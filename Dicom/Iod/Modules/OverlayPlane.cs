@@ -302,17 +302,67 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get { return _tagOffset; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the <see cref="OverlayData"/> is stored in 16-bit big-endian words.
+		/// </summary>
 		public bool IsBigEndianOW
 		{
 			get { return ByteBuffer.LocalMachineEndian == Endian.Big && base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayData] is DicomAttributeOW; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating if the overlay data for this plane is embedded in the unused bits of the <see cref="DicomTags.PixelData"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This determination algorithm checks for non-existence of <see cref="DicomTags.OverlayData"/>,
+		/// existence of <see cref="DicomTags.PixelData"/>, and that <see cref="DicomTags.OverlayBitPosition"/>
+		/// is valid given <see cref="DicomTags.BitsAllocated"/>, <see cref="DicomTags.BitsStored"/>, and
+		/// <see cref="DicomTags.HighBit"/>.
+		/// </para>
+		/// <para>
+		/// If <b>any</b> of these tags (which, it should be noted, are not part of the Overlay Plane Module)
+		/// may not be in the same dataset, then it is highly recommended that a custom determination be made
+		/// instead of using this property.
+		/// </para>
+		/// </remarks>
 		public bool IsEmbedded
 		{
 			get
 			{
+				// OverlayData exists => not embedded
+				DicomAttribute overlayData = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayData];
+				if (overlayData.IsEmpty || overlayData.IsNull)
+				{
+					// embedded => PixelData exists, not empty
+					DicomAttribute pixelData = base.DicomAttributeProvider[DicomTags.PixelData];
+					if (!pixelData.IsEmpty && !pixelData.IsNull)
+					{
+						// embedded => BitsAllocated={8|16}, OverlayBitPosition in [0, BitsAllocated)
+						int overlayBitPosition = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].GetInt32(0, -1);
+						int bitsAllocated = base.DicomAttributeProvider[DicomTags.BitsAllocated].GetInt32(0, 0);
+						if (overlayBitPosition >= 0 && overlayBitPosition < bitsAllocated && (bitsAllocated == 8 || bitsAllocated == 16))
+						{
+							// embedded => OverlayBitPosition in (HighBit, BitsAllocated) or [0, HighBit - BitsStored + 1)
+							int highBit = base.DicomAttributeProvider[DicomTags.HighBit].GetInt32(0, 0);
+							int bitsStored = base.DicomAttributeProvider[DicomTags.BitsStored].GetInt32(0, 0);
+							return (overlayBitPosition > highBit || overlayBitPosition < highBit - bitsStored + 1);
+						}
+					}
+				}
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating if the <see cref="DicomTags.OverlayData"/> exists for this plane.
+		/// </summary>
+		public bool HasOverlayData
+		{
+			get
+			{
 				DicomAttribute attribute = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayData];
-				return attribute.IsEmpty || attribute.IsNull;
+				return !attribute.IsEmpty && !attribute.IsNull;
 			}
 		}
 

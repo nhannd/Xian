@@ -91,6 +91,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				foreach (OverlayPlane overlay in overlaysFromPresentationState)
 				{
+					// it is highly unlikely that an overlay should be embedded in the pixel data of an image-less instance, but worth the sanity check anyway
 					if (overlay.OverlayType != OverlayType.None && !overlay.IsEmbedded)
 					{
 						try

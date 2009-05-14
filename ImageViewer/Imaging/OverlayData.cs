@@ -48,6 +48,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			Platform.CheckNonNegative(offset, "offset");
 
+			if (overlayData == null)
+				overlayData = new byte[0];
+
 			_offset = offset;
 			_rows = rows;
 			_columns = columns;

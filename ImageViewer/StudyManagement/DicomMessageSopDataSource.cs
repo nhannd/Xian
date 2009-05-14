@@ -280,6 +280,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					if (overlay.IsEmbedded && _overlayCache[overlay.Index, _frameIndex] == null)
 						_overlayCache[overlay.Index, _frameIndex] = OverlayData.Extract(overlay.OverlayBitPosition, bitsAllocated, false, rawPixelData);
+					else if (!overlay.HasOverlayData)
+						Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", this.Parent.SopInstanceUid, overlay.Group);
 				}
 			}
 

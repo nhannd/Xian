@@ -98,10 +98,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this.Parent);
 					foreach (OverlayPlane overlayPlane in opmi)
 					{
-						if (overlayPlane.IsEmbedded && _overlayData[overlayPlane.Index] == null)
+						if (IsOverlayEmbedded(overlayPlane) && _overlayData[overlayPlane.Index] == null)
 						{
-							byte[] overlayData = OverlayData.Extract(overlayPlane.OverlayBitPosition, overlayPlane.OverlayBitsAllocated, false, pixelData);
+							byte[] overlayData = OverlayData.Extract(overlayPlane.OverlayBitPosition, this.Parent[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
 							_overlayData[overlayPlane.Index] = overlayData;
+						}
+						else if (!overlayPlane.HasOverlayData)
+						{
+							Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", this.Parent.SopInstanceUid, overlayPlane.Group);
 						}
 					}
 
@@ -125,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 					if (_overlayData[overlayIndex] == null)
 					{
-						if (overlayPlane.IsEmbedded)
+						if (IsOverlayEmbedded(overlayPlane))
 						{
 							this.GetNormalizedPixelData();
 						}
@@ -302,6 +306,34 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					_retrieveResult = null;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Determines if the overlay data for this plane is embedded in the pixel data.
+		/// </summary>
+		/// <remarks>
+		/// We cannot use <see cref="OverlayPlane.IsEmbedded"/> because the PixelData attribute is not in the dataset since we stream it separately.
+		/// </remarks>
+		private static bool IsOverlayEmbedded(OverlayPlane overlayPlane)
+		{
+			IDicomAttributeProvider provider = overlayPlane.DicomAttributeProvider;
+
+			// OverlayData exists => not embedded
+			DicomAttribute overlayData = provider[overlayPlane.TagOffset + DicomTags.OverlayData];
+			if (overlayData.IsEmpty || overlayData.IsNull)
+			{
+				// embedded => BitsAllocated={8|16}, OverlayBitPosition in [0, BitsAllocated)
+				int overlayBitPosition = provider[overlayPlane.TagOffset + DicomTags.OverlayBitPosition].GetInt32(0, -1);
+				int bitsAllocated = provider[DicomTags.BitsAllocated].GetInt32(0, 0);
+				if (overlayBitPosition >= 0 && overlayBitPosition < bitsAllocated && (bitsAllocated == 8 || bitsAllocated == 16))
+				{
+					// embedded => OverlayBitPosition in (HighBit, BitsAllocated) or [0, HighBit - BitsStored + 1)
+					int highBit = provider[DicomTags.HighBit].GetInt32(0, 0);
+					int bitsStored = provider[DicomTags.BitsStored].GetInt32(0, 0);
+					return (overlayBitPosition > highBit || overlayBitPosition < highBit - bitsStored + 1);
+				}
+			}
+			return false;
 		}
 	}
 }
