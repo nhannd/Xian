@@ -51,9 +51,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private class Item
 		{
+			private readonly object _syncLock = new object();
 			private readonly ISopDataSource _realDataSource;
-			private IList<VoiDataLut> _sopVoiDataLuts;
-			private int _referenceCount = 0;
+			private volatile IList<VoiDataLut> _sopVoiDataLuts;
+			private volatile int _referenceCount = 0;
 
 			public Item(ISopDataSource realDataSource)
 			{
@@ -62,24 +63,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			~Item()
 			{
-				lock (_syncLock)
-				{
-					// perform dictionary pruning if we are being finalized yet some client(s) has not properly disposed us yet
-					if (_referenceCount >= 0)
-					{
-						string key = null;
-						foreach (KeyValuePair<string, Item> item in _items)
-						{
-							if (item.Value == this)
-							{
-								key = item.Key;
-								break;
-							}
-						}
-						if (key != null)
-							_items.Remove(key);
-					}
-				}
+				//the only way this object will get finalized is when all the frames
+				//referencing it are dead themselves.  So, we set a boolean to indicate
+				//that we know there are dead WeakReference objects to clean up.
+				if (_referenceCount > -1)
+					_containsDeadItems = true;
 			}
 
 			public ISopDataSource RealDataSource
@@ -93,14 +81,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					if (_sopVoiDataLuts == null)
 					{
-						try
+						lock (_syncLock)
 						{
-							_sopVoiDataLuts = VoiDataLut.Create(_realDataSource).AsReadOnly();
-						}
-						catch (Exception ex)
-						{
-							Platform.Log(LogLevel.Warn, ex, SR.MessageFailedToGetVOIDataLUTs);
-							_sopVoiDataLuts = new List<VoiDataLut>().AsReadOnly();
+							if (_sopVoiDataLuts == null)
+							{
+								try
+								{
+									_sopVoiDataLuts = VoiDataLut.Create(_realDataSource).AsReadOnly();
+								}
+								catch (Exception ex)
+								{
+									Platform.Log(LogLevel.Warn, ex, SR.MessageFailedToGetVOIDataLUTs);
+									_sopVoiDataLuts = new List<VoiDataLut>().AsReadOnly();
+								}
+							}
 						}
 					}
 
@@ -121,7 +115,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public void OnReferenceDisposed()
 			{
-				lock(_syncLock)
+				string removeSopInstanceUid = null;
+
+				lock (_syncLock)
 				{
 					if (_referenceCount > 0)
 						--_referenceCount;
@@ -129,13 +125,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					if (_referenceCount == 0)
 					{
 						_referenceCount = -1;
-						_items.Remove(RealDataSource.SopInstanceUid);
-						_realDataSource.Dispose();
+						GC.SuppressFinalize(this);
 
-						if (_items.Count == 0)
-							Trace.WriteLine("The sop data cache is empty.");
+						removeSopInstanceUid = _realDataSource.SopInstanceUid;
+
+						try
+						{
+							_realDataSource.Dispose();
+						}
+						catch(Exception e)
+						{
+							Platform.Log(LogLevel.Debug, e);
+						}
 					}
 				}
+
+				if (removeSopInstanceUid != null)
+					Remove(removeSopInstanceUid);
 			}
 		}
 
@@ -188,8 +194,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		
 		#endregion
 
-		private static readonly object _syncLock = new object();
-		private static readonly Dictionary<string, Item> _items = new Dictionary<string, Item>();
+		private static readonly object _itemsLock = new object();
+		private static readonly Dictionary<string, WeakReference> _items = new Dictionary<string, WeakReference>();
+		private static volatile bool _containsDeadItems = false;
 		
 #if UNIT_TESTS
 
@@ -201,24 +208,91 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 #endif
 		public static ISopDataCacheItemReference Add(ISopDataSource dataSource)
 		{
-			lock(_syncLock)
+			lock(_itemsLock)
 			{
+				CleanupDeadItems();
+
+				WeakReference weakReference = null;
 				Item item = null;
 
 				if (_items.ContainsKey(dataSource.SopInstanceUid))
 				{
-					item = _items[dataSource.SopInstanceUid];
+					weakReference = _items[dataSource.SopInstanceUid];
+					try
+					{
+						item = weakReference.Target as Item;
+					}
+					catch (InvalidOperationException)
+					{
+						weakReference = null;
+						item = null;
+					}
+				}
+
+				if (weakReference == null)
+				{
+					weakReference = new WeakReference(null);
+					_items[dataSource.SopInstanceUid] = weakReference;
+				}
+
+
+				if (item != null && weakReference.IsAlive)
+				{
 					if (!ReferenceEquals(item.RealDataSource, dataSource))
 						dataSource.Dispose(); //silently dispose the new one, we already have it.
 				}
 				else
 				{
 					item = new Item(dataSource);
-					_items.Add(dataSource.SopInstanceUid, item);
+					weakReference.Target = item;
 				}
 
 				return new ItemReference(item);
 			}
+		}
+
+		private static void Remove(string sopInstanceUid)
+		{
+			lock (_itemsLock)
+			{
+				_items.Remove(sopInstanceUid);
+
+				if (_items.Count == 0)
+					Trace.WriteLine("The sop data cache is empty.");
+			}
+		}
+
+		private static void CleanupDeadItems()
+		{
+			if (!_containsDeadItems)
+				return;
+
+			_containsDeadItems = false;
+
+			// Note that the only way we should even get to here is if some Frames that were
+			// allocated didn't get disposed, which should never happen.  This is a failsafe
+			// to ensure that the dictionary doesn't get ridiculous.
+
+			List<string> deadObjectKeys = new List<string>();
+
+			foreach (KeyValuePair<string, WeakReference> pair in _items)
+			{
+				try
+				{
+					if (!pair.Value.IsAlive || pair.Value.Target == null)
+						deadObjectKeys.Add(pair.Key);
+				}
+				catch (InvalidOperationException)
+				{
+					deadObjectKeys.Add(pair.Key);
+				}
+			}
+
+			foreach (string deadObjectKey in deadObjectKeys)
+				_items.Remove(deadObjectKey);
+
+			if (_items.Count == 0)
+				Trace.WriteLine("The sop data cache is empty.");
 		}
 	}
 }
