@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             changeLog.Action = _processDuplicateEntry.QueueData.Action;
             changeLog.DuplicateDetails = _duplicateSopDetails;
             changeLog.StudySnapShot = _originalStudyInfo;
-
+            changeLog.StudyUpdateCommands = _studyUpdateCommands;
             XmlDocument doc = XmlUtils.SerializeAsXmlDoc(changeLog);
             columns.ChangeDescription = doc;
             return columns;

@@ -98,7 +98,10 @@
                                     </span>
                                 </td></tr>
                             <tr><td style="border:none">
-                            <div style="margin-left:2px;">
+                            <div style="margin-left:2px; padding-left:5px;">
+                                <% foreach(BaseImageLevelUpdateCommand command in ChangeLog.StudyUpdateCommands) {%>
+                                        <%= command.ToString() %> <br />
+                                <% }%>
                              </div>
                             </td></tr>
                         </table>

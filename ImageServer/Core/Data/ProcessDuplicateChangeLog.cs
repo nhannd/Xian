@@ -30,9 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Data
@@ -43,7 +47,9 @@ namespace ClearCanvas.ImageServer.Core.Data
         private DateTime _timeStamp = Platform.Time;
         private ProcessDuplicateAction _action;
         private ImageSetDetails _duplicateSetDetails;
-        private StudyInformation _studySnapShot; 
+        private StudyInformation _studySnapShot;
+        private List<BaseImageLevelUpdateCommand> _studyUpdateCommands;
+            
         #endregion
 
         #region Public Properties
@@ -70,7 +76,16 @@ namespace ClearCanvas.ImageServer.Core.Data
         {
             get { return _studySnapShot; }
             set { _studySnapShot = value; }
-        } 
+        }
+
+        [XmlArray("StudyUpdateCommands")]
+        [XmlArrayItem("Command", Type = typeof(AbstractProperty<BaseImageLevelUpdateCommand>))]
+        public List<BaseImageLevelUpdateCommand> StudyUpdateCommands
+        {
+            get { return _studyUpdateCommands; }
+            set { _studyUpdateCommands = value; }
+        }
+
         #endregion
     }
 }
