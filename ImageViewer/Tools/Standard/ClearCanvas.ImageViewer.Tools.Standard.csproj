@@ -338,24 +338,6 @@
     <EmbeddedResource Include="Icons\DicomOverlaysToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawPolygonShutterToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawPolygonShutterToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawPolygonShutterToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawCircleShutterToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawCircleShutterToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawCircleShutterToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteAllAnnotationsToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
@@ -372,15 +354,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteAnnotationToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawRectangleShutterToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawRectangleShutterToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DrawRectangleShutterToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ShutterOverlayToolLarge.png" />
@@ -411,6 +384,17 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\BlankCursor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawCircularShutterToolLarge.png" />
+    <EmbeddedResource Include="Icons\DrawCircularShutterToolMedium.png" />
+    <EmbeddedResource Include="Icons\DrawCircularShutterToolSmall.png" />
+    <EmbeddedResource Include="Icons\DrawPolygonalShutterToolLarge.png" />
+    <EmbeddedResource Include="Icons\DrawPolygonalShutterToolMedium.png" />
+    <EmbeddedResource Include="Icons\DrawPolygonalShutterToolSmall.png" />
+    <EmbeddedResource Include="Icons\DrawRectangularShutterToolLarge.png" />
+    <EmbeddedResource Include="Icons\DrawRectangularShutterToolMedium.png" />
+    <EmbeddedResource Include="Icons\DrawRectangularShutterToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

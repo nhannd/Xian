@@ -66,15 +66,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	#region Drop-down
 
 	[ButtonAction("selectDrawCircleShutter", "drawshutter-toolbar-dropdown/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
-	[IconSet("selectDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircleShutterToolSmall.png", "Icons.DrawCircleShutterToolMedium.png", "Icons.DrawCircleShutterToolLarge.png")]
+	[IconSet("selectDrawCircleShutter", IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawCircleShutter", "DrawCircleShutterChecked", "SelectedShutterTypeChanged")]
 
 	[ButtonAction("selectDrawPolygonShutter", "drawshutter-toolbar-dropdown/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
-	[IconSet("selectDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonShutterToolSmall.png", "Icons.DrawPolygonShutterToolMedium.png", "Icons.DrawPolygonShutterToolLarge.png")]
+	[IconSet("selectDrawPolygonShutter", IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawPolygonShutter", "DrawPolygonShutterChecked", "SelectedShutterTypeChanged")]
 
 	[ButtonAction("selectDrawRectangleShutter", "drawshutter-toolbar-dropdown/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
-	[IconSet("selectDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangleShutterToolSmall.png", "Icons.DrawRectangleShutterToolMedium.png", "Icons.DrawRectangleShutterToolLarge.png")]
+	[IconSet("selectDrawRectangleShutter", IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png")]
 	[CheckedStateObserver("selectDrawRectangleShutter", "DrawRectangleShutterChecked", "SelectedShutterTypeChanged")]
 
 	#endregion
@@ -131,11 +131,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get
 			{
 				if (_selectedShutterType == ShutterType.Rectangle)
-					return new IconSet(IconScheme.Colour, "Icons.DrawRectangleShutterToolSmall.png", "Icons.DrawRectangleShutterToolMedium.png", "Icons.DrawRectangleShutterToolLarge.png");
+					return new IconSet(IconScheme.Colour, "Icons.DrawRectangularShutterToolSmall.png", "Icons.DrawRectangularShutterToolMedium.png", "Icons.DrawRectangularShutterToolLarge.png");
 				else if (_selectedShutterType == ShutterType.Polygon)
-					return new IconSet(IconScheme.Colour, "Icons.DrawPolygonShutterToolSmall.png", "Icons.DrawPolygonShutterToolMedium.png", "Icons.DrawPolygonShutterToolLarge.png");
+					return new IconSet(IconScheme.Colour, "Icons.DrawPolygonalShutterToolSmall.png", "Icons.DrawPolygonalShutterToolMedium.png", "Icons.DrawPolygonalShutterToolLarge.png");
 				else
-					return new IconSet(IconScheme.Colour, "Icons.DrawCircleShutterToolSmall.png", "Icons.DrawCircleShutterToolMedium.png", "Icons.DrawCircleShutterToolLarge.png");
+					return new IconSet(IconScheme.Colour, "Icons.DrawCircularShutterToolSmall.png", "Icons.DrawCircularShutterToolMedium.png", "Icons.DrawCircularShutterToolLarge.png");
 			}	
 		}
 
