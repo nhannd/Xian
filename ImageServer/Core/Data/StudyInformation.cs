@@ -86,8 +86,14 @@ namespace ClearCanvas.ImageServer.Core.Data
 				ReferringPhysician = attributeProvider[DicomTags.ReferringPhysiciansName].ToString();
 
 			PatientInfo = new PatientInformation(attributeProvider);
-			SeriesInformation series = new SeriesInformation(attributeProvider);
-			Add(series);
+
+		    DicomAttribute seriesUidAttr;
+		    if (attributeProvider.TryGetAttribute(DicomTags.SeriesInstanceUid, out seriesUidAttr))
+            {
+                SeriesInformation series = new SeriesInformation(attributeProvider);
+                Add(series);
+            }
+			
 		}
 
 		#endregion

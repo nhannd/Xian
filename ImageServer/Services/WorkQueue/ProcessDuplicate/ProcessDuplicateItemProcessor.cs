@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         private List<BaseImageLevelUpdateCommand> _studyUpdateCommands;
         private List<BaseImageLevelUpdateCommand> _duplicateUpdateCommands;
         private StudyInformation _originalStudyInfo;
+        private ImageSetDetails _duplicateSopDetails;
 
         protected String DuplicateFolder
         {
@@ -209,6 +210,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
             ProcessDuplicateChangeLog changeLog = new ProcessDuplicateChangeLog();
             changeLog.Action = _processDuplicateEntry.QueueData.Action;
+            changeLog.DuplicateDetails = _duplicateSopDetails;
+            changeLog.StudySnapShot = _originalStudyInfo;
+
             XmlDocument doc = XmlUtils.SerializeAsXmlDoc(changeLog);
             columns.ChangeDescription = doc;
             return columns;
@@ -216,7 +220,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private void ProcessUid(WorkQueueUid uid)
         {
-            
             switch(_processDuplicateEntry.QueueData.Action)
             {
                 case ProcessDuplicateAction.Delete:
@@ -275,6 +278,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             {
                 DicomFile file = LoadDicomFile(uid);
                 String dupFilePath = file.Filename;
+
+                if (_duplicateSopDetails==null)
+                    _duplicateSopDetails = new ImageSetDetails(file.DataSet);
+                
+                _duplicateSopDetails.InsertFile(file);
 
                 if (needOverwrite)
                 {
@@ -381,17 +389,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             
         }
 
-    }
-
-    public class ProcessDuplicateChangeLog
-    {
-        private ProcessDuplicateAction _action;
-
-        public ProcessDuplicateAction Action
-        {
-            get { return _action; }
-            set { _action = value; }
-        }
     }
 
     internal class DuplicateSopUpdateCommand : ServerCommand

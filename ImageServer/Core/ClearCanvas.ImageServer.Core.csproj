@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ProcessDuplicateChangeLog.cs" />
     <Compile Include="Edit\BaseImageLevelUpdateCommand.cs" />
     <Compile Include="Reconcile\InsertDuplicateQueueEntryCommand.cs" />
     <Compile Include="Edit\SetTagCommand.cs" />

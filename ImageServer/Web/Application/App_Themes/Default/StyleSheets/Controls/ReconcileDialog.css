@@ -220,3 +220,20 @@
 {
 	padding:5px;
 }
+
+.DuplicateDialogSeriesPanel
+{
+	margin:5px;
+}
+.DuplicateDialogSeriesTable
+{
+	border-right: #cccc99 1px dotted;
+	border-top: #cccc99 1px dotted;
+	border-left: #cccc99 1px dotted;
+	border-bottom: #cccc99 1px dotted;
+	padding:5px;
+}
+.DuplicateDialogSeriesTableHeader
+{
+	background-color: #cccccc;
+}

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -31,71 +31,46 @@
 
 using System;
 using System.Xml.Serialization;
-using ClearCanvas.Dicom;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Data
 {
-	/// <summary>
-	/// Represents serializable series information.
-	/// </summary>
-	[XmlRoot("Series")]
-	public class SeriesInformation
-	{
-		#region Private Members
-		private string _seriesInstanceUid;
-		private string _seriesDescription;
-		private string _modality;
-		private int _numberOfInstances = 0;
-		#endregion
+    public class ProcessDuplicateChangeLog
+    {
+        #region Private Members
+        private DateTime _timeStamp = Platform.Time;
+        private ProcessDuplicateAction _action;
+        private ImageSetDetails _duplicateSetDetails;
+        private StudyInformation _studySnapShot; 
+        #endregion
 
-		#region Constructors
+        #region Public Properties
 
-		public SeriesInformation()
-		{
-		}
+        public DateTime TimeStamp
+        {
+            get { return _timeStamp; }
+            set { _timeStamp = value; }
+        }
 
-		public SeriesInformation(IDicomAttributeProvider attributeProvider)
-		{
-			if (attributeProvider[DicomTags.SeriesInstanceUid] != null)
-				SeriesInstanceUid = attributeProvider[DicomTags.SeriesInstanceUid].ToString();
-			if (attributeProvider[DicomTags.SeriesDescription] != null)
-				SeriesDescription = attributeProvider[DicomTags.SeriesDescription].ToString();
-			if (attributeProvider[DicomTags.Modality] != null)
-				Modality = attributeProvider[DicomTags.Modality].ToString();
+        public ProcessDuplicateAction Action
+        {
+            get { return _action; }
+            set { _action = value; }
+        }
 
-            if (attributeProvider[DicomTags.NumberOfSeriesRelatedInstances] != null)
-                Int32.TryParse(attributeProvider[DicomTags.NumberOfSeriesRelatedInstances].ToString(), out _numberOfInstances);
+        public ImageSetDetails DuplicateDetails
+        {
+            get { return _duplicateSetDetails; }
+            set { _duplicateSetDetails = value; }
+        }
 
-		}
-
-		#endregion
-
-		#region Public Properties
-		[XmlAttribute]
-		public string SeriesInstanceUid
-		{
-			get { return _seriesInstanceUid; }
-			set { _seriesInstanceUid = value; }
-		}
-		[XmlAttribute]
-		public string Modality
-		{
-			get { return _modality; }
-			set { _modality = value; }
-		}
-		public string SeriesDescription
-		{
-			get { return _seriesDescription; }
-			set { _seriesDescription = value; }
-		}
-
-		public int NumberOfInstances
-		{
-			get { return _numberOfInstances; }
-			set { _numberOfInstances = value; }
-		}
-
-		#endregion
-
-	}
+        public StudyInformation StudySnapShot
+        {
+            get { return _studySnapShot; }
+            set { _studySnapShot = value; }
+        } 
+        #endregion
+    }
 }
