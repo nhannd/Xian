@@ -31,21 +31,16 @@
 
 using System;
 using System.Globalization;
-using System.Web.UI.WebControls;
 using System.Xml;
-using AjaxControlToolkit;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
-using ValueType=ClearCanvas.Dicom.Iod.ValueType;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -57,17 +52,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// <summary>
         /// Sets/Gets the current editing device.
         /// </summary>
-        public Study study
+        public Study Study
         {
             set
             {
                 // put into viewstate to retrieve later
-                ViewState[ClientID + "_loadedStudy"] = value;
+                ViewState["loadedStudy"] = value;
             }
             get
             { 
                 // put into viewstate to retrieve later
-                return ViewState[ClientID + "_loadedStudy"] as Study;
+                return ViewState["loadedStudy"] as Study;
             }
         }
 
@@ -118,7 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             setNode.SetAttribute("TagPath", "");
             setNode.SetAttribute("Value","");
 
-            PersonName oldPatientName = new PersonName(study.PatientsName);
+            PersonName oldPatientName = new PersonName(Study.PatientsName);
             PersonName newPatientName = PatientNamePanel.PersonName;
 
             if (!oldPatientName.AreSame(newPatientName, PersonNameComparisonOptions.CaseInsensitive))
@@ -132,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
                                         ? DateTime.Parse(PatientBirthDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
-            if (!study.PatientsBirthDate.Equals(dicomBirthDate))
+            if (!Study.PatientsBirthDate.Equals(dicomBirthDate))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsBirthDate, dicomBirthDate));
 				description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -140,7 +135,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 											 dicomBirthDate);
 			}
 
-            if(study.PatientsAge == null || !PatientAge.Text.Equals(study.PatientsAge)) {
+            if(Study.PatientsAge == null || !PatientAge.Text.Equals(Study.PatientsAge)) {
                 string patientAge = PatientAge.Text.PadLeft(3,'0');
                 patientAge += PatientAgePeriod.SelectedValue;
 
@@ -151,7 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             }
 
-            if (!study.PatientsSex.Equals(PatientGender.Text))
+            if (!Study.PatientsSex.Equals(PatientGender.Text))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsSex, PatientGender.Text));
             	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -159,7 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             	                             PatientGender.Text);
             }
 
-            if (!study.PatientId.Equals(PatientID.Text))
+            if (!Study.PatientId.Equals(PatientID.Text))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientID, PatientID.Text));
 				description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -167,8 +162,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 									 PatientID.Text);
 			}
 
-            if(String.IsNullOrEmpty(study.StudyDescription)
-				|| !study.StudyDescription.Equals((StudyDescription.Text)))
+            if(String.IsNullOrEmpty(Study.StudyDescription)
+				|| !Study.StudyDescription.Equals((StudyDescription.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDescription, StudyDescription.Text));
             	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -176,8 +171,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             	                             StudyDescription.Text);
 			}
 
-			if (String.IsNullOrEmpty(study.StudyId)
-				|| !study.StudyId.Equals((StudyID.Text)))
+			if (String.IsNullOrEmpty(Study.StudyId)
+				|| !Study.StudyId.Equals((StudyID.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyID, StudyID.Text));
             	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -185,8 +180,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             	                             StudyID.Text);
 			}
 
-			if (String.IsNullOrEmpty(study.AccessionNumber)
-				|| !study.AccessionNumber.Equals((AccessionNumber.Text)))
+			if (String.IsNullOrEmpty(Study.AccessionNumber)
+				|| !Study.AccessionNumber.Equals((AccessionNumber.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
             	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -194,7 +189,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             	                             AccessionNumber.Text);
 			}
 
-            PersonName oldPhysicianName = new PersonName(study.ReferringPhysiciansName);
+            PersonName oldPhysicianName = new PersonName(Study.ReferringPhysiciansName);
             PersonName newPhysicianName = ReferringPhysicianNamePanel.PersonName;
 
             if (!newPhysicianName.AreSame(oldPhysicianName, PersonNameComparisonOptions.CaseInsensitive))
@@ -209,7 +204,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                         ? DateTime.Parse(StudyDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
 
-            if(!study.StudyDate.Equals(dicomStudyDate))
+            if(!Study.StudyDate.Equals(dicomStudyDate))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDate, dicomStudyDate));
             	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -222,7 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             int ss = int.Parse(StudyTimeSeconds.Text);
             String dicomStudyTime = String.Format("{0:00}{1:00}{2:00}", hh, mm, ss);
             
-            if(!study.StudyTime.Equals(dicomStudyTime))
+            if(!Study.StudyTime.Equals(dicomStudyTime))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyTime, dicomStudyTime));
 				description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
@@ -237,18 +232,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private void UpdateFields()
         {
-            if(study == null) return;
+            if(Study == null) return;
 
-            EditStudyModalDialog.Title = App_GlobalResources.Titles.EditStudyDialog;
-
+            PersonName patientName = new PersonName(Study.PatientsName);
+            PersonName physicianName = new PersonName(Study.ReferringPhysiciansName);
+            PatientNamePanel.PersonName = patientName;
+            ReferringPhysicianNamePanel.PersonName = physicianName;
+            
             // Patient Information
-            string dicomName = study.PatientsName;
-
-            string[] splitDicomName = dicomName.Split('^');
-
-            if (!study.PatientsSex.Equals(string.Empty))
+            if (!Study.PatientsSex.Equals(string.Empty))
             {
-                switch(study.PatientsSex)
+                switch(Study.PatientsSex)
                 {
                     case "M":
                         PatientGender.SelectedIndex = 1;
@@ -266,26 +260,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 
             }
 
-            PatientID.Text = study.PatientId;
+            PatientID.Text = Study.PatientId;
+            DateTime? birthDate = String.IsNullOrEmpty(Study.PatientsBirthDate)? null:DateParser.Parse(Study.PatientsBirthDate);
+            PatientBirthDateCalendarExtender.SelectedDate = birthDate;
+            if (birthDate == null)
+                PatientBirthDate.Text = String.Empty; // calendar fills in the default date if it's null, we don't want that to happen.
 
-            if (!string.IsNullOrEmpty(study.PatientsBirthDate))
+            if (!String.IsNullOrEmpty(Study.PatientsAge))
             {
-                DateTime? birthDate = DateParser.Parse(study.PatientsBirthDate);
-                if (birthDate!=null)
-                {
-                    PatientBirthDate.Text = birthDate.Value.ToString(DateTimeFormatter.DefaultDateFormat);
-                }
-            }
-            else
-            {
-                PatientBirthDate.Text = string.Empty;
-            }
-
-
-            if (!String.IsNullOrEmpty(study.PatientsAge))
-            {
-                PatientAge.Text = study.PatientsAge.Substring(0, 3).TrimStart('0');
-                switch (study.PatientsAge.Substring(3))
+                PatientAge.Text = Study.PatientsAge.Substring(0, 3).TrimStart('0');
+                switch (Study.PatientsAge.Substring(3))
                 {
                     case "Y":
                         PatientAgePeriod.SelectedIndex = 0;
@@ -308,14 +292,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
             // Study Information
+            StudyDescription.Text = Study.StudyDescription;            
+            StudyID.Text = Study.StudyId;
+            AccessionNumber.Text = Study.AccessionNumber;
 
-            StudyDescription.Text = study.StudyDescription;            
-            StudyID.Text = study.StudyId;
-            AccessionNumber.Text = study.AccessionNumber;
-
-            if (!string.IsNullOrEmpty(study.StudyDate))
+            if (!string.IsNullOrEmpty(Study.StudyDate))
             {
-                DateTime? studyDate = DateParser.Parse(study.StudyDate);
+                DateTime? studyDate = DateParser.Parse(Study.StudyDate);
                 if (studyDate!=null)
                 {
                     StudyDate.Text = studyDate.Value.ToString(DateTimeFormatter.DefaultDateFormat);
@@ -329,9 +312,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyDate.Text = String.Empty;
             }
 
-            if (!string.IsNullOrEmpty(study.StudyTime))
+            if (!string.IsNullOrEmpty(Study.StudyTime))
             {
-                DateTime? studyTime = TimeParser.Parse(study.StudyTime);
+                DateTime? studyTime = TimeParser.Parse(Study.StudyTime);
                 if (studyTime!=null)
                 {
                     if (studyTime.Value.Hour == 0)
@@ -367,10 +350,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeAmPm.SelectedValue = "AM";
             }
 
-            PersonName patientName = new PersonName(study.PatientsName);
-            PersonName physicianName = new PersonName(study.ReferringPhysiciansName);
-            PatientNamePanel.PersonName = patientName;
-            ReferringPhysicianNamePanel.PersonName = physicianName;
             DataBind();
         }
 
@@ -384,35 +363,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             CalendarLink.ImageUrl = ImageServerConstants.ImageURLs.CalendarIcon;
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            //Set the culture settings
-            CultureInfo oCulture = CultureInfo.CurrentCulture;
-            PatientBirthDateMaskExtender.CultureName = oCulture.Name;
-            PatientBirthDateCalendarExtender.Format = oCulture.DateTimeFormat.ShortDatePattern;
-
-            //CalendarMaskExtender expects something like "99/99/9999"
-            string Mask = PatientBirthDateCalendarExtender.Format.Replace(oCulture.DateTimeFormat.DateSeparator, "/");
-            if (Mask.IndexOf("d") != Mask.LastIndexOf("d"))
-            {
-                Mask = Mask.Replace("d", "9");
-            }
-            else
-            {
-                Mask = Mask.Replace("d", "99");
-            }
-            if (Mask.IndexOf("M") != Mask.LastIndexOf("M"))
-            {
-                Mask = Mask.Replace("M", "9");
-            }
-            else
-            {
-                Mask = Mask.Replace("M", "99");
-            }
-            Mask = Mask.Replace("y", "9");
-            PatientBirthDateMaskExtender.Mask = Mask;
-
-        }
 
         /// <summary>
         /// Handles event when user clicks on "OK" button.
@@ -431,7 +381,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     if (modifiedFields.HasChildNodes)
                     {
                         StudyController studyController = new StudyController();
-                        studyController.EditStudy(study, modifiedFields);
+                        studyController.EditStudy(Study, modifiedFields);
 
                     	DicomInstancesAccessedAuditHelper helper =
                     		new DicomInstancesAccessedAuditHelper(ServerPlatform.AuditSource,
@@ -443,7 +393,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 									SessionManager.Current.Credentials.DisplayName));
 
                     	AuditStudyParticipantObject participant =
-                    		new AuditStudyParticipantObject(study.StudyInstanceUid, study.AccessionNumber);
+                    		new AuditStudyParticipantObject(Study.StudyInstanceUid, Study.AccessionNumber);
                     	participant.ParticipantObjectDetail = description;
 						helper.AddStudyParticipantObject(participant);
                     	ServerPlatform.LogAuditMessage("DicomInstancesAccessedUpdate", helper);
@@ -471,6 +421,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         }
 
         #endregion 
+
         #region Public Methods
 
         /// <summary>

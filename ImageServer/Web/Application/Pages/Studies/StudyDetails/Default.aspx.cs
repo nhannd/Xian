@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                 }
                 else
                 {
-                    EditStudyDialog.study = _study.TheStudy;
+                    EditStudyDialog.Study = _study.TheStudy;
                     EditStudyDialog.Show(true);
                 }
             }

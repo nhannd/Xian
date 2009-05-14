@@ -209,6 +209,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DateValidator DateValidator19;
         
         /// <summary>
+        /// PatientBirthDateMaskExtender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.MaskedEditExtender PatientBirthDateMaskExtender;
+        
+        /// <summary>
+        /// PatientBirthDateCalendarExtender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender PatientBirthDateCalendarExtender;
+        
+        /// <summary>
         /// Label3 control.
         /// </summary>
         /// <remarks>
@@ -253,15 +271,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator PatientAgeValidator;
         
-        /// <summary>
-        /// PatientBirthDateCalendarExtender control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender PatientBirthDateCalendarExtender;
-
         /// <summary>
         /// TabPanel2 control.
         /// </summary>
@@ -513,8 +522,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender StudyDateCalendarExtender;
-
-        protected AjaxControlToolkit.MaskedEditExtender PatientBirthDateMaskExtender;
         
         /// <summary>
         /// Panel1 control.

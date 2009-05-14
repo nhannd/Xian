@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditStudyDetailsDialog.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditStudyDetailsDialog" %>
 
-<ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px">
+<ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px" Title='<%$ Resources:Titles, EditStudyDialog %>'>
 <ContentTemplate>
 <asp:ValidationSummary ID="EditStudyDetailsValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
 EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />
@@ -34,7 +34,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                            <asp:DropDownList ID="PatientGender" runat="server" CssClass="DialogDropDownList" CausesValidation="true" ValidationGroup="vg1">
+                                            <asp:DropDownList ID="PatientGender" runat="server" CssClass="DialogDropDownList" CausesValidation="true" ValidationGroup="vg1"  >
                                                 <asp:ListItem Selected="True" Text=" " Value=" " />
                                                 <asp:ListItem Text="Male" Value="M" />
                                                 <asp:ListItem Text="Female" Value="F" />
@@ -58,7 +58,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" textCausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:DateValidator
@@ -67,6 +67,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                                         Text="The Patient Birth Date cannot be in the future." Display="None">
                                             </ccValidator:DateValidator>
                                             <aspAjax:MaskedEditExtender runat="server" ID="PatientBirthDateMaskExtender" MaskType="Date" Mask="99/99/9999" TargetControlID="PatientBirthDate"></aspAjax:MaskedEditExtender>
+                                            <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" Format="MM/dd/yyyy" CssClass="Calendar" PopupButtonID="CalendarLink"></ccUI:CalendarExtender>
                                         </td></tr>
                                     </table>
                                 </td>
@@ -94,8 +95,6 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 </td>
                             </tr>
                         </table>
-                        <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" CssClass="Calendar" PopupButtonID="CalendarLink" Format="MM/dd/yyyy">
-                        </ccUI:CalendarExtender>
                     </ContentTemplate>
                     <HeaderTemplate>
                         Patient Information
@@ -104,51 +103,6 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                 <aspAjax:TabPanel ID="TabPanel2" runat="server" HeaderText="TabPanel2">
                     <ContentTemplate>
                         <table cellpadding="2" cellspacing="5" width="100%" style="background-color: #eeeeee; border: solid 1px #cccccc;">
-                            <%--<tr>
-                            <td><asp:Image ID="Image1" runat="server" SkinID="spacer" Height="6" /></td>
-                                <td rowspan="2">
-                                    <table cellpadding="0" cellspacing="0">
-                                    <tr>
-                                        <td>
-                                            <asp:Label ID="Label16" runat="server" Text="Title" CssClass="DialogTextBoxLabel" /><br />
-                                            <asp:TextBox ID="PhysicianTitle" runat="server" CssClass="DialogTextBox" />
-                                        </td>
-                                        <td><asp:Label ID="Label17" runat="server" Text="Given Name" CssClass="DialogTextBoxLabel" /><br /><asp:TextBox ID="PhysicianGivenName" runat="server" MaxLength="64" CssClass="DialogTextBox" /></td>
-                                        <td><asp:Label ID="Label18" runat="server" Text="Middle Name" CssClass="DialogTextBoxLabel" /><br /><asp:TextBox ID="PhysicianMiddleName" runat="server" MaxLength="64" CssClass="DialogTextBox" /></td>
-                                        <td><asp:Label ID="Label19" runat="server" Text="Last Name" CssClass="DialogTextBoxLabel" /><br /><asp:TextBox ID="PhysicianLastName" runat="server" MaxLength="64" CssClass="DialogTextBox" /></td>
-                                        <td><asp:Label ID="Label20" runat="server" Text="Suffix" CssClass="DialogTextBoxLabel" /><br /><asp:TextBox ID="PhysicianSuffix" runat="server" MaxLength="64" CssClass="DialogTextBox" /></td>
-                                        <td valign="bottom">
-                                        <ccAsp:InvalidInputIndicator ID="PhysiciansNameHelp" runat="server" SkinID="InvalidInputIndicator" />
-                                            <ccValidator:RegularExpressionFieldValidator
-                                                        ID="RegularExpressionFieldValidator9" runat="server" ControlToValidate="PhysicianTitle"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
-                                            </ccValidator:RegularExpressionFieldValidator>
-                                            <ccValidator:RegularExpressionFieldValidator
-                                                        ID="RegularExpressionFieldValidator10" runat="server" ControlToValidate="PhysicianGivenName"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
-                                            </ccValidator:RegularExpressionFieldValidator>
-                                            <ccValidator:RegularExpressionFieldValidator
-                                                        ID="RegularExpressionFieldValidator11" runat="server" ControlToValidate="PhysicianMiddleName"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
-                                            </ccValidator:RegularExpressionFieldValidator>
-                                            <ccValidator:RegularExpressionFieldValidator
-                                                        ID="RegularExpressionFieldValidator12" runat="server" ControlToValidate="PhysicianLastName"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
-                                            </ccValidator:RegularExpressionFieldValidator>
-                                            <ccValidator:RegularExpressionFieldValidator
-                                                        ID="RegularExpressionFieldValidator13" runat="server" ControlToValidate="PhysicianSuffix"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;." Display="None">
-                                            </ccValidator:RegularExpressionFieldValidator>
-                                        </td>
-                                    </tr>                                    
-                                    </table>
-                                </td>
-                            </tr>--%>
                             <tr>
                                 <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label21" runat="server" Text="Referring Physician" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
