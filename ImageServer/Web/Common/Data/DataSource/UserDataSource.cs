@@ -82,12 +82,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 return new List<UserRowData>();
             }
 
-            List<UserRowData> users = null;
+            List<UserRowData> users;
             using (UserManagement service = new UserManagement())
             {
                 ListUsersRequest filter = new ListUsersRequest();
-                filter.UserName = UserName;
-                filter.DisplayName = DisplayName;
+                filter.UserName = "%" + UserName.Replace("*","%").Replace("?","_");
+				filter.DisplayName = "%" + DisplayName.Replace("*", "%").Replace("?", "_");
                 filter.Page.FirstRow = startRowIndex;
                 filter.Page.MaxRows = maximumRows;
 

@@ -22,7 +22,7 @@
                                                 <asp:TextBox ID="DisplayNameTextBox" runat="server" CssClass="SearchTextBox"></asp:TextBox>
                                             </td>
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click"/></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>

@@ -122,5 +122,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             UserGroupRowData userGroup = UserGroupsGridPanel.SelectedUserGroup;
             if (userGroup != null) ((Default)Page).OnDeleteUserGroup(userGroup);
         }
+
+    	protected void SearchButton_Click(object sender, ImageClickEventArgs e)
+    	{
+    		UserGroupsGridPanel.Refresh();
+    	}
     }
 }

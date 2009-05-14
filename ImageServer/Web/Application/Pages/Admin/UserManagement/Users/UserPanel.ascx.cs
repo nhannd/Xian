@@ -32,8 +32,6 @@
 using System;
 using System.Web.UI;
 using AjaxControlToolkit;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
@@ -144,5 +142,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (user != null) ((Default)Page).OnResetPassword(user);
         }
 
+    	protected void SearchButton_Click(object sender, ImageClickEventArgs e)
+    	{
+    		UserGridPanel.Refresh();
+    	}
     }
 }

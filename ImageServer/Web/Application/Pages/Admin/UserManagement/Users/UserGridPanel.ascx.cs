@@ -198,5 +198,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 DataSourceCreated(_dataSource);
 
         }
+
+		public void Refresh()
+		{
+			UserGridView.ClearSelections();
+			UserGridView.PageIndex = 0;
+			UserGridView.DataBind();
+		}
     }
 }

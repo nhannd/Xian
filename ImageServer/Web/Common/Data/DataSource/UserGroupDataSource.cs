@@ -31,11 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Enterprise.Admin;
-using ClearCanvas.ImageServer.Services.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -74,7 +73,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         private IList<UserGroupRowData> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
         {
-            Array authorityRowData = null;
+            Array authorityRowData;
             Array authorityRowDataRange = Array.CreateInstance(typeof(UserGroupRowData), maximumRows);
 
             resultCount = 0;
@@ -86,16 +85,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
                 IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();
 
-                if(GroupName != null)
+                if(!string.IsNullOrEmpty(GroupName))
                 {
+                	string matchString = GroupName;
+
+					while (matchString.StartsWith("*") || matchString.StartsWith("?"))
+						matchString = matchString.Substring(1);
+					while (matchString.EndsWith("*")||matchString.EndsWith("?"))
+						matchString = matchString.Substring(0, matchString.Length - 1);
+
+					matchString = matchString.Replace("*", "[A-Za-z0-9]*");
+					matchString = matchString.Replace("?", ".");
+
                     foreach(AuthorityGroupSummary group in list)
                     {
-                        if(group.Name.ToLower().Contains(GroupName.ToLower()) || group.Name.ToLower().Equals(GroupName.ToLower()))
-                        {
-                            filteredList.Add(group);
-                        }
+						if (Regex.IsMatch(group.Name,matchString,RegexOptions.IgnoreCase))
+							filteredList.Add(group);
                     }
-                } else
+                } 
+				else
                 {
                     filteredList = list;
                 }
@@ -120,11 +128,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 }
             };
 
-            if (authorityRowData != null)
-            {
-                resultCount = authorityRowData.Length;
-            }
-
+            resultCount = authorityRowData.Length;
 
             return CollectionUtils.Cast<UserGroupRowData>(authorityRowDataRange);
         }
