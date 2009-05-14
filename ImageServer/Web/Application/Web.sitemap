@@ -10,7 +10,7 @@
       <siteMapNode url="~/Pages/Queues/StudyIntegrityQueue/Default.aspx" title="$Resources: Titles, StudyIntegrityQueue" roles="PACS/StudyIntegrityQueue/Search" />
     </siteMapNode>
 
-    <siteMapNode url="" title="$Resources: Titles, Admin" roles="Admin/System/Enterprise Configuration,Admin/Security/User,Admin/Security/Authority Group,PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive,PACS/StudyDeleteHistory/Search,PACS/Configure/ServiceScheduling,PACS/Alert/View">
+    <siteMapNode url="" title="$Resources: Titles, Admin" roles="Enterprise/Admin/System/Configuration,Enterprise/Admin/Security/Authority Group,Enterprise/Admin/Security/User,PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive,PACS/StudyDeleteHistory/Search,PACS/Configure/ServiceScheduling,PACS/Alert/View">
 
       <siteMapNode url="" title="$Resources: Titles, Configure" roles="PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive">
         <siteMapNode url="~/Pages/Admin/Configure/Devices/Default.aspx" title="$Resources: Titles, Devices" roles="PACS/Configure/Devices" />
@@ -20,9 +20,9 @@
         <siteMapNode url="~/Pages/Admin/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" roles="PACS/Configure/PartitionArchive" />
       </siteMapNode>
 
-      <siteMapNode url="" title="$Resources: Titles, UserManagement" roles="Admin/Security/Authority Group,Admin/Security/User">
-        <siteMapNode url="~/Pages/Admin/UserManagement/Users/Default.aspx" title="$Resources: Titles, Users" roles="Admin/Security/User" />
-        <siteMapNode url="~/Pages/Admin/UserManagement/UserGroups/Default.aspx" title="$Resources: Titles, UserGroups" roles="Admin/Security/Authority Group" />
+      <siteMapNode url="" title="$Resources: Titles, UserManagement" roles="Enterprise/Admin/Security/Authority Group,Enterprise/Admin/Security/User">
+        <siteMapNode url="~/Pages/Admin/UserManagement/Users/Default.aspx" title="$Resources: Titles, Users" roles="Enterprise/Admin/Security/User" />
+        <siteMapNode url="~/Pages/Admin/UserManagement/UserGroups/Default.aspx" title="$Resources: Titles, UserGroups" roles="Enterprise/Admin/Security/Authority Group" />
       </siteMapNode>
 
       <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies/Default.aspx" title="$Resources: Titles, DeletedStudies" roles="PACS/StudyDeleteHistory/Search" />
