@@ -1436,9 +1436,9 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Da
 BEGIN
 CREATE TABLE [dbo].[DatabaseVersion_](
 	[Major_] [nvarchar](5) NOT NULL,
-	[Minor_] [nvarchar](5) NOT NULL,
-	[Revision_] [nvarchar](5) NOT NULL,
-	[Build_] [nvarchar](5) NOT NULL
+	[Minor_] [nvarchar](5) NOT NULL,	
+	[Build_] [nvarchar](5) NOT NULL,
+	[Revision_] [nvarchar](5) NOT NULL
 ) ON [PRIMARY]
 END
 GO
