@@ -70,6 +70,8 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			this._markedMemory = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._memoryDifference = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._markMemory = new System.Windows.Forms.Button();
+			this._largeObjectMemory = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._unloadPixelData = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this._memoryIncrement)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -160,9 +162,9 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			// 
 			this._collect.Location = new System.Drawing.Point(178, 261);
 			this._collect.Name = "_collect";
-			this._collect.Size = new System.Drawing.Size(94, 23);
+			this._collect.Size = new System.Drawing.Size(114, 23);
 			this._collect.TabIndex = 6;
-			this._collect.Text = "Collect";
+			this._collect.Text = "GC Collect";
 			this._collect.UseVisualStyleBackColor = true;
 			this._collect.Click += new System.EventHandler(this._collect_Click);
 			// 
@@ -170,7 +172,7 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			// 
 			this._consumeMaxMemory.Location = new System.Drawing.Point(178, 232);
 			this._consumeMaxMemory.Name = "_consumeMaxMemory";
-			this._consumeMaxMemory.Size = new System.Drawing.Size(94, 23);
+			this._consumeMaxMemory.Size = new System.Drawing.Size(114, 23);
 			this._consumeMaxMemory.TabIndex = 1;
 			this._consumeMaxMemory.Text = "Consume Max";
 			this._consumeMaxMemory.UseVisualStyleBackColor = true;
@@ -185,7 +187,7 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			this._markedMemory.Name = "_markedMemory";
 			this._markedMemory.PasswordChar = '\0';
 			this._markedMemory.ReadOnly = true;
-			this._markedMemory.Size = new System.Drawing.Size(128, 41);
+			this._markedMemory.Size = new System.Drawing.Size(81, 41);
 			this._markedMemory.TabIndex = 7;
 			this._markedMemory.ToolTip = null;
 			this._markedMemory.Value = null;
@@ -206,18 +208,44 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			// 
 			// _markMemory
 			// 
-			this._markMemory.Location = new System.Drawing.Point(145, 30);
+			this._markMemory.Location = new System.Drawing.Point(100, 32);
 			this._markMemory.Name = "_markMemory";
-			this._markMemory.Size = new System.Drawing.Size(94, 23);
+			this._markMemory.Size = new System.Drawing.Size(40, 23);
 			this._markMemory.TabIndex = 6;
 			this._markMemory.Text = "Mark";
 			this._markMemory.UseVisualStyleBackColor = true;
 			this._markMemory.Click += new System.EventHandler(this._markMemory_Click);
 			// 
+			// _largeObjectMemory
+			// 
+			this._largeObjectMemory.LabelText = "Large Objects";
+			this._largeObjectMemory.Location = new System.Drawing.Point(12, 232);
+			this._largeObjectMemory.Margin = new System.Windows.Forms.Padding(2);
+			this._largeObjectMemory.Mask = "";
+			this._largeObjectMemory.Name = "_largeObjectMemory";
+			this._largeObjectMemory.PasswordChar = '\0';
+			this._largeObjectMemory.ReadOnly = true;
+			this._largeObjectMemory.Size = new System.Drawing.Size(128, 41);
+			this._largeObjectMemory.TabIndex = 9;
+			this._largeObjectMemory.ToolTip = null;
+			this._largeObjectMemory.Value = null;
+			// 
+			// _unloadPixelData
+			// 
+			this._unloadPixelData.Location = new System.Drawing.Point(178, 290);
+			this._unloadPixelData.Name = "_unloadPixelData";
+			this._unloadPixelData.Size = new System.Drawing.Size(114, 23);
+			this._unloadPixelData.TabIndex = 10;
+			this._unloadPixelData.Text = "Unload Pixel Data";
+			this._unloadPixelData.UseVisualStyleBackColor = true;
+			this._unloadPixelData.Click += new System.EventHandler(this._unloadPixelData_Click);
+			// 
 			// MemoryAnalysisComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._unloadPixelData);
+			this.Controls.Add(this._largeObjectMemory);
 			this.Controls.Add(this._markMemory);
 			this.Controls.Add(this._memoryDifference);
 			this.Controls.Add(this._markedMemory);
@@ -226,7 +254,7 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			this.Controls.Add(this._consumeMaxMemory);
 			this.Controls.Add(this._heapMemory);
 			this.Name = "MemoryAnalysisComponentControl";
-			this.Size = new System.Drawing.Size(310, 296);
+			this.Size = new System.Drawing.Size(312, 336);
 			((System.ComponentModel.ISupportInitialize)(this._memoryIncrement)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -246,5 +274,7 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _markedMemory;
 		private ClearCanvas.Desktop.View.WinForms.TextField _memoryDifference;
 		private System.Windows.Forms.Button _markMemory;
+		private ClearCanvas.Desktop.View.WinForms.TextField _largeObjectMemory;
+		private System.Windows.Forms.Button _unloadPixelData;
     }
 }

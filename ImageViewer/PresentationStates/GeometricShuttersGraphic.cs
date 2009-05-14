@@ -37,6 +37,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
@@ -58,6 +59,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		[CloneIgnore]
 		private ColorImageGraphic _imageGraphic;
+
+		[CloneIgnore]
+		private byte[] _buffer;
 
 		private Color _fillColor = Color.Black;
 
@@ -131,16 +135,27 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			RenderImageGraphic();
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			if (disposing)
+				ReleaseBuffer();
+		}
+
 		private void RenderImageGraphic()
 		{
 			if (_imageGraphic != null || !HasShutters)
 				return;
 
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
 			int stride = _imageRectangle.Width*4;
 			int size = _imageRectangle.Height*stride;
-			byte[] buffer = new byte[size];
+			_buffer = new byte[size];
+			MemoryHelper.OnLargeObjectAllocated(_buffer.Length);
 
-			GCHandle bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+			GCHandle bufferHandle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
 
 			try
 			{
@@ -167,7 +182,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 					//NOTE: we are not doing this properly according to Dicom.  We should be rendering
 					//to a 16-bit image so we can set the 16-bit p-value.
-					_imageGraphic = new ColorImageGraphic(_imageRectangle.Height, _imageRectangle.Width, buffer);
+					_imageGraphic = new ColorImageGraphic(_imageRectangle.Height, _imageRectangle.Width, _buffer);
 					base.Graphics.Add(_imageGraphic);
 				}
 			}
@@ -175,6 +190,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			{
 				bufferHandle.Free();
 			}
+
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("Shutters", "Render", clock.Seconds);
 		}
 
 		private IEnumerable<GeometricShutter> GetAllShutters()
@@ -190,11 +208,22 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		{
 			if (_imageGraphic != null)
 			{
-				//TODO: will this cause unnecessary re-allocation of memory?
 				base.Graphics.Remove(_imageGraphic);
 				_imageGraphic.Dispose();
 				_imageGraphic = null;
+
+				//don't de-allocate and reallocate unnecessarily.
+				if (!HasShutters)
+					ReleaseBuffer();
 			}
+		}
+
+		private void ReleaseBuffer()
+		{
+			if (_buffer != null)
+				MemoryHelper.OnLargeObjectReleased(_buffer.Length);
+
+			_buffer = null;
 		}
 
 		private void OnCustomShuttersChanged(object sender, ListEventArgs<GeometricShutter> e)

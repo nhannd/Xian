@@ -118,6 +118,7 @@
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Common\AuthorityTokens.cs" />
+    <Compile Include="Common\MemoryHelper.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Common\ViewerActionPermissionAttribute.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />

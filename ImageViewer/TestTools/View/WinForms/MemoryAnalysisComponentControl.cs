@@ -74,6 +74,9 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 
 			_memoryDifference.DataBindings.Add("Value", _component, "MemoryDifferenceKB", true,
 				DataSourceUpdateMode.OnPropertyChanged);
+
+			_largeObjectMemory.DataBindings.Add("Value", _component, "TotalLargeObjectMemoryBytes", true,
+				DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _consumeMaxMemory_Click(object sender, EventArgs e)
@@ -102,6 +105,11 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 		private void _markMemory_Click(object sender, EventArgs e)
 		{
 			_component.MarkMemory();
+		}
+
+		private void _unloadPixelData_Click(object sender, EventArgs e)
+		{
+			_component.UnloadPixelData();
 		}
     }
 }

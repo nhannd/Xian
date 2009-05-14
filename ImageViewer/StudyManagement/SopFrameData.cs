@@ -1,8 +1,9 @@
 using ClearCanvas.Common;
+using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	public interface ISopFrameData
+	public interface ISopFrameData : IDisposable
 	{
 		byte[] GetNormalizedPixelData();
 		byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
@@ -38,5 +39,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
 
 		public abstract void Unload();
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "An unexpected error has occurred while disposing the frame data.");
+			}
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+		}
 	}
 }

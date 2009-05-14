@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly object _syncLock = new object();
 		private volatile NormalizedPixelSpacing _normalizedPixelSpacing;
 		private volatile ImagePlaneHelper _imagePlaneHelper;
-		private volatile byte[] _pixelData;
 
 		#endregion
 
@@ -772,19 +771,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public byte[] GetNormalizedPixelData()
 		{
-			byte[] pixelData = _pixelData;
-			if (pixelData == null)
-			{
-				lock (_syncLock)
-				{
-					if (_pixelData == null)
-						_pixelData = _parentImageSop.DataSource.GetFrameData(FrameNumber).GetNormalizedPixelData();
-
-					pixelData = _pixelData;
-				}
-			}
-
-			return pixelData;
+			return _parentImageSop.DataSource.GetFrameData(FrameNumber).GetNormalizedPixelData();
 		}
 
 		/// <summary>
@@ -799,11 +786,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public void UnloadPixelData()
 		{
-			lock (_syncLock)
-			{
-				_pixelData = null;
-				_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
-			}
+			_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
 		}
 
 		public IFrameReference CreateTransientReference()

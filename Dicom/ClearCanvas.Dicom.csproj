@@ -90,6 +90,7 @@
       <Name>System</Name>
       <HintPath>..\..\..\..\WINDOWS\assembly\GAC_MSIL\System\2.0.0.0__b77a5c561934e089\System.dll</HintPath>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -390,6 +391,12 @@
     <Compile Include="ServiceModel\Streaming\IHeaderStreamingService.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingClient.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingResultMetaData.cs" />
+    <Compile Include="ServiceModel\Streaming\StreamingSettings.cs" />
+    <Compile Include="ServiceModel\Streaming\StreamingSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StreamingSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ServiceModel\Streaming\StudyNotFoundFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsInUseFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
@@ -458,6 +465,10 @@
     <None Include="Network\NetworkSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>NetworkSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ServiceModel\Streaming\StreamingSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StreamingSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

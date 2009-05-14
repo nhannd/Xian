@@ -36,6 +36,8 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using Timer=ClearCanvas.Common.Utilities.Timer;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.TestTools
 {
@@ -56,6 +58,14 @@ namespace ClearCanvas.ImageViewer.TestTools
 		public MemoryAnalysisComponent()
 		{
 			_heldMemory = new List<byte[]>();
+		}
+
+		public string TotalLargeObjectMemoryBytes
+		{
+			get
+			{
+				return (MemoryHelper.TotalLargeObjectMemoryBytes / 1024F).ToString("F2");
+			}	
 		}
 
 		public string HeapMemoryKB
@@ -175,7 +185,38 @@ namespace ClearCanvas.ImageViewer.TestTools
 			{
 				NotifyPropertyChanged("HeapMemoryKB");
 				NotifyPropertyChanged("MemoryDifferenceKB");
+				NotifyPropertyChanged("TotalLargeObjectMemoryBytes");
 			}
+		}
+
+		public void UnloadPixelData()
+		{
+			IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(Application.ActiveDesktopWindow.ActiveWorkspace);
+			if (viewer == null)
+				return;
+
+			foreach (Patient patient in viewer.StudyTree.Patients)
+			{
+				foreach (Study study in patient.Studies)
+				{
+					foreach (Series series in study.Series)
+					{
+						foreach (Sop sop in series.Sops)
+						{
+							if (sop is ImageSop)
+							{
+								foreach (Frame frame in ((ImageSop)sop).Frames)
+								{
+									frame.UnloadPixelData();
+								}
+							}
+						}
+					}
+				}
+			}
+			NotifyPropertyChanged("HeapMemoryKB");
+			NotifyPropertyChanged("MemoryDifferenceKB");
+			NotifyPropertyChanged("TotalLargeObjectMemoryBytes");
 		}
 	}
 }

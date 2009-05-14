@@ -31,7 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -39,7 +39,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		//I hate doing this, but it's horribly inefficient for all subclasses to do their own locking.
 		protected readonly object SyncLock = new object();
-
 		private volatile ISopFrameData[] _frameData;
 
 		protected StandardSopDataSource() : base() {}
@@ -60,13 +59,35 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					}
 				}
 			}
+
 			frameData = _frameData[frameNumber - 1];
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			if (disposing)
+			{
+				lock(SyncLock)
+				{
+					if (_frameData != null)
+					{
+						foreach (ISopFrameData frameData in _frameData)
+						{
+							frameData.Dispose();
+						}
+					}
+				}
+			}
+		}
+
+		#region StandardSopFrameData class
+
 		protected abstract class StandardSopFrameData : SopFrameData
 		{
-			private readonly Dictionary<int, WeakReference> _overlayData = new Dictionary<int, WeakReference>();
-			private volatile WeakReference _pixelData = new WeakReference(null);
+			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>();
+			private byte[] _pixelData = null;
 
 			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent) : base(frameNumber, parent) {}
 
@@ -77,26 +98,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public sealed override byte[] GetNormalizedPixelData()
 			{
-				byte[] data;
-
 				lock (this.Parent.SyncLock)
 				{
-					try
+					if (_pixelData == null)
 					{
-						data = _pixelData.Target as byte[];
-					}
-					catch (InvalidOperationException)
-					{
-						_pixelData = new WeakReference(data = null);
+						_pixelData = CreateNormalizedPixelData();
+						if (_pixelData != null)
+							MemoryHelper.OnLargeObjectAllocated(_pixelData.Length);
 					}
 
-					if (!_pixelData.IsAlive || data == null)
-					{
-						_pixelData.Target = data = CreateNormalizedPixelData();
-					}
+					return _pixelData;
 				}
-
-				return data;
 			}
 
 			protected abstract byte[] CreateNormalizedPixelData();
@@ -108,35 +120,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (overlayFrameNumber < 1)
 					throw new ArgumentOutOfRangeException("overlayFrameNumber", overlayFrameNumber, "Must be a positive, non-zero number.");
 
-				byte[] data;
 				int key = ((overlayFrameNumber - 1) << 8) | ((overlayGroupNumber - 1) & 0x000000ff);
 
 				lock (this.Parent.SyncLock)
 				{
-					if (!_overlayData.ContainsKey(key))
+					byte[] data;
+					if (!_overlayData.TryGetValue(key, out data) || data == null)
 					{
-						if (!_overlayData.ContainsKey(key))
-						{
-							_overlayData.Add(key, new WeakReference(null));
-						}
+						_overlayData[key] = data = CreateNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber);
+						if (data != null)
+							MemoryHelper.OnLargeObjectAllocated(data.Length);
 					}
 
-					try
-					{
-						data = _overlayData[key].Target as byte[];
-					}
-					catch (InvalidOperationException)
-					{
-						_overlayData[key] = new WeakReference(data = null);
-					}
-
-					if (!_overlayData[key].IsAlive || data == null)
-					{
-						_overlayData[key].Target = data = CreateNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber);
-					}
+					return data;
 				}
-
-				return data;
 			}
 
 			protected abstract byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
@@ -145,15 +142,51 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				lock (this.Parent.SyncLock)
 				{
+					ReportLargeObjectsUnloaded();
+
 					this.OnUnloading();
-					_pixelData = new WeakReference(null);
+					_pixelData = null;
 					_overlayData.Clear();
 					this.OnUnloaded();
 				}
 			}
 
-			protected virtual void OnUnloading() {}
-			protected virtual void OnUnloaded() {}
+			protected virtual void OnUnloading()
+			{
+				
+			}
+			
+			protected virtual void OnUnloaded()
+			{
+				
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				base.Dispose(disposing);
+
+				if (disposing)
+				{
+					lock (Parent.SyncLock)
+					{
+						ReportLargeObjectsUnloaded();
+					}
+				}
+			}
+
+			private void ReportLargeObjectsUnloaded()
+			{
+				if (_pixelData != null)
+					MemoryHelper.OnLargeObjectReleased(_pixelData.Length);
+
+				foreach (byte[] overlayData in _overlayData.Values)
+				{
+					if (overlayData != null)
+						MemoryHelper.OnLargeObjectReleased(overlayData.Length);
+				}
+			}
 		}
+
+		#endregion
 	}
 }
