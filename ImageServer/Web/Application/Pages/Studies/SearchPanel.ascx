@@ -69,10 +69,12 @@ function MultiSelect() {
                                                     <asp:ListItem Value="CT">CT</asp:ListItem>
                                                     <asp:ListItem Value="DX">DX</asp:ListItem>
                                                     <asp:ListItem Value="ES">ES</asp:ListItem>
+                                                    <asp:ListItem Value="KO">KO</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="MG">MG</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="MR">MR</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="NM">NM</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="OT">OT</asp:ListItem>
+                                                    <asp:ListItem Value="PR">PR</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="PT">PT</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="RF">RF</asp:ListItem>                                                                                                                                                            
                                                     <asp:ListItem Value="SC">SC</asp:ListItem>                                                                                                        
