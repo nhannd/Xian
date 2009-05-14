@@ -198,7 +198,24 @@ namespace ClearCanvas.ImageServer.TestApp
                 stream.Close();
 
             }
-            catch(Exception ex)
+            catch(FaultException<StudyIsInUseFault> ex)
+            {
+                timer1.Stop();
+                MessageBox.Show(ex.Detail.StudyState);
+            }
+            catch (FaultException<StudyIsNearlineFault> ex)
+            {
+                timer1.Stop();
+                MessageBox.Show(ex.Message);
+                
+            }
+            catch (FaultException<StudyNotFoundFault> ex)
+            {
+                timer1.Stop();
+                MessageBox.Show(ex.Message);
+                
+            }
+            catch (Exception ex)
             {
                 Log(ex+ ":" + ex.StackTrace);
             }

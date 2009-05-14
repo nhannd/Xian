@@ -84,9 +84,9 @@ namespace ClearCanvas.ImageServer.TestApp.services
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="StudyIsNearlineFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="StudyNotFoundFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
     [System.SerializableAttribute()]
-    public partial class StudyIsNearlineFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class StudyNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
@@ -115,6 +115,9 @@ namespace ClearCanvas.ImageServer.TestApp.services
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string StudyStateField;
+        
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
             get
@@ -126,13 +129,26 @@ namespace ClearCanvas.ImageServer.TestApp.services
                 this.extensionDataField = value;
             }
         }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string StudyState
+        {
+            get
+            {
+                return this.StudyStateField;
+            }
+            set
+            {
+                this.StudyStateField = value;
+            }
+        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="StudyNotFoundFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="StudyIsNearlineFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
     [System.SerializableAttribute()]
-    public partial class StudyNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class StudyIsNearlineFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
@@ -157,10 +173,10 @@ namespace ClearCanvas.ImageServer.TestApp.services
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeader", ReplyAction="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageServer.TestApp.services.StudyNotFoundFault), Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderStudyNotFoundFaultFault", Name="StudyNotFoundFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageServer.TestApp.services.StudyIsInUseFault), Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderStudyIsInUseFaultFault", Name="StudyIsInUseFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
         [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageServer.TestApp.services.StudyIsNearlineFault), Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderStudyIsNearlineFaultFaul" +
             "t", Name="StudyIsNearlineFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageServer.TestApp.services.StudyIsInUseFault), Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderStudyIsInUseFaultFault", Name="StudyIsInUseFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageServer.TestApp.services.StudyNotFoundFault), Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderStudyNotFoundFaultFault", Name="StudyNotFoundFault", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.Streaming")]
         System.IO.Stream GetStudyHeader(string callingAETitle, ClearCanvas.ImageServer.TestApp.services.HeaderStreamingParameters parameters);
     }
     

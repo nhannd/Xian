@@ -54,6 +54,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         /// <summary>
         /// Gets or sets the current state of the study.
         /// </summary>
+        /// 
+        [DataMember(IsRequired = false)]
         public String StudyState
         {
             get { return _studyState; }
