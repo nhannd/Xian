@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Common
                 FormsAuthentication.RedirectToLoginPage();
             }
 
-            if (SessionManager.Current.User.IsInRole(AuthorityTokens.Admin.System.EnterpriseConfiguration))
+            if (SessionManager.Current.User.IsInRole(AuthorityTokens.Admin.System.Configuration))
             {
                 return ImageServerConstants.PageURLs.AdminUserPage;
             }
