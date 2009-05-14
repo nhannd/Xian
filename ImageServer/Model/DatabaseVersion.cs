@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Model
 
 		public string GetVersionString()
 		{
-			return string.Format("{0}.{1}.{2}.{3}", Major ?? "0", Minor ?? "0", Revision ?? "0", Build ?? "0");
+			return string.Format("{0}.{1}.{2}.{3}", Major ?? "0", Minor ?? "0", Build ?? "0", Revision ?? "0");
 		}
 	}
 }
