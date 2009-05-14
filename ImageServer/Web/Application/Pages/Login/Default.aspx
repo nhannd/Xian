@@ -25,14 +25,10 @@
     <div align="right" id="VersionInfoPanel">
             Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
     </div>
-    
+        
     <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server">
         <div id="LoginCredentials">
         
-        <asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="ErrorMessagePanel"
-                        Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
-                        <asp:Label runat="server" ID="ErrorMessage" ForeColor="red" Text='<%# Page.Request.QueryString["error"] %>' />
-        </asp:Panel>
         <table>      
             <tr>
             <td align="right">User ID:</td>
@@ -51,9 +47,16 @@
         </table>
           
         </div>
+        
+                        <asp:Panel CssClass="LoginErrorMessagePanel" runat="server" ID="ErrorMessagePanel" 
+                        Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
+                        <asp:Label runat="server" ID="ErrorMessage" ForeColor="red" Text='<%# Page.Request.QueryString["error"] %>' />
+        </asp:Panel>  
                         
             
-    </asp:Panel>         
+    </asp:Panel>       
+    
+
     
     <asp:UpdatePanel runat="server">
         <ContentTemplate>

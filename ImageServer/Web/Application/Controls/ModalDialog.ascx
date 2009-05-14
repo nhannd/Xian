@@ -26,7 +26,7 @@
                                             <asp:TableCell CssClass="DefaultModalDialogTitleBarRight">
                                                 <asp:UpdateProgress runat="server" ID="UpdateProgress" AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="1000">
                                                         <ProgressTemplate>
-                                                            <asp:Image ID="Image5" runat="server" SkinID="AjaxLoadingYellow" style="display:block" />     
+                                                            <asp:Image ID="Image5" runat="server" SkinID="AjaxLoadingIndicator" style="display:block; padding-right: 5px; padding-bottom: 5px;" />     
                                                         </ProgressTemplate>
                                                 </asp:UpdateProgress>
                                             </asp:TableCell>

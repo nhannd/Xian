@@ -41,12 +41,13 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application
 {
-    public partial class Default : System.Web.UI.Page
+    public partial class Default : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

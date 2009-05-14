@@ -191,8 +191,8 @@
       <DependentUpon>TimedDialog.ascx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -689,8 +689,8 @@
       <DependentUpon>JavascriptRequired.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Error\Default.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Error\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -1245,7 +1245,7 @@
     <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\ajax-loader-blue.gif" />
     <Content Include="App_Themes\Default\images\Indicators\ajax-loader-green.gif" />
-    <Content Include="App_Themes\Default\images\Indicators\ajax-loader-yellow.gif" />
+    <Content Include="App_Themes\Default\images\Indicators\ajax-loader.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AlertIndicatorBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\IdeographicName.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
