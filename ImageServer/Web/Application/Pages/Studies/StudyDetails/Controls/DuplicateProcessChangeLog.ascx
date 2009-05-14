@@ -99,7 +99,9 @@
                                 </td></tr>
                             <tr><td style="border:none">
                             <div style="margin-left:2px; padding-left:5px;">
-                                <% foreach(BaseImageLevelUpdateCommand command in ChangeLog.StudyUpdateCommands) {%>
+                                <% if (ChangeLog.StudyUpdateCommands == null || ChangeLog.StudyUpdateCommands.Count==0) {%>
+                                        Study was not modified.
+                                <% } else foreach(BaseImageLevelUpdateCommand command in ChangeLog.StudyUpdateCommands) {%>
                                         <%= command.ToString() %> <br />
                                 <% }%>
                              </div>
