@@ -20,13 +20,13 @@
                             <span style="padding-left:5px">Study (Snapshot):</span></td></tr>
                         <tr><td style="border:none">
                         <div>
-                            <pre style="padding-left:10px">Patient ID = <%# ChangeLog.StudySnapShot.PatientInfo.PatientId%></pre>
-                            <pre style="padding-left:10px">Issuer of Patient ID = <%# ChangeLog.StudySnapShot.PatientInfo.IssuerOfPatientId%></pre>
-                            <pre style="padding-left:10px">Patient's Name = <%# ChangeLog.StudySnapShot.PatientInfo.Name%></pre>
-                            <pre style="padding-left:10px">Patient's Birth date = <%# ChangeLog.StudySnapShot.PatientInfo.PatientsBirthdate%></pre>
-                            <pre style="padding-left:10px">Patient's Sex = <%# ChangeLog.StudySnapShot.PatientInfo.Sex%></pre>
-                            <pre style="padding-left:10px">Accession Number = <%# ChangeLog.StudySnapShot.AccessionNumber%></pre>
-                            <pre style="padding-left:10px">Study Date = <%# ChangeLog.StudySnapShot.StudyDate%></pre>
+                            <pre style="padding-left:10px">Patient ID = <%= ChangeLog.StudySnapShot.PatientInfo.PatientId%></pre>
+                            <pre style="padding-left:10px">Issuer of Patient ID = <%= ChangeLog.StudySnapShot.PatientInfo.IssuerOfPatientId%></pre>
+                            <pre style="padding-left:10px">Patient's Name = <%= ChangeLog.StudySnapShot.PatientInfo.Name%></pre>
+                            <pre style="padding-left:10px">Patient's Birth date = <%= ChangeLog.StudySnapShot.PatientInfo.PatientsBirthdate%></pre>
+                            <pre style="padding-left:10px">Patient's Sex = <%= ChangeLog.StudySnapShot.PatientInfo.Sex%></pre>
+                            <pre style="padding-left:10px">Accession Number = <%= ChangeLog.StudySnapShot.AccessionNumber%></pre>
+                            <pre style="padding-left:10px">Study Date = <%= ChangeLog.StudySnapShot.StudyDate%></pre>
                             <div class="DuplicateDialogSeriesPanel">
                                 <table width="100%" class="DuplicateDialogSeriesTable">
                                     <tr class="DuplicateDialogSeriesTableHeader"><td>Description</td><td>Modality</td><td>Instances</td></tr>
@@ -59,13 +59,13 @@
                                         N/A
                                 <%  }
                                     else{ %>
-                                        <pre style="padding-left:10px">Patient ID = <%# ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientId%></pre>
-                                        <pre style="padding-left:10px">Issuer of Patient ID = <%# ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.IssuerOfPatientId%></pre>
-                                        <pre style="padding-left:10px">Patient's Name = <%# ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Name%></pre>
-                                        <pre style="padding-left:10px">Patient's Birth date = <%# ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientsBirthdate%></pre>
-                                        <pre style="padding-left:10px">Patient's Sex = <%# ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Sex%></pre>
-                                        <pre style="padding-left:10px">Accession Number = <%# ChangeLog.DuplicateDetails.StudyInfo.AccessionNumber%></pre>
-                                        <pre style="padding-left:10px">Study Date = <%# ChangeLog.DuplicateDetails.StudyInfo.StudyDate%></pre>
+                                        <pre style="padding-left:10px">Patient ID = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientId%></pre>
+                                        <pre style="padding-left:10px">Issuer of Patient ID = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.IssuerOfPatientId%></pre>
+                                        <pre style="padding-left:10px">Patient's Name = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Name%></pre>
+                                        <pre style="padding-left:10px">Patient's Birth date = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.PatientsBirthdate%></pre>
+                                        <pre style="padding-left:10px">Patient's Sex = <%= ChangeLog.DuplicateDetails.StudyInfo.PatientInfo.Sex%></pre>
+                                        <pre style="padding-left:10px">Accession Number = <%= ChangeLog.DuplicateDetails.StudyInfo.AccessionNumber%></pre>
+                                        <pre style="padding-left:10px">Study Date = <%= ChangeLog.DuplicateDetails.StudyInfo.StudyDate%></pre>
                                         
                                         <div class="DuplicateDialogSeriesPanel">
                                             <table width="100%" class="DuplicateDialogSeriesTable">

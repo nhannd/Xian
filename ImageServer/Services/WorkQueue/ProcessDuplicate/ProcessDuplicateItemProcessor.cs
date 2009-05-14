@@ -133,12 +133,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
                 _originalStudyInfo = StudyInformation.CreateFrom(Study);
            
-                _studyUpdateCommands = GetStudyUpdateCommands();
-
                 switch (_processDuplicateEntry.QueueData.Action)
                 {
                     case ProcessDuplicateAction.OverwriteUseDuplicates:
                         Platform.Log(LogLevel.Info, "Update Existing Study w/ Duplicate Info");
+                        _studyUpdateCommands = GetStudyUpdateCommands();
                         using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Existing Study w/ Duplicate Info"))
                         {
                             processor.AddCommand(new UpdateStudyCommand(ServerPartition, StorageLocation, _studyUpdateCommands));
@@ -249,6 +248,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Delete Received Duplicate"))
             {
                 FileInfo duplicateFile = GetDuplicateSopFile(uid);
+                DicomFile dcmFile = new DicomFile(duplicateFile.FullName);
+                dcmFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+
+                if (_duplicateSopDetails == null)
+                    _duplicateSopDetails = new ImageSetDetails(dcmFile.DataSet);
+
+                _duplicateSopDetails.InsertFile(dcmFile);
+
 
                 processor.AddCommand(new DeleteFileCommand(duplicateFile.FullName));
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
