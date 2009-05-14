@@ -43,7 +43,10 @@ namespace ClearCanvas.ImageServer.Common
     /// </remarks>
     public static class FileStreamOpener
     {
+        #region Private Members
         private const int RETRY_MIN_DELAY = 100; 
+        private const int FILE_MISSING_OVERRIDE_TIMEOUT = 2; // # of seconds to abort if the file is missing.
+        #endregion
 
         /// <summary>
         /// Opens a file for update, using specified mode
@@ -246,6 +249,13 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     // Maybe it is being swapped?
                     lastException = e;
+                    
+                    // regardless of what the caller wants, if we can't find the file 
+                    // after FILE_MISSING_OVERRIDE_TIMEOUT seconds, we should abort so that we don't block 
+                    // the application for too long.
+                    TimeSpan elapse = TimeSpan.FromMilliseconds(Environment.TickCount - begin);
+                    if (elapse > TimeSpan.FromSeconds(FILE_MISSING_OVERRIDE_TIMEOUT))
+                        throw;
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -270,7 +280,7 @@ namespace ClearCanvas.ImageServer.Common
                     if (timeout > 0 && Environment.TickCount - begin > timeout)
                     {
                         if (lastException != null)
-                            throw lastException ;
+                            throw lastException;
                         else
                             throw new TimeoutException();
                     }
@@ -279,7 +289,6 @@ namespace ClearCanvas.ImageServer.Common
                     {
                         cancelled = stopSignal.WaitOne(TimeSpan.FromMilliseconds(100), false);
                     }
-
                 }
             }
 

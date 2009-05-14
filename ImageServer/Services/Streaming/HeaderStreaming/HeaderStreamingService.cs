@@ -119,9 +119,25 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             }
             catch (StudyAccessException e)
             {
+                if (e.InnerException !=null)
+                {
+                    if (e.InnerException is FileNotFoundException)
+                    {
+                        throw new FaultException<StudyIsInUseFault>(
+                            new StudyIsInUseFault(e.StudyState.Description),
+                            String.Format(SR.FaultFaultStudyTemporarilyNotAccessible, parameters.StudyInstanceUID, e.StudyState));
+
+                    }
+                }
                 throw new FaultException<StudyIsInUseFault>(
                                 new StudyIsInUseFault(e.StudyState.Description),
                                 String.Format(SR.FaultFaultStudyTemporarilyNotAccessible, parameters.StudyInstanceUID, e.StudyState));
+            }
+            catch(FileNotFoundException e)
+            {
+                // OOPS.. the header is missing
+                Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
+                throw new FaultException(SR.FaultHeaderIsNotAvailable);
             }
             catch (Exception e)
             {

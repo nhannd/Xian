@@ -139,6 +139,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 			{
 			    headerStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
 			}
+            catch(FileNotFoundException)
+            {
+                throw;
+            }
             catch(IOException ex)
             {
                 // treated as sharing violation

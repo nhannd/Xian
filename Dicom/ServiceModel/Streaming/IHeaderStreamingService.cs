@@ -52,6 +52,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         [FaultContract(typeof(StudyIsInUseFault))]
         [FaultContract(typeof(StudyIsNearlineFault))]
         [FaultContract(typeof(StudyNotFoundFault))]
+        [FaultContract(typeof(string))]
         Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters);
     }
 }

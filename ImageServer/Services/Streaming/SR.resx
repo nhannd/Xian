@@ -135,6 +135,9 @@
   <data name="FaultFilesystemOffline" xml:space="preserve">
     <value>The filesystem containing the study is not readable.</value>
   </data>
+  <data name="FaultHeaderIsNotAvailable" xml:space="preserve">
+    <value>The header is not available at this time. Please try again later. If the problem persists, please contact the administrator.</value>
+  </data>
   <data name="FaultLocked" xml:space="preserve">
     <value>The requested object is being used by another process. Please try again later.</value>
   </data>

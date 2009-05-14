@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The header is not available at this time. Please try again later. If the problem persists, please contact the administrator..
+        /// </summary>
+        internal static string FaultHeaderIsNotAvailable {
+            get {
+                return ResourceManager.GetString("FaultHeaderIsNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The requested object is being used by another process. Please try again later..
         /// </summary>
         internal static string FaultLocked {

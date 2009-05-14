@@ -201,23 +201,25 @@ namespace ClearCanvas.ImageServer.TestApp
             catch(FaultException<StudyIsInUseFault> ex)
             {
                 timer1.Stop();
-                MessageBox.Show(ex.Detail.StudyState);
+                MessageBox.Show(String.Format("StudyIsInUseFault received:{0}\n\nState={1}" ,
+                            ex.Message, ex.Detail.StudyState));
             }
             catch (FaultException<StudyIsNearlineFault> ex)
             {
                 timer1.Stop();
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("StudyIsNearlineFault received:\n" + ex.Message);
                 
             }
             catch (FaultException<StudyNotFoundFault> ex)
             {
                 timer1.Stop();
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("StudyNotFoundFault received:\n" + ex.Message);
                 
             }
             catch (Exception ex)
             {
-                Log(ex+ ":" + ex.StackTrace);
+                timer1.Stop();
+                MessageBox.Show(ex.Message);
             }
             finally
             {
