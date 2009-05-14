@@ -113,7 +113,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 							Frame frame = ((IImageSopProvider) image).Frame;
 							if (frame.ParentImageSop.DataSource is StreamingSopDataSource)
 							{
-								if (!((StreamingSopDataSource)frame.ParentImageSop.DataSource).IsFrameRetrieved(frame.FrameNumber))
+								StreamingSopDataSource dataSource = (StreamingSopDataSource) frame.ParentImageSop.DataSource;
+								IStreamingSopFrameData frameData = (IStreamingSopFrameData) (dataSource.GetFrameData(frame.FrameNumber));
+								if (!frameData.PixelDataRetrieved)
 									_frames.Enqueue(frame);
 							}
 						}

@@ -120,7 +120,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				string message = String.Format("Retrieving Frame (active threads: {0})", Thread.VolatileRead(ref _activeRetrieveThreads));
 				Trace.WriteLine(message);
 
-				((StreamingSopDataSource)frame.ParentImageSop.DataSource).RetrievePixelData(frame.FrameNumber);
+				StreamingSopDataSource dataSource = (StreamingSopDataSource)frame.ParentImageSop.DataSource;
+				IStreamingSopFrameData frameData = (IStreamingSopFrameData)(dataSource.GetFrameData(frame.FrameNumber));
+
+				frameData.RetrievePixelData();
 				_decompressThreadPool.Enqueue(delegate { LoadFramePixelData(frame); });
 			}
 			catch(OutOfMemoryException)

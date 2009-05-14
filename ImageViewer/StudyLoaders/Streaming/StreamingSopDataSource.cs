@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private InstanceXmlDicomAttributeCollection AttributeCollection
 		{
-			get { return (InstanceXmlDicomAttributeCollection)((DicomFile)base.SourceMessage).DataSet; }
+			get { return (InstanceXmlDicomAttributeCollection)SourceMessage.DataSet; }
 		}
 
 		public override DicomAttribute GetDicomAttribute(DicomTag tag)
@@ -111,29 +111,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		public void RetrievePixelData(int frameNumber)
-		{
-			RetrievePixelData(frameNumber, false);
-		}
-
-		public void RetrievePixelData(int frameNumber, bool force)
-		{
-			this.GetFrameData(frameNumber).RetrieveResult.RetrievePixelData(force);
-		}
-
-		internal bool IsFrameRetrieved(int frameNumber)
-		{
-			return this.GetFrameData(frameNumber).RetrieveResult.AlreadyRetrieved;
-		}
-
 		protected override StandardSopFrameData CreateFrameData(int frameNumber)
 		{
 			return new StreamingSopFrameData(frameNumber, this);
-		}
-
-		private new StreamingSopFrameData GetFrameData(int frameNumber)
-		{
-			return (StreamingSopFrameData) base.GetFrameData(frameNumber);
 		}
 
 		private bool NeedFullHeader(uint tag)
