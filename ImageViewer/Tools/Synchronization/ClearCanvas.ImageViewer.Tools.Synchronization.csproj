@@ -29,11 +29,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SynchronizationToolConfigComponent.cs" />
+    <Compile Include="SynchronizationToolSettings.cs" />
     <Compile Include="SynchronizationToolSettings.Designer.cs">
       <DependentUpon>SynchronizationToolSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -54,6 +57,7 @@
     </Compile>
     <Compile Include="StackingSynchronizationTool.cs" />
     <Compile Include="SynchronizationToolCoordinator.cs" />
+    <Compile Include="SynchronizationToolSettingsHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -70,6 +74,11 @@
     <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>

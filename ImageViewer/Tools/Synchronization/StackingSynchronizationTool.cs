@@ -74,8 +74,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		
 		private SynchronizationToolCoordinator _coordinator;
 
-		private static readonly float _fiveDegreesInRadians = (float)(5 * Math.PI / 180);
-
 		private FrameOfReferenceCalibrator _frameOfReferenceCalibrator;
 		private bool _deferSynchronizeUntilDisplaySetChanged;
 
@@ -288,7 +286,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private void ResetFrameOfReferenceCalibrations()
 		{
-			_frameOfReferenceCalibrator = new FrameOfReferenceCalibrator(_fiveDegreesInRadians);
+			_frameOfReferenceCalibrator = new FrameOfReferenceCalibrator(SynchronizationToolSettingsHelper.Default.ParallelPlanesToleranceAngleRadians);
 		}
 
 		private void CalibrateFrameOfReferenceForVisibleImageBoxes()
@@ -315,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			foreach (DicomImagePlane targetImagePlane in targetImagePlanes)
 			{
-				if (targetImagePlane.IsParallelTo(referenceImagePlane, _fiveDegreesInRadians))
+				if (targetImagePlane.IsParallelTo(referenceImagePlane, SynchronizationToolSettingsHelper.Default.ParallelPlanesToleranceAngleRadians))
 				{
 					bool sameFrameOfReference = referenceImagePlane.IsInSameFrameOfReference(targetImagePlane);
 					if (this.StudiesLinked || sameFrameOfReference)
