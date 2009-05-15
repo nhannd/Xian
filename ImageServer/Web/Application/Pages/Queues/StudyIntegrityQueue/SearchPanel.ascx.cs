@@ -94,6 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public void UpdateUI()
         {
             SearchUpdatePanel.Update();
+            StudyIntegrityQueueItemList.RefreshCurrentPage();
         }
 
         #endregion Public Methods

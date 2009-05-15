@@ -70,7 +70,7 @@
 							    </table>    
                             </itemtemplate>
 						</asp:TemplateField>
-			            <asp:TemplateField HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+			            <asp:TemplateField HeaderText="Time&nbsp;Received&nbsp;&nbsp;" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" >
                                 <ItemTemplate>
                                     <ccUI:DateTimeLabel ID="TimeReceived" runat="server" Value='<%# Eval("ReceivedTime") %>' ></ccUI:DateTimeLabel>
                                 </ItemTemplate>

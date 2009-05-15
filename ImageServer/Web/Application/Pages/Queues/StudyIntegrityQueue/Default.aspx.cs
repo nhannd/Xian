@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 DuplicateSopReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
                 DuplicateSopReconcileDialog.DuplicateEntryDetails = details as DuplicateEntryDetails;
-
+                
                 DuplicateSopReconcileDialog.DataBind();
                 DuplicateSopReconcileDialog.Show();
             }
@@ -71,12 +71,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 ReconcileDialog.ReconcileDetails = details;
                 ReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
                 ReconcileDialog.Show();
-            }
-            
+            }           
         }
     
-
-
         public void UpdateUI()
         {
 			foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)

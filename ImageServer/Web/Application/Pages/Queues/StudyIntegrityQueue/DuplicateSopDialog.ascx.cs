@@ -225,6 +225,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 action = ProcessDuplicateAction.OverwriteAsIs;
 
             controller.Process(itemKey, action);
+
+            ((Default)Page).UpdateUI();
             Close();
         }
     }

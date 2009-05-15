@@ -104,7 +104,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 }
         }
 
-
         #endregion // public members
 
         #region Events
