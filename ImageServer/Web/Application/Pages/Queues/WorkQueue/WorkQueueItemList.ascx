@@ -15,7 +15,8 @@
 						OnRowDataBound="WorkQueueListView_RowDataBound"
 						OnPageIndexChanged="WorkQueueListView_PageIndexChanged" 
 						OnDataBound="WorkQueueListView_DataBound"
-						OnSelectedIndexChanged="WorkQueueListView_SelectedIndexChanged">
+						OnSelectedIndexChanged="WorkQueueListView_SelectedIndexChanged"
+						DataKeyNames="WorkQueueItemDataKey">
 						<Columns>
 						<asp:BoundField HeaderText="Patient ID" DataField="PatientId" HeaderStyle-HorizontalAlign="Left" HeaderStyle-Wrap="false" ItemStyle-Wrap="false"/>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">

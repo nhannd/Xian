@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -151,18 +152,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
 			WorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
 														{
-															source.SearchKeys = WorkQueueKeys;
+                                                            if (WorkQueueKeys == null) source.SearchKeys = new List<ServerEntityKey>();
+                                                            else source.SearchKeys = WorkQueueKeys;
 														};
-        }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (Page.IsPostBack)
-            {
-                DataBind();
-            }
+            WorkQueueItemList.Refresh();            
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -323,7 +317,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 WorkQueueSettingsPanel.SelectedPriority = workqueue.WorkQueuePriorityEnum;
                 WorkQueueSettingsPanel.NewScheduledDateTime = workqueue.ScheduledTime;
             }
-            
+
+            WorkQueueItemList.Refresh();
+
             ModalDialog.Show();
         }
 

@@ -294,6 +294,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			resultCount = parameters.ResultCount;
 
+            string workQueueItems = "\n";
+            foreach (WorkQueue item in list)
+            {
+                workQueueItems += "[" + item.Key + "]";
+            }
+
+            Platform.Log(LogLevel.Info, null, "WorkQueueDataSource.InternalSelect: list=" + workQueueItems);
+
 			return list;
 		}
 		#endregion

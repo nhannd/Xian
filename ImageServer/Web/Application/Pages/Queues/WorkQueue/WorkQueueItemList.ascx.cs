@@ -36,6 +36,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -182,19 +183,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            WorkQueueGridView.DataKeyNames = new string[] { "Key" };           
 
             if (_height!=Unit.Empty)
                 ListContainerTable.Height = _height;
 
-            WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
-            WorkQueueGridView.DataBind();
+            if (IsPostBack || Page.IsAsync)
+            {
+                WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
+            }
         }
       
         protected ServerEntityKey SelectedWorkQueueItemKey
         {
             set
             {
+                Platform.Log(LogLevel.Debug, null, "WorkQueueItemList.SelectWorkQueueItemKey=" + value);
                 ViewState[ "_SelectedWorkQueueItemKey"] = value;
             }
             get
@@ -206,6 +209,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected ServerEntityKey GetRowItemKey(int rowIndex)
         {
 			if (WorkQueueItems == null) return null;
+
+            string workQueueItems = "\n";
+            for (int i = 0; i < WorkQueueItems.Count; i++)
+            {
+                workQueueItems += "[i=" + i + " ][ItemKey=" + WorkQueueItems[i].Key + "]\n";
+            }
+
+            Platform.Log(LogLevel.Debug, null, "WorkQueueItemList.GetRowItemKey=" + WorkQueueItems[rowIndex].Key + "\nWorkQueueItems:\n" + workQueueItems);
 	
 			return WorkQueueItems[rowIndex].Key;
         }
@@ -214,18 +225,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             GridViewRow row = e.Row;
 
-            if (WorkQueueGridView.EditIndex != e.Row.RowIndex)
+            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
             {
-                if (row.RowType == DataControlRowType.DataRow)
+                EmptySearchResultsMessage message =
+                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                if (message != null)
                 {
-                    WorkQueueSummary item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
-					row.Attributes["uid"] = item.Key.ToString();
+                    if (WorkQueueGridView.DataSource == null)
+                    {
+                        message.Message = "Please enter search criteria to find work queue items.";
+                    }
+                    else
+                    {
+                        message.Message = "No work queue items found matching the provided criteria.";
+                    }
+                }
 
-                    CustomizeColumns(e.Row);
-                    CustomizeRowAttribute(e.Row);
+            }
+            else
+            {
+                if (WorkQueueGridView.EditIndex != e.Row.RowIndex)
+                {
+                    if (row.RowType == DataControlRowType.DataRow)
+                    {
+                        WorkQueueSummary item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
+                        row.Attributes["uid"] = item.Key.ToString();
+
+                        CustomizeColumns(e.Row);
+                        CustomizeRowAttribute(e.Row);
+                    }
                 }
             }
-            
         }
 
         private void CustomizeColumns(GridViewRow row)
