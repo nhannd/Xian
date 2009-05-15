@@ -45,37 +45,47 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #region Private Fields
         [ThreadStatic]
         private static ExecutionContext _current;
-        protected string _tempDirectory;
         protected string _backupDirectory;
+        protected string _tempDirectory;
         private readonly object _sync = new object();
         private readonly ExecutionContext _inheritFrom;
         private IReadContext _readContext;
         private IPersistenceContext _persistenceContext;
+        private readonly string _contextId;
 
         #endregion
 
         #region Constructors
+
+
+        public ExecutionContext()
+            : this(Path.GetTempFileName() /* use random generated filename as the contextid */)
+        {
+
+        }
+
 
         /// <summary>
         /// Creates an instance of <see cref="ExecutionContext"/> inherited
         /// the current ExecutionContext in the thread, if it exists. This context
         /// becomes the current context of the thread until it is disposed.
         /// </summary>
-        public ExecutionContext()
-            : this(Current)
+        public ExecutionContext(String contextId)
+            : this(contextId, Current)
         {
          
         }
 
-        public ExecutionContext(ExecutionContext inheritFrom)
+        public ExecutionContext(String contextId, ExecutionContext inheritFrom)
         {
+            Platform.CheckForNullReference(contextId, "contextId");
+            
+            _contextId = contextId;
             _inheritFrom = inheritFrom;
             _current = this;
 
             if (inheritFrom!=null)
             {
-                TempDirectory = inheritFrom.TempDirectory;
-                BackupDirectory = inheritFrom.BackupDirectory;
                 PersistenceContext = inheritFrom.PersistenceContext;
             }
 
@@ -84,10 +94,19 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #endregion
 
         #region Virtual Protected Methods
-        protected virtual string GetTemporaryDirectory()
+
+        protected virtual string GetTemporaryPath()
         {
-            return ServerPlatform.TempDirectory;
+            string path = _inheritFrom != null
+                              ? Path.Combine(_inheritFrom.GetTemporaryPath(), _contextId)
+                              : Path.Combine(ServerPlatform.TempDirectory, _contextId);
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            return path;
         }
+
         #endregion
 
         protected object SyncRoot
@@ -95,28 +114,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _sync; }
         }
 
-
         public String TempDirectory
         {
             get
             {
                 if (_tempDirectory==null)
-                {
-                    lock(SyncRoot)
-                    {
-                        _tempDirectory = GetTemporaryDirectory();
-                        if (!Directory.Exists(_tempDirectory))
-                            Directory.CreateDirectory(_tempDirectory);
-                    }
-                }
+                    _tempDirectory = GetTemporaryPath();
 
-                if (!Directory.Exists(_tempDirectory))
-                    Directory.CreateDirectory(_tempDirectory);
                 return _tempDirectory;
-            }
-            set
-            {
-                _tempDirectory = value;
             }
         }
 
@@ -135,6 +140,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
                 if (!Directory.Exists(_backupDirectory))
                     Directory.CreateDirectory(_backupDirectory);
+
                 return _backupDirectory;
             }
             set
@@ -183,27 +189,15 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             try
             {
-                if (Directory.Exists(_backupDirectory))
+                if (!DirectoryUtility.DeleteIfEmpty(_backupDirectory))
                 {
-                    // If the backupdir is empty, that means everyone has claimed its stuff.
-                    // We can remove the entire temp folder.
-                    if (DirectoryUtility.DeleteIfEmpty(_backupDirectory))
-                    {
-                        DirectoryUtility.DeleteIfExists(_tempDirectory);
-                    }
-                    else
-                    {
-                        Platform.Log(LogLevel.Warn, "Some backup files can be found left in {0}", BackupDirectory);
-                    }
+                    Platform.Log(LogLevel.Warn, "Some backup files can be found left in {0}", BackupDirectory);
                 }
-                else
-                {
-                    if (Directory.Exists(_tempDirectory))
-                    {
-                        DirectoryUtility.DeleteIfEmpty(_tempDirectory);
-                    }
 
-                }
+                if (Platform.IsLogLevelEnabled(LogLevel.Debug) && Directory.Exists(_tempDirectory))
+                    Platform.Log(LogLevel.Debug, "Deleting temp folder: {0}", _tempDirectory);
+                
+                DirectoryUtility.DeleteIfEmpty(_tempDirectory);
             }
             finally
             {
@@ -220,7 +214,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #endregion
 
-        protected static string GetBaseTempPath()
+        protected static string GetTempPathRoot()
         {
             String basePath = String.Empty;
             if (!String.IsNullOrEmpty(ImageServerCommonConfiguration.TemporaryPath))

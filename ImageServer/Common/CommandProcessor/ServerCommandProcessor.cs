@@ -67,14 +67,16 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private string _description;
         private readonly Stack<IServerCommand> _stack = new Stack<IServerCommand>();
         private readonly Queue<IServerCommand> _queue = new Queue<IServerCommand>();
-        private readonly List<IServerCommand> _list = new List<IServerCommand>(); 
+        private readonly List<IServerCommand> _list = new List<IServerCommand>();
+        private readonly bool _ownsExecContext;
+        private readonly string _contextId;
+        
         private string _failureReason;
 		private IUpdateContext _updateContext = null;
 		private Exception _exception;
         private ExecutionContext _executionContext;
-	    private bool _ownsExecContext;
         private bool _ownsPersistenceContext;
-
+        
         #endregion
 
 		#region Constructors
@@ -83,14 +85,18 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         /// Creates an instance of <see cref="ServerCommandProcessor"/> using
         /// the current <see cref="ExecutionContext"/> for the thread.
         /// </summary>
+        /// <param name="contextId"></param>
         /// <param name="description"></param>
-        public ServerCommandProcessor(string description)
+        public ServerCommandProcessor(string contextId, string description)
         {
+            Platform.CheckForEmptyString(contextId, "contextId");
+
+            _contextId = contextId;
             _description = description;
             if (CommandProcessor.ExecutionContext.Current == null)
             {
                 _ownsExecContext = true;
-                ExecutionContext = new ExecutionContext();
+                ExecutionContext = new ExecutionContext(_contextId);
             }
             else
             {
@@ -98,20 +104,19 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 ExecutionContext = CommandProcessor.ExecutionContext.Current;
 
             }
-            
+
         }
 
         /// <summary>
         /// Creates an instance of <see cref="ServerCommandProcessor"/> using
-        /// the specified <see cref="ExecutionContext"/>
+        /// the current <see cref="ExecutionContext"/> for the thread.
         /// </summary>
         /// <param name="description"></param>
-        /// <param name="context"></param>
-        public ServerCommandProcessor(string description, ExecutionContext context)
-	    {
-            _description = description;
-	        ExecutionContext = context;
-	    }
+        public ServerCommandProcessor(string description)
+            :this(Guid.NewGuid().ToString(), description)
+        {
+            
+        }
 
 	    #endregion
 

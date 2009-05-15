@@ -71,13 +71,13 @@ namespace ClearCanvas.ImageServer.Core
 
     public class SopInstanceImporterContext
     {
-        public String ID; 
-        public string sourceAE; 
+        public String ContextID; 
+        public string SourceAE; 
         public DicomMessageBase Message;
 
         public string GetDuplicateStorageFolder()
         {
-            return ID;
+            return ContextID;
         }
 
         public string SeriesInstanceUid
@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageServer.Core
                     bool dupImage = false;
                     string extension = null;
                     String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
-                    DicomFile file = ConvertToDicomFile(message, finalDest, context.sourceAE);
+                    DicomFile file = ConvertToDicomFile(message, finalDest, context.SourceAE);
 
                     if (HasUnprocessedCopy(context, studyLocation))
                     {
@@ -236,7 +236,7 @@ namespace ClearCanvas.ImageServer.Core
 
                             DuplicateSopProcessor dupProcessor =
                                 new DuplicateSopProcessor(commandProcessor, _partition, studyLocation);
-                            result = dupProcessor.Process(context.sourceAE, context.ID, file);
+                            result = dupProcessor.Process(context.SourceAE, context.ContextID, file);
                         }
                         else
                         {

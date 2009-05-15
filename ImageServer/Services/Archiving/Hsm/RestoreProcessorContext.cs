@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
         /// </summary>
         /// <param name="item"></param>
         public RestoreProcessorContext(RestoreQueue item)
+            :base(item.GetKey().Key.ToString())
         {
             Platform.CheckForNullReference(item, "item");
             _item = item;
@@ -59,14 +60,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
         #endregion
 
         #region Protected Methods
-        protected override string GetTemporaryDirectory()
+        protected override string GetTemporaryPath()
         {
             StudyStorageLocation storage = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(_item.StudyStorageKey))[0];
             if (storage == null)
                 return base.TempDirectory;
             else
             {
-                String basePath = GetBaseTempPath();
+                String basePath = GetTempPathRoot();
 
                 if (String.IsNullOrEmpty(basePath))
                 {

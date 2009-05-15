@@ -48,12 +48,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion
 
         public WorkQueueProcessorContext(Model.WorkQueue item)
+            :base(item.GetKey().Key.ToString())
         {
             _item = item;
             
         }
 
-        protected override string GetTemporaryDirectory()
+        protected override string GetTemporaryPath()
         {
                 IList<StudyStorageLocation> storages =
                     StudyStorageLocation.FindStorageLocations(StudyStorage.Load(_item.StudyStorageKey));
@@ -72,7 +73,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else
                 {
-                    string basePath = GetBaseTempPath();
+                    string basePath = GetTempPathRoot();
 
                     if (String.IsNullOrEmpty(basePath))
                     {

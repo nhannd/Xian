@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -149,9 +149,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         if (!skipped)
                         {
                             SopInstanceImporterContext context = new SopInstanceImporterContext();
-                            context.ID = String.Format("Importer_{0}", _startTimeStamp.ToString("yyyyMMddhhmmss"));
+                            context.ContextID = String.Format("Importer_{0}", _startTimeStamp.ToString("yyyyMMddhhmmss"));
                             context.Message = file;
-                            context.sourceAE = "Importer";
+                            context.SourceAE = "Importer";
                 
                             DicomSopProcessingResult result = _importer.Import(context);
                             if (result.Sussessful)

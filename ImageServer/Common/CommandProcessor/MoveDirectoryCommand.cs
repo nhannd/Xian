@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -43,13 +44,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     /// If <see cref="ServerCommand.RequiresRollback"/> is set to <b>true</b>, the <see cref="MoveDirectoryCommand"/>
     /// will perform necessary backup so that the original source and destination directories can be restored when <see cref="OnUndo"/> is called.
     /// </remark>
-    public class MoveDirectoryCommand : ServerCommand
+    public class MoveDirectoryCommand : ServerCommand, IDisposable
     {
         #region Private Members
         private readonly string _src;
         private readonly string _dest;
         private string _backupSrcDir ;
         private string _backupDestDir ;
+        private bool _restored;
         #endregion
 
         public MoveDirectoryCommand(string src, string dest)
@@ -81,8 +83,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             // by renaming it (if Windows API allow) or copy to a different location other than the current machine? 
             if (Directory.Exists(_src))
             {
-                _backupSrcDir = ExecutionContext.TempDirectory;
-
+                _backupSrcDir = Path.Combine(ExecutionContext.BackupDirectory, "OrigStudy");
+                Directory.CreateDirectory(_backupSrcDir);
                 Platform.Log(LogLevel.Debug, "Backing up original source folder {0}", _src);
                 DirectoryUtility.Copy(_src, _backupSrcDir);
 
@@ -92,7 +94,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
             if (Directory.Exists(_dest))
             {
-                _backupDestDir = ExecutionContext.TempDirectory;
+                _backupDestDir = Path.Combine(ExecutionContext.BackupDirectory, "DestStudy");
+                Directory.CreateDirectory(_backupDestDir); 
                 Platform.Log(LogLevel.Debug, "Backing up original destination folder {0}", _dest);
                 DirectoryUtility.Copy(_dest, _backupDestDir);
                 Platform.Log(LogLevel.Info, "Original destination folder {0} is backed up to {1}", _dest, _backupDestDir);
@@ -120,8 +123,34 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     DirectoryUtility.Copy(_backupDestDir, _dest);
                 }
 
+                _restored = true;
             }
 
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (RollBackRequested)
+            {
+                if (_restored)
+                {
+                    DirectoryUtility.DeleteIfExists(_backupSrcDir);
+                    DirectoryUtility.DeleteIfExists(_backupDestDir);
+                }
+                else
+                {
+                    // leave the backup there
+                }
+            }
+            else
+            {
+                DirectoryUtility.DeleteIfExists(_backupSrcDir);
+                DirectoryUtility.DeleteIfExists(_backupDestDir);
+            }
+        }
+
+        #endregion
     }
 }

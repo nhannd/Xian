@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         /// </summary>
         /// <param name="item"></param>
         public ServiceLockProcessorContext(Model.ServiceLock item)
+            :base(item.GetKey().Key.ToString())
         {
             Platform.CheckForNullReference(item, "item");
             _item = item;
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #endregion
        
         #region Private Methods
-        protected override string GetTemporaryDirectory()
+        protected override string GetTemporaryPath()
         {
             ServerFilesystemInfo filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(_item.FilesystemKey);
             if (filesystem == null)
@@ -69,7 +70,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
             else
             {
-                String basePath = GetBaseTempPath();
+                String basePath = GetTempPathRoot();
                 if (String.IsNullOrEmpty(basePath))
                 {
                     basePath = Path.Combine(filesystem.Filesystem.FilesystemPath, "temp");

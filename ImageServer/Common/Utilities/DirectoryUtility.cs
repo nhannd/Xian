@@ -134,7 +134,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 		/// <param name="dir"></param>
         public static void DeleteIfExists(string dir)
         {
-            DeleteIfExists(dir, false);
+            if (Directory.Exists(dir))
+                DeleteIfExists(dir, false);
         }
 
 		/// <summary>
@@ -212,15 +213,18 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         {
 			try
 			{
-				DirectoryInfo parent = Directory.GetParent(dir);
 				if (Directory.Exists(dir))
-					Directory.Delete(dir, true);
-
-				if (deleteParentIfEmpty)
 				{
-					// delete the parent too
-					DeleteIfEmpty(parent.FullName);
+                    DirectoryInfo parent = Directory.GetParent(dir);
+                    Directory.Delete(dir, true);
+
+                    if (deleteParentIfEmpty && parent != null && parent.FullName != null)
+                    {
+                        // delete the parent too
+                        DeleteIfEmpty(parent.FullName);
+                    }
 				}
+
 			}
 			catch(Exception e)
 			{
