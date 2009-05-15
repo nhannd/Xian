@@ -246,6 +246,7 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Synchronization\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Synchronization.View.WinForms.dll" />
 
     <!-- Layout -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
