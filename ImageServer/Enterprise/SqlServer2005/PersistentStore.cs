@@ -64,8 +64,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 					PersistentStoreVersionSelectCriteria criteria = new PersistentStoreVersionSelectCriteria();
 					criteria.Major.SortDesc(0);
 					criteria.Minor.SortDesc(1);
-					criteria.Revision.SortDesc(2);
-					criteria.Build.SortDesc(3);
+					criteria.Build.SortDesc(2);
+					criteria.Revision.SortDesc(3);
 
 					IList<PersistentStoreVersion> versions = broker.Find(criteria);
 					if (versions.Count == 0)
@@ -76,8 +76,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 					return new Version(
 						int.Parse(ver.Major),
 						int.Parse(ver.Minor),
-						int.Parse(ver.Revision),
-						int.Parse(ver.Build));
+						int.Parse(ver.Build),
+						int.Parse(ver.Revision));
 				}
 			}
 		}
