@@ -630,12 +630,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			studyList.Columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(SR.ColumnHeadingNumberOfInstances,
-			delegate(StudyItem item)
-			{
-				return (item.NumberOfStudyRelatedInstances == 0) ? "" : item.NumberOfStudyRelatedInstances.ToString();
-			},
-			0.5f);
+			column = new TableColumn<StudyItem, string>(
+					SR.ColumnHeadingNumberOfInstances,
+					delegate(StudyItem item) { return (item.NumberOfStudyRelatedInstances == 0) ? "" : item.NumberOfStudyRelatedInstances.ToString(); },
+					null,
+					0.5f,
+					delegate(StudyItem itemA, StudyItem itemB) { return itemA.NumberOfStudyRelatedInstances.CompareTo(itemB.NumberOfStudyRelatedInstances); });
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 
