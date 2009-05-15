@@ -12,7 +12,6 @@ namespace ClearCanvas.ImageServer.Model
     /// </summary>
     public class InconsistentDataSIQEntry : StudyIntegrityQueue
     {
-        private StudyStorageLocation _location;
 
         public InconsistentDataSIQEntry()
         {

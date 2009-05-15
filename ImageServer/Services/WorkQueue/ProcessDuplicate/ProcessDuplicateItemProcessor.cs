@@ -315,6 +315,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
                 
                 bool compare = action != ProcessDuplicateAction.OverwriteAsIs;
+                // NOTE: "compare" has no effect for OverwriteUseExisting or OverwriteUseDuplicate
+                // because in both cases, the study and the duplicates are modified to be the same.
 
                 ProcessReplacedSOPInstance processReplaced =
                         new ProcessReplacedSOPInstance(StorageLocation.ServerPartition, studyXml, file, compare);

@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private void ProcessDuplicate(WorkQueueUid uid, string basePath, string duplicatePath)
         {
             DicomFile dupFile = new DicomFile(duplicatePath);
-            dupFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+            dupFile.Load();
             if (!File.Exists(basePath))
             {
                 // NOTE: This is special case. The file which caused dicom service to think this sop is a duplicate
@@ -90,9 +90,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             else
             {
                 DicomFile baseFile = new DicomFile(basePath);
-
-                dupFile.Load(DicomReadOptions.StorePixelDataReferences);
-                baseFile.Load(DicomReadOptions.StorePixelDataReferences);
+                baseFile.Load();
 
                 if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
                 {
