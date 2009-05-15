@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             set
             {
-                Platform.Log(LogLevel.Debug, null, "WorkQueueItemList.SelectWorkQueueItemKey=" + value);
+                Platform.Log(LogLevel.Info, null, "WorkQueueItemList.SelectWorkQueueItemKey=" + value);
                 ViewState[ "_SelectedWorkQueueItemKey"] = value;
             }
             get
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 workQueueItems += "[i=" + i + " ][ItemKey=" + WorkQueueItems[i].Key + "]\n";
             }
 
-            Platform.Log(LogLevel.Debug, null, "WorkQueueItemList.GetRowItemKey=" + WorkQueueItems[rowIndex].Key + "\nWorkQueueItems:\n" + workQueueItems);
+            Platform.Log(LogLevel.Info, null, "WorkQueueItemList.GetRowItemKey=" + WorkQueueItems[rowIndex].Key + "\nWorkQueueItems:\n" + workQueueItems);
 	
 			return WorkQueueItems[rowIndex].Key;
         }
