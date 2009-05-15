@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -104,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			base.ImageViewer.EventBroker.DisplaySetChanging += OnDisplaySetChanging;
 			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
 			base.ImageViewer.PhysicalWorkspace.LayoutCompleted += OnLayoutCompleted;
+			SynchronizationToolSettingsHelper.Default.PropertyChanged += OnSynchronizationToolSettingsPropertyChanged;
 
 			_coordinator = SynchronizationToolCoordinator.Get(base.ImageViewer);
 			_coordinator.SetStackingSynchronizationTool(this);
@@ -111,6 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		protected override void Dispose(bool disposing)
 		{
+			SynchronizationToolSettingsHelper.Default.PropertyChanged -= OnSynchronizationToolSettingsPropertyChanged;
 			base.ImageViewer.EventBroker.DisplaySetChanging -= OnDisplaySetChanging;
 			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
 			base.ImageViewer.PhysicalWorkspace.LayoutCompleted -= OnLayoutCompleted;
@@ -265,6 +268,15 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			SynchronizeNewDisplaySet(e.NewDisplaySet);
 			_coordinator.OnSynchronizedImageBoxes();
+		}
+
+		private void OnSynchronizationToolSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			// if the tolerance angle setting changes, force a recalibration
+			if (e.PropertyName == "ParallelPlanesToleranceAngleRadians")
+			{
+				ResetFrameOfReferenceCalibrations();
+			}
 		}
 
 		#endregion

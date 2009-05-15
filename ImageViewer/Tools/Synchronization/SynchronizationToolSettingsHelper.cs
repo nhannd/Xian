@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private void OnSettingChanged(object sender, SettingChangingEventArgs e)
 		{
-			if (!_suspendSettingChangingEvent && e.SettingKey == "ParallelPlanesToleranceAngle")
+			if (!_suspendSettingChangingEvent && e.SettingName == "ParallelPlanesToleranceAngle")
 			{
 				float value = (float) e.NewValue;
 				_parallelPlanesToleranceAngleRadians = (float) (value*Math.PI/180f);
