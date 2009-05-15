@@ -290,6 +290,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             else if (currentConnectionCounter > DestinationDevice.ThrottleMaxConnections)
             {
                 RaiseConnectionLimitReachedAlert();
+
+                PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Pending,WorkQueueProcessorDatabaseUpdate.None);
                 return false;
             }
 
