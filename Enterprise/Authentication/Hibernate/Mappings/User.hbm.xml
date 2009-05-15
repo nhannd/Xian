@@ -23,6 +23,7 @@
       <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup"/>
     </set>
     <set name="Sessions" lazy="true" inverse="true" cascade="all-delete-orphan">
+      <cache usage="nonstrict-read-write"/>
       <key column="UserOID_"/>
       <one-to-many class="UserSession"/>
     </set>
