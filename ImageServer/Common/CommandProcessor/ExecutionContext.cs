@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 
         public ExecutionContext()
-            : this(Path.GetTempFileName() /* use random generated filename as the contextid */)
+            : this(Guid.NewGuid().ToString())
         {
 
         }
