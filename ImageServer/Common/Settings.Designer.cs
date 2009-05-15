@@ -121,5 +121,23 @@ namespace ClearCanvas.ImageServer.Common {
                 return ((string)(this["TemporaryPath"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool WriteThroughMode {
+            get {
+                return ((bool)(this["WriteThroughMode"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("65536")]
+        public int WriteBufferSize {
+            get {
+                return ((int)(this["WriteBufferSize"]));
+            }
+        }
     }
 }

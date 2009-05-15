@@ -41,7 +41,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// </summary>
 	public class SaveDicomFileCommand : ServerCommand, IDisposable
 	{
-        private GetFilePathDelegateMethod GetFilePathDelegate;
         public delegate string GetFilePathDelegateMethod();
 
 		#region Private Members
@@ -74,27 +73,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_saveTemp = saveTemp;
 		}
 
-        public SaveDicomFileCommand(GetFilePathDelegateMethod getFilePathDelegateMethod, DicomFile file, bool failOnExists, bool saveTemp)
-			: base("Save DICOM Message", true)
-		{
-            Platform.CheckForNullReference(getFilePathDelegateMethod, "getFilePathDelegateMethod");
-			Platform.CheckForNullReference(file, "Dicom File object");
-
-            GetFilePathDelegate = getFilePathDelegateMethod;
-			_file = file;
-			_failOnExists = failOnExists;
-			_saveTemp = saveTemp;
-		}
-
-        
-
 	    private void Backup()
 	    {
-            if (String.IsNullOrEmpty(_path) && GetFilePathDelegate != null)
-            {
-                _path = GetFilePathDelegate();
-            }
-
             if (File.Exists(_path))
             {
 				if (_failOnExists)

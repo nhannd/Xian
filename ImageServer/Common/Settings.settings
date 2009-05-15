@@ -35,5 +35,11 @@
     <Setting Name="TemporaryPath" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="WriteThroughMode" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="WriteBufferSize" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">65536</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

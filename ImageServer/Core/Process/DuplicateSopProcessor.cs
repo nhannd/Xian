@@ -64,7 +64,6 @@ namespace ClearCanvas.ImageServer.Core.Process
             string failureMessage;
 
             String sopInstanceUid = file.MediaStorageSopInstanceUid;
-            Study study = _context.StudyLocation.Study;
             ServerPartition partition = _context.Partition;
 
             if (_context.Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))

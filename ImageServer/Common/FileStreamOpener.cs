@@ -126,7 +126,10 @@ namespace ClearCanvas.ImageServer.Common
             {
                 try
                 {
-                    stream = new FileStream(path, mode, FileAccess.Write, FileShare.Read /* don't block others from reading this file */);
+                	stream =
+                		new FileStream(path, mode, FileAccess.Write, FileShare.Read
+                		               /* don't block others from reading this file */, Settings.Default.WriteBufferSize,
+                		               Settings.Default.WriteThroughMode ? FileOptions.WriteThrough : FileOptions.None);
                     break;
                 }
                 catch(FileNotFoundException)
