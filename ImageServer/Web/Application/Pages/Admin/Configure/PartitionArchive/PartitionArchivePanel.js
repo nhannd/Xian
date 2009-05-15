@@ -62,8 +62,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
         
         _OnLoad : function()
         {                    
-            var PartitionArchivelist = $find(this._PartitionArchiveListClientID);
-            PartitionArchivelist.add_onClientRowClick(this._OnPartitionArchiveListRowClickedHandler);
+            var PartitionArchiveList = $find(this._PartitionArchiveListClientID);
+            PartitionArchiveList.add_onClientRowClick(this._OnPartitionArchiveListRowClickedHandler);
                  
             this._updateToolbarButtonStates();
         },
@@ -82,20 +82,39 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
         
         _updateToolbarButtonStates : function()
         {
-            var PartitionArchivelist = $find(this._PartitionArchiveListClientID);
+            var PartitionArchiveList = $find(this._PartitionArchiveListClientID);
                                          
             this._enableEditButton(false);
             this._enableDeleteButton(false);
                                                       
-            if (PartitionArchivelist!=null )
+            if (PartitionArchiveList!=null)
             {
-                var rows = PartitionArchivelist.getSelectedRowElements();
+                var rows = PartitionArchiveList.getSelectedRowElements();
 
-                if(rows != null && rows.length > 0) {
+                if (rows!=null && rows.length>0)
+                {
+		            var selectedArchiveCount = rows.length; 
+		            var canDeleteCount=0; 
+				    for(i=0; i<rows.length; i++)
+                    {
+                        if (this._canDeleteArchive(rows[i]))
+                        {
+                            canDeleteCount++;
+                        }
+                    }
+                    
+                    this._enableDeleteButton(canDeleteCount>0);
+                    
+                    // always enabled open button when a row is selected
                     this._enableEditButton(true);
-                    this._enableDeleteButton(true);
                 }
             }
+        },
+        
+        _canDeleteArchive : function(row)
+        {
+            //"candelete" is a custom attribute injected by the list control
+            return row.getAttribute('candelete')=='true';
         },
         
         _enableDeleteButton : function(en)

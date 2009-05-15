@@ -34,6 +34,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
@@ -50,6 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         /// </summary>
         private IList<ServerPartition> _partitions;
         private Unit _height;
+		private readonly ServerPartitionConfigController _theController = new ServerPartitionConfigController();
         #endregion private Members
 
         #region Public Properties
@@ -128,6 +130,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             UpdateUI();
         }
+
+		protected override void OnPreRender(EventArgs e)
+		{
+			foreach (GridViewRow row in TheGrid.Rows)
+			{
+				if (row.RowType == DataControlRowType.DataRow)
+				{
+					ServerPartition partition = Partitions[row.RowIndex];
+
+					if (partition != null)
+					{
+						if (_theController.CanDelete(partition))
+							row.Attributes.Add("candelete", "true");
+					}
+				}
+			}
+			base.OnPreRender(e);
+		}
 
         protected void PartitionGridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {

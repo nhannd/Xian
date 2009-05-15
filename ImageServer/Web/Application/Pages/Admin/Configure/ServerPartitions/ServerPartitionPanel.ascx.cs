@@ -241,10 +241,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             LoadData();
             ServerPartitionGridPanel.UpdateUI();
 
-            ServerPartition partition = ServerPartitionGridPanel.SelectedPartition;
-            EditPartitionButton.Enabled = partition != null;
-            DeletePartitionButton.Enabled = (partition != null && _theController.CanDelete(partition));
-
             SearchUpdatePanel.Update();
         }
 

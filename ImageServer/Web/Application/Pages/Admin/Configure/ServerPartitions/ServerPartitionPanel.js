@@ -91,13 +91,34 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
             {
                 var rows = serverpartitionlist.getSelectedRowElements();
 
-                if(rows != null && rows.length > 0) {
+                if (rows!=null && rows.length>0)
+                {
+		            var selectedPartitionCount = rows.length; 
+		            var canDeleteCount=0; 
+                    if (rows.length>0)
+                    {
+					    for(i=0; i<rows.length; i++)
+                        {
+                            if (this._canDeletePartition(rows[i]))
+                            {
+                                canDeleteCount++;
+                            }
+                        }
+                    }
+                    // always enabled open button when a row is selected
                     this._enableEditButton(true);
-                    this._enableDeleteButton(true);
+    				
+                    this._enableDeleteButton(canDeleteCount==selectedPartitionCount);
                 }
             }
         },
         
+        _canDeletePartition:function(row)
+        {
+            //"candelete" is a custom attribute injected by the list control
+            return row.getAttribute('candelete')=='true';
+        },
+
         _enableDeleteButton : function(en)
         {
             var deleteButton = $find(this._DeleteButtonClientID);

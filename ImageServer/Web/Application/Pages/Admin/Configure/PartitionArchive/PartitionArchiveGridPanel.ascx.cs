@@ -34,10 +34,8 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
@@ -53,6 +51,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         /// </summary>
         private IList<Model.PartitionArchive> _partitions;
         private Unit _height;
+		private readonly PartitionArchiveConfigController _theController = new PartitionArchiveConfigController();
+
         #endregion private Members
 
         #region Public Properties
@@ -129,6 +129,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
                 ContainerTable.Height = _height;
         }
 
+		protected override void OnPreRender(EventArgs e)
+		{
+			base.OnPreRender(e);
+			foreach (GridViewRow row in TheGrid.Rows)
+			{
+				if (row.RowType == DataControlRowType.DataRow)
+				{
+					Model.PartitionArchive partition = Partitions[row.RowIndex];
+
+					if (partition != null)
+					{
+						if (_theController.CanDelete(partition))
+							row.Attributes.Add("candelete", "true");
+					}
+				}
+			}
+		}
+
         #endregion Protected methods
 
         #region Public methods
@@ -137,8 +155,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             DataBind();
             
-            SearchUpdatePanel.Update(); // force refresh
-            ((Default) Page).UpdateUI();
+            //SearchUpdatePanel.Update(); // force refresh
+            //((Default) Page).UpdateUI();
         }
 
         protected void PartitionGridView_RowDataBound(object sender, GridViewRowEventArgs e)

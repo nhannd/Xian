@@ -29,14 +29,10 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -141,13 +137,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             ArchiveStudyStorageSelectCriteria criteria = new ArchiveStudyStorageSelectCriteria();
             criteria.PartitionArchiveKey.EqualTo(partition.GetKey());
 
-            IList<ArchiveQueue> archiveItems = archiveQueueAdaptor.Get(selectCriteria);
-            IList<ArchiveStudyStorage> storageItems = archiveStudyStorageAdaptor.Get(criteria);
+            int queueItems = archiveQueueAdaptor.GetCount(selectCriteria);
+			int storageItems = 0;
+			// only check if we need to.
+			if (queueItems == 0) storageItems = archiveStudyStorageAdaptor.GetCount(criteria);
 
-            return ((archiveItems != null && archiveItems.Count > 0) ||
-                (storageItems != null && storageItems.Count > 0)) ? false : true;
-
-
+			return !((queueItems > 0) || (storageItems > 0));
         }
 
         #endregion // public methods
