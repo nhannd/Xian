@@ -55,7 +55,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			parms.SeriesDescription = _file.DataSet[DicomTags.SeriesDescription].ToString();
 			parms.SeriesInstanceUid = _file.DataSet[DicomTags.SeriesInstanceUid].ToString();
 			parms.SopInstanceUid = _file.MediaStorageSopInstanceUid;
-
+		    ReconcileStudyQueueDescription queueDesc = CreateQueueEntryDescription(_file);
+		    parms.Description = queueDesc != null ? queueDesc.ToString() : String.Empty;
             DuplicateSIQQueueData queueData = new DuplicateSIQQueueData();
             queueData.Details = new ImageSetDetails(_file.DataSet);
             if (_reasons != null && _reasons.Count>0)
@@ -75,6 +76,32 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			_queueEntry = entries[0];
 
 		}
+
+        private ReconcileStudyQueueDescription CreateQueueEntryDescription(DicomFile file)
+	    {
+	        using(ExecutionContext context = new ExecutionContext())
+	        {
+	            Study study = _studyLocation.LoadStudy(context.PersistenceContext);
+                if (study!=null)
+                {
+                    ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
+                    desc.ExistingPatientId = study.PatientId;
+                    desc.ExistingPatientName = study.PatientsName;
+                    desc.ExistingAccessionNumber = study.AccessionNumber;
+
+                    desc.ConflictingPatientName = file.DataSet[DicomTags.PatientsName].ToString();
+                    desc.ConflictingPatientId = file.DataSet[DicomTags.PatientId].ToString();
+                    desc.ConflictingAccessionNumber = file.DataSet[DicomTags.AccessionNumber].ToString();
+
+                    return desc;
+                }
+                else
+                {
+                    return null;
+                }
+	        }
+            
+        }
 	}
 
     public class UpdateDuplicateQueueEntryCommand:ServerDatabaseCommand
