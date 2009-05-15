@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -217,16 +218,29 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
+        
+
         protected override bool CanStart()
         {
 			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
 			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
+			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[]
+			                                           {
+			                                               WorkQueueTypeEnum.StudyProcess, 
+                                                           WorkQueueTypeEnum.ReconcileStudy, 
+                                                           WorkQueueTypeEnum.ProcessDuplicate,
+                                                           WorkQueueTypeEnum.ReconcilePostProcess,
+                                                           WorkQueueTypeEnum.ReconcileCleanup
+                                                        });
 			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
 			if (relatedItems == null || relatedItems.Count == 0)
-				return true;
+                return true; // nothing related in the work queue
 
-			Platform.Log(LogLevel.Info,
+            IList<StudyIntegrityQueue> reconcileList = FindSIQEntries();
+            if (reconcileList == null || reconcileList.Count == 0)
+                return true; // nothing in the reconcile queue
+
+            Platform.Log(LogLevel.Info,
 						 "Tier Migrate entry for study {0} has conflicting WorkQueue entry, reinserting into FilesystemQueue",
 						 StorageLocation.StudyInstanceUid);
 		

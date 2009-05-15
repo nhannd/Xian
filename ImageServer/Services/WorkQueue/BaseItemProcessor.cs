@@ -834,6 +834,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
+        public IList<StudyIntegrityQueue> FindSIQEntries()
+        {
+            IStudyIntegrityQueueEntityBroker broker = ReadContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+            StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
+            criteria.StudyStorageKey.EqualTo(Study.GetKey());
+            criteria.InsertTime.SortDesc(0);
+            IList<StudyIntegrityQueue> list = broker.Find(criteria);
+            return list;
+        }
+
+
         /// <summary>
         /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 
         /// if the process can begin.
