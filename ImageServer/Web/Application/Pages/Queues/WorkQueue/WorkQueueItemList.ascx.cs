@@ -73,9 +73,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 		{
 			get
 			{
-                if (!WorkQueueGridView.IsDataBound) WorkQueueGridView.DataBind();
-                if (_dataSource == null) return 0;
-				return _dataSource.ResultCount;
+                if (_dataSource == null)
+                {
+                    _dataSource = new WorkQueueDataSource();
+
+                    _dataSource.WorkQueueFoundSet += delegate(IList<WorkQueueSummary> newlist)
+                                            {
+                                                WorkQueueItems = new WorkQueueItemCollection(newlist);
+                                            };
+                    if (DataSourceCreated != null)
+                        DataSourceCreated(_dataSource);
+                    _dataSource.SelectCount();
+                }
+                if (_dataSource.ResultCount == 0)
+                {
+                    if (DataSourceCreated != null)
+                        DataSourceCreated(_dataSource);
+
+                    _dataSource.SelectCount();
+                }
+                return _dataSource.ResultCount;
 			}
 		}
 
