@@ -20,7 +20,7 @@
     <property name="LastLoginTime" column="LastLoginTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
     <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all">
       <key column="UserOID_"/>
-      <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup"/>
+      <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup" fetch="join"/>
     </set>
     <set name="Sessions" lazy="true" inverse="true" cascade="all-delete-orphan">
       <cache usage="nonstrict-read-write"/>
