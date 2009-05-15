@@ -114,6 +114,20 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         [QueueSearchableDescription]
+        public String ConflictingPatientName
+        {
+            get
+            {
+                return this["ConflictingPatientName"] as String;
+            }
+            set
+            {
+                this["ConflictingPatientName"] = value;
+            }
+        }
+
+
+        [QueueSearchableDescription]
         public String ExistingPatientId
         {
             get
@@ -126,18 +140,6 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        [QueueSearchableDescription]
-        public String ConflictingPatientName
-        {
-            get
-            {
-                return this["ConflictingPatientName"] as String;
-            }
-            set
-            {
-                this["ConflictingPatientName"] = value;
-            }
-        }
 
         [QueueSearchableDescription]
         public String ConflictingPatientId

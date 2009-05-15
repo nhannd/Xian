@@ -531,19 +531,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
 			string description = string.Empty;
+            if (!String.IsNullOrEmpty(PatientName))
+            {
+                description += "%ExistingPatientName=%" + PatientName + "%";
+            }
+            if (!String.IsNullOrEmpty(PatientId))
+            {
+                description += "%ExistingPatientId=%" + PatientId + "%";
+            }
+            else if (!String.IsNullOrEmpty(description))
+                description += "%ExistingPatientId=%";
 
-			if (!String.IsNullOrEmpty(PatientName))
-			{
-				description += PatientName + "%";
-			}
-			if (!String.IsNullOrEmpty(PatientId))
-			{
-				description += PatientId;
-			}
-			if(!String.IsNullOrEmpty(AccessionNumber))
-			{
-				description += AccessionNumber + "%";                
-			}
+            if (!String.IsNullOrEmpty(AccessionNumber))
+            {
+                description += "%ExistingAccessionNumber=%" + AccessionNumber + "%";
+            }
+            else if (!String.IsNullOrEmpty(description))
+                description += "%ExistingAccessionNumber=%";
 
 			if(!String.IsNullOrEmpty(description))
 			{
