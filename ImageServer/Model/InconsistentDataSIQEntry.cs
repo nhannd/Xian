@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -44,25 +45,16 @@ namespace ClearCanvas.ImageServer.Model
 
         public string GetFolderPath()
         {
-            if (_location == null)
-            {
-                if (_studyStorage == null)
-                {
-                    using (IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-                    {
-                        _studyStorage = StudyStorage.Load(context, this.StudyStorageKey);
-                    }
-                }
+            Platform.CheckForNullReference(QueueData, "QueueData");
+            // TODO: We should use ReconcileStudyWorkQueueData instead here. But that is impossible 
+            // because of the Model<--> COmmon dependency.
+ 
+            XmlNode xmlStoragePath = this.QueueData.SelectSingleNode("//StoragePath");
+            Platform.CheckForNullReference(xmlStoragePath, "xmlStoragePath");
+            // TODO: end
 
-                _location = StudyStorageLocation.FindStorageLocations(_studyStorage)[0];
-            }
-
-
-
-            String path = Path.Combine(_location.FilesystemPath, _location.PartitionFolder);
-            path = Path.Combine(path, "Reconcile");
-            path = Path.Combine(path, this.GetKey().Key.ToString());
-            return path;
+            String storagePath = xmlStoragePath.InnerText;
+            return storagePath;
         }
 
         public string GetSopPath(string seriesUid, string instanceUid)
