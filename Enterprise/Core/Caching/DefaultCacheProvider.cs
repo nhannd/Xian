@@ -9,40 +9,42 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core.Caching
 {
-	[ExtensionOf(typeof(CacheClientProviderExtensionPoint))]
-	public class DefaultCacheProvider : ICacheClientProvider
+	[ExtensionOf(typeof(CacheProviderExtensionPoint))]
+	public class DefaultCacheProvider : ICacheProvider
 	{
-		private static readonly string _cacheKeyPrefix = Guid.NewGuid().ToString("N");
-		private readonly Dictionary<string, string> _rootCacheKeys = new Dictionary<string, string>();
-		private Cache _cache;
+		private System.Web.Caching.Cache _cache;
 
-		#region ICacheClientProvider Members
+		#region ICacheProvider Members
 
-		public void Initialize(CacheClientProviderInitializationArgs args)
+		public void Initialize(CacheProviderInitializationArgs args)
 		{
+            // This may seem odd, but using the ASP.NET cache outside of an ASP app
+            // is perfectly ok, according to this MSDN article:
+            // http://msdn.microsoft.com/en-us/library/ms978500.aspx
 			_cache = HttpRuntime.Cache;
 		}
 
-		public ICacheClient CreateCacheClient(CacheClientCreationArgs args)
+		public ICacheClient CreateClient(CacheClientCreationArgs args)
 		{
-			string rootKey;
-			if(!_rootCacheKeys.TryGetValue(args.Region, out rootKey))
-			{
-				rootKey = GetQualifiedCacheKey(args.Region, Guid.NewGuid().ToString("N"));
-				StoreRootCacheKey(rootKey);
-				_rootCacheKeys.Add(args.Region, rootKey);
-			}
+            // a cacheID is required!
+            Platform.CheckForEmptyString(args.CacheID, "CacheID");
+
+            // ensure both cache and region exist
+            CreateCache(args.CacheID);
+            CreateRegion(args.CacheID, args.Region);
 
 			return new DefaultCacheClient(this, args);
 		}
 
 		#endregion
 
-		internal object Get(string region, string key)
+        #region Internal API
+
+        internal object Get(string cacheID, string region, string key)
 		{
 			Platform.CheckForNullReference(key, "key");
 
-			string cacheKey = GetQualifiedCacheKey(region, key);
+            string cacheKey = GetItemCacheKey(cacheID, region, key);
 
 			object obj = _cache.Get(cacheKey);
 			if (obj == null)
@@ -52,59 +54,123 @@ namespace ClearCanvas.Enterprise.Core.Caching
 			return key.Equals(entry.Key) ? entry.Value : null;
 		}
 
-		internal void Put(string region, string key, object value, TimeSpan expiration)
+        internal void Put(string cacheID, string region, string key, object value, TimeSpan expiration, bool sliding)
 		{
 			Platform.CheckForNullReference(key, "key");
 			Platform.CheckForNullReference(value, "value");
 
-			string qualifiedKey = GetQualifiedCacheKey(region, key);
-			if (_cache[qualifiedKey] != null)
-			{
-				// Remove the key to re-add it again below
-				_cache.Remove(qualifiedKey);
-			}
-
-			_cache.Add(
-				qualifiedKey,
-				new DictionaryEntry(key, value),
-				new CacheDependency(null, new string[] { _rootCacheKeys[region] }),
-				Platform.Time.Add(expiration),
-				Cache.NoSlidingExpiration,
-				CacheItemPriority.Normal,
-				null);
+            string cacheKey = GetItemCacheKey(cacheID, region, key);
+            PutItem(cacheKey, key, GetRegionCacheKey(cacheID, region), value, expiration, sliding);
 		}
 
-		internal void Remove(string region, string key)
+
+        internal void Remove(string cacheID, string region, string key)
 		{
 			Platform.CheckForNullReference(key, "key");
-			string qualifiedKey = GetQualifiedCacheKey(region, key);
-			_cache.Remove(qualifiedKey);
+            string cacheKey = GetItemCacheKey(cacheID, region, key);
+            _cache.Remove(cacheKey);
 		}
 
-		internal void Clear(string region)
+		internal void ClearRegion(string cacheID, string region)
 		{
-			string rootKey = _rootCacheKeys[region];
-			_cache.Remove(rootKey);
-			StoreRootCacheKey(rootKey);
+            string regionKey = GetRegionCacheKey(cacheID, region);
+
+            // remove region key to clear all items
+            _cache.Remove(regionKey);
+
+            // re-create region
+            CreateRegion(cacheID, regionKey);
 		}
 
-		private void StoreRootCacheKey(string rootKey)
+        internal void ClearCache(string cacheID)
+        {
+            string rootKey = GetRootCacheKey(cacheID);
+
+            // remove root key to clear all items
+            _cache.Remove(rootKey);
+
+            // re-create cache
+            CreateCache(cacheID);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private void CreateCache(string cacheID)
 		{
-			// remove the root key in case already stored (note, this will clear the 
-			_cache.Remove(rootKey);
-			_cache.Add(
-				rootKey,
-				rootKey,
-				null,
-				Cache.NoAbsoluteExpiration,
-				Cache.NoSlidingExpiration,
-				CacheItemPriority.NotRemovable,
-				null);
+            CreateRoot(GetRootCacheKey(cacheID), null);
 		}
 
-		private static string GetQualifiedCacheKey(string region, string key)
-		{
-			return string.Format("{0}:{1}:{2}", _cacheKeyPrefix, region, key);
-		}
-	}
+        private void CreateRegion(string cacheID, string region)
+        {
+            CreateRoot(GetRegionCacheKey(cacheID, region), GetRootCacheKey(cacheID));
+        }
+
+        private void CreateRoot(string rootKey, string dependencyKey)
+        {
+            // if not already stored, store it now
+            if (_cache.Get(rootKey) == null)
+            {
+                // add region key, dependent on root key
+                _cache.Add(
+                    rootKey,
+                    rootKey,
+                    dependencyKey == null ? null : new CacheDependency(null, new string[] { dependencyKey }),
+                    System.Web.Caching.Cache.NoAbsoluteExpiration,
+                    System.Web.Caching.Cache.NoSlidingExpiration,
+                    CacheItemPriority.NotRemovable,
+                    OnCacheItemRemoved);
+            }
+        }
+
+        private static string GetRootCacheKey(string cacheid)
+        {
+            return cacheid;
+        }
+
+        private static string GetRegionCacheKey(string cacheid, string region)
+        {
+            return string.Format("{0}:{1}", cacheid, region);
+        }
+
+        private static string GetItemCacheKey(string cacheid, string region, string key)
+        {
+            return string.Format("{0}:{1}:{2}", cacheid, region, key);
+        }
+
+        private void PutItem(
+            string qualifiedKey,
+            string key,
+            string dependencyKey,
+            object value,
+            TimeSpan expiryTime,
+            bool sliding)
+        {
+            CacheDependency dependency = dependencyKey == null ? null
+                : new CacheDependency(null, new string[] { dependencyKey });
+
+            DateTime absExpiration = sliding ? System.Web.Caching.Cache.NoAbsoluteExpiration
+                : Platform.Time.Add(expiryTime);
+            TimeSpan slidingExpiration = sliding ? expiryTime
+                : System.Web.Caching.Cache.NoSlidingExpiration;
+
+            _cache.Insert(
+                qualifiedKey,
+                new DictionaryEntry(key, value),
+                dependency,
+                absExpiration,
+                slidingExpiration,
+                System.Web.Caching.CacheItemPriority.Normal,
+                OnCacheItemRemoved);
+        }
+
+        private void OnCacheItemRemoved(string key, object value, CacheItemRemovedReason reason)
+        {
+            // TODO logging
+        }
+
+        #endregion
+
+    }
 }

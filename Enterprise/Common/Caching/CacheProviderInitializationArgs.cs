@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common.Caching
 {
-	public class CacheClientProviderInitializationArgs
+	public class CacheProviderInitializationArgs
 	{
 	}
 }
