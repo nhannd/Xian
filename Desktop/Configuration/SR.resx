@@ -141,6 +141,9 @@
   <data name="LabelEdit" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="LabelImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
   <data name="LabelReset" xml:space="preserve">
     <value>Reset</value>
   </data>

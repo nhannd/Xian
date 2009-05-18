@@ -54,6 +54,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 
             _settingsGroupTableView.Table = _component.SettingsGroupTable;
             _settingsGroupTableView.DataBindings.Add("Selection", _component, "SelectedSettingsGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+            _settingsGroupTableView.ToolbarModel = _component.SettingsGroupsActionModel;
 
             _valueTableView.Table = _component.SettingsPropertiesTable;
             _valueTableView.DataBindings.Add("Selection", _component, "SelectedSettingsProperty", true, DataSourceUpdateMode.OnPropertyChanged);

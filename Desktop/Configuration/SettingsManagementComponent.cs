@@ -260,6 +260,9 @@ namespace ClearCanvas.Desktop.Configuration
         private ClickAction _resetAction;
         private ClickAction _editAction;
 
+        private SimpleActionModel _settingsGroupsActionModel;
+        private ClickAction _importAction;
+
 
         /// <summary>
         /// Constructor.
@@ -295,6 +298,12 @@ namespace ClearCanvas.Desktop.Configuration
                delegate(SettingsProperty p) { return p.Value; },
                delegate(SettingsProperty p, string text) { p.Value = text; }));
 
+            _settingsGroupsActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _importAction = _settingsGroupsActionModel.AddAction("import", SR.LabelImport, "ImportToolSmall.png",
+                "Import settings meta-data from local plugins",
+                Import);
+            _importAction.Visible = _configStore.SupportsImport;
+
             _settingsPropertiesActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 
             _saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "SaveToolSmall.png",
@@ -321,10 +330,7 @@ namespace ClearCanvas.Desktop.Configuration
         {
             try
             {
-                foreach (SettingsGroupDescriptor group in _configStore.ListSettingsGroups())
-                {
-                    _settingsGroupTable.Items.Add(group);
-                }
+                FillSettingsGroupTable();
             }
             catch (Exception e)
             {
@@ -366,6 +372,14 @@ namespace ClearCanvas.Desktop.Configuration
         }
 
         #region Presentation Model
+
+        /// <summary>
+        /// Gets the action model for the settings groups.
+        /// </summary>
+        public ActionModelRoot SettingsGroupsActionModel
+        {
+            get { return _settingsGroupsActionModel; }
+        }
 
         /// <summary>
         /// Gets the currently selected settings group table.
@@ -464,6 +478,15 @@ namespace ClearCanvas.Desktop.Configuration
 
         #endregion
 
+        private void FillSettingsGroupTable()
+        {
+            _settingsGroupTable.Items.Clear();
+            foreach (SettingsGroupDescriptor group in _configStore.ListSettingsGroups())
+            {
+                _settingsGroupTable.Items.Add(group);
+            }
+        }
+
         private void LoadSettingsProperties()
         {
             _settingsPropertiesTable.Items.Clear();
@@ -484,6 +507,54 @@ namespace ClearCanvas.Desktop.Configuration
                     ExceptionHandler.Report(e, this.Host.DesktopWindow);
                 }
             }
+        }
+
+        private void Import()
+        {
+            try
+            {
+                DialogBoxAction action = this.Host.ShowMessageBox("Import settings meta-data defined in locally installed plugins?",
+                                 MessageBoxActions.OkCancel);
+                if (action == DialogBoxAction.Ok)
+                {
+                    DoImport();
+                }
+
+                // update groups table
+                FillSettingsGroupTable();
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
+        private void DoImport()
+        {
+            List<SettingsGroupDescriptor> groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
+            BackgroundTask task = new BackgroundTask(
+                delegate(IBackgroundTaskContext context)
+                {
+                    for (int i = 0; i < groups.Count; i++)
+                    {
+                        if (context.CancelRequested)
+                        {
+                            context.Cancel();
+                            break;
+                        }
+
+                        SettingsGroupDescriptor group = groups[i];
+                        context.ReportProgress(new BackgroundTaskProgress(i, groups.Count, string.Format("Importing {0}", group.Name)));
+
+                        List<SettingsPropertyDescriptor> props = SettingsPropertyDescriptor.ListSettingsProperties(group);
+                        _configStore.ImportSettingsGroup(group, props);
+
+                    }
+                },
+                true);
+
+            ProgressDialog.Show(task, this.Host.DesktopWindow, true);
         }
 
         private void SaveModifiedSettings(bool confirmationRequired)

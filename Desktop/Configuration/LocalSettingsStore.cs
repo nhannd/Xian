@@ -393,6 +393,22 @@ namespace ClearCanvas.Desktop.Configuration
             return SettingsPropertyDescriptor.ListSettingsProperties(group);
         }
 
+        /// <summary>
+        /// Local store does not support import.
+        /// </summary>
+        public bool SupportsImport
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Local store does not support import.
+        /// </summary>
+        public void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties)
+        {
+            throw new NotSupportedException("Local settings store does not support the Import operation.");
+        }
+
         #endregion
     }
 }

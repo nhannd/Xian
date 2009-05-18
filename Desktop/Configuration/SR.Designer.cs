@@ -133,6 +133,15 @@ namespace ClearCanvas.Desktop.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string LabelImport {
+            get {
+                return ResourceManager.GetString("LabelImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reset.
         /// </summary>
         internal static string LabelReset {

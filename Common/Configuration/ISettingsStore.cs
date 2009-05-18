@@ -45,6 +45,11 @@ namespace ClearCanvas.Common.Configuration
     public interface ISettingsStore
     {
         /// <summary>
+        /// Gets a value indicating whether this store supports importing of meta-data.
+        /// </summary>
+        bool SupportsImport { get; }
+
+        /// <summary>
         /// Lists all settings groups for which this store maintains settings values.
         /// </summary>
         /// <remarks>
@@ -57,6 +62,13 @@ namespace ClearCanvas.Common.Configuration
         /// Lists the settings properties for the specified settings group.
         /// </summary>
         IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group);
+
+        /// <summary>
+        /// Imports meta-data for the specified settings group and its properties.
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="properties"></param>
+        void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties);
 
 
         /// <summary>

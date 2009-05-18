@@ -114,7 +114,7 @@ namespace ClearCanvas.Common.Configuration
             _version = SettingsClassMetaDataReader.GetVersion(settingsClass);
             _description = SettingsClassMetaDataReader.GetGroupDescription(settingsClass);
 		    _hasUserScopedSettings = SettingsClassMetaDataReader.HasUserScopedSettings(settingsClass);
-            _assemblyQualifiedTypeName = settingsClass.AssemblyQualifiedName;
+            _assemblyQualifiedTypeName = GetSafeClassName(settingsClass);
         }
 
         /// <summary>
@@ -194,5 +194,16 @@ namespace ClearCanvas.Common.Configuration
         }
 
         #endregion
+
+        /// <summary>
+        /// Gets the assembly qualified name of the type, but without all the version and culture info.
+        /// </summary>
+        /// <param name="entityClass"></param>
+        /// <returns></returns>
+        private static string GetSafeClassName(Type settingsClass)
+        {
+            return string.Format("{0}, {1}", settingsClass.FullName, settingsClass.Assembly.GetName().Name);
+        }
+
     }
 }
