@@ -24,18 +24,28 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// </summary>
 		private static readonly Dictionary<Type, ICacheProvider> _providers = new Dictionary<Type, ICacheProvider>();
 
+        /// <summary>
+        /// Gets a value indicating if the cache is supported in this environment.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsSupported()
+        {
+            CacheProviderExtensionPoint point = new CacheProviderExtensionPoint();
+            return point.ListExtensions().Length > 0;
+        }
+
 		/// <summary>
-		/// Creates a cache client based on the specified arguments.
+		/// Creates a cache client for the specified logical cacheID.
 		/// </summary>
 		/// <remarks>
 		/// This method is safe for concurrent use by multiple threads.
 		/// </remarks>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		public static ICacheClient CreateClient(CacheClientCreationArgs args)
+		public static ICacheClient CreateClient(string cacheID)
 		{
             // a cacheID is required!
-            Platform.CheckForNullReference(args.CacheID, "CacheID");
+            Platform.CheckForEmptyString(cacheID, "CacheID");
 
             // TODO a more sophisticated delegate may be required here
 			// if more than one cache provider extension exists, there will need to be mechanisms for choosing
@@ -46,7 +56,7 @@ namespace ClearCanvas.Enterprise.Common.Caching
 			// create specified cache
             // this call assumes the provider.CreateClient method is thread-safe, which
             // is the responsibility of the provider!
-			return provider.CreateClient(args);
+            return provider.CreateClient(cacheID);
 		}
 
         /// <summary>

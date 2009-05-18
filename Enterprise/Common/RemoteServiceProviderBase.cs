@@ -36,6 +36,8 @@ using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System.Security.Cryptography.X509Certificates;
+using Castle.DynamicProxy;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -158,6 +160,46 @@ namespace ClearCanvas.Enterprise.Common
 
 	#endregion
 
+    public interface IRemoteServiceProxy
+    {
+        object GetChannel();
+    }
+
+    internal class RemoteServiceProxyMixin : IRemoteServiceProxy
+    {
+        private object _channel;
+
+        internal RemoteServiceProxyMixin(object channel)
+        {
+            _channel = channel;
+        }
+
+        object IRemoteServiceProxy.GetChannel()
+        {
+            return _channel;
+        }
+    }
+
+    internal class DisposableInterceptor : IInterceptor
+    {
+        public object Intercept(IInvocation invocation, params object[] args)
+        {
+            // if the method being called is IDisposable.Dispose()
+            if (invocation.Method.DeclaringType == typeof(IDisposable))
+            {
+                // invoke the method directly on the target - do not proceed along interceptor chain
+                IDisposable disposable = (IDisposable)invocation.InvocationTarget;
+                disposable.Dispose();
+                return null;
+            }
+            else
+            {
+                // proceed normally
+                return invocation.Proceed(args);
+            }
+        }
+    }
+
 	/// <summary>
 	/// Abstract base class for remote service provider extensions.
 	/// </summary>
@@ -166,6 +208,8 @@ namespace ClearCanvas.Enterprise.Common
 		where TServiceLayerAttribute : Attribute
 	{
 		private readonly RemoteServiceProviderArgs _args;
+        private readonly ProxyGenerator _proxyGenerator;
+        private List<IInterceptor> _interceptors;
 
 		/// <summary>
 		/// Constructor.
@@ -174,7 +218,8 @@ namespace ClearCanvas.Enterprise.Common
 		public RemoteServiceProviderBase(RemoteServiceProviderArgs args)
 		{
 			_args = args;
-		}
+            _proxyGenerator = new ProxyGenerator();
+        }
 
         #region IServiceProvider Members
 
@@ -188,19 +233,35 @@ namespace ClearCanvas.Enterprise.Common
             bool authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
 
             // create the channel
+            // it is unfortunate that we cannot defer channel creation until an interceptor
+            // actually Proceed()s to it, but DynamicProxy1 does not support this (DP2 does!)
             object channel = CreateChannel(serviceContract, authenticationRequired);
 
             Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticationRequired={1}.",
                          serviceContract.FullName, authenticationRequired);
 
-            return channel;
+            return CreateChannelProxy(serviceContract, channel);
         }
 
 		#endregion
 
 		#region Protected API
 
-		/// <summary>
+        protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
+        {
+            // this must be added as the outer-most interceptor
+            // it is basically a hack to prevent the interception chain from acting on a call to Dispose(),
+            // because Dispose() is not a service operation
+            interceptors.Add(new DisposableInterceptor());
+
+            if (Caching.Cache.IsSupported())
+            {
+                // add response-caching client-side advice
+                interceptors.Add(new ResponseCachingClientAdvice());
+            }
+        }
+
+        /// <summary>
 		/// Gets a value indicating whether this service provider provides the specified service.
 		/// </summary>
 		/// <remarks>
@@ -271,5 +332,31 @@ namespace ClearCanvas.Enterprise.Common
 			return createChannelMethod.Invoke(channelFactory, null);
 		}
 
+        private object CreateChannelProxy(Type serviceContract, object channel)
+        {
+            // get list of interceptors if not yet created
+            if (_interceptors == null)
+            {
+                _interceptors = new List<IInterceptor>();
+                ApplyInterceptors(_interceptors);
+            }
+
+            // build AOP intercept chain
+            AopInterceptorChain aopIntercept = new AopInterceptorChain(_interceptors);
+
+            GeneratorContext genContext = new GeneratorContext();
+            genContext.AddMixinInstance(new RemoteServiceProxyMixin(channel));
+
+            // create and return proxy
+            // note: _proxyGenerator does internal caching based on service contract
+            // so subsequent calls based on the same contract will be fast
+            // note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
+            object proxy = _proxyGenerator.CreateCustomProxy(
+                new Type[] { serviceContract, typeof(IDisposable) },
+                aopIntercept,
+                channel,
+                genContext);
+            return proxy;
+        }
 	}
 }

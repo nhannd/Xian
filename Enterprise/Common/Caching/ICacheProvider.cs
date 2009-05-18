@@ -16,12 +16,12 @@ namespace ClearCanvas.Enterprise.Common.Caching
 
 
 		/// <summary>
-		/// Creates a cache client using the specified arguments.
+		/// Creates a cache client for the specified logical cache ID.
 		/// </summary>
         /// <remarks>
         /// The implementation of this method *must* be safe for multiple threads making concurrent calls.
         /// </remarks>
 		/// <returns></returns>
-		ICacheClient CreateClient(CacheClientCreationArgs args);
+		ICacheClient CreateClient(string cacheID);
 	}
 }

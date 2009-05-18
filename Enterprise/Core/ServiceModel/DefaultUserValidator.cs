@@ -50,15 +50,15 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
             Platform.Log(LogLevel.Debug, "Validating session for user ", userName);
 
 			// Note: password is actually the session token
-            AuthenticationClient authClient = new AuthenticationClient();
-            authClient.ValidateSession(new ValidateSessionRequest(userName, new SessionToken(password)));
+            //AuthenticationClient authClient = new AuthenticationClient();
+            //authClient.ValidateSession(new ValidateSessionRequest(userName, new SessionToken(password)));
 
-            //Platform.GetService<IAuthenticationService>(
-            //    delegate(IAuthenticationService service)
-            //        {
-            //            // this call will throw an exception if the session is invalid or has expired
-            //            service.ValidateSession(new ValidateSessionRequest(userName, new SessionToken(password)));
-            //        });
+            Platform.GetService<IAuthenticationService>(
+                delegate(IAuthenticationService service)
+                {
+                    // this call will throw an exception if the session is invalid or has expired
+                    service.ValidateSession(new ValidateSessionRequest(userName, new SessionToken(password)));
+                });
 		}
 	}
 }

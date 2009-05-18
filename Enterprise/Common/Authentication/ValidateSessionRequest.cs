@@ -34,11 +34,12 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common.Authentication
 {
 	[DataContract]
-	public class ValidateSessionRequest : DataContractBase
+	public class ValidateSessionRequest : DataContractBase, ICacheKeyProvider
 	{
 		public ValidateSessionRequest(string userName, SessionToken sessionToken)
 		{
@@ -63,5 +64,15 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// </summary>
 		[DataMember]
 		public bool GetAuthorizations;
-	}
+
+
+        #region ICacheKeyProvider Members
+
+        string ICacheKeyProvider.GetCacheKey()
+        {
+            return string.Format("{0}:{1}:{2}", UserName, SessionToken.Id, GetAuthorizations);
+        }
+
+        #endregion
+    }
 }

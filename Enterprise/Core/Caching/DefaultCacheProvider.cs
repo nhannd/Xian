@@ -24,27 +24,24 @@ namespace ClearCanvas.Enterprise.Core.Caching
 			_cache = HttpRuntime.Cache;
 		}
 
-		public ICacheClient CreateClient(CacheClientCreationArgs args)
+		public ICacheClient CreateClient(string cacheID)
 		{
-            // a cacheID is required!
-            Platform.CheckForEmptyString(args.CacheID, "CacheID");
+            // ensure cache exists
+            CreateCache(cacheID);
 
-            // ensure both cache and region exist
-            CreateCache(args.CacheID);
-            CreateRegion(args.CacheID, args.Region);
-
-			return new DefaultCacheClient(this, args);
+            return new DefaultCacheClient(this, cacheID);
 		}
 
 		#endregion
 
         #region Internal API
 
-        internal object Get(string cacheID, string region, string key)
+        internal object Get(string cacheID, string key, CacheGetOptions options)
 		{
 			Platform.CheckForNullReference(key, "key");
+            Platform.CheckForNullReference(options, "options");
 
-            string cacheKey = GetItemCacheKey(cacheID, region, key);
+            string cacheKey = GetItemCacheKey(cacheID, options.Region, key);
 
 			object obj = _cache.Get(cacheKey);
 			if (obj == null)
@@ -54,24 +51,37 @@ namespace ClearCanvas.Enterprise.Core.Caching
 			return key.Equals(entry.Key) ? entry.Value : null;
 		}
 
-        internal void Put(string cacheID, string region, string key, object value, TimeSpan expiration, bool sliding)
+        internal void Put(string cacheID, string key, object value, CachePutOptions options)
 		{
 			Platform.CheckForNullReference(key, "key");
 			Platform.CheckForNullReference(value, "value");
+            Platform.CheckForNullReference(options, "options");
 
-            string cacheKey = GetItemCacheKey(cacheID, region, key);
-            PutItem(cacheKey, key, GetRegionCacheKey(cacheID, region), value, expiration, sliding);
+            // ensure region exists
+            CreateRegion(cacheID, options.Region);
+
+            string cacheKey = GetItemCacheKey(cacheID, options.Region, key);
+            PutItem(cacheKey, key, GetRegionCacheKey(cacheID, options.Region),
+                value, options.Expiration, options.Sliding);
 		}
 
 
-        internal void Remove(string cacheID, string region, string key)
+        internal void Remove(string cacheID, string key, CacheRemoveOptions options)
 		{
 			Platform.CheckForNullReference(key, "key");
-            string cacheKey = GetItemCacheKey(cacheID, region, key);
+            Platform.CheckForNullReference(options, "options");
+
+            string cacheKey = GetItemCacheKey(cacheID, options.Region, key);
             _cache.Remove(cacheKey);
 		}
 
-		internal void ClearRegion(string cacheID, string region)
+        internal bool RegionExists(string cacheID, string region)
+        {
+            string regionKey = GetRegionCacheKey(cacheID, region);
+            return _cache.Get(regionKey) != null;
+        }
+
+        internal void ClearRegion(string cacheID, string region)
 		{
             string regionKey = GetRegionCacheKey(cacheID, region);
 
@@ -171,6 +181,7 @@ namespace ClearCanvas.Enterprise.Core.Caching
         }
 
         #endregion
+
 
     }
 }

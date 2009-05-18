@@ -11,19 +11,13 @@ namespace ClearCanvas.Enterprise.Core.Caching
 {
 	internal class DefaultCacheClient : ICacheClient
 	{
+        private readonly DefaultCacheProvider _provider;
         private readonly string _cacheID;
-		private readonly string _region;
-		private readonly DefaultCacheProvider _provider;
-		private readonly TimeSpan _expiration;
-        private readonly bool _sliding;
 
-		internal DefaultCacheClient(DefaultCacheProvider provider, CacheClientCreationArgs args)
+		internal DefaultCacheClient(DefaultCacheProvider provider, string cacheID)
 		{
 			_provider = provider;
-            _cacheID = args.CacheID;
-			_region = StringUtilities.EmptyIfNull(args.Region);
-			_expiration = args.ExpirationTime;
-            _sliding = args.SlidingExpiration;
+            _cacheID = cacheID;
 		}
 
 		#region ICacheClient Members
@@ -33,34 +27,29 @@ namespace ClearCanvas.Enterprise.Core.Caching
             get { return _cacheID; }
         }
 
-        public string Region
+        public object Get(string key, CacheGetOptions options)
+		{
+            return _provider.Get(_cacheID, key, options);
+		}
+
+		public void Put(string key, object value, CachePutOptions options)
+		{
+			_provider.Put(_cacheID, key, value, options);
+		}
+
+		public void Remove(string key, CacheRemoveOptions options)
+		{
+            _provider.Remove(_cacheID, key, options);
+		}
+
+        public bool RegionExists(string region)
         {
-            get { return _region; }
+            return _provider.RegionExists(_cacheID, region);
         }
 
-        public object Get(string key)
+		public void ClearRegion(string region)
 		{
-            return _provider.Get(_cacheID, _region, key);
-		}
-
-		public void Put(string key, object value)
-		{
-			_provider.Put(_cacheID, _region, key, value, _expiration, _sliding);
-		}
-
-        public void Put(string key, object value, TimeSpan expiration, bool sliding)
-        {
-            _provider.Put(_cacheID, _region, key, value, expiration, sliding);
-        }
-
-		public void Remove(string key)
-		{
-            _provider.Remove(_cacheID, _region, key);
-		}
-
-		public void ClearRegion()
-		{
-            _provider.ClearRegion(_cacheID, _region);
+            _provider.ClearRegion(_cacheID, region);
 		}
 
         public void ClearCache()

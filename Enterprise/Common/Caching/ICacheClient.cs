@@ -15,54 +15,43 @@ namespace ClearCanvas.Enterprise.Common.Caching
         string CacheID { get; }
 
         /// <summary>
-        /// Gets the cache region associated with this client.
-        /// </summary>
-        string Region { get; }
-
-        /// <summary>
 		/// Gets the object at the specified key from the cache, or null if the key does not exist.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		/// <exception cref="CacheException"></exception>
-		object Get(string key);
-
-		/// <summary>
-		/// Puts the specified object into the cache at the specified key,
-        /// using default expiration policy.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <exception cref="CacheException"></exception>
-		void Put(string key, object value);
+		object Get(string key, CacheGetOptions options);
 
         /// <summary>
         /// Puts the specified object into the cache at the specified key,
-        /// using specified expiration policy.
+        /// using the specified options.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="expiration"></param>
-        /// <param name="sliding"></param>
-        void Put(string key, object value, TimeSpan expiration, bool sliding);
+        /// <param name="options"></param>
+        void Put(string key, object value, CachePutOptions options);
 
 		/// <summary>
 		/// Removes the specified item from the cache, or does nothing if the item does not
         /// exist.
 		/// </summary>
 		/// <param name="key">The Key of the Item in the Cache to remove.</param>
-		/// <exception cref="CacheException"></exception>
-		void Remove(string key);
+        void Remove(string key, CacheRemoveOptions options);
 
         /// <summary>
-        /// Clears the entire cache region (as identified by <see cref="Region"/>).
+        /// Gets a value indicating whether the specified region exists.
         /// </summary>
-        void ClearRegion();
+        /// <param name="region"></param>
+        /// <returns></returns>
+        bool RegionExists(string region);
+
+        /// <summary>
+        /// Clears the entire cache region.
+        /// </summary>
+        void ClearRegion(string region);
 
 		/// <summary>
 		/// Clears the entire logical cache (as identified by <see cref="CacheID"/>.
 		/// </summary>
-		/// <exception cref="CacheException"></exception>
 		void ClearCache();
 	}
 }

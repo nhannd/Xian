@@ -22,19 +22,17 @@ namespace ClearCanvas.Enterprise.Common
         private bool _enableCaching;
         private TimeSpan _timeToLive;
         private ResponseCachingSite _cacheSite;
-        private bool _userAffine;
 
         public ResponseCachingDirective()
         {
 
         }
 
-        public ResponseCachingDirective(bool enableCaching, TimeSpan timeToLive, ResponseCachingSite site, bool userAffine)
+        public ResponseCachingDirective(bool enableCaching, TimeSpan timeToLive, ResponseCachingSite site)
         {
             _enableCaching = enableCaching;
             _timeToLive = timeToLive;
             _cacheSite = site;
-            _userAffine = userAffine;
         }
 
         [DataMember]
@@ -56,13 +54,6 @@ namespace ClearCanvas.Enterprise.Common
         {
             get { return _cacheSite; }
             set { _cacheSite = value; }
-        }
-
-        [DataMember]
-        public bool UserAffine
-        {
-            get { return _userAffine; }
-            set { _userAffine = value; }
         }
     }
 }
