@@ -58,6 +58,14 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 		ListSettingsPropertiesResponse ListSettingsProperties(ListSettingsPropertiesRequest request);
 
         /// <summary>
+        /// Imports meta-data for a settings group.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        ImportSettingsGroupResponse ImportSettingsGroup(ImportSettingsGroupRequest request);
+
+        /// <summary>
         /// Gets the document specified by the name, version, user and instance key.
         /// The user and instance key may be null.
         /// </summary>

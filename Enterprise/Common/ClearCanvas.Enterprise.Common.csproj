@@ -115,6 +115,8 @@
     <Compile Include="Caching\ICacheClient.cs" />
     <Compile Include="Caching\ICacheKeyProvider.cs" />
     <Compile Include="Caching\ICacheProvider.cs" />
+    <Compile Include="Configuration\ImportSettingsGroupRequest.cs" />
+    <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
     <Compile Include="ResponseCachingClientAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />

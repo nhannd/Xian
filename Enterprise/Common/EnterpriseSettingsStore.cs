@@ -39,12 +39,6 @@ using ClearCanvas.Enterprise.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    //NOTE: 
-    //There are a number of oddities in the implementation of this class due to the fact that it doesn't inherently
-    //know whether it is executing on the desktop (client) or server, and the server does not have any knowledge of
-    //settings classes that reside in client-side plugins.  This entire design of this could be revisited, however
-    //at the moment it isn't clear what a better design would be
-
     /// <summary>
     /// This class is an implementation of <see cref="ISettingsStore"/> that uses a <see cref="IConfigurationService"/>
     /// as a back-end storage.
@@ -52,9 +46,6 @@ namespace ClearCanvas.Enterprise.Common
     [ExtensionOf(typeof(SettingsStoreExtensionPoint))]
     public class EnterpriseSettingsStore : ISettingsStore
     {
-        private IList<SettingsGroupDescriptor> _groups;
-        private IList<SettingsGroupDescriptor> _localGroups;
-
         public EnterpriseSettingsStore()
         {
         }
@@ -166,57 +157,43 @@ namespace ClearCanvas.Enterprise.Common
 
         public IList<SettingsGroupDescriptor> ListSettingsGroups()
         {
-            // init groups if not initialized
-            if (_groups == null)
-            {
-                // obtain the list of settings groups from the configuration service
-				Platform.GetService<Configuration.IConfigurationService>(
-					delegate(Configuration.IConfigurationService service)
-                    {
-                    	_groups = service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
-                    });
+            List<SettingsGroupDescriptor> groups = null;
 
-                // HACK:
-                // this is really ugly, but we don't know if we're executing on the server or the client
-                // if executing on the client, need to add local groups (settings classes from client-side plugins)
-                // because the configuration service will not know about these groups
-                // note however that local settings classes that use the local file provider are excluded (ListInstalledSettingsGroups(true))
-                // because they are not stored in the enterprise settings store
-                _localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
-                foreach (SettingsGroupDescriptor group in _localGroups)
+            // obtain the list of settings groups from the configuration service
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
                 {
-                    if (!_groups.Contains(group))
-                        _groups.Add(group);
-                }
-            }
+                	groups = service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
+                });
 
-            return _groups;
+            return groups;
         }
 
         public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
         {
-            // init groups if not initialized
-            if (_groups == null)
-            {
-                ListSettingsGroups();
-            }
+            // use the configuration service to obtain the properties
+            IList<SettingsPropertyDescriptor> properties = null;
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
+                {
+                	properties = service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
+                });
+            return properties;
+        }
 
-            // if the group is in the local plugin base, get properties directly
-            if (_localGroups.Contains(group))
-            {
-                return SettingsPropertyDescriptor.ListSettingsProperties(group);
-            }
-            else
-            {
-                // use the configuration service to obtain the properties
-                IList<SettingsPropertyDescriptor> properties = null;
-				Platform.GetService<Configuration.IConfigurationService>(
-					delegate(Configuration.IConfigurationService service)
-                    {
-                    	properties = service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
-                    });
-                return properties;
-            }
+        public bool SupportsImport
+        {
+            get { return true; }
+        }
+
+        public void ImportSettingsGroup(SettingsGroupDescriptor group, List<SettingsPropertyDescriptor> properties)
+        {
+            Platform.GetService<Configuration.IConfigurationService>(
+                delegate(Configuration.IConfigurationService service)
+                {
+                    service.ImportSettingsGroup(
+                        new ImportSettingsGroupRequest(group, properties));
+                });
         }
 
         #endregion

@@ -55,7 +55,15 @@ namespace ClearCanvas.Enterprise.Configuration
         [ResponseCaching("GetSettingsMetadataCachingDirective")]
         public ListSettingsGroupsResponse ListSettingsGroups(ListSettingsGroupsRequest request)
         {
-        	return new ListSettingsGroupsResponse(SettingsGroupDescriptor.ListInstalledSettingsGroups(true));
+        	//return new ListSettingsGroupsResponse(SettingsGroupDescriptor.ListInstalledSettingsGroups(true));
+            IConfigurationSettingsGroupBroker broker = PersistenceContext.GetBroker<IConfigurationSettingsGroupBroker>();
+            return new ListSettingsGroupsResponse(
+                CollectionUtils.Map<ConfigurationSettingsGroup, SettingsGroupDescriptor>(
+                    broker.FindAll(),
+                    delegate(ConfigurationSettingsGroup g)
+                    {
+                        return g.GetDescriptor();
+                    }));
         }
 
         // because this service is invoked by the framework, rather than by the application,
@@ -67,8 +75,60 @@ namespace ClearCanvas.Enterprise.Configuration
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.Group, "Group");
 
-        	return new ListSettingsPropertiesResponse(
-				SettingsPropertyDescriptor.ListSettingsProperties(request.Group));
+            //return new ListSettingsPropertiesResponse(
+			//	SettingsPropertyDescriptor.ListSettingsProperties(request.Group));
+            ConfigurationSettingsGroupSearchCriteria where =
+                ConfigurationSettingsGroup.GetCriteria(request.Group);
+
+            IConfigurationSettingsGroupBroker broker = PersistenceContext.GetBroker<IConfigurationSettingsGroupBroker>();
+            ConfigurationSettingsGroup group = broker.FindOne(where);
+
+            return new ListSettingsPropertiesResponse(
+                CollectionUtils.Map<ConfigurationSettingsProperty, SettingsPropertyDescriptor>(
+                    group.SettingsProperties,
+                    delegate(ConfigurationSettingsProperty p)
+                    {
+                        return p.GetDescriptor();
+                    }));
+        }
+
+        [UpdateOperation]
+        public ImportSettingsGroupResponse ImportSettingsGroup(ImportSettingsGroupRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.Group, "Group");
+
+            IConfigurationSettingsGroupBroker broker = PersistenceContext.GetBroker<IConfigurationSettingsGroupBroker>();
+            ConfigurationSettingsGroupSearchCriteria where = ConfigurationSettingsGroup.GetCriteria(request.Group);
+            ConfigurationSettingsGroup group = CollectionUtils.FirstElement(broker.Find(where));
+            if (group == null)
+            {
+                // group doesn't exist, need to create it
+                group = new ConfigurationSettingsGroup();
+                group.UpdateFromDescriptor(request.Group);
+                PersistenceContext.Lock(group, DirtyState.New);
+            }
+            else
+            {
+                // update group from descriptor
+                group.UpdateFromDescriptor(request.Group);
+            }
+
+            if (request.Properties != null)
+            {
+                // update properties
+                group.SettingsProperties.Clear();
+                foreach (SettingsPropertyDescriptor descriptor in request.Properties)
+                {
+                    ConfigurationSettingsProperty property = new ConfigurationSettingsProperty();
+                    property.UpdateFromDescriptor(descriptor);
+                    group.SettingsProperties.Add(property);
+                }
+            }
+
+            PersistenceContext.SynchState();
+
+            return new ImportSettingsGroupResponse();
         }
 
         // because this service is invoked by the framework, rather than by the application,
@@ -268,7 +328,6 @@ namespace ClearCanvas.Enterprise.Configuration
 
             return criteria;
         }
-
 
     }
 }
