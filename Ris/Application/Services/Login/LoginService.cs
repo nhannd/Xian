@@ -45,6 +45,7 @@ using ClearCanvas.Ris.Application.Common.Login;
 using ChangePasswordRequest=ClearCanvas.Ris.Application.Common.Login.ChangePasswordRequest;
 using ChangePasswordResponse=ClearCanvas.Ris.Application.Common.Login.ChangePasswordResponse;
 using ClearCanvas.Enterprise.Core.ServiceModel;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -85,9 +86,9 @@ namespace ClearCanvas.Ris.Application.Services.Login
             string[] authorityTokens = null;
             SessionToken token = null;
 
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
+            //Platform.GetService<IAuthenticationService>(
+            //    delegate(IAuthenticationService service)
+            //    {
                     // this call will throw SecurityTokenException if user/password not valid
                     // it will throw a PasswordExpiredException if the password has expired
                     // note that PasswordExpiredException is part of the fault contract of this method,
@@ -97,7 +98,9 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 	InitiateSessionRequest initSessionRequest = new InitiateSessionRequest(user, "RIS", hostName, password);
                 	initSessionRequest.GetAuthorizations = true;
 
-					InitiateSessionResponse initSessionResponse = service.InitiateSession(initSessionRequest);
+                    AuthenticationClient authClient = new AuthenticationClient();
+                    InitiateSessionResponse initSessionResponse = authClient.InitiateSession(initSessionRequest);
+                    //InitiateSessionResponse initSessionResponse = service.InitiateSession(initSessionRequest);
                 	token = initSessionResponse.SessionToken;
                 	authorityTokens = initSessionResponse.AuthorityTokens;
 
@@ -105,7 +108,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                     // (this is necessary in order to load the WorkingFacilitySettings below)
 					// TODO is this the best way to do this?  Seems a little hokey...
                     Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(new GenericIdentity(user), token);
-                });
+                //});
 
 
             // store the working facility in the user's profile
@@ -147,13 +150,13 @@ namespace ClearCanvas.Ris.Application.Services.Login
             Platform.CheckMemberIsSet(request.UserName, "UserName");
             Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    // this call will throw SecurityTokenException if user/session token not valid
-                    // we intentionally don't catch this, allowing it to cause a fault
-                    service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
-                });
+            //Platform.GetService<IAuthenticationService>(
+            //    delegate(IAuthenticationService service)
+            //    {
+                    AuthenticationClient authClient = new AuthenticationClient();
+                    authClient.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
+                    //service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
+                //});
 
             return new LogoutResponse();
         }
