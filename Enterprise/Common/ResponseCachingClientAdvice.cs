@@ -13,16 +13,14 @@ namespace ClearCanvas.Enterprise.Common
 
         public object Intercept(IInvocation invocation, params object[] args)
         {
-            ICacheClient cacheClient = Cache.CreateClient("ResponseCache");
-
+            object service = invocation.InvocationTarget;
             string region = string.Format("{0}.{1}",
                 invocation.Method.DeclaringType.FullName, invocation.Method.Name);
             object request = args[0];
+            object response = null;
 
             string cacheKey = GetCacheKey(request);
-            object service = invocation.InvocationTarget;
-
-            object response = null;
+            ICacheClient cacheClient = Cache.CreateClient("ResponseCache");
             if (cacheKey != null && cacheClient.RegionExists(region))
             {
                 // check cache, and return if available
@@ -45,7 +43,8 @@ namespace ClearCanvas.Enterprise.Common
                 {
                     // if we didn't succeed in getting a cache key, this is an error
                     if (cacheKey == null)
-                        throw new InvalidOperationException("Service operation response is cacheable but the request class does not implement ICacheKeyProvider interface.");
+                        throw new InvalidOperationException(
+                            string.Format("{0} is cacheable but the request class does not implement ICacheKeyProvider.", response.GetType().FullName));
 
                     cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
                 }

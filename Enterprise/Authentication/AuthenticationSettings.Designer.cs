@@ -136,9 +136,9 @@ namespace ClearCanvas.Enterprise.Authentication {
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether session token cache is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool SessionTokenCacheEnabled {
+        public bool SessionTokenCachingEnabled {
             get {
-                return ((bool)(this["SessionTokenCacheEnabled"]));
+                return ((bool)(this["SessionTokenCachingEnabled"]));
             }
         }
         
@@ -149,9 +149,9 @@ namespace ClearCanvas.Enterprise.Authentication {
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies session token cache TTL in seconds - max recommended value is 60")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int SessionTokenCacheTimeToLiveSeconds {
+        public int SessionTokenCachingTimeToLiveSeconds {
             get {
-                return ((int)(this["SessionTokenCacheTimeToLiveSeconds"]));
+                return ((int)(this["SessionTokenCachingTimeToLiveSeconds"]));
             }
         }
         
@@ -162,9 +162,9 @@ namespace ClearCanvas.Enterprise.Authentication {
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies whether authority token cache is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AuthorityTokenCacheEnabled {
+        public bool AuthorityTokenCachingEnabled {
             get {
-                return ((bool)(this["AuthorityTokenCacheEnabled"]));
+                return ((bool)(this["AuthorityTokenCachingEnabled"]));
             }
         }
         
@@ -176,9 +176,9 @@ namespace ClearCanvas.Enterprise.Authentication {
             "take effect until this time elapses.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("180")]
-        public int AuthorityTokenCacheTimeToLiveSeconds {
+        public int AuthorityTokenCachingTimeToLiveSeconds {
             get {
-                return ((int)(this["AuthorityTokenCacheTimeToLiveSeconds"]));
+                return ((int)(this["AuthorityTokenCachingTimeToLiveSeconds"]));
             }
         }
     }

@@ -39,7 +39,7 @@ namespace ClearCanvas.Enterprise.Core
         private static void ProcessCacheDirective(object service, MethodInfo operation, object[] args)
         {
             ResponseCachingDirective directive = GetCachingDirective(service, operation, args);
-            if (directive == null)
+            if (directive == null || Equals(directive, ResponseCachingDirective.DoNotCacheDirective))
                 return;
 
             if (directive.CacheSite == ResponseCachingSite.Server)

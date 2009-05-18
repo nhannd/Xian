@@ -33,11 +33,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common.Caching;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class ConfigurationDocumentKey
+	public class ConfigurationDocumentKey : DataContractBase, ICacheKeyProvider
 	{
 		private string _documentName;
 		private Version _version;
@@ -79,5 +81,18 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 			get { return _instanceKey; }
 			private set { _instanceKey = value; }
 		}
-	}
+
+        #region ICacheKeyProvider Members
+
+        string ICacheKeyProvider.GetCacheKey()
+        {
+            return string.Format("{0}:{1}:{2}:{3}",
+                this.DocumentName,
+                this.Version,
+                StringUtilities.EmptyIfNull(this.User),
+                StringUtilities.EmptyIfNull(this.InstanceKey));
+        }
+
+        #endregion
+    }
 }

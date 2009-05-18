@@ -33,15 +33,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class GetConfigurationDocumentRequest : ConfigurationDocumentRequestBase
+	public class GetConfigurationDocumentRequest : ConfigurationDocumentRequestBase, ICacheKeyProvider
 	{
 		public GetConfigurationDocumentRequest(ConfigurationDocumentKey documentKey)
 			:base(documentKey)
 		{
 		}
-	}
+
+        #region ICacheKeyProvider Members
+
+        string ICacheKeyProvider.GetCacheKey()
+        {
+            return ((ICacheKeyProvider)this.DocumentKey).GetCacheKey();
+        }
+
+        #endregion
+    }
 }

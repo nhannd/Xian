@@ -54,6 +54,12 @@
     <Compile Include="ConfigurationException.cs" />
     <Compile Include="ConfigurationService.cs" />
     <Compile Include="ConfigurationServiceRecorder.cs" />
+    <Compile Include="ConfigurationStoreSettings.cs" />
+    <Compile Include="ConfigurationStoreSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ConfigurationStoreSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Imex\ConfigurationImex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
@@ -83,6 +89,13 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ConfigurationStoreSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ConfigurationStoreSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -292,8 +292,8 @@ namespace ClearCanvas.Enterprise.Authentication
         {
             AuthenticationSettings settings = new AuthenticationSettings();
             return new ResponseCachingDirective(
-                this.Settings.SessionTokenCacheEnabled,
-                TimeSpan.FromSeconds(this.Settings.SessionTokenCacheTimeToLiveSeconds),
+                this.Settings.SessionTokenCachingEnabled,
+                TimeSpan.FromSeconds(this.Settings.SessionTokenCachingTimeToLiveSeconds),
                 ResponseCachingSite.Client);
         }
 
@@ -306,8 +306,8 @@ namespace ClearCanvas.Enterprise.Authentication
         {
             AuthenticationSettings settings = new AuthenticationSettings();
             return new ResponseCachingDirective(
-                this.Settings.AuthorityTokenCacheEnabled,
-                TimeSpan.FromSeconds(this.Settings.AuthorityTokenCacheTimeToLiveSeconds),
+                this.Settings.AuthorityTokenCachingEnabled,
+                TimeSpan.FromSeconds(this.Settings.AuthorityTokenCachingTimeToLiveSeconds),
                 ResponseCachingSite.Client);
         }
 

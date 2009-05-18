@@ -66,6 +66,7 @@ namespace ClearCanvas.Enterprise.Configuration
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
+        [ResponseCaching("GetDocumentCachingDirective")]
         public GetConfigurationDocumentResponse GetConfigurationDocument(GetConfigurationDocumentRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
@@ -81,8 +82,6 @@ namespace ClearCanvas.Enterprise.Configuration
             ConfigurationDocument document = CollectionUtils.FirstElement(documents);
             return new GetConfigurationDocumentResponse(request.DocumentKey, document == null ? null : document.Body.DocumentText);
         }
-
-
 
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
@@ -142,6 +141,31 @@ namespace ClearCanvas.Enterprise.Configuration
         }
 
         #endregion
+
+        /// <summary>
+        /// This method is called automatically by response caching framework.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private ResponseCachingDirective GetDocumentCachingDirective(GetConfigurationDocumentRequest request)
+        {
+            // if the request is for ConfigurationStoreSettings, we cannot try to load 
+            // these settings to read the values, or we'll get into an infinite recursion
+            // therefore, we assume ConfigurationStoreSettings are simply never cached.
+            // a better solution would be to allow each settings group to specify its own
+            // cacheability, and store this in the db with the settings meta-data
+            // but this is not currently implemented
+            if (request.DocumentKey.DocumentName == typeof(ConfigurationStoreSettings).FullName)
+            {
+                return ResponseCachingDirective.DoNotCacheDirective;
+            }
+
+            ConfigurationStoreSettings settings = new ConfigurationStoreSettings();
+            return new ResponseCachingDirective(
+                settings.ConfigurationCachingEnabled,
+                TimeSpan.FromSeconds(settings.ConfigurationCachingTimeToLiveSeconds),
+                ResponseCachingSite.Client);
+        }
 
         private void CheckReadAccess(string user)
         {
