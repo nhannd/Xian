@@ -40,5 +40,23 @@ namespace ClearCanvas.Enterprise.Configuration {
                 return ((int)(this["ConfigurationCachingTimeToLiveSeconds"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SettingsMetadataCachingEnabled {
+            get {
+                return ((bool)(this["SettingsMetadataCachingEnabled"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("180")]
+        public int SettingsMetadataCachingTimeToLiveSeconds {
+            get {
+                return ((int)(this["SettingsMetadataCachingTimeToLiveSeconds"]));
+            }
+        }
     }
 }

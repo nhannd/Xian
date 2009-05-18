@@ -35,11 +35,12 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class ListSettingsPropertiesRequest : DataContractBase
+	public class ListSettingsPropertiesRequest : DataContractBase, ICacheKeyProvider
 	{
 		public ListSettingsPropertiesRequest(SettingsGroupDescriptor group)
 		{
@@ -48,5 +49,14 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 
 		[DataMember]
 		public SettingsGroupDescriptor Group;
-	}
+
+        #region ICacheKeyProvider Members
+
+        public string GetCacheKey()
+        {
+            return string.Format("{0}:{1}", this.Group.Name, this.Group.Version);
+        }
+
+        #endregion
+    }
 }

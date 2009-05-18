@@ -49,11 +49,19 @@ namespace ClearCanvas.Enterprise.Configuration
     {
         #region IConfigurationService Members
 
+        // because this service is invoked by the framework, rather than by the application,
+        // it is safest to use a new persistence scope
+        [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
+        [ResponseCaching("GetSettingsMetadataCachingDirective")]
         public ListSettingsGroupsResponse ListSettingsGroups(ListSettingsGroupsRequest request)
         {
         	return new ListSettingsGroupsResponse(SettingsGroupDescriptor.ListInstalledSettingsGroups(true));
         }
 
+        // because this service is invoked by the framework, rather than by the application,
+        // it is safest to use a new persistence scope
+        [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
+        [ResponseCaching("GetSettingsMetadataCachingDirective")]
         public ListSettingsPropertiesResponse ListSettingsProperties(ListSettingsPropertiesRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
@@ -143,7 +151,8 @@ namespace ClearCanvas.Enterprise.Configuration
         #endregion
 
         /// <summary>
-        /// This method is called automatically by response caching framework.
+        /// This method is called automatically by response caching framework
+        /// to provide caching directive for configuration documents.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -164,6 +173,21 @@ namespace ClearCanvas.Enterprise.Configuration
             return new ResponseCachingDirective(
                 settings.ConfigurationCachingEnabled,
                 TimeSpan.FromSeconds(settings.ConfigurationCachingTimeToLiveSeconds),
+                ResponseCachingSite.Client);
+        }
+
+        /// <summary>
+        /// This method is called automatically by response caching framework
+        /// to provide caching directive for settings meta-data.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private ResponseCachingDirective GetSettingsMetadataCachingDirective(object request)
+        {
+            ConfigurationStoreSettings settings = new ConfigurationStoreSettings();
+            return new ResponseCachingDirective(
+                settings.SettingsMetadataCachingEnabled,
+                TimeSpan.FromSeconds(settings.SettingsMetadataCachingTimeToLiveSeconds),
                 ResponseCachingSite.Client);
         }
 

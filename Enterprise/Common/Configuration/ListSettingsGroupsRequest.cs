@@ -34,11 +34,21 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class ListSettingsGroupsRequest : DataContractBase
+	public class ListSettingsGroupsRequest : DataContractBase, ICacheKeyProvider
 	{
-	}
+        #region ICacheKeyProvider Members
+
+        public string GetCacheKey()
+        {
+            // this request has no parameters, therefore all requests are identical
+            return "";
+        }
+
+        #endregion
+    }
 }
