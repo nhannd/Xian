@@ -26,5 +26,17 @@
     <Setting Name="HostNameWhiteList" Description="Comma delimited list of valid host names.  If blank, all host names are valid." Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="SessionTokenCacheEnabled" Description="Specifies whether session token cache is enabled." Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SessionTokenCacheTimeToLiveSeconds" Description="Specifies session token cache TTL in seconds - max recommended value is 60" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="AuthorityTokenCacheEnabled" Description="Specifies whether authority token cache is enabled." Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AuthorityTokenCacheTimeToLiveSeconds" Description="Specifies authority token cache TTL in seconds.  Authority token changes may not take effect until this time elapses." Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">180</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

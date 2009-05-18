@@ -91,6 +91,7 @@
     <Compile Include="Audit\WriteEntryRequest.cs" />
     <Compile Include="Audit\WriteEntryResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
+    <Compile Include="AuthenticationClient.cs" />
     <Compile Include="Authentication\ChangePasswordRequest.cs" />
     <Compile Include="Authentication\ChangePasswordResponse.cs" />
     <Compile Include="Authentication\GetAuthorizationsRequest.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="IConfigurationService.cs" />
     <Compile Include="ICoreServiceLayer.cs" />
     <Compile Include="ITimeService.cs" />
+    <Compile Include="ResponseCachingDirective.cs" />
     <Compile Include="UserAccessDeniedException.cs" />
     <Compile Include="InvalidUserSessionException.cs" />
     <Compile Include="IServiceChannelConfiguration.cs" />

@@ -48,11 +48,14 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			// initialize auth tokens if this is the first call
 			if (_authorityTokens == null)
 			{
-				Platform.GetService<IAuthenticationService>(
-					delegate(IAuthenticationService service)
-					{
-						_authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
-					});
+                AuthenticationClient authClient = new AuthenticationClient();
+                _authorityTokens = authClient.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
+                
+                //Platform.GetService<IAuthenticationService>(
+                //    delegate(IAuthenticationService service)
+                //    {
+                //        _authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
+                //    });
 			}
 
 			// check that the user was granted this token

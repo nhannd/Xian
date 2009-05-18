@@ -69,6 +69,8 @@
     <Compile Include="AuditLogEntry.cs" />
     <Compile Include="Audit\AuditLogEntryAssembler.cs" />
     <Compile Include="Audit\AuditService.cs" />
+    <Compile Include="ResponseCachingAdvice.cs" />
+    <Compile Include="ResponseCachingAttribute.cs" />
     <Compile Include="Caching\DefaultCacheClient.cs" />
     <Compile Include="Caching\DefaultCacheProvider.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />

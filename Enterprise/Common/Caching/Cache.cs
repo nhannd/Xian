@@ -37,11 +37,6 @@ namespace ClearCanvas.Enterprise.Common.Caching
             // a cacheID is required!
             Platform.CheckForNullReference(args.CacheID, "CacheID");
 
-            // eventually we may allow configuration of logical caches via external config,
-            // but for now the expiration time must be provided in the args!
-            if (args.ExpirationTime == TimeSpan.Zero)
-                throw new ArgumentException("ExpirationTime must be non-zero.");
-
             // TODO a more sophisticated delegate may be required here
 			// if more than one cache provider extension exists, there will need to be mechanisms for choosing
 			// the appropriate provider, which may be influenced by a) the creation args,

@@ -53,6 +53,8 @@ namespace ClearCanvas.Enterprise.Core
 			// JR: is there any point in logging exceptions from the in-process provider?  Or is this just redundant?
 			//_serviceFactory.Interceptors.Add(new ExceptionLoggingAdvice());
 
+            _serviceFactory.Interceptors.Add(new ResponseCachingAdvice());
+
 			// add persistence context advice, that controls the persistence context for the main transaction
 			_serviceFactory.Interceptors.Add(new PersistenceContextAdvice());
 

@@ -47,6 +47,9 @@ namespace ClearCanvas.Enterprise.Authentication
     [ServiceImplementsContract(typeof(IAuthenticationService))]
     public class AuthenticationService : CoreServiceLayer, IAuthenticationService
     {
+        private AuthenticationSettings _settings;
+
+
         #region IAuthenticationService Members
 
     	[UpdateOperation(ChangeSetAuditable = false)]
@@ -58,14 +61,12 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.HostName, "HostName");
 			Platform.CheckMemberIsSet(request.Password, "Password");
 
-			AuthenticationSettings settings = new AuthenticationSettings();
-
 			// check host name against white-list
-			if (!CheckWhiteList(settings.HostNameWhiteList, request.HostName))
+			if (!CheckWhiteList(this.Settings.HostNameWhiteList, request.HostName))
 				throw new UserAccessDeniedException();
 
 			// check application name against white-list
-			if (!CheckWhiteList(settings.ApplicationWhiteList, request.Application))
+            if (!CheckWhiteList(this.Settings.ApplicationWhiteList, request.Application))
 				throw new UserAccessDeniedException();
 
 
@@ -78,7 +79,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			CleanExpiredSessions(user);
 
 			// initiate new session
-			UserSession session = user.InitiateSession(request.Application, request.HostName, request.Password, GetSessionTimeout(settings));
+			UserSession session = user.InitiateSession(request.Application, request.HostName, request.Password, GetSessionTimeout());
 
 			// get authority tokens if requested
 			string[] authorizations = request.GetAuthorizations ? 	
@@ -106,13 +107,11 @@ namespace ClearCanvas.Enterprise.Authentication
                 throw new UserAccessDeniedException();
             }
 
-			AuthenticationSettings settings = new AuthenticationSettings();
-
 			// check new password meets policy
-			if (!Regex.Match(request.NewPassword, settings.ValidPasswordRegex).Success)
-				throw new RequestValidationException(settings.ValidPasswordMessage);
+            if (!Regex.Match(request.NewPassword, this.Settings.ValidPasswordRegex).Success)
+                throw new RequestValidationException(this.Settings.ValidPasswordMessage);
 
-			DateTime expiryTime = Platform.Time.AddDays(settings.PasswordExpiryDays);
+            DateTime expiryTime = Platform.Time.AddDays(this.Settings.PasswordExpiryDays);
 
 			// change the password
             user.ChangePassword(request.NewPassword, expiryTime);
@@ -121,7 +120,8 @@ namespace ClearCanvas.Enterprise.Authentication
         }
 
         [UpdateOperation(ChangeSetAuditable = false)]
-		public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
+        [ResponseCaching("GetSessionTokenCacheDirective")]
+        public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
@@ -133,13 +133,11 @@ namespace ClearCanvas.Enterprise.Authentication
             if (session == null)
                 throw new InvalidUserSessionException();
 
-			AuthenticationSettings settings = new AuthenticationSettings();
-
 			// determine if still valid
-			session.Validate(request.UserName, settings.UserSessionTimeoutEnabled);
+            session.Validate(request.UserName, this.Settings.UserSessionTimeoutEnabled);
 
 			// renew
-			session.Renew(GetSessionTimeout(settings));
+            session.Renew(GetSessionTimeout());
 
 			// get authority tokens if requested
 			string[] authorizations = request.GetAuthorizations ?
@@ -181,7 +179,8 @@ namespace ClearCanvas.Enterprise.Authentication
 
 
         [ReadOperation]
-		public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
+        [ResponseCaching("GetAuthorityTokenCacheDirective")]
+        public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
@@ -198,7 +197,7 @@ namespace ClearCanvas.Enterprise.Authentication
 
         #endregion
 
-		/// <summary>
+        /// <summary>
 		/// Gets the user specified by the user name, or null if no such user exists.
 		/// </summary>
 		/// <param name="userName"></param>
@@ -274,9 +273,62 @@ namespace ClearCanvas.Enterprise.Authentication
 				delegate(string s) { return s.Equals(value, StringComparison.InvariantCultureIgnoreCase); });
 		}
 
-		private static TimeSpan GetSessionTimeout(AuthenticationSettings settings)
+        /// <summary>
+        /// Gets the user session timeout from settings.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+		private TimeSpan GetSessionTimeout()
 		{
-			return TimeSpan.FromMinutes(settings.UserSessionTimeoutMinutes);
+            return TimeSpan.FromMinutes(this.Settings.UserSessionTimeoutMinutes);
 		}
+
+        /// <summary>
+        /// Gets the session token response caching directive.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private ResponseCachingDirective GetSessionTokenCacheDirective(object request)
+        {
+            AuthenticationSettings settings = new AuthenticationSettings();
+            return new ResponseCachingDirective(
+                this.Settings.SessionTokenCacheEnabled,
+                TimeSpan.FromSeconds(this.Settings.SessionTokenCacheTimeToLiveSeconds),
+                ResponseCachingSite.Client,
+                false);
+        }
+
+        /// <summary>
+        /// Gets the authority token response caching directive.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private ResponseCachingDirective GetAuthorityTokenCacheDirective(object request)
+        {
+            AuthenticationSettings settings = new AuthenticationSettings();
+            return new ResponseCachingDirective(
+                this.Settings.AuthorityTokenCacheEnabled,
+                TimeSpan.FromSeconds(this.Settings.AuthorityTokenCacheTimeToLiveSeconds),
+                ResponseCachingSite.Client,
+                false);
+        }
+
+        /// <summary>
+        /// Gets an instance of the settings.  The instance is loaded on demand
+        /// once per instance of this service class.
+        /// </summary>
+        private AuthenticationSettings Settings
+        {
+            get
+            {
+                if (_settings == null)
+                {
+                    _settings = new AuthenticationSettings();
+                }
+                return _settings;
+            }
+        }
+
+
 	}
 }

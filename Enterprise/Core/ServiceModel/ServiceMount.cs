@@ -254,6 +254,9 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
             // add exception promotion advice at the beginning of the interception chain (outside of the service transaction)
             interceptors.Add(new ExceptionPromotionAdvice());
 
+            // response caching advice can occur anywhere in the chain?
+            interceptors.Add(new ResponseCachingAdvice());
+
             // add performance logging advice conditionally
             if (_enablePerformanceLogging)
             {

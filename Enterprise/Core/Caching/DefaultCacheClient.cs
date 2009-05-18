@@ -48,6 +48,11 @@ namespace ClearCanvas.Enterprise.Core.Caching
 			_provider.Put(_cacheID, _region, key, value, _expiration, _sliding);
 		}
 
+        public void Put(string key, object value, TimeSpan expiration, bool sliding)
+        {
+            _provider.Put(_cacheID, _region, key, value, expiration, sliding);
+        }
+
 		public void Remove(string key)
 		{
             _provider.Remove(_cacheID, _region, key);

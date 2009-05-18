@@ -28,12 +28,23 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		object Get(string key);
 
 		/// <summary>
-		/// Puts the specified object into the cache at the specified key.
+		/// Puts the specified object into the cache at the specified key,
+        /// using default expiration policy.
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
 		/// <exception cref="CacheException"></exception>
 		void Put(string key, object value);
+
+        /// <summary>
+        /// Puts the specified object into the cache at the specified key,
+        /// using specified expiration policy.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="expiration"></param>
+        /// <param name="sliding"></param>
+        void Put(string key, object value, TimeSpan expiration, bool sliding);
 
 		/// <summary>
 		/// Removes the specified item from the cache, or does nothing if the item does not
