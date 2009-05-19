@@ -94,7 +94,6 @@ namespace ClearCanvas.Healthcare
 			procedure.ProcedureSteps.Add(this);
 		}
 
-
 		#endregion
 
 		#region Public Properties
@@ -103,7 +102,6 @@ namespace ClearCanvas.Healthcare
         /// Gets a user-friendly descriptive name for this procedure step.
         /// </summary>
         public abstract string Name { get; }
-
 
         /// <summary>
         /// Gets the associated procedure.
@@ -171,10 +169,82 @@ namespace ClearCanvas.Healthcare
 
 		#endregion
 
-
 		#region Public methods
 
-		/// <summary>
+        /// <summary>
+        /// Assigns the specified staff as the scheduled performer of this step.  Note that this operation is only valid
+        /// while the step is in the scheduled state.  The value may be null, in which case the step is unassigned.
+        /// </summary>
+        /// <param name="performer"></param>
+        public virtual void Assign(Staff performer)
+        {
+            Assign(performer == null ? null : new ProcedureStepPerformer(performer));
+        }
+
+        /// <summary>
+        /// Re-assigns this step to the specified scheduled performer.
+        /// </summary>
+        /// <remarks>
+        /// If this step is currently Scheduled, the scheduled performer is simply changed
+        /// to the specified performer.  If this step is in-progress or suspended, then
+        /// it is discontinued, and a new step is scheduled and assigned to the specified performer.
+        /// </remarks>
+        /// <param name="performer"></param>
+        /// <returns>A new step with the assigned performer.</returns>
+        public virtual ProcedureStep Reassign(Staff performer)
+        {
+            if(this.IsTerminated)
+                throw new WorkflowException("Cannot re-assign a terminated procedure step.");
+
+            if (this.State == ActivityStatus.SC)
+            {
+                this.Assign(performer);
+                return this;
+            }
+            else
+            {
+                this.Discontinue();
+                ProcedureStep newStep = CreateScheduledCopy();
+                newStep.Schedule(this.Scheduling.StartTime, this.Scheduling.EndTime);
+                newStep.Assign(performer);
+                return newStep;
+            }
+        }
+
+        /// <summary>
+        /// Starts the step using the specified staff as the performer
+        /// </summary>
+        /// <param name="performer"></param>
+        public virtual void Start(Staff performer)
+        {
+            Start(performer, null);
+        }
+
+        /// <summary>
+        /// Starts the step using the specified staff as the performer, recording the specified startTime.
+        /// </summary>
+        /// <param name="performer"></param>
+        /// <param name="startTime"></param>
+        public virtual void Start(Staff performer, DateTime? startTime)
+        {
+            Platform.CheckForNullReference(performer, "performer");
+
+            Start(new ProcedureStepPerformer(performer), startTime);
+        }
+
+        /// <summary>
+        /// Completes the step using the specified staff as the performer, assuming a performer has not already been assigned
+        /// </summary>
+        /// <param name="performer"></param>
+        public virtual void Complete(Staff performer)
+        {
+            Platform.CheckForNullReference(performer, "performer");
+
+            Complete(new ProcedureStepPerformer(performer));
+        }
+
+
+        /// <summary>
 		/// Links this step to the specified other step, effectively discontinuing this step.
 		/// </summary>
 		/// <param name="other"></param>
@@ -194,16 +264,7 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Links the specified procedure to the workflow artifact associated with this step.
-		/// </summary>
-		/// <param name="procedure"></param>
-    	protected virtual void LinkProcedure(Procedure procedure)
-    	{
-    		throw new WorkflowException(string.Format("Procedure steps of class {0} do not support linking.", this.GetClass().Name));
-    	}
-
-		/// <summary>
-		/// Gets the set of procedure steps that are related to this procedure step,
+		/// Gets athe set of procedure steps that are related to this procedure step,
 		/// in the sense that they relate to the same work artifact (protocol, report, etc).
 		/// Note that the result includes this step.
 		/// </summary>
@@ -220,75 +281,21 @@ namespace ClearCanvas.Healthcare
 		/// <returns></returns>
     	public abstract List<Procedure> GetLinkedProcedures();
 
-        /// <summary>
-        /// Assigns the specified staff as the scheduled performer of this step.  Note that this operation is only valid
-        /// while the step is in the scheduled state.  The value may be null, in which case the step is unassigned.
-        /// </summary>
-        /// <param name="performer"></param>
-        public virtual void Assign(Staff performer)
-        {
-            Assign(performer == null ? null : new ProcedureStepPerformer(performer));
-        }
-
-		/// <summary>
-		/// Discontinue the current step, create a new step and assigns the specified staff as the scheduled performer of the new step.
-		/// </summary>
-		/// <param name="performer"></param>
-		/// <returns>A new step with the assigned performer.</returns>
-		public virtual ProcedureStep Reassign(Staff performer)
-		{
-			if (this.State == ActivityStatus.SC)
-			{
-				this.Assign(performer);
-				return this;
-			}
-			else
-			{
-				this.Discontinue();
-				ProcedureStep newStep = CreateScheduledCopy();
-				newStep.Schedule(this.Scheduling.StartTime, this.Scheduling.EndTime);
-				newStep.Assign(performer);
-				return newStep;
-			}
-		}
-
-        /// <summary>
-        /// Starts the step using the specified staff as the performer
-        /// </summary>
-        /// <param name="performer"></param>
-        public virtual void Start(Staff performer)
-        {
-			Start(performer, null);
-        }
-
-		/// <summary>
-		/// Starts the step using the specified staff as the performer, recording the specified startTime.
-		/// </summary>
-		/// <param name="performer"></param>
-		/// <param name="startTime"></param>
-		public virtual void Start(Staff performer, DateTime? startTime)
-		{
-			Platform.CheckForNullReference(performer, "performer");
-
-			Start(new ProcedureStepPerformer(performer), startTime);
-		}
-
-        /// <summary>
-        /// Completes the step using the specified staff as the performer, assuming a performer has not already been assigned
-        /// </summary>
-        /// <param name="performer"></param>
-        public virtual void Complete(Staff performer)
-        {
-            Platform.CheckForNullReference(performer, "performer");
-
-            Complete(new ProcedureStepPerformer(performer));
-		}
 
 		#endregion
 
 		#region Protected API
 
-		/// <summary>
+        /// <summary>
+        /// Links the specified procedure to the workflow artifact associated with this step.
+        /// </summary>
+        /// <param name="procedure"></param>
+        protected virtual void LinkProcedure(Procedure procedure)
+        {
+            throw new WorkflowException(string.Format("Procedure steps of class {0} do not support linking.", this.GetClass().Name));
+        }
+
+        /// <summary>
         /// Called when the scheduling information for this procedure step has changed.
         /// </summary>
         protected override void OnSchedulingChanged()

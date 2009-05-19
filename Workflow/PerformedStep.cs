@@ -53,6 +53,8 @@ namespace ClearCanvas.Workflow
         private DateTime _startTime;
         private DateTime? _endTime;
 
+        #region Constructors
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -94,6 +96,9 @@ namespace ClearCanvas.Workflow
             _performer = performer;
         }
 
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets the set of associated activities.  Do not add or remove elements directly from this collection.
@@ -132,6 +137,8 @@ namespace ClearCanvas.Workflow
             get { return _endTime; }
             private set { _endTime = value; }
         }
+
+        #endregion
 
         /// <summary>
         /// Discontinues this step

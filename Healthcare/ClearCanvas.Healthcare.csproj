@@ -143,6 +143,7 @@
     <Compile Include="Imex\StaffGroupImex.cs" />
     <Compile Include="StaffNotePosting.cs" />
     <Compile Include="PerformingWorklists.cs" />
+    <Compile Include="Tests\ProcedureStepTests.cs" />
     <Compile Include="Tests\ReportTests.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestLocationFactory.cs" />
@@ -319,6 +320,7 @@
       <LastGenOutput>AlertsSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="Healthcare.cd" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingWorkflowSettings.Designer.cs</LastGenOutput>
