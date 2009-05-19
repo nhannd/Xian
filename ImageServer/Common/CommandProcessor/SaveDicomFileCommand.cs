@@ -33,6 +33,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using System;
+using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
@@ -102,7 +103,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			{
 				path = String.Format("{0}_tmp", _path);
 				if (File.Exists(path))
-					File.Delete(path);
+					FileUtils.Delete(path);
 			}
 			else
 				path = _path;
@@ -119,7 +120,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			if (_saveTemp)
 			{
 				if (File.Exists(_path))
-					File.Delete(_path);
+					FileUtils.Delete(_path);
 				File.Move(path, _path);
 				_fileCreated = true;
 			}

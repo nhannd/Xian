@@ -33,6 +33,7 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
         {
             if (File.Exists(_dest))
             {
-                File.Delete(_dest);
+				FileUtils.Delete(_dest);
             }
 
             // restore backup
@@ -103,7 +104,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             {
                 if (File.Exists(_destBackup))
                 {
-                    File.Delete(_destBackup);
+                    FileUtils.Delete(_destBackup);
                 }
             }
         }

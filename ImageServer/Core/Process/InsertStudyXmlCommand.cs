@@ -38,6 +38,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Process
@@ -89,9 +90,9 @@ namespace ClearCanvas.ImageServer.Core.Process
 				try
 				{
 					if (File.Exists(tmpStreamFile))
-						File.Delete(tmpStreamFile);
+						FileUtils.Delete(tmpStreamFile);
 					if (File.Exists(tmpGzStreamFile))
-						File.Delete(tmpGzStreamFile);
+						FileUtils.Delete(tmpGzStreamFile);
 
 					using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
 					                  gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
@@ -102,10 +103,10 @@ namespace ClearCanvas.ImageServer.Core.Process
 					}
 
 					if (File.Exists(streamFile))
-						File.Delete(streamFile);
+						FileUtils.Delete(streamFile);
 					File.Move(tmpStreamFile, streamFile);
 					if (File.Exists(gzStreamFile))
-						File.Delete(gzStreamFile);
+						FileUtils.Delete(gzStreamFile);
 					File.Move(tmpGzStreamFile,gzStreamFile);
 					return;
 				}

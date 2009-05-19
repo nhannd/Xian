@@ -100,6 +100,7 @@
     <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
     <Compile Include="Utilities\FilesystemUtils.cs" />
+    <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
   </ItemGroup>

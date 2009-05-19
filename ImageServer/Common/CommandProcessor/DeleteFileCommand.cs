@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
@@ -108,13 +109,13 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 if (_restored)
                 {
                     if (File.Exists(_backupFile))
-                        File.Delete(_backupFile);
+                        FileUtils.Delete(_backupFile);
                 }
             }
             else
             {
                 if (File.Exists(_backupFile))
-                    File.Delete(_backupFile);
+					FileUtils.Delete(_backupFile);
             }
         }
 

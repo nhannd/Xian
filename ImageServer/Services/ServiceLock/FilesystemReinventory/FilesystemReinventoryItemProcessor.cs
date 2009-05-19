@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
 								string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
 								if (File.Exists(studyXml))
-									File.Delete(studyXml);
+									FileUtils.Delete(studyXml);
 
 								foreach (FileInfo sopFile in fileList)
 								{

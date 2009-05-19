@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
@@ -120,9 +121,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 				try
 				{
 					if (File.Exists(tmpStreamFile))
-						File.Delete(tmpStreamFile);
+						FileUtils.Delete(tmpStreamFile);
 					if (File.Exists(tmpGzStreamFile))
-						File.Delete(tmpGzStreamFile);
+						FileUtils.Delete(tmpGzStreamFile);
 
 					_fileSaved = true;
 
@@ -135,10 +136,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 					}
 
 					if (File.Exists(streamFile))
-						File.Delete(streamFile);
+						FileUtils.Delete(streamFile);
 					File.Move(tmpStreamFile, streamFile);
 					if (File.Exists(gzStreamFile))
-						File.Delete(gzStreamFile);
+						FileUtils.Delete(gzStreamFile);
 					File.Move(tmpGzStreamFile, gzStreamFile);
 					return;
 				}
@@ -168,7 +169,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		protected override void OnUndo()
 		{
 			if (File.Exists(_xmlPath) && _fileSaved)
-				File.Delete(_xmlPath);
+				FileUtils.Delete(_xmlPath);
 
 			if (false == String.IsNullOrEmpty(_xmlBackupPath) && File.Exists(_xmlBackupPath))
 			{
@@ -177,7 +178,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			}
 
 			if (File.Exists(_gzPath) && _fileSaved)
-				File.Delete(_gzPath);
+				FileUtils.Delete(_gzPath);
 
 			if (false == String.IsNullOrEmpty(_gzBackupPath) && File.Exists(_gzBackupPath))
 			{
@@ -192,11 +193,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		{
 			if (false == String.IsNullOrEmpty(_xmlBackupPath) && File.Exists(_xmlBackupPath))
 			{
-				File.Delete(_xmlBackupPath);
+				FileUtils.Delete(_xmlBackupPath);
 			}
 			if (false == String.IsNullOrEmpty(_gzBackupPath) && File.Exists(_gzBackupPath))
 			{
-				File.Delete(_gzBackupPath);
+				FileUtils.Delete(_gzBackupPath);
 			}
 		}
 

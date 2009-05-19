@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -281,7 +282,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                         else
                         {
                             // only keep .dcm files
-                            File.Delete(file);
+							FileUtils.Delete(file);
                         }
 
                     }, true);

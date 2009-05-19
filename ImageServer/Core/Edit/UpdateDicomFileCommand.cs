@@ -36,6 +36,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {
@@ -101,9 +102,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		public  void Dispose()
 		{
 			if (File.Exists(_backupExistingFileName))
-				File.Delete(_backupExistingFileName); 
-
-            
+				FileUtils.Delete(_backupExistingFileName); 
 		}
 
 		protected override void OnExecute()
@@ -140,7 +139,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			if (!String.IsNullOrEmpty(OutputFilePath) && _saved)
 			{
-				File.Delete(OutputFilePath);
+				FileUtils.Delete(OutputFilePath);
 
 				if (_backup)
 				{
