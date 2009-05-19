@@ -225,11 +225,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			{
 				if (IsVoiLutProvider(presentationImage) && IsGrayScaleImage(presentationImage) && IsImageSopProvider(presentationImage))
 				{
-					IDicomVoiLutsProvider voiLutsProvider = presentationImage as IDicomVoiLutsProvider;
-					return (AutoImageVoiLutLinear.CanCreateFrom(voiLutsProvider)
-					        || AutoPresentationVoiLutLinear.CanCreateFrom(voiLutsProvider)
-					        || AutoImageVoiLutData.CanCreateFrom(voiLutsProvider)
-					        || AutoPresentationVoiLutData.CanCreateFrom(voiLutsProvider));
+					// this preset applies to any IDicomVoiLutsProvider, since in the absence of any presentation or image luts, we always have a min/max algorithm
+					return presentationImage is IDicomVoiLutsProvider;
 				}
 				return false;
 			}
