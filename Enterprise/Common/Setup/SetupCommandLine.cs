@@ -34,9 +34,26 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Configuration.Setup
+namespace ClearCanvas.Enterprise.Common.Setup
 {
 	class SetupCommandLine : CommandLine
 	{
+        private string _userName;
+        private string _password;
+
+        [CommandLineParameter("uid", "u", "User", Required=true)]
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
+        }
+
+        [CommandLineParameter("pwd", "p", "Password", Required = true)]
+        public string Password
+        {
+            get { return _password; }
+            set { _password = value; }
+        }
+
 	}
 }

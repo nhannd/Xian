@@ -148,6 +148,8 @@
     <Compile Include="ICoreServiceLayer.cs" />
     <Compile Include="ITimeService.cs" />
     <Compile Include="ResponseCachingDirective.cs" />
+    <Compile Include="Setup\SetupApplication.cs" />
+    <Compile Include="Setup\SetupCommandLine.cs" />
     <Compile Include="UserAccessDeniedException.cs" />
     <Compile Include="InvalidUserSessionException.cs" />
     <Compile Include="IServiceChannelConfiguration.cs" />
