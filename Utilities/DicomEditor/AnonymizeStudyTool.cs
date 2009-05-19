@@ -134,7 +134,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 			try
 			{
-				_tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+				_tempPath = Path.Combine(Path.GetTempPath(), "ClearCanvas");
+				_tempPath = Path.Combine(_tempPath, "Anonymization");
+				_tempPath = Path.Combine(_tempPath, Path.GetRandomFileName());
 				Directory.CreateDirectory(_tempPath);
 
 				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
@@ -193,7 +195,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 					FileImportRequest request = new FileImportRequest();
 					request.BadFileBehaviour = BadFileBehaviour.Move;
 					request.FileImportBehaviour = FileImportBehaviour.Move;
-					request.FilePaths = filePaths;
+					request.FilePaths = new string[] {_tempPath};
 					request.Recursive = false;
 					request.IsBackground = true;
 					client.Import(request);
