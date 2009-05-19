@@ -46,6 +46,7 @@ using ChangePasswordRequest=ClearCanvas.Ris.Application.Common.Login.ChangePassw
 using ChangePasswordResponse=ClearCanvas.Ris.Application.Common.Login.ChangePasswordResponse;
 using ClearCanvas.Enterprise.Core.ServiceModel;
 using System;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -80,67 +81,36 @@ namespace ClearCanvas.Ris.Application.Services.Login
             string password = StringUtilities.EmptyIfNull(request.Password);
         	string hostName = StringUtilities.NullIfEmpty(request.HostName) ?? StringUtilities.NullIfEmpty(request.ClientIP);
 
-            // obtain the set of authority tokens for the user
-            // note that we don't need to be authenticated to access IAuthenticationService
-            // because it will accessed in-process
-            string[] authorityTokens = null;
-            SessionToken token = null;
-
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    // this call will throw SecurityTokenException if user/password not valid
-                    // it will throw a PasswordExpiredException if the password has expired
-                    // note that PasswordExpiredException is part of the fault contract of this method,
-                    // so we don't catch it
-
-					// TODO: app name shouldn't be hardcoded
-                	InitiateSessionRequest initSessionRequest = new InitiateSessionRequest(user, "RIS", hostName, password);
-                	initSessionRequest.GetAuthorizations = true;
-
-                    //AuthenticationClient authClient = new AuthenticationClient();
-                    //InitiateSessionResponse initSessionResponse = authClient.InitiateSession(initSessionRequest);
-                    InitiateSessionResponse initSessionResponse = service.InitiateSession(initSessionRequest);
-                	token = initSessionResponse.SessionToken;
-                	authorityTokens = initSessionResponse.AuthorityTokens;
-
-                    // setup a principal on this thread for the duration of this request
-                    // (this is necessary in order to load the WorkingFacilitySettings below)
-					// TODO is this the best way to do this?  Seems a little hokey...
-                    Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(new GenericIdentity(user), token);
-                });
-
-
-            // store the working facility in the user's profile
-            WorkingFacilitySettings settings = new WorkingFacilitySettings();
-            if (request.WorkingFacility != null)
+            try
             {
-                Facility facility = PersistenceContext.Load<Facility>(request.WorkingFacility);
-                settings.WorkingFacilityCode = facility.Code;
+                // initiate session and obtain authority tokens
+                string[] authorityTokens = null;
+                SessionToken token = InitiateSession(user, password, hostName, out authorityTokens);
+
+                // store the working facility in the user's profile
+                UpdateWorkingFacility(request.WorkingFacility);
+
+                // load staff for user
+                Staff staff = FindStaffForUser(user);
+
+                return new LoginResponse(
+                    token.Id,
+                    authorityTokens,
+                    staff == null ? null : new StaffAssembler().CreateStaffSummary(staff, this.PersistenceContext));
+
             }
-            else
+            // for some reason, we need to catch and rethrow these to get the client
+            // to see a strongly typed fault - otherwise it just gets a general FaultException
+            catch (FaultException<UserAccessDeniedException> e)
             {
-                // working facility not known
-                settings.WorkingFacilityCode = "";
+                throw e.Detail;
             }
-            settings.Save();
-
-
-        	StaffSummary staffSummary = null;
-            try 
-            {	
-                StaffSearchCriteria where = new StaffSearchCriteria();
-                where.UserName.EqualTo(user);
-                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
-                staffSummary = staff == null ? null : new StaffAssembler().CreateStaffSummary(staff, this.PersistenceContext);
-            }
-            catch (EntityNotFoundException)
+            catch (FaultException<PasswordExpiredException> e)
             {
-                // no staff associated to user 
+                throw e.Detail;
             }
-
-            return new LoginResponse(token.Id, authorityTokens, staffSummary);
         }
+
 
         [UpdateOperation]
         [Audit(typeof(LoginServiceRecorder))]
@@ -153,8 +123,6 @@ namespace ClearCanvas.Ris.Application.Services.Login
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
-                    //AuthenticationClient authClient = new AuthenticationClient();
-                    //authClient.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
                     service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
                 });
 
@@ -172,16 +140,90 @@ namespace ClearCanvas.Ris.Application.Services.Login
             string password = StringUtilities.EmptyIfNull(request.Password);
             string newPassword = StringUtilities.EmptyIfNull(request.NewPassword);
 
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    // this call will throw SecurityTokenException if user/password not valid
-                    service.ChangePassword(new Enterprise.Common.Authentication.ChangePasswordRequest(user, password, newPassword));
-                });
+            try
+            {
+                Platform.GetService<IAuthenticationService>(
+                    delegate(IAuthenticationService service)
+                    {
+                        // this call will throw SecurityTokenException if user/password not valid
+                        service.ChangePassword(new Enterprise.Common.Authentication.ChangePasswordRequest(user, password, newPassword));
+                    });
 
-            return new ChangePasswordResponse();
+                return new ChangePasswordResponse();
+            }
+            // for some reason, we need to catch and rethrow these to get the client
+            // to see a strongly typed fault - otherwise it just gets a general FaultException
+            catch (FaultException<RequestValidationException> e)
+            {
+                throw e.Detail;
+            }
+            catch (FaultException<UserAccessDeniedException> e)
+            {
+                throw e.Detail;
+            }
         }
 
         #endregion
+
+        /// <summary>
+        /// Initiates a session for the specified user, and establishes a principal on this thread.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="hostname"></param>
+        /// <param name="authorityTokens"></param>
+        /// <returns></returns>
+        private SessionToken InitiateSession(string userName, string password, string hostname, out string[] authorityTokens)
+        {
+            InitiateSessionResponse initSessionResponse = null;
+            Platform.GetService<IAuthenticationService>(
+                delegate(IAuthenticationService service)
+                {
+                    // TODO: app name shouldn't be hardcoded
+                    initSessionResponse = service.InitiateSession(
+                        new InitiateSessionRequest(userName, "RIS", hostname, password, true));
+
+                    // setup a principal on this thread for the duration of this request
+                    // (this is necessary in order to load the WorkingFacilitySettings, etc)
+                    // TODO is this the best way to do this?  Seems a little hokey...
+                    Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(new GenericIdentity(userName), initSessionResponse.SessionToken);
+                });
+            authorityTokens = initSessionResponse.AuthorityTokens;
+            return initSessionResponse.SessionToken;
+        }
+
+        /// <summary>
+        /// Updates the working facility stored in the user profile of the current user.
+        /// </summary>
+        /// <param name="facilityRef"></param>
+        private void UpdateWorkingFacility(EntityRef facilityRef)
+        {
+            // store the working facility in the user's profile
+            WorkingFacilitySettings settings = new WorkingFacilitySettings();
+            if (facilityRef != null)
+            {
+                Facility facility = PersistenceContext.Load<Facility>(facilityRef);
+                settings.WorkingFacilityCode = facility.Code;
+            }
+            else
+            {
+                // working facility not known
+                settings.WorkingFacilityCode = "";
+            }
+            settings.Save();
+        }
+
+        /// <summary>
+        /// Gets the staff associated with specified user, or null if no staff associated.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        private Staff FindStaffForUser(string userName)
+        {
+            StaffSearchCriteria where = new StaffSearchCriteria();
+            where.UserName.EqualTo(userName);
+            return CollectionUtils.FirstElement(PersistenceContext.GetBroker<IStaffBroker>().Find(where));
+        }
+
     }
 }
