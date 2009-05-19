@@ -120,14 +120,21 @@ namespace ClearCanvas.Ris.Application.Services.Login
             Platform.CheckMemberIsSet(request.UserName, "UserName");
             Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
-                });
+			try
+			{
+				Platform.GetService<IAuthenticationService>(
+					delegate(IAuthenticationService service)
+					{
+						service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
+					});
 
-            return new LogoutResponse();
-        }
+				return new LogoutResponse();
+			}
+			catch (FaultException<InvalidUserSessionException> e)
+			{
+				throw e.Detail;
+			}
+		}
 
         [UpdateOperation]
         [Audit(typeof(LoginServiceRecorder))]
