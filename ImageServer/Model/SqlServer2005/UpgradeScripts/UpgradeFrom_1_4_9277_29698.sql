@@ -755,6 +755,7 @@ GO
 
 PRINT N'Delete AcceptLatest policy from [dbo].[DuplicateSopPolicyEnum]'
 GO
+UPDATE [dbo].[ServerPartition] SET DuplicateSopPolicyEnum=103 where DuplicateSopPolicyEnum=102
 DELETE FROM [dbo].[DuplicateSopPolicyEnum] WHERE Lookup = 'AcceptLatest'
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
