@@ -98,24 +98,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = AccessionNumber.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.AccessionNumber.Like(key);
 			}
 			if (!String.IsNullOrEmpty(PatientId))
 			{
 				string key = PatientId.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.PatientId.Like(key);
 			}
 			if (!String.IsNullOrEmpty(PatientsName))
 			{
 				string key = PatientsName.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.PatientsName.Like(key);
 			}
 			if (!String.IsNullOrEmpty(StudyDescription))
 			{
 				string key = StudyDescription.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.StudyDescription.Like(key);
 			}
 			if (StudyDate != null)

@@ -171,6 +171,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				string key = Component;
 				key = key.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.Component.Like(key);
 			}
 			if (!String.IsNullOrEmpty(InsertTime))

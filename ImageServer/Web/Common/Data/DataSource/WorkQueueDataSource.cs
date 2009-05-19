@@ -238,12 +238,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = PatientsName.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				parameters.PatientsName = key;
 			}
 			if (PatientId != null)
 			{
 				string key = PatientId.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				parameters.PatientID = key;
 			}
 

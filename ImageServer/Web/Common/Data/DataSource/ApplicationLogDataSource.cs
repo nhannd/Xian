@@ -119,6 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = LogLevel.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.LogLevel.Like(key);
 			}
 
@@ -126,6 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = Thread.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.Thread.Like(key);
 			}
 
@@ -133,6 +135,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = Host.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.Host.Like(key);
 			}
 
@@ -140,6 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = Exception.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.Exception.Like(key);
 			}
 
@@ -147,6 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			{
 				string key = Message.Replace("*", "%");
 				key = key.Replace("?", "_");
+				key = "%" + key + "%";
 				criteria.Message.Like(key);
 			}
 
