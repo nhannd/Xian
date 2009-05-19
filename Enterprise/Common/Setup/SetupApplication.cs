@@ -31,47 +31,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.IO;
+using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Enterprise.Common.Authentication;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using System.Net;
-using System.Security.Principal;
-using System.Threading;
 
 namespace ClearCanvas.Enterprise.Common.Setup
 {
+	/// <summary>
+	/// Connects to the enterprise server and imports settings groups, authority tokens, and optionally authority groups.
+	/// </summary>
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class SetupApplication : IApplicationRoot
     {
-
-        #region Principal class
-
-        class Principal : GenericPrincipal, IUserCredentialsProvider
-        {
-            private SessionToken _token;
-            public Principal(IIdentity identity, SessionToken token, string[] roles)
-                :base(identity, roles)
-            {
-                _token = token;
-            }
-
-
-            public string UserName
-            {
-                get { return this.Identity.Name; }
-            }
-
-            public string SessionTokenId
-            {
-                get { return _token.Id; }
-            }
-        }
-
-        #endregion
-
         #region IApplicationRoot Members
 
         public void RunApplication(string[] args)
@@ -81,12 +55,20 @@ namespace ClearCanvas.Enterprise.Common.Setup
             {
                 cmdLine.Parse(args);
 
-                RemoteConnectionScope(cmdLine.UserName, cmdLine.Password,
-                    delegate
-                    {
-                        ImportSettingsGroups();
-                    });
+				using(new AuthenticationScope(cmdLine.UserName, "setup", Dns.GetHostName(), cmdLine.Password))
+				{
+					// first import the tokens, since the default groups will likely depend on these tokens
+					ImportAuthorityTokens(cmdLine.SysAdminGroup);
 
+					// import groups if specified
+					if(cmdLine.ImportDefaultAuthorityGroups)
+					{
+						ImportAuthorityGroups();
+					}
+
+					// import settings groups
+					ImportSettingsGroups();
+				}
             }
 			catch (CommandLineException e)
 			{
@@ -96,6 +78,9 @@ namespace ClearCanvas.Enterprise.Common.Setup
 
         #endregion
 
+		/// <summary>
+		/// Import settings groups defined in local plugins.
+		/// </summary>
         private static void ImportSettingsGroups()
         {
             List<SettingsGroupDescriptor> groups = SettingsGroupDescriptor.ListInstalledSettingsGroups(true);
@@ -111,35 +96,49 @@ namespace ClearCanvas.Enterprise.Common.Setup
                 });
         }
 
-        private void RemoteConnectionScope(string user, string password, Action<object> action)
-        {
-            SessionToken sessionToken = null;
-            Platform.GetService<IAuthenticationService>(
-                delegate(IAuthenticationService service)
-                {
-                    // obtain session
-                    InitiateSessionResponse response = service.InitiateSession(
-                        new InitiateSessionRequest(user, "setup", Dns.GetHostName(), password, true));
+		/// <summary>
+		/// Import authority tokens defined in local plugins.
+		/// </summary>
+		private static void ImportAuthorityTokens(string sysAdminGroup)
+		{
+			string[] addToGroups = string.IsNullOrEmpty(sysAdminGroup) ? new string[] { } : new string[] { sysAdminGroup };
 
-                    // establish thread principal
-                    sessionToken = response.SessionToken;
-                    Thread.CurrentPrincipal = new Principal(
-                        new GenericIdentity(user),
-                        sessionToken,
-                        response.AuthorityTokens);
+			AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
 
-                    try
-                    {
-                        // execute actions
-                        action(null);
-                    }
-                    finally
-                    {
-                        // terminate session
-                        service.TerminateSession(
-                            new TerminateSessionRequest(user, sessionToken));
-                    }
-                });
-        }
+			List<AuthorityTokenSummary> summaries = CollectionUtils.Map<AuthorityTokenDefinition, AuthorityTokenSummary>(tokens,
+								delegate(AuthorityTokenDefinition t)
+								{
+									return new AuthorityTokenSummary(t.Token, t.Description);
+								});
+
+			Platform.GetService<IAuthorityGroupAdminService>(
+				delegate(IAuthorityGroupAdminService service)
+				{
+					service.ImportAuthorityTokens(
+						new ImportAuthorityTokensRequest(summaries, new List<string>(addToGroups)));
+				});
+		}
+
+		/// <summary>
+		/// Import authority groups defined in local plugins.
+		/// </summary>
+		private static void ImportAuthorityGroups()
+		{
+			AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
+
+			Platform.GetService<IAuthorityGroupAdminService>(
+				delegate(IAuthorityGroupAdminService service)
+				{
+					service.ImportAuthorityGroups(
+						new ImportAuthorityGroupsRequest(
+							CollectionUtils.Map<AuthorityGroupDefinition, AuthorityGroupDetail>(groups,
+								delegate(AuthorityGroupDefinition g)
+								{
+									return new AuthorityGroupDetail(null, g.Name,
+										CollectionUtils.Map<string, AuthorityTokenSummary>(g.Tokens,
+											delegate(string t) { return new AuthorityTokenSummary(t, null); }));
+								})));
+				});
+		}
     }
 }

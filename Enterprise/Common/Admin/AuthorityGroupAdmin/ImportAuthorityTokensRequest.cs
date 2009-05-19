@@ -45,7 +45,23 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 			Tokens = tokens;
 		}
 
+
+		public ImportAuthorityTokensRequest(List<AuthorityTokenSummary> tokens, List<string> addToGroups)
+		{
+			Tokens = tokens;
+			AddToGroups = addToGroups;
+		}
+
+		/// <summary>
+		/// Tokens to import.
+		/// </summary>
 		[DataMember]
 		public List<AuthorityTokenSummary> Tokens;
+
+		/// <summary>
+		/// Existing authority groups to which the tokens should be added.
+		/// </summary>
+		[DataMember]
+		public List<string> AddToGroups;
 	}
 }

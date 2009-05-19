@@ -40,20 +40,47 @@ namespace ClearCanvas.Enterprise.Common.Setup
 	{
         private string _userName;
         private string _password;
+		private string _sysAdminGroup;
+		private bool _importDefaultAuthorityGroups = true;
 
-        [CommandLineParameter("uid", "u", "User", Required=true)]
+		/// <summary>
+		/// Specifies whether to create default authority groups.
+		/// </summary>
+		[CommandLineParameter("groups", "g", "Specifies whether to import the default authority groups. This option is enabled by default.")]
+		public bool ImportDefaultAuthorityGroups
+		{
+			get { return _importDefaultAuthorityGroups; }
+			set { _importDefaultAuthorityGroups = value; }
+		}
+
+		/// <summary>
+		/// Specifies user name to connect to enterprise server.
+		/// </summary>
+		[CommandLineParameter("suid", "Specifies user name to connect to enterprise server.", Required = true)]
         public string UserName
         {
             get { return _userName; }
             set { _userName = value; }
         }
 
-        [CommandLineParameter("pwd", "p", "Password", Required = true)]
+		/// <summary>
+		/// Specifies password to connect to enterprise server.
+		/// </summary>
+		[CommandLineParameter("spwd", "Specifies password to connect to enterprise server.", Required = true)]
         public string Password
         {
             get { return _password; }
             set { _password = value; }
         }
 
+		/// <summary>
+		/// Name of the sys-admin group. Imported tokens will be automatically added to this group.
+		/// </summary>
+		[CommandLineParameter("sgroup", "Specifies the name of the system admin authority group, so that imported tokens can be added to it.")]
+		public string SysAdminGroup
+		{
+			get { return _sysAdminGroup; }
+			set { _sysAdminGroup = value; }
+		}
 	}
 }
