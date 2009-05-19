@@ -1180,6 +1180,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected image is not stored on your local file system..
+        /// </summary>
+        internal static string MessageUnableToLocateNonLocalImage {
+            get {
+                return ResourceManager.GetString("MessageUnableToLocateNonLocalImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calculates Window/Level from the minimum and maximum pixel values.
         /// </summary>
         internal static string MinMaxAlgorithmPresetVoiLutOperationComponentDescription {

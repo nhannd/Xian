@@ -68,7 +68,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
         	ILocalSopDataSource localSource = image.ImageSop.DataSource as ILocalSopDataSource;
 			if (localSource == null)
+			{
+				base.Context.DesktopWindow.ShowMessageBox(SR.MessageUnableToLocateNonLocalImage, MessageBoxActions.Ok);
 				return;
+			}
 
 			System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + localSource.Filename);
         }

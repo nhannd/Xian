@@ -726,4 +726,7 @@ Please check the log for more details.</value>
   <data name="LabelEnterText" xml:space="preserve">
     <value>Enter Text</value>
   </data>
+  <data name="MessageUnableToLocateNonLocalImage" xml:space="preserve">
+    <value>The selected image is not stored on your local file system.</value>
+  </data>
 </root>
