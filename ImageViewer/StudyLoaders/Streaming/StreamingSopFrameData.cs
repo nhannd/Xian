@@ -202,22 +202,45 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			public RetrievePixelDataResult Retrieve()
 			{
-				CodeClock clock = new CodeClock();
-				clock.Start();
+				try
+				{
+					CodeClock clock = new CodeClock();
+					clock.Start();
 
-				StreamingClient client = new StreamingClient(BaseUrl);
-				RetrievePixelDataResult result =
-					client.RetrievePixelData(AETitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid, FrameNumber - 1);
+					StreamingClient client = new StreamingClient(BaseUrl);
+					RetrievePixelDataResult result =
+						client.RetrievePixelData(AETitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid, FrameNumber - 1);
 
-				clock.Stop();
+					clock.Stop();
 
-				string message = String.Format("[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (s): {4}",
-											   SopInstanceUid, FrameNumber, TransferSyntaxUid,
-											   result.MetaData.ContentLength, clock.Seconds);
+					string message = String.Format("[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (s): {4}",
+					                               SopInstanceUid, FrameNumber, TransferSyntaxUid,
+					                               result.MetaData.ContentLength, clock.Seconds);
 
-				Platform.Log(LogLevel.Debug, message);
+					Platform.Log(LogLevel.Debug, message);
 
-				return result;
+					return result;
+				}
+				catch (StreamingClientException ex)
+				{
+					switch (ex.Type)
+					{
+						case StreamingClientExceptionType.Access:
+							throw new Exception(SR.MessageStreamingAccessException, ex);
+						case StreamingClientExceptionType.Network:
+							throw new Exception(SR.MessageStreamingNetworkException, ex);
+						case StreamingClientExceptionType.Protocol:
+						case StreamingClientExceptionType.Server:
+						case StreamingClientExceptionType.UnexpectedResponse:
+						case StreamingClientExceptionType.Generic:
+						default:
+							throw new Exception(SR.MessageStreamingGenericException, ex);
+					}
+				}
+				catch (Exception ex)
+				{
+					throw new Exception(SR.MessageStreamingGenericException, ex);
+				}
 			}
 		}
 		

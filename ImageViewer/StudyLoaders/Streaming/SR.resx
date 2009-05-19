@@ -120,4 +120,16 @@
   <data name="DescriptionPrefetchingStrategy" xml:space="preserve">
     <value>ClearCanvas Streaming</value>
   </data>
+  <data name="MessageStreamingAccessException" xml:space="preserve">
+    <value>An access error has occurred while streaming the image. The server may be currently processing the image. If the error persists, please contact your system administrator.</value>
+  </data>
+  <data name="MessageStreamingClientConfigurationException" xml:space="preserve">
+    <value>The streaming client is not configured properly. Please contact your system administrator to verify the correct streaming settings.</value>
+  </data>
+  <data name="MessageStreamingGenericException" xml:space="preserve">
+    <value>An error has occurred while streaming the image. The server may be currently processing the image, or there may be a network problem. If the error persists, please contact your system administrator.</value>
+  </data>
+  <data name="MessageStreamingNetworkException" xml:space="preserve">
+    <value>A network error has occurred while streaming the image. If the error persists, please contact your system administrator.</value>
+  </data>
 </root>

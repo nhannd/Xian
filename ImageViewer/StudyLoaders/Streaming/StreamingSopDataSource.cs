@@ -151,15 +151,43 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			if (!_fullHeaderRetrieved)
 			{
-				Uri uri = new Uri(String.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
-				StreamingClient client = new StreamingClient(uri);
-
-				DicomFile imageHeader = new DicomFile();
-				using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid))
+				try
 				{
-					imageHeader.Load(imageHeaderStream);
-					base.SourceMessage = imageHeader;
-					_fullHeaderRetrieved = true;
+					Uri uri = new Uri(String.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
+					StreamingClient client = new StreamingClient(uri);
+
+					DicomFile imageHeader = new DicomFile();
+					using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid))
+					{
+						imageHeader.Load(imageHeaderStream);
+						base.SourceMessage = imageHeader;
+						_fullHeaderRetrieved = true;
+					}
+				}
+				catch(StreamingClientException ex)
+				{
+					switch(ex.Type)
+					{
+						case StreamingClientExceptionType.Access:
+							throw new Exception(SR.MessageStreamingAccessException, ex);
+						case StreamingClientExceptionType.Network:
+							throw new Exception(SR.MessageStreamingNetworkException, ex);
+						case StreamingClientExceptionType.Protocol:
+						case StreamingClientExceptionType.Server:
+						case StreamingClientExceptionType.UnexpectedResponse:
+						case StreamingClientExceptionType.Generic:
+						default:
+							throw new Exception(SR.MessageStreamingGenericException, ex);
+					}
+				}
+				catch(FormatException ex)
+				{
+					// this exception happens if the FormatWadoUriPrefix setting is invalid.
+					throw new Exception(SR.MessageStreamingClientConfigurationException, ex);
+				}
+				catch(Exception ex)
+				{
+					throw new Exception(SR.MessageStreamingGenericException, ex);
 				}
 			}
 		}

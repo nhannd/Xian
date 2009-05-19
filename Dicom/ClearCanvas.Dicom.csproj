@@ -390,6 +390,7 @@
     <Compile Include="ServiceModel\Streaming\HeaderStreamingParameters.cs" />
     <Compile Include="ServiceModel\Streaming\IHeaderStreamingService.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingClient.cs" />
+    <Compile Include="ServiceModel\Streaming\StreamingClientException.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingResultMetaData.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingSettings.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingSettings.Designer.cs">

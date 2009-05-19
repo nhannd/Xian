@@ -105,64 +105,76 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
 		public RetrievePixelDataResult RetrievePixelData(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, int frame)
         {
-            CodeClock clock = new CodeClock();
-			clock.Start();
+			try
+			{
+				CodeClock clock = new CodeClock();
+				clock.Start();
 
-			FrameStreamingResultMetaData result = new FrameStreamingResultMetaData();
-            StringBuilder url = new StringBuilder();
+				FrameStreamingResultMetaData result = new FrameStreamingResultMetaData();
+				StringBuilder url = new StringBuilder();
 
-            if (_baseUri.ToString().EndsWith("/"))
-            {
-                url.AppendFormat("{0}{1}", _baseUri, serverAE);                
-            }
-            else
-            {
-                url.AppendFormat("{0}/{1}", _baseUri, serverAE);
-            }
+				if (_baseUri.ToString().EndsWith("/"))
+				{
+					url.AppendFormat("{0}{1}", _baseUri, serverAE);
+				}
+				else
+				{
+					url.AppendFormat("{0}/{1}", _baseUri, serverAE);
+				}
 
-            url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}", studyInstanceUID, seriesInstanceUID, sopInstanceUid);
-            url.AppendFormat("&frameNumber={0}", frame);
-            url.AppendFormat("&contentType={0}", HttpUtility.HtmlEncode("application/clearcanvas"));
+				url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}", studyInstanceUID, seriesInstanceUID, sopInstanceUid);
+				url.AppendFormat("&frameNumber={0}", frame);
+				url.AppendFormat("&contentType={0}", HttpUtility.HtmlEncode("application/clearcanvas"));
 
-            result.Speed.Start();
+				result.Speed.Start();
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
-			request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
-			request.Timeout = (int)TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+				HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
+				request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
+				request.Timeout = (int) TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
+				HttpWebResponse response = (HttpWebResponse) request.GetResponse();
 
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception(String.Format("Server responded with an error: {0}", HttpUtility.HtmlDecode(response.StatusDescription)));
-            }
+				if (response.StatusCode != HttpStatusCode.OK)
+				{
+					throw new StreamingClientException(response.StatusCode, HttpUtility.HtmlDecode(response.StatusDescription));
+				}
 
-			Stream responseStream = response.GetResponseStream();
-			BinaryReader reader = new BinaryReader(responseStream);
-			byte[] buffer = reader.ReadBytes((int)response.ContentLength);
-			reader.Close();
-			responseStream.Close();
-			response.Close();
-			
-			result.Speed.SetData(buffer.Length);
-            result.Speed.End();
+				Stream responseStream = response.GetResponseStream();
+				BinaryReader reader = new BinaryReader(responseStream);
+				byte[] buffer = reader.ReadBytes((int) response.ContentLength);
+				reader.Close();
+				responseStream.Close();
+				response.Close();
 
-            result.ResponseMimeType = response.ContentType;
-            result.Status = response.StatusCode;
-            result.StatusDescription = response.StatusDescription;
-            result.Uri = response.ResponseUri;
-            result.ContentLength = buffer.Length;
-            result.IsLast = (response.Headers["IsLast"] != null && bool.Parse(response.Headers["IsLast"]));
+				result.Speed.SetData(buffer.Length);
+				result.Speed.End();
 
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("Streaming", "RetrievePixelData", clock.Seconds);
+				result.ResponseMimeType = response.ContentType;
+				result.Status = response.StatusCode;
+				result.StatusDescription = response.StatusDescription;
+				result.Uri = response.ResponseUri;
+				result.ContentLength = buffer.Length;
+				result.IsLast = (response.Headers["IsLast"] != null && bool.Parse(response.Headers["IsLast"]));
 
-			RetrievePixelDataResult pixelDataResult;
-			if (response.Headers["Compressed"] != null && bool.Parse(response.Headers["Compressed"]))
-				pixelDataResult = new RetrievePixelDataResult(CreateCompressedPixelData(response, buffer), result);
-			else
-				pixelDataResult = new RetrievePixelDataResult(buffer, result);
+				clock.Stop();
+				PerformanceReportBroker.PublishReport("Streaming", "RetrievePixelData", clock.Seconds);
 
-			return pixelDataResult;
+				RetrievePixelDataResult pixelDataResult;
+				if (response.Headers["Compressed"] != null && bool.Parse(response.Headers["Compressed"]))
+					pixelDataResult = new RetrievePixelDataResult(CreateCompressedPixelData(response, buffer), result);
+				else
+					pixelDataResult = new RetrievePixelDataResult(buffer, result);
+
+				return pixelDataResult;
+			}
+			catch (WebException ex)
+			{
+				if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse)
+				{
+					HttpWebResponse response = (HttpWebResponse) ex.Response;
+					throw new StreamingClientException(response.StatusCode, HttpUtility.HtmlDecode(response.StatusDescription));
+				}
+				throw new StreamingClientException(StreamingClientExceptionType.Network, ex);
+			}
 		}
 
 		public Stream RetrieveImageHeader(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid)
@@ -219,37 +231,49 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
 		private static MemoryStream RetrieveImageData(string url, out StreamingResultMetaData result)
 		{
-			result = new StreamingResultMetaData();
-
-			result.Speed.Start();
-
-			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
-			request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg";
-			request.Timeout = (int)TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
-			
-			HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-			if (response.StatusCode != HttpStatusCode.OK)
+			try
 			{
-				throw new Exception(String.Format("Server responded with an error: {0}", HttpUtility.HtmlDecode(response.StatusDescription)));
+				result = new StreamingResultMetaData();
+
+				result.Speed.Start();
+
+				HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
+				request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg";
+				request.Timeout = (int) TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
+
+				HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+				if (response.StatusCode != HttpStatusCode.OK)
+				{
+					throw new StreamingClientException(response.StatusCode, HttpUtility.HtmlDecode(response.StatusDescription));
+				}
+
+				Stream responseStream = response.GetResponseStream();
+				BinaryReader reader = new BinaryReader(responseStream);
+				byte[] buffer = reader.ReadBytes((int) response.ContentLength);
+				reader.Close();
+				responseStream.Close();
+				response.Close();
+
+				result.Speed.SetData(buffer.Length);
+				result.Speed.End();
+
+				result.ResponseMimeType = response.ContentType;
+				result.Status = response.StatusCode;
+				result.StatusDescription = response.StatusDescription;
+				result.Uri = response.ResponseUri;
+				result.ContentLength = buffer.Length;
+
+				return new MemoryStream(buffer);
 			}
-
-			Stream responseStream = response.GetResponseStream();
-			BinaryReader reader = new BinaryReader(responseStream);
-			byte[] buffer = reader.ReadBytes((int)response.ContentLength);
-			reader.Close();
-			responseStream.Close();
-			response.Close();
-
-			result.Speed.SetData(buffer.Length);
-			result.Speed.End();
-
-			result.ResponseMimeType = response.ContentType;
-			result.Status = response.StatusCode;
-			result.StatusDescription = response.StatusDescription;
-			result.Uri = response.ResponseUri;
-			result.ContentLength = buffer.Length;
-
-			return new MemoryStream(buffer);
+			catch (WebException ex)
+			{
+				if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response is HttpWebResponse)
+				{
+					HttpWebResponse response = (HttpWebResponse) ex.Response;
+					throw new StreamingClientException(response.StatusCode, HttpUtility.HtmlDecode(response.StatusDescription));
+				}
+				throw new StreamingClientException(StreamingClientExceptionType.Network, ex);
+			}
 		}
 
 		private static DicomCompressedPixelData CreateCompressedPixelData(HttpWebResponse response, byte[] pixelDataBuffer)
