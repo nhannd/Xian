@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             NewScheduleDate.Enabled = true;
             NewScheduleTime.Enabled = true;
 
-            WorkQueueSettingsUpdatePanel.Update();
+//            WorkQueueSettingsUpdatePanel.Update();
 
         }
 
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 NewScheduleTime.Enabled = true;
             }
 
-           WorkQueueSettingsUpdatePanel.Update();
+//           WorkQueueSettingsUpdatePanel.Update();
 
         }
 
@@ -232,6 +232,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             NewScheduleTime.Enabled = true;
 
             base.DataBind();
+        }
+
+        public void UpdateScheduleDateTime()
+        {
+            DateTime newDate = DateTime.Parse(NewScheduleDate.Text + " " + NewScheduleTime.Text);
+            NewScheduledDateTime = newDate;
         }
 
         #endregion Public Methods

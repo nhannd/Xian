@@ -109,11 +109,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public List<ServerEntityKey> WorkQueueKeys
         {
             get {
-                return ViewState[ "_WorkQueueKeys"] as List<ServerEntityKey>;
+                return ViewState["_WorkQueueKeys"] as List<ServerEntityKey>;
             }
             set
             {
-                ViewState[ "_WorkQueueKeys"] = value;
+                ViewState["_WorkQueueKeys"] = value;
             }
         }
 
@@ -141,22 +141,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Protected Methods
 
-        protected override void OnInit(EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
-            base.OnInit(e);
-
             PreOpenConfirmDialog.Confirmed += PreOpenConfirmDialog_Confirmed;
             PreApplyChangeConfirmDialog.Confirmed += PreApplyChangeConfirmDialog_Confirmed;
 
             WorkQueueItemList.WorkQueueItemGridView.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
 
-			WorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
-														{
-                                                            if (WorkQueueKeys == null) source.SearchKeys = new List<ServerEntityKey>();
-                                                            else source.SearchKeys = WorkQueueKeys;
-														};
+            WorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
+                                            {
+                                                if (WorkQueueKeys == null) source.SearchKeys = new List<ServerEntityKey>();
+                                                else source.SearchKeys = WorkQueueKeys;
+                                            };
 
-            WorkQueueItemList.Refresh();            
+            WorkQueueItemList.Refresh();   
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -212,6 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             if (!prompt)
             {
+                WorkQueueSettingsPanel.UpdateScheduleDateTime();
                 ApplyChanges();
             }           
         }
