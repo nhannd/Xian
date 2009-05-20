@@ -11,10 +11,10 @@
 <table class="WorkQueueAlertStudyTable">
 <tr><td>Partition</td><td><%= data.StudyInfo.ServerAE %></td></tr>
 <tr><td>Patient's Name</td><td><pre><%= data.StudyInfo.PatientsName%></pre></td></tr>
-<tr><td>Patient ID</td><td></pre><%= data.StudyInfo.PatientsId %></pre></td></tr>
+<tr><td>Patient ID</td><td><pre><%= data.StudyInfo.PatientsId %></pre></td></tr>
 <tr><td>Study Instance UID</td><td><%= data.StudyInfo.StudyInstaneUid%></td></tr>
-<tr><td>Accession #</td><td></pre><%= data.StudyInfo.AccessionNumber%></pre></td></tr>
-<tr><td>Study Date</td><td></pre><%= data.StudyInfo.StudyDate%></pre></td></tr>
+<tr><td>Accession #</td><td><pre><%= data.StudyInfo.AccessionNumber%></pre></td></tr>
+<tr><td>Study Date</td><td><pre><%= data.StudyInfo.StudyDate%></pre></td></tr>
 </table>
 
  <table>
