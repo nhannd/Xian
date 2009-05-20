@@ -1,6 +1,9 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Import namespace="System.Xml"%>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="AlertsGridPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsGridPanel" %>
+
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
@@ -13,7 +16,12 @@
             <ccUI:GridView ID="AlertGridView" runat="server" OnRowDataBound="AlertGridView_RowDataBound" SelectionMode="Multiple"
                 DataKeyNames="Key">
                 <Columns>
-                    <asp:BoundField DataField="Content" HeaderText="Content" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:TemplateField HeaderText="Content">
+					    <itemtemplate>
+					        <%# Eval("Message") %>
+					        <asp:PlaceHolder runat="server" ID="DetailsHoverPlaceHolder"></asp:PlaceHolder>
+					    </itemtemplate>
+				    </asp:TemplateField>
                     <asp:BoundField DataField="Component" HeaderText="Component" HeaderStyle-HorizontalAlign="Left" />
                     <asp:BoundField DataField="Source" HeaderText="Source" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
                     <asp:BoundField DataField="InsertTime" HeaderText="Insert Date" HeaderStyle-HorizontalAlign="Left" />

@@ -36,15 +36,16 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Xml;
-using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
 {
+   
     /// <summary>
     /// Represents an alert service extension that stores <see cref="ClearCanvas.ImageServer.Common.Alert"/> in the database or log file, whichever available.
     /// </summary>
@@ -79,35 +80,25 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
 
         #region Private Methods
 
-        private static XmlDocument CreateXmlContent(Object content)
+        private static XmlDocument CreateXmlContent(ImageServer.Common.Alert alert)
         {
             XmlDocument doc = new XmlDocument();
 
-            if (content is string)
+            XmlNode docElement = doc.CreateElement("Contents");
+            doc.AppendChild(docElement);
+
+            XmlNode messageNode = doc.CreateElement("Message");
+            messageNode.AppendChild(doc.CreateTextNode(alert.Message));
+
+            docElement.AppendChild(messageNode);
+
+            if (alert.ContextData != null)
             {
-                XmlNode node = doc.CreateElement("Message");
-                XmlNode msg = doc.CreateTextNode(content.ToString());
-                node.AppendChild(msg);
-                doc.AppendChild(node);
-            }
-            else
-            {
-                MemoryStream ms = new MemoryStream();
-                XmlSerializer serializer = new XmlSerializer(content.GetType());
-                try
-                {
-                    serializer.Serialize(ms, content);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    doc.Load(ms);
-                }
-                catch (Exception)
-                {
-                    // cannot be serialized as xml. Resort to string instead.
-                    XmlNode node = doc.CreateElement("Message");
-                    XmlNode msg = doc.CreateTextNode(content.ToString());
-                    node.AppendChild(msg);
-                    doc.AppendChild(node);
-                }
+                XmlNode contextContainerNode = doc.CreateElement("Context");
+                XmlNode contextNode = doc.ImportNode(XmlUtils.Serialize(alert.ContextData), true);
+
+                contextContainerNode.AppendChild(contextNode);
+                docElement.AppendChild(contextContainerNode);
             }
 
             return doc;
@@ -115,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
 
         private static void WriteToLog(ImageServer.Common.Alert alert)
         {
-            XmlDocument doc = CreateXmlContent(alert.Data);
+            XmlDocument doc = CreateXmlContent(alert);
 
             using (StringWriter sw = new StringWriter())
             {
@@ -153,7 +144,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
 
         private static void WriteToDatabase(ImageServer.Common.Alert alert)
         {
-            XmlDocument doc = CreateXmlContent(alert.Data);
+            XmlDocument doc = CreateXmlContent(alert);
 
             AlertUpdateColumns columns = new AlertUpdateColumns();
 
@@ -224,7 +215,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         static private string ResolveKey(ImageServer.Common.Alert alert)
         {
             string key = String.Format("{0}/{1}/{2}/{3}",
-                                       alert.Source.Host, alert.Source.Name, alert.Code, alert.Data);
+                                       alert.Source.Host, alert.Source.Name, alert.Code, alert.ContextData);
 
             return key;
         }

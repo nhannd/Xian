@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -219,6 +220,18 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                             Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
                                          _hsmArchive.PartitionArchive.Description);
                     }
+                }
+                catch (StudyIntegrityValidationFailure ex)
+                {
+                    StringBuilder error = new StringBuilder();
+                    error.AppendLine(String.Format("Partition  : {0}", ex.StudyInfo.ServerAE));
+                    error.AppendLine(String.Format("Patient    : {0}", ex.StudyInfo.PatientsName));
+                    error.AppendLine(String.Format("Study Uid  : {0}", ex.StudyInfo.StudyInstaneUid));
+                    error.AppendLine(String.Format("Accession# : {0}", ex.StudyInfo.AccessionNumber));
+                    error.AppendLine(String.Format("Study Date : {0}", ex.StudyInfo.StudyDate));
+
+                    queueItem.FailureDescription = error.ToString();
+                    _hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
                 }
                 catch (Exception e)
                 {

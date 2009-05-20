@@ -31,56 +31,73 @@
 
 using System;
 using System.Text;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Core.Validation
 {
-    public enum ValidationErrors
-    {
-        // Object count in db and study xml do not match
-        InconsistentObjectCount
-    }
-
     /// <summary>
-    /// Represents exception thrown when study validation fails.
+    /// Information associated with a validation failure.
     /// </summary>
-    public class StudyIntegrityValidationFailure : Exception
+    public class StudyInfo
     {
         #region Private Members
-        private readonly ValidationErrors _error;
-        private readonly StudyInfo _studyInfo;
+        private string _serverAE;
+        private string _patientsName;
+        private string _patientsId;
+        private string _studyInstaneUid;
+        private string _accessionNumber;
+        private string _studyDate;
         #endregion
-        #region Constructors
-
-        public StudyIntegrityValidationFailure(ValidationErrors error, StudyInfo studyInfo, string details)
-            : base(details)
-        {
-            Platform.CheckForNullReference(studyInfo, "studyInfo");
-
-            _error = error;
-            _studyInfo = studyInfo;
-        }
-        
-        #endregion
-
         #region Public Properties
 
-        #endregion
-
-        /// <summary>
-        /// Gets the <see cref="StudyInfo"/> for the study that failed the validation.
-        /// </summary>
-        public StudyInfo StudyInfo
+        public string ServerAE
         {
-            get { return _studyInfo; }
+            get { return _serverAE; }
+            set { _serverAE = value; }
         }
 
-        /// <summary>
-        /// Gets the <see cref="ValidationErrors"/>.
-        /// </summary>
-        public ValidationErrors Error
+        public string PatientsName
         {
-            get { return _error; }
+            get { return _patientsName; }
+            set { _patientsName = value; }
+        }
+
+        public string PatientsId
+        {
+            get { return _patientsId; }
+            set { _patientsId = value; }
+        }
+
+        public string StudyInstaneUid
+        {
+            get { return _studyInstaneUid; }
+            set { _studyInstaneUid = value; }
+        }
+
+        public string AccessionNumber
+        {
+            get { return _accessionNumber; }
+            set { _accessionNumber = value; }
+        }
+
+        public string StudyDate
+        {
+            get { return _studyDate; }
+            set { _studyDate = value; }
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(String.Format("Partition : {0}", _serverAE));
+            sb.AppendLine(String.Format("Patient   : {0}", _patientsName));
+            sb.AppendLine(String.Format("Patient ID: {0}", _patientsId));
+            sb.AppendLine(String.Format("Study UID : {0}", _studyInstaneUid));
+            sb.AppendLine(String.Format("Accession#: {0}", _accessionNumber));
+            sb.AppendLine(String.Format("Study Date: {0}", _studyDate));
+
+            return sb.ToString();
         }
     }
 }

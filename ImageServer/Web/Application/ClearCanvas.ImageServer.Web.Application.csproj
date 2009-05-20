@@ -204,6 +204,20 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx.cs">
+      <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx.designer.cs">
+      <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx.cs">
+      <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx.designer.cs">
+      <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.cs">
       <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1324,6 +1338,8 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
+    <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Users.xml" />

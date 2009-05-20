@@ -51,19 +51,6 @@ namespace ClearCanvas.ImageServer.Common
     	private static AuditLog _log; 
         #endregion
 
-        /// <summary>
-        /// Generates an alert message.
-        /// </summary>
-        /// <param name="category">An alert category</param>
-        /// <param name="level">Alert level</param>
-        /// <param name="source">Name of the source where the alert is raised</param>
-        /// <param name="code">Alert code</param>
-        /// <param name="message">The alert message or formatted message.</param>
-        /// <param name="args">Paramaters used in the alert message, when specified.</param>
-        public static void Alert(AlertCategory category, AlertLevel level, String source, int code, String message, params object[] args)
-        {
-            Alert(category, level, source, code, TimeSpan.Zero, message, args);
-        }
 
         /// <summary>
         /// Generates an alert message with an expiration time.
@@ -71,11 +58,14 @@ namespace ClearCanvas.ImageServer.Common
         /// <param name="category">An alert category</param>
         /// <param name="level">Alert level</param>
         /// <param name="source">Name of the source where the alert is raised</param>
-        /// <param name="code">Alert type code</param>
+        /// <param name="alertCode">Alert type code</param>
+        /// <param name="contextData">The user-defined application context data</param>
         /// <param name="expirationTime">Expiration time for the alert</param>
         /// <param name="message">The alert message or formatted message.</param>
         /// <param name="args">Paramaters used in the alert message, when specified.</param>
-        public static void Alert(AlertCategory category, AlertLevel level, String source, int code, TimeSpan expirationTime, String message, params object[] args)
+        public static void Alert(AlertCategory category, AlertLevel level, String source, 
+                                    int alertCode, object contextData, TimeSpan expirationTime, 
+                                    String message, params object[] args)
         {
             Platform.CheckForNullReference(source, "source");
             Platform.CheckForNullReference(message, "message");
@@ -87,10 +77,12 @@ namespace ClearCanvas.ImageServer.Common
                 Alert alert = new Alert();
                 alert.Category = category;
                 alert.Level = level;
-                alert.Code = code;
+                alert.Code = alertCode;
                 alert.ExpirationTime = Platform.Time.Add(expirationTime);
                 alert.Source = src;
-                alert.Data = String.Format(message, args);
+                alert.Message = String.Format(message, args);
+                alert.ContextData = contextData;
+
                 service.GenerateAlert(alert);
             }
         }

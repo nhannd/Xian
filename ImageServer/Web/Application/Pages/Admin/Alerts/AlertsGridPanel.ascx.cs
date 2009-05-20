@@ -253,6 +253,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                         }
                         level.Text = alert.Level;
                     }
+
+                    if (alert.ContextData!=null)
+                    {
+                        AlertHoverPopupDetails ctrl =
+                       Page.LoadControl("AlertHoverPopupDetails.ascx") as AlertHoverPopupDetails;
+
+                        ctrl.Alert = alert;
+
+                        e.Row.FindControl("DetailsHoverPlaceHolder").Controls.Add(ctrl);
+                        ctrl.DataBind();
+                    }
+                   
                 }
             }
         }
@@ -283,6 +295,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         #endregion
 
+        protected bool HasContextData(AlertSummary item)
+        {
+            return item.ContextData != null;
+        }
     }
 
 }

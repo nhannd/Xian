@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 				Platform.Log(LogLevel.Fatal, e, "Unexpected exception starting Streaming Server Shred");
 
 			    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, SR.HeaderStreamingServerDisplayName,
-			                         AlertTypeCodes.UnableToStart,
+                                     AlertTypeCodes.UnableToStart, null, TimeSpan.Zero,
 			                         SR.AlertUnableToStart, e.Message);
 			}
 		}

@@ -160,8 +160,7 @@ namespace ClearCanvas.ImageServer.Rules
 
 			if (_studyXml == null)
 			{
-				string studyPath = _location.GetStudyPath();
-				string studyXml = Path.Combine(studyPath, _location.StudyInstanceUid + ".xml");
+			    string studyXml = _location.GetStudyXmlPath();
 
 				if (!File.Exists(studyXml))
 				{

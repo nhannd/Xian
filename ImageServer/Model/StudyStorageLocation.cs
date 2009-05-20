@@ -230,7 +230,17 @@ namespace ClearCanvas.ImageServer.Model
         /// </remarks>
         public Study Study
         {
-            get { return _study; }
+            get
+            {
+                if (_study==null)
+                {
+                    using(IPersistenceContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                        _study = LoadStudy(context);
+                    }
+                }
+                return _study;
+            }
         }
 
         #endregion
@@ -243,7 +253,7 @@ namespace ClearCanvas.ImageServer.Model
             {
                 _study = Study.Find(context, StudyInstanceUid, ServerPartition);
             }
-            return Study;
+            return _study;
             
         }
 

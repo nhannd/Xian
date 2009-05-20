@@ -188,6 +188,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
 													    	ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, "ServiceLockProcessor",
 													    	                     AlertTypeCodes.UnableToProcess,
+                                                                                 null, TimeSpan.Zero,
 													    	                     "Exception thrown when processing {0} ServiceLock item",
 													    	                     queueItem.ServiceLockTypeEnum.Description);
 															ResetServiceLock(queueItem);

@@ -280,7 +280,7 @@ namespace ClearCanvas.ImageServer.Rules
             }
             catch(NoSuchDicomTagException)
             {
-                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, SR.AlertComponentRules, AlertTypeCodes.InvalidConfiguration,
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, SR.AlertComponentRules, AlertTypeCodes.InvalidConfiguration, null, TimeSpan.Zero,
                                SR.AlertRuleInvalid, expression.Text
                     );
 

@@ -336,7 +336,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         private void RaisePotentialTooManyConnectionAlert(int currentConnectionCounter)
         {
         	ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "Auto-route/Move",
-        	                     AlertTypeCodes.LowResources, "Number of current connections to {0} : {1}",
+                                 AlertTypeCodes.LowResources, null, TimeSpan.Zero, "Number of current connections to {0} : {1}",
         	                     DestinationDevice.AeTitle, currentConnectionCounter);
         }
 

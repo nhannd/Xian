@@ -65,3 +65,35 @@
     padding-right: 8px;
     vertical-align: top;
 }
+
+.AlertHoverPopupDetails
+{
+	margin-left: 20px;
+	margin-top: 10px;
+	padding: 5px;
+	border-right: #6699CC 1px solid;
+	border-top: #6699CC 1px solid;
+	border-left: #6699CC 1px solid;
+	border-bottom: #6699CC 1px solid;
+	background-color: #d2e8ff; /*#cbe0e0;*/
+}
+
+.MoreInfo
+{
+	display: inline;
+	font-size: smaller;
+	font-style: italic;
+	color:Blue;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+.WorkQueueAlertStudyTable
+{
+	border-bottom: lightsteelblue 1px solid;
+}
+
+.WorkQueueAlertStudyTable tr td
+{
+	border-bottom:none;
+}

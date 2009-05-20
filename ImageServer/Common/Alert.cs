@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
@@ -182,10 +183,11 @@ namespace ClearCanvas.ImageServer.Common
         private AlertSource _source;
         private AlertCategory _category;
         private AlertLevel _level;
-        private DateTime _timeStamp;
+        private readonly DateTime _timeStamp;
         private DateTime _expirationTime;
         private int _code;
-        private Object _data;
+        private String _message;
+        private object _data;
 
         #endregion
 
@@ -206,7 +208,9 @@ namespace ClearCanvas.ImageServer.Common
             _level = level;
             _code = 0;
             _data = null;
+            _message = null;
         }
+
         #endregion
 
         /// <summary>
@@ -226,10 +230,12 @@ namespace ClearCanvas.ImageServer.Common
             get { return _timeStamp; }
         }
 
+
+
         /// <summary>
         /// Gets or sets the data associated with the alert
         /// </summary>
-        public object Data
+        public object ContextData
         {
             get { return _data; }
             set { _data = value; }
@@ -274,6 +280,12 @@ namespace ClearCanvas.ImageServer.Common
             set { _expirationTime = value; }
         }
 
+        public string Message
+        {
+            get { return _message; }
+            set { _message = value; }
+        }
+
         #region IEquatable<Alert> Members
 
         public bool Equals(Alert other)
@@ -284,10 +296,10 @@ namespace ClearCanvas.ImageServer.Common
                    Code.Equals(other.Code)))
             return false;
 
-            if (Data == null)
-                return other.Data == null;
+            if (ContextData == null)
+                return other.ContextData == null;
             
-            return Data.Equals(other.Data);
+            return ContextData.Equals(other.ContextData);
         }
 
         #endregion

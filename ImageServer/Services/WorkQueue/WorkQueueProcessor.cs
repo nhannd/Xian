@@ -36,10 +36,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using Alert=ClearCanvas.ImageServer.Common.Alert;
+using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -205,6 +207,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 											 SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
 
 						ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "WorkQueue", AlertTypeCodes.NoResources,
+                                             null, TimeSpan.Zero,
 						                     "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
 						                     WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB,
 						                     SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
@@ -236,16 +239,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							 "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
 							 queueItem.WorkQueueTypeEnum,
 							 queueItem.GetKey());
-				if (e.InnerException != null)
-					FailQueueItem(queueItem, e.InnerException.Message);
-				else
-					FailQueueItem(queueItem, e.Message);
+			    String error = e.InnerException != null ? e.InnerException.Message : e.Message;
 
-				ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
-									 processor.Name, AlertTypeCodes.UnableToProcess,
-									 "Work Queue item failed: Type={0}, GUID={1}",
-									 queueItem.WorkQueueTypeEnum,
-									 queueItem.GetKey());
+                FailQueueItem(queueItem, error);
+			    RaiseAlert(processor, queueItem, error);
+				
 			}
 
 
@@ -256,7 +254,43 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			processor.Dispose();
 		}
 
-		/// <summary>
+        private void RaiseAlert(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem, string error)
+        {
+            using(ExecutionContext context = new  ExecutionContext())
+            {
+                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
+									 processor.Name, AlertTypeCodes.UnableToProcess,
+                                     GetWorkQueueStudyInfo(queueItem), TimeSpan.Zero,
+									 "Work Queue item failed: Type={0}, GUID={1}: {2}",
+									 queueItem.WorkQueueTypeEnum,
+                                     queueItem.GetKey(), error);
+            }
+           
+        }
+
+        private StudyInfo GetWorkQueueStudyInfo(Model.WorkQueue item)
+        {
+            IList<StudyStorageLocation> storages = item.LoadStudyLocations(ExecutionContext.Current.PersistenceContext);
+            if (storages != null && storages.Count>0)
+            {
+                StudyStorageLocation location = storages[0];
+                if (location.Study != null)
+                {
+                    StudyInfo studyInfo = new StudyInfo();
+                    studyInfo.AccessionNumber = location.Study.AccessionNumber;
+                    studyInfo.PatientsId = location.Study.PatientId;
+                    studyInfo.PatientsName = location.Study.PatientsName;
+                    studyInfo.ServerAE = location.ServerPartition.AeTitle;
+                    studyInfo.StudyInstaneUid = location.StudyInstanceUid;
+                    studyInfo.StudyDate = location.Study.StudyDate;
+                    return studyInfo;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
 		/// Get array of enumerated values to query on.
 		/// </summary>
 		/// <returns></returns>

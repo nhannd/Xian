@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                     Platform.Log(LogLevel.Warn, "Max concurrency reached: {0}. Max={1}", _contexts.Count, _maxConnections); 
 
                     ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "Header Streaming",
-                                         AlertTypeCodes.LowResources,
+                                         AlertTypeCodes.LowResources, null, TimeSpan.FromSeconds(15),
                                          SR.AlertHeaderMaxConnectionsReached, _maxConnections);
                 }
             }

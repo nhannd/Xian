@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds.Management
             {
                 Platform.Log(LogLevel.Error, "Failed to start {0} : {1}", SR.FilesystemServiceDisplayName, e.StackTrace);
                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, SR.FilesystemServiceDisplayName,
-                                     AlertTypeCodes.UnableToStart, SR.AlertFilesystemUnableToStart, e.Message);
+                                     AlertTypeCodes.UnableToStart, null, TimeSpan.Zero, SR.AlertFilesystemUnableToStart, e.Message);
             }
         }
 

@@ -94,6 +94,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             control.CssClass = control.CssClass.Replace(" " + cssClass, "");
         }
 
+        public static String ResolveStudyDetailsUrl(Page page, String serverAE, String studyUid)
+        {
+            return String.Format("{0}?serverae={1}&siuid={2}",
+                page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage),
+                serverAE, studyUid);
+        }
+
+        public static String ResolveWorkQueueDetailsUrl(Page page, String workQueueKey)
+        {
+            return String.Format("{0}?uid={1}",
+                page.ResolveClientUrl(ImageServerConstants.PageURLs.WorkQueueItemDetailsPage), workQueueKey);
+        }
     }
 
 

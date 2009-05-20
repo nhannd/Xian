@@ -213,7 +213,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     if (elapse.Duration() >= ALERT_INTERVAL)
                     {
                         ServerPlatform.Alert(AlertCategory.System, AlertLevel.Warning, "Filesystem",
-                                             AlertTypeCodes.LowResources,
+                                             AlertTypeCodes.LowResources, null, TimeSpan.Zero,
                                              SR.AlertFilesystemAboveHW,
                                              fs.Filesystem.Description,
                                              TimeSpanFormatter.Format(Platform.Time - state.AboveHighWatermarkTimestamp.Value, true));

@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
                 ServerPlatform.Alert(
                                 AlertCategory.Application, AlertLevel.Warning,
-                                SR.AlertComponentAutorouteRule, AlertTypeCodes.UnableToProcess, TimeSpan.FromMinutes(5),
+                                SR.AlertComponentAutorouteRule, AlertTypeCodes.UnableToProcess, null, TimeSpan.FromMinutes(5),
                                 SR.AlertAutoRouteUnknownDestination, _deviceAe, _context.ServerPartition.AeTitle);
 
                 return;
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                              "Auto-route attempted to device {0} on partition {1} with autoroute support disabled.  Ignoring request.",
                              dev.AeTitle, _context.ServerPartition.AeTitle);
 
-                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, SR.AlertComponentAutorouteRule, AlertTypeCodes.UnableToProcess, TimeSpan.FromMinutes(5),
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, SR.AlertComponentAutorouteRule, AlertTypeCodes.UnableToProcess, null, TimeSpan.FromMinutes(5),
                             SR.AlertAutoRouteDestinationAEDisabled, dev.AeTitle, _context.ServerPartition.AeTitle);
                 
                 return;

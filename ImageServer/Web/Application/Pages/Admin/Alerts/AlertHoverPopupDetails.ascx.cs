@@ -29,58 +29,38 @@
 
 #endregion
 
-using System;
-using System.Text;
-using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Core.Validation;
+using ClearCanvas.ImageServer.Services.WorkQueue;
+using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
-namespace ClearCanvas.ImageServer.Core.Validation
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
-    public enum ValidationErrors
-    {
-        // Object count in db and study xml do not match
-        InconsistentObjectCount
-    }
-
-    /// <summary>
-    /// Represents exception thrown when study validation fails.
-    /// </summary>
-    public class StudyIntegrityValidationFailure : Exception
+    public partial class AlertHoverPopupDetails : System.Web.UI.UserControl
     {
         #region Private Members
-        private readonly ValidationErrors _error;
-        private readonly StudyInfo _studyInfo;
+        private AlertSummary _alert; 
         #endregion
-        #region Constructors
-
-        public StudyIntegrityValidationFailure(ValidationErrors error, StudyInfo studyInfo, string details)
-            : base(details)
-        {
-            Platform.CheckForNullReference(studyInfo, "studyInfo");
-
-            _error = error;
-            _studyInfo = studyInfo;
-        }
         
-        #endregion
-
         #region Public Properties
-
+        public AlertSummary Alert
+        {
+            get { return _alert; }
+            set { _alert = value; }
+        } 
         #endregion
 
-        /// <summary>
-        /// Gets the <see cref="StudyInfo"/> for the study that failed the validation.
-        /// </summary>
-        public StudyInfo StudyInfo
+        public override void DataBind()
         {
-            get { return _studyInfo; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="ValidationErrors"/>.
-        /// </summary>
-        public ValidationErrors Error
-        {
-            get { return _error; }
+            if (Alert!=null && Alert.ContextData!=null)
+            {
+                if (Alert.ContextData is WorkQueueAlertContextData)
+                {
+                    WorkQueueAlertContextDataView view = Page.LoadControl("WorkQueueAlertContextDataView.ascx") as WorkQueueAlertContextDataView;
+                    view.Alert = this.Alert;
+                    DetailsPlaceHolder.Controls.Add(view);
+                }
+            }
+            base.DataBind();
         }
     }
 }

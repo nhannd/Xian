@@ -110,7 +110,8 @@ namespace ClearCanvas.ImageServer.Common
             catch(Exception e)
             {
                 Platform.Log(LogLevel.Fatal, e, "Unable to start {0}", _name);
-                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, _name, AlertTypeCodes.UnableToStart, "Unable to start {0}: {1}", _name, e.Message);
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, _name, AlertTypeCodes.UnableToStart,
+                                        null, TimeSpan.Zero, "Unable to start {0}: {1}", _name, e.Message);
             }
             
         }

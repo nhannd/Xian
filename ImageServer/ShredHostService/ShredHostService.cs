@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.ShredHostService
 
             ServerPlatform.Alert(AlertCategory.System, AlertLevel.Informational,
                                  SR.AlertComponentName, AlertTypeCodes.Starting,
+                                 null, TimeSpan.Zero,
                                  SR.AlertShredHostServiceStarting);
 
             // the default startup path is in the system folder
@@ -72,6 +73,7 @@ namespace ClearCanvas.ImageServer.ShredHostService
 
             ServerPlatform.Alert(AlertCategory.System, AlertLevel.Informational,
                                  SR.AlertComponentName, AlertTypeCodes.Stopped,
+                                 null, TimeSpan.Zero,
                                  SR.AlertShredHostServiceStopped);
         }
 

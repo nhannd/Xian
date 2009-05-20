@@ -33,9 +33,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Exceptions;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Validation
@@ -67,8 +65,20 @@ namespace ClearCanvas.ImageServer.Core.Validation
                     {
                         if (studyXml != null && studyXml.NumberOfStudyRelatedInstances != study.NumberOfStudyRelatedInstances)
                         {
-                            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, context, -1, "Number of instances in database and xml are out of sync. Server={0} UID={1} Patient={2}", studyStorage.ServerPartition.AeTitle, studyStorage.StudyInstanceUid, study.PatientsName);
-                            throw new StudyIntegrityValidationFailure(String.Format("Number of instances in database and xml do not match."));
+                            StudyInfo studyInfo = new StudyInfo();
+                            studyInfo.AccessionNumber = study.AccessionNumber;
+                            studyInfo.PatientsId = study.PatientId;
+                            studyInfo.PatientsName = study.PatientsName;
+                            studyInfo.ServerAE = studyStorage.ServerPartition.AeTitle;
+                            studyInfo.StudyInstaneUid = study.StudyInstanceUid;
+                            studyInfo.StudyDate = study.StudyDate;
+
+                            throw new StudyIntegrityValidationFailure(
+                                ValidationErrors.InconsistentObjectCount, studyInfo,
+                                String.Format("Number of instances in database and xml do not match: {0} vs {1}.",
+                                    study.NumberOfStudyRelatedInstances,
+                                    studyXml.NumberOfStudyRelatedInstances
+                                ));
                         }
                     }
 

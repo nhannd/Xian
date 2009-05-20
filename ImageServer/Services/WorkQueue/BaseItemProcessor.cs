@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -41,8 +42,8 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Exceptions;
 using ClearCanvas.ImageServer.Core.Validation;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -50,6 +51,29 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
+    public class WorkQueueAlertContextData
+    {
+        #region Private Members
+        private String _workQueueItemKey;
+        private StudyInfo _studyInfo; 
+        #endregion
+
+        #region Public Properties
+        public String WorkQueueItemKey
+        {
+            get { return _workQueueItemKey; }
+            set { _workQueueItemKey = value; }
+        }
+
+        public StudyInfo StudyInfo
+        {
+            get { return _studyInfo; }
+            set { _studyInfo = value; }
+        } 
+        #endregion
+    }
+
+
 	/// <summary>
 	/// Enum telling if a work queue entry had a fatal or nonfatal error.
 	/// </summary>
@@ -109,7 +133,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private StudyIntegrityValidationModes _ValidationModes = StudyIntegrityValidationModes.None;
 
         #endregion
-
 
         #region Constructors
         public BaseItemProcessor()
@@ -567,7 +590,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now		
 
-							    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, Name, AlertTypeCodes.UnableToProcess,
+                                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, Name, AlertTypeCodes.UnableToProcess,
+                                                GetWorkQueueContextData(), TimeSpan.Zero,
                                                "Failing {0} WorkQueue entry ({1}), fatal error: {2}",
                                                item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription);
 							}
@@ -582,7 +606,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-							                   "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                               GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
 							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
 							}
 							else
@@ -610,6 +634,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				);
 		}
 
+        private WorkQueueAlertContextData GetWorkQueueContextData()
+        {
+            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
+            contextData.WorkQueueItemKey = WorkQueueItem.GetKey().Key.ToString();
+
+            if (StorageLocation != null && StorageLocation.Study != null)
+            {
+                contextData.StudyInfo = new StudyInfo();
+                contextData.StudyInfo.AccessionNumber = StorageLocation.Study.AccessionNumber;
+                contextData.StudyInfo.PatientsId = StorageLocation.Study.PatientId;
+                contextData.StudyInfo.PatientsName = StorageLocation.Study.PatientsName;
+                contextData.StudyInfo.ServerAE = StorageLocation.ServerPartition.AeTitle;
+                contextData.StudyInfo.StudyInstaneUid = StorageLocation.StudyInstanceUid;
+                contextData.StudyInfo.StudyDate = StorageLocation.Study.StudyDate;
+            }
+
+            return contextData;
+        }
 
 
         /// <summary>
@@ -645,7 +687,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                                "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}", 
+                                                GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}", 
                                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
                             }
                             else
@@ -942,6 +984,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         // Needs immediate attention. Abort the work queue now.
                         item.FailureDescription = ex.Message;
                         PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+
                     }
                     
                 }
@@ -984,7 +1027,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     StudyStorageLocation location = locations[0];
                     StudyIntegrityValidator validator = new StudyIntegrityValidator();
-                    validator.ValidateStudyState("WorkQueue", location, ValidationModes);
+                    validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), location, ValidationModes);
                 }
             }
             

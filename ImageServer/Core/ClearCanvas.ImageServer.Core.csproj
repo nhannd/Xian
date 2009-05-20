@@ -61,6 +61,7 @@
     <Compile Include="Reconcile\ReconcileImageContext.cs" />
     <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="SopInstanceProcessor.cs" />
+    <Compile Include="Validation\StudyInfo.cs" />
     <Compile Include="Validation\StudyIntegrityValidationFailure.cs" />
     <Compile Include="Validation\StudyIntegrityValidationModes.cs" />
     <Compile Include="Validation\StudyIntegrityValidator.cs" />

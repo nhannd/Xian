@@ -110,7 +110,13 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// </remarks>
         public static XmlNode Serialize(Object obj)
         {
-            return SerializeAsXmlDoc(obj).DocumentElement;
+            XmlDocument doc = SerializeAsXmlDoc(obj);
+            XmlNode node = doc.DocumentElement;
+            // add "type" attribute to the context node for deserialization purpose
+            XmlAttribute attr = doc.CreateAttribute("type");
+            attr.Value = obj.GetType().AssemblyQualifiedName;
+            node.Attributes.Append(attr);
+            return node;
         }
         
         public static XmlDocument SerializeAsXmlDoc(Object obj)

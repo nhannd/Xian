@@ -121,8 +121,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			StudyXml studyXml;
 			studyXml = LoadStudyXml(StorageLocation);
 
-            PerformSanityCheck(studyXml);
-
             int successfulProcessCount = 0;
 			int totalCount = WorkQueueUidList.Count;
 			foreach (WorkQueueUid sop in WorkQueueUidList)
@@ -413,17 +411,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			return false;
         }
 
-
-        [Conditional("DEBUG_SIM_ERRORS")] 
-        private void PerformSanityCheck(StudyXml studyXml)
-        {
-            string[] files = Directory.GetFiles(StorageLocation.GetStudyPath(), "*.dcm", SearchOption.AllDirectories);
-            if (studyXml.NumberOfStudyRelatedInstances != files.Length)
-            {
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Warning, "StudyCompress", 1023,
-                    "Image Count in XML does not match number of images in the folder: {0} vs {1}",
-                    studyXml.NumberOfStudyRelatedInstances, files.Length);
-            }
-        }
 	}
 }

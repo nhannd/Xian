@@ -292,9 +292,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
                 if (e.InnerException != null)
-                    item.FailureDescription = e.InnerException.Message;
+                    item.FailureDescription = String.Format("{0}:{1}", e.GetType().Name, e.InnerException.Message);
                 else
-                    item.FailureDescription = e.Message;
+                    item.FailureDescription = String.Format("{0}:{1}", e.GetType().Name, e.Message);
 
                 sop.FailureCount++;
                 if ((sop.FailureCount > WorkQueueSettings.Instance.WorkQueueMaxFailureCount) || sop.Duplicate)
