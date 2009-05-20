@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
         [Test]
-        public void CreateNewReport()
+        public void Test_CreateNewReport()
         {
         	Report report = CreateReport();
 
@@ -77,7 +77,7 @@ namespace ClearCanvas.Healthcare.Tests
         }
 
 		[Test]
-		public void DraftToPreliminary()
+        public void Test_DraftToPreliminary()
 		{
 			Report report = CreateReport();
 			report.ActivePart.MarkPreliminary();
@@ -92,7 +92,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void DraftToFinal()
+        public void Test_DraftToFinal()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Complete();
@@ -107,7 +107,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void PreliminaryToFinal()
+        public void Test_PreliminaryToFinal()
 		{
 			Report report = CreateReport();
 			report.ActivePart.MarkPreliminary();
@@ -123,7 +123,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void DraftToCancelled()
+        public void Test_DraftToCancelled()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Cancel();
@@ -138,7 +138,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void PreliminaryToCancelled()
+        public void Test_PreliminaryToCancelled()
 		{
 			Report report = CreateReport();
 			report.ActivePart.MarkPreliminary();
@@ -155,7 +155,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void FinalToPreliminary()
+        public void Test_FinalToPreliminary()
 		{
 			Report report = CreateReport();
 			report.Parts[0].Complete();
@@ -164,7 +164,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void CancelledToPreliminary()
+        public void Test_CancelledToPreliminary()
 		{
 			Report report = CreateReport();
 			report.Parts[0].Cancel();
@@ -173,7 +173,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void FinalToCancelled()
+        public void Test_FinalToCancelled()
 		{
 			Report report = CreateReport();
 			report.Parts[0].Complete();
@@ -182,7 +182,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void CancelledToFinal()
+        public void Test_CancelledToFinal()
 		{
 			Report report = CreateReport();
 			report.Parts[0].Cancel();
@@ -191,7 +191,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void FinalToFinal()
+        public void Test_FinalToFinal()
 		{
 			Report report = CreateReport();
 			report.Parts[0].Complete();
@@ -200,7 +200,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void CancelledToCancelled()
+        public void Test_CancelledToCancelled()
 		{
 			Report report = CreateReport();
 			report.Parts[0].Cancel();
@@ -209,7 +209,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void AddAddendumToDraft()
+        public void Test_AddAddendumToDraft()
 		{
 			Report report = CreateReport();
 			report.AddAddendum();
@@ -217,7 +217,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void AddAddendumToPreliminary()
+        public void Test_AddAddendumToPreliminary()
 		{
 			Report report = CreateReport();
 			report.ActivePart.MarkPreliminary();
@@ -226,7 +226,7 @@ namespace ClearCanvas.Healthcare.Tests
 
 		[Test]
 		[ExpectedException(typeof(WorkflowException))]
-		public void AddAddendumToCancelled()
+        public void Test_AddAddendumToCancelled()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Cancel();
@@ -234,7 +234,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void AddAddendumToFinal()
+        public void Test_AddAddendumToFinal()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Complete();
@@ -249,7 +249,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void AddendumDraftToPreliminary()
+        public void Test_AddendumDraftToPreliminary()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Complete();
@@ -265,7 +265,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void AddendumDraftToComplete()
+        public void Test_AddendumDraftToComplete()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Complete();
@@ -282,7 +282,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void AddendumCancel()
+        public void Test_AddendumCancel()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Complete();
@@ -299,7 +299,7 @@ namespace ClearCanvas.Healthcare.Tests
 		}
 
 		[Test]
-		public void MultipleAddenda()
+        public void Test_MultipleAddenda()
 		{
 			Report report = CreateReport();
 			report.ActivePart.Complete();
