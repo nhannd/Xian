@@ -198,7 +198,7 @@ namespace ClearCanvas.Common.Configuration
         /// <summary>
         /// Gets the assembly qualified name of the type, but without all the version and culture info.
         /// </summary>
-        /// <param name="entityClass"></param>
+        /// <param name="settingsClass"></param>
         /// <returns></returns>
         private static string GetSafeClassName(Type settingsClass)
         {

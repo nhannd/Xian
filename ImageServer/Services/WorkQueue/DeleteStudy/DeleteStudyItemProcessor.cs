@@ -119,10 +119,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 			}
 			else
 			{
-				Platform.Log(LogLevel.Info, "Processing {0} (GUID={1})",
-				             WorkQueueItem.WorkQueueTypeEnum.Description,
-				             WorkQueueItem.Key.Key);
-
 				LoadExtensions();
 
 				OnDeletingStudy();
@@ -149,9 +145,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
 				OnStudyDeleted();
 
-				Platform.Log(LogLevel.Info, "{0} is completed. (GUID={1})",
-				             WorkQueueItem.WorkQueueTypeEnum.Description,
-				             WorkQueueItem.Key.Key);
+				Platform.Log(LogLevel.Info,
+								 "Completed Deleting study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
+								 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+								 Study.AccessionNumber, ServerPartition.Description);
+
 			}
 		}
 

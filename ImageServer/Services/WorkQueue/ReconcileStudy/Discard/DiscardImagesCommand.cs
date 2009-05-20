@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
@@ -69,7 +70,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard
                     DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
                     processor.AddCommand(deleteFile);
                     processor.AddCommand(deleteUid);
-                    Platform.Log(LogLevel.Info, deleteFile.ToString());
+                    Platform.Log(ServerPlatform.InstanceLogLevel, deleteFile.ToString());
                     if (!processor.Execute())
                     {
                         throw new Exception(String.Format("Unable to discard image {0}", uid.SopInstanceUid));

@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                     case ProcessDuplicateAction.OverwriteUseExisting:
                         ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
                         _duplicateUpdateCommands = new List<BaseImageLevelUpdateCommand>();
-                        _duplicateUpdateCommands.AddRange(commandBuilder.BuildCommands<Model.Study>(StorageLocation));
+                        _duplicateUpdateCommands.AddRange(commandBuilder.BuildCommands<Study>(StorageLocation));
                         PrintCommands(_duplicateUpdateCommands);
                         break;
                 }
@@ -265,7 +265,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 }
                 else
                 {
-                    Platform.Log(LogLevel.Info, "Discard duplicate SOP {0} in {1}", uid.SopInstanceUid, duplicateFile.FullName);
+                    Platform.Log(ServerPlatform.InstanceLogLevel, "Discard duplicate SOP {0} in {1}", uid.SopInstanceUid, duplicateFile.FullName);
                 }
             }
         }
@@ -332,9 +332,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 else
                 {
                     if (needOverwrite)
-                        Platform.Log(LogLevel.Info, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, dupFilePath);
+						Platform.Log(ServerPlatform.InstanceLogLevel, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, dupFilePath);
                     else
-                        Platform.Log(LogLevel.Info, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, dupFilePath);
+						Platform.Log(ServerPlatform.InstanceLogLevel, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, dupFilePath);
                 }
             }
         }
@@ -363,7 +363,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 file.DataSet.LoadDicomFields(patient);
 
                 ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
-                commands.AddRange(commandBuilder.BuildCommands<Model.Study>(file.DataSet));
+                commands.AddRange(commandBuilder.BuildCommands<Study>(file.DataSet));
             }
 
             return commands;
@@ -467,7 +467,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
     {
         private readonly StudyStorageLocation _studyLocation;
         private readonly DicomFile _file;
-        private StudyXml _studyXml;
+        private readonly StudyXml _studyXml;
 
         public RemoveInstanceFromStudyXmlCommand(StudyStorageLocation location, StudyXml studyXml, DicomFile file)
             :base("Remove Instance From Study Xml", true)

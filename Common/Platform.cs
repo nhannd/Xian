@@ -609,6 +609,9 @@ namespace ClearCanvas.Common
 		/// <param name="message">The message to be logged.</param>
 		public static void Log(LogLevel category, object message)
         {
+			// Just return without formatting if the log level isn't enabled
+			if (!IsLogLevelEnabled(category)) return;
+
             Exception ex = message as Exception;
             if (ex != null)
             {
@@ -663,7 +666,10 @@ namespace ClearCanvas.Common
         /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
         public static void Log(LogLevel category,String message, params object[] args)
         {
-            StringBuilder sb = new StringBuilder();
+			// Just return without formatting if the log level isn't enabled
+			if (!IsLogLevelEnabled(category)) return;
+
+			StringBuilder sb = new StringBuilder();
 
 			if (args == null || args.Length == 0)
 				sb.Append(message);
@@ -701,7 +707,10 @@ namespace ClearCanvas.Common
         /// <param name="args">Optional arguments used with <paramref name="message"/>.</param>
         public static void Log(LogLevel category, Exception ex, String message, params object[] args)
         {
-            StringBuilder sb = new StringBuilder();
+			// Just return without formatting if the log level isn't enabled
+			if (!IsLogLevelEnabled(category)) return;
+
+			StringBuilder sb = new StringBuilder();
             sb.AppendLine(SR.ExceptionThrown);
             sb.AppendLine();
 

@@ -150,6 +150,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 context.Commit();
             }
 
+        	Platform.Log(LogLevel.Info,
+        	             "Completed Cleanup of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+        	             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+        	             Study.AccessionNumber, ServerPartition.Description);
+
 			PostProcessing(item, 
 				WorkQueueProcessorStatus.Pending, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);

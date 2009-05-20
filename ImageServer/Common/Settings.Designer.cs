@@ -139,5 +139,14 @@ namespace ClearCanvas.ImageServer.Common {
                 return ((int)(this["WriteBufferSize"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool InstanceLogging {
+            get {
+                return ((bool)(this["InstanceLogging"]));
+            }
+        }
     }
 }

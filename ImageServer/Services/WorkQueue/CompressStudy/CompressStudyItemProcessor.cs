@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 						{
 							if (overlayIod.HasOverlayPlane(i))
 							{
-								Platform.Log(LogLevel.Info, "SOP Instance {0} has embedded overlay in pixel data, extracting", file.MediaStorageSopInstanceUid);
+								Platform.Log(ServerPlatform.InstanceLogLevel, "SOP Instance {0} has embedded overlay in pixel data, extracting", file.MediaStorageSopInstanceUid);
 								OverlayPlane overlay = overlayIod[i];
 								if (overlay.OverlayData == null)
 								{
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         else
                         {
                             _instanceStats.CompressTime.Add(compressCommand.CompressTime);
-                            Platform.Log(LogLevel.Info, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
+							Platform.Log(ServerPlatform.InstanceLogLevel, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
                                          patientsName);
                         }
                     }
@@ -318,6 +318,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
 			else
 			{
+				Platform.Log(LogLevel.Info,
+				             "Completed Compressing study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4} to {5}",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description, compressSyntax.Name);
+
+
 				if (compressSyntax.LossyCompressed)
 					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
 				else

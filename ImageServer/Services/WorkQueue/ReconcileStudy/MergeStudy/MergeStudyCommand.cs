@@ -31,11 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
                         counter++;
                         _processedUidList.Add(uid);
-                        Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+                        Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
                     }
                 }
                 catch(InstanceAlreadyExistsException)
@@ -270,67 +270,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             Context.DestStorageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
         }
 
-        
-        private void SaveFile(WorkQueueUid uid, DicomFile file)
-        {
-            String seriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-            String sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update file system"))
-            {
-                String destPath = Context.DestStorageLocation.FilesystemPath;
-                String extension = "dcm";
 
-                processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-                destPath = Path.Combine(destPath, Context.DestStorageLocation.PartitionFolder);
-                processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-                destPath = Path.Combine(destPath, Context.DestStorageLocation.StudyFolder);
-                processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-                destPath = Path.Combine(destPath, Context.DestStorageLocation.StudyInstanceUid);
-                processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-                destPath = Path.Combine(destPath, seriesInstanceUid);
-                processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-                destPath = Path.Combine(destPath, sopInstanceUid);
-                destPath += "."+ extension;
-
-                bool duplicate = File.Exists(destPath);
-
-                if (duplicate)
-                {
-                    if (uid != null)
-                    {
-                        Platform.Log(LogLevel.Warn, "Image {0} is a duplicate. Existing sop will be replaced.", file.Filename);
-                        _duplicateList.Add(uid);
-                    }
-                }
-
-
-                Platform.Log(LogLevel.Debug, "Saving {0}", destPath);
-                processor.AddCommand(new SaveDicomFileCommand(destPath, file, false, true));
-                processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-
-                UpdateWorkQueueCommand.CommandParameters parameters = new UpdateWorkQueueCommand.CommandParameters();
-                parameters.Extension = extension;
-                parameters.IsDuplicate = duplicate;
-                parameters.SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-                parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-                processor.AddCommand(new UpdateWorkQueueCommand(Context, parameters));
-                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-                
-                if (!processor.Execute())
-                {
-                    _failedUidList.Add(uid);
-                    throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
-                }
-                _processedUidList.Add(uid);
-                
-            }      
-        }
-        private List<BaseImageLevelUpdateCommand> BuildUpdateCommandList()
+    	private List<BaseImageLevelUpdateCommand> BuildUpdateCommandList()
         {
             List<BaseImageLevelUpdateCommand> updateCommandList = new List<BaseImageLevelUpdateCommand>();
             

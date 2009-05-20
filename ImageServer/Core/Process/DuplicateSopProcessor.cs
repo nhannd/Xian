@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
@@ -140,7 +141,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
             _context.CommandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
 
-            Platform.Log(LogLevel.Info, "Duplicate ==> {0}", path);
+            Platform.Log(ServerPlatform.InstanceLogLevel, "Duplicate ==> {0}", path);
         }
     }
 }

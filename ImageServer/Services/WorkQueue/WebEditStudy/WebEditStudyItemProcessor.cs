@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 					else
 					{
 						FailQueueItem(WorkQueueItem, processor.FailureReason);
-						Platform.Log(LogLevel.Info, "Study Edit failed. WorkQueueKey:{0}. Reason={1}", WorkQueueItem.GetKey(),
+						Platform.Log(LogLevel.Error, "Study Edit failed. WorkQueueKey:{0}. Reason={1}", WorkQueueItem.GetKey(),
 						             processor.FailureReason);
 					}
 				}

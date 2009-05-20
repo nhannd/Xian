@@ -198,6 +198,7 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
 		/// <param name="duplicate"></param>
 		/// <param name="file"></param>
+		/// <param name="compare"></param>
         public virtual ProcessingResult ProcessFile(DicomFile file, StudyXml stream, bool duplicate, bool compare)
 		{
 		    ProcessingResult result = new ProcessingResult();
@@ -212,7 +213,7 @@ namespace ClearCanvas.ImageServer.Core
 			}
 			else
 			{
-				InsertInstance(file, stream, duplicate);
+				InsertInstance(file, stream);
 			    result.Status = ProcessingStatus.Success;
 			}
 
@@ -291,7 +292,7 @@ namespace ClearCanvas.ImageServer.Core
 		}
 
        
-		private void InsertInstance(DicomFile file, StudyXml stream, bool duplicate)
+		private void InsertInstance(DicomFile file, StudyXml stream)
 		{
 			//Platform.CheckForNullReference(_context, "_context");
 			//Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
@@ -348,7 +349,7 @@ namespace ClearCanvas.ImageServer.Core
 					}
 					else
 					{
-						Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+						Platform.Log(ServerPlatform.InstanceLogLevel, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
 					}
 				}
 				catch (Exception e)

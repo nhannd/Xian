@@ -441,7 +441,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     file.Save(oldPath);
                     
                     restoredCount++;
-                    Platform.Log(LogLevel.Info, "Restored SOP {0} [{1} of {2}]", sopUid, restoredCount, _updatedSopList.Count);
+                    Platform.Log(ServerPlatform.InstanceLogLevel, "Restored SOP {0} [{1} of {2}]", sopUid, restoredCount, _updatedSopList.Count);
                     
                     SimulateErrors();
 
@@ -635,7 +635,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 						}
 						newStudyXml.AddFile(file, fileSize, outputSettings);
 
-                        Platform.Log(LogLevel.Info, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
+                        Platform.Log(ServerPlatform.InstanceLogLevel, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
 
                         SimulateErrors();
                     }

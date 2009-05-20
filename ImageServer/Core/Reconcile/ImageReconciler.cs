@@ -110,14 +110,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 		#region Private Methods
 
-		private IList<StudyHistory> LoadStudyHistories(StudyStorageLocation studyStorage, bool reload)
+		private void LoadStudyHistories(StudyStorageLocation studyStorage, bool reload)
 		{
 			if (_studyHistoryList == null || reload)
 			{
 				// Results are sorted in the Find by InsertTime.
 				_studyHistoryList = new List<StudyHistory>(StudyHistory.Find(studyStorage));
 			}
-			return _studyHistoryList;
+			return;
 		}
 
 		private IList<StudyHistory> FindReconcileHistories(DicomFile file)
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				{
 					if (DifferentOnlyByCarets(different.ExpectValue, different.RealValue))
 					{
-						AutoCorrectPatientsName(message, StudyReconcileAction.Merge);
+						AutoCorrectPatientsName(StudyReconcileAction.Merge);
 						return true;
 					}
 				}
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			return true;
 		}
 
-		private void AutoCorrectPatientsName(DicomMessageBase message, StudyReconcileAction method)
+		private void AutoCorrectPatientsName(StudyReconcileAction method)
 		{
 			Platform.Log(LogLevel.Info, "Scheduling auto reconciliation to correct patient name...");
 			using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request"))
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				{
 					throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
 				}
-				Platform.Log(LogLevel.Info, "SOP {0} has been scheduled for auto reconciliation.", _sopInstanceUid);
+				Platform.Log(ServerPlatform.InstanceLogLevel, "SOP {0} has been scheduled for auto reconciliation.", _sopInstanceUid);
 			}
 		}
 

@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
@@ -141,7 +139,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
                         }
 
                         counter++;
-                        Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+                        Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
             
                     }
                 }
@@ -152,7 +150,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
             }
         }
 
-        private void CreatDuplicateSIQEntry(DicomFile file, Model.WorkQueue queue, Model.WorkQueueUid uid)
+        private void CreatDuplicateSIQEntry(DicomFile file, Model.WorkQueue queue, WorkQueueUid uid)
         {
             Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
             String sourceId = queue.GroupID ?? queue.GetKey().Key.ToString();

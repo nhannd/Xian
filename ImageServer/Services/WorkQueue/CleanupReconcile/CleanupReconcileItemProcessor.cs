@@ -33,6 +33,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
@@ -110,13 +111,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
                 // If the file for some reason doesn't exist, we just ignore it
                 if (File.Exists(imagePath))
                 {
-                    Platform.Log(LogLevel.Info, "Deleting {0}", imagePath);
+					Platform.Log(ServerPlatform.InstanceLogLevel, "Deleting {0}", imagePath);
                     FileDeleteCommand deleteFile = new FileDeleteCommand(imagePath, true);
                     processor.AddCommand(deleteFile);
                 }
                 else
                 {
-                    Platform.Log(LogLevel.Info, "WARNING {0} is missing.", imagePath);
+                    Platform.Log(LogLevel.Warn, "WARNING {0} is missing.", imagePath);
                 }
 
                 DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);

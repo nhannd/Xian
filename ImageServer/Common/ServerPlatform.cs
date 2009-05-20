@@ -95,6 +95,9 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+		/// <summary>
+		/// A well known AuditSource for ImageServer audit logging.
+		/// </summary>
     	public static DicomAuditSource AuditSource
     	{
     		get
@@ -110,6 +113,11 @@ namespace ClearCanvas.ImageServer.Common
     		}
     	}
 
+		/// <summary>
+		/// Log an Audit message.
+		/// </summary>
+		/// <param name="operation"></param>
+		/// <param name="helper"></param>
 		public static void LogAuditMessage(string operation, DicomAuditHelper helper)
 		{
 			lock (_syncLock)
@@ -174,9 +182,9 @@ namespace ClearCanvas.ImageServer.Common
                             using (IReadContext ctx = store.OpenReadContext())
                             {
                                 IDatabaseVersionEntityBroker broker = ctx.GetBroker<IDatabaseVersionEntityBroker>();
-                                IList<DatabaseVersion> versions = broker.Find(new DatabaseVersionSelectCriteria());
-                                if (versions != null && versions.Count > 0)
-                                    _dbVersion = versions[0].GetVersionString();
+                                DatabaseVersion version = broker.FindOne(new DatabaseVersionSelectCriteria());
+								if (version != null)
+                                    _dbVersion = version.GetVersionString();
                                 else
                                     _dbVersion = String.Empty;
                             }
@@ -192,5 +200,12 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+		/// <summary>
+		/// Flag telling if instance level logging is enabled.
+		/// </summary>
+    	public static LogLevel InstanceLogLevel
+    	{
+			get { return Settings.Default.InstanceLogging ? LogLevel.Info : LogLevel.Debug; }
+    	}
     }
 }
