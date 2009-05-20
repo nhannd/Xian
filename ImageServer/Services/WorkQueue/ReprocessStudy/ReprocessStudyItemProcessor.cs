@@ -40,6 +40,9 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Validation;
+
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 {
@@ -200,6 +203,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         #endregion
     }
 
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     public class ReprocessStudyItemProcessor : BaseItemProcessor
     {
         #region Private Members
