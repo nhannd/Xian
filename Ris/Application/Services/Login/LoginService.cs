@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 Staff staff = FindStaffForUser(user);
 
                 return new LoginResponse(
-                    token.Id,
+                    token,
                     authorityTokens,
                     staff == null ? null : new StaffAssembler().CreateStaffSummary(staff, this.PersistenceContext));
 
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
 				Platform.GetService<IAuthenticationService>(
 					delegate(IAuthenticationService service)
 					{
-						service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
+						service.TerminateSession(new TerminateSessionRequest(request.UserName, request.SessionToken));
 					});
 
 				return new LogoutResponse();
@@ -152,7 +152,6 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 Platform.GetService<IAuthenticationService>(
                     delegate(IAuthenticationService service)
                     {
-                        // this call will throw SecurityTokenException if user/password not valid
                         service.ChangePassword(new Enterprise.Common.Authentication.ChangePasswordRequest(user, password, newPassword));
                     });
 
@@ -192,7 +191,6 @@ namespace ClearCanvas.Ris.Application.Services.Login
 
                     // setup a principal on this thread for the duration of this request
                     // (this is necessary in order to load the WorkingFacilitySettings, etc)
-                    // TODO is this the best way to do this?  Seems a little hokey...
                     Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(new GenericIdentity(userName), initSessionResponse.SessionToken);
                 });
             authorityTokens = initSessionResponse.AuthorityTokens;

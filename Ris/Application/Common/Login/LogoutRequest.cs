@@ -30,13 +30,14 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Login
 {
     [DataContract]
     public class LogoutRequest : LoginServiceRequestBase
     {
-        public LogoutRequest(string user, string sessionToken, string clientIP, string clientMachineID)
+        public LogoutRequest(string user, SessionToken sessionToken, string clientIP, string clientMachineID)
 			: base(user, clientIP, clientMachineID)
         {
             this.SessionToken = sessionToken;
@@ -46,6 +47,6 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// SessionToken. Required.
         /// </summary>
         [DataMember]
-        public string SessionToken;
+        public SessionToken SessionToken;
     }
 }

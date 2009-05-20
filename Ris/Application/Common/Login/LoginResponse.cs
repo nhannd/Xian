@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LoginResponse : DataContractBase
     {
-        public LoginResponse(string sessionToken, string[] userAuthorityTokens, StaffSummary staffSummary)
+        public LoginResponse(SessionToken sessionToken, string[] userAuthorityTokens, StaffSummary staffSummary)
         {
             this.SessionToken = sessionToken;
             this.UserAuthorityTokens = userAuthorityTokens;
@@ -60,6 +60,6 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// Session token which the client must return with all subsequent service calls.
         /// </summary>
         [DataMember]
-        public string SessionToken;
+        public SessionToken SessionToken;
     }
 }

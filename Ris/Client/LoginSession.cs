@@ -90,10 +90,12 @@ namespace ClearCanvas.Ris.Client
 								GetIPAddress(),
 								GetMachineID()));
 
-                        // if the call succeeded, construct a generic principal object on this thread, containing
+                        // if the call succeeded, set a default principal object on this thread, containing
                         // the set of authority tokens for this user
-                        Thread.CurrentPrincipal = new GenericPrincipal(
-                            new GenericIdentity(userName), response.UserAuthorityTokens);
+                        Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(
+                            new GenericIdentity(userName),
+                            response.SessionToken,
+                            response.UserAuthorityTokens);
 
                         // set the current session before attempting to access other services, as these will require authentication
                         _current = new LoginSession(userName, response.SessionToken, response.StaffSummary, facility);
@@ -135,11 +137,11 @@ namespace ClearCanvas.Ris.Client
         }
 
         private readonly string _userName;
-        private readonly string _sessionToken;
+        private readonly SessionToken _sessionToken;
         private readonly StaffSummary _staff;
         private readonly FacilitySummary _workingFacility;
 
-        private LoginSession(string userName, string sessionToken, StaffSummary staff, FacilitySummary workingFacility)
+        private LoginSession(string userName, SessionToken sessionToken, StaffSummary staff, FacilitySummary workingFacility)
         {
             _userName = userName;
             _sessionToken = sessionToken;
@@ -212,7 +214,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         internal string SessionToken
         {
-            get { return _sessionToken; }
+            get { return _sessionToken.Id; }
         }
 
         /// <summary>
