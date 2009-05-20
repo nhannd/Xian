@@ -64,14 +64,14 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 			set { _sysAdminUserName = value; }
 		}
 
-		[CommandLineParameter("sname", "Specifies the initial system admin display name. Default is 'sysadmin'.")]
+		[CommandLineParameter("sname", "Specifies the system admin user display name. Default is 'sysadmin'.")]
 		public string SysAdminDisplayName
 		{
 			get { return _sysAdminDisplayName; }
 			set { _sysAdminDisplayName = value; }
 		}
 
-		[CommandLineParameter("spwd", "Specifies the initial system admin password.  Default is 'clearcanvas'.")]
+		[CommandLineParameter("spwd", "Specifies the system admin user password.  Default is 'clearcanvas'.")]
 		public string SysAdminInitialPassword
 		{
 			get { return _sysAdminInitialPassword; }

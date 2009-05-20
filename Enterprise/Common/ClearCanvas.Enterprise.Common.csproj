@@ -118,6 +118,7 @@
     <Compile Include="Caching\ICacheProvider.cs" />
     <Compile Include="Configuration\ImportSettingsGroupRequest.cs" />
     <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
+    <Compile Include="DefaultPrincipal.cs" />
     <Compile Include="ResponseCachingClientAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
@@ -188,6 +189,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="TransactionNotifier.cs" />
+    <Compile Include="DefaultUserCredentialsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

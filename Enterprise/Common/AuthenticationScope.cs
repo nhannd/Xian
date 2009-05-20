@@ -17,36 +17,6 @@ namespace ClearCanvas.Enterprise.Common
 	/// </remarks>
 	public class AuthenticationScope : IDisposable
 	{
-		#region CustomPrincipal class
-
-		class CustomPrincipal : GenericPrincipal, IUserCredentialsProvider
-		{
-			private readonly SessionToken _token;
-
-			public CustomPrincipal(IIdentity identity, SessionToken token, string[] roles)
-				: base(identity, roles)
-			{
-				_token = token;
-			}
-
-			public SessionToken SessionToken
-			{
-				get { return _token; }
-			}
-
-			string IUserCredentialsProvider.UserName
-			{
-				get { return Identity.Name; }
-			}
-
-			string IUserCredentialsProvider.SessionTokenId
-			{
-				get { return _token.Id; }
-			}
-		}
-
-		#endregion
-
 		[ThreadStatic]
 		private static AuthenticationScope _current;
 
@@ -54,7 +24,7 @@ namespace ClearCanvas.Enterprise.Common
 		private readonly string _userName;
 		private readonly string _application;
 		private readonly string _hostName;
-		private readonly CustomPrincipal _principal;
+        private readonly IPrincipal _principal;
 		private readonly IPrincipal _previousPrincipal;
 		private bool _disposed;
 
@@ -97,11 +67,6 @@ namespace ClearCanvas.Enterprise.Common
 			get { return _current; }
 		}
 
-		public SessionToken SessionToken
-		{
-			get { return _principal.SessionToken; }
-		}
-
 		public IPrincipal Principal
 		{
 			get { return _principal; }
@@ -139,9 +104,9 @@ namespace ClearCanvas.Enterprise.Common
 
 		#region Helpers
 
-		private CustomPrincipal InitiateSession(string password)
+		private IPrincipal InitiateSession(string password)
 		{
-			CustomPrincipal principal = null;
+            IPrincipal principal = null;
 			Platform.GetService<IAuthenticationService>(
 				delegate(IAuthenticationService service)
 				{
@@ -150,7 +115,7 @@ namespace ClearCanvas.Enterprise.Common
 						new InitiateSessionRequest(_userName, _application, _hostName, password, true));
 
 					// create principal
-					principal = new CustomPrincipal(
+                    principal = DefaultPrincipal.CreatePrincipal(
 						new GenericIdentity(_userName),
 						response.SessionToken,
 						response.AuthorityTokens);
@@ -166,7 +131,7 @@ namespace ClearCanvas.Enterprise.Common
 				{
 					// terminate session
 					service.TerminateSession(
-						new TerminateSessionRequest(_userName, _principal.SessionToken));
+						new TerminateSessionRequest(_userName, ((DefaultPrincipal)_principal).SessionToken));
 				});
 		}
 

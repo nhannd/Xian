@@ -4,10 +4,9 @@ using System.Security.Principal;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
 
-namespace ClearCanvas.Enterprise.Core.ServiceModel
+namespace ClearCanvas.Enterprise.Common
 {
 	/// <summary>
 	/// Implemenation of <see cref="IPrincipal"/> that determines role information
@@ -17,25 +16,39 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 	{
 		/// <summary>
 		/// Creates an object that implements <see cref="IPrincipal"/> based on the specified
-		/// identity and session token.
+		/// identity and session token.  The authorizations will be automatically obtained
+        /// via the <see cref="IAuthenticationService"/>.
 		/// </summary>
 		/// <param name="identity"></param>
 		/// <param name="sessionToken"></param>
 		/// <returns></returns>
 		public static IPrincipal CreatePrincipal(IIdentity identity, SessionToken sessionToken)
 		{
-			return new DefaultPrincipal(identity, sessionToken);
+			return new DefaultPrincipal(identity, sessionToken, null);
 		}
+
+        /// <summary>
+        /// Creates an object that implements <see cref="IPrincipal"/> based on the specified
+        /// identity, session token, and authorizations.
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <param name="sessionToken"></param>
+        /// <returns></returns>
+        public static IPrincipal CreatePrincipal(IIdentity identity, SessionToken sessionToken, string[] authorityTokens)
+        {
+            return new DefaultPrincipal(identity, sessionToken, authorityTokens);
+        }
 
 
 		private readonly IIdentity _identity;
 		private readonly SessionToken _sessionToken;
 		private string[] _authorityTokens;
 
-		private DefaultPrincipal(IIdentity identity, SessionToken sessionToken)
+		private DefaultPrincipal(IIdentity identity, SessionToken sessionToken, string[] authorityTokens)
 		{
 			_identity = identity;
 			_sessionToken = sessionToken;
+            _authorityTokens = authorityTokens;
 		}
 
 		public IIdentity Identity
@@ -43,14 +56,16 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 			get { return _identity; }
 		}
 
+        public SessionToken SessionToken
+        {
+            get { return _sessionToken; }
+        }
+
 		public bool IsInRole(string role)
 		{
-			// initialize auth tokens if this is the first call
+			// initialize auth tokens if not yet initialized
 			if (_authorityTokens == null)
 			{
-                //AuthenticationClient authClient = new AuthenticationClient();
-                //_authorityTokens = authClient.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
-
                 Platform.GetService<IAuthenticationService>(
                     delegate(IAuthenticationService service)
                     {

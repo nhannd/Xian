@@ -41,7 +41,7 @@ using System.Net;
 namespace ClearCanvas.Enterprise.Common.Setup
 {
 	/// <summary>
-	/// Connects to the enterprise server and imports settings groups, authority tokens, and optionally authority groups.
+	/// Connects to the enterprise server and imports settings groups, authority tokens, and authority groups.
 	/// </summary>
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class SetupApplication : IApplicationRoot
@@ -58,16 +58,22 @@ namespace ClearCanvas.Enterprise.Common.Setup
 				using(new AuthenticationScope(cmdLine.UserName, "setup", Dns.GetHostName(), cmdLine.Password))
 				{
 					// first import the tokens, since the default groups will likely depend on these tokens
-					ImportAuthorityTokens(cmdLine.SysAdminGroup);
+                    if (cmdLine.ImportAuthorityTokens)
+                    {
+                        ImportAuthorityTokens(cmdLine.SysAdminGroup);
+                    }
 
-					// import groups if specified
+					// import authority groups
 					if(cmdLine.ImportDefaultAuthorityGroups)
 					{
 						ImportAuthorityGroups();
 					}
 
 					// import settings groups
-					ImportSettingsGroups();
+                    if (cmdLine.ImportSettingsGroups)
+                    {
+                        ImportSettingsGroups();
+                    }
 				}
             }
 			catch (CommandLineException e)

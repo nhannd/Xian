@@ -4,9 +4,14 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Threading;
 
-namespace ClearCanvas.Enterprise.Core.ServiceModel
+namespace ClearCanvas.Enterprise.Common
 {
-	public class WcfServiceUserCredentialsProvider : IUserCredentialsProvider
+    /// <summary>
+    /// Implementation of <see cref="IUserCredentialsProvider"/> that obtains credentials from
+    /// the <see cref="Thread.CurrentPrincipal"/>, assuming that the current principal
+    /// implements the <see cref="IUserCredentialsProvider"/> interface.
+    /// </summary>
+	public class DefaultUserCredentialsProvider : IUserCredentialsProvider
 	{
 		#region IUserCredentialsProvider Members
 
@@ -26,7 +31,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 		{
 			IUserCredentialsProvider provider = Thread.CurrentPrincipal as IUserCredentialsProvider;
 			if(provider == null)
-				throw new NotSupportedException(""); //TODO elaborate
+                throw new InvalidOperationException("Thread.CurrentPrincipal value does not implement IUserCredentialsProvider.");
 
 			return provider;
 		}

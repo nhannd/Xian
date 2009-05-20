@@ -62,7 +62,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         {
             // scan all plugins for token definitions
         	AuthorityTokenDefinition[] tokenDefs = AuthorityGroupSetup.GetAuthorityTokens();
-        	return Import(tokenDefs, context);
+        	return Import(tokenDefs, null, context);
         }
 
 		/// <summary>
@@ -71,17 +71,25 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 		/// <param name="tokenDefs"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public IList<AuthorityToken> Import(IEnumerable<AuthorityTokenDefinition> tokenDefs, IUpdateContext context)
+		public IList<AuthorityToken> Import(IEnumerable<AuthorityTokenDefinition> tokenDefs,
+            IList<string> addToGroups, IUpdateContext context)
 		{
 			// first load all the existing tokens into memory
 			// there should not be that many tokens ( < 500), so this should not be a problem
 			IAuthorityTokenBroker broker = context.GetBroker<IAuthorityTokenBroker>();
 			IList<AuthorityToken> existingTokens = broker.FindAll();
 
+            // if there are groups to add to, load the groups
+            IList<AuthorityGroup> groups = addToGroups != null && addToGroups.Count > 0
+                ? LoadGroups(addToGroups, context) : new List<AuthorityGroup>();
+
 			foreach (AuthorityTokenDefinition tokenDef in tokenDefs)
 			{
 				AuthorityToken token = ProcessToken(tokenDef, existingTokens, context);
 				existingTokens.Add(token);
+
+                // add to groups
+                CollectionUtils.ForEach(groups, delegate(AuthorityGroup g) { g.AuthorityTokens.Add(token); });
 			}
 
 			return existingTokens;
@@ -105,6 +113,14 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 			token.Description = tokenDef.Description;
 
             return token;
+        }
+
+        private IList<AuthorityGroup> LoadGroups(IEnumerable<string> groupNames, IPersistenceContext context)
+        {
+            AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
+            where.Name.In(groupNames);
+
+            return context.GetBroker<IAuthorityGroupBroker>().Find(where);
         }
 
         #region IApplicationRoot Members

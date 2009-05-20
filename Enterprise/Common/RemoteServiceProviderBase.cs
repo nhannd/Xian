@@ -239,7 +239,7 @@ namespace ClearCanvas.Enterprise.Common
 
             Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticationRequired={1}.",
                          serviceContract.FullName, authenticationRequired);
-
+            //return channel;
             return CreateChannelProxy(serviceContract, channel);
         }
 

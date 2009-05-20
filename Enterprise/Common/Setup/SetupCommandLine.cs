@@ -38,10 +38,22 @@ namespace ClearCanvas.Enterprise.Common.Setup
 {
 	class SetupCommandLine : CommandLine
 	{
-        private string _userName;
-        private string _password;
-		private string _sysAdminGroup;
-		private bool _importDefaultAuthorityGroups = true;
+        private string _userName = "sa";
+        private string _password = "clearcanvas";
+		private string _sysAdminGroup = "Administrators";
+        private bool _importAuthorityTokens = true;
+        private bool _importDefaultAuthorityGroups = true;
+        private bool _importSettingsGroups = true;
+
+        /// <summary>
+        /// Specifies whether to import authority tokens.
+        /// </summary>
+        [CommandLineParameter("tokens", "t", "Specifies whether to import authority tokens. This option is enabled by default.")]
+        public bool ImportAuthorityTokens
+        {
+            get { return _importAuthorityTokens; }
+            set { _importAuthorityTokens = value; }
+        }
 
 		/// <summary>
 		/// Specifies whether to create default authority groups.
@@ -53,10 +65,20 @@ namespace ClearCanvas.Enterprise.Common.Setup
 			set { _importDefaultAuthorityGroups = value; }
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Specifies whether to import settings groups.
+        /// </summary>
+        [CommandLineParameter("settings", "s", "Specifies whether to import settings groups. This option is enabled by default.")]
+        public bool ImportSettingsGroups
+        {
+            get { return _importSettingsGroups; }
+            set { _importSettingsGroups = value; }
+        }
+        
+        /// <summary>
 		/// Specifies user name to connect to enterprise server.
 		/// </summary>
-		[CommandLineParameter("suid", "Specifies user name to connect to enterprise server.", Required = true)]
+		[CommandLineParameter("suid", "Specifies user name to connect to enterprise server. Default is 'sa'.")]
         public string UserName
         {
             get { return _userName; }
@@ -66,7 +88,7 @@ namespace ClearCanvas.Enterprise.Common.Setup
 		/// <summary>
 		/// Specifies password to connect to enterprise server.
 		/// </summary>
-		[CommandLineParameter("spwd", "Specifies password to connect to enterprise server.", Required = true)]
+		[CommandLineParameter("spwd", "Specifies password to connect to enterprise server. Default is 'clearcanvas'.")]
         public string Password
         {
             get { return _password; }

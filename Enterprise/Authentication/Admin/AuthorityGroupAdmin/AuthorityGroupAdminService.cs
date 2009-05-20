@@ -158,6 +158,7 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.AuthorityGroupAdmin
 				importer.Import(
 					CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenDefinition>(request.Tokens,
 						delegate(AuthorityTokenSummary s) { return new AuthorityTokenDefinition(s.Name, s.Description); }),
+                        request.AddToGroups,
 						(IUpdateContext)PersistenceContext);
 
 			}
