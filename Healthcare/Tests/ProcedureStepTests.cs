@@ -13,22 +13,38 @@ namespace ClearCanvas.Healthcare.Tests
     {
         #region ConcreteProcedureStep
 
+		/// <summary>
+		/// Concrete derivation of the abstract ProcedureStep, for use in tests.
+		/// </summary>
         class ConcreteProcedureStep : ProcedureStep
         {
-            public ConcreteProcedureStep()
-            {
-                
-            }
+        	private readonly bool _supportsLinking;
+			private readonly List<Procedure> _linkedProcedures = new List<Procedure>();
+			private List<ProcedureStep> _relatedSteps = new List<ProcedureStep>();
 
-            public ConcreteProcedureStep(Procedure procedure) 
+			public ConcreteProcedureStep(Procedure procedure)
+				:this(procedure, false)
+			{
+			}
+
+            public ConcreteProcedureStep(Procedure procedure, bool supportsLinking) 
                 : base(procedure)
             {
-
+            	_supportsLinking = supportsLinking;
             }
+
+			/// <summary>
+			/// Method used to set the "related" steps, for testing
+			/// </summary>
+			/// <param name="relatedSteps"></param>
+			public void SetRelatedSteps(ConcreteProcedureStep[] relatedSteps)
+			{
+				_relatedSteps = new List<ProcedureStep>(relatedSteps);
+			}
 
             public override string Name
             {
-                get { return "Test string."; }
+				get { return "Concrete"; }
             }
 
             public override bool IsPreStep
@@ -38,12 +54,21 @@ namespace ClearCanvas.Healthcare.Tests
 
             protected override void LinkProcedure(Procedure procedure)
             {
-                // Do nothing
+				if(_supportsLinking)
+				{
+					_linkedProcedures.Add(procedure);
+				}
+				else
+				{
+					base.LinkProcedure(procedure);
+				}
             }
 
             public override List<Procedure> GetLinkedProcedures()
             {
-                return null;
+				// note that even if _supporstLinking == false, we
+				// still return an empty list here - we don't throw
+				return _linkedProcedures;
             }
 
             protected override ProcedureStep CreateScheduledCopy()
@@ -53,7 +78,8 @@ namespace ClearCanvas.Healthcare.Tests
 
             protected override bool IsRelatedStep(ProcedureStep step)
             {
-                return true;
+				// this is by definition related to this!
+                return Equals(this, step) || _relatedSteps.Contains(step);
             }
         }
 
@@ -72,58 +98,7 @@ namespace ClearCanvas.Healthcare.Tests
         
         #endregion
 
-        #region Property Tests
-
-        [Test]
-        public void Test_AssignedStaff()
-        {
-            Procedure procedure = new Procedure();
-            ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-            Staff performer = new Staff();
-
-            procedureStep.Assign(performer);
-
-            Assert.IsNotNull(procedureStep.Scheduling);
-            Assert.IsNotNull(procedureStep.Scheduling.Performer);
-            Assert.AreEqual(performer, procedureStep.AssignedStaff);
-        }
-
-        [Test]
-        public void Test_AssignedStaff_SchedulingNull()
-        {
-            Procedure procedure = new Procedure();
-            ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-
-            Assert.IsFalse(procedureStep.Scheduling != null && procedureStep.Scheduling.Performer != null);
-            Assert.IsNull(procedureStep.AssignedStaff);
-        }
-
-        [Test]
-        public void Test_PerformingStaff()
-        {
-            Procedure procedure = new Procedure();
-            ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-            Staff performer = new Staff();
-
-            procedureStep.Start(performer);
-
-            Assert.IsNotNull(procedureStep.Performer);
-            Assert.AreEqual(performer, procedureStep.PerformingStaff);
-        }
-
-        [Test]
-        public void Test_PerformingStaff_PerformerNull()
-        {
-            Procedure procedure = new Procedure();
-            ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-
-            Assert.IsNull(procedureStep.Performer);
-            Assert.IsNull(procedureStep.PerformingStaff);
-        }
-
-        #endregion
-
-        #region Method Tests
+        #region Assign/Reassign functionality
 
         [Test]
         public void Test_Assign()
@@ -223,9 +198,37 @@ namespace ClearCanvas.Healthcare.Tests
             procedureStep.Discontinue();
 
             ConcreteProcedureStep newStep = (ConcreteProcedureStep)procedureStep.Reassign(performer);
-        }
+		}
 
-        [Test]
+		[Test]
+		public void Test_AssignedStaff()
+		{
+			Procedure procedure = new Procedure();
+			ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
+			Staff performer = new Staff();
+
+			procedureStep.Assign(performer);
+
+			Assert.IsNotNull(procedureStep.Scheduling);
+			Assert.IsNotNull(procedureStep.Scheduling.Performer);
+			Assert.AreEqual(performer, procedureStep.AssignedStaff);
+		}
+
+		[Test]
+		public void Test_AssignedStaff_SchedulingNull()
+		{
+			Procedure procedure = new Procedure();
+			ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
+
+			Assert.IsFalse(procedureStep.Scheduling != null && procedureStep.Scheduling.Performer != null);
+			Assert.IsNull(procedureStep.AssignedStaff);
+		}
+
+		#endregion
+
+		#region Starting and Completing functionality
+
+		[Test]
         public void Test_Start()
         {
             DateTime? later = DateTime.Now.AddHours(2);
@@ -312,51 +315,163 @@ namespace ClearCanvas.Healthcare.Tests
             ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
 
             procedureStep.Complete((Staff)null); // Perform event
-        }
+		}
+		[Test]
+		public void Test_PerformingStaff()
+		{
+			Procedure procedure = new Procedure();
+			ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
+			Staff performer = new Staff();
 
-        [Test]
+			procedureStep.Start(performer);
+
+			Assert.IsNotNull(procedureStep.Performer);
+			Assert.AreEqual(performer, procedureStep.PerformingStaff);
+		}
+
+		[Test]
+		public void Test_PerformingStaff_PerformerNull()
+		{
+			Procedure procedure = new Procedure();
+			ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
+
+			Assert.IsNull(procedureStep.Performer);
+			Assert.IsNull(procedureStep.PerformingStaff);
+		}
+
+		#endregion
+
+		#region Procedure Linking Functionality
+
+		[Test]
         public void Test_LinkTo()
         {
-            Procedure procedure = new Procedure();
-            Procedure procedure2 = new Procedure();
-            ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-            ConcreteProcedureStep procedureStep2 = new ConcreteProcedureStep(procedure2);
-            Assert.AreEqual(ActivityStatus.SC, procedureStep.State);
-            
-            procedureStep.LinkTo(procedureStep2); // Perform event
+            Procedure p1 = new Procedure();
+            Procedure p2 = new Procedure();
 
-            // Make assertions
-            Assert.AreEqual(procedureStep2, procedureStep.LinkStep);
-            Assert.AreEqual(ActivityStatus.DC, procedureStep.State);
-        }
+			// create proc steps that support linking
+            ConcreteProcedureStep ps1 = new ConcreteProcedureStep(p1, true);
+            ConcreteProcedureStep ps2 = new ConcreteProcedureStep(p2, true);
+            Assert.AreEqual(ActivityStatus.SC, ps1.State);
+
+			// pre-conditions:
+			// both link step properties are null (not set), and 
+			// linked procedure lists are emtpy
+			Assert.IsNull(ps1.LinkStep);
+        	Assert.IsFalse(ps1.IsLinked);
+			Assert.IsEmpty(ps1.GetLinkedProcedures());
+			Assert.IsNull(ps2.LinkStep);
+			Assert.IsFalse(ps2.IsLinked);
+			Assert.IsEmpty(ps2.GetLinkedProcedures());
+           
+			// link step 1 to step 2
+            ps1.LinkTo(ps2);
+
+			// which should discontinue step 1
+			Assert.AreEqual(ActivityStatus.DC, ps1.State);
+
+			// expect the ps1.LinkStep is set to point to ps2
+            Assert.AreEqual(ps2, ps1.LinkStep);
+			Assert.IsTrue(ps1.IsLinked);	// ps1 is linked
+
+			// expect ps1 does not have any linked procedures,
+			// and AllProcedures returns only ps1
+			Assert.IsEmpty(ps1.GetLinkedProcedures());
+			Assert.AreEqual(1, ps1.AllProcedures.Count);
+			Assert.Contains(p1, ps1.AllProcedures);
+
+			// expect ps2 is still not linked
+			Assert.IsNull(ps2.LinkStep);
+			Assert.IsFalse(ps2.IsLinked);	// ps2 is not linked
+			// expect ps2 has exactly 1 linked procedure, which is p1
+			Assert.AreEqual(1, ps2.GetLinkedProcedures().Count);
+			Assert.Contains(p1, ps2.GetLinkedProcedures());
+
+			// expect AllProcedures contains both p1 and p2
+			Assert.AreEqual(2, ps2.AllProcedures.Count);
+			Assert.Contains(p1, ps2.AllProcedures);
+			Assert.Contains(p2, ps2.AllProcedures);
+		}
 
         [Test]
         [ExpectedException(typeof(WorkflowException))]
-        public void Test_LinkTo_StateNotScheduling()
+        public void Test_LinkTo_StateNotScheduled()
         {
-            Procedure procedure = new Procedure();
-            Procedure procedure2 = new Procedure();
-            ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-            ConcreteProcedureStep procedureStep2 = new ConcreteProcedureStep(procedure2);
-            procedureStep.Discontinue();
+            Procedure p1 = new Procedure();
+            Procedure p2 = new Procedure();
 
-            procedureStep.LinkTo(procedureStep2); // Perform event
+			// create proc steps that support linking
+			ConcreteProcedureStep ps1 = new ConcreteProcedureStep(p1, true);
+			ConcreteProcedureStep ps2 = new ConcreteProcedureStep(p2, true);
+
+			ps1.Discontinue();
+			Assert.AreEqual(ActivityStatus.DC, ps1.State);
+
+			// should throw, because only a scheduled step can be linked to another
+            ps1.LinkTo(ps2);
         }
 
-        //[Test]
-        //[ExpectedException(typeof(WorkflowException))]
-        //public void Test_Linkprocedure()
-        //{
-        //    Procedure procedure = new Procedure();
-        //    ConcreteProcedureStep procedureStep = new ConcreteProcedureStep(procedure);
-        //    ProcedureStep baseProcedureStep = procedureStep;
+		[Test]
+		[ExpectedException(typeof(WorkflowException))]
+		public void Test_LinkTo_LinkingNotSupported()
+		{
+			Procedure p1 = new Procedure();
+			Procedure p2 = new Procedure();
 
-        //    baseProcedureStep.LinkProcedure(new Procedure());
-        //}
+			// create proc steps that don't support linking
+			ConcreteProcedureStep ps1 = new ConcreteProcedureStep(p1, false);
+			ConcreteProcedureStep ps2 = new ConcreteProcedureStep(p2, false);
 
-        #endregion
+			// should throw, because linking is not supported
+			ps1.LinkTo(ps2);
+		}
 
-        private static bool RoughlyEqual(DateTime? x, DateTime? y)
+		#endregion
+
+		#region Related-Steps functionality
+
+		[Test]
+		public void Test_GetRelatedProcedureSteps()
+		{
+			Procedure p1 = new Procedure();
+
+			// attach 2 procedure steps to p1
+			ConcreteProcedureStep ps11 = new ConcreteProcedureStep(p1, false);
+			ConcreteProcedureStep ps12 = new ConcreteProcedureStep(p1, false);
+
+			// expect that each ps is only related to itself
+			Assert.AreEqual(1, ps11.GetRelatedProcedureSteps().Count);
+			Assert.Contains(ps11, ps11.GetRelatedProcedureSteps());
+			Assert.AreEqual(1, ps12.GetRelatedProcedureSteps().Count);
+			Assert.Contains(ps12, ps12.GetRelatedProcedureSteps());
+
+			// now set ps12 related to ps11
+			ps11.SetRelatedSteps(
+				new ConcreteProcedureStep[]{ps12});
+
+			// expect ps11 now has 2 related steps, itself and ps12
+			Assert.AreEqual(2, ps11.GetRelatedProcedureSteps().Count);
+			Assert.Contains(ps11, ps11.GetRelatedProcedureSteps());
+			Assert.Contains(ps12, ps11.GetRelatedProcedureSteps());
+
+			// create another procedure and proc step
+			Procedure p2 = new Procedure();
+			ConcreteProcedureStep ps21 = new ConcreteProcedureStep(p2, false);
+
+			// now set ps21 related to ps11
+			ps11.SetRelatedSteps(
+				new ConcreteProcedureStep[] { ps21 });
+
+			// expect that ps11 is only related to itself,
+			// (eg ps21 has no effect, because it is associated with a different procedure,
+			// and only steps associated to the same procedure can be related.
+			Assert.AreEqual(1, ps11.GetRelatedProcedureSteps().Count);
+			Assert.Contains(ps11, ps11.GetRelatedProcedureSteps());
+		}
+
+    	#endregion
+
+		private static bool RoughlyEqual(DateTime? x, DateTime? y)
         {
             if (!x.HasValue && !y.HasValue)
                 return true;

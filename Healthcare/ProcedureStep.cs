@@ -264,9 +264,10 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Gets athe set of procedure steps that are related to this procedure step,
+		/// Gets the set of procedure steps that are related to this procedure step,
 		/// in the sense that they relate to the same work artifact (protocol, report, etc).
-		/// Note that the result includes this step.
+		/// Note that the result includes this step, because a procedure is by 
+		/// definition related to itself.
 		/// </summary>
 		/// <returns></returns>
 		public virtual List<ProcedureStep> GetRelatedProcedureSteps()

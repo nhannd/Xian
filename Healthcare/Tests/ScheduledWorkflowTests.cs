@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// service plan is correctly applied to the order.
         /// </summary>
         [Test]
-        public void CreateNewOrderScheduled()
+        public void Test_CreateNewOrderScheduled()
         {
             DateTime scheduleTime = DateTime.Now;
 
@@ -114,7 +114,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// are updated to reflect the scheduled time.
         /// </summary>
         [Test]
-        public void ScheduleProcedureStep()
+		public void Test_ScheduleProcedureStep()
         {
             // create an unscheduled order
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
@@ -137,7 +137,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// also unscheduled.
         /// </summary>
         [Test]
-        public void UnscheduleProcedureStep()
+		public void Test_UnscheduleProcedureStep()
         {
             // create a scheduled order
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
@@ -162,7 +162,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// is updated to reflect the earlist procedure step.
         /// </summary>
         [Test]
-        public void RescheduleEarlier()
+		public void Test_RescheduleEarlier()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true, true);
 
@@ -185,7 +185,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// scheduling information still reflects the earliest start time.
         /// </summary>
         [Test]
-        public void RescheduleLater()
+		public void Test_RescheduleLater()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true, true);
 
@@ -208,7 +208,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// procedure steps are discontinued.
         /// </summary>
         [Test]
-        public void CancelOrderFromScheduled()
+		public void Test_CancelOrderFromScheduled()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
             CheckStatus(OrderStatus.SC, order);
@@ -236,7 +236,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// (bug #3440)
         /// </summary>
         [Test]
-        public void CancelOrderWithCancelledProcedure()
+		public void Test_CancelOrderWithCancelledProcedure()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
             CheckStatus(OrderStatus.SC, order);
@@ -272,7 +272,7 @@ namespace ClearCanvas.Healthcare.Tests
 		/// procedure steps are discontinued.
 		/// </summary>
 		[Test]
-		public void ReplaceOrderFromScheduled()
+		public void Test_ReplaceOrderFromScheduled()
 		{
 			Order order = TestOrderFactory.CreateOrder(2, 2, true);
 			CheckStatus(OrderStatus.SC, order);
@@ -301,7 +301,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// Verify that an order cannot be cancelled after it is already in progress.
         /// </summary>
         [Test]
-        public void CancelOrderFromInProgress()
+		public void Test_CancelOrderFromInProgress()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
@@ -327,7 +327,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// but in progress procedures are allowed to complete.
         /// </summary>
         [Test]
-        public void DiscontinueOrder()
+		public void Test_DiscontinueOrder()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
@@ -363,7 +363,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// Verify that order is auto-discontinued when all procedures are cancelled.
         /// </summary>
         [Test]
-        public void AutoDiscontinueOrder()
+		public void Test_AutoDiscontinueOrder()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
@@ -394,7 +394,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// Verify that order is auto-cancelled when all procedures are cancelled.
         /// </summary>
         [Test]
-        public void AutoCancelOrder()
+		public void Test_AutoCancelOrder()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
@@ -415,7 +415,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// is started.
         /// </summary>
         [Test]
-        public void AutoStartOrderProcedure()
+		public void Test_AutoStartOrderProcedure()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
@@ -438,7 +438,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// is completed, and that the order is still completed even if another procedure was discontinued.
         /// </summary>
         [Test]
-        public void AutoCompleteOrderProcedure()
+		public void Test_Test_AutoCompleteOrderProcedure()
         {
             Order order = TestOrderFactory.CreateOrder(2, 1, true);
             // copy req procs to a list so we can access them by index
@@ -478,7 +478,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// Verify that when a procedure is cancelled, all steps are discontinued.
         /// </summary>
         [Test]
-        public void CancelProcedureFromScheduled()
+		public void Test_CancelProcedureFromScheduled()
         {
             Order order = TestOrderFactory.CreateOrder(1, 2, true);
 
@@ -505,7 +505,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// Verify that an in-progress procedure cannot be cancelled.
         /// </summary>
         [Test]
-        public void CancelProcedureFromInProgress()
+		public void Test_CancelProcedureFromInProgress()
         {
             try
             {
@@ -533,7 +533,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// b) CM, DC steps are unchanged.
         /// </summary>
         [Test]
-        public void DiscontinueProcedure()
+		public void Test_DiscontinueProcedure()
         {
             Order order = TestOrderFactory.CreateOrder(1, 3, true);
 
@@ -574,7 +574,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// Verify that a procedure step can be started, and that the order/procedure move to IP status.
         /// </summary>
         [Test]
-        public void StartProcedureStep()
+		public void Test_StartProcedureStep()
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
@@ -599,7 +599,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// and that the order/procedure status are unchanged.
         /// </summary>
         [Test]
-        public void CompleteProcedureStepFromScheduled()
+		public void Test_CompleteProcedureStepFromScheduled()
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
 
@@ -627,7 +627,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// and that the order/procedure status are unchanged.
         /// </summary>
         [Test]
-        public void CompleteProcedureStepFromInProgress()
+		public void Test_CompleteProcedureStepFromInProgress()
         {
             Order order = TestOrderFactory.CreateOrder(1, 1, true);
             Procedure rp1 = CollectionUtils.FirstElement(order.Procedures);
@@ -659,7 +659,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// (assuming it is not the only procedure step).
         /// </summary>
         [Test]
-        public void DiscontinueProcedureStep()
+		public void Test_DiscontinueProcedureStep()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
@@ -688,7 +688,7 @@ namespace ClearCanvas.Healthcare.Tests
         /// discontinued.
         /// </summary>
         [Test]
-        public void AutoDiscontinueProcedure()
+		public void Test_AutoDiscontinueProcedure()
         {
             Order order = TestOrderFactory.CreateOrder(2, 2, true);
 
