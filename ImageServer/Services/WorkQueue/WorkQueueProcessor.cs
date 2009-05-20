@@ -40,7 +40,6 @@ using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using Alert=ClearCanvas.ImageServer.Common.Alert;
 using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
@@ -260,7 +259,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                  ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
 									 processor.Name, AlertTypeCodes.UnableToProcess,
-                                     GetWorkQueueStudyInfo(queueItem), TimeSpan.Zero,
+                                     GetWorkQueueContextData(queueItem), TimeSpan.Zero,
 									 "Work Queue item failed: Type={0}, GUID={1}: {2}",
 									 queueItem.WorkQueueTypeEnum,
                                      queueItem.GetKey(), error);
@@ -268,26 +267,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            
         }
 
-        private StudyInfo GetWorkQueueStudyInfo(Model.WorkQueue item)
+        private WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
         {
             IList<StudyStorageLocation> storages = item.LoadStudyLocations(ExecutionContext.Current.PersistenceContext);
-            if (storages != null && storages.Count>0)
+            if (storages != null && storages.Count > 0)
             {
                 StudyStorageLocation location = storages[0];
                 if (location.Study != null)
                 {
-                    StudyInfo studyInfo = new StudyInfo();
-                    studyInfo.AccessionNumber = location.Study.AccessionNumber;
-                    studyInfo.PatientsId = location.Study.PatientId;
-                    studyInfo.PatientsName = location.Study.PatientsName;
-                    studyInfo.ServerAE = location.ServerPartition.AeTitle;
-                    studyInfo.StudyInstaneUid = location.StudyInstanceUid;
-                    studyInfo.StudyDate = location.Study.StudyDate;
-                    return studyInfo;
+                    WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
+                    contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+
+                    contextData.StudyInfo = new StudyInfo();
+                    contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
+                    contextData.StudyInfo.PatientsId = location.Study.PatientId;
+                    contextData.StudyInfo.PatientsName = location.Study.PatientsName;
+                    contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
+                    contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+                    contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                    return contextData;
                 }
             }
 
             return null;
+            
         }
 
         /// <summary>
