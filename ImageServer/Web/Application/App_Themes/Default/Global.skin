@@ -58,9 +58,9 @@
 <asp:Image runat="server" SkinID="Watermark" ImageUrl="images/Indicators/Watermark.gif" />
 <asp:Image runat="server" SkinID="Searching" ImageUrl="images/Indicators/Searching.gif" />
 <asp:Image runat="server" SkinID="Loading" ImageUrl="images/MainContent/Loading.gif" />
-<asp:Image runat="server" SkinID="AjaxLoadingBlue" ImageUrl="images/Indicators/ajax-loader-blue.gif" />
-<asp:Image runat="server" SkinID="AjaxLoadingIndicator" ImageUrl="images/Indicators/ajax-loader.gif" />
-<asp:Image runat="server" SkinID="RefreshEnabled" ImageUrl="images/Indicators/RefreshEnabled.gif" />
+<asp:Image runat="server" SkinID="AjaxLoadingBlue" ImageUrl="images/Indicators/ajax-loader-blue.gif" style="margin-right: 7px;" />
+<asp:Image runat="server" SkinID="AjaxLoadingIndicator" ImageUrl="images/Indicators/ajax-loader.gif"  />
+<asp:Image runat="server" SkinID="RefreshEnabled" ImageUrl="images/Indicators/RefreshEnabled.gif" style="margin-right: 7px;" />
 <asp:Image runat="server" SkinID="RefreshEnabledWhite" ImageUrl="images/Indicators/RefreshEnabledWhite.gif" />
 <asp:Image runat="server" SkinID="Spacer" ImageUrl="images/blank.gif" />
 
