@@ -302,8 +302,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 workQueueItems += "[" + item.Key + "]";
             }
 
-            ClearCanvas.Common.Platform.Log(ClearCanvas.Common.LogLevel.Info, null, "WorkQueueDataSource.InternalSelect: list=" + workQueueItems);
-
 			return list;
 		}
 		#endregion
