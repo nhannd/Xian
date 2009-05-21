@@ -84,7 +84,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             catch(UnauthorizedAccessException)
             {
                 //alert the system admin
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", AlertTypeCodes.NoPermission,
+                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", 
+                                        AlertTypeCodes.NoPermission, null, TimeSpan.Zero,
                                      "Unauthorized access to {0} from {1}", _directory, ServiceTools.HostId);
                 throw;
             }
