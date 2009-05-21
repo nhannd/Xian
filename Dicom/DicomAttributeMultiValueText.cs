@@ -110,7 +110,9 @@ namespace ClearCanvas.Dicom
 
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.
-            valueArray = valueArray.Trim(new char[] {tag.VR.PadChar, '\0'});
+			// Leading and trailing space characters are non-significant in all multi-valued VRs,
+			// so pull them out here as well since some devices seem to pad UI attributes with spaces too.
+            valueArray = valueArray.Trim(new char[] {tag.VR.PadChar, '\0', ' '});
 
             if (valueArray.Length == 0)
             {
