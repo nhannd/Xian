@@ -9,7 +9,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="StudyHeaderMaxValueLength" Type="System.UInt64" Scope="Application">
-      <Value Profile="(Default)">16384</Value>
+      <Value Profile="(Default)">4096</Value>
     </Setting>
     <Setting Name="DefaultStudyRootFolder" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Unknown</Value>

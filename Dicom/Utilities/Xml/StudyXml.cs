@@ -225,10 +225,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
     		Platform.CheckForNullReference(settings, "settings");
 
 			// Create a copy of the collection without pixel data
-    		DicomAttributeCollection data =
-    			theFile.DataSet.Copy(true, settings.IncludePrivateValues != StudyXmlTagInclusion.IgnoreTag,
-    			                     settings.IncludeUnknownTags != StudyXmlTagInclusion.IgnoreTag,
-    			                     DicomTags.PixelData);
+    		DicomAttributeCollection data = new InstanceXmlDicomAttributeCollection(theFile.DataSet, true,
+    		                                                                        settings.IncludePrivateValues !=
+    		                                                                        StudyXmlTagInclusion.IgnoreTag,
+    		                                                                        settings.IncludeUnknownTags !=
+    		                                                                        StudyXmlTagInclusion.IgnoreTag,
+    		                                                                        DicomTags.PixelData);
 
             String studyInstanceUid = data[DicomTags.StudyInstanceUid];
 

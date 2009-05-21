@@ -134,6 +134,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	{
 		private readonly ExcludedTagsHelper _excludedTagsHelper;
 
+		internal InstanceXmlDicomAttributeCollection(DicomAttributeCollection source, bool copyBinary, bool copyPrivate, bool copyUnknown, uint stopTag)
+			: base(source, copyBinary, copyPrivate, copyUnknown, stopTag)
+		{
+			_excludedTagsHelper = new ExcludedTagsHelper(this);
+		}
+
 		internal InstanceXmlDicomAttributeCollection()
 		{
 			_excludedTagsHelper = new ExcludedTagsHelper(this);
@@ -451,7 +457,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			 || (attribute is DicomAttributeOW)
 			 || (attribute is DicomAttributeOF)
 			 || (attribute is DicomFragmentSequence))
-				return StudyXmlTagInclusion.IgnoreTag;
+				return StudyXmlTagInclusion.IncludeTagExclusion;
 
 			return settings.IncludeLargeTags;
 		}
@@ -639,12 +645,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			IEnumerator<DicomAttribute> baseIterator = null;
 			bool validIterator = false;
-			IPrivateInstanceXmlDicomAttributeCollection privateCollection = null;
+			IPrivateInstanceXmlDicomAttributeCollection privateBaseCollection = null;
 			if (baseCollection != null)
 			{
 				baseIterator = baseCollection.GetEnumerator();
 				validIterator = baseIterator.MoveNext();
-				privateCollection = baseCollection as IPrivateInstanceXmlDicomAttributeCollection;
+				privateBaseCollection = baseCollection as IPrivateInstanceXmlDicomAttributeCollection;
 			}
 
 			foreach (DicomAttribute attribute in collection)
@@ -681,8 +687,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 							validIterator = baseIterator.MoveNext();
 						}
 					}
-					if (privateCollection != null && !isInBase)
-						if (privateCollection.ExcludedTagsHelper.ExcludedTags.Contains(attribute.Tag))
+					if (privateBaseCollection != null && !isInBase)
+						if (privateBaseCollection.ExcludedTagsHelper.ExcludedTags.Contains(attribute.Tag))
 							isInBase = true;
 				}
 
@@ -695,8 +701,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				StudyXmlTagInclusion inclusion = AttributeShouldBeIncluded(attribute, settings);
 				if (inclusion == StudyXmlTagInclusion.IncludeTagExclusion)
 				{
-					XmlElement excludedAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "ExcludedAttribute");
-					instance.AppendChild(excludedAttributeElement);
+					if (!isInBase && (privateBaseCollection == null || !privateBaseCollection.ExcludedTagsHelper.ExcludedTags.Contains(attribute.Tag)))
+					{
+						XmlElement excludedAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "ExcludedAttribute");
+						instance.AppendChild(excludedAttributeElement);
+					}
 					continue;
 				}
 				else if (inclusion == StudyXmlTagInclusion.IgnoreTag)

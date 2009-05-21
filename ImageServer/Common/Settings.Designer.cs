@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("16384")]
+        [global::System.Configuration.DefaultSettingValueAttribute("4096")]
         public ulong StudyHeaderMaxValueLength {
             get {
                 return ((ulong)(this["StudyHeaderMaxValueLength"]));
