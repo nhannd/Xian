@@ -132,6 +132,9 @@
   <data name="MessageNoEndpointListening" xml:space="preserve">
     <value>Unable to connect to the server.</value>
   </data>
+  <data name="MessageNoServiceProvider" xml:space="preserve">
+    <value>No service provider was found.  There may be an issue with the application's configuration.</value>
+  </data>
   <data name="MessagePasswordChanged" xml:space="preserve">
     <value>Password changed.</value>
   </data>

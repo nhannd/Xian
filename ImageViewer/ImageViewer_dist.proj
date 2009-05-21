@@ -53,8 +53,8 @@
       <PropertyGroup>
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>-->
-        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>
+        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>-->
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -188,6 +188,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EnterpriseClientFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
     <EnterpriseClientFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
     <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" />
     <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" />

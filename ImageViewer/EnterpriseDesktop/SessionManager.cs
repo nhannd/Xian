@@ -157,19 +157,19 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 				try
 				{
 					Login(userName, password);
-
-					//no exception = success.
-					AuditHelper.LogLogin("Login", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.Success);
 					return true;
 				}
-				catch(FaultException<PasswordExpiredException>)
+				catch (FaultException<PasswordExpiredException>)
+				{
+					changPassword = true;
+				}
+				catch (PasswordExpiredException)
 				{
 					changPassword = true;
 				}
 				catch (Exception e)
 				{
 					ReportException(e);
-					AuditHelper.LogLogin("Login", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.SeriousFailure);
 				}
 
 				needLoginDialog = true;
@@ -219,15 +219,35 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 			Platform.GetService<IAuthenticationService>(
 				delegate(IAuthenticationService service)
 				{
-					InitiateSessionRequest request = new InitiateSessionRequest(userName, Application.Name, Dns.GetHostName(), password);
-					request.GetAuthorizations = true;
-					InitiateSessionResponse response = service.InitiateSession(request);
+					try
+					{
+						InitiateSessionRequest request = new InitiateSessionRequest(userName, Application.Name, Dns.GetHostName(), password);
+						request.GetAuthorizations = true;
+						InitiateSessionResponse response = service.InitiateSession(request);
 
-					if (response.SessionToken == null)
-						throw new Exception("Invalid session token returned from authentication service.");
+						if (response.SessionToken == null)
+							throw new Exception("Invalid session token returned from authentication service.");
 
 					Session.Create(userName, response.DisplayName, response.AuthorityTokens, response.SessionToken);
 					Thread.CurrentPrincipal = Session.Current.Principal;
+
+						AuditHelper.LogLogin("Login", userName, EventResult.Success);
+					}
+					catch(FaultException<PasswordExpiredException>)
+					{
+						//log it after the user has changed their password.
+						throw;
+					}
+					catch(PasswordExpiredException)
+					{
+						//log it after the user has changed their password.
+						throw;
+					}
+					catch
+					{
+						AuditHelper.LogLogin("Login", userName, EventResult.SeriousFailure);
+						throw;
+					}
 				});
 		}
 
@@ -248,11 +268,11 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 							service.TerminateSession(request);
 						});
 
-				AuditHelper.LogLogin("Logout", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.Success);
+				AuditHelper.LogLogout("Logout", userName, EventResult.Success);
 			}
 			catch (Exception)
 			{
-				AuditHelper.LogLogin("Logout", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.SeriousFailure);
+				AuditHelper.LogLogout("Logout", userName, EventResult.SeriousFailure);
 				throw;
 			}
 		}
@@ -300,11 +320,11 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 
 		private static void ReportException(Exception e)
 		{
-			if (e is FaultException<RequestValidationException>)
+			if (e is FaultException<RequestValidationException> || e is RequestValidationException)
 			{
 				Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
 			}
-			else if (e is FaultException<UserAccessDeniedException>)
+			else if (e is FaultException<UserAccessDeniedException> || e is UserAccessDeniedException)
 			{
 				Platform.Log(LogLevel.Error, e);
 				Application.ShowMessageBox(SR.MessageAccessDenied, MessageBoxActions.Ok);
@@ -318,6 +338,10 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 			{
 				Platform.Log(LogLevel.Error, e);
 				Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
+			}
+			else if (e is UnknownServiceException)
+			{
+				Application.ShowMessageBox(SR.MessageNoServiceProvider, MessageBoxActions.Ok);
 			}
 			else
 			{

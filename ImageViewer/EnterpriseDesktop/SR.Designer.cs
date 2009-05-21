@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No service provider was found.  There may be an issue with the application&apos;s configuration..
+        /// </summary>
+        internal static string MessageNoServiceProvider {
+            get {
+                return ResourceManager.GetString("MessageNoServiceProvider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password changed..
         /// </summary>
         internal static string MessagePasswordChanged {

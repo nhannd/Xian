@@ -38,14 +38,15 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 	{
 		private Session(string userName, string displayName, string[] authorityTokens, SessionToken sessionToken)
 		{
-			this.Principal = new GenericPrincipal(new GenericIdentity(userName), authorityTokens);
+			IIdentity identity = new GenericIdentity(userName);
+			this.Principal = DefaultPrincipal.CreatePrincipal(identity, sessionToken, authorityTokens);
 			this.DisplayName = displayName;
 			this.Token = sessionToken;
 		}
 
-		public readonly GenericPrincipal Principal;
+		public readonly IPrincipal Principal;
 		public readonly string DisplayName;
-		public SessionToken Token;
+		public readonly SessionToken Token;
 
 		private static Session _current;
 

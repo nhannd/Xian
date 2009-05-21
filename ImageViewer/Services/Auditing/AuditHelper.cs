@@ -97,6 +97,18 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// </summary>
 		/// <param name="operation">A description of the operation.</param>
 		/// <param name="username">The username or asserted username of the account that was logged in.</param>
+		/// <param name="eventResult">The result of the operation.</param>
+		public static void LogLogin(string operation, string username, EventResult eventResult)
+		{
+			LogLogin(operation, username, null, eventResult);
+		}
+
+		/// <summary>
+		/// Generates a "User Authentication" login event in the audit log, according to DICOM Supplement 95,
+		/// and a "Security Alert" event if the operation failed.
+		/// </summary>
+		/// <param name="operation">A description of the operation.</param>
+		/// <param name="username">The username or asserted username of the account that was logged in.</param>
 		/// <param name="authenticationServer">The authentication server against which the operation was performed.</param>
 		/// <param name="eventResult">The result of the operation.</param>
 		public static void LogLogin(string operation, string username, EventSource authenticationServer, EventResult eventResult)
@@ -106,14 +118,17 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 
 			try
 			{
-				UserAuthenticationAuditHelper auditHelper = new UserAuthenticationAuditHelper(authenticationServer, eventResult, UserAuthenticationEventType.Login);
+				UserAuthenticationAuditHelper auditHelper = new UserAuthenticationAuditHelper(EventSource.CurrentProcess, eventResult, UserAuthenticationEventType.Login);
 				auditHelper.AddUserParticipant(new AuditPersonActiveParticipant(username, string.Empty, username));
-				auditHelper.AddNode(authenticationServer);
+				if (authenticationServer != null)
+					auditHelper.AddNode(authenticationServer);
+
 				Log(operation, auditHelper);
 
 				if (eventResult != EventResult.Success)
 				{
-					SecurityAlertAuditHelper alertAuditHelper = new SecurityAlertAuditHelper(authenticationServer, eventResult, SecurityAlertEventTypeCodeEnum.NodeAuthentication);
+					SecurityAlertAuditHelper alertAuditHelper = new SecurityAlertAuditHelper(EventSource.CurrentProcess, eventResult, SecurityAlertEventTypeCodeEnum.NodeAuthentication);
+					alertAuditHelper.AddReportingUser(EventSource.CurrentProcess);
 					alertAuditHelper.AddActiveParticipant(new AuditPersonActiveParticipant(username, string.Empty, username));
 					Log(operation, alertAuditHelper);
 				}
@@ -122,6 +137,17 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 			{
 				Platform.Log(LogLevel.Warn, ex, _messageAuditFailed);
 			}
+		}
+
+		/// <summary>
+		/// Generates a "User Authentication" logout event in the audit log, according to DICOM Supplement 95.
+		/// </summary>
+		/// <param name="operation">A description of the operation.</param>
+		/// <param name="username">The username or asserted username of the account that was logged out.</param>
+		/// <param name="eventResult">The result of the operation.</param>
+		public static void LogLogout(string operation, string username, EventResult eventResult)
+		{
+			LogLogout(operation, username, null, eventResult);
 		}
 
 		/// <summary>
@@ -138,9 +164,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 
 			try
 			{
-				UserAuthenticationAuditHelper auditHelper = new UserAuthenticationAuditHelper(authenticationServer, eventResult, UserAuthenticationEventType.Logout);
+				UserAuthenticationAuditHelper auditHelper = new UserAuthenticationAuditHelper(EventSource.CurrentProcess, eventResult, UserAuthenticationEventType.Logout);
 				auditHelper.AddUserParticipant(new AuditPersonActiveParticipant(username, string.Empty, username));
-				auditHelper.AddNode(authenticationServer);
+				if (authenticationServer != null)
+					auditHelper.AddNode(authenticationServer);
+
 				Log(operation, auditHelper);
 			}
 			catch (Exception ex)
