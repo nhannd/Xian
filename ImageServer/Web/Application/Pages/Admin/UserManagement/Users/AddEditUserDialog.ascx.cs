@@ -239,6 +239,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
                 List<UserGroup> groups = User.UserGroups;
 
+                UserGroupListBox.ClearSelection();
                 foreach (UserGroup group in groups)
                 {
                     UserGroupListBox.Items.FindByText(group.Name).Selected = true;
@@ -251,6 +252,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
                 EnabledRow.Visible = false;
                 UserLoginId.ReadOnly = false;
+                UserGroupListBox.ClearSelection();
             }
 
             // Update the rest of the fields

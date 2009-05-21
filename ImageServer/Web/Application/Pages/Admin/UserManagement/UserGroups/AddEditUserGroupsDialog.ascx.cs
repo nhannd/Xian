@@ -209,6 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
             else
             {
+                TokenCheckBoxList.ClearSelection();
                 ModalDialog1.Title = App_GlobalResources.SR.DialogAddUserGroupTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
