@@ -315,8 +315,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			{
 				anonymizedData = GetAnonymizedStudyData(originalData);
 
-				// generate the new study uid
-				anonymizedData.StudyInstanceUid = DicomUid.GenerateUid().UID;
+				// generate the new study uid if it hasn't already been remapped
+				if (_uidMap.ContainsKey(originalData.StudyInstanceUid))
+					anonymizedData.StudyInstanceUid = _uidMap[originalData.StudyInstanceUid];
+				else
+					anonymizedData.StudyInstanceUid = _uidMap[originalData.StudyInstanceUid] = DicomUid.GenerateUid().UID;
+
 				if (String.IsNullOrEmpty(anonymizedData.StudyInstanceUid) || anonymizedData.StudyInstanceUid == originalData.StudyInstanceUid)
 					throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
 
@@ -361,7 +365,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 				anonymizedData = GetAnonymizedSeriesData(originalData);
 
-				anonymizedData.SeriesInstanceUid = DicomUid.GenerateUid().UID; // generate the series uid
+				// generate the new series uid if it hasn't already been remapped
+				if (_uidMap.ContainsKey(originalData.SeriesInstanceUid))
+					anonymizedData.SeriesInstanceUid = _uidMap[originalData.SeriesInstanceUid];
+				else
+					anonymizedData.SeriesInstanceUid = _uidMap[originalData.SeriesInstanceUid] = DicomUid.GenerateUid().UID;
+
 				if (String.IsNullOrEmpty(anonymizedData.SeriesInstanceUid) || anonymizedData.SeriesInstanceUid == originalData.SeriesInstanceUid)
 					throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
 
@@ -387,11 +396,20 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 		private void Anonymize()
 		{
-			string oldUid = _currentFile.DataSet[DicomTags.SopInstanceUid].ToString();
-			if (string.IsNullOrEmpty(oldUid))
-				throw new DicomAnonymizerException("The SopInstanceUid of the source file cannot be empty.");
+            string oldUid = _currentFile.DataSet[DicomTags.SopInstanceUid].ToString();
+            if (string.IsNullOrEmpty(oldUid))
+                throw new DicomAnonymizerException("The SopInstanceUid of the source file cannot be empty.");
 
-			string newUid = DicomUid.GenerateUid().UID;
+            string newUid;
+            if (_uidMap.ContainsKey(oldUid))
+            {
+                newUid = _uidMap[oldUid];
+            }
+            else
+            {
+                newUid = DicomUid.GenerateUid().UID;
+                _uidMap[oldUid] = newUid;
+            }
 
 			if (String.IsNullOrEmpty(newUid) || newUid == oldUid)
 				throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
@@ -415,7 +433,8 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			}
 
 			_currentFile.DataSet[DicomTags.SopInstanceUid].SetStringValue(newUid);
-			_uidMap[oldUid] = newUid;
+			_currentFile.MetaInfo[DicomTags.MediaStorageSopInstanceUid].SetStringValue(newUid);
+			_currentFile.MetaInfo[DicomTags.MediaStorageSopClassUid].Values = _currentFile.DataSet[DicomTags.SopClassUid].Values;
 		}
 
 		private void Anonymize(DicomAttributeCollection dataset)

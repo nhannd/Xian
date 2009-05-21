@@ -49,12 +49,20 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 		private static IEnumerable<uint> GetUidsToRemap()
 		{
-			//NOTE: in TagsToRemove
 			//Type 3, Sop Common
-			//yield return DicomTags.InstanceCreatorUid;
+			//removetag: DicomTags.InstanceCreatorUid;
+
+			//Type 1, Sop Common
+			yield return DicomTags.SopInstanceUid;
 
 			//Type 1 and 1C, many different modules and sequences
 			yield return DicomTags.ReferencedSopInstanceUid;
+
+			//Type 1, Series Module, but also Type 1 Hierarchical Sop Instance Reference Macro
+			yield return DicomTags.StudyInstanceUid;
+			//Type 1, Study Module, but also Type 1 Hierarchical Series Reference Macro
+			yield return DicomTags.SeriesInstanceUid;
+
 			//Type 1, Frame Of Reference
 			yield return DicomTags.FrameOfReferenceUid;
 			//Type 1, Synchronization Module
@@ -63,10 +71,8 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			//Type 1C, Content Item Macro, Document Content Macro
 			yield return DicomTags.Uid;
 
-			//NOTE: in TagsToRemove
-			//INSTANCE AVAILABILITY, STORAGE COMMITMENT, MEDIA CREATION MANAGEMENT MODULE
-			//Type 3, SOP INSTANCE REFERENCE MACRO
-			//yield return DicomTags.StorageMediaFileSetUid;
+			//Type 3, Sop Instance Reference Macro, Instance Availability, Storage Commitment, Media Creation Management Module
+			//removetag: DicomTags.StorageMediaFileSetUid;
 			
 			//Type 1C, STRUCTURE SET MODULE
 			yield return DicomTags.ReferencedFrameOfReferenceUid;
