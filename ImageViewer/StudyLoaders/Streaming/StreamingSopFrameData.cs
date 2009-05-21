@@ -212,82 +212,93 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			public RetrievePixelDataResult Retrieve()
 			{
-				CodeClock retryClock = new CodeClock();
-				retryClock.Start();
+				Exception retrieveException;
+				RetrievePixelDataResult result = TryClientRetrievePixelData(out retrieveException);
 
-				try
+				if (result != null)
+					return result;
+
+				// if no result was returned, then the throw an exception with an appropriate, user-friendly message
+				if (retrieveException is StreamingClientException)
 				{
-					StreamingClient client = new StreamingClient(BaseUrl);
-
-					const double timeoutSeconds = 3;
-					double pauseSeconds = 0.125;
-					int retryCount = 0;
-
-					while (true)
-					{
-						RetrievePixelDataResult result; 
-						
-						try
-						{
-							if (retryCount > 0)
-								Platform.Log(LogLevel.Info, "Retry #{0}: retrieve pixel data for sop '{1}'", retryCount, SopInstanceUid);
-
-							CodeClock statsClock = new CodeClock();
-							statsClock.Start();
-
-							result = client.RetrievePixelData(AETitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid, FrameNumber - 1);
-
-							statsClock.Stop();
-							
-							Platform.Log(LogLevel.Debug, "[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (s): {4}",
-														   SopInstanceUid, FrameNumber, TransferSyntaxUid,
-														   result.MetaData.ContentLength, statsClock.Seconds);
-							return result;
-						}
-						catch(Exception e)
-						{
-							double retryClockSeconds = retryClock.Seconds;
-
-							if (retryClockSeconds < timeoutSeconds)
-							{
-								++retryCount;
-								pauseSeconds *= 2;
-								pauseSeconds = Math.Min(pauseSeconds, timeoutSeconds - retryClockSeconds);
-
-								Platform.Log(LogLevel.Error, e,
-								             "Failed to retrieve pixel data for sop '{0}'; waiting {1} seconds before retry ...", SopInstanceUid, pauseSeconds);
-
-								Thread.Sleep(TimeSpan.FromSeconds(pauseSeconds));
-							}
-							else
-							{
-								Platform.Log(LogLevel.Error, e,
-											 "Failed to retrieve pixel data for sop '{0}'; quitting retry loop.", SopInstanceUid);
-								throw;
-							}
-						}
-					}
-				}
-				catch (StreamingClientException ex)
-				{
-					switch (ex.Type)
+					switch (((StreamingClientException) retrieveException).Type)
 					{
 						case StreamingClientExceptionType.Access:
-							throw new Exception(SR.MessageStreamingAccessException, ex);
+							throw new Exception(SR.MessageStreamingAccessException, retrieveException);
 						case StreamingClientExceptionType.Network:
-							throw new Exception(SR.MessageStreamingNetworkException, ex);
+							throw new Exception(SR.MessageStreamingNetworkException, retrieveException);
 						case StreamingClientExceptionType.Protocol:
 						case StreamingClientExceptionType.Server:
 						case StreamingClientExceptionType.UnexpectedResponse:
 						case StreamingClientExceptionType.Generic:
 						default:
-							throw new Exception(SR.MessageStreamingGenericException, ex);
+							throw new Exception(SR.MessageStreamingGenericException, retrieveException);
 					}
 				}
-				catch (Exception ex)
+				throw new Exception(SR.MessageStreamingGenericException, retrieveException);
+			}
+
+			private RetrievePixelDataResult TryClientRetrievePixelData(out Exception lastRetrieveException)
+			{
+				// retry parameters
+				int retryTimeoutSeconds = 1500;
+				int retryDelay = 50;
+				int retryCounter = 0;
+				
+				StreamingClient client = new StreamingClient(this.BaseUrl);
+				RetrievePixelDataResult result = null;
+				lastRetrieveException = null;
+
+				CodeClock timeoutClock = new CodeClock();
+				timeoutClock.Start();
+
+				while (true)
 				{
-					throw new Exception(SR.MessageStreamingGenericException, ex);
+					try
+					{
+						if (retryCounter > 0)
+							Platform.Log(LogLevel.Info, "Retrying retrieve pixel data for Sop '{0}' (Attempt #{1})", this.SopInstanceUid, retryCounter);
+
+						CodeClock statsClock = new CodeClock();
+						statsClock.Start();
+
+						result = client.RetrievePixelData(this.AETitle, this.StudyInstanceUid, this.SeriesInstanceUid, this.SopInstanceUid, this.FrameNumber - 1);
+
+						statsClock.Stop();
+
+						Platform.Log(LogLevel.Debug, "[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (s): {4}, Retries: {5}",
+						             this.SopInstanceUid, this.FrameNumber, this.TransferSyntaxUid,
+						             result.MetaData.ContentLength, statsClock.Seconds, retryCounter);
+
+						break;
+					}
+					catch (Exception ex)
+					{
+						lastRetrieveException = ex;
+
+						timeoutClock.Stop();
+						if (timeoutClock.Seconds*1000 >= retryTimeoutSeconds)
+						{
+							// log an alert that we are aborting (exception trace at debug level only)
+							int elapsed = (int)(1000*timeoutClock.Seconds);
+							Platform.Log(LogLevel.Warn, "Failed to retrieve pixel data for Sop '{0}'; Aborting after {1} attempts in {2} ms", this.SopInstanceUid, retryCounter, elapsed);
+							Platform.Log(LogLevel.Debug, ex, "[Retrieve Fail-Abort] Sop/Frame: {0}/{1}, Retry Attempts: {2}, Elapsed: {3} ms", this.SopInstanceUid, this.FrameNumber - 1, retryCounter, elapsed);
+							break;
+						}
+						timeoutClock.Start();
+
+						retryCounter++;
+
+						// log the retry (exception trace at debug level only)
+						Platform.Log(LogLevel.Warn, "Failed to retrieve pixel data for Sop '{0}'; Retrying in {1} ms", this.SopInstanceUid, retryDelay);
+						Platform.Log(LogLevel.Debug, ex, "[Retrieve Fail-Retry] Sop/Frame: {0}/{1}, Retry in: {2} ms", this.SopInstanceUid, this.FrameNumber - 1, retryDelay);
+						Thread.Sleep(retryDelay);
+
+						retryDelay *= 2;
+					}
 				}
+
+				return result;
 			}
 		}
 		
