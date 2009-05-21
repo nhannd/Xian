@@ -34,7 +34,10 @@
 #pragma warning disable 1591,0419,1574,1587, 649
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Dicom.Tests;
 using NUnit.Framework;
 
@@ -340,6 +343,239 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			anonymizer.Anonymize(_file);
 		}
 
+		[Test]
+		public void TestFileMetaInformation()
+		{
+			Initialize();
+
+			string oldUid = _file.DataSet[DicomTags.SopInstanceUid].ToString();
+
+			StudyData studyPrototype = CreateStudyPrototype();
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+			
+			Assert.AreNotEqual(oldUid, _file.DataSet[DicomTags.SopInstanceUid].ToString(), "Patient Confidentiality Issue - SOP Instance Uid is not anonymized.");
+			Assert.AreNotEqual(oldUid, _file.MetaInfo[DicomTags.MediaStorageSopInstanceUid].ToString(), "Patient Confidentiality Issue - Media Storage SOP Instance Uid is not anonymized.");
+			Assert.AreNotEqual(oldUid, _file.MediaStorageSopInstanceUid, "Patient Confidentiality Issue - Media Storage SOP Instance Uid is not anonymized.");
+			Assert.AreEqual(_file.DataSet[DicomTags.SopInstanceUid].ToString(), _file.MetaInfo[DicomTags.MediaStorageSopInstanceUid].ToString(), "MetaInfo Media Storage SOP Instance doesn't match DataSet SOP Instance.");
+			Assert.AreEqual(_file.DataSet[DicomTags.SopClassUid].ToString(), _file.MetaInfo[DicomTags.MediaStorageSopClassUid].ToString(), "MetaInfo Media Storage SOP Class doesn't match DataSet SOP Class.");
+		}
+
+		[Test]
+		public void TestRemappedReferencedSopUids()
+		{
+			// setup some files with unique "uids"
+			DicomFile[] originals = new DicomFile[8];
+			for (int n = 0; n < originals.Length; n++)
+			{
+				originals[n] = new DicomFile();
+				originals[n].DataSet[DicomTags.StudyInstanceUid].SetStringValue((1000 + (n >> 2)).ToString());
+				originals[n].DataSet[DicomTags.SeriesInstanceUid].SetStringValue((100 + (n >> 1)).ToString());
+				originals[n].DataSet[DicomTags.SopInstanceUid].SetStringValue((10 + n).ToString());
+				originals[n].DataSet[DicomTags.SopClassUid].SetStringValue((11111111111).ToString());
+			}
+
+			// setup up some cyclic and self references
+			for (int n = 0; n < originals.Length; n++)
+			{
+				DicomSequenceItem sq;
+				DicomFile n0File = originals[n];
+				DicomFile n1File = originals[(n + 1)%originals.Length];
+				DicomFile n2File = originals[(n + 2)%originals.Length];
+				DicomFile n4File = originals[(n + 4)%originals.Length];
+
+				n0File.DataSet[DicomTags.Uid].SetStringValue(n0File.DataSet[DicomTags.SopInstanceUid].ToString());
+				n0File.DataSet[DicomTags.ReferencedSopInstanceUid].SetStringValue(n1File.DataSet[DicomTags.SopInstanceUid].ToString());
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(DicomUid.GenerateUid().UID);
+				sq[DicomTags.TextString].SetStringValue("UID of something not in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n0File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of self");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n1File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of next file in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n1File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of next file series in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n1File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of next file study in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n2File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of 2nd next file in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n2File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of 2nd next file series in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n2File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of 2nd next file study in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n4File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of 4th next file in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n4File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of 4th next file series in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.Uid].SetStringValue(n4File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("UID of 4th next file study in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+				sq[DicomTags.TextString].SetStringValue("Sop UID of something not in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n0File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Sop UID of self");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n1File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Sop UID of next file in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n2File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Sop UID of 2nd next file in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n4File.DataSet[DicomTags.SopInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Sop UID of 4th next file in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+				sq[DicomTags.TextString].SetStringValue("Series UID of something not in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n0File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Series UID of self series");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n1File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Series UID of next file series in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n2File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Series UID of 2nd next file series in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n4File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Series UID of 4th next file series in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.StudyInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+				sq[DicomTags.TextString].SetStringValue("Study UID of something not in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n0File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Study UID of self study");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n1File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Study UID of next file study in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n2File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Study UID of 2nd next file study in data set");
+
+				n0File.DataSet[DicomTags.ContentSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n4File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.TextString].SetStringValue("Study UID of 4th next file study in data set");
+
+				n0File.DataSet[DicomTags.ReferencedStudySequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.TextString].SetStringValue("A more typical hierarchical sop reference to self");
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n0File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.ReferencedSeriesSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n0File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.ReferencedSopSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n0File.DataSet[DicomTags.SopInstanceUid].ToString());
+
+				n0File.DataSet[DicomTags.ReferencedStudySequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.TextString].SetStringValue("A more typical hierarchical sop reference to next");
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n1File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.ReferencedSeriesSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n1File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.ReferencedSopSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n1File.DataSet[DicomTags.SopInstanceUid].ToString());
+
+				n0File.DataSet[DicomTags.ReferencedStudySequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.TextString].SetStringValue("A more typical hierarchical sop reference to 2nd next");
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n2File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.ReferencedSeriesSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n2File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.ReferencedSopSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n2File.DataSet[DicomTags.SopInstanceUid].ToString());
+
+				n0File.DataSet[DicomTags.ReferencedStudySequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.TextString].SetStringValue("A more typical hierarchical sop reference to 4th next");
+				sq[DicomTags.StudyInstanceUid].SetStringValue(n4File.DataSet[DicomTags.StudyInstanceUid].ToString());
+				sq[DicomTags.ReferencedSeriesSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.SeriesInstanceUid].SetStringValue(n4File.DataSet[DicomTags.SeriesInstanceUid].ToString());
+				sq[DicomTags.ReferencedSopSequence].AddSequenceItem(sq = new DicomSequenceItem());
+				sq[DicomTags.ReferencedSopInstanceUid].SetStringValue(n4File.DataSet[DicomTags.SopInstanceUid].ToString());
+			}
+
+			// copy the originals and anonymize them
+			DicomFile[] anonymized = new DicomFile[originals.Length];
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.ValidationOptions = ValidationOptions.RelaxAllChecks;
+			for (int n = 0; n < anonymized.Length; n++)
+			{
+				anonymized[n] = new DicomFile(string.Empty, originals[n].MetaInfo.Copy(true, true, true), originals[n].DataSet.Copy(true, true, true));
+				anonymizer.Anonymize(anonymized[n]);
+			}
+
+			// generate validation dump strings - unique uids are mapped to sequential numbers
+			string originalDumpValidationString = GenerateHierarchicalUidValidationDumpString(originals);
+			string anonymizedDumpValidationString = GenerateHierarchicalUidValidationDumpString(anonymized);
+
+			// if the hierarchical structure and pattern of uids is the same, then the relationships have been preserved.
+			Assert.AreEqual(originalDumpValidationString, anonymizedDumpValidationString, "Relationships of anonymized data set differ compared to those of original data set.");
+		}
+
+		private static string GenerateHierarchicalUidValidationDumpString(DicomFile[] files)
+		{
+			Regex rgx = new Regex("[0-9A-Fa-f]{8}:UI=(\\[.*\\])");
+
+			// generate a dump of all SQ and UI attributes in the original set
+			StringBuilder sbOriginalDump = new StringBuilder();
+			for (int n = 0; n < files.Length; n++)
+			{
+				sbOriginalDump.AppendLine("File " + n);
+				sbOriginalDump.AppendLine(DumpHierarchicalDataSet(files[n].DataSet, 0, delegate(DicomAttribute a) { return a is DicomAttributeSQ || a is DicomAttributeUI; }));
+			}
+
+			// map unique UIDs to a sequential number
+			Dictionary<string, int> uidValidationMap = new Dictionary<string, int>();
+			int seed = 0;
+			string validationDumpString = rgx.Replace(sbOriginalDump.ToString(),
+			                                          delegate(Match m)
+			                                          	{
+			                                          		int value;
+			                                          		string key = m.Groups[1].Value;
+			                                          		if (string.IsNullOrEmpty(key))
+			                                          			return m.Groups[0].Value;
+			                                          		if (uidValidationMap.ContainsKey(key))
+			                                          			value = uidValidationMap[key];
+			                                          		else
+			                                          			value = uidValidationMap[key] = seed++;
+			                                          		return m.Groups[0].Value.Replace(key, value.ToString("X8"));
+			                                          	});
+
+			return validationDumpString;
+		}
+
 		private void Initialize()
 		{
 			_file = CreateTestFile();
@@ -471,6 +707,50 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 
 			Trace.WriteLine("Validated Remapped Uids.");
 		}
+
+		#region Hierarchical Dump Code
+
+		private static string DumpHierarchicalDataSet(DicomAttributeCollection dataset)
+		{
+			return DumpHierarchicalDataSet(dataset, 0, null);
+		}
+
+		private static string DumpHierarchicalDataSet(DicomAttributeCollection dataset, Predicate<DicomAttribute> filter)
+		{
+			return DumpHierarchicalDataSet(dataset, 0, filter);
+		}
+
+		private static string DumpHierarchicalDataSet(DicomAttributeCollection dataset, int level, Predicate<DicomAttribute> filter)
+		{
+			StringBuilder sb = new StringBuilder();
+			string prefix = string.Join(">", new string[level + 1]);
+			foreach (DicomAttribute attribute in dataset)
+			{
+				if (filter != null && !filter(attribute))
+					continue;
+
+				if (attribute is DicomAttributeSQ)
+				{
+					sb.AppendFormat("{0}{1}:SQ={2} items", prefix, attribute.Tag.HexString, attribute.Count);
+					sb.AppendLine();
+					int counter = 0;
+					foreach (DicomSequenceItem item in ((DicomSequenceItem[]) attribute.Values))
+					{
+						sb.AppendFormat("{0}{1} SQ Item #{2}", prefix, attribute.Tag.HexString, counter++);
+						sb.AppendLine();
+						sb.AppendLine(DumpHierarchicalDataSet(item, level + 1, filter));
+					}
+				}
+				else
+				{
+					sb.AppendFormat("{0}{1}:{3}=[{2}]", prefix, attribute.Tag.HexString, attribute.ToString(), attribute.Tag.VR.Name);
+					sb.AppendLine();
+				}
+			}
+			return sb.ToString().TrimEnd();
+		}
+
+		#endregion
 	}
 }
 
