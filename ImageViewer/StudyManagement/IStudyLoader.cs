@@ -31,15 +31,13 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO: move this stuff into ImageViewer.Services.
-
 	/// <summary>
 	/// Holds the parameters that specify the study to be loaded.
 	/// </summary>
 	public class StudyLoaderArgs
 	{
-		private string _studyInstanceUid;
-		private object _server;
+		private readonly string _studyInstanceUid;
+		private readonly object _server;
 
 		/// <summary>
 		/// Constructs a new <see cref="StudyLoaderArgs"/> using the specified parameters.

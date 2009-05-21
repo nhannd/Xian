@@ -45,51 +45,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
-	#region OpenStudyResult
-
-	internal class OpenStudyResult
-	{
-		private string _studyInstanceUid;
-		private int _numberOfImagesLoaded;
-		private int _numberOfImagesFailed;
-
-		public OpenStudyResult()
-		{
-		}
-
-		public OpenStudyResult(string studyInstanceUid)
-			: this(studyInstanceUid, 0, 0)
-		{
-		}
-
-		public OpenStudyResult(string studyInstanceUid, int loaded, int failed)
-		{
-			_studyInstanceUid = studyInstanceUid;
-			_numberOfImagesLoaded = loaded;
-			_numberOfImagesFailed = failed;
-		}
-
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
-
-		public int NumberOfImagesFailed
-		{
-			get { return _numberOfImagesFailed; }
-			set { _numberOfImagesFailed = value; }
-		}
-
-		public int NumberOfImagesLoaded
-		{
-			get { return _numberOfImagesLoaded; }
-			set { _numberOfImagesLoaded = value; }
-		}
-	}
-
-	#endregion
-
 	/// <summary>
 	/// For internal use only.
 	/// </summary>
@@ -134,14 +89,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			if (request == null)
 			{
 				string message = "The get viewer info request cannot be null.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
 			if (request.Viewer == null || request.Viewer.Identifier.Equals(Guid.Empty))
 			{
 				string message = "A valid viewer id must be specified.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
@@ -165,14 +120,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			if (request == null)
 			{
 				string message = "The open studies request cannot be null.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
 			if (request.StudiesToOpen == null || request.StudiesToOpen.Count == 0)
 			{
 				string message = "At least one study must be specified.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
@@ -192,33 +147,8 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 				}
 				else
 				{
-					List<OpenStudyResult> loadFailures;
-					viewer = CreateViewer(request, out loadFailures);
-
-					if (primaryStudyInstanceUid != GetPrimaryStudyInstanceUid(viewer))
-					{
-						viewer.Dispose();
-						string message = "Failed to open the primary study.";
-						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
-					}
-					else if (viewer.StudyTree.Patients.Count == 0)
-					{
-						viewer.Dispose();
-						string message = "Failed to open any of the specified studies.";
-						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
-					}
-					else
-					{
-						//yes, this code is duplicated from OpenStudyHelper.
-						if (ViewerLaunchSettings.WindowBehaviour == WindowBehaviour.Separate)
-							ImageViewerComponent.LaunchInSeparateWindow((ImageViewerComponent)viewer);
-						else
-							ImageViewerComponent.LaunchInActiveWindow((ImageViewerComponent)viewer);
-					}
-
-					//don't block waiting for the user to dismiss a dialog.
-					if (loadFailures.Count > 0)
-						SynchronizationContext.Current.Post(ReportLoadFailures, loadFailures);
+					Exception loadException;
+					viewer = OpenStudies(request, primaryStudyInstanceUid);
 				}
 
 				Guid? viewerId = ViewerAutomationTool.GetViewerId(viewer);
@@ -245,14 +175,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			if (request == null)
 			{
 				string message = "The activate viewer request cannot be null.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
 			if (request.Viewer == null || request.Viewer.Identifier.Equals(Guid.Empty))
 			{
 				string message = "A valid viewer id must be specified.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
@@ -294,14 +224,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			if (request == null)
 			{
 				string message = "The close viewer request cannot be null.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
 			if (request.Viewer == null || request.Viewer.Identifier.Equals(Guid.Empty))
 			{
 				string message = "A valid viewer id must be specified.";
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 				throw new FaultException(message);
 			}
 
@@ -369,53 +299,65 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 		}
 
-		private static ImageViewerComponent CreateViewer(OpenStudiesRequest args, out List<OpenStudyResult> loadFailures)
+		private static ImageViewerComponent OpenStudies(OpenStudiesRequest args, string primaryStudyInstanceUid)
 		{
-			//TODO: could change openstudyhelper to work this way and throw an exception rather than showing a dialog.
-			loadFailures = new List<OpenStudyResult>();
-
 			CompleteOpenStudyInfo(args.StudiesToOpen);
 			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(args.StudiesToOpen);
 
-			ImageViewerComponent component = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			OpenStudyHelper helper = new OpenStudyHelper();
+			helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
+
 			foreach (OpenStudyInfo info in args.StudiesToOpen)
 			{
-				try
-				{
-					//None of the servers should be empty now, but if they are, assume local.
-					//The worst that will happen is it will fail to load when it doesn't exist.
-					ApplicationEntity server = null;
-					string loader = "DICOM_LOCAL";
+				//None of the servers should be empty now, but if they are, assume local.
+				//The worst that will happen is it will fail to load when it doesn't exist.
+				ApplicationEntity server = null;
+				string loader = "DICOM_LOCAL";
 
-					if (!String.IsNullOrEmpty(info.SourceAETitle) && serverMap.ContainsKey(info.SourceAETitle))
-					{
-						server = serverMap[info.SourceAETitle];
-						if (server != null)
-							loader = "CC_STREAMING";
-					}
-
-					component.LoadStudy(new LoadStudyArgs(info.StudyInstanceUid, server , loader));
-				}
-				catch(OpenStudyException openStudyException)
+				if (!String.IsNullOrEmpty(info.SourceAETitle) && serverMap.ContainsKey(info.SourceAETitle))
 				{
-					loadFailures.Add(new OpenStudyResult(info.StudyInstanceUid, 
-						openStudyException.SuccessfulImages, 
-						openStudyException.FailedImages));
+					server = serverMap[info.SourceAETitle];
+					if (server != null)
+						loader = "CC_STREAMING";
+				}
 
-					Platform.Log(LogLevel.Error, openStudyException, 
-							"Failed to load {0} of {1} images for a study specified in the request ({2}).",
-							openStudyException.FailedImages, 
-							openStudyException.FailedImages + openStudyException.SuccessfulImages, info.StudyInstanceUid);
-				}
-				catch (Exception e)
-				{
-					//total failure.
-					loadFailures.Add(new OpenStudyResult(info.StudyInstanceUid));
-					Platform.Log(LogLevel.Error, e, "Failed to load a study specified in the request ({0}).", info.StudyInstanceUid);
-				}
+				helper.AddStudy(info.StudyInstanceUid, server , loader);
 			}
 
-			return component;
+			ImageViewerComponent viewer = helper.CreateViewer();
+
+			Exception loadException = null;
+			try
+			{
+				helper.LoadStudies(viewer);
+			}
+			catch(Exception e)
+			{
+				loadException = e;
+			}
+
+			if (primaryStudyInstanceUid != GetPrimaryStudyInstanceUid(viewer))
+			{
+				viewer.Dispose();
+				string message = "Failed to open the primary study.";
+				throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
+			}
+			else if (viewer.StudyTree.Patients.Count == 0)
+			{
+				viewer.Dispose();
+				string message = "Failed to open any of the specified studies.";
+				throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
+			}
+			else
+			{
+				helper.LaunchViewer(viewer);
+			}
+
+			//don't block waiting for the user to dismiss a dialog.
+			if (loadException != null)
+				SynchronizationContext.Current.Post(ReportLoadFailures, loadException);
+
+			return viewer;
 		}
 
 		private static IDictionary<string, ApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
@@ -452,38 +394,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		private static void ReportLoadFailures(object loadFailures)
 		{
-			List<OpenStudyResult> failures = (List<OpenStudyResult>)loadFailures;
-			if (failures.Count == 0)
-				return;
-
-			List<OpenStudyResult> totalFailures = failures.FindAll(
-				delegate(OpenStudyResult result) { return result.NumberOfImagesLoaded == 0; });
-
-			StringBuilder messageBuilder = new StringBuilder();
-			if (totalFailures.Count > 0)
-			{
-				if (totalFailures.Count == 1)
-					messageBuilder.Append(SR.MessageFormatStudyLoadFailure);
-				else
-					messageBuilder.AppendFormat(SR.MessageFormatStudyLoadFailures, totalFailures.Count);
-			}
-
-			int partialFailures = failures.Count - totalFailures.Count;
-			if (partialFailures != 0)
-			{
-				if (totalFailures.Count != 0)
-					messageBuilder.AppendLine();
-
-				if (partialFailures == 1)
-					messageBuilder.AppendFormat(SR.MessagePartialStudyLoadFailure);
-				else 
-					messageBuilder.AppendFormat(SR.MessagePartialStudyLoadFailures, partialFailures);
-			}
-
-			messageBuilder.AppendLine();
-			messageBuilder.Append(SR.MessagePleaseSeeLogs);
-
-			Application.ActiveDesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.Ok);
+			ExceptionHandler.Report((Exception)loadFailures, Application.ActiveDesktopWindow);
 		}
 
 		private static string GetPrimaryStudyInstanceUid(IImageViewer viewer)

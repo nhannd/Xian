@@ -394,24 +394,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log..
-        /// </summary>
-        public static string ExceptionLoadCompleteFailure {
-            get {
-                return ResourceManager.GetString("ExceptionLoadCompleteFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images you requested.  Please contact your PACS administrator, or check the log..
-        /// </summary>
-        public static string ExceptionLoadPartialFailure {
-            get {
-                return ResourceManager.GetString("ExceptionLoadPartialFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to LUT index out of range (index = {0})..
         /// </summary>
         public static string ExceptionLUTIndexOutOfRange {
@@ -817,6 +799,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please contact your PACS administrator, or check the log..
+        /// </summary>
+        public static string MessageContactPacsAdmin {
+            get {
+                return ResourceManager.GetString("MessageContactPacsAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occured while attempting to clone a display set.  Please check the log for more details..
         /// </summary>
         public static string MessageErrorCloningDisplaySet {
@@ -862,11 +853,92 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images you requested..
+        /// </summary>
+        public static string MessageFormatLoadStudyIncomplete {
+            get {
+                return ResourceManager.GetString("MessageFormatLoadStudyIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opening {0} of {1} images.
         /// </summary>
         public static string MessageFormatOpeningImages {
             get {
                 return ResourceManager.GetString("MessageFormatOpeningImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} studies were only partially loaded..
+        /// </summary>
+        public static string MessageFormatXStudiesIncomplete {
+            get {
+                return ResourceManager.GetString("MessageFormatXStudiesIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} studies are in use..
+        /// </summary>
+        public static string MessageFormatXStudiesInUse {
+            get {
+                return ResourceManager.GetString("MessageFormatXStudiesInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} studies are nearline..
+        /// </summary>
+        public static string MessageFormatXStudiesNearline {
+            get {
+                return ResourceManager.GetString("MessageFormatXStudiesNearline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} studies were not found..
+        /// </summary>
+        public static string MessageFormatXStudiesNotFound {
+            get {
+                return ResourceManager.GetString("MessageFormatXStudiesNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} studies could not be loaded..
+        /// </summary>
+        public static string MessageFormatXStudiesNotLoaded {
+            get {
+                return ResourceManager.GetString("MessageFormatXStudiesNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} studies are offline..
+        /// </summary>
+        public static string MessageFormatXStudiesOffline {
+            get {
+                return ResourceManager.GetString("MessageFormatXStudiesOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following failures occurred while loading studies:.
+        /// </summary>
+        public static string MessageLoadMultipleStudiesFailurePrefix {
+            get {
+                return ResourceManager.GetString("MessageLoadMultipleStudiesFailurePrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images you requested..
+        /// </summary>
+        public static string MessageLoadStudyCompleteFailure {
+            get {
+                return ResourceManager.GetString("MessageLoadStudyCompleteFailure", resourceCulture);
             }
         }
         
@@ -885,6 +957,60 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageNoVisibleDisplaySets {
             get {
                 return ResourceManager.GetString("MessageNoVisibleDisplaySets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One study was only partially loaded..
+        /// </summary>
+        public static string MessageOneStudyIncomplete {
+            get {
+                return ResourceManager.GetString("MessageOneStudyIncomplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One study is in use..
+        /// </summary>
+        public static string MessageOneStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageOneStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One study is nearline..
+        /// </summary>
+        public static string MessageOneStudyNearline {
+            get {
+                return ResourceManager.GetString("MessageOneStudyNearline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One study was not found..
+        /// </summary>
+        public static string MessageOneStudyNotFound {
+            get {
+                return ResourceManager.GetString("MessageOneStudyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One study could not be loaded..
+        /// </summary>
+        public static string MessageOneStudyNotLoaded {
+            get {
+                return ResourceManager.GetString("MessageOneStudyNotLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One study is offline..
+        /// </summary>
+        public static string MessageOneStudyOffline {
+            get {
+                return ResourceManager.GetString("MessageOneStudyOffline", resourceCulture);
             }
         }
         
@@ -922,6 +1048,51 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageRoiAnalysisError {
             get {
                 return ResourceManager.GetString("MessageRoiAnalysisError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is currently in use and cannot be loaded.  Try waiting a few minutes and load the study again..
+        /// </summary>
+        public static string MessageStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is nearline and cannot be loaded.  If your PACS is a ClearCanvas ImageServer, try waiting a few minutes and load the study again.  Otherwise, the study must be restored by a PACS administrator..
+        /// </summary>
+        public static string MessageStudyNearline {
+            get {
+                return ResourceManager.GetString("MessageStudyNearline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study could not be found..
+        /// </summary>
+        public static string MessageStudyNotFound {
+            get {
+                return ResourceManager.GetString("MessageStudyNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is offline and cannot be loaded until it has been restored by a PACS administrator..
+        /// </summary>
+        public static string MessageStudyOffline {
+            get {
+                return ResourceManager.GetString("MessageStudyOffline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study is unavailable..
+        /// </summary>
+        public static string MessageStudyUnavailable {
+            get {
+                return ResourceManager.GetString("MessageStudyUnavailable", resourceCulture);
             }
         }
         

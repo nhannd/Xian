@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
 			}
 
-			UpdateServerColumnVisibility();
+			UpdateServerColumnsVisibility();
 
 			ProcessReceivedAndRemovedStudies();
 
@@ -553,14 +553,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingPatientId,
 					delegate(StudyItem item) { return item.PatientId; },
-					1.5f);
+					0.5f);
 
 			studyList.Columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingLastName,
 					delegate(StudyItem item) { return item.PatientsName.LastName; },
-                    1.5f);
+                    0.5f);
 
 			studyList.Columns.Add(column);
 
@@ -570,14 +570,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingFirstName,
 					delegate(StudyItem item) { return item.PatientsName.FirstName; },
-                    1.5f);
+                    0.5f);
 
 			studyList.Columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingIdeographicName,
 					delegate(StudyItem item) { return item.PatientsName.Ideographic; },
-					1.5f);
+					0.5f);
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
 
@@ -586,7 +586,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingPhoneticName,
 					delegate(StudyItem item) { return item.PatientsName.Phonetic; },
-					1.5f);
+					0.5f);
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowPhoneticName;
 
@@ -596,14 +596,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					SR.ColumnHeadingDateOfBirth,
                     delegate(StudyItem item) { return GetDateStringFromDicomDA(item.PatientsBirthDate); },
                     null,
-                    1.0f,
+                    0.3F,
                     delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); });
 
 			studyList.Columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingAccessionNumber,
-					delegate(StudyItem item) { return item.AccessionNumber; });
+					delegate(StudyItem item) { return item.AccessionNumber; },
+					0.4F);
 
 			studyList.Columns.Add(column);
 
@@ -611,7 +612,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					SR.ColumnHeadingStudyDate,
 					delegate(StudyItem item){ return GetDateStringFromDicomDA(item.StudyDate); },
                     null,
-                    1.0f,
+                    0.3F,
                     delegate(StudyItem one, StudyItem two) {  return one.StudyDate.CompareTo(two.StudyDate); });
 
 			studyList.Columns.Add(column);
@@ -619,14 +620,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingStudyDescription,
 					delegate(StudyItem item) { return item.StudyDescription; },
-                    2.0f);
+                    1.0f);
 
 			studyList.Columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingModality,
                     delegate(StudyItem item) { return item.ModalitiesInStudy; },
-                    0.5f);
+                    0.3f);
 
 			studyList.Columns.Add(column);
 
@@ -634,7 +635,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					SR.ColumnHeadingNumberOfInstances,
 					delegate(StudyItem item) { return (item.NumberOfStudyRelatedInstances == 0) ? "" : item.NumberOfStudyRelatedInstances.ToString(); },
 					null,
-					0.5f,
+					0.3f,
 					delegate(StudyItem itemA, StudyItem itemB) { return itemA.NumberOfStudyRelatedInstances.CompareTo(itemB.NumberOfStudyRelatedInstances); });
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
@@ -646,7 +647,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					return (item.Server == null) ? "" : item.Server.ToString();
 				},
-				0.4f);
+				0.3f);
+
+			studyList.Columns.Add(column);
+
+			column = new TableColumn<StudyItem, string>(SR.ColumnHeadingAvailability,
+				delegate(StudyItem item)
+				{
+					return item.InstanceAvailability ?? "";
+				},
+				0.3f);
 
 			studyList.Columns.Add(column);
 		}
@@ -819,25 +829,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
 		}
 
-		private void UpdateServerColumnVisibility()
+		private void UpdateServerColumnsVisibility()
 		{
-			TableColumnBase<StudyItem> serverColumn = null;
-			foreach (TableColumnBase<StudyItem> column in _searchResults[_selectedServerGroup.GroupID].StudyList.Columns)
-			{
-				if (column.Name == SR.ColumnHeadingServer)
-				{
-					serverColumn = column;
-					break;
-				}
-			}
-
-			if (serverColumn != null)
+			TableColumnBase<StudyItem> column = FindColumn(SR.ColumnHeadingServer);
+			if (column != null)
 			{
 				if (_selectedServerGroup.IsLocalDatastore || _selectedServerGroup.Servers.Count == 1)
-					serverColumn.Visible = false;
+					column.Visible = false;
 				else
-					serverColumn.Visible = true;
+					column.Visible = true;
 			}
+
+			column = FindColumn(SR.ColumnHeadingAvailability);
+			if (column != null)
+			{
+				if (_selectedServerGroup.IsLocalDatastore)
+					column.Visible = false;
+				else
+					column.Visible = true;
+			}
+		}
+
+		private TableColumnBase<StudyItem> FindColumn(string columnHeading)
+		{
+			foreach (TableColumnBase<StudyItem> column in _searchResults[_selectedServerGroup.GroupID].StudyList.Columns)
+			{
+				if (column.Name == columnHeading)
+					return column;
+			}
+
+			return null;
 		}
 
 		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)

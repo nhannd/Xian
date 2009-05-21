@@ -107,7 +107,8 @@ namespace ClearCanvas.ImageViewer
 					cancelled = false;
 				}
 
-				VerifyLoad(Total, Failed);
+				if (Failed > 0)
+					throw new LoadSopsException(Total, Failed);
 			}
 
 			private void LoadSop(string file)

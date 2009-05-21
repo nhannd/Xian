@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Services.Auditing;
@@ -72,6 +73,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             collection[DicomTags.SpecificCharacterSet].SetStringValue("");
 			collection[DicomTags.StudyInstanceUid].SetStringValue(queryParams["StudyInstanceUid"]);
 			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
+			collection[DicomTags.InstanceAvailability].SetStringValue("");
 
             StudyItemList studyItemList = new StudyItemList();
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
@@ -89,6 +91,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
 					item.AccessionNumber = result[DicomTags.AccessionNumber].ToString();
 					item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
+					item.InstanceAvailability = result[DicomTags.InstanceAvailability].GetString(0, "");
+					if (String.IsNullOrEmpty(item.InstanceAvailability))
+						item.InstanceAvailability = "ONLINE";
 
 					studyItemList.Add(item);
 				}

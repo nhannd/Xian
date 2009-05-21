@@ -76,6 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
 			requestCollection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
 			requestCollection[DicomTags.SpecificCharacterSet].SetStringValue("");
+			requestCollection[DicomTags.InstanceAvailability].SetStringValue("");
 
 			IList<DicomAttributeCollection> results = Query(selectedServer, requestCollection);
 			
@@ -95,6 +96,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
 				item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
 				item.SpecificCharacterSet = result.SpecificCharacterSet;
+				item.InstanceAvailability = result[DicomTags.InstanceAvailability].GetString(0, "");
+				if (String.IsNullOrEmpty(item.InstanceAvailability))
+					item.InstanceAvailability = "ONLINE";
 
 				studyItemList.Add(item);
 			}

@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				volume = LoadLocalImages(files, Application.ActiveDesktopWindow, out cancelled);
 			}
-			catch (OpenStudyException e)
+			catch (LoadSopsException e)
 			{
 				anyFailures = true;
 				successfulImagesInLoadFailure = e.SuccessfulImages;
@@ -188,13 +188,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			cancelled = userCancelled;
 
 			if (_failedImages > 0)
-			{
-				string message = String.Format("{0} of {1} images have failed to load.", _failedImages, _totalImages);
-				OpenStudyException ex = new OpenStudyException(message);
-				ex.TotalImages = _totalImages;
-				ex.FailedImages = _failedImages;
-				throw ex;
-			}
+				throw new LoadSopsException(_totalImages, _failedImages);
 
 			if (volumeFailed)
 			{

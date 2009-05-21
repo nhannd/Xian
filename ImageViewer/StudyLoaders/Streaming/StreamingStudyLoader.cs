@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private IEnumerator<InstanceXml> _instances;
 		private ApplicationEntity _ae;
 
+		private static Random _rand = new Random();
+
 		public StreamingStudyLoader() : base("CC_STREAMING")
 		{
 			PrefetchingStrategy = new StreamingPrefetchingStrategy();
@@ -58,6 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		public override int OnStart(StudyLoaderArgs studyLoaderArgs)
 		{
+			RandomizeException(studyLoaderArgs);
 			ApplicationEntity ae = studyLoaderArgs.Server as ApplicationEntity;
 			_ae = ae;
 
@@ -80,6 +83,25 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			finally 
 			{
 				AuditHelper.LogOpenStudies("Load Studies", new string[] { ae.AETitle }, loadedInstances, EventSource.CurrentUser, result);
+			}
+		}
+
+		private void RandomizeException(StudyLoaderArgs studyLoaderArgs)
+		{
+			int randomValue = _rand.Next(0, 5);
+			if (randomValue == 0)
+				return;
+			
+			switch(randomValue)
+			{
+				case 1:
+					throw new OfflineLoadStudyException(studyLoaderArgs.StudyInstanceUid);
+				case 2:
+					throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid);
+				case 3:
+					throw new NotFoundLoadStudyException(studyLoaderArgs.StudyInstanceUid);
+				case 4:
+					throw new InUseLoadStudyException(studyLoaderArgs.StudyInstanceUid);
 			}
 		}
 
@@ -126,10 +148,22 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				client.Close();
 				return headerXmlDocument;
 			}
-			catch(Exception)
+			catch(FaultException<StudyIsInUseFault> e)
+			{
+				throw new InUseLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+			}
+			catch (FaultException<StudyIsNearlineFault> e)
+			{
+				throw new NearlineLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+			}
+			catch (FaultException<StudyNotFoundFault> e)
+			{
+				throw new NotFoundLoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+			}
+			catch (Exception e)
 			{
 				client.Abort();
-				throw;
+				throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
 			}
 		}
 

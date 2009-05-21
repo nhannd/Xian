@@ -70,6 +70,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Availability.
+        /// </summary>
+        internal static string ColumnHeadingAvailability {
+            get {
+                return ResourceManager.GetString("ColumnHeadingAvailability", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DOB.
         /// </summary>
         internal static string ColumnHeadingDateOfBirth {

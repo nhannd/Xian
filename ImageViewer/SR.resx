@@ -228,12 +228,6 @@
   <data name="ExceptionLinearLutDataCannotBeSet" xml:space="preserve">
     <value>Linear Luts have no settable data.</value>
   </data>
-  <data name="ExceptionLoadCompleteFailure" xml:space="preserve">
-    <value>ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log.</value>
-  </data>
-  <data name="ExceptionLoadPartialFailure" xml:space="preserve">
-    <value>ClearCanvas was only able to load {0} of the {1} images you requested.  Please contact your PACS administrator, or check the log.</value>
-  </data>
   <data name="ExceptionLUTIndexOutOfRange" xml:space="preserve">
     <value>LUT index out of range (index = {0}).</value>
   </data>
@@ -371,6 +365,9 @@
   <data name="MenuShowAnalysis" xml:space="preserve">
     <value>Show Analysis</value>
   </data>
+  <data name="MessageContactPacsAdmin" xml:space="preserve">
+    <value>Please contact your PACS administrator, or check the log.</value>
+  </data>
   <data name="MessageErrorCloningDisplaySet" xml:space="preserve">
     <value>An error has occured while attempting to clone a display set.  Please check the log for more details.</value>
   </data>
@@ -386,14 +383,59 @@
   <data name="MessageFailedToGetVOIDataLUTs" xml:space="preserve">
     <value>Creation of VOI Data LUTs failed.</value>
   </data>
+  <data name="MessageFormatLoadStudyIncomplete" xml:space="preserve">
+    <value>ClearCanvas was only able to load {0} of the {1} images you requested.</value>
+  </data>
   <data name="MessageFormatOpeningImages" xml:space="preserve">
     <value>Opening {0} of {1} images</value>
+  </data>
+  <data name="MessageFormatXStudiesIncomplete" xml:space="preserve">
+    <value>{0} studies were only partially loaded.</value>
+  </data>
+  <data name="MessageFormatXStudiesInUse" xml:space="preserve">
+    <value>{0} studies are in use.</value>
+  </data>
+  <data name="MessageFormatXStudiesNearline" xml:space="preserve">
+    <value>{0} studies are nearline.</value>
+  </data>
+  <data name="MessageFormatXStudiesNotFound" xml:space="preserve">
+    <value>{0} studies were not found.</value>
+  </data>
+  <data name="MessageFormatXStudiesNotLoaded" xml:space="preserve">
+    <value>{0} studies could not be loaded.</value>
+  </data>
+  <data name="MessageFormatXStudiesOffline" xml:space="preserve">
+    <value>{0} studies are offline.</value>
+  </data>
+  <data name="MessageLoadMultipleStudiesFailurePrefix" xml:space="preserve">
+    <value>The following failures occurred while loading studies:</value>
+  </data>
+  <data name="MessageLoadStudyCompleteFailure" xml:space="preserve">
+    <value>ClearCanvas was unable to load any of the images you requested.</value>
   </data>
   <data name="MessageNoRendererPluginsExist" xml:space="preserve">
     <value>No renderer plugins exist; defaulting to GDI renderer.</value>
   </data>
   <data name="MessageNoVisibleDisplaySets" xml:space="preserve">
     <value>No images could be found to display.  The viewer cannot be opened.</value>
+  </data>
+  <data name="MessageOneStudyIncomplete" xml:space="preserve">
+    <value>One study was only partially loaded.</value>
+  </data>
+  <data name="MessageOneStudyInUse" xml:space="preserve">
+    <value>One study is in use.</value>
+  </data>
+  <data name="MessageOneStudyNearline" xml:space="preserve">
+    <value>One study is nearline.</value>
+  </data>
+  <data name="MessageOneStudyNotFound" xml:space="preserve">
+    <value>One study was not found.</value>
+  </data>
+  <data name="MessageOneStudyNotLoaded" xml:space="preserve">
+    <value>One study could not be loaded.</value>
+  </data>
+  <data name="MessageOneStudyOffline" xml:space="preserve">
+    <value>One study is offline.</value>
   </data>
   <data name="MessagePresentationStateApplicationFailure" xml:space="preserve">
     <value>An error has occured while attempting to load a presentation state. The presentation state may not have been loaded in its entirety. Please check the log for more details.</value>
@@ -407,6 +449,21 @@
   <data name="MessageRoiAnalysisError" xml:space="preserve">
     <value>An error has occurred while analyzing the Roi.
 Please check the log for more details.</value>
+  </data>
+  <data name="MessageStudyInUse" xml:space="preserve">
+    <value>The study is currently in use and cannot be loaded.  Try waiting a few minutes and load the study again.</value>
+  </data>
+  <data name="MessageStudyNearline" xml:space="preserve">
+    <value>The study is nearline and cannot be loaded.  If your PACS is a ClearCanvas ImageServer, try waiting a few minutes and load the study again.  Otherwise, the study must be restored by a PACS administrator.</value>
+  </data>
+  <data name="MessageStudyNotFound" xml:space="preserve">
+    <value>The study could not be found.</value>
+  </data>
+  <data name="MessageStudyOffline" xml:space="preserve">
+    <value>The study is offline and cannot be loaded until it has been restored by a PACS administrator.</value>
+  </data>
+  <data name="MessageStudyUnavailable" xml:space="preserve">
+    <value>The study is unavailable.</value>
   </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
     <value>Visible Display Set</value>

@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Services.ServerTree;
@@ -38,10 +39,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[ExceptionPolicyFor(typeof(PriorStudyLoaderException))]
+	[ExceptionPolicyFor(typeof(LoadPriorStudiesException))]
+
 	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
 	public class PriorStudyLoaderExceptionPolicy : IExceptionPolicy
 	{
@@ -53,53 +56,45 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public void Handle(System.Exception e, IExceptionHandlingContext exceptionHandlingContext)
 		{
-			if (e is PriorStudyLoaderException)
-				Handle(e as PriorStudyLoaderException, exceptionHandlingContext);
+			if (e is LoadPriorStudiesException)
+			{
+				exceptionHandlingContext.Log(LogLevel.Error, e);
+				
+				Handle(e as LoadPriorStudiesException, exceptionHandlingContext);
+			}
 		}
 
 		#endregion
 
-		private static void Handle(PriorStudyLoaderException exception, IExceptionHandlingContext context)
+		private static void Handle(LoadPriorStudiesException exception, IExceptionHandlingContext context)
 		{
-			if (exception.FindFailed || (exception.CompleteFailures == exception.TotalQueryResults))
+			if (exception.FindFailed)
 			{
-				context.ShowMessageBox(SR.MessageFailedToLoadAnyPriors);
+				context.ShowMessageBox(SR.MessageSearchForPriorsFailed);
 			}
-			else if (exception.CompleteFailures > 0 && exception.PartialFailures > 0)
+			else if (ShouldShowErrorMessage(exception))
 			{
-				string message = String.Format(SR.FormatXCompleteYPartialPriorLoadFailures, 
-					exception.CompleteFailures, exception.PartialFailures);
+				StringBuilder summary = new StringBuilder();
 
-				context.ShowMessageBox(message);
-			}
-			else if (exception.CompleteFailures > 0)
-			{
-				string message;
-				if (exception.CompleteFailures == 1)
-					message = SR.Message1CompletePriorLoadFailures;
-				else
-					message = String.Format(SR.FormatXCompletePriorLoadFailures, exception.CompleteFailures);
+				summary.AppendLine(SR.MessageLoadPriorsErrorPrefix);
+				summary.Append(exception.GetExceptionSummary());
 
-				context.ShowMessageBox(message);
+				context.ShowMessageBox(summary.ToString());
 			}
-			else if (exception.PartialFailures > 0)
-			{
-				string message;
-				if (exception.PartialFailures == 1)
-					message = SR.Message1PartialPriorLoadFailures;
-				else
-					message = String.Format(SR.FormatXPartialPriorLoadFailures, exception.PartialFailures);
+		}
 
-				context.ShowMessageBox(message);
-			}
-			else if (exception.NoStudyLoaderFailures > 0)
-			{
-				//ignore, since there's not a lot we can do about it.
-			}
-			else
-			{
-				context.ShowMessageBox(SR.MessageUnexpectedPriorLoadFailure);
-			}
+		private static bool ShouldShowErrorMessage(LoadPriorStudiesException exception)
+		{
+			if (exception.GetNumberIncomplete() > 0)
+				return true;
+
+			if (exception.GetNumberNotFound() > 0)
+				return true;
+
+			if (exception.GetNumberUnknownFailures() > 0)
+				return true;
+
+			return false;
 		}
 	}
 
@@ -196,6 +191,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			item.StudyDate = study.StudyDate;
 			item.StudyTime = study.StudyTime;
 			item.StudyDescription = study.StudyDescription;
+			
+			item.InstanceAvailability = study.InstanceAvailability;
+			if (String.IsNullOrEmpty(item.InstanceAvailability))
+				item.InstanceAvailability = "ONLINE";
 
 			return item;
 		}

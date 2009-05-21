@@ -42,28 +42,60 @@ namespace ClearCanvas.ImageViewer
 		internal class SingleStudyLoader : IDisposable
 		{
 			private readonly ImageViewerComponent _viewer;
-			private readonly LoadStudyArgs _args;
 			private readonly List<Sop> _sops;
-			private int _total;
-			private int _failed;
+			private readonly LoadStudyArgs _args;
+			private readonly StudyItem _studyItem;
 
 			public SingleStudyLoader(ImageViewerComponent viewer, LoadStudyArgs args)
 			{
 				_viewer = viewer;
 				_args = args;
 				_sops = new List<Sop>();
-				_total = 0;
-				_failed = 0;
 			}
 
-			public int Total
+			public SingleStudyLoader(ImageViewerComponent viewer, StudyItem studyItem)
 			{
-				get { return _total; }
+				_viewer = viewer;
+				_studyItem = studyItem;
+				_sops = new List<Sop>();
 			}
 
-			public int Failed
+			public StudyItem StudyItem
 			{
-				get { return _failed; }
+				get { return _studyItem; }	
+			}
+
+			public string StudyLoaderName
+			{
+				get
+				{
+					if (_args != null)
+						return _args.StudyLoaderName;
+					else
+						return _studyItem.StudyLoaderName;
+				}	
+			}
+
+			public string StudyInstanceUid
+			{
+				get
+				{
+					if (_args != null)
+						return _args.StudyInstanceUid;
+					else
+						return _studyItem.StudyInstanceUID;
+				}
+			}
+
+			public object Server
+			{
+				get
+				{
+					if (_args != null)
+						return _args.Server;
+					else
+						return _studyItem.Server;
+				}
 			}
 
 			public void LoadStudy()
@@ -75,28 +107,24 @@ namespace ClearCanvas.ImageViewer
 			public void LoadSops()
 			{
 				//Use a new loader in case this call is asynchronous, we don't want to use the viewer's instance.
-				IStudyLoader studyLoader = new StudyLoaderMap()[_args.StudyLoaderName];
+				IStudyLoader studyLoader = new StudyLoaderMap()[StudyLoaderName];
 
+				StudyLoaderArgs args = new StudyLoaderArgs(StudyInstanceUid, Server);
 				int total;
+
 				try
 				{
-					total = studyLoader.Start(new StudyLoaderArgs(_args.StudyInstanceUid, _args.Server));
+					total = studyLoader.Start(args);
 					if (total <= 0)
-					{
-						string message = String.Format("Study '{0}' does not appear to exist on server '{1}'",
-						                               _args.StudyInstanceUid, _args.Server);
-
-						throw new OpenStudyException(message);
-					}
+						throw new NotFoundLoadStudyException(args.StudyInstanceUid);
 				}
-				catch(OpenStudyException)
+				catch (LoadStudyException)
 				{
 					throw;
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("Failed to load images for study '{0}'", _args.StudyInstanceUid);
-					throw new OpenStudyException(message, e);
+					throw new LoadStudyException(args.StudyInstanceUid, e);
 				}
 
 				try
@@ -112,9 +140,6 @@ namespace ClearCanvas.ImageViewer
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("Failed to load images for study '{0}'", _args.StudyInstanceUid);
-					Platform.Log(LogLevel.Error, e, message);
-
 					foreach (Sop sop in _sops)
 					{
 						try
@@ -129,16 +154,21 @@ namespace ClearCanvas.ImageViewer
 
 					_sops.Clear();
 
-					OpenStudyException exception = new OpenStudyException(message, e);
-					exception.TotalImages = total;
-					exception.FailedImages = total;
-					throw exception;
+					throw new LoadStudyException(args.StudyInstanceUid, total, total, e);
 				}
 			}
 
 			public void AddSops()
 			{
 				if (_sops.Count == 0)
+					return;
+
+				int total = 0;
+				int failed = 0;
+
+				//don't try to load something that's already there.
+				Study study = _viewer.StudyTree.GetStudy(StudyInstanceUid);
+				if (study != null)
 					return;
 
 				List<Sop> sops = new List<Sop>(_sops);
@@ -151,26 +181,27 @@ namespace ClearCanvas.ImageViewer
 					}
 					catch(SopValidationException e)
 					{
-						++_failed;
+						++failed;
 						Platform.Log(LogLevel.Error, e);
 						sop.Dispose();
 					}
 					catch (Exception e)
 					{
-						++_failed;
+						++failed;
 						Platform.Log(LogLevel.Error, e);
 					}
 
-					++_total;
+					++total;
 				}
 
-				Study study = _viewer.StudyTree.GetStudy(_args.StudyInstanceUid);
+				study = _viewer.StudyTree.GetStudy(StudyInstanceUid);
 				if (study != null)
 					_viewer.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(study));
 
-				VerifyLoad(Total, Failed);
+				if (failed > 0)
+					throw new LoadStudyException(StudyInstanceUid, total, failed);
 
-				IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[_args.StudyLoaderName].PrefetchingStrategy;
+				IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[StudyLoaderName].PrefetchingStrategy;
 				if (prefetchingStrategy != null)
 					prefetchingStrategy.Start(_viewer);
 			}

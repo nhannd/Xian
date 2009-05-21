@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 					{
 						result = EventResult.MajorFailure;
 						loadedInstances.AddInstance(studyLoaderArgs.StudyInstanceUid);
-						throw new Exception("The specified study does not exist.");
+						throw new NotFoundLoadStudyException(studyLoaderArgs.StudyInstanceUid);
 					}
 					loadedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
 

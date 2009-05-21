@@ -120,6 +120,9 @@
   <data name="ColumnHeadingAccessionNumber" xml:space="preserve">
     <value>Accession Number</value>
   </data>
+  <data name="ColumnHeadingAvailability" xml:space="preserve">
+    <value>Availability</value>
+  </data>
   <data name="ColumnHeadingDateOfBirth" xml:space="preserve">
     <value>DOB</value>
   </data>

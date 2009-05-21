@@ -275,6 +275,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
+		/// Gets or sets the Instance Availability of the study.
+		/// </summary>
+		public string InstanceAvailability
+		{
+			get { return _instanceAvailability; }
+			set { _instanceAvailability = value; }
+		}
+	
+		/// <summary>
 		/// Gets or sets the server.
 		/// </summary>
 		public object Server
@@ -312,7 +321,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         private uint _numberOfStudyRelatedInstances;
         private string _specificCharacterSet;
 		private object _server;
-        private PersonName _patientsName;
+		private string _instanceAvailability;
+		private PersonName _patientsName;
         #endregion
 	}
 

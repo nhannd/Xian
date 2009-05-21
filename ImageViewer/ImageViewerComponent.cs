@@ -654,7 +654,7 @@ namespace ClearCanvas.ImageViewer
 		/// will be shown.</param>
 		/// <param name="cancelled">A value that indicates whether the operation
 		/// was cancelled.</param>
-		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		public void LoadImages(string[] files, IDesktopWindow desktop, out bool cancelled)
 		{
@@ -838,18 +838,6 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		#region Private methods
-
-		private static void VerifyLoad(int total, int failed)
-		{
-			if (failed == 0)
-				return;
-
-			string message = String.Format("{0} of {1} sops have failed to load.", failed, total);
-			OpenStudyException ex = new OpenStudyException(message);
-			ex.TotalImages = total;
-			ex.FailedImages = failed;
-			throw ex;
-		}
 
 		private void StopPrefetching()
 		{

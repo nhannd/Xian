@@ -360,6 +360,7 @@
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
     <Compile Include="StudyManagement\FrameReference.cs" />
+    <Compile Include="StudyManagement\LoadMultipleStudiesException.cs" />
     <Compile Include="StudyManagement\SopFrameData.cs" />
     <Compile Include="StudyManagement\PrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\SopReference.cs" />
@@ -523,7 +524,7 @@
     <Compile Include="LinkageChangedEventArgs.cs" />
     <Compile Include="LogicalWorkspace.cs" />
     <Compile Include="BaseTools\MouseImageViewerTool.cs" />
-    <Compile Include="OpenStudyException.cs" />
+    <Compile Include="LoadSopsException.cs" />
     <Compile Include="PhysicalWorkspace.cs" />
     <Compile Include="PhysicalWorkspaceMemento.cs" />
     <Compile Include="PresentationImage.cs" />

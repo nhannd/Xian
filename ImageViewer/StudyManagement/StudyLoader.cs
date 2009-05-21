@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class StudyLoader : IStudyLoader
@@ -55,28 +56,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			protected set { _prefetchingStrategy = value; }
 		}
 
-		public abstract int OnStart(StudyLoaderArgs args);
+		public abstract int OnStart(StudyLoaderArgs studyLoaderArgs);
 
 		public int Start(StudyLoaderArgs studyLoaderArgs)
 		{
 			_currentServer = studyLoaderArgs.Server;
 
-			return OnStart(studyLoaderArgs);
+			try
+			{
+				return OnStart(studyLoaderArgs);
+			}
+			catch(LoadStudyException)
+			{
+				throw;
+			}
+			catch(Exception e)
+			{
+				throw new LoadStudyException(studyLoaderArgs.StudyInstanceUid, e);
+			}
 		}
 
 		public Sop LoadNextSop()
 		{
-			SopDataSource dataSource = LoadNextSopDataSource();
-			if (dataSource == null)
-			{
-				_currentServer = null;
-				return null;
-			}
+				SopDataSource dataSource = LoadNextSopDataSource();
+				if (dataSource == null)
+				{
+					_currentServer = null;
+					return null;
+				}
 
-			dataSource.StudyLoaderName = Name;
-			dataSource.Server = _currentServer;
+				dataSource.StudyLoaderName = Name;
+				dataSource.Server = _currentServer;
 
-			return CreateSop(dataSource);
+				return CreateSop(dataSource);
 		}
 
 		#endregion

@@ -46,12 +46,71 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	internal class UnavailableImageSet : ImageSet
 	{
-		public UnavailableImageSet(StudyItem studyItem)
+		public UnavailableImageSet(StudyItem studyItem, Exception error)
 		{
 			StudyItem = studyItem;
+			Error = error;
 		}
 
+		public readonly Exception Error;
 		public readonly StudyItem StudyItem;
+
+		internal string GetActionMessage()
+		{
+			if (Error is OfflineLoadStudyException)
+			{
+				return SR.MessageActionStudyOffline;
+			}
+			else if (Error is NearlineLoadStudyException)
+			{
+				return SR.MessageActionStudyNearline;
+			}
+			else if (Error is InUseLoadStudyException)
+			{
+				return SR.MessageActionStudyInUse;
+			}
+			else if (Error is StudyLoaderNotFoundException)
+			{
+				return SR.MessageActionNoStudyLoader;
+			}
+			else
+			{
+				return SR.MessageActionStudyCouldNotBeLoaded;
+			}
+		}
+
+		internal string GetNamePrefix()
+		{
+			string serverName = "Unknown";
+			if (StudyItem.Server != null)
+				serverName = StudyItem.Server.ToString();
+
+			return serverName;
+		}
+
+		internal string GetActionLabel()
+		{
+			if (Error is OfflineLoadStudyException)
+			{
+				return String.Format(SR.LabelFormatStudyUnavailable, SR.Offline);
+			}
+			else if (Error is NearlineLoadStudyException)
+			{
+				return String.Format(SR.LabelFormatStudyUnavailable, SR.Nearline);
+			}
+			else if (Error is InUseLoadStudyException)
+			{
+				return String.Format(SR.LabelFormatStudyUnavailable, SR.InUse);
+			}
+			else if (Error is StudyLoaderNotFoundException)
+			{
+				return String.Format(SR.LabelFormatStudyUnavailable, SR.Unavailable);
+			}
+			else
+			{
+				return SR.LabelStudyCouldNotBeLoaded;
+			}
+		}
 	}
 
 	internal class StudyDateComparer : ImageSetComparer
@@ -167,18 +226,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			_anyUnavailable = true;
 
-			//not interested in any other errors as far as showing the 'unavailable' study items in the context menu.
-			if (e.Error is StudyLoaderNotFoundException)
+			bool notFoundError = e.Error is NotFoundLoadStudyException;
+			if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
 			{
 				if (null == CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
 					delegate(IImageSet imageSet) { return imageSet.Uid == e.Study.StudyInstanceUID; }))
 				{
-					_imageSetGroups.Root.Add(CreateUnavailableImageSet(e.Study));
+					_imageSetGroups.Root.Add(CreateUnavailableImageSet(e.Study, e.Error));
 				}
 			}
 		}
 
-		private static UnavailableImageSet CreateUnavailableImageSet(StudyItem study)
+		private static UnavailableImageSet CreateUnavailableImageSet(StudyItem study, Exception error)
 		{
 			//TODO: none of this is ideal because this code is duplicated from the layout manager,
 			//but unfortunately it's necessary right now.  I think the problem is 3-fold:
@@ -195,7 +254,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			// menu actions would then be constructed from that information, not relying on
 			// image set names.
 
-			UnavailableImageSet imageSet = new UnavailableImageSet(study);
+			UnavailableImageSet imageSet = new UnavailableImageSet(study, error);
 
 			DateTime studyDate;
 			DateParser.Parse(study.StudyDate, out studyDate);
@@ -254,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 							{
 								UnavailableImageSet unavailable = (UnavailableImageSet) imageSet;
 								imageSetPath = String.Format("{0}/({1}) {2}", basePath,
-									unavailable.StudyItem.Server ?? SR.MessageUnavailable, imageSet.Name.Replace("/", "-"));
+									unavailable.GetNamePrefix(), imageSet.Name.Replace("/", "-"));
 							}
 							else
 							{
@@ -358,15 +417,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private IClickAction CreateUnavailableStudyAction(string basePath, UnavailableImageSet imageSet)
 		{
 			string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
-			Trace.WriteLine(String.Format("Path: {0}", pathString));
+			//Trace.WriteLine(String.Format("Path: {0}", pathString));
 
 			ActionPath path = new ActionPath(pathString, null);
 			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.CheckParents, null);
 			action.GroupHint = new GroupHint("DisplaySets");
-			action.Label = SR.MessageStudyUnavailable;
+			action.Label = imageSet.GetActionLabel();
 			action.SetClickHandler(delegate
 			                       	{
-			                       		this.Context.DesktopWindow.ShowMessageBox(SR.MessageTheStudyMustBeRetrieved,
+			                       		this.Context.DesktopWindow.ShowMessageBox(imageSet.GetActionMessage(),
 			                       		                                          MessageBoxActions.Ok);
 			                       	});
 
@@ -382,7 +441,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private IClickAction CreateDisplaySetAction(string basePath, IDisplaySet displaySet)
 		{
     		string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
-			Trace.WriteLine(String.Format("Path: {0}", pathString));
+			//Trace.WriteLine(String.Format("Path: {0}", pathString));
 
 			ActionPath path = new ActionPath(pathString, null);
 			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.CheckParents, null);
