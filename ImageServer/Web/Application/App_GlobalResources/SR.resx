@@ -364,7 +364,7 @@
     <value>Alert Found</value>
   </data>
   <data name="AlertDeleteAllConfirm" xml:space="preserve">
-    <value>Are you sure you want to delete all Alert items from the queue?</value>
+    <value>Are you sure you want to delete all of the current Alert items? &lt;br/&gt;Only the alerts that are a result of the current search will be deleted.</value>
   </data>
   <data name="GridPagerApplicationLogMultipleItems" xml:space="preserve">
     <value>Logs Found</value>

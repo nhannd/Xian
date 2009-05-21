@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete all Alert items from the queue?.
+        ///   Looks up a localized string similar to Are you sure you want to delete all of the current Alert items? &lt;br/&gt;Only the alerts that are a result of the current search will be deleted..
         /// </summary>
         internal static string AlertDeleteAllConfirm {
             get {
