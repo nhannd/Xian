@@ -51,9 +51,10 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters</OptionsFlags>-->
-        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise</OptionsFlags>
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>-->
+        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>

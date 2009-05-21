@@ -42,8 +42,8 @@
     <DistributionBuild>false</DistributionBuild>
     <FullViewer>false</FullViewer>
     <!-- Default, triceratops options -->
-    <DefaultOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeReporting</DefaultOptions>	
-    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeStudyFilters</FullViewerOptions>
+    <DefaultOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeReporting+ExcludeMpr</DefaultOptions>	
+    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</FullViewerOptions>
   </PropertyGroup>
 
   <Choose>
