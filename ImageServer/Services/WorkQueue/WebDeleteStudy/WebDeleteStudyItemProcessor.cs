@@ -29,10 +29,12 @@
 
 #endregion
 
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     public class WebDeleteStudyItemProcessor : DeleteStudyItemProcessor
     {
         

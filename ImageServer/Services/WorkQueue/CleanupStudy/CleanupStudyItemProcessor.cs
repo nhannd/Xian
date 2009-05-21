@@ -34,6 +34,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -45,6 +46,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
     /// <summary>
     /// For processing 'CleanupStudy' WorkQueue items.
     /// </summary>
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     public class CleanupStudyItemProcessor : BaseItemProcessor
     {
 

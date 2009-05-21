@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -41,7 +42,8 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 {
 
-	public class PurgeStudyItemProcessor : BaseItemProcessor
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
+    public class PurgeStudyItemProcessor : BaseItemProcessor
 	{
 		#region Private Methods
 		private void RemoveFilesystem()

@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
     /// <summary>
     /// For processing 'CleanupReconcile' WorkQueue items.
     /// </summary>
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     class CleanupReconcileItemProcessor : BaseItemProcessor
     {
         private ReconcileStudyWorkQueueData _reconcileQueueData;
