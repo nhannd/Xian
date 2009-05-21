@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="AuthorityGroupImporter.cs" />
     <Compile Include="AuthorityTokenImporter.cs" />
-    <Compile Include="DefaultAuthorityGroups.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

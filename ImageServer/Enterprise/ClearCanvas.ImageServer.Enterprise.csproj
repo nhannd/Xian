@@ -44,6 +44,7 @@
     <Compile Include="Admin\UserManagement.cs" />
     <Compile Include="Audit\ApplicationLogAuditSink.cs" />
     <Compile Include="Authentication\AuthorityTokens.cs" />
+    <Compile Include="Authentication\DefaultAuthorityGroups.cs" />
     <Compile Include="Authentication\LoginService.cs" />
     <Compile Include="Authentication\SessionInfo.cs" />
     <Compile Include="Authentication\SessionValidationException.cs" />

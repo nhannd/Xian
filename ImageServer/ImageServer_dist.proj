@@ -97,7 +97,6 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Utilities\TokenImporter\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.TokenImporter.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />

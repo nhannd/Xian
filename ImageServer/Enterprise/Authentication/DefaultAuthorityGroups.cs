@@ -36,9 +36,8 @@ using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
 
-namespace ClearCanvas.ImageServer.Utilities
+namespace ClearCanvas.ImageServer.Enterprise.Authentication
 {
-
     class UserGroupDefinitionAttribute : Attribute
     {
         public string Name;
