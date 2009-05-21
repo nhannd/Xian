@@ -53,8 +53,8 @@
       <PropertyGroup>
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
-        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>
-        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>-->
+        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>
