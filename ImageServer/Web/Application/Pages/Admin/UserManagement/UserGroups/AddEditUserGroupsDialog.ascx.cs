@@ -201,6 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
                 GroupName.Text = UserGroup.Name;
                 OriginalGroupName.Value = UserGroup.Name;
+                TokenCheckBoxList.ClearSelection();
                 foreach (TokenSummary token in UserGroup.Tokens)
                 {
                     TokenCheckBoxList.Items.FindByValue(token.Name).Selected = true;

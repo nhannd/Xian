@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
         public void OnDeleteUserGroup(UserGroupRowData userGroupRowData)
         {
-            DeleteConfirmation.Message = string.Format("Are you sure to delete user group \"{0}?\"", userGroupRowData.Name);
+            DeleteConfirmation.Message = string.Format("Are you sure you want to delete user group \"{0}?\"", userGroupRowData.Name);
             DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmation.Data = userGroupRowData;
             DeleteConfirmation.Show();
