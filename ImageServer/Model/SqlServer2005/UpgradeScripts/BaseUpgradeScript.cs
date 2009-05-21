@@ -105,9 +105,8 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 				DatabaseVersionUpdateColumns columns = new DatabaseVersionUpdateColumns();
 				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
 
-				// Build & Revision are switched, due to how we do revisions in the DB table!!
-				columns.Build = DestinationVersion.Revision.ToString();
-				columns.Revision = DestinationVersion.Build.ToString();
+				columns.Revision = DestinationVersion.Revision.ToString();
+				columns.Build = DestinationVersion.Build.ToString();
 				columns.Minor = DestinationVersion.Minor.ToString();
 				columns.Major = DestinationVersion.Major.ToString();
 

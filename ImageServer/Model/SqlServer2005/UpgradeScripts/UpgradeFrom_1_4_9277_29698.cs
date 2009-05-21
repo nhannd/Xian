@@ -38,8 +38,9 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 	[ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
 	class UpgradeFrom_1_4_9277_29698 : BaseUpgradeScript
 	{
+        //In versions prior to 1.5 the use of Build and Revision were swapped and so it has to be swapped here in order for the utility to properly detect the older version
 		public UpgradeFrom_1_4_9277_29698()
-			: base(new Version(1, 4, 9277, 29698), null, "UpgradeFrom_1_4_9277_29698.sql")
+			: base(new Version(1, 4, 29698, 9277), null, "UpgradeFrom_1_4_9277_29698.sql")
 		{
 		}
 	}
