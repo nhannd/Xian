@@ -221,11 +221,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public ImageViewerComponent OpenStudies()
 		{
-			ImageViewerComponent component = null;
+			ImageViewerComponent viewer = null;
 
-			BlockingOperation.Run(delegate { component = LoadAndOpenStudies(); });
+			BlockingOperation.Run(delegate { viewer = LoadAndOpenStudies(); });
 
-			return component;
+			return viewer;
 		}
 
 		#endregion
@@ -237,25 +237,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			CodeClock codeClock = new CodeClock();
 			codeClock.Start();
 
-			ImageViewerComponent viewer = _imageViewer = CreateViewer();
+			ImageViewerComponent viewer = CreateViewer();
 
 			try
 			{
-				LoadStudies();
+				LoadStudies(viewer);
 			}
 			catch(Exception e)
 			{
 				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 
-				if (!AnySopsLoaded(_imageViewer))
+				if (!AnySopsLoaded(viewer))
 				{
-					_imageViewer.Dispose();
+					viewer.Dispose();
 					return null;
 				}
-			}
-			finally
-			{
-				_imageViewer = null;
 			}
 
 			LaunchViewer(viewer);

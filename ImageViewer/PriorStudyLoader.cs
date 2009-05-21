@@ -104,6 +104,7 @@ namespace ClearCanvas.ImageViewer
 
 			private readonly IPriorStudyFinder _priorStudyFinder;
 			private volatile StudyItemList _queryResults;
+			private volatile int _actualPriorCount = 0;
 			private volatile bool _findFailed = false;
 
 			public AsyncPriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
@@ -245,6 +246,7 @@ namespace ClearCanvas.ImageViewer
 					//don't re-report for an existing study.
 					if (null == _imageViewer.StudyTree.GetStudy(args.Study.StudyInstanceUID))
 					{
+						++_actualPriorCount;
 						_loadStudyExceptions.Add(args.Error);
 						EventsHelper.Fire(_loadPriorStudyFailed, this, args);
 					}
@@ -258,11 +260,18 @@ namespace ClearCanvas.ImageViewer
 				{
 					try
 					{
-						loader.AddSops();
+						if (null == _imageViewer.StudyTree.GetStudy(loader.StudyInstanceUid))
+						{
+							loader.AddSops();
+							++_actualPriorCount;
+						}
 					}
 					catch(LoadStudyException e)
 					{
-						OnLoadPriorStudyFailed(loader.StudyItem, e);
+						Platform.Log(LogLevel.Error, e, "An error occurred while loading sops for prior study '{0}' from study loader '{1}'.",
+									 loader.StudyInstanceUid, loader.StudyLoaderName);
+
+						OnLoadPriorStudyFailed(new LoadPriorStudyFailedEventArgs(loader.StudyItem, e));
 					}
 				}
 			}
@@ -290,7 +299,7 @@ namespace ClearCanvas.ImageViewer
 				if (_findFailed)
 					throw new LoadPriorStudiesException();
 				else if (_loadStudyExceptions.Count > 0)
-					throw new LoadPriorStudiesException(_loadStudyExceptions, _queryResults.Count);
+					throw new LoadPriorStudiesException(_loadStudyExceptions, _actualPriorCount);
 			}
 
 			private void DisposeLoaders()

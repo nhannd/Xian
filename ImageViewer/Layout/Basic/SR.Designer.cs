@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The selected study is on a non-streaming server and must be retrieved to the local machine in order to view it..
+        ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved to the local machine in order to view it..
         /// </summary>
         public static string MessageActionNoStudyLoader {
             get {
@@ -223,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The selected study could not be loaded.  Please contact your PACS administrator..
+        ///   Looks up a localized string similar to The study could not be loaded.  Please contact your PACS administrator..
         /// </summary>
         public static string MessageActionStudyCouldNotBeLoaded {
             get {

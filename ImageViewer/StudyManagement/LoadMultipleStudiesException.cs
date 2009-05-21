@@ -105,8 +105,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public int GetNumberUnknownFailures()
 		{
-			return LoadStudyExceptions.Count - GetNumberOffline() - GetNumberNearline() - GetNumberIncomplete()
-			       - GetNumberInUse() - GetNumberNotFound() - GetNumberStudyLoaderNotFound();
+			return LoadStudyExceptions.Count - GetNumberOffline() - GetNumberNearline() - GetNumberInUse() - 
+				GetNumberNotFound() - GetNumberIncomplete() - GetNumberStudyLoaderNotFound();
 		}
 
 		public string GetExceptionSummary()

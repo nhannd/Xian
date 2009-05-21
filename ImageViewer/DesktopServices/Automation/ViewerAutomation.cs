@@ -147,7 +147,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 				}
 				else
 				{
-					Exception loadException;
 					viewer = OpenStudies(request, primaryStudyInstanceUid);
 				}
 

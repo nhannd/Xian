@@ -169,10 +169,10 @@
     <value>Standard</value>
   </data>
   <data name="MessageActionNoStudyLoader" xml:space="preserve">
-    <value>The selected study is on a non-streaming server and must be retrieved to the local machine in order to view it.</value>
+    <value>The study is on a non-streaming server and must be retrieved to the local machine in order to view it.</value>
   </data>
   <data name="MessageActionStudyCouldNotBeLoaded" xml:space="preserve">
-    <value>The selected study could not be loaded.  Please contact your PACS administrator.</value>
+    <value>The study could not be loaded.  Please contact your PACS administrator.</value>
   </data>
   <data name="MessageActionStudyInUse" xml:space="preserve">
     <value>The study is in use.  Please close the current study, wait a few minutes, then try loading the study again.</value>
