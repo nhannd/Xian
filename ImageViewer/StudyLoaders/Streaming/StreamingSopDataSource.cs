@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
@@ -151,17 +153,57 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			if (!_fullHeaderRetrieved)
 			{
+				CodeClock retryClock = new CodeClock();
+				retryClock.Start();
+
 				try
 				{
 					Uri uri = new Uri(String.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
 					StreamingClient client = new StreamingClient(uri);
 
-					DicomFile imageHeader = new DicomFile();
-					using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid))
+					const double timeoutSeconds = 3;
+					double pauseSeconds = 0.125;
+					int retryCount = 0;
+
+					while (true)
 					{
-						imageHeader.Load(imageHeaderStream);
-						base.SourceMessage = imageHeader;
-						_fullHeaderRetrieved = true;
+						try
+						{
+							if (retryCount > 0)
+								Platform.Log(LogLevel.Info, "Retry #{0}: retrieve full header for sop '{1}'", retryCount, SopInstanceUid);
+
+							DicomFile imageHeader = new DicomFile();
+							using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid))
+							{
+								imageHeader.Load(imageHeaderStream);
+								base.SourceMessage = imageHeader;
+								_fullHeaderRetrieved = true;
+							}
+
+							return;
+						}
+						catch (Exception e)
+						{
+							double retryClockSeconds = retryClock.Seconds;
+
+							if (retryClockSeconds < timeoutSeconds)
+							{
+								++retryCount;
+								pauseSeconds *= 2;
+								pauseSeconds = Math.Min(pauseSeconds, timeoutSeconds - retryClockSeconds);
+
+								Platform.Log(LogLevel.Error, e,
+											 "Failed to retrieve full header for sop '{0}'; waiting {1} seconds before retry ...", SopInstanceUid, pauseSeconds);
+
+								Thread.Sleep(TimeSpan.FromSeconds(pauseSeconds));
+							}
+							else
+							{
+								Platform.Log(LogLevel.Error, e,
+											 "Failed to retrieve full header for sop '{0}'; quitting retry loop.", SopInstanceUid);
+								throw;
+							}
+						}
 					}
 				}
 				catch(StreamingClientException ex)

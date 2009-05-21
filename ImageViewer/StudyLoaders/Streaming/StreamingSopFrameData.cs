@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -189,7 +190,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				string host = source.Parent._host;
 				string wadoPrefix = source.Parent._wadoUriPrefix;
 				int wadoPort = source.Parent._wadoServicePort;
-				BaseUrl = new Uri(String.Format(wadoPrefix, host, wadoPort));
+
+				try
+				{
+					BaseUrl = new Uri(String.Format(wadoPrefix, host, wadoPort));
+				}
+				catch (FormatException ex)
+				{
+					// this exception happens if the FormatWadoUriPrefix setting is invalid.
+					throw new Exception(SR.MessageStreamingClientConfigurationException, ex);
+				}
 
 				AETitle = source.Parent._aeTitle;
 
@@ -202,24 +212,61 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			public RetrievePixelDataResult Retrieve()
 			{
+				CodeClock retryClock = new CodeClock();
+				retryClock.Start();
+
 				try
 				{
-					CodeClock clock = new CodeClock();
-					clock.Start();
-
 					StreamingClient client = new StreamingClient(BaseUrl);
-					RetrievePixelDataResult result =
-						client.RetrievePixelData(AETitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid, FrameNumber - 1);
 
-					clock.Stop();
+					const double timeoutSeconds = 3;
+					double pauseSeconds = 0.125;
+					int retryCount = 0;
 
-					string message = String.Format("[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (s): {4}",
-					                               SopInstanceUid, FrameNumber, TransferSyntaxUid,
-					                               result.MetaData.ContentLength, clock.Seconds);
+					while (true)
+					{
+						RetrievePixelDataResult result; 
+						
+						try
+						{
+							if (retryCount > 0)
+								Platform.Log(LogLevel.Info, "Retry #{0}: retrieve pixel data for sop '{1}'", retryCount, SopInstanceUid);
 
-					Platform.Log(LogLevel.Debug, message);
+							CodeClock statsClock = new CodeClock();
+							statsClock.Start();
 
-					return result;
+							result = client.RetrievePixelData(AETitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid, FrameNumber - 1);
+
+							statsClock.Stop();
+							
+							Platform.Log(LogLevel.Debug, "[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (s): {4}",
+														   SopInstanceUid, FrameNumber, TransferSyntaxUid,
+														   result.MetaData.ContentLength, statsClock.Seconds);
+							return result;
+						}
+						catch(Exception e)
+						{
+							double retryClockSeconds = retryClock.Seconds;
+
+							if (retryClockSeconds < timeoutSeconds)
+							{
+								++retryCount;
+								pauseSeconds *= 2;
+								pauseSeconds = Math.Min(pauseSeconds, timeoutSeconds - retryClockSeconds);
+
+								Platform.Log(LogLevel.Error, e,
+								             "Failed to retrieve pixel data for sop '{0}'; waiting {1} seconds before retry ...", SopInstanceUid, pauseSeconds);
+
+								Thread.Sleep(TimeSpan.FromSeconds(pauseSeconds));
+							}
+							else
+							{
+								Platform.Log(LogLevel.Error, e,
+											 "Failed to retrieve pixel data for sop '{0}'; quitting retry loop.", SopInstanceUid);
+								throw;
+							}
+						}
+					}
 				}
 				catch (StreamingClientException ex)
 				{
@@ -311,11 +358,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 					clock.Stop();
 
-					string message = String.Format("[Decompress Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Uncompressed bytes: {3}, Elapsed (s): {4}",
+					Platform.Log(LogLevel.Debug, "[Decompress Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Uncompressed bytes: {3}, Elapsed (s): {4}",
 												   retriever.SopInstanceUid, FrameNumber, retriever.TransferSyntaxUid,
-					                               pixelData.Length, clock.Seconds);
-
-					Platform.Log(LogLevel.Debug, message);
+												   pixelData.Length, clock.Seconds);
 
 					return pixelData;
 				}
