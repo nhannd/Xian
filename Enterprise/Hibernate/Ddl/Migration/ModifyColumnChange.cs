@@ -37,13 +37,20 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
     class ModifyColumnChange : RelationalModelChange
     {
+    	private readonly ColumnInfo _initial;
     	private readonly ColumnInfo _column;
 
 		public ModifyColumnChange(TableInfo table, ColumnInfo initial, ColumnInfo desired)
 			: base(table)
 		{
+			_initial = initial;
 			_column = desired;
         }
+
+    	public ColumnInfo Initial
+    	{
+			get { return _initial; }
+    	}
 
     	public ColumnInfo Column
     	{
