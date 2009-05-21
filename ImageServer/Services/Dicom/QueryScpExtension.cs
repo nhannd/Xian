@@ -290,8 +290,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// <param name="read">The connection to use to read the values.</param>
         /// <param name="response"></param>
         /// <param name="tagList"></param>
-		/// <param name="storage"></param>
-        /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
+	    /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
+	    /// <param name="availability">Instance availability string.</param>
         private void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row, string availability)
         {
             DicomAttributeCollection dataSet = response.DataSet;
@@ -594,6 +594,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 				if (CancelReceived)
 					throw new DicomException("DICOM C-Cancel Received");
+
+				if (!server.NetworkActive)
+					throw new DicomException("Association is no longer valid.");
 			}
 		}
 

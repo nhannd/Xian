@@ -193,6 +193,17 @@ namespace ClearCanvas.Dicom.Network
 			set { _logInformation = value; }
 		}
 
+		/// <summary>
+		/// Flag telling if the network 
+		/// </summary>
+    	public bool NetworkActive
+    	{
+    		get
+    		{
+    			return _network != null;
+    		}
+    	}
+
         #endregion
 
         #region Public Constructors
