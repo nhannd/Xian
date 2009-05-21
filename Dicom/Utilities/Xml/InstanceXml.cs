@@ -776,7 +776,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			if (collection is IInstanceXmlDicomAttributeCollection)
 			{
 				foreach (DicomTag excludedTag in ((IInstanceXmlDicomAttributeCollection)collection).ExcludedTags)
-					instance.AppendChild(CreateDicomAttributeElement(theDocument, excludedTag, "ExcludedAttribute"));
+				{
+					if (privateBaseCollection == null || !privateBaseCollection.ExcludedTagsHelper.ExcludedTags.Contains(excludedTag))
+						instance.AppendChild(CreateDicomAttributeElement(theDocument, excludedTag, "ExcludedAttribute"));
+				}
 			}
 
 			return instance;
