@@ -31,6 +31,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -62,10 +65,43 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _theAlertItem.AlertCategoryEnum.Description; }
 		}
 
-		public string Content
+		public string Message
 		{
-			get { return _theAlertItem.Content.GetElementsByTagName("Message").Item(0).InnerText; }
+			get
+			{
+                StringBuilder sb = new StringBuilder();
+			    sb.AppendLine(_theAlertItem.Content.GetElementsByTagName("Message").Item(0).InnerText);
+                return sb.ToString();
+			}
 		}
+
+	    public object ContextData
+	    {
+	        get
+	        {
+                XmlNode contextNode = _theAlertItem.Content.SelectSingleNode("//Context");
+
+                if (contextNode != null)
+                {
+                    XmlNode node = contextNode.FirstChild;
+                    // Cast the Data back from the Abstract Type.
+                    if (node.Attributes["type"] != null)
+                    {
+                        Type type = Type.GetType(node.Attributes["type"].Value);
+                        if (type == null)
+                            return contextNode; // don't know how to decode it
+
+                        XmlSerializer serializer = new XmlSerializer(type);
+                        return serializer.Deserialize(new XmlNodeReader(node));
+                    }
+                    else
+                        return node; // don't know how to decode it
+
+                }
+
+	            return null;//
+	        }
+	    }
 
 		public string Component
 		{
