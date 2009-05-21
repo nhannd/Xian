@@ -3,7 +3,6 @@
      %>
 
 <%@ Register Src="AlertsPanel.ascx" TagName="AlertsPanel" TagPrefix="localAsp" %>
-<%@ Register Src="~/Pages/Admin/Alerts/DeleteAlertDialog.ascx" TagName="DeleteDialog" TagPrefix="localAsp" %>
 
 <asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,Alerts%>" /></asp:Content>
     
@@ -15,6 +14,5 @@
             </ContentTemplate>
         </asp:UpdatePanel>
     </asp:Panel>    
-    <localAsp:DeleteDialog ID="DeleteAlertDialog" runat="server"  />
-    <localAsp:DeleteDialog ID="DeleteAllAlertsDialog" runat="server" />
+
 </asp:Content>

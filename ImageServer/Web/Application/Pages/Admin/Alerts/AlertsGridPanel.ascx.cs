@@ -180,9 +180,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             }
         }
 
+        public void Refresh()
+        {
+            AlertGridView.ClearSelections();
+            AlertGridView.PageIndex = 0;
+            AlertGridView.DataBind();
+        }
+
         public void RefreshCurrentPage()
         {
-            DataBind();
+            AlertGridView.DataBind();
         }
 
         #endregion

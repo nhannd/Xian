@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                                     _theController.DeleteAlertItem(keys[i] as ServerEntityKey);
                                 }
                                
-                                AlertsGridPanel.RefreshCurrentPage();                               
+                                AlertsGridPanel.Refresh();                               
                                 SearchUpdatePanel.Update(); // force refresh
 
                             };

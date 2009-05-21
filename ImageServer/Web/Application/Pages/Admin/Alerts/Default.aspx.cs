@@ -54,11 +54,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             Page.Title = App_GlobalResources.Titles.AlertsPageTitle;
         }
 
-        public void DeleteAllAlerts()
-        {
-            DeleteAllAlertsDialog.Show(true);
-        }
-
         public void UpdateUI()
         {
             AlertsPanel.UpdateUI();

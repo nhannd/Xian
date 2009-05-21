@@ -396,13 +396,6 @@
     <Compile Include="Pages\Admin\Alerts\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx.cs">
-      <DependentUpon>DeleteAlertDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx.designer.cs">
-      <DependentUpon>DeleteAlertDialog.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Admin\ApplicationLog\ApplicationLogGridView.ascx.cs">
       <DependentUpon>ApplicationLogGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1378,7 +1371,6 @@
     <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\Default.aspx" />
-    <Content Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx" />
     <Content Include="Pages\Admin\ApplicationLog\ApplicationLogGridView.ascx" />
     <Content Include="Pages\Admin\ApplicationLog\ApplicationLogPanel.ascx" />
     <Content Include="Pages\Admin\ApplicationLog\Default.aspx" />
