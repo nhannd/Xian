@@ -880,7 +880,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             IStudyIntegrityQueueEntityBroker broker = ReadContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
-            criteria.StudyStorageKey.EqualTo(Study.GetKey());
+            criteria.StudyStorageKey.EqualTo(StorageLocation.GetKey());
             criteria.InsertTime.SortDesc(0);
             IList<StudyIntegrityQueue> list = broker.Find(criteria);
             return list;
