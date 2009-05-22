@@ -233,12 +233,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                                            WorkQueueTypeEnum.ReconcileCleanup
                                                         });
 			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-			if (relatedItems == null || relatedItems.Count == 0)
-                return true; // nothing related in the work queue
 
             IList<StudyIntegrityQueue> reconcileList = FindSIQEntries();
-            if (reconcileList == null || reconcileList.Count == 0)
-                return true; // nothing in the reconcile queue
+            
+            if ((relatedItems == null || relatedItems.Count == 0) && (reconcileList == null || reconcileList.Count == 0))
+                return true; // nothing related in the work queue and nothing in the reconcile queue
+            
 
             Platform.Log(LogLevel.Info,
 						 "Tier Migrate entry for study {0} has conflicting WorkQueue entry, reinserting into FilesystemQueue",
