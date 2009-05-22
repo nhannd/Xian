@@ -509,7 +509,7 @@ Preview.ProtocolProceduresTable = function () {
 	
 	var _formatProtocolUrgency = function(protocol)
 	{
-		if (!protocol)
+		if (!protocol || !protocol.Urgency)
 			return "";
 			
 		return protocol.Urgency.Value;
