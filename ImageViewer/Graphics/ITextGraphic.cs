@@ -57,11 +57,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		string Font { get; set; }
 
 		/// <summary>
-		/// Gets the dimensions of text's bounding box.
+		/// Gets the dimensions of the smallest rectangle that bounds the text.
 		/// </summary>
 		/// <remarks>
+		/// This property is in either source or destination coordinates depending on the value of <see cref="IGraphic.CoordinateSystem"/>.
+		/// </remarks>
 		SizeF Dimensions { get; }
 
+		/// <summary>
+		/// Gets or sets the location of the center of the text.
+		/// </summary>
+		/// <remarks>
+		/// This property is in either source or destination coordinates depending on the value of <see cref="IGraphic.CoordinateSystem"/>.
+		/// </remarks>
 		PointF Location { get; set; }
 	}
 }

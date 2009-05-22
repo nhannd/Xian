@@ -226,7 +226,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <param name="vertices">A pointer to the array of vertices defining the polygon.</param>
 		/// <param name="vertexCount">The number of vertices in the array.</param>
 		/// <returns>The number of CCW windings.</returns>
-		/// <seealso cref="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm"/>
+		/// <remarks>
+		/// Algorithm as given on <a href="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm">http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm</a>.
+		/// </remarks>
 		private static unsafe int CountWindings(PointF pt, PointF* vertices, int vertexCount)
 		{
 			int wn = 0; // the winding number counter
@@ -254,7 +256,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>Used by <see cref="CountWindings"/>.</summary>
-		/// <seealso cref="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm"/>
+		/// <remarks>
+		/// Algorithm as given on <a href="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm">http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm</a>.
+		/// </remarks>
 		private static int IsLeft(PointF p0, PointF p1, PointF p2)
 		{
 			float result = (p1.X - p0.X)*(p2.Y - p0.Y) - (p2.X - p0.X)*(p1.Y - p0.Y);

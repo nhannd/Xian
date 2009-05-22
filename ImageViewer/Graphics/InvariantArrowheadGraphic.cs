@@ -217,7 +217,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the point on the arrowhead closest to the specified <paramref name="point"/>.
 		/// </summary>
-		public PointF GetClosestPoint(PointF point) {
+		public override PointF GetClosestPoint(PointF point)
+		{
 			PointF pointL = new PointF();
 			double distanceL = Vector.DistanceFromPointToLine(point, _sideL.TopLeft, _sideL.BottomRight, ref pointL);
 			PointF pointR = new PointF();

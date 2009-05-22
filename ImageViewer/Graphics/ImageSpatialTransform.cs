@@ -208,8 +208,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
-			ImageSpatialTransformMemento imageSpatialTransformMemento = memento as ImageSpatialTransformMemento;
-			Platform.CheckForInvalidCast(imageSpatialTransformMemento, "memento", "ImageSpatialTransformMemento");
+			ImageSpatialTransformMemento imageSpatialTransformMemento = (ImageSpatialTransformMemento) memento;
 
 			this.ScaleToFit = imageSpatialTransformMemento.ScaleToFit;
 

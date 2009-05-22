@@ -90,8 +90,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public void SetMemento(object memento)
 		{
-			ComposableLutMemento lutMemento = memento as ComposableLutMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ComposableLutMemento).Name);
+			ComposableLutMemento lutMemento = (ComposableLutMemento) memento;
 
 			if (_grayscaleImageGraphic.ColorMap != lutMemento.OriginatingLut)
 				_grayscaleImageGraphic.InstallColorMap(lutMemento.OriginatingLut as IDataLut);

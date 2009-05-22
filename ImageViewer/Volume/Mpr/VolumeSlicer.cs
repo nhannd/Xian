@@ -741,7 +741,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static Matrix CreateResliceAxesIdentity()
 		{
-			return new Matrix(4, 4, new float[4, 4]
+			return new Matrix(new float[4, 4]
 			                        	{
 			                        		{1, 0, 0, 0},
 			                        		{0, 1, 0, 0},
@@ -752,7 +752,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static Matrix CreateResliceAxesOrthoY()
 		{
-			return new Matrix(4, 4, new float[4,4]
+			return new Matrix(new float[4,4]
 			                        	{
 			                        		{0, 1, 0, 0},
 			                        		{0, 0, -1, 0},
@@ -763,7 +763,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static Matrix CreateResliceAxesOrthoX()
 		{
-			return new Matrix(4, 4, new float[4,4]
+			return new Matrix(new float[4,4]
 			                        	{
 			                        		{1, 0, 0, 0},
 			                        		{0, 0, -1, 0},
@@ -783,7 +783,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return aboutX * aboutY * aboutZ;
 		}
 
-		private static readonly Matrix _identityMatrix = new Matrix(4, 4, new float[4,4]
+		private static readonly Matrix _identityMatrix = new Matrix(new float[4,4]
 		                                                                  	{
 		                                                                  		{1, 0, 0, 0},
 		                                                                  		{0, 1, 0, 0},
@@ -799,7 +799,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				float sinX = (float) Math.Sin(rotateXdegrees * Math.PI / 180);
 				float cosX = (float) Math.Cos(rotateXdegrees * Math.PI / 180);
-				aboutX = new Matrix(4, 4, new float[4,4]
+				aboutX = new Matrix(new float[4,4]
 				                          	{
 				                          		{1, 0, 0, 0},
 				                          		{0, cosX, -sinX, 0},
@@ -821,7 +821,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				float sinY = (float) Math.Sin(rotateYdegrees * Math.PI / 180);
 				float cosY = (float) Math.Cos(rotateYdegrees * Math.PI / 180);
-				aboutY = new Matrix(4, 4, new float[4,4]
+				aboutY = new Matrix(new float[4,4]
 				                          	{
 				                          		{cosY, 0, sinY, 0},
 				                          		{0, 1, 0, 0},
@@ -843,7 +843,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				float sinZ = (float) Math.Sin(rotateZdegrees * Math.PI / 180);
 				float cosZ = (float) Math.Cos(rotateZdegrees * Math.PI / 180);
-				aboutZ = new Matrix(4, 4, new float[4,4]
+				aboutZ = new Matrix(new float[4,4]
 				                          	{
 				                          		{cosZ, -sinZ, 0, 0},
 				                          		{sinZ, cosZ, 0, 0},

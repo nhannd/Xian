@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		/// <summary>
 		/// Called by the framework when the associated <see cref="IStandardStatefulGraphic"/>
-		/// is clicked on and results in a transition to the <see cref="MoveGraphicState"/>.
+		/// is clicked on.
 		/// </summary>
 		/// <param name="mouseInformation"></param>
 		/// <returns></returns>

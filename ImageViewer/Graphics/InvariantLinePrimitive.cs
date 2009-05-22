@@ -44,8 +44,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// source coordinate system and whose length will be fixed relative to the
 	/// destination coordinate system.</para>
 	/// <para>The <see cref="InvariantLinePrimitive.AnchorPoint"/> defines the point
-	/// that is affixed to the source coordinate system, and the <see cref="InvariantLinePrimitive.InvariantTopLeft"/>
-	/// and <see cref="InvariantLinePrimitive.InvariantBottomRight"/> properties define the length
+	/// that is affixed to the source coordinate system, and the <see cref="InvariantBoundablePrimitive.InvariantTopLeft"/>
+	/// and <see cref="InvariantBoundablePrimitive.InvariantBottomRight"/> properties define the length
 	/// and orientation of the line.</para>
 	/// </remarks>
 	[Cloneable(true)]
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// The endpoint of the line as specified by <see cref="InvariantLinePrimitive.TopLeft"/> in either source or destination coordinates.
+		/// The endpoint of the line as specified by <see cref="InvariantBoundablePrimitive.TopLeft"/> in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// The endpoint of the line as specified by <see cref="InvariantLinePrimitive.BottomRight"/> in either source or destination coordinates.
+		/// The endpoint of the line as specified by <see cref="InvariantBoundablePrimitive.BottomRight"/> in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this

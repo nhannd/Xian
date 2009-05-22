@@ -37,7 +37,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
-	public class RectangularRoi : Roi, IRoiAreaProvider, IRoiPerimeterProvider, IRoiStatisticsProvider
+	public class RectangularRoi : Roi, IRoiAreaProvider, IRoiStatisticsProvider
 	{
 		private readonly RectangleF _rectangle;
 
@@ -148,21 +148,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				}
 				return _area.Value;
 			}
-		}
-
-		#endregion
-
-		#region IRoiPerimeterProvider Members
-
-		private double? _pixelPerimeter;
-		private double? _perimeter;
-
-		public double PixelPerimeter {
-			get { throw new System.Exception("The method or operation is not implemented."); }
-		}
-
-		public double Perimeter {
-			get { throw new System.Exception("The method or operation is not implemented."); }
 		}
 
 		#endregion

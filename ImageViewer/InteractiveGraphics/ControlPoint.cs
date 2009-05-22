@@ -41,7 +41,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
 	/// A graphical representation of the "handles" that allow 
-	/// the user to move and resize <see cref="InteractiveGraphic"/>s.
+	/// the user to move and resize graphics decorated by
+	/// <see cref="ControlGraphic"/>s.
 	/// </summary>
 	[Cloneable(true)]
 	public class ControlPoint : CompositeGraphic
@@ -127,6 +128,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _locationChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Moves the <see cref="ControlPoint"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public override void Move(SizeF delta)
 		{
 			this.Location += delta;

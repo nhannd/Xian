@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private event EventHandler _textChanged;
 
 		/// <summary>
-		/// Instantiates a new instance of <see cref="XUserCalloutGraphic"/>.
+		/// Instantiates a new instance of <see cref="UserCalloutGraphic"/>.
 		/// </summary>
 		public UserCalloutGraphic() : base("") {}
 

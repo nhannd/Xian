@@ -46,12 +46,12 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		public static DrawableUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IPresentationImage image)
+		public new static DrawableUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IPresentationImage image)
 		{
 			return DrawableUndoableOperation<IPresentationImage>.Apply(operation, image);
 		}
 
-		public static CompositeUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IEnumerable<IPresentationImage> images)
+		public new static CompositeUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IEnumerable<IPresentationImage> images)
 		{
 			return DrawableUndoableOperation<IPresentationImage>.Apply(operation, images);
 		}

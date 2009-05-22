@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// A <see cref="XStatefulCompositeGraphic"/> that is <see cref="ISelectableGraphic">selectable</see> and
+	/// A <see cref="StatefulCompositeGraphic"/> that is <see cref="ISelectableGraphic">selectable</see> and
 	/// <see cref="IFocussableGraphic">focusable</see>.
 	/// </summary>
 	/// <remarks>
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private Color _inactiveColor = DefaultInactiveColor;
 
 		/// <summary>
-		/// Constructs a new instance of <see cref="XStandardStatefulGraphic"/>.
+		/// Constructs a new instance of <see cref="StandardStatefulGraphic"/>.
 		/// </summary>
 		public StandardStatefulGraphic(IGraphic subject) : base(subject)
 		{
@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region ISelectable Members
 
 		/// <summary>
-		/// Gets or set a value indicating whether the <see cref="StandardStatefulCompositeGraphic"/> is selected.
+		/// Gets or set a value indicating whether the <see cref="StandardStatefulGraphic"/> is selected.
 		/// </summary>
 		public bool Selected
 		{
@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region IFocussable Members
 
 		/// <summary>
-		/// Gets or set a value indicating whether the <see cref="StandardStatefulCompositeGraphic"/> is in focus.
+		/// Gets or set a value indicating whether the <see cref="StandardStatefulGraphic"/> is in focus.
 		/// </summary>
 		public bool Focussed
 		{

@@ -483,8 +483,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public virtual void SetMemento(object memento)
 		{
-			DisplaySetMemento displaySetMemento = memento as DisplaySetMemento;
-			Platform.CheckForInvalidCast(displaySetMemento, "displaySetMemento", typeof(DisplaySetMemento).FullName);
+			DisplaySetMemento displaySetMemento = (DisplaySetMemento) memento;
 
 			if (displaySetMemento.Comparer != null)
 				this.PresentationImages.Sort(displaySetMemento.Comparer);

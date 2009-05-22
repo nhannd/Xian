@@ -53,12 +53,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private IMouseInformation _mouseInformation;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="XStatefulCompositeGraphic"/>.
+		/// Initializes a new instance of <see cref="StatefulCompositeGraphic"/>.
 		/// </summary>
 		protected StatefulCompositeGraphic() : base(new CompositeGraphic()) {}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="XStatefulCompositeGraphic"/>.
+		/// Initializes a new instance of <see cref="StatefulCompositeGraphic"/>.
 		/// </summary>
 		protected StatefulCompositeGraphic(IGraphic subject) : base(subject) {}
 

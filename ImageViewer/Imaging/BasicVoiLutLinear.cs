@@ -212,8 +212,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="memento">The memento to use to restore a previous state.</param>
 		public override void SetMemento(object memento)
 		{
-			WindowLevelMemento windowLevelMemento = memento as WindowLevelMemento;
-			Platform.CheckForInvalidCast(windowLevelMemento, "memento", typeof(WindowLevelMemento).Name);
+			WindowLevelMemento windowLevelMemento = (WindowLevelMemento) memento;
 
 			this.WindowWidth = windowLevelMemento.WindowWidth;
 			this.WindowCenter = windowLevelMemento.WindowCenter;

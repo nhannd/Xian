@@ -156,8 +156,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		public DropDownButtonToolbarItem(IClickAction action)
 			: base()
 		{
-			IDropDownAction dropAction = action as IDropDownAction;
-			Platform.CheckForInvalidCast(dropAction, "action", "dropAction");
+			IDropDownAction dropAction = (IDropDownAction) action;
 
 			_fakeButton = new FakeToolstripButton(this);
 			base.DropDownButtonWidth = 15;

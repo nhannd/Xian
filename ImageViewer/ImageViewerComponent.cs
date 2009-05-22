@@ -601,7 +601,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.</para>
 		/// </remarks>
-		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		/// <seealso cref="LoadStudy(LoadStudyArgs)"/>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use the LoadStudy(LoadStudyArgs) overload instead.")]
 		public void LoadStudy(string studyInstanceUID, string studyLoaderName)
@@ -623,7 +623,7 @@ namespace ClearCanvas.ImageViewer
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
 		/// </remarks>
 		/// <param name="loadStudyArgs">A <see cref="LoadStudyArgs"/> object containing information about the study to be loaded.</param>
-		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
 			using (SingleStudyLoader loader = new SingleStudyLoader(this, loadStudyArgs))
@@ -636,7 +636,7 @@ namespace ClearCanvas.ImageViewer
 		/// Loads images from the specified file paths.
 		/// </summary>
 		/// <param name="files">An array of file paths.</param>
-		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		public void LoadImages(string[] files)
 		{

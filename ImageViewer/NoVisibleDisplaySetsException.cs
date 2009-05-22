@@ -36,7 +36,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Exception handling policy for <see cref="OpenStudyException"/>s.
+	/// Exception handling policy for <see cref="NoVisibleDisplaySetsException"/>s.
 	/// </summary>
 	[ExceptionPolicyFor(typeof(NoVisibleDisplaySetsException))]
 

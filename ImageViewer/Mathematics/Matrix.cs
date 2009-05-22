@@ -49,8 +49,11 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		private readonly float[,] _matrix;
 
 		/// <summary>
-		/// Constructor.
+		/// Constructs a new zero matrix of the given dimensions.
 		/// </summary>
+		/// <param name="rows">The number of rows in the matrix.</param>
+		/// <param name="columns">The number of columns in the matrix.</param>
+		/// <exception cref="ArgumentException">Thrown if either <paramref name="rows"/> or <paramref name="columns"/> is zero or negative.</exception>
 		public Matrix(int rows, int columns)
 		{
 			Platform.CheckPositive(rows, "rows");
@@ -62,18 +65,32 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_matrix = new float[rows, columns];
 		}
 
-		public Matrix(int rows, int columns, float[,] matrix)
+		/// <summary>
+		/// Constructs a new matrix and initializes its values to that of the given 2-dimensional array.
+		/// </summary>
+		/// <param name="matrix">The 2-dimensional array (rows, then columns) with which to initialize the matrix.</param>
+		/// <exception cref="ArgumentNullException">Thrown if the supplied matrix is null.</exception>
+		public Matrix(float[,] matrix)
 		{
+			Platform.CheckForNullReference(matrix, "matrix");
+
 			_matrix = matrix;
-			_rows = rows;
-			_columns = columns;
+			_rows = matrix.GetLength(0);
+			_columns = matrix.GetLength(1);
 		}
 
-		public Matrix(Matrix src)
+		/// <summary>
+		/// Constructs a new matrix as a clone of an existing matrix.
+		/// </summary>
+		/// <param name="matrix">The source matrix to clone.</param>
+		/// <exception cref="ArgumentNullException">Thrown if the supplied matrix is null.</exception>
+		public Matrix(Matrix matrix)
 		{
-			_rows = src._rows;
-			_columns = src._columns;
-			_matrix = (float[,])src._matrix.Clone();
+			Platform.CheckForNullReference(matrix, "matrix");
+
+			_rows = matrix._rows;
+			_columns = matrix._columns;
+			_matrix = (float[,])matrix._matrix.Clone();
 		}
 
 		/// <summary>
@@ -195,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 					matrix[row, column] = _matrix[row, column];
 			}
 			
-			return new Matrix(_rows, _columns, matrix);
+			return new Matrix(matrix);
 		}
 
 		/// <summary>
@@ -252,7 +269,17 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Multiplies <paramref name="left"/> and <paramref name="right"/> together.
+		/// Gets an identity matrix with the dimensions of the given square matrix.
+		/// </summary>
+		public static Matrix GetIdentity(Matrix matrix)
+		{
+			Platform.CheckForNullReference(matrix, "matrix");
+			Platform.CheckTrue(matrix.IsSquare, "Matrix must be square.");
+			return GetIdentity(matrix.Rows);
+		}
+
+		/// <summary>
+		/// Performs matrix multiplication of <paramref name="left"/> and <paramref name="right"/>.
 		/// </summary>
 		public static Matrix operator *(Matrix left, Matrix right)
 		{
@@ -279,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Multiplies <paramref name="matrix"/> by <paramref name="scale"/>.
+		/// Performs scalar multiplication of <paramref name="matrix"/> by <paramref name="scale"/>.
 		/// </summary>
 		public static Matrix operator *(float scale, Matrix matrix)
 		{
@@ -287,7 +314,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Multiplies <paramref name="matrix"/> by <paramref name="scale"/>.
+		/// Performs scalar multiplication of <paramref name="matrix"/> by <paramref name="scale"/>.
 		/// </summary>
 		public static Matrix operator *(Matrix matrix, float scale)
 		{
@@ -297,15 +324,25 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Multiplies <paramref name="matrix"/> by 1/<paramref name="scale"/>.
+		/// This notation is no longer supported.
 		/// </summary>
+		/// <remarks>
+		/// <para>This notation is ambiguous. Please use an explicit notation of the expected operation, such as one of the following.</para>
+		/// <code>scale * matrix.Inverse()</code>
+		/// <code>matrix / scale</code>
+		/// <code>scale * Matrix.GetIdentity(matrix) * matrix.Inverse()</code>
+		/// <code>(scale * Matrix.GetIdentity(matrix)).Inverse() * matrix</code>
+		/// </remarks>
+		[Obsolete("Did you mean scale * Inverse(matrix), matrix / scale, scale * Identity(Dimensions(matrix)) * Inverse(matrix), or Inverse(scale * Identity(Dimensions(matrix))) * matrix?", true)]
 		public static Matrix operator /(float scale, Matrix matrix)
 		{
+			// any existing compiled code depending on this operator will continue to work as it always has
+			// any new code referencing this method will fail to compile
 			return matrix/scale;
 		}
 
 		/// <summary>
-		/// Multiplies <paramref name="matrix"/> by 1/<paramref name="scale"/>.
+		/// Performs scalar multiplication of <paramref name="matrix"/> by 1/<paramref name="scale"/>.
 		/// </summary>
 		public static Matrix operator /(Matrix matrix, float scale)
 		{
@@ -315,8 +352,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Adds <paramref name="left"/> and <paramref name="right"/>.
+		/// Performs element-by-element addition of <paramref name="left"/> and <paramref name="right"/>.
 		/// </summary>
+		/// <exception cref="ArgumentException">If the matrices do not have the same dimensions.</exception>
 		public static Matrix operator +(Matrix left, Matrix right)
 		{
 			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
@@ -333,8 +371,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Subtracts <paramref name="right"/> from <paramref name="left"/>.
+		/// Performs element-by-element subtraction of <paramref name="right"/> from <paramref name="left"/>.
 		/// </summary>
+		/// <exception cref="ArgumentException">If the matrices do not have the same dimensions.</exception>
 		public static Matrix operator -(Matrix left, Matrix right)
 		{
 			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
@@ -351,8 +390,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Gets whether or not <paramref name="left"/> is equal to <paramref name="right"/>, within a given tolerance (per matrix component).
+		/// Gets a value indicating whether or not the elements of <paramref name="left"/> are equal to <paramref name="right"/> within the given tolerance.
 		/// </summary>
+		/// <exception cref="ArgumentException">If the matrices do not have the same dimensions.</exception>
 		public static bool AreEqual(Matrix left, Matrix right, float tolerance)
 		{
 			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");
@@ -370,8 +410,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Gets whether or not <paramref name="left"/> is equal to <paramref name="right"/>, within a small tolerance (per matrix component).
+		/// Gets a value indicating whether or not the elements of <paramref name="left"/> are equal to <paramref name="right"/> within a small tolerance.
 		/// </summary>
+		/// <exception cref="ArgumentException">If the matrices do not have the same dimensions.</exception>
 		public static bool AreEqual(Matrix left, Matrix right)
 		{
 			Platform.CheckTrue(left.Columns == right.Columns && left.Rows == right.Rows, "Matrix Same Dimensions");

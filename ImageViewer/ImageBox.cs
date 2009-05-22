@@ -725,9 +725,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(memento, "memento");
 
-			ImageBoxMemento imageBoxMemento = memento as ImageBoxMemento;
-
-			Platform.CheckForInvalidCast(imageBoxMemento, "memento", "ImageBoxMemento");
+			ImageBoxMemento imageBoxMemento = (ImageBoxMemento)memento;
 
 			_rows = 0;
 			_columns = 0;

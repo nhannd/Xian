@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public static Matrix OrientationMatrixFromVectors(Vector3D xVec, Vector3D yVec, Vector3D zVec)
 		{
 			return new Matrix
-				(4, 4, new float[4, 4]
+				(new float[4, 4]
 				       	{
 				       		{xVec.X, xVec.Y, xVec.Z, 0},
 				       		{yVec.X, yVec.Y, yVec.Z, 0},

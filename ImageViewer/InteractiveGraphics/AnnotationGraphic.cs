@@ -43,16 +43,20 @@ using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// An stateful interactive graphic that consists of some <see cref="InteractiveGraphic">subject of interest</see>
+	/// An stateful interactive graphic that consists of some subject of interest graphic
 	/// and a <see cref="CalloutGraphic">text callout</see> that describes the subject.
 	/// </summary>
 	/// <remarks>
-	/// <see cref="XAnnotationGraphic"/> essentially acts as a template for any kind
-	/// of interactive graphic defining some object of interest.  The type of region of interest
-	/// can be any <see cref="InteractiveGraphic"/> such as a line, a rectangle, 
-	/// an ellipse, etc.; it is defined by the tool writer via the constructor.  
-	/// By default, the callout line will snap to the
-	/// nearest point on the <see cref="InteractiveGraphic"/>.
+	/// <para>
+	/// <see cref="AnnotationGraphic"/> essentially acts as a template for any kind
+	/// of interactive graphic defining some object of interest. The subject of interest
+	/// can be any graphic primitive such as a <see cref="LinePrimitive">line</see>, a
+	/// <see cref="RectanglePrimitive">rectangle</see>, an <see cref="EllipsePrimitive">ellipse</see>,
+	/// etc., or some hierarchy of <see cref="ControlGraphic"/>s decorating a primitive graphic.
+	/// </para>
+	/// <para>
+	/// By default, the callout line will snap to the nearest point on the <see cref="ControlGraphic.Subject"/>.
+	/// </para>
 	/// </remarks>
 	[DicomSerializableGraphicAnnotation(typeof (StandardAnnotationGraphicSerializer))]
 	[Cloneable]
@@ -117,13 +121,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="XAnnotationGraphic"/>.
+		/// Initializes a new instance of <see cref="AnnotationGraphic"/>.
 		/// </summary>
 		public AnnotationGraphic(IGraphic subjectGraphic)
 			: this(subjectGraphic, null) {}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="XAnnotationGraphic"/> with the given <see cref="IXAnnotationCalloutLocationStrategy"/>.
+		/// Initializes a new instance of <see cref="AnnotationGraphic"/> with the given <see cref="IAnnotationCalloutLocationStrategy"/>.
 		/// </summary>
 		public AnnotationGraphic(IGraphic subjectGraphic, IAnnotationCalloutLocationStrategy calloutLocationStrategy)
 			: base(subjectGraphic)

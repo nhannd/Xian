@@ -466,8 +466,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(memento, "memento");
 
-			PhysicalWorkspaceMemento workspaceMemento = memento as PhysicalWorkspaceMemento;
-			Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
+			PhysicalWorkspaceMemento workspaceMemento = (PhysicalWorkspaceMemento) memento;
 
 			//locked is not part of the memento.
 			bool locked = Locked;

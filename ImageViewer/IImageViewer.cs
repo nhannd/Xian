@@ -121,14 +121,15 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
 		/// </remarks>
-		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
+		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		void LoadStudy(string studyInstanceUID, string source);
 
 		/// <summary>
 		/// Loads images with the specified file paths.
 		/// </summary>
 		/// <param name="path">The file path of the image.</param>
-		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		void LoadImages(string[] path);
 
@@ -140,7 +141,7 @@ namespace ClearCanvas.ImageViewer
 		/// a progress bar to be shown.</param>
 		/// <param name="cancelled">A value that indicates whether the operation
 		/// was cancelled.</param>
-		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		void LoadImages(string[] files, IDesktopWindow desktop, out bool cancelled);
 

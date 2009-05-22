@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region IRoiCalloutLocationStrategy Members
 
 		/// <summary>
-		/// Sets the <see cref="InteractiveGraphics.XAnnotationGraphic"/> that owns this strategy.
+		/// Sets the <see cref="AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
 		public virtual void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
 		{
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Calculates the callout endpoint using the <see cref="InteractiveGraphic.GetClosestPoint"/> method.
+		/// Calculates the callout endpoint using the <see cref="IGraphic.GetClosestPoint"/> method.
 		/// </summary>
 		public virtual void CalculateCalloutEndPoint(out PointF endPoint, out CoordinateSystem coordinateSystem)
 		{
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a deep copy of this strategy object.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IXAnnotationCalloutLocationStrategy"/>s should not return null from this method.
+		/// <see cref="IAnnotationCalloutLocationStrategy"/>s should not return null from this method.
 		/// </remarks>
 		public IAnnotationCalloutLocationStrategy Clone()
 		{

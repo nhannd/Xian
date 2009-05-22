@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Common
 		{
 		}
 
-		private static bool ReturnTrue<T>(T item)
+		private static bool ReturnTrue<U>(U item)
 		{
 			return true;
 		}

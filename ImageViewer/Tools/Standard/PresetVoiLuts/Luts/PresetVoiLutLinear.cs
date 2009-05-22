@@ -154,8 +154,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public override void SetMemento(object memento)
 		{
-			PresetVoiLutLinearParameters parameters = memento as PresetVoiLutLinearParameters;
-			Platform.CheckForInvalidCast(parameters, "memento", typeof (PresetVoiLutLinearParameters).Name);
+			PresetVoiLutLinearParameters parameters = (PresetVoiLutLinearParameters) memento;
 			this.Parameters = parameters;
 		}
 

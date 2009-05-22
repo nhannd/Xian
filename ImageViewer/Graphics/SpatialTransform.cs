@@ -536,8 +536,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public virtual void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
-			SpatialTransformMemento spatialTransformMemento = memento as SpatialTransformMemento;
-			Platform.CheckForInvalidCast(spatialTransformMemento, "memento", "SpatialTransformMemento");
+			SpatialTransformMemento spatialTransformMemento = (SpatialTransformMemento) memento;
 
 			this.FlipX = spatialTransformMemento.FlipX;
 			this.FlipY = spatialTransformMemento.FlipY;

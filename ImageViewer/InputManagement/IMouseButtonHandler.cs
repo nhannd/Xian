@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	/// The framework will look for this interface first on graphic objects (<see cref="ClearCanvas.ImageViewer.Graphics.IGraphic"/>) 
 	/// in the current <see cref="IPresentationImage"/>'s SceneGraph (see <see cref="PresentationImage.SceneGraph"/>), then on 
 	/// <see cref="ClearCanvas.Desktop.Tools.ITool"/>s belonging to the current <see cref="IImageViewer"/> 
-	/// (via <see cref="IViewerShortcutManager.GetMouseButtonHandler"/>) and if an appropriate one is found, it will be given capture.
+	/// (via <see cref="IViewerShortcutManager.GetMouseButtonHandlers"/>) and if an appropriate one is found, it will be given capture.
 	/// </para>
 	/// <para>
 	/// An <see cref="IMouseButtonHandler"/> gets capture by returning true from <see cref="Start"/> indicating to the framework

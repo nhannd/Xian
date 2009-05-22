@@ -35,22 +35,22 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// A strategy for automatically calculating the location of a <see cref="XAnnotationGraphic"/>'s callout.
+	/// A strategy for automatically calculating the location of a <see cref="AnnotationGraphic"/>'s callout.
 	/// </summary>
 	public interface IAnnotationCalloutLocationStrategy
 	{
 		/// <summary>
-		/// Sets the <see cref="XAnnotationGraphic"/> that owns this strategy.
+		/// Sets the <see cref="AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
 		void SetAnnotationGraphic(AnnotationGraphic annotationGraphic);
 
 		/// <summary>
-		/// Called when the <see cref="XAnnotationGraphic"/>'s callout location has been changed externally; for example, by the user.
+		/// Called when the <see cref="AnnotationGraphic"/>'s callout location has been changed externally; for example, by the user.
 		/// </summary>
 		void OnCalloutLocationChangedExternally();
 
 		/// <summary>
-		/// Called by the owning <see cref="XAnnotationGraphic"/> to get the callout's new location.
+		/// Called by the owning <see cref="AnnotationGraphic"/> to get the callout's new location.
 		/// </summary>
 		/// <param name="location">The new location of the callout.</param>
 		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="location"/>.</param>
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		bool CalculateCalloutLocation(out PointF location, out CoordinateSystem coordinateSystem);
 
 		/// <summary>
-		/// Called by the owning <see cref="XAnnotationGraphic"/> to get the callout's end point.
+		/// Called by the owning <see cref="AnnotationGraphic"/> to get the callout's end point.
 		/// </summary>
 		/// <param name="endPoint">The callout end point.</param>
 		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="endPoint"/>.</param>
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a deep copy of this strategy object.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IXAnnotationCalloutLocationStrategy"/>s should not return null from this method.
+		/// <see cref="IAnnotationCalloutLocationStrategy"/>s should not return null from this method.
 		/// </remarks>
 		IAnnotationCalloutLocationStrategy Clone();
 	}

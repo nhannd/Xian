@@ -58,6 +58,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 				LinearLutMemento = linearLutMemento;
 			}
 
+			public override int GetHashCode()
+			{
+				int dataLutHash = 0x7D60C4F1;
+				int linearLutHash = 0x081B32C5;
+				if (this.DataLutMemento != null)
+					dataLutHash = this.DataLutMemento.GetHashCode();
+				if (this.LinearLutMemento != null)
+					linearLutHash = this.LinearLutMemento.GetHashCode();
+				return dataLutHash ^ linearLutHash ^ 0x273FB457;
+			}
+
 			public override bool Equals(object obj)
 			{
 				if (Object.ReferenceEquals(obj, this))
@@ -283,8 +294,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public override void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
-			Memento lutMemento = memento as Memento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(Memento).FullName);
+			Memento lutMemento = (Memento) memento;
 
 			if (lutMemento.DataLutMemento != null)
 				_dataLut.SetMemento(lutMemento.DataLutMemento);

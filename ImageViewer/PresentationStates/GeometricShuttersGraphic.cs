@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	[Cloneable]
 	public class GeometricShuttersGraphic : CompositeGraphic, IShutterGraphic
 	{
-		public const string Name = "Geometric Shutters";
+		public const string DefaultName = "Geometric Shutters";
 
 		private readonly Rectangle _imageRectangle;
 
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			_dicomShutters = new List<GeometricShutter>();
 			_readOnlyDicomShutters = new ReadOnlyCollection<GeometricShutter>(_dicomShutters);
 
-			base.Name = Name;
+			base.Name = DefaultName;
 		}
 
 		//for cloning; all the underlying graphics are also cloneable.

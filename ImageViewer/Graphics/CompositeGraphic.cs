@@ -91,6 +91,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { base.Visible = value; }
 		}
 
+		/// <summary>
+		/// Gets the tightest bounding box that encloses all the bounding boxes of the child graphics in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
+		/// </remarks>
 		public override RectangleF BoundingBox
 		{
 			get

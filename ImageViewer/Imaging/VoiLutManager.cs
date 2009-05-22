@@ -89,8 +89,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public void SetMemento(object memento)
 		{
-			VoiLutMemento lutMemento = memento as VoiLutMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(VoiLutMemento).Name);
+			VoiLutMemento lutMemento = (VoiLutMemento) memento;
 
 			if (_grayscaleImageGraphic.VoiLut != lutMemento.ComposableLutMemento.OriginatingLut)
 				this.InstallLut(lutMemento.ComposableLutMemento.OriginatingLut);

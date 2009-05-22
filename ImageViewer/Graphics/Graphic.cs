@@ -428,12 +428,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 			remove { _propertyChanged -= value; }
 		}
 
+		/// <summary>
+		/// Fires the <see cref="PropertyChanged"/> event.
+		/// </summary>
+		/// <param name="propertyName">The name of the property whose value changed.</param>
 		protected void NotifyPropertyChanged(string propertyName)
 		{
 			this.OnPropertyChanged(propertyName);
 			EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// Called when a property changes, before notification of other handlers observing the <see cref="PropertyChanged"/> event.
+		/// </summary>
+		/// <param name="propertyName">The name of the property whose value changed.</param>
 		protected virtual void OnPropertyChanged(string propertyName) {}
 	}
 }
