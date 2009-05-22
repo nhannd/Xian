@@ -30,14 +30,14 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
-using ClearCanvas.ImageViewer.StudyManagement;
-using System.IO;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -153,85 +153,107 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			if (!_fullHeaderRetrieved)
 			{
-				CodeClock retryClock = new CodeClock();
-				retryClock.Start();
+				Exception retrieveException;
+				DicomFile imageHeader = TryClientRetrieveImageHeader(out retrieveException);
 
+				if (imageHeader != null)
+				{
+					base.SourceMessage = imageHeader;
+					_fullHeaderRetrieved = true;
+				}
+
+				// if no result was returned, then the throw an exception with an appropriate, user-friendly message
+				throw TranslateStreamingException(retrieveException);
+			}
+		}
+
+		private DicomFile TryClientRetrieveImageHeader(out Exception lastRetrieveException)
+		{
+			// retry parameters
+			const int retryTimeout = 1500;
+			int retryDelay = 50;
+			int retryCounter = 0;
+
+			Uri uri = new Uri(string.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
+			StreamingClient client = new StreamingClient(uri);
+			DicomFile result = null;
+			lastRetrieveException = null;
+
+			CodeClock timeoutClock = new CodeClock();
+			timeoutClock.Start();
+
+			while (true)
+			{
 				try
 				{
-					Uri uri = new Uri(String.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
-					StreamingClient client = new StreamingClient(uri);
+					if (retryCounter > 0)
+						Platform.Log(LogLevel.Info, "Retrying retrieve headers for Sop '{0}' (Attempt #{1})", this.SopInstanceUid, retryCounter);
 
-					const double timeoutSeconds = 3;
-					double pauseSeconds = 0.125;
-					int retryCount = 0;
+					CodeClock statsClock = new CodeClock();
+					statsClock.Start();
 
-					while (true)
+					using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, this.StudyInstanceUid, this.SeriesInstanceUid, this.SopInstanceUid))
 					{
-						try
-						{
-							if (retryCount > 0)
-								Platform.Log(LogLevel.Info, "Retry #{0}: retrieve full header for sop '{1}'", retryCount, SopInstanceUid);
-
-							DicomFile imageHeader = new DicomFile();
-							using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid))
-							{
-								imageHeader.Load(imageHeaderStream);
-								base.SourceMessage = imageHeader;
-								_fullHeaderRetrieved = true;
-							}
-
-							return;
-						}
-						catch (Exception e)
-						{
-							double retryClockSeconds = retryClock.Seconds;
-
-							if (retryClockSeconds < timeoutSeconds)
-							{
-								++retryCount;
-								pauseSeconds *= 2;
-								pauseSeconds = Math.Min(pauseSeconds, timeoutSeconds - retryClockSeconds);
-
-								Platform.Log(LogLevel.Error, e,
-											 "Failed to retrieve full header for sop '{0}'; waiting {1} seconds before retry ...", SopInstanceUid, pauseSeconds);
-
-								Thread.Sleep(TimeSpan.FromSeconds(pauseSeconds));
-							}
-							else
-							{
-								Platform.Log(LogLevel.Error, e,
-											 "Failed to retrieve full header for sop '{0}'; quitting retry loop.", SopInstanceUid);
-								throw;
-							}
-						}
+						DicomFile imageHeader = new DicomFile();
+						imageHeader.Load(imageHeaderStream);
+						result = imageHeader;
 					}
+
+					statsClock.Stop();
+
+					break;
 				}
-				catch(StreamingClientException ex)
+				catch (Exception ex)
 				{
-					switch(ex.Type)
+					lastRetrieveException = ex;
+
+					timeoutClock.Stop();
+					if (timeoutClock.Seconds*1000 >= retryTimeout)
 					{
-						case StreamingClientExceptionType.Access:
-							throw new Exception(SR.MessageStreamingAccessException, ex);
-						case StreamingClientExceptionType.Network:
-							throw new Exception(SR.MessageStreamingNetworkException, ex);
-						case StreamingClientExceptionType.Protocol:
-						case StreamingClientExceptionType.Server:
-						case StreamingClientExceptionType.UnexpectedResponse:
-						case StreamingClientExceptionType.Generic:
-						default:
-							throw new Exception(SR.MessageStreamingGenericException, ex);
+						// log an alert that we are aborting (exception trace at debug level only)
+						int elapsed = (int) (1000*timeoutClock.Seconds);
+						Platform.Log(LogLevel.Warn, "Failed to retrieve headers for Sop '{0}'; Aborting after {1} attempts in {2} ms", this.SopInstanceUid, retryCounter, elapsed);
+						Platform.Log(LogLevel.Debug, ex, "[GetHeaders Fail-Abort] Sop: {0}, Retry Attempts: {1}, Elapsed: {2} ms", this.SopInstanceUid, retryCounter, elapsed);
+						break;
 					}
-				}
-				catch(FormatException ex)
-				{
-					// this exception happens if the FormatWadoUriPrefix setting is invalid.
-					throw new Exception(SR.MessageStreamingClientConfigurationException, ex);
-				}
-				catch(Exception ex)
-				{
-					throw new Exception(SR.MessageStreamingGenericException, ex);
+					timeoutClock.Start();
+
+					retryCounter++;
+
+					// log the retry (exception trace at debug level only)
+					Platform.Log(LogLevel.Warn, "Failed to retrieve headers for Sop '{0}'; Retrying in {1} ms", this.SopInstanceUid, retryDelay);
+					Platform.Log(LogLevel.Debug, ex, "[GetHeaders Fail-Retry] Sop: {0}, Retry in: {1} ms", this.SopInstanceUid, retryDelay);
+					Thread.Sleep(retryDelay);
+
+					retryDelay *= 2;
 				}
 			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Translates possible exceptions thrown by <see cref="StreamingClient"/> and related classes into standardized, user-friendly error messages.
+		/// </summary>
+		private static Exception TranslateStreamingException(Exception exception)
+		{
+			if (exception is StreamingClientException)
+			{
+				switch (((StreamingClientException) exception).Type)
+				{
+					case StreamingClientExceptionType.Access:
+						return new InvalidOperationException(SR.MessageStreamingAccessException, exception);
+					case StreamingClientExceptionType.Network:
+						return new IOException(SR.MessageStreamingNetworkException, exception);
+					case StreamingClientExceptionType.Protocol:
+					case StreamingClientExceptionType.Server:
+					case StreamingClientExceptionType.UnexpectedResponse:
+					case StreamingClientExceptionType.Generic:
+					default:
+						return new Exception(SR.MessageStreamingGenericException, exception);
+				}
+			}
+			return new Exception(SR.MessageStreamingGenericException, exception);
 		}
 	}
 }

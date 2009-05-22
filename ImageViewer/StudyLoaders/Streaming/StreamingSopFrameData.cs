@@ -219,29 +219,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					return result;
 
 				// if no result was returned, then the throw an exception with an appropriate, user-friendly message
-				if (retrieveException is StreamingClientException)
-				{
-					switch (((StreamingClientException) retrieveException).Type)
-					{
-						case StreamingClientExceptionType.Access:
-							throw new Exception(SR.MessageStreamingAccessException, retrieveException);
-						case StreamingClientExceptionType.Network:
-							throw new Exception(SR.MessageStreamingNetworkException, retrieveException);
-						case StreamingClientExceptionType.Protocol:
-						case StreamingClientExceptionType.Server:
-						case StreamingClientExceptionType.UnexpectedResponse:
-						case StreamingClientExceptionType.Generic:
-						default:
-							throw new Exception(SR.MessageStreamingGenericException, retrieveException);
-					}
-				}
-				throw new Exception(SR.MessageStreamingGenericException, retrieveException);
+				throw TranslateStreamingException(retrieveException);
 			}
 
 			private RetrievePixelDataResult TryClientRetrievePixelData(out Exception lastRetrieveException)
 			{
 				// retry parameters
-				int retryTimeoutSeconds = 1500;
+				const int retryTimeout = 1500;
 				int retryDelay = 50;
 				int retryCounter = 0;
 				
@@ -277,7 +261,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						lastRetrieveException = ex;
 
 						timeoutClock.Stop();
-						if (timeoutClock.Seconds*1000 >= retryTimeoutSeconds)
+						if (timeoutClock.Seconds*1000 >= retryTimeout)
 						{
 							// log an alert that we are aborting (exception trace at debug level only)
 							int elapsed = (int)(1000*timeoutClock.Seconds);
