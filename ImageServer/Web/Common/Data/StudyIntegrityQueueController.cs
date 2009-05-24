@@ -177,21 +177,59 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             else
             {
                 command.Description = "Using study information from the conflicting images.";
+
+                if (record.ConflictingImageDetails!=null)
+                {
+                    // The conflicting study data is stored in QueueData column
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, record.ConflictingImageDetails.StudyInfo.PatientInfo.Sex));
+                    command.Commands.Add(new SetTagCommand(DicomTags.IssuerOfPatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.IssuerOfPatientId));
+                    command.Commands.Add(new SetTagCommand(DicomTags.AccessionNumber, record.ConflictingImageDetails.StudyInfo.AccessionNumber));
+    
+                }
+                else
+                {
+                	// The conflicting study data is stored in StudyData column
+                    String patientName = record.ConflictingImageDescriptor[DicomTags.PatientsName] != null
+                                             ? record.ConflictingImageDescriptor[DicomTags.PatientsName].Value
+                                             : null;
+                    if (patientName!=null)
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, patientName));
+
+                    String patientId = record.ConflictingImageDescriptor[DicomTags.PatientId] != null
+                                             ? record.ConflictingImageDescriptor[DicomTags.PatientId].Value
+                                             : null;
+                    if (patientId != null)
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientId, patientId));
+
+                    String patientsBirthDate = record.ConflictingImageDescriptor[DicomTags.PatientsBirthDate] != null
+                                             ? record.ConflictingImageDescriptor[DicomTags.PatientsBirthDate].Value
+                                             : null;
+                    if (patientsBirthDate != null)
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, patientsBirthDate));
+
+                    String patientsSex = record.ConflictingImageDescriptor[DicomTags.PatientsSex] != null
+                                             ? record.ConflictingImageDescriptor[DicomTags.PatientsSex].Value
+                                             : null;
+                    if (patientsSex != null)
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, patientsSex));
+
+                    String issuerOfPatientId = record.ConflictingImageDescriptor[DicomTags.IssuerOfPatientId] != null
+                                             ? record.ConflictingImageDescriptor[DicomTags.IssuerOfPatientId].Value
+                                             : null;
+                    if (issuerOfPatientId != null)
+                        command.Commands.Add(new SetTagCommand(DicomTags.IssuerOfPatientId, issuerOfPatientId));
+
+                    String accessionNumber = record.ConflictingImageDescriptor[DicomTags.AccessionNumber] != null
+                                             ? record.ConflictingImageDescriptor[DicomTags.AccessionNumber].Value
+                                             : null;
+                    if (accessionNumber != null)
+                        command.Commands.Add(new SetTagCommand(DicomTags.AccessionNumber, accessionNumber));
+
+                }
                 
-                command.Commands.Add(
-                    new SetTagCommand(DicomTags.PatientsName, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
-
-                command.Commands.Add(
-                                    new SetTagCommand(DicomTags.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
-                command.Commands.Add(
-                                    new SetTagCommand(DicomTags.PatientsBirthDate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
-                command.Commands.Add(
-                                    new SetTagCommand(DicomTags.PatientsSex, record.ConflictingImageDetails.StudyInfo.PatientInfo.Sex));
-                command.Commands.Add(
-                                    new SetTagCommand(DicomTags.IssuerOfPatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.IssuerOfPatientId));
-                command.Commands.Add(
-                                    new SetTagCommand(DicomTags.AccessionNumber, record.ConflictingImageDetails.StudyInfo.AccessionNumber));
-
                 String xml = XmlUtils.SerializeAsString(command);
                 ReconcileStudy(xml, record.QueueItem); 
             }

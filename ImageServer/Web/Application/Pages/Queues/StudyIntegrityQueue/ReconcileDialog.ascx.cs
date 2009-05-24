@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public override void DataBind()
         {
             ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingStudy.Series;
-            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingImageSet.StudyInfo.Series;
+            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingStudyInfo.Series;
             base.DataBind();
         }
 
@@ -198,23 +198,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             if (ReconcileDetails!=null)
             {
-                Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
+                Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingStudyInfo.Patient.Name, 
                    delegate(bool different)
                        {
                            Highlight(ConflictingNameLabel, different);
                        });
 
-                Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
+                Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingStudyInfo.Patient.PatientID,
                     delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
+                Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID,
                     delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
+                Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate,
                     delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
+                Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingStudyInfo.Patient.Sex,
                     delegate(bool different) { Highlight(ConflictingPatientSex, different); });
-                Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate,
+                Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingStudyInfo.StudyDate,
                     delegate(bool different) { Highlight(ConflictingStudyDate, different); });
-                Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
+                Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingStudyInfo.AccessionNumber,
                     delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
 
             }

@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 	public class ImageSetDetails
 	{
 		#region Private Fields
-		private StudyInformation _studyInfo=new StudyInformation();
+		private StudyInformation _studyInfo;
 		private int _sopCount;
 		#endregion
 

@@ -186,11 +186,13 @@ namespace ClearCanvas.ImageServer.Core.Data
 					return null;
 			}
 		}
+
 		public ImageSetField this[uint tag]
 		{
 			get
 			{
-				return _fields[DicomTagDictionary.GetDicomTag(tag)];
+                DicomTag theTag = DicomTagDictionary.GetDicomTag(tag);
+                return this[theTag];
 			}
 		}
 		#endregion

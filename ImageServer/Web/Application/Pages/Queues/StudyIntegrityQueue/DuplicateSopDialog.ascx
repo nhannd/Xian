@@ -142,7 +142,7 @@
 		                                                                        <asp:Label runat="server" ID="SeriesDescription" Text='<%# Eval("Description") %>' ToolTip='<%# Eval("SeriesInstanceUid") %>'></asp:Label>
 		                                                                    </ItemTemplate>
 		                                                                </asp:TemplateField>
-		                                                                <asp:BoundField HeaderText="Modalitiy" DataField="Modalitiy" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
+		                                                                <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
 		                                                                <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 		                                                            </Columns>
 		                                                            <RowStyle CssClass="ReconcileSeriesGridViewRow" />
@@ -215,7 +215,7 @@
 		                                                            <asp:Label runat="server" ID="SeriesDescription" Text='<%# Eval("SeriesDescription") %>' ToolTip='<%# Eval("SeriesInstanceUid") %>'></asp:Label>
 		                                                        </ItemTemplate>
 		                                                    </asp:TemplateField>
-		                                                    <asp:BoundField HeaderText="Modalitiy" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
+		                                                    <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
 		                                                    <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 		                                                </Columns>
 		                                                <RowStyle CssClass="ReconcileSeriesGridViewRow" />

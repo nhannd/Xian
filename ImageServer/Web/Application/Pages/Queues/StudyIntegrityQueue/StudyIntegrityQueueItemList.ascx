@@ -55,15 +55,15 @@
 							    <tr>
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left;">
-							            <asp:Label runat="server" ID="ConflictingPatientId" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.PatientInfo.PatientId")%>'></asp:Label> / 
-							            <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.PatientInfo.Name")%>'></asp:Label>
+							            <asp:Label runat="server" ID="ConflictingPatientId" CssClass="StudyField" Text='<%# Eval("ConflictingPatientId")%>'></asp:Label> / 
+							            <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# Eval("ConflictingPatientName")%>'></asp:Label>
 							        </td>							        
 							    </tr>
 							    <tr >
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left; font-size:80%;">
-							            <asp:Label runat="server" ID="ConflictingAccessionNumber" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.AccessionNumber")%>'></asp:Label> / <asp:Label runat="server" ID="ConflictingStudyDescription" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.StudyDescription")%>'></asp:Label> / 
-                                        <asp:Label runat="server" ID="ConflictingStudyDate" CssClass="StudyField"  Text='<%# Eval("QueueData.Details.StudyInfo.StudyDate")%>'></asp:Label> / 
+							            <asp:Label runat="server" ID="ConflictingAccessionNumber" CssClass="StudyField" Text='<%# Eval("ConflictingAccessionNumber")%>'></asp:Label> / <asp:Label runat="server" ID="ConflictingStudyDescription" CssClass="StudyField" Text='<%# Eval("ConflictingStudyDescription")%>'></asp:Label> / 
+                                        <asp:Label runat="server" ID="ConflictingStudyDate" CssClass="StudyField"  Text='<%# Eval("ConflictingStudyDate")%>'></asp:Label> / 
                                         <asp:Label runat="server" ID="ConflictingModalities" CssClass="StudyField" Text='<%# StringUtilities.Combine(Eval("ConflictingModalities") as string[], ",") %>'></asp:Label>
 							        </td>
 							    </tr>

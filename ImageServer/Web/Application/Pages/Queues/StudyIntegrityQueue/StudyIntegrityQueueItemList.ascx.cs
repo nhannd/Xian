@@ -296,9 +296,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 Label existingPatientName = row.FindControl("ExistingPatientName") as Label;
                 Label conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
 
-                Highlight(item.ExistingPatientId, item.QueueData.Details.StudyInfo.PatientInfo.PatientId, existingPatientId, conflictingPatientId);
-                Highlight(item.ExistingPatientName, item.QueueData.Details.StudyInfo.PatientInfo.Name, existingPatientName, conflictingPatientName);
-                Highlight(item.ExistingAccessionNumber, item.QueueData.Details.StudyInfo.AccessionNumber, existingAccessionNumber, conflictingAccessionNumber);
+                Highlight(item.ExistingPatientId, item.ConflictingPatientId, existingPatientId, conflictingPatientId);
+                Highlight(item.ExistingPatientName, item.ConflictingPatientName, existingPatientName, conflictingPatientName);
+                Highlight(item.ExistingAccessionNumber, item.ConflictingAccessionNumber, existingAccessionNumber, conflictingAccessionNumber);
                 
             }
         }

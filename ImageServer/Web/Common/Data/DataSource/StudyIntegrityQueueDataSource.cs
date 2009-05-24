@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         private readonly StudyIntegrityQueue _item;
         private StudyInfo _existingStudy;
         private ImageSetDetails _conflictingImages;
+        private StudyInfo _conflictingStudyInfo;
 
         #endregion
 
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 set { _description = value; }
             }
 
-            public string Modalitiy
+            public string Modality
             {
                 get { return _modality; }
                 set { _modality = value; }
@@ -198,13 +199,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             get
             {
-                if (_conflictingImages == null)
-                    _conflictingImages = new ImageSetDetails();
                 return _conflictingImages;
             }
             set { _conflictingImages = value; }
         }
 
+        public StudyInfo ConflictingStudyInfo
+        {
+            get { return _conflictingStudyInfo; }
+            set { _conflictingStudyInfo = value; }
+        }
     }
 
 	public class StudyIntegrityQueueSummary
@@ -225,6 +229,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private StudySummary _study;
 	    private string[] _conflictingModalities;
 	    private ReconcileStudyWorkQueueData _queueData;
+	    private string _conflictingStudyDate;
+	    private string _conflictingStudyDescription;
 
 	    #endregion Private members
 
@@ -339,6 +345,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	    {
 	        get { return _reason; }
 	        set { _reason = value; }
+	    }
+
+	    public string ConflictingStudyDate
+	    {
+            get { return _conflictingStudyDate;  }
+            set { _conflictingStudyDate = value; }
+	    }
+
+	    public string ConflictingStudyDescription
+	    {
+            get { return _conflictingStudyDescription; }
+            set { _conflictingStudyDescription = value; }
 	    }
 
 	    #endregion Public Properties
@@ -482,25 +500,33 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
                 queueDescription.Parse(item.Description);
 
+                summary.ReceivedTime = item.InsertTime;
                 summary.ConflictingPatientId = queueDescription.ConflictingPatientId;
                 summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
                 summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
-                summary.ReceivedTime = item.InsertTime;
-
-
+                
                 if (item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
                     summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
                 else
                     summary.QueueData = XmlUtils.Deserialize<DuplicateSIQQueueData>(item.QueueData);
 
-                List<string> modalities = new List<string>();
-                List<SeriesInformation> seriesList = summary.QueueData.Details.StudyInfo.Series;
-                foreach (SeriesInformation series in seriesList)
+
+
+                // These fields only exists in Enterprise version
+                if (summary.QueueData.Details != null && summary.QueueData.Details.StudyInfo!=null)
                 {
-                    if (!modalities.Contains(series.Modality))
-                        modalities.Add(series.Modality);
+                    summary.ConflictingStudyDate = summary.QueueData.Details.StudyInfo.StudyDate;
+                    summary.ConflictingStudyDescription = summary.QueueData.Details.StudyInfo.StudyDescription;
+                    List<string> modalities = new List<string>();
+                    List<SeriesInformation> seriesList = summary.QueueData.Details.StudyInfo.Series;
+                    foreach (SeriesInformation series in seriesList)
+                    {
+                        if (!modalities.Contains(series.Modality))
+                            modalities.Add(series.Modality);
+                    }
+                    summary.ConflictingModalities = modalities.ToArray();
                 }
-                summary.ConflictingModalities = modalities.ToArray();
+
 
                 // Fetch existing study info. Note: this is done last because the study may not exist.
                 Study study = storages.LoadStudy(HttpContextData.Current.ReadContext);

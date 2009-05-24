@@ -29,8 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
@@ -65,13 +70,105 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                         ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
                         seriesDetails.Description = theSeries.SeriesDescription;
                         seriesDetails.SeriesInstanceUid = theSeries.SeriesInstanceUid;
-                        seriesDetails.Modalitiy = theSeries.Modality;
+                        seriesDetails.Modality = theSeries.Modality;
                         seriesDetails.NumberOfInstances = theSeries.NumberOfSeriesRelatedInstances;
                         return seriesDetails;
                     });
 
 
             details.ConflictingImageSet = item.QueueData.Details;
+
+
+            details.ConflictingStudyInfo = new ReconcileDetails.StudyInfo();
+
+            if (item.QueueData.Details != null)
+            {
+                // extract the conflicting study info from QueueData
+                details.ConflictingStudyInfo.AccessionNumber = item.QueueData.Details.StudyInfo.AccessionNumber;
+                details.ConflictingStudyInfo.StudyDate = item.QueueData.Details.StudyInfo.StudyDate;
+                details.ConflictingStudyInfo.StudyInstanceUID = item.QueueData.Details.StudyInfo.StudyInstanceUid;
+                details.ConflictingStudyInfo.StudyDate = item.QueueData.Details.StudyInfo.StudyDate;
+
+                details.ConflictingStudyInfo.Patient = new ReconcileDetails.PatientInfo();
+                details.ConflictingStudyInfo.Patient.BirthDate = item.QueueData.Details.StudyInfo.PatientInfo.PatientsBirthdate;
+                details.ConflictingStudyInfo.Patient.IssuerOfPatientID = item.QueueData.Details.StudyInfo.PatientInfo.IssuerOfPatientId;
+                details.ConflictingStudyInfo.Patient.Name = item.QueueData.Details.StudyInfo.PatientInfo.Name;
+                details.ConflictingStudyInfo.Patient.PatientID = item.QueueData.Details.StudyInfo.PatientInfo.PatientId;
+                details.ConflictingStudyInfo.Patient.Sex = item.QueueData.Details.StudyInfo.PatientInfo.Sex;
+
+                details.ConflictingStudyInfo.Series =
+                    CollectionUtils.Map<SeriesInformation, ReconcileDetails.SeriesDetails>(
+                        item.QueueData.Details.StudyInfo.Series,
+                        delegate(SeriesInformation input)
+                            {
+                                ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
+                                seriesDetails.Description = input.SeriesDescription;
+                                seriesDetails.Modality = input.Modality;
+                                seriesDetails.SeriesInstanceUid = input.SeriesInstanceUid;
+                                seriesDetails.NumberOfInstances = input.NumberOfInstances;
+                                return seriesDetails;
+                            });
+            }
+            else
+            {
+                // Extract the conflicting study info from StudyData
+                // Note: Not all fields are available.
+                ImageSetDescriptor desc = ImageSetDescriptor.Parse(item.TheStudyIntegrityQueueItem.StudyData.DocumentElement);
+
+                details.ConflictingStudyInfo.AccessionNumber = desc[DicomTags.AccessionNumber] != null
+                                                                   ? desc[DicomTags.AccessionNumber].Value
+                                                                   : null;
+                details.ConflictingStudyInfo.StudyDate = desc[DicomTags.StudyDate] != null
+                                                             ? desc[DicomTags.StudyDate].Value
+                                                             : null;
+                details.ConflictingStudyInfo.StudyInstanceUID = desc[DicomTags.StudyInstanceUid] != null
+                                                                    ? desc[DicomTags.StudyInstanceUid].Value
+                                                                    : null;
+                details.ConflictingStudyInfo.StudyDate = desc[DicomTags.StudyDate] != null
+                                                             ? desc[DicomTags.StudyDate].Value
+                                                             : null;
+
+                details.ConflictingStudyInfo.Patient = new ReconcileDetails.PatientInfo();
+                details.ConflictingStudyInfo.Patient.BirthDate = desc[DicomTags.PatientsBirthDate] != null
+                                                                     ? desc[DicomTags.PatientsBirthDate].Value
+                                                                     : null;
+                details.ConflictingStudyInfo.Patient.IssuerOfPatientID = desc[DicomTags.IssuerOfPatientId] != null
+                                                                             ? desc[DicomTags.IssuerOfPatientId].Value
+                                                                             : null;
+                details.ConflictingStudyInfo.Patient.Name = desc[DicomTags.PatientsName] != null
+                                                                ? desc[DicomTags.PatientsName].Value
+                                                                : null;
+                details.ConflictingStudyInfo.Patient.PatientID = desc[DicomTags.PatientId] != null
+                                                                     ? desc[DicomTags.PatientId].Value
+                                                                     : null;
+                details.ConflictingStudyInfo.Patient.Sex = desc[DicomTags.PatientsSex] != null
+                                                               ? desc[DicomTags.PatientsSex].Value
+                                                               : null;
+                
+                
+                List<ReconcileDetails.SeriesDetails> series = new List<ReconcileDetails.SeriesDetails>();
+                details.ConflictingStudyInfo.Series = series;
+
+                IStudyIntegrityQueueUidEntityBroker uidBroker =
+                    HttpContextData.Current.ReadContext.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
+                StudyIntegrityQueueUidSelectCriteria criteria = new StudyIntegrityQueueUidSelectCriteria();
+                criteria.StudyIntegrityQueueKey.EqualTo(item.TheStudyIntegrityQueueItem.GetKey());
+
+                IList<StudyIntegrityQueueUid> uids = uidBroker.Find(criteria);
+
+                Dictionary<string, List<StudyIntegrityQueueUid>> seriesGroups = CollectionUtils.GroupBy<StudyIntegrityQueueUid, string>(uids, delegate(StudyIntegrityQueueUid uid) { return uid.SeriesInstanceUid; });
+
+                foreach (string seriesUid in seriesGroups.Keys)
+                {
+                    ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
+                    seriesDetails.SeriesInstanceUid = seriesUid; 
+                    seriesDetails.Description = seriesGroups[seriesUid][0].SeriesDescription;
+                    seriesDetails.NumberOfInstances = seriesGroups[seriesUid].Count;
+                    //seriesDetails.Modality = "N/A";
+                    series.Add(seriesDetails);
+                }
+            }
+            
 
             return details;
         }
