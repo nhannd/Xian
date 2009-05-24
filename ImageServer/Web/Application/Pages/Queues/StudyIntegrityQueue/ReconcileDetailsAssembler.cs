@@ -114,36 +114,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 // Extract the conflicting study info from StudyData
                 // Note: Not all fields are available.
                 ImageSetDescriptor desc = ImageSetDescriptor.Parse(item.TheStudyIntegrityQueueItem.StudyData.DocumentElement);
+                string value;
 
-                details.ConflictingStudyInfo.AccessionNumber = desc[DicomTags.AccessionNumber] != null
-                                                                   ? desc[DicomTags.AccessionNumber].Value
-                                                                   : null;
-                details.ConflictingStudyInfo.StudyDate = desc[DicomTags.StudyDate] != null
-                                                             ? desc[DicomTags.StudyDate].Value
-                                                             : null;
-                details.ConflictingStudyInfo.StudyInstanceUID = desc[DicomTags.StudyInstanceUid] != null
-                                                                    ? desc[DicomTags.StudyInstanceUid].Value
-                                                                    : null;
-                details.ConflictingStudyInfo.StudyDate = desc[DicomTags.StudyDate] != null
-                                                             ? desc[DicomTags.StudyDate].Value
-                                                             : null;
+                if (desc.TryGetValue(DicomTags.AccessionNumber, out value))
+                    details.ConflictingStudyInfo.AccessionNumber = value;
+
+                if (desc.TryGetValue(DicomTags.StudyDate, out value))
+                    details.ConflictingStudyInfo.StudyDate = value;
+
+                if (desc.TryGetValue(DicomTags.StudyInstanceUid, out value))
+                    details.ConflictingStudyInfo.StudyInstanceUID = value;
 
                 details.ConflictingStudyInfo.Patient = new ReconcileDetails.PatientInfo();
-                details.ConflictingStudyInfo.Patient.BirthDate = desc[DicomTags.PatientsBirthDate] != null
-                                                                     ? desc[DicomTags.PatientsBirthDate].Value
-                                                                     : null;
-                details.ConflictingStudyInfo.Patient.IssuerOfPatientID = desc[DicomTags.IssuerOfPatientId] != null
-                                                                             ? desc[DicomTags.IssuerOfPatientId].Value
-                                                                             : null;
-                details.ConflictingStudyInfo.Patient.Name = desc[DicomTags.PatientsName] != null
-                                                                ? desc[DicomTags.PatientsName].Value
-                                                                : null;
-                details.ConflictingStudyInfo.Patient.PatientID = desc[DicomTags.PatientId] != null
-                                                                     ? desc[DicomTags.PatientId].Value
-                                                                     : null;
-                details.ConflictingStudyInfo.Patient.Sex = desc[DicomTags.PatientsSex] != null
-                                                               ? desc[DicomTags.PatientsSex].Value
-                                                               : null;
+
+                if (desc.TryGetValue(DicomTags.PatientsBirthDate, out value))
+                    details.ConflictingStudyInfo.Patient.BirthDate = value;
+
+                if (desc.TryGetValue(DicomTags.IssuerOfPatientId, out value))
+                    details.ConflictingStudyInfo.Patient.IssuerOfPatientID = value;
+
+                if (desc.TryGetValue(DicomTags.PatientsName, out value))
+                    details.ConflictingStudyInfo.Patient.Name = value;
+
+                if (desc.TryGetValue(DicomTags.PatientId, out value))
+                    details.ConflictingStudyInfo.Patient.PatientID = value;
+
+                if (desc.TryGetValue(DicomTags.PatientsSex, out value))
+                    details.ConflictingStudyInfo.Patient.Sex = value;
                 
                 
                 List<ReconcileDetails.SeriesDetails> series = new List<ReconcileDetails.SeriesDetails>();

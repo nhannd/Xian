@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
@@ -500,23 +501,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
                 queueDescription.Parse(item.Description);
 
-                summary.ReceivedTime = item.InsertTime;
-                summary.ConflictingPatientId = queueDescription.ConflictingPatientId;
-                summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
-                summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
                 
                 if (item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
                     summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
                 else
                     summary.QueueData = XmlUtils.Deserialize<DuplicateSIQQueueData>(item.QueueData);
 
-
+                ImageSetDescriptor studyData = ImageSetDescriptor.Parse(item.StudyData.DocumentElement);
+                    
 
                 // These fields only exists in Enterprise version
                 if (summary.QueueData.Details != null && summary.QueueData.Details.StudyInfo!=null)
                 {
+                    summary.ReceivedTime = item.InsertTime;
+                    summary.ConflictingPatientId = summary.QueueData.Details.StudyInfo.PatientInfo.PatientId;
+                    summary.ConflictingPatientName = summary.QueueData.Details.StudyInfo.PatientInfo.Name;
+                    summary.ConflictingAccessionNumber = summary.QueueData.Details.StudyInfo.AccessionNumber;
                     summary.ConflictingStudyDate = summary.QueueData.Details.StudyInfo.StudyDate;
                     summary.ConflictingStudyDescription = summary.QueueData.Details.StudyInfo.StudyDescription;
+                    
                     List<string> modalities = new List<string>();
                     List<SeriesInformation> seriesList = summary.QueueData.Details.StudyInfo.Series;
                     foreach (SeriesInformation series in seriesList)
@@ -525,6 +528,27 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                             modalities.Add(series.Modality);
                     }
                     summary.ConflictingModalities = modalities.ToArray();
+                }
+                else
+                {
+                    string value;
+                    if (studyData.TryGetValue(DicomTags.PatientId, out value))
+                        summary.ConflictingPatientId = value;
+
+                    if (studyData.TryGetValue(DicomTags.PatientsName, out value))
+                        summary.ConflictingPatientName = value;
+
+                    if (studyData.TryGetValue(DicomTags.AccessionNumber, out value))
+                        summary.ConflictingAccessionNumber = value;
+
+                    if (studyData.TryGetValue(DicomTags.StudyDate, out value))
+                        summary.ConflictingStudyDate = value;
+
+                    if (studyData.TryGetValue(DicomTags.StudyDescription, out value))
+                        summary.ConflictingStudyDescription = value;
+
+                    // no modality info
+                    
                 }
 
 

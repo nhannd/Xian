@@ -204,10 +204,36 @@ namespace ClearCanvas.ImageServer.Core.Data
 		}
 		#endregion
 
-		static public ImageSetDescriptor Parse(XmlElement element)
-		{
-			return XmlUtils.Deserialize<ImageSetDescriptor>(element);
-		}
+        #region Public Methods
+        /// <summary>
+        /// Retrieves the value for a Dicom tag.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool TryGetValue(uint tag, out string value)
+        {
+            ImageSetField field = this[tag];
+
+            if (field == null) // doesn't exist
+            {
+                value = null;
+                return false;
+            }
+            else
+            {
+                value = field.Value;
+                return true;
+            }
+        } 
+        #endregion
+
+        #region Public Static Methods
+        static public ImageSetDescriptor Parse(XmlElement element)
+        {
+            return XmlUtils.Deserialize<ImageSetDescriptor>(element);
+        } 
+        #endregion
 
 		#region IEquatable<ImageSetDescriptor> Members
 
