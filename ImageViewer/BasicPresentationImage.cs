@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer
 		private CompositeGraphic _applicationGraphics;
 		[CloneIgnore]
 		private CompositeGraphic _overlayGraphics;
-		[CloneCopyReference]
+		[CloneIgnore]
 		private PresentationStateGraphic _presentationStateGraphic;
 		private IAnnotationLayout _annotationLayout;
 
@@ -316,11 +316,11 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		/// <summary>
-		/// Gets a collection of all the top-level graphical layers.
+		/// Gets the <see cref="CompositeGraphic"/> at the root of the scene graphic containing the image itself and all additional graphics.
 		/// </summary>
-		protected GraphicCollection GraphicalLayers
+		protected CompositeGraphic CompositeImageGraphic
 		{
-			get { return _compositeImageGraphic.Graphics; }
+			get { return _compositeImageGraphic; }
 		}
 
 		/// <summary>

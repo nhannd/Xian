@@ -422,6 +422,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_spatialTransform.OwnerGraphic = this;
 		}
 
+		/// <summary>
+		/// Occurs when a property value changes.
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged
 		{
 			add { _propertyChanged += value; }

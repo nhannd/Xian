@@ -269,20 +269,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Selection and Activation Business
 
-		private void OnDataSourceSelectionChanged(object sender, EventArgs e) {
-			return;
-			_selectionEventsEnabled = false;
-			foreach(ListViewItem lvi in _listView.Items)
-			{
-				if(_component.Selection.Contains(lvi.Tag ))
-				{
-					lvi.Selected = true;
-				} else
-				{
-					lvi.Selected = false;
-				}
-			}
-			_selectionEventsEnabled = true;
+		private void OnDataSourceSelectionChanged(object sender, EventArgs e)
+		{
+			//_selectionEventsEnabled = false;
+			//foreach (ListViewItem lvi in _listView.Items)
+			//{
+			//    if (_component.Selection.Contains(lvi.Tag))
+			//    {
+			//        lvi.Selected = true;
+			//    }
+			//    else
+			//    {
+			//        lvi.Selected = false;
+			//    }
+			//}
+			//_selectionEventsEnabled = true;
 		}
 
 		private void OnSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)

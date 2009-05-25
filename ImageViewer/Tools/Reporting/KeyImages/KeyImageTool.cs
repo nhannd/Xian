@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		#region Private Fields
 
 		private readonly FlashOverlayController _flashOverlayController;
-		private event EventHandler _enabledChanged;
 		private bool _showEnabled;
 		private event EventHandler _showEnabledChanged;
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;

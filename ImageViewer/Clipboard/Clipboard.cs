@@ -44,7 +44,14 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	/// </remarks>
 	public static class Clipboard
 	{
+		/// <summary>
+		/// Constant defining the action model site for the toolbar on the <see cref="ClipboardComponent"/>.
+		/// </summary>
 		public const string ClipboardSiteToolbar = "clipboard-toolbar";
+
+		/// <summary>
+		/// Constant defining the action model site for the context menu of the <see cref="ClipboardComponent"/>.
+		/// </summary>
 		public const string ClipboardSiteMenu = "clipboard-contextmenu";
 		
 		internal static readonly BindingList<IClipboardItem> Items = new BindingList<IClipboardItem>();

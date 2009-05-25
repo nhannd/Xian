@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
-			_dicomGraphics = CollectionUtils.SelectFirst(base.GraphicalLayers,
+			_dicomGraphics = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics,
 				delegate(IGraphic test) { return test.Name == "DICOM"; }) as CompositeGraphic;
 
 			Initialize();
@@ -109,9 +109,9 @@ namespace ClearCanvas.ImageViewer
 				_dicomGraphics.Name = "DICOM";
 
 				// insert the DICOM graphics layer right after the image graphic (both contain domain-level graphics)
-				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.GraphicalLayers,
+				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics,
 					delegate(IGraphic test) { return test is ImageGraphic; });
-				base.GraphicalLayers.Insert(base.GraphicalLayers.IndexOf(imageGraphic) + 1, _dicomGraphics);
+				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(imageGraphic) + 1, _dicomGraphics);
 			}
 		}
 
