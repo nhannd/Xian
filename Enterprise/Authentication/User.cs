@@ -60,7 +60,6 @@ namespace ClearCanvas.Enterprise.Authentication {
 			Platform.CheckForNullReference(userInfo, "userInfo");
 			Platform.CheckForNullReference(initialPassword, "initialPassword");
 			Platform.CheckForEmptyString(userInfo.UserName, "UserName");
-			Platform.CheckForEmptyString(userInfo.DisplayName, "DisplayName");
 
             return new User(
                 userInfo.UserName,
