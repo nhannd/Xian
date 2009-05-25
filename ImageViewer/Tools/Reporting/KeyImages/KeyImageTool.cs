@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		#region Private Fields
 
 		private readonly FlashOverlayController _flashOverlayController;
-		private bool _enabled;
 		private event EventHandler _enabledChanged;
 		private bool _showEnabled;
 		private event EventHandler _showEnabledChanged;
@@ -73,25 +72,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		public KeyImageTool()
 		{
 			_flashOverlayController = new FlashOverlayController("Icons.CreateKeyImageToolLarge.png", new ResourceResolver(this.GetType(), false));
-		}
-
-		public bool Enabled
-		{
-			get { return _enabled; }
-			set
-			{
-				if (_enabled == value)
-					return;
-
-				_enabled = value;
-				EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-			}
-		}
-
-		public event EventHandler EnabledChanged
-		{
-			add { _enabledChanged += value; }
-			remove { _enabledChanged -= value; }
 		}
 
 		public bool ShowEnabled
@@ -118,14 +98,14 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		public override void Initialize()
 		{
 			base.Initialize();
-			KeyImageClipboard.OnViewerOpened(Context.Viewer);
+			KeyImageClipboard.OnViewerOpened(base.Context.Viewer);
 
-			Enabled = LocalDataStoreActivityMonitor.IsConnected && 
+			base.Enabled = LocalDataStoreActivityMonitor.IsConnected && 
 				PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Modify);
 
 			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
-			_localDataStoreEventBroker.Connected += OnConnected;
-			_localDataStoreEventBroker.LostConnection += OnLostConnection;
+			_localDataStoreEventBroker.Connected += this.OnConnected;
+			_localDataStoreEventBroker.LostConnection += this.OnLostConnection;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -134,20 +114,20 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
 			_localDataStoreEventBroker.Dispose();
 
-			if (Context != null)
-				KeyImageClipboard.OnViewerClosed(Context.Viewer);
+			if (base.Context != null)
+				KeyImageClipboard.OnViewerClosed(base.Context.Viewer);
 
 			base.Dispose(disposing);
 		}
 
 		private void UpdateEnabled()
 		{
-			Enabled = base.SelectedPresentationImage is IImageSopProvider &&
+			base.Enabled = base.SelectedPresentationImage is IImageSopProvider &&
 					((IImageSopProvider)base.SelectedPresentationImage).ImageSop.DataSource.IsStored &&
 			          LocalDataStoreActivityMonitor.IsConnected &&
 					  PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Modify);
 
-			ShowEnabled = LocalDataStoreActivityMonitor.IsConnected;
+			this.ShowEnabled = LocalDataStoreActivityMonitor.IsConnected;
 		}
 
 		private void OnConnected(object sender, EventArgs e)
@@ -176,18 +156,18 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public void Show()
 		{
-			if (ShowEnabled)
+			if (this.ShowEnabled)
 				KeyImageClipboard.Show();
 		}
 
 		public void Create()
 		{
-			if (!Enabled)
+			if (!base.Enabled)
 				return;
 
 			try
 			{
-				IPresentationImage image = Context.Viewer.SelectedPresentationImage;
+				IPresentationImage image = base.Context.Viewer.SelectedPresentationImage;
 				if (image != null)
 				{
 					KeyImageClipboard.Add(image);

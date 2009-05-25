@@ -34,6 +34,7 @@ using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -42,49 +43,38 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		private bool _initialLocationSet;
 
-		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
+		public override void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
 		{
-			//if (base.AnnotationGraphic != null)
-			//    this.Roi.PolygonClosed -= OnPolygonInteractiveGraphicClosed;
+			base.SetAnnotationGraphic(annotationGraphic);
 
-			base.SetAnnotationGraphic(roiGraphic);
-
-			//if (roiGraphic != null)
-			//    this.Roi.PolygonClosed += OnPolygonInteractiveGraphicClosed;
+			IPointsGraphic pointsGraphic = annotationGraphic.Subject as IPointsGraphic;
+			if(pointsGraphic != null)
+			{
+				pointsGraphic.PointsChanged += OnPolygonGraphicClosed;
+			}
 		}
 
 		public override bool CalculateCalloutLocation(out PointF location, out CoordinateSystem coordinateSystem)
 		{
-			// if the polygon has not been closed yet, hide the callout
-			if (false)//!this.Roi.IsClosed)
+			base.Callout.Visible = !string.IsNullOrEmpty(base.Callout.Text);
+			location = PointF.Empty;
+			coordinateSystem = CoordinateSystem.Destination;
+
+			if (!_initialLocationSet && IsClosed(this.Roi))
 			{
-				base.Callout.Visible = false;
-				location = PointF.Empty;
-				coordinateSystem = CoordinateSystem.Source;
+				_initialLocationSet = true;
+
+				//TODO: make the offset less hard-coded (use case Roi analyzers with many results).
+				SizeF offset = new SizeF(0, 50);
+
+				// Setup the callout
+				this.Roi.CoordinateSystem = CoordinateSystem.Destination;
+				location = this.Roi.BoundingBox.Location - offset;
+				this.Roi.ResetCoordinateSystem();
 				return true;
 			}
-			else
-			{
-				base.Callout.Visible = !string.IsNullOrEmpty(base.Callout.Text);
-				location = PointF.Empty;
-				coordinateSystem = CoordinateSystem.Destination;
 
-				if (!_initialLocationSet)
-				{
-					_initialLocationSet = true;
-
-					//TODO: make the offset less hard-coded (use case Roi analyzers with many results).
-					SizeF offset = new SizeF(0, 50);
-
-					// Setup the callout
-					this.Roi.CoordinateSystem = CoordinateSystem.Destination;
-					location = this.Roi.BoundingBox.Location - offset;
-					this.Roi.ResetCoordinateSystem();
-					return true;
-				}
-
-				return false;
-			}
+			return false;
 		}
 
 		protected new IPointsGraphic Roi
@@ -92,24 +82,34 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return ((IPointsGraphic)base.Roi); }
 		}
 
-		private void OnPolygonInteractiveGraphicClosed(object sender, EventArgs e)
+		private void OnPolygonGraphicClosed(object sender, EventArgs e)
 		{
-			// match coordinate systems
-			this.Callout.CoordinateSystem = this.Roi.CoordinateSystem;
-
-			PointF location;
-			CoordinateSystem coordinateSystem;
-
-			// compute a nice location for the callout
-			if (this.CalculateCalloutLocation(out location, out coordinateSystem))
+			// sometimes the coordinate systems are mismatched, so force fix it now
+			this.Roi.CoordinateSystem = CoordinateSystem.Destination;
+			try
 			{
-				this.Callout.CoordinateSystem = coordinateSystem;
-				this.Callout.Location = location;
-				this.Callout.ResetCoordinateSystem();
-			}
+				PointF location;
+				CoordinateSystem coordinateSystem;
 
-			// reset coordinate systems
-			this.Callout.ResetCoordinateSystem();
+				// compute a nice location for the callout
+				if (this.CalculateCalloutLocation(out location, out coordinateSystem))
+				{
+					this.Callout.CoordinateSystem = coordinateSystem;
+					this.Callout.Location = location;
+					this.Callout.ResetCoordinateSystem();
+				}
+			}
+			finally
+			{
+				this.Roi.ResetCoordinateSystem();
+			}
+		}
+
+		private static bool IsClosed(IPointsGraphic g)
+		{
+			if (g.Points.Count > 2)
+				return FloatComparer.AreEqual(g.Points[0], g.Points[g.Points.Count - 1]);
+			return false;
 		}
 	}
 }

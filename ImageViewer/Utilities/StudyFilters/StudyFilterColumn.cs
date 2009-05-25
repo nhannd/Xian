@@ -51,6 +51,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return false;
 		}
 
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
 		public abstract string Key { get; }
 
 		public abstract bool Equals(StudyFilterColumn other);

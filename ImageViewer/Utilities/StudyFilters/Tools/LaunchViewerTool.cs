@@ -72,7 +72,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			{
 				LaunchImageViewerArgs launchArgs = new LaunchImageViewerArgs(WindowBehaviour.Auto);
 				ImageViewerComponent.Launch(viewer, launchArgs);
-			}catch(Exception ex) {}
+			}
+			catch (Exception ex)
+			{
+				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
+				Platform.Log(LogLevel.Error, ex, "ImageViewerComponent launch failure.");
+			}
 		}
 	}
 }
