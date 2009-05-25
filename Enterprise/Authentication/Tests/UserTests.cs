@@ -151,7 +151,6 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		public void Test_CreateNewUser_NullDisplayName()
 		{
 			UserInfo userInfo = new UserInfo(
@@ -164,7 +163,6 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		public void Test_CreateNewUser_EmptyDisplayName()
 		{
 			UserInfo userInfo = new UserInfo(
