@@ -215,6 +215,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         private void RescheduleWorkQueueItem(Model.WorkQueue item)
         {
+            if (item == null)
+            {
+                MessageBox.BackgroundCSS = string.Empty;
+                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageBox.MessageStyle = "color: red; font-weight: bold;";
+                MessageBox.MessageType =
+                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Show();
+
+                return;
+            }
+            
             List<ServerEntityKey> keys = new List<ServerEntityKey>();
             keys.Add(item.GetKey());
             ScheduleWorkQueueDialog.WorkQueueKeys = keys;
@@ -285,7 +297,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
 
         }
-
 
         #endregion Private Methods
 

@@ -33,7 +33,7 @@
                     </td>
                 </tr>
                 <tr><td colspan="2">
-                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" style="padding-top: 5px;">
                             <tr><td>
                                     <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="RescheduleButton" OnClick="Reschedule_Click"/>
                                     <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="ResetButton" OnClick="Reset_Click"/>
