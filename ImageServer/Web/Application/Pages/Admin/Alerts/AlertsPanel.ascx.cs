@@ -238,9 +238,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 if (items.Count > 1) DeleteConfirmationBox.Message = string.Format(App_GlobalResources.SR.MultipleAlertDelete);
                 else DeleteConfirmationBox.Message = string.Format(App_GlobalResources.SR.SingleAlertDelete);
 
-                DeleteConfirmationBox.Message += "<table class='DeleteAlertConfirmTable' border='0' cellspacing='0' cellpadding='0'>";
+                DeleteConfirmationBox.Message += "<div id='DeleteAlertTableContainer' class='DeleteAlertTableContainer'> <table class='DeleteAlertConfirmTable' border='0' cellspacing='0' cellpadding='0'>";
                 DeleteConfirmationBox.Message +=
-                    "<tr class='GlobalGridViewHeader'><td align='left'>Component</td><td>Insert Date</td><td>Level</td><td>Content</td></tr>";
+                    "<thead class='DeleteAlertFixedHeader' id='DeleteAlertFixedHeader'><tr class='GlobalGridViewHeader'><th align='left'>Component</th><th>Insert Date</th><th>Level</th><th>Content</th></tr></thead><tbody class='DeleteAlertScrollContent'>";
 
                 foreach (Model.Alert item in items)
                 {
@@ -254,7 +254,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                                    item.Component, item.InsertTime, item.AlertLevelEnum, sb);
                     keyArray.Add(item.Key);
                 }
-                DeleteConfirmationBox.Message += "</table>";
+                DeleteConfirmationBox.Message += "</tbody></table></div>";
 
                 DeleteConfirmationBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
                 DeleteConfirmationBox.Data = keyArray;

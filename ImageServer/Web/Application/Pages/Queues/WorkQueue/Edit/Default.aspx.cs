@@ -323,6 +323,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         }
 
+        public void HideRescheduleDialog()
+        {
+            ScheduleWorkQueueDialog.Hide();
+            WorkQueueItemList itemList = FindControl("WorkQueueItemList") as WorkQueueItemList;
+            itemList.Refresh();
+        }
+
         #endregion Public Methods
     }
 }

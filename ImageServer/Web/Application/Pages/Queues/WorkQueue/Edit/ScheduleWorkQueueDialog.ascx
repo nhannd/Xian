@@ -11,7 +11,7 @@
         
         <asp:UpdatePanel ID="TestUpdatePanel" runat="server">
             <ContentTemplate>
-            <localAsp:WorkQueueItemList ID="WorkQueueItemList" runat="server" />
+            <localAsp:WorkQueueItemList ID="SelectedWorkQueueItemList" runat="server" />
             </ContentTemplate>
         </asp:UpdatePanel>
         <asp:Panel runat="server" style="border-top: solid 1px #CCCCCC; padding-top: 3px; text-align: center; padding-top: 5px; padding-bottom: 5px;">

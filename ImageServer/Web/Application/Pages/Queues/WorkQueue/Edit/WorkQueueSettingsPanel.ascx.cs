@@ -31,9 +31,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
@@ -54,6 +57,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         private ListItemCollection _defaultTimeList;
 
         #endregion 
+
+        public delegate void OnNoItemsEventHandler();
+        public event OnNoItemsEventHandler OnNoWorkQueueItems;
 
         #region Public Properties
 
@@ -163,12 +169,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             NewScheduleDate.Enabled = true;
             NewScheduleTime.Enabled = true;
 
-//            WorkQueueSettingsUpdatePanel.Update();
-
         }
 
         protected void ScheduleNow_CheckChanged(object sender, EventArgs arg)
         {
+            WorkQueueItemList itemList = Parent.FindControl("SelectedWorkQueueItemList") as WorkQueueItemList;
+            
+            if(itemList.WorkQueueItems == null || itemList.WorkQueueItems.Count == 0)
+            {
+                if (OnNoWorkQueueItems != null) OnNoWorkQueueItems();
+                return;
+            }
+            
             ScheduleNow = ScheduleNowCheckBox.Checked;
 
             if(ScheduleNow)
@@ -180,9 +192,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 NewScheduleDate.Enabled = true;
                 NewScheduleTime.Enabled = true;
             }
-
-//           WorkQueueSettingsUpdatePanel.Update();
-
         }
 
         #endregion Protected Methods
@@ -193,12 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public override void DataBind()
         {
 
-            if (!Page.IsPostBack)
-            {
-
-            }
-            else
-            {
+            if(Page.IsPostBack) {
                 if (!String.IsNullOrEmpty(NewScheduleDate.Text))
                 {
                     DateTime dt = DateTime.ParseExact(NewScheduleDate.Text, CalendarExtender.Format, null);
@@ -238,6 +242,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             DateTime newDate = DateTime.Parse(NewScheduleDate.Text + " " + NewScheduleTime.Text);
             NewScheduledDateTime = newDate;
+        }
+
+        public void WorkQueueItemNoLongerExists()
+        {
+            
         }
 
         #endregion Public Methods

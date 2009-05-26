@@ -76,6 +76,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         #region Public Methods
 
+        public void UpdateCurrentPartition()
+        {
+            Update(true);
+        }
+
         public Control GetUserControlForPartition(ServerEntityKey key)
         {
             if (_mapPanel.ContainsKey(key))

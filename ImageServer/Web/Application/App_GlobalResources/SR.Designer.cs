@@ -700,7 +700,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list..
+        ///   Looks up a localized string similar to The item you selected is no longer on the list.&lt;br/&gt;It could have been modified by the system or another person..
         /// </summary>
         internal static string SelectedWorkQueueNoLongerOnTheList {
             get {

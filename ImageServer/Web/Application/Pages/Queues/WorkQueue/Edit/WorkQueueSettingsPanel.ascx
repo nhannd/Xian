@@ -29,5 +29,6 @@
     </table>
     </ContentTemplate>
 </asp:UpdatePanel>
+<ccAsp:MessageBox ID="ErrorMessageBox" runat="server" />
 
 

@@ -259,7 +259,7 @@
     <value>The study has been scheduled for reprocess.</value>
   </data>
   <data name="SelectedWorkQueueNoLongerOnTheList" xml:space="preserve">
-    <value>The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list.</value>
+    <value>The item you selected is no longer on the list.&lt;br/&gt;It could have been modified by the system or another person.</value>
   </data>
   <data name="ServiceLockUpdate_Confirm_ServiceIsLocked" xml:space="preserve">
     <value>This service lock is being used by the server.  Are you sure you want to edit it ?</value>

@@ -60,8 +60,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_Code\KeyedCollectionBase.cs" />
-    <Compile Include="App_Code\EntityCollection.cs" />
     <Compile Include="App_GlobalResources\GridPager.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

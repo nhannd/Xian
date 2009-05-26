@@ -288,76 +288,60 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
-			if (workQueueItemList.SelectedItems == null)
-				DataBind();
-
-			if (workQueueItemList.SelectedItems[0] != null)
-            {
-                EnclosingPage.ViewWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
-            }
+            if (!SelectedItemExists()) return;
+            EnclosingPage.ViewWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
         }
 
 
         protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
-			if (workQueueItemList.SelectedItems == null)
-				DataBind();
-
-            if (workQueueItemList.SelectedItems[0] != null)
-            {
-                EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
-                workQueueItemList.RefreshCurrentPage();
-            }
+            if (!SelectedItemExists()) return;
+            EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            workQueueItemList.RefreshCurrentPage();
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
-			if (workQueueItemList.SelectedItems == null)
-				DataBind();
-
-			if (workQueueItemList.SelectedItems[0] != null)
-            {
-                EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
-                workQueueItemList.RefreshCurrentPage();
-            }
+            if (!SelectedItemExists()) return;
+            EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            workQueueItemList.RefreshCurrentPage();
         }
 
         protected void ReprocessItemButton_Click(object sender, EventArgs arg)
         {
-			if (workQueueItemList.SelectedItems == null)
-				DataBind();
-
-			if (workQueueItemList.SelectedItems[0] != null)
-            {
-                EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
-                workQueueItemList.RefreshCurrentPage();
-            }
+            if (!SelectedItemExists()) return;
+            EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            workQueueItemList.RefreshCurrentPage();
         }
-
 
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {
-			if (workQueueItemList.SelectedItems == null)
-				DataBind();
-
-            if (workQueueItemList.SelectedItems[0] != null)
-            {
-                EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
-                workQueueItemList.RefreshCurrentPage();
-            }
-            else
-            {
-                // the item no longer exist on the list... either it is deleted or filtered
-                MessageBox.Title = string.Empty;
-                MessageBox.BackgroundCSS = string.Empty;
-                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
-                MessageBox.MessageType =
-                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
-                MessageBox.Show();
-            }
+            if (!SelectedItemExists()) return;
+            EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            workQueueItemList.RefreshCurrentPage();
         }
 
         #endregion Protected Methods
+
+        private bool SelectedItemExists()
+        {
+            if (workQueueItemList.SelectedItems == null)
+				DataBind();
+
+            if (workQueueItemList.SelectedItems == null || workQueueItemList.SelectedItems[0] == null)
+            {
+                MessageBox.BackgroundCSS = string.Empty;
+                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageBox.MessageStyle = "color: red; font-weight: bold;";
+                MessageBox.MessageType =
+                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Show();
+
+                return false;
+            }
+
+            return true;
+        }
 
     }
 }

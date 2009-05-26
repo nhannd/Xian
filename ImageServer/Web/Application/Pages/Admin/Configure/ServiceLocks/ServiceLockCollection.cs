@@ -30,7 +30,7 @@
 #endregion
 
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.App_Code;
+using ClearCanvas.ImageServer.Web.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
 {

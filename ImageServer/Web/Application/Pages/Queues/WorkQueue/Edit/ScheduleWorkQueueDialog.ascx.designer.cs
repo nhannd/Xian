@@ -47,13 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit {
         protected global::System.Web.UI.UpdatePanel TestUpdatePanel;
         
         /// <summary>
-        /// WorkQueueItemList control.
+        /// SelectedWorkQueueItemList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemList WorkQueueItemList;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemList SelectedWorkQueueItemList;
         
         /// <summary>
         /// WorkQueueSettingsPanel control.

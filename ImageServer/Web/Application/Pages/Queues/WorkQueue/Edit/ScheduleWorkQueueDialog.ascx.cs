@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Private Members
         private List<Model.WorkQueue> _workQueues;
+        private WorkQueueItemList _workQueueItems;
         #endregion
 
         #region Protected Properties
@@ -117,6 +118,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
         }
 
+        public WorkQueueSettingsPanel SchedulePanel
+        {
+            get { return WorkQueueSettingsPanel; }
+        }
+
         #endregion Public Properties
 
         #region Events
@@ -146,23 +152,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             PreOpenConfirmDialog.Confirmed += PreOpenConfirmDialog_Confirmed;
             PreApplyChangeConfirmDialog.Confirmed += PreApplyChangeConfirmDialog_Confirmed;
 
-            WorkQueueItemList.WorkQueueItemGridView.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
+            SelectedWorkQueueItemList.WorkQueueItemGridView.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
 
-            WorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
+            SelectedWorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
                                             {
                                                 if (WorkQueueKeys == null) source.SearchKeys = new List<ServerEntityKey>();
                                                 else source.SearchKeys = WorkQueueKeys;
                                             };
 
-            WorkQueueItemList.Refresh();   
+            SelectedWorkQueueItemList.Refresh();
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (WorkQueueKeys!=null)
             {
-                if (WorkQueueItemList.WorkQueueItems!=null && 
-                    WorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
+                if (SelectedWorkQueueItemList.WorkQueueItems!=null && 
+                    SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
                     MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                     MessageDialog.MessageType =
@@ -208,6 +214,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 }
             }
 
+            if (SelectedWorkQueueItemList.WorkQueueItems == null || SelectedWorkQueueItemList.WorkQueueItems.Count == 0)
+            {
+                MessageDialog.BackgroundCSS = string.Empty;
+                MessageDialog.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageDialog.MessageStyle = "color: red; font-weight: bold;";
+                MessageDialog.MessageType =
+                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                MessageDialog.Show();
+
+                return;
+            }
+
             if (!prompt)
             {
                 WorkQueueSettingsPanel.UpdateScheduleDateTime();
@@ -216,7 +234,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         }
 
         protected void ApplyChanges()
-        {
+        {           
             if (WorkQueues != null)
             {
                 
@@ -317,7 +335,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 WorkQueueSettingsPanel.NewScheduledDateTime = workqueue.ScheduledTime;
             }
 
-            WorkQueueItemList.Refresh();
+            SelectedWorkQueueItemList.Refresh();
 
             ModalDialog.Show();
         }
@@ -357,7 +375,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             if (WorkQueues == null)
                 return;
 
-            if (WorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
+            if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
                 MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                 MessageDialog.MessageType =

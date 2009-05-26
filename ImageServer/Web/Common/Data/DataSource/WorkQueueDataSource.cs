@@ -312,10 +312,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			IList<WorkQueue> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
 
 			_list = new List<WorkQueueSummary>();
-			foreach (WorkQueue item in list)
-				_list.Add(CreateWorkQueueSummary(item));
+            foreach (WorkQueue item in list)
+            {
+                if (item == null) break;
+                _list.Add(CreateWorkQueueSummary(item));
+            }
 
-			if (WorkQueueFoundSet != null)
+		    if (WorkQueueFoundSet != null)
 				WorkQueueFoundSet(_list);
 
 			return _list;

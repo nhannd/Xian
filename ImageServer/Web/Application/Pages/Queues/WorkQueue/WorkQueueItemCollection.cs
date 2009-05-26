@@ -31,7 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Web.Application.App_Code;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue

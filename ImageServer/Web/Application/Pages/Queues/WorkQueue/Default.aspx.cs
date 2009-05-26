@@ -84,7 +84,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             set { ViewState["RefreshRate"] = value; }
         }
 
-
         #region Protected Methods
 
         protected void Page_Load(object sender, EventArgs e)
@@ -103,7 +102,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ScheduleWorkQueueDialog.OnShow += DisableRefresh;
-            ScheduleWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
+            ScheduleWorkQueueDialog.OnHide += delegate() { 
+                RefreshTimer.Reset(AutoRefresh); 
+                ServerPartitionTabs.UpdateCurrentPartition();
+            };
+            ScheduleWorkQueueDialog.SchedulePanel.OnNoWorkQueueItems += delegate()
+                                                            {
+                                                                ScheduleWorkQueueDialog.Hide();
+
+                                                                MessageBox.BackgroundCSS = string.Empty;
+                                                                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                                                                MessageBox.MessageStyle = "color: red; font-weight: bold;";
+                                                                MessageBox.MessageType =
+                                                                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+
+                                                                MessageBox.Show();
+
+                                                            };
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
             ResetWorkQueueDialog.OnShow += DisableRefresh;
             ResetWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
@@ -263,6 +278,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                     InformationDialog.Show();
                 }
             }
+        }
+
+        public void HideRescheduleDialog()
+        {
+            ScheduleWorkQueueDialog.Hide();
         }
 
         #endregion Public Methods

@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Web.Application.App_Code
+namespace ClearCanvas.ImageServer.Web.Common
 {
     /// <summary>
     /// Abstract base for a generic collection of object which can be indexed based on a key.

@@ -30,8 +30,9 @@
 #endregion
 
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Web.Common;
 
-namespace ClearCanvas.ImageServer.Web.Application.App_Code
+namespace ClearCanvas.ImageServer.Web.Common
 {
     /// <summary>
     /// Encapsulates a generic collection of object which can be indexed based on the <see cref="ServerEntityKey"/>
