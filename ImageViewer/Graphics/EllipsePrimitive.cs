@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return result;
 		}
 
-		public override Roi CreateRoiInformation()
+		public override Roi CreateRoi()
 		{
 			return new EllipticalRoi(this);
 		}

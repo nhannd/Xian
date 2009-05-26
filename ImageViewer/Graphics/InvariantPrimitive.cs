@@ -73,6 +73,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			remove { _anchorPointChangedEvent -= value; }
 		}
 
+		//TODO (CR May09): deprecate and add Location
+
 		/// <summary>
 		/// The point in the coordinate system of the parent <see cref="IGraphic"/> where the
 		/// <see cref="InvariantPrimitive"/> is anchored.

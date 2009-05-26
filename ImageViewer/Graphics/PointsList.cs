@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_owner = owner;
 		}
 
+		//TODO (CR May09): remove and use constructor w/ enableEvents
 		public PointsList Clone(IGraphic owner)
 		{
 			PointsList clone = new PointsList(owner);

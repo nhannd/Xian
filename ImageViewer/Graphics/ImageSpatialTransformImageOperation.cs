@@ -33,6 +33,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/*
 	/// <summary>
 	/// A specialization of the <see cref="SpatialTransformImageOperation"/> where the
 	/// originator is an <see cref="IImageSpatialTransform"/>.
@@ -62,4 +63,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return base.GetOriginator(image) as ImageSpatialTransform;
 		}
 	}
-}
+*/}

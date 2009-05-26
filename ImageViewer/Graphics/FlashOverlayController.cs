@@ -69,6 +69,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_rows = _columns = 0;
 		}
 
+		//TODO (CR May09): add another constructor for PixelData object.
+
 		/// <summary>
 		/// Constructs a controller that uses the 32-bit colour ARGB bitmap specified by the resource name and resource resolver.
 		/// </summary>
@@ -140,6 +142,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 				DoFlash(image);
 			}
 		}
+
+		//TODO (CR May09): fix threading issue.  Use BeginFlash IAsyncResult, etc.
 
 		/// <summary>
 		/// Flashes the overlay on the specified image asynchronously.

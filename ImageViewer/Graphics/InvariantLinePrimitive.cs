@@ -92,6 +92,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return false;
 		}
 
+		//TODO (CR May09): hook up, make non-explicit.
+
 		/// <summary>
 		/// The endpoint of the line as specified by <see cref="InvariantBoundablePrimitive.TopLeft"/> in either source or destination coordinates.
 		/// </summary>

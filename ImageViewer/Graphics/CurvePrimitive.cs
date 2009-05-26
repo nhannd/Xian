@@ -39,7 +39,8 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	//TODO: change this to expose a collection of points.
+	//TODO (CR May09): use PointsList.
+	//TODO (CR May09): implement IPointsGraphic.
 
 	/// <summary>
 	/// A primitive curve graphic.
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public class CurvePrimitive : VectorGraphic
 	{
 		[CloneIgnore]
-		private readonly List<PointF> _srcPts;
+		private readonly List<PointF> _sourcePoints;
 
 		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
 
@@ -62,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public CurvePrimitive()
 		{
-			_srcPts = new List<PointF>();
+			_sourcePoints = new List<PointF>();
 		}
 
 		/// <summary>
@@ -72,10 +73,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			context.CloneFields(source, this);
 
-			_srcPts = new List<PointF>();
-			foreach (PointF point in source._srcPts)
+			_sourcePoints = new List<PointF>();
+			foreach (PointF point in source._sourcePoints)
 			{
-				_srcPts.Add(point);
+				_sourcePoints.Add(point);
 			}
 		}
 
@@ -95,9 +96,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if (base.CoordinateSystem == CoordinateSystem.Destination)
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_srcPts[index]);
+					return base.SpatialTransform.ConvertToDestination(_sourcePoints[index]);
 				}
-				return _srcPts[index];
+				return _sourcePoints[index];
 			}
 			set
 			{
@@ -107,9 +108,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 					value = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				if (!FloatComparer.AreEqual(_srcPts[index], value))
+				if (!FloatComparer.AreEqual(_sourcePoints[index], value))
 				{
-					_srcPts[index] = value;
+					_sourcePoints[index] = value;
 					EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(value, index));
 					base.NotifyPropertyChanged("Points");
 				}
@@ -121,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public int CountPoints
 		{
-			get { return _srcPts.Count; }
+			get { return _sourcePoints.Count; }
 		}
 
 		public override RectangleF BoundingBox
@@ -145,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				point = base.SpatialTransform.ConvertToSource(point);
 			}
 
-			_srcPts.Add(point);
+			_sourcePoints.Add(point);
 			base.NotifyPropertyChanged("Points");
 		}
 
@@ -166,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				point = base.SpatialTransform.ConvertToSource(point);
 			}
 
-			_srcPts.Insert(index, point);
+			_sourcePoints.Insert(index, point);
 			base.NotifyPropertyChanged("Points");
 		}
 
@@ -176,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="index">The index of the data point.</param>
 		public void RemoveAt(int index)
 		{
-			_srcPts.RemoveAt(index);
+			_sourcePoints.RemoveAt(index);
 			base.NotifyPropertyChanged("Points");
 		}
 
@@ -185,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public bool IsClosed
 		{
-			get { return (_srcPts.Count > 0) && FloatComparer.AreEqual(_srcPts[0], _srcPts[_srcPts.Count - 1]); }
+			get { return (_sourcePoints.Count > 0) && FloatComparer.AreEqual(_sourcePoints[0], _sourcePoints[_sourcePoints.Count - 1]); }
 		}
 
 		/// <summary>
@@ -265,9 +266,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override void Move(SizeF delta)
 		{
-			for (int n = 0; n < _srcPts.Count; n++)
+			for (int n = 0; n < _sourcePoints.Count; n++)
 			{
-				_srcPts[n] = _srcPts[n] + delta;
+				_sourcePoints[n] = _sourcePoints[n] + delta;
 			}
 			base.NotifyPropertyChanged("Points");
 		}
@@ -287,13 +288,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (base.CoordinateSystem == CoordinateSystem.Destination)
 			{
 				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-				array = new PointF[_srcPts.Count];
-				for (int n = 0; n < _srcPts.Count; n++)
-					array[n] = base.SpatialTransform.ConvertToDestination(_srcPts[n]);
+				array = new PointF[_sourcePoints.Count];
+				for (int n = 0; n < _sourcePoints.Count; n++)
+					array[n] = base.SpatialTransform.ConvertToDestination(_sourcePoints[n]);
 			}
 			else
 			{
-				array = _srcPts.ToArray();
+				array = _sourcePoints.ToArray();
 			}
 			return array;
 		}
@@ -340,20 +341,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			PointF[] array;
 			if (this.IsClosed && excludeClosedPathPoint)
-				array = new PointF[_srcPts.Count - 1];
+				array = new PointF[_sourcePoints.Count - 1];
 			else
-				array = new PointF[_srcPts.Count];
+				array = new PointF[_sourcePoints.Count];
 
 			if (base.CoordinateSystem == CoordinateSystem.Destination)
 			{
 				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
 				for (int n = 0; n < array.Length; n++)
-					array[n] = base.SpatialTransform.ConvertToDestination(_srcPts[n]) + offset;
+					array[n] = base.SpatialTransform.ConvertToDestination(_sourcePoints[n]) + offset;
 			}
 			else
 			{
 				for (int n = 0; n < array.Length; n++)
-					array[n] = _srcPts[n] + offset;
+					array[n] = _sourcePoints[n] + offset;
 			}
 			return array;
 		}

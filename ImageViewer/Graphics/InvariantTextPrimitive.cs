@@ -158,6 +158,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		//TODO (CR May09): remove, use Location in base InvariantPrimitive.
+
 		PointF ITextGraphic.Location
 		{
 			get { return this.AnchorPoint; }

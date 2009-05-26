@@ -187,13 +187,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the line style.
+		/// Gets or sets the line style to be used on the shaft of the arrow.
 		/// </summary>
 		public LineStyle LineStyle
 		{
 			get { return _shaft.LineStyle; }
 			set { _shaft.LineStyle = value; }
 		}
+
+		//TODO (CR May09): update comments.
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this arrow is visible.
@@ -208,16 +210,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		//TODO (CR May09): do we need this?  Composite graphic does the same thing.
+
 		/// <summary>
 		/// Gets the point on the arrow closest to the specified <paramref name="point"/>.
 		/// </summary>
 		public override PointF GetClosestPoint(PointF point)
 		{
-			PointF pointS = new PointF();
-			double distanceS = Vector.DistanceFromPointToLine(point, _shaft.Pt1, _shaft.Pt2, ref pointS);
-			PointF pointA = _arrowhead.GetClosestPoint(point);
-			double distanceA = Vector.Distance(point, pointA);
-			return distanceS < distanceA ? pointS : pointA;
+			PointF pointShaft = new PointF();
+			double distanceShaft = Vector.DistanceFromPointToLine(point, _shaft.Pt1, _shaft.Pt2, ref pointShaft);
+			PointF pointArrowhead = _arrowhead.GetClosestPoint(point);
+			double distanceArrowhead = Vector.Distance(point, pointArrowhead);
+			return distanceShaft < distanceArrowhead ? pointShaft : pointArrowhead;
 		}
 
 		/// <summary>

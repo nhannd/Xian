@@ -49,14 +49,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public class InvariantArrowheadGraphic : CompositeGraphic, IVectorGraphic
 	{
 		[CloneIgnore]
-		private InvariantLinePrimitive _sideL;
+		private InvariantLinePrimitive _left;
 
 		[CloneIgnore]
-		private InvariantLinePrimitive _sideR;
+		private InvariantLinePrimitive _right;
 
 		private PointF _point = PointF.Empty;
 		private float _height = 15f;
-		private float _widthAngle = 30f;
+		private float _sweepAngle = 30f;
 		private float _angle = 0f;
 
 		/// <summary>
@@ -77,16 +77,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void Initialize()
 		{
-			if (_sideL == null)
+			if (_left == null)
 			{
-				base.Graphics.Add(_sideL = new InvariantLinePrimitive());
-				_sideL.InvariantBottomRight = PointF.Empty;
+				base.Graphics.Add(_left = new InvariantLinePrimitive());
+				_left.InvariantBottomRight = PointF.Empty;
 			}
 
-			if (_sideR == null)
+			if (_right == null)
 			{
-				base.Graphics.Add(_sideR = new InvariantLinePrimitive());
-				_sideR.InvariantBottomRight = PointF.Empty;
+				base.Graphics.Add(_right = new InvariantLinePrimitive());
+				_right.InvariantBottomRight = PointF.Empty;
 			}
 
 			RecomputeArrow();
@@ -98,8 +98,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			IList<IGraphic> lines = CollectionUtils.Select(base.Graphics,
 			                                               delegate(IGraphic test) { return test is InvariantLinePrimitive; });
 
-			_sideL = lines[0] as InvariantLinePrimitive;
-			_sideR = lines[1] as InvariantLinePrimitive;
+			_left = lines[0] as InvariantLinePrimitive;
+			_right = lines[1] as InvariantLinePrimitive;
 
 			Initialize();
 		}
@@ -109,8 +109,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public Color Color
 		{
-			get { return _sideL.Color; }
-			set { _sideL.Color = _sideR.Color = value; }
+			get { return _left.Color; }
+			set { _left.Color = _right.Color = value; }
 		}
 
 		/// <summary>
@@ -118,8 +118,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public LineStyle LineStyle
 		{
-			get { return _sideL.LineStyle; }
-			set { _sideL.LineStyle = _sideR.LineStyle = value; }
+			get { return _left.LineStyle; }
+			set { _left.LineStyle = _right.LineStyle = value; }
 		}
 
 		/// <summary>
@@ -176,6 +176,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		//TODO (CR May09): Length
+
 		/// <summary>
 		/// Gets or sets the height of the arrowhead.
 		/// </summary>
@@ -201,14 +203,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <remarks>
 		/// The width angle is the inner angle formed by the two sides of the arrowhead.
 		/// </remarks>
-		public float WidthAngle
+		public float SweepAngle
 		{
-			get { return _widthAngle; }
+			get { return _sweepAngle; }
 			set
 			{
-				if (!FloatComparer.AreEqual(_widthAngle, value))
+				if (!FloatComparer.AreEqual(_sweepAngle, value))
 				{
-					_widthAngle = value;
+					_sweepAngle = value;
 					RecomputeArrow();
 				}
 			}
@@ -220,9 +222,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override PointF GetClosestPoint(PointF point)
 		{
 			PointF pointL = new PointF();
-			double distanceL = Vector.DistanceFromPointToLine(point, _sideL.TopLeft, _sideL.BottomRight, ref pointL);
+			double distanceL = Vector.DistanceFromPointToLine(point, _left.TopLeft, _left.BottomRight, ref pointL);
 			PointF pointR = new PointF();
-			double distanceR = Vector.DistanceFromPointToLine(point, _sideR.TopLeft, _sideR.BottomRight, ref pointR);
+			double distanceR = Vector.DistanceFromPointToLine(point, _right.TopLeft, _right.BottomRight, ref pointR);
 			return distanceL < distanceR ? pointL : pointR;
 		}
 
@@ -231,21 +233,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		protected void RecomputeArrow()
 		{
-			float height = (float) (_height*Math.Tan(Math.PI*_widthAngle/360));
+			float height = (float) (_height*Math.Tan(Math.PI*_sweepAngle/360));
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
 				PointF pt = this.Point;
 
-				_sideL.AnchorPoint = pt;
-				_sideL.InvariantTopLeft = new PointF(-_height, -height);
-				_sideL.SpatialTransform.CenterOfRotationXY = pt;
-				_sideL.SpatialTransform.RotationXY = (int) _angle;
+				_left.AnchorPoint = pt;
+				_left.InvariantTopLeft = new PointF(-_height, -height);
+				_left.SpatialTransform.CenterOfRotationXY = pt;
+				_left.SpatialTransform.RotationXY = (int) _angle;
 
-				_sideR.AnchorPoint = pt;
-				_sideR.InvariantTopLeft = new PointF(-_height, height);
-				_sideR.SpatialTransform.CenterOfRotationXY = pt;
-				_sideR.SpatialTransform.RotationXY = (int) _angle;
+				_right.AnchorPoint = pt;
+				_right.InvariantTopLeft = new PointF(-_height, height);
+				_right.SpatialTransform.CenterOfRotationXY = pt;
+				_right.SpatialTransform.RotationXY = (int) _angle;
 			}
 			finally
 			{

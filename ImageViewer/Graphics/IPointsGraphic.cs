@@ -38,7 +38,11 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Graphics {
 	public interface IPointsGraphic : IVectorGraphic 
 	{
+		//TODO (CR May09): can we use IPointsList and it's events?
+
 		IList<PointF> Points { get; }
+
+		//TODO (CR May09): shouldn't be here; put on tool code.
 
 		/// <summary>
 		/// Gets the index of the next closest point.

@@ -91,9 +91,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _decoratedGraphic; }
 		}
 
-		public override Roi CreateRoiInformation()
+		public override Roi CreateRoi()
 		{
-			return this.DecoratedGraphic.CreateRoiInformation();
+			return this.DecoratedGraphic.CreateRoi();
 		}
 	}
 }

@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return this.Rectangle.Contains(point);
 		}
 
-		public override Roi CreateRoiInformation()
+		public override Roi CreateRoi()
 		{
 			return new RectangularRoi(this);
 		}

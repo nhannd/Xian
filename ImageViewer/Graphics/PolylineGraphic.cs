@@ -301,7 +301,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return base.GetClosestPoint(point);
 		}
 
-		public override Roi CreateRoiInformation()
+		public override Roi CreateRoi()
 		{
 			if (_points.Count == 2 && !_roiClosedOnly)
 			{
@@ -311,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				return new PolygonalRoi(this);
 			}
-			return base.CreateRoiInformation();
+			return base.CreateRoi();
 		}
 
 		private void OnPointsItemAdded(object sender, IndexEventArgs e)

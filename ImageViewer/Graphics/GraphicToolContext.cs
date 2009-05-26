@@ -48,6 +48,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public interface IGraphicToolContext : IToolContext
 	{
+		//TODO (CR May09): revert so there's just Graphic
+
 		/// <summary>
 		/// Gets the top-level <see cref="IGraphic"/> that the tool applies to.
 		/// </summary>

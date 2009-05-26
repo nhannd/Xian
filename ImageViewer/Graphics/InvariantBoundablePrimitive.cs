@@ -184,15 +184,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return RectangleUtilities.ConvertToPositiveRectangle(this.Rectangle); }
 		}
 
-		RectangleF IBoundableGraphic.Rectangle
-		{
-			get { return this.Rectangle; }
-		}
-
 		/// <summary>
 		/// Gets the rectangle that defines a <see cref="BoundableGraphic"/>.
 		/// </summary>
-		protected RectangleF Rectangle
+		public RectangleF Rectangle
 		{
 			get
 			{
@@ -218,6 +213,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			return new PointF(base.AnchorPoint.X + pt[0].X, base.AnchorPoint.Y + pt[0].Y);
 		}
+
+		//TODO (CR May09): hook these up, not explicit.
 
 		#region IBoundableGraphic Members
 

@@ -39,6 +39,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public interface ILineSegmentGraphic : IVectorGraphic
 	{
+		//TODO (CR May09): although this is legacy naming, we should really not use a contraction.
+
 		/// <summary>
 		/// Gets or sets one endpoint of the line in either source or destination coordinates.
 		/// </summary>

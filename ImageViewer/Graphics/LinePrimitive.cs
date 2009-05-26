@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public class LinePrimitive : VectorGraphic, ILineSegmentGraphic, IPointsGraphic
 	{
+		//TODO (CR May09): try using PointsList with a count in the constructor.
+
 		#region Private fields
 		
 		private PointF _srcPt1;
