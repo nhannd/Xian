@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Delete()
 		{
-			IGraphic graphic = base.Context.OwnerGraphic;
+			IGraphic graphic = base.Context.Graphic;
 			if (graphic == null)
 				return;
 
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void DeleteAll()
 		{
-			IGraphic graphic = base.Context.OwnerGraphic;
+			IGraphic graphic = base.Context.Graphic;
 			if (graphic == null)
 				return;
 

@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="image">The image on which to display the overlay. The image must implement <see cref="IOverlayGraphicsProvider"/>.</param>
 		public void Flash(IPresentationImage image)
 		{
-			_doFlashDelegate.Invoke(image, SynchronizationContext.Current);
+			_doFlashDelegate.Invoke(image, null);
 		}
 
 		/// <summary>

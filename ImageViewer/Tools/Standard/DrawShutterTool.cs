@@ -379,8 +379,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				polyLine.CoordinateSystem = CoordinateSystem.Source;
 
 				List<Point> points = new List<Point>();
-				for (int i = 0; i < polyLine.Count; ++i)
-					points.Add(new Point((int)polyLine[i].X, (int)polyLine[i].Y));
+				for (int i = 0; i < polyLine.Points.Count; ++i)
+					points.Add(new Point((int)polyLine.Points[i].X, (int)polyLine.Points[i].Y));
 
 				polyLine.ResetCoordinateSystem();
 				shutter = new PolygonalShutter(points);

@@ -51,6 +51,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if(pointsGraphic != null)
 			{
 				pointsGraphic.Points.PointAdded += OnPolygonGraphicClosed;
+				pointsGraphic.Points.PointChanged += OnPolygonGraphicClosed;
+				pointsGraphic.Points.PointRemoved += OnPolygonGraphicClosed;
+				pointsGraphic.Points.PointsCleared += OnPolygonGraphicClosed;
 			}
 		}
 

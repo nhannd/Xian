@@ -412,12 +412,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			callout.LineStyle = LineStyle.Solid;
 			callout.ShowArrowhead = true;
 
-			VerticesControlGraphic controlGraphic = new VerticesControlGraphic(callout);
+			AnchorPointControlGraphic controlGraphic = new AnchorPointControlGraphic(callout);
 			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(controlGraphic);
 			statefulGraphic.State = statefulGraphic.CreateInactiveState();
 
 			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);
-			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic, contextGraphic.Subject)).Actions;
+			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic)).Actions;
 
 			return contextGraphic;
 		}
@@ -437,7 +437,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			statefulGraphic.State = statefulGraphic.CreateInactiveState();
 
 			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);
-			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic, contextGraphic.Subject)).Actions;
+			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic)).Actions;
 
 			return contextGraphic;
 		}

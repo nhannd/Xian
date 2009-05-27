@@ -30,12 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// all the specified points.</para>
 	/// </remarks>
 	[Cloneable]
+	[DicomSerializableGraphicAnnotation(typeof(CurveGraphicAnnotationSerializer))]
 	public class CurvePrimitive : VectorGraphic, IPointsGraphic
 	{
 		[CloneIgnore]
@@ -59,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public CurvePrimitive()
 		{
 			_points = new PointsList(this);
+			Initialize();
 		}
 
 		/// <summary>
@@ -70,6 +72,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_points = new PointsList(source._points, this);
 		}
 
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			Initialize();
+		}
+
 		public IPointsList Points
 		{
 			get { return _points; }
@@ -78,6 +86,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override RectangleF BoundingBox
 		{
 			get { return RectangleUtilities.ComputeBoundingRectangle(_points); }
+		}
+
+		private void Initialize()
+		{
+			_points.PointAdded += OnPointsChanged;
+			_points.PointChanged += OnPointsChanged;
+			_points.PointRemoved += OnPointsChanged;
+			_points.PointsCleared += OnPointsChanged;
+		}
+
+		private void OnPointsChanged(object sender, EventArgs e)
+		{
+			base.NotifyPropertyChanged("Points");
 		}
 
 		/// <summary>
@@ -152,7 +173,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				_points[n] = _points[n] + delta;
 			}
-			base.NotifyPropertyChanged("Points");
 		}
 
 		private static PointF[] GetCurvePoints(IPointsList points)

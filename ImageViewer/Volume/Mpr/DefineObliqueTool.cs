@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				RemoveGraphicBuilder();
 
-				_polyLine.AnchorPointChangedEvent -= OnAnchorPointChanged;
+				_polyLine.Points.PointChanged -= OnAnchorPointChanged;
 				_polyLine.Drawing -= OnPolyLineDrawing;
 				_polyLine.Dispose();
 				_polyLine = null;
@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			if (_graphicBuilder.Start(mouseInformation))
 			{
-				_polyLine.AnchorPointChangedEvent += OnAnchorPointChanged;
+				_polyLine.Points.PointChanged += OnAnchorPointChanged;
 				_polyLine.Drawing += OnPolyLineDrawing;
 				base.ActivationChanged += OnActivationChanged;
 				return true;
@@ -206,8 +206,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 #if true
 			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
 
-			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine[0]);
-			PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine[1]);
+			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.Points[0]);
+			PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine.Points[1]);
 
 			_polyLine.ResetCoordinateSystem();
 
@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private Vector3D _startPatient;
 		private Vector3D _endPatient;
 
-		private void OnAnchorPointChanged(object sender, ListEventArgs<PointF> e)
+		private void OnAnchorPointChanged(object sender, IndexEventArgs e)
 		{
 #if false  // Code moved to OnPolyLineDrawing above, enable this to see the erratic behavior
 			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
