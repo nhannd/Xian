@@ -40,7 +40,7 @@ using ClearCanvas.Enterprise.Common.Caching;
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class ListSettingsPropertiesRequest : DataContractBase, ICacheKeyProvider
+	public class ListSettingsPropertiesRequest : DataContractBase, IDefinesCacheKey
 	{
 		public ListSettingsPropertiesRequest(SettingsGroupDescriptor group)
 		{
@@ -50,7 +50,7 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 		[DataMember]
 		public SettingsGroupDescriptor Group;
 
-        #region ICacheKeyProvider Members
+        #region IDefinesCacheKey Members
 
         public string GetCacheKey()
         {

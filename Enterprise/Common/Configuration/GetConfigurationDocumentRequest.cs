@@ -38,18 +38,18 @@ using ClearCanvas.Enterprise.Common.Caching;
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class GetConfigurationDocumentRequest : ConfigurationDocumentRequestBase, ICacheKeyProvider
+	public class GetConfigurationDocumentRequest : ConfigurationDocumentRequestBase, IDefinesCacheKey
 	{
 		public GetConfigurationDocumentRequest(ConfigurationDocumentKey documentKey)
 			:base(documentKey)
 		{
 		}
 
-        #region ICacheKeyProvider Members
+        #region IDefinesCacheKey Members
 
-        string ICacheKeyProvider.GetCacheKey()
+        string IDefinesCacheKey.GetCacheKey()
         {
-            return ((ICacheKeyProvider)this.DocumentKey).GetCacheKey();
+            return ((IDefinesCacheKey)this.DocumentKey).GetCacheKey();
         }
 
         #endregion

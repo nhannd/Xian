@@ -44,7 +44,7 @@ namespace ClearCanvas.Enterprise.Common
                     // if we didn't succeed in getting a cache key, this is an error
                     if (cacheKey == null)
                         throw new InvalidOperationException(
-                            string.Format("{0} is cacheable but the request class does not implement ICacheKeyProvider.", response.GetType().FullName));
+                            string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", response.GetType().FullName));
 
                     cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
                 }
@@ -56,9 +56,9 @@ namespace ClearCanvas.Enterprise.Common
 
         private string GetCacheKey(object request)
         {
-            if (request is ICacheKeyProvider)
+            if (request is IDefinesCacheKey)
             {
-                return (request as ICacheKeyProvider).GetCacheKey();
+                return (request as IDefinesCacheKey).GetCacheKey();
             }
             // for now, the request must implement an interface to get a cache key
             // in future, we could add some automatic serialization to turn it into a cache key

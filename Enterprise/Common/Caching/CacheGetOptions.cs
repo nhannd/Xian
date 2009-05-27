@@ -4,19 +4,14 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common.Caching
 {
-    public class CacheGetOptions
-    {
-        private string _region = "";
-
-        public CacheGetOptions(string region)
-        {
-            _region = region;
-        }
-
-        public string Region
-        {
-            get { return _region; }
-            set { _region = value; }
+	/// <summary>
+	/// Encapsulates options for the <see cref="ICacheClient.Get"/> method.
+	/// </summary>
+    public class CacheGetOptions : CacheOptionsBase
+	{
+		public CacheGetOptions(string region)
+			: base(region)
+		{
         }
     }
 }

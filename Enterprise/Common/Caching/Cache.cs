@@ -40,8 +40,6 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// <remarks>
 		/// This method is safe for concurrent use by multiple threads.
 		/// </remarks>
-		/// <param name="args"></param>
-		/// <returns></returns>
 		public static ICacheClient CreateClient(string cacheID)
 		{
             // a cacheID is required!
@@ -56,7 +54,14 @@ namespace ClearCanvas.Enterprise.Common.Caching
 			// create specified cache
             // this call assumes the provider.CreateClient method is thread-safe, which
             // is the responsibility of the provider!
-            return provider.CreateClient(cacheID);
+            ICacheClient client = provider.CreateClient(cacheID);
+
+			// if debug logging enabled, wrap client in a logging decorator set at Debug level
+			if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+			{
+				client = new CacheClientLoggingDecorator(client, LogLevel.Debug);
+			}
+			return client;
 		}
 
         /// <summary>
@@ -70,8 +75,8 @@ namespace ClearCanvas.Enterprise.Common.Caching
 			// determine the provider class
 			CacheProviderExtensionPoint point = new CacheProviderExtensionPoint();
 			ExtensionInfo extension = CollectionUtils.FirstElement(point.ListExtensions(filter));
-			if(extension == null)
-				throw new Exception();	//TODO use typed exception
+			if (extension == null)
+				throw new CacheException("No cache provider extension found, or those that exist do not support all required features.");
 
 			Type providerClass = extension.ExtensionClass;
 

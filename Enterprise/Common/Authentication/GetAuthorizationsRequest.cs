@@ -39,7 +39,7 @@ using ClearCanvas.Enterprise.Common.Caching;
 namespace ClearCanvas.Enterprise.Common.Authentication
 {
 	[DataContract]
-    public class GetAuthorizationsRequest : DataContractBase, ICacheKeyProvider
+    public class GetAuthorizationsRequest : DataContractBase, IDefinesCacheKey
 	{
 		public GetAuthorizationsRequest(string user, SessionToken sessionToken)
 		{
@@ -59,9 +59,9 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		[DataMember]
 		public SessionToken SessionToken;
 
-        #region ICacheKeyProvider Members
+        #region IDefinesCacheKey Members
 
-        string ICacheKeyProvider.GetCacheKey()
+        string IDefinesCacheKey.GetCacheKey()
         {
             return string.Format("{0}:{1}", UserName, SessionToken.Id);
         }

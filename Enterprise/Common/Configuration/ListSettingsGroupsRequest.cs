@@ -39,9 +39,9 @@ using ClearCanvas.Enterprise.Common.Caching;
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class ListSettingsGroupsRequest : DataContractBase, ICacheKeyProvider
+	public class ListSettingsGroupsRequest : DataContractBase, IDefinesCacheKey
 	{
-        #region ICacheKeyProvider Members
+        #region IDefinesCacheKey Members
 
         public string GetCacheKey()
         {

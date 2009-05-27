@@ -39,7 +39,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Enterprise.Common.Configuration
 {
 	[DataContract]
-	public class ConfigurationDocumentKey : DataContractBase, ICacheKeyProvider
+	public class ConfigurationDocumentKey : DataContractBase, IDefinesCacheKey
 	{
 		private string _documentName;
 		private Version _version;
@@ -82,9 +82,9 @@ namespace ClearCanvas.Enterprise.Common.Configuration
 			private set { _instanceKey = value; }
 		}
 
-        #region ICacheKeyProvider Members
+        #region IDefinesCacheKey Members
 
-        string ICacheKeyProvider.GetCacheKey()
+        string IDefinesCacheKey.GetCacheKey()
         {
             return string.Format("{0}:{1}:{2}:{3}",
                 this.DocumentName,

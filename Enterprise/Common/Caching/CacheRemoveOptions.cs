@@ -4,19 +4,18 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common.Caching
 {
-    public class CacheRemoveOptions
+	/// <summary>
+	/// Encapsulates options for the <see cref="ICacheClient.Remove"/> method.
+	/// </summary>
+	public class CacheRemoveOptions : CacheOptionsBase
     {
-        private string _region = "";
-
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="region"></param>
         public CacheRemoveOptions(string region)
+			:base(region)
         {
-            _region = region;
-        }
-
-        public string Region
-        {
-            get { return _region; }
-            set { _region = value; }
         }
     }
 }

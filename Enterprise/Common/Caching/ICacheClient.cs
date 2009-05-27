@@ -18,6 +18,7 @@ namespace ClearCanvas.Enterprise.Common.Caching
 		/// Gets the object at the specified key from the cache, or null if the key does not exist.
 		/// </summary>
 		/// <param name="key"></param>
+		/// <param name="options"></param>
 		/// <returns></returns>
 		object Get(string key, CacheGetOptions options);
 
@@ -35,7 +36,8 @@ namespace ClearCanvas.Enterprise.Common.Caching
         /// exist.
 		/// </summary>
 		/// <param name="key">The Key of the Item in the Cache to remove.</param>
-        void Remove(string key, CacheRemoveOptions options);
+		/// <param name="options"></param>
+		void Remove(string key, CacheRemoveOptions options);
 
         /// <summary>
         /// Gets a value indicating whether the specified region exists.
