@@ -44,7 +44,7 @@ namespace ClearCanvas.Enterprise.Common
 	#region RemoteServiceProviderArgs class
 
 	/// <summary>
-	/// Arguments that are passed to a <see cref="RemoteServiceProviderBase{T}"/>.
+	/// Encapsulates options that confgiure a <see cref="RemoteServiceProviderBase{T}"/>.
 	/// </summary>
 	public class RemoteServiceProviderArgs
 	{
@@ -54,6 +54,7 @@ namespace ClearCanvas.Enterprise.Common
 		private X509CertificateValidationMode _certificateValidationMode;
 		private X509RevocationMode _revocationMode;
         private IUserCredentialsProvider _userCredentialsProvider;
+		private string _failoverBaseUrl;
 
         /// <summary>
         /// Constructor
@@ -95,6 +96,15 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			get { return _baseUrl; }
 			set { _baseUrl = value; }
+		}
+
+		/// <summary>
+		/// Failover base URL shared by all services in the service layer.
+		/// </summary>
+		public string FailoverBaseUrl
+		{
+			get { return _failoverBaseUrl; }
+			set { _failoverBaseUrl = value; }
 		}
 
 		/// <summary>
@@ -160,33 +170,47 @@ namespace ClearCanvas.Enterprise.Common
 
 	#endregion
 
-    public interface IRemoteServiceProxy
-    {
-        object GetChannel();
-    }
+	#region RemoteServiceProxyMixin class
 
-    internal class RemoteServiceProxyMixin : IRemoteServiceProxy
+	/// <summary>
+	/// Remote service proxy mix-in class.
+	/// </summary>
+	internal class RemoteServiceProxyMixin : IRemoteServiceProxy
     {
-        private object _channel;
+        private readonly object _channel;
 
         internal RemoteServiceProxyMixin(object channel)
         {
             _channel = channel;
         }
 
-        object IRemoteServiceProxy.GetChannel()
+		/// <summary>
+		/// Gets the channel object.
+		/// </summary>
+		/// <returns></returns>
+		object IRemoteServiceProxy.GetChannel()
         {
             return _channel;
         }
-    }
+	}
 
-    internal class DisposableInterceptor : IInterceptor
+	#endregion
+
+	#region DisposableInterceptor
+
+	/// <summary>
+	/// Interceptor that ensure <see cref="IDisposable"/> is honoured.
+	/// </summary>
+	internal class DisposableInterceptor : IInterceptor
     {
         public object Intercept(IInvocation invocation, params object[] args)
         {
             // if the method being called is IDisposable.Dispose()
             if (invocation.Method.DeclaringType == typeof(IDisposable))
             {
+				//TODO before calling dispose, we should check if the target implements
+				// IClientChannel, and if so, call Close()
+
                 // invoke the method directly on the target - do not proceed along interceptor chain
                 IDisposable disposable = (IDisposable)invocation.InvocationTarget;
                 disposable.Dispose();
@@ -198,18 +222,18 @@ namespace ClearCanvas.Enterprise.Common
                 return invocation.Proceed(args);
             }
         }
-    }
+	}
+
+	#endregion
 
 	/// <summary>
 	/// Abstract base class for remote service provider extensions.
 	/// </summary>
-	/// <typeparam name="TServiceLayerAttribute">Attribute that identifiers the service layer to which a service belongs.</typeparam>
-	public abstract class RemoteServiceProviderBase<TServiceLayerAttribute> : IServiceProvider
-		where TServiceLayerAttribute : Attribute
+	public abstract class RemoteServiceProviderBase : IServiceProvider
 	{
 		private readonly RemoteServiceProviderArgs _args;
-        private readonly ProxyGenerator _proxyGenerator;
-        private List<IInterceptor> _interceptors;
+		private readonly ProxyGenerator _proxyGenerator;
+		private List<IInterceptor> _interceptors;
 
 		/// <summary>
 		/// Constructor.
@@ -218,61 +242,54 @@ namespace ClearCanvas.Enterprise.Common
 		public RemoteServiceProviderBase(RemoteServiceProviderArgs args)
 		{
 			_args = args;
-            _proxyGenerator = new ProxyGenerator();
-        }
+			_proxyGenerator = new ProxyGenerator();
+		}
 
-        #region IServiceProvider Members
+		#region IServiceProvider
 
-        public object GetService(Type serviceContract)
-        {
-            // check if the service is provided by this provider
-            if (CanProvideService(serviceContract))
-                return null;
+		public object GetService(Type serviceContract)
+		{
+			// check if the service is provided by this provider
+			if (CanProvideService(serviceContract))
+				return null;
 
-            AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceContract);
-            bool authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
+			// create the channel
+			// it is unfortunate that we cannot defer channel creation until an interceptor
+			// actually Proceed()s to it, but DynamicProxy1 does not support this (DP2 does!)
+			object channel = CreateChannel(serviceContract, false);
 
-            // create the channel
-            // it is unfortunate that we cannot defer channel creation until an interceptor
-            // actually Proceed()s to it, but DynamicProxy1 does not support this (DP2 does!)
-            object channel = CreateChannel(serviceContract, authenticationRequired);
-
-            Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticationRequired={1}.",
-                         serviceContract.FullName, authenticationRequired);
-            //return channel;
-            return CreateChannelProxy(serviceContract, channel);
-        }
+			// create an AOP proxy around the channel, and return that
+			return CreateChannelProxy(serviceContract, channel);
+		}
 
 		#endregion
 
 		#region Protected API
 
-        protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
-        {
-            // this must be added as the outer-most interceptor
-            // it is basically a hack to prevent the interception chain from acting on a call to Dispose(),
-            // because Dispose() is not a service operation
-            interceptors.Add(new DisposableInterceptor());
-
-            if (Caching.Cache.IsSupported())
-            {
-                // add response-caching client-side advice
-                interceptors.Add(new ResponseCachingClientAdvice());
-            }
-        }
-
-        /// <summary>
+		/// <summary>
 		/// Gets a value indicating whether this service provider provides the specified service.
 		/// </summary>
-		/// <remarks>
-		/// The default implementation is based on the service contract being marked with the <see cref="TServiceLayerAttribute"/>
-		/// attribute.  Override this method to customize which services are provided by this provider.
-		/// </remarks>
-		/// <param name="serviceType"></param>
-		/// <returns></returns>
-		protected virtual bool CanProvideService(Type serviceType)
+		protected abstract bool CanProvideService(Type serviceType);
+
+		/// <summary>
+		/// Applies AOP interceptors to the proxy.
+		/// </summary>
+		/// <param name="interceptors"></param>
+		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
 		{
-			return !AttributeUtils.HasAttribute<TServiceLayerAttribute>(serviceType);
+			// this must be added as the outer-most interceptor
+			// it is basically a hack to prevent the interception chain from acting on a call to Dispose(),
+			// because Dispose() is not a service operation
+			interceptors.Add(new DisposableInterceptor());
+
+			if (Caching.Cache.IsSupported())
+			{
+				// add response-caching client-side advice
+				interceptors.Add(new ResponseCachingClientAdvice());
+			}
+
+			// add fail-over advice inside of caching advice
+			interceptors.Add(new FailoverClientAdvice(this));
 		}
 
 		/// <summary>
@@ -293,7 +310,7 @@ namespace ClearCanvas.Enterprise.Common
 													_args.CertificateValidationMode,
 													_args.RevocationMode));
 
-			if(authenticationRequired)
+			if (authenticationRequired)
 			{
 				factory.Credentials.UserName.UserName = this.UserName;
 				factory.Credentials.UserName.Password = this.Password;
@@ -315,48 +332,93 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		protected virtual string Password
 		{
-            get { return _args.UserCredentialsProvider == null ? "" : _args.UserCredentialsProvider.SessionTokenId; }
-        }
+			get { return _args.UserCredentialsProvider == null ? "" : _args.UserCredentialsProvider.SessionTokenId; }
+		}
 
 		#endregion
 
-		private object CreateChannel(Type serviceType, bool authenticationRequired)
+		#region Helpers
+
+		internal object CreateChannel(Type serviceContract, bool useFailover)
 		{
-			Uri uri = new Uri(new Uri(_args.BaseUrl), serviceType.FullName);
-			Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });
+			AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceContract);
+			bool authenticationRequired = authAttr == null ? true : authAttr.AuthenticationRequired;
+
+			Uri uri = new Uri(new Uri(useFailover ? _args.FailoverBaseUrl : _args.BaseUrl), serviceContract.FullName);
+			Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceContract });
 
 			ChannelFactory channelFactory = GetChannelFactory(channelFactoryClass, uri, authenticationRequired);
 
 			// invoke the CreateChannel method on the factory
 			MethodInfo createChannelMethod = channelFactory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
-			return createChannelMethod.Invoke(channelFactory, null);
+			object channel = createChannelMethod.Invoke(channelFactory, null);
+			Platform.Log(LogLevel.Debug, "Created WCF channel instance for service {0}, authenticationRequired={1}.",
+						 serviceContract.FullName, authenticationRequired);
+			return channel;
 		}
 
-        private object CreateChannelProxy(Type serviceContract, object channel)
-        {
-            // get list of interceptors if not yet created
-            if (_interceptors == null)
-            {
-                _interceptors = new List<IInterceptor>();
-                ApplyInterceptors(_interceptors);
-            }
+		private object CreateChannelProxy(Type serviceContract, object channel)
+		{
+			// get list of interceptors if not yet created
+			if (_interceptors == null)
+			{
+				_interceptors = new List<IInterceptor>();
+				ApplyInterceptors(_interceptors);
+			}
 
-            // build AOP intercept chain
-            AopInterceptorChain aopIntercept = new AopInterceptorChain(_interceptors);
+			// build AOP intercept chain
+			AopInterceptorChain aopIntercept = new AopInterceptorChain(_interceptors);
 
-            GeneratorContext genContext = new GeneratorContext();
-            genContext.AddMixinInstance(new RemoteServiceProxyMixin(channel));
+			GeneratorContext genContext = new GeneratorContext();
+			genContext.AddMixinInstance(new RemoteServiceProxyMixin(channel));
 
-            // create and return proxy
-            // note: _proxyGenerator does internal caching based on service contract
-            // so subsequent calls based on the same contract will be fast
-            // note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
-            object proxy = _proxyGenerator.CreateCustomProxy(
-                new Type[] { serviceContract, typeof(IDisposable) },
-                aopIntercept,
-                channel,
-                genContext);
-            return proxy;
-        }
+			// create and return proxy
+			// note: _proxyGenerator does internal caching based on service contract
+			// so subsequent calls based on the same contract will be fast
+			// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
+			object proxy = _proxyGenerator.CreateCustomProxy(
+				new Type[] { serviceContract, typeof(IDisposable) },
+				aopIntercept,
+				channel,
+				genContext);
+			return proxy;
+		}
+
+		#endregion
+	}
+
+	/// <summary>
+	/// Abstract base class for remote service provider extensions.
+	/// </summary>
+	/// <typeparam name="TServiceLayerAttribute">Attribute that identifiers the service layer to which a service belongs.</typeparam>
+	public abstract class RemoteServiceProviderBase<TServiceLayerAttribute> : RemoteServiceProviderBase
+		where TServiceLayerAttribute : Attribute
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="args"></param>
+		public RemoteServiceProviderBase(RemoteServiceProviderArgs args)
+			: base(args)
+		{
+		}
+
+		#region Protected API
+
+		/// <summary>
+		/// Gets a value indicating whether this service provider provides the specified service.
+		/// </summary>
+		/// <remarks>
+		/// The default implementation is based on the service contract being marked with the <see cref="TServiceLayerAttribute"/>
+		/// attribute.  Override this method to customize which services are provided by this provider.
+		/// </remarks>
+		/// <param name="serviceType"></param>
+		/// <returns></returns>
+		protected override bool CanProvideService(Type serviceType)
+		{
+			return !AttributeUtils.HasAttribute<TServiceLayerAttribute>(serviceType);
+		}
+
+		#endregion
 	}
 }

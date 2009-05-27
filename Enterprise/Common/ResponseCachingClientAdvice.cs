@@ -9,7 +9,7 @@ namespace ClearCanvas.Enterprise.Common
 	/// Client-side advice to implement transparent caching on the client side,
 	/// where the server returns an appropriate <see cref="ResponseCachingDirective"/>.
 	/// </summary>
-    public class ResponseCachingClientAdvice : IInterceptor
+    class ResponseCachingClientAdvice : IInterceptor
     {
         #region IInterceptor Members
 

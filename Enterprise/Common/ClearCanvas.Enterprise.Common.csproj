@@ -121,6 +121,8 @@
     <Compile Include="Configuration\ImportSettingsGroupRequest.cs" />
     <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />
+    <Compile Include="FailoverClientAdvice.cs" />
+    <Compile Include="IRemoteServiceProxy.cs" />
     <Compile Include="ResponseCachingClientAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
