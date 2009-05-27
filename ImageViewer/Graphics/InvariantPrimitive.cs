@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_location = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_locationChangedEvent, this, new PointChangedEventArgs(this.Location));
+				this.OnLocationChanged();
 				base.NotifyPropertyChanged("Location");
 			}
 		}
@@ -112,6 +112,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			add { _locationChangedEvent += value; }
 			remove { _locationChangedEvent -= value; }
+		}
+
+		protected virtual void OnLocationChanged()
+		{
+			EventsHelper.Fire(_locationChangedEvent, this, new PointChangedEventArgs(this.Location));
 		}
 
 		/// <summary>

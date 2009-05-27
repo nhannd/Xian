@@ -45,6 +45,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public abstract class InvariantBoundablePrimitive : InvariantPrimitive, IBoundableGraphic
 	{
+		private event EventHandler<PointChangedEventArgs> _topLeftChanged;
+		private event EventHandler<PointChangedEventArgs> _bottomRightChanged;
+
 		private PointF _topLeft = new PointF(0,0);
 		private PointF _bottomRight = new PointF(0,0);
 
@@ -98,7 +101,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public PointF InvariantTopLeft
 		{
 			get { return _topLeft; }
-			set { _topLeft = value; }
+			set
+			{
+				if (_topLeft != value)
+				{
+					_topLeft = value;
+					this.OnTopLeftChanged();
+				}
+			}
 		}
 
 		/// <summary>
@@ -144,7 +154,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public PointF InvariantBottomRight
 		{
 			get { return _bottomRight; }
-			set { _bottomRight = value; }
+			set
+			{
+				if (_bottomRight != value)
+				{
+					_bottomRight = value;
+					this.OnBottomRightChanged();
+				}
+			}
 		}
 
 		/// <summary>
@@ -177,6 +194,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public event EventHandler<PointChangedEventArgs> TopLeftChanged
+		{
+			add { _topLeftChanged += value; }
+			remove { _topLeftChanged -= value; }
+		}
+
+		public event EventHandler<PointChangedEventArgs> BottomRightChanged
+		{
+			add { _bottomRightChanged += value; }
+			remove { _bottomRightChanged -= value; }
+		}
+
 		public abstract bool Contains(PointF point);
 
 		public override RectangleF BoundingBox
@@ -193,6 +222,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				return new RectangleF(this.TopLeft.X, this.TopLeft.Y, this.Width, this.Height);
 			}
+		}
+
+		protected override void OnLocationChanged()
+		{
+			this.OnTopLeftChanged();
+			this.OnBottomRightChanged();
+			base.OnLocationChanged();
 		}
 
 		private PointF ConvertInvariantToDestination(PointF invariantPoint)
@@ -214,21 +250,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return new PointF(base.Location.X + pt[0].X, base.Location.Y + pt[0].Y);
 		}
 
-		// TODO (CR May09): hook these up, not explicit.
+		protected virtual void OnTopLeftChanged()
+		{
+			EventsHelper.Fire(_topLeftChanged, this, new PointChangedEventArgs(this.TopLeft));
+		}
+
+		protected virtual void OnBottomRightChanged()
+		{
+			EventsHelper.Fire(_bottomRightChanged, this, new PointChangedEventArgs(this.BottomRight));
+		}
 
 		#region IBoundableGraphic Members
-
-		event EventHandler<PointChangedEventArgs> IBoundableGraphic.TopLeftChanged
-		{
-			add { }
-			remove { }
-		}
-
-		event EventHandler<PointChangedEventArgs> IBoundableGraphic.BottomRightChanged
-		{
-			add { }
-			remove { }
-		}
 
 		PointF IBoundableGraphic.TopLeft
 		{

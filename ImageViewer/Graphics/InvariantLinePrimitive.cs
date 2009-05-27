@@ -51,6 +51,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public class InvariantLinePrimitive : InvariantBoundablePrimitive, ILineSegmentGraphic
 	{
+		private event EventHandler<PointChangedEventArgs> _point1Changed;
+		private event EventHandler<PointChangedEventArgs> _point2Changed;
+
 		/// <summary>
 		/// Constructs a new invariant line primitive.
 		/// </summary>
@@ -92,7 +95,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return false;
 		}
 
-		// TODO (CR May09): hook up, make non-explicit.
+		protected override void OnTopLeftChanged()
+		{
+			EventsHelper.Fire(_point1Changed, this, new PointChangedEventArgs(this.TopLeft));
+			base.OnTopLeftChanged();
+		}
+
+		protected override void OnBottomRightChanged()
+		{
+			EventsHelper.Fire(_point2Changed, this, new PointChangedEventArgs(this.BottomRight));
+			base.OnBottomRightChanged();
+		}
 
 		/// <summary>
 		/// The endpoint of the line as specified by <see cref="InvariantBoundablePrimitive.TopLeft"/> in either source or destination coordinates.
@@ -122,14 +135,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point1Changed
 		{
-			add { }
-			remove { }
+			add { _point1Changed += value; }
+			remove { _point1Changed -= value; }
 		}
 
 		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point2Changed
 		{
-			add { }
-			remove { }
+			add { _point2Changed += value; }
+			remove { _point2Changed -= value; }
 		}
 	}
 }
