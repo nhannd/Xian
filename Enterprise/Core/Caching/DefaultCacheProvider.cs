@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.Web;
 using System.Web.Caching;
 using ClearCanvas.Enterprise.Common.Caching;
@@ -9,6 +7,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core.Caching
 {
+	/// <summary>
+	/// Default implementation of <see cref="ICacheProvider"/>, provides a local in-process cache.
+	/// </summary>
 	[ExtensionOf(typeof(CacheProviderExtensionPoint))]
 	public class DefaultCacheProvider : ICacheProvider
 	{
@@ -16,6 +17,9 @@ namespace ClearCanvas.Enterprise.Core.Caching
 
 		#region ICacheProvider Members
 
+		/// <summary>
+		/// Initializes this cache provider.
+		/// </summary>
 		public void Initialize(CacheProviderInitializationArgs args)
 		{
             // This may seem odd, but using the ASP.NET cache outside of an ASP app
@@ -24,6 +28,13 @@ namespace ClearCanvas.Enterprise.Core.Caching
 			_cache = HttpRuntime.Cache;
 		}
 
+		/// <summary>
+		/// Creates a cache client for the specified logical cache ID.
+		/// </summary>
+		/// <remarks>
+		/// The implementation of this method *must* be safe for multiple threads making concurrent calls.
+		/// </remarks>
+		/// <returns></returns>
 		public ICacheClient CreateClient(string cacheID)
 		{
             // ensure cache exists

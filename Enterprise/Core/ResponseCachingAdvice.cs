@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Castle.DynamicProxy;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
@@ -10,32 +8,30 @@ using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Core
 {
+	/// <summary>
+	/// Advice class responsible for honouring the <see cref="ResponseCachingAttribute"/> that may
+	/// be applied to service operations.
+	/// </summary>
     public class ResponseCachingAdvice : ServiceOperationAdvice, IInterceptor
     {
-        public ResponseCachingAdvice()
-        {
-
-        }
-
         #region IInterceptor Members
 
         public object Intercept(IInvocation invocation, params object[] args)
         {
+            object retval = invocation.Proceed(args);
 
-            try
-            {
-                object retval = invocation.Proceed(args);
+            // if the invocation succceeded, process the caching directive
+            ProcessCacheDirective(invocation.InvocationTarget, invocation.MethodInvocationTarget, args);
 
-                // if the invocation succceeded, process the caching directive
-                ProcessCacheDirective(invocation.InvocationTarget, invocation.MethodInvocationTarget, args);
-
-                return retval;
-            }
-            finally
-            {
-            }
+            return retval;
         }
 
+		/// <summary>
+		/// Processes any caching directive specified by the attribute.
+		/// </summary>
+		/// <param name="service"></param>
+		/// <param name="operation"></param>
+		/// <param name="args"></param>
         private static void ProcessCacheDirective(object service, MethodInfo operation, object[] args)
         {
             ResponseCachingDirective directive = GetCachingDirective(service, operation, args);
@@ -57,6 +53,13 @@ namespace ClearCanvas.Enterprise.Core
             }
         }
 
+		/// <summary>
+		/// Dynamically invokes the specified method to obtain the caching directive.
+		/// </summary>
+		/// <param name="service"></param>
+		/// <param name="operation"></param>
+		/// <param name="args"></param>
+		/// <returns></returns>
         private static ResponseCachingDirective GetCachingDirective(object service, MethodInfo operation, object[] args)
         {
              // determine if the response is cacheable, and if so, obtain caching directive
