@@ -40,25 +40,30 @@
   <PropertyGroup>
     <Configuration>Debug</Configuration>
     <DistributionBuild>false</DistributionBuild>
-    <FullViewer>false</FullViewer>
+    <PackageOption>Thin</PackageOption>
     <!-- Default, triceratops options -->
-    <DefaultOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeReporting+ExcludeMpr</DefaultOptions>	
+    <TriceratopsOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeReporting+ExcludeMpr</TriceratopsOptions>
+    <ThinViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeMpr</ThinViewerOptions>
     <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</FullViewerOptions>
   </PropertyGroup>
 
   <Choose>
-    <When Condition="$(FullViewer)">
+    <When Condition="'$(PackageOption)' == 'FullViewer'">
       <PropertyGroup>
-        <SolutionConfiguration>$(Configuration) Full Viewer</SolutionConfiguration>
         <Options>$(FullViewerOptions)</Options>
-		<BuildSuffix>FullViewer</BuildSuffix>
+		    <BuildSuffix>FullViewer</BuildSuffix>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(PackageOption)' == 'Triceratops'">
+      <PropertyGroup>
+        <Options>$(TriceratopsOptions)</Options>
+        <BuildSuffix>Triceratops</BuildSuffix>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <SolutionConfiguration>$(Configuration)</SolutionConfiguration>
-        <Options>$(DefaultOptions)</Options>
-		<BuildSuffix>ThinViewer</BuildSuffix>
+        <Options>$(ThinViewerOptions)</Options>
+		    <BuildSuffix>ThinViewer</BuildSuffix>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -79,12 +84,12 @@
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <RisClientProperties>Configuration=$(SolutionConfiguration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(Options);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</RisClientProperties>
+        <RisClientProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(Options);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</RisClientProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <RisClientProperties>Configuration=$(SolutionConfiguration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(Options)</RisClientProperties>
+        <RisClientProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(Options)</RisClientProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>

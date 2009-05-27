@@ -13,6 +13,7 @@
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
     <DistributionDesktopConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DistributionDesktopConfig>
+    <DistributionShredHostConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostConfig>
   </PropertyGroup>
 
   <Choose>
@@ -85,6 +86,19 @@
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>true</ShredHostBuild>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="$(DesktopBuild)">
+      <PropertyGroup>
+        <DistributionAppConfig>$(DistributionDesktopConfig)</DistributionAppConfig>
+       </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DistributionAppConfig>$(DistributionShredHostConfig)</DistributionAppConfig>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
   <ItemGroup>
     <JscriptFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
@@ -188,10 +202,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EnterpriseClientFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
-    <EnterpriseClientFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" />
-    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" />
+    <EnterpriseCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
+    <EnterpriseCommonFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EnterpriseDesktopFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" />
+    <EnterpriseDesktopFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -288,8 +305,8 @@
   </Target>
   
   <Target Name="Copy ShredHost App Config">
-    <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
-    <FileReplaceText FilePath="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
+    <CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionShredHostConfig)" />
+    <FileReplaceText FilePath="$(DistributionShredHostConfig)" TextToReplace="!filestore!" ReplacementText="$(FileStoreDirectory)"/>
   </Target>
 
   <Target Name="Copy Database Files">
@@ -343,10 +360,13 @@
   <Target Name="Copy Local DataStore Client Files">
     <Copy SourceFiles="@(LocalDataStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
-  <Target Name="Copy Enterprise Client Files">
-    <Copy SourceFiles="@(EnterpriseClientFiles)" DestinationFolder="$(PluginsDirectory)" />
-    <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseDesktop_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
+  <Target Name="Copy Enterprise Files">
+    <Copy SourceFiles="@(EnterpriseCommonFiles)" DestinationFolder="$(PluginsDirectory)" />
+    <Copy Condition="$(DesktopBuild)" SourceFiles="@(EnterpriseDesktopFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+    <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config;$(DistributionAppConfig)" OutputFile="$(DistributionAppConfig)" />
   </Target>
+  
   <Target Name="Copy Dicom Remote Client Files">
     <Copy SourceFiles="@(DicomRemoteClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
@@ -393,9 +413,6 @@
     <RegexIsMatch Pattern="ExcludeStreaming" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStreaming" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
-    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeMpr" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeMpr" />
     </RegexIsMatch>
@@ -412,7 +429,6 @@
     <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
     <CallTarget Condition="!$(ExcludeMpr)" Targets="Copy Mpr Files" />
     <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
-    <CallTarget Condition="!$(ExcludeEnterprise)" Targets="Copy Enterprise Client Files" />
 
   </Target>
 
@@ -428,11 +444,16 @@
 
   <Target Name="Copy Project Files" DependsOnTargets="Copy Plugin Files">
 
+    <Copy SourceFiles="@(DicomToolkitFiles)" DestinationFolder="$(CommonDirectory)" />
+
     <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
     </RegexIsMatch>
 
-    <Copy SourceFiles="@(DicomToolkitFiles)" DestinationFolder="$(CommonDirectory)" />
+    <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
+    </RegexIsMatch>
+    <CallTarget Condition="!$(ExcludeEnterprise)" Targets="Copy Enterprise Files" />
 
     <!-- Always copy database for shred host -->
     <CallTarget Condition="$(ShredHostBuild) Or !$(ExcludeDatabase)" Targets="Copy Database Files" />
@@ -457,7 +478,8 @@
     
   </Target>
 
-  <Target Name="Copy ShredHost Files" DependsOnTargets="Copy Project Files;Copy ShredHost App Config;Copy License Files">
+  <Target Name="Copy ShredHost Files" DependsOnTargets="Copy ShredHost App Config;Copy License Files">
+    <CallTarget Targets="Copy Project Files" />
   </Target>
 
   <Target Name ="Copy Files" >

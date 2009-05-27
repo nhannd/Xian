@@ -6,8 +6,7 @@
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\</TrunkDirectory>
-    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeMpr</DefaultOptions>
-    <!--<DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeMpr</DefaultOptions>-->
+    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeMpr</DefaultOptions>
   </PropertyGroup>
     
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
@@ -29,13 +28,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
-    <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\Client\app.config" />
+    <AppConfigSourceFiles Include="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+    <!--Although not explicitly including the enterprise desktop stuff, we do need the enterprise common settings -->
+    <AppConfigSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config" />
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_dist.config" />
   </ItemGroup>
 
   <ItemGroup>
     <ShredHostAppConfigFiles Include="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+    <!--Although not explicitly including the enterprise desktop stuff, we do need the enterprise common settings -->
+    <ShredHostAppConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config" />
     <ShredHostAppConfigFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_Shreds_dist.config" />
   </ItemGroup>
 
