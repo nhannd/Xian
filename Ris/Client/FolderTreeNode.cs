@@ -271,6 +271,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private bool CanHaveSubTree
+		{
+			get
+			{
+				if (this.Folder is ContainerFolder)
+					return true;
+				else
+					return this.GetSubTree().Items.Count > 0;
+			}
+		}
+
 		#endregion
 
 		#region Private Helpers
@@ -370,7 +381,7 @@ namespace ClearCanvas.Ris.Client
 			binding.CanAcceptDropHandler = explorer.CanFolderAcceptDrop;
 			binding.AcceptDropHandler = explorer.FolderAcceptDrop;
 
-			binding.CanHaveSubTreeHandler = delegate(FolderTreeNode node) { return node.GetSubTree().Items.Count > 0; };
+			binding.CanHaveSubTreeHandler = delegate(FolderTreeNode node) { return node.CanHaveSubTree; };
 			binding.IsExpandedGetter = delegate(FolderTreeNode node) { return node.Expanded; };
 			binding.IsExpandedSetter = delegate(FolderTreeNode node, bool expanded) { node.Expanded = expanded; };
 			binding.SubTreeProvider = delegate(FolderTreeNode node) { return node.GetSubTree(); };
