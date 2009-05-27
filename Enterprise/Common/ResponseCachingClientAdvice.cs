@@ -1,12 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Castle.DynamicProxy;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common.Caching;
 
 namespace ClearCanvas.Enterprise.Common
 {
+	/// <summary>
+	/// Client-side advice to implement transparent caching on the client side,
+	/// where the server returns an appropriate <see cref="ResponseCachingDirective"/>.
+	/// </summary>
     public class ResponseCachingClientAdvice : IInterceptor
     {
         #region IInterceptor Members
@@ -17,8 +19,11 @@ namespace ClearCanvas.Enterprise.Common
             string region = string.Format("{0}.{1}",
                 invocation.Method.DeclaringType.FullName, invocation.Method.Name);
             object request = args[0];
-            object response = null;
+            object response;
 
+			// check for a cached response
+			// must do this even if this operation does not support caching, because have no way of knowing
+			// whether it does or does not support caching
             string cacheKey = GetCacheKey(request);
             ICacheClient cacheClient = Cache.CreateClient("ResponseCache");
             if (cacheKey != null && cacheClient.RegionExists(region))
@@ -29,8 +34,8 @@ namespace ClearCanvas.Enterprise.Common
                     return response;
             }
 
-            // not available, so invoke service
-            using (OperationContextScope scope = new OperationContextScope(service as IContextChannel))
+            // no cached response is available, so invoke service operation
+            using (new OperationContextScope(service as IContextChannel))
             {
                 // invoke the operation
                 response = invocation.Proceed(args);
@@ -46,6 +51,7 @@ namespace ClearCanvas.Enterprise.Common
                         throw new InvalidOperationException(
                             string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", response.GetType().FullName));
 
+					// cache the response for future use
                     cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
                 }
             }
@@ -54,7 +60,12 @@ namespace ClearCanvas.Enterprise.Common
 
         }
 
-        private string GetCacheKey(object request)
+		/// <summary>
+		/// Obtains the cache key for the specified request object.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+        private static string GetCacheKey(object request)
         {
             if (request is IDefinesCacheKey)
             {
@@ -65,6 +76,10 @@ namespace ClearCanvas.Enterprise.Common
             return null;
         }
 
+		/// <summary>
+		/// Attempts to read the cache directive header from the message, returning null if the header doesn't exist.
+		/// </summary>
+		/// <returns></returns>
         private static ResponseCachingDirective ReadCachingDirectiveHeader()
         {
             int h = OperationContext.Current.IncomingMessageHeaders.FindHeader(

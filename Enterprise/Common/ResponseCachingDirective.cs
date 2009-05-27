@@ -7,13 +7,30 @@ using System.Threading;
 
 namespace ClearCanvas.Enterprise.Common
 {
+	/// <summary>
+	/// Defines the set of response cache sites.
+	/// </summary>
     public enum ResponseCachingSite
     {
+		/// <summary>
+		/// The response is not cached.
+		/// </summary>
         None,
+
+		/// <summary>
+		/// The response is cached on the server.
+		/// </summary>
         Server,
+
+		/// <summary>
+		/// The response is cached on the client.
+		/// </summary>
         Client,
     }
 
+	/// <summary>
+	/// Encapsulates information that directs how a client should cache a response.
+	/// </summary>
     [DataContract]
     public class ResponseCachingDirective : DataContractBase, IEquatable<ResponseCachingDirective>
     {
@@ -30,11 +47,20 @@ namespace ClearCanvas.Enterprise.Common
         private TimeSpan _timeToLive;
         private ResponseCachingSite _cacheSite;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
         public ResponseCachingDirective()
             : this(false, TimeSpan.Zero, ResponseCachingSite.None)
         {
         }
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="enableCaching"></param>
+		/// <param name="timeToLive"></param>
+		/// <param name="site"></param>
         public ResponseCachingDirective(bool enableCaching, TimeSpan timeToLive, ResponseCachingSite site)
         {
             _enableCaching = enableCaching;
@@ -42,6 +68,9 @@ namespace ClearCanvas.Enterprise.Common
             _cacheSite = site;
         }
 
+		/// <summary>
+		/// Gets or sets a value indicated whether caching of the response is enabled.
+		/// </summary>
         [DataMember]
         public bool EnableCaching
         {
@@ -49,6 +78,9 @@ namespace ClearCanvas.Enterprise.Common
             set { _enableCaching = value; }
         }
 
+		/// <summary>
+		/// Gets or sets a value indicating the Time-to-Live for the cached response.
+		/// </summary>
         [DataMember]
         public TimeSpan TimeToLive
         {
@@ -56,6 +88,9 @@ namespace ClearCanvas.Enterprise.Common
             set { _timeToLive = value; }
         }
 
+		/// <summary>
+		/// Gets or sets the cache site.
+		/// </summary>
         [DataMember]
         public ResponseCachingSite CacheSite
         {
@@ -65,7 +100,7 @@ namespace ClearCanvas.Enterprise.Common
 
         public override string ToString()
         {
-            return string.Format("EnableCaching = {1} TTL = {2} Site = {3}",
+            return string.Format("EnableCaching = {0} TTL = {1} Site = {2}",
                 _enableCaching, _timeToLive, _cacheSite);
         }
 
