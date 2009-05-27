@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<risDatabaseGenerator xmlns="http://www.clearcanvas.ca">
+   <dbCreationProperty name="HOST" value="172.16.10.167" />
+   <dbCreationProperty name="EXPRESS" value="true" />
+   <dbCreationProperty name="ADMINID" value="sa" />
+   <dbCreationProperty name="ADMINPASS" value="redhat5.1" />
+   <dbCreationProperty name="DB" value="Enterprise1" />
+   <dbCreationProperty name="DBFOLDER" value="D:\sqldb" />
+   <dbCreationProperty name="LOGFOLDER" value="D:\sqldb" />
+   <dbCreationProperty name="USERID" value="entuser" />
+   <dbCreationProperty name="USERPASS" value="entpass" />
+</risDatabaseGenerator>

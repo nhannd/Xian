@@ -1,0 +1,28 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+
+  <!-- an ISessionFactory instance -->
+  <session-factory xmlns='urn:nhibernate-configuration-2.2'>
+    <!-- common properties -->
+    <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
+    <property name="hibernate.connection.isolation">ReadCommitted</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
+    <property name="relativeExpiration">10</property>
+
+    <!--MS SQL-->
+    <property name="hibernate.dialect">NHibernate.Dialect.MsSql2000Dialect</property>
+	  <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
+	  <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Enterprise1;User Id=entuser;Password=entpass</property>
+	  <property name="hibernate.default_schema">Enterprise1.dbo</property>
+	<property name="hibernate.use_proxy_validator">false</property>
+	<property name="hibernate.connection.release_mode">on_close</property>
+
+    <!--SQLite-->
+    <!--<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>
+    <property name="hibernate.connection.driver_class">NHibernate.Driver.SQLiteDriver</property>
+    <property name="hibernate.connection.connection_string">Data Source=datastore\ris.sqb;Version=3</property>-->
+    
+  </session-factory>
+
+</hibernate-configuration>
