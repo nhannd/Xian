@@ -25,36 +25,38 @@ namespace ClearCanvas.Enterprise.Common
 			// must do this even if this operation does not support caching, because have no way of knowing
 			// whether it does or does not support caching
             string cacheKey = GetCacheKey(request);
-            ICacheClient cacheClient = Cache.CreateClient("ResponseCache");
-            if (cacheKey != null && cacheClient.RegionExists(region))
-            {
-                // check cache, and return if available
-                response = cacheClient.Get(cacheKey, new CacheGetOptions(region));
-                if (response != null)
-                    return response;
-            }
+			using (ICacheClient cacheClient = Cache.CreateClient("ResponseCache"))
+			{
+				if (cacheKey != null && cacheClient.RegionExists(region))
+				{
+					// check cache, and return if available
+					response = cacheClient.Get(cacheKey, new CacheGetOptions(region));
+					if (response != null)
+						return response;
+				}
 
-            // no cached response is available, so invoke service operation
-            using (new OperationContextScope(service as IContextChannel))
-            {
-                // invoke the operation
-                response = invocation.Proceed(args);
+				// no cached response is available, so invoke service operation
+				using (new OperationContextScope(service as IContextChannel))
+				{
+					// invoke the operation
+					response = invocation.Proceed(args);
 
-                // read caching directive from headers
-                ResponseCachingDirective directive = ReadCachingDirectiveHeader();
+					// read caching directive from headers
+					ResponseCachingDirective directive = ReadCachingDirectiveHeader();
 
-                // cache the response if directed
-                if (directive != null && directive.EnableCaching)
-                {
-                    // if we didn't succeed in getting a cache key, this is an error
-                    if (cacheKey == null)
-                        throw new InvalidOperationException(
-                            string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", response.GetType().FullName));
+					// cache the response if directed
+					if (directive != null && directive.EnableCaching)
+					{
+						// if we didn't succeed in getting a cache key, this is an error
+						if (cacheKey == null)
+							throw new InvalidOperationException(
+								string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", response.GetType().FullName));
 
-					// cache the response for future use
-                    cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
-                }
-            }
+						// cache the response for future use
+						cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
+					}
+				}
+			}
 
             return response;
 
