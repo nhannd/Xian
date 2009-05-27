@@ -49,8 +49,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				base.ControlPoints.Add(this.Subject.Pt1);
-				base.ControlPoints.Add(this.Subject.Pt2);
+				base.ControlPoints.Add(this.Subject.Point1);
+				base.ControlPoints.Add(this.Subject.Point2);
 			}
 			finally
 			{
@@ -84,14 +84,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void Initialize()
 		{
-			this.Subject.Pt1Changed += OnSubjectPt1Changed;
-			this.Subject.Pt2Changed += OnSubjectPt2Changed;
+			this.Subject.Point1Changed += OnSubjectPt1Changed;
+			this.Subject.Point2Changed += OnSubjectPt2Changed;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			this.Subject.Pt1Changed -= OnSubjectPt1Changed;
-			this.Subject.Pt2Changed -= OnSubjectPt2Changed;
+			this.Subject.Point1Changed -= OnSubjectPt1Changed;
+			this.Subject.Point2Changed -= OnSubjectPt2Changed;
 			base.Dispose(disposing);
 		}
 
@@ -104,8 +104,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				pointsMemento.Add(this.Subject.Pt1);
-				pointsMemento.Add(this.Subject.Pt2);
+				pointsMemento.Add(this.Subject.Point1);
+				pointsMemento.Add(this.Subject.Point2);
 			}
 			finally
 			{
@@ -124,8 +124,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				this.Subject.Pt1 = pointsMemento[0];
-				this.Subject.Pt2 = pointsMemento[1];
+				this.Subject.Point1 = pointsMemento[0];
+				this.Subject.Point2 = pointsMemento[1];
 			}
 			finally
 			{
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				this.ControlPoints[0] = this.Subject.Pt1;
+				this.ControlPoints[0] = this.Subject.Point1;
 			}
 			finally
 			{
@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				this.ControlPoints[1] = this.Subject.Pt2;
+				this.ControlPoints[1] = this.Subject.Point2;
 			}
 			finally
 			{
@@ -168,9 +168,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			if (index == 0)
-				this.Subject.Pt1 = point;
+				this.Subject.Point1 = point;
 			else if (index == 1)
-				this.Subject.Pt2 = point;
+				this.Subject.Point2 = point;
 			base.OnControlPointChanged(index, point);
 		}
 	}

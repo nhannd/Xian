@@ -38,19 +38,9 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	public sealed class IndexEventArgs : EventArgs
+	public sealed class PointsList : IPointsList
 	{
-		public readonly int Index;
-
-		public IndexEventArgs(int index)
-		{
-			this.Index = index;
-		}
-	}
-
-	public class PointsList : IList<PointF>
-	{
-		private readonly List<PointF> _innerList = new List<PointF>();
+		private readonly List<PointF> _sourcePoints = new List<PointF>();
 		private readonly IGraphic _owner;
 		private bool _enableEvents = true;
 
@@ -59,18 +49,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_owner = owner;
 		}
 
-		//TODO (CR May09): remove and use constructor w/ enableEvents
-		public PointsList Clone(IGraphic owner)
+		public PointsList(IEnumerable<PointF> points, IGraphic owner)
+			: this(owner)
 		{
-			PointsList clone = new PointsList(owner);
-			foreach (PointF point in _innerList)
-				clone._innerList.Add(point);
-			return clone;
+			foreach (PointF point in points)
+				_sourcePoints.Add(point);
 		}
 
 		public bool IsClosed
 		{
-			get { return _innerList.Count > 2 && FloatComparer.AreEqual(_innerList[0], _innerList[_innerList.Count - 1]); }
+			get { return _sourcePoints.Count > 2 && FloatComparer.AreEqual(_sourcePoints[0], _sourcePoints[_sourcePoints.Count - 1]); }
 		}
 
 		public void SuspendEvents()
@@ -117,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (_owner.CoordinateSystem == CoordinateSystem.Destination)
 				item = _owner.SpatialTransform.ConvertToSource(item);
 
-			return _innerList.IndexOf(item);
+			return _sourcePoints.IndexOf(item);
 		}
 
 		public void Insert(int index, PointF item)
@@ -125,13 +113,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (_owner.CoordinateSystem == CoordinateSystem.Destination)
 				item = _owner.SpatialTransform.ConvertToSource(item);
 
-			_innerList.Insert(index, item);
+			_sourcePoints.Insert(index, item);
 			NotifyPointAdded(index);
 		}
 
 		public void RemoveAt(int index)
 		{
-			_innerList.RemoveAt(index);
+			_sourcePoints.RemoveAt(index);
 			NotifyPointRemoved(index);
 		}
 
@@ -140,17 +128,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_owner.CoordinateSystem == CoordinateSystem.Destination)
-					return _owner.SpatialTransform.ConvertToDestination(_innerList[index]);
-				return _innerList[index];
+					return _owner.SpatialTransform.ConvertToDestination(_sourcePoints[index]);
+				return _sourcePoints[index];
 			}
 			set
 			{
 				if (_owner.CoordinateSystem == CoordinateSystem.Destination)
 					value = _owner.SpatialTransform.ConvertToSource(value);
 
-				if (!FloatComparer.AreEqual(_innerList[index], value))
+				if (!FloatComparer.AreEqual(_sourcePoints[index], value))
 				{
-					_innerList[index] = value;
+					_sourcePoints[index] = value;
 					NotifyPointChanged(index);
 				}
 			}
@@ -158,12 +146,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public void Add(PointF item)
 		{
-			this.Insert(_innerList.Count, item);
+			this.Insert(_sourcePoints.Count, item);
 		}
 
 		public void Clear()
 		{
-			_innerList.Clear();
+			_sourcePoints.Clear();
 			NotifyPointsCleared();
 		}
 
@@ -171,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (_owner.CoordinateSystem == CoordinateSystem.Destination)
 				item = _owner.SpatialTransform.ConvertToSource(item);
-			return _innerList.Contains(item);
+			return _sourcePoints.Contains(item);
 		}
 
 		public void CopyTo(PointF[] array, int arrayIndex)
@@ -183,12 +171,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				return;
 			}
-			_innerList.CopyTo(array, arrayIndex);
+			_sourcePoints.CopyTo(array, arrayIndex);
 		}
 
 		public int Count
 		{
-			get { return _innerList.Count; }
+			get { return _sourcePoints.Count; }
 		}
 
 		public bool IsReadOnly
@@ -198,24 +186,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public bool Remove(PointF item)
 		{
-			int index = _innerList.IndexOf(item);
+			int index = _sourcePoints.IndexOf(item);
 			if (index < 0)
 				return false;
 			this.RemoveAt(index);
 			return true;
 		}
 
-		private IEnumerator<PointF> EnumerateDestPoints()
+		private IEnumerator<PointF> EnumerateDestinationPoints()
 		{
-			foreach (PointF point in _innerList)
+			foreach (PointF point in _sourcePoints)
 				yield return _owner.SpatialTransform.ConvertToDestination(point);
 		}
 
 		public IEnumerator<PointF> GetEnumerator()
 		{
 			if (_owner.CoordinateSystem == CoordinateSystem.Destination)
-				return this.EnumerateDestPoints();
-			return _innerList.GetEnumerator();
+				return this.EnumerateDestinationPoints();
+			return _sourcePoints.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()

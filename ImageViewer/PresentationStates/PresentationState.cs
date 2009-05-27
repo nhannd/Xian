@@ -24,6 +24,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	[Cloneable(true)]
 	public abstract class PresentationState
 	{
+		/// <summary>
+		/// Constructs a new presentation state.
+		/// </summary>
 		protected PresentationState() {}
 
 		/// <summary>

@@ -363,7 +363,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
 		public virtual Roi CreateRoi()
 		{
-			return null;
+		    return null;
 		}
 
 		/// <summary>

@@ -39,8 +39,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public interface ILineSegmentGraphic : IVectorGraphic
 	{
-		//TODO (CR May09): although this is legacy naming, we should really not use a contraction.
-
 		/// <summary>
 		/// Gets or sets one endpoint of the line in either source or destination coordinates.
 		/// </summary>
@@ -48,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF Pt1 { get; set; }
+		PointF Point1 { get; set; }
 
 		/// <summary>
 		/// Gets or sets the other endpoint of the line in either source or destination coordinates.
@@ -57,16 +55,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF Pt2 { get; set; }
+		PointF Point2 { get; set; }
 
 		/// <summary>
-		/// Occurs when the <see cref="Pt1"/> property changed.
+		/// Occurs when the <see cref="Point1"/> property changed.
 		/// </summary>
-		event EventHandler<PointChangedEventArgs> Pt1Changed;
+		event EventHandler<PointChangedEventArgs> Point1Changed;
 
 		/// <summary>
-		/// Occurs when the <see cref="Pt2"/> property changed.
+		/// Occurs when the <see cref="Point2"/> property changed.
 		/// </summary>
-		event EventHandler<PointChangedEventArgs> Pt2Changed;
+		event EventHandler<PointChangedEventArgs> Point2Changed;
 	}
 }

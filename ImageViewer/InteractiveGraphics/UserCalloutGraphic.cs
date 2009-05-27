@@ -38,8 +38,9 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class UserCalloutGraphic : CalloutGraphic, ITextGraphic, IPointsGraphic
+	public class UserCalloutGraphic : CalloutGraphic, ITextGraphic, IPointGraphic
 	{
+		private event EventHandler _pointChanged;
 		private event EventHandler _textChanged;
 
 		/// <summary>
@@ -111,43 +112,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.TextControlGraphic.EndEdit();
 		}
 
-		#region IPointsGraphic Members
+		#region IPointGraphic Members
 
-		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
-
-		private PointF GetPoint(int index)
+		PointF IPointGraphic.Point
 		{
-			return base.EndPoint;
+			get { return this.EndPoint; }
+			set { this.EndPoint = value; }
 		}
 
-		private void SetPoint(int index, PointF value)
-		{
-			base.EndPoint = value;
-		}
-
-		IList<PointF> IPointsGraphic.Points
-		{
-			get { return new FixedPointsList(this.GetPoint, this.SetPoint, 1); }
-		}
-
-		int IPointsGraphic.IndexOfNextPoint(PointF point)
-		{
-			return 0;
-		}
-
-		event EventHandler IPointsGraphic.PointsChanged
-		{
-			add { }
-			remove { }
-		}
-
-		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
+		event EventHandler IPointGraphic.PointChanged
 		{
 			add { _pointChanged += value; }
 			remove { _pointChanged -= value; }
 		}
 
 		#endregion
-
 	}
 }

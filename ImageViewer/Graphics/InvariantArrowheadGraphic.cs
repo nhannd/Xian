@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private InvariantLinePrimitive _right;
 
 		private PointF _point = PointF.Empty;
-		private float _height = 15f;
+		private float _length = 15f;
 		private float _sweepAngle = 30f;
 		private float _angle = 0f;
 
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// remain pointing to the same location in the parent graphic.</para>
 		/// <para>This property can be specified in either source or destination
 		/// coordinates depending on the value of
-		/// <see cref="InvariantArrowheadGraphic.CoordinateSystem"/>.</para>
+		/// <see cref="IGraphic.CoordinateSystem"/>.</para>
 		/// </remarks>
 		public PointF Point
 		{
@@ -176,32 +176,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		//TODO (CR May09): Length
-
 		/// <summary>
-		/// Gets or sets the height of the arrowhead.
+		/// Gets or sets the length of the arrowhead.
 		/// </summary>
 		/// <remarks>
-		/// The height of the arrowhead is the altitude along the shaft of the triangle formed by the arrowhead.
+		/// The length of the arrowhead is the altitude along the shaft of the triangle formed by the arrowhead.
 		/// </remarks>
-		public float Height
+		public float Length
 		{
-			get { return _height; }
+			get { return _length; }
 			set
 			{
-				if (!FloatComparer.AreEqual(_height, value))
+				if (!FloatComparer.AreEqual(_length, value))
 				{
-					_height = value;
+					_length = value;
 					RecomputeArrow();
 				}
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the width angle of the arrowhead in degrees.
+		/// Gets or sets the sweep angle of the arrowhead in degrees.
 		/// </summary>
 		/// <remarks>
-		/// The width angle is the inner angle formed by the two sides of the arrowhead.
+		/// The sweep angle is the angle spanned by the two sides of the arrowhead.
 		/// </remarks>
 		public float SweepAngle
 		{
@@ -233,19 +231,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		protected void RecomputeArrow()
 		{
-			float height = (float) (_height*Math.Tan(Math.PI*_sweepAngle/360));
+			float height = (float) (_length*Math.Tan(Math.PI*_sweepAngle/360));
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
 				PointF pt = this.Point;
 
-				_left.AnchorPoint = pt;
-				_left.InvariantTopLeft = new PointF(-_height, -height);
+				_left.Location = pt;
+				_left.InvariantTopLeft = new PointF(-_length, -height);
 				_left.SpatialTransform.CenterOfRotationXY = pt;
 				_left.SpatialTransform.RotationXY = (int) _angle;
 
-				_right.AnchorPoint = pt;
-				_right.InvariantTopLeft = new PointF(-_height, height);
+				_right.Location = pt;
+				_right.InvariantTopLeft = new PointF(-_length, height);
 				_right.SpatialTransform.CenterOfRotationXY = pt;
 				_right.SpatialTransform.RotationXY = (int) _angle;
 			}

@@ -36,20 +36,38 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	/// <summary>
+	/// Specifies the <see cref="GraphicAnnotationSerializer"/> to use when serializing a DICOM graphic annotation (DICOM PS 3.3 C.10.5)
+	/// </summary>
+	/// <remarks>
+	/// Only one attribute may be specified on any given class. Attributes decorating base classes are inherited (and can be overriden)
+	/// by the derived class.
+	/// </remarks>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public class DicomSerializableGraphicAnnotationAttribute : Attribute
 	{
-		private Type _serializerType;
+		private readonly Type _serializerType;
 		private GraphicAnnotationSerializer _serializer;
 
+		/// <summary>
+		/// Constructs a new <see cref="DicomSerializableGraphicAnnotationAttribute"/>.
+		/// </summary>
+		/// <param name="serializerType">The concrete implementation of <see cref="GraphicAnnotationSerializer"/> to use.</param>
 		public DicomSerializableGraphicAnnotationAttribute(Type serializerType)
 		{
 			if (!typeof (GraphicAnnotationSerializer).IsAssignableFrom(serializerType))
 				throw new ArgumentException("Serializer type must derive from GraphicAnnotationSerializer.", "serializerType");
+			if (serializerType.IsAbstract)
+				throw new ArgumentException("Serializer type must not be abstract.", "serializerType");
+			if (serializerType.GetConstructor(Type.EmptyTypes) == null)
+				throw new ArgumentException("Serializer type must have a public, parameter-less constructor.", "serializerType");
 
 			_serializerType = serializerType;
 		}
 
+		/// <summary>
+		/// Gets an instance of the specified serializer.
+		/// </summary>
 		public GraphicAnnotationSerializer Serializer
 		{
 			get
@@ -63,10 +81,27 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		}
 	}
 
+	/// <summary>
+	/// Base class for a state-less class that serializes <see cref="IGraphic"/>s into <see cref="GraphicAnnotationSequenceItem"/>s according to DICOM PS 3.3 C.10.5.
+	/// </summary>
+	/// <remarks>
+	/// Concrete implementations of this class must have a public, parameter-less constructor.
+	/// </remarks>
 	public abstract class GraphicAnnotationSerializer
 	{
+		/// <summary>
+		/// Serializes the specified graphic to the supplied serialization state object.
+		/// </summary>
+		/// <param name="graphic">The graphic to serialize.</param>
+		/// <param name="serializationState">The state to which the graphic should be serialized.</param>
 		protected abstract void Serialize(IGraphic graphic, GraphicAnnotationSequenceItem serializationState);
 
+		/// <summary>
+		/// Helper method to serialize a graphic to the supplied serialization state object.
+		/// </summary>
+		/// <param name="graphic">The graphic to serialize.</param>
+		/// <param name="serializationState">The state to which the graphic should be serialized.</param>
+		/// <returns>True if the graphic was serializable; False otherwise.</returns>
 		public static bool SerializeGraphic(IGraphic graphic, GraphicAnnotationSequenceItem serializationState)
 		{
 			Platform.CheckForNullReference(graphic, "graphic");
@@ -82,10 +117,27 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		}
 	}
 
+	/// <summary>
+	/// Typed class for a state-less class that serializes a particular type of <see cref="IGraphic"/>s according to DICOM PS 3.3 C.10.5.
+	/// </summary>
+	/// <remarks>
+	/// Concrete implementations of this class must have a public, parameter-less constructor.
+	/// </remarks>
+	/// <typeparam name="T">The type of <see cref="IGraphic"/> that the serializer supports.</typeparam>
 	public abstract class GraphicAnnotationSerializer<T> : GraphicAnnotationSerializer where T : IGraphic
 	{
+		/// <summary>
+		/// Serializes the specified graphic to the supplied serialization state object.
+		/// </summary>
+		/// <param name="graphic">The graphic to serialize.</param>
+		/// <param name="serializationState">The state to which the graphic should be serialized.</param>
 		protected abstract void Serialize(T graphic, GraphicAnnotationSequenceItem serializationState);
 
+		/// <summary>
+		/// Serializes the specified graphic to the supplied serialization state object.
+		/// </summary>
+		/// <param name="graphic">The graphic to serialize.</param>
+		/// <param name="serializationState">The state to which the graphic should be serialized.</param>
 		protected override sealed void Serialize(IGraphic graphic, GraphicAnnotationSequenceItem serializationState)
 		{
 			this.Serialize((T) graphic, serializationState);

@@ -125,6 +125,8 @@
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
     <Compile Include="DrawableUndoableOperationCommand.cs" />
+    <Compile Include="Graphics\IPointGraphic.cs" />
+    <Compile Include="Graphics\IPointsList.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneOverlays.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneShutters.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsDeserializationException.cs" />
@@ -141,7 +143,6 @@
     <Compile Include="Graphics\IApplicationGraphicsProvider.cs" />
     <Compile Include="Graphics\IPointsGraphic.cs" />
     <Compile Include="Graphics\ITextGraphic.cs" />
-    <Compile Include="Graphics\FixedPointsList.cs" />
     <Compile Include="Graphics\PointsList.cs" />
     <Compile Include="Graphics\PolylineGraphic.cs" />
     <Compile Include="IDicomPresentationImage.cs" />

@@ -30,7 +30,6 @@
 #endregion
 
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -68,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.OnDrawing();
 			
-			if (this.Count == 3)
+			if (this.Points.Count == 3)
 			{
 				_arc.Visible = IsArcVisible();
 
@@ -113,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_arc.CoordinateSystem = CoordinateSystem.Destination;
 
 			// The arc center is the vertex of the protractor
-			_arc.AnchorPoint = this[1];
+			_arc.AnchorPoint = this.Points[1];
 
 			_arc.InvariantTopLeft = new PointF(-_arcRadius, -_arcRadius);
 			_arc.InvariantBottomRight = new PointF(_arcRadius, _arcRadius);
@@ -132,18 +131,18 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			this.CoordinateSystem = CoordinateSystem.Destination;
 
 			sweepAngle = -(float)Vector.SubtendedAngle(
-				this[0],
-				this[1],
-				this[2]);
+				this.Points[0],
+				this.Points[1],
+				this.Points[2]);
 
 
 			// Define a horizontal ray
-			PointF zeroDegreePoint = this[1];
+			PointF zeroDegreePoint = this.Points[1];
 			zeroDegreePoint.X += 50;
 
 			startAngle = (float) Vector.SubtendedAngle(
-			                      	this[0],
-			                      	this[1],
+									this.Points[0],
+									this.Points[1],
 			                      	zeroDegreePoint);
 
 			this.ResetCoordinateSystem();
@@ -154,9 +153,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			// Arc should only be visible if the arc radius is smaller than both of the
 			// two arms of the angle
 			this.CoordinateSystem = CoordinateSystem.Destination;
-			Vector3D vertexPositionVector = new Vector3D(this[1].X, this[1].Y, 0);
-			Vector3D a = new Vector3D(this[0].X, this[0].Y, 0) - vertexPositionVector;
-			Vector3D b = new Vector3D(this[2].X, this[2].Y, 0) - vertexPositionVector;
+			Vector3D vertexPositionVector = new Vector3D(this.Points[1].X, this.Points[1].Y, 0);
+			Vector3D a = new Vector3D(this.Points[0].X, this.Points[0].Y, 0) - vertexPositionVector;
+			Vector3D b = new Vector3D(this.Points[2].X, this.Points[2].Y, 0) - vertexPositionVector;
 			this.ResetCoordinateSystem();
 
 			return a.Magnitude > _arcRadius && b.Magnitude > _arcRadius;

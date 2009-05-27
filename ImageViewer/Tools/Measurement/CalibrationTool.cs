@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override void Initialize()
 		{
-			RoiGraphic roiGraphic = this.Context.OwnerGraphic as RoiGraphic;
+			RoiGraphic roiGraphic = this.Context.Graphic as RoiGraphic;
 
 			this.Visible = false;
 
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private double GetCurrentLength()
 		{
-			RoiGraphic roiGraphic = this.Context.OwnerGraphic as RoiGraphic;
+			RoiGraphic roiGraphic = this.Context.Graphic as RoiGraphic;
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
 			Units units = Units.Centimeters;
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private void ApplyCalibration(double lengthInMm)
 		{
-			RoiGraphic roiGraphic = this.Context.OwnerGraphic as RoiGraphic;
+			RoiGraphic roiGraphic = this.Context.Graphic as RoiGraphic;
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
 			double aspectRatio;

@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -42,8 +41,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive point graphic.
 	/// </summary>
 	[Cloneable(true)]
-	public class PointPrimitive : VectorGraphic, IPointsGraphic
+	public class PointPrimitive : VectorGraphic, IPointGraphic
 	{
+		private event EventHandler _pointChanged;
 		private PointF _point;
 
 		/// <summary>
@@ -91,6 +91,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public event EventHandler PointChanged
+		{
+			add { _pointChanged += value; }
+			remove { _pointChanged -= value; }
+		}
+
 		public override RectangleF BoundingBox
 		{
 			get { return new RectangleF(this.Point, SizeF.Empty); }
@@ -122,45 +128,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void NotifyPointChanged()
 		{
-			EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.Point, 0));
+			EventsHelper.Fire(_pointChanged, this, EventArgs.Empty);
 		}
-
-		#region IPointsGraphic Members
-
-		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
-
-		private PointF GetPoint(int index)
-		{
-			return this.Point;
-		}
-
-		private void SetPoint(int index, PointF value)
-		{
-			this.Point = value;
-		}
-
-		IList<PointF> IPointsGraphic.Points
-		{
-			get { return new FixedPointsList(this.GetPoint, this.SetPoint, 1); }
-		}
-
-		int IPointsGraphic.IndexOfNextPoint(PointF point)
-		{
-			return 0;
-		}
-
-		event EventHandler IPointsGraphic.PointsChanged
-		{
-			add { }
-			remove { }
-		}
-
-		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
-		{
-			add { _pointChanged += value; }
-			remove { _pointChanged -= value; }
-		}
-
-		#endregion
 	}
 }

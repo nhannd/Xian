@@ -205,7 +205,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Draws a <see cref="CurvePrimitive"/>.
 		/// </summary>
-		protected override void DrawCurvePrimitive(CurvePrimitive curve) {
+		protected override void DrawCurvePrimitive(CurvePrimitive curve)
+		{
 			Surface.FinalBuffer.Graphics.Transform = curve.SpatialTransform.CumulativeTransform;
 			curve.CoordinateSystem = CoordinateSystem.Source;
 
@@ -218,18 +219,18 @@ namespace ClearCanvas.ImageViewer.Rendering
 			SetDashStyle(curve);
 
 			SizeF dropShadowOffset = GetDropShadowOffset(curve);
-			PointF[] pathPoints =  curve.AsArray(dropShadowOffset, true);
+			PointF[] pathPoints = GetCurvePoints(curve.Points, dropShadowOffset);
 
-			if (curve.IsClosed)
+			if (curve.Points.IsClosed)
 				Surface.FinalBuffer.Graphics.DrawClosedCurve(_pen, pathPoints);
 			else
 				Surface.FinalBuffer.Graphics.DrawCurve(_pen, pathPoints);
 
 			// Draw line
 			_pen.Color = curve.Color;
-			pathPoints = curve.AsArray(true);
+			pathPoints = GetCurvePoints(curve.Points, SizeF.Empty);
 
-			if (curve.IsClosed)
+			if (curve.Points.IsClosed)
 				Surface.FinalBuffer.Graphics.DrawClosedCurve(_pen, pathPoints);
 			else
 				Surface.FinalBuffer.Graphics.DrawCurve(_pen, pathPoints);
@@ -530,16 +531,16 @@ namespace ClearCanvas.ImageViewer.Rendering
 			SizeF dropShadowOffset = GetDropShadowOffset(line);
 			Surface.FinalBuffer.Graphics.DrawLine(
 				_pen,
-				line.Pt1 + dropShadowOffset,
-				line.Pt2 + dropShadowOffset);
+				line.Point1 + dropShadowOffset,
+				line.Point2 + dropShadowOffset);
 
 			// Draw line
 			_pen.Color = line.Color;
 
 			Surface.FinalBuffer.Graphics.DrawLine(
 				_pen,
-				line.Pt1,
-				line.Pt2);
+				line.Point1,
+				line.Point2);
 
 			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.None;
 
@@ -649,6 +650,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			float offset = CalculateScaledPenWidth(graphic, 1);
 			return new SizeF(offset, offset);
+		}
+
+		private static PointF[] GetCurvePoints(IPointsList points, SizeF offset)
+		{
+			PointF[] result = new PointF[points.Count - (points.IsClosed ? 1 : 0)];
+			for (int n = 0; n < result.Length; n++)
+				result[n] = points[n] + offset;
+			return result;
 		}
 
 		/// <summary>

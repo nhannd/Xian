@@ -54,8 +54,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public abstract class InvariantPrimitive : VectorGraphic
 	{
-		private PointF _anchorPoint;
-		private event EventHandler<PointChangedEventArgs> _anchorPointChangedEvent;
+		private PointF _location;
+		private event EventHandler<PointChangedEventArgs> _locationChangedEvent;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="InvariantPrimitive"/>.
@@ -65,52 +65,53 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Occurs when the <see cref="AnchorPoint"/> property has changed.
+		/// The location where the <see cref="InvariantPrimitive"/> is anchored.
 		/// </summary>
-		public event EventHandler<PointChangedEventArgs> AnchorPointChanged
-		{
-			add { _anchorPointChangedEvent += value; }
-			remove { _anchorPointChangedEvent -= value; }
-		}
-
-		//TODO (CR May09): deprecate and add Location
-
-		/// <summary>
-		/// The point in the coordinate system of the parent <see cref="IGraphic"/> where the
-		/// <see cref="InvariantPrimitive"/> is anchored.
-		/// </summary>
-		public PointF AnchorPoint
+		/// <remarks>
+		/// The value of this property is in either source or destination coordinates
+		/// depending on the value of <see cref="IGraphic.CoordinateSystem"/>.
+		/// </remarks>
+		public PointF Location
 		{
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					return _anchorPoint;
+					return _location;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_anchorPoint);
+					return base.SpatialTransform.ConvertToDestination(_location);
 				}
 			}
 			set
 			{
-				if (FloatComparer.AreEqual(this.AnchorPoint, value))
+				if (FloatComparer.AreEqual(this.Location, value))
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 				{
-					_anchorPoint = value;
+					_location = value;
 				}
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					_anchorPoint = base.SpatialTransform.ConvertToSource(value);
+					_location = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_anchorPointChangedEvent, this, new PointChangedEventArgs(this.AnchorPoint));
-				base.NotifyPropertyChanged("AnchorPoint");
+				EventsHelper.Fire(_locationChangedEvent, this, new PointChangedEventArgs(this.Location));
+				base.NotifyPropertyChanged("Location");
 			}
+		}
+
+		/// <summary>
+		/// Occurs when the <see cref="Location"/> property has changed.
+		/// </summary>
+		public event EventHandler<PointChangedEventArgs> LocationChanged
+		{
+			add { _locationChangedEvent += value; }
+			remove { _locationChangedEvent -= value; }
 		}
 
 		/// <summary>
@@ -126,10 +127,35 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 #if MONO
 			Size del = new Size((int)delta.Width, (int)delta.Height);
-			this.AnchorPoint += del;
+			this.Location += del;
 #else
-			this.AnchorPoint += delta;
+			this.Location += delta;
 #endif
 		}
+
+		#region Legacy Members
+
+		/// <summary>
+		/// Occurs when the <see cref="Location"/> property has changed.
+		/// </summary>
+		[Obsolete("Use the LocationChanged event instead.")]
+		public event EventHandler<PointChangedEventArgs> AnchorPointChanged
+		{
+			add { _locationChangedEvent += value; }
+			remove { _locationChangedEvent -= value; }
+		}
+
+		/// <summary>
+		/// The point in the coordinate system of the parent <see cref="IGraphic"/> where the
+		/// <see cref="InvariantPrimitive"/> is anchored.
+		/// </summary>
+		[Obsolete("Use the Location property instead.")]
+		public PointF AnchorPoint
+		{
+			get { return this.Location; }
+			set { this.Location = value; }
+		}
+
+		#endregion
 	}
 }

@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			if (_toolSet == null)
-				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this, this.Subject));
+				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this));
 			return _toolSet.Actions;
 		}
 

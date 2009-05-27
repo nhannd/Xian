@@ -29,11 +29,13 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -50,11 +52,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </example>
 	public class FlashOverlayController
 	{
+		private delegate void DoFlashDelegate(IPresentationImage image, SynchronizationContext syncContext);
+		private readonly DoFlashDelegate _doFlashDelegate;
 		private readonly byte[] _pixelData;
 		private readonly int _rows, _columns;
 		private int _flashSpeed = 500;
-
-		private SynchronizationContext _syncContext;
 
 		/// <summary>
 		/// Constructs a default controller.
@@ -65,11 +67,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		protected FlashOverlayController()
 		{
+			_doFlashDelegate = this.DoFlash;
 			_pixelData = null;
 			_rows = _columns = 0;
 		}
 
-		//TODO (CR May09): add another constructor for PixelData object.
+		/// <summary>
+		/// Constructs a controller that uses a 32-bit colour ARGB image specified by the provided pixel data.
+		/// </summary>
+		/// <param name="colorPixelData">The 32-bit colour ARGB pixel data.</param>
+		public FlashOverlayController(ColorPixelData colorPixelData) : this()
+		{
+			_pixelData = colorPixelData.Raw;
+			_rows = colorPixelData.Rows;
+			_columns = colorPixelData.Columns;
+		}
 
 		/// <summary>
 		/// Constructs a controller that uses the 32-bit colour ARGB bitmap specified by the resource name and resource resolver.
@@ -136,55 +148,68 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="image">The image on which to display the overlay. The image must implement <see cref="IOverlayGraphicsProvider"/>.</param>
 		public void Flash(IPresentationImage image)
 		{
-			if (image is IOverlayGraphicsProvider)
-			{
-				_syncContext = null;
-				DoFlash(image);
-			}
+			_doFlashDelegate.Invoke(image, SynchronizationContext.Current);
 		}
-
-		//TODO (CR May09): fix threading issue.  Use BeginFlash IAsyncResult, etc.
 
 		/// <summary>
 		/// Flashes the overlay on the specified image asynchronously.
 		/// </summary>
 		/// <param name="image">The image on which to display the overlay. The image must implement <see cref="IOverlayGraphicsProvider"/>.</param>
-		public void AsyncFlash(IPresentationImage image)
+		/// <param name="userCallback">The method to be called when the asynchronous flash operation is completed. </param>
+		/// <param name="state">A user-provided object that distinguishes this particular asynchronous flash request from other requests. </param>
+		/// <returns>An <see cref="IAsyncResult"/> that references the asynchronous read.</returns>
+		public IAsyncResult BeginFlash(IPresentationImage image, AsyncCallback userCallback, object state)
 		{
-			if (image is IOverlayGraphicsProvider)
-			{
-				_syncContext = SynchronizationContext.Current;
-
-				Thread t = new Thread(delegate() { DoFlash(image); });
-				t.IsBackground = true;
-				t.Start();
-			}
+			return _doFlashDelegate.BeginInvoke(image, SynchronizationContext.Current, userCallback, state);
 		}
 
 		/// <summary>
-		/// <paramref name="image"/> must also implement <see cref="IOverlayGraphicsProvider"/>.
+		/// Waits for the pending asynchronous flash to complete.
 		/// </summary>
-		private void DoFlash(IPresentationImage image)
+		/// <param name="asyncResult">The reference to the pending asynchronous request to wait for. </param>
+		public void EndFlash(IAsyncResult asyncResult)
 		{
+			_doFlashDelegate.EndInvoke(asyncResult);
+		}
+
+		private void DoFlash(IPresentationImage image, SynchronizationContext syncContext)
+		{
+			if (!(image is IOverlayGraphicsProvider))
+				return;
+
 			GraphicCollection overlayGraphics = ((IOverlayGraphicsProvider) image).OverlayGraphics;
 			using (FlashOverlayGraphic flashOverlay = new FlashOverlayGraphic(this))
 			{
-				overlayGraphics.Add(flashOverlay);
-				ContextDraw(image);
+				if (syncContext == null)
+				{
+					overlayGraphics.Add(flashOverlay);
+					image.Draw();
+				}
+				else
+				{
+					syncContext.Post(delegate
+					                 	{
+					                 		overlayGraphics.Add(flashOverlay);
+					                 		image.Draw();
+					                 	}, null);
+				}
 
 				Thread.Sleep(_flashSpeed);
 
-				overlayGraphics.Remove(flashOverlay);
-				ContextDraw(image);
+				if (syncContext == null)
+				{
+					overlayGraphics.Remove(flashOverlay);
+					image.Draw();
+				}
+				else
+				{
+					syncContext.Post(delegate
+					                 	{
+					                 		overlayGraphics.Remove(flashOverlay);
+					                 		image.Draw();
+					                 	}, null);
+				}
 			}
-		}
-
-		private void ContextDraw(IDrawable drawable)
-		{
-			if (_syncContext == null)
-				drawable.Draw();
-			else
-				_syncContext.Post(delegate { drawable.Draw(); }, null);
 		}
 
 		private class FlashOverlayGraphic : ColorImageGraphic

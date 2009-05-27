@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -42,16 +41,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive line graphic.
 	/// </summary>
 	[Cloneable(true)]
-	public class LinePrimitive : VectorGraphic, ILineSegmentGraphic, IPointsGraphic
+	public class LinePrimitive : VectorGraphic, ILineSegmentGraphic
 	{
-		//TODO (CR May09): try using PointsList with a count in the constructor.
-
 		#region Private fields
 		
-		private PointF _srcPt1;
-		private PointF _srcPt2;
-		private event EventHandler<PointChangedEventArgs> _pt1ChangedEvent;
-		private event EventHandler<PointChangedEventArgs> _pt2ChangedEvent;
+		private PointF _point1;
+		private PointF _point2;
+		private event EventHandler<PointChangedEventArgs> _point1ChangedEvent;
+		private event EventHandler<PointChangedEventArgs> _point2ChangedEvent;
 		
 		#endregion
 
@@ -74,11 +71,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return _srcPt1;
+					return _point1;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_srcPt1);
+					return base.SpatialTransform.ConvertToDestination(_point1);
 				}
 			}
 			set
@@ -87,15 +84,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					_srcPt1 = value;
+					_point1 = value;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					_srcPt1 = base.SpatialTransform.ConvertToSource(value);
+					_point1 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt1));
-				EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.Pt1, 0));
+				EventsHelper.Fire(_point1ChangedEvent, this, new PointChangedEventArgs(this.Pt1));
 				base.NotifyPropertyChanged("Pt1");
 			}
 		}
@@ -112,11 +108,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return _srcPt2;
+					return _point2;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_srcPt2);
+					return base.SpatialTransform.ConvertToDestination(_point2);
 				}
 			}
 			set
@@ -125,15 +121,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					_srcPt2 = value;
+					_point2 = value;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					_srcPt2 = base.SpatialTransform.ConvertToSource(value);
+					_point2 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_pt2ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
-				EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.Pt2, 1));
+				EventsHelper.Fire(_point2ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
 				base.NotifyPropertyChanged("Pt2");
 			}
 		}
@@ -148,8 +143,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public event EventHandler<PointChangedEventArgs> Pt1Changed
 		{
-			add { _pt1ChangedEvent += value; }
-			remove { _pt1ChangedEvent -= value; }
+			add { _point1ChangedEvent += value; }
+			remove { _point1ChangedEvent -= value; }
 		}
 
 		/// <summary>
@@ -157,8 +152,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public event EventHandler<PointChangedEventArgs> Pt2Changed
 		{
-			add { _pt2ChangedEvent += value; }
-			remove { _pt2ChangedEvent -= value; }
+			add { _point2ChangedEvent += value; }
+			remove { _point2ChangedEvent -= value; }
 		}
 
 		/// <summary>
@@ -218,50 +213,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 #endif
 		}
 
-		#region IPointsGraphic Members
+		#region ILineSegmentGraphic Members
 
-		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
-
-		IList<PointF> IPointsGraphic.Points
+		PointF ILineSegmentGraphic.Point1
 		{
-			get
-			{
-				return new FixedPointsList(
-					delegate(int index)
-						{
-							Platform.CheckArgumentRange(index, 0, 1, "index");
-							if (index == 0)
-								return this.Pt1;
-							else
-								return this.Pt2;
-						},
-					delegate(int index, PointF value)
-						{
-							Platform.CheckArgumentRange(index, 0, 1, "index");
-							if (index == 0)
-								this.Pt1 = value;
-							else
-								this.Pt2 = value;
-						},
-					2);
-			}
+			get { return this.Pt1; }
+			set { this.Pt1 = value; }
 		}
 
-		int IPointsGraphic.IndexOfNextPoint(PointF point)
+		PointF ILineSegmentGraphic.Point2
 		{
-			return Vector.Distance(this.Pt1, point) < Vector.Distance(this.Pt2, point) ? 0 : 1;
+			get { return this.Pt2; }
+			set { this.Pt2 = value; }
 		}
 
-		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point1Changed
 		{
-			add { _pointChanged += value; }
-			remove { _pointChanged -= value; }
+			add { _point1ChangedEvent += value; }
+			remove { _point1ChangedEvent -= value; }
 		}
 
-		event EventHandler IPointsGraphic.PointsChanged
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point2Changed
 		{
-			add { }
-			remove { }
+			add { _point2ChangedEvent += value; }
+			remove { _point2ChangedEvent -= value; }
 		}
 
 		#endregion

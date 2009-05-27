@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 					Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
 
-					Rectangle.AnchorPoint = this.Location;
+					this.Rectangle.Location = this.Location;
 					EventsHelper.Fire(_locationChangedEvent, this, EventArgs.Empty);
 				}
 			}

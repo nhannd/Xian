@@ -239,7 +239,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		{
 			CurvePrimitive curve = new CurvePrimitive();
 			for (int n = 0; n < dataPoints.Count; n++)
-				curve.Add(dataPoints[n]);
+				curve.Points.Add(dataPoints[n]);
 			return curve;
 		}
 
@@ -247,7 +247,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		{
 			PolylineGraphic polyline = new PolylineGraphic();
 			for (int n = 0; n < vertices.Count; n++)
-				polyline.Add(vertices[n]);
+				polyline.Points.Add(vertices[n]);
 			return polyline;
 		}
 
@@ -265,7 +265,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			const float radius = 5;
 
 			InvariantEllipsePrimitive point = new InvariantEllipsePrimitive();
-			point.AnchorPoint = location;
+			point.Location = location;
 			point.InvariantTopLeft = new PointF(-radius, -radius);
 			point.InvariantBottomRight = new PointF(radius, radius);
 			return point;
@@ -338,7 +338,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				// RectangleF boundingBox = RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 				// boundingBox = RectangleUtilities.ConvertToPositiveRectangle(boundingBox);
 				// boundingBox.Location = boundingBox.Location - new SizeF(1, 1);
-				text.AnchorPoint = Vector.Midpoint(topLeft, bottomRight);
+				text.Location = Vector.Midpoint(topLeft, bottomRight);
 
 				return text;
 			}

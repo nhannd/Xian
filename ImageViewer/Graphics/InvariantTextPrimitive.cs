@@ -158,17 +158,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		//TODO (CR May09): remove, use Location in base InvariantPrimitive.
-
-		PointF ITextGraphic.Location
-		{
-			get { return this.AnchorPoint; }
-			set { this.AnchorPoint = value; }
-		}
-
 		/// <summary>
 		/// Gets the bounding box of the text in source or destination coordinates.  The centre of the 
-		/// bounding box should be <see cref="InvariantPrimitive.AnchorPoint"/>.
+		/// bounding box should be <see cref="InvariantPrimitive.Location"/>.
 		/// </summary>
 		public override RectangleF BoundingBox
 		{
@@ -177,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				float halfWidth = this.Dimensions.Width / 2F;
 				float halfHeight = this.Dimensions.Height / 2F;
 
-				return RectangleF.FromLTRB(this.AnchorPoint.X - halfWidth, this.AnchorPoint.Y - halfHeight, this.AnchorPoint.X + halfWidth, this.AnchorPoint.Y + halfHeight);
+				return RectangleF.FromLTRB(this.Location.X - halfWidth, this.Location.Y - halfHeight, this.Location.X + halfWidth, this.Location.Y + halfHeight);
 			}
 		}
 

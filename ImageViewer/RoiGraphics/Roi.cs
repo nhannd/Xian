@@ -29,14 +29,32 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
+	/// <summary>
+	/// Represents a static region of interest for the purposes of computing statistics on the contained pixels.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// <see cref="Roi"/> objects are static definitions of a region of interest on a particular image. Its
+	/// shape definition and the underlying pixel values are considered fixed upon construction, and hence its
+	/// various properties and statistics are non-changing.
+	/// </para>
+	/// <para>
+	/// New instances of a <see cref="Roi"/> should be constructed everytime the definition of the region of
+	/// interest or the underlying image pixel data has changed. The <see cref="IGraphic.CreateRoi"/>
+	/// method allows client code to quickly construct a new instance of a <see cref="Roi"/> based on the current
+	/// definition of the graphic and the image it currently belongs to.
+	/// </para>
+	/// </remarks>
 	public abstract class Roi
 	{
 		private readonly int _imageRows;
@@ -49,6 +67,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		private RectangleF _boundingBox;
 
+		/// <summary>
+		/// Constructs a new region of interest, specifying an <see cref="IPresentationImage"/> as the source of the pixel data.
+		/// </summary>
+		/// <param name="presentationImage">The image containing the source pixel data.</param>
 		protected Roi(IPresentationImage presentationImage)
 		{
 			IImageGraphicProvider provider = presentationImage as IImageGraphicProvider;
@@ -76,41 +98,69 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the number of rows in the entire image.
+		/// </summary>
 		public int ImageRows
 		{
 			get { return _imageRows; }
 		}
 
+		/// <summary>
+		/// Gets the number of columns in the entire image.
+		/// </summary>
 		public int ImageColumns
 		{
 			get { return _imageColumns; }
 		}
 
+		/// <summary>
+		/// Gets the pixel data of the image.
+		/// </summary>
 		public PixelData PixelData
 		{
 			get { return _pixelData; }
 		}
 
+		/// <summary>
+		/// Gets the pixel aspect ratio of the image.
+		/// </summary>
 		public PixelAspectRatio PixelAspectRatio
 		{
 			get { return _pixelAspectRatio; }
 		}
 
+		/// <summary>
+		/// Gets the normalized pixel spacing of the image.
+		/// </summary>
 		public PixelSpacing NormalizedPixelSpacing
 		{
 			get { return _normalizedPixelSpacing; }
 		}
 
+		/// <summary>
+		/// Gets the modality LUT of the image, if one exists.
+		/// </summary>
 		public IComposableLut ModalityLut
 		{
 			get { return _modalityLut; }
 		}
 
+		/// <summary>
+		/// Gets the modality of the image.
+		/// </summary>
 		public string Modality
 		{
 			get { return _modality; }
 		}
 
+		/// <summary>
+		/// Gets the tightest bounding box containing the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </remarks>
 		public RectangleF BoundingBox
 		{
 			get
@@ -121,15 +171,164 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called by <see cref="BoundingBox"/> to compute the tightest bounding box of the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// <para>This method is only called once and the result is cached for future accesses.</para>
+		/// <para>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </para>
+		/// </remarks>
+		/// <returns>A rectangle defining the bounding box.</returns>
 		protected abstract RectangleF ComputeBounds();
 
+		/// <summary>
+		/// Creates a copy of this <see cref="Roi"/> using the same region of interest shape but using a different image as the source pixel data.
+		/// </summary>
+		/// <param name="presentationImage">The image upon which to copy this region of interest.</param>
+		/// <returns>A new <see cref="Roi"/> of the same type and shape as the current region of interest.</returns>
 		public abstract Roi CopyTo(IPresentationImage presentationImage);
 
+		/// <summary>
+		/// Tests to see if the given point is contained within the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </remarks>
+		/// <param name="point">The point to test.</param>
+		/// <returns>True if the point is defined as within the region of interest; False otherwise.</returns>
 		public abstract bool Contains(PointF point);
 
+		/// <summary>
+		/// Tests to see if the given point is contained within the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </remarks>
+		/// <param name="x">The X-coordinate of the point to test.</param>
+		/// <param name="y">The Y-coordinate of the point to test.</param>
+		/// <returns>True if the point is defined as within the region of interest; False otherwise.</returns>
+		public bool Contains(float x, float y)
+		{
+			return this.Contains(new PointF(x, y));
+		}
+
+		/// <summary>
+		/// Tests to see if the given point is contained within the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </remarks>
+		/// <param name="x">The X-coordinate of the point to test.</param>
+		/// <param name="y">The Y-coordinate of the point to test.</param>
+		/// <returns>True if the point is defined as within the region of interest; False otherwise.</returns>
 		public bool Contains(int x, int y)
 		{
 			return this.Contains(new PointF(x, y));
+		}
+
+		/// <summary>
+		/// Enumerates the coordinates of points contained within the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </remarks>
+		/// <returns>An enumeration of points.</returns>
+		public IEnumerable<PointF> EnumeratePoints()
+		{
+			Rectangle bounds = Rectangle.Round(this.BoundingBox);
+			for (int x = bounds.Left; x < bounds.Right; x++)
+			{
+				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				{
+					PointF p = new PointF(x, y);
+					if (this.Contains(p))
+						yield return p;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Enumerates the raw pixel values contained within the region of interest.
+		/// </summary>
+		/// <returns>An enumeration of raw pixel values.</returns>
+		public IEnumerable<int> EnumerateRawPixels()
+		{
+			if (this.PixelData == null)
+				yield break;
+
+			Rectangle bounds = Rectangle.Round(this.BoundingBox);
+			for (int x = bounds.Left; x < bounds.Right; x++)
+			{
+				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				{
+					PointF p = new PointF(x, y);
+					if (this.Contains(p))
+						yield return this.PixelData.GetPixel(x, y);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Enumerates the modality LUT transformed pixel values contained within the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// If the <see cref="ModalityLut"/> is null, then this method enumerates the same values as <see cref="EnumerateRawPixels"/>.
+		/// </remarks>
+		/// <returns>An enumeration of modality LUT transformed pixel values.</returns>
+		public IEnumerable<int> EnumeratePixels()
+		{
+			if (this.PixelData == null)
+				yield break;
+
+			ILut lut = this.ModalityLut;
+			if (lut == null)
+				lut = new IdentityLut();
+
+			Rectangle bounds = Rectangle.Round(this.BoundingBox);
+			for (int x = bounds.Left; x < bounds.Right; x++)
+			{
+				for (int y = bounds.Top; y < bounds.Bottom; y++)
+				{
+					PointF p = new PointF(x, y);
+					if (this.Contains(p))
+						yield return lut[this.PixelData.GetPixel(x, y)];
+				}
+			}
+		}
+
+		private class IdentityLut : ILut
+		{
+			public int this[int index]
+			{
+				get { return index; }
+			}
+
+			public int MinOutputValue
+			{
+				get { return int.MinValue; }
+			}
+
+			public int MaxOutputValue
+			{
+				get { return int.MaxValue; }
+			}
+
+			public int MinInputValue
+			{
+				get { return int.MinValue; }
+			}
+
+			public int MaxInputValue
+			{
+				get { return int.MaxValue; }
+			}
 		}
 	}
 }

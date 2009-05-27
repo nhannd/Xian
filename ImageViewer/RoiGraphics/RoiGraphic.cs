@@ -91,7 +91,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private void OnCloneComplete()
 		{
 			Initialize();
-			_roi = base.Subject.CreateRoi();
 		}
 
 		protected override CalloutGraphic CreateCalloutGraphic()

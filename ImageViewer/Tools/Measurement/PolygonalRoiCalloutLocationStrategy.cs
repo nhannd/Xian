@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			IPointsGraphic pointsGraphic = annotationGraphic.Subject as IPointsGraphic;
 			if(pointsGraphic != null)
 			{
-				pointsGraphic.PointsChanged += OnPolygonGraphicClosed;
+				pointsGraphic.Points.PointAdded += OnPolygonGraphicClosed;
 			}
 		}
 

@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -101,14 +102,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void Initialize()
 		{
-			this.Subject.PointChanged += OnSubjectPointChanged;
-			this.Subject.PointsChanged += OnSubjectPointsChanged;
+			this.Subject.Points.PointChanged += OnSubjectPointChanged;
+			this.Subject.Points.PointAdded += OnSubjectPointsChanged;
+			this.Subject.Points.PointRemoved += OnSubjectPointsChanged;
+			this.Subject.Points.PointsCleared += OnSubjectPointsChanged;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			this.Subject.PointChanged -= OnSubjectPointChanged;
-			this.Subject.PointsChanged -= OnSubjectPointsChanged;
+			this.Subject.Points.PointChanged -= OnSubjectPointChanged;
+			this.Subject.Points.PointAdded -= OnSubjectPointsChanged;
+			this.Subject.Points.PointRemoved -= OnSubjectPointsChanged;
+			this.Subject.Points.PointsCleared -= OnSubjectPointsChanged;
 			base.Dispose(disposing);
 		}
 
@@ -143,7 +148,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (index < 0)
 				{
 					// if inserting in middle of line, find which index to insert at
-					index = subject.IndexOfNextPoint(_lastContextMenuPoint);
+					index = IndexOfNextClosestPoint(subject, _lastContextMenuPoint);
 				}
 				else if(index == subject.Points.Count - 1)
 				{
@@ -182,6 +187,27 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			base.AddToCommandHistory(memento, this.CreateMemento());
+		}
+
+		/// <summary>
+		/// Computes the index for insertion of a new point on an existing <see cref="IPointsGraphic"/>.
+		/// </summary>
+		private int IndexOfNextClosestPoint(IPointsGraphic subject, PointF point)
+		{
+			int index = 0;
+			double best = double.MaxValue;
+			PointF closestPoint = this.GetClosestPoint(point);
+			PointF temp = PointF.Empty;
+			for (int n = 0; n < subject.Points.Count - 1; n++)
+			{
+				double distance = Vector.DistanceFromPointToLine(closestPoint, subject.Points[n], subject.Points[n + 1], ref temp);
+				if (distance < best)
+				{
+					best = distance;
+					index = n + 1;
+				}
+			}
+			return index;
 		}
 
 		private void PerformInsertVertex()
@@ -303,7 +329,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		protected virtual void OnSubjectPointChanged(object sender, ListEventArgs<PointF> e)
+		protected virtual void OnSubjectPointChanged(object sender, IndexEventArgs e)
 		{
 			if (_suspendSubjectPointChangeEvents)
 				return;

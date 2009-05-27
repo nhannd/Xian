@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			ResyncEndPoints();
 		}
 
-		protected override void OnSubjectPointChanged(object sender, ListEventArgs<PointF> e)
+		protected override void OnSubjectPointChanged(object sender, IndexEventArgs e)
 		{
 			base.OnSubjectPointChanged(sender, e);
 
@@ -90,9 +90,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (pointsGraphic.Points.Count > 1)
 			{
 				if (e.Index == 0)
-					base.OnSubjectPointChanged(sender, new ListEventArgs<PointF>(e.Item, pointsGraphic.Points.Count - 1));
+					base.OnSubjectPointChanged(sender, new IndexEventArgs(pointsGraphic.Points.Count - 1));
 				if (e.Index == pointsGraphic.Points.Count - 1)
-					base.OnSubjectPointChanged(sender, new ListEventArgs<PointF>(e.Item, 0));
+					base.OnSubjectPointChanged(sender, new IndexEventArgs(0));
 			}
 		}
 

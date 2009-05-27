@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <para>This primitive graphic defines a line whose position can be fixed to the
 	/// source coordinate system and whose length will be fixed relative to the
 	/// destination coordinate system.</para>
-	/// <para>The <see cref="InvariantLinePrimitive.AnchorPoint"/> defines the point
+	/// <para>The <see cref="InvariantPrimitive.Location"/> defines the point
 	/// that is affixed to the source coordinate system, and the <see cref="InvariantBoundablePrimitive.InvariantTopLeft"/>
 	/// and <see cref="InvariantBoundablePrimitive.InvariantBottomRight"/> properties define the length
 	/// and orientation of the line.</para>
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return false;
 		}
 
-		//TODO (CR May09): hook up, make non-explicit.
+		// TODO (CR May09): hook up, make non-explicit.
 
 		/// <summary>
 		/// The endpoint of the line as specified by <see cref="InvariantBoundablePrimitive.TopLeft"/> in either source or destination coordinates.
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF ILineSegmentGraphic.Pt1
+		PointF ILineSegmentGraphic.Point1
 		{
 			get { return this.TopLeft; }
 			set { throw new NotSupportedException(); }
@@ -114,19 +114,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF ILineSegmentGraphic.Pt2
+		PointF ILineSegmentGraphic.Point2
 		{
 			get { return this.BottomRight; }
 			set { throw new NotSupportedException(); }
 		}
 
-		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt1Changed
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point1Changed
 		{
 			add { }
 			remove { }
 		}
 
-		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt2Changed
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point2Changed
 		{
 			add { }
 			remove { }

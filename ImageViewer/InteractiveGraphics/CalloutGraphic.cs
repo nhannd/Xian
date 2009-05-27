@@ -126,8 +126,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public PointF Location
 		{
-			get { return this.TextGraphic.AnchorPoint; }
-			set { this.TextGraphic.AnchorPoint = value; }
+			get { return this.TextGraphic.Location; }
+			set { this.TextGraphic.Location = value; }
 		}
 
 		/// <summary>
@@ -251,7 +251,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Graphics.Add(_textControlGraphic);
 			}
 
-			this.TextGraphic.AnchorPointChanged += OnTextAnchorPointChanged;
+			this.TextGraphic.LocationChanged += OnTextLocationChanged;
 			this.TextGraphic.BoundingBoxChanged += OnTextBoundingBoxChanged;
 
 			if (_lineGraphic == null)
@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return point;
 		}
 
-		private void OnTextAnchorPointChanged(object sender, PointChangedEventArgs e)
+		private void OnTextLocationChanged(object sender, PointChangedEventArgs e)
 		{
 			EventsHelper.Fire(_locationChanged, this, e);
 			NotifyPropertyChanged("Location");

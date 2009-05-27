@@ -47,8 +47,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			protractor.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				for (int i = 0; i < protractor.Count; ++i)
-					_points.Add(protractor[i]);
+				for (int i = 0; i < protractor.Points.Count; ++i)
+					_points.Add(protractor.Points[i]);
 			}
 			finally
 			{

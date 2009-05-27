@@ -39,9 +39,6 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	//TODO (CR May09): use PointsList.
-	//TODO (CR May09): implement IPointsGraphic.
-
 	/// <summary>
 	/// A primitive curve graphic.
 	/// </summary>
@@ -51,19 +48,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// all the specified points.</para>
 	/// </remarks>
 	[Cloneable]
-	public class CurvePrimitive : VectorGraphic
+	public class CurvePrimitive : VectorGraphic, IPointsGraphic
 	{
 		[CloneIgnore]
-		private readonly List<PointF> _sourcePoints;
-
-		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
+		private readonly PointsList _points;
 
 		/// <summary>
 		/// Constructs a curve graphic.
 		/// </summary>
 		public CurvePrimitive()
 		{
-			_sourcePoints = new List<PointF>();
+			_points = new PointsList(this);
 		}
 
 		/// <summary>
@@ -72,130 +67,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected CurvePrimitive(CurvePrimitive source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
-
-			_sourcePoints = new List<PointF>();
-			foreach (PointF point in source._sourcePoints)
-			{
-				_sourcePoints.Add(point);
-			}
+			_points = new PointsList(source._points, this);
 		}
 
-		/// <summary>
-		/// Gets or sets the data points of the curve.
-		/// </summary>
-		/// <remarks>
-		/// <para>The resulting interpolated curve will pass through these points.</para>
-		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this
-		/// property is in source or destination coordinates.</para>
-		/// </remarks>
-		/// <param name="index">The index of the data point.</param>
-		public PointF this[int index]
+		public IPointsList Points
 		{
-			get
-			{
-				if (base.CoordinateSystem == CoordinateSystem.Destination)
-				{
-					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_sourcePoints[index]);
-				}
-				return _sourcePoints[index];
-			}
-			set
-			{
-				if (base.CoordinateSystem == CoordinateSystem.Destination)
-				{
-					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					value = base.SpatialTransform.ConvertToSource(value);
-				}
-
-				if (!FloatComparer.AreEqual(_sourcePoints[index], value))
-				{
-					_sourcePoints[index] = value;
-					EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(value, index));
-					base.NotifyPropertyChanged("Points");
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets the number of data points in the curve.
-		/// </summary>
-		public int CountPoints
-		{
-			get { return _sourcePoints.Count; }
+			get { return _points; }
 		}
 
 		public override RectangleF BoundingBox
 		{
-			get { return RectangleUtilities.ComputeBoundingRectangle(this.AsArray()); }
-		}
-
-		/// <summary>
-		/// Adds a new data point to the end of the curve.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether the
-		/// point is interpreted as source or destination coordinates.
-		/// </remarks>
-		/// <param name="point">The data point to add.</param>
-		public void Add(PointF point)
-		{
-			if (base.CoordinateSystem == CoordinateSystem.Destination)
-			{
-				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-				point = base.SpatialTransform.ConvertToSource(point);
-			}
-
-			_sourcePoints.Add(point);
-			base.NotifyPropertyChanged("Points");
-		}
-
-		/// <summary>
-		/// Inserts a new data point at the specified index.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether the
-		/// point is interpreted as source or destination coordinates.
-		/// </remarks>
-		/// <param name="index">The index of the data point.</param>
-		/// <param name="point">The data point to add.</param>
-		public void Insert(int index, PointF point)
-		{
-			if (base.CoordinateSystem == CoordinateSystem.Destination)
-			{
-				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-				point = base.SpatialTransform.ConvertToSource(point);
-			}
-
-			_sourcePoints.Insert(index, point);
-			base.NotifyPropertyChanged("Points");
-		}
-
-		/// <summary>
-		/// Removes the data point at the specified index.
-		/// </summary>
-		/// <param name="index">The index of the data point.</param>
-		public void RemoveAt(int index)
-		{
-			_sourcePoints.RemoveAt(index);
-			base.NotifyPropertyChanged("Points");
-		}
-
-		/// <summary>
-		/// Gets a value indicating if the curve is closed - that is, its last data point is equal to the first data point.
-		/// </summary>
-		public bool IsClosed
-		{
-			get { return (_sourcePoints.Count > 0) && FloatComparer.AreEqual(_sourcePoints[0], _sourcePoints[_sourcePoints.Count - 1]); }
-		}
-
-		/// <summary>
-		/// Event fired when the coordinates of a data point have changed.
-		/// </summary>
-		public event EventHandler<ListEventArgs<PointF>> PointChanged
-		{
-			add { _pointChanged += value; }
-			remove { _pointChanged -= value; }
+			get { return RectangleUtilities.ComputeBoundingRectangle(_points); }
 		}
 
 		/// <summary>
@@ -211,9 +93,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			base.CoordinateSystem = CoordinateSystem.Destination;
 			try
 			{
-				PointF[] pathPoints = this.AsArray(true);
+				PointF[] pathPoints = GetCurvePoints(_points);
 				GraphicsPath gp = new GraphicsPath();
-				if (this.IsClosed)
+				if (_points.IsClosed)
 					gp.AddClosedCurve(pathPoints);
 				else
 					gp.AddCurve(pathPoints);
@@ -243,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			PointF result = PointF.Empty;
 			double min = double.MaxValue;
-			foreach (PointF pt in this.AsArray())
+			foreach (PointF pt in _points)
 			{
 				double d = Vector.Distance(point, pt);
 				if (min > d)
@@ -266,97 +148,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override void Move(SizeF delta)
 		{
-			for (int n = 0; n < _sourcePoints.Count; n++)
+			for (int n = 0; n < _points.Count; n++)
 			{
-				_sourcePoints[n] = _sourcePoints[n] + delta;
+				_points[n] = _points[n] + delta;
 			}
 			base.NotifyPropertyChanged("Points");
 		}
 
-		/// <summary>
-		/// Gets the data points of the curve as an array.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether the
-		/// points are given as source or destination coordinates.
-		/// </remarks>
-		/// <returns>An array of points.</returns>
-		public PointF[] AsArray()
+		private static PointF[] GetCurvePoints(IPointsList points)
 		{
-			// this implementation is much more efficient than calling the general overload
-			PointF[] array;
-			if (base.CoordinateSystem == CoordinateSystem.Destination)
-			{
-				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-				array = new PointF[_sourcePoints.Count];
-				for (int n = 0; n < _sourcePoints.Count; n++)
-					array[n] = base.SpatialTransform.ConvertToDestination(_sourcePoints[n]);
-			}
-			else
-			{
-				array = _sourcePoints.ToArray();
-			}
-			return array;
-		}
-
-		/// <summary>
-		/// Gets the data points of the curve as an array.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether the
-		/// points are given as source or destination coordinates.
-		/// </remarks>
-		/// <param name="excludeClosedPathPoint">True if a closed path should have its last point excluded from the results; False otherwise. No effect if the curve is not closed.</param>
-		/// <returns>An array of points.</returns>
-		public PointF[] AsArray(bool excludeClosedPathPoint)
-		{
-			return AsArray(SizeF.Empty, excludeClosedPathPoint);
-		}
-
-		/// <summary>
-		/// Gets the data points of the curve as an array.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether the
-		/// points are given as source or destination coordinates.
-		/// </remarks>
-		/// <param name="offset">An offset to apply to each data point.</param>
-		/// <returns>An array of points.</returns>
-		public PointF[] AsArray(SizeF offset)
-		{
-			return AsArray(offset, false);
-		}
-
-		/// <summary>
-		/// Gets the data points of the curve as an array.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether the
-		/// points are given as source or destination coordinates.
-		/// </remarks>
-		/// <param name="offset">An offset to apply to each data point.</param>
-		/// <param name="excludeClosedPathPoint">True if a closed path should have its last point excluded from the results; False otherwise. No effect if the curve is not closed.</param>
-		/// <returns>An array of points.</returns>
-		public PointF[] AsArray(SizeF offset, bool excludeClosedPathPoint)
-		{
-			PointF[] array;
-			if (this.IsClosed && excludeClosedPathPoint)
-				array = new PointF[_sourcePoints.Count - 1];
-			else
-				array = new PointF[_sourcePoints.Count];
-
-			if (base.CoordinateSystem == CoordinateSystem.Destination)
-			{
-				Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-				for (int n = 0; n < array.Length; n++)
-					array[n] = base.SpatialTransform.ConvertToDestination(_sourcePoints[n]) + offset;
-			}
-			else
-			{
-				for (int n = 0; n < array.Length; n++)
-					array[n] = _sourcePoints[n] + offset;
-			}
-			return array;
+			PointF[] result = new PointF[points.Count - (points.IsClosed ? 1 : 0)];
+			for (int n = 0; n < result.Length; n++)
+				result[n] = points[n];
+			return result;
 		}
 	}
 }

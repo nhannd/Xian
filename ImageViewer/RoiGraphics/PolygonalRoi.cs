@@ -33,21 +33,32 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
+	/// <summary>
+	/// Represents a polygonal region of interest.
+	/// </summary>
 	public class PolygonalRoi : Roi, IRoiStatisticsProvider, IRoiAreaProvider
 	{
 		private readonly PolygonF _polygon;
 
-		public PolygonalRoi(IList<PointF> vertices, IPresentationImage presentationImage) : base(presentationImage)
+		/// <summary>
+		/// Constructs a new polygonal region of interest.
+		/// </summary>
+		/// <param name="vertices">The ordered vertices defining the polygonal region of interest.</param>
+		/// <param name="presentationImage">The image containing the source pixel data.</param>
+		public PolygonalRoi(IEnumerable<PointF> vertices, IPresentationImage presentationImage) : base(presentationImage)
 		{
 			_polygon = new PolygonF(vertices);
 		}
 
+		/// <summary>
+		/// Constructs a new polygonal region of interest, specifying an <see cref="IPointsGraphic"/> as the source of the definition and pixel data.
+		/// </summary>
+		/// <param name="polygon">The polygonal graphic that represents the region of interest.</param>
 		public PolygonalRoi(IPointsGraphic polygon)
 			: base(polygon.ParentPresentationImage)
 		{
@@ -85,6 +96,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			get { return _polygon; }
 		}
 
+		/// <summary>
+		/// Called by <see cref="Roi.BoundingBox"/> to compute the tightest bounding box of the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// <para>This method is only called once and the result is cached for future accesses.</para>
+		/// <para>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </para>
+		/// </remarks>
+		/// <returns>A rectangle defining the bounding box.</returns>
 		protected override RectangleF ComputeBounds()
 		{
 			if (_polygon == null)
@@ -92,11 +114,25 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _polygon.BoundingRectangle;
 		}
 
+		/// <summary>
+		/// Creates a copy of this <see cref="PolygonalRoi"/> using the same region of interest shape but using a different image as the source pixel data.
+		/// </summary>
+		/// <param name="presentationImage">The image upon which to copy this region of interest.</param>
+		/// <returns>A new <see cref="PolygonalRoi"/> of the same shape as the current region of interest.</returns>
 		public override Roi CopyTo(IPresentationImage presentationImage)
 		{
 			return new PolygonalRoi(_polygon.Vertices, presentationImage);
 		}
 
+		/// <summary>
+		/// Tests to see if the given point is contained within the region of interest.
+		/// </summary>
+		/// <remarks>
+		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
+		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
+		/// </remarks>
+		/// <param name="point">The point to test.</param>
+		/// <returns>True if the point is defined as within the region of interest; False otherwise.</returns>
 		public override bool Contains(PointF point)
 		{
 			return _polygon != null && _polygon.Contains(point);
@@ -106,6 +142,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		private RoiStatistics _statistics;
 
+		/// <summary>
+		/// Gets the standard deviation of the values over the <see cref="Roi"/>.
+		/// </summary>
 		public double StandardDeviation
 		{
 			get
@@ -118,6 +157,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the mean of the values over the <see cref="Roi"/>.
+		/// </summary>
 		public double Mean
 		{
 			get
@@ -137,6 +179,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private double? _pixelArea;
 		private double? _area;
 
+		/// <summary>
+		/// Gets the area of the <see cref="Roi"/> in square pixels.
+		/// </summary>
 		public double PixelArea
 		{
 			get
@@ -152,6 +197,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the area of the <see cref="Roi"/> in square millimetres.
+		/// </summary>
+		/// <exception cref="UncalibratedImageException">If the image has no pixel spacing
+		/// information and has not been calibrated.</exception>
 		public double Area
 		{
 			get
@@ -167,6 +217,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating that the image has pixel spacing information or has
+		/// previously been calibrated, and hence the <see cref="IRoiAreaProvider.Area"/> property is available.
+		/// </summary>
 		public bool IsCalibrated
 		{
 			get { return !base.NormalizedPixelSpacing.IsNull; }

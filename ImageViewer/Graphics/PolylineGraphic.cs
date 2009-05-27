@@ -30,13 +30,8 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Drawing;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
@@ -60,8 +55,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private Color _color = Color.Yellow;
 		private LineStyle _lineStyle = LineStyle.Solid;
 		private bool _roiClosedOnly = false;
-		private event EventHandler<ListEventArgs<PointF>> _anchorPointChangedEvent;
-		private event EventHandler _anchorPointsChangedEvent;
 
 		[CloneIgnore]
 		private LinesComposite _lines;
@@ -86,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="roiClosedOnly">
 		/// True if this graphic should only be treated as a
 		/// closed polygon for the purposes of ROI computation
-		/// (<seealso cref="PolylineGraphic.CreateRoiInformation"/>).
+		/// (<seealso cref="CreateRoi"/>).
 		/// </param>
 		public PolylineGraphic(bool roiClosedOnly) : this()
 		{
@@ -97,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			: base()
 		{
 			context.CloneFields(source, this);
-			_points = source._points.Clone(this);
+			_points = new PointsList(source._points, this);
 		}
 
 		[OnCloneComplete]
@@ -152,11 +145,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating that the <see cref="PolylineGraphic.CreateRoiInformation"/> method
+		/// Gets or sets a value indicating that the <see cref="CreateRoi"/> method
 		/// should assume the shape should always be a closed polygon.
 		/// </summary>
 		/// <remarks>
-		/// If True, then <see cref="PolylineGraphic.CreateRoiInformation"/> will only ever return
+		/// If True, then <see cref="CreateRoi"/> will only ever return
 		/// <see cref="PolygonalRoi"/> objects (or null, if the shape is not a closed polygon).
 		/// If False, then the method will return <see cref="PolygonalRoi"/> or <see cref="LinearRoi"/>
 		/// depending on the current shape (or null, if the shape is neither a closed polygon nor
@@ -169,87 +162,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the number of anchor points in the <see cref="PolylineGraphic"/>.
+		/// Gets the vertices of the polyline.
 		/// </summary>
-		public int Count
+		public IPointsList Points
 		{
-			get { return _points.Count; }
-		}
-
-		/// <summary>
-		/// Occurs when an anchor point has changed.
-		/// </summary>
-		public event EventHandler<ListEventArgs<PointF>> AnchorPointChangedEvent
-		{
-			add { _anchorPointChangedEvent += value; }
-			remove { _anchorPointChangedEvent -= value; }
-		}
-
-		/// <summary>
-		/// Occurs when the list of anchor points has changed (inserted, removed or cleared)
-		/// </summary>
-		public event EventHandler AnchorPointsChangedEvent
-		{
-			add { _anchorPointsChangedEvent += value; }
-			remove { _anchorPointsChangedEvent -= value; }
-		}
-
-		/// <summary>
-		/// Adds a new anchor point to the <see cref="PolylineGraphic"/>.
-		/// </summary>
-		/// <param name="point">The anchor point to be inserted.</param>
-		/// <remarks>
-		/// The anchor point should be in either source or destination coordinates depending
-		/// on the value of <see cref="IGraphic.CoordinateSystem"/>.
-		/// </remarks>
-		public void Add(PointF point)
-		{
-			_points.Add(point);
-		}
-
-		/// <summary>
-		/// Inserts a new anchor point to the <see cref="PolylineGraphic"/>.
-		/// </summary>
-		/// <param name="index">The zero-based index at which to insert the anchor point.</param>
-		/// <param name="point">The anchor point to be inserted.</param>
-		/// <remarks>
-		/// The anchor point should be in either source or destination coordinates depending
-		/// on the value of <see cref="IGraphic.CoordinateSystem"/>.
-		/// </remarks>
-		public void Insert(int index, PointF point)
-		{
-			_points.Insert(index, point);
-		}
-
-		/// <summary>
-		/// Removes an anchor point from the <see cref="PolylineGraphic"/>.
-		/// </summary>
-		/// <param name="index">The zero-based index of the anchor point to remove.</param>
-		public void RemoveAt(int index)
-		{
-			_points.RemoveAt(index);
-		}
-
-		/// <summary>
-		/// Gets or sets the location of the specified anchor point.
-		/// </summary>
-		/// <param name="index">The zero-based index of the anchor point.</param>
-		/// <remarks>
-		/// This property returns points in either source or destination coordinates depending
-		/// on the value of <see cref="IGraphic.CoordinateSystem"/>.
-		/// </remarks>
-		public PointF this[int index]
-		{
-			get { return _points[index]; }
-			set { _points[index] = value; }
-		}
-
-		/// <summary>
-		/// Removes all anchor points from the <see cref="PolylineGraphic"/>.
-		/// </summary>
-		public void Clear()
-		{
-			_points.Clear();
+			get { return _points; }
 		}
 
 		/// <summary>
@@ -285,12 +202,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			base.Move(delta);
 
-			_points.SuspendEvents();
 			for (int n = 0; n < _points.Count; n++)
 				_points[n] += delta;
-			_points.ResumeEvents();
-
-			NotifyListeners();
 		}
 
 		public override PointF GetClosestPoint(PointF point)
@@ -345,8 +258,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 					line.ResetCoordinateSystem();
 				}
 			}
-
-			NotifyListeners();
 		}
 
 		private void OnPointsItemRemoved(object sender, IndexEventArgs e)
@@ -367,8 +278,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_lines.Graphics.RemoveAt(e.Index);
 				}
 			}
-
-			NotifyListeners();
 		}
 
 		private void OnPointsItemChanged(object sender, IndexEventArgs e)
@@ -385,14 +294,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 					((LinePrimitive) _lines.Graphics[e.Index - 1]).Pt2 = _points[e.Index];
 				}
 			}
-
-			NotifyListeners(e.Index, _points[e.Index]);
 		}
 
 		private void OnPointsCleared(object sender, EventArgs e)
 		{
 			_lines.Graphics.Clear();
-			NotifyListeners();
 		}
 
 		protected virtual void OnColorChanged()
@@ -407,61 +313,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 				line.LineStyle = _lineStyle;
 		}
 
-		private void NotifyListeners(int anchorPointIndex, PointF anchorPoint)
-		{
-			EventsHelper.Fire(_anchorPointChangedEvent, this, new ListEventArgs<PointF>(anchorPoint, anchorPointIndex));
-			base.NotifyPropertyChanged("Points");
-		}
-
-		private void NotifyListeners()
-		{
-			EventsHelper.Fire(_anchorPointsChangedEvent, this, new EventArgs());
-			base.NotifyPropertyChanged("Points");
-		}
-
 		[Cloneable(true)]
 		private class LinesComposite : CompositeGraphic
 		{
 			public LinesComposite() : base() {}
 		}
-
-		#region IPointsGraphic Members
-
-		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
-		{
-			add { _anchorPointChangedEvent += value; }
-			remove { _anchorPointChangedEvent -= value; }
-		}
-
-		event EventHandler IPointsGraphic.PointsChanged
-		{
-			add { _anchorPointsChangedEvent += value; }
-			remove { _anchorPointsChangedEvent -= value; }
-		}
-
-		int IPointsGraphic.IndexOfNextPoint(PointF point)
-		{
-			int index = 0;
-			double best = double.MaxValue;
-			PointF closestPoint = this.GetClosestPoint(point);
-			PointF temp = PointF.Empty;
-			for (int n = 0; n < _points.Count - 1; n++)
-			{
-				double distance = Vector.DistanceFromPointToLine(closestPoint, _points[n], _points[n + 1], ref temp);
-				if (distance < best)
-				{
-					best = distance;
-					index = n + 1;
-				}
-			}
-			return index;
-		}
-
-		IList<PointF> IPointsGraphic.Points
-		{
-			get { return _points; }
-		}
-
-		#endregion
 	}
 }

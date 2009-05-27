@@ -140,12 +140,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Event fired when the value of <see cref="StartPoint"/> changes.
+		/// </summary>
 		public event EventHandler<PointChangedEventArgs> StartPointChanged
 		{
 			add { _startPointChanged += value; }
 			remove { _startPointChanged -= value; }
 		}
 
+		/// <summary>
+		/// Event fired when the value of <see cref="EndPoint"/> changes.
+		/// </summary>
 		public event EventHandler<PointChangedEventArgs> EndPointChanged
 		{
 			add { _endPointChanged += value; }
@@ -153,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the line style to be used on the arrowhead.
+		/// Gets or sets the line style of the arrowhead.
 		/// </summary>
 		public LineStyle ArrowheadLineStyle
 		{
@@ -178,7 +184,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the colour.
+		/// Gets or sets the colour of the arrow.
 		/// </summary>
 		public Color Color
 		{
@@ -187,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the line style to be used on the shaft of the arrow.
+		/// Gets or sets the line style of the shaft of the arrow.
 		/// </summary>
 		public LineStyle LineStyle
 		{
@@ -195,10 +201,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _shaft.LineStyle = value; }
 		}
 
-		//TODO (CR May09): update comments.
-
 		/// <summary>
-		/// Gets or sets a value indicating whether this arrow is visible.
+		/// Gets or sets a value indicating whether or not the arrow is visible.
 		/// </summary>
 		public override bool Visible
 		{
@@ -210,53 +214,45 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		//TODO (CR May09): do we need this?  Composite graphic does the same thing.
-
 		/// <summary>
-		/// Gets the point on the arrow closest to the specified <paramref name="point"/>.
-		/// </summary>
-		public override PointF GetClosestPoint(PointF point)
-		{
-			PointF pointShaft = new PointF();
-			double distanceShaft = Vector.DistanceFromPointToLine(point, _shaft.Pt1, _shaft.Pt2, ref pointShaft);
-			PointF pointArrowhead = _arrowhead.GetClosestPoint(point);
-			double distanceArrowhead = Vector.Distance(point, pointArrowhead);
-			return distanceShaft < distanceArrowhead ? pointShaft : pointArrowhead;
-		}
-
-		/// <summary>
-		/// One endpoint of the line in either source or destination coordinates.
+		/// Gets or sets the tail endpoint of the line in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF ILineSegmentGraphic.Pt1
+		PointF ILineSegmentGraphic.Point1
 		{
 			get { return this.StartPoint; }
 			set { this.StartPoint = value; }
 		}
 
 		/// <summary>
-		/// The other endpoint of the line in either source or destination coordinates.
+		/// Gets or sets the tip endpoint of the line in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF ILineSegmentGraphic.Pt2
+		PointF ILineSegmentGraphic.Point2
 		{
 			get { return this.EndPoint; }
 			set { this.EndPoint = value; }
 		}
 
-		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt1Changed
+		/// <summary>
+		/// Occurs when the <see cref="ILineSegmentGraphic.Point1"/> property changed.
+		/// </summary>
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point1Changed
 		{
 			add { this.StartPointChanged += value; }
 			remove { this.StartPointChanged -= value; }
 		}
 
-		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt2Changed
+		/// <summary>
+		/// Occurs when the <see cref="ILineSegmentGraphic.Point2"/> property changed.
+		/// </summary>
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point2Changed
 		{
 			add { this.EndPointChanged += value; }
 			remove { this.EndPointChanged -= value; }
@@ -284,7 +280,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				// if arrowhead option is true and the graphic is visible, only show arrowhead if line is long enough!
 				if (_showArrowhead && _visible)
-					_arrowhead.Visible = Vector.Distance(_shaft.Pt1, _shaft.Pt2) > _arrowhead.Height;
+					_arrowhead.Visible = Vector.Distance(_shaft.Pt1, _shaft.Pt2) > _arrowhead.Length;
 				else
 					_arrowhead.Visible = false;
 			}

@@ -211,10 +211,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			m.TransformPoints(pt);
 			m.Dispose();
 
-			return new PointF(base.AnchorPoint.X + pt[0].X, base.AnchorPoint.Y + pt[0].Y);
+			return new PointF(base.Location.X + pt[0].X, base.Location.Y + pt[0].Y);
 		}
 
-		//TODO (CR May09): hook these up, not explicit.
+		// TODO (CR May09): hook these up, not explicit.
 
 		#region IBoundableGraphic Members
 
