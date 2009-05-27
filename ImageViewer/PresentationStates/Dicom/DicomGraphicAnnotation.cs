@@ -200,8 +200,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				if (graphic is PolylineGraphic)
 					((PolylineGraphic) graphic).Color = _color;
-				else if (graphic is VectorGraphic)
-					((VectorGraphic) graphic).Color = _color;
+				else if (graphic is IVectorGraphic)
+					((IVectorGraphic) graphic).Color = _color;
 				else if (graphic is CalloutGraphic)
 					((CalloutGraphic) graphic).Color = _color;
 				else if (graphic is StandardStatefulGraphic)
@@ -273,14 +273,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private static IGraphic CreateEllipse(PointF majorAxisEnd1, PointF majorAxisEnd2, PointF minorAxisEnd1, PointF minorAxisEnd2)
 		{
-			EllipsePrimitive ellipse = new EllipsePrimitive();
-			PointF centroid = Vector.Midpoint(majorAxisEnd1, majorAxisEnd2);
-			SizeF radial = new SizeF((float) (Vector.Distance(majorAxisEnd1, majorAxisEnd2)/2), (float) (Vector.Distance(minorAxisEnd1, minorAxisEnd2)/2));
-			ellipse.TopLeft = centroid - radial;
-			ellipse.BottomRight = centroid + radial;
-			ellipse.SpatialTransform.CenterOfRotationXY = centroid;
-			ellipse.SpatialTransform.RotationXY = (int) Vector.SubtendedAngle(majorAxisEnd1, majorAxisEnd2, majorAxisEnd2 + new SizeF(1, 0))%180;
-			return ellipse;
+			DicomEllipseGraphic dicomEllipseGraphic = new DicomEllipseGraphic();
+			dicomEllipseGraphic.MajorAxisPoint1 = majorAxisEnd1;
+			dicomEllipseGraphic.MajorAxisPoint2 = majorAxisEnd2;
+			dicomEllipseGraphic.MinorAxisPoint1 = minorAxisEnd1;
+			dicomEllipseGraphic.MinorAxisPoint2 = minorAxisEnd2;
+			return dicomEllipseGraphic;
 		}
 
 		private static IGraphic CreateCalloutText(RectangleF annotationBounds, RectangleF displayedArea, GraphicAnnotationSequenceItem.TextObjectSequenceItem textItem)

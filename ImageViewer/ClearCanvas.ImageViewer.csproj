@@ -139,6 +139,7 @@
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneLayers.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneUserOverlays.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\CurveGraphicAnnotationSerializer.cs" />
+    <Compile Include="PresentationStates\Dicom\DicomEllipseGraphic.cs" />
     <Compile Include="PresentationStates\Dicom\OverlayPlaneGraphic.cs" />
     <Compile Include="Graphics\FlashOverlayController.cs" />
     <Compile Include="Graphics\CurvePrimitive.cs" />
