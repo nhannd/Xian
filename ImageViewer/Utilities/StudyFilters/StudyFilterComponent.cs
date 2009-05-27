@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		private readonly StudyFilterColumnCollection _columns;
 		private readonly StudyItemSelection _selection;
 		private readonly StudyFilterSettings _settings;
-		private readonly FilteredGroups<StudyItem> _root;
+		private readonly RootFilteredGroup<StudyItem> _root;
 		private readonly ObservableList<StudyItem> _items;
 		private readonly RootPredicate _filterPredicate;
 		private event EventHandler _filteredChanged;
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			_columns = new StudyFilterColumnCollection(this);
 			_settings = StudyFilterSettings.Default;
 			_filterPredicate = new RootPredicate();
-			_root = new FilteredGroups<StudyItem>();
+			_root = new RootFilteredGroup<StudyItem>();
 			_root.ChildGroups.Add(_filter = new FilteredGroup<StudyItem>("User", "User", _filterPredicate.Evaluate));
 		}
 
