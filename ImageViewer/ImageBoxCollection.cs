@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class ImageBoxCollection : ObservableList<IImageBox>
 	{
-		private bool _isReadOnly;
+		private bool _readOnly;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageBoxCollection"/>.
@@ -62,15 +62,17 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		internal new bool IsReadOnly
+		//TODO (CR May09): make base.IsReadOnly protected settable, or virtual and return _readOnly.
+		//NOTE: defer change for now to avoid changing Common.
+		internal bool ReadOnly
 		{
-			get { return _isReadOnly; }
-			set { _isReadOnly = value; }
+			get { return _readOnly; }
+			set { _readOnly = value; }
 		}
 
 		public override void Add(IImageBox item)
 		{
-			if (_isReadOnly)
+			if (_readOnly)
 				throw new InvalidOperationException("The image box collection is read-only.");
 
 			base.Add(item);
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageViewer
 
 		public override void Insert(int index, IImageBox item)
 		{
-			if (_isReadOnly)
+			if (_readOnly)
 				throw new InvalidOperationException("The image box collection is read-only.");
 
 			base.Insert(index, item);
@@ -86,7 +88,7 @@ namespace ClearCanvas.ImageViewer
 
 		public override bool Remove(IImageBox item)
 		{
-			if (_isReadOnly)
+			if (_readOnly)
 				throw new InvalidOperationException("The image box collection is read-only.");
 
 			return base.Remove(item);
@@ -94,7 +96,7 @@ namespace ClearCanvas.ImageViewer
 
 		public override void RemoveAt(int index)
 		{
-			if (_isReadOnly)
+			if (_readOnly)
 				throw new InvalidOperationException("The image box collection is read-only.");
 
 			base.RemoveAt(index);
@@ -102,7 +104,7 @@ namespace ClearCanvas.ImageViewer
 
 		public override void Clear()
 		{
-			if (_isReadOnly)
+			if (_readOnly)
 				throw new InvalidOperationException("The image box collection is read-only.");
 
 			base.Clear();
@@ -116,7 +118,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			set
 			{
-				if (_isReadOnly)
+				if (_readOnly)
 					throw new InvalidOperationException("The image box collection is read-only.");
 
 				base[index] = value;

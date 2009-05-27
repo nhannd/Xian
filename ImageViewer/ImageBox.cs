@@ -68,7 +68,6 @@ namespace ClearCanvas.ImageViewer
 		private static int _insetWidth = 5;
 		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
-		private int _presetTopLeftPresentationImageIndex;
 
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
@@ -218,7 +217,7 @@ namespace ClearCanvas.ImageViewer
 
 					// Force the images in the display set to fill
 					// the tiles of this image box
-					this.TopLeftPresentationImageIndex = _presetTopLeftPresentationImageIndex;
+					this.TopLeftPresentationImageIndex = 0;
 					_displaySet.Selected = this.Selected;
 				}
 
@@ -442,18 +441,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Allows setting of presentation image index prior to having a DisplaySet, when
-		/// DisplaySet is set this index will be used to initialize <see cref="TopLeftPresentationImageIndex"/>
-		/// </summary>
-		public int PresetTopLeftPresentationImageIndex
-		{
-			set
-			{
-				_presetTopLeftPresentationImageIndex = value;
-			}
-		}
-
-		/// <summary>
 		/// Gets the <see cref="Tile"/> at the specified row and column.
 		/// </summary>
 		/// <exception cref="IndexOutOfRangeException"><pararef name="row"/> or
@@ -483,8 +470,8 @@ namespace ClearCanvas.ImageViewer
 
 		internal bool Locked
 		{
-			get { return Tiles.IsReadOnly; }
-			set  { Tiles.IsReadOnly = value; }
+			get { return Tiles.ReadOnly; }
+			set  { Tiles.ReadOnly = value; }
 		}
 
 		#endregion

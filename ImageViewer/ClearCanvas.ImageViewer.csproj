@@ -124,13 +124,13 @@
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="DrawableUndoableOperationCommand.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneOverlays.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneShutters.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsDeserializationException.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsFactory.cs" />
-    <Compile Include="DrawableUndoableOperation.cs" />
     <Compile Include="EditBox.cs" />
-    <Compile Include="Common\FilteredGroups.cs" />
+    <Compile Include="Common\FilteredGroup.cs" />
     <Compile Include="Graphics\DecoratorCompositeGraphic.cs" />
     <Compile Include="Graphics\AddGraphicUndoableCommand.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneLayers.cs" />
@@ -563,6 +563,7 @@
     <Compile Include="TileSelectedEventArgs.cs" />
     <Compile Include="DrawableUndoableCommand.cs" />
     <Compile Include="UndoableOperation.cs" />
+    <Compile Include="UndoableOperationCommand.cs" />
     <Compile Include="ViewerShortcutManager.cs" />
   </ItemGroup>
   <ItemGroup>

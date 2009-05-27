@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		public void Update()
 		{
 			RoiGraphic roiGraphic = this.ParentGraphic;
-			this.Update(roiGraphic.CreateRoiInformation(), RoiAnalysisMode.Normal);
+			this.Update(roiGraphic.CreateRoi(), RoiAnalysisMode.Normal);
 		}
 
 		public void Update(Roi roi)

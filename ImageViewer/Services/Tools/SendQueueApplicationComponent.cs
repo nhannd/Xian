@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string _title;
 		private ToolSet _toolSet;
 		private Table<SendQueueItem> _sendTable;
-		private FilteredGroups<SendQueueItem> _filteredItems;
+		private RootFilteredGroup<SendQueueItem> _filteredItems;
 		private bool _showBackgroundSends;
 		private ISelection _selection;
 		private event EventHandler _selectionUpdated;
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		
 		public override void Start()
 		{
-			_filteredItems = new FilteredGroups<SendQueueItem>();
+			_filteredItems = new RootFilteredGroup<SendQueueItem>();
 			_filteredItems.ItemAdded += FilteredItemAdded;
 			_filteredItems.ItemRemoved += FilteredItemRemoved;
 

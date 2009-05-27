@@ -34,6 +34,10 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	// TODO (later): see if there's a way to cleanly get rid of this and/or 
+	// put the delegates into one of the superclasses so it can be used on something other than just images.
+	// For now, though, just leave it, since it's code that's already been released.
+
 	/// <summary>
 	/// A simple way to implement an ImageOperation, using delegates.
 	/// </summary>

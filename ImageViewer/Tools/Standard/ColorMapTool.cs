@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ColorMapTool : ImageViewerTool
 	{
-		private class ColorMapActionContainer : ImageOperation
+		private class ColorMapActionContainer : UndoableOperation<IPresentationImage>
 		{
 			private readonly ColorMapTool _ownerTool;
 			private readonly MenuAction _action;
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private void Apply()
 			{
 				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, this);
-				CompositeUndoableCommand historyCommand = applicator.ApplyToAllImages();
+				UndoableCommand historyCommand = applicator.ApplyToAllImages();
 				if (historyCommand != null)
 				{
 					historyCommand.Name = SR.CommandColorMap;

@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (this.SelectedVoiLutProvider.VoiLutManager.GetLut() is IBasicVoiLutLinear)
 			{
 				_memorableCommand.EndState = GetSelectedImageVoiLutManager().CreateMemento();
-				CompositeUndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+				UndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
 				DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
 				if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))

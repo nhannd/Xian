@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer
 
 	public class LoadPriorStudyFailedEventArgs : EventArgs
 	{
-		public LoadPriorStudyFailedEventArgs(StudyItem study, Exception error)
+		internal LoadPriorStudyFailedEventArgs(StudyItem study, Exception error)
 		{
 			this.Study = study;
 			this.Error = error;
@@ -78,11 +78,8 @@ namespace ClearCanvas.ImageViewer
 		bool IsActive { get; }
 		event EventHandler IsActiveChanged;
 
+		//TODO (CR May09): resolve events with EventBroker; combine 'failed' and 'success' events into one.
 		event EventHandler<LoadPriorStudyFailedEventArgs> LoadPriorStudyFailed;
-
-		//TODO: keep running stats of failed studies?
-		void Start();
-		void Stop();
 	}
 
 	public partial class ImageViewerComponent
@@ -163,6 +160,7 @@ namespace ClearCanvas.ImageViewer
 					return;
 
 				_stop = true;
+				_priorStudyFinder.Cancel();
 				_thread.Join();
 				_thread = null;
 			}

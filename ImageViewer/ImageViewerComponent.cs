@@ -851,10 +851,7 @@ namespace ClearCanvas.ImageViewer
 		private void StopLoadingPriors()
 		{
 			if (_priorStudyLoader != null)
-			{
 				_priorStudyLoader.Stop();
-				_priorStudyLoader = null;
-			}
 		}
 
 		#endregion

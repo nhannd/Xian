@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private void OnCloneComplete()
 		{
 			Initialize();
-			_roi = base.Subject.CreateRoiInformation();
+			_roi = base.Subject.CreateRoi();
 		}
 
 		protected override CalloutGraphic CreateCalloutGraphic()
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			get
 			{
 				if (_roi == null)
-					_roi = base.Subject.CreateRoiInformation();
+					_roi = base.Subject.CreateRoi();
 
 				return _roi;
 			}
@@ -127,9 +127,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			remove { _nameChanged -= value; }
 		}
 
-		public override Roi CreateRoiInformation()
+		public override Roi CreateRoi()
 		{
-			return base.Subject.CreateRoiInformation();
+			return base.Subject.CreateRoi();
 		}
 
 		protected override void OnNameChanged()
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		private void Analyze(bool responsive)
 		{
-			_roi = base.Subject.CreateRoiInformation();
+			_roi = base.Subject.CreateRoi();
 			this.Callout.Update(_roi, responsive ? RoiAnalysisMode.Responsive : RoiAnalysisMode.Normal);
 		}
 

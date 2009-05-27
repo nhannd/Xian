@@ -83,8 +83,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			CalculateReferenceDisplayValues();
-			CompositeUndoableCommand historyCommand = ImageOperation.Apply(this, GetAllImages());
-
+			UndoableCommand historyCommand = new DrawableUndoableOperationCommand<IPresentationImage>(this, GetAllImages());
 			if (historyCommand != null)
 			{
 				historyCommand.Name = SR.CommandMatchScale;

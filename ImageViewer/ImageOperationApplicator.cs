@@ -106,10 +106,14 @@ namespace ClearCanvas.ImageViewer
 		/// Each affected image is drawn automatically by this method.
 		/// </para>
 		/// </remarks>
-		public CompositeUndoableCommand ApplyToAllImages()
+		public UndoableCommand ApplyToAllImages()
 		{
 			_imageEnumerator.ExcludeReferenceImage = false;
-			return ImageOperation.Apply(_operation, _imageEnumerator);
+			CompositeUndoableCommand command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator);
+			if (command.Count == 0)
+				return null;
+			else 
+				return command;
 		}
 
 		/// <summary>
@@ -125,10 +129,14 @@ namespace ClearCanvas.ImageViewer
 		/// Each affected image is drawn automatically by this method.
 		/// </para>
 		/// </remarks>
-		public CompositeUndoableCommand ApplyToLinkedImages()
+		public UndoableCommand ApplyToLinkedImages()
 		{
 			_imageEnumerator.ExcludeReferenceImage = true;
-			return ImageOperation.Apply(_operation, _imageEnumerator);
+			CompositeUndoableCommand command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator);
+			if (command.Count == 0)
+				return null;
+			else
+				return command;
 		}
 	}
 }

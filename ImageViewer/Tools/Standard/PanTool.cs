@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			_memorableCommand.EndState = GetSelectedImageTransform().CreateMemento();
-			CompositeUndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+			UndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
 			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
 			if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))

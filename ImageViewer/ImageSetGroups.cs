@@ -74,65 +74,10 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		protected static IEnumerable<T> GetImages<T>(IImageSet imageSet) where T : class
-		{
-			foreach (IPresentationImage image in GetImages(imageSet))
-			{
-				T provider = image as T;
-				if (provider != null)
-					yield return provider;
-			}
-		}
-
-		protected static IEnumerable<IPresentationImage> GetImages(IImageSet imageSet)
-		{
-			foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-			{
-				foreach (IPresentationImage image in displaySet.PresentationImages)
-				{
-					yield return image;
-				}
-			}
-		}
-
-		protected static IPresentationImage GetFirstImage(IImageSet imageSet)
-		{
-			foreach (IPresentationImage image in GetImages(imageSet))
-				return image;
-
-			return null;
-		}
-
-		protected static T GetFirstImage<T>(IImageSet imageSet) where T : class
-		{
-			return GetFirstImage<T>(imageSet, delegate { return true; });
-		}
-
-		protected static T GetFirstImage<T>(IImageSet imageSet, Predicate<T> test) where T : class
-		{
-			foreach (IPresentationImage image in GetImageAsProvider<T>(imageSet))
-			{
-				T provider = image as T;
-				if (provider != null && test(provider))
-					return image as T;
-			}
-
-			return null;
-		}
-
-		protected static IEnumerable<T> GetImageAsProvider<T>(IImageSet imageSet) where T : class
-		{
-			foreach (IPresentationImage image in GetImages(imageSet))
-			{
-				if (image is T)
-					yield return image as T;
-			}
-		}
-
 		public abstract TestResult Test(IImageSet imageSet);
 	}
 
-	public class PatientImageSetGroup : FilteredGroup<IImageSet>
+	internal class PatientImageSetGroup : FilteredGroup<IImageSet>
 	{
 		internal PatientImageSetGroup(IImageSet sourceImageSet)
 			: base("Patient", sourceImageSet.PatientInfo, new PatientInfoSpecification(sourceImageSet))
@@ -140,9 +85,9 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
-	public class SimplePatientImageSetGroupFactory : IFilteredGroupFactory<IImageSet>
+	internal class PatientImageSetGroupFactory : IFilteredGroupFactory<IImageSet>
 	{
-		public SimplePatientImageSetGroupFactory()
+		internal PatientImageSetGroupFactory()
 		{
 		}
 
@@ -158,12 +103,12 @@ namespace ClearCanvas.ImageViewer
 
 	public class ImageSetGroups : IDisposable
 	{
-		private readonly FilteredGroups<IImageSet> _root;
+		private readonly RootFilteredGroup<IImageSet> _root;
 		private ObservableList<IImageSet> _sourceImageSets;
 
 		public ImageSetGroups()
 		{
-			_root = new FilteredGroups<IImageSet>("Root", "All Patients", new SimplePatientImageSetGroupFactory());
+			_root = new RootFilteredGroup<IImageSet>("Root", "All Patients", new PatientImageSetGroupFactory());
 		}
 
 		public ImageSetGroups(ObservableList<IImageSet> sourceImageSets)
@@ -172,7 +117,7 @@ namespace ClearCanvas.ImageViewer
 			SourceImageSets = sourceImageSets;
 		}
 
-		public FilteredGroups<IImageSet> Root
+		public RootFilteredGroup<IImageSet> Root
 		{
 			get { return _root; }	
 		}

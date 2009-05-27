@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			CompositeUndoableCommand historyCommand = applicator.ApplyToAllImages();
+			UndoableCommand historyCommand = applicator.ApplyToAllImages();
 
 			if (historyCommand != null)
 			{

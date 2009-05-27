@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,11 +29,52 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.DicomGraphics
+namespace ClearCanvas.Desktop.Configuration.Standard
 {
-	
+	[ExtensionPoint]
+	public sealed class ToolStripConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+
+	[AssociateView(typeof (ToolStripConfigurationComponentViewExtensionPoint))]
+	public sealed class ToolStripConfigurationComponent : ConfigurationApplicationComponent
+	{
+		private ToolStripSettingsHelper _settings;
+		private bool _wrapLongToolstrips;
+
+		public bool WrapLongToolstrips
+		{
+			get { return _wrapLongToolstrips; }
+			set
+			{
+				if (_wrapLongToolstrips != value)
+				{
+					_wrapLongToolstrips = value;
+					base.NotifyPropertyChanged("WrapLongToolstrips");
+					base.Modified = true;
+				}
+			}
+		}
+
+		public override void Start()
+		{
+			base.Start();
+
+			_settings = ToolStripSettingsHelper.Default;
+			_wrapLongToolstrips = _settings.WrapLongToolstrips;
+		}
+
+		public override void Stop()
+		{
+			_settings = null;
+
+			base.Stop();
+		}
+
+		public override void Save()
+		{
+			_settings.WrapLongToolstrips = _wrapLongToolstrips;
+			_settings.Save();
+		}
+	}
 }

@@ -33,7 +33,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-/*	/// <summary>
+	/// <summary>
 	/// A specialization of the <see cref="BasicImageOperation"/> where the
 	/// originator is an <see cref="ISpatialTransform"/>.
 	/// </summary>
@@ -70,4 +70,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return null;
 		}
 	}
-*/}
+}

@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private ToolSet _toolSet;
 		private Table<ImportProgressItem> _importTable;
-		private FilteredGroups<ImportProgressItem> _filteredItems;
+		private RootFilteredGroup<ImportProgressItem> _filteredItems;
 		private ISelection _selection;
 		private ImportProgressItem _selectedProgressItem;
 		private event EventHandler _selectionUpdated;
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			InitializeTable();
 
-			_filteredItems = new FilteredGroups<ImportProgressItem>();
+			_filteredItems = new RootFilteredGroup<ImportProgressItem>();
 			_filteredItems.ItemAdded += FilteredItemAdded;
 			_filteredItems.ItemRemoved += FilteredItemRemoved;
 

@@ -35,15 +35,15 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {
-	[ExtensionOf(typeof (ToolStripConfigComponentViewExtensionPoint))]
-	public sealed class ToolStripConfigComponentView : WinFormsView, IApplicationComponentView
+	[ExtensionOf(typeof (ToolStripConfigurationComponentViewExtensionPoint))]
+	public sealed class ToolStripConfigurationComponentView : WinFormsView, IApplicationComponentView
 	{
-		private ToolStripConfigComponent _component;
-		private ToolStripConfigComponentControl _control;
+		private ToolStripConfigurationComponent _component;
+		private ToolStripConfigurationComponentControl _control;
 
 		public void SetComponent(IApplicationComponent component)
 		{
-			_component = (ToolStripConfigComponent) component;
+			_component = (ToolStripConfigurationComponent)component;
 		}
 
 		public override object GuiElement
@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 			get
 			{
 				if (_control == null)
-					_control = new ToolStripConfigComponentControl(_component);
+					_control = new ToolStripConfigurationComponentControl(_component);
 				return _control;
 			}
 		}

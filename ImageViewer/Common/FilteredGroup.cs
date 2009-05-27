@@ -77,39 +77,39 @@ namespace ClearCanvas.ImageViewer.Common
 		}
 	}
 
-	public class FilteredGroups<T> : FilteredGroup<T> where T : class
+	public class RootFilteredGroup<T> : FilteredGroup<T> where T : class
 	{
-		public FilteredGroups()
+		public RootFilteredGroup()
 			: this("Root", "All Items")
 		{
 		}
 
-		public FilteredGroups(string name, string label)
+		public RootFilteredGroup(string name, string label)
 			: this(name, label, ReturnTrue)
 		{
 		}
 
-		public FilteredGroups(string name, string label, Predicate<T> test)
+		public RootFilteredGroup(string name, string label, Predicate<T> test)
 			: this(name, label, test, null)
 		{
 		}
 		
-		public FilteredGroups(string name, string label, ISpecification specification)
+		public RootFilteredGroup(string name, string label, ISpecification specification)
 			: this(name, label, specification, null)
 		{
 		}
 
-		public FilteredGroups(string name, string label, IFilteredGroupFactory<T> childGroupFactory)
+		public RootFilteredGroup(string name, string label, IFilteredGroupFactory<T> childGroupFactory)
 			: this(name, label, new SimpleSpecification(ReturnTrue), childGroupFactory)
 		{
 		}
 
-		public FilteredGroups(string name, string label, Predicate<T> test, IFilteredGroupFactory<T> childGroupFactory)
+		public RootFilteredGroup(string name, string label, Predicate<T> test, IFilteredGroupFactory<T> childGroupFactory)
 			: base(name, label, test, childGroupFactory)
 		{
 		}
 
-		public FilteredGroups(string name, string label, ISpecification specification, IFilteredGroupFactory<T> childGroupFactory)
+		public RootFilteredGroup(string name, string label, ISpecification specification, IFilteredGroupFactory<T> childGroupFactory)
 			: base(name, label, specification, childGroupFactory)
 		{
 		}
@@ -289,6 +289,8 @@ namespace ClearCanvas.ImageViewer.Common
 
 		protected virtual void OnChildGroupEmpty(FilteredGroup<T> childGroup, out bool remove)
 		{
+			//TODO (CR May09): make it so if there is a factory, you can't add your own groups.
+			//NOTE: in the interest of time, deferring actually doing this since it involves no API changes.
 			remove = _childGroupFactory != null;
 		}
 
@@ -307,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Common
 		public FilteredGroup<T> ParentGroup
 		{
 			get { return _parentGroup; }
-			set
+			private set
 			{
 				Clear();
 				_parentGroup = value;
@@ -459,8 +461,7 @@ namespace ClearCanvas.ImageViewer.Common
 				{
 					ChildGroups.Add(newGroup);
 					addedToChild = AddItemToChild(item, newGroup);
-					if (!addedToChild)
-						Debug.Assert(false, "Item should be guaranteed to have been inserted.");
+					Platform.CheckTrue(addedToChild, "Item should be guaranteed to have been inserted.");
 				}
 			}
 

@@ -1,5 +1,5 @@
 namespace ClearCanvas.Desktop.Configuration.View.WinForms {
-	partial class ToolStripConfigComponentControl {
+	partial class ToolStripConfigurationComponentControl {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>

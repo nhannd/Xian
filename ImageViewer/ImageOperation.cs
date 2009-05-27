@@ -45,15 +45,5 @@ namespace ClearCanvas.ImageViewer
 		protected ImageOperation()
 		{
 		}
-
-		public new static DrawableUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IPresentationImage image)
-		{
-			return DrawableUndoableOperation<IPresentationImage>.Apply(operation, image);
-		}
-
-		public new static CompositeUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IEnumerable<IPresentationImage> images)
-		{
-			return DrawableUndoableOperation<IPresentationImage>.Apply(operation, images);
-		}
 	}
 }

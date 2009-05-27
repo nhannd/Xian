@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,45 +29,28 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Desktop;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.Configuration.Standard;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {
-	public abstract class DrawableUndoableOperation<T> : UndoableOperation<T> where T : class, IDrawable
+	public partial class ToolStripConfigurationComponentControl : UserControl
 	{
-		protected DrawableUndoableOperation()
+		private readonly ToolStripConfigurationComponent _component;
+
+		public ToolStripConfigurationComponentControl(ToolStripConfigurationComponent component)
 		{
-		}
+			InitializeComponent();
 
-		public static DrawableUndoableCommand Apply(IUndoableOperation<T> operation, T item)
-		{
-			MemorableUndoableCommand memorableCommand = UndoableOperation<T>.Apply(operation, item);
-			if (memorableCommand == null)
-				return null;
+			_component = component;
 
-			//we have to draw the item ourselves b/c the operation has already been applied.
-			item.Draw();
-
-			DrawableUndoableCommand drawableCommand = new DrawableUndoableCommand(item);
-			drawableCommand.Enqueue(memorableCommand);
-			return drawableCommand;
-		}
-
-		public static CompositeUndoableCommand Apply(IUndoableOperation<T> operation, IEnumerable<T> items)
-		{
-			CompositeUndoableCommand returnCommand = new CompositeUndoableCommand();
-			foreach (T item in items)
-			{
-				DrawableUndoableCommand drawableCommand = Apply(operation, item);
-				if (drawableCommand != null)
-					returnCommand.Enqueue(drawableCommand);
-			}
-
-			if (returnCommand.Count > 0)
-				return returnCommand;
-			else
-				return null;
+			_chkWrapGlobalToolbars.DataBindings.Add("Checked", _component, "WrapLongToolstrips", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

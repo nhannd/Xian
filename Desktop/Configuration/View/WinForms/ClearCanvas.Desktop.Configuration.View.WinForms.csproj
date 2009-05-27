@@ -57,13 +57,13 @@
       <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingsManagementComponentView.cs" />
-    <Compile Include="ToolStripConfigComponentControl.cs">
+    <Compile Include="ToolStripConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ToolStripConfigComponentControl.Designer.cs">
-      <DependentUpon>ToolStripConfigComponentControl.cs</DependentUpon>
+    <Compile Include="ToolStripConfigurationComponentControl.Designer.cs">
+      <DependentUpon>ToolStripConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ToolStripConfigComponentView.cs" />
+    <Compile Include="ToolStripConfigurationComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -97,9 +97,9 @@
       <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ToolStripConfigComponentControl.resx">
+    <EmbeddedResource Include="ToolStripConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>ToolStripConfigComponentControl.cs</DependentUpon>
+      <DependentUpon>ToolStripConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
