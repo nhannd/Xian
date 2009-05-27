@@ -272,6 +272,24 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         }
 
         /// <summary>
+        /// Gets the total size of all instances in the study.
+        /// </summary>
+        /// <returns>
+        /// Size of the study, in bytes.
+        /// </returns>
+        public long GetStudySize()
+        {
+            long size = 0;
+            foreach(SeriesXml series in this)
+            {
+                foreach (InstanceXml instance in series)
+                    size += instance.FileSize;
+            }
+
+            return size;
+        }
+
+        /// <summary>
         /// Get an XML document representing the <see cref="StudyXml"/>.
         /// </summary>
         /// <remarks>

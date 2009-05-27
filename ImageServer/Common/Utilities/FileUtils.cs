@@ -61,6 +61,9 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 		/// <param name="retryMinDelay">The minimum number of milliseconds to delay when deleting.</param>
 		static public void Delete(string path, long timeout, ManualResetEvent stopSignal, int retryMinDelay)
 		{
+            if (!File.Exists(path))
+                return; //nothing to do
+
 			Exception lastException = null;
 			long begin = Environment.TickCount;
 			bool cancelled = false;
@@ -96,5 +99,108 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
 			throw lastException;
 		}
+
+
+        /// <summary>
+        /// Replacement for <see cref="File.Copy"/> that retries if the file is in use.
+        /// </summary>
+        /// <param name="source">The path to copy from.</param>
+        /// <param name="destination">The path to copy to.</param>
+        static public void Copy(string source, string destination, bool overwrite)
+        {
+            Copy(source, destination, overwrite, RETRY_MAX_DELAY, null, RETRY_MIN_DELAY);
+        }
+
+        /// <summary>
+        /// Replacement for <see cref="File.Copy"/> that retries if the file is in use.
+        /// </summary>
+        /// <param name="source">The path to copy from.</param>
+        /// <param name="destination">The path to copy to.</param>
+        /// <param name="overwrite">Boolean value to indicate whether to overwrite the destination if it exists</param>
+        /// <param name="timeout">The timeout in milliseconds to attempt to retry to delete the file</param>
+        /// <param name="stopSignal">An optional stopSignal to tell the delete operation to stop if retrying</param>
+        /// <param name="retryMinDelay">The minimum number of milliseconds to delay when deleting.</param>
+        static public void Copy(string source, string destination, bool overwrite,
+                long timeout, ManualResetEvent stopSignal, int retryMinDelay)
+        {
+            if (!File.Exists(source))
+                throw new FileNotFoundException("Source file does not exist", source);
+
+            Exception lastException = null;
+            long begin = Environment.TickCount;
+            bool cancelled = false;
+
+            while (!cancelled)
+            {
+                try
+                {
+                    File.Copy(source, destination, overwrite);
+                    return;
+                }
+                catch (IOException e)
+                {
+                    // other IO exceptions should be treated as retry
+                    lastException = e;
+                    Random rand = new Random();
+                    Thread.Sleep(rand.Next(retryMinDelay, 2 * retryMinDelay));
+                }
+
+                if (timeout > 0 && Environment.TickCount - begin > timeout)
+                {
+                    if (lastException != null)
+                        throw lastException;
+                    else
+                        throw new TimeoutException();
+                }
+
+                if (stopSignal != null)
+                {
+                    cancelled = stopSignal.WaitOne(TimeSpan.FromMilliseconds(retryMinDelay), false);
+                }
+            }
+
+            throw lastException;
+        }
+
+        /// <summary>
+        /// Backs up the specified file.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>The path to the backup file. Null if the file is not backed up.</returns>
+        static public string Backup(string source)
+        {
+            FileInfo sourceInfo = new FileInfo(source);
+            if (File.Exists(source))
+            {
+                int i = 0;
+                bool filenameAbtained = false;
+                while(!filenameAbtained)
+                {
+                    string backup = (CommandProcessor.ExecutionContext.Current != null)
+                                    ? Path.Combine(CommandProcessor.ExecutionContext.Current.BackupDirectory, String.Format("{0}.bak({1})", sourceInfo.Name,i))
+                                    : Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name,i));
+                
+                    try
+                    {
+                        FileStream stream = FileStreamOpener.OpenForSoleUpdate(backup, FileMode.CreateNew, 100);
+                        stream.Close();
+                        filenameAbtained = true;
+                    }
+                    catch(Exception ex)
+                    {
+                        // try another file name
+                    }
+
+                    if (filenameAbtained)
+                    {
+                        FileUtils.Copy(source, backup, true);
+                        return backup;
+                    }
+                }
+            }
+
+            return null;
+                
+        }
 	}
 }

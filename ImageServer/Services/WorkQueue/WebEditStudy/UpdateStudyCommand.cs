@@ -34,11 +34,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -54,139 +51,6 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
-    class PatientInfo : IEquatable<PatientInfo>
-    {
-        private string _name;
-        private string _patientId;
-        private string _issuerOfPatientId;
-
-        public PatientInfo()
-        {
-        }
-
-        public PatientInfo(PatientInfo other)
-        {
-            Name = other.Name;
-            PatientId = other.PatientId;
-            IssuerOfPatientId = other.IssuerOfPatientId;
-        }
-        
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-
-        public string PatientId
-        {
-            get { return _patientId; }
-            set { _patientId = value; }
-        }
-
-        public string IssuerOfPatientId
-        {
-            get { return _issuerOfPatientId; }
-            set { _issuerOfPatientId = value; }
-        }
-
-        #region IEquatable<PatientInfo> Members
-
-        public bool Equals(PatientInfo other)
-        {
-            PersonName name = new PersonName(_name);
-            PersonName otherName = new PersonName(other.Name);
-            return name.Equals(otherName) && String.Equals(_patientId, other.PatientId, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        #endregion
-    }
-
-    class InstanceInfo
-    {
-        private string _seriesInstanceUid;
-        private string _sopInstanceUid;
-
-        public string SeriesInstanceUid
-        {
-            get { return _seriesInstanceUid; }
-            set { _seriesInstanceUid = value; }
-        }
-
-        public string SopInstanceUid
-        {
-            get { return _sopInstanceUid; }
-            set { _sopInstanceUid = value; }
-        }
-    }
-
-
-    /// <summary>
-    /// Stores statistics of a WorkQueue instance processing.
-    /// </summary>
-    internal class UpdateStudyStatistics : StatisticsSet
-    {
-        #region Constructors
-
-        public UpdateStudyStatistics(string studyInstanceUid)
-            : this("UpdateStudy", studyInstanceUid)
-        { }
-
-        public UpdateStudyStatistics(string name, string studyInstanceUid)
-            : base(name)
-        {
-            AddField("StudyInstanceUid", studyInstanceUid);
-        }
-
-        #endregion Constructors
-
-        #region Public Properties
-
-        
-        public TimeSpanStatistics ProcessTime
-        {
-            get
-            {
-                if (this["ProcessTime"] == null)
-                    this["ProcessTime"] = new TimeSpanStatistics("ProcessTime");
-
-                return (this["ProcessTime"] as TimeSpanStatistics);
-            }
-            set { this["ProcessTime"] = value; }
-        }
-
-        public ulong StudySize
-        {
-            set
-            {
-                this["StudySize"] = new ByteCountStatistics("StudySize", value);
-            }
-            get
-            {
-                if (this["StudySize"] == null)
-                    this["StudySize"] = new ByteCountStatistics("StudySize");
-
-                return ((ByteCountStatistics)this["StudySize"]).Value;
-            }
-        }
-
-        public int InstanceCount
-        {
-            set
-            {
-                this["InstanceCount"] = new Statistics<int>("InstanceCount", value);
-            }
-            get
-            {
-                if (this["InstanceCount"] == null)
-                    this["InstanceCount"] = new Statistics<int>("InstanceCount");
-
-                return ((Statistics<int>)this["InstanceCount"]).Value;
-            }
-        }
-
-        #endregion Public Properties
-    }
-
     /// <summary>
     /// Command for updating a study.
     /// </summary>
@@ -198,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
     {
         #region Private Members
         private readonly List<InstanceInfo> _updatedSopList = new List<InstanceInfo>();
-        private readonly StudyStorageLocation _studyLocation;
+        private readonly StudyStorageLocation _oldStudyLocation;
         private string _oldStudyPath;
         private string _oldStudyInstanceUid;
         private string _newStudyFolder;
@@ -224,6 +88,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private UpdateStudyStatistics _statistics;
         private int _totalSopCount;
         private bool _restored;
+        private StudyStorageLocation _backupStudyLocation;
 
         #endregion
 
@@ -234,9 +99,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             : base("Update existing study", true)
         {
             _partition = partition;
-            _studyLocation = studyLocation;
+            _oldStudyLocation = studyLocation;
             _commands = imageLevelCommands;
-            _statistics = new UpdateStudyStatistics(_studyLocation.StudyInstanceUid);
+            _statistics = new UpdateStudyStatistics(_oldStudyLocation.StudyInstanceUid);
 
         }
 
@@ -295,13 +160,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             _backupDir = ExecutionContext.BackupDirectory;
 
-            _oldStudyPath = _studyLocation.GetStudyPath();
-            _oldStudyInstanceUid = _studyLocation.StudyInstanceUid;
-            _oldStudyFolder = _studyLocation.StudyFolder;
+            _oldStudyPath = _oldStudyLocation.GetStudyPath();
+            _oldStudyInstanceUid = _oldStudyLocation.StudyInstanceUid;
+            _oldStudyFolder = _oldStudyLocation.StudyFolder;
             _newStudyFolder = _oldStudyFolder;
             _newStudyInstanceUid = _oldStudyInstanceUid;
 
-            _study = _studyLocation.LoadStudy(UpdateContext);
+            _study = _oldStudyLocation.LoadStudy(UpdateContext);
             _totalSopCount = _study.NumberOfStudyRelatedInstances;
             _curPatient = _study.LoadPatient(UpdateContext);
             _oldPatientInfo = new PatientInfo();
@@ -354,7 +219,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 _newStudyFolder = ImageServerCommonConfiguration.DefaultStudyRootFolder;
             }
 
-            _newStudyPath = Path.Combine(_studyLocation.FilesystemPath, _partition.PartitionFolder);
+            _newStudyPath = Path.Combine(_oldStudyLocation.FilesystemPath, _partition.PartitionFolder);
             _newStudyPath = Path.Combine(_newStudyPath, _newStudyFolder);
             _newStudyPath = Path.Combine(_newStudyPath, _newStudyInstanceUid);
 
@@ -362,7 +227,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
 
             Statistics.InstanceCount = _study.NumberOfStudyRelatedInstances;
-            Statistics.StudySize = (ulong) DirectoryUtility.CalculateFolderSize(_oldStudyPath);
+            Statistics.StudySize = (ulong) _oldStudyLocation.LoadStudyXml().GetStudySize();
 
             _initialized = true;
         }
@@ -382,7 +247,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             StringBuilder log = new StringBuilder();
             log.AppendLine(String.Format("Study to be updated:"));
             log.AppendLine(String.Format("\tServer Partition: {0}\n", _partition.AeTitle));
-            log.AppendLine(String.Format("\tStorage GUID: {0}\n", _studyLocation.GetKey().Key));
+            log.AppendLine(String.Format("\tStorage GUID: {0}\n", _oldStudyLocation.GetKey().Key));
             log.AppendLine(String.Format("\tPatient ID: {0}\n", _study.PatientId));
             log.AppendLine(String.Format("\tPatient Name: {0}\n", _study.PatientsName));
             log.AppendLine(String.Format("\tAccession #: {0}\n", _study.AccessionNumber));
@@ -401,65 +266,61 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             log.AppendLine(String.Format("\tNew location: {0}", NewStudyPath));
             Platform.Log(LogLevel.Info, log);
         }
+
         private void RestoreFilesystem()
         {
             if (!RequiresRollback || !_initialized)
                 return;
 
-            if (NewStudyPath == _oldStudyPath)
+            if (_backupStudyLocation!=null)
             {
-                
-                // files were overwritten
-                if (Directory.Exists(_oldStudyPath))
-                    Directory.CreateDirectory(_oldStudyPath);
+                if (!Directory.Exists(_oldStudyLocation.GetStudyPath()))
+                    Directory.CreateDirectory(_oldStudyLocation.GetStudyPath());
 
-                // restore header
-                Platform.Log(LogLevel.Info, "Restoring old study header...");
-                string backupFilePath = Path.Combine(_backupDir, _oldStudyInstanceUid +".xml" );
-                File.Copy(backupFilePath, Path.Combine(_oldStudyPath, _oldStudyInstanceUid + ".xml"), true);
-                backupFilePath = Path.Combine(_backupDir, _oldStudyInstanceUid + ".xml.gz");
-                File.Copy(backupFilePath, Path.Combine(_oldStudyPath, _oldStudyInstanceUid + ".xml.gz"), true);
-
-                // restore updated SOPs
-                Platform.Log(LogLevel.Info, "Restoring old study folder... {0} sop need to be restored", _updatedSopList.Count);
-                int restoredCount = 0;
-                foreach (InstanceInfo sop in _updatedSopList)
+                if (NewStudyPath == _oldStudyPath)
                 {
-                    string backupUidPath = Path.Combine(_backupDir, sop.SeriesInstanceUid);
-                    backupUidPath = Path.Combine(backupUidPath,  sop.SopInstanceUid +".dcm");
-                    DicomFile file = new DicomFile(backupUidPath);
-                    file.Load();
+                    // files were overwritten
 
-                    string seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-                    string sopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-                    string oldPath = Path.Combine(_oldStudyPath, seriesUid);
-                    if (Directory.Exists(oldPath))
-                        Directory.CreateDirectory(oldPath);
+                    // restore header
+                    Platform.Log(LogLevel.Info, "Restoring old study header...");
+                    FileUtils.Copy(_backupStudyLocation.GetStudyXmlPath(), _oldStudyLocation.GetStudyXmlPath(), true);
+                    FileUtils.Copy(_backupStudyLocation.GetCompressedStudyXmlPath(), _oldStudyLocation.GetCompressedStudyXmlPath(), true);
 
-                    oldPath = Path.Combine(oldPath, sopUid + ".dcm");
+                    // restore updated SOPs
+                    Platform.Log(LogLevel.Info, "Restoring old study folder... {0} sop need to be restored", _updatedSopList.Count);
+                    int restoredCount = 0;
+                    foreach (InstanceInfo sop in _updatedSopList)
+                    {
+                        FileUtils.Copy(_backupStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid),
+                                        _oldStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid), true);
 
-                    file.Save(oldPath);
-                    
-                    restoredCount++;
-                    Platform.Log(ServerPlatform.InstanceLogLevel, "Restored SOP {0} [{1} of {2}]", sopUid, restoredCount, _updatedSopList.Count);
-                    
+                        restoredCount++;
+                        Platform.Log(ServerPlatform.InstanceLogLevel, "Restored SOP {0} [{1} of {2}]", sop.SopInstanceUid, restoredCount, _updatedSopList.Count);
+
+                        SimulateErrors();
+                    }
+
+                    if (restoredCount > 0)
+                        Platform.Log(LogLevel.Info, "{0} SOP(s) have been restored.", restoredCount);
+
+                }
+                else
+                {
+                    // files were not overwritten.
+
+                    DirectoryUtility.DeleteIfExists(NewStudyPath, true);
+                    if (_originalFolderDeleted)
+                    {
+                        // the old folder was removed. It must be restored entirely
+                        Platform.Log(LogLevel.Info, "Restoring original study folder");
+                        DirectoryUtility.Copy(_backupStudyLocation.GetStudyPath(), _oldStudyLocation.GetStudyPath());
+                    }
+
                     SimulateErrors();
-
                 }
             }
-            else
-            {
-                DirectoryUtility.DeleteIfExists(NewStudyPath, true);
 
-                if (_originalFolderDeleted)
-                {
-                    // the old folder was removed. It must be restored entirely
-                    Platform.Log(LogLevel.Info, "Restoring original study folder");
-                    DirectoryUtility.Copy(_backupDir, _oldStudyPath);
-                }
-
-                SimulateErrors();
-            }
+            
         }
 
         private void SimulateErrors()
@@ -488,7 +349,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private void LoadEntities()
         {
-            _storage = StudyStorage.Load(_studyLocation.GetKey());
+            _storage = StudyStorage.Load(_oldStudyLocation.GetKey());
             _study = _storage.LoadStudy(UpdateContext);
         }
 
@@ -511,8 +372,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             // Update the FilesystemStudyStorage table
             IFilesystemStudyStorageEntityBroker filesystemStorageBroker = UpdateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorageSelectCriteria criteria = new FilesystemStudyStorageSelectCriteria();
-            criteria.FilesystemKey.Equals(_studyLocation.FilesystemKey);
-            criteria.StudyStorageKey.EqualTo(_studyLocation.GetKey());
+            criteria.FilesystemKey.Equals(_oldStudyLocation.FilesystemKey);
+            criteria.StudyStorageKey.EqualTo(_oldStudyLocation.GetKey());
             FilesystemStudyStorageUpdateColumns columns = new FilesystemStudyStorageUpdateColumns();
             columns.StudyFolder = _newStudyFolder;
             filesystemStorageBroker.Update(criteria, columns);
@@ -593,8 +454,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private void UpdateFilesystem()
         {
             Platform.Log(LogLevel.Info, "Updating filesystem...");
-            string studyXmlPath = Path.Combine(_oldStudyPath, _oldStudyInstanceUid + ".xml"); ;
-            StudyXml studyXml = LoadStudyXml(studyXmlPath);
+            StudyXml studyXml = _oldStudyLocation.LoadStudyXml();
 			StudyXmlOutputSettings outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
 
             StudyXml newStudyXml = new StudyXml();
@@ -677,7 +537,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             String seriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             String sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 
-            String destPath = _studyLocation.FilesystemPath;
+            String destPath = _oldStudyLocation.FilesystemPath;
             String extension = ".dcm";
 
             using (ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Update Study"))
@@ -718,24 +578,32 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private void BackupFilesystem()
         {
             Platform.Log(LogLevel.Info, "Backing up current study folder...");
-            Directory.CreateDirectory(_backupDir);
-            DirectoryUtility.Copy(_oldStudyPath, _backupDir);
+            _backupStudyLocation = _oldStudyLocation.Clone() as StudyStorageLocation;
+            
+            //change the filesystem path and remove the partition and study folders
+            _backupStudyLocation.FilesystemPath = ExecutionContext.Current.BackupDirectory;
+            _backupStudyLocation.StudyFolderRelativePath = _backupStudyLocation.StudyInstanceUid;
+
+            StudyXml studyXml = _oldStudyLocation.LoadStudyXml();
+            Directory.CreateDirectory(_backupStudyLocation.GetStudyPath());
+            FileUtils.Copy(_oldStudyLocation.GetStudyXmlPath(), _backupStudyLocation.GetStudyXmlPath(), true);
+            FileUtils.Copy(_oldStudyLocation.GetCompressedStudyXmlPath(), _backupStudyLocation.GetCompressedStudyXmlPath(), true);
+
+            foreach(SeriesXml seriesXml in studyXml)
+            {
+                foreach(InstanceXml instanceXml in seriesXml)
+                {
+                    string existingFile = _oldStudyLocation.GetSopInstancePath(seriesXml.SeriesInstanceUid, instanceXml.SopInstanceUid);
+
+                    FileInfo backupPath = new FileInfo(_backupStudyLocation.GetSopInstancePath(seriesXml.SeriesInstanceUid, instanceXml.SopInstanceUid));
+                    Directory.CreateDirectory(backupPath.Directory.FullName);
+                    FileUtils.Copy(existingFile, backupPath.FullName, true );
+                }
+            }
+
             Platform.Log(LogLevel.Info, "A copy of {0} has been saved to {1}.", _oldStudyInstanceUid, _backupDir);
         }
 
-        private StudyXml LoadStudyXml(string studyXmlPath)
-        {
-            XmlDocument doc = new XmlDocument();
-            StudyXml studyXml = new StudyXml();
-			using (FileStream stream = FileStreamOpener.OpenForRead(studyXmlPath,FileMode.Open))
-            {
-                StudyXmlIo.Read(doc, stream);
-                studyXml.SetMemento(doc);
-				stream.Close();
-            }
-
-            return studyXml;
-        }
 
         #endregion
 

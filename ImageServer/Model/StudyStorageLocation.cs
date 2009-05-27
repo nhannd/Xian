@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Xml;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
@@ -45,20 +44,49 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class StudyStorageLocation : ServerEntity
+    public class StudyStorageLocation : ServerEntity, ICloneable
     {
         private const string STUDY_XML_EXTENSION = "xml";
-        private const string STUDY_XML_GZIP_EXTENSION = "gz";
+        private const string STUDY_XML_GZIP_EXTENSION = "xml.gz";
         
         #region Constructors
         public StudyStorageLocation()
             : base("StudyStorageLocation")
         {
         }
+
+        /// <summary>
+        /// Create a copy of the specified <see cref="StudyStorageLocation"/>
+        /// </summary>
+        /// <param name="original"></param>
+        public StudyStorageLocation(StudyStorageLocation original)
+            : base("StudyStorageLocation")
+        {
+            this.Enabled = original.Enabled;
+            this.FilesystemKey = original.FilesystemKey;
+            this.FilesystemPath = original.FilesystemPath;
+            this.FilesystemStudyStorageKey = original.FilesystemStudyStorageKey;
+            this.FilesystemTierEnum = original.FilesystemTierEnum;
+            this.InsertTime = original.InsertTime;
+            this.IsReconcileRequired = original.IsReconcileRequired;
+            this.LastAccessedTime = original.LastAccessedTime;
+            this.Lock = original.Lock;
+            this.PartitionFolder = original.PartitionFolder;
+            this.QueueStudyStateEnum = original.QueueStudyStateEnum;
+            this.ReadOnly = original.ReadOnly;
+            this.ServerPartitionKey = original.ServerPartitionKey;
+            this.ServerTransferSyntaxKey = original.ServerTransferSyntaxKey;
+            this.StudyFolder = original.StudyFolder;
+            this.StudyInstanceUid = original.StudyInstanceUid;
+            this.StudyStatusEnum = original.StudyStatusEnum;
+            this.StudyUidFolder = original.StudyUidFolder;
+            this.TransferSyntaxUid = original.TransferSyntaxUid;
+            this.WriteOnly = original.WriteOnly;
+        }
         #endregion
 
         #region Private Members
-        static private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+        static private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _filesystemKey;
     	private ServerEntityKey _serverTransferSyntaxKey;
@@ -83,6 +111,8 @@ namespace ClearCanvas.ImageServer.Model
         private ServerPartition _partition;
         private Study _study;
         private StudyXml _studyXml;
+        private string _studyUidFolder;
+        private string _studyFolderRelativePath;
 
         #endregion
 
@@ -207,6 +237,19 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Public Properties
 
+
+        public string StudyUidFolder
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_studyUidFolder))
+                    return StudyInstanceUid;
+                else
+                    return _studyUidFolder;
+            }
+            set { _studyUidFolder = value; }
+        }
+
         public ServerPartition ServerPartition
         {
             get
@@ -215,7 +258,7 @@ namespace ClearCanvas.ImageServer.Model
                 {
                     if (_partition == null)
                     {
-                        _partition = ServerPartition.Load(this.ServerPartitionKey);
+                        _partition = ServerPartition.Load(ServerPartitionKey);
                     }
                 }
                 return _partition;
@@ -259,12 +302,25 @@ namespace ClearCanvas.ImageServer.Model
 
         public string GetStudyPath()
         {
-            string path = Path.Combine(FilesystemPath, PartitionFolder);
-            path = Path.Combine(path, StudyFolder);
-            path = Path.Combine(path, StudyInstanceUid);
-
+            string path = Path.Combine(FilesystemPath, StudyFolderRelativePath);
             return path;
         }
+
+        public string StudyFolderRelativePath
+        {
+            get { 
+                if (_studyFolderRelativePath!=null)
+                    return _studyFolderRelativePath; 
+                else
+                {
+                    string path = Path.Combine(PartitionFolder, StudyFolder);
+                    path = Path.Combine(path, StudyUidFolder);
+                    return path;
+                }
+            }
+            set { _studyFolderRelativePath = value; }
+        }
+
 
         /// <summary>
         /// Acquires a lock on the study for processing
@@ -285,7 +341,7 @@ namespace ClearCanvas.ImageServer.Model
             {
                 ILockStudy lockStudyBroker = context.GetBroker<ILockStudy>();
                 LockStudyParameters parms = new LockStudyParameters();
-                parms.StudyStorageKey = this.GetKey();
+                parms.StudyStorageKey = GetKey();
                 parms.Lock = true;
                 if (!lockStudyBroker.Execute(parms))
                     return false;
@@ -314,7 +370,7 @@ namespace ClearCanvas.ImageServer.Model
             {
                 ILockStudy lockStudyBroker = context.GetBroker<ILockStudy>();
                 LockStudyParameters parms = new LockStudyParameters();
-                parms.StudyStorageKey = this.GetKey();
+                parms.StudyStorageKey = GetKey();
                 parms.Lock = false;
                 if (!lockStudyBroker.Execute(parms))
                     return false;
@@ -400,7 +456,7 @@ namespace ClearCanvas.ImageServer.Model
 		/// Returns the path of the sop instance with the specified series and sop instance uid.
 		/// </summary>
 		/// <param name="seriesInstanceUid"></param>
-		/// <param name="sopInstanceUid)"></param>
+        /// <param name="sopInstanceUid"></param>
         public String GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
         {
             String path = StringUtilities.Combine(new String[] {
@@ -448,13 +504,11 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        public string ResolveRelativePath(string relativePath)
-        {
-            String path = Path.Combine(FilesystemPath, PartitionFolder);
-            path = Path.Combine(path, relativePath);
-            return path;
-        }
 
+        /// <summary>
+        /// Gets the path of the study xml.
+        /// </summary>
+        /// <returns></returns>
         public String GetStudyXmlPath()
         {
             String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
@@ -462,6 +516,11 @@ namespace ClearCanvas.ImageServer.Model
 
             return path;
         }
+
+        /// <summary>
+        /// Gets the path of the compressed study xml.
+        /// </summary>
+        /// <returns></returns>
         public String GetCompressedStudyXmlPath()
         {
             String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
@@ -470,6 +529,12 @@ namespace ClearCanvas.ImageServer.Model
             return path;
         }
 
+        /// <summary>
+        /// Gets the <see cref="StudyXml"/> if it exists in this storage location.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <returns></returns>
         public StudyXml LoadStudyXml()
         {
             // TODO: Use FileStreamOpener instead
@@ -501,13 +566,14 @@ namespace ClearCanvas.ImageServer.Model
             return _studyXml;
         }
         
+        // TODO: Replace this method with FileStreamOpener
         private static Stream Open(string path)
         {
             FileStream stream = null;
 
             for (int i = 0; i<50; i++)
             {
-                Exception lastException;
+                Exception lastException=null;
                 try
                 {
                     stream = new FileStream(path, FileMode.Open, 
@@ -540,5 +606,15 @@ namespace ClearCanvas.ImageServer.Model
             }
             return stream;
         }
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            return new StudyStorageLocation(this);
+        }
+
+        #endregion
+
     }
 }
