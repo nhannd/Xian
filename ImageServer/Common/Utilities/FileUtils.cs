@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 long timeout, ManualResetEvent stopSignal, int retryMinDelay)
         {
             if (!File.Exists(source))
-                throw new FileNotFoundException("Source file does not exist", source);
+                throw new FileNotFoundException(String.Format("Source file {0} does not exist", source), source);
 
             Exception lastException = null;
             long begin = Environment.TickCount;
@@ -163,11 +163,13 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         }
 
         /// <summary>
-        /// Backs up the specified file.
+        /// Creates copy of the specified file and returns the path to the backup file.
         /// </summary>
         /// <param name="source"></param>
         /// <returns>The path to the backup file. Null if the file is not backed up.</returns>
-        static public string Backup(string source)
+        /// <param name="inSourceFolder">A boolean value indicating whether to save the backup in the same folder</param>
+        /// <remarks>If the file is in use, retry will be attempted until it succeeds.</remarks>
+        static public string Backup(string source, bool inSourceFolder)
         {
             FileInfo sourceInfo = new FileInfo(source);
             if (File.Exists(source))
@@ -176,13 +178,23 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 bool filenameAbtained = false;
                 while(!filenameAbtained)
                 {
-                    string backup = (CommandProcessor.ExecutionContext.Current != null)
-                                    ? Path.Combine(CommandProcessor.ExecutionContext.Current.BackupDirectory, String.Format("{0}.bak({1})", sourceInfo.Name,i))
-                                    : Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name,i));
+                    string backup;
+
+                    // check if the file still exists every time in case it is moved/deleted 
+                    // so that we are not stucked in the loop
+                    if (!File.Exists(source))
+                        throw new FileNotFoundException(String.Format("Source file {0} does not exist", source), source);
+
+                    if (inSourceFolder)
+                        backup = Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));
+                    else 
+                        backup =  (CommandProcessor.ExecutionContext.Current != null)
+                                     ? Path.Combine(CommandProcessor.ExecutionContext.Current.BackupDirectory, String.Format("{0}.bak({1})", sourceInfo.Name, i))
+                                     : Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));
                 
                     try
                     {
-                        FileStream stream = FileStreamOpener.OpenForSoleUpdate(backup, FileMode.CreateNew, 100);
+                        FileStream stream = FileStreamOpener.OpenForSoleUpdate(backup, FileMode.CreateNew, RETRY_MIN_DELAY);
                         stream.Close();
                         filenameAbtained = true;
                     }
@@ -201,6 +213,16 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
             return null;
                 
+        }
+
+        /// <summary>
+        /// Creates copy of the specified file and returns the path to the backup file.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns>The path to the backup file. Null if the file is not backed up.</returns>
+        static public string Backup(string source)
+        {
+            return Backup(source, false);
         }
 	}
 }

@@ -95,9 +95,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			Platform.CheckForNullReference(_context.StoragePath, "_context.StoragePath");
 
 			_processor = new ServerCommandProcessor("Move Reconcile Image Processor");
-
-		    String seriesUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].ToString();
-            String sopUid = _context.File.DataSet[DicomTags.SopInstanceUid].ToString();
 		    _src = _context.File.Filename;
 			_dest = GetReconcileImageTempPath(_context.File);
             
@@ -106,11 +103,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             
 			RenameFileCommand moveCommand = new RenameFileCommand(_src, _dest, true);
 			_processor.AddCommand(moveCommand);
-            
 			if (!_processor.Execute())
 			{
 				throw new ApplicationException(
-					String.Format("Unable to process image. Unable to move image to Reconcile folder: {0}", _processor.FailureReason));
+					String.Format("Unable to process image. Unable to move image to Reconcile folder: {0}", _processor.FailureReason), _processor.FailureException);
 			}
 
 			SimulatePostOperationError();

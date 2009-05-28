@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                 
 				if (processor.Execute() == false)
 				{
-					throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
+					throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason), processor.FailureException);
 				}
 				Platform.Log(ServerPlatform.InstanceLogLevel, "SOP {0} has been scheduled for auto reconciliation.", _sopInstanceUid);
 			}
@@ -309,7 +309,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                     processor.AddCommand(new OpValidationCommand(_reconcileContext));
 					if (processor.Execute() == false)
 					{
-						throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));
+                        throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason), processor.FailureException);
 					}
 
 				}
@@ -348,7 +348,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                     
 					if (processor.Execute() == false)
 					{
-						throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
+                        throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason), processor.FailureException);
 					}
 
 					Debug.Assert(insertCommand.ReconcileStudyWorkQueueItem != null);
