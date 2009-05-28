@@ -326,8 +326,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <remarks>
 		/// The <see cref="ControlGraphic"/> implementation returns the the cursor token
-		/// provided by the <see cref="CurrentHandler">current input handler</see>,
-		/// <see cref="OnGetCursorToken"/>, or any child graphics implementing <see cref="ICursorTokenProvider"/>,
+		/// provided by the current input handler, <see cref="OnGetCursorToken"/>, or any
+		/// child graphics implementing <see cref="ICursorTokenProvider"/>,
 		/// in decreasing order of priority.
 		/// </remarks>
 		CursorToken ICursorTokenProvider.GetCursorToken(Point point)
@@ -381,15 +381,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <para>
 		/// The <see cref="ControlGraphic"/> implementation finds a handler by trying <see cref="OnMouseStart"/>,
 		/// and any child graphics implementing <see cref="IMouseButtonHandler"/>, in decreasing order of priority.
-		/// Successful capture results in the <see cref="CurrentHandler"/> property being set to the captured handler.
 		/// </para>
 		/// </remarks>
 		/// <param name="mouseInformation">The mouse input information.</param>
 		/// <returns>True if the <see cref="ControlGraphic"/> did something as a result of the call and hence would like to receive capture; False otherwise.</returns>
 		bool IMouseButtonHandler.Start(IMouseInformation mouseInformation)
 		{
-			//TODO (CR May09):route to captured handler until it returns false.
 			bool result;
+
+			if (_capturedHandler != null)
+			{
+				result = _capturedHandler.Start(mouseInformation);
+				if (result)
+					return result;
+			}
 
 			this.CoordinateSystem = CoordinateSystem.Destination;
 			try
@@ -500,13 +505,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			bool result;
 
-			//TODO (CR May09):route to captured handler until it returns false.
-
 			if (_capturedHandler != null)
 			{
 				result = _capturedHandler.Stop(mouseInformation);
-				_capturedHandler = null;
-				return result;
+				if (!result)
+				{
+					_capturedHandler = null;
+					return result;
+				}
 			}
 
 			try
