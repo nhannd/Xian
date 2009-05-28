@@ -576,7 +576,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             if (val.Contains("*") || val.Contains("?"))
             {
-                String value = val.Replace('*', '%');
+				String value = val.Replace("%", "[%]").Replace("?", "[_]");
+				value = value.Replace('*', '%');
                 value = value.Replace('?', '_');
                 cond.Like(value);
             }
