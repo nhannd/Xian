@@ -23,7 +23,11 @@ namespace ClearCanvas.Enterprise.Common {
             }
         }
         
+        /// <summary>
+        /// Base URL that hosts the remote core services
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Base URL that hosts the remote core services")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("net.tcp://localhost:8000/")]
         public string BaseUrl {
@@ -75,6 +79,19 @@ namespace ClearCanvas.Enterprise.Common {
         public string UserCredentialsProviderClass {
             get {
                 return ((string)(this["UserCredentialsProviderClass"]));
+            }
+        }
+        
+        /// <summary>
+        /// Optional failover base URL (see BaseURL property)
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Optional failover base URL (see BaseURL property)")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FailoverBaseUrl {
+            get {
+                return ((string)(this["FailoverBaseUrl"]));
             }
         }
     }

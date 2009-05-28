@@ -133,7 +133,7 @@ namespace ClearCanvas.Enterprise.Core.Caching
             // if not already stored, store it now
             if (_cache.Get(rootKey) == null)
             {
-                // add region key, dependent on root key
+                // add root key, dependent on dependencyKey
                 _cache.Add(
                     rootKey,
                     rootKey,

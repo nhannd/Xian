@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -42,6 +43,17 @@ namespace ClearCanvas.Enterprise.Common
     [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
     public class AuthenticationAttribute : Attribute
     {
+        /// <summary>
+        /// Tests a service contract to see if it requires authentication.
+        /// </summary>
+        /// <param name="serviceContract"></param>
+        /// <returns></returns>
+        public static bool IsAuthenticationRequired(Type serviceContract)
+        {
+            AuthenticationAttribute authAttr = AttributeUtils.GetAttribute<AuthenticationAttribute>(serviceContract);
+            return authAttr == null ? true : authAttr.AuthenticationRequired;
+        }
+
         private readonly bool _required;
 
         public AuthenticationAttribute(bool required)

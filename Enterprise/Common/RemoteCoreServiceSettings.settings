@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Enterprise.Common" GeneratedClassName="RemoteCoreServiceSettings">
   <Profiles />
   <Settings>
-    <Setting Name="BaseUrl" Type="System.String" Scope="Application">
+    <Setting Name="BaseUrl" Description="Base URL that hosts the remote core services" Type="System.String" Scope="Application">
       <Value Profile="(Default)">net.tcp://localhost:8000/</Value>
     </Setting>
     <Setting Name="ConfigurationClass" Type="System.String" Scope="Application">
@@ -18,6 +18,9 @@
       <Value Profile="(Default)">NoCheck</Value>
     </Setting>
     <Setting Name="UserCredentialsProviderClass" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="FailoverBaseUrl" Description="Optional failover base URL (see BaseURL property)" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>
