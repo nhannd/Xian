@@ -41,26 +41,44 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Defines a graphic that decorates an <see cref="IGraphic"/> with user interaction
+	/// components controlling an underlying graphic in the scene graph.
+	/// </summary>
 	public interface IControlGraphic : IDecoratorGraphic, ICursorTokenProvider, IMouseButtonHandler, IExportedActionsProvider
 	{
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
+		/// <remarks>
+		/// The controlled graphic is the first non-decorator graphic in the
+		/// control graphics chain (the first graphic that doesn't implement
+		/// <see cref="IDecoratorGraphic"/> when recursively following the
+		/// <see cref="IDecoratorGraphic.DecoratedGraphic"/> property.)
+		/// </remarks>
 		IGraphic Subject { get; }
-		//TODO (CR May09): remove this
-		event EventHandler SubjectChanged;
+
+		/// <summary>
+		/// Gets or sets the color of the control graphic.
+		/// </summary>
 		Color Color { get; set; }
-		//TODO (CR May09): Just call Show
-		bool ShowControlGraphics { get; set; }
-		//TODO (CR May09): remove and make protected property
-		string CommandName { get; }
-		//TODO (CR May09): do we need this?
-		IMouseButtonHandler CurrentHandler { get;}
+
+		/// <summary>
+		/// Gets or sets a value to show or hide this control graphic without affecting the
+		/// visibility of the underlying subject or other control graphics.
+		/// </summary>
+		bool Show { get; set; }
 	}
 
+	/// <summary>
+	/// Abstract base class for implementations of <see cref="IControlGraphic"/>.
+	/// </summary>
 	[Cloneable]
 	public abstract class ControlGraphic : DecoratorCompositeGraphic, IControlGraphic
 	{
 		private event EventHandler _subjectChanged;
 		private Color _color = Color.Yellow;
-		private bool _showControlGraphics = true;
+		private bool _show = true;
 
 		[CloneIgnore]
 		private bool _notifyOnSubjectChanged = true;
@@ -74,11 +92,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[CloneIgnore]
 		private bool _isTracking = false;
 
+		/// <summary>
+		/// Constructs a new control graphic to control the given subject graphic.
+		/// </summary>
+		/// <param name="subject">The graphic to control.</param>
 		protected ControlGraphic(IGraphic subject) : base(subject)
 		{
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected ControlGraphic(ControlGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
@@ -95,12 +122,25 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.PropertyChanged += OnSubjectPropertyChanged;
 		}
 
-		protected override void Dispose(bool disposing) {
+		/// <summary>
+		/// Releases all resources used by this <see cref="ControlGraphic"/>.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
 			this.Subject.PropertyChanged -= OnSubjectPropertyChanged;
 
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
+		/// <remarks>
+		/// The controlled graphic is the first non-decorator graphic in the
+		/// control graphics chain (the first graphic that doesn't implement
+		/// <see cref="IDecoratorGraphic"/> when recursively following the
+		/// <see cref="IDecoratorGraphic.DecoratedGraphic"/> property.)
+		/// </remarks>
 		public IGraphic Subject
 		{
 			get
@@ -111,29 +151,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public virtual string CommandName
 		{
 			get { return null; }
 		}
 
-		public IMouseButtonHandler CurrentHandler
-		{
-			get
-			{
-				if (_capturedHandler == null)
-					return this;
-				if (_capturedHandler is IControlGraphic)
-					return ((IControlGraphic) _capturedHandler).CurrentHandler;
-				return _capturedHandler;
-			}
-		}
-
-		public event EventHandler SubjectChanged
-		{
-			add { _subjectChanged += value; }
-			remove { _subjectChanged -= value; }
-		}
-
+		/// <summary>
+		/// Gets or sets the color of the control graphic.
+		/// </summary>
 		public Color Color
 		{
 			get { return _color; }
@@ -147,19 +175,26 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		public bool ShowControlGraphics
+		/// <summary>
+		/// Gets or sets a value to show or hide this control graphic without affecting the
+		/// visibility of the underlying subject or other control graphics.
+		/// </summary>
+		public bool Show
 		{
-			get { return _showControlGraphics; }
+			get { return _show; }
 			set
 			{
-				if (_showControlGraphics != value)
+				if (_show != value)
 				{
-					_showControlGraphics = value;
+					_show = value;
 					this.OnShowControlGraphicsChanged();
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets the last tracked cursor position in source or destination coordinates.
+		/// </summary>
 		protected PointF LastTrackedPosition
 		{
 			get
@@ -170,6 +205,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the control graphic is currently tracking mouse input.
+		/// </summary>
 		protected bool IsTracking
 		{
 			get { return _isTracking; }
@@ -180,7 +218,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (_notifyOnSubjectChanged)
 			{
 				this.OnSubjectChanged();
-				EventsHelper.Fire(_subjectChanged, this, new EventArgs());
 			}
 		}
 
@@ -211,47 +248,89 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				OnSubjectPropertyChanged(this, new PropertyChangedEventArgs(string.Empty));
 		}
 
+		/// <summary>
+		/// Called when properties on the <see cref="Subject"/> have changed.
+		/// </summary>
 		protected virtual void OnSubjectChanged() {}
 
+		/// <summary>
+		/// Called when the <see cref="Color"/> property changes.
+		/// </summary>
 		protected virtual void OnColorChanged() {}
 
+		/// <summary>
+		/// Called when the <see cref="Show"/> property changes.
+		/// </summary>
 		protected virtual void OnShowControlGraphicsChanged() {}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting exported actions via <see cref="GetExportedActions"/>.
+		/// </summary>
+		/// <param name="site">The action model site at which the actions should reside.</param>
+		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
+		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		protected virtual IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			return null;
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting the cursor token for a particular screen coordinate via <see cref="GetCursorToken"/>.
+		/// </summary>
+		/// <param name="point">The screen coordinate for which the cursor is requested.</param>
+		/// <returns></returns>
 		protected virtual CursorToken OnGetCursorToken(Point point)
 		{
 			return null;
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to a mouse button click via <see cref="Start"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the <see cref="ControlGraphic"/> did something as a result of the call and hence would like to receive capture; False otherwise.</returns>
 		protected virtual bool OnMouseStart(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework tracking mouse input via <see cref="Track"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the message was handled; False otherwise.</returns>
 		protected virtual bool OnMouseTrack(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response a mouse button release via <see cref="Stop"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the framework should <b>not</b> release capture; False otherwise.</returns>
 		protected virtual bool OnMouseStop(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
 
-		protected virtual void OnMouseCancel() {}
-
-		//TODO (CR May09): implement explicitly and rename the protected On* methods to be the same as the interface methods.
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to an attempt to cancel the current operation via <see cref="Cancel"/>.
+		/// </summary>
+		protected virtual void OnMouseCancel() { }
 
 		#region ICursorTokenProvider Members
 
 		/// <summary>
 		/// Gets the cursor token to be shown at the current mouse position.
 		/// </summary>
-		public CursorToken GetCursorToken(Point point)
+		/// <remarks>
+		/// The <see cref="ControlGraphic"/> implementation returns the the cursor token
+		/// provided by the <see cref="CurrentHandler">current input handler</see>,
+		/// <see cref="OnGetCursorToken"/>, or any child graphics implementing <see cref="ICursorTokenProvider"/>,
+		/// in decreasing order of priority.
+		/// </remarks>
+		CursorToken ICursorTokenProvider.GetCursorToken(Point point)
 		{
 			CursorToken cursor = null;
 
@@ -264,7 +343,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			if (cursor == null)
-				cursor = OnGetCursorToken(point);
+				cursor = this.OnGetCursorToken(point);
 
 			if (cursor == null)
 			{
@@ -290,7 +369,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IMouseButtonHandler Members
 
-		public bool Start(IMouseInformation mouseInformation)
+		/// <summary>
+		/// Called by the framework each time a mouse button is pressed.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// As a general rule, if the <see cref="IMouseButtonHandler"/> object did anything as a result of this call, it must 
+		/// return true.  If false is returned, <see cref="IMouseButtonHandler.Start"/> is called on other <see cref="IMouseButtonHandler"/>s
+		/// until one returns true.
+		/// </para>
+		/// <para>
+		/// The <see cref="ControlGraphic"/> implementation finds a handler by trying <see cref="OnMouseStart"/>,
+		/// and any child graphics implementing <see cref="IMouseButtonHandler"/>, in decreasing order of priority.
+		/// Successful capture results in the <see cref="CurrentHandler"/> property being set to the captured handler.
+		/// </para>
+		/// </remarks>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the <see cref="ControlGraphic"/> did something as a result of the call and hence would like to receive capture; False otherwise.</returns>
+		bool IMouseButtonHandler.Start(IMouseInformation mouseInformation)
 		{
 			//TODO (CR May09):route to captured handler until it returns false.
 			bool result;
@@ -335,7 +431,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return result;
 		}
 
-		public bool Track(IMouseInformation mouseInformation)
+		/// <summary>
+		/// Called by the framework when the mouse has moved.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// A button does not necessarily have to be down for this message to be called.  The framework can
+		/// call it any time the mouse moves.
+		/// </para>
+		/// <para>
+		/// The <see cref="ControlGraphic"/> implementation calls <see cref="IMouseButtonHandler.Track"/> on
+		/// the current handler, <see cref="OnMouseTrack"/>, or any child graphics implementing <see cref="IMouseButtonHandler"/>,
+		/// in decreasing order of priority.
+		/// </para>
+		/// </remarks>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the message was handled; False otherwise.</returns>
+		bool IMouseButtonHandler.Track(IMouseInformation mouseInformation)
 		{
 			bool result;
 
@@ -372,7 +484,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return result;
 		}
 
-		public bool Stop(IMouseInformation mouseInformation)
+		/// <summary>
+		/// Called by the framework when the mouse button is released.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The <see cref="ControlGraphic"/> implementation calls <see cref="IMouseButtonHandler.Stop"/> on
+		/// the current handler, <see cref="OnMouseStop"/>, or any child graphics implementing <see cref="IMouseButtonHandler"/>,
+		/// in decreasing order of priority.
+		/// </para>
+		/// </remarks>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the framework should <b>not</b> release capture; False otherwise.</returns>
+		bool IMouseButtonHandler.Stop(IMouseInformation mouseInformation)
 		{
 			bool result;
 
@@ -398,7 +522,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return result;
 		}
 
-		public void Cancel()
+		/// <summary>
+		/// Called by the framework to let <see cref="IMouseButtonHandler"/> perform any necessary cleanup 
+		/// when capture is going to be forcibly released.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The <see cref="ControlGraphic"/> implementation calls <see cref="IMouseButtonHandler.Cancel"/> on
+		/// the current handler or <see cref="OnMouseCancel"/> in decreasing order of priority.
+		/// </para>
+		/// </remarks>
+		void IMouseButtonHandler.Cancel()
 		{
 			if (_capturedHandler != null)
 			{
@@ -417,6 +551,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the desired behaviour of this mouse input handler.
+		/// </summary>
+		/// <remarks>
+		/// The default implementation returns the behaviour of the lowest control
+		/// graphic in the control chain, or <see cref="MouseButtonHandlerBehaviour.None"/>
+		/// if this graphic is the lowest in the control chain.
+		/// </remarks>
 		public virtual MouseButtonHandlerBehaviour Behaviour
 		{
 			get
@@ -431,7 +573,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IExportedActionsProvider Members
 
-		public IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
+		/// <summary>
+		/// Gets a set of exported <see cref="IAction"/>s.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This mechanism is useful when a particular component defines generally useful <see cref="IAction"/>s
+		/// without requiring specific knowledge of the action model sites that the client code uses.
+		/// </para>
+		/// <para>
+		/// The <see cref="ControlGraphic"/> implementation returns the combination of its own exported actions
+		/// (as provided by <see cref="OnGetExportedActions"/>) and those of its child graphics.
+		/// </para>
+		/// </remarks>
+		/// <param name="site">The action model site at which the actions should reside.</param>
+		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
+		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
+		IActionSet IExportedActionsProvider.GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			bool atLeastOne = false;
 			IActionSet actions = new ActionSet();

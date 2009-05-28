@@ -36,6 +36,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public interface IPointsGraphic : IVectorGraphic
 	{
+		/// <summary>
+		/// Gets the ordered list of points that defines the graphic.
+		/// </summary>
 		IPointsList Points { get; }
 	}
 }

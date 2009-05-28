@@ -129,22 +129,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return extractedPixels;
 		}
 
-		//TODO (CR May09): pass in rows, cols, byte[] instead of PixelData object.
 		/// <summary>
-		/// Converts a PixelData chunk into an OverlayData chunk.
+		/// Creates a packed overlay data object using the specified pixel data buffer.
 		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="highBit"></param>
 		/// <param name="bigEndianWords"></param>
-		/// <param name="pixelData">The pixel data to convert.</param>
-		/// <returns>An OverlayData chunk containing packed 1-bit overlay data.</returns>
-		public static OverlayData FromPixelData(bool bigEndianWords, GrayscalePixelData pixelData)
+		/// <param name="pixelData"></param>
+		/// <returns></returns>
+		public static OverlayData CreateOverlayData(int rows, int columns, int bitsStored, int bitsAllocated, int highBit, bool bigEndianWords, byte[] pixelData)
 		{
-			int minBytesNeeded = (int)Math.Ceiling(pixelData.Rows*pixelData.Columns/8d);
+			int minBytesNeeded = (int) Math.Ceiling(rows*columns/8d);
 			if (minBytesNeeded % 2 == 1)
 				minBytesNeeded++;
 			byte[] packedOverlayData = new byte[minBytesNeeded];
-			uint mask = (uint) ((1 << pixelData.BitsStored) - 1) << (pixelData.BitsAllocated - pixelData.HighBit - 1);
-			Pack(pixelData.Raw, packedOverlayData, 0, mask, bigEndianWords);
-			return new OverlayData(pixelData.Rows, pixelData.Columns, bigEndianWords, packedOverlayData);
+			uint mask = (uint) ((1 << bitsStored) - 1) << (bitsAllocated - highBit - 1);
+			Pack(pixelData, packedOverlayData, 0, mask, bigEndianWords);
+			return new OverlayData(rows, columns, bigEndianWords, packedOverlayData);
 		}
 
 		#region Private Bit Packing Code

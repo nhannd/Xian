@@ -78,11 +78,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Gets the ordered list of points that defines the graphic.
+		/// </summary>
 		public IPointsList Points
 		{
 			get { return _points; }
 		}
 
+		/// <summary>
+		/// Gets the tightest bounding box that encloses the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public override RectangleF BoundingBox
 		{
 			get { return RectangleUtilities.ComputeBoundingRectangle(_points); }

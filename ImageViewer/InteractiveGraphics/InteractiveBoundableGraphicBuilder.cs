@@ -34,23 +34,46 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Interactive builder class that interprets two mouse clicks as opposite
+	/// vertices to setup a <see cref="IBoundableGraphic"/>.
+	/// </summary>
+	/// <remarks>
+	/// This builder takes exactly two clicks, after which the graphic is
+	/// complete and control is released.
+	/// </remarks>
 	public class InteractiveBoundableGraphicBuilder : InteractiveGraphicBuilder
 	{
 		private int _numberOfPointsAnchored = 1;
 
+		/// <summary>
+		/// Constructs an interactive builder for the specified boundable graphic.
+		/// </summary>
+		/// <param name="boundableGraphic">The boundable graphic to be interactively built.</param>
 		public InteractiveBoundableGraphicBuilder(IBoundableGraphic boundableGraphic) : base(boundableGraphic) {}
 
+		/// <summary>
+		/// Gets the graphic that the builder is operating on.
+		/// </summary>
 		public new IBoundableGraphic Graphic
 		{
 			get { return (IBoundableGraphic) base.Graphic; }
 		}
 
+		/// <summary>
+		/// Resets any internal state of the builder, allowing the same graphic to be rebuilt.
+		/// </summary>
 		public override void Reset()
 		{
 			_numberOfPointsAnchored = 1;
 			base.Reset();
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Start"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the builder did something as a result of the call, and hence would like to receive capture; False otherwise.</returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			// We just started creating
@@ -72,6 +95,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Track"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the builder handled the message; False otherwise.</returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -88,6 +116,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Stop"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the tool should not release capture; False otherwise.</returns>
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			return true;

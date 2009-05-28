@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (graphic is IControlGraphic)
 			{
 				IControlGraphic controlGraphic = (IControlGraphic) graphic;
-				controlGraphic.ShowControlGraphics = controlGraphics;
+				controlGraphic.Show = controlGraphics;
 				controlGraphic.Color = color;
 			}
 			else if (graphic is IVectorGraphic)

@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (string.IsNullOrEmpty(this.Site))
 				return null;
 
-			return ActionModelRoot.CreateModel(this.Namespace, this.Site, this.GetExportedActions(this.Site, mouseInformation));
+			return ActionModelRoot.CreateModel(this.Namespace, this.Site, ((IExportedActionsProvider) this).GetExportedActions(this.Site, mouseInformation));
 		}
 
 		#endregion

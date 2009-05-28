@@ -34,7 +34,7 @@ using System.Drawing;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Interface for <see cref="IGraphic"/>s that contain some dynamic, formattable text content.
+	/// Defines an <see cref="IVectorGraphic"/> that contains some dynamic, formattable text content.
 	/// </summary>
 	public interface ITextGraphic : IVectorGraphic
 	{

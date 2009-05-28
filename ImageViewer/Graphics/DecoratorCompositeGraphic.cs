@@ -32,21 +32,27 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// Defines <see cref="IGraphic"/>s which follow the <i>decorator pattern</i> to provide
+	/// modify and/or add functionality to an existing <see cref="IGraphic"/>.
+	/// </summary>
 	public interface IDecoratorGraphic : IGraphic
 	{
 		/// <summary>
-		/// Gets the <see cref="IGraphic"/> decorated by this object.
+		/// Gets the <see cref="IGraphic"/> decorated by this graphic.
 		/// </summary>
 		IGraphic DecoratedGraphic { get; }
 	}
 
+	/// <summary>
+	/// Base class for <see cref="IDecoratorGraphic"/> implementations.
+	/// </summary>
 	[Cloneable]
 	[DicomSerializableGraphicAnnotation(typeof (DecoratorGraphicAnnotationSerializer))]
 	public abstract class DecoratorCompositeGraphic : CompositeGraphic, IDecoratorGraphic
@@ -81,16 +87,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_decoratedGraphic = CollectionUtils.FirstElement(base.Graphics);
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IGraphic"/> decorated by this graphic.
+		/// </summary>
 		IGraphic IDecoratorGraphic.DecoratedGraphic
 		{
 			get { return this.DecoratedGraphic; }
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IGraphic"/> decorated by this graphic.
+		/// </summary>
 		protected IGraphic DecoratedGraphic
 		{
 			get { return _decoratedGraphic; }
 		}
 
+		/// <summary>
+		/// Creates an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by the <see cref="DecoratedGraphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// Decorated graphics that do not describe a region of interest may return null.
+		/// </remarks>
+		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the decorated graphic does not describe a region of interest.</returns>
 		public override Roi CreateRoi()
 		{
 			return this.DecoratedGraphic.CreateRoi();

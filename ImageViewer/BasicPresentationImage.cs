@@ -205,6 +205,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IPresentationStateProvider members
 
+		/// <summary>
+		/// Gets or sets the <see cref="PresentationStates.PresentationState"/> of the image.
+		/// </summary>
 		public PresentationState PresentationState
 		{
 			get { return _presentationStateGraphic.PresentationState; }

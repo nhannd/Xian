@@ -33,11 +33,24 @@ using ClearCanvas.Dicom.Iod.ContextGroups;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
-	public sealed class KeyObjectSelectionCodeSequences
+	/// <summary>
+	/// Static class defining DICOM code sequences used in key object selections.
+	/// </summary>
+	public static class KeyObjectSelectionCodeSequences
 	{
+		/// <summary>
+		/// Gets the code for DCM 113011 Document Title Modifier.
+		/// </summary>
 		public static readonly Code DocumentTitleModifier = new Code(113011, "Document Title Modifier");
+
+		/// <summary>
+		/// Gets the code for DCM 113012 Key Object Description.
+		/// </summary>
 		public static readonly Code KeyObjectDescription = new Code(113012, "Key Object Description");
 
+		/// <summary>
+		/// A DICOM code sequence used in key object selections.
+		/// </summary>
 		public sealed class Code : ContextGroupBase<Code>.ContextGroupItemBase
 		{
 			internal Code(int codeValue, string codeMeaning) : base("DCM", codeValue.ToString(), codeMeaning) {}

@@ -29,22 +29,35 @@
 
 #endregion
 
-using System;
 using System.Drawing;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Interactive builder class that interprests two mouse clicks as the
+	/// circle centre followed by a point on the circumference.
+	/// </summary>
+	/// <remarks>
+	/// This builder takes exactly two clicks, after which the graphic is
+	/// complete and control is released.
+	/// </remarks>
 	public class InteractiveCircleGraphicBuilder : InteractiveGraphicBuilder
 	{
 		private int _numberOfPointsAnchored = 1;
 		private PointF _centre;
 
+		/// <summary>
+		/// Constructs an interactive builder for the specified boundable graphic.
+		/// </summary>
+		/// <param name="boundableGraphic">The boundable graphic to be interactively built.</param>
 		public InteractiveCircleGraphicBuilder(IBoundableGraphic boundableGraphic) : base(boundableGraphic) {}
 
+		/// <summary>
+		/// Gets the graphic that the builder is operating on.
+		/// </summary>
 		public new IBoundableGraphic Graphic
 		{
 			get { return (IBoundableGraphic) base.Graphic; }

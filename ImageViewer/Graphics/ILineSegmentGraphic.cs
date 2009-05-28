@@ -35,7 +35,7 @@ using System.Drawing;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Defines an <see cref="IVectorGraphic"/> that can be described by two points.
+	/// Defines an <see cref="IVectorGraphic"/> that can be described by two endpoints.
 	/// </summary>
 	public interface ILineSegmentGraphic : IVectorGraphic
 	{

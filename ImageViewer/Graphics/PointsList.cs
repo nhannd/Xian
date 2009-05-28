@@ -38,17 +38,29 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// An observable list of points defining an <see cref="IGraphic"/>.
+	/// </summary>
 	public sealed class PointsList : IPointsList
 	{
 		private readonly List<PointF> _sourcePoints = new List<PointF>();
 		private readonly IGraphic _owner;
 		private bool _enableEvents = true;
 
+		/// <summary>
+		/// Constructs a new <see cref="PointsList"/> with the specified owning graphic.
+		/// </summary>
+		/// <param name="owner">The owner graphic whose <see cref="CoordinateSystem"/> is used when interpreting points in the list.</param>
 		public PointsList(IGraphic owner)
 		{
 			_owner = owner;
 		}
 
+		/// <summary>
+		/// Constructs a new <see cref="PointsList"/> with the specified owning graphic.
+		/// </summary>
+		/// <param name="points">A list of points in the <see cref="CoordinateSystem.Source"/> coordinate system with which to initialize the list.</param>
+		/// <param name="owner">The owner graphic whose <see cref="CoordinateSystem"/> is used when interpreting points in the list.</param>
 		public PointsList(IEnumerable<PointF> points, IGraphic owner)
 			: this(owner)
 		{

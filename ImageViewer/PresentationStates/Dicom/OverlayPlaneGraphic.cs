@@ -316,7 +316,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		public OverlayData CreateOverlayData(bool bigEndianWords)
 		{
-			return OverlayData.FromPixelData(bigEndianWords, _overlayGraphic.PixelData);
+			GrayscalePixelData pixelData = _overlayGraphic.PixelData;
+			return OverlayData.CreateOverlayData(
+				pixelData.Rows, pixelData.Columns,
+				pixelData.BitsStored, 
+				pixelData.BitsAllocated,
+				pixelData.HighBit,
+				bigEndianWords,
+				pixelData.Raw);
 		}
 
 		#region IShutterGraphic Members

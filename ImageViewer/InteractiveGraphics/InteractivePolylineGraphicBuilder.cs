@@ -34,20 +34,39 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Interactive builder class that interprets mouse clicks as ordered
+	/// vertices to setup an open <see cref="IPointsGraphic"/>.
+	/// </summary>
+	/// <remarks>
+	/// This builder takes input until the maximum number of vertices is reached.
+	/// </remarks>
 	public class InteractivePolylineGraphicBuilder : InteractiveGraphicBuilder
 	{
-		private readonly int _maximumAnchorPoints;
+		private readonly int _maximumVertices;
 		private int _numberOfPointsAnchored = 0;
 
+		/// <summary>
+		/// Constructs an interactive builder for the specified graphic.
+		/// </summary>
+		/// <param name="pointsGraphic">The graphic to be interactively built.</param>
 		public InteractivePolylineGraphicBuilder(IPointsGraphic pointsGraphic)
 			: this(int.MaxValue, pointsGraphic) {}
 
-		public InteractivePolylineGraphicBuilder(int maximumAnchorPoints, IPointsGraphic pointsGraphic)
+		/// <summary>
+		/// Constructs an interactive builder for the specified graphic.
+		/// </summary>
+		/// <param name="maximumVertices">The maximum number of vertices to accept.</param>
+		/// <param name="pointsGraphic">The graphic to be interactively built.</param>
+		public InteractivePolylineGraphicBuilder(int maximumVertices, IPointsGraphic pointsGraphic)
 			: base(pointsGraphic)
 		{
-			_maximumAnchorPoints = maximumAnchorPoints;
+			_maximumVertices = maximumVertices;
 		}
 
+		/// <summary>
+		/// Gets the graphic that the builder is operating on.
+		/// </summary>
 		public new IPointsGraphic Graphic
 		{
 			get { return (IPointsGraphic) base.Graphic; }
@@ -72,12 +91,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Graphic.ResetCoordinateSystem();
 			}
 			// We're done creating
-			else if (_numberOfPointsAnchored == _maximumAnchorPoints)
+			else if (_numberOfPointsAnchored == _maximumVertices)
 			{
 				this.NotifyGraphicComplete();
 			}
 			// We're in the middle of creating
-			else if (_numberOfPointsAnchored >= 2 && _maximumAnchorPoints > 2)
+			else if (_numberOfPointsAnchored >= 2 && _maximumVertices > 2)
 			{
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
 				this.Graphic.Points.Add(mouseInformation.Location);

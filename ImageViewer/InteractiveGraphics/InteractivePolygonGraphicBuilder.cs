@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
@@ -37,6 +38,17 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Interactive builder class that interprets mouse clicks as ordered
+	/// vertices to setup a closed <see cref="IPointsGraphic"/>.
+	/// </summary>
+	/// <remarks>
+	/// This builder takes input until the the maximum number of
+	/// vertices is reached, the user clicks near the first point
+	/// or the user double clicks anywhere, after which the graphic is complete
+	/// and control is released. A visual cue is shown when the cursor is close
+	/// enough to the first point to snap and close the polygon.
+	/// </remarks>
 	public class InteractivePolygonGraphicBuilder : InteractiveGraphicBuilder
 	{
 		private readonly int _maximumVertices;
@@ -45,9 +57,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private SnapPointGraphic _snapPoint;
 
+		/// <summary>
+		/// Constructs an interactive builder for the specified graphic.
+		/// </summary>
+		/// <param name="pointsGraphic">The graphic to be interactively built.</param>
 		public InteractivePolygonGraphicBuilder(IPointsGraphic pointsGraphic)
 			: this(int.MaxValue, pointsGraphic) {}
 
+		/// <summary>
+		/// Constructs an interactive builder for the specified graphic.
+		/// </summary>
+		/// <param name="maximumVertices">The maximum number of vertices to accept.</param>
+		/// <param name="pointsGraphic">The graphic to be interactively built.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="maximumVertices"/> is less than 3.</exception>
 		public InteractivePolygonGraphicBuilder(int maximumVertices, IPointsGraphic pointsGraphic)
 			: base(pointsGraphic)
 		{
@@ -55,6 +77,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_maximumVertices = maximumVertices;
 		}
 
+		/// <summary>
+		/// Gets the graphic that the builder is operating on.
+		/// </summary>
 		public new IPointsGraphic Graphic
 		{
 			get { return (IPointsGraphic) base.Graphic; }

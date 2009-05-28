@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
-			return ActionModelRoot.CreateModel(this.ContextMenuNamespace, "basicgraphic-menu", base.GetExportedActions("basicgraphic-menu", mouseInformation));
+			return ActionModelRoot.CreateModel(this.ContextMenuNamespace, "basicgraphic-menu", ((IExportedActionsProvider) this).GetExportedActions("basicgraphic-menu", mouseInformation));
 		}
 
 		#endregion

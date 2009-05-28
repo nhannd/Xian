@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	}
 
 	[Cloneable]
-	public abstract class ControlPointsGraphic : ControlGraphic, IControlPointsGraphic, IActiveControlGraphic
+	public abstract class ControlPointsGraphic : ControlGraphic, IControlPointsGraphic
 	{
 		private event EventHandler<ListEventArgs<PointF>> _controlPointChangedEvent;
 
@@ -251,7 +251,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnShowControlGraphicsChanged()
 		{
-			_controlPoints.Visible = base.ShowControlGraphics;
+			_controlPoints.Visible = base.Show;
 			base.OnShowControlGraphicsChanged();
 		}
 

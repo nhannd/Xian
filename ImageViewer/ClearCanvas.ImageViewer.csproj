@@ -161,14 +161,13 @@
     <Compile Include="InteractiveGraphics\ControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\ControlPointsGraphic.cs" />
     <Compile Include="InteractiveGraphics\BoundableResizeControlGraphic.cs" />
-    <Compile Include="InteractiveGraphics\IExportedActionsProvider.cs" />
+    <Compile Include="InputManagement\IExportedActionsProvider.cs" />
     <Compile Include="InteractiveGraphics\InteractiveCircleGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\StandardAnnotationGraphicSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InteractiveGraphics\TextPlaceholderControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\VerticesControlGraphic.cs" />
-    <Compile Include="InteractiveGraphics\IActiveControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\TextEditControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\InteractivePolygonGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\InteractiveGraphicBuilder.cs" />

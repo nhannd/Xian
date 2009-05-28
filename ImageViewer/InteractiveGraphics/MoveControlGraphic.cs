@@ -40,7 +40,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public sealed class MoveControlGraphic : ControlGraphic, IActiveControlGraphic, IMemorable
+	public sealed class MoveControlGraphic : ControlGraphic, IMemorable
 	{
 		[CloneCopyReference]
 		private CursorToken _cursor;
