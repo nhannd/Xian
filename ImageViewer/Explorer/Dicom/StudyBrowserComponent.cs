@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel.Security;
 using System.Text;
+using ClearCanvas.Common.Specifications;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
@@ -389,12 +390,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			//Update the results title in the component and add the new results.
 			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = this.ResultsTitle;
-			_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Clear();
-			
-			foreach (StudyItem item in aggregateStudyItemList)
-				_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
-
-			_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
+			Table<StudyItem> table = _searchResults[_selectedServerGroup.GroupID].StudyList;
+			PopulateTable(table, aggregateStudyItemList, false);
+			table.Sort();
 
             // Re-throw the last exception with a list of failed server name, if any
 			if (failedServerInfo.Count > 0)
@@ -417,6 +415,42 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				//method is called on startup before the component is started.
 				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
             }
+		}
+
+		private void PopulateTable(Table<StudyItem> table, StudyItemList studies, bool allowDuplicates)
+		{
+			table.Items.Clear();
+
+			if (allowDuplicates || this._selectedServerGroup.IsLocalDatastore)
+			{
+				table.Items.AddRange(studies);
+			}
+			else
+			{
+				Dictionary<string, StudyItem> uniqueStudies = new Dictionary<string, StudyItem>();
+				foreach (StudyItem study in studies)
+				{
+					StudyItem existing;
+					if (uniqueStudies.TryGetValue(study.StudyInstanceUID, out existing))
+					{
+						ApplicationEntity server = study.Server as ApplicationEntity;
+						//we will only replace an existing entry if this study's server is streaming.
+						if (server != null && server.IsStreaming)
+						{
+							//only replace existing entry if it is on a non-streaming server.
+							server = existing.Server as ApplicationEntity;
+							if (server == null || !server.IsStreaming)
+								uniqueStudies[study.StudyInstanceUID] = study;
+						}
+					}
+					else
+					{
+						uniqueStudies[study.StudyInstanceUID] = study;
+					}
+				}
+
+				table.Items.AddRange(uniqueStudies.Values);
+			}
 		}
 
 		public void ItemDoubleClick()
