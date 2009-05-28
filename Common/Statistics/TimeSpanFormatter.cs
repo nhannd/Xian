@@ -72,7 +72,7 @@ namespace ClearCanvas.Common.Statistics
                 if (duration.Ticks > TICKSPERMILISECONDS)
                     return String.Format("{0:0} ms", duration.TotalMilliseconds);
                 if (duration.Ticks > TICKSPERMICROECONDS)
-                    return String.Format("{0:0} �s", duration.Ticks / TICKSPERMICROECONDS);
+                    return String.Format("{0:0} µs", duration.Ticks / TICKSPERMICROECONDS);
                 else
                     return String.Format("{0:0} ns", duration.Ticks / TICKSPERNANOSECONDS);
             }
@@ -89,7 +89,7 @@ namespace ClearCanvas.Common.Statistics
                 if (duration.Ticks > TICKSPERMILISECONDS)
                     return String.Format("{0:0.00} ms", duration.TotalMilliseconds);
                 if (duration.Ticks > TICKSPERMICROECONDS)
-                    return String.Format("{0:0.00} �s", duration.Ticks / TICKSPERMICROECONDS);
+                    return String.Format("{0:0.00} µs", duration.Ticks / TICKSPERMICROECONDS);
                 else
                     return String.Format("{0:0.00} ns", duration.Ticks / TICKSPERNANOSECONDS);
                 
