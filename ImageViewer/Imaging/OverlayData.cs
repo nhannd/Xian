@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return unpackedPixelData;
 		}
 
-		public static byte[] ExtractFromPixelData(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
+		public static byte[] UnpackFromPixelData(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
 		{
 			const byte ONE = 0xff;
 			const byte ZERO = 0x00;

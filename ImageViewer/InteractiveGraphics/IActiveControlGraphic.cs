@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics {
+	//TODO (CR May09): remove empty interface.
 	public interface IActiveControlGraphic : IControlGraphic {
 	}
 }

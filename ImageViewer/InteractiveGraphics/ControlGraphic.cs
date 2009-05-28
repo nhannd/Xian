@@ -44,10 +44,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public interface IControlGraphic : IDecoratorGraphic, ICursorTokenProvider, IMouseButtonHandler, IExportedActionsProvider
 	{
 		IGraphic Subject { get; }
+		//TODO (CR May09): remove this
 		event EventHandler SubjectChanged;
 		Color Color { get; set; }
+		//TODO (CR May09): Just call Show
 		bool ShowControlGraphics { get; set; }
+		//TODO (CR May09): remove and make protected property
 		string CommandName { get; }
+		//TODO (CR May09): do we need this?
 		IMouseButtonHandler CurrentHandler { get;}
 	}
 
@@ -240,6 +244,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected virtual void OnMouseCancel() {}
 
+		//TODO (CR May09): implement explicitly and rename the protected On* methods to be the same as the interface methods.
+
 		#region ICursorTokenProvider Members
 
 		/// <summary>
@@ -286,6 +292,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public bool Start(IMouseInformation mouseInformation)
 		{
+			//TODO (CR May09):route to captured handler until it returns false.
 			bool result;
 
 			this.CoordinateSystem = CoordinateSystem.Destination;
@@ -368,6 +375,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public bool Stop(IMouseInformation mouseInformation)
 		{
 			bool result;
+
+			//TODO (CR May09):route to captured handler until it returns false.
 
 			if (_capturedHandler != null)
 			{
