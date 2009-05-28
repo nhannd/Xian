@@ -202,43 +202,6 @@ namespace ClearCanvas.Enterprise.Common
 
 	#endregion
 
-    class FixedChannelFactoryProvider : IChannelFactoryProvider
-    {
-        private readonly RemoteServiceProviderArgs _args;
-
-        public FixedChannelFactoryProvider(RemoteServiceProviderArgs args)
-        {
-            _args = args;
-        }
-
-        public ChannelFactory GetPrimary(Type serviceContract)
-        {
-            return GetChannelFactory(serviceContract, new Uri(_args.BaseUrl));
-        }
-
-        public ChannelFactory GetFailover(Type serviceContract, EndpointAddress failedEndpoint)
-        {
-            //TODO check failedEndpoint.Address.Uri != _args.FailoverBaseUrl
-            if (!string.IsNullOrEmpty(_args.FailoverBaseUrl))
-            {
-                return GetChannelFactory(serviceContract, new Uri(_args.FailoverBaseUrl));
-            }
-            return null;
-        }
-
-        private ChannelFactory GetChannelFactory(Type serviceContract, Uri baseUri)
-        {
-            Uri uri = new Uri(baseUri, serviceContract.FullName);
-            Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceContract });
-            return _args.Configuration.ConfigureChannelFactory(
-                new ServiceChannelConfigurationArgs(channelFactoryClass,
-                                                    uri,
-                                                    AuthenticationAttribute.IsAuthenticationRequired(serviceContract),
-                                                    _args.MaxReceivedMessageSize,
-                                                    _args.CertificateValidationMode,
-                                                    _args.RevocationMode));
-        }
-    }
 
 	/// <summary>
 	/// Abstract base class for remote service provider extensions.
@@ -302,7 +265,7 @@ namespace ClearCanvas.Enterprise.Common
 
         #endregion
 
-		private readonly ProxyGenerator _proxyGenerator;
+        private readonly ProxyGenerator _proxyGenerator;
         private readonly IChannelFactoryProvider _channelFactoryProvider;
         private readonly IUserCredentialsProvider _userCredentialsProvider;
         private List<IInterceptor> _interceptors;
@@ -312,7 +275,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-            :this(new FixedChannelFactoryProvider(args), args.UserCredentialsProvider)
+            :this(new StaticChannelFactoryProvider(args), args.UserCredentialsProvider)
 		{
 		}
 
