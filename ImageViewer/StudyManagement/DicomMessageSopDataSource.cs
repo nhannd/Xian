@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				foreach (OverlayPlane overlay in overlayPlaneModule)
 				{
 					if (overlay.IsEmbedded && _overlayCache[overlay.Index, _frameIndex] == null)
-						_overlayCache[overlay.Index, _frameIndex] = OverlayData.Extract(overlay.OverlayBitPosition, bitsAllocated, false, rawPixelData);
+						_overlayCache[overlay.Index, _frameIndex] = OverlayData.ExtractFromPixelData(overlay.OverlayBitPosition, bitsAllocated, false, rawPixelData);
 					else if (!overlay.HasOverlayData)
 						Platform.Log(LogLevel.Warn, "The image {0} appears to be missing OverlayData for group 0x{1:X4}.", this.Parent.SopInstanceUid, overlay.Group);
 				}

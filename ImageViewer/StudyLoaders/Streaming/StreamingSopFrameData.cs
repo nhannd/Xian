@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					{
 						if (IsOverlayEmbedded(overlayPlane) && _overlayData[overlayPlane.Index] == null)
 						{
-							byte[] overlayData = OverlayData.Extract(overlayPlane.OverlayBitPosition, this.Parent[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
+							byte[] overlayData = OverlayData.ExtractFromPixelData(overlayPlane.OverlayBitPosition, this.Parent[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
 							_overlayData[overlayPlane.Index] = overlayData;
 						}
 						else if (!overlayPlane.HasOverlayData)

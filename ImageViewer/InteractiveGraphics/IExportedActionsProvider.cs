@@ -34,6 +34,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	//TODO (CR May09): move to InputManagement.
 	public interface IExportedActionsProvider
 	{
 		IActionSet GetExportedActions(string site, IMouseInformation mouseInformation);

@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 		{
 			get
 			{
-				return (MemoryHelper.TotalLargeObjectMemoryBytes / 1024F).ToString("F2");
+				return (Diagnostics.TotalLargeObjectBytes / 1024F).ToString("F2");
 			}	
 		}
 

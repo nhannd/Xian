@@ -70,19 +70,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return unpackedPixelData;
 		}
 
-		/// <summary>
-		/// Converts this OverlayData chunk into a PixelData chunk.
-		/// </summary>
-		/// <returns>A greyscale PixelData chunk containing 8-bit overlay data (1 bit stored).</returns>
-		[Obsolete]
-		public GrayscalePixelData ToPixelData()
-		{
-			byte[] unpackedPixelData = new byte[_rows*_columns];
-			Unpack(_rawOverlayData, unpackedPixelData, _offset, _bigEndianWords);
-			return new GrayscalePixelData(_rows, _columns, 8, 1, 1, false, unpackedPixelData);
-		}
-
-		public static byte[] Extract(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
+		public static byte[] ExtractFromPixelData(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
 		{
 			const byte ONE = 0xff;
 			const byte ZERO = 0x00;
@@ -141,6 +129,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return extractedPixels;
 		}
 
+		//TODO (CR May09): pass in rows, cols, byte[] instead of PixelData object.
 		/// <summary>
 		/// Converts a PixelData chunk into an OverlayData chunk.
 		/// </summary>

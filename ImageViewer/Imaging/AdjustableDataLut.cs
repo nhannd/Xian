@@ -102,6 +102,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public AdjustableDataLut(DataLut dataLut)
 		{
+			Platform.CheckForNullReference(dataLut, "dataLut");
+
 			_dataLut = dataLut;
 			_dataLut.LutChanged += OnDataLutChanged;
 
@@ -111,6 +113,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Reset();
 		}
 
+		//TODO (CR May09): make cloning constructor.
 		protected AdjustableDataLut()
 		{
 		}
@@ -208,6 +211,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _linearLut.MaxOutputValue; }
 			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
+
+		//TODO: later, add IContrastBrightnessLut and allow the properties to be set.
 
 		#region IBasicVoiLutLinear Members
 

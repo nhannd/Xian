@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			int stride = _imageRectangle.Width*4;
 			int size = _imageRectangle.Height*stride;
 			_buffer = new byte[size];
-			MemoryHelper.OnLargeObjectAllocated(_buffer.Length);
+			Diagnostics.OnLargeObjectAllocated(_buffer.Length);
 
 			GCHandle bufferHandle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);
 
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		private void ReleaseBuffer()
 		{
 			if (_buffer != null)
-				MemoryHelper.OnLargeObjectReleased(_buffer.Length);
+				Diagnostics.OnLargeObjectReleased(_buffer.Length);
 
 			_buffer = null;
 		}

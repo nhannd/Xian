@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						_pixelData = CreateNormalizedPixelData();
 						if (_pixelData != null)
-							MemoryHelper.OnLargeObjectAllocated(_pixelData.Length);
+							Diagnostics.OnLargeObjectAllocated(_pixelData.Length);
 					}
 
 					return _pixelData;
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						_overlayData[key] = data = CreateNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber);
 						if (data != null)
-							MemoryHelper.OnLargeObjectAllocated(data.Length);
+							Diagnostics.OnLargeObjectAllocated(data.Length);
 					}
 
 					return data;
@@ -177,12 +177,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private void ReportLargeObjectsUnloaded()
 			{
 				if (_pixelData != null)
-					MemoryHelper.OnLargeObjectReleased(_pixelData.Length);
+					Diagnostics.OnLargeObjectReleased(_pixelData.Length);
 
 				foreach (byte[] overlayData in _overlayData.Values)
 				{
 					if (overlayData != null)
-						MemoryHelper.OnLargeObjectReleased(overlayData.Length);
+						Diagnostics.OnLargeObjectReleased(overlayData.Length);
 				}
 			}
 		}
