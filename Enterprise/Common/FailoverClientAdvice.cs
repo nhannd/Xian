@@ -71,7 +71,7 @@ namespace ClearCanvas.Enterprise.Common
                 catch (Exception ex)
                 {
                     // log and try next failover channel
-                    LogFailure(invocation, e, remoteEndpoint);
+                    LogFailure(invocation, ex, remoteEndpoint);
                 }
             }
 
