@@ -346,8 +346,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
                         {
                             Platform.Log(LogLevel.Error,
-                                         "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                         "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
                             parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                             parms.ScheduledTime = Platform.Time;
                             parms.ExpirationTime = Platform.Time.AddDays(1);
@@ -355,8 +355,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         else
                         {
                             Platform.Log(LogLevel.Error,
-                                         "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                         "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}. Failure Reason: {3}",
+                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
                             parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
                             parms.ScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
                             parms.ExpirationTime =

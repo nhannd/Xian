@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -43,7 +42,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Validation;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -598,21 +596,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							else if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
 							{
 								Platform.Log(LogLevel.Error,
-								             "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-											 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                             "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+											 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, item.FailureDescription);
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now
 
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                               GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                               GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, item.FailureDescription);
 							}
 							else
 							{
 								Platform.Log(LogLevel.Error,
-								             "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
+                                             "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}.",
 								             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
 								parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
@@ -679,16 +677,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
                             {
                                 Platform.Log(LogLevel.Error,
-                                             "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                             "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
                                 parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                                 parms.ScheduledTime = Platform.Time;
                                 parms.ExpirationTime = Platform.Time.AddDays(1);
 
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                                GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}", 
-                                                item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                                                GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                                item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
                             }
                             else
                             {
