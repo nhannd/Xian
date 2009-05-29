@@ -1,1 +1,0 @@
-cscript EnterpriseDatabaseGenerator.js Debug
