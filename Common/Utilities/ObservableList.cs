@@ -43,7 +43,7 @@ namespace ClearCanvas.Common.Utilities
 	/// For exception details on individual methods, see <see cref="List{T}"/>.
 	/// </remarks>
 	/// <typeparam name="TItem">The type of the objects stored in the list.</typeparam>
-	public class ObservableList<TItem> : IList<TItem>
+	public class ObservableList<TItem> : IObservableList<TItem>
 	{
 		private readonly List<TItem> _list;
 		private bool _enableEvents = true;	// events are enabled by default
@@ -72,6 +72,16 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
+		/// Gets or sets a value indicating whether <see cref="ItemAdded"/>, <see cref="ItemChanged"/>,
+		/// <see cref="ItemChanging"/> and <see cref="ItemRemoved"/> events are raised.
+		/// </summary>
+		public bool EnableEvents
+		{
+			get { return _enableEvents; }
+			set { _enableEvents = value; }
+		}
+
+		/// <summary>
 		/// Sorts the list given the input <paramref name="sortComparer"/>.
 		/// </summary>
 		/// <param name="sortComparer">A comparer to be used to sort the list.</param>
@@ -81,6 +91,8 @@ namespace ClearCanvas.Common.Utilities
 
 			_list.Sort(sortComparer);
 		}
+
+		#region IObservableList
 
 		/// <summary>
 		/// Fired when an item is added to the list.
@@ -118,16 +130,7 @@ namespace ClearCanvas.Common.Utilities
 			remove { _itemChanging -= value; }
 		}
 
-		/// <summary>
-		/// Gets or sets a value indicating whether <see cref="ItemAdded"/>, <see cref="ItemChanged"/>,
-		/// <see cref="ItemChanging"/> and <see cref="ItemRemoved"/> events are raised.
-		/// </summary>
-		public bool EnableEvents
-		{
-			get { return _enableEvents; }
-			set { _enableEvents = value; }
-		}
-
+		#endregion
 		#region IList<T> Members
 
 		/// <summary>
@@ -147,9 +150,6 @@ namespace ClearCanvas.Common.Utilities
 		public virtual void Insert(int index, TItem item)
 		{
 			Platform.CheckArgumentRange(index, 0, this.Count, "index");
-
-			if (_list.Contains(item))
-				return;
 
 			_list.Insert(index, item);
 			OnItemAdded(new ListEventArgs<TItem>(item, index));
@@ -201,9 +201,6 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		public virtual void Add(TItem item)
 		{
-			if (_list.Contains(item))
-				return;
-
 			_list.Add(item);
 			OnItemAdded(new ListEventArgs<TItem>(item, this.Count - 1));
 		}

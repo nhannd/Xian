@@ -305,6 +305,7 @@
     <Compile Include="Shreds\QueueProcessorShred.cs" />
     <Compile Include="Shreds\Shred.cs" />
     <Compile Include="Shreds\ShredExtensionPoint.cs" />
+    <Compile Include="Utilities\IObservableList.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -179,7 +178,7 @@ namespace ClearCanvas.ImageViewer
 					{
 						_viewer.StudyTree.AddSop(sop);
 					}
-					catch(SopValidationException e)
+					catch (SopValidationException e)
 					{
 						++failed;
 						Platform.Log(LogLevel.Error, e);
@@ -194,16 +193,29 @@ namespace ClearCanvas.ImageViewer
 					++total;
 				}
 
+				LoadStudyException error = null;
+				if (failed > 0)
+					error = new LoadStudyException(StudyInstanceUid, total, failed);
+
 				study = _viewer.StudyTree.GetStudy(StudyInstanceUid);
 				if (study != null)
-					_viewer.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(study));
+				{
+					_viewer.EventBroker.OnStudyLoaded(new StudyLoadedEventArgs(study, error));
 
-				if (failed > 0)
-					throw new LoadStudyException(StudyInstanceUid, total, failed);
+					IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[StudyLoaderName].PrefetchingStrategy;
+					if (prefetchingStrategy != null)
+						prefetchingStrategy.Start(_viewer);
+				}
+				else
+				{
+					if (_studyItem != null)
+						_viewer.EventBroker.OnStudyLoadFailed(new StudyLoadFailedEventArgs(_studyItem, error));
+					else
+						_viewer.EventBroker.OnStudyLoadFailed(new StudyLoadFailedEventArgs(_args, error));
+				}
 
-				IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[StudyLoaderName].PrefetchingStrategy;
-				if (prefetchingStrategy != null)
-					prefetchingStrategy.Start(_viewer);
+				if (error != null)
+					throw error;
 			}
 
 			#region IDisposable Members

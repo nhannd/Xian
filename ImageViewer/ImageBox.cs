@@ -470,8 +470,8 @@ namespace ClearCanvas.ImageViewer
 
 		internal bool Locked
 		{
-			get { return Tiles.ReadOnly; }
-			set  { Tiles.ReadOnly = value; }
+			get { return Tiles.Locked; }
+			set  { Tiles.Locked = value; }
 		}
 
 		#endregion

@@ -117,9 +117,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 					if (currentLut is AdjustableDataLut)
 					{
 						AdjustableDataLut adj = (AdjustableDataLut) currentLut;
-						if (adj.DataLut is AutoPresentationVoiLutData)
+						if (adj.DataLut is AutoPresentationVoiDataLut)
 							return PresentationData;
-						else if (adj.DataLut is AutoImageVoiLutData)
+						else if (adj.DataLut is AutoImageVoiDataLut)
 							return ImageData;
 					}
 					else if (currentLut is AutoPresentationVoiLutLinear)
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 					if (voiLutsProvider == null)
 						return null;
 
-					AutoVoiLutData dataLut = AutoImageVoiLutData.CreateFrom(voiLutsProvider);
+					AutoVoiDataLut dataLut = AutoImageVoiDataLut.CreateFrom(voiLutsProvider);
 					if (dataLut == null)
 						return null;
 					return new AdjustableAutoVoiDataLut(dataLut);
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 					if (voiLutsProvider == null)
 						return null;
 
-					AutoVoiLutData dataLut = AutoPresentationVoiLutData.CreateFrom(voiLutsProvider);
+					AutoVoiDataLut dataLut = AutoPresentationVoiDataLut.CreateFrom(voiLutsProvider);
 					if (dataLut == null)
 						return null;
 					return new AdjustableAutoVoiDataLut(dataLut);

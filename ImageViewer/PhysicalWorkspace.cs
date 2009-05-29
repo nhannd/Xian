@@ -209,10 +209,10 @@ namespace ClearCanvas.ImageViewer
 
 		public bool Locked
 		{
-			get { return ImageBoxes.ReadOnly; }
+			get { return ImageBoxes.Locked; }
 			set
 			{
-				if (ImageBoxes.ReadOnly == value)
+				if (ImageBoxes.Locked == value)
 					return;
 				
 				SetLocked(value);
@@ -342,7 +342,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void SetLocked(bool value)
 		{
-			ImageBoxes.ReadOnly = value;
+			ImageBoxes.Locked = value;
 			foreach (IImageBox box in ImageBoxes)
 				((ImageBox)box).Locked = value;
 		}

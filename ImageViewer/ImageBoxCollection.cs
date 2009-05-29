@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class ImageBoxCollection : ObservableList<IImageBox>
 	{
-		private bool _readOnly;
+		private bool _locked;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageBoxCollection"/>.
@@ -62,50 +62,50 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		//TODO (CR May09): make base.IsReadOnly protected settable, or virtual and return _readOnly.
-		//NOTE: defer change for now to avoid changing Common.
-		internal bool ReadOnly
+		//NOTE: opted not to override base.IsReadOnly b/c the semantic is slightly different.
+		//This is not a 'read only' list, rather the parent object has temporarily locked it.
+		internal bool Locked
 		{
-			get { return _readOnly; }
-			set { _readOnly = value; }
+			get { return _locked; }
+			set { _locked = value; }
 		}
 
 		public override void Add(IImageBox item)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The image box collection is read-only.");
-
+			if (_locked)
+				throw new InvalidOperationException("The image box collection is locked.");
+				
 			base.Add(item);
 		}
 
 		public override void Insert(int index, IImageBox item)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The image box collection is read-only.");
+			if (_locked)
+				throw new InvalidOperationException("The image box collection is locked.");
 
 			base.Insert(index, item);
 		}
 
 		public override bool Remove(IImageBox item)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The image box collection is read-only.");
-
+			if (_locked)
+				throw new InvalidOperationException("The image box collection is locked.");
+				
 			return base.Remove(item);
 		}
 
 		public override void RemoveAt(int index)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The image box collection is read-only.");
+			if (_locked)
+				throw new InvalidOperationException("The image box collection is locked.");
 
 			base.RemoveAt(index);
 		}
 
 		public override void Clear()
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The image box collection is read-only.");
+			if (_locked)
+				throw new InvalidOperationException("The image box collection is locked.");
 
 			base.Clear();
 		}
@@ -118,8 +118,8 @@ namespace ClearCanvas.ImageViewer
 			}
 			set
 			{
-				if (_readOnly)
-					throw new InvalidOperationException("The image box collection is read-only.");
+				if (_locked)
+					throw new InvalidOperationException("The image box collection is locked.");
 
 				base[index] = value;
 			}

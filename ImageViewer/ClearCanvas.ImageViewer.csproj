@@ -362,6 +362,7 @@
     <Compile Include="Rendering\RendererBase.cs" />
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
+    <Compile Include="StudyLoadedEventArgs.cs" />
     <Compile Include="StudyManagement\FrameReference.cs" />
     <Compile Include="StudyManagement\LoadMultipleStudiesException.cs" />
     <Compile Include="StudyManagement\SopFrameData.cs" />

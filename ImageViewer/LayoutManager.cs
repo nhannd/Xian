@@ -549,9 +549,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		private void OnPriorStudyLoaded(object sender, ItemEventArgs<Study> e)
+		private void OnPriorStudyLoaded(object sender, StudyLoadedEventArgs args)
 		{
-			OnPriorStudyLoaded(e.Item);
+			OnPriorStudyLoaded(args.Study);
 		}
 
 		#region Disposal

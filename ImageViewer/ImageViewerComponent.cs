@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer
 		private ViewerShortcutManager _shortcutManager;
 		private ToolSet _toolSet;
 		private ILayoutManager _layoutManager;
-		private AsyncPriorStudyLoader _priorStudyLoader;
+		private AsynchronousPriorStudyLoader _priorStudyLoader;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
 		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer
 		public ImageViewerComponent(ILayoutManager layoutManager, IPriorStudyFinder priorStudyFinder)
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
-			_priorStudyLoader = new AsyncPriorStudyLoader(this, priorStudyFinder ?? PriorStudyFinder.Null);
+			_priorStudyLoader = new AsynchronousPriorStudyLoader(this, priorStudyFinder ?? PriorStudyFinder.Null);
 
 			_layoutManager = layoutManager;
 			_layoutManager.SetImageViewer(this);

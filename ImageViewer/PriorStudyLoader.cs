@@ -61,30 +61,16 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
-	public class LoadPriorStudyFailedEventArgs : EventArgs
-	{
-		internal LoadPriorStudyFailedEventArgs(StudyItem study, Exception error)
-		{
-			this.Study = study;
-			this.Error = error;
-		}
-
-		public readonly StudyItem Study;
-		public readonly Exception Error;
-	}
-
 	public interface IPriorStudyLoader
 	{
 		bool IsActive { get; }
 		event EventHandler IsActiveChanged;
-
-		//TODO (CR May09): resolve events with EventBroker; combine 'failed' and 'success' events into one.
-		event EventHandler<LoadPriorStudyFailedEventArgs> LoadPriorStudyFailed;
 	}
 
 	public partial class ImageViewerComponent
 	{
-		internal class AsyncPriorStudyLoader : IPriorStudyLoader
+		//NOTE: Async because otherwise the name conflicts with the ImageViewer.PriorStudyLoader property.
+		internal class AsynchronousPriorStudyLoader : IPriorStudyLoader
 		{
 			private readonly ImageViewerComponent _imageViewer;
 			private readonly List<SingleStudyLoader> _singleStudyLoaders;
@@ -92,7 +78,6 @@ namespace ClearCanvas.ImageViewer
 
 			private volatile bool _isActive = false;
 			private event EventHandler _isActiveChanged;
-			event EventHandler<LoadPriorStudyFailedEventArgs> _loadPriorStudyFailed;
 
 			private volatile bool _stop = false;
 
@@ -104,7 +89,7 @@ namespace ClearCanvas.ImageViewer
 			private volatile int _actualPriorCount = 0;
 			private volatile bool _findFailed = false;
 
-			public AsyncPriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
+			public AsynchronousPriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
 			{
 				_imageViewer = imageViewer;
 				_singleStudyLoaders = new List<SingleStudyLoader>();
@@ -112,6 +97,8 @@ namespace ClearCanvas.ImageViewer
 				_priorStudyFinder = priorStudyFinder;
 				_priorStudyFinder.SetImageViewer(_imageViewer);
 			}
+
+			#region IPriorStudyLoader
 
 			public bool IsActive
 			{
@@ -132,11 +119,7 @@ namespace ClearCanvas.ImageViewer
 				remove { _isActiveChanged -= value; }
 			}
 
-			public event EventHandler<LoadPriorStudyFailedEventArgs> LoadPriorStudyFailed
-			{
-				add { _loadPriorStudyFailed += value; }
-				remove { _loadPriorStudyFailed -= value; }
-			}
+			#endregion
 
 			public void Start()
 			{
@@ -233,20 +216,25 @@ namespace ClearCanvas.ImageViewer
 
 			private void OnLoadPriorStudyFailed(StudyItem result, Exception error)
 			{
-				_synchronizationContext.Post(OnLoadPriorStudyFailed, new LoadPriorStudyFailedEventArgs(result, error));
+				_synchronizationContext.Post(OnLoadPriorStudyFailed, new StudyLoadFailedEventArgs(result, error));
 			}
 
-			private void OnLoadPriorStudyFailed(object loadPriorStudyFailedEventArgs)
+			private void OnLoadPriorStudyFailed(object studyLoadFailedEventArgs)
+			{
+				OnLoadPriorStudyFailed((StudyLoadFailedEventArgs)studyLoadFailedEventArgs, true);
+			}
+
+			private void OnLoadPriorStudyFailed(StudyLoadFailedEventArgs args, bool fireEvent)
 			{
 				if (!_stop)
 				{
-					LoadPriorStudyFailedEventArgs args = (LoadPriorStudyFailedEventArgs) loadPriorStudyFailedEventArgs;
 					//don't re-report for an existing study.
 					if (null == _imageViewer.StudyTree.GetStudy(args.Study.StudyInstanceUID))
 					{
 						++_actualPriorCount;
 						_loadStudyExceptions.Add(args.Error);
-						EventsHelper.Fire(_loadPriorStudyFailed, this, args);
+						if (fireEvent)
+							_imageViewer.EventBroker.OnStudyLoadFailed(args);
 					}
 				}
 			}
@@ -266,10 +254,11 @@ namespace ClearCanvas.ImageViewer
 					}
 					catch(LoadStudyException e)
 					{
+						OnLoadPriorStudyFailed(new StudyLoadFailedEventArgs(loader.StudyItem, e), false);
+
+						//loader.AddSops has already reported any failures through the event broker, so just log.
 						Platform.Log(LogLevel.Error, e, "An error occurred while loading sops for prior study '{0}' from study loader '{1}'.",
 									 loader.StudyInstanceUid, loader.StudyLoaderName);
-
-						OnLoadPriorStudyFailed(new LoadPriorStudyFailedEventArgs(loader.StudyItem, e));
 					}
 				}
 			}

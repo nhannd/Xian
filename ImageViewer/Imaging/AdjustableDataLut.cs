@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <see cref="GetDescription"/> expresses the Window Width/Center as a percentage of 
 	/// the full window, since the true values won't necessarily have any real meaning.
 	/// </remarks>
-	[Cloneable(true)]
+	[Cloneable]
 	public class AdjustableDataLut : ComposableLut, IBasicVoiLutLinear, IDataLut
 	{
 		private class Memento
@@ -113,9 +113,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Reset();
 		}
 
-		//TODO (CR May09): make cloning constructor.
-		protected AdjustableDataLut()
+		protected AdjustableDataLut(AdjustableDataLut source, ICloningContext context)
 		{
+			context.CloneFields(source, this);
+
+			Platform.CheckForNullReference(_dataLut, "_dataLut");
+			Platform.CheckForNullReference(_linearLut, "_linearLut");
+
+			_linearLut.LutChanged += OnLinearLutChanged;
+			_dataLut.LutChanged += OnDataLutChanged;
 		}
 
 		#endregion

@@ -211,18 +211,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
-			base.ImageViewer.PriorStudyLoader.LoadPriorStudyFailed += OnLoadPriorStudyFailed;
+			base.ImageViewer.EventBroker.StudyLoadFailed += OnLoadPriorStudyFailed;
 			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.ImageViewer.PriorStudyLoader.LoadPriorStudyFailed -= OnLoadPriorStudyFailed;
+			base.ImageViewer.EventBroker.StudyLoadFailed -= OnLoadPriorStudyFailed;
 			_imageSetGroups.Dispose();
 			base.Dispose(disposing);
 		}
 
-		private void OnLoadPriorStudyFailed(object sender, LoadPriorStudyFailedEventArgs e)
+		private void OnLoadPriorStudyFailed(object sender, StudyLoadFailedEventArgs e)
 		{
 			_anyUnavailable = true;
 

@@ -39,61 +39,60 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class TileCollection : ObservableList<ITile>
 	{
-		private bool _readOnly;
+		private bool _locked;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="TileCollection"/>.
 		/// </summary>
 		internal TileCollection()
 		{
-
 		}
 
-		//TODO (CR May09): make base.IsReadOnly protected settable, or virtual and return _readOnly.
-		//NOTE: defer change for now to avoid changing Common.
-		internal bool ReadOnly
+		//NOTE: opted not to override base.IsReadOnly b/c the semantic is slightly different.
+		//This is not a 'read only' list, rather the parent object has temporarily locked it.
+		internal bool Locked
 		{
-			get { return _readOnly; }
-			set { _readOnly = value; }
+			get { return _locked; }
+			set { _locked = value; }
 		}
 
 		public override void Add(ITile item)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The tile collection is read-only.");
+			if (_locked)
+				throw new InvalidOperationException("The tile collection is locked.");
 
 			base.Add(item);
 		}
 
 		public override void Insert(int index, ITile item)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The tile collection is read-only.");
-
+			if (_locked)
+				throw new InvalidOperationException("The tile collection is locked.");
+				
 			base.Insert(index, item);
 		}
 
 		public override bool Remove(ITile item)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The tile collection is read-only.");
-
+			if (_locked)
+				throw new InvalidOperationException("The tile collection is locked.");
+				
 			return base.Remove(item);
 		}
 
 		public override void RemoveAt(int index)
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The tile collection is read-only.");
-
+			if (_locked)
+				throw new InvalidOperationException("The tile collection is locked.");
+				
 			base.RemoveAt(index);
 		}
 
 		public override void Clear()
 		{
-			if (_readOnly)
-				throw new InvalidOperationException("The tile collection is read-only.");
-			
+			if (_locked)
+				throw new InvalidOperationException("The tile collection is locked.");
+				
 			base.Clear();
 		}
 
@@ -105,9 +104,9 @@ namespace ClearCanvas.ImageViewer
 			}
 			set
 			{
-				if (_readOnly)
-					throw new InvalidOperationException("The tile collection is read-only.");
-
+				if (_locked)
+					throw new InvalidOperationException("The tile collection is locked.");
+					
 				base[index] = value;
 			}
 		}

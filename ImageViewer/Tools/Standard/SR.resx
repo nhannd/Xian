@@ -582,7 +582,7 @@ Please check the log for more details.</value>
   <data name="FormatDescriptionAutoLinearLut" xml:space="preserve">
     <value>W:{0} L:{1} ({2})</value>
   </data>
-  <data name="FormatAutoVoiLutDataDescription" xml:space="preserve">
+  <data name="FormatAutoVoiDataLutDescription" xml:space="preserve">
     <value>{0} (Data)</value>
   </data>
   <data name="MenuShowHideScaleOverlay" xml:space="preserve">

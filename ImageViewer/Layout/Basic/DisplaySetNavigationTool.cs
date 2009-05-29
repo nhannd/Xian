@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			remove { _enabledChanged -= value; }
 		}
 
-		private void OnStudyLoaded(object sender, ItemEventArgs<Study> e)
+		private void OnStudyLoaded(object sender, StudyLoadedEventArgs e)
 		{
 			UpdateEnabled();
 		}
