@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
@@ -49,9 +50,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #region Private Members
         private readonly string _src;
         private readonly string _dest;
-        private string _backupSrcDir ;
         private string _backupDestDir ;
-        private bool _restored;
+        private readonly TimeSpanStatistics _backupTime = new TimeSpanStatistics();
+        private readonly RateStatistics _moveSpeed = new RateStatistics("MoveSpeed", RateType.BYTES);
+
         #endregion
 
         public MoveDirectoryCommand(string src, string dest)
@@ -64,41 +66,43 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             _dest = dest;
         }
 
+        public TimeSpanStatistics BackupTime
+        {
+            get { return _backupTime; }
+        }
+
+        public RateStatistics MoveSpeed
+        {
+            get { return _moveSpeed; }
+        }
+
         protected override void OnExecute()
         {
+            if (!Directory.Exists(_src))
+                throw new DirectoryNotFoundException(string.Format("Source directory {0} does not exist", _src));
+            
             if (RequiresRollback)
             {
                 Backup();
             }
 
-            DirectoryUtility.Move(_src, _dest);
-
-			DirectoryUtility.DeleteIfExists(_src, true);
-
+            MoveSpeed.Start();
+            ulong bytesCopied = DirectoryUtility.Copy(_src, _dest);
+            MoveSpeed.SetData(bytesCopied);
+            MoveSpeed.End();
         }
 
         private void Backup()
         {
-            // TODO: find a better way to backup the directory. For eg, will it be more efficient to backup the directory
-            // by renaming it (if Windows API allow) or copy to a different location other than the current machine? 
-            if (Directory.Exists(_src))
-            {
-                _backupSrcDir = Path.Combine(ExecutionContext.BackupDirectory, "OrigStudy");
-                Directory.CreateDirectory(_backupSrcDir);
-                Platform.Log(LogLevel.Debug, "Backing up original source folder {0}", _src);
-                DirectoryUtility.Copy(_src, _backupSrcDir);
-
-                Platform.Log(LogLevel.Info, "Original source folder {0} is backed up to {1}", _src, _backupSrcDir);
-            }
-
-
             if (Directory.Exists(_dest))
             {
+                BackupTime.Start();
                 _backupDestDir = Path.Combine(ExecutionContext.BackupDirectory, "DestStudy");
-                Directory.CreateDirectory(_backupDestDir); 
-                Platform.Log(LogLevel.Debug, "Backing up original destination folder {0}", _dest);
+                Directory.CreateDirectory(_backupDestDir);
+                Platform.Log(LogLevel.Info, "Backing up original destination folder {0}", _dest);
                 DirectoryUtility.Copy(_dest, _backupDestDir);
                 Platform.Log(LogLevel.Info, "Original destination folder {0} is backed up to {1}", _dest, _backupDestDir);
+                BackupTime.End();
             }
 
         }
@@ -111,19 +115,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
             finally
             {
-                if (Directory.Exists(_backupSrcDir))
-                {
-                    Platform.Log(LogLevel.Info, "Restoring original source folder {0}", _src);
-                    DirectoryUtility.Copy(_backupSrcDir, _src);
-                }
-
                 if (Directory.Exists(_backupDestDir))
                 {
                     Platform.Log(LogLevel.Info, "Restoring original destination folder {0}", _dest);
                     DirectoryUtility.Copy(_backupDestDir, _dest);
+                    Platform.Log(LogLevel.Info, "Original destination folder {0} is restored", _dest);
                 }
-
-                _restored = true;
             }
 
         }
@@ -132,23 +129,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         public void Dispose()
         {
-            if (RollBackRequested)
+            if (!RollBackRequested)
             {
-                if (_restored)
-                {
-                    DirectoryUtility.DeleteIfExists(_backupSrcDir);
-                    DirectoryUtility.DeleteIfExists(_backupDestDir);
-                }
-                else
-                {
-                    // leave the backup there
-                }
+                DirectoryUtility.DeleteIfExists(_src);
             }
-            else
-            {
-                DirectoryUtility.DeleteIfExists(_backupSrcDir);
-                DirectoryUtility.DeleteIfExists(_backupDestDir);
-            }
+
+            DirectoryUtility.DeleteIfExists(_backupDestDir);
         }
 
         #endregion

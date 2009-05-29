@@ -93,14 +93,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             set { this["DBUpdate"] = value; }
         }
 
-        public TimeSpanStatistics CopyFiles
+        public RateStatistics CopyFiles
         {
             get
             {
                 if (this["CopyFiles"] == null)
-                    this["CopyFiles"] = new TimeSpanStatistics("CopyFiles");
+                    this["CopyFiles"] = new RateStatistics("CopyFiles", RateType.BYTES);
 
-                return (this["CopyFiles"] as TimeSpanStatistics);
+                return (this["CopyFiles"] as RateStatistics);
             }
             set { this["CopyFiles"] = value; }
         }

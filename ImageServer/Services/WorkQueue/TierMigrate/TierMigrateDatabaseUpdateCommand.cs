@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             // update FilesystemStudyStorage
             if (Context != null)
             {
-                Platform.Log(LogLevel.Debug, "Updating database...");
+                Platform.Log(LogLevel.Info, "Updating database...");
                 IFilesystemStudyStorageEntityBroker broker = updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
 
                 FilesystemStudyStorageSelectCriteria searchCriteria = new FilesystemStudyStorageSelectCriteria();
@@ -101,6 +101,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 parms.ScheduledTime = Platform.Time;
                 parms.StudyStorageKey = Context.OriginalStudyLocation.GetKey();
                 insertFilesystemQueueBroker.Execute(parms);
+
+                Platform.Log(LogLevel.Info, "Database is updated.");
+                
             }
         }
     }

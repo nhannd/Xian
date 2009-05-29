@@ -97,16 +97,17 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 		/// </summary>
 		/// <param name="sourceDirectory"></param>
 		/// <param name="targetDirectory"></param>
-        public static void Copy(string sourceDirectory, string targetDirectory)
+        public static ulong Copy(string sourceDirectory, string targetDirectory)
         {
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
 
-            InternalCopy(diSource, diTarget);
+            return InternalCopy(diSource, diTarget);
         }
 
-        private static void InternalCopy(DirectoryInfo source, DirectoryInfo target)
+        private static ulong InternalCopy(DirectoryInfo source, DirectoryInfo target)
         {
+            ulong bytesCopied = 0;
             // Check if the target directory exists, if not, create it.
             if (Directory.Exists(target.FullName) == false)
             {
@@ -117,15 +118,19 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             foreach (FileInfo fi in source.GetFiles())
             {
                 //Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
+                bytesCopied += (ulong) fi.Length; 
                 fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+                
             }
 
             // Copy each subdirectory using recursion.
             foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
             {
                 DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-                InternalCopy(diSourceSubDir, nextTargetSubDir);
+                bytesCopied+=InternalCopy(diSourceSubDir, nextTargetSubDir);
             }
+
+            return bytesCopied;
         }
 
 		/// <summary>

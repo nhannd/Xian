@@ -35,6 +35,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -134,14 +135,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             TierMigrationStatistics stat = new TierMigrationStatistics();
             stat.StudyInstanceUid = storage.StudyInstanceUid;
             stat.ProcessSpeed.Start();
+    	    StudyXml studyXml = storage.LoadStudyXml();
+            stat.StudySize = (ulong) studyXml.GetStudySize(); 
 
-            ulong studySize = (ulong)DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
-            stat.StudySize = studySize;
-
-            Platform.Log(LogLevel.Info, "Migrating study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
+            Platform.Log(LogLevel.Info, "About to migrate study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
 			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(storage.FilesystemKey);
 			ServerFilesystemInfo newFilesystem = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(currFilesystem);
-
+            
             if (newFilesystem == null)
             {
             	// this entry shouldn't have been scheduled in the first place.
@@ -154,6 +154,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 throw new ApplicationException(msg);
             }
 
+            Platform.Log(LogLevel.Info, "New filesystem : {0}", newFilesystem.Filesystem.Description);
             string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
                 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
@@ -169,7 +170,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 processor.AddCommand(new CreateDirectoryCommand(newPath));
 
                 newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyInstanceUid);
-                processor.AddCommand(new CreateDirectoryCommand(newPath));
+                // don't create this directory so that it won't be backed up by MoveDirectoryCommand
 
                 MoveDirectoryCommand moveCommand = new MoveDirectoryCommand(origFolder, newPath);
                 processor.AddCommand(moveCommand);
@@ -177,25 +178,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 TierMigrateDatabaseUpdateCommand updateDBCommand = new TierMigrateDatabaseUpdateCommand(context);
                 processor.AddCommand(updateDBCommand);
 
+                Platform.Log(LogLevel.Info, "Start migrating study {0}.. {1} to be moved", storage.StudyInstanceUid, ByteCountFormatter.Format(stat.StudySize));
                 if (!processor.Execute())
                 {
                     throw new ApplicationException(processor.FailureReason);
                 }
 
                 stat.DBUpdate = updateDBCommand.Statistics;
-                stat.CopyFiles = moveCommand.Statistics;
+                stat.CopyFiles = moveCommand.MoveSpeed;
             }
 
-            stat.ProcessSpeed.SetData(studySize);
+            stat.ProcessSpeed.SetData(stat.StudySize);
             stat.ProcessSpeed.End();
 
-            string[] files = Directory.GetFiles(newPath, "*.dcm", SearchOption.AllDirectories);
-
-            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} [ {3} images, {4} @ {5}]",
+            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} in {7} [ {3} images, {4} @ {5}]. DB Update={6}",
                             storage.StudyInstanceUid, storage.FilesystemTierEnum, 
                             newFilesystem.Filesystem.FilesystemTierEnum, 
-                            files.Length,
-                            ByteCountFormatter.Format(studySize), stat.ProcessSpeed.FormattedValue);
+                            studyXml.NumberOfStudyRelatedInstances,
+                            ByteCountFormatter.Format(stat.StudySize),
+                            stat.CopyFiles.FormattedValue,
+                            stat.DBUpdate.FormattedValue,
+                            TimeSpanFormatter.Format(stat.ProcessSpeed.ElapsedTime));
 
             UpdateAverageStatistics(stat);                       
         }
