@@ -59,6 +59,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		public const int DefaultWorkQueueMinimumFreeMemoryMB = 256;
 		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
 	    public const bool DefaultEnableStudyIntegrityValidation = true;
+        public const int DefaultTierMigrationProgressUpdateInSeconds = 30;
 
 		private static WorkQueueSettings _instance;
 
@@ -220,6 +221,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
             set { this["WorkQueueProcessDelayMedPrioritySeconds"] = value; }
         }
 
+        /// <summary>
+        /// The number of seconds to update on the progress of tier migration work queue entries.
+        /// </summary>
+        [SettingsDescriptionAttribute("The number of seconds to update on the progress of tier migration work queue entries.")]
+        [ConfigurationProperty("TierMigrationProgressUpdateInSeconds", DefaultValue = DefaultTierMigrationProgressUpdateInSeconds)]
+        public int TierMigrationProgressUpdateInSeconds
+        {
+            get { return ((int)(this["TierMigrationProgressUpdateInSeconds"])); }
+            set { this["TierMigrationProgressUpdateInSeconds"] = value; }
+        }
+
+
 		#endregion
 
 		public override object Clone()
@@ -242,6 +255,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		    clone.CompletedWorkQueueDelayDeleteSeconds = _instance.CompletedWorkQueueDelayDeleteSeconds;
 			clone.WorkQueueMinimumFreeMemoryMB = _instance.WorkQueueMinimumFreeMemoryMB;
 		    clone.EnableStudyIntegrityValidation = _instance.EnableStudyIntegrityValidation;
+		    clone.TierMigrationProgressUpdateInSeconds = _instance.TierMigrationProgressUpdateInSeconds;
 			return clone;
 		}
 	}

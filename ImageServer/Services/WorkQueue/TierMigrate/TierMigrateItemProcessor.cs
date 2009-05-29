@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                 fileCounter++;
                                 float pct = (float)fileCounter/instanceCount;
                                 TimeSpan elapsed = DateTime.Now - lastLog;
-                                if (elapsed>TimeSpan.FromSeconds(15))
+                                if (elapsed > TimeSpan.FromSeconds(WorkQueueSettings.Instance.TierMigrationProgressUpdateInSeconds))
                                 {
                                     TimeSpan totalElapsed = Platform.Time - startTime;
                                     double speedInMBPerSecond = 0;
