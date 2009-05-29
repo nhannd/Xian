@@ -194,20 +194,39 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Occurs when the value of <see cref="TopLeft"/> changes.
+		/// </summary>
 		public event EventHandler<PointChangedEventArgs> TopLeftChanged
 		{
 			add { _topLeftChanged += value; }
 			remove { _topLeftChanged -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when the value of <see cref="BottomRight"/> changes.
+		/// </summary>
 		public event EventHandler<PointChangedEventArgs> BottomRightChanged
 		{
 			add { _bottomRightChanged += value; }
 			remove { _bottomRightChanged -= value; }
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified point is
+		/// contained in the graphic.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public abstract bool Contains(PointF point);
 
+		/// <summary>
+		/// Gets the tightest bounding box that encloses the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public override RectangleF BoundingBox
 		{
 			get { return RectangleUtilities.ConvertToPositiveRectangle(this.Rectangle); }
@@ -224,6 +243,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="InvariantPrimitive.Location"/> changes.
+		/// </summary>
 		protected override void OnLocationChanged()
 		{
 			this.OnTopLeftChanged();
@@ -250,11 +272,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return new PointF(base.Location.X + pt[0].X, base.Location.Y + pt[0].Y);
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="TopLeft"/> changes.
+		/// </summary>
 		protected virtual void OnTopLeftChanged()
 		{
 			EventsHelper.Fire(_topLeftChanged, this, new PointChangedEventArgs(this.TopLeft));
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="BottomRight"/> changes.
+		/// </summary>
 		protected virtual void OnBottomRightChanged()
 		{
 			EventsHelper.Fire(_bottomRightChanged, this, new PointChangedEventArgs(this.BottomRight));

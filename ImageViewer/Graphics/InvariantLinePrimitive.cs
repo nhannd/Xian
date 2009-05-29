@@ -82,6 +82,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="Graphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			PointF result = PointF.Empty;
@@ -90,17 +101,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return result;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified point is
+		/// contained in the graphic.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool Contains(PointF point)
 		{
 			return false;
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="InvariantBoundablePrimitive.TopLeft"/> changes.
+		/// </summary>
 		protected override void OnTopLeftChanged()
 		{
 			EventsHelper.Fire(_point1Changed, this, new PointChangedEventArgs(this.TopLeft));
 			base.OnTopLeftChanged();
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="InvariantBoundablePrimitive.BottomRight"/> changes.
+		/// </summary>
 		protected override void OnBottomRightChanged()
 		{
 			EventsHelper.Fire(_point2Changed, this, new PointChangedEventArgs(this.BottomRight));
@@ -133,12 +156,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { throw new NotSupportedException(); }
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="ILineSegmentGraphic.Point1"/> property changed.
+		/// </summary>
 		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point1Changed
 		{
 			add { _point1Changed += value; }
 			remove { _point1Changed -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="ILineSegmentGraphic.Point2"/> property changed.
+		/// </summary>
 		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point2Changed
 		{
 			add { _point2Changed += value; }

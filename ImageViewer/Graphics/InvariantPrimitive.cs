@@ -114,6 +114,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			remove { _locationChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="Location"/> changes.
+		/// </summary>
 		protected virtual void OnLocationChanged()
 		{
 			EventsHelper.Fire(_locationChangedEvent, this, new PointChangedEventArgs(this.Location));

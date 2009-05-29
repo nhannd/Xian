@@ -34,16 +34,35 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Represents DICOM overlay data.
+	/// </summary>
 	public class OverlayData
 	{
-		private int _offset;
-		private int _rows;
-		private int _columns;
-		private bool _bigEndianWords;
-		private byte[] _rawOverlayData;
+		private readonly int _offset;
+		private readonly int _rows;
+		private readonly int _columns;
+		private readonly bool _bigEndianWords;
+		private readonly byte[] _rawOverlayData;
 
-		public OverlayData(int rows, int columns, bool bigEndianWords, byte[] overlayData) : this(0, rows, columns, bigEndianWords, overlayData) {}
+		/// <summary>
+		/// Constructs a new overlay data object.
+		/// </summary>
+		/// <param name="rows">The number of rows in the overlay.</param>
+		/// <param name="columns">The number of columns in the overlay.</param>
+		/// <param name="bigEndianWords">A value indicating if the <paramref name="overlayData"/> is stored as 16-bit words with big endian byte ordering</param>
+		/// <param name="overlayData">The packed bits overlay data buffer.</param>
+		public OverlayData(int rows, int columns, bool bigEndianWords, byte[] overlayData)
+			: this(0, rows, columns, bigEndianWords, overlayData) {}
 
+		/// <summary>
+		/// Constructs a new overlay data object.
+		/// </summary>
+		/// <param name="offset">The initial offset of the first bit within the <paramref name="overlayData"/>.</param>
+		/// <param name="rows">The number of rows in the overlay.</param>
+		/// <param name="columns">The number of columns in the overlay.</param>
+		/// <param name="bigEndianWords">A value indicating if the <paramref name="overlayData"/> is stored as 16-bit words with big endian byte ordering</param>
+		/// <param name="overlayData">The packed bits overlay data buffer.</param>
 		public OverlayData(int offset, int rows, int columns, bool bigEndianWords, byte[] overlayData)
 		{
 			Platform.CheckNonNegative(offset, "offset");
@@ -58,11 +77,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_rawOverlayData = overlayData;
 		}
 
+		/// <summary>
+		/// Gets the raw, packed bits overlay data buffer.
+		/// </summary>
 		public byte[] Raw
 		{
 			get { return _rawOverlayData; }
 		}
 
+		/// <summary>
+		/// Unpacks the overlay data into an 8-bit overlay pixel data buffer.
+		/// </summary>
+		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
 		public byte[] Unpack()
 		{
 			byte[] unpackedPixelData = new byte[_rows * _columns];
@@ -70,6 +96,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return unpackedPixelData;
 		}
 
+		/// <summary>
+		/// Extracts an overlay embedded in a DICOM Pixel Data buffer and unpacks it to form an 8-bit overlay pixel data buffer.
+		/// </summary>
+		/// <remarks>
+		/// Embedded overlays were last defined in the 2004 DICOM Standard. Since then, their usage has been retired.
+		/// As such, there is no mechanism to directly read or encode embedded overlays. This method may be used as a
+		/// helper to extract overlays in images encoded with a previous version of the standard for display in compatibility
+		/// mode or storage as packed bit data.
+		/// </remarks>
+		/// <param name="bitPosition">The bit position the the overlay is embedded at within the DICOM Pixel Data buffer.</param>
+		/// <param name="bitsAllocated">The number of bits allocated per pixel. Must be 8 or 16.</param>
+		/// <param name="bigEndianWords">A value indicating if the pixel data buffer is stored as 16-bit words with big endian byte ordering.</param>
+		/// <param name="pixelData">The DICOM Pixel Data buffer containing an embedded overlay.</param>
+		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
 		public static byte[] UnpackFromPixelData(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
 		{
 			const byte ONE = 0xff;
@@ -130,24 +170,37 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
+		/// Creates a packed overlay data object using the specified 8-bit pixel data buffer.
+		/// </summary>
+		/// <param name="rows">The number of rows of pixels.</param>
+		/// <param name="columns">The number of columns of pixels.</param>
+		/// <param name="bigEndianWords">A value indicating if the output overlay data should be encoded as 16-bit words with big endian byte ordering.</param>
+		/// <param name="overlayPixelData">The pixel data buffer containing the overlay contents.</param>
+		/// <returns>A packed overlay data object representing the overlay contents.</returns>
+		public static OverlayData CreateOverlayData(int rows, int columns, bool bigEndianWords, byte[] overlayPixelData)
+		{
+			return CreateOverlayData(rows, columns, 8, 8, 7, bigEndianWords, overlayPixelData);
+		}
+
+		/// <summary>
 		/// Creates a packed overlay data object using the specified pixel data buffer.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsStored"></param>
-		/// <param name="bitsAllocated"></param>
-		/// <param name="highBit"></param>
-		/// <param name="bigEndianWords"></param>
-		/// <param name="pixelData"></param>
-		/// <returns></returns>
-		public static OverlayData CreateOverlayData(int rows, int columns, int bitsStored, int bitsAllocated, int highBit, bool bigEndianWords, byte[] pixelData)
+		/// <param name="rows">The number of rows of pixels.</param>
+		/// <param name="columns">The number of columns of pixels.</param>
+		/// <param name="bitsStored">The number of bits stored per pixel.</param>
+		/// <param name="bitsAllocated">The number of bits allocated per pixel. Must be 8 or 16.</param>
+		/// <param name="highBit">The bit position of the most significant bit of a pixel.</param>
+		/// <param name="bigEndianWords">A value indicating if the output overlay data should be encoded as 16-bit words with big endian byte ordering.</param>
+		/// <param name="overlayPixelData">The pixel data buffer containing the overlay contents.</param>
+		/// <returns>A packed overlay data object representing the overlay contents.</returns>
+		public static OverlayData CreateOverlayData(int rows, int columns, int bitsStored, int bitsAllocated, int highBit, bool bigEndianWords, byte[] overlayPixelData)
 		{
 			int minBytesNeeded = (int) Math.Ceiling(rows*columns/8d);
 			if (minBytesNeeded % 2 == 1)
 				minBytesNeeded++;
 			byte[] packedOverlayData = new byte[minBytesNeeded];
 			uint mask = (uint) ((1 << bitsStored) - 1) << (bitsAllocated - highBit - 1);
-			Pack(pixelData, packedOverlayData, 0, mask, bigEndianWords);
+			Pack(overlayPixelData, packedOverlayData, 0, mask, bigEndianWords);
 			return new OverlayData(rows, columns, bigEndianWords, packedOverlayData);
 		}
 

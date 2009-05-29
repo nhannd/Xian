@@ -99,11 +99,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _cursor = value; }
 		}
 
-		protected override CursorToken OnGetCursorToken(Point point)
+		protected override CursorToken GetCursorToken(Point point)
 		{
 			if (this.HitTest(point))
 				return this.Cursor;
-			return base.OnGetCursorToken(point);
+			return base.GetCursorToken(point);
 		}
 
 		public override bool HitTest(Point point)
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.DecoratedGraphic.Move(delta);
 		}
 
-		protected override bool OnMouseStart(IMouseInformation mouseInformation)
+		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 			try
@@ -133,10 +133,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.ResetCoordinateSystem();
 			}
 
-			return base.OnMouseStart(mouseInformation);
+			return base.Start(mouseInformation);
 		}
 
-		protected override bool OnMouseTrack(IMouseInformation mouseInformation)
+		protected override bool Track(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 			try
@@ -158,23 +158,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.ResetCoordinateSystem();
 			}
 
-			return base.OnMouseTrack(mouseInformation);
+			return base.Track(mouseInformation);
 		}
 
-		protected override bool OnMouseStop(IMouseInformation mouseInformation)
+		protected override bool Stop(IMouseInformation mouseInformation)
 		{
 			if (_stateMemento != null)
 			{
 				this.AddToCommandHistory(_stateMemento, this.CreateMemento());
 				_stateMemento = null;
 			}
-			return base.OnMouseStop(mouseInformation);
+			return base.Stop(mouseInformation);
 		}
 
-		protected override void OnMouseCancel()
+		protected override void Cancel()
 		{
 			_stateMemento = null;
-			base.OnMouseCancel();
+			base.Cancel();
 		}
 
 		private void AddToCommandHistory(object beginState, object endState)

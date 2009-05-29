@@ -264,22 +264,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected virtual void OnShowControlGraphicsChanged() {}
 
 		/// <summary>
-		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting exported actions via <see cref="GetExportedActions"/>.
-		/// </summary>
-		/// <param name="site">The action model site at which the actions should reside.</param>
-		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
-		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
-		protected virtual IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
-		{
-			return null;
-		}
-
-		/// <summary>
 		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting the cursor token for a particular screen coordinate via <see cref="GetCursorToken"/>.
 		/// </summary>
 		/// <param name="point">The screen coordinate for which the cursor is requested.</param>
 		/// <returns></returns>
-		protected virtual CursorToken OnGetCursorToken(Point point)
+		protected virtual CursorToken GetCursorToken(Point point)
 		{
 			return null;
 		}
@@ -289,7 +278,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="mouseInformation">The mouse input information.</param>
 		/// <returns>True if the <see cref="ControlGraphic"/> did something as a result of the call and hence would like to receive capture; False otherwise.</returns>
-		protected virtual bool OnMouseStart(IMouseInformation mouseInformation)
+		protected virtual bool Start(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
@@ -299,7 +288,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="mouseInformation">The mouse input information.</param>
 		/// <returns>True if the message was handled; False otherwise.</returns>
-		protected virtual bool OnMouseTrack(IMouseInformation mouseInformation)
+		protected virtual bool Track(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
@@ -309,7 +298,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="mouseInformation">The mouse input information.</param>
 		/// <returns>True if the framework should <b>not</b> release capture; False otherwise.</returns>
-		protected virtual bool OnMouseStop(IMouseInformation mouseInformation)
+		protected virtual bool Stop(IMouseInformation mouseInformation)
 		{
 			return false;
 		}
@@ -317,7 +306,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Called by <see cref="ControlGraphic"/> in response to an attempt to cancel the current operation via <see cref="Cancel"/>.
 		/// </summary>
-		protected virtual void OnMouseCancel() { }
+		protected virtual void Cancel() { }
 
 		#region ICursorTokenProvider Members
 
@@ -326,7 +315,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <remarks>
 		/// The <see cref="ControlGraphic"/> implementation returns the the cursor token
-		/// provided by the current input handler, <see cref="OnGetCursorToken"/>, or any
+		/// provided by the current input handler, <see cref="GetCursorToken"/>, or any
 		/// child graphics implementing <see cref="ICursorTokenProvider"/>,
 		/// in decreasing order of priority.
 		/// </remarks>
@@ -343,7 +332,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			if (cursor == null)
-				cursor = this.OnGetCursorToken(point);
+				cursor = this.GetCursorToken(point);
 
 			if (cursor == null)
 			{
@@ -379,7 +368,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// until one returns true.
 		/// </para>
 		/// <para>
-		/// The <see cref="ControlGraphic"/> implementation finds a handler by trying <see cref="OnMouseStart"/>,
+		/// The <see cref="ControlGraphic"/> implementation finds a handler by trying <see cref="Start"/>,
 		/// and any child graphics implementing <see cref="IMouseButtonHandler"/>, in decreasing order of priority.
 		/// </para>
 		/// </remarks>
@@ -404,7 +393,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					_lastTrackedPosition = mouseInformation.Location;
 					_isTracking = true;
 				}
-				result = this.OnMouseStart(mouseInformation);
+				result = this.Start(mouseInformation);
 				_isTracking = _isTracking && result;
 			}
 			finally
@@ -446,7 +435,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </para>
 		/// <para>
 		/// The <see cref="ControlGraphic"/> implementation calls <see cref="IMouseButtonHandler.Track"/> on
-		/// the current handler, <see cref="OnMouseTrack"/>, or any child graphics implementing <see cref="IMouseButtonHandler"/>,
+		/// the current handler, <see cref="Track"/>, or any child graphics implementing <see cref="IMouseButtonHandler"/>,
 		/// in decreasing order of priority.
 		/// </para>
 		/// </remarks>
@@ -461,7 +450,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			try
 			{
-				result = this.OnMouseTrack(mouseInformation);
+				result = this.Track(mouseInformation);
 			}
 			finally
 			{
@@ -495,7 +484,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <remarks>
 		/// <para>
 		/// The <see cref="ControlGraphic"/> implementation calls <see cref="IMouseButtonHandler.Stop"/> on
-		/// the current handler, <see cref="OnMouseStop"/>, or any child graphics implementing <see cref="IMouseButtonHandler"/>,
+		/// the current handler, <see cref="Stop"/>, or any child graphics implementing <see cref="IMouseButtonHandler"/>,
 		/// in decreasing order of priority.
 		/// </para>
 		/// </remarks>
@@ -517,7 +506,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			try
 			{
-				result = this.OnMouseStop(mouseInformation);
+				result = this.Stop(mouseInformation);
 			}
 			finally
 			{
@@ -535,7 +524,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <remarks>
 		/// <para>
 		/// The <see cref="ControlGraphic"/> implementation calls <see cref="IMouseButtonHandler.Cancel"/> on
-		/// the current handler or <see cref="OnMouseCancel"/> in decreasing order of priority.
+		/// the current handler or <see cref="Cancel"/> in decreasing order of priority.
 		/// </para>
 		/// </remarks>
 		void IMouseButtonHandler.Cancel()
@@ -548,7 +537,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			try
 			{
-				this.OnMouseCancel();
+				this.Cancel();
 			}
 			finally
 			{
@@ -588,25 +577,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// without requiring specific knowledge of the action model sites that the client code uses.
 		/// </para>
 		/// <para>
-		/// The <see cref="ControlGraphic"/> implementation returns the combination of its own exported actions
-		/// (as provided by <see cref="OnGetExportedActions"/>) and those of its child graphics.
+		/// Overriding implementations should generally call the base implementation and invoke a <see cref="IActionSet.Union"/>
+		/// with any new actions the derived class wishes to provide in order to maintain full functionality of any
+		/// control graphics further down in the chain.
 		/// </para>
 		/// </remarks>
 		/// <param name="site">The action model site at which the actions should reside.</param>
 		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
 		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
-		IActionSet IExportedActionsProvider.GetExportedActions(string site, IMouseInformation mouseInformation)
+		public virtual IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
-			bool atLeastOne = false;
 			IActionSet actions = new ActionSet();
-
-			IActionSet myActions = this.OnGetExportedActions(site, mouseInformation);
-			if (myActions != null)
-			{
-				actions = actions.Union(myActions);
-				atLeastOne = true;
-			}
-
 			foreach (IGraphic graphic in this.EnumerateChildGraphics(true))
 			{
 				IExportedActionsProvider controlGraphic = graphic as IExportedActionsProvider;
@@ -616,12 +597,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					if (otherActions != null)
 					{
 						actions = actions.Union(otherActions);
-						atLeastOne = true;
 					}
 				}
 			}
-
-			return atLeastOne ? actions : null;
+			return actions;
 		}
 
 		#endregion

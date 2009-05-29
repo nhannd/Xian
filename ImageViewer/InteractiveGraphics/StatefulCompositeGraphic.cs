@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// True if the <see cref="IMouseButtonHandler"/> did something as a result of the call, 
 		/// and hence would like to receive capture.  Otherwise, false.
 		/// </returns>
-		protected override bool OnMouseStart(IMouseInformation mouseInformation)
+		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
 			_mouseInformation = mouseInformation;
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// call it any time the mouse moves.
 		/// </remarks>
 		/// <returns>True if the message was handled, otherwise false.</returns>
-		protected override bool OnMouseTrack(IMouseInformation mouseInformation)
+		protected override bool Track(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
 			_mouseInformation = mouseInformation;
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>
 		/// True if the framework should <b>not</b> release capture, otherwise false.
 		/// </returns>
-		protected override bool OnMouseStop(IMouseInformation mouseInformation)
+		protected override bool Stop(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
 			_mouseInformation = mouseInformation;
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// It is important that this method is implemented correctly and doesn't simply do nothing when it is inappropriate
 		/// to do so, otherwise odd behaviour may be experienced.
 		/// </remarks>
-		protected override void OnMouseCancel()
+		protected override void Cancel()
 		{
 			this.State.Cancel();
 		}

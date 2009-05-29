@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return cursorLocation;
 		}
 
-		protected override CursorToken OnGetCursorToken(Point point)
+		protected override CursorToken GetCursorToken(Point point)
 		{
 			if (this.IsTracking)
 				return this.StretchingToken;
@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					return StretchCursorTokenStrategy.GetCursorToken(point);
 			}
 
-			return base.OnGetCursorToken(point);
+			return base.GetCursorToken(point);
 		}
 
 		private void Initialize()
@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.OnShowControlGraphicsChanged();
 		}
 
-		protected override bool OnMouseStart(IMouseInformation mouseInformation)
+		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 			try
@@ -275,10 +275,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.ResetCoordinateSystem();
 			}
 
-			return base.OnMouseStart(mouseInformation);
+			return base.Start(mouseInformation);
 		}
 
-		protected override bool OnMouseTrack(IMouseInformation mouseInformation)
+		protected override bool Track(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
 			try
@@ -304,10 +304,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.ResetCoordinateSystem();
 			}
 
-			return base.OnMouseTrack(mouseInformation);
+			return base.Track(mouseInformation);
 		}
 
-		protected override bool OnMouseStop(IMouseInformation mouseInformation)
+		protected override bool Stop(IMouseInformation mouseInformation)
 		{
 			if (this is IMemorable && base.ImageViewer != null)
 			{
@@ -316,14 +316,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			_trackedControlPoint = -1;
-			return base.OnMouseStop(mouseInformation);
+			return base.Stop(mouseInformation);
 		}
 
-		protected override void OnMouseCancel()
+		protected override void Cancel()
 		{
 			_memorableState = null;
 			_trackedControlPoint = -1;
-			base.OnMouseCancel();
+			base.Cancel();
 		}
 
 		protected void AddToCommandHistory(object beginState, object endState)

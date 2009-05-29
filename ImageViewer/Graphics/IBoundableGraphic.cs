@@ -55,40 +55,48 @@ namespace ClearCanvas.ImageViewer.Graphics
 		event EventHandler<PointChangedEventArgs> BottomRightChanged;
 
 		/// <summary>
-		/// Gets or sets the top left corner of the bounding box in either source or destination coordinates.
+		/// Gets or sets the top left corner of the bounding rectangle in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
-		/// property is in source or destination coordinates.
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
 		/// </remarks>
 		PointF TopLeft { get; set; }
 
 		/// <summary>
-		/// Gets or sets the bottom right corner of the bounding box in either source or destination coordinates.
+		/// Gets or sets the bottom right corner of the bounding rectangle in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
-		/// property is in source or destination coordinates.
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
 		/// </remarks>
 		PointF BottomRight { get; set; }
 
+		/// <summary>
+		/// Gets the bounding rectangle of the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This property gives the orientation-sensitive rectangle that bounds the graphic, whereas
+		/// the <see cref="IGraphic.BoundingBox"/> property gives the normalized rectangle with positive
+		/// width and height.
+		/// </para>
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
+		/// </remarks>
+		/// <seealso cref="IGraphic.BoundingBox"/>
 		RectangleF Rectangle { get; }
 
 		/// <summary>
-		/// Gets the width of the bounding box in either source or destination pixels.
+		/// Gets the width of the bounding rectangle in either source or destination pixels.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
-		/// property is in source or destination pixels.
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
 		/// </remarks>
 		float Width { get; }
 
 		/// <summary>
-		/// Gets the height of the bounding box in either source or destination pixels.
+		/// Gets the height of the bounding rectangle in either source or destination pixels.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
-		/// property is in source or destination coordinates.
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
 		/// </remarks>
 		float Height { get; }
 

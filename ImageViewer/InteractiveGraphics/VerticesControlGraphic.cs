@@ -224,15 +224,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected void OnCanAddRemoveVerticesChanged() {}
 
-		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
+			IActionSet actions = base.GetExportedActions(site, mouseInformation);
 			_lastContextMenuPoint = mouseInformation.Location;
 
 			if (!_canAddRemoveVertices)
-				return null;
+				return actions;
 
 			if (!base.Subject.HitTest(Point.Round(_lastContextMenuPoint)))
-				return null;
+				return actions;
 
 			int count = this.Subject.Points.Count;
 			bool hit = base.ControlPoints.HitTest(Point.Round(_lastContextMenuPoint));
@@ -253,7 +254,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			deleteAction.Persistent = true;
 			deleteAction.SetClickHandler(this.PerformDeleteVertex);
 
-			return new ActionSet(new IAction[] {insertAction, deleteAction});
+			return actions.Union(new ActionSet(new IAction[] {insertAction, deleteAction}));
 		}
 
 		#endregion

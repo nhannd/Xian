@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			protected set { _site = value; }
 		}
 
-		protected override bool OnMouseStart(IMouseInformation mouseInformation)
+		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			if (mouseInformation.ActiveButton == XMouseButtons.Right)
 			{
@@ -106,12 +106,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.ResetCoordinateSystem();
 				}
 			}
-			return base.OnMouseStart(mouseInformation);
+			return base.Start(mouseInformation);
 		}
 
-		protected sealed override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		public sealed override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
-			return this.Actions;
+			return base.GetExportedActions(site, mouseInformation).Union(this.Actions);
 		}
 
 		#region IContextMenuProvider Members

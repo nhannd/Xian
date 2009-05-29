@@ -295,18 +295,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.OnStateChanged(e);
 		}
 
-		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			if (_toolSet == null)
 				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this));
-			return _toolSet.Actions;
+			return base.GetExportedActions(site, mouseInformation).Union(_toolSet.Actions);
 		}
 
 		#region IContextMenuProvider Members
 
 		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
-			return ActionModelRoot.CreateModel(this.ContextMenuNamespace, "basicgraphic-menu", ((IExportedActionsProvider) this).GetExportedActions("basicgraphic-menu", mouseInformation));
+			IActionSet actions = this.GetExportedActions("basicgraphic-menu", mouseInformation);
+			if (actions == null || actions.Count == 0)
+				return null;
+			return ActionModelRoot.CreateModel(this.ContextMenuNamespace, "basicgraphic-menu", actions);
 		}
 
 		#endregion

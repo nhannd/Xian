@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
 			string @namespace = typeof(TextEditControlGraphic).FullName;
@@ -198,10 +198,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			action.Label = SR.MenuEditText;
 			action.Persistent = true;
 			action.SetClickHandler(delegate { this.StartEdit(); });
-			return new ActionSet(new IAction[] {action});
+			return base.GetExportedActions(site, mouseInformation).Union(new ActionSet(new IAction[] {action}));
 		}
 
-		protected override bool OnMouseStart(IMouseInformation mouseInformation)
+		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			if (mouseInformation.ClickCount == 2 && mouseInformation.ActiveButton == XMouseButtons.Left)
 			{
@@ -223,7 +223,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.ResetCoordinateSystem();
 				}
 			}
-			return base.OnMouseStart(mouseInformation);
+			return base.Start(mouseInformation);
 		}
 
 		#region ITextGraphic Members
