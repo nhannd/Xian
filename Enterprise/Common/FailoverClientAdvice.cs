@@ -8,10 +8,24 @@ using System.Collections;
 
 namespace ClearCanvas.Enterprise.Common
 {
-	class FailoverClientAdvice : IInterceptor
+    /// <summary>
+    /// Client-side advice to implement transparent failover.
+    /// </summary>
+    /// <remarks>
+    /// If the invocation fails due to a <see cref="CommunicationException"/> (excluding
+    /// <see cref="FaultException"/>s) or <see cref="TimeoutException"/>, this interceptor
+    /// will attempt to obtain an alternate service channel and retry the service operation
+    /// on the alternate channel.  The process is repeated until the operation succeeds or
+    /// there are no more alternate channels to try.
+    /// </remarks>
+    class FailoverClientAdvice : IInterceptor
 	{
 		private readonly RemoteServiceProviderBase _serviceProvider;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="serviceProvider">Service provider instance that provides the failover channel.</param>
 		public FailoverClientAdvice(RemoteServiceProviderBase serviceProvider)
 		{
 			_serviceProvider = serviceProvider;
@@ -32,17 +46,20 @@ namespace ClearCanvas.Enterprise.Common
                 ThrowIfFailoverNotApplicable(e);
 
                 // attempt failover
-                return Failover(invocation, args, e);
+                return DoFailover(invocation, args, e);
             }
 		}
 
-        private object Failover(IInvocation invocation, object[] args, Exception e)
+        private object DoFailover(IInvocation invocation, object[] args, Exception e)
         {
-            // log the exception
-            Platform.Log(LogLevel.Error, e, "Service operation failed with specified exception, attempting failover.");
-            
             object channel = invocation.InvocationTarget;
             EndpointAddress remoteEndpoint = (channel as IClientChannel).RemoteAddress;
+
+            // log the exception
+            Platform.Log(LogLevel.Error, e,
+                "Service operation {0} failed on endpoint {1} with specified exception, attempting failover.",
+                invocation.Method.Name,
+                remoteEndpoint.Uri);
 
             // loop until we find a channel that succeeds or run out of failover channels
             while ((channel = GetFailoverChannel(invocation, remoteEndpoint))
@@ -60,7 +77,11 @@ namespace ClearCanvas.Enterprise.Common
                 catch (Exception ex)
                 {
                     // log and try next failover channel
-                    Platform.Log(LogLevel.Error, ex);
+                    // log the exception
+                    Platform.Log(LogLevel.Error, ex,
+                        "Service operation {0} failed on endpoint {1} with specified exception, attempting failover.",
+                        invocation.Method.Name,
+                        remoteEndpoint.Uri);
                 }
             }
 

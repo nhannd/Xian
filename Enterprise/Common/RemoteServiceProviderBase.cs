@@ -321,6 +321,13 @@ namespace ClearCanvas.Enterprise.Common
 		/// <summary>
 		/// Applies AOP interceptors to the proxy.
 		/// </summary>
+        /// <remarks>
+        /// Override this method to customize which interceptors are applied to the
+        /// proxy by adding/removing or inserting into the specified list.
+        /// The order of interceptors is significant.  The first entry
+        /// in the list is the outermost, and the last entry in the list is the 
+        /// innermost.
+        /// </remarks>
 		/// <param name="interceptors"></param>
 		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
 		{
@@ -335,7 +342,7 @@ namespace ClearCanvas.Enterprise.Common
 				interceptors.Add(new ResponseCachingClientAdvice());
 			}
 
-			// add fail-over advice inside of caching advice
+			// add fail-over advice at the end of the list, closest the target call
 			interceptors.Add(new FailoverClientAdvice(this));
 		}
 
@@ -355,6 +362,12 @@ namespace ClearCanvas.Enterprise.Common
             get { return _userCredentialsProvider == null ? "" : _userCredentialsProvider.SessionTokenId; }
 		}
 
+        /// <summary>
+        /// Attempts to get a failover channel for the specified service contract.
+        /// </summary>
+        /// <param name="serviceContract"></param>
+        /// <param name="failedEndpoint"></param>
+        /// <returns></returns>
         protected internal object GetFailoverChannel(Type serviceContract, EndpointAddress failedEndpoint)
         {
             ChannelFactory alternate = _channelFactoryProvider.GetFailover(serviceContract, failedEndpoint);
