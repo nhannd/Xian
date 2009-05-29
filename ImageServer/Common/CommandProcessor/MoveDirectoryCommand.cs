@@ -53,10 +53,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private string _backupDestDir ;
         private readonly TimeSpanStatistics _backupTime = new TimeSpanStatistics();
         private readonly RateStatistics _moveSpeed = new RateStatistics("MoveSpeed", RateType.BYTES);
-
+        private DirectoryUtility.CopyProcessCallback _callback;
         #endregion
 
-        public MoveDirectoryCommand(string src, string dest)
+        public MoveDirectoryCommand(string src, string dest, DirectoryUtility.CopyProcessCallback callback)
             : base("MoveDirectory", true)
         {
             Platform.CheckForNullReference(src, "src");
@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
             _src = src;
             _dest = dest;
+            _callback = callback;
         }
 
         public TimeSpanStatistics BackupTime
@@ -86,8 +87,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 Backup();
             }
 
+
+
             MoveSpeed.Start();
-            ulong bytesCopied = DirectoryUtility.Copy(_src, _dest);
+            ulong bytesCopied = DirectoryUtility.Copy(_src, _dest, _callback);
             MoveSpeed.SetData(bytesCopied);
             MoveSpeed.End();
         }

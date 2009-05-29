@@ -32,14 +32,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -130,7 +129,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 			}
 		}
 
-    	private static void DoMigrateStudy(StudyStorageLocation storage)
+    	private void DoMigrateStudy(StudyStorageLocation storage)
         {
             TierMigrationStatistics stat = new TierMigrationStatistics();
             stat.StudyInstanceUid = storage.StudyInstanceUid;
@@ -156,7 +155,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
             Platform.Log(LogLevel.Info, "New filesystem : {0}", newFilesystem.Filesystem.Description);
             string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
-                
+    	    DateTime startTime = Platform.Time;
+            DateTime lastLog = DateTime.Now;
+    	    int fileCounter = 0;
+    	    ulong bytesCopied = 0;
+    	    int instanceCount = studyXml.NumberOfStudyRelatedInstances;
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
             {
                 TierMigrationContext context = new TierMigrationContext();
@@ -172,7 +175,51 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyInstanceUid);
                 // don't create this directory so that it won't be backed up by MoveDirectoryCommand
 
-                MoveDirectoryCommand moveCommand = new MoveDirectoryCommand(origFolder, newPath);
+                MoveDirectoryCommand moveCommand = new MoveDirectoryCommand(origFolder, newPath, 
+                    delegate (string path)
+                        {
+                            FileInfo file = new FileInfo(path);
+                            bytesCopied += (ulong)file.Length;
+                            if (file.Extension != null && file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                fileCounter++;
+                                float pct = (float)fileCounter/instanceCount;
+                                TimeSpan elapsed = DateTime.Now - lastLog;
+                                if (elapsed>TimeSpan.FromSeconds(15))
+                                {
+                                    TimeSpan totalElapsed = Platform.Time - startTime;
+                                    double speedInMBPerSecond = 0;
+                                    if (totalElapsed.TotalSeconds>0)
+                                    {
+                                        speedInMBPerSecond = (bytesCopied/1024f/1024f)/totalElapsed.TotalSeconds;
+                                    }
+
+                                    Platform.Log(LogLevel.Info, "Tier migration for study {0}: {1:0}% completed. {2:0.0}MB moved. Speed={3:0.00}MB/s", 
+                                                storage.StudyInstanceUid, pct * 100, bytesCopied/1024f/1024f, speedInMBPerSecond);
+
+                                    try
+                                    {
+                                        using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                                        {
+                                            IWorkQueueEntityBroker broker = ctx.GetBroker<IWorkQueueEntityBroker>();
+                                            WorkQueueUpdateColumns parameters = new WorkQueueUpdateColumns();
+                                            parameters.FailureDescription = string.Format("{0:0}% completed since {1}. {2:0.0}MB @ {3:0.00}MB/s", pct * 100, startTime, bytesCopied / 1024f / 1024f, speedInMBPerSecond);
+                                            broker.Update(WorkQueueItem.GetKey(), parameters);
+                                            ctx.Commit();
+                                        }
+                                        
+                                    }
+                                    catch(Exception)
+                                    {
+                                        //ignore it
+                                    }
+                                    finally
+                                    {
+                                        lastLog = DateTime.Now;
+                                    }
+                                }
+                            }
+                        });
                 processor.AddCommand(moveCommand);
                 
                 TierMigrateDatabaseUpdateCommand updateDBCommand = new TierMigrateDatabaseUpdateCommand(context);

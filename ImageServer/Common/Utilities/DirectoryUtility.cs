@@ -35,51 +35,18 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Common.Utilities
 {
+
 	/// <summary>
 	/// Static Class containing utilities for manipulating directories.
 	/// </summary>
     public static class DirectoryUtility
     {
-		/// <summary>
-		/// Calculate the size of a folder.
-		/// </summary>
-		/// <param name="folder"></param>
-		/// <returns></returns>
-        public static float CalculateFolderSize(string folder)
-        {
-            float folderSize = 0.0f;
-            try
-            {
-                //Checks if the path is valid or not
-                if (!Directory.Exists(folder))
-                    return folderSize;
-                else
-                {
-                    try
-                    {
-                        foreach (string file in Directory.GetFiles(folder))
-                        {
-                            if (File.Exists(file))
-                            {
-                                FileInfo finfo = new FileInfo(file);
-                                folderSize += finfo.Length;
-                            }
-                        }
-
-                        foreach (string dir in Directory.GetDirectories(folder))
-                            folderSize += CalculateFolderSize(dir);
-                    }
-                    catch (NotSupportedException)
-                    {
-
-                    }
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-            }
-            return folderSize;
-        }
+	
+        /// <summary>
+        /// Callback delegate used by DirectoryUtility.Copy() to report the progress.
+        /// </summary>
+        /// <param name="path">The file that is being copied</param>
+        public delegate void CopyProcessCallback(string path);
 
         /// <summary>
         /// Moves a study from one location to another.
@@ -92,20 +59,25 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             DeleteIfExists(source);
         }
 
+        public static ulong Copy(string sourceDirectory, string targetDirectory)
+        {
+            return Copy(sourceDirectory, targetDirectory, null);
+        }
+
 		/// <summary>
 		/// Recursively copy a directory
 		/// </summary>
 		/// <param name="sourceDirectory"></param>
 		/// <param name="targetDirectory"></param>
-        public static ulong Copy(string sourceDirectory, string targetDirectory)
+        public static ulong Copy(string sourceDirectory, string targetDirectory, CopyProcessCallback progressCallback)
         {
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
 
-            return InternalCopy(diSource, diTarget);
+            return InternalCopy(diSource, diTarget, progressCallback);
         }
 
-        private static ulong InternalCopy(DirectoryInfo source, DirectoryInfo target)
+        private static ulong InternalCopy(DirectoryInfo source, DirectoryInfo target, CopyProcessCallback progressCallback)
         {
             ulong bytesCopied = 0;
             // Check if the target directory exists, if not, create it.
@@ -120,6 +92,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 //Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
                 bytesCopied += (ulong) fi.Length; 
                 fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
+                if (progressCallback != null)
+                    progressCallback(fi.FullName);
                 
             }
 
@@ -127,7 +101,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
             {
                 DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-                bytesCopied+=InternalCopy(diSourceSubDir, nextTargetSubDir);
+                bytesCopied+=InternalCopy(diSourceSubDir, nextTargetSubDir, progressCallback);
             }
 
             return bytesCopied;
