@@ -53,10 +53,7 @@ namespace ClearCanvas.Enterprise.Common
             EndpointAddress remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
 
             // log the exception
-            Platform.Log(LogLevel.Error, e,
-                "Service operation {0} failed on endpoint {1} with specified exception, attempting failover.",
-                invocation.Method.Name,
-                remoteEndpoint.Uri);
+            LogFailure(invocation, e, remoteEndpoint);
 
             // loop until we find a channel that succeeds or run out of failover channels
             while ((channel = GetFailoverChannel(invocation, remoteEndpoint))
@@ -74,16 +71,26 @@ namespace ClearCanvas.Enterprise.Common
                 catch (Exception ex)
                 {
                     // log and try next failover channel
-                    // log the exception
-                    Platform.Log(LogLevel.Error, ex,
-                        "Service operation {0} failed on endpoint {1} with specified exception, attempting failover.",
-                        invocation.Method.Name,
-                        remoteEndpoint.Uri);
+                    LogFailure(invocation, e, remoteEndpoint);
                 }
             }
 
             // ran out of failover channels without success
             throw e;
+        }
+
+        private object GetFailoverChannel(IInvocation invocation, EndpointAddress failedEndpoint)
+        {
+            return _serviceProvider.GetFailoverChannel(
+              invocation.Method.DeclaringType, failedEndpoint);
+        }
+
+        private static void LogFailure(IInvocation invocation, Exception e, EndpointAddress failedEndpoint)
+        {
+            Platform.Log(LogLevel.Error, e,
+                "Service operation {0} failed on endpoint {1} with specified exception, attempting failover.",
+                invocation.Method.Name,
+                failedEndpoint.Uri);
         }
 
         private static void ThrowIfFailoverNotApplicable(Exception e)
@@ -99,12 +106,6 @@ namespace ClearCanvas.Enterprise.Common
 
             // any other exception should be re-thrown
             throw e;
-        }
-
-        private object GetFailoverChannel(IInvocation invocation, EndpointAddress failedEndpoint)
-        {
-            return _serviceProvider.GetFailoverChannel(
-              invocation.Method.DeclaringType, failedEndpoint);
         }
 
 		#endregion
