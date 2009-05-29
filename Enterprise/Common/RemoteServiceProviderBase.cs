@@ -38,7 +38,6 @@ using ClearCanvas.Common.Utilities;
 using System.Security.Cryptography.X509Certificates;
 using Castle.DynamicProxy;
 using System.Collections.Generic;
-using System.Collections;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -81,6 +80,7 @@ namespace ClearCanvas.Enterprise.Common
         /// Constructor
         /// </summary>
         /// <param name="baseUrl"></param>
+        /// <param name="failoverBaseUrl"></param>
         /// <param name="configurationClassName"></param>
         /// <param name="maxReceivedMessageSize"></param>
         /// <param name="certificateValidationMode"></param>
@@ -378,7 +378,13 @@ namespace ClearCanvas.Enterprise.Common
 
 		#region Helpers
 
-
+		/// <summary>
+		/// Creates a channel for the specified contract, using the specified factory.
+		/// Note that this method modifies the factory, therefore it cannot be re-used!
+		/// </summary>
+		/// <param name="serviceContract"></param>
+		/// <param name="factory"></param>
+		/// <returns></returns>
         private object CreateChannel(Type serviceContract, ChannelFactory factory)
         {
             bool authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);

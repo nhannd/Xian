@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
 
@@ -15,9 +14,12 @@ namespace ClearCanvas.Enterprise.Common
     {
         #region Node class
 
+		/// <summary>
+		/// Represents a remote service instance.
+		/// </summary>
         class Node
         {
-            private Uri _url;
+            private readonly Uri _url;
             private DateTime _blackOutExpiry;
 
             public Node(string url)
@@ -31,14 +33,22 @@ namespace ClearCanvas.Enterprise.Common
                 get { return _url; }
             }
 
+			/// <summary>
+			/// Gets a value indicating whether the node is currently marked as offline.
+			/// </summary>
             public bool IsBlackedOut
             {
                 get { return _blackOutExpiry > DateTime.Now; }
             }
 
-            public void Blackout(TimeSpan howLong)
+			/// <summary>
+			/// Marks the node as offline for the specified timeout period.
+			/// No further attempt to contact the node will be made until the offline timeout expires.
+			/// </summary>
+			/// <param name="timeout"></param>
+            public void Blackout(TimeSpan timeout)
             {
-                _blackOutExpiry = DateTime.Now + howLong;
+                _blackOutExpiry = DateTime.Now + timeout;
             }
         }
 
@@ -48,6 +58,10 @@ namespace ClearCanvas.Enterprise.Common
         private readonly RemoteServiceProviderArgs _args;
         private readonly List<Node> _nodes = new List<Node>();
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="args"></param>
         public StaticChannelFactoryProvider(RemoteServiceProviderArgs args)
         {
             _args = args;
@@ -58,9 +72,14 @@ namespace ClearCanvas.Enterprise.Common
             {
                 _nodes.Add(new Node(_args.FailoverBaseUrl));
             }
-        }
+		}
 
-        public ChannelFactory GetPrimary(Type serviceContract)
+		#region IChannelFactoryProvider
+
+		/// <summary>
+    	/// Gets the primary channel factory for the specified service contract.
+    	/// </summary>
+    	public ChannelFactory GetPrimary(Type serviceContract)
         {
             ChannelFactory factory = GetFirstLiveChannel(serviceContract);
             if (factory != null)
@@ -71,7 +90,11 @@ namespace ClearCanvas.Enterprise.Common
             return GetChannelFactory(serviceContract, new Uri(_args.BaseUrl));
         }
 
-        public ChannelFactory GetFailover(Type serviceContract, EndpointAddress failedEndpoint)
+    	/// <summary>
+    	/// Attempts to obtain an alternate channel factory for the specified service
+    	/// contract, in the event that the primary channel endpoint is unreachable.
+    	/// </summary>
+    	public ChannelFactory GetFailover(Type serviceContract, EndpointAddress failedEndpoint)
         {
             // find the failed node and marked it as blacked out
             Node failedNode = CollectionUtils.SelectFirst(_nodes,
@@ -84,9 +107,13 @@ namespace ClearCanvas.Enterprise.Common
                 return factory;
 
             return null;
-        }
+		}
 
-        private ChannelFactory GetFirstLiveChannel(Type serviceContract)
+		#endregion
+
+		#region Helpers
+
+		private ChannelFactory GetFirstLiveChannel(Type serviceContract)
         {
             // find the first non-blacked out node in the list
             Node node = CollectionUtils.SelectFirst(_nodes,
@@ -111,6 +138,8 @@ namespace ClearCanvas.Enterprise.Common
         private static Uri GetFullUri(Type serviceContract, Uri baseUri)
         {
             return new Uri(baseUri, serviceContract.FullName);
-        }
-    }
+		}
+
+		#endregion
+	}
 }

@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Castle.DynamicProxy;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using System.Collections;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -53,7 +50,7 @@ namespace ClearCanvas.Enterprise.Common
         private object DoFailover(IInvocation invocation, object[] args, Exception e)
         {
             object channel = invocation.InvocationTarget;
-            EndpointAddress remoteEndpoint = (channel as IClientChannel).RemoteAddress;
+            EndpointAddress remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
 
             // log the exception
             Platform.Log(LogLevel.Error, e,
@@ -65,7 +62,7 @@ namespace ClearCanvas.Enterprise.Common
             while ((channel = GetFailoverChannel(invocation, remoteEndpoint))
                 != null)
             {
-                remoteEndpoint = (channel as IClientChannel).RemoteAddress;
+                remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
                 try
                 {
                     // try again using this channel, being sure to dispose of it
@@ -85,11 +82,11 @@ namespace ClearCanvas.Enterprise.Common
                 }
             }
 
-            // ran out of fail over channels without success
+            // ran out of failover channels without success
             throw e;
         }
 
-        private void ThrowIfFailoverNotApplicable(Exception e)
+        private static void ThrowIfFailoverNotApplicable(Exception e)
         {
             // must ignore FaultException, otherwise it will 
             // be treated as a CommunicationException
