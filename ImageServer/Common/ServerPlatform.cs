@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageServer.Common
 			lock (_syncLock)
 			{
 				if (_log == null)
-					_log = new AuditLog("DICOM");
+					_log = new AuditLog("ImageServer","DICOM");
 
 				_log.WriteEntry(helper.Operation, helper.Serialize(false));
 			}
