@@ -81,8 +81,6 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 			syntaxAttribute.Value = TransferSyntax.RleLosslessUid;
 			element.Attributes.Append(syntaxAttribute);
 
-			Platform.Log(LogLevel.Info, "RLE Compression Scheduling: Study {0} will be compressed at {1}", context.StudyStorage.StudyInstanceUid,
-			             scheduledTime);
 			context.CommandProcessor.AddCommand(
 				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
 				                                 scheduledTime, doc));

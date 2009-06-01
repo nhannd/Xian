@@ -34,7 +34,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -606,6 +608,47 @@ namespace ClearCanvas.ImageServer.Model
             }
             return stream;
         }
+
+		public void LogFilesystemQueue( )
+		{
+			FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();
+			criteria.StudyStorageKey.EqualTo(Key);
+
+			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+			{
+				IFilesystemQueueEntityBroker broker = read.GetBroker<IFilesystemQueueEntityBroker>();
+
+				IList<FilesystemQueue> list = broker.Find(criteria);
+				foreach (FilesystemQueue queueItem in list)
+				{
+					if (queueItem.FilesystemQueueTypeEnum.Equals(FilesystemQueueTypeEnum.LosslessCompress) ||
+						queueItem.FilesystemQueueTypeEnum.Equals(FilesystemQueueTypeEnum.LossyCompress))
+					{
+						XmlElement element = queueItem.QueueXml.DocumentElement;
+
+						string syntax = element.Attributes["syntax"].Value;
+
+						TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+						if (compressSyntax != null)
+						{
+							Platform.Log(LogLevel.Info, "{0}: Study {1} on partition {2} scheduled for {3} compression at {4}",
+										 queueItem.FilesystemQueueTypeEnum.Description, StudyInstanceUid, ServerPartition.AeTitle,
+										 compressSyntax.Name, queueItem.ScheduledTime);
+						}
+						else
+							Platform.Log(LogLevel.Info, "{0}: Study {1} on partition {2} scheduled for {3} compression at {4}",
+										 queueItem.FilesystemQueueTypeEnum.Description, StudyInstanceUid, ServerPartition.AeTitle,
+										 syntax, queueItem.ScheduledTime);
+					}
+					else
+					{
+						Platform.Log(LogLevel.Info, "{0}: Study {1} on partition {2} scheduled for {3}",
+									 queueItem.FilesystemQueueTypeEnum.Description, StudyInstanceUid, ServerPartition.AeTitle,
+									 queueItem.ScheduledTime);
+					}
+				}
+			}
+		}
 
         #region ICloneable Members
 

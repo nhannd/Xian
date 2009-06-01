@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 					// Run Study / Series Rules Engine.
 					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation,ServerPartition);
 					engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
+					StorageLocation.LogFilesystemQueue();
 
 					PostProcessing(item,
 								   WorkQueueProcessorStatus.Complete,

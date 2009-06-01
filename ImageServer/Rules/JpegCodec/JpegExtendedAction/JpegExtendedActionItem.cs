@@ -86,9 +86,6 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 			syntaxAttribute.Value = _quality.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
-			Platform.Log(LogLevel.Info,
-			             "Jpeg Extended Compression Scheduling: This study {0} on partition {1} will be compressed on {2}",
-			             context.StudyStorage.StudyInstanceUid, context.ServerPartition.AeTitle, scheduledTime);
 			context.CommandProcessor.AddCommand(
 				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
 				                                 scheduledTime, doc));

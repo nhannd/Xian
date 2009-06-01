@@ -68,10 +68,6 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 
             scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
 
-			Platform.Log(LogLevel.Info,
-						 "Tier 1 Retention: Study {0} on partition {1} will remain on tier 1 at least until {2}",
-						 context.StudyStorage.StudyInstanceUid, context.ServerPartition.Description, scheduledTime);
-
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
                                                  scheduledTime, null));

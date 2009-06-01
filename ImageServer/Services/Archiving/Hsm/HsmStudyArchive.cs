@@ -219,6 +219,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         else
                             Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
                                          _hsmArchive.PartitionArchive.Description);
+
+						// Log the current FilesystemQueue settings
+						_storageLocation.LogFilesystemQueue();
                     }
                 }
                 catch (StudyIntegrityValidationFailure ex)
