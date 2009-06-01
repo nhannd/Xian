@@ -52,7 +52,7 @@
                         <div style="background: #e1eff7; border-bottom: solid 1px #b8d9ee; padding-left: 6px;
                             padding-right: 6px; padding-top: 1px; margin-bottom: 1px;">
                             <asp:Label ID="Label3" runat="server" Text="Page" CssClass="GlobalGridPagerLabel" />
-                            <asp:TextBox ID="CurrentPage" runat="server" Width="30px" CssClass="GridViewTextBox"
+                            <asp:TextBox ID="CurrentPage" runat="server" Width="85px" CssClass="GridViewTextBox"
                                 Style="font-size: 12px;" />
                             <asp:Label ID="PageCountLabel" runat="server" Text="Label" CssClass="GlobalGridPagerLabel" />
                             <aspAjax:FilteredTextBoxExtender runat="server" ID="CurrentPageFilter" FilterType="Numbers" TargetControlID="CurrentPage"  />

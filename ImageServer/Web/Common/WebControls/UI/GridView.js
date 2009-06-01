@@ -38,6 +38,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.callBaseMethod(this, 'initialize');
             this._onsubmit$delegate = Function.createDelegate(this, this._onsubmit);
             
+            this._selectedDataKeys = null;
+            
             this._loadClientState();
             
             if (this.get_element().rows!=null)
@@ -86,6 +88,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         getSelectedRowElements : function() {
+            
             var rows = this.get_element().rows;
                                               
             if (rows!=undefined && rows!=null)
@@ -146,7 +149,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             //if (stateField!=null)   stateField.value='';
                             
         },
-        
+             
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -166,7 +169,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 handler(this, eventArgs);
             }
         },
-        
         
         add_onClientRowDblClick : function(handler) {
             this.remove_onClientRowDblClick(handler); //make sure we don't attach the same handler twice
@@ -304,7 +306,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             {
                 if (this._SelectionMode=='Multiple')
                 {
-                    
                     row.style.cssText = this._SelectedRowStyle;                    
                     row.className = this._SelectedRowCSS;
                     row.setAttribute('selected', 'true');
@@ -315,9 +316,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                     row.style.cssText = this._SelectedRowStyle;                    
                     row.className = this._SelectedRowCSS;
                     row.setAttribute('selected', 'true');
-                }
-                
-                
+                }      
             }
             
         },
@@ -343,11 +342,37 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             }
             
         },
-        
-        
-        
+                
         _loadClientState : function(value) {
+            var selectedKeysField = this.get_selectedKeysStateField();
             
+            if(selectedKeysField != null && selectedKeysField.value != "" && selectedKeysField.value != 'undefined') {
+                this._selectedDataKeys = Sys.Serialization.JavaScriptSerializer.deserialize(selectedKeysField.value);
+                
+                var rows = this.get_element().rows;
+                                              
+                if (rows!=undefined && rows!=null)
+                {
+                    for(var i=0; i<rows.length; i++)
+                    {
+                        if (rows[i].getAttribute('isdatarow')=='true' && this._containsDataKey(rows[i].getAttribute('dataKey')))
+                            this._selectRow(rows[i]);                            
+                    }
+                }                
+            }
+        },
+        
+        _containsDataKey : function(value) {
+
+            if(this._selectedDataKeys == null) return false;
+
+            for(var i=0; i<this._selectedDataKeys.length; i++)
+            {
+                if(this._selectedDataKeys[i] == value) return true;
+            }
+  
+            return false;
+  
         },
         
         ///
@@ -356,25 +381,36 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         _saveClientState : function() 
         {
             var stateField =  this.get_clientStateField();
-            if (stateField!=null)
+            var selectedKeysField = this.get_selectedKeysStateField();
+            
+            if (stateField!=null && selectedKeysField != null)
             {
                 var rows = this.getSelectedRowElements();
                 if (rows==null || rows.length==0)
                 {
                     stateField.value = '';
+                    selectedKeysField.value = '';
                 }
                 else
                 {
+                    var useDataKeys = true;
+                    if(rows[0].getAttribute('dataKey') == null) useDataKeys = false;
+                    
                     var selectedRowIndices = new Array();
+                    if(useDataKeys) var selectedRowDataKeys = new Array();
+                    
                     for(i=0;i <rows.length; i++)
                     {
                         selectedRowIndices[selectedRowIndices.length] = rows[i].getAttribute('rowIndex');
-                        //selectedRowIndices[selectedRowIndices.length] = rows[i].getAttribute('datakey');
+                        if(useDataKeys)
+                            selectedRowDataKeys[selectedRowDataKeys.length] = rows[i].getAttribute('dataKey');
                     }
                     stateField.value = Sys.Serialization.JavaScriptSerializer.serialize(selectedRowIndices);
+                    
+                    if(useDataKeys)
+                        selectedKeysField.value = Sys.Serialization.JavaScriptSerializer.serialize(selectedRowDataKeys);
                 }
             }
-                 
         },
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,15 +424,29 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         set_clientStateFieldID : function(value) {
             this._clientStateFieldID = value;
         },
-       
+             
         get_clientStateField : function(){
             
             if (this._clientStateFieldID!=undefined && this._clientStateFieldID!=null)
                 return $get(this._clientStateFieldID);
             else
                 return null;
-        },     
-       
+        },    
+        
+        get_selectedKeysStateFieldID : function() {
+            return this._selectedsKeyStateFieldID;
+        },
+        set_selectedKeysStateFieldID : function(value) {
+            this._selectedKeysStateFieldID = value;
+        },
+        
+        get_selectedKeysStateField : function(){
+            if (this._selectedKeysStateFieldID!=undefined && this._selectedKeysStateFieldID!=null)
+                return $get(this._selectedKeysStateFieldID);
+            else
+                return null;
+        },    
+               
         get_SelectedRowStyle : function() {
             return this._SelectedRowStyle;
         },
@@ -405,7 +455,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             this._SelectedRowStyle = value;
             this.raisePropertyChanged('SelectedRowStyle');
         },
-        
         
         get_SelectedRowCSS : function() {
             return this._SelectedRowCSS;
@@ -425,7 +474,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             this.raisePropertyChanged('AlternatingRowStyle');
         },
         
-        
         get_AlternatingRowCSS : function() {
             return this._AlternatingRowCSS;
         },
@@ -444,7 +492,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             this.raisePropertyChanged('UnSelectedRowStyle');
         },
         
-        
         get_UnSelectedRowCSS : function() {
             return this._UnSelectedRowCSS;
         },
@@ -462,10 +509,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             this._SelectionMode = value;
             this.raisePropertyChanged('SelectionMode');
         }
-
-
-
-
     }
 
     // Optional descriptor for JSON serialization.

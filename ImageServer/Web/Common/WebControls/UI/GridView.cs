@@ -37,6 +37,7 @@ using System.Text;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Enterprise;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js", "text/javascript")]
 
@@ -64,6 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         private string _onClientRowDblClick;
         private SelectionModeEnum _selectionMode = SelectionModeEnum.Single;
         private Hashtable _selectedRows = new Hashtable();
+        private Hashtable _selectedDataKeys = new Hashtable();
         #endregion Private members
 
         #region Public Properties
@@ -77,7 +79,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             get { return _selectionMode; }
             set { _selectionMode = value; }
         }
-
 
         private bool _isDataBound = false;
 
@@ -192,6 +193,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
         }
 
+        public string[] SelectedDataKeys
+        {
+            get
+            {
+                if (_selectedDataKeys.Keys.Count == 0) return null;
+
+                string[] dataKeys = new string[_selectedDataKeys.Keys.Count];
+                int i = 0;
+                foreach (string s in _selectedDataKeys.Keys)
+                    dataKeys[i++] = s;
+
+                return dataKeys;
+            }
+        }
+
         #endregion Public Properties
 
 
@@ -206,28 +222,48 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         protected virtual void SaveState()
         {
             string stateValue = "";
+            string selectedDataKeys = "";
             JavaScriptSerializer serializer = new JavaScriptSerializer();
 
             int[] rows = SelectedIndices;
             if (rows != null)
                 stateValue = serializer.Serialize(rows);
 
+            string[] dataKeys = SelectedDataKeys;
+            if (dataKeys != null)
+                selectedDataKeys = serializer.Serialize(dataKeys);
+
             Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", stateValue);
+            Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowDataKeys", selectedDataKeys);
         }
 
         protected virtual void LoadState()
         {
-            string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
-            if (statesValue != null && statesValue != "")
-            {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                int[] rows = serializer.Deserialize<int[]>(statesValue);
-                foreach (int r in rows)
-                {
-                    _selectedRows[r] = true;
-                }
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
 
+            string selectedKeysValue = Page.Request[ClientID + "SelectedRowDataKeys"];
+            if (!string.IsNullOrEmpty(selectedKeysValue) && selectedKeysValue != "null")
+            {
+                string[] dataRows = serializer.Deserialize<string[]>(selectedKeysValue);
+                foreach (string r in dataRows)
+                {
+                    _selectedDataKeys[r] = true;
+                }
             }
+            else
+            {
+                string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
+                if (!string.IsNullOrEmpty(statesValue))
+                {
+                    int[] rows = serializer.Deserialize<int[]>(statesValue);
+                    foreach (int r in rows)
+                    {
+                        _selectedRows[r] = true;
+                    }
+                }
+            }
+
+
         }
 
 
@@ -269,6 +305,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             ScriptControlDescriptor desc = new ScriptControlDescriptor(GetType().FullName, ClientID);
 
             desc.AddProperty("clientStateFieldID", ClientID + "SelectedRowIndices");
+            desc.AddProperty("selectedKeysStateFieldID", ClientID + "SelectedRowDataKeys");
             desc.AddProperty("SelectionMode", SelectionMode.ToString());
 
             string style = StyleToString(SelectedRowStyle);
@@ -353,6 +390,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                         row.Attributes["selected"] = "false";
                     }
                 } 
+                
+                if(DataKeys != null && DataKeys.Count <= Rows.Count)
+                {
+                    if (row.RowIndex < DataKeys.Count)
+                        row.Attributes["dataKey"] = DataKeys[row.RowIndex].Value.ToString();
+                    else row.Attributes["dataKey"] = "Data Key Does not exist for row with index" + row.RowIndex;
+                } 
             }
             base.Render(writer);
         }
@@ -372,8 +416,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             Rows[rowIndex].RowState = DataControlRowState.Selected;
             Rows[rowIndex].Attributes["selected"] = "true";
-
-            
              
             _selectedRows[rowIndex] = true;
         }

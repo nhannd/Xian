@@ -35,6 +35,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -187,7 +188,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
                                                                 if (PriorityDropDownList.SelectedValue != string.Empty)
                                                                     source.PriorityEnum = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
-
                                                             };
 
         }
@@ -289,35 +289,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
             if (!SelectedItemExists()) return;
-            EnclosingPage.ViewWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            EnclosingPage.ViewWorkQueueItem(workQueueItemList.SelectedDataKey);
         }
-
 
         protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
             if (!SelectedItemExists()) return;
-            EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedDataKey);
             workQueueItemList.RefreshCurrentPage();
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
             if (!SelectedItemExists()) return;
-            EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedDataKey);
             workQueueItemList.RefreshCurrentPage();
         }
 
         protected void ReprocessItemButton_Click(object sender, EventArgs arg)
         {
             if (!SelectedItemExists()) return;
-            EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedDataKey);
             workQueueItemList.RefreshCurrentPage();
         }
 
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {
             if (!SelectedItemExists()) return;
-            EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+            EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedDataKey);
             workQueueItemList.RefreshCurrentPage();
         }
 
@@ -325,10 +324,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         private bool SelectedItemExists()
         {
-            if (workQueueItemList.SelectedItems == null)
+            if (workQueueItemList.SelectedDataKey == null)
 				DataBind();
 
-            if (workQueueItemList.SelectedItems == null || workQueueItemList.SelectedItems[0] == null)
+            if (workQueueItemList.SelectedDataKey == null)
             {
                 MessageBox.BackgroundCSS = string.Empty;
                 MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;

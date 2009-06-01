@@ -142,54 +142,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             set { _workQueueItems = value; }
         }
 
-        /// <summary>
-        /// Gets/Sets a key of the selected work queue item.
-        /// </summary>
-        public WorkQueueSummary SelectedWorkQueueItem
+        public ServerEntityKey SelectedDataKey
         {
             get
             {
-                if (SelectedWorkQueueItemKey != null && WorkQueueItems.ContainsKey(SelectedWorkQueueItemKey))
-                {
-                    return WorkQueueItems[SelectedWorkQueueItemKey];
-                }
-                else
-                    return null;
-            }
-            set
-            {
-
-                SelectedWorkQueueItemKey = value.Key;
-                WorkQueueGridView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueGridView);
-            }
-        }
-
-        /// <summary>
-        /// Gets/Sets the current selected device.
-        /// </summary>
-        public IList<WorkQueueSummary> SelectedItems
-        {
-            get
-            {
-                if(!WorkQueueGridView.IsDataBound) WorkQueueGridView.DataBind();
-
-                if (WorkQueueItems == null || WorkQueueItems.Count == 0)
-                    return null;
-
-                int[] rows = WorkQueueGridView.SelectedIndices;
-                if (rows == null || rows.Length == 0)
-                    return null;
-
-                IList<WorkQueueSummary> queueItems = new List<WorkQueueSummary>();
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    if (rows[i] < WorkQueueItems.Count)
-                    {
-                        queueItems.Add(WorkQueueItems[rows[i]]);
-                    }
-                }
-
-                return queueItems;
+                if (WorkQueueGridView.SelectedDataKeys == null) return null;
+                return new ServerEntityKey("WorkQueue", new Guid(WorkQueueGridView.SelectedDataKeys[0]));
             }
         }
 
@@ -208,6 +166,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
             }
+        }
+
+        protected void Page_Render()
+        {
+            
         }
       
         protected ServerEntityKey SelectedWorkQueueItemKey
