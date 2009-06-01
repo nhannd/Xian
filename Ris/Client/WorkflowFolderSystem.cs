@@ -135,6 +135,7 @@ namespace ClearCanvas.Ris.Client
 
 			public void RegisterDoubleClickHandler(IClickAction clickAction)
 			{
+				Platform.CheckForNullReference(clickAction, "clickAction");
 				_owner._doubleClickHandlers.Add(new DoubleClickHandlerRegistration(clickAction));
 			}
 
