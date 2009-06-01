@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				AuditSinkExtensionPoint xp = new AuditSinkExtensionPoint();
 				_auditingEnabled = xp.ListExtensions().Length > 0;
 				if (_auditingEnabled)
-					_log = new AuditLog("ImageViewer");
+					_log = new AuditLog("ImageViewer", string.Empty);
 				else 
 					Platform.Log(LogLevel.Warn, "No audit sink extensions found - Auditing will be disabled for the remainder of the session.");
 			}
