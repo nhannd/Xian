@@ -64,7 +64,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void Initialize()
 		{
-			this.Subject.PropertyChanged += Subject_PropertyChanged;
+			this.Subject.VisualStateChanged += Subject_VisualStateChanged;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			this.Subject.VisualStateChanged -= Subject_VisualStateChanged;
+			base.Dispose(disposing);
 		}
 
 		public new ITextGraphic Subject
@@ -115,7 +121,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		private void Subject_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		private void Subject_VisualStateChanged(object sender, VisualStateChangedEventArgs e)
 		{
 			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;

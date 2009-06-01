@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnTextLocationChanged(object sender, PointChangedEventArgs e)
 		{
 			EventsHelper.Fire(_locationChanged, this, e);
-			NotifyPropertyChanged("Location");
+			NotifyVisualStateChanged("Location");
 		}
 
 		private void OnTextBoundingBoxChanged(object sender, RectangleChangedEventArgs e)
@@ -336,12 +336,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected virtual void OnTextChanged(EventArgs e)
 		{
 			EventsHelper.Fire(_textChanged, this, new EventArgs());
-			NotifyPropertyChanged("Text");
+			NotifyVisualStateChanged("Text");
 		}
 
 		protected virtual void OnEndPointChanged()
 		{
-			NotifyPropertyChanged("EndPoint");
+			NotifyVisualStateChanged("EndPoint");
 		}
 
 		/// <summary>

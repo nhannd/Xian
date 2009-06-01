@@ -38,37 +38,41 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// Defines an <see cref="IControlGraphic"/> that consists of a number of individually adjustable control points.
+	/// </summary>
 	public interface IControlPointsGraphic : IControlGraphic
 	{
 		/// <summary>
-		/// Occurs when the location of a <see cref="ControlPoint"/> has changed.
+		/// Occurs when the location of a control point has changed.
 		/// </summary>
 		event EventHandler<ListEventArgs<PointF>> ControlPointChangedEvent;
 
 		/// <summary>
-		/// Returns the number of <see cref="ControlPoint"/>s in the <see cref="IControlGraphic"/>.
+		/// Gets the number of control points in the <see cref="IControlGraphic"/>.
 		/// </summary>
 		int Count { get; }
 
 		/// <summary>
-		/// Gets or sets the location of the specified <see cref="ControlPoint"/>.
+		/// Gets or sets the location of the specified control point.
 		/// </summary>
-		/// <param name="index">The zero-based index of the <see cref="ControlPoint"/>.</param>
-		/// <returns></returns>
+		/// <param name="index">The zero-based index of the control point.</param>
 		PointF this[int index] { get; set; }
 
 		/// <summary>
 		/// Performs a hit test on each <see cref="ControlPoint"/> and returns
 		/// the index of the <see cref="ControlPoint"/> for which the test is true.
 		/// </summary>
-		/// <param name="point"></param>
-		/// <returns>The index of the <see cref="ControlPoint"/> or
-		/// -1 if the hit test failed for all <see cref="ControlPoint"/>s.</returns>
+		/// <param name="point">The screen coordinates to test for a control point.</param>
+		/// <returns>The index of the control point or -1 if the hit test failed for all control points.</returns>
 		int HitTestControlPoint(Point point);
 	}
 
+	/// <summary>
+	/// Abstract base class for implementations of <see cref="IControlPointsGraphic"/>.
+	/// </summary>
 	[Cloneable]
-	public abstract class ControlPointsGraphic : ControlGraphic, IControlPointsGraphic
+	public abstract partial class ControlPointsGraphic : ControlGraphic, IControlPointsGraphic
 	{
 		private event EventHandler<ListEventArgs<PointF>> _controlPointChangedEvent;
 
@@ -89,6 +93,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private StretchCursorTokenStrategy _stretchCursorTokenStrategy;
 
+		/// <summary>
+		/// Constructs a new <see cref="ControlPointsGraphic"/> to control the given subject graphic.
+		/// </summary>
+		/// <param name="subject">The graphic to control.</param>
 		public ControlPointsGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -97,13 +105,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected ControlPointsGraphic(ControlPointsGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
 		/// <summary>
-		/// Occurs when the location of a <see cref="ControlPoint"/> has changed.
+		/// Occurs when the location of a control point has changed.
 		/// </summary>
 		public event EventHandler<ListEventArgs<PointF>> ControlPointChangedEvent
 		{
@@ -111,12 +124,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _controlPointChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the cursor token to use when moving a control point.
+		/// </summary>
 		public CursorToken StretchingToken
 		{
 			get { return _stretchingToken; }
 			set { _stretchingToken = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a strategy for selecting a cursor to show when hovering over a control point.
+		/// </summary>
 		public StretchCursorTokenStrategy StretchCursorTokenStrategy
 		{
 			get { return _stretchCursorTokenStrategy; }
@@ -133,7 +152,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Returns the number of <see cref="ControlPoint"/>s in the <see cref="IControlGraphic"/>.
+		/// Gets the number of control points in the <see cref="IControlGraphic"/>.
 		/// </summary>
 		public int Count
 		{
@@ -141,21 +160,29 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Gets or sets the location of the specified <see cref="ControlPoint"/>.
+		/// Gets or sets the location of the specified control point.
 		/// </summary>
-		/// <param name="index">The zero-based index of the <see cref="ControlPoint"/>.</param>
-		/// <returns></returns>
+		/// <param name="index">The zero-based index of the control point.</param>
 		public PointF this[int index]
 		{
 			get { return _controlPoints[index]; }
 			set { _controlPoints[index] = value; }
 		}
 
+		/// <summary>
+		/// Performs a hit test on each <see cref="ControlPoint"/> and returns
+		/// the index of the <see cref="ControlPoint"/> for which the test is true.
+		/// </summary>
+		/// <param name="point">The screen coordinates to test for a control point.</param>
+		/// <returns>The index of the control point or -1 if the hit test failed for all control points.</returns>
 		public int HitTestControlPoint(Point point)
 		{
 			return _controlPoints.HitTestControlPoint(point);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		protected ControlPointGroup ControlPoints
 		{
 			get { return _controlPoints; }

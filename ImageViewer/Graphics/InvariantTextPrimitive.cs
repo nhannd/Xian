@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
 using ClearCanvas.ImageViewer.Rendering;
@@ -87,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if (_text != value)
 				{
 					_text = value;
-					base.NotifyPropertyChanged("Text");
+					base.NotifyVisualStateChanged("Text");
 				}
 			}
 		}
@@ -101,7 +102,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public float SizeInPoints
 		{
 			get { return _sizeInPoints; }
-			set { _sizeInPoints = value; }
+			set
+			{
+				if (!FloatComparer.AreEqual(_sizeInPoints, value))
+				{
+					_sizeInPoints = value;
+					base.NotifyVisualStateChanged("SizeInPoints");
+				}
+			}
 		}
 
 		/// <summary>
@@ -113,7 +121,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public string Font
 		{
 			get { return _font; }
-			set { _font = value; }
+			set
+			{
+				if (_font != value)
+				{
+					_font = value;
+					base.NotifyVisualStateChanged("Font");
+				}
+			}
 		}
 
 		/// <summary>

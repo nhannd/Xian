@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				this.OnLocationChanged();
-				base.NotifyPropertyChanged("Location");
+				base.NotifyVisualStateChanged("Location");
 			}
 		}
 

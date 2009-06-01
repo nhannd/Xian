@@ -107,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				{
 					_topLeft = value;
 					this.OnTopLeftChanged();
+					base.NotifyVisualStateChanged("InvariantTopLeft");
 				}
 			}
 		}
@@ -160,6 +161,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				{
 					_bottomRight = value;
 					this.OnBottomRightChanged();
+					base.NotifyVisualStateChanged("InvariantBottomRight");
 				}
 			}
 		}

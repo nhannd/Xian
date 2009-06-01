@@ -76,12 +76,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	[Cloneable]
 	public abstract class ControlGraphic : DecoratorCompositeGraphic, IControlGraphic
 	{
-		private event EventHandler _subjectChanged;
 		private Color _color = Color.Yellow;
 		private bool _show = true;
-
-		[CloneIgnore]
-		private bool _notifyOnSubjectChanged = true;
 
 		[CloneIgnore]
 		private IMouseButtonHandler _capturedHandler = null;
@@ -98,7 +94,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="subject">The graphic to control.</param>
 		protected ControlGraphic(IGraphic subject) : base(subject)
 		{
-			Initialize();
 		}
 
 		/// <summary>
@@ -109,27 +104,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected ControlGraphic(ControlGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
-		}
-
-		[OnCloneComplete]
-		private void OnCloneComplete()
-		{
-			Initialize();
-		}
-
-		private void Initialize()
-		{
-			this.Subject.PropertyChanged += OnSubjectPropertyChanged;
-		}
-
-		/// <summary>
-		/// Releases all resources used by this <see cref="ControlGraphic"/>.
-		/// </summary>
-		protected override void Dispose(bool disposing)
-		{
-			this.Subject.PropertyChanged -= OnSubjectPropertyChanged;
-
-			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -212,46 +186,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			get { return _isTracking; }
 		}
-
-		private void OnSubjectPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (_notifyOnSubjectChanged)
-			{
-				this.OnSubjectChanged();
-			}
-		}
-
-		/// <summary>
-		/// Suspends notification of <see cref="SubjectChanged"/> events.
-		/// </summary>
-		/// <remarks>
-		/// There are times when it is desirable to suspend the notification of
-		/// <see cref="SubjectChanged"/> events, such as when initializing 
-		/// the <see cref="IControlGraphic.Subject"/> graphic.  To resume the raising of the event, call
-		/// <see cref="Resume"/>.
-		/// </remarks>
-		public void Suspend()
-		{
-			_notifyOnSubjectChanged = false;
-		}
-
-		/// <summary>
-		/// Resumes notification of <see cref="SubjectChanged"/> events.
-		/// </summary>
-		/// <param name="notifyNow">If <b>true</b>, the graphic is updated immediately.
-		/// </param>
-		public void Resume(bool notifyNow)
-		{
-			_notifyOnSubjectChanged = true;
-
-			if (notifyNow)
-				OnSubjectPropertyChanged(this, new PropertyChangedEventArgs(string.Empty));
-		}
-
-		/// <summary>
-		/// Called when properties on the <see cref="Subject"/> have changed.
-		/// </summary>
-		protected virtual void OnSubjectChanged() {}
 
 		/// <summary>
 		/// Called when the <see cref="Color"/> property changes.

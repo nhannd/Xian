@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_point1ChangedEvent, this, new PointChangedEventArgs(this.Pt1));
-				base.NotifyPropertyChanged("Pt1");
+				base.NotifyVisualStateChanged("Pt1");
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_point2ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
-				base.NotifyPropertyChanged("Pt2");
+				base.NotifyVisualStateChanged("Pt2");
 			}
 		}
 

@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private bool _visible = true;
 		private Stack<CoordinateSystem> _coordinateSystemStack;
 		private event EventHandler _drawing;
-		private event PropertyChangedEventHandler _propertyChanged;
+		private event VisualStateChangedEventHandler _visualStateChanged;
 		#endregion
 
 		/// <summary>
@@ -423,28 +423,39 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Occurs when a property value changes.
+		/// Occurs when a property is changed on a graphic, resulting in a change in the graphic's visual state.
 		/// </summary>
-		public event PropertyChangedEventHandler PropertyChanged
+		public event VisualStateChangedEventHandler VisualStateChanged
 		{
-			add { _propertyChanged += value; }
-			remove { _propertyChanged -= value; }
+			add { _visualStateChanged += value; }
+			remove { _visualStateChanged -= value; }
 		}
 
 		/// <summary>
-		/// Fires the <see cref="PropertyChanged"/> event.
+		/// Fires the <see cref="VisualStateChanged"/> event.
 		/// </summary>
 		/// <param name="propertyName">The name of the property whose value changed.</param>
-		protected void NotifyPropertyChanged(string propertyName)
+		protected void NotifyVisualStateChanged(string propertyName)
 		{
-			this.OnPropertyChanged(propertyName);
-			EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
+			this.OnVisualStateChanged(propertyName);
+			EventsHelper.Fire(_visualStateChanged, this, new VisualStateChangedEventArgs(this, propertyName));
 		}
 
 		/// <summary>
-		/// Called when a property changes, before notification of other handlers observing the <see cref="PropertyChanged"/> event.
+		/// Forwards the <see cref="VisualStateChanged"/> event from a child graphic to listeners of a parent graphic.
+		/// </summary>
+		/// <param name="e">Data for the <see cref="VisualStateChanged"/> event.</param>
+		internal void NotifyVisualStateChanged(VisualStateChangedEventArgs e)
+		{
+			if(e.Graphic == this)
+				this.OnVisualStateChanged(e.PropertyName);
+			EventsHelper.Fire(_visualStateChanged, this, e);
+		}
+
+		/// <summary>
+		/// Called when the visual state changes on the current graphic, before notification of other handlers observing the <see cref="VisualStateChanged"/> event.
 		/// </summary>
 		/// <param name="propertyName">The name of the property whose value changed.</param>
-		protected virtual void OnPropertyChanged(string propertyName) {}
+		protected virtual void OnVisualStateChanged(string propertyName) {}
 	}
 }

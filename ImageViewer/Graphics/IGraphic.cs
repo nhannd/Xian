@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
@@ -39,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// Defines a graphical object that can be rendered.
 	/// </summary>
-	public interface IGraphic : IDrawable, IDisposable, INotifyPropertyChanged
+	public interface IGraphic : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets this <see cref="IGraphic"/> object's parent <see cref="IGraphic"/>.
@@ -162,5 +161,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
 		Roi CreateRoi();
+
+		/// <summary>
+		/// Occurs when a property is changed on a graphic, resulting in a change in the graphic's visual state.
+		/// </summary>
+		event VisualStateChangedEventHandler VisualStateChanged;
 	}
 }

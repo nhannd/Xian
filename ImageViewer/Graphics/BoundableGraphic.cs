@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_topLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft));
-				base.NotifyPropertyChanged("TopLeft");
+				base.NotifyVisualStateChanged("TopLeft");
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_bottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight));
-				base.NotifyPropertyChanged("BottomRight");
+				base.NotifyVisualStateChanged("BottomRight");
 			}
 		}
 

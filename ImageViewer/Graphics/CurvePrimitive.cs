@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void OnPointsChanged(object sender, EventArgs e)
 		{
-			base.NotifyPropertyChanged("Points");
+			base.NotifyVisualStateChanged("Points");
 		}
 
 		/// <summary>

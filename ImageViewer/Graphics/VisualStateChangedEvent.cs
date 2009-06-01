@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,82 +29,37 @@
 
 #endregion
 
-using System.Drawing;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Tools;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Specifies the line style to use when drawing the vector.
+	/// Represents the method that will handle the <see cref="IGraphic.VisualStateChanged"/> event raised
+	/// when a property is changed on a graphic, resulting in a change in the graphic's visual state.
 	/// </summary>
-	public enum LineStyle
-	{
-		/// <summary>
-		/// A solid line.
-		/// </summary>
-		Solid = 0,
-		/// <summary>
-		/// A dashed line.
-		/// </summary>
-		Dash = 1,
-		/// <summary>
-		/// A dotted line.
-		/// </summary>
-		Dot = 2
-	}
+	/// <param name="sender">The source of the event.</param>
+	/// <param name="e">A <see cref="VisualStateChangedEventArgs"/> that contains the event data. </param>
+	public delegate void VisualStateChangedEventHandler(object sender, VisualStateChangedEventArgs e);
 
 	/// <summary>
-	/// An vector <see cref="Graphic"/>.
+	/// Provides data for the <see cref="IGraphic.VisualStateChanged"/> event. 
 	/// </summary>
-	[Cloneable(true)]
-	public abstract class VectorGraphic : Graphic, IVectorGraphic
+	public sealed class VisualStateChangedEventArgs : PropertyChangedEventArgs
 	{
 		/// <summary>
-		/// The hit test distance in destination pixels.
+		/// Gets the graphic whose visual state changed.
 		/// </summary>
-		public static readonly int HitTestDistance = 10;
-		private Color _color = Color.Yellow;
-		private LineStyle _lineStyle = LineStyle.Solid;
+		public readonly IGraphic Graphic;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="VectorGraphic"/>.
+		/// Initializes a new instance of the <see cref="VisualStateChangedEventArgs"/> class. 
 		/// </summary>
-		protected VectorGraphic()
+		/// <param name="graphic">The graphic whose visual state changed.</param>
+		/// <param name="propertyName">The name of the property that changed. </param>
+		public VisualStateChangedEventArgs(IGraphic graphic, string propertyName)
+			: base(propertyName)
 		{
-		}
-
-		/// <summary>
-		/// Gets or sets the colour.
-		/// </summary>
-		public Color Color
-		{
-			get { return _color; }
-			set
-			{
-				if (_color != value)
-				{
-					_color = value;
-					base.NotifyVisualStateChanged("Color");
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the line style.
-		/// </summary>
-		public LineStyle LineStyle
-		{
-			get { return _lineStyle; }
-			set
-			{
-				if (_lineStyle != value)
-				{
-					_lineStyle = value;
-					base.NotifyVisualStateChanged("LineStyle");
-				}
-			}
+			this.Graphic = graphic;
 		}
 	}
 }

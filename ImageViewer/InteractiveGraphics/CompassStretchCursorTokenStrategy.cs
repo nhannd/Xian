@@ -76,8 +76,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get
 			{
 				List<PointF> controlPoints = new List<PointF>();
-				for (int i = 0; i < ControlPoints.Count; ++i)
-					controlPoints.Add(ControlPoints[i]);
+				for (int i = 0; i < this.ControlPoints.Count; ++i)
+					controlPoints.Add(this.ControlPoints[i]);
 
 				return RectangleUtilities.ComputeBoundingRectangle(controlPoints.ToArray());
 			}

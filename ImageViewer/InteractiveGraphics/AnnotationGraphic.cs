@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -62,48 +63,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	[Cloneable]
 	public class AnnotationGraphic : StandardStatefulGraphic, IContextMenuProvider
 	{
-		#region AnnotationGraphicMemento
-
-		private class AnnotationGraphicMemento : IEquatable<AnnotationGraphicMemento>
-		{
-			public readonly object SubjectMemento;
-			public readonly object CalloutMemento;
-
-			public AnnotationGraphicMemento(object subjectMemento, object calloutMemento)
-			{
-				SubjectMemento = subjectMemento;
-				CalloutMemento = calloutMemento;
-			}
-
-			public override int GetHashCode()
-			{
-				return base.GetHashCode();
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
-
-				return this.Equals(obj as AnnotationGraphicMemento);
-			}
-
-			#region IEquatable<AnnotationGraphicMemento> Members
-
-			public bool Equals(AnnotationGraphicMemento other)
-			{
-				if (other == null)
-					return false;
-
-				return SubjectMemento.Equals(other.SubjectMemento) && CalloutMemento.Equals(other.CalloutMemento);
-			}
-
-			#endregion
-		}
-
-		#endregion
-
 		#region Private fields
+
+		[CloneIgnore]
+		private bool _notifyOnSubjectChanged = true;
 
 		[CloneIgnore]
 		private CalloutGraphic _calloutGraphic;
@@ -222,6 +185,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_calloutLocationStrategy = calloutLocationStrategy ?? new AnnotationCalloutLocationStrategy();
 
 			_calloutLocationStrategy.SetAnnotationGraphic(this);
+
+			this.Subject.VisualStateChanged += OnSubjectVisualStateChanged;
+		}
+
+		/// <summary>
+		/// Releases all resources used by this <see cref="AnnotationGraphic"/>.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			this.Subject.VisualStateChanged -= OnSubjectVisualStateChanged;
+			base.Dispose(disposing);
 		}
 
 		[OnCloneComplete]
@@ -237,11 +211,48 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.State = this.CreateInactiveState();
 		}
 
-		protected override void OnSubjectChanged()
+		#region Annotation Subject Change Notification
+
+		private void OnSubjectVisualStateChanged(object sender, VisualStateChangedEventArgs e)
+		{
+			if (_notifyOnSubjectChanged)
+			{
+				if(e.PropertyName != "Color" && e.PropertyName != "LineStyle")
+					this.OnSubjectChanged();
+			}
+		}
+
+		/// <summary>
+		/// Temporarily suspends recomputation of the annotation in response to
+		/// property change events on the <see cref="IControlGraphic.Subject"/>.
+		/// </summary>
+		public void Suspend()
+		{
+			_notifyOnSubjectChanged = false;
+		}
+
+		/// <summary>
+		/// Resumes recomputation of the annotation in response to
+		/// property change events on the <see cref="IControlGraphic.Subject"/>.
+		/// </summary>
+		/// <param name="notifyNow">True if the recomputation is to be carried out immediately.</param>
+		public void Resume(bool notifyNow)
+		{
+			_notifyOnSubjectChanged = true;
+
+			if (notifyNow)
+				OnSubjectVisualStateChanged(this, new VisualStateChangedEventArgs(this, string.Empty));
+		}
+
+		/// <summary>
+		/// Called when properties on the <see cref="ControlGraphic.Subject"/> have changed.
+		/// </summary>
+		protected virtual void OnSubjectChanged()
 		{
 			SetCalloutLocation();
-			base.OnSubjectChanged();
 		}
+
+		#endregion
 
 		private void SetCalloutEndPoint()
 		{
@@ -288,11 +299,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (!_settingCalloutLocation)
 				_calloutLocationStrategy.OnCalloutLocationChangedExternally();
 			SetCalloutEndPoint();
-		}
-
-		protected override void OnStateChanged(GraphicStateChangedEventArgs e)
-		{
-			base.OnStateChanged(e);
 		}
 
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)

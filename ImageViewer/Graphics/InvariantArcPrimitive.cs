@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -78,13 +79,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			set
 			{
-				if (this.CoordinateSystem == CoordinateSystem.Source)
+				if (!FloatComparer.AreEqual(this.StartAngle, value))
 				{
-					_startAngle = value;
-				}
-				else
-				{
-					_startAngle = ArcPrimitive.ConvertStartAngle(value, this.SpatialTransform, CoordinateSystem.Source);
+					if (this.CoordinateSystem == CoordinateSystem.Source)
+					{
+						_startAngle = value;
+					}
+					else
+					{
+						_startAngle = ArcPrimitive.ConvertStartAngle(value, this.SpatialTransform, CoordinateSystem.Source);
+					}
+					base.NotifyVisualStateChanged("StartAngle");
 				}
 			}
 		}
@@ -110,15 +115,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			set
 			{
-				if (this.CoordinateSystem == CoordinateSystem.Source)
+				if (!FloatComparer.AreEqual(this.SweepAngle, value))
 				{
-					_sweepAngle = value;
-				}
-				else
-				{
-					this.CoordinateSystem = CoordinateSystem.Destination;
-					_sweepAngle = ArcPrimitive.ConvertSweepAngle(value, this.StartAngle, this.SpatialTransform, CoordinateSystem.Source);
-					this.ResetCoordinateSystem();
+					if (this.CoordinateSystem == CoordinateSystem.Source)
+					{
+						_sweepAngle = value;
+					}
+					else
+					{
+						this.CoordinateSystem = CoordinateSystem.Destination;
+						_sweepAngle = ArcPrimitive.ConvertSweepAngle(value, this.StartAngle, this.SpatialTransform, CoordinateSystem.Source);
+						this.ResetCoordinateSystem();
+					}
+					base.NotifyVisualStateChanged("SweepAngle");
 				}
 			}
 		}

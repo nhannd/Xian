@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				this.NotifyPointChanged();
-				base.NotifyPropertyChanged("Point");
+				base.NotifyVisualStateChanged("Point");
 			}
 		}
 

@@ -263,11 +263,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.SetParentPresentationImage(this.ParentPresentationImage);
 			graphic.SetImageViewer(this.ImageViewer);
 			graphic.CoordinateSystem = this.CoordinateSystem;
+			graphic.VisualStateChanged += OnGraphicVisualStateChanged;
 		}
 
 		private void OnGraphicRemoved(object sender, ListEventArgs<IGraphic> e)
 		{
 			Graphic graphic = (Graphic)e.Item;
+			graphic.VisualStateChanged -= OnGraphicVisualStateChanged;
 
 			if (graphic is ISelectableGraphic)
 				((ISelectableGraphic) graphic).Selected = false;
@@ -277,6 +279,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.SetParentGraphic(null);
 			graphic.SetParentPresentationImage(null);
 			graphic.SetImageViewer(null);
+		}
+
+		private void OnGraphicVisualStateChanged(object sender, VisualStateChangedEventArgs e)
+		{
+			base.NotifyVisualStateChanged(e);
 		}
 
 		[CloneInitialize]
