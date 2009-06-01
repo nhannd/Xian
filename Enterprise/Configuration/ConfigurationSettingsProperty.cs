@@ -12,7 +12,11 @@ namespace ClearCanvas.Enterprise.Configuration {
     /// </summary>
 	public partial class ConfigurationSettingsProperty
 	{
-        public void UpdateFromDescriptor(SettingsPropertyDescriptor descriptor)
+		/// <summary>
+		/// Updates this instance from the specified descriptor.
+		/// </summary>
+		/// <param name="descriptor"></param>
+		public void UpdateFromDescriptor(SettingsPropertyDescriptor descriptor)
         {
             _name = descriptor.Name;
             _typeName = descriptor.TypeName;
@@ -21,7 +25,11 @@ namespace ClearCanvas.Enterprise.Configuration {
             _defaultValue = descriptor.DefaultValue;
         }
 
-        public SettingsPropertyDescriptor GetDescriptor()
+		/// <summary>
+		/// Returns a descriptor populated from this instance.
+		/// </summary>
+		/// <returns></returns>
+		public SettingsPropertyDescriptor GetDescriptor()
         {
             return new SettingsPropertyDescriptor(
                 _name,

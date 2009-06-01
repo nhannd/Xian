@@ -26,7 +26,7 @@
         <property name="TypeName" column="TypeName_" type="String" not-null="true"/>
         <property name="Scope" column="Scope_" type="String" not-null="true"/>
         <property name="Description" column="Description_" type="String" length="1000"/>
-        <property name="DefaultValue" column="DefaultValue_" type="StringClob" length="65000"/>
+        <property name="DefaultValue" column="DefaultValue_" type="StringClob" length="1000000"/>
       </composite-element>
     </idbag>
   </class>

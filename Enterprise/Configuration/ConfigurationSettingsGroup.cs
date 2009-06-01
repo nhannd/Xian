@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Configuration {
 
@@ -11,6 +12,7 @@ namespace ClearCanvas.Enterprise.Configuration {
     /// <summary>
     /// ConfigurationSettingsGroup entity
     /// </summary>
+	[UniqueKey("SettingsGroupKey", new string[]{"Name", "VersionString"})]
 	public partial class ConfigurationSettingsGroup : ClearCanvas.Enterprise.Core.Entity
 	{
         public static ConfigurationSettingsGroupSearchCriteria GetCriteria(SettingsGroupDescriptor descriptor)
@@ -21,6 +23,11 @@ namespace ClearCanvas.Enterprise.Configuration {
             return where;
         }
 
+
+		/// <summary>
+		/// Updates this instance from the specified descriptor.
+		/// </summary>
+		/// <param name="descriptor"></param>
         public virtual void UpdateFromDescriptor(SettingsGroupDescriptor descriptor)
         {
             _assemblyQualifiedTypeName = descriptor.AssemblyQualifiedTypeName;
@@ -30,6 +37,10 @@ namespace ClearCanvas.Enterprise.Configuration {
             _hasUserScopedSettings = descriptor.HasUserScopedSettings;
         }
 
+		/// <summary>
+		/// Returns a descriptor populated from this instance.
+		/// </summary>
+		/// <returns></returns>
         public virtual SettingsGroupDescriptor GetDescriptor()
         {
             return new SettingsGroupDescriptor(
