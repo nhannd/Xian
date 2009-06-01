@@ -43,7 +43,7 @@ namespace ClearCanvas.Enterprise.Core.Audit
 	{
 		#region IAuditService Members
 
-		[UpdateOperation]
+		[UpdateOperation(ChangeSetAuditable = false)]
 		public WriteEntryResponse WriteEntry(WriteEntryRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
