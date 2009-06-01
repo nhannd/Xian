@@ -110,7 +110,7 @@ namespace ClearCanvas.Enterprise.Core
             IServiceOperationRecorder recorder = (IServiceOperationRecorder) Activator.CreateInstance(attr.RecorderClass);
 
             // write to the audit log
-			AuditLog log = new AuditLog(recorder.Category);
+			AuditLog log = new AuditLog(null, recorder.Category);
 			recorder.WriteLogEntry(info, log);
         }
 

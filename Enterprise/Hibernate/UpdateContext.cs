@@ -196,7 +196,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (_changeSetRecorder != null)
             {
 				// write to the "ChangeSet" audit log
-				AuditLog auditLog = new AuditLog("ChangeSet");
+				AuditLog auditLog = new AuditLog(null, "ChangeSet");
                 _changeSetRecorder.WriteLogEntry(_interceptor.EntityChangeSet, auditLog);
             }
         }
