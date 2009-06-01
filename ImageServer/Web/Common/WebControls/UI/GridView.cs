@@ -66,6 +66,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         private SelectionModeEnum _selectionMode = SelectionModeEnum.Single;
         private Hashtable _selectedRows = new Hashtable();
         private Hashtable _selectedDataKeys = new Hashtable();
+        private bool _isDataBound = false;
+        private bool _selectUsingDataKeys = false;
         #endregion Private members
 
         #region Public Properties
@@ -80,7 +82,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             set { _selectionMode = value; }
         }
 
-        private bool _isDataBound = false;
+        public bool SelectUsingDataKeys
+        {
+            get { return _selectUsingDataKeys; }
+            set { _selectUsingDataKeys = value; }
+        }
 
         public bool IsDataBound
         {
@@ -250,22 +256,20 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                     _selectedDataKeys[r] = true;
                 }
             }
-            else
+
+            string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
+            if (!string.IsNullOrEmpty(statesValue))
             {
-                string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
-                if (!string.IsNullOrEmpty(statesValue))
+                int[] rows = serializer.Deserialize<int[]>(statesValue);
+                foreach (int r in rows)
                 {
-                    int[] rows = serializer.Deserialize<int[]>(statesValue);
-                    foreach (int r in rows)
-                    {
-                        _selectedRows[r] = true;
-                    }
+                    _selectedRows[r] = true;
                 }
             }
 
 
-        }
 
+        }
 
         /// <summary>
         /// Clear the current selections.
@@ -294,8 +298,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         }
 
         #endregion Public Methods
-
-
         
         #region IScriptControl Members
 
@@ -315,6 +317,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             style = StyleToString(RowStyle);
             desc.AddProperty("UnSelectedRowStyle", style);
             desc.AddProperty("UnSelectedRowCSS", RowStyle.CssClass);
+
+            desc.AddProperty("SelectUsingDataKeys", SelectUsingDataKeys);
 
 
             if (AlternatingRowStyle!=null)
@@ -389,14 +393,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                     {
                         row.Attributes["selected"] = "false";
                     }
-                } 
-                
-                if(DataKeys != null && DataKeys.Count <= Rows.Count)
+                }
+
+                if (SelectUsingDataKeys)
                 {
-                    if (row.RowIndex < DataKeys.Count)
-                        row.Attributes["dataKey"] = DataKeys[row.RowIndex].Value.ToString();
-                    else row.Attributes["dataKey"] = "Data Key Does not exist for row with index" + row.RowIndex;
-                } 
+                    if (DataKeys != null && DataKeys.Count <= Rows.Count)
+                    {
+                        if (row.RowIndex < DataKeys.Count)
+                            row.Attributes["dataKey"] = DataKeys[row.RowIndex].Value.ToString();
+                        else row.Attributes["dataKey"] = "Data Key Does not exist for row with index" + row.RowIndex;
+                    }
+                }
             }
             base.Render(writer);
         }

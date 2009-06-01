@@ -392,22 +392,19 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                     selectedKeysField.value = '';
                 }
                 else
-                {
-                    var useDataKeys = true;
-                    if(rows[0].getAttribute('dataKey') == null) useDataKeys = false;
-                    
+                {                   
                     var selectedRowIndices = new Array();
-                    if(useDataKeys) var selectedRowDataKeys = new Array();
+                    if(this._SelectUsingDataKeys) var selectedRowDataKeys = new Array();
                     
                     for(i=0;i <rows.length; i++)
                     {
                         selectedRowIndices[selectedRowIndices.length] = rows[i].getAttribute('rowIndex');
-                        if(useDataKeys)
+                        if(this._SelectUsingDataKeys)
                             selectedRowDataKeys[selectedRowDataKeys.length] = rows[i].getAttribute('dataKey');
                     }
                     stateField.value = Sys.Serialization.JavaScriptSerializer.serialize(selectedRowIndices);
                     
-                    if(useDataKeys)
+                    if(this._SelectUsingDataKeys)
                         selectedKeysField.value = Sys.Serialization.JavaScriptSerializer.serialize(selectedRowDataKeys);
                 }
             }
@@ -508,6 +505,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         set_SelectionMode : function(value) {
             this._SelectionMode = value;
             this.raisePropertyChanged('SelectionMode');
+        },
+        
+        get_SelectUsingDataKeys : function() {
+            return this._SelectUsingDataKeys;
+        },
+
+        set_SelectUsingDataKeys : function(value) {
+            this._SelectUsingDataKeys = value;
+            this.raisePropertyChanged('SelectUsingDataKeys');
         }
     }
 
