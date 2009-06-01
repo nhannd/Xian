@@ -54,6 +54,7 @@ namespace ClearCanvas.Common.Audit
 	/// </remarks>
 	public class AuditLog
 	{
+		private readonly string _application;
 		private readonly string _category;
 		private readonly IAuditSink[] _sinks;
 
@@ -62,19 +63,22 @@ namespace ClearCanvas.Common.Audit
 		/// <summary>
 		/// Constructs an audit log with the specified category.
 		/// </summary>
+		/// <param name="application"></param>
 		/// <param name="category"></param>
-		public AuditLog(string category)
-			:this(category, new IAuditSink[]{ CreateSink() })
+		public AuditLog(string application, string category)
+			:this(application, category, new IAuditSink[]{ CreateSink() })
 		{
 		}
 
 		/// <summary>
 		/// Constructs an audit log with the specified category and sinks.
 		/// </summary>
+		/// <param name="application"></param>
 		/// <param name="category"></param>
 		/// <param name="sinks"></param>
-		private AuditLog(string category, IAuditSink[] sinks)
+		private AuditLog(string application, string category, IAuditSink[] sinks)
 		{
+			_application = application;
 			_category = category;
 			_sinks = sinks;			
 		}
@@ -107,7 +111,7 @@ namespace ClearCanvas.Common.Audit
 				_category,
 				Platform.Time,
 				Dns.GetHostName(),
-				null,	// not currently in use
+				_application,
 				user,
 				operation,
 				details);
