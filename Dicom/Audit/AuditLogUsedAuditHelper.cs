@@ -51,6 +51,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="uriOfAuditLog">Add the Identity of the Audit Log.  </param>
 		public AuditLogUsedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			string uriOfAuditLog)
+			: base("AuditLogUsed")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.AuditLogUsed;

@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		{
 			QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource,
 			                                               outcome, parms);
-			ServerPlatform.LogAuditMessage("Query", helper);
+			ServerPlatform.LogAuditMessage(helper);
 		}
 
         /// <summary>

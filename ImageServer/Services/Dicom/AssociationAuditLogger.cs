@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					}
 				}
 
-				ServerPlatform.LogAuditMessage("BeginTransferringDicomInstances", audit);
+				ServerPlatform.LogAuditMessage(audit);
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					}
 				}
 
-				ServerPlatform.LogAuditMessage("DicomInstancesTransferred", helper);
+				ServerPlatform.LogAuditMessage(helper);
 			}
 		}
 	}

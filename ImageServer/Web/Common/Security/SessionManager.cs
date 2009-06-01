@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                                              session.Credentials.UserName,
                                              null,
                                              session.Credentials.DisplayName));
-                ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+                ServerPlatform.LogAuditMessage(audit);
             }
             
 

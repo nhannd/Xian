@@ -60,7 +60,7 @@ namespace ClearCanvas.Dicom.Audit
 		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome, 
 			ApplicationActivityType type,
-			AuditProcessActiveParticipant idOfApplicationStarted)
+			AuditProcessActiveParticipant idOfApplicationStarted) : base("ApplicationActivity")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;

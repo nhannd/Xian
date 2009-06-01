@@ -55,6 +55,7 @@ namespace ClearCanvas.Dicom.Audit
 	{
 		public UserAuthenticationAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome, UserAuthenticationEventType type)
+			: base("UserAuthentication")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.UserAuthentication;

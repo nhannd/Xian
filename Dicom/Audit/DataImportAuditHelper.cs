@@ -43,8 +43,9 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="outcome">The outcome (success or failure)</param>
 		/// <param name="importDescriptor">Any machine readable identifications on the media, such as media serial number, volume label, 
 		/// DICOMDIR SOP Instance UID.</param>
-		public DataImportAuditHelper(DicomAuditSource auditSource, 
+		public DataImportAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome, string importDescriptor)
+			: base("DataImport")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Import;

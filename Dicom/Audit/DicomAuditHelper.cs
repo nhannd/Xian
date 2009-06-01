@@ -53,6 +53,7 @@ namespace ClearCanvas.Dicom.Audit
 		private static readonly object _syncLock = new object();
 		private static string _application;
 		private static string _processName;
+		private static string _operation;
 		#endregion
 
 		#region Members
@@ -60,6 +61,13 @@ namespace ClearCanvas.Dicom.Audit
 		protected readonly List<AuditMessageActiveParticipant> _participantList = new List<AuditMessageActiveParticipant>(3);
 		protected readonly List<AuditSourceIdentificationType> _auditSourceList = new List<AuditSourceIdentificationType>(1);
 		protected readonly Dictionary<string, AuditParticipantObject> _participantObjectList = new Dictionary<string, AuditParticipantObject>();
+		#endregion
+
+		#region Constructors
+		public DicomAuditHelper(string operation)
+		{
+			_operation = operation;
+		}
 		#endregion
 
 		#region Static Properties
@@ -124,6 +132,11 @@ namespace ClearCanvas.Dicom.Audit
 		protected AuditMessage AuditMessage
 		{
 			get { return _message; }
+		}
+
+		public string Operation
+		{
+			get { return _operation; }
 		}
 		#endregion
 

@@ -58,6 +58,7 @@ namespace ClearCanvas.Dicom.Audit
 		public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			EventIdentificationTypeEventActionCode action,
 			AssociationParameters parms)
+			: base("DicomInstancesTransferred")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesTransferred;
@@ -77,6 +78,7 @@ namespace ClearCanvas.Dicom.Audit
 		public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			EventIdentificationTypeEventActionCode action,
 			string sourceAE, string sourceHost, string destinationAE, string destinationHost)
+			: base("DicomInstancesTransferred")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesTransferred;

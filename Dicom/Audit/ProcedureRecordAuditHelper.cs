@@ -55,6 +55,7 @@ namespace ClearCanvas.Dicom.Audit
 	{
 		public ProcedureRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, 
 			EventIdentificationTypeEventActionCode code)
+			: base("ProcedureRecord")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.ProcedureRecord;

@@ -71,6 +71,7 @@ namespace ClearCanvas.Dicom.Audit
 		public QueryAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome, 
 			AssociationParameters parms)
+			: base("Query")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Query;
@@ -86,7 +87,7 @@ namespace ClearCanvas.Dicom.Audit
 
 		public QueryAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome,
-			string sourceAE, string sourceHost, string destinationAE, string destinationHost)
+			string sourceAE, string sourceHost, string destinationAE, string destinationHost) : base("Query")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Query;

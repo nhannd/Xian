@@ -70,6 +70,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="node">The identity of the node entering or leaving the network</param>
 		/// <param name="auditSource">The source of the audit message.</param>
 		public NetworkEntryAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, NetworkEntryType type, AuditProcessActiveParticipant node)
+			: base("NetworkEntry")
 
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();

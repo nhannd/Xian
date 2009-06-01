@@ -49,6 +49,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// </summary>
 		public DicomInstancesAccessedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			EventIdentificationTypeEventActionCode action)
+			: base("DicomInstancesAccessed")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesAccessed;

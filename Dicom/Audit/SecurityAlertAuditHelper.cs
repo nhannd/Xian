@@ -88,6 +88,7 @@ namespace ClearCanvas.Dicom.Audit
 		public SecurityAlertAuditHelper(DicomAuditSource auditSource,
 			EventIdentificationTypeEventOutcomeIndicator outcome,
 			SecurityAlertEventTypeCodeEnum eventTypeCode)
+			: base("SecurityAlert")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.SecurityAlert;

@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         }
     }
 
-    public partial class DeleteStudyConfirmDialog : System.Web.UI.UserControl
+    public partial class DeleteStudyConfirmDialog : UserControl
     {
         private const string REASON_CANNEDTEXT_CATEGORY = "DeleteStudyReason";
         private EventHandler<DeleteStudyConfirmDialogStudyDeletingEventArgs> _studyDeletingHandler;
@@ -250,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         	helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
 																	study.StudyInstanceUid, 
 																	study.AccessionNumber));
-                        	ServerPlatform.LogAuditMessage("DicomStudyDeleted", helper);
+                        	ServerPlatform.LogAuditMessage(helper);
                         }
                         catch (Exception ex)
                         {

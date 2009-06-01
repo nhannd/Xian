@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                         stream.Close();
                         filenameAbtained = true;
                     }
-                    catch(Exception ex)
+                    catch(Exception)
                     {
                         // try another file name
                     }

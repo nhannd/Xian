@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 				helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
 														Study.StudyInstanceUid,
 														Study.AccessionNumber));
-				ServerPlatform.LogAuditMessage("DicomStudyDeleted", helper);
+				ServerPlatform.LogAuditMessage(helper);
 
 
 				RemoveFilesystem();

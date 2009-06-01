@@ -53,6 +53,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="exportDestination">Any machine readable identifications on the media, such as media serial number, volume label, 
 		/// DICOMDIR SOP Instance UID.</param>
 		public DataExportAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, string exportDestination)
+			: base("DataExport")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Export;

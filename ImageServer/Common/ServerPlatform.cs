@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
@@ -108,16 +107,15 @@ namespace ClearCanvas.ImageServer.Common
 		/// <summary>
 		/// Log an Audit message.
 		/// </summary>
-		/// <param name="operation"></param>
 		/// <param name="helper"></param>
-		public static void LogAuditMessage(string operation, DicomAuditHelper helper)
+		public static void LogAuditMessage(DicomAuditHelper helper)
 		{
 			lock (_syncLock)
 			{
 				if (_log == null)
-					_log = new AuditLog("ImageServer");
+					_log = new AuditLog("DICOM");
 
-				_log.WriteEntry(operation, helper.Serialize(false));
+				_log.WriteEntry(helper.Operation, helper.Serialize(false));
 			}
 		}
 

@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Private Members
         private List<Model.WorkQueue> _workQueues;
-        private WorkQueueItemList _workQueueItems;
+        //private WorkQueueItemList _workQueueItems;
         #endregion
 
         #region Protected Properties

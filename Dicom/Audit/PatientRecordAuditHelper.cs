@@ -50,8 +50,9 @@ namespace ClearCanvas.Dicom.Audit
 	/// </remarks>
 	public class PatientRecordAuditHelper : DicomAuditHelper
 	{
-		public PatientRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, 
+		public PatientRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			EventIdentificationTypeEventActionCode code)
+			: base("PatientRecord")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.PatientRecord;

@@ -55,8 +55,9 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="auditSource"></param>
 		/// <param name="outcome"></param>
 		/// <param name="code"></param>
-		public OrderRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, 
+		public OrderRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			EventIdentificationTypeEventActionCode code)
+			: base("OrderRecord")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.OrderRecord;

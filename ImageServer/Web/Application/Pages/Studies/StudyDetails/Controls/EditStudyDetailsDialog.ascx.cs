@@ -30,14 +30,13 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Xml;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
@@ -121,7 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsName, newPatientName.ToString()));
             	description += string.Format("Tag=\"{0}\" Value=\"{1}\";", 
 											 DicomTagDictionary.GetDicomTag(DicomTags.PatientsName).Name, 
-											 newPatientName.ToString());
+											 newPatientName);
             }
 
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
@@ -396,7 +395,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     		new AuditStudyParticipantObject(Study.StudyInstanceUid, Study.AccessionNumber);
                     	participant.ParticipantObjectDetail = description;
 						helper.AddStudyParticipantObject(participant);
-                    	ServerPlatform.LogAuditMessage("DicomInstancesAccessedUpdate", helper);
+                    	ServerPlatform.LogAuditMessage(helper);
                     }
 
                     StudyEdited();

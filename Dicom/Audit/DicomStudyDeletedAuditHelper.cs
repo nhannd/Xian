@@ -47,6 +47,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// Constructor.
 		/// </summary>
 		public DicomStudyDeletedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome)
+			: base("DicomStudyDeleted")
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMStudyDeleted;
