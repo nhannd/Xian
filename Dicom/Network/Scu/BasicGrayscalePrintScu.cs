@@ -44,53 +44,36 @@ namespace ClearCanvas.Dicom.Network.Scu
     /// <para>
     /// <example>
     /// <code><![CDATA[
+    /// private void SendPrintRequest(string clientAETitle, string remoteAE, string remoteHost, int remotePort, string file1)
+    /// {
+    ///     BasicGrayscalePrintScu printScu = new BasicGrayscalePrintScu();
+    ///     printScu.Timeout = 100000;
     ///     BasicFilmSessionModuleIod basicFilmSessionModuleIod = new BasicFilmSessionModuleIod();
-    ///     basicFilmSessionModuleIod.PrintPriority = PrintPriority.Med;
     ///     basicFilmSessionModuleIod.NumberOfCopies = 1;
-    ///     basicFilmSessionModuleIod.OwnerId = "ME";
-    ///     basicFilmSessionModuleIod.FilmDestinationString = "BIN_1";
-    ///     basicFilmSessionModuleIod.MediumType = MediumType.Paper;
-    ///     basicFilmSessionModuleIod.FilmSessionLabel = "TEST TEST";
-    /// 
+    ///     
     ///     BasicFilmBoxModuleIod basicFilmBoxModuleIod = new BasicFilmBoxModuleIod();
-    ///     // Set it to print 2 images (in column)
-    ///     basicFilmBoxModuleIod.ImageDisplayFormat = @"STANDARD\1,2";
+    ///     // Set it to print 1 image
+    ///     basicFilmBoxModuleIod.ImageDisplayFormat = @"STANDARD\1,1";
     ///     basicFilmBoxModuleIod.FilmSizeId = FilmSize.IN8x10;
-    ///     basicFilmBoxModuleIod.MagnificationType = MagnificationType.Bilinear;
-    ///     basicFilmBoxModuleIod.BorderDensity = "BLACK";
-    ///     basicFilmBoxModuleIod.EmptyImageDensity = "BLACK";
+    ///     basicFilmBoxModuleIod.MagnificationType = MagnificationType.None;
     ///     basicFilmBoxModuleIod.FilmOrientation = FilmOrientation.Portrait;
-    /// 
+    ///     
     ///     IList<ImageBoxPixelModuleIod> imageBoxPixelModuleIods = new List<ImageBoxPixelModuleIod>();
     ///     
     ///     // Configure 1st Image
     ///     ImageBoxPixelModuleIod imageBoxPixelModuleIod = new ImageBoxPixelModuleIod();
     ///     imageBoxPixelModuleIod.ImageBoxPosition = 1;
-    ///     imageBoxPixelModuleIod.Polarity = Polarity.Normal;
-    ///     imageBoxPixelModuleIod.MagnificationType = MagnificationType.Bilinear;
-    ///     imageBoxPixelModuleIod.RequestedDecimateCropBehavior = DecimateCropBehavior.Crop;
-    ///     imageBoxPixelModuleIod.SmoothingType = SmoothingType.None;
-    ///     BasicGrayscaleImageSequenceIod basicGrayscaleImageSequence = new BasicGrayscaleImageSequenceIod();
-    ///     string fileName = @""; // TODO: put file name here
-    ///     basicGrayscaleImageSequence.AddDicomFileValues(fileName);
+
+    ///     // Add grayscale image sequence and add the file
+    ///     var basicGrayscaleImageSequence = new BasicGrayscaleImageSequenceIod();
+    ///     basicGrayscaleImageSequence.AddDicomFileValues(file1);
     ///     imageBoxPixelModuleIod.BasicGrayscaleImageSequenceList.Add(basicGrayscaleImageSequence);
     ///     imageBoxPixelModuleIods.Add(imageBoxPixelModuleIod);
-    /// 
-    ///     // Configure 2nd image
-    ///     imageBoxPixelModuleIod = new ImageBoxPixelModuleIod();
-    ///     imageBoxPixelModuleIod.ImageBoxPosition = 2;
-    ///     imageBoxPixelModuleIod.Polarity = Polarity.Normal;
-    ///     imageBoxPixelModuleIod.MagnificationType = MagnificationType.Bilinear;
-    ///     imageBoxPixelModuleIod.RequestedDecimateCropBehavior = DecimateCropBehavior.Crop;
-    ///     imageBoxPixelModuleIod.SmoothingType = SmoothingType.None;
-    ///     basicGrayscaleImageSequence = new BasicGrayscaleImageSequenceIod();
-    ///     fileName = @""; // TODO: put 2nd file name here
-    ///     basicGrayscaleImageSequence.AddDicomFileValues(fileName);
-    ///     imageBoxPixelModuleIod.BasicGrayscaleImageSequenceList.Add(basicGrayscaleImageSequence);
-    ///     imageBoxPixelModuleIods.Add(imageBoxPixelModuleIod);
-    /// 
-    ///     BasicGrayscalePrintScu printScu = new BasicGrayscalePrintScu();
-    ///     printScu.Print("MYCLIENTAETITLE", "MYSERVERAE", "127.0.0.1", 5678, basicFilmSessionModuleIod, basicFilmBoxModuleIod, imageBoxPixelModuleIods);
+
+    ///     DicomState expected = DicomState.Success;
+    ///     DicomState actual = printScu.Print(clientAETitle, remoteAE, remoteHost, remotePort,
+    ///     basicFilmSessionModuleIod, basicFilmBoxModuleIod, imageBoxPixelModuleIods);
+    /// }
     /// ]]></code>
     /// </example>
     /// </para>
@@ -201,7 +184,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// Initializes a new instance of the <see cref="BasicGrayscalePrintScu"/> class.
         /// </summary>
         public BasicGrayscalePrintScu()
-            :base()
+            : base()
         {
         }
         #endregion
@@ -229,6 +212,9 @@ namespace ClearCanvas.Dicom.Network.Scu
             _currentImageBoxIndex = 0;
             _filmBoxUids.Clear();
             Connect(clientAETitle, remoteAE, remoteHost, remotePort);
+            if (Status == ScuOperationStatus.AssociationRejected || Status == ScuOperationStatus.Failed || Status == ScuOperationStatus.ConnectFailed ||
+                Status == ScuOperationStatus.NetworkError || Status == ScuOperationStatus.TimeoutExpired)
+                return DicomState.Failure;
             return ResultStatus;
         }
 
@@ -465,7 +451,7 @@ namespace ClearCanvas.Dicom.Network.Scu
                             break;
                     }
                 }
-                else 
+                else
                 {
                     // TODO: Handle this... check for warnings - they are OK?  throw exception on errors... ?
                 }

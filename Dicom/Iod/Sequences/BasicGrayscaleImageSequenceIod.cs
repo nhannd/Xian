@@ -31,7 +31,7 @@
 
 using System;
 using System.IO;
-using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Iod.Sequences
 {
@@ -46,7 +46,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// Initializes a new instance of the <see cref="BasicGrayscaleImageSequenceIod"/> class.
         /// </summary>
         public BasicGrayscaleImageSequenceIod()
-            :base()
+            : base()
         {
         }
 
@@ -84,10 +84,10 @@ namespace ClearCanvas.Dicom.Iod.Sequences
             get { return PhotometricInterpretation.FromCodeString(base.DicomAttributeProvider[DicomTags.PhotometricInterpretation].GetString(0, String.Empty)); }
             set
             {
-				if (value == null)
-					base.DicomAttributeProvider[DicomTags.PhotometricInterpretation] = null;
-            	else
-					base.DicomAttributeProvider[DicomTags.PhotometricInterpretation].SetStringValue(value.Code);
+                if (value == null)
+                    base.DicomAttributeProvider[DicomTags.PhotometricInterpretation] = null;
+                else
+                    base.DicomAttributeProvider[DicomTags.PhotometricInterpretation].SetStringValue(value.Code);
             }
         }
 
@@ -118,13 +118,13 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         public PixelAspectRatio PixelAspectRatio
         {
             get { return PixelAspectRatio.FromString(base.DicomAttributeProvider[DicomTags.PixelAspectRatio].ToString()); }
-			set
-			{
-				if (value == null || value.IsNull)
-					base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetNullValue();
-				else 
-					base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetStringValue(value.ToString());
-			}
+            set
+            {
+                if (value == null || value.IsNull)
+                    base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetNullValue();
+                else
+                    base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetStringValue(value.ToString());
+            }
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-            	DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.PixelData];
+                DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.PixelData];
                 if (!attribute.IsNull && !attribute.IsEmpty)
                     return (byte[])attribute.Values;
                 else
@@ -207,51 +207,50 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         }
 
         /// <summary>
-        /// Adds the dicom file values.
+        /// Adds the attribute values for the specified <see cref="dicomFile"/>.  Tags it sets are:
+        /// ImageType, SopClassUid, SopInstanceUid, StudyInstanceUid, SamplesPerPixel, PhotometricInterpretation,NumberOfFrames,
+        /// Rows, Columns, BitsAllocated,BitsStored, HighBit,  PixelRepresentation, SmallestImagePixelValue, LargestImagePixelValue,
+        /// WindowCenter, WindowWidth, PixelData.
         /// </summary>
-        /// <param name="dicomFile">The dicom file.</param>
         public void AddDicomFileValues(DicomFile dicomFile)
         {
+            if (dicomFile == null)
+                throw new ArgumentNullException("dicomFile");
+
             try
             {
-                ImagePixelMacroIod imagePixelMacroIod = new ImagePixelMacroIod(dicomFile.DataSet);
+				uint[] dicomTags = new uint[]
+                    {
+                        DicomTags.ImageType,
+                        DicomTags.SopClassUid,
+                        DicomTags.SopInstanceUid,
+                        DicomTags.StudyInstanceUid,
+                        DicomTags.SamplesPerPixel,
+                        DicomTags.PhotometricInterpretation,
+                        DicomTags.NumberOfFrames,
+                        DicomTags.Rows,
+                        DicomTags.Columns,
+                        DicomTags.BitsAllocated,
+                        DicomTags.BitsStored,
+                        DicomTags.HighBit,
+                        DicomTags.PixelRepresentation,
+                        DicomTags.SmallestImagePixelValue,
+                        DicomTags.LargestImagePixelValue,
+                        DicomTags.WindowCenter,
+                        DicomTags.WindowWidth,
+                        DicomTags.PixelData
+                    };
 
-                this.SamplesPerPixel = 1; // only possible value for grayscale as per dicom standard
-
-                if (imagePixelMacroIod.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 && imagePixelMacroIod.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+                foreach (uint dicomTag in dicomTags)
                 {
-                    // Dicom File doesn't have Monochrome1 or MonoChrome2 - what to do?  throw exception or pick one?  let's try picking one...
-                    this.PhotometricInterpretation = PhotometricInterpretation.Monochrome1;
+                    DicomAttribute dicomAttribute;
+                    if (dicomFile.DataSet.TryGetAttribute(dicomTag, out dicomAttribute))
+                        DicomAttributeProvider[dicomTag].Values = dicomAttribute.Values;
                 }
-                else
-                {
-                    this.PhotometricInterpretation = imagePixelMacroIod.PhotometricInterpretation;
-                }
-
-                this.Rows = imagePixelMacroIod.Rows;
-                this.Columns = imagePixelMacroIod.Columns;
-
-                PixelAspectRatio ratio = imagePixelMacroIod.PixelAspectRatio;
-				if (ratio == null || ratio.IsNull)
-					this.PixelAspectRatio = new PixelAspectRatio(1, 1);
-
-                //TODO: figure out when to make it 12... possible values are only 8 or 12...
-                this.BitsStored = 8;
-
-                // Bits allocated is 8 if BitsStored = 8, 12 if BitsStored = 12...
-                this.BitsAllocated = (this.BitsStored == (ushort)8) ? (ushort)8 : (ushort)16;
-
-                // High bit is 7 if Bits Stored = 8, 11 if Bits Stored = 12..
-                this.HighBit = (this.BitsStored == (ushort)8) ? (ushort)7 : (ushort)11;
-
-                // Always 0 as per DICOM standard
-                this.PixelRepresentation = 0;
-
-                // Sets the pixel data from the Dicom File
-                this.PixelData = imagePixelMacroIod.PixelData;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Platform.Log(LogLevel.Error, ex, "Exception adding dicom file value for file: {0}", dicomFile.Filename);
                 throw;
             }
         }

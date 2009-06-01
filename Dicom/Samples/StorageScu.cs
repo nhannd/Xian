@@ -156,8 +156,10 @@ namespace ClearCanvas.Dicom.Samples
 
                 if (pcid == 0)
                 {
-                    pcid = _assocParams.AddPresentationContext(sendStruct.sopClass);
+					pcid = _assocParams.AddPresentationContext(sendStruct.sopClass);
                     _assocParams.AddTransferSyntax(pcid, sendStruct.transferSyntax);
+					if (sendStruct.transferSyntax.Equals(TransferSyntax.ImplicitVrLittleEndian))
+						_assocParams.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
                 }
             }
         }
@@ -226,14 +228,19 @@ namespace ClearCanvas.Dicom.Samples
             DicomMessage msg = new DicomMessage(dicomFile);
 
             byte pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.sopClass, dicomFile.TransferSyntax);
-            if (pcid == 0)
-            {
-                Logger.LogError(
-                    "Unable to find matching negotiated presentation context for sop {0} and syntax {1}",
-                    dicomFile.SopClass.Name, dicomFile.TransferSyntax.Name);
-                return false;
-            }
-            client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
+			if (pcid == 0)
+			{
+				if (dicomFile.TransferSyntax.Equals(TransferSyntax.ImplicitVrLittleEndian))
+					pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.sopClass, TransferSyntax.ExplicitVrLittleEndian);
+				if (pcid == 0)
+				{
+					Logger.LogError(
+						"Unable to find matching negotiated presentation context for sop {0} and syntax {1}",
+						dicomFile.SopClass.Name, dicomFile.TransferSyntax.Name);
+					return false;
+				}
+			}
+        	client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
             return true;
         }
         #endregion
