@@ -3553,6 +3553,12 @@ namespace ClearCanvas.Dicom
             get { return _values; }
             set
             {
+                if (value == null)
+                {
+                    _values = null;
+                    SetStreamLength();
+                    return;
+                }
                 ushort[] vals = value as ushort[];
                 if (vals != null)
                 {

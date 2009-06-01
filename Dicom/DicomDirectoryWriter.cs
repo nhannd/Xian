@@ -239,6 +239,7 @@ namespace ClearCanvas.Dicom
 
             foreach (DicomFile dicomFile in _dicomFiles.Keys)
             {
+                string optionalRelativeRootPath = _dicomFiles[dicomFile];
                 try
                 {
                     if (dicomFile.DataSet.Count == 0)
@@ -263,14 +264,15 @@ namespace ClearCanvas.Dicom
                         seriesRecord = GetExistingOrCreateNewSeries(studyRecord.LowerLevelRecord, dicomFile);
 
                     if (seriesRecord.LowerLevelRecord == null)
-                        seriesRecord.LowerLevelRecord = CreateImageItem(dicomFile, _dicomFiles[dicomFile]);
+                        seriesRecord.LowerLevelRecord = CreateImageItem(dicomFile, optionalRelativeRootPath);
                     else
-                        GetExistingOrCreateNewImage(seriesRecord.LowerLevelRecord, dicomFile, _dicomFiles[dicomFile]);
+                        GetExistingOrCreateNewImage(seriesRecord.LowerLevelRecord, dicomFile, optionalRelativeRootPath);
 
                 }
                 catch (Exception ex)
                 {
-					Platform.Log(LogLevel.Error, ex, "Error adding image {0} to directory file", dicomFile.Filename);
+                    Platform.Log(LogLevel.Error, ex, "Error adding image {0} to directory file", dicomFile.Filename);
+                    throw;
                 }
             }
 
@@ -278,7 +280,7 @@ namespace ClearCanvas.Dicom
 
             //Set initial offset of where the directory record sequence tag starts
             // based on the 128 byte preamble, the DICM characters and the tags themselves.
-            _fileOffset = 128 + 4 + _dicomDirFile.MetaInfo.CalculateWriteLength(_dicomDirFile.TransferSyntax, DicomWriteOptions.Default) 
+            _fileOffset = 128 + 4 + _dicomDirFile.MetaInfo.CalculateWriteLength(_dicomDirFile.TransferSyntax, DicomWriteOptions.Default)
                 + _dicomDirFile.DataSet.CalculateWriteLength(_dicomDirFile.TransferSyntax, DicomWriteOptions.Default);
 
             //Add the offset for the Directory Record sequence tag itself
@@ -331,7 +333,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception ex)
             {
-				Platform.Log(LogLevel.Error, ex, "Error saving dicom File {0}", fileName);
+                Platform.Log(LogLevel.Error, ex, "Error saving dicom File {0}", fileName);
             }
         }
 
