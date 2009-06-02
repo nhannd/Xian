@@ -241,7 +241,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_editReportWithoutImagesTool.SetContext(this.Context);
 			_editReportWithoutImagesTool.Initialize();
 
-			if (ReportingSettings.Default.ShouldOpenImages)
+			if (ReportingSettings.Default != null && ReportingSettings.Default.ShouldOpenImages)
 				SetActiveTool(_editReportWithImagesTool);
 			else
 				SetActiveTool(_editReportWithoutImagesTool);
@@ -364,7 +364,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void SetActiveTool(EditReportToolBase tool)
 		{
-			if(_selectedTool == tool)
+			if (_selectedTool == tool)
+				return;
+
+			if (ReportingSettings.Default == null)
 				return;
 
 			_selectedTool = tool;
@@ -378,10 +381,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				this.Context.UnregisterDoubleClickHandler(
 					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImages"); }));
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImagesContext"); }));
 				this.Context.RegisterDoubleClickHandler(
 					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImages"); }));
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImagesContext"); }));
 			}
 			else
 			{
@@ -392,10 +395,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				this.Context.UnregisterDoubleClickHandler(
 					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImages"); }));
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImagesContext"); }));
 				this.Context.RegisterDoubleClickHandler(
 					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImages"); }));
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImagesContext"); }));
 			}
 
 			ReportingSettings.Default.Save();
