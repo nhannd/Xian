@@ -48,9 +48,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	/// <para>
 	/// At this time, the only supported softcopy presentation states are the following:
 	/// </para>
-	/// <list type="unordered">
-	/// <item>PS 3.3 A.33.1 <see cref="DicomGrayscaleSoftcopyPresentationState">Grayscale Softcopy Presentation State</see> (for <see cref="DicomGrayscalePresentationImage"/>)</item>
-	/// <item>PS 3.3 A.33.2 <see cref="DicomColorSoftcopyPresentationState">Color Softcopy Presentation State</see> (for <see cref="DicomColorPresentationImage"/>)</item>
+	/// <list type="table">
+	/// <listheader><dicom>Reference</dicom><pstate><see cref="PresentationState">Presentation State</see> Class</pstate><pimage><see cref="IPresentationImage">Presentation Image</see> Class</pimage></listheader>
+	/// <item><dicom>PS 3.3 A.33.1</dicom><pstate><see cref="DicomGrayscaleSoftcopyPresentationState">Grayscale Softcopy Presentation State</see></pstate><pimage><see cref="DicomGrayscalePresentationImage"/></pimage></item>
+	/// <item><dicom>PS 3.3 A.33.2</dicom><pstate><see cref="DicomColorSoftcopyPresentationState">Color Softcopy Presentation State</see></pstate><pimage><see cref="DicomColorPresentationImage"/></pimage></item>
 	/// </list>
 	/// </remarks>
 	[Cloneable]

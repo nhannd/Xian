@@ -71,11 +71,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return result;
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="Graphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			return RectanglePrimitive.GetClosestPoint(point, this.Rectangle);
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified point is
+		/// contained in the graphic.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool Contains(PointF point)
 		{
 			return this.Rectangle.Contains(point);

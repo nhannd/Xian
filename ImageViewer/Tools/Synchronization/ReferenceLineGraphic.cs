@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			{
 				_line.Pt1 = Point1;
 				_line.Pt2 = Point2;
-				_text.AnchorPoint = Point1;
+				_text.Location = Point1;
 
 				this.ResetCoordinateSystem();
 				return;
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			endPoint = PointF.Subtract(endPoint, textAnchorPointOffset);
 
 			// this aligns the text edge with the client edge in the case where the line intersects the client edge.
-			_text.AnchorPoint = endPoint;
+			_text.Location = endPoint;
 			
 			// offset the line by half again the distance necessary to keep the text box inside the client rectangle.
 			_line.Pt2 = PointF.Subtract(endPoint, textAnchorPointOffset);

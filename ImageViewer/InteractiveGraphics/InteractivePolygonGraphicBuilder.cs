@@ -94,18 +94,29 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _snapRadius = value; }
 		}
 
+		/// <summary>
+		/// Called when the builder is cancelling building the <see cref="InteractiveGraphicBuilder.Graphic"/> due to user cancellation.
+		/// </summary>
 		protected override void OnGraphicCancelled()
 		{
 			base.OnGraphicCancelled();
 			InstallSnapPointGraphic(false);
 		}
 
+		/// <summary>
+		/// Notifies listeners that the builder is done building the <see cref="InteractiveGraphicBuilder.Graphic"/>.
+		/// </summary>
 		protected override void NotifyGraphicComplete()
 		{
 			InstallSnapPointGraphic(false);
 			base.NotifyGraphicComplete();
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Start"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the builder did something as a result of the call, and hence would like to receive capture; False otherwise.</returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			_numberOfPointsAnchored++;
@@ -163,6 +174,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Track"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the builder handled the message; False otherwise.</returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -184,6 +200,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Stop"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the tool should not release capture; False otherwise.</returns>
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			return true;
@@ -272,7 +293,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 						else
 							_location = base.SpatialTransform.ConvertToSource(value);
 
-						_circle.AnchorPoint = this.Location;
+						_circle.Location = this.Location;
 					}
 				}
 			}

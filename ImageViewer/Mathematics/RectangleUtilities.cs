@@ -417,6 +417,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return normalizedRectangle;
 		}
 
+		/// <summary>
+		/// Takes a rectangle whose width and/or height may be negative and converts it to
+		/// an equivalent rectangle whose width and height are guaranteed to be positive
+		/// </summary>
+		/// <param name="rectangle"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Some computations assume non-negative widths and heights. This function may be used in such cases
+		/// to convert the rectangle.
+		/// </remarks>
 		public static Rectangle ConvertToPositiveRectangle(Rectangle rectangle)
 		{
 			RectangleF rect = new RectangleF(rectangle.Location, new SizeF(rectangle.Width, rectangle.Height));
@@ -431,8 +441,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <param name="rectangle"></param>
 		/// <returns></returns>
 		/// <remarks>
-		/// GDI methods always require rectangles with non-negative widths and heights. Use
-		/// this method when making such calls.
+		/// Some computations assume non-negative widths and heights. This function may be used in such cases
+		/// to convert the rectangle.
 		/// </remarks>
 		public static RectangleF ConvertToPositiveRectangle(RectangleF rectangle)
 		{

@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
@@ -77,10 +76,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		#region Private Fields
 
 		[CloneCopyReference]
-		private readonly IList<Window> _windows;
-
-		[CloneCopyReference]
-		private readonly IList<string> _explanations;
+		private readonly IList<VoiWindow> _windows;
 
 		private int _index;
 
@@ -88,10 +84,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		#region Constructors
 
-		protected AutoVoiLutLinear(IList<Window> windows, IList<string> explanations)
+		protected AutoVoiLutLinear(IList<VoiWindow> windows)
 		{
 			_windows = windows;
-			_explanations = explanations;
 			_index = 0;
 		}
 
@@ -147,10 +142,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public override sealed string GetDescription()
 		{
-			if (_explanations == null || _index >= _explanations.Count)
+			if (string.IsNullOrEmpty(_windows[_index].Explanation))
 				return String.Format(SR.FormatDescriptionAutoLinearLutNoExplanation, WindowWidth, WindowCenter);
 			else
-				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, _explanations[_index]);
+				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, _windows[_index].Explanation);
 		}
 
 		public override sealed object CreateMemento()
@@ -172,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 	internal sealed class AutoImageVoiLutLinear : AutoVoiLutLinear
 	{
 		private readonly string _name = "AutoImageVoiLutLinear";
-		private AutoImageVoiLutLinear(IList<Window> windows, IList<string> explanations) : base(windows, explanations) {}
+		private AutoImageVoiLutLinear(IList<VoiWindow> windows) : base(windows) {}
 
 		/// <summary>
 		/// Cloning constructor
@@ -193,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 			IDicomVoiLuts luts = provider.DicomVoiLuts;
 			if (luts.ImageVoiLinearLuts.Count > 0)
-				return new AutoImageVoiLutLinear(luts.ImageVoiLinearLuts, luts.ImageVoiLinearLutExplanations);
+				return new AutoImageVoiLutLinear(luts.ImageVoiLinearLuts);
 			return null;
 		}
 	}
@@ -203,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 	{
 		private readonly string _name = "AutoPresentationVoiLutLinear";
 
-		private AutoPresentationVoiLutLinear(IList<Window> windows, IList<string> explanations) : base(windows, explanations) {}
+		private AutoPresentationVoiLutLinear(IList<VoiWindow> windows) : base(windows) {}
 
 		/// <summary>
 		/// Cloning constructor
@@ -224,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 			IDicomVoiLuts luts = provider.DicomVoiLuts;
 			if (luts.PresentationVoiLinearLuts.Count > 0)
-				return new AutoPresentationVoiLutLinear(luts.PresentationVoiLinearLuts, luts.PresentationVoiLinearLutExplanations);
+				return new AutoPresentationVoiLutLinear(luts.PresentationVoiLinearLuts);
 			return null;
 		}
 	}

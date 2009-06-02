@@ -91,12 +91,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Occurs when the value of <see cref="IPointGraphic.Point"/> changes.
+		/// </summary>
 		public event EventHandler PointChanged
 		{
 			add { _pointChanged += value; }
 			remove { _pointChanged -= value; }
 		}
 
+		/// <summary>
+		/// Gets the tightest bounding box that encloses the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public override RectangleF BoundingBox
 		{
 			get { return new RectangleF(this.Point, SizeF.Empty); }
@@ -112,6 +122,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return FloatComparer.AreEqual(base.SpatialTransform.ConvertToDestination(_point), point);
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="Graphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			return this.Point;

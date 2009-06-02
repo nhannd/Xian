@@ -37,18 +37,19 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	/// <summary>
-	/// 
+	/// A 1-bit bitmap overlay plane <see cref="IGraphic"/>.
 	/// </summary>
 	/// <remarks>
 	/// This implementation does not support overlays embedded in the unused bits of the
 	/// <see cref="DicomTags.PixelData"/> attribute, a retired usage from previous versions
 	/// of the DICOM Standard. 
 	/// </remarks>
-	[Cloneable(true)]
+	[Cloneable]
 	public class OverlayPlaneGraphic : CompositeGraphic, IShutterGraphic
 	{
 		[CloneIgnore]
@@ -166,7 +167,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Cloning constructor.
 		/// </summary>
-		protected OverlayPlaneGraphic() {}
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
+		protected OverlayPlaneGraphic(OverlayPlaneGraphic source, ICloningContext context) : base()
+		{
+			context.CloneFields(source, this);
+		}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
@@ -217,6 +223,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
+		/// <summary>
+		/// Gets the raw overlay pixel data as an 8-bit grayscale pixel data buffer.
+		/// </summary>
 		protected byte[] OverlayPixelData
 		{
 			get { return _overlayGraphic.PixelData.Raw; }
@@ -227,45 +236,69 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _overlayGraphic; }
 		}
 
+		/// <summary>
+		/// Gets the overlay group index in which the overlay was encoded.
+		/// </summary>
 		public int Index
 		{
 			get { return _index; }
 		}
 
+		/// <summary>
+		/// Gets the frame index of this overlay frame within the original overlay data.
+		/// </summary>
 		public int FrameIndex
 		{
 			get { return _frameIndex; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating the source of the overlay plane.
+		/// </summary>
 		public OverlayPlaneSource Source
 		{
 			get { return _source; }
 		}
 
+		/// <summary>
+		/// Gets the label or name of the overlay plane.
+		/// </summary>
 		public string Label
 		{
 			get { return _label; }
 			protected set { _label = value; }
 		}
 
+		/// <summary>
+		/// Gets the description of the overlay plane.
+		/// </summary>
 		public string Description
 		{
 			get { return _description; }
 			protected set { _description = value; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating the type of content represented by the overlay plane.
+		/// </summary>
 		public OverlayType Type
 		{
 			get { return _type; }
 			protected set { _type = value; }
 		}
 
+		/// <summary>
+		/// Gets a value identifying the intended purpose of the overlay.
+		/// </summary>
 		public OverlaySubtype Subtype
 		{
 			get { return _subtype; }
 			protected set { _subtype = value; }
 		}
 
+		/// <summary>
+		/// Gets the location of the top left corner of the overlay relative to the image.
+		/// </summary>
 		public PointF Origin
 		{
 			get { return new PointF(_overlayGraphic.SpatialTransform.TranslationX + 1, _overlayGraphic.SpatialTransform.TranslationY + 1); }
@@ -276,16 +309,32 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
+		/// <summary>
+		/// Gets the number of rows in the overlay plane.
+		/// </summary>
 		public int Rows
 		{
 			get { return _overlayGraphic.Rows; }
 		}
 
+		/// <summary>
+		/// Gets the number of columns in the overlay plane.
+		/// </summary>
 		public int Columns
 		{
 			get { return _overlayGraphic.Columns; }
 		}
 
+		/// <summary>
+		/// Gets or sets the 16-bit grayscale presentation value in which the overlay should be drawn.
+		/// </summary>
+		/// <remarks>
+		/// DICOM overlays are strictly 1-bit images, so each overlay pixels is either present or not.
+		/// The display of present pixels is no longer defined by the data source but is now
+		/// implementation specific. The <see cref="GrayPresentationValue"/> and <see cref="Color"/>
+		/// properties allows this display to be customized by client code. A null value for
+		/// <see cref="Color"/> causes the <see cref="GrayPresentationValue"/> to be used.
+		/// </remarks>
 		public ushort GrayPresentationValue
 		{
 			get { return _grayPresentationValue; }
@@ -301,6 +350,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the presentation color in which the overlay should be drawn.
+		/// </summary>
+		/// <remarks>
+		/// DICOM overlays are strictly 1-bit images, so each overlay pixels is either present or not.
+		/// The display of present pixels is no longer defined by the data source but is now
+		/// implementation specific. The <see cref="GrayPresentationValue"/> and <see cref="Color"/>
+		/// properties allows this display to be customized by client code. A null value for
+		/// <see cref="Color"/> causes the <see cref="GrayPresentationValue"/> to be used.
+		/// </remarks>
 		public Color? Color
 		{
 			get { return _color; }
@@ -314,6 +373,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
+		/// <summary>
+		/// Creates a packed overlay data object from the contents of this overlay plane.
+		/// </summary>
+		/// <param name="bigEndianWords">A value indciating if the packed overlay data should be encoded as 16-bit words with big endian byte ordering.</param>
+		/// <returns>A packed overlay data object.</returns>
 		public OverlayData CreateOverlayData(bool bigEndianWords)
 		{
 			GrayscalePixelData pixelData = _overlayGraphic.PixelData;
@@ -328,12 +392,28 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region IShutterGraphic Members
 
+		/// <summary>
+		/// Gets or sets the 16-bit grayscale presentation value which should replace the shuttered pixels.
+		/// </summary>
+		/// <remarks>
+		/// The display of shuttered pixels is no longer defined by the data source but is now
+		/// implementation specific. The <see cref="IShutterGraphic.PresentationValue"/> and <see cref="IShutterGraphic.PresentationColor"/>
+		/// properties allows this display to be customized by client code.
+		/// </remarks>
 		ushort IShutterGraphic.PresentationValue
 		{
 			get { return this.GrayPresentationValue; }
 			set { this.GrayPresentationValue = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the presentation color which should replace the shuttered pixels.
+		/// </summary>
+		/// <remarks>
+		/// The display of shuttered pixels is no longer defined by the data source but is now
+		/// implementation specific. The <see cref="IShutterGraphic.PresentationValue"/> and <see cref="IShutterGraphic.PresentationColor"/>
+		/// properties allows this display to be customized by client code.
+		/// </remarks>
 		Color IShutterGraphic.PresentationColor
 		{
 			get { return this.Color ?? System.Drawing.Color.Empty; }

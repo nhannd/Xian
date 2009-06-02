@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_arc.CoordinateSystem = CoordinateSystem.Destination;
 
 			// The arc center is the vertex of the protractor
-			_arc.AnchorPoint = this.Points[1];
+			_arc.Location = this.Points[1];
 
 			_arc.InvariantTopLeft = new PointF(-_arcRadius, -_arcRadius);
 			_arc.InvariantBottomRight = new PointF(_arcRadius, _arcRadius);

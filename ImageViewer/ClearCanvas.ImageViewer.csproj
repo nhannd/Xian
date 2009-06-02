@@ -128,6 +128,7 @@
     <Compile Include="Graphics\IPointGraphic.cs" />
     <Compile Include="Graphics\IPointsList.cs" />
     <Compile Include="Graphics\VisualStateChangedEvent.cs" />
+    <Compile Include="Imaging\VoiWindow.cs" />
     <Compile Include="InteractiveGraphics\AnchorPointControlGraphic.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneOverlays.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneShutters.cs" />

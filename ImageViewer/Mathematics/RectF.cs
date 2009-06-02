@@ -55,6 +55,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="RectF"/>.
+		/// </summary>
 		public RectF(RectF rectangle)
 		{
 			_top = rectangle.Top;

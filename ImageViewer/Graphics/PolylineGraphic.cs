@@ -86,6 +86,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_roiClosedOnly = roiClosedOnly;
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected PolylineGraphic(PolylineGraphic source, ICloningContext context)
 			: base()
 		{
@@ -188,6 +193,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return false;
 		}
 
+		/// <summary>
+		/// Gets the tightest bounding box that encloses all the bounding boxes of the child graphics in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <para><see cref="IGraphic.CoordinateSystem"/> determines whether this property is in source or destination coordinates.</para>
+		/// </remarks>
 		public override RectangleF BoundingBox
 		{
 			get
@@ -198,6 +209,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Moves the <see cref="CompositeGraphic"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public override void Move(SizeF delta)
 		{
 			base.Move(delta);
@@ -206,6 +226,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_points[n] += delta;
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="CompositeGraphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// <para>Calling <see cref="CompositeGraphic.GetClosestPoint"/> will recursively call <see cref="CompositeGraphic.GetClosestPoint"/>
+		/// on <see cref="Graphic"/> objects in the subtree and return the closest result.</para>
+		/// </remarks>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			if (_points.Count == 1)
@@ -214,6 +247,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return base.GetClosestPoint(point);
 		}
 
+		/// <summary>
+		/// Creates an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by this <see cref="Graphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// Graphic objects that do not describe a region of interest may return null.
+		/// </remarks>
+		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
 		public override Roi CreateRoi()
 		{
 			if (_points.Count == 2 && !_roiClosedOnly)
@@ -305,12 +345,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			base.NotifyVisualStateChanged("Points");
 		}
 
+		/// <summary>
+		/// Called when the value of the <see cref="Color"/> property changes.
+		/// </summary>
 		protected virtual void OnColorChanged()
 		{
 			foreach (LinePrimitive line in _lines.Graphics)
 				line.Color = _color;
 		}
 
+		/// <summary>
+		/// Called when the value of the <see cref="LineStyle"/> property changes.
+		/// </summary>
 		protected virtual void OnLineStyleChanged()
 		{
 			foreach (LinePrimitive line in _lines.Graphics)

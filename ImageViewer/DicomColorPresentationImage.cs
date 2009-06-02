@@ -60,14 +60,17 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <param name="frame">The <see cref="Frame"/> from which to construct the image.</param>
 		/// <remarks>
-		/// This constructor provides a convenient means of associating an
-		/// <see cref="Frame"/> with a <see cref="ColorPresentationImage"/>.
+		/// This constructor provides a convenient means of associating a <see cref="Frame"/> with a <see cref="ColorPresentationImage"/>.
 		/// </remarks>
 		public DicomColorPresentationImage(Frame frame)
 			: this(frame.CreateTransientReference())
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DicomColorPresentationImage"/>.
+		/// </summary>
+		/// <param name="frameReference">A <see cref="IFrameReference">reference</see> to the frame from which to construct the image.</param>
 		public DicomColorPresentationImage(IFrameReference frameReference)
 			: base(frameReference.Frame.Rows,
 				   frameReference.Frame.Columns,
@@ -155,6 +158,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomSoftcopyPresentationStateProvider Members
 
+		/// <summary>
+		/// Gets or sets the <see cref="DicomSoftcopyPresentationState"/> of the image.
+		/// </summary>
 		public new DicomSoftcopyPresentationState PresentationState
 		{
 			get { return base.PresentationState as DicomSoftcopyPresentationState; }
@@ -165,6 +171,15 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomPresentationImage Members
 
+		/// <summary>
+		/// Gets this presentation image's collection of domain-level graphics.
+		/// </summary>
+		/// <remarks>
+		/// Use <see cref="IDicomPresentationImage.DicomGraphics"/> to add DICOM-defined graphics that you want to
+		/// overlay the image at the domain-level. These graphics are rendered
+		/// before any <see cref="IApplicationGraphicsProvider.ApplicationGraphics"/>
+		/// and before any <see cref="IOverlayGraphicsProvider.OverlayGraphics"/>.
+		/// </remarks>
 		public GraphicCollection DicomGraphics
 		{
 			get { return _dicomGraphics.Graphics; }

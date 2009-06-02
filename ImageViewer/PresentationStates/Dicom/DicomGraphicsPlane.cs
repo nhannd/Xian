@@ -35,6 +35,26 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	/// <summary>
+	/// The composite graphic containing all the DICOM-defined graphics that may be specified in
+	/// a DICOM image header or an accompanying presentation state.
+	/// </summary>
+	/// <remarks>
+	/// <para>This graphic provides explicit support for the following DICOM graphics concepts:</para>
+	/// <list type="table">
+	/// <listheader><dicom>Reference</dicom><description>Module</description></listheader>
+	/// <item><dicom>PS 3.3 C.7.6.11</dicom><description>Display Shutter</description></item>
+	/// <item><dicom>PS 3.3 C.7.6.15</dicom><description>Bitmap Display Shutter</description></item>
+	/// <item><dicom>PS 3.3 C.9.2</dicom><description>Overlay Plane</description></item>
+	/// <item><dicom>PS 3.3 C.11.7</dicom><description>Overlay Activation</description></item>
+	/// <item><dicom>PS 3.3 C.10.7</dicom><description>Graphic Layer</description></item>
+	/// </list>
+	/// <para>Additionally, support for the following DICOM is available by directly using the appropriate class:</para>
+	/// <list type="table">
+	/// <listheader><dicom>Reference</dicom><description>Module</description><class>See</class></listheader>
+	/// <item><dicom>PS 3.3 C.10.5</dicom><description>Graphic Annotation</description><class><see cref="DicomGraphicAnnotation"/></class></item>
+	/// </list>
+	/// </remarks>
 	[Cloneable(true)]
 	public partial class DicomGraphicsPlane : CompositeGraphic
 	{
@@ -53,6 +73,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		[CloneIgnore]
 		private LayerCollection _layers;
 
+		/// <summary>
+		/// Constructs a new instance of a <see cref="DicomGraphicsPlane"/>.
+		/// </summary>
 		public DicomGraphicsPlane()
 		{
 			_imageOverlays = new OverlaysCollection(this);
@@ -132,6 +155,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets a collection of available overlays from the image SOP.
 		/// </summary>
+		/// <remarks>
+		/// The indices of overlays in this collection are restricted to 0-15, representing the 16 available overlay plane groups.
+		/// </remarks>
 		public IDicomGraphicsPlaneOverlays ImageOverlays
 		{
 			get { return _imageOverlays; }
@@ -140,6 +166,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets a collection of available overlays from an associated presentation state SOP, if one exists.
 		/// </summary>
+		/// <remarks>
+		/// The indices of overlays in this collection are restricted to 0-15, representing the 16 available overlay plane groups.
+		/// </remarks>
 		public IDicomGraphicsPlaneOverlays PresentationOverlays
 		{
 			get { return _presentationOverlays; }
@@ -148,6 +177,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets a collection of existing user-created overlays.
 		/// </summary>
+		/// <remarks>
+		/// This collection gives client code a collection to insert any dynamically created overlay planes which may not necessarily
+		/// have an assigned overlay plane group. During DICOM softcopy presentation state serialization, visible overlays in this collection
+		/// will be given priority for serialization, since only 16 overlays can be serialized.
+		/// </remarks>
 		public IDicomGraphicsPlaneOverlays UserOverlays
 		{
 			get { return _userOverlays; }

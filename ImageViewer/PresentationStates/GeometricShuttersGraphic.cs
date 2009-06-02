@@ -38,13 +38,17 @@ using System.Runtime.InteropServices;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
+	/// <summary>
+	/// A display shutter graphic consisting of a combination of a circular, rectangular, and polygonal shutter.
+	/// </summary>
 	[Cloneable]
 	public class GeometricShuttersGraphic : CompositeGraphic, IShutterGraphic
 	{
-		public const string DefaultName = "Geometric Shutters";
+		internal const string DefaultName = "Geometric Shutters";
 
 		private readonly Rectangle _imageRectangle;
 
@@ -65,6 +69,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private Color _fillColor = Color.Black;
 
+		/// <summary>
+		/// Constructs a new <see cref="GeometricShuttersGraphic"/> with the specified dimensions.
+		/// </summary>
+		/// <param name="rows">The number of rows in the display shutter.</param>
+		/// <param name="columns">The number of columns in the display shutter.</param>
 		public GeometricShuttersGraphic(int rows, int columns)
 		{
 			_imageRectangle = new Rectangle(0, 0, columns, rows);
@@ -81,7 +90,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			base.Name = DefaultName;
 		}
 
-		//for cloning; all the underlying graphics are also cloneable.
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected GeometricShuttersGraphic(GeometricShuttersGraphic source, ICloningContext context)
 			: this(source._imageRectangle.Height, source._imageRectangle.Width)
 		{
@@ -105,16 +118,25 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			get { return _customShutters.Count > 0 || _dicomShutters.Count > 0; }
 		}
 
+		/// <summary>
+		/// Gets a readonly collection of the <see cref="GeometricShutter"/>s.
+		/// </summary>
 		public ReadOnlyCollection<GeometricShutter> DicomShutters
 		{
 			get { return _readOnlyDicomShutters; }
 		}
 
+		/// <summary>
+		/// Gets a list of custom display shutters.
+		/// </summary>
 		public ObservableList<GeometricShutter> CustomShutters
 		{
 			get { return _customShutters; }
 		}
 
+		/// <summary>
+		/// Gets or sets the presentation color which should replace the shuttered pixels.
+		/// </summary>
 		public Color FillColor
 		{
 			get { return _fillColor; }
@@ -128,6 +150,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
+		/// <summary>
+		/// Fires the <see cref="Graphic.Drawing"/> event.  Should be called by an <see cref="IRenderer"/>
+		/// for each object just before it is drawn/rendered, hence the reason it is public.
+		/// </summary>
 		public override void OnDrawing()
 		{
 			base.OnDrawing();
@@ -135,6 +161,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			RenderImageGraphic();
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="CompositeGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -233,12 +262,28 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		#region IShutterGraphic Members
 
+		/// <summary>
+		/// Gets or sets the 16-bit grayscale presentation value which should replace the shuttered pixels.
+		/// </summary>
+		/// <remarks>
+		/// The display of shuttered pixels is no longer defined by the data source but is now
+		/// implementation specific. The <see cref="IShutterGraphic.PresentationValue"/> and <see cref="IShutterGraphic.PresentationColor"/>
+		/// properties allows this display to be customized by client code.
+		/// </remarks>
 		ushort IShutterGraphic.PresentationValue
 		{
 			get { return 0; }
 			set { }
 		}
 
+		/// <summary>
+		/// Gets or sets the presentation color which should replace the shuttered pixels.
+		/// </summary>
+		/// <remarks>
+		/// The display of shuttered pixels is no longer defined by the data source but is now
+		/// implementation specific. The <see cref="IShutterGraphic.PresentationValue"/> and <see cref="IShutterGraphic.PresentationColor"/>
+		/// properties allows this display to be customized by client code.
+		/// </remarks>
 		Color IShutterGraphic.PresentationColor
 		{
 			get { return this.FillColor; }

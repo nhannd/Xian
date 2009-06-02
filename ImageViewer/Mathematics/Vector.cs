@@ -130,11 +130,17 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Point(x, y);
 		}
 
+		/// <summary>
+		/// Computes the unit vector of the vector from the origin towards the specified <paramref name="vector">point</paramref>.
+		/// </summary>
 		public static SizeF UnitVector(PointF vector)
 		{
 			return UnitVector(PointF.Empty, vector);
 		}
 
+		/// <summary>
+		/// Computes the unit vector of the vector from <paramref name="origin"/> towards the specified <paramref name="vector">point</paramref>.
+		/// </summary>
 		public static SizeF UnitVector(PointF origin, PointF vector)
 		{
 			if (FloatComparer.AreEqual(origin, vector))

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -14,6 +15,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// Gets the overlay plane at a specific index.
 		/// </summary>
 		/// <param name="index">The index of the overlay plane.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		OverlayPlaneGraphic this[int index] { get; }
 
 		/// <summary>
@@ -26,6 +28,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		/// <param name="overlay">The overlay plane to activate. This overlay must be part of the collection.</param>
 		/// <param name="layerId">The ID of the layer on which to activate the overlay plane.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		void ActivateAsLayer(OverlayPlaneGraphic overlay, string layerId);
 
 		/// <summary>
@@ -33,42 +37,53 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		/// <param name="index">The index of the overlay plane to activate.</param>
 		/// <param name="layerId">The ID of the layer on which to activate the overlay plane.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		void ActivateAsLayer(int index, string layerId);
 
 		/// <summary>
 		/// Activates the specified overlay plane as a bitmap display shutter.
 		/// </summary>
 		/// <param name="overlay">The overlay plane to activate. This overlay must be part of the collection.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		void ActivateAsShutter(OverlayPlaneGraphic overlay);
 
 		/// <summary>
 		/// Activates the specified overlay plane as a bitmap display shutter.
 		/// </summary>
 		/// <param name="index">The index of the overlay plane to activate.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		void ActivateAsShutter(int index);
 
 		/// <summary>
 		/// Deactivates the specified overlay plane.
 		/// </summary>
 		/// <param name="overlay">The overlay plane to activate. This overlay must be part of the collection.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		void Deactivate(OverlayPlaneGraphic overlay);
 
 		/// <summary>
 		/// Deactivates the specified overlay plane.
 		/// </summary>
 		/// <param name="index">The index of the overlay plane to activate.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		void Deactivate(int index);
 
 		/// <summary>
 		/// Adds the specified overlay plane to the collection.
 		/// </summary>
-		/// <param name="overlay">The overlay plane to add to the collection. This overlay must not be a part of any other collection.</param>
+		/// <param name="overlay">The overlay plane to add to the collection. This overlay must not be a part of any other <see cref="IDicomGraphicsPlaneOverlays"/> collection.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is part of another <see cref="IDicomGraphicsPlaneOverlays"/> collection.</exception>
 		void Add(OverlayPlaneGraphic overlay);
 
 		/// <summary>
 		/// Removes the specified overlay plane from the collection.
 		/// </summary>
 		/// <param name="overlay">The overlay plane to remove from the collection. This overlay must be part of the collection.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		void Remove(OverlayPlaneGraphic overlay);
 
 		/// <summary>
@@ -83,6 +98,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		/// <param name="overlay">The overlay plane to check for.</param>
 		/// <returns>True if the specified overlay plane is part of the collection; False otherwise.</returns>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
 		bool Contains(OverlayPlaneGraphic overlay);
 
 		/// <summary>
@@ -95,6 +111,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		/// <param name="overlay">The overlay plane to check for.</param>
 		/// <returns>True if the specified overlay plane is activated as a bitmap display shutter; False otherwise.</returns>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		bool IsShutter(OverlayPlaneGraphic overlay);
 
 		/// <summary>
@@ -102,6 +120,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		/// <param name="overlay">The overlay plane to check for.</param>
 		/// <returns>True if the specified overlay plane is activated on a layer; False otherwise.</returns>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		bool IsLayer(OverlayPlaneGraphic overlay);
 
 		/// <summary>
@@ -109,6 +129,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		/// <param name="overlay">The overlay plane to check for.</param>
 		/// <returns>The layer ID of the overlay plane to check for.</returns>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="overlay"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="overlay"/> is not part of the collection.</exception>
 		string GetLayer(OverlayPlaneGraphic overlay);
 	}
 
@@ -237,7 +259,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public bool Contains(int index)
 			{
-				Platform.CheckArgumentRange(index, 0, 15, "index");
+				if (index < 0 || index > 15)
+					return false;
 				return _overlays[index] != null;
 			}
 

@@ -5,7 +5,7 @@ using ClearCanvas.ImageViewer;
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
 	/// <summary>
-	/// Interface for <see cref="IPresentationImage"/>s that support a <see cref="PresentationStates.PresentationState"/>.
+	/// Defines a property to get or set the <see cref="PresentationStates.PresentationState"/> of an <see cref="IPresentationImage"/>.
 	/// </summary>
 	public interface IPresentationStateProvider
 	{

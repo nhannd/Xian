@@ -43,7 +43,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	/// <summary>
-	/// A <see cref="IGraphic"/> whose contents represent those of a DICOM Graphic Annotation Sequence.
+	/// A <see cref="IGraphic"/> whose contents represent those of a DICOM Graphic Annotation Sequence (PS 3.3 C.10.5).
 	/// </summary>
 	[Cloneable]
 	[DicomSerializableGraphicAnnotation(typeof (DicomGraphicAnnotationSerializer))]
@@ -137,6 +137,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			context.CloneFields(source, this);
 		}
 
+		/// <summary>
+		/// Gets the layer ID to which this graphic annotation belongs.
+		/// </summary>
 		public string LayerId
 		{
 			get { return _layerId; }

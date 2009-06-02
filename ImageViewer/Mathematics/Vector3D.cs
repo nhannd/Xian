@@ -51,8 +51,19 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static readonly Vector3D Null = new Vector3D(0F, 0F, 0F);
 
+		/// <summary>
+		/// Represents the unit vector in the direction of the positive X axis.
+		/// </summary>
 		public static readonly Vector3D xUnit = new Vector3D(1F, 0F, 0F);
+
+		/// <summary>
+		/// Represents the unit vector in the direction of the positive Y axis.
+		/// </summary>
 		public static readonly Vector3D yUnit = new Vector3D(0F, 1F, 0F);
+
+		/// <summary>
+		/// Represents the unit vector in the direction of the positive Z axis.
+		/// </summary>
 		public static readonly Vector3D zUnit = new Vector3D(0F, 0F, 1F);
 
 		/// <summary>
@@ -146,6 +157,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Vector3D(x, y, z);
 		}
 
+		/// <summary>
+		/// Determines whether or not this vector is parallel to <paramref name="other"/> within a certain <paramref name="angleTolerance"/>.
+		/// </summary>
 		public bool IsParallel(Vector3D other, float angleTolerance)
 		{
 			angleTolerance = Math.Abs(angleTolerance);
@@ -166,6 +180,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return parallel;
 		}
 
+		/// <summary>
+		/// Determines whether or not this vector is orthogonal to <paramref name="other"/> within a certain <paramref name="angleTolerance"/>.
+		/// </summary>
 		public bool IsOrthogonal(Vector3D other, float angleTolerance)
 		{
 			angleTolerance = Math.Abs(angleTolerance);
@@ -177,6 +194,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
 		}
 
+		/// <summary>
+		/// Gets the angle between this vector and <paramref name="other"/> in radians.
+		/// </summary>
 		public float GetAngleBetween(Vector3D other)
 		{
 			Vector3D normal1 = this.Normalize();

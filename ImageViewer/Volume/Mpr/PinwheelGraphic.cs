@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public PointF RotationAnchor
 		{
-			get { return _ellipse.AnchorPoint; }	
+			get { return _ellipse.Location; }	
 		}
 
 		public override void OnDrawing()
@@ -115,15 +115,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			
 			base.ResetCoordinateSystem();
 
-			_line1.AnchorPoint = this.Anchor;
+			_line1.Location = this.Anchor;
 			_line1.InvariantTopLeft = new PointF(-7, 0);
 			_line1.InvariantBottomRight = new PointF(20, 0);
 
-			_line2.AnchorPoint = this.Anchor;
+			_line2.Location = this.Anchor;
 			_line2.InvariantTopLeft = new PointF(0, -7);
 			_line2.InvariantBottomRight = new PointF(0, 7);
 
-			_ellipse.AnchorPoint = _line1.BottomRight;
+			_ellipse.Location = _line1.BottomRight;
 			_ellipse.InvariantTopLeft = new PointF(-3, -3);
 			_ellipse.InvariantBottomRight = new PointF(3, 3);
 

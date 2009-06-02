@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers
 {
-	public class RectangleGraphicAnnotationSerializer : GraphicAnnotationSerializer<IBoundableGraphic>
+	internal class RectangleGraphicAnnotationSerializer : GraphicAnnotationSerializer<IBoundableGraphic>
 	{
 		protected override void Serialize(IBoundableGraphic graphic, GraphicAnnotationSequenceItem serializationState)
 		{

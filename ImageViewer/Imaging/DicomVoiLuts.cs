@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
@@ -38,25 +36,60 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IDicomVoiLutsProvider {
+	/// <summary>
+	/// Defines a property to get a collection of DICOM-defined VOI LUTs from the image header and/or any associated presentation state.
+	/// </summary>
+	public interface IDicomVoiLutsProvider
+	{
+		/// <summary>
+		/// Gets a collection of DICOM-defined VOI LUTs from the image header and/or any associated presentation state.
+		/// </summary>
 		IDicomVoiLuts DicomVoiLuts { get; }
 	}
 
+	/// <summary>
+	/// Defines properties to get the various DICOM-defined VOI LUTs from the image header and/or any associated presentation state.
+	/// </summary>
 	public interface IDicomVoiLuts
 	{
-		IList<Window> ImageVoiLinearLuts { get; }
-		IList<string> ImageVoiLinearLutExplanations { get; }
+		/// <summary>
+		/// Gets a list of linear VOI LUTs (i.e. value windows) defined in the image header.
+		/// </summary>
+		IList<VoiWindow> ImageVoiLinearLuts { get; }
+
+		/// <summary>
+		/// Gets a list of data VOI LUTs defined in the image header.
+		/// </summary>
 		IList<VoiDataLut> ImageVoiDataLuts { get; }
+
+		/// <summary>
+		/// Gets the SOP instance UID of the image.
+		/// </summary>
 		string ImageSopInstanceUid { get; }
+
+		/// <summary>
+		/// Gets the frame number of the frame associated with the image.
+		/// </summary>
 		int ImageSopFrameNumber { get; }
 
-		IList<Window> PresentationVoiLinearLuts { get; }
-		IList<string> PresentationVoiLinearLutExplanations { get; }
+		/// <summary>
+		/// Gets a list of linear VOI LUTs (i.e. value windows) defined in the presentation state.
+		/// </summary>
+		IList<VoiWindow> PresentationVoiLinearLuts { get; }
+
+		/// <summary>
+		/// Gets a list of data VOI LUTs defined in the presentation state.
+		/// </summary>
 		IList<VoiDataLut> PresentationVoiDataLuts { get; }
+
+		/// <summary>
+		/// Gets the SOP instance UID of the presentation state.
+		/// </summary>
 		string PresentationStateSopInstanceUid { get; }
 	}
 
-	internal sealed class DicomVoiLuts : IDicomVoiLuts {
+	internal sealed class DicomVoiLuts : IDicomVoiLuts
+	{
 		private readonly IImageSopProvider _image;
 
 		internal DicomVoiLuts(IImageSopProvider image)
@@ -67,10 +100,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Presentation Luts
 
 		[CloneIgnore]
-		private readonly List<Window> _presentationVoiLinearLuts = new List<Window>();
-
-		[CloneIgnore]
-		private readonly List<string> _presentationVoiLinearLutExplanations = new List<string>();
+		private readonly List<VoiWindow> _presentationVoiLinearLuts = new List<VoiWindow>();
 
 		[CloneIgnore]
 		private readonly List<VoiDataLut> _presentationVoiDataLuts = new List<VoiDataLut>();
@@ -83,17 +113,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _sourcePresentationSopUid; }
 		}
 
-		public IList<Window> PresentationVoiLinearLuts
+		public IList<VoiWindow> PresentationVoiLinearLuts
 		{
 			get { return _presentationVoiLinearLuts.AsReadOnly(); }
 		}
 
-		public IList<string> PresentationVoiLinearLutExplanations
+		public IList<VoiDataLut> PresentationVoiDataLuts
 		{
-			get { return _presentationVoiLinearLutExplanations.AsReadOnly(); }
-		}
-
-		public IList<VoiDataLut> PresentationVoiDataLuts {
 			get { return _presentationVoiDataLuts.AsReadOnly(); }
 		}
 
@@ -101,14 +127,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			_sourcePresentationSopUid = sourceSopUid;
 			_presentationVoiLinearLuts.Clear();
-			_presentationVoiLinearLutExplanations.Clear();
 			_presentationVoiDataLuts.Clear();
 		}
 
 		internal void AddPresentationLinearLut(double width, double center, string explanation)
 		{
-			_presentationVoiLinearLuts.Add(new Window(width, center));
-			_presentationVoiLinearLutExplanations.Add(explanation);
+			_presentationVoiLinearLuts.Add(new VoiWindow(width, center, explanation));
 		}
 
 		internal void AddPresentationDataLut(VoiDataLut dataLut)
@@ -130,27 +154,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _image.Frame.FrameNumber; }
 		}
 
-		public IList<Window> ImageVoiLinearLuts {
-			get
-			{
-				Window[] windows = _image.Frame.WindowCenterAndWidth;
-				if (windows == null || windows.Length == 0)
-					return new List<Window>().AsReadOnly();
-				return new List<Window>(windows).AsReadOnly();
-			}
+		public IList<VoiWindow> ImageVoiLinearLuts
+		{
+			get { return new List<VoiWindow>(VoiWindow.GetWindows(_image.ImageSop.DataSource)).AsReadOnly(); }
 		}
 
-		public IList<string> ImageVoiLinearLutExplanations {
-			get
-			{
-				string[] explanations = _image.Frame.WindowCenterAndWidthExplanation;
-				if (explanations == null || explanations.Length == 0)
-					return new List<string>().AsReadOnly();
-				return new List<string>(explanations).AsReadOnly();
-			}
-		}
-
-		public IList<VoiDataLut> ImageVoiDataLuts {
+		public IList<VoiDataLut> ImageVoiDataLuts
+		{
 			get { return _image.ImageSop.VoiDataLuts; }
 		}
 

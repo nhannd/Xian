@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return wn;
 		}
 
-		/// <summary>Used by <see cref="CountWindings"/>.</summary>
+		/// <summary>Used by <see cref="CountWindings(PointF,PointF*,int)"/>.</summary>
 		/// <remarks>
 		/// Algorithm as given on <a href="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm">http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm</a>.
 		/// </remarks>

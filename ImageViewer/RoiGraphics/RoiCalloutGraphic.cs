@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			try
 			{
 				EditBox editBox = new EditBox(parent.Name ?? string.Empty);
-				editBox.Location = Point.Round(base.TextGraphic.AnchorPoint);
+				editBox.Location = Point.Round(base.TextGraphic.Location);
 				editBox.Size = Size.Round(base.TextGraphic.BoundingBox.Size);
 				editBox.FontName = base.TextGraphic.Font;
 				editBox.FontSize = base.TextGraphic.SizeInPoints;

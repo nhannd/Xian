@@ -105,6 +105,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return EllipsePrimitive.IntersectEllipseAndLine(a, b, center, point);
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether the specified point is
+		/// contained in the graphic.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool Contains(PointF point)
 		{
 			//TODO: duplicated from EllipsePrimitive - should combine.

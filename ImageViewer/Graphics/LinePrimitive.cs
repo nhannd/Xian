@@ -133,6 +133,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the tightest bounding box that encloses the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
 		public override RectangleF BoundingBox
 		{
 			get { return RectangleUtilities.ComputeBoundingRectangle(this.Pt1, this.Pt2); }
@@ -185,6 +192,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 				return false;
 		}
 
+		/// <summary>
+		/// Gets the point on the <see cref="Graphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
 		public override PointF GetClosestPoint(PointF point)
 		{
 			PointF result = PointF.Empty;

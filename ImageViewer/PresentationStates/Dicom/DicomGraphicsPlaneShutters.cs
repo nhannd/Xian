@@ -43,16 +43,56 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	/// </summary>
 	public interface IDicomGraphicsPlaneShutters : IList<IShutterGraphic>
 	{
+		/// <summary>
+		/// Activates the specified display shutter graphic.
+		/// </summary>
+		/// <param name="shutter">The display shutter to activate. This shutter must be a part of the collection.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="shutter"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="shutter"/> is not part of the collection.</exception>
 		void Activate(IShutterGraphic shutter);
+
+		/// <summary>
+		/// Activates the specified display shutter graphic.
+		/// </summary>
+		/// <param name="index">The index of the display shutter to activate.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		void Activate(int index);
+
+		/// <summary>
+		/// Activates the first display shutter graphic in the collection.
+		/// </summary>
 		void ActivateFirst();
 
+		/// <summary>
+		/// Deactivates the specified display shutter graphic.
+		/// </summary>
+		/// <param name="shutter">The display shutter to deactivate. This shutter must be a part of the collection.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="shutter"/> is null.</exception>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="shutter"/> is not part of the collection.</exception>
 		void Deactivate(IShutterGraphic shutter);
+
+		/// <summary>
+		/// Deactivates the specified display shutter graphic.
+		/// </summary>
+		/// <param name="index">The index of the display shutter to deactivate.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		void Deactivate(int index);
+
+		/// <summary>
+		/// Deactivates any and all active display shutter graphics.
+		/// </summary>
 		void DeactivateAll();
 
+		/// <summary>
+		/// Gets the currently activate display shutter graphic.
+		/// </summary>
 		IShutterGraphic ActiveShutter { get; }
 
+		/// <summary>
+		/// Gets the display shutter graphic at the specified index.
+		/// </summary>
+		/// <param name="index">The index of the display shutter to deactivate.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
 		new IShutterGraphic this[int index] { get; }
 
 		/// <summary>

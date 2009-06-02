@@ -113,6 +113,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Reset();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected AdjustableDataLut(AdjustableDataLut source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
@@ -297,11 +302,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return String.Format(SR.FormatAdjustableDataLutDescription, _dataLut.GetDescription(), ContrastPercent, BrightnessPercent);
 		}
 
+		/// <summary>
+		/// Returns null.
+		/// </summary>
+		/// <remarks>
+		/// Override this member only when necessary.  If this method is overridden, <see cref="ComposableLut.SetMemento"/> must also be overridden.
+		///  </remarks>
+		/// <returns>null, unless overridden.</returns>
 		public override object CreateMemento()
 		{
 			return new Memento(_dataLut.CreateMemento(), _linearLut.CreateMemento());
 		}
 
+		/// <summary>
+		/// Does nothing unless overridden.
+		/// </summary>
+		/// <remarks>
+		/// If you override <see cref="ComposableLut.CreateMemento"/> to capture the Lut's state, you must also override this method
+		/// to allow the state to be restored.
+		/// </remarks>
+		/// <param name="memento">The memento object from which to restore the Lut's state.</param>
+		/// <exception cref="InvalidOperationException">Thrown if <paramref name="memento"/> is <B>not</B> null, 
+		/// which would indicate that <see cref="ComposableLut.CreateMemento"/> has been overridden, but <see cref="ComposableLut.SetMemento"/> has not.</exception>
 		public override void SetMemento(object memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");
@@ -318,6 +340,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Overrides
 
+		/// <summary>
+		/// Fires the <see cref="ComposableLut.LutChanged"/> event.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors should call this method when any property of the Lut has changed.
+		/// </remarks>
 		protected override void OnLutChanged()
 		{
 			// when something changes, wipe the cached lut array

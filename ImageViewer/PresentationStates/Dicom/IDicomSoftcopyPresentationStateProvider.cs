@@ -31,8 +31,14 @@
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	/// <summary>
+	/// Defines a property to get or set the <see cref="DicomSoftcopyPresentationState"/> of an <see cref="IDicomPresentationImage"/>.
+	/// </summary>
 	public interface IDicomSoftcopyPresentationStateProvider : IPresentationStateProvider
 	{
+		/// <summary>
+		/// Gets or sets the <see cref="DicomSoftcopyPresentationState"/> of the image.
+		/// </summary>
 		new DicomSoftcopyPresentationState PresentationState { get; set; }
 	}
 }
