@@ -255,7 +255,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				client.Reindex();
 				client.Close();
 
-				AuditHelper.LogImportStudies("Reindex", new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
+				AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
 
 				this.ReindexEnabled = false;
 			}

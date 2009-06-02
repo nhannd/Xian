@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				}
 				finally
 				{
-					AuditHelper.LogExportStudies("Export Images", exportedInstances, EventSource.CurrentUser, result);
+					AuditHelper.LogExportStudies(exportedInstances, EventSource.CurrentUser, result);
 					_imagesToDispose.ForEach(delegate(IPresentationImage image) { image.Dispose(); });
 				}
 			}

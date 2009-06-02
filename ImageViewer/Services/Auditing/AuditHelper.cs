@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 					_auditingEnabled = value;
 
 					SecurityAlertEventTypeCodeEnum type = _auditingEnabled ? SecurityAlertEventTypeCodeEnum.AuditRecordingStarted : SecurityAlertEventTypeCodeEnum.AuditRecordingStopped;
-					Log(_auditingEnabled ? "Auditing ON" : "Auditing OFF", new SecurityAlertAuditHelper(EventSource.CurrentUser, EventResult.Success, type));
+					Log(new SecurityAlertAuditHelper(EventSource.CurrentUser, EventResult.Success, type));
 				}
 			}
 		}
@@ -73,45 +73,42 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <summary>
 		/// Logs an event to the audit log using the format as described in DICOM Supplement 95.
 		/// </summary>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="message">The audit message to log.</param>
-		public static void Log(string operation, DicomAuditHelper message)
+		public static void Log(DicomAuditHelper message)
 		{
 			if (_auditingEnabled && _log == null)
 			{
 				AuditSinkExtensionPoint xp = new AuditSinkExtensionPoint();
 				_auditingEnabled = xp.ListExtensions().Length > 0;
 				if (_auditingEnabled)
-					_log = new AuditLog("ImageViewer", string.Empty);
+					_log = new AuditLog("ImageViewer", "DICOM");
 				else 
 					Platform.Log(LogLevel.Warn, "No audit sink extensions found - Auditing will be disabled for the remainder of the session.");
 			}
 
 			if (_auditingEnabled)
-				_log.WriteEntry(operation ?? string.Empty, message.Serialize(false));
+				_log.WriteEntry(message.Operation, message.Serialize(false));
 		}
 
 		/// <summary>
 		/// Generates a "User Authentication" login event in the audit log, according to DICOM Supplement 95,
 		/// and a "Security Alert" event if the operation failed.
 		/// </summary>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="username">The username or asserted username of the account that was logged in.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogLogin(string operation, string username, EventResult eventResult)
+		public static void LogLogin(string username, EventResult eventResult)
 		{
-			LogLogin(operation, username, null, eventResult);
+			LogLogin(username, null, eventResult);
 		}
 
 		/// <summary>
 		/// Generates a "User Authentication" login event in the audit log, according to DICOM Supplement 95,
 		/// and a "Security Alert" event if the operation failed.
 		/// </summary>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="username">The username or asserted username of the account that was logged in.</param>
 		/// <param name="authenticationServer">The authentication server against which the operation was performed.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogLogin(string operation, string username, EventSource authenticationServer, EventResult eventResult)
+		public static void LogLogin(string username, EventSource authenticationServer, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -123,14 +120,14 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				if (authenticationServer != null)
 					auditHelper.AddNode(authenticationServer);
 
-				Log(operation, auditHelper);
+				Log(auditHelper);
 
 				if (eventResult != EventResult.Success)
 				{
 					SecurityAlertAuditHelper alertAuditHelper = new SecurityAlertAuditHelper(EventSource.CurrentProcess, eventResult, SecurityAlertEventTypeCodeEnum.NodeAuthentication);
 					alertAuditHelper.AddReportingUser(EventSource.CurrentProcess);
 					alertAuditHelper.AddActiveParticipant(new AuditPersonActiveParticipant(username, string.Empty, username));
-					Log(operation, alertAuditHelper);
+					Log(alertAuditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -142,22 +139,20 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <summary>
 		/// Generates a "User Authentication" logout event in the audit log, according to DICOM Supplement 95.
 		/// </summary>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="username">The username or asserted username of the account that was logged out.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogLogout(string operation, string username, EventResult eventResult)
+		public static void LogLogout(string username, EventResult eventResult)
 		{
-			LogLogout(operation, username, null, eventResult);
+			LogLogout(username, null, eventResult);
 		}
 
 		/// <summary>
 		/// Generates a "User Authentication" logout event in the audit log, according to DICOM Supplement 95.
 		/// </summary>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="username">The username or asserted username of the account that was logged out.</param>
 		/// <param name="authenticationServer">The authentication server against which the operation was performed.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogLogout(string operation, string username, EventSource authenticationServer, EventResult eventResult)
+		public static void LogLogout(string username, EventSource authenticationServer, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -169,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				if (authenticationServer != null)
 					auditHelper.AddNode(authenticationServer);
 
-				Log(operation, auditHelper);
+				Log(auditHelper);
 			}
 			catch (Exception ex)
 			{
@@ -180,13 +175,12 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <summary>
 		/// Generates a "Query" event in the audit log, according to DICOM Supplement 95.
 		/// </summary>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitle">The application entity on which the query is taking place.</param>
 		/// <param name="hostname">The hostname of the application entity on which the query is taking place.</param>
 		/// <param name="instances">The studies that were opened.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogQueryStudies(string operation, string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogQueryStudies(string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -201,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 					auditHelper.AddPatientParticipantObject(patient);
 				foreach (AuditStudyParticipantObject study in instances.EnumerateStudies())
 					auditHelper.AddStudyParticipantObject(study);
-				Log(operation, auditHelper);
+				Log(auditHelper);
 			}
 			catch (Exception ex)
 			{
@@ -215,12 +209,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitles">The application entities from which the instances were accessed.</param>
 		/// <param name="instances">The studies that were opened.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogOpenStudies(string operation, IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogOpenStudies(IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -237,7 +230,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 					auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -252,12 +245,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitles">The application entities from which the instances were accessed.</param>
 		/// <param name="instances">The studies that were opened.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogCreateInstances(string operation, IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogCreateInstances(IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -274,7 +266,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 					auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -289,12 +281,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitles">The application entities from which the instances were accessed.</param>
 		/// <param name="instances">The studies that were opened.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogUpdateInstances(string operation, IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogUpdateInstances(IEnumerable<string> aeTitles, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -311,7 +302,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 					auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -326,13 +317,12 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitle">The application entity to which the transfer was started.</param>
 		/// <param name="hostname">The hostname of the application entity to which the transfer was started.</param>
 		/// <param name="instances">The studies that were queued for transfer.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogBeginSendInstances(string operation, string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogBeginSendInstances(string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -345,7 +335,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 						LocalAETitle, LocalHostname, aeTitle ?? LocalAETitle, hostname ?? LocalHostname, patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -360,13 +350,12 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitle">The application entity to which the transfer was completed.</param>
 		/// <param name="hostname">The hostname of the application entity to which the transfer was completed.</param>
 		/// <param name="instances">The studies that were transferred.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogSentInstances(string operation, string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogSentInstances(string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -379,7 +368,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 						LocalAETitle, LocalHostname, aeTitle ?? LocalAETitle, hostname ?? LocalHostname);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -394,13 +383,12 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitle">The application entity from which the transfer was started.</param>
 		/// <param name="hostname">The hostname of the application entity from which the transfer was started.</param>
 		/// <param name="instances">The studies that were requested for transfer.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogBeginReceiveInstances(string operation, string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogBeginReceiveInstances(string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -413,7 +401,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 						aeTitle ?? LocalAETitle, hostname ?? LocalHostname, LocalAETitle, LocalHostname, patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -428,13 +416,13 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitle">The application entity from which the transfer was completed.</param>
 		/// <param name="hostname">The hostname of the application entity from which the transfer was completed.</param>
 		/// <param name="instances">The studies that were transferred.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogReceivedInstances(string operation, string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult, EventReceiptAction action)
+		/// <param name="action">The action taken on the studies that were transferred.</param>
+		public static void LogReceivedInstances(string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult, EventReceiptAction action)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -447,7 +435,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 						aeTitle ?? LocalAETitle, hostname ?? LocalHostname, LocalAETitle, LocalHostname);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -462,11 +450,10 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// One audit event is generated for each file system volume from which data is imported.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="instances">The files that were imported.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogImportStudies(string operation, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogImportStudies(AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -483,7 +470,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 						auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies())
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -498,11 +485,10 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// One audit event is generated for each file system volume to which data is exported.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="instances">The files that were exported.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogExportStudies(string operation, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogExportStudies(AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -519,7 +505,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 						auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies())
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)
@@ -534,12 +520,11 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		/// <remarks>
 		/// This method automatically separates different patients into separately logged events, as required by DICOM.
 		/// </remarks>
-		/// <param name="operation">A description of the operation.</param>
 		/// <param name="aeTitle">The application entity from which the instances were deleted.</param>
 		/// <param name="instances">The studies that were deleted.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogDeleteStudies(string operation, string aeTitle, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogDeleteStudies(string aeTitle, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -554,7 +539,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 					auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
-					Log(operation, auditHelper);
+					Log(auditHelper);
 				}
 			}
 			catch (Exception ex)

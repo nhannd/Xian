@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					}
 					finally
 					{
-						AuditHelper.LogUpdateInstances("Create Key Images", new string[] {pair.Key.AETitle}, updatedInstances, EventSource.CurrentUser, result);
+						AuditHelper.LogUpdateInstances(new string[] {pair.Key.AETitle}, updatedInstances, EventSource.CurrentUser, result);
 					}
 				}
 			}

@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Services
 				client.Import(request);
 				client.Close();
 
-				AuditHelper.LogImportStudies("Publish Instances", new AuditedInstances(true, tempFileDirectory), EventSource.CurrentProcess, EventResult.Success);
+				AuditHelper.LogImportStudies(new AuditedInstances(true, tempFileDirectory), EventSource.CurrentProcess, EventResult.Success);
 			}
 			catch (Exception e)
 			{

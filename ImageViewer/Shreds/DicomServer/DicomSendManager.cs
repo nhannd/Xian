@@ -227,15 +227,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						else
 							failedInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
 					}
-					AuditHelper.LogSentInstances("Send", this.RemoteAE, this.RemoteHost, sentInstances, EventSource.CurrentProcess, EventResult.Success);
-					AuditHelper.LogSentInstances("Send", this.RemoteAE, this.RemoteHost, failedInstances, EventSource.CurrentProcess, EventResult.MinorFailure);
+					AuditHelper.LogSentInstances(this.RemoteAE, this.RemoteHost, sentInstances, EventSource.CurrentProcess, EventResult.Success);
+					AuditHelper.LogSentInstances(this.RemoteAE, this.RemoteHost, failedInstances, EventSource.CurrentProcess, EventResult.MinorFailure);
 				}
 				else
 				{
 					AuditedInstances sentInstances = new AuditedInstances();
 					foreach (StorageInstance instance in this.StorageInstances)
 						sentInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
-					AuditHelper.LogSentInstances("Send", this.RemoteAE, this.RemoteHost, sentInstances, EventSource.CurrentProcess, EventResult.MajorFailure);
+					AuditHelper.LogSentInstances(this.RemoteAE, this.RemoteHost, sentInstances, EventSource.CurrentProcess, EventResult.MajorFailure);
 				}
 			}
 

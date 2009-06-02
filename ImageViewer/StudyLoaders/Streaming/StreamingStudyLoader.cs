@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			} 
 			finally 
 			{
-				AuditHelper.LogOpenStudies("Load Studies", new string[] { ae.AETitle }, loadedInstances, EventSource.CurrentUser, result);
+				AuditHelper.LogOpenStudies(new string[] { ae.AETitle }, loadedInstances, EventSource.CurrentUser, result);
 			}
 		}
 

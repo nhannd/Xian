@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					AuditedInstances requestedInstances = new AuditedInstances();
 					foreach (StudyInformation study in kvp.Value)
 						requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
-					AuditHelper.LogBeginReceiveInstances("Retrieve Studies", kvp.Key.AETitle, kvp.Key.Host, requestedInstances, EventSource.CurrentUser, result);
+					AuditHelper.LogBeginReceiveInstances(kvp.Key.AETitle, kvp.Key.Host, requestedInstances, EventSource.CurrentUser, result);
 				}
 			}
 		}

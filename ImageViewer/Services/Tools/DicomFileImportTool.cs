@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				client.Import(request);
 				client.Close();
 
-				AuditHelper.LogImportStudies("Import", new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
+				AuditHelper.LogImportStudies(new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
 
 				LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
 			}

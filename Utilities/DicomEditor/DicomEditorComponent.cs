@@ -266,7 +266,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                 _dirtyFlags[i] = false;
             }
 
-			AuditHelper.LogUpdateInstances("Modified by Dicom Editor", new string[0], modifiedInstances, EventSource.CurrentUser, EventResult.Success);
+			AuditHelper.LogUpdateInstances(new string[0], modifiedInstances, EventSource.CurrentUser, EventResult.Success);
         }
 
         public bool TagExists(uint tag)

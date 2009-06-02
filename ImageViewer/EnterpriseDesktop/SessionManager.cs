@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 					Session.Create(userName, response.DisplayName, response.AuthorityTokens, response.SessionToken);
 					Thread.CurrentPrincipal = Session.Current.Principal;
 
-						AuditHelper.LogLogin("Login", userName, EventResult.Success);
+						AuditHelper.LogLogin(userName, EventResult.Success);
 					}
 					catch(FaultException<PasswordExpiredException>)
 					{
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 					}
 					catch
 					{
-						AuditHelper.LogLogin("Login", userName, EventResult.SeriousFailure);
+						AuditHelper.LogLogin(userName, EventResult.SeriousFailure);
 						throw;
 					}
 				});
@@ -268,11 +268,11 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 							service.TerminateSession(request);
 						});
 
-				AuditHelper.LogLogout("Logout", userName, EventResult.Success);
+				AuditHelper.LogLogout(userName, EventResult.Success);
 			}
 			catch (Exception)
 			{
-				AuditHelper.LogLogout("Logout", userName, EventResult.SeriousFailure);
+				AuditHelper.LogLogout(userName, EventResult.SeriousFailure);
 				throw;
 			}
 		}

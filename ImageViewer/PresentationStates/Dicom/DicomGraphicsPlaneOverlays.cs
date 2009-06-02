@@ -5,23 +5,110 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	/// <summary>
+	/// Represents a collection of overlay planes available on an image.
+	/// </summary>
 	public interface IDicomGraphicsPlaneOverlays : IEnumerable<OverlayPlaneGraphic>
 	{
+		/// <summary>
+		/// Gets the overlay plane at a specific index.
+		/// </summary>
+		/// <param name="index">The index of the overlay plane.</param>
 		OverlayPlaneGraphic this[int index] { get; }
+
+		/// <summary>
+		/// Gets the number of overlay planes in the collection.
+		/// </summary>
 		int Count { get; }
+
+		/// <summary>
+		/// Activates the specified overlay plane in the given layer.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to activate. This overlay must be part of the collection.</param>
+		/// <param name="layerId">The ID of the layer on which to activate the overlay plane.</param>
 		void ActivateAsLayer(OverlayPlaneGraphic overlay, string layerId);
+
+		/// <summary>
+		/// Activates the specified overlay plane in the given layer.
+		/// </summary>
+		/// <param name="index">The index of the overlay plane to activate.</param>
+		/// <param name="layerId">The ID of the layer on which to activate the overlay plane.</param>
 		void ActivateAsLayer(int index, string layerId);
+
+		/// <summary>
+		/// Activates the specified overlay plane as a bitmap display shutter.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to activate. This overlay must be part of the collection.</param>
 		void ActivateAsShutter(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Activates the specified overlay plane as a bitmap display shutter.
+		/// </summary>
+		/// <param name="index">The index of the overlay plane to activate.</param>
 		void ActivateAsShutter(int index);
+
+		/// <summary>
+		/// Deactivates the specified overlay plane.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to activate. This overlay must be part of the collection.</param>
 		void Deactivate(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Deactivates the specified overlay plane.
+		/// </summary>
+		/// <param name="index">The index of the overlay plane to activate.</param>
 		void Deactivate(int index);
+
+		/// <summary>
+		/// Adds the specified overlay plane to the collection.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to add to the collection. This overlay must not be a part of any other collection.</param>
 		void Add(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Removes the specified overlay plane from the collection.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to remove from the collection. This overlay must be part of the collection.</param>
 		void Remove(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Checks if the specified overlay plane is part of the collection.
+		/// </summary>
+		/// <param name="index">The index of the overlay plane to check for.</param>
+		/// <returns>True if the specified overlay plane is part of the collection; False otherwise.</returns>
 		bool Contains(int index);
+
+		/// <summary>
+		/// Checks if the specified overlay plane is part of the collection.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to check for.</param>
+		/// <returns>True if the specified overlay plane is part of the collection; False otherwise.</returns>
 		bool Contains(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Clears the collection.
+		/// </summary>
 		void Clear();
+
+		/// <summary>
+		/// Checks if the specified overlay plane is currently activated as a bitmap display shutter.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to check for.</param>
+		/// <returns>True if the specified overlay plane is activated as a bitmap display shutter; False otherwise.</returns>
 		bool IsShutter(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Checks if the specified overlay plane is currently activated on a layer.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to check for.</param>
+		/// <returns>True if the specified overlay plane is activated on a layer; False otherwise.</returns>
 		bool IsLayer(OverlayPlaneGraphic overlay);
+
+		/// <summary>
+		/// Gets the ID of the layer on which the specified overlay plane is currently activated, if applicable.
+		/// </summary>
+		/// <param name="overlay">The overlay plane to check for.</param>
+		/// <returns>The layer ID of the overlay plane to check for.</returns>
 		string GetLayer(OverlayPlaneGraphic overlay);
 	}
 

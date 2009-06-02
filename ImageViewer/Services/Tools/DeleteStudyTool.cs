@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				AuditedInstances deletedInstances = new AuditedInstances();
 				((List<string>) context.UserState).ForEach(delegate(string studyInstanceUid) { deletedInstances.AddInstance(studyInstanceUid); });
-				AuditHelper.LogDeleteStudies("Delete", AuditHelper.LocalAETitle, deletedInstances, EventSource.CurrentUser, EventResult.Success);
+				AuditHelper.LogDeleteStudies(AuditHelper.LocalAETitle, deletedInstances, EventSource.CurrentUser, EventResult.Success);
 			}
 			catch(Exception e)
 			{

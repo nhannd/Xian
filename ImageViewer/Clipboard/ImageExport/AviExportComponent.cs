@@ -354,7 +354,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 			finally
 			{
-				AuditHelper.LogExportStudies("Export Video", exportedInstances, EventSource.CurrentUser, result);
+				AuditHelper.LogExportStudies(exportedInstances, EventSource.CurrentUser, result);
 				imagesToDispose.ForEach(delegate(IPresentationImage image) { image.Dispose(); });
 			}
 		}

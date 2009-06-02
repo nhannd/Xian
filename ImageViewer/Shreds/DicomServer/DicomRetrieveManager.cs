@@ -195,9 +195,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				foreach (StudyInformation instance in this._studiesToRetrieve)
 					receivedInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
 				if (noExceptions)
-					AuditHelper.LogReceivedInstances("Send", this.RemoteAE, this.RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.Success, EventReceiptAction.ActionUnknown);
+					AuditHelper.LogReceivedInstances(this.RemoteAE, this.RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.Success, EventReceiptAction.ActionUnknown);
 				else
-					AuditHelper.LogReceivedInstances("Send", this.RemoteAE, this.RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.MajorFailure, EventReceiptAction.ActionUnknown);
+					AuditHelper.LogReceivedInstances(this.RemoteAE, this.RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.MajorFailure, EventReceiptAction.ActionUnknown);
 			}
 
 			private void OnBeginRetrieve()

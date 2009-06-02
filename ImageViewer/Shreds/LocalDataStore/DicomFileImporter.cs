@@ -738,7 +738,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 				finally
 				{
-					AuditHelper.LogImportStudies("Imported", importedInstances, EventSource.CurrentProcess, result);
+					AuditHelper.LogImportStudies(importedInstances, EventSource.CurrentProcess, result);
 				}
 
 #if DEBUG

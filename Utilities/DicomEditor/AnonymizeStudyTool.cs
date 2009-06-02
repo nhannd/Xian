@@ -207,7 +207,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 					throw;
 				}
 
-				AuditHelper.LogCreateInstances("Create Anonymous Study", new string[0], anonymizedInstances, EventSource.CurrentUser, EventResult.Success);
+				AuditHelper.LogCreateInstances(new string[0], anonymizedInstances, EventSource.CurrentUser, EventResult.Success);
 
 				context.Complete();
 			}

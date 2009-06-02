@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 
 			AuditedInstances queriedInstances = new AuditedInstances();
 			studyItemList.ForEach(delegate(StudyItem study) { queriedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUID); });
-			AuditHelper.LogQueryStudies("Find Studies", null, null, queriedInstances, EventSource.CurrentUser, EventResult.Success);
+			AuditHelper.LogQueryStudies(null, null, queriedInstances, EventSource.CurrentUser, EventResult.Success);
 
             return studyItemList;
         }

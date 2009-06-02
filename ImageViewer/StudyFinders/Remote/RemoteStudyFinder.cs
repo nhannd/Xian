@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
 			AuditedInstances queriedInstances = new AuditedInstances();
 			studyItemList.ForEach(delegate(StudyItem study) { queriedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUID); });
-			AuditHelper.LogQueryStudies("Find Studies", selectedServer.AETitle, selectedServer.Host, queriedInstances, EventSource.CurrentUser, EventResult.Success);
+			AuditHelper.LogQueryStudies(selectedServer.AETitle, selectedServer.Host, queriedInstances, EventSource.CurrentUser, EventResult.Success);
 
 			return studyItemList;
         }

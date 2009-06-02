@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			finally
 			{
 				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
-					AuditHelper.LogBeginSendInstances("Send Studies", destinationAE.AETitle, destinationAE.Host, sentInstances, EventSource.CurrentUser, result);
+					AuditHelper.LogBeginSendInstances(destinationAE.AETitle, destinationAE.Host, sentInstances, EventSource.CurrentUser, result);
 			}
 		}
 
