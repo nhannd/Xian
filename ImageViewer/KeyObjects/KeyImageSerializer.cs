@@ -46,6 +46,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
+	//TODO (CR May09): documentation note that API is unstable and may change.
 	public class KeyImageSerializer
 	{
 		private readonly FramePresentationList _framePresentationStates;
@@ -61,6 +62,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			_datetime = Platform.Time;
 		}
 
+		//TODO (CR May09):can we use an object?
 		public IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>> FramePresentationStates
 		{
 			get { return _framePresentationStates; }
@@ -148,9 +150,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				EvidenceDictionary currentRequestedProcedureEvidenceList = new EvidenceDictionary();
 
 				Dictionary<ImageSop, List<int>> frameMap = new Dictionary<ImageSop, List<int>>();
-				foreach (KeyValuePair<Frame,DicomSoftcopyPresentationState> framePRPair in _framePresentationStates)
+				foreach (KeyValuePair<Frame,DicomSoftcopyPresentationState> frameAndPresentationState in _framePresentationStates)
 				{
-					Frame frame = framePRPair.Key;
+					Frame frame = frameAndPresentationState.Key;
 					ImageSop sop = frame.ParentImageSop;
 
 					// build frame map by unique sop - used to make the evidence sequence less verbose
@@ -166,23 +168,23 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 						content.RelationshipType = RelationshipType.Contains;
 						content.ReferencedContentItemIdentifier = new uint[] { 1 };
 
-						IImageReferenceMacro imgMac = content.InitializeImageReferenceAttributes();
-						imgMac.ReferencedSopSequence.InitializeAttributes();
-						imgMac.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUID;
-						imgMac.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUID;
+						IImageReferenceMacro imageReferenceMacro = content.InitializeImageReferenceAttributes();
+						imageReferenceMacro.ReferencedSopSequence.InitializeAttributes();
+						imageReferenceMacro.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUID;
+						imageReferenceMacro.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUID;
 						if (sop.NumberOfFrames > 1)
-							imgMac.ReferencedSopSequence.ReferencedFrameNumber = frame.FrameNumber.ToString();
+							imageReferenceMacro.ReferencedSopSequence.ReferencedFrameNumber = frame.FrameNumber.ToString();
 						else
-							imgMac.ReferencedSopSequence.ReferencedFrameNumber = null;
+							imageReferenceMacro.ReferencedSopSequence.ReferencedFrameNumber = null;
 
 						// save the presentation state
-						if(framePRPair.Value!=null)
+						if(frameAndPresentationState.Value!=null)
 						{
-							DicomSoftcopyPresentationState presentationState = framePRPair.Value;
-							imgMac.ReferencedSopSequence.CreateReferencedSopSequence();
-							imgMac.ReferencedSopSequence.ReferencedSopSequence.InitializeAttributes();
-							imgMac.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopClassUid = presentationState.PresentationSopClass.Uid;
-							imgMac.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid = presentationState.PresentationInstanceUid;
+							DicomSoftcopyPresentationState presentationState = frameAndPresentationState.Value;
+							imageReferenceMacro.ReferencedSopSequence.CreateReferencedSopSequence();
+							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.InitializeAttributes();
+							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopClassUid = presentationState.PresentationSopClass.Uid;
+							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid = presentationState.PresentationInstanceUid;
 						}
 					}
 					contentList.Add(content);
@@ -242,118 +244,118 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		{
 			KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(target);
 
-			PatientModuleIod srcPatient = new PatientModuleIod(source);
+			PatientModuleIod sourcePatient = new PatientModuleIod(source);
 			if (true) // patient module is always required
 			{
-				iod.Patient.BreedRegistrationSequence = srcPatient.BreedRegistrationSequence;
-				iod.Patient.DeIdentificationMethod = srcPatient.DeIdentificationMethod;
-				iod.Patient.DeIdentificationMethodCodeSequence = srcPatient.DeIdentificationMethodCodeSequence;
-				iod.Patient.EthnicGroup = srcPatient.EthnicGroup;
-				iod.Patient.IssuerOfPatientId = srcPatient.IssuerOfPatientId;
-				iod.Patient.OtherPatientIds = srcPatient.OtherPatientIds;
-				iod.Patient.OtherPatientIdsSequence = srcPatient.OtherPatientIdsSequence;
-				iod.Patient.OtherPatientNames = srcPatient.OtherPatientNames;
-				iod.Patient.PatientBreedCodeSequence = srcPatient.PatientBreedCodeSequence;
-				iod.Patient.PatientBreedDescription = srcPatient.PatientBreedDescription;
-				iod.Patient.PatientComments = srcPatient.PatientComments;
-				iod.Patient.PatientId = srcPatient.PatientId;
-				iod.Patient.PatientIdentityRemoved = srcPatient.PatientIdentityRemoved;
-				iod.Patient.PatientsBirthDateTime = srcPatient.PatientsBirthDateTime;
-				iod.Patient.PatientsName = srcPatient.PatientsName;
-				iod.Patient.PatientSpeciesCodeSequence = srcPatient.PatientSpeciesCodeSequence;
-				iod.Patient.PatientSpeciesDescription = srcPatient.PatientSpeciesDescription;
-				iod.Patient.PatientsSex = srcPatient.PatientsSex;
-				iod.Patient.ReferencedPatientSequence = srcPatient.ReferencedPatientSequence;
-				iod.Patient.ResponsibleOrganization = srcPatient.ResponsibleOrganization;
-				iod.Patient.ResponsiblePerson = srcPatient.ResponsiblePerson;
-				iod.Patient.ResponsiblePersonRole = srcPatient.ResponsiblePersonRole;
+				iod.Patient.BreedRegistrationSequence = sourcePatient.BreedRegistrationSequence;
+				iod.Patient.DeIdentificationMethod = sourcePatient.DeIdentificationMethod;
+				iod.Patient.DeIdentificationMethodCodeSequence = sourcePatient.DeIdentificationMethodCodeSequence;
+				iod.Patient.EthnicGroup = sourcePatient.EthnicGroup;
+				iod.Patient.IssuerOfPatientId = sourcePatient.IssuerOfPatientId;
+				iod.Patient.OtherPatientIds = sourcePatient.OtherPatientIds;
+				iod.Patient.OtherPatientIdsSequence = sourcePatient.OtherPatientIdsSequence;
+				iod.Patient.OtherPatientNames = sourcePatient.OtherPatientNames;
+				iod.Patient.PatientBreedCodeSequence = sourcePatient.PatientBreedCodeSequence;
+				iod.Patient.PatientBreedDescription = sourcePatient.PatientBreedDescription;
+				iod.Patient.PatientComments = sourcePatient.PatientComments;
+				iod.Patient.PatientId = sourcePatient.PatientId;
+				iod.Patient.PatientIdentityRemoved = sourcePatient.PatientIdentityRemoved;
+				iod.Patient.PatientsBirthDateTime = sourcePatient.PatientsBirthDateTime;
+				iod.Patient.PatientsName = sourcePatient.PatientsName;
+				iod.Patient.PatientSpeciesCodeSequence = sourcePatient.PatientSpeciesCodeSequence;
+				iod.Patient.PatientSpeciesDescription = sourcePatient.PatientSpeciesDescription;
+				iod.Patient.PatientsSex = sourcePatient.PatientsSex;
+				iod.Patient.ReferencedPatientSequence = sourcePatient.ReferencedPatientSequence;
+				iod.Patient.ResponsibleOrganization = sourcePatient.ResponsibleOrganization;
+				iod.Patient.ResponsiblePerson = sourcePatient.ResponsiblePerson;
+				iod.Patient.ResponsiblePersonRole = sourcePatient.ResponsiblePersonRole;
 			}
 
-			SpecimenIdentificationModuleIod srcSpecimen = new SpecimenIdentificationModuleIod(source);
-			if (srcSpecimen.HasValues()) // specimen module is required only if subject is a specimen
+			SpecimenIdentificationModuleIod sourceSpecimen = new SpecimenIdentificationModuleIod(source);
+			if (sourceSpecimen.HasValues()) // specimen module is required only if subject is a specimen
 			{
-				iod.SpecimenIdentification.SpecimenAccessionNumber = srcSpecimen.SpecimenAccessionNumber;
-				iod.SpecimenIdentification.SpecimenSequence = srcSpecimen.SpecimenSequence;
+				iod.SpecimenIdentification.SpecimenAccessionNumber = sourceSpecimen.SpecimenAccessionNumber;
+				iod.SpecimenIdentification.SpecimenSequence = sourceSpecimen.SpecimenSequence;
 			}
 
-			ClinicalTrialSubjectModuleIod srcTrialSubject = new ClinicalTrialSubjectModuleIod(source);
-			if (srcTrialSubject.HasValues()) // clinical trial subkect module is user optional
+			ClinicalTrialSubjectModuleIod sourceTrialSubject = new ClinicalTrialSubjectModuleIod(source);
+			if (sourceTrialSubject.HasValues()) // clinical trial subkect module is user optional
 			{
-				iod.ClinicalTrialSubject.ClinicalTrialProtocolId = srcTrialSubject.ClinicalTrialProtocolId;
-				iod.ClinicalTrialSubject.ClinicalTrialProtocolName = srcTrialSubject.ClinicalTrialProtocolName;
-				iod.ClinicalTrialSubject.ClinicalTrialSiteId = srcTrialSubject.ClinicalTrialSiteId;
-				iod.ClinicalTrialSubject.ClinicalTrialSiteName = srcTrialSubject.ClinicalTrialSiteName;
-				iod.ClinicalTrialSubject.ClinicalTrialSponsorName = srcTrialSubject.ClinicalTrialSponsorName;
-				iod.ClinicalTrialSubject.ClinicalTrialSubjectId = srcTrialSubject.ClinicalTrialSubjectId;
-				iod.ClinicalTrialSubject.ClinicalTrialSubjectReadingId = srcTrialSubject.ClinicalTrialSubjectReadingId;
+				iod.ClinicalTrialSubject.ClinicalTrialProtocolId = sourceTrialSubject.ClinicalTrialProtocolId;
+				iod.ClinicalTrialSubject.ClinicalTrialProtocolName = sourceTrialSubject.ClinicalTrialProtocolName;
+				iod.ClinicalTrialSubject.ClinicalTrialSiteId = sourceTrialSubject.ClinicalTrialSiteId;
+				iod.ClinicalTrialSubject.ClinicalTrialSiteName = sourceTrialSubject.ClinicalTrialSiteName;
+				iod.ClinicalTrialSubject.ClinicalTrialSponsorName = sourceTrialSubject.ClinicalTrialSponsorName;
+				iod.ClinicalTrialSubject.ClinicalTrialSubjectId = sourceTrialSubject.ClinicalTrialSubjectId;
+				iod.ClinicalTrialSubject.ClinicalTrialSubjectReadingId = sourceTrialSubject.ClinicalTrialSubjectReadingId;
 			}
 
-			GeneralStudyModuleIod srcGeneralStudy = new GeneralStudyModuleIod(source);
+			GeneralStudyModuleIod sourceGeneralStudy = new GeneralStudyModuleIod(source);
 			if (true) // general study module is always required
 			{
-				iod.GeneralStudy.AccessionNumber = srcGeneralStudy.AccessionNumber;
-				iod.GeneralStudy.NameOfPhysiciansReadingStudy = srcGeneralStudy.NameOfPhysiciansReadingStudy;
-				iod.GeneralStudy.PhysiciansOfRecord = srcGeneralStudy.PhysiciansOfRecord;
-				iod.GeneralStudy.PhysiciansOfRecordIdentificationSequence = srcGeneralStudy.PhysiciansOfRecordIdentificationSequence;
-				iod.GeneralStudy.PhysiciansReadingStudyIdentificationSequence = srcGeneralStudy.PhysiciansReadingStudyIdentificationSequence;
-				iod.GeneralStudy.ProcedureCodeSequence = srcGeneralStudy.ProcedureCodeSequence;
-				iod.GeneralStudy.ReferencedStudySequence = srcGeneralStudy.ReferencedStudySequence;
-				iod.GeneralStudy.ReferringPhysicianIdentificationSequence = srcGeneralStudy.ReferringPhysicianIdentificationSequence;
-				iod.GeneralStudy.ReferringPhysiciansName = srcGeneralStudy.ReferringPhysiciansName;
-				iod.GeneralStudy.StudyDateTime = srcGeneralStudy.StudyDateTime;
-				iod.GeneralStudy.StudyDescription = srcGeneralStudy.StudyDescription;
-				iod.GeneralStudy.StudyId = srcGeneralStudy.StudyId;
-				iod.GeneralStudy.StudyInstanceUid = srcGeneralStudy.StudyInstanceUid;
+				iod.GeneralStudy.AccessionNumber = sourceGeneralStudy.AccessionNumber;
+				iod.GeneralStudy.NameOfPhysiciansReadingStudy = sourceGeneralStudy.NameOfPhysiciansReadingStudy;
+				iod.GeneralStudy.PhysiciansOfRecord = sourceGeneralStudy.PhysiciansOfRecord;
+				iod.GeneralStudy.PhysiciansOfRecordIdentificationSequence = sourceGeneralStudy.PhysiciansOfRecordIdentificationSequence;
+				iod.GeneralStudy.PhysiciansReadingStudyIdentificationSequence = sourceGeneralStudy.PhysiciansReadingStudyIdentificationSequence;
+				iod.GeneralStudy.ProcedureCodeSequence = sourceGeneralStudy.ProcedureCodeSequence;
+				iod.GeneralStudy.ReferencedStudySequence = sourceGeneralStudy.ReferencedStudySequence;
+				iod.GeneralStudy.ReferringPhysicianIdentificationSequence = sourceGeneralStudy.ReferringPhysicianIdentificationSequence;
+				iod.GeneralStudy.ReferringPhysiciansName = sourceGeneralStudy.ReferringPhysiciansName;
+				iod.GeneralStudy.StudyDateTime = sourceGeneralStudy.StudyDateTime;
+				iod.GeneralStudy.StudyDescription = sourceGeneralStudy.StudyDescription;
+				iod.GeneralStudy.StudyId = sourceGeneralStudy.StudyId;
+				iod.GeneralStudy.StudyInstanceUid = sourceGeneralStudy.StudyInstanceUid;
 			}
 
-			PatientStudyModuleIod srcPatientStudy = new PatientStudyModuleIod(source);
-			if (srcPatientStudy.HasValues()) // patient study module is user optional
+			PatientStudyModuleIod sourcePatientStudy = new PatientStudyModuleIod(source);
+			if (sourcePatientStudy.HasValues()) // patient study module is user optional
 			{
-				iod.PatientStudy.AdditionalPatientHistory = srcPatientStudy.AdditionalPatientHistory;
-				iod.PatientStudy.AdmissionId = srcPatientStudy.AdmissionId;
-				iod.PatientStudy.AdmittingDiagnosesCodeSequence = srcPatientStudy.AdmittingDiagnosesCodeSequence;
-				iod.PatientStudy.AdmittingDiagnosesDescription = srcPatientStudy.AdmittingDiagnosesDescription;
-				iod.PatientStudy.IssuerOfAdmissionId = srcPatientStudy.IssuerOfAdmissionId;
-				iod.PatientStudy.IssuerOfServiceEpisodeId = srcPatientStudy.IssuerOfServiceEpisodeId;
-				iod.PatientStudy.Occupation = srcPatientStudy.Occupation;
-				iod.PatientStudy.PatientsAge = srcPatientStudy.PatientsAge;
-				iod.PatientStudy.PatientsSexNeutered = srcPatientStudy.PatientsSexNeutered;
-				iod.PatientStudy.PatientsSize = srcPatientStudy.PatientsSize;
-				iod.PatientStudy.PatientsWeight = srcPatientStudy.PatientsWeight;
-				iod.PatientStudy.ServiceEpisodeDescription = srcPatientStudy.ServiceEpisodeDescription;
-				iod.PatientStudy.ServiceEpisodeId = srcPatientStudy.ServiceEpisodeId;
+				iod.PatientStudy.AdditionalPatientHistory = sourcePatientStudy.AdditionalPatientHistory;
+				iod.PatientStudy.AdmissionId = sourcePatientStudy.AdmissionId;
+				iod.PatientStudy.AdmittingDiagnosesCodeSequence = sourcePatientStudy.AdmittingDiagnosesCodeSequence;
+				iod.PatientStudy.AdmittingDiagnosesDescription = sourcePatientStudy.AdmittingDiagnosesDescription;
+				iod.PatientStudy.IssuerOfAdmissionId = sourcePatientStudy.IssuerOfAdmissionId;
+				iod.PatientStudy.IssuerOfServiceEpisodeId = sourcePatientStudy.IssuerOfServiceEpisodeId;
+				iod.PatientStudy.Occupation = sourcePatientStudy.Occupation;
+				iod.PatientStudy.PatientsAge = sourcePatientStudy.PatientsAge;
+				iod.PatientStudy.PatientsSexNeutered = sourcePatientStudy.PatientsSexNeutered;
+				iod.PatientStudy.PatientsSize = sourcePatientStudy.PatientsSize;
+				iod.PatientStudy.PatientsWeight = sourcePatientStudy.PatientsWeight;
+				iod.PatientStudy.ServiceEpisodeDescription = sourcePatientStudy.ServiceEpisodeDescription;
+				iod.PatientStudy.ServiceEpisodeId = sourcePatientStudy.ServiceEpisodeId;
 			}
 
-			ClinicalTrialStudyModuleIod srcTrialStudy = new ClinicalTrialStudyModuleIod(source);
-			if (srcTrialStudy.HasValues()) // clinical trial study module is user optional
+			ClinicalTrialStudyModuleIod sourceTrialStudy = new ClinicalTrialStudyModuleIod(source);
+			if (sourceTrialStudy.HasValues()) // clinical trial study module is user optional
 			{
-				iod.ClinicalTrialStudy.ClinicalTrialTimePointDescription = srcTrialStudy.ClinicalTrialTimePointDescription;
-				iod.ClinicalTrialStudy.ClinicalTrialTimePointId = srcTrialStudy.ClinicalTrialTimePointId;
+				iod.ClinicalTrialStudy.ClinicalTrialTimePointDescription = sourceTrialStudy.ClinicalTrialTimePointDescription;
+				iod.ClinicalTrialStudy.ClinicalTrialTimePointId = sourceTrialStudy.ClinicalTrialTimePointId;
 			}
 
-			ClinicalTrialSeriesModuleIod srcTrialSeries = new ClinicalTrialSeriesModuleIod(source);
-			if (srcTrialSeries.HasValues()) // clinical trial series module is user optional
+			ClinicalTrialSeriesModuleIod sourceTrialSeries = new ClinicalTrialSeriesModuleIod(source);
+			if (sourceTrialSeries.HasValues()) // clinical trial series module is user optional
 			{
-				iod.ClinicalTrialSeries.ClinicalTrialCoordinatingCenterName = srcTrialSeries.ClinicalTrialCoordinatingCenterName;
-				iod.ClinicalTrialSeries.ClinicalTrialSeriesDescription = srcTrialSeries.ClinicalTrialSeriesDescription;
-				iod.ClinicalTrialSeries.ClinicalTrialSeriesId = srcTrialSeries.ClinicalTrialSeriesId;
+				iod.ClinicalTrialSeries.ClinicalTrialCoordinatingCenterName = sourceTrialSeries.ClinicalTrialCoordinatingCenterName;
+				iod.ClinicalTrialSeries.ClinicalTrialSeriesDescription = sourceTrialSeries.ClinicalTrialSeriesDescription;
+				iod.ClinicalTrialSeries.ClinicalTrialSeriesId = sourceTrialSeries.ClinicalTrialSeriesId;
 			}
 
-			GeneralEquipmentModuleIod srcGeneralEquipment = new GeneralEquipmentModuleIod(source);
+			GeneralEquipmentModuleIod sourceGeneralEquipment = new GeneralEquipmentModuleIod(source);
 			if (true) // general equipment module is always required
 			{
-				iod.GeneralEquipment.DateTimeOfLastCalibrationDateTime = srcGeneralEquipment.DateTimeOfLastCalibrationDateTime;
-				iod.GeneralEquipment.DeviceSerialNumber = srcGeneralEquipment.DeviceSerialNumber;
-				iod.GeneralEquipment.GantryId = srcGeneralEquipment.GantryId;
-				iod.GeneralEquipment.InstitutionAddress = srcGeneralEquipment.InstitutionAddress;
-				iod.GeneralEquipment.InstitutionalDepartmentName = srcGeneralEquipment.InstitutionalDepartmentName;
-				iod.GeneralEquipment.InstitutionName = srcGeneralEquipment.InstitutionName;
-				iod.GeneralEquipment.Manufacturer = srcGeneralEquipment.Manufacturer;
-				iod.GeneralEquipment.ManufacturersModelName = srcGeneralEquipment.ManufacturersModelName;
-				iod.GeneralEquipment.PixelPaddingValue = srcGeneralEquipment.PixelPaddingValue;
-				iod.GeneralEquipment.SoftwareVersions = srcGeneralEquipment.SoftwareVersions;
-				iod.GeneralEquipment.SpatialResolution = srcGeneralEquipment.SpatialResolution;
-				iod.GeneralEquipment.StationName = srcGeneralEquipment.StationName;
+				iod.GeneralEquipment.DateTimeOfLastCalibrationDateTime = sourceGeneralEquipment.DateTimeOfLastCalibrationDateTime;
+				iod.GeneralEquipment.DeviceSerialNumber = sourceGeneralEquipment.DeviceSerialNumber;
+				iod.GeneralEquipment.GantryId = sourceGeneralEquipment.GantryId;
+				iod.GeneralEquipment.InstitutionAddress = sourceGeneralEquipment.InstitutionAddress;
+				iod.GeneralEquipment.InstitutionalDepartmentName = sourceGeneralEquipment.InstitutionalDepartmentName;
+				iod.GeneralEquipment.InstitutionName = sourceGeneralEquipment.InstitutionName;
+				iod.GeneralEquipment.Manufacturer = sourceGeneralEquipment.Manufacturer;
+				iod.GeneralEquipment.ManufacturersModelName = sourceGeneralEquipment.ManufacturersModelName;
+				iod.GeneralEquipment.PixelPaddingValue = sourceGeneralEquipment.PixelPaddingValue;
+				iod.GeneralEquipment.SoftwareVersions = sourceGeneralEquipment.SoftwareVersions;
+				iod.GeneralEquipment.SpatialResolution = sourceGeneralEquipment.SpatialResolution;
+				iod.GeneralEquipment.StationName = sourceGeneralEquipment.StationName;
 			}
 
 			return iod;

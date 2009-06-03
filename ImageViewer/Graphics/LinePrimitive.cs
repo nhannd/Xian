@@ -231,6 +231,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 #endif
 		}
 
+		//TODO (CR May09): Make these all public and deprecate the contracted ones.
+
 		#region ILineSegmentGraphic Members
 
 		PointF ILineSegmentGraphic.Point1

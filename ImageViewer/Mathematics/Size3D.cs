@@ -90,6 +90,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			get { return _depth; }
 		}
 
+		//TODO (CR May09): unclear from the property name what this is.
+
 		/// <summary>
 		/// Returns the width * height * depth
 		/// </summary>

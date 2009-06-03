@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
         }
 
-    	public override int OnStart(StudyLoaderArgs studyLoaderArgs)
+    	protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
 		{
     		_sops = null;
 

@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			PrefetchingStrategy = new StreamingPrefetchingStrategy();
 		}
 
-		public override int OnStart(StudyLoaderArgs studyLoaderArgs)
+		protected override int OnStart(StudyLoaderArgs studyLoaderArgs)
 		{
 			ApplicationEntity ae = studyLoaderArgs.Server as ApplicationEntity;
 			_ae = ae;

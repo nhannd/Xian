@@ -67,6 +67,8 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		public readonly ColorSoftcopyPresentationStateIod ColorPresentationStateIod;
 	}
 
+	//TODO (CR May09): documentation note that API is unstable and may change.
+
 	public class KeyImageDeserializer
 	{
 		private readonly StudyTree _studyTree;
@@ -86,10 +88,10 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public IList<KeyObjectContentItem> Deserialize()
 		{
-			List<KeyObjectContentItem> imagePRPairs = new List<KeyObjectContentItem>();
+			List<KeyObjectContentItem> contentItems = new List<KeyObjectContentItem>();
 
-			SrDocumentContentModuleIod srDoc = _document.SrDocumentContent;
-			foreach (IContentSequence contentItem in srDoc.ContentSequence)
+			SrDocumentContentModuleIod srDocument = _document.SrDocumentContent;
+			foreach (IContentSequence contentItem in srDocument.ContentSequence)
 			{
 				if (contentItem.RelationshipType == RelationshipType.Contains)
 				{
@@ -97,8 +99,8 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 					{
 						try
 						{
-							IImageReferenceMacro imageRef = contentItem;
-							string referencedSopInstanceUid = imageRef.ReferencedSopSequence.ReferencedSopInstanceUid;
+							IImageReferenceMacro imageReference = contentItem;
+							string referencedSopInstanceUid = imageReference.ReferencedSopSequence.ReferencedSopInstanceUid;
 							ImageSop referencedImage = FindReferencedImageSop(referencedSopInstanceUid);
 							if (referencedImage == null)
 							{
@@ -107,12 +109,12 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 							}
 
 							Sop presentationState = null;
-							if(imageRef.ReferencedSopSequence.ReferencedSopSequence != null)
+							if(imageReference.ReferencedSopSequence.ReferencedSopSequence != null)
 							{
-								presentationState = FindReferencedSop(imageRef.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid);
+								presentationState = FindReferencedSop(imageReference.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid);
 							}
 
-							string referencedFrameNumbers = imageRef.ReferencedSopSequence.ReferencedFrameNumber;
+							string referencedFrameNumbers = imageReference.ReferencedSopSequence.ReferencedFrameNumber;
 							int[] frameNumbers;
 							if (DicomStringHelper.TryGetIntArray(referencedFrameNumbers, out frameNumbers) && frameNumbers.Length > 0)
 							{
@@ -125,7 +127,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 									else
 									{
 										KeyObjectContentItem item = new KeyObjectContentItem(referencedImage.Frames[frameNumber], presentationState);
-										imagePRPairs.Add(item);
+										contentItems.Add(item);
 									}
 								}
 							}
@@ -133,7 +135,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 							{
 								foreach (Frame frame in referencedImage.Frames) {
 									KeyObjectContentItem item = new KeyObjectContentItem(frame, presentationState);
-									imagePRPairs.Add(item);
+									contentItems.Add(item);
 								}
 							}
 						}
@@ -152,7 +154,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				}
 			}
 
-			return imagePRPairs.AsReadOnly();
+			return contentItems.AsReadOnly();
 		}
 
 		private ImageSop FindReferencedImageSop(string sopInstanceUid)

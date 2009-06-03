@@ -42,9 +42,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 	/// </remarks>
 	public class Vector3D : IEquatable<Vector3D>
 	{
-		private float _x;
-		private float _y;
-		private float _z;
+		private readonly float _x;
+		private readonly float _y;
+		private readonly float _z;
 
 		/// <summary>
 		/// Represents the Zero vector.
@@ -160,11 +160,11 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <summary>
 		/// Determines whether or not this vector is parallel to <paramref name="other"/> within a certain <paramref name="angleTolerance"/>.
 		/// </summary>
-		public bool IsParallel(Vector3D other, float angleTolerance)
+		public bool IsParallelTo(Vector3D other, float angleToleranceRadians)
 		{
-			angleTolerance = Math.Abs(angleTolerance);
-			float upper = angleTolerance;
-			float lower = -angleTolerance;
+			angleToleranceRadians = Math.Abs(angleToleranceRadians);
+			float upper = angleToleranceRadians;
+			float lower = -angleToleranceRadians;
 
 			float angle = GetAngleBetween(other);
 
@@ -172,8 +172,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			if (!parallel)
 			{
-				upper = (float)Math.PI + angleTolerance;
-				lower = (float)Math.PI - angleTolerance;
+				upper = (float)Math.PI + angleToleranceRadians;
+				lower = (float)Math.PI - angleToleranceRadians;
 				parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
 			}
 
@@ -183,11 +183,11 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <summary>
 		/// Determines whether or not this vector is orthogonal to <paramref name="other"/> within a certain <paramref name="angleTolerance"/>.
 		/// </summary>
-		public bool IsOrthogonal(Vector3D other, float angleTolerance)
+		public bool IsOrthogonalTo(Vector3D other, float angleToleranceRadians)
 		{
-			angleTolerance = Math.Abs(angleTolerance);
-			float upper = (float)Math.PI / 2 + angleTolerance;
-			float lower = (float)Math.PI / 2 - angleTolerance;
+			angleToleranceRadians = Math.Abs(angleToleranceRadians);
+			float upper = (float)Math.PI / 2 + angleToleranceRadians;
+			float lower = (float)Math.PI / 2 - angleToleranceRadians;
 
 			float angle = GetAngleBetween(other);
 

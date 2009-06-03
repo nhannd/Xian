@@ -112,6 +112,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return false;
 		}
 
+		//TODO (CR May09): When location changes, so does Point1 & Point2, as well as TopLeft and BottomRight.
+
 		/// <summary>
 		/// Called when the value of <see cref="InvariantBoundablePrimitive.TopLeft"/> changes.
 		/// </summary>

@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			protected set { _prefetchingStrategy = value; }
 		}
 
-		public abstract int OnStart(StudyLoaderArgs studyLoaderArgs);
+		protected abstract int OnStart(StudyLoaderArgs studyLoaderArgs);
 
 		public int Start(StudyLoaderArgs studyLoaderArgs)
 		{

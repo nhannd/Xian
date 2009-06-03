@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new InvalidOperationException("This functionality cannot be used for non-images.");
 		}
 
+		//TODO (CR May09): use explicit implementation and make virtual methods have same signature as interface method.
 		protected abstract void OnGetFrameData(int frameNumber, out ISopFrameData frameData);
 
 		#region IDicomAttributeProvider Members
@@ -149,6 +150,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { throw new NotSupportedException("SopDataSource objects should be considered read-only."); }
 		}
 
+		//TODO (CR May09): GetAttribute
 		public abstract DicomAttribute GetDicomAttribute(DicomTag tag);
 
 		public abstract DicomAttribute GetDicomAttribute(uint tag);

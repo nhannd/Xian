@@ -329,12 +329,12 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		public bool IsParallelTo(DicomImagePlane other, float angleTolerance)
 		{
-			return Normal.IsParallel(other.Normal, angleTolerance);
+			return Normal.IsParallelTo(other.Normal, angleTolerance);
 		}
 
 		public bool IsOrthogonalTo(DicomImagePlane other, float angleTolerance)
 		{
-			return Normal.IsOrthogonal(other.Normal, angleTolerance);
+			return Normal.IsOrthogonalTo(other.Normal, angleTolerance);
 		}
 
 		public float GetAngleBetween(DicomImagePlane other)

@@ -466,6 +466,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new RectangleF(left, top, width, height);
 		}
 
+		//TODO (CR May09):this seems pretty specialized; internalize to the class that calls it until we need it here.
+
 		/// <summary>
 		/// Computes a rectangle specifying the 1-based pixel address and the row and column offset to get the pixel address of the opposite corner
 		/// given a rectangle specifying the 0-based coordinate and size (whose width and height need not be positive).

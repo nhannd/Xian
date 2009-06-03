@@ -130,6 +130,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Point(x, y);
 		}
 
+		//TODO (CR May09):call it CreateUnitVector(directionVector)?  This doesn't appear to be used anyway.
+		//TODO (CR May09): API unclear; resolve PointF/SizeF issue.
 		/// <summary>
 		/// Computes the unit vector of the vector from the origin towards the specified <paramref name="vector">point</paramref>.
 		/// </summary>
@@ -138,6 +140,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return UnitVector(PointF.Empty, vector);
 		}
 
+		//TODO (CR May09): API unclear; should really just be passing in 2 points, not a point and a vector.
 		/// <summary>
 		/// Computes the unit vector of the vector from <paramref name="origin"/> towards the specified <paramref name="vector">point</paramref>.
 		/// </summary>
