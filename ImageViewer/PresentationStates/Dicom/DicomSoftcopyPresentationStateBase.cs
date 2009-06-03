@@ -246,6 +246,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			set { _displayAreaSerializationOption = value; }
 		}
 
+		//TODO (CR May09): again, can we use an object instead of a dictionary?
 		protected void SerializePresentationStateRelationship(PresentationStateRelationshipModuleIod presentationStateRelationshipModule, IDictionary<string, IList<T>> imagesBySeries)
 		{
 			presentationStateRelationshipModule.InitializeAttributes();

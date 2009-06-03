@@ -34,6 +34,8 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO (later): get rid of this class.
+
 	/// <summary>
 	/// A delegate used to retrieve data from an <see cref="Frame"/>.
 	/// </summary>

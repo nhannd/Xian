@@ -109,6 +109,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// </summary>
 		int? DisplayGrayscaleColor { get; set; }
 
+		//TODO (CR May09): Use the CIELabColor that's in Iod?
+
 		/// <summary>
 		/// Gets or sets the CIELab colour value to use on this layer. (Currently not strictly implemented)
 		/// </summary>

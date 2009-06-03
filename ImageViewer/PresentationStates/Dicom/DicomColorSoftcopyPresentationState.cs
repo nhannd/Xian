@@ -59,6 +59,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Serialization Support
 
+		//TODO (CR May09): can we improve this method signature by using a specialized collection class where you can enumerate the images
+		// however you want?
+		// For example: presentationImages.GetImagesBySeries();
 		protected override void PerformTypeSpecificSerialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries)
 		{
 			IOverlayMapping overlayMapping;

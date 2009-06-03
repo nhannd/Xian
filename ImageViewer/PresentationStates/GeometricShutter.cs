@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		internal abstract void AddToGraphicsPath(GraphicsPath path);
 
-		internal GeometricShutter Clone()
+		public GeometricShutter Clone()
 		{
 			return CloneBuilder.Clone(this) as GeometricShutter;
 		}

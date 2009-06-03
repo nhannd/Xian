@@ -173,6 +173,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				{
 					if (overlay.ParentGraphic is ShutterCollection)
 					{
+						//TODO (CR May09): do we need to dispose the graphic that was removed.
 						ShutterCollection shutterCollection = (ShutterCollection) overlay.ParentGraphic;
 						shutterCollection.Deactivate(overlay);
 						shutterCollection.Graphics.Remove(overlay);
@@ -272,6 +273,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public void Clear()
 			{
+				//TODO (CR May09):dispose
 				_overlays[0] = null;
 				_overlays[1] = null;
 				_overlays[2] = null;

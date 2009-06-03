@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private const string _messageAlreadySerialized = "This presentation state has already been serialized to a file.";
 		private const string _messageNotYetSerialized = "This presentation state has not been serialized to a file.";
 
+		//TODO (CR May09): contractions
 		[CloneCopyReference]
 		private readonly SopClass _psSopClass;
 
@@ -144,6 +145,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _psSopClass.Uid; }
 		}
 
+		//TODO (CR May09): use SeriesInstanceUid, SopInstanceUid, etc throughout the framework for consistency
 		/// <summary>
 		/// Gets or sets the presentation state series UID.
 		/// </summary>

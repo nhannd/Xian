@@ -17,16 +17,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	{
 		internal DicomDefaultPresentationState() : base() {}
 
-		private static void Deserialize(IDicomPresentationImage _image)
+		private static void Deserialize(IDicomPresentationImage image)
 		{
 			bool anyFailures = false;
 
-			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(_image, true);
+			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
 			if(dicomGraphicsPlane == null)
 				throw new DicomGraphicsDeserializationException("Unknown exception.");
 
 			// Check if the image header specifies a bitmap display shutter
-			BitmapDisplayShutterModuleIod bitmapShutterIod = new BitmapDisplayShutterModuleIod(_image.ImageSop.DataSource);
+			BitmapDisplayShutterModuleIod bitmapShutterIod = new BitmapDisplayShutterModuleIod(image.ImageSop.DataSource);
 			int bitmapShutterIndex = -1;
 			if (bitmapShutterIod.ShutterShape == ShutterShape.Bitmap)
 				bitmapShutterIndex = bitmapShutterIod.ShutterOverlayGroupIndex;
@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			try
 			{
-				GeometricShuttersGraphic geometricShuttersGraphic = DicomGraphicsFactory.CreateGeometricShuttersGraphic(_image.Frame);
+				GeometricShuttersGraphic geometricShuttersGraphic = DicomGraphicsFactory.CreateGeometricShuttersGraphic(image.Frame);
 				dicomGraphicsPlane.Shutters.Add(geometricShuttersGraphic);
 			}
 			catch (Exception e)
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			try
 			{
-				List<OverlayPlaneGraphic> overlayPlaneGraphics = DicomGraphicsFactory.CreateOverlayPlaneGraphics(_image.Frame);
+				List<OverlayPlaneGraphic> overlayPlaneGraphics = DicomGraphicsFactory.CreateOverlayPlaneGraphics(image.Frame);
 				foreach (OverlayPlaneGraphic overlay in overlayPlaneGraphics)
 				{
 					if (overlay.Index == bitmapShutterIndex)
