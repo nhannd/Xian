@@ -622,7 +622,7 @@ Preview.ReportingProceduresTable = function () {
 		// bug #3470: there is no point drilling down into the "reporting" status unless the procedure is actually In Progress or Completed
 		// if not, we just return the Procedure status
 		if(["IP", "CM"].indexOf(procedure.Status.Code) == -1)
-			return procedure.Status.Value;
+			return Preview.ProceduresTableHelper.formatProcedureStatus(procedure.Status, procedure.ScheduledStartTime, procedure.StartTime, procedure.CheckInTime, procedure.CheckOutTime);
 	
 		var activeReportingStep = _getActiveReportingStep(procedure);
 		var lastCompletedPublicationStep = _getLastCompletedPublicationStep(procedure);

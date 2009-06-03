@@ -84,6 +84,7 @@
 							getValue: function(item) 
 							{
 								var html = "";
+								var formattedProcedureStatus = Preview.ProceduresTableHelper.formatProcedureStatus(item.Status, item.ScheduledStartTime, item.StartTime, item.CheckInTime, item.CheckOutTime);
 								
 								html += "<table>";
 								html += "<tr>";
@@ -91,7 +92,7 @@
 								html += "</tr>";
 								html += "<tr>";
 								html += "	<td width='120' class='propertyname'>Status</td>";
-								html += "	<td width='200'>" + item.Status.Value + "</td>";
+								html += "	<td width='200'>" + formattedProcedureStatus + "</td>";
 								html += "	<td width='120' class='propertyname'>Performing Facility</td>";
 								html += "	<td width='200'>" + item.PerformingFacility.Name + "</td>";
 								html += "</tr>";
