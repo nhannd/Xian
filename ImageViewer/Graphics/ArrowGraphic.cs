@@ -92,8 +92,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_arrowhead.Visible = _showArrowhead;
 			}
 
-			_shaft.Pt1Changed += OnShaftPt1Changed;
-			_shaft.Pt2Changed += OnShaftPt2Changed;
+			_shaft.Point1Changed += OnShaftPoint1Changed;
+			_shaft.Point2Changed += OnShaftPoint2Changed;
 		}
 
 		[OnCloneComplete]
@@ -114,10 +114,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public PointF StartPoint
 		{
-			get { return _shaft.Pt1; }
+			get { return _shaft.Point1; }
 			set
 			{
-				_shaft.Pt1 = value;
+				_shaft.Point1 = value;
 				UpdateArrowheadAngle();
 			}
 		}
@@ -132,10 +132,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public PointF EndPoint
 		{
-			get { return _shaft.Pt2; }
+			get { return _shaft.Point2; }
 			set
 			{
-				_shaft.Pt2 = _arrowhead.Point = value;
+				_shaft.Point2 = _arrowhead.Point = value;
 				UpdateArrowheadAngle();
 			}
 		}
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			try
 			{
 				// the arrowhead is invariant, but the angle part isn't! must be computed with source coordinates!
-				_arrowhead.Angle = (int)Vector.SubtendedAngle(_shaft.Pt2, _shaft.Pt1, _shaft.Pt1 + new SizeF(1, 0));
+				_arrowhead.Angle = (int)Vector.SubtendedAngle(_shaft.Point2, _shaft.Point1, _shaft.Point1 + new SizeF(1, 0));
 			}
 			finally
 			{
@@ -280,7 +280,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				// if arrowhead option is true and the graphic is visible, only show arrowhead if line is long enough!
 				if (_showArrowhead && _visible)
-					_arrowhead.Visible = Vector.Distance(_shaft.Pt1, _shaft.Pt2) > _arrowhead.Length;
+					_arrowhead.Visible = Vector.Distance(_shaft.Point1, _shaft.Point2) > _arrowhead.Length;
 				else
 					_arrowhead.Visible = false;
 			}
@@ -290,12 +290,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		private void OnShaftPt1Changed(object sender, PointChangedEventArgs e)
+		private void OnShaftPoint1Changed(object sender, PointChangedEventArgs e)
 		{
 			EventsHelper.Fire(_startPointChanged, this, new PointChangedEventArgs(e.Point));
 		}
 
-		private void OnShaftPt2Changed(object sender, PointChangedEventArgs e)
+		private void OnShaftPoint2Changed(object sender, PointChangedEventArgs e)
 		{
 			EventsHelper.Fire(_endPointChanged, this, new PointChangedEventArgs(e.Point));
 		}

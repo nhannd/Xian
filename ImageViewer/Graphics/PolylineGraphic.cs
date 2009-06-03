@@ -280,17 +280,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 					if (e.Index == _points.Count - 1)
 					{
 						_lines.Graphics.Add(line);
-						line.Pt1 = _points[e.Index - 1];
-						line.Pt2 = _points[e.Index];
+						line.Point1 = _points[e.Index - 1];
+						line.Point2 = _points[e.Index];
 					}
 					else
 					{
 						_lines.Graphics.Insert(e.Index, line);
-						line.Pt1 = _points[e.Index];
-						line.Pt2 = _points[e.Index + 1];
+						line.Point1 = _points[e.Index];
+						line.Point2 = _points[e.Index + 1];
 
 						if (e.Index > 0)
-							((LinePrimitive) _lines.Graphics[e.Index - 1]).Pt2 = _points[e.Index];
+							((LinePrimitive) _lines.Graphics[e.Index - 1]).Point2 = _points[e.Index];
 					}
 				}
 				finally
@@ -312,7 +312,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				else if (e.Index > 0)
 				{
 					_lines.Graphics.RemoveAt(e.Index);
-					((LinePrimitive) _lines.Graphics[e.Index - 1]).Pt2 = _points[e.Index];
+					((LinePrimitive) _lines.Graphics[e.Index - 1]).Point2 = _points[e.Index];
 				}
 				else
 				{
@@ -328,12 +328,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				if (e.Index < _points.Count - 1)
 				{
-					((LinePrimitive) _lines.Graphics[e.Index]).Pt1 = _points[e.Index];
+					((LinePrimitive) _lines.Graphics[e.Index]).Point1 = _points[e.Index];
 				}
 
 				if (e.Index > 0)
 				{
-					((LinePrimitive) _lines.Graphics[e.Index - 1]).Pt2 = _points[e.Index];
+					((LinePrimitive) _lines.Graphics[e.Index - 1]).Point2 = _points[e.Index];
 				}
 			}
 			base.NotifyVisualStateChanged("Points");

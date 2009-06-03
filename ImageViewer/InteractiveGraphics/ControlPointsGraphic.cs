@@ -204,12 +204,34 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="CompositeGraphic.CoordinateSystem"/>.
+		/// </summary>
+		/// <remarks>
+		/// Setting the <see cref="CompositeGraphic.CoordinateSystem"/> property will recursively set the 
+		/// <see cref="CompositeGraphic.CoordinateSystem"/> property for <i>all</i> <see cref="Graphic"/> 
+		/// objects in the subtree.
+		/// </remarks>
 		public override sealed CoordinateSystem CoordinateSystem
 		{
 			get { return base.CoordinateSystem; }
 			set { base.CoordinateSystem = value; }
 		}
 
+		/// <summary>
+		/// Resets the <see cref="CompositeGraphic.CoordinateSystem"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// <see cref="CompositeGraphic.ResetCoordinateSystem"/> will reset the <see cref="CompositeGraphic.CoordinateSystem"/>
+		/// to what it was before the <see cref="CompositeGraphic.CoordinateSystem"/> was last set.
+		/// </para>
+		/// <para>
+		/// Calling <see cref="CompositeGraphic.ResetCoordinateSystem"/> will recursively call
+		/// <see cref="CompositeGraphic.ResetCoordinateSystem"/> on <i>all</i> <see cref="Graphic"/> 
+		/// objects in the subtree.
+		/// </para>
+		/// </remarks>
 		public override sealed void ResetCoordinateSystem()
 		{
 			base.ResetCoordinateSystem();

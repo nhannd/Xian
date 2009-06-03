@@ -127,8 +127,8 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			float lengthOfLineThroughTextBox;
 			if (!GetTextBoxAdjustmentParameters(out startPoint, out endPoint, out lengthOfLineThroughTextBox))
 			{
-				_line.Pt1 = Point1;
-				_line.Pt2 = Point2;
+				_line.Point1 = Point1;
+				_line.Point2 = Point2;
 				_text.Location = Point1;
 
 				this.ResetCoordinateSystem();
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 				clientEdgeOffset = new SizeF(clientEdgeOffsetVector.X, clientEdgeOffsetVector.Y);
 			}
 			
-			_line.Pt1 = startPoint;
+			_line.Point1 = startPoint;
 
 			// offset by the distance from the extended endpoint to the client rectangle edge.
 			endPoint = PointF.Subtract(endPoint, clientEdgeOffset);
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			_text.Location = endPoint;
 			
 			// offset the line by half again the distance necessary to keep the text box inside the client rectangle.
-			_line.Pt2 = PointF.Subtract(endPoint, textAnchorPointOffset);
+			_line.Point2 = PointF.Subtract(endPoint, textAnchorPointOffset);
 
 			this.ResetCoordinateSystem();
 		}

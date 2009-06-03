@@ -72,12 +72,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return (IPointsGraphic) base.Graphic; }
 		}
 
+		/// <summary>
+		/// Resets any internal state of the builder, allowing the same graphic to be rebuilt.
+		/// </summary>
 		public override void Reset()
 		{
 			_numberOfPointsAnchored = 0;
 			base.Reset();
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Start"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the builder did something as a result of the call, and hence would like to receive capture; False otherwise.</returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			_numberOfPointsAnchored++;
@@ -106,6 +114,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Track"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the builder handled the message; False otherwise.</returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -116,6 +129,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
+		/// <summary>
+		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Stop"/> is called on the owning tool.
+		/// </summary>
+		/// <param name="mouseInformation">The user input data.</param>
+		/// <returns>True if the tool should not release capture; False otherwise.</returns>
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			return true;

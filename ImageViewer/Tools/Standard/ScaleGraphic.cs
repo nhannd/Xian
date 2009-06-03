@@ -244,8 +244,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// <param name="endpoint2">The other endpoint where the base line segment should be drawn.</param>
 		protected virtual void FormatBaseLine(LinePrimitive baseLine, PointF endpoint1, PointF endpoint2)
 		{
-			baseLine.Pt1 = endpoint1;
-			baseLine.Pt2 = endpoint2;
+			baseLine.Point1 = endpoint1;
+			baseLine.Point2 = endpoint2;
 			baseLine.Color = Color.White;
 		}
 
@@ -260,8 +260,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			float length = this.MajorTickLength;
 			if (this.IsMirrored)
 				length = -length;
-			tickLine.Pt1 = point;
-			tickLine.Pt2 = new PointF(point.X + length * unitNormal.Width, point.Y + length * unitNormal.Height);
+			tickLine.Point1 = point;
+			tickLine.Point2 = new PointF(point.X + length * unitNormal.Width, point.Y + length * unitNormal.Height);
 			tickLine.Color = Color.White;
 		}
 
@@ -276,8 +276,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			float length = this.MinorTickLength;
 			if (this.IsMirrored)
 				length = -length;
-			tickLine.Pt1 = point;
-			tickLine.Pt2 = new PointF(point.X + length * unitNormal.Width, point.Y + length * unitNormal.Height);
+			tickLine.Point1 = point;
+			tickLine.Point2 = new PointF(point.X + length * unitNormal.Width, point.Y + length * unitNormal.Height);
 			tickLine.Color = Color.White;
 		}
 

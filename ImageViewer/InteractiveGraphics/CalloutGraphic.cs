@@ -197,6 +197,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="Color"/> changes.
+		/// </summary>
 		protected virtual void OnColorChanged()
 		{
 			_lineGraphic.Color = this.Color;

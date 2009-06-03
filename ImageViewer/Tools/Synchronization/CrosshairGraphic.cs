@@ -107,20 +107,20 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 			PointF anchor = Anchor;
 
-			_line1.Pt1 = PointF.Subtract(anchor, offset1);
-			_line1.Pt2 = PointF.Subtract(anchor, offset2);
+			_line1.Point1 = PointF.Subtract(anchor, offset1);
+			_line1.Point2 = PointF.Subtract(anchor, offset2);
 
-			_line2.Pt1 = PointF.Add(anchor, offset1);
-			_line2.Pt2 = PointF.Add(anchor, offset2);
+			_line2.Point1 = PointF.Add(anchor, offset1);
+			_line2.Point2 = PointF.Add(anchor, offset2);
 
 			offset1 = new SizeF(0, _lineLength + 5F);
 			offset2 = new SizeF(0, 5F);
 
-			_line3.Pt1 = PointF.Subtract(anchor, offset1);
-			_line3.Pt2 = PointF.Subtract(anchor, offset2);
+			_line3.Point1 = PointF.Subtract(anchor, offset1);
+			_line3.Point2 = PointF.Subtract(anchor, offset2);
 
-			_line4.Pt1 = PointF.Add(anchor, offset1);
-			_line4.Pt2 = PointF.Add(anchor, offset2);
+			_line4.Point1 = PointF.Add(anchor, offset1);
+			_line4.Point2 = PointF.Add(anchor, offset2);
 
 			base.ResetCoordinateSystem();
 		}
