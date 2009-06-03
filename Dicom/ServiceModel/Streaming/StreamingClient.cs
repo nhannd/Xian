@@ -131,7 +131,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 				HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
 				request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
 				request.Timeout = (int) TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
-				HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+				request.KeepAlive = false;
+
+				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
 				if (response.StatusCode != HttpStatusCode.OK)
 				{
@@ -240,6 +242,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 				HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
 				request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg";
 				request.Timeout = (int) TimeSpan.FromSeconds(StreamingSettings.Default.ClientTimeoutSeconds).TotalMilliseconds;
+				request.KeepAlive = false;
 
 				HttpWebResponse response = (HttpWebResponse) request.GetResponse();
 				if (response.StatusCode != HttpStatusCode.OK)

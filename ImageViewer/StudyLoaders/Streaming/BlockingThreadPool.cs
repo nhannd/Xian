@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	//TODO: incorporate this kind of thing into the thread pools in common, where the items being 
 	//processed can be added and/or removed.
-	internal class BlockingThreadPool<T> : ThreadPoolBase
+	public class BlockingThreadPool<T> : ThreadPoolBase
 	{
 		private readonly IBlockingEnumerator<T> _blockingEnumerator;
 		private readonly ProcessItemDelegate<T> _processItem;

@@ -42,8 +42,28 @@ using System.Threading;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	internal interface IStreamingSopFrameData : ISopFrameData
+	public class StreamingPerformanceInfo
 	{
+		internal StreamingPerformanceInfo(DateTime start, DateTime end, long totalBytesTransferred)
+		{
+			StartTime = start;
+			EndTime = end;
+			TotalBytesTransferred = totalBytesTransferred;
+		}
+
+		public readonly DateTime StartTime;
+		public readonly DateTime EndTime;
+		public readonly long TotalBytesTransferred;
+
+		public TimeSpan ElapsedTime
+		{
+			get { return EndTime.Subtract(StartTime); }	
+		}
+	}
+
+	public interface IStreamingSopFrameData : ISopFrameData
+	{
+		StreamingPerformanceInfo LastRetrievePerformanceInfo { get; } 
 		bool PixelDataRetrieved { get; }
 		void RetrievePixelData();
 	}
@@ -70,6 +90,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			{
 				get { return _framePixelData.AlreadyRetrieved; }
 			}
+
+			public StreamingPerformanceInfo LastRetrievePerformanceInfo
+			{
+				get { return _framePixelData.LastRetrievePerformanceInfo; }	
+			}
+
 			public void RetrievePixelData()
 			{
 				_framePixelData.Retrieve();
@@ -291,6 +317,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			private readonly object _syncLock = new object();
 			private volatile bool _alreadyRetrieved;
 			private RetrievePixelDataResult _retrieveResult;
+			private volatile StreamingPerformanceInfo _lastRetrievePerformanceInfo;
 
 			public readonly StreamingSopDataSource Parent;
 			public readonly int FrameNumber;
@@ -306,6 +333,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				get { return _alreadyRetrieved; }
 			}
 
+			public StreamingPerformanceInfo LastRetrievePerformanceInfo
+			{
+				get { return _lastRetrievePerformanceInfo; }
+			}
+
 			public void Retrieve()
 			{
 				if (!_alreadyRetrieved)
@@ -319,7 +351,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					{
 						if (!_alreadyRetrieved)
 						{
+							DateTime start = DateTime.Now;
 							_retrieveResult = retriever.Retrieve();
+							DateTime end = DateTime.Now;
+
+							_lastRetrievePerformanceInfo = 
+								new StreamingPerformanceInfo(start, end, _retrieveResult.MetaData.ContentLength);
+							
 							_alreadyRetrieved = true;
 						}
 					}

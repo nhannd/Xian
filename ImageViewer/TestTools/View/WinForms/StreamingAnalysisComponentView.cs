@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,13 +29,50 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 {
-	//TODO: work this into common, so that all thread pools aren't tied to queues that can't be changed.
-	public interface IBlockingEnumerator<T> : IEnumerable<T>
-	{
-		bool ContinueBlocking { get; set; }
-	}
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="StreamingAnalysisComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(StreamingAnalysisComponentViewExtensionPoint))]
+    public class StreamingAnalysisComponentView : WinFormsView, IApplicationComponentView
+    {
+        private StreamingAnalysisComponent _component;
+        private StreamingAnalysisComponentControl _control;
+
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (StreamingAnalysisComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new StreamingAnalysisComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

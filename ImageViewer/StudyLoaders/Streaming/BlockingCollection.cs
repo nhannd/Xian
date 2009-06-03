@@ -35,10 +35,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	//Note: not used right now, but it works so we'll keep it around.
-
 	//Similar to the BlockingQueue, except that items can be added and removed.
-	internal class BlockingCollection<T> : ICollection<T>, IBlockingEnumerator<T>
+	//TODO: the behaviour of this class and it's API should be refactored if it's going to be reused.
+	public class BlockingCollection<T> : ICollection<T>, IBlockingEnumerator<T>
 	{
 		private readonly object _syncLock = new object();
 		private readonly List<T> _items = new List<T>();
@@ -57,7 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				_continueBlocking = value;
 				if (!_continueBlocking)
 				{
-					lock(_syncLock)
+					lock (_syncLock)
 					{
 						Monitor.PulseAll(_syncLock);
 					}
@@ -87,6 +86,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				}
 
 				yield return item;
+			}
+		}
+
+		public void Clear(out List<T> itemsRemoved)
+		{
+			lock (_syncLock)
+			{
+				itemsRemoved = new List<T>(_items);
+				_items.Clear();
 			}
 		}
 
@@ -127,7 +135,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		public bool Remove(T item)
 		{
-			lock(_syncLock)
+			lock (_syncLock)
 			{
 				return _items.Remove(item);
 			}
@@ -135,7 +143,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		public void Clear()
 		{
-			lock(_syncLock)
+			lock (_syncLock)
 			{
 				_items.Clear();
 			}
@@ -161,7 +169,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			get
 			{
-				lock(_syncLock)
+				lock (_syncLock)
 				{
 					return _items.Count;
 				}

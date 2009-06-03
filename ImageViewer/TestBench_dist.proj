@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NPlot.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer32.dll" />
     <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer64.dll" />

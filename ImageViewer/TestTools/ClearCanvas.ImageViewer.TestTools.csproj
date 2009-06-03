@@ -46,6 +46,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StreamingAnalysisComponent.cs" />
+    <Compile Include="StreamingAnalysisTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -83,6 +85,10 @@
     <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StudyLoaders\Streaming\ClearCanvas.ImageViewer.StudyLoaders.Streaming.csproj">
+      <Project>{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}</Project>
+      <Name>ClearCanvas.ImageViewer.StudyLoaders.Streaming</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

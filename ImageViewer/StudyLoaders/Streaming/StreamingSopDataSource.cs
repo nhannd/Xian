@@ -41,7 +41,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	internal partial class StreamingSopDataSource : DicomMessageSopDataSource
+	public interface IStreamingSopDataSource : IDicomMessageSopDataSource
+	{
+		new IStreamingSopFrameData GetFrameData(int frameNumber);
+	}
+
+	internal partial class StreamingSopDataSource : DicomMessageSopDataSource, IStreamingSopDataSource
 	{
 		private readonly string _host;
 		private readonly string _aeTitle;
@@ -68,6 +73,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 			get { return (InstanceXmlDicomAttributeCollection)SourceMessage.DataSet; }
 		}
+
+		#region IStreamingSopDataSource Members
+
+		public new IStreamingSopFrameData GetFrameData(int frameNumber)
+		{
+			return (IStreamingSopFrameData) base.GetFrameData(frameNumber);
+		}
+
+		#endregion
 
 		public override DicomAttribute GetDicomAttribute(DicomTag tag)
 		{
