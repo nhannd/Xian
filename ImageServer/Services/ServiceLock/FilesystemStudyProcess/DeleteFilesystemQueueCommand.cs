@@ -46,12 +46,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
     public class DeleteFilesystemQueueCommand : ServerDatabaseCommand
     {
         private readonly ServerEntityKey _storageLocationKey;
+    	private readonly ServerRuleApplyTimeEnum _applyTime = null;
 
-        public DeleteFilesystemQueueCommand(ServerEntityKey storageLocationKey)
-            : base("Delete FilesystemQueue", false)
-        {
-            _storageLocationKey = storageLocationKey;
-        }
+		public DeleteFilesystemQueueCommand(ServerEntityKey storageLocationKey, ServerRuleApplyTimeEnum applyTime)
+			: base("Delete FilesystemQueue", false)
+		{
+			_storageLocationKey = storageLocationKey;
+			_applyTime = applyTime;
+		}
 
         protected override void OnExecute(IUpdateContext updateContext)
         {
@@ -63,21 +65,38 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
             IWorkQueueEntityBroker workQueueBroker = updateContext.GetBroker<IWorkQueueEntityBroker>();
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(_storageLocationKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.PurgeStudy, WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.CompressStudy, WorkQueueTypeEnum.MigrateStudy });
+			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.PurgeStudy, WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.CompressStudy, WorkQueueTypeEnum.MigrateStudy });
             IList<WorkQueue> workQueueItems = workQueueBroker.Find(workQueueCriteria);
 
             foreach (FilesystemQueue queue in filesystemQueueItems)
             {
-                if (!filesystemQueueBroker.Delete(queue.GetKey()))
-                    throw new ApplicationException("Unable to delete items in the filesystem queue");
+            	bool delete = false;
+				if (_applyTime.Equals(ServerRuleApplyTimeEnum.StudyArchived))
+				{
+					if (queue.FilesystemQueueTypeEnum.Equals(FilesystemQueueTypeEnum.PurgeStudy))
+						delete = true;
+				}
+				else
+				{
+					delete = true;
+				}
+
+				if (delete)
+				{
+					if (!filesystemQueueBroker.Delete(queue.GetKey()))
+						throw new ApplicationException("Unable to delete items in the filesystem queue");
+				}
             }
 
-            // delete work queue
-            foreach (WorkQueue item in workQueueItems)
-            {
-                if (!item.Delete(updateContext))
-                    throw new ApplicationException("Unable to delete items in the work queue");
-            }
+			if (!_applyTime.Equals(ServerRuleApplyTimeEnum.StudyArchived))
+			{
+				// delete work queue
+				foreach (WorkQueue item in workQueueItems)
+				{
+					if (!item.Delete(updateContext))
+						throw new ApplicationException("Unable to delete items in the work queue");
+				}
+			}
         }
     }
 }
