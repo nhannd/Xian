@@ -126,4 +126,7 @@
   <data name="MprWorkspaceTitlePrefix" xml:space="preserve">
     <value>MPR - </value>
   </data>
+  <data name="MessageFormatOpeningImages" xml:space="preserve">
+    <value>Opening {0} of {1} images</value>
+  </data>
 </root>

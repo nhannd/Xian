@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SR {
+	internal class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.SR", typeof(SR).Assembly);
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ClearCanvas Workstation.
         /// </summary>
-        public static string ApplicationName {
+        internal static string ApplicationName {
             get {
                 return ResourceManager.GetString("ApplicationName", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to 1.0.
         /// </summary>
-        public static string ApplicationVersion {
+        internal static string ApplicationVersion {
             get {
                 return ResourceManager.GetString("ApplicationVersion", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
-        public static string BoolNo {
+        internal static string BoolNo {
             get {
                 return ResourceManager.GetString("BoolNo", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Yes.
         /// </summary>
-        public static string BoolYes {
+        internal static string BoolYes {
             get {
                 return ResourceManager.GetString("BoolYes", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Change.
         /// </summary>
-        public static string CommandChange {
+        internal static string CommandChange {
             get {
                 return ResourceManager.GetString("CommandChange", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Create multiline graphic.
         /// </summary>
-        public static string CommandCreateMultilineGraphic {
+        internal static string CommandCreateMultilineGraphic {
             get {
                 return ResourceManager.GetString("CommandCreateMultilineGraphic", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Create rectangle graphic.
         /// </summary>
-        public static string CommandCreateRectangleGraphic {
+        internal static string CommandCreateRectangleGraphic {
             get {
                 return ResourceManager.GetString("CommandCreateRectangleGraphic", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Create ROI graphic.
         /// </summary>
-        public static string CommandCreateROIGraphic {
+        internal static string CommandCreateROIGraphic {
             get {
                 return ResourceManager.GetString("CommandCreateROIGraphic", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
-        public static string CommandDelete {
+        internal static string CommandDelete {
             get {
                 return ResourceManager.GetString("CommandDelete", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Edit Text.
         /// </summary>
-        public static string CommandEditText {
+        internal static string CommandEditText {
             get {
                 return ResourceManager.GetString("CommandEditText", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Move.
         /// </summary>
-        public static string CommandMove {
+        internal static string CommandMove {
             get {
                 return ResourceManager.GetString("CommandMove", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Move control point.
         /// </summary>
-        public static string CommandMoveControlPoint {
+        internal static string CommandMoveControlPoint {
             get {
                 return ResourceManager.GetString("CommandMoveControlPoint", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Move graphic.
         /// </summary>
-        public static string CommandMoveGraphic {
+        internal static string CommandMoveGraphic {
             get {
                 return ResourceManager.GetString("CommandMoveGraphic", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Resize.
         /// </summary>
-        public static string CommandResize {
+        internal static string CommandResize {
             get {
                 return ResourceManager.GetString("CommandResize", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Stretch.
         /// </summary>
-        public static string CommandStretch {
+        internal static string CommandStretch {
             get {
                 return ResourceManager.GetString("CommandStretch", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Blue.
         /// </summary>
-        public static string DescriptionBlueColorMap {
+        internal static string DescriptionBlueColorMap {
             get {
                 return ResourceManager.GetString("DescriptionBlueColorMap", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to (None).
         /// </summary>
-        public static string DescriptionGrayscaleColorMap {
+        internal static string DescriptionGrayscaleColorMap {
             get {
                 return ResourceManager.GetString("DescriptionGrayscaleColorMap", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Green.
         /// </summary>
-        public static string DescriptionGreenColorMap {
+        internal static string DescriptionGreenColorMap {
             get {
                 return ResourceManager.GetString("DescriptionGreenColorMap", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Palette Color.
         /// </summary>
-        public static string DescriptionPaletteColorMap {
+        internal static string DescriptionPaletteColorMap {
             get {
                 return ResourceManager.GetString("DescriptionPaletteColorMap", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Prefetches image data in a display set when display set becomes visible..
         /// </summary>
-        public static string DescriptionPrefetchingStrategyVisibleDisplaySet {
+        internal static string DescriptionPrefetchingStrategyVisibleDisplaySet {
             get {
                 return ResourceManager.GetString("DescriptionPrefetchingStrategyVisibleDisplaySet", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Red.
         /// </summary>
-        public static string DescriptionRedColorMap {
+        internal static string DescriptionRedColorMap {
             get {
                 return ResourceManager.GetString("DescriptionRedColorMap", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Additional mouse tool assignments must be modified ({0})..
         /// </summary>
-        public static string ExceptionAdditionalMouseToolAssignmentsMustBeModified {
+        internal static string ExceptionAdditionalMouseToolAssignmentsMustBeModified {
             get {
                 return ResourceManager.GetString("ExceptionAdditionalMouseToolAssignmentsMustBeModified", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to AnnotationItem has no display name: {0}..
         /// </summary>
-        public static string ExceptionFormatAnnotationItemHasNoDisplayName {
+        internal static string ExceptionFormatAnnotationItemHasNoDisplayName {
             get {
                 return ResourceManager.GetString("ExceptionFormatAnnotationItemHasNoDisplayName", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ImageBufferWin32 is not supported on non-Win32 platforms..
         /// </summary>
-        public static string ExceptionImageBufferWin32NotSupported {
+        internal static string ExceptionImageBufferWin32NotSupported {
             get {
                 return ResourceManager.GetString("ExceptionImageBufferWin32NotSupported", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Image is not grayscale..
         /// </summary>
-        public static string ExceptionImageIsNotGrayscale {
+        internal static string ExceptionImageIsNotGrayscale {
             get {
                 return ResourceManager.GetString("ExceptionImageIsNotGrayscale", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Invalid pixel data (expected size: {0} bytes, actual size: {1} bytes)..
         /// </summary>
-        public static string ExceptionIncorrectPixelDataSize {
+        internal static string ExceptionIncorrectPixelDataSize {
             get {
                 return ResourceManager.GetString("ExceptionIncorrectPixelDataSize", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Invalid Annotation Layout XML ({0})..
         /// </summary>
-        public static string ExceptionInvalidAnnotationLayoutXml {
+        internal static string ExceptionInvalidAnnotationLayoutXml {
             get {
                 return ResourceManager.GetString("ExceptionInvalidAnnotationLayoutXml", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Invalid Filtered Annotation Layout XML ({0})..
         /// </summary>
-        public static string ExceptionInvalidFilteredAnnotationLayoutXml {
+        internal static string ExceptionInvalidFilteredAnnotationLayoutXml {
             get {
                 return ResourceManager.GetString("ExceptionInvalidFilteredAnnotationLayoutXml", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid normalized rectangle.  Normalized rectangle coordinates must be between 0.0 and 1.0 with Right &gt; Left, Bottom &gt; Top..
         /// </summary>
-        public static string ExceptionInvalidNormalizedRectangle {
+        internal static string ExceptionInvalidNormalizedRectangle {
             get {
                 return ResourceManager.GetString("ExceptionInvalidNormalizedRectangle", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ({0},{1},{2},{3}) is an invalid parent rectangle.  Parent rectangle must be such that all coordinates are positive with Right &gt; Left, Bottom &gt; Top..
         /// </summary>
-        public static string ExceptionInvalidParentRectangle {
+        internal static string ExceptionInvalidParentRectangle {
             get {
                 return ResourceManager.GetString("ExceptionInvalidParentRectangle", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Patient ID must not be empty..
         /// </summary>
-        public static string ExceptionInvalidPatientID {
+        internal static string ExceptionInvalidPatientID {
             get {
                 return ResourceManager.GetString("ExceptionInvalidPatientID", resourceCulture);
             }
@@ -342,7 +342,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Rotation value must be 0, 90, 180 or 270..
         /// </summary>
-        public static string ExceptionInvalidRotationValue {
+        internal static string ExceptionInvalidRotationValue {
             get {
                 return ResourceManager.GetString("ExceptionInvalidRotationValue", resourceCulture);
             }
@@ -351,7 +351,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} is an invalid standard path item..
         /// </summary>
-        public static string ExceptionInvalidStandardPathItem {
+        internal static string ExceptionInvalidStandardPathItem {
             get {
                 return ResourceManager.GetString("ExceptionInvalidStandardPathItem", resourceCulture);
             }
@@ -360,7 +360,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Stride improperly calculated (correct stride = {0}, calculated stride = {1})..
         /// </summary>
-        public static string ExceptionInvalidStride {
+        internal static string ExceptionInvalidStride {
             get {
                 return ResourceManager.GetString("ExceptionInvalidStride", resourceCulture);
             }
@@ -369,7 +369,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Transfer syntax UID must be one of: 1.2.840.10008.1.2, 1.2.840.10008.1.2.1, 1.2.840.10008.1.2.2 or 1.2.840.10008.1.2.5.
         /// </summary>
-        public static string ExceptionInvalidTransferSyntaxUID {
+        internal static string ExceptionInvalidTransferSyntaxUID {
             get {
                 return ResourceManager.GetString("ExceptionInvalidTransferSyntaxUID", resourceCulture);
             }
@@ -378,7 +378,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The layout of the physical workspace is either non-rectangular or has not been set..
         /// </summary>
-        public static string ExceptionLayoutIsNotRectangular {
+        internal static string ExceptionLayoutIsNotRectangular {
             get {
                 return ResourceManager.GetString("ExceptionLayoutIsNotRectangular", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Linear Luts have no settable data..
         /// </summary>
-        public static string ExceptionLinearLutDataCannotBeSet {
+        internal static string ExceptionLinearLutDataCannotBeSet {
             get {
                 return ResourceManager.GetString("ExceptionLinearLutDataCannotBeSet", resourceCulture);
             }
@@ -396,7 +396,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to LUT index out of range (index = {0})..
         /// </summary>
-        public static string ExceptionLUTIndexOutOfRange {
+        internal static string ExceptionLUTIndexOutOfRange {
             get {
                 return ResourceManager.GetString("ExceptionLUTIndexOutOfRange", resourceCulture);
             }
@@ -405,7 +405,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Output range of previous LUT does not match input range of current LUT..
         /// </summary>
-        public static string ExceptionLUTInputOutputRange {
+        internal static string ExceptionLUTInputOutputRange {
             get {
                 return ResourceManager.GetString("ExceptionLUTInputOutputRange", resourceCulture);
             }
@@ -414,7 +414,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Output range of last LUT is not 8 bits..
         /// </summary>
-        public static string ExceptionLUTLastOutputRange {
+        internal static string ExceptionLUTLastOutputRange {
             get {
                 return ResourceManager.GetString("ExceptionLUTLastOutputRange", resourceCulture);
             }
@@ -423,7 +423,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Minimum input value greater than or equal to maximum input value..
         /// </summary>
-        public static string ExceptionLUTMinGreaterThanEqualToMax {
+        internal static string ExceptionLUTMinGreaterThanEqualToMax {
             get {
                 return ResourceManager.GetString("ExceptionLUTMinGreaterThanEqualToMax", resourceCulture);
             }
@@ -432,7 +432,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Cannot generate composite LUT because no LUTs have been added yet..
         /// </summary>
-        public static string ExceptionLUTNotAdded {
+        internal static string ExceptionLUTNotAdded {
             get {
                 return ResourceManager.GetString("ExceptionLUTNotAdded", resourceCulture);
             }
@@ -441,7 +441,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The maximum output value is not settable..
         /// </summary>
-        public static string ExceptionMaximumOutputValueIsNotSettable {
+        internal static string ExceptionMaximumOutputValueIsNotSettable {
             get {
                 return ResourceManager.GetString("ExceptionMaximumOutputValueIsNotSettable", resourceCulture);
             }
@@ -450,7 +450,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The minimum output value is not settable..
         /// </summary>
-        public static string ExceptionMinimumOutputValueIsNotSettable {
+        internal static string ExceptionMinimumOutputValueIsNotSettable {
             get {
                 return ResourceManager.GetString("ExceptionMinimumOutputValueIsNotSettable", resourceCulture);
             }
@@ -459,7 +459,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The minimum and maximum input values have not been set..
         /// </summary>
-        public static string ExceptionMinMaxInputValuesNotSet {
+        internal static string ExceptionMinMaxInputValuesNotSet {
             get {
                 return ResourceManager.GetString("ExceptionMinMaxInputValuesNotSet", resourceCulture);
             }
@@ -468,7 +468,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to You must override SetMemento in order to restore state from a previous call to CreateMemento..
         /// </summary>
-        public static string ExceptionMustOverrideSetMemento {
+        internal static string ExceptionMustOverrideSetMemento {
             get {
                 return ResourceManager.GetString("ExceptionMustOverrideSetMemento", resourceCulture);
             }
@@ -477,7 +477,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Is the ImageBox to which this Tile belongs supposed to be empty?.
         /// </summary>
-        public static string ExceptionNoDisplaySetAssociatedWithImageBoxTile {
+        internal static string ExceptionNoDisplaySetAssociatedWithImageBoxTile {
             get {
                 return ResourceManager.GetString("ExceptionNoDisplaySetAssociatedWithImageBoxTile", resourceCulture);
             }
@@ -486,7 +486,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Is the tile supposed to be empty?.
         /// </summary>
-        public static string ExceptionNoPresentationImageAssociatedWithTile {
+        internal static string ExceptionNoPresentationImageAssociatedWithTile {
             get {
                 return ResourceManager.GetString("ExceptionNoPresentationImageAssociatedWithTile", resourceCulture);
             }
@@ -495,7 +495,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to No SOPs exist in this series.  SeriesDescription cannot be determined..
         /// </summary>
-        public static string ExceptionNoSopsExistInSeries {
+        internal static string ExceptionNoSopsExistInSeries {
             get {
                 return ResourceManager.GetString("ExceptionNoSopsExistInSeries", resourceCulture);
             }
@@ -504,7 +504,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Object must be of Type Single..
         /// </summary>
-        public static string ExceptionObjectMustBeSingleType {
+        internal static string ExceptionObjectMustBeSingleType {
             get {
                 return ResourceManager.GetString("ExceptionObjectMustBeSingleType", resourceCulture);
             }
@@ -513,7 +513,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Sop Instance validation failed..
         /// </summary>
-        public static string ExceptionSopInstanceValidationFailed {
+        internal static string ExceptionSopInstanceValidationFailed {
             get {
                 return ResourceManager.GetString("ExceptionSopInstanceValidationFailed", resourceCulture);
             }
@@ -522,7 +522,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to For undo support, your StatefulGraphic subclass must implement IMemorable..
         /// </summary>
-        public static string ExceptionStatefulGraphicMustBeIMemorable {
+        internal static string ExceptionStatefulGraphicMustBeIMemorable {
             get {
                 return ResourceManager.GetString("ExceptionStatefulGraphicMustBeIMemorable", resourceCulture);
             }
@@ -531,7 +531,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} [C:{1:F2}% B:{2:F2}%].
         /// </summary>
-        public static string FormatAdjustableDataLutDescription {
+        internal static string FormatAdjustableDataLutDescription {
             get {
                 return ResourceManager.GetString("FormatAdjustableDataLutDescription", resourceCulture);
             }
@@ -540,7 +540,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Area: {0:F0} pixels.
         /// </summary>
-        public static string FormatAreaPixels {
+        internal static string FormatAreaPixels {
             get {
                 return ResourceManager.GetString("FormatAreaPixels", resourceCulture);
             }
@@ -549,7 +549,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Area: {0:F1} cm².
         /// </summary>
-        public static string FormatAreaSquareCm {
+        internal static string FormatAreaSquareCm {
             get {
                 return ResourceManager.GetString("FormatAreaSquareCm", resourceCulture);
             }
@@ -558,7 +558,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Area: {0:F0} mm².
         /// </summary>
-        public static string FormatAreaSquareMm {
+        internal static string FormatAreaSquareMm {
             get {
                 return ResourceManager.GetString("FormatAreaSquareMm", resourceCulture);
             }
@@ -567,7 +567,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Overlay Plane ({0} #{1}, Fr #{2}).
         /// </summary>
-        public static string FormatDefaultMultiFrameOverlayGraphicName {
+        internal static string FormatDefaultMultiFrameOverlayGraphicName {
             get {
                 return ResourceManager.GetString("FormatDefaultMultiFrameOverlayGraphicName", resourceCulture);
             }
@@ -576,7 +576,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Overlay Plane ({0} #{1}).
         /// </summary>
-        public static string FormatDefaultSingleFrameOverlayGraphicName {
+        internal static string FormatDefaultSingleFrameOverlayGraphicName {
             get {
                 return ResourceManager.GetString("FormatDefaultSingleFrameOverlayGraphicName", resourceCulture);
             }
@@ -585,7 +585,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1}.
         /// </summary>
-        public static string FormatDescriptionBasicLinearLut {
+        internal static string FormatDescriptionBasicLinearLut {
             get {
                 return ResourceManager.GetString("FormatDescriptionBasicLinearLut", resourceCulture);
             }
@@ -594,7 +594,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1} (Min/Max).
         /// </summary>
-        public static string FormatDescriptionMinMaxCalculatedLinearLut {
+        internal static string FormatDescriptionMinMaxCalculatedLinearLut {
             get {
                 return ResourceManager.GetString("FormatDescriptionMinMaxCalculatedLinearLut", resourceCulture);
             }
@@ -603,7 +603,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Slope: {0:F2} Int.: {1:F2}.
         /// </summary>
-        public static string FormatDescriptionModalityLutLinear {
+        internal static string FormatDescriptionModalityLutLinear {
             get {
                 return ResourceManager.GetString("FormatDescriptionModalityLutLinear", resourceCulture);
             }
@@ -612,7 +612,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1} ({2}).
         /// </summary>
-        public static string FormatDescriptionPresentationStateLinearLut {
+        internal static string FormatDescriptionPresentationStateLinearLut {
             get {
                 return ResourceManager.GetString("FormatDescriptionPresentationStateLinearLut", resourceCulture);
             }
@@ -621,7 +621,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Reason: {0}.
         /// </summary>
-        public static string FormatExceptionReason {
+        internal static string FormatExceptionReason {
             get {
                 return ResourceManager.GetString("FormatExceptionReason", resourceCulture);
             }
@@ -630,7 +630,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0:F1} cm.
         /// </summary>
-        public static string FormatLengthCm {
+        internal static string FormatLengthCm {
             get {
                 return ResourceManager.GetString("FormatLengthCm", resourceCulture);
             }
@@ -639,7 +639,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0:F0} mm.
         /// </summary>
-        public static string FormatLengthMm {
+        internal static string FormatLengthMm {
             get {
                 return ResourceManager.GetString("FormatLengthMm", resourceCulture);
             }
@@ -648,7 +648,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0:F0} pixels.
         /// </summary>
-        public static string FormatLengthPixels {
+        internal static string FormatLengthPixels {
             get {
                 return ResourceManager.GetString("FormatLengthPixels", resourceCulture);
             }
@@ -657,7 +657,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Mean: {0}.
         /// </summary>
-        public static string FormatMean {
+        internal static string FormatMean {
             get {
                 return ResourceManager.GetString("FormatMean", resourceCulture);
             }
@@ -666,7 +666,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Mean: {0} HU.
         /// </summary>
-        public static string FormatMeanCT {
+        internal static string FormatMeanCT {
             get {
                 return ResourceManager.GetString("FormatMeanCT", resourceCulture);
             }
@@ -675,7 +675,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} : {1}.
         /// </summary>
-        public static string FormatMouseButtonShortcutDescription {
+        internal static string FormatMouseButtonShortcutDescription {
             get {
                 return ResourceManager.GetString("FormatMouseButtonShortcutDescription", resourceCulture);
             }
@@ -684,7 +684,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated..
         /// </summary>
-        public static string FormatMouseToolHasNoAssignment {
+        internal static string FormatMouseToolHasNoAssignment {
             get {
                 return ResourceManager.GetString("FormatMouseToolHasNoAssignment", resourceCulture);
             }
@@ -693,7 +693,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The mouse tool has an invalid shortcut assignment ({0})..
         /// </summary>
-        public static string FormatMouseToolInvalidAssignment {
+        internal static string FormatMouseToolInvalidAssignment {
             get {
                 return ResourceManager.GetString("FormatMouseToolInvalidAssignment", resourceCulture);
             }
@@ -702,7 +702,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Wheel : {0}.
         /// </summary>
-        public static string FormatMouseWheelShortcutDescription {
+        internal static string FormatMouseWheelShortcutDescription {
             get {
                 return ResourceManager.GetString("FormatMouseWheelShortcutDescription", resourceCulture);
             }
@@ -711,7 +711,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Std Dev: {0}.
         /// </summary>
-        public static string FormatStdDev {
+        internal static string FormatStdDev {
             get {
                 return ResourceManager.GetString("FormatStdDev", resourceCulture);
             }
@@ -720,7 +720,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Std Dev: {0} HU.
         /// </summary>
-        public static string FormatStdDevCT {
+        internal static string FormatStdDevCT {
             get {
                 return ResourceManager.GetString("FormatStdDevCT", resourceCulture);
             }
@@ -729,7 +729,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Error:.
         /// </summary>
-        public static string LabelError {
+        internal static string LabelError {
             get {
                 return ResourceManager.GetString("LabelError", resourceCulture);
             }
@@ -738,7 +738,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to PR LUT.
         /// </summary>
-        public static string LabelPresentationStateLut {
+        internal static string LabelPresentationStateLut {
             get {
                 return ResourceManager.GetString("LabelPresentationStateLut", resourceCulture);
             }
@@ -747,7 +747,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
-        public static string LabelUnknown {
+        internal static string LabelUnknown {
             get {
                 return ResourceManager.GetString("LabelUnknown", resourceCulture);
             }
@@ -756,7 +756,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Delete Vertex.
         /// </summary>
-        public static string MenuDeleteVertex {
+        internal static string MenuDeleteVertex {
             get {
                 return ResourceManager.GetString("MenuDeleteVertex", resourceCulture);
             }
@@ -765,7 +765,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
-        public static string MenuEditText {
+        internal static string MenuEditText {
             get {
                 return ResourceManager.GetString("MenuEditText", resourceCulture);
             }
@@ -774,7 +774,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Insert Vertex.
         /// </summary>
-        public static string MenuInsertVertex {
+        internal static string MenuInsertVertex {
             get {
                 return ResourceManager.GetString("MenuInsertVertex", resourceCulture);
             }
@@ -783,7 +783,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Rename.
         /// </summary>
-        public static string MenuRename {
+        internal static string MenuRename {
             get {
                 return ResourceManager.GetString("MenuRename", resourceCulture);
             }
@@ -792,7 +792,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Show Analysis.
         /// </summary>
-        public static string MenuShowAnalysis {
+        internal static string MenuShowAnalysis {
             get {
                 return ResourceManager.GetString("MenuShowAnalysis", resourceCulture);
             }
@@ -801,7 +801,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Please contact your PACS administrator, or check the log..
         /// </summary>
-        public static string MessageContactPacsAdmin {
+        internal static string MessageContactPacsAdmin {
             get {
                 return ResourceManager.GetString("MessageContactPacsAdmin", resourceCulture);
             }
@@ -810,7 +810,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An error has occured while attempting to clone a display set.  Please check the log for more details..
         /// </summary>
-        public static string MessageErrorCloningDisplaySet {
+        internal static string MessageErrorCloningDisplaySet {
             get {
                 return ResourceManager.GetString("MessageErrorCloningDisplaySet", resourceCulture);
             }
@@ -819,7 +819,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An error has occured while attempting to clone an image.  Please check the log for more details..
         /// </summary>
-        public static string MessageErrorCloningPresentationImage {
+        internal static string MessageErrorCloningPresentationImage {
             get {
                 return ResourceManager.GetString("MessageErrorCloningPresentationImage", resourceCulture);
             }
@@ -828,7 +828,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details..
         /// </summary>
-        public static string MessageErrorLoadingAnnotationLayout {
+        internal static string MessageErrorLoadingAnnotationLayout {
             get {
                 return ResourceManager.GetString("MessageErrorLoadingAnnotationLayout", resourceCulture);
             }
@@ -837,7 +837,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An error occurred while trying to add graphics from the image header.  Some or all of them will not appear..
         /// </summary>
-        public static string MessageFailedToApplyDicomHeaderGraphics {
+        internal static string MessageFailedToApplyDicomHeaderGraphics {
             get {
                 return ResourceManager.GetString("MessageFailedToApplyDicomHeaderGraphics", resourceCulture);
             }
@@ -846,7 +846,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Creation of VOI Data LUTs failed..
         /// </summary>
-        public static string MessageFailedToGetVOIDataLUTs {
+        internal static string MessageFailedToGetVOIDataLUTs {
             get {
                 return ResourceManager.GetString("MessageFailedToGetVOIDataLUTs", resourceCulture);
             }
@@ -855,7 +855,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images you requested..
         /// </summary>
-        public static string MessageFormatLoadStudyIncomplete {
+        internal static string MessageFormatLoadStudyIncomplete {
             get {
                 return ResourceManager.GetString("MessageFormatLoadStudyIncomplete", resourceCulture);
             }
@@ -864,7 +864,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Opening {0} of {1} images.
         /// </summary>
-        public static string MessageFormatOpeningImages {
+        internal static string MessageFormatOpeningImages {
             get {
                 return ResourceManager.GetString("MessageFormatOpeningImages", resourceCulture);
             }
@@ -873,7 +873,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} studies were only partially loaded..
         /// </summary>
-        public static string MessageFormatXStudiesIncomplete {
+        internal static string MessageFormatXStudiesIncomplete {
             get {
                 return ResourceManager.GetString("MessageFormatXStudiesIncomplete", resourceCulture);
             }
@@ -882,7 +882,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} studies are in use..
         /// </summary>
-        public static string MessageFormatXStudiesInUse {
+        internal static string MessageFormatXStudiesInUse {
             get {
                 return ResourceManager.GetString("MessageFormatXStudiesInUse", resourceCulture);
             }
@@ -891,7 +891,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} studies are nearline..
         /// </summary>
-        public static string MessageFormatXStudiesNearline {
+        internal static string MessageFormatXStudiesNearline {
             get {
                 return ResourceManager.GetString("MessageFormatXStudiesNearline", resourceCulture);
             }
@@ -900,7 +900,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} studies were not found..
         /// </summary>
-        public static string MessageFormatXStudiesNotFound {
+        internal static string MessageFormatXStudiesNotFound {
             get {
                 return ResourceManager.GetString("MessageFormatXStudiesNotFound", resourceCulture);
             }
@@ -909,7 +909,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} studies could not be loaded..
         /// </summary>
-        public static string MessageFormatXStudiesNotLoaded {
+        internal static string MessageFormatXStudiesNotLoaded {
             get {
                 return ResourceManager.GetString("MessageFormatXStudiesNotLoaded", resourceCulture);
             }
@@ -918,7 +918,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to {0} studies are offline..
         /// </summary>
-        public static string MessageFormatXStudiesOffline {
+        internal static string MessageFormatXStudiesOffline {
             get {
                 return ResourceManager.GetString("MessageFormatXStudiesOffline", resourceCulture);
             }
@@ -927,7 +927,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The following failures occurred while loading studies:.
         /// </summary>
-        public static string MessageLoadMultipleStudiesFailurePrefix {
+        internal static string MessageLoadMultipleStudiesFailurePrefix {
             get {
                 return ResourceManager.GetString("MessageLoadMultipleStudiesFailurePrefix", resourceCulture);
             }
@@ -936,7 +936,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images you requested..
         /// </summary>
-        public static string MessageLoadStudyCompleteFailure {
+        internal static string MessageLoadStudyCompleteFailure {
             get {
                 return ResourceManager.GetString("MessageLoadStudyCompleteFailure", resourceCulture);
             }
@@ -945,7 +945,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to No renderer plugins exist; defaulting to GDI renderer..
         /// </summary>
-        public static string MessageNoRendererPluginsExist {
+        internal static string MessageNoRendererPluginsExist {
             get {
                 return ResourceManager.GetString("MessageNoRendererPluginsExist", resourceCulture);
             }
@@ -954,7 +954,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to No images could be found to display.  The viewer cannot be opened..
         /// </summary>
-        public static string MessageNoVisibleDisplaySets {
+        internal static string MessageNoVisibleDisplaySets {
             get {
                 return ResourceManager.GetString("MessageNoVisibleDisplaySets", resourceCulture);
             }
@@ -963,7 +963,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to One study was only partially loaded..
         /// </summary>
-        public static string MessageOneStudyIncomplete {
+        internal static string MessageOneStudyIncomplete {
             get {
                 return ResourceManager.GetString("MessageOneStudyIncomplete", resourceCulture);
             }
@@ -972,7 +972,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to One study is in use..
         /// </summary>
-        public static string MessageOneStudyInUse {
+        internal static string MessageOneStudyInUse {
             get {
                 return ResourceManager.GetString("MessageOneStudyInUse", resourceCulture);
             }
@@ -981,7 +981,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to One study is nearline..
         /// </summary>
-        public static string MessageOneStudyNearline {
+        internal static string MessageOneStudyNearline {
             get {
                 return ResourceManager.GetString("MessageOneStudyNearline", resourceCulture);
             }
@@ -990,7 +990,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to One study was not found..
         /// </summary>
-        public static string MessageOneStudyNotFound {
+        internal static string MessageOneStudyNotFound {
             get {
                 return ResourceManager.GetString("MessageOneStudyNotFound", resourceCulture);
             }
@@ -999,7 +999,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to One study could not be loaded..
         /// </summary>
-        public static string MessageOneStudyNotLoaded {
+        internal static string MessageOneStudyNotLoaded {
             get {
                 return ResourceManager.GetString("MessageOneStudyNotLoaded", resourceCulture);
             }
@@ -1008,7 +1008,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to One study is offline..
         /// </summary>
-        public static string MessageOneStudyOffline {
+        internal static string MessageOneStudyOffline {
             get {
                 return ResourceManager.GetString("MessageOneStudyOffline", resourceCulture);
             }
@@ -1017,7 +1017,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An error has occured while attempting to load a presentation state. The presentation state may not have been loaded in its entirety. Please check the log for more details..
         /// </summary>
-        public static string MessagePresentationStateApplicationFailure {
+        internal static string MessagePresentationStateApplicationFailure {
             get {
                 return ResourceManager.GetString("MessagePresentationStateApplicationFailure", resourceCulture);
             }
@@ -1026,7 +1026,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An error has occurred while deserializing the image presentation state..
         /// </summary>
-        public static string MessagePresentationStateDeserializeFailure {
+        internal static string MessagePresentationStateDeserializeFailure {
             get {
                 return ResourceManager.GetString("MessagePresentationStateDeserializeFailure", resourceCulture);
             }
@@ -1035,7 +1035,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to An error has occured while attempting to read a presentation state file. Please check the log for more details..
         /// </summary>
-        public static string MessagePresentationStateReadFailure {
+        internal static string MessagePresentationStateReadFailure {
             get {
                 return ResourceManager.GetString("MessagePresentationStateReadFailure", resourceCulture);
             }
@@ -1045,7 +1045,7 @@ namespace ClearCanvas.ImageViewer {
         ///   Looks up a localized string similar to An error has occurred while analyzing the Roi.
         ///Please check the log for more details..
         /// </summary>
-        public static string MessageRoiAnalysisError {
+        internal static string MessageRoiAnalysisError {
             get {
                 return ResourceManager.GetString("MessageRoiAnalysisError", resourceCulture);
             }
@@ -1054,7 +1054,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The study is currently in use and cannot be loaded.  Try waiting a few minutes and load the study again..
         /// </summary>
-        public static string MessageStudyInUse {
+        internal static string MessageStudyInUse {
             get {
                 return ResourceManager.GetString("MessageStudyInUse", resourceCulture);
             }
@@ -1063,7 +1063,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The study is nearline and cannot be loaded.  If your PACS is a ClearCanvas ImageServer, try waiting a few minutes and load the study again.  Otherwise, the study must be restored by a PACS administrator..
         /// </summary>
-        public static string MessageStudyNearline {
+        internal static string MessageStudyNearline {
             get {
                 return ResourceManager.GetString("MessageStudyNearline", resourceCulture);
             }
@@ -1072,7 +1072,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The study could not be found..
         /// </summary>
-        public static string MessageStudyNotFound {
+        internal static string MessageStudyNotFound {
             get {
                 return ResourceManager.GetString("MessageStudyNotFound", resourceCulture);
             }
@@ -1081,7 +1081,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The study is offline and cannot be loaded until it has been restored by a PACS administrator..
         /// </summary>
-        public static string MessageStudyOffline {
+        internal static string MessageStudyOffline {
             get {
                 return ResourceManager.GetString("MessageStudyOffline", resourceCulture);
             }
@@ -1090,7 +1090,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to The study is unavailable..
         /// </summary>
-        public static string MessageStudyUnavailable {
+        internal static string MessageStudyUnavailable {
             get {
                 return ResourceManager.GetString("MessageStudyUnavailable", resourceCulture);
             }
@@ -1099,7 +1099,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Visible Display Set.
         /// </summary>
-        public static string NamePrefetchingStrategyVisibleDisplaySet {
+        internal static string NamePrefetchingStrategyVisibleDisplaySet {
             get {
                 return ResourceManager.GetString("NamePrefetchingStrategyVisibleDisplaySet", resourceCulture);
             }
@@ -1108,7 +1108,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to -.
         /// </summary>
-        public static string SeparatorPatientDescription {
+        internal static string SeparatorPatientDescription {
             get {
                 return ResourceManager.GetString("SeparatorPatientDescription", resourceCulture);
             }
@@ -1117,7 +1117,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ::.
         /// </summary>
-        public static string SeparatorPatientsLoaded {
+        internal static string SeparatorPatientsLoaded {
             get {
                 return ResourceManager.GetString("SeparatorPatientsLoaded", resourceCulture);
             }
@@ -1126,7 +1126,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
-        public static string StringNotApplicable {
+        internal static string StringNotApplicable {
             get {
                 return ResourceManager.GetString("StringNotApplicable", resourceCulture);
             }
@@ -1135,7 +1135,7 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to ---.
         /// </summary>
-        public static string StringNoValue {
+        internal static string StringNoValue {
             get {
                 return ResourceManager.GetString("StringNoValue", resourceCulture);
             }

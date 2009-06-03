@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SR {
+    internal class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.View.WinForms.SR", typeof(SR).Assembly);
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
         /// <summary>
         ///   Looks up a localized string similar to PresentationImage not associated with an IRenderer..
         /// </summary>
-        public static string ExceptionPresentationImageNotAssociatedWithARenderer {
+        internal static string ExceptionPresentationImageNotAssociatedWithARenderer {
             get {
                 return ResourceManager.GetString("ExceptionPresentationImageNotAssociatedWithARenderer", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms {
         /// <summary>
         ///   Looks up a localized string similar to TileControl is not associated with a tile..
         /// </summary>
-        public static string ExceptionTileControlNoAssociatedTile {
+        internal static string ExceptionTileControlNoAssociatedTile {
             get {
                 return ResourceManager.GetString("ExceptionTileControlNoAssociatedTile", resourceCulture);
             }

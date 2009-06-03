@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SR {
+	internal class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Layout.Basic.SR", typeof(SR).Assembly);
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Explode Tile.
         /// </summary>
-        public static string CommandExplodeTile {
+        internal static string CommandExplodeTile {
             get {
                 return ResourceManager.GetString("CommandExplodeTile", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Layout image boxes.
         /// </summary>
-        public static string CommandLayoutImageBoxes {
+        internal static string CommandLayoutImageBoxes {
             get {
                 return ResourceManager.GetString("CommandLayoutImageBoxes", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Layout tiles.
         /// </summary>
-        public static string CommandLayoutTiles {
+        internal static string CommandLayoutTiles {
             get {
                 return ResourceManager.GetString("CommandLayoutTiles", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Survey/Explode.
         /// </summary>
-        public static string CommandSurveyExplode {
+        internal static string CommandSurveyExplode {
             get {
                 return ResourceManager.GetString("CommandSurveyExplode", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The specified image is not currently loaded (SopInstanceUID={0})..
         /// </summary>
-        public static string ExceptionImageNotLoaded {
+        internal static string ExceptionImageNotLoaded {
             get {
                 return ResourceManager.GetString("ExceptionImageNotLoaded", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The specified series is not currently loaded (SeriesInstanceUID={0})..
         /// </summary>
-        public static string ExceptionSeriesNotLoaded {
+        internal static string ExceptionSeriesNotLoaded {
             get {
                 return ResourceManager.GetString("ExceptionSeriesNotLoaded", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The specified study is not currently loaded (StudyInstanceUID={0})..
         /// </summary>
-        public static string ExceptionStudyNotLoaded {
+        internal static string ExceptionStudyNotLoaded {
             get {
                 return ResourceManager.GetString("ExceptionStudyNotLoaded", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to in use.
         /// </summary>
-        public static string InUse {
+        internal static string InUse {
             get {
                 return ResourceManager.GetString("InUse", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to (Default).
         /// </summary>
-        public static string LabelDefault {
+        internal static string LabelDefault {
             get {
                 return ResourceManager.GetString("LabelDefault", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study is {0}..
         /// </summary>
-        public static string LabelFormatStudyUnavailable {
+        internal static string LabelFormatStudyUnavailable {
             get {
                 return ResourceManager.GetString("LabelFormatStudyUnavailable", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Loading Priors ....
         /// </summary>
-        public static string LabelLoadingPriors {
+        internal static string LabelLoadingPriors {
             get {
                 return ResourceManager.GetString("LabelLoadingPriors", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study could not be loaded..
         /// </summary>
-        public static string LabelStudyCouldNotBeLoaded {
+        internal static string LabelStudyCouldNotBeLoaded {
             get {
                 return ResourceManager.GetString("LabelStudyCouldNotBeLoaded", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Survey/Explode.
         /// </summary>
-        public static string MenuExplodeImageBox {
+        internal static string MenuExplodeImageBox {
             get {
                 return ResourceManager.GetString("MenuExplodeImageBox", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
-        public static string MenuLayoutManager {
+        internal static string MenuLayoutManager {
             get {
                 return ResourceManager.GetString("MenuLayoutManager", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Next Display Set.
         /// </summary>
-        public static string MenuNextDisplaySet {
+        internal static string MenuNextDisplaySet {
             get {
                 return ResourceManager.GetString("MenuNextDisplaySet", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Previous Display Set.
         /// </summary>
-        public static string MenuPreviousDisplaySet {
+        internal static string MenuPreviousDisplaySet {
             get {
                 return ResourceManager.GetString("MenuPreviousDisplaySet", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Standard.
         /// </summary>
-        public static string MenuStandard {
+        internal static string MenuStandard {
             get {
                 return ResourceManager.GetString("MenuStandard", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study is on a non-streaming server and must be retrieved to the local machine in order to view it..
         /// </summary>
-        public static string MessageActionNoStudyLoader {
+        internal static string MessageActionNoStudyLoader {
             get {
                 return ResourceManager.GetString("MessageActionNoStudyLoader", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study could not be loaded.  Please contact your PACS administrator..
         /// </summary>
-        public static string MessageActionStudyCouldNotBeLoaded {
+        internal static string MessageActionStudyCouldNotBeLoaded {
             get {
                 return ResourceManager.GetString("MessageActionStudyCouldNotBeLoaded", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study is in use.  Please close the current study, wait a few minutes, then try loading the study again..
         /// </summary>
-        public static string MessageActionStudyInUse {
+        internal static string MessageActionStudyInUse {
             get {
                 return ResourceManager.GetString("MessageActionStudyInUse", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study is nearline.  If your PACS is a ClearCanvas ImageServer, please close the current study, wait a few minutes, then try loading the study again.  Otherwise, the study must be brought back online by a PACS administrator..
         /// </summary>
-        public static string MessageActionStudyNearline {
+        internal static string MessageActionStudyNearline {
             get {
                 return ResourceManager.GetString("MessageActionStudyNearline", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The study is offline and must be brought back online by a PACS administrator..
         /// </summary>
-        public static string MessageActionStudyOffline {
+        internal static string MessageActionStudyOffline {
             get {
                 return ResourceManager.GetString("MessageActionStudyOffline", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The following errors occurred while loading prior studies:.
         /// </summary>
-        public static string MessageLoadPriorsErrorPrefix {
+        internal static string MessageLoadPriorsErrorPrefix {
             get {
                 return ResourceManager.GetString("MessageLoadPriorsErrorPrefix", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to The search for prior studies has failed.  Try reopening the study or select a different default server..
         /// </summary>
-        public static string MessageSearchForPriorsFailed {
+        internal static string MessageSearchForPriorsFailed {
             get {
                 return ResourceManager.GetString("MessageSearchForPriorsFailed", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to nearline.
         /// </summary>
-        public static string Nearline {
+        internal static string Nearline {
             get {
                 return ResourceManager.GetString("Nearline", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to offline.
         /// </summary>
-        public static string Offline {
+        internal static string Offline {
             get {
                 return ResourceManager.GetString("Offline", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Layout.
         /// </summary>
-        public static string TitleLayoutConfiguration {
+        internal static string TitleLayoutConfiguration {
             get {
                 return ResourceManager.GetString("TitleLayoutConfiguration", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
-        public static string TitleLayoutManager {
+        internal static string TitleLayoutManager {
             get {
                 return ResourceManager.GetString("TitleLayoutManager", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Image Box Layout.
         /// </summary>
-        public static string ToolbarLayoutBoxesChooser {
+        internal static string ToolbarLayoutBoxesChooser {
             get {
                 return ResourceManager.GetString("ToolbarLayoutBoxesChooser", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to LayoutManager.
         /// </summary>
-        public static string ToolbarLayoutManager {
+        internal static string ToolbarLayoutManager {
             get {
                 return ResourceManager.GetString("ToolbarLayoutManager", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Tile Layout.
         /// </summary>
-        public static string ToolbarLayoutTilesChooser {
+        internal static string ToolbarLayoutTilesChooser {
             get {
                 return ResourceManager.GetString("ToolbarLayoutTilesChooser", resourceCulture);
             }
@@ -342,7 +342,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Next Display Set.
         /// </summary>
-        public static string ToolbarNextDisplaySet {
+        internal static string ToolbarNextDisplaySet {
             get {
                 return ResourceManager.GetString("ToolbarNextDisplaySet", resourceCulture);
             }
@@ -351,7 +351,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Previous Display Set.
         /// </summary>
-        public static string ToolbarPreviousDisplaySet {
+        internal static string ToolbarPreviousDisplaySet {
             get {
                 return ResourceManager.GetString("ToolbarPreviousDisplaySet", resourceCulture);
             }
@@ -360,7 +360,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Survey/Explode.
         /// </summary>
-        public static string TooltipExplodeImageBox {
+        internal static string TooltipExplodeImageBox {
             get {
                 return ResourceManager.GetString("TooltipExplodeImageBox", resourceCulture);
             }
@@ -369,7 +369,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Layout Manager.
         /// </summary>
-        public static string TooltipLayoutManager {
+        internal static string TooltipLayoutManager {
             get {
                 return ResourceManager.GetString("TooltipLayoutManager", resourceCulture);
             }
@@ -378,7 +378,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Next Display Set.
         /// </summary>
-        public static string TooltipNextDisplaySet {
+        internal static string TooltipNextDisplaySet {
             get {
                 return ResourceManager.GetString("TooltipNextDisplaySet", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to Previous Display Set.
         /// </summary>
-        public static string TooltipPreviousDisplaySet {
+        internal static string TooltipPreviousDisplaySet {
             get {
                 return ResourceManager.GetString("TooltipPreviousDisplaySet", resourceCulture);
             }
@@ -396,7 +396,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         /// <summary>
         ///   Looks up a localized string similar to unavailable.
         /// </summary>
-        public static string Unavailable {
+        internal static string Unavailable {
             get {
                 return ResourceManager.GetString("Unavailable", resourceCulture);
             }

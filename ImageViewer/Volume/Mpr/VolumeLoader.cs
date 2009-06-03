@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 							LoadLocalImage(files[i]);
 
 							percentComplete = (int)(((float)(i + 1) / files.Length) * 40);
-							string message1 = String.Format(ImageViewer.SR.MessageFormatOpeningImages, i + 1, files.Length);
+							string message1 = String.Format(SR.MessageFormatOpeningImages, i + 1, files.Length);
 
 							BackgroundTaskProgress progress = new BackgroundTaskProgress(percentComplete, message1);
 							context.ReportProgress(progress);

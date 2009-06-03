@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opening {0} of {1} images.
+        /// </summary>
+        public static string MessageFormatOpeningImages {
+            get {
+                return ResourceManager.GetString("MessageFormatOpeningImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MPR - .
         /// </summary>
         public static string MprWorkspaceTitlePrefix {
