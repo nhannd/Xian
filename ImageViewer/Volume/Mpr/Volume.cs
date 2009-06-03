@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// </summary>
 		public int SizeInVoxels
 		{
-			get { return ArrayDimensions.Size; }
+			get { return ArrayDimensions.Volume; }
 		}
 
 		public float MinXCoord

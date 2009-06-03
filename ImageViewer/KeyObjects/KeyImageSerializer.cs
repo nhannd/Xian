@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 							imageReferenceMacro.ReferencedSopSequence.CreateReferencedSopSequence();
 							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.InitializeAttributes();
 							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopClassUid = presentationState.PresentationSopClass.Uid;
-							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid = presentationState.PresentationInstanceUid;
+							imageReferenceMacro.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid = presentationState.PresentationSopInstanceUid;
 						}
 					}
 					contentList.Add(content);
@@ -479,14 +479,14 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			public void Add(DicomSoftcopyPresentationState state)
 			{
 				IDicomAttributeProvider dataset = state.DicomFile.DataSet;
-				bool result = base.TryAddReference(dataset[DicomTags.StudyInstanceUid], state.PresentationSeriesUid, state.PresentationSopClassUid, state.PresentationInstanceUid);
-				if (result && !_seriesInfo.ContainsKey(state.PresentationSeriesUid))
+				bool result = base.TryAddReference(dataset[DicomTags.StudyInstanceUid], state.PresentationSeriesInstanceUid, state.PresentationSopClassUid, state.PresentationSopInstanceUid);
+				if (result && !_seriesInfo.ContainsKey(state.PresentationSeriesInstanceUid))
 				{
 					SeriesInfo seriesInfo = new SeriesInfo();
 					seriesInfo.RetrieveAeTitle = dataset[DicomTags.RetrieveAeTitle].ToString();
 					seriesInfo.StorageMediaFileSetId = dataset[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
 					seriesInfo.StorageMediaFileSetUid = dataset[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
-					_seriesInfo.Add(state.PresentationSeriesUid, seriesInfo);
+					_seriesInfo.Add(state.PresentationSeriesInstanceUid, seriesInfo);
 				}
 			}
 

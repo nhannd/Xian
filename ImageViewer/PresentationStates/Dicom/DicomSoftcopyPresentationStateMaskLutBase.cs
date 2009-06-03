@@ -62,24 +62,24 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Serialization Support
 
-		protected void SerializePresentationStateMask(PresentationStateMaskModuleIod module, IEnumerable<T> imagesByList)
+		protected void SerializePresentationStateMask(PresentationStateMaskModuleIod module, DicomPresentationImageCollection<T> images)
 		{
 			// NOTE: Not supported
 			module.InitializeAttributes();
 		}
 
-		protected void SerializeMask(MaskModuleIod module, IEnumerable<T> imagesByList)
+		protected void SerializeMask(MaskModuleIod module, DicomPresentationImageCollection<T> images)
 		{
 			// NOTE: Not supported
 		}
 
-		protected void SerializeModalityLut(ModalityLutModuleIod module, IEnumerable<T> imagesByList) { }
+		protected void SerializeModalityLut(ModalityLutModuleIod module, DicomPresentationImageCollection<T> images) { }
 
-		protected void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod module, IEnumerable<T> imagesByList)
+		protected void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod module, DicomPresentationImageCollection<T> images)
 		{
 			List<SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem> voiLutSequenceItems = new List<SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem>();
 
-			foreach (T image in imagesByList)
+			foreach (T image in images)
 			{
 				SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem sequenceItem = new SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem();
 				sequenceItem.InitializeAttributes();
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				return;
 
 			DicomVoiLuts voiLuts = (DicomVoiLuts) image.DicomVoiLuts;
-			voiLuts.ReinitializePresentationLuts(this.PresentationInstanceUid);
+			voiLuts.ReinitializePresentationLuts(this.PresentationSopInstanceUid);
 
 			foreach (SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem lutSequence in lutSequences)
 			{

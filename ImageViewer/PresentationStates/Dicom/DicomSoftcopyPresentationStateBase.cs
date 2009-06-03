@@ -42,8 +42,6 @@ using ClearCanvas.Dicom.Iod.Macros.PresentationStateRelationship;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
@@ -64,34 +62,26 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		protected override void PerformSerialization(IEnumerable<IPresentationImage> images)
 		{
-			List<T> listImages = new List<T>();
-			Dictionary<string, IList<T>> seriesImages = new Dictionary<string, IList<T>>();
+			DicomPresentationImageCollection<T> imageCollection = new DicomPresentationImageCollection<T>();
 			foreach (IPresentationImage image in images)
 			{
 				if (image is T)
-				{
-					T tImage = (T) image;
-					string seriesUid = tImage.ImageSop.SeriesInstanceUID;
-					if (!seriesImages.ContainsKey(seriesUid))
-						seriesImages.Add(seriesUid, new List<T>());
-					seriesImages[seriesUid].Add(tImage);
-					listImages.Add(tImage);
-				}
+					imageCollection.Add((T) image);
 			}
 
-			if (listImages.Count == 0)
+			if (imageCollection.Count == 0)
 				return;
 
 			// Initialize the Patient IE using source image information
-			InitializePatientModule(new PatientModuleIod(base.DataSet), listImages[0]);
-			InitializeClinicalTrialSubjectModule(new ClinicalTrialSubjectModuleIod(base.DataSet), listImages[0]);
+			InitializePatientModule(new PatientModuleIod(base.DataSet), imageCollection.FirstImage);
+			InitializeClinicalTrialSubjectModule(new ClinicalTrialSubjectModuleIod(base.DataSet), imageCollection.FirstImage);
 
 			// Initialize the Study IE using source image information
-			InitializeGeneralStudyModule(new GeneralStudyModuleIod(base.DataSet), listImages[0]);
-			InitializePatientStudyModule(new PatientStudyModuleIod(base.DataSet), listImages[0]);
-			InitializeClinicalTrialStudyModule(new ClinicalTrialStudyModuleIod(base.DataSet), listImages[0]);
+			InitializeGeneralStudyModule(new GeneralStudyModuleIod(base.DataSet), imageCollection.FirstImage);
+			InitializePatientStudyModule(new PatientStudyModuleIod(base.DataSet), imageCollection.FirstImage);
+			InitializeClinicalTrialStudyModule(new ClinicalTrialStudyModuleIod(base.DataSet), imageCollection.FirstImage);
 
-			this.PerformTypeSpecificSerialization(listImages, seriesImages);
+			this.PerformTypeSpecificSerialization(imageCollection);
 		}
 
 		protected override sealed void PerformDeserialization(IEnumerable<IPresentationImage> images)
@@ -100,31 +90,23 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				SeriesReferenceDictionary dictionary = new SeriesReferenceDictionary(psRelationship.ReferencedSeriesSequence);
 
-				List<T> listImages = new List<T>();
-				Dictionary<string, IList<T>> seriesImages = new Dictionary<string, IList<T>>();
+				DicomPresentationImageCollection<T> imageCollection = new DicomPresentationImageCollection<T>();
 				foreach (IPresentationImage image in images)
 				{
 					if (image is T)
 					{
 						T tImage = (T) image;
-
-						string seriesUid = tImage.ImageSop.SeriesInstanceUID;
-						if (dictionary.ReferencesFrame(seriesUid, tImage.ImageSop.SopInstanceUID, tImage.Frame.FrameNumber))
-						{
-							if (!seriesImages.ContainsKey(seriesUid))
-								seriesImages.Add(seriesUid, new List<T>());
-							seriesImages[seriesUid].Add(tImage);
-							listImages.Add(tImage);
-						}
+						if (dictionary.ReferencesFrame(tImage.ImageSop.SeriesInstanceUID, tImage.ImageSop.SopInstanceUID, tImage.Frame.FrameNumber))
+							imageCollection.Add(tImage);
 					}
 				}
 
-				this.PerformTypeSpecificDeserialization(listImages, seriesImages);
+				this.PerformTypeSpecificDeserialization(imageCollection);
 			}
 		}
 
-		protected abstract void PerformTypeSpecificSerialization(IList<T> imagesByList, IDictionary<string, IList<T>> imagesBySeries);
-		protected abstract void PerformTypeSpecificDeserialization(IList<T> imagesByList, IDictionary<string, IList<T>> imagesBySeries);
+		protected abstract void PerformTypeSpecificSerialization(DicomPresentationImageCollection<T> images);
+		protected abstract void PerformTypeSpecificDeserialization(DicomPresentationImageCollection<T> images);
 
 		/// <summary>
 		/// Gets a <see cref="PresentationStateRelationshipModuleIod"/> for this data set.
@@ -246,17 +228,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			set { _displayAreaSerializationOption = value; }
 		}
 
-		//TODO (CR May09): again, can we use an object instead of a dictionary?
-		protected void SerializePresentationStateRelationship(PresentationStateRelationshipModuleIod presentationStateRelationshipModule, IDictionary<string, IList<T>> imagesBySeries)
+		protected void SerializePresentationStateRelationship(PresentationStateRelationshipModuleIod presentationStateRelationshipModule, DicomPresentationImageCollection<T> images)
 		{
 			presentationStateRelationshipModule.InitializeAttributes();
 			List<IReferencedSeriesSequence> seriesReferences = new List<IReferencedSeriesSequence>();
-			foreach (string seriesUid in imagesBySeries.Keys)
+			foreach (string seriesUid in images.EnumerateSeries())
 			{
 				IReferencedSeriesSequence seriesReference = presentationStateRelationshipModule.CreateReferencedSeriesSequence();
 				seriesReference.SeriesInstanceUid = seriesUid;
 				List<ImageSopInstanceReferenceMacro> imageReferences = new List<ImageSopInstanceReferenceMacro>();
-				foreach (T image in imagesBySeries[seriesUid])
+				foreach (T image in images.EnumerateImages(seriesUid))
 				{
 					imageReferences.Add(CreateImageSopInstanceReference(image.Frame));
 				}
@@ -271,7 +252,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			presentationStateShutterModule.InitializeAttributes();
 		}
 
-		protected void SerializeDisplayedArea(DisplayedAreaModuleIod displayedAreaModule, IEnumerable<T> images)
+		protected void SerializeDisplayedArea(DisplayedAreaModuleIod displayedAreaModule, DicomPresentationImageCollection<T> images)
 		{
 			displayedAreaModule.InitializeAttributes();
 			List<DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem> displayedAreas = new List<DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem>();
@@ -297,7 +278,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 					// compute the pixel addresses of the visible area by intersecting area with actual pixel addresses available
 					//Rectangle visiblePixels = Rectangle.Truncate(RectangleUtilities.Intersect(visibleImageArea, new RectangleF(_point1, imageSize)));
-					Rectangle visiblePixels = RectangleUtilities.ConvertToPixelAddressRectangle(Rectangle.Truncate(visibleImageArea));
+					Rectangle visiblePixels = ConvertToPixelAddressRectangle(Rectangle.Truncate(visibleImageArea));
 					displayedArea.DisplayedAreaTopLeftHandCorner = visiblePixels.Location;
 					displayedArea.DisplayedAreaBottomRightHandCorner = visiblePixels.Location + visiblePixels.Size;
 				}
@@ -336,7 +317,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			displayedAreaModule.DisplayedAreaSelectionSequence = displayedAreas.ToArray();
 		}
 
-		protected void SerializeSpatialTransform(SpatialTransformModuleIod spatialTransformModule, IEnumerable<T> images)
+		protected void SerializeSpatialTransform(SpatialTransformModuleIod spatialTransformModule, DicomPresentationImageCollection<T> images)
 		{
 			foreach (T image in images)
 			{
@@ -355,7 +336,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private static readonly string _annotationsLayerId = "USER ANNOTATIONS";
 
-		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IEnumerable<T> images)
+		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, DicomPresentationImageCollection<T> images)
 		{
 			Dictionary<string, string> layerIndex = new Dictionary<string, string>();
 			List<GraphicLayerSequenceItem> layerSequences = new List<GraphicLayerSequenceItem>();
@@ -375,8 +356,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 							layerSequence.GraphicLayer = layerGraphic.Id.ToUpperInvariant();
 							layerSequence.GraphicLayerDescription = layerGraphic.Description;
 							layerSequence.GraphicLayerOrder = order++;
-							layerSequence.GraphicLayerRecommendedDisplayCielabValue = layerGraphic.DisplayCIELabColor;
-							layerSequence.GraphicLayerRecommendedDisplayGrayscaleValue = layerGraphic.DisplayGrayscaleColor;
+							layerSequence.GraphicLayerRecommendedDisplayCielabValue = null;
+							layerSequence.GraphicLayerRecommendedDisplayGrayscaleValue = null;
 							layerSequences.Add(layerSequence);
 							layerIndex.Add(layerGraphic.Id, null);
 						}
@@ -401,7 +382,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				graphicLayerModule.GraphicLayerSequence = layerSequences.ToArray();
 		}
 
-		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, IEnumerable<T> images)
+		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, DicomPresentationImageCollection<T> images)
 		{
 			List<GraphicAnnotationSequenceItem> annotations = new List<GraphicAnnotationSequenceItem>();
 
@@ -441,7 +422,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				graphicAnnotationModule.GraphicAnnotationSequence = annotations.ToArray();
 		}
 
-		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule, IEnumerable<T> images)
+		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule, DicomPresentationImageCollection<T> images)
 		{
 			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
 			CircularShutter circular = null;
@@ -529,7 +510,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
-		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule, IOverlayMapping overlayMapping, IEnumerable<T> images)
+		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule, IOverlayMapping overlayMapping, DicomPresentationImageCollection<T> images)
 		{
 			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
 			for (int n = 0; n < 16; n++)
@@ -549,7 +530,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
-		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule, out IOverlayMapping overlayMapping, IEnumerable<T> images)
+		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule, out IOverlayMapping overlayMapping, DicomPresentationImageCollection<T> images)
 		{
 			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
 			List<OverlayPlaneGraphic> visibleOverlays = new List<OverlayPlaneGraphic>();
@@ -633,7 +614,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			overlayMapping = overlayMap;
 		}
 
-		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule, IOverlayMapping overlayMapping, IEnumerable<T> images)
+		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule, IOverlayMapping overlayMapping, DicomPresentationImageCollection<T> images)
 		{
 			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
 			for (int n = 0; n < 16; n++)
@@ -667,6 +648,35 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				get { return _map[index]; }
 				set { _map[index] = value; }
 			}
+		}
+
+		/// <summary>
+		/// Computes a rectangle specifying the 1-based pixel address and the row and column offset to get the pixel address of the opposite corner
+		/// given a rectangle specifying the 0-based coordinate and size (whose width and height need not be positive).
+		/// </summary>
+		/// <param name="rectangle">The 0-based rectangle specified as a 0-based coordinate and a size.</param>
+		/// <returns>An equivalent rectangle specifying the 1-based pixel address of the coordinate and row and column offset to get the pixel address of the opposite corner.</returns>
+		/// <exception cref="ArgumentException">Thrown if the given rectangle has zero-area, as it cannot be represented in a 1-based pixel address rectangle.</exception>
+		/// <remarks>
+		/// <para>In DICOM and certain other applications, areas of images are identified with the first pixel being at position row 1 and column 1.
+		/// In most Windows graphics rendering systems, imaging coordinates are identified as an infinitesimal point at the top-left corner of a given pixel
+		/// and the coordinates are given in a 0-based system (that is, the first pixel has a coordinate of (0,0)).</para>
+		/// <para>It is trivial to compute the addresses of the pixels included within the rectangle when the rectangle is positively-oriented
+		/// (has positive width and height) since the left most pixels are in column <see cref="Rectangle.X"/>+1, the right most pixels are in
+		/// column <see cref="Rectangle.X"/>+<see cref="Rectangle.Width"/>, and so on. It is somewhat more complicated to compute when the
+		/// rectangle is not positively-oriented due to the singularities when either <see cref="Rectangle.Width"/> or <see cref="Rectangle.Height"/>
+		/// is 0 (and hence rectangles having zero-area cannot be specified as a pixel address rectangle - a pixel address rectangle having size
+		/// 0x0 is considered as containing 1 row and 1 column).</para>
+		/// </remarks>
+		private static Rectangle ConvertToPixelAddressRectangle(Rectangle rectangle)
+		{
+			if (rectangle.Width*rectangle.Height == 0)
+				throw new ArgumentException("Zero-area rectangles cannot be specified in terms of a pixel address rectangle.", "rectangle");
+
+			Size locationOffset = new Size(rectangle.Width > 0 ? 1 : 0, rectangle.Height > 0 ? 1 : 0);
+			Size sizeOffset = new Size(rectangle.Width > 0 ? -1 : 1, rectangle.Height > 0 ? -1 : 1);
+
+			return new Rectangle(rectangle.Location + locationOffset, rectangle.Size + sizeOffset);
 		}
 
 		#endregion
@@ -764,8 +774,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				ILayer layer = graphic.Layers[sequenceItem.GraphicLayer];
 				layer.Description = sequenceItem.GraphicLayerDescription;
-				layer.DisplayCIELabColor = sequenceItem.GraphicLayerRecommendedDisplayCielabValue;
-				layer.DisplayGrayscaleColor = sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue;
+				// we don't support sequenceItem.GraphicLayerRecommendedDisplayCielabValue
+				// we don't support sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue
 			}
 		}
 

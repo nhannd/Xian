@@ -58,24 +58,24 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Serialization Support
 
-		protected override void PerformTypeSpecificSerialization(IList<DicomGrayscalePresentationImage> imagesByList, IDictionary<string, IList<DicomGrayscalePresentationImage>> imagesBySeries)
+		protected override void PerformTypeSpecificSerialization(DicomPresentationImageCollection<DicomGrayscalePresentationImage> images)
 		{
 			IOverlayMapping overlayMapping;
 			GrayscaleSoftcopyPresentationStateIod iod = new GrayscaleSoftcopyPresentationStateIod(base.DataSet);
-			this.SerializePresentationStateRelationship(iod.PresentationStateRelationship, imagesBySeries);
+			this.SerializePresentationStateRelationship(iod.PresentationStateRelationship, images);
 			this.SerializePresentationStateShutter(iod.PresentationStateShutter);
-			this.SerializePresentationStateMask(iod.PresentationStateMask, imagesByList);
-			this.SerializeMask(iod.Mask, imagesByList);
-			this.SerializeDisplayShutter(iod.DisplayShutter, imagesByList);
-			this.SerializeOverlayPlane(iod.OverlayPlane, out overlayMapping, imagesByList);
-			this.SerializeOverlayActivation(iod.OverlayActivation, overlayMapping, imagesByList);
-			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, overlayMapping, imagesByList);
-			this.SerializeDisplayedArea(iod.DisplayedArea, imagesByList);
-			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, imagesByList);
-			this.SerializeSpatialTransform(iod.SpatialTransform, imagesByList);
-			this.SerializeGraphicLayer(iod.GraphicLayer, imagesByList);
-			this.SerializeModalityLut(iod.ModalityLut, imagesByList);
-			this.SerializeSoftcopyVoiLut(iod.SoftcopyVoiLut, imagesByList);
+			this.SerializePresentationStateMask(iod.PresentationStateMask, images);
+			this.SerializeMask(iod.Mask, images);
+			this.SerializeDisplayShutter(iod.DisplayShutter, images);
+			this.SerializeOverlayPlane(iod.OverlayPlane, out overlayMapping, images);
+			this.SerializeOverlayActivation(iod.OverlayActivation, overlayMapping, images);
+			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, overlayMapping, images);
+			this.SerializeDisplayedArea(iod.DisplayedArea, images);
+			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, images);
+			this.SerializeSpatialTransform(iod.SpatialTransform, images);
+			this.SerializeGraphicLayer(iod.GraphicLayer, images);
+			this.SerializeModalityLut(iod.ModalityLut, images);
+			this.SerializeSoftcopyVoiLut(iod.SoftcopyVoiLut, images);
 			this.SerializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut);
 		}
 
@@ -94,11 +94,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Deserialization Support
 
-		protected override void PerformTypeSpecificDeserialization(IList<DicomGrayscalePresentationImage> imagesByList, IDictionary<string, IList<DicomGrayscalePresentationImage>> imagesBySeries)
+		protected override void PerformTypeSpecificDeserialization(DicomPresentationImageCollection<DicomGrayscalePresentationImage> images)
 		{
 			GrayscaleSoftcopyPresentationStateIod iod = new GrayscaleSoftcopyPresentationStateIod(base.DataSet);
 
-			foreach (DicomGrayscalePresentationImage image in imagesByList)
+			foreach (DicomGrayscalePresentationImage image in images)
 			{
 				RectangleF displayedArea;
 				this.DeserializeSpatialTransform(iod.SpatialTransform, image);

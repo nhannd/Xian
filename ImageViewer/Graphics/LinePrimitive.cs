@@ -60,13 +60,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// The start point of the line in either source or destination coordinates.
+		/// Gets or sets one endpoint of the line in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		public PointF Pt1
+		public PointF Point1
 		{
 			get
 			{
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			set
 			{
-				if (FloatComparer.AreEqual(this.Pt1, value))
+				if (FloatComparer.AreEqual(this.Point1, value))
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
@@ -91,19 +91,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_point1 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_point1ChangedEvent, this, new PointChangedEventArgs(this.Pt1));
-				base.NotifyVisualStateChanged("Pt1");
+				EventsHelper.Fire(_point1ChangedEvent, this, new PointChangedEventArgs(this.Point1));
+				base.NotifyVisualStateChanged("Point1");
 			}
 		}
 
 		/// <summary>
-		/// The end point of the line in either source or destination coordinates.
+		/// Gets or sets the other endpoint of the line in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		public PointF Pt2
+		public PointF Point2
 		{
 			get
 			{
@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			set
 			{
-				if (FloatComparer.AreEqual(this.Pt2, value))
+				if (FloatComparer.AreEqual(this.Point2, value))
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
@@ -128,8 +128,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_point2 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_point2ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
-				base.NotifyVisualStateChanged("Pt2");
+				EventsHelper.Fire(_point2ChangedEvent, this, new PointChangedEventArgs(this.Point2));
+				base.NotifyVisualStateChanged("Point2");
 			}
 		}
 
@@ -142,22 +142,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override RectangleF BoundingBox
 		{
-			get { return RectangleUtilities.ComputeBoundingRectangle(this.Pt1, this.Pt2); }
+			get { return RectangleUtilities.ComputeBoundingRectangle(this.Point1, this.Point2); }
 		}
 
 		/// <summary>
-		/// Occurs when <see cref="Pt1"/> has changed.
+		/// Occurs when the <see cref="ILineSegmentGraphic.Point1"/> property changed.
 		/// </summary>
-		public event EventHandler<PointChangedEventArgs> Pt1Changed
+		public event EventHandler<PointChangedEventArgs> Point1Changed
 		{
 			add { _point1ChangedEvent += value; }
 			remove { _point1ChangedEvent -= value; }
 		}
 
 		/// <summary>
-		/// Occurs when <see cref="Pt2"/> has changed.
+		/// Occurs when the <see cref="ILineSegmentGraphic.Point2"/> property changed.
 		/// </summary>
-		public event EventHandler<PointChangedEventArgs> Pt2Changed
+		public event EventHandler<PointChangedEventArgs> Point2Changed
 		{
 			add { _point2ChangedEvent += value; }
 			remove { _point2ChangedEvent -= value; }
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			// Always do the hit test in destination coordinates since we want the
 			// "activation distance" to be the same irrespective of the zoom
 			this.CoordinateSystem = CoordinateSystem.Destination;
-			distance = Vector.DistanceFromPointToLine(point, this.Pt1, this.Pt2, ref ptNearest);
+			distance = Vector.DistanceFromPointToLine(point, this.Point1, this.Point2, ref ptNearest);
 			this.ResetCoordinateSystem();
 
 			if (distance < HitTestDistance)
@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override PointF GetClosestPoint(PointF point)
 		{
 			PointF result = PointF.Empty;
-			Vector.DistanceFromPointToLine(point, this.Pt1, this.Pt2, ref result);
+			Vector.DistanceFromPointToLine(point, this.Point1, this.Point2, ref result);
 			return result;
 		}
 
@@ -223,37 +223,51 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 #if MONO
 			Size del = new Size((int)delta.Width, (int)delta.Height);
-			this.Pt1 += del;
-			this.Pt2 += del;
+			this.Point1 += del;
+			this.Point2 += del;
 #else
-			this.Pt1 += delta;
-			this.Pt2 += delta;
+			this.Point1 += delta;
+			this.Point2 += delta;
 #endif
 		}
 
-		//TODO (CR May09): Make these all public and deprecate the contracted ones.
+		#region Legacy Members
 
-		#region ILineSegmentGraphic Members
-
-		PointF ILineSegmentGraphic.Point1
+		/// <summary>
+		/// This member has been deprecated in favour of <see cref="Point1"/>.
+		/// </summary>
+		[Obsolete("Use LinePrimitive.Point1 instead.")]
+		public PointF Pt1
 		{
-			get { return this.Pt1; }
-			set { this.Pt1 = value; }
+			get { return this.Point1; }
+			set { this.Point1 = value; }
 		}
 
-		PointF ILineSegmentGraphic.Point2
+		/// <summary>
+		/// This member has been deprecated in favour of <see cref="Point2"/>.
+		/// </summary>
+		[Obsolete("Use LinePrimitive.Point2 instead.")]
+		public PointF Pt2
 		{
-			get { return this.Pt2; }
-			set { this.Pt2 = value; }
+			get { return this.Point2; }
+			set { this.Point2 = value; }
 		}
 
-		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point1Changed
+		/// <summary>
+		/// This member has been deprecated in favour of <see cref="Point1Changed"/>.
+		/// </summary>
+		[Obsolete("Use LinePrimitive.Point1Changed instead.")]
+		public event EventHandler<PointChangedEventArgs> Pt1Changed
 		{
 			add { _point1ChangedEvent += value; }
 			remove { _point1ChangedEvent -= value; }
 		}
 
-		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Point2Changed
+		/// <summary>
+		/// This member has been deprecated in favour of <see cref="Point2Changed"/>.
+		/// </summary>
+		[Obsolete("Use LinePrimitive.Point2Changed instead.")]
+		public event EventHandler<PointChangedEventArgs> Pt2Changed
 		{
 			add { _point2ChangedEvent += value; }
 			remove { _point2ChangedEvent -= value; }

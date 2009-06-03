@@ -59,23 +59,20 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Serialization Support
 
-		//TODO (CR May09): can we improve this method signature by using a specialized collection class where you can enumerate the images
-		// however you want?
-		// For example: presentationImages.GetImagesBySeries();
-		protected override void PerformTypeSpecificSerialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries)
+		protected override void PerformTypeSpecificSerialization(DicomPresentationImageCollection<DicomColorPresentationImage> images)
 		{
 			IOverlayMapping overlayMapping;
 			ColorSoftcopyPresentationStateIod iod = new ColorSoftcopyPresentationStateIod(base.DataSet);
-			this.SerializePresentationStateRelationship(iod.PresentationStateRelationship, imagesBySeries);
+			this.SerializePresentationStateRelationship(iod.PresentationStateRelationship, images);
 			this.SerializePresentationStateShutter(iod.PresentationStateShutter);
-			this.SerializeDisplayShutter(iod.DisplayShutter, imagesByList);
-			this.SerializeOverlayPlane(iod.OverlayPlane, out overlayMapping, imagesByList);
-			this.SerializeOverlayActivation(iod.OverlayActivation, overlayMapping, imagesByList);
-			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, overlayMapping, imagesByList);
-			this.SerializeDisplayedArea(iod.DisplayedArea, imagesByList);
-			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, imagesByList);
-			this.SerializeSpatialTransform(iod.SpatialTransform, imagesByList);
-			this.SerializeGraphicLayer(iod.GraphicLayer, imagesByList);
+			this.SerializeDisplayShutter(iod.DisplayShutter, images);
+			this.SerializeOverlayPlane(iod.OverlayPlane, out overlayMapping, images);
+			this.SerializeOverlayActivation(iod.OverlayActivation, overlayMapping, images);
+			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, overlayMapping, images);
+			this.SerializeDisplayedArea(iod.DisplayedArea, images);
+			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, images);
+			this.SerializeSpatialTransform(iod.SpatialTransform, images);
+			this.SerializeGraphicLayer(iod.GraphicLayer, images);
 			this.SerializeIccProfile(iod.IccProfile);
 		}
 
@@ -88,11 +85,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Deserialization Support
 
-		protected override void PerformTypeSpecificDeserialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries)
+		protected override void PerformTypeSpecificDeserialization(DicomPresentationImageCollection<DicomColorPresentationImage> images)
 		{
 			ColorSoftcopyPresentationStateIod iod = new ColorSoftcopyPresentationStateIod(base.DataSet);
 
-			foreach (DicomColorPresentationImage image in imagesByList)
+			foreach (DicomColorPresentationImage image in images)
 			{
 				RectangleF displayedArea;
 				this.DeserializeSpatialTransform(iod.SpatialTransform, image);

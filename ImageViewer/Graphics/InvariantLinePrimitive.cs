@@ -112,10 +112,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return false;
 		}
 
-		//TODO (CR May09): When location changes, so does Point1 & Point2, as well as TopLeft and BottomRight.
-
 		/// <summary>
-		/// Called when the value of <see cref="InvariantBoundablePrimitive.TopLeft"/> changes.
+		/// Called when the value of <see cref="InvariantBoundablePrimitive.TopLeft"/> or <see cref="InvariantPrimitive.Location"/> changes.
 		/// </summary>
 		protected override void OnTopLeftChanged()
 		{
@@ -124,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Called when the value of <see cref="InvariantBoundablePrimitive.BottomRight"/> changes.
+		/// Called when the value of <see cref="InvariantBoundablePrimitive.BottomRight"/> or <see cref="InvariantPrimitive.Location"/> changes.
 		/// </summary>
 		protected override void OnBottomRightChanged()
 		{

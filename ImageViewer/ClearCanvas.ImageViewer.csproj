@@ -140,6 +140,7 @@
     <Compile Include="Graphics\AddGraphicUndoableCommand.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneLayers.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneUserOverlays.cs" />
+    <Compile Include="PresentationStates\Dicom\DicomPresentationImageCollection.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\CurveGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\DicomEllipseGraphic.cs" />
     <Compile Include="PresentationStates\Dicom\OverlayPlaneGraphic.cs" />

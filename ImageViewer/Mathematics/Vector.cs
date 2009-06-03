@@ -130,28 +130,25 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Point(x, y);
 		}
 
-		//TODO (CR May09):call it CreateUnitVector(directionVector)?  This doesn't appear to be used anyway.
-		//TODO (CR May09): API unclear; resolve PointF/SizeF issue.
 		/// <summary>
-		/// Computes the unit vector of the vector from the origin towards the specified <paramref name="vector">point</paramref>.
+		/// Computes the unit vector of the vector defined by <paramref name="directionVector"/>.
 		/// </summary>
-		public static SizeF UnitVector(PointF vector)
+		public static PointF CreateUnitVector(PointF directionVector)
 		{
-			return UnitVector(PointF.Empty, vector);
+			return CreateUnitVector(PointF.Empty, directionVector);
 		}
 
-		//TODO (CR May09): API unclear; should really just be passing in 2 points, not a point and a vector.
 		/// <summary>
-		/// Computes the unit vector of the vector from <paramref name="origin"/> towards the specified <paramref name="vector">point</paramref>.
+		/// Computes the unit vector of the vector defined by <paramref name="point1"/> to <paramref name="point2"/>.
 		/// </summary>
-		public static SizeF UnitVector(PointF origin, PointF vector)
+		public static PointF CreateUnitVector(PointF point1, PointF point2)
 		{
-			if (FloatComparer.AreEqual(origin, vector))
+			if (FloatComparer.AreEqual(point1, point2))
 				throw new ArgumentException("The arguments must define a valid vector.");
-			float deltaX = vector.X - origin.X;
-			float deltaY = vector.Y - origin.Y;
+			float deltaX = point2.X - point1.X;
+			float deltaY = point2.Y - point1.Y;
 			double magnitude = Math.Sqrt(deltaX*deltaX + deltaY*deltaY);
-			return new SizeF((float) (deltaX/magnitude), (float) (deltaY/magnitude));
+			return new PointF((float)(deltaX / magnitude), (float)(deltaY / magnitude));
 		}
 
 		/// <summary>

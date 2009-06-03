@@ -275,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Called when the value of <see cref="TopLeft"/> changes.
+		/// Called when the value of <see cref="TopLeft"/> or <see cref="InvariantPrimitive.Location"/> changes.
 		/// </summary>
 		protected virtual void OnTopLeftChanged()
 		{
@@ -283,7 +283,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Called when the value of <see cref="BottomRight"/> changes.
+		/// Called when the value of <see cref="BottomRight"/> or <see cref="InvariantPrimitive.Location"/> changes.
 		/// </summary>
 		protected virtual void OnBottomRightChanged()
 		{

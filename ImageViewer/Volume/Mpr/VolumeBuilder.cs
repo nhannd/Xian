@@ -320,7 +320,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// Builds the volume array. Takes care of Gantry Tilt correction (pads rows at top/bottom accordingly)
 		private T[] BuildVolumeArray<T>(T pixelPadValue)
 		{
-			T[] volumeArray = new T[_dimensions.Size];
+			T[] volumeArray = new T[_dimensions.Volume];
 			float lastFramePos = (float)_frames[_frames.Count - 1].ImagePositionPatient.Z;
 
 			int imageIndex = 0;
