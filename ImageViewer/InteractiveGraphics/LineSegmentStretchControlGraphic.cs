@@ -33,14 +33,20 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that controls the end points of an <see cref="ILineSegmentGraphic"/>.
+	/// </summary>
 	[Cloneable]
-	public sealed class LineSegmentStretchControlGraphic : ControlPointsGraphic, IMemorable
+	public sealed class LineSegmentStretchControlGraphic : ControlPointsGraphic
 	{
+		/// <summary>
+		/// Constructs a new <see cref="LineSegmentStretchControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">An <see cref="ILineSegmentGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="ILineSegmentGraphic"/>.</param>
 		public LineSegmentStretchControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -60,17 +66,28 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		private LineSegmentStretchControlGraphic(LineSegmentStretchControlGraphic source, ICloningContext context)
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
 		public new ILineSegmentGraphic Subject
 		{
 			get { return base.Subject as ILineSegmentGraphic; }
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandChange; }
@@ -88,6 +105,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.Point2Changed += OnSubjectPt2Changed;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="IControlGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			this.Subject.Point1Changed -= OnSubjectPt1Changed;
@@ -95,9 +115,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
-		#region IMemorable Members
-
-		public object CreateMemento()
+		/// <summary>
+		/// Captures the current state of this <see cref="LineSegmentStretchControlGraphic"/>.
+		/// </summary>
+		public override object CreateMemento()
 		{
 			PointsMemento pointsMemento = new PointsMemento();
 
@@ -115,7 +136,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return pointsMemento;
 		}
 
-		public void SetMemento(object memento)
+		/// <summary>
+		/// Restores the state of this <see cref="LineSegmentStretchControlGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="LineSegmentStretchControlGraphic.CreateMemento"/>.</param>
+		public override void SetMemento(object memento)
 		{
 			PointsMemento pointsMemento = memento as PointsMemento;
 			if (pointsMemento == null || pointsMemento.Count != 2)
@@ -132,8 +157,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Subject.ResetCoordinateSystem();
 			}
 		}
-
-		#endregion
 
 		private void OnSubjectPt1Changed(object sender, PointChangedEventArgs e)
 		{
@@ -165,6 +188,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			if (index == 0)

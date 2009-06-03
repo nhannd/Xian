@@ -30,18 +30,23 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that displays a placeholder control point when the value of the subject's <see cref="ITextGraphic.Text"/> is empty or null.
+	/// </summary>
 	[Cloneable]
-	public class TextPlaceholderControlGraphic : ControlPointsGraphic, IMemorable
+	public class TextPlaceholderControlGraphic : ControlPointsGraphic
 	{
+		/// <summary>
+		/// Constructs a new <see cref="TextPlaceholderControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">An <see cref="ITextGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="ITextGraphic"/>.</param>
 		public TextPlaceholderControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -50,6 +55,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected TextPlaceholderControlGraphic(TextPlaceholderControlGraphic source, ICloningContext context)
 			: base(source, context)
 		{
@@ -67,25 +77,35 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.VisualStateChanged += Subject_VisualStateChanged;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="IControlGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			this.Subject.VisualStateChanged -= Subject_VisualStateChanged;
 			base.Dispose(disposing);
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
 		public new ITextGraphic Subject
 		{
 			get { return base.Subject as ITextGraphic; }
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandChange; }
 		}
 
-		#region IMemorable Members
-
-		public virtual object CreateMemento()
+		/// <summary>
+		/// Captures the current state of this <see cref="TextPlaceholderControlGraphic"/>.
+		/// </summary>
+		public override object CreateMemento()
 		{
 			PointMemento pointMemento;
 
@@ -102,7 +122,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return pointMemento;
 		}
 
-		public virtual void SetMemento(object memento)
+		/// <summary>
+		/// Restores the state of this <see cref="TextPlaceholderControlGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="TextPlaceholderControlGraphic.CreateMemento"/>.</param>
+		public override void SetMemento(object memento)
 		{
 			PointMemento pointMemento = memento as PointMemento;
 			if (pointMemento == null)
@@ -118,8 +142,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Subject.ResetCoordinateSystem();
 			}
 		}
-
-		#endregion
 
 		private void Subject_VisualStateChanged(object sender, VisualStateChangedEventArgs e)
 		{
@@ -140,6 +162,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			this.Subject.Location = point;

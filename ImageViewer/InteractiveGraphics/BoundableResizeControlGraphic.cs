@@ -33,14 +33,16 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that controls resizing of an <see cref="IBoundableGraphic"/>.
+	/// </summary>
 	[Cloneable]
-	public sealed class BoundableResizeControlGraphic : ControlPointsGraphic, IMemorable
+	public sealed class BoundableResizeControlGraphic : ControlPointsGraphic
 	{
 		private const int _topLeft = 0;
 		private const int _topRight = 1;
@@ -49,6 +51,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private float? _fixedAspectRatio = null;
 
+		/// <summary>
+		/// Constructs a new <see cref="BoundableResizeControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">An <see cref="IBoundableGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IBoundableGraphic"/>.</param>
 		public BoundableResizeControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -71,6 +77,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Constructs a new <see cref="BoundableResizeControlGraphic"/>.
+		/// </summary>
+		/// <param name="aspectRatio">The width to height aspect ratio that constrains the movement of the resize control points.</param>
+		/// <param name="subject">An <see cref="IBoundableGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IBoundableGraphic"/>.</param>
 		public BoundableResizeControlGraphic(float aspectRatio, IGraphic subject)
 			: this(subject)
 		{
@@ -78,6 +89,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_fixedAspectRatio = aspectRatio;
 		}
 
+		/// <summary>
+		/// Constructs a new <see cref="BoundableResizeControlGraphic"/>.
+		/// </summary>
+		/// <param name="fixedAspectRatio">The width to height aspect ratio that constrains the movement of the resize control points, or null if the movement should not be constrained.</param>
+		/// <param name="subject">An <see cref="IBoundableGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IBoundableGraphic"/>.</param>
 		public BoundableResizeControlGraphic(float? fixedAspectRatio, IGraphic subject)
 			: this(subject)
 		{
@@ -86,6 +102,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_fixedAspectRatio = fixedAspectRatio;
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		private BoundableResizeControlGraphic(BoundableResizeControlGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
@@ -97,11 +118,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
 		public new IBoundableGraphic Subject
 		{
 			get { return base.Subject as IBoundableGraphic; }
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandResize; }
@@ -113,6 +140,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.TopLeftChanged += OnSubjectTopLeftChanged;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="IControlGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			this.Subject.BottomRightChanged -= OnSubjectBottomRightChanged;
@@ -123,6 +153,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region Fixed Ratio Resizing
 
+		/// <summary>
+		/// Gets or sets the width to height aspect ratio that constrains the movement of
+		/// the resize control points, or null if the movement should not be constrained.
+		/// </summary>
+		/// <exception cref="ArgumentException">Thrown if the aspect ratio is zero or negative.</exception>
 		public float? FixedAspectRatio
 		{
 			get { return _fixedAspectRatio; }
@@ -134,6 +169,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Computes a constrained control point location (in destination coordinates) given the location to which the cursor moved after starting drag on the control point.
+		/// </summary>
+		/// <param name="controlPointIndex">The index of the control point being dragged.</param>
+		/// <param name="cursorLocation">The location to which the cursor moved.</param>
+		/// <returns>The constrained control point location.</returns>
 		protected override PointF ConstrainControlPointLocation(int controlPointIndex, PointF cursorLocation) {
 			if (!_fixedAspectRatio.HasValue)
 				return cursorLocation;
@@ -215,9 +256,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		#region IMemorable Members
-
-		public object CreateMemento()
+		/// <summary>
+		/// Captures the current state of this <see cref="BoundableResizeControlGraphic"/>.
+		/// </summary>
+		public override object CreateMemento()
 		{
 			PointsMemento pointsMemento = new PointsMemento();
 
@@ -235,7 +277,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return pointsMemento;
 		}
 
-		public void SetMemento(object memento)
+		/// <summary>
+		/// Restores the state of this <see cref="BoundableResizeControlGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="BoundableResizeControlGraphic.CreateMemento"/>.</param>
+		public override void SetMemento(object memento)
 		{
 			PointsMemento pointsMemento = memento as PointsMemento;
 			if (pointsMemento == null || pointsMemento.Count != 2)
@@ -253,8 +299,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#endregion
-
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			IBoundableGraphic subject = this.Subject;

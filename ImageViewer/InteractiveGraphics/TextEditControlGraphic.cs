@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				{
 					object state = this.CreateMemento();
 					this.Text = _currentCalloutEditBox.LastAcceptedValue;
-					this.AddToCommandHistory(state, this.CreateMemento());
+					AddToCommandHistory(this, state, this.CreateMemento());
 					this.Draw();
 				}
 			}
@@ -194,22 +194,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					command.Execute();
 					imageViewer.CommandHistory.AddCommand(command);
 				}
-			}
-		}
-
-		private void AddToCommandHistory(object beginState, object endState)
-		{
-			if (beginState != null && endState != null && !beginState.Equals(endState) && base.ImageViewer != null)
-			{
-				MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(this);
-				memorableCommand.BeginState = beginState;
-				memorableCommand.EndState = endState;
-
-				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
-				command.Name = this.CommandName;
-				command.Enqueue(memorableCommand);
-
-				base.ImageViewer.CommandHistory.AddCommand(command);
 			}
 		}
 

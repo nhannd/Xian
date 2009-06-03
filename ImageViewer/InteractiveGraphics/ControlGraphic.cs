@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -535,6 +532,37 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				}
 			}
 			return actions;
+		}
+
+		#endregion
+
+		#region IMemorable Helpers
+
+		/// <summary>
+		/// Helper method to add the operation of an <see cref="ControlGraphic"/> implementing <see cref="IMemorable"/> to the associated command history.
+		/// </summary>
+		/// <typeparam name="T">The derived type of <see cref="ControlGraphic"/>. Must implement <see cref="IMemorable"/>.</typeparam>
+		/// <param name="originator">The <see cref="ControlGraphic"/> that performed the operation.</param>
+		/// <param name="beginState">The memento created by <see cref="IMemorable.CreateMemento"/> before the operation.</param>
+		/// <param name="endState">The memento created by <see cref="IMemorable.CreateMemento"/> after the operation.</param>
+		protected static void AddToCommandHistory<T>(T originator, object beginState, object endState) where T : ControlGraphic, IMemorable
+		{
+			if (originator.ImageViewer == null)
+				return;
+			if (beginState == endState) // ensure that both states aren't simultaneously null and that they're not the same states
+				return;
+			if (beginState != null && beginState.Equals(endState)) // ensure that beginState isn't equivalent to endState
+				return;
+
+			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(originator);
+			memorableCommand.BeginState = beginState;
+			memorableCommand.EndState = endState;
+
+			DrawableUndoableCommand command = new DrawableUndoableCommand(originator);
+			command.Name = originator.CommandName;
+			command.Enqueue(memorableCommand);
+
+			originator.ImageViewer.CommandHistory.AddCommand(command);
 		}
 
 		#endregion

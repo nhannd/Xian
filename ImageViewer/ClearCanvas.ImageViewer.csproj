@@ -179,7 +179,6 @@
     <Compile Include="InteractiveGraphics\AnnotationCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\IAnnotationCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\AnnotationGraphic.cs" />
-    <Compile Include="InteractiveGraphics\RotateControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\StandardStatefulGraphic.cs" />
     <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
     <Compile Include="InteractiveGraphics\LineSegmentStretchControlGraphic.cs" />

@@ -33,7 +33,6 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -41,8 +40,11 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that controls the vertices of an <see cref="IPointsGraphic"/>.
+	/// </summary>
 	[Cloneable]
-	public class VerticesControlGraphic : ControlPointsGraphic, IMemorable
+	public class VerticesControlGraphic : ControlPointsGraphic
 	{
 		private bool _canAddRemoveVertices = false;
 
@@ -52,9 +54,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[CloneIgnore]
 		private PointF _lastContextMenuPoint = PointF.Empty;
 
+		/// <summary>
+		/// Constructs a new <see cref="VerticesControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">An <see cref="IPointsGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IPointsGraphic"/>.</param>
 		public VerticesControlGraphic(IGraphic subject)
 			: this(false, subject) {}
 
+		/// <summary>
+		/// Constructs a new <see cref="VerticesControlGraphic"/>.
+		/// </summary>
+		/// <param name="canAddRemoveVertices">A value indicating whether or not the user can dynamically add or remove vertices on the subject.</param>
+		/// <param name="subject">An <see cref="IPointsGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IPointsGraphic"/>.</param>
 		public VerticesControlGraphic(bool canAddRemoveVertices, IGraphic subject)
 			: base(subject)
 		{
@@ -78,17 +89,28 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected VerticesControlGraphic(VerticesControlGraphic source, ICloningContext context)
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
 		public new IPointsGraphic Subject
 		{
 			get { return base.Subject as IPointsGraphic; }
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandChange; }
@@ -108,6 +130,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.Points.PointsCleared += OnSubjectPointsChanged;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="IControlGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			this.Subject.Points.PointChanged -= OnSubjectPointChanged;
@@ -119,6 +144,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region Add/Remove Vertices
 
+		/// <summary>
+		/// Gets or sets a value indicating whether or not the user can dynamically add or remove vertices on the subject.
+		/// </summary>
 		public bool CanAddRemoveVertices
 		{
 			get { return _canAddRemoveVertices; }
@@ -132,6 +160,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called to insert a vertex at the point where the context menu was last invoked.
+		/// </summary>
 		protected virtual void InsertVertex()
 		{
 			if (!_canAddRemoveVertices)
@@ -166,9 +197,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				subject.ResetCoordinateSystem();
 			}
 
-			base.AddToCommandHistory(memento, this.CreateMemento());
+			AddToCommandHistory(this, memento, this.CreateMemento());
 		}
 
+		/// <summary>
+		/// Called to remove the vertex at the point where the context menu was last invoked.
+		/// </summary>
 		protected virtual void DeleteVertex()
 		{
 			if (!_canAddRemoveVertices)
@@ -186,7 +220,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				}
 			}
 
-			base.AddToCommandHistory(memento, this.CreateMemento());
+			AddToCommandHistory(this, memento, this.CreateMemento());
 		}
 
 		/// <summary>
@@ -222,8 +256,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Draw();
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="CanAddRemoveVertices"/> changes.
+		/// </summary>
 		protected void OnCanAddRemoveVerticesChanged() {}
 
+		/// <summary>
+		/// Gets a set of exported <see cref="IAction"/>s.
+		/// </summary>
+		/// <param name="site">The action model site at which the actions should reside.</param>
+		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
+		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			IActionSet actions = base.GetExportedActions(site, mouseInformation);
@@ -259,9 +302,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		#region IMemorable Members
-
-		public virtual object CreateMemento()
+		/// <summary>
+		/// Captures the current state of this <see cref="VerticesControlGraphic"/>.
+		/// </summary>
+		public override object CreateMemento()
 		{
 			PointsMemento pointsMemento = new PointsMemento();
 
@@ -279,7 +323,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return pointsMemento;
 		}
 
-		public virtual void SetMemento(object memento)
+		/// <summary>
+		/// Restores the state of this <see cref="VerticesControlGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="VerticesControlGraphic.CreateMemento"/>.</param>
+		public override void SetMemento(object memento)
 		{
 			PointsMemento pointsMemento = memento as PointsMemento;
 			if (pointsMemento == null)
@@ -305,13 +353,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#endregion
-
-		protected virtual void OnSubjectPointsChanged(object sender, EventArgs e)
+		private void OnSubjectPointsChanged(object sender, EventArgs e)
 		{
 			if (_suspendSubjectPointChangeEvents)
 				return;
 
+			this.OnSubjectPointsChanged();
+		}
+
+		/// <summary>
+		/// Called to notify that multiple vertices in the subject graphic have changed.
+		/// </summary>
+		protected virtual void OnSubjectPointsChanged()
+		{
 			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
@@ -330,16 +384,25 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		protected virtual void OnSubjectPointChanged(object sender, IndexEventArgs e)
+		private void OnSubjectPointChanged(object sender, IndexEventArgs e)
 		{
 			if (_suspendSubjectPointChangeEvents)
 				return;
 
+			this.OnSubjectPointChanged(e.Index);
+		}
+
+		/// <summary>
+		/// Called to notify that a vertex in the subject graphic has changed.
+		/// </summary>
+		/// <param name="index">The index of the vertex that changed.</param>
+		protected virtual void OnSubjectPointChanged(int index)
+		{
 			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				this.ControlPoints[e.Index] = this.Subject.Points[e.Index];
+				this.ControlPoints[index] = this.Subject.Points[index];
 			}
 			finally
 			{
@@ -348,6 +411,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			this.Subject.Points[index] = point;

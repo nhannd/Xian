@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	public class PolygonalShutter : GeometricShutter
 	{
 		private readonly List<Point> _vertices;
-		public readonly ReadOnlyCollection<Point> _readOnlyVertices;
+		private readonly ReadOnlyCollection<Point> _readOnlyVertices;
 
 		public PolygonalShutter(IEnumerable<Point> vertices)
 		{

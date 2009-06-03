@@ -71,8 +71,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// Abstract base class for implementations of <see cref="IControlPointsGraphic"/>.
 	/// </summary>
+	/// <remarks>
+	/// The use of the <see cref="ControlPointsGraphic"/> base class is for convenience, as much of the logic behind
+	/// the control point graphics, handling user input and command history is implemented by default.
+	/// </remarks>
 	[Cloneable]
-	public abstract partial class ControlPointsGraphic : ControlGraphic, IControlPointsGraphic
+	public abstract partial class ControlPointsGraphic : ControlGraphic, IControlPointsGraphic, IMemorable
 	{
 		private event EventHandler<ListEventArgs<PointF>> _controlPointChangedEvent;
 
@@ -181,7 +185,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// 
+		/// Gets the collection of control points.
 		/// </summary>
 		protected ControlPointGroup ControlPoints
 		{
@@ -200,11 +204,28 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
+		public override sealed CoordinateSystem CoordinateSystem
+		{
+			get { return base.CoordinateSystem; }
+			set { base.CoordinateSystem = value; }
+		}
+
+		public override sealed void ResetCoordinateSystem()
+		{
+			base.ResetCoordinateSystem();
+		}
+
+		/// <summary>
+		/// Temporarily suspends notification of control point change events.
+		/// </summary>
 		protected void SuspendControlPointEvents()
 		{
 			_bypassControlPointChangedEvent = true;
 		}
 
+		/// <summary>
+		/// Resumes notification of control point change events.
+		/// </summary>
 		protected void ResumeControlPointEvents()
 		{
 			_bypassControlPointChangedEvent = false;
@@ -219,6 +240,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected virtual void OnControlPointChanged(int index, PointF point) {}
 
 		/// <summary>
@@ -236,6 +262,40 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return cursorLocation;
 		}
 
+		/// <summary>
+		/// Captures the current state of this <see cref="ControlPointsGraphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Any overriding implementation of <see cref="ControlPointsGraphic.CreateMemento"/> should return an
+		/// object containing enough state information so that, when <see cref="ControlPointsGraphic.SetMemento"/> is called,
+		/// the object can be restored to the original state.
+		/// </para>
+		/// <para>The default implementation returns null.</para>
+		/// </remarks>
+		public virtual object CreateMemento()
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Restores the state of this <see cref="ControlPointsGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="ControlPointsGraphic.CreateMemento"/>.</param>
+		/// <remarks>
+		/// <para>
+		/// Any overriding implementation of <see cref="ControlPointsGraphic.SetMemento"/> should return the 
+		/// object to the original state captured by <see cref="ControlPointsGraphic.CreateMemento"/>.
+		/// </para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		public virtual void SetMemento(object memento) {}
+
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting the cursor token for a particular screen coordinate via <see cref="ControlGraphic.GetCursorToken"/>.
+		/// </summary>
+		/// <param name="point">The screen coordinate for which the cursor is requested.</param>
+		/// <returns></returns>
 		protected override CursorToken GetCursorToken(Point point)
 		{
 			if (this.IsTracking)
@@ -270,18 +330,29 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Called when the <see cref="ControlGraphic.Color"/> property changes.
+		/// </summary>
 		protected override void OnColorChanged() 
 		{
 			_controlPoints.Color = base.Color;
 			base.OnColorChanged();
 		}
 
+		/// <summary>
+		/// Called when the <see cref="ControlGraphic.Show"/> property changes.
+		/// </summary>
 		protected override void OnShowControlGraphicsChanged()
 		{
 			_controlPoints.Visible = base.Show;
 			base.OnShowControlGraphicsChanged();
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to a mouse button click via <see cref="ControlGraphic.Start"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the <see cref="ControlGraphic"/> did something as a result of the call and hence would like to receive capture; False otherwise.</returns>
 		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
@@ -290,10 +361,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_trackedControlPoint = this.ControlPoints.HitTestControlPoint(mouseInformation.Location);
 				if (_trackedControlPoint >= 0)
 				{
-					if(this is IMemorable)
-					{
-						_memorableState = ((IMemorable) this).CreateMemento();
-					}
+					_memorableState = this.CreateMemento();
 					return true;
 				}
 			}
@@ -305,6 +373,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return base.Start(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework tracking mouse input via <see cref="ControlGraphic.Track"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the message was handled; False otherwise.</returns>
 		protected override bool Track(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
@@ -334,11 +407,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return base.Track(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response a mouse button release via <see cref="ControlGraphic.Stop"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the framework should <b>not</b> release capture; False otherwise.</returns>
 		protected override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (this is IMemorable && base.ImageViewer != null)
+			if (_memorableState != null)
 			{
-				AddToCommandHistory(_memorableState, ((IMemorable) this).CreateMemento());
+				AddToCommandHistory(this, _memorableState, this.CreateMemento());
 				_memorableState = null;
 			}
 
@@ -346,27 +424,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return base.Stop(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to an attempt to cancel the current operation via <see cref="ControlGraphic.Cancel"/>.
+		/// </summary>
 		protected override void Cancel()
 		{
 			_memorableState = null;
 			_trackedControlPoint = -1;
 			base.Cancel();
-		}
-
-		protected void AddToCommandHistory(object beginState, object endState)
-		{
-			if (this is IMemorable && beginState != null && endState != null && !beginState.Equals(endState) && base.ImageViewer != null)
-			{
-				MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand((IMemorable) this);
-				memorableCommand.BeginState = beginState;
-				memorableCommand.EndState = endState;
-
-				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
-				command.Name = this.CommandName;
-				command.Enqueue(memorableCommand);
-
-				base.ImageViewer.CommandHistory.AddCommand(command);
-			}
 		}
 	}
 }

@@ -39,6 +39,9 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that allows a subject graphic to be moved.
+	/// </summary>
 	[Cloneable]
 	public sealed class MoveControlGraphic : ControlGraphic, IMemorable
 	{
@@ -50,16 +53,28 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private PointF _anchor = PointF.Empty;
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="MoveControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">The subject graphic.</param>
 		public MoveControlGraphic(IGraphic subject) : base(subject)
 		{
 			_cursor = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		private MoveControlGraphic(MoveControlGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandMove; }
@@ -93,12 +108,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the cursor to show when hovering over the graphic.
+		/// </summary>
 		public CursorToken Cursor
 		{
 			get { return _cursor; }
 			set { _cursor = value; }
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting the cursor token for a particular screen coordinate via <see cref="ControlGraphic.GetCursorToken"/>.
+		/// </summary>
+		/// <param name="point">The screen coordinate for which the cursor is requested.</param>
+		/// <returns></returns>
 		protected override CursorToken GetCursorToken(Point point)
 		{
 			if (this.HitTest(point))
@@ -106,17 +129,43 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return base.GetCursorToken(point);
 		}
 
+		/// <summary>
+		/// Performs a hit test on the <see cref="CompositeGraphic"/> at given point.
+		/// </summary>
+		/// <param name="point">The mouse position in destination coordinates.</param>
+		/// <returns>
+		/// <b>True</b> if <paramref name="point"/> "hits" any <see cref="Graphic"/>
+		/// in the subtree, <b>false</b> otherwise.
+		/// </returns>
+		/// <remarks>
+		/// Calling <see cref="CompositeGraphic.HitTest"/> will recursively call <see cref="CompositeGraphic.HitTest"/> on
+		/// <see cref="Graphic"/> objects in the subtree.
+		/// </remarks>
 		public override bool HitTest(Point point)
 		{
 			return base.DecoratedGraphic.HitTest(point);
 		}
 
+		/// <summary>
+		/// Moves the <see cref="CompositeGraphic"/> by a specified delta.
+		/// </summary>
+		/// <param name="delta">The distance to move.</param>
+		/// <remarks>
+		/// Depending on the value of <see cref="CoordinateSystem"/>,
+		/// <paramref name="delta"/> will be interpreted in either source
+		/// or destination coordinates.
+		/// </remarks>
 		public override void Move(SizeF delta)
 		{
 			this.Anchor += delta;
 			this.DecoratedGraphic.Move(delta);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to a mouse button click via <see cref="ControlGraphic.Start"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the <see cref="ControlGraphic"/> did something as a result of the call and hence would like to receive capture; False otherwise.</returns>
 		protected override bool Start(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
@@ -136,6 +185,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return base.Start(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework tracking mouse input via <see cref="ControlGraphic.Track"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the message was handled; False otherwise.</returns>
 		protected override bool Track(IMouseInformation mouseInformation)
 		{
 			this.CoordinateSystem = CoordinateSystem.Destination;
@@ -161,40 +215,41 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return base.Track(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response a mouse button release via <see cref="ControlGraphic.Stop"/>.
+		/// </summary>
+		/// <param name="mouseInformation">The mouse input information.</param>
+		/// <returns>True if the framework should <b>not</b> release capture; False otherwise.</returns>
 		protected override bool Stop(IMouseInformation mouseInformation)
 		{
 			if (_stateMemento != null)
 			{
-				this.AddToCommandHistory(_stateMemento, this.CreateMemento());
+				AddToCommandHistory(this, _stateMemento, this.CreateMemento());
 				_stateMemento = null;
 			}
 			return base.Stop(mouseInformation);
 		}
 
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to an attempt to cancel the current operation via <see cref="ControlGraphic.Cancel"/>.
+		/// </summary>
 		protected override void Cancel()
 		{
 			_stateMemento = null;
 			base.Cancel();
 		}
 
-		private void AddToCommandHistory(object beginState, object endState)
-		{
-			if (beginState != null && endState != null && !beginState.Equals(endState) && base.ImageViewer != null)
-			{
-				MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(this);
-				memorableCommand.BeginState = beginState;
-				memorableCommand.EndState = endState;
-
-				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
-				command.Name = this.CommandName;
-				command.Enqueue(memorableCommand);
-
-				base.ImageViewer.CommandHistory.AddCommand(command);
-			}
-		}
-
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures the state of an object.
+		/// </summary>
+		/// <remarks>
+		/// The implementation of <see cref="IMemorable.CreateMemento"/> should return an
+		/// object containing enough state information so that
+		/// when <see cref="IMemorable.SetMemento"/> is called, the object can be restored
+		/// to the original state.
+		/// </remarks>
 		public object CreateMemento()
 		{
 			PointMemento pointMemento;
@@ -212,6 +267,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return pointMemento;
 		}
 
+		/// <summary>
+		/// Restores the state of an object.
+		/// </summary>
+		/// <param name="memento">The object that was
+		/// originally created with <see cref="IMemorable.CreateMemento"/>.</param>
+		/// <remarks>
+		/// The implementation of <see cref="IMemorable.SetMemento"/> should return the 
+		/// object to the original state captured by <see cref="IMemorable.CreateMemento"/>.
+		/// </remarks>
 		public void SetMemento(object memento)
 		{
 			PointMemento pointMemento = memento as PointMemento;

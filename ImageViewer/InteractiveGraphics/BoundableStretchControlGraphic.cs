@@ -33,19 +33,25 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that controls stretching of an <see cref="IBoundableGraphic"/>.
+	/// </summary>
 	[Cloneable]
-	public sealed class BoundableStretchControlGraphic : ControlPointsGraphic, IMemorable
+	public sealed class BoundableStretchControlGraphic : ControlPointsGraphic
 	{
 		private const int _top = 0;
 		private const int _bottom = 1;
 		private const int _left = 2;
 		private const int _right = 3;
 
+		/// <summary>
+		/// Constructs a new <see cref="BoundableStretchControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">An <see cref="IBoundableGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IBoundableGraphic"/>.</param>
 		public BoundableStretchControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -70,6 +76,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		private BoundableStretchControlGraphic(BoundableStretchControlGraphic source, ICloningContext context)
 			: base(source, context)
 		{
@@ -82,11 +93,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
 		public new IBoundableGraphic Subject
 		{
 			get { return base.Subject as IBoundableGraphic; }
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandStretch; }
@@ -98,6 +115,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.TopLeftChanged += OnSubjectChanged;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="IControlGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			this.Subject.BottomRightChanged -= OnSubjectChanged;
@@ -106,9 +126,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
-		#region IMemorable Members
-
-		public object CreateMemento()
+		/// <summary>
+		/// Captures the current state of this <see cref="BoundableStretchControlGraphic"/>.
+		/// </summary>
+		public override object CreateMemento()
 		{
 			PointsMemento pointsMemento = new PointsMemento();
 
@@ -126,7 +147,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return pointsMemento;
 		}
 
-		public void SetMemento(object memento)
+		/// <summary>
+		/// Restores the state of this <see cref="BoundableStretchControlGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="BoundableStretchControlGraphic.CreateMemento"/>.</param>
+		public override void SetMemento(object memento)
 		{
 			PointsMemento pointsMemento = memento as PointsMemento;
 			if (pointsMemento == null || pointsMemento.Count != 2)
@@ -144,8 +169,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#endregion
-
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			IBoundableGraphic subject = this.Subject;

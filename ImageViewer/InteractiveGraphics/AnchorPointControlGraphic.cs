@@ -2,17 +2,23 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// An interactive graphic that controls the single point of an <see cref="IPointGraphic"/>.
+	/// </summary>
 	[Cloneable]
-	public class AnchorPointControlGraphic : ControlPointsGraphic, IMemorable
+	public class AnchorPointControlGraphic : ControlPointsGraphic
 	{
 		[CloneIgnore]
 		private bool _suspendSubjectPointChangeEvents = false;
 
+		/// <summary>
+		/// Constructs a new <see cref="AnchorPointControlGraphic"/>.
+		/// </summary>
+		/// <param name="subject">An <see cref="IPointGraphic"/> or an <see cref="IControlGraphic"/> chain whose subject is an <see cref="IPointGraphic"/>.</param>
 		public AnchorPointControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -31,17 +37,28 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected AnchorPointControlGraphic(AnchorPointControlGraphic source, ICloningContext context)
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
+		/// <summary>
+		/// Gets the subject graphic that this graphic controls.
+		/// </summary>
 		public new IPointGraphic Subject
 		{
 			get { return base.Subject as IPointGraphic; }
 		}
 
+		/// <summary>
+		/// Gets a string that describes the type of control operation that this graphic provides.
+		/// </summary>
 		public override string CommandName
 		{
 			get { return SR.CommandChange; }
@@ -58,15 +75,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.PointChanged += OnSubjectPointChanged;
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="IControlGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			this.Subject.PointChanged -= OnSubjectPointChanged;
 			base.Dispose(disposing);
 		}
 
-		#region IMemorable Members
-
-		public virtual object CreateMemento()
+		/// <summary>
+		/// Captures the current state of this <see cref="AnchorPointControlGraphic"/>.
+		/// </summary>
+		public override object CreateMemento()
 		{
 			this.Subject.CoordinateSystem = CoordinateSystem.Source;
 			try
@@ -79,7 +100,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		public virtual void SetMemento(object memento)
+		/// <summary>
+		/// Restores the state of this <see cref="AnchorPointControlGraphic"/>.
+		/// </summary>
+		/// <param name="memento">The object that was originally created with <see cref="AnchorPointControlGraphic.CreateMemento"/>.</param>
+		public override void SetMemento(object memento)
 		{
 			PointMemento pointMemento = memento as PointMemento;
 			if (pointMemento == null)
@@ -99,8 +124,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#endregion
-
 		private void OnSubjectPointChanged(object sender, EventArgs e)
 		{
 			if (_suspendSubjectPointChangeEvents)
@@ -119,6 +142,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called to notify the derived class of a control point change event.
+		/// </summary>
+		/// <param name="index">The index of the point that changed.</param>
+		/// <param name="point">The value of the point that changed.</param>
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
 			this.Subject.Point = point;
