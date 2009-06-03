@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -79,6 +80,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			_numberOfPointsAnchored = 0;
 			base.Reset();
+		}
+
+		/// <summary>
+		/// Rolls back the internal state of the builder by one mouse click, allowing the same graphic to be rebuilt by resuming from an earlier state.
+		/// </summary>
+		protected override void Rollback()
+		{
+			_numberOfPointsAnchored = Math.Max(_numberOfPointsAnchored - 1, 0);
 		}
 
 		/// <summary>

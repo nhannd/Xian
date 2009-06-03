@@ -68,6 +68,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			throw new NotSupportedException();
 		}
 
+		protected override void Rollback()
+		{
+			throw new NotSupportedException();
+		}
+
 		protected override void NotifyGraphicComplete()
 		{
 			// Find the edit control graphic for the text graphic and invoke edit mode.

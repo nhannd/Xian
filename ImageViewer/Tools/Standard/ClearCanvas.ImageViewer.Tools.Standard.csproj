@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
+    <Compile Include="InteractiveShutterGraphicBuilders.cs" />
     <Compile Include="InteractiveTextCalloutBuilder.cs" />
     <Compile Include="InteractiveTextAreaBuilder.cs" />
     <Compile Include="ClearCustomShuttersTool.cs" />

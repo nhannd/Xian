@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	public class InteractiveBoundableGraphicBuilder : InteractiveGraphicBuilder
 	{
-		private int _numberOfPointsAnchored = 1;
+		private int _numberOfPointsAnchored = 0;
 
 		/// <summary>
 		/// Constructs an interactive builder for the specified boundable graphic.
@@ -70,6 +71,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
+		/// Rolls back the internal state of the builder by one mouse click, allowing the same graphic to be rebuilt by resuming from an earlier state.
+		/// </summary>
+		protected override void Rollback()
+		{
+			_numberOfPointsAnchored = Math.Max(_numberOfPointsAnchored - 1, 0);
+		}
+
+		/// <summary>
 		/// Passes user input to the builder when <see cref="IMouseButtonHandler.Start"/> is called on the owning tool.
 		/// </summary>
 		/// <param name="mouseInformation">The user input data.</param>
@@ -77,7 +86,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			// We just started creating
-			if (_numberOfPointsAnchored == 1)
+			if (_numberOfPointsAnchored == 0)
 			{
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
 				this.Graphic.TopLeft = mouseInformation.Location;
@@ -89,6 +98,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're done creating
 			else
 			{
+				_numberOfPointsAnchored++;
+
 				this.NotifyGraphicComplete();
 			}
 

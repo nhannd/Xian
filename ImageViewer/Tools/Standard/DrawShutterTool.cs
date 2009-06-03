@@ -311,26 +311,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					{
 						_primitiveGraphic = new PolylineGraphic();
 						image.OverlayGraphics.Add(_primitiveGraphic);
-						_graphicBuilder = new InteractivePolygonGraphicBuilder((PolylineGraphic)_primitiveGraphic);
+						_graphicBuilder = InteractiveShutterGraphicBuilders.CreatePolygonalShutterBuilder((PolylineGraphic)_primitiveGraphic);
 						break;
 					}
 				case ShutterType.Circle:
 					{
 						_primitiveGraphic = new EllipsePrimitive();
 						image.OverlayGraphics.Add(_primitiveGraphic);
-						_graphicBuilder = new InteractiveCircleGraphicBuilder((EllipsePrimitive)_primitiveGraphic);
+						_graphicBuilder = InteractiveShutterGraphicBuilders.CreateCircularShutterBuilder((EllipsePrimitive)_primitiveGraphic);
 						break;
 					}
 				default:
 					{
 						_primitiveGraphic = new RectanglePrimitive();
 						image.OverlayGraphics.Add(_primitiveGraphic);
-						_graphicBuilder = new InteractiveBoundableGraphicBuilder((RectanglePrimitive)_primitiveGraphic);
+						_graphicBuilder = InteractiveShutterGraphicBuilders.CreateRectangularShutterBuilder((RectanglePrimitive)_primitiveGraphic);
 						break;
 					}
 			}
 
-			((IVectorGraphic)_primitiveGraphic).Color = Color.LightSteelBlue;
 			_graphicBuilder.GraphicCancelled += OnGraphicCancelled;
 			_graphicBuilder.GraphicComplete += OnGraphicComplete;
 		}

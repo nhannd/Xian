@@ -181,6 +181,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual void Reset() {}
 
 		/// <summary>
+		/// Rolls back the internal state of the builder by one mouse click, allowing the same graphic to be rebuilt by resuming from an earlier state.
+		/// </summary>
+		protected virtual void Rollback() {}
+
+		/// <summary>
 		/// Gets the builder-recommended behaviour that the owning tool should use.
 		/// </summary>
 		public virtual MouseButtonHandlerBehaviour Behaviour
