@@ -130,6 +130,7 @@
     <Compile Include="Graphics\VisualStateChangedEvent.cs" />
     <Compile Include="Imaging\VoiWindow.cs" />
     <Compile Include="InteractiveGraphics\AnchorPointControlGraphic.cs" />
+    <Compile Include="Graphics\GraphicEventArgs.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneOverlays.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneShutters.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsDeserializationException.cs" />
@@ -211,7 +212,6 @@
     <Compile Include="RoiGraphics\Analyzers\IRoiAnalyzer.cs" />
     <Compile Include="RoiGraphics\IRoiAreaProvider.cs" />
     <Compile Include="RoiGraphics\IRoiLengthProvider.cs" />
-    <Compile Include="RoiGraphics\IRoiPerimeterProvider.cs" />
     <Compile Include="RoiGraphics\PolygonalRoi.cs" />
     <Compile Include="RoiGraphics\RectangularRoi.cs" />
     <Compile Include="Mathematics\Size3D.cs" />

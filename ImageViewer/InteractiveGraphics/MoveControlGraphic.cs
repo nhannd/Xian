@@ -80,8 +80,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return SR.CommandMove; }
 		}
 
-		//TODO (CR May09):private
-
 		/// <summary>
 		/// Gets a point that can be used as a landmark to quantify the difference in position of the controlled
 		/// graphic when moved by this <see cref="ControlGraphic"/>.
@@ -94,7 +92,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <para>This point is given in either source or destination coordinates depending on the current value
 		/// of <see cref="Graphic.CoordinateSystem"/>.</para>
 		/// </remarks>
-		public PointF Anchor
+		private PointF Anchor
 		{
 			get
 			{
@@ -102,7 +100,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					return this.SpatialTransform.ConvertToDestination(_anchor);
 				return _anchor;
 			}
-			private set
+			set
 			{
 				if (this.CoordinateSystem == CoordinateSystem.Destination)
 					value = this.SpatialTransform.ConvertToSource(value);

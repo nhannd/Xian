@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	{
 		private readonly RectangleF _bounds;
 		private readonly float a, b, a2, b2, h, k;
+		private Units _units;
 
 		public EllipticalRoi(RectangleF boundingBox, IPresentationImage presentationImage)
 			: base(presentationImage)
@@ -74,6 +75,24 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			{
 				ellipse.ResetCoordinateSystem();
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets the units of area with which to compute the value of <see cref="IRoiAreaProvider.Area"/>.
+		/// </summary>
+		public Units Units
+		{
+			get { return _units; }
+			set { _units = value; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating that the image has pixel spacing information or has
+		/// previously been calibrated with physical dimensions.
+		/// </summary>
+		public bool IsCalibrated
+		{
+			get { return !base.NormalizedPixelSpacing.IsNull; }
 		}
 
 		protected override RectangleF ComputeBounds()
@@ -130,39 +149,23 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		#region IRoiAreaProvider Members
 
-		private double? _pixelArea;
 		private double? _area;
 
-		public double PixelArea
-		{
-			get
-			{
-				if (!_pixelArea.HasValue)
-				{
-					_pixelArea = Math.Abs(_bounds.Width*_bounds.Height*Math.PI/4);
-				}
-				return _pixelArea.Value;
-			}
-		}
-
+		/// <summary>
+		/// Gets the area of the region of interest in the units of area as specified by <see cref="IRoiAreaProvider.Units"/>.
+		/// </summary>
+		/// <exception cref="UncalibratedImageException">If <see cref="IRoiAreaProvider.Units"/> is a physical
+		/// unit of measurement and the image has no pixel spacing information, nor has it been calibrated.</exception>
 		public double Area
 		{
 			get
 			{
 				if (!_area.HasValue)
 				{
-					if (base.NormalizedPixelSpacing.IsNull)
-						throw new UncalibratedImageException();
-
-					_area = this.PixelArea*base.NormalizedPixelSpacing.Column*base.NormalizedPixelSpacing.Row;
+					_area = Math.Abs(_bounds.Width*_bounds.Height*Math.PI/4);
 				}
-				return _area.Value;
+				return ConvertFromSquarePixels(_area.Value, _units, base.NormalizedPixelSpacing);
 			}
-		}
-
-		public bool IsCalibrated
-		{
-			get { return !base.NormalizedPixelSpacing.IsNull; }
 		}
 
 		#endregion

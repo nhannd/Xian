@@ -5,5 +5,8 @@
     <Setting Name="ShowAnalysisByDefault" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="AnalysisUnits" Type="ClearCanvas.ImageViewer.RoiGraphics.Units" Scope="User">
+      <Value Profile="(Default)">Centimeters</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

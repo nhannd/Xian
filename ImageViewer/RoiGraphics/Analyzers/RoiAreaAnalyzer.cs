@@ -37,6 +37,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiAreaAnalyzer : IRoiAnalyzer
 	{
+		private Units _units = Units.Centimeters;
+
+		public Units Units
+		{
+			get { return _units; }
+			set { _units = value; }
+		}
+
 		public bool SupportsRoi(Roi roi)
 		{
 			return roi is IRoiAreaProvider;
@@ -47,15 +55,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			if (!SupportsRoi(roi))
 				return null;
 
-			//TODO (CR May09): reconcile with property on RoiProvider
-			Units units = Units.Centimeters;
-
 			// performance enhancement to restrict excessive computation of polygon area.
 			if (mode == RoiAnalysisMode.Responsive)
 			{
-				if (units == Units.Pixels)
+				if (_units == Units.Pixels)
 					return String.Format(SR.FormatAreaPixels, SR.StringNoValue);
-				else if (units == Units.Millimeters)
+				else if (_units == Units.Millimeters)
 					return String.Format(SR.FormatAreaSquareMm, SR.StringNoValue);
 				else
 					return String.Format(SR.FormatAreaSquareCm, SR.StringNoValue);
@@ -65,12 +70,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
 			string text;
 
-			if (!areaProvider.IsCalibrated || units == Units.Pixels)
-				text = String.Format(SR.FormatAreaPixels, areaProvider.PixelArea);
-			else if (units == Units.Millimeters)
+			Units oldUnits = areaProvider.Units;
+			areaProvider.Units = _units;
+
+			if (!areaProvider.IsCalibrated || _units == Units.Pixels)
+				text = String.Format(SR.FormatAreaPixels, areaProvider.Area);
+			else if (_units == Units.Millimeters)
 				text = String.Format(SR.FormatAreaSquareMm, areaProvider.Area);
 			else
-				text = String.Format(SR.FormatAreaSquareCm, areaProvider.Area/100);
+				text = String.Format(SR.FormatAreaSquareCm, areaProvider.Area);
+
+			areaProvider.Units = oldUnits;
 
 			return text;
 		}

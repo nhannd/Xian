@@ -34,5 +34,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics {
                 this["ShowAnalysisByDefault"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Centimeters")]
+        public global::ClearCanvas.ImageViewer.RoiGraphics.Units AnalysisUnits {
+            get {
+                return ((global::ClearCanvas.ImageViewer.RoiGraphics.Units)(this["AnalysisUnits"]));
+            }
+            set {
+                this["AnalysisUnits"] = value;
+            }
+        }
     }
 }

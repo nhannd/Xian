@@ -118,8 +118,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (this.TextGraphic.Text != value)
 				{
 					this.TextGraphic.Text = value;
-					//TODO (CR May09):remove argument
-					OnTextChanged(new EventArgs());
+					this.OnTextChanged();
 				}
 			}
 		}
@@ -339,9 +338,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			SetCalloutLineStart();
 		}
 
-		protected virtual void OnTextChanged(EventArgs e)
+		protected virtual void OnTextChanged()
 		{
-			EventsHelper.Fire(_textChanged, this, new EventArgs());
+			EventsHelper.Fire(_textChanged, this, EventArgs.Empty);
 			NotifyVisualStateChanged("Text");
 		}
 

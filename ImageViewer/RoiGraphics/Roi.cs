@@ -39,8 +39,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
-	//TODO (CR May09):LinearUnits property, just get Length property
-
 	/// <summary>
 	/// Represents a static region of interest for the purposes of computing statistics on the contained pixels.
 	/// </summary>
@@ -234,17 +232,15 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return this.Contains(new PointF(x, y));
 		}
 
-		//TODO (CR May09): GetPixelCoordinates
-
 		/// <summary>
-		/// Enumerates the coordinates of points contained within the region of interest.
+		/// Gets an enumeration of the coordinates of points contained within the region of interest.
 		/// </summary>
 		/// <remarks>
 		/// Regions of interest have no notion of coordinate system. All coordinates are inherently
 		/// given relative to the image pixel space (i.e. <see cref="CoordinateSystem.Source"/>.)
 		/// </remarks>
 		/// <returns>An enumeration of points.</returns>
-		public IEnumerable<PointF> EnumeratePoints()
+		public IEnumerable<PointF> GetPixelCoordinates()
 		{
 			Rectangle bounds = Rectangle.Round(this.BoundingBox);
 			for (int x = bounds.Left; x < bounds.Right; x++)
@@ -258,13 +254,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
-		//TODO (CR May09): GetRawPixelValues
-
 		/// <summary>
-		/// Enumerates the raw pixel values contained within the region of interest.
+		/// Gets an enumeration of the raw pixel values contained within the region of interest.
 		/// </summary>
 		/// <returns>An enumeration of raw pixel values.</returns>
-		public IEnumerable<int> EnumerateRawPixels()
+		public IEnumerable<int> GetRawPixelValues()
 		{
 			if (this.PixelData == null)
 				yield break;
@@ -282,13 +276,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		}
 
 		/// <summary>
-		/// Enumerates the modality LUT transformed pixel values contained within the region of interest.
+		/// Gets an enumeration of the modality LUT transformed pixel values contained within the region of interest.
 		/// </summary>
 		/// <remarks>
-		/// If the <see cref="ModalityLut"/> is null, then this method enumerates the same values as <see cref="EnumerateRawPixels"/>.
+		/// If the <see cref="ModalityLut"/> is null, then this method enumerates the same values as <see cref="GetRawPixelValues"/>.
 		/// </remarks>
 		/// <returns>An enumeration of modality LUT transformed pixel values.</returns>
-		public IEnumerable<int> EnumeratePixels()
+		public IEnumerable<int> GetPixelValues()
 		{
 			if (this.PixelData == null)
 				yield break;
@@ -307,6 +301,30 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 						yield return lut[this.PixelData.GetPixel(x, y)];
 				}
 			}
+		}
+
+		protected static double ConvertFromSquarePixels(double area, Units units, PixelSpacing pixelSpacing)
+		{
+			if (units != Units.Pixels && pixelSpacing.IsNull)
+				throw new UncalibratedImageException();
+
+			double factor = 1;
+
+			switch (units)
+			{
+				case Units.Pixels:
+					factor = 1;
+					break;
+				case Units.Centimeters:
+					factor = pixelSpacing.Column*pixelSpacing.Row/100;
+					break;
+				case Units.Millimeters:
+				default:
+					factor = pixelSpacing.Column*pixelSpacing.Row;
+					break;
+			}
+
+			return area*factor;
 		}
 
 		private class IdentityLut : ILut

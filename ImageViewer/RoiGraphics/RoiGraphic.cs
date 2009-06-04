@@ -174,24 +174,16 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		protected override sealed void OnSubjectChanged()
 		{
-			bool active = false;
 			if (this.DecoratedGraphic is IControlGraphic)
 			{
-				active = true; // ((IControlGraphic) this.DecoratedGraphic).CurrentHandler is IActiveControlGraphic;
+				_delayedEventPublisher.Publish(this.Subject, EventArgs.Empty);
+				Analyze(true);
 			}
-
-			//TODO (CR May09):need active?
-
-			if (!active)
+			else
 			{
 				// the roi is inactive, focused or selected, but not actively
 				// moving or stretching; just do the calculation immediately.
 				Analyze(false);
-			}
-			else
-			{
-				_delayedEventPublisher.Publish(this.Subject, EventArgs.Empty);
-				Analyze(true);
 			}
 
 			this.OnRoiChanged();

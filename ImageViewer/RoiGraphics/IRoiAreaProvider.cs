@@ -34,25 +34,25 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	/// <summary>
-	/// Common interface for regions of interest that have the notion of area.
+	/// Defines the property to get the area of a region of interest.
 	/// </summary>
 	public interface IRoiAreaProvider
 	{
 		/// <summary>
-		/// Gets the area of the <see cref="Roi"/> in square pixels.
+		/// Gets or sets the units of area with which to compute the value of <see cref="Area"/>.
 		/// </summary>
-		double PixelArea { get; }
+		Units Units { get; set; }
 
 		/// <summary>
-		/// Gets the area of the <see cref="Roi"/> in square millimetres.
+		/// Gets the area of the region of interest in the units of area as specified by <see cref="Units"/>.
 		/// </summary>
-		/// <exception cref="UncalibratedImageException">If the image has no pixel spacing
-		/// information and has not been calibrated.</exception>
+		/// <exception cref="UncalibratedImageException">If <see cref="Units"/> is a physical
+		/// unit of measurement and the image has no pixel spacing information, nor has it been calibrated.</exception>
 		double Area { get; }
 
 		/// <summary>
 		/// Gets a value indicating that the image has pixel spacing information or has
-		/// previously been calibrated, and hence the <see cref="Area"/> property is available.
+		/// previously been calibrated with physical dimensions.
 		/// </summary>
 		bool IsCalibrated { get; }
 	}

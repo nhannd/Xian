@@ -39,30 +39,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	/// </summary>
 	public sealed class RoiAnalyzerExtensionPoint : ExtensionPoint<IRoiAnalyzer>
 	{
-		private static IList<IRoiAnalyzer> _roiAnalyzers = null;
-
-		/// <summary>
-		/// Gets an enumeration of available <see cref="IRoiAnalyzer"/>s.
-		/// </summary>
-		public static IEnumerable<IRoiAnalyzer> RoiAnalyzers
+		public static IEnumerable<IRoiAnalyzer> CreateRoiAnalyzers()
 		{
-			get
+			SortedList<string, IRoiAnalyzer> extensions = new SortedList<string, IRoiAnalyzer>();
+			foreach (IRoiAnalyzer roiAnalyzer in new RoiAnalyzerExtensionPoint().CreateExtensions())
 			{
-				if (_roiAnalyzers == null)
-				{
-					SortedList<string, IRoiAnalyzer> extensions = new SortedList<string, IRoiAnalyzer>();
-					foreach (IRoiAnalyzer roiAnalyzer in new RoiAnalyzerExtensionPoint().CreateExtensions())
-					{
-						extensions.Add(roiAnalyzer.GetType().FullName, roiAnalyzer);
-					}
-					_roiAnalyzers = new List<IRoiAnalyzer>(extensions.Values).AsReadOnly();
-				}
-				return _roiAnalyzers;
+				roiAnalyzer.Units = RoiSettings.Default.AnalysisUnits;
+				extensions.Add(roiAnalyzer.GetType().FullName, roiAnalyzer);
 			}
+			return extensions.Values;
 		}
 	}
-
-	//TODO (CR May09): still need this enumeration?
 
 	/// <summary>
 	/// Enumerated values for the type of ROI analysis to perform.
@@ -85,6 +72,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	/// </summary>
 	public interface IRoiAnalyzer
 	{
+		/// <summary>
+		/// Gets or sets the base unit of measurement in which analysis is performed.
+		/// </summary>
+		Units Units { get; set; }
+
 		/// <summary>
 		/// Checks if this analyzer class can analyze the given ROI.
 		/// </summary>

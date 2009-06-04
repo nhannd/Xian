@@ -41,6 +41,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiLengthAnalyzer : IRoiAnalyzer
 	{
+		private Units _units = Units.Centimeters;
+
+		public Units Units
+		{
+			get { return _units; }
+			set { _units = value; }
+		}
+
 		public bool SupportsRoi(Roi roi)
 		{
 			return roi is IRoiLengthProvider;
@@ -51,18 +59,21 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			if (!SupportsRoi(roi))
 				return null;
 
-			Units units = Units.Centimeters;
-
 			IRoiLengthProvider lengthProvider = (IRoiLengthProvider) roi;
 
 			string text;
 
-			if (!lengthProvider.IsCalibrated || units == Units.Pixels)
-				text = String.Format(SR.FormatLengthPixels, lengthProvider.PixelLength);
-			else if (units == Units.Millimeters)
+			Units oldUnits = lengthProvider.Units;
+			lengthProvider.Units = _units;
+
+			if (!lengthProvider.IsCalibrated || _units == Units.Pixels)
+				text = String.Format(SR.FormatLengthPixels, lengthProvider.Length);
+			else if (_units == Units.Millimeters)
 				text = String.Format(SR.FormatLengthMm, lengthProvider.Length);
 			else
-				text = String.Format(SR.FormatLengthCm, lengthProvider.Length / 10);
+				text = String.Format(SR.FormatLengthCm, lengthProvider.Length);
+
+			lengthProvider.Units = oldUnits;
 
 			return text;
 		}

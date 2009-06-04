@@ -41,6 +41,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiStatisticsAnalyzer : IRoiAnalyzer
 	{
+		Units IRoiAnalyzer.Units
+		{
+			get { return Units.Centimeters; }
+			set { }
+		}
+
 		public bool SupportsRoi(Roi roi)
 		{
 			return roi is IRoiStatisticsProvider;

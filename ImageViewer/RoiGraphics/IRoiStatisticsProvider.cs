@@ -31,20 +31,17 @@
 
 using System;
 using System.Drawing;
-using System.Text;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	/// <summary>
-	/// Common interface for regions of interest that have the notion of a
-	/// number of points over which the mean and standard deviation can
-	/// be computed.
+	/// Defines the properties to get the mean and standard deviation of a
+	/// region of interest.
 	/// </summary>
-	public interface IRoiStatisticsProvider {
+	public interface IRoiStatisticsProvider
+	{
 		/// <summary>
 		/// Gets the standard deviation of the values over the <see cref="Roi"/>.
 		/// </summary>

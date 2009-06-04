@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	public class LinearRoi : Roi, IRoiLengthProvider
 	{
 		private readonly IList<PointF> _points;
+		private Units _units;
 
 		public LinearRoi(PointF point1, PointF point2, IPresentationImage presentationImage) : base(presentationImage)
 		{
@@ -85,6 +86,24 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			get { return _points; }
 		}
 
+		/// <summary>
+		/// Gets or sets the units of area with which to compute the value of <see cref="IRoiAreaProvider.Area"/>.
+		/// </summary>
+		public Units Units
+		{
+			get { return _units; }
+			set { _units = value; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating that the image has pixel spacing information or has
+		/// previously been calibrated with physical dimensions.
+		/// </summary>
+		public bool IsCalibrated
+		{
+			get { return !base.NormalizedPixelSpacing.IsNull; }
+		}
+
 		protected override RectangleF ComputeBounds()
 		{
 			return RectangleUtilities.ComputeBoundingRectangle(_points);
@@ -112,47 +131,44 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private double? _lengthInPixels;
 		private double? _length;
 
-		public double PixelLength
-		{
-			get
-			{
-				if (!_lengthInPixels.HasValue)
-				{
-					double length = 0;
-					for (int n = 1; n < _points.Count; n++)
-					{
-						length += Vector.Distance(_points[n - 1], _points[n]);
-					}
-					_lengthInPixels = length;
-				}
-				return _lengthInPixels.Value;
-			}
-		}
-
 		public double Length
 		{
 			get
 			{
-				if (!_length.HasValue)
+				if (_units == Units.Pixels)
 				{
-					if (base.NormalizedPixelSpacing.IsNull)
-						throw new UncalibratedImageException();
-
-					Units units = Units.Millimeters;
-					double length = 0;
-					for (int n = 1; n < _points.Count; n++)
+					if (!_lengthInPixels.HasValue)
 					{
-						length += RoiLengthAnalyzer.CalculateLength(_points[n - 1], _points[n], base.NormalizedPixelSpacing, ref units);
+						double length = 0;
+						for (int n = 1; n < _points.Count; n++)
+						{
+							length += Vector.Distance(_points[n - 1], _points[n]);
+						}
+						_lengthInPixels = length;
 					}
-					_length = length;
+					return _lengthInPixels.Value;
 				}
-				return _length.Value;
-			}
-		}
+				else
+				{
+					if (!_length.HasValue)
+					{
+						if (base.NormalizedPixelSpacing.IsNull)
+							throw new UncalibratedImageException();
 
-		public bool IsCalibrated
-		{
-			get { return !base.NormalizedPixelSpacing.IsNull; }
+						Units units = _units;
+						double length = 0;
+						for (int n = 1; n < _points.Count; n++)
+						{
+							length += RoiLengthAnalyzer.CalculateLength(_points[n - 1], _points[n], base.NormalizedPixelSpacing, ref units);
+						}
+						_length = length;
+					}
+
+					if (_units == Units.Centimeters)
+						return _length.Value/10;
+					return _length.Value;
+				}
+			}
 		}
 
 		#endregion

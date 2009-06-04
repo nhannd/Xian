@@ -51,14 +51,15 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		[CloneIgnore]
 		private readonly List<IRoiAnalyzer> _roiAnalyzers = new List<IRoiAnalyzer>();
 
-		public RoiCalloutGraphic() : base()
+		public RoiCalloutGraphic()
+			: this(RoiAnalyzerExtensionPoint.CreateRoiAnalyzers()) {}
+
+		public RoiCalloutGraphic(IEnumerable<IRoiAnalyzer> analyzers)
+			: base()
 		{
-			//TODO (CR May09):own instances of analyzer
-			_roiAnalyzers.AddRange(RoiAnalyzerExtensionPoint.RoiAnalyzers);
+			_roiAnalyzers.AddRange(analyzers);
 			_showAnalysis = RoiSettings.Default.ShowAnalysisByDefault;
 		}
-
-		//TODO (CR May09): add constructor for own analyzers
 
 		protected RoiCalloutGraphic(RoiCalloutGraphic source, ICloningContext context)
 			: base(source, context)
@@ -228,10 +229,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			base.Text = builder.ToString().Trim();
 		}
 
-		protected override void OnTextChanged(EventArgs e)
+		protected override void OnTextChanged()
 		{
 			base.Visible = !(string.IsNullOrEmpty(base.Text));
-			base.OnTextChanged(e);
+			base.OnTextChanged();
 		}
 	}
 }

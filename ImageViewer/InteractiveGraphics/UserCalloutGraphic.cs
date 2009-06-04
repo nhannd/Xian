@@ -79,11 +79,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _textChanged -= value; }
 		}
 
-		protected override void OnTextChanged(EventArgs e)
+		protected override void OnTextChanged()
 		{
-			base.OnTextChanged(e);
+			base.OnTextChanged();
 
-			EventsHelper.Fire(_textChanged, this, new EventArgs());
+			EventsHelper.Fire(_textChanged, this, EventArgs.Empty);
 		}
 
 		protected override void OnEndPointChanged()

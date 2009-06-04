@@ -42,6 +42,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint))]
 	public class ProtractorAngleCalculator : IRoiAnalyzer
 	{
+		Units IRoiAnalyzer.Units
+		{
+			get { return Units.Centimeters; }
+			set { }
+		}
+
 		public string Analyze(ProtractorRoiInfo roiInfo, RoiAnalysisMode mode)
 		{
 			// Don't show the callout until the second ray is drawn

@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	public class RectangularRoi : Roi, IRoiAreaProvider, IRoiStatisticsProvider
 	{
 		private readonly RectangleF _rectangle;
+		private Units _units;
 
 		/// <summary>
 		/// Constructs a new rectangular region of interest, specifying an <see cref="IBoundableGraphic"/> as the source of the definition and pixel data.
@@ -78,6 +79,24 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		public RectangleF Rectangle
 		{
 			get { return _rectangle; }
+		}
+
+		/// <summary>
+		/// Gets or sets the units of area with which to compute the value of <see cref="IRoiAreaProvider.Area"/>.
+		/// </summary>
+		public Units Units
+		{
+			get { return _units; }
+			set { _units = value; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating that the image has pixel spacing information or has
+		/// previously been calibrated with physical dimensions.
+		/// </summary>
+		public bool IsCalibrated
+		{
+			get { return !base.NormalizedPixelSpacing.IsNull; }
 		}
 
 		/// <summary>
@@ -120,15 +139,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _rectangle.Contains(point);
 		}
 
-		/// <summary>
-		/// Gets a value indicating that the image has pixel spacing information or has
-		/// previously been calibrated, and hence the <see cref="IRoiAreaProvider.Area"/> property is available.
-		/// </summary>
-		public bool IsCalibrated
-		{
-			get { return !base.NormalizedPixelSpacing.IsNull; }
-		}
-
 		#region IRoiStatisticsProvider Members
 
 		private RoiStatistics _statistics;
@@ -167,41 +177,22 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		#region IRoiAreaProvider Members
 
-		private double? _pixelArea;
 		private double? _area;
 
 		/// <summary>
-		/// Gets the area of the <see cref="Roi"/> in square pixels.
+		/// Gets the area of the region of interest in the units of area as specified by <see cref="IRoiAreaProvider.Units"/>.
 		/// </summary>
-		public double PixelArea
-		{
-			get
-			{
-				if (!_pixelArea.HasValue)
-				{
-					_pixelArea = Math.Abs(_rectangle.Width*_rectangle.Height);
-				}
-				return _pixelArea.Value;
-			}
-		}
-
-		/// <summary>
-		/// Gets the area of the <see cref="Roi"/> in square millimetres.
-		/// </summary>
-		/// <exception cref="UncalibratedImageException">If the image has no pixel spacing
-		/// information and has not been calibrated.</exception>
+		/// <exception cref="UncalibratedImageException">If <see cref="IRoiAreaProvider.Units"/> is a physical
+		/// unit of measurement and the image has no pixel spacing information, nor has it been calibrated.</exception>
 		public double Area
 		{
 			get
 			{
 				if (!_area.HasValue)
 				{
-					if (base.NormalizedPixelSpacing.IsNull)
-						throw new UncalibratedImageException();
-
-					_area = this.PixelArea*base.NormalizedPixelSpacing.Column*base.NormalizedPixelSpacing.Row;
+					_area = Math.Abs(_rectangle.Width*_rectangle.Height);
 				}
-				return _area.Value;
+				return ConvertFromSquarePixels(_area.Value, _units, base.NormalizedPixelSpacing);
 			}
 		}
 

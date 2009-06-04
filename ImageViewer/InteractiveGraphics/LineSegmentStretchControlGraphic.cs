@@ -101,8 +101,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void Initialize()
 		{
-			this.Subject.Point1Changed += OnSubjectPt1Changed;
-			this.Subject.Point2Changed += OnSubjectPt2Changed;
+			this.Subject.Point1Changed += OnSubjectPoint1Changed;
+			this.Subject.Point2Changed += OnSubjectPoint2Changed;
 		}
 
 		/// <summary>
@@ -110,8 +110,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			this.Subject.Point1Changed -= OnSubjectPt1Changed;
-			this.Subject.Point2Changed -= OnSubjectPt2Changed;
+			this.Subject.Point1Changed -= OnSubjectPoint1Changed;
+			this.Subject.Point2Changed -= OnSubjectPoint2Changed;
 			base.Dispose(disposing);
 		}
 
@@ -158,8 +158,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		//TODO (CR May09):contraction
-		private void OnSubjectPt1Changed(object sender, PointChangedEventArgs e)
+		private void OnSubjectPoint1Changed(object sender, PointChangedEventArgs e)
 		{
 			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
@@ -174,7 +173,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		private void OnSubjectPt2Changed(object sender, PointChangedEventArgs e)
+		private void OnSubjectPoint2Changed(object sender, PointChangedEventArgs e)
 		{
 			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;

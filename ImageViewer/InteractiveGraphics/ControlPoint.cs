@@ -39,8 +39,6 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	//TODO (CR May09):IPointGraphic?
-
 	/// <summary>
 	/// A graphical representation of the "handles" that allow 
 	/// the user to move and resize graphics decorated by

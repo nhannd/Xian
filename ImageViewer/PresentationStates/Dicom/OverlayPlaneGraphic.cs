@@ -390,7 +390,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				pixelData.Raw);
 		}
 
-		//TODO (CR May09): should we have a ShutterOverlay Graphic that implements these separately?
 		#region IShutterGraphic Members
 
 		/// <summary>

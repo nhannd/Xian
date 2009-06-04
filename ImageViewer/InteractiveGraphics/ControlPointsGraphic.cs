@@ -361,14 +361,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.OnColorChanged();
 		}
 
-		//TODO (CR May09):OnShowChanged
 		/// <summary>
 		/// Called when the <see cref="ControlGraphic.Show"/> property changes.
 		/// </summary>
-		protected override void OnShowControlGraphicsChanged()
+		protected override void OnShowChanged()
 		{
 			_controlPoints.Visible = base.Show;
-			base.OnShowControlGraphicsChanged();
+			base.OnShowChanged();
 		}
 
 		/// <summary>

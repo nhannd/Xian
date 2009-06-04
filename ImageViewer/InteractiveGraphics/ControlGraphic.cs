@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (_show != value)
 				{
 					_show = value;
-					this.OnShowControlGraphicsChanged();
+					this.OnShowChanged();
 				}
 			}
 		}
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Called when the <see cref="Show"/> property changes.
 		/// </summary>
-		protected virtual void OnShowControlGraphicsChanged() {}
+		protected virtual void OnShowChanged() {}
 
 		/// <summary>
 		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting the cursor token for a particular screen coordinate via <see cref="GetCursorToken"/>.

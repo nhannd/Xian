@@ -39,27 +39,6 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	//TODO (CR May09):separate file
-	/// <summary>
-	/// Provides data for <see cref="InteractiveGraphicBuilder"/> events.
-	/// </summary>
-	public sealed class GraphicEventArgs : EventArgs
-	{
-		/// <summary>
-		/// Gets the <see cref="IGraphic"/> to which the event applies.
-		/// </summary>
-		public readonly IGraphic Graphic;
-
-		/// <summary>
-		/// Constructs a new <see cref="GraphicEventArgs"/>.
-		/// </summary>
-		/// <param name="graphic">The graphic to which the event applies.</param>
-		public GraphicEventArgs(IGraphic graphic)
-		{
-			this.Graphic = graphic;
-		}
-	}
-
 	/// <summary>
 	/// Base class for builder objects to which mouse input can be forwarded in order to build graphics in a standardized manner.
 	/// </summary>
