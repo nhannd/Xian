@@ -77,7 +77,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public StandardStatefulGraphic(IGraphic subject) : base(subject)
 		{
-			Initialize();
 		}
 
 		/// <summary>
@@ -93,8 +92,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
-			Initialize();
-
 			if (this.State == null)
 				this.State = this.CreateInactiveState();
 		}
