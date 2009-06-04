@@ -49,4 +49,17 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
 		}
 	}
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class JpegExtendedSopSample : SampleRuleBase
+	{
+		public JpegExtendedSopSample()
+			: base("JpegExtendedSopSample",
+				   "JPEG Extended SOP Simple Sample",
+				   ServerRuleTypeEnum.SopCompress,
+				   "SampleJpegExtendedSop.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
+		}
+	}
 }

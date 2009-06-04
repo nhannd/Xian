@@ -29,19 +29,35 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core.Upgrade;
+using System.Xml;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
+namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 {
-	[ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-	class UpgradeFrom_1_5_10019_31163 : BaseUpgradeScript
+	/// <summary>
+	/// RLE SOP compression action item for <see cref="ServerRulesEngine"/>
+	/// </summary>
+	public class RleSopActionItem : ServerActionItemBase
 	{
-		//In versions prior to 1.5 the use of Build and Revision were swapped and so it has to be swapped here in order for the utility to properly detect the older version
-		public UpgradeFrom_1_5_10019_31163()
-			: base(new Version(1, 5, 31163, 10019), null, "UpgradeFrom_1_5_10019_31163.sql")
+		public RleSopActionItem()
+			: base("RLE SOP compression action")
 		{
+		}
+
+		protected override bool OnExecute(ServerActionContext context)
+		{
+			XmlDocument doc = new XmlDocument();
+
+			XmlElement element = doc.CreateElement("compress");
+			doc.AppendChild(element);
+			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
+			syntaxAttribute.Value = TransferSyntax.RleLosslessUid;
+			element.Attributes.Append(syntaxAttribute);
+
+			context.CommandProcessor.AddCommand(new DicomCompressCommand(context.Message, doc));
+
+			return true;
 		}
 	}
 }

@@ -41,9 +41,13 @@
     <Compile Include="Jpeg2000LosslessAction\Jpeg2000LosslessActionItem.cs" />
     <Compile Include="Jpeg2000LosslessAction\Jpeg2000LosslessActionOperator.cs" />
     <Compile Include="Jpeg2000LosslessAction\Jpeg2000LosslessSamples.cs" />
+    <Compile Include="Jpeg2000LosslessAction\Jpeg2000LosslessSopActionItem.cs" />
+    <Compile Include="Jpeg2000LosslessAction\Jpeg2000LosslessSopActionOperator.cs" />
     <Compile Include="Jpeg2000LossyAction\Jpeg2000LossyActionItem.cs" />
     <Compile Include="Jpeg2000LossyAction\Jpeg2000LossyActionOperator.cs" />
     <Compile Include="Jpeg2000LossyAction\Jpeg2000LossySamples.cs" />
+    <Compile Include="Jpeg2000LossyAction\Jpeg2000LossySopActionItem.cs" />
+    <Compile Include="Jpeg2000LossyAction\Jpeg2000LossySopActionOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

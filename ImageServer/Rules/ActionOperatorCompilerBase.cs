@@ -170,6 +170,37 @@ namespace ClearCanvas.ImageServer.Rules
 
 			return element;
 		}
+
+		protected static XmlSchemaElement GetBaseSchema(string elementName)
+		{
+			XmlSchemaSimpleType languageType = new XmlSchemaSimpleType();
+			XmlSchemaSimpleTypeRestriction languageEnum = new XmlSchemaSimpleTypeRestriction();
+			languageEnum.BaseTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			XmlSchemaEnumerationFacet enumeration = new XmlSchemaEnumerationFacet();
+			enumeration.Value = "dicom";
+			languageEnum.Facets.Add(enumeration);
+			languageType.Content = languageEnum;
+
+			XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "refValue";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "expressionLanguage";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaType = languageType;
+			type.Attributes.Add(attrib);
+
+			XmlSchemaElement element = new XmlSchemaElement();
+			element.Name = elementName;
+			element.SchemaType = type;
+
+			return element;
+		}
         #endregion
     }
 }

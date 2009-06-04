@@ -420,6 +420,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                                 // Load the rules engine
                                 _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
+								_sopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
                                 _sopProcessedRulesEngine.Load();
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
                             	_context.SopProcessedRulesEngine = _sopProcessedRulesEngine;

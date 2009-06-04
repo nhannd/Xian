@@ -172,6 +172,11 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
            (newid(),104,'StudyCompress','Study Compress','A rule to specify when a study should be compressed')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),105,'SopCompress','SOP Compress','A rule to specify when a SOP Instance should be compressed (during initial processing)')
+GO
 
 --  WorkQueuePriorityEnum inserts
 INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum

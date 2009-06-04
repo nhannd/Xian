@@ -57,6 +57,7 @@ namespace ClearCanvas.ImageServer.Core
         private readonly StudyStorageLocation _storageLocation;
 		private Study _study;
 		private ServerRulesEngine _sopProcessedRulesEngine;
+		private ServerRulesEngine _sopCompressionRulesEngine;
 		private IReadContext _readContext;
 
 	    #endregion
@@ -107,16 +108,17 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			get
 			{
-                if (_sopProcessedRulesEngine==null)
-                {
-                    lock (_syncLock)
-                    {
-                        _sopProcessedRulesEngine =
-                            new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Partition.GetKey());
-                        _sopProcessedRulesEngine.Load();
-                    }
-                }
-			    return _sopProcessedRulesEngine;
+				lock (_syncLock)
+				{
+					if (_sopProcessedRulesEngine == null)
+					{
+						_sopProcessedRulesEngine =
+							new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Partition.GetKey());
+						_sopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
+						_sopProcessedRulesEngine.Load();
+					}
+				}
+				return _sopProcessedRulesEngine;
 			}
 			set
 			{
@@ -124,6 +126,31 @@ namespace ClearCanvas.ImageServer.Core
                 {
                     _sopProcessedRulesEngine = value;
                 }
+			}
+		}
+
+		public ServerRulesEngine SopCompressionRulesEngine
+		{
+			get
+			{
+				lock (_syncLock)
+				{
+					if (_sopCompressionRulesEngine == null)
+					{
+						_sopCompressionRulesEngine =
+							new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Partition.GetKey());
+						_sopCompressionRulesEngine.AddIncludeType(ServerRuleTypeEnum.SopCompress);
+						_sopCompressionRulesEngine.Load();
+					}
+				}
+				return _sopCompressionRulesEngine;
+			}
+			set
+			{
+				lock (_syncLock)
+				{
+					_sopCompressionRulesEngine = value;
+				}
 			}
 		}
 
@@ -148,8 +175,6 @@ namespace ClearCanvas.ImageServer.Core
                 }
 			}
 		}
-
-
 	    #endregion
 	}
 
@@ -307,38 +332,35 @@ namespace ClearCanvas.ImageServer.Core
 
 				try
 				{
+					// Create a context for applying actions from the rules engine
+					ServerActionContext context =
+						new ServerActionContext(file, _context.StorageLocation.FilesystemKey, _context.Partition.Key, _context.StorageLocation.Key);
+					context.CommandProcessor = processor;
+
+					_context.SopCompressionRulesEngine.Execute(context);
                     String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
                     String sopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
                     String finalDest = _context.StorageLocation.GetSopInstancePath(seriesUid, sopUid);
-                    if (file.Filename != finalDest)
+                    if (file.Filename != finalDest || processor.CommandCount > 0)
                     {
-                        // save the file in the study folder
-                        processor.AddCommand(new SaveDicomFileCommand(finalDest, file, true, true));
+                        // save the file in the study folder, or if its been compressed
+						processor.AddCommand(new SaveDicomFileCommand(finalDest, file, file.Filename != finalDest, true));
                     }
 
 					// Update the StudyStream object
 					insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, _context.StorageLocation);
 					processor.AddCommand(insertStudyXmlCommand);
 
+					// Have the rules applied during the command processor, and add the objects.
+					processor.AddCommand(new ApplySopRulesCommand(context,_context.SopProcessedRulesEngine));
+
 					// Insert into the database, but only if its not a duplicate so the counts don't get off
 					insertInstanceCommand = new InsertInstanceCommand(file, _context.StorageLocation);
 					processor.AddCommand(insertInstanceCommand);
 					
-					// Create a context for applying actions from the rules engine
-					ServerActionContext context =
-						new ServerActionContext(file, _context.StorageLocation.FilesystemKey, _context.Partition.Key, _context.StorageLocation.Key);
-					context.CommandProcessor = processor;
-
-					// Run the rules engine against the object.
-					_context.SopProcessedRulesEngine.Execute(context);
-
-					// Do insert into the archival queue.  Note that we re-run this with each object processed
-					// so that the scheduled time is pushed back each time.  Note, however, if the study only 
-					// has one image, we could incorrectly insert an ArchiveQueue request, since the 
-					// study rules haven't been run.  We re-run the command when the study processed
-					// rules are run to remove out the archivequeue request again, if it isn't needed.
-					context.CommandProcessor.AddCommand(
-						new InsertArchiveQueueCommand(_context.Partition.Key, _context.StorageLocation.Key));
+					// Do a check if the StudyStatus value should be changed in the StorageLocation.  This
+					// should only occur if the object has been compressed in the previous steps.
+					processor.AddCommand(new UpdateStudyStatusCommand(_context.StorageLocation, file));
 
 					// Do the actual processing
 					if (!processor.Execute())

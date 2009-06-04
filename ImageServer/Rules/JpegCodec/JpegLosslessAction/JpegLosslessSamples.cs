@@ -49,4 +49,17 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
 		}
 	}
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class JpegLosslessSopSample : SampleRuleBase
+	{
+		public JpegLosslessSopSample()
+			: base("JpegLosslessSop",
+				   "JPEG Lossless SOP Sample Rule",
+				   ServerRuleTypeEnum.SopCompress,
+				   "SampleJpegLosslessSop.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
+		}
+	}
 }

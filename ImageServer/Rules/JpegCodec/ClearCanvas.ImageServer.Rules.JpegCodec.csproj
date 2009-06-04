@@ -41,12 +41,18 @@
     <Compile Include="JpegBaselineAction\JpegBaselineActionItem.cs" />
     <Compile Include="JpegBaselineAction\JpegBaselineActionOperator.cs" />
     <Compile Include="JpegBaselineAction\JpegBaselineSamples.cs" />
+    <Compile Include="JpegBaselineAction\JpegBaselineSopActionItem.cs" />
+    <Compile Include="JpegBaselineAction\JpegBaselineSopActionOperator.cs" />
     <Compile Include="JpegExtendedAction\JpegExtendedActionItem.cs" />
     <Compile Include="JpegExtendedAction\JpegExtendedActionOperator.cs" />
     <Compile Include="JpegExtendedAction\JpegExtendedSamples.cs" />
+    <Compile Include="JpegExtendedAction\JpegExtendedSopActionItem.cs" />
+    <Compile Include="JpegExtendedAction\JpegExtendedSopActionOperator.cs" />
     <Compile Include="JpegLosslessAction\JpegLosslessActionItem.cs" />
     <Compile Include="JpegLosslessAction\JpegLosslessActionOperator.cs" />
     <Compile Include="JpegLosslessAction\JpegLosslessSamples.cs" />
+    <Compile Include="JpegLosslessAction\JpegLosslessSopActionItem.cs" />
+    <Compile Include="JpegLosslessAction\JpegLosslessSopActionOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +96,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JpegBaselineAction\SampleJpegBaselineStudyDate.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="JpegBaselineAction\SampleJpegBaselineSop.xml" />
+    <EmbeddedResource Include="JpegExtendedAction\SampleJpegExtendedSop.xml" />
+    <EmbeddedResource Include="JpegLosslessAction\SampleJpegLosslessSop.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

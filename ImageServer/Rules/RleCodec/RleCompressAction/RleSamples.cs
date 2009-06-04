@@ -36,17 +36,30 @@ using ClearCanvas.ImageServer.Rules;
 namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 {
 	[ExtensionOf(typeof (SampleRuleExtensionPoint))]
-	public class RleSamples : SampleRuleBase
+	public class RleSample : SampleRuleBase
 	{
-		public RleSamples()
+		public RleSample()
 			: base("RleParameters",
-			       "RLE Sample Parameters",
+			       "RLE Sample Compression",
 			       ServerRuleTypeEnum.StudyCompress,
 			       "Sample_RLE.xml")
 		{
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
+		}
+	}
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class RleSopSample : SampleRuleBase
+	{
+		public RleSopSample()
+			: base("RleSopSample",
+				   "RLE Sample SOP Compression",
+				   ServerRuleTypeEnum.SopCompress,
+				   "SampleRleSop.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
 		}
 	}
 }

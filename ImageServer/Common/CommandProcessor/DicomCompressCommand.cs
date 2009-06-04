@@ -29,6 +29,9 @@
 
 #endregion
 
+using System;
+using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
@@ -44,22 +47,59 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly IDicomCodec _codec;
 		private readonly DicomCodecParameters _parms;
 		private readonly TransferSyntax _syntax;
-		private bool _lossy;
-		private TimeSpanStatistics _timeSpan = new TimeSpanStatistics("CompressTime");
+		private readonly TimeSpanStatistics _timeSpan = new TimeSpanStatistics("CompressTime");
 
 		public TimeSpanStatistics CompressTime
 		{
 			get { return _timeSpan; }
 		}
 
-		public DicomCompressCommand(DicomMessageBase file, TransferSyntax syntax, IDicomCodec codec, DicomCodecParameters parms, bool lossy)
+		public DicomCompressCommand(DicomMessageBase file, TransferSyntax syntax, IDicomCodec codec, DicomCodecParameters parms)
 			: base("DICOM Compress Command", true)
 		{
+
 			_file = file;
 			_syntax = syntax;
 			_codec = codec;
 			_parms = parms;
-			_lossy = lossy;
+		}
+
+		public DicomCompressCommand(DicomMessageBase file, XmlDocument parms)
+			: base("DICOM Compress Command", true)
+		{
+			_file = file;
+
+			XmlElement element = parms.DocumentElement;
+
+			string syntax = element.Attributes["syntax"].Value;
+
+			_syntax = TransferSyntax.GetTransferSyntax(syntax);
+			if (_syntax == null)
+			{
+				string failureDescription =
+					String.Format("Invalid transfer syntax in compression command: {0}", element.Attributes["syntax"].Value);
+				Platform.Log(LogLevel.Error, "Error with input syntax: {0}", failureDescription);
+				throw new DicomCodecException(failureDescription);
+			}
+
+			IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
+			IDicomCodecFactory theCodecFactory = null;
+			foreach (IDicomCodecFactory codec in codecs)
+				if (codec.CodecTransferSyntax.Equals(_syntax))
+				{
+					theCodecFactory = codec;
+					break;
+				}
+
+			if (theCodecFactory == null)
+			{
+				string failureDescription = String.Format("Unable to find codec for compression: {0}", _syntax.Name);
+				Platform.Log(LogLevel.Error, "Error with compression input parameters: {0}", failureDescription);
+				throw new DicomCodecException(failureDescription);
+			}
+
+			_codec = theCodecFactory.GetDicomCodec();
+			_parms = theCodecFactory.GetCodecParameters(parms);
 		}
 
 		protected override void OnExecute()

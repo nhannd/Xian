@@ -48,6 +48,7 @@ public partial class ServerRuleTypeEnum : ServerEnum
       private static readonly ServerRuleTypeEnum _Tier1Retention = GetEnum("Tier1Retention");
       private static readonly ServerRuleTypeEnum _OnlineRetention = GetEnum("OnlineRetention");
       private static readonly ServerRuleTypeEnum _StudyCompress = GetEnum("StudyCompress");
+      private static readonly ServerRuleTypeEnum _SopCompress = GetEnum("SopCompress");
       #endregion
 
       #region Public Static Properties
@@ -85,6 +86,13 @@ public partial class ServerRuleTypeEnum : ServerEnum
       public static ServerRuleTypeEnum StudyCompress
       {
           get { return _StudyCompress; }
+      }
+      /// <summary>
+      /// A rule to specify when a SOP Instance should be compressed (during initial processing)
+      /// </summary>
+      public static ServerRuleTypeEnum SopCompress
+      {
+          get { return _SopCompress; }
       }
 
       #endregion

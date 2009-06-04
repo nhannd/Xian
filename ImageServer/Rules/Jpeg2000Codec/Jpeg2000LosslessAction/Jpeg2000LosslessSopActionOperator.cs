@@ -29,19 +29,35 @@
 
 #endregion
 
-using System;
+using System.Xml;
+using System.Xml.Schema;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core.Upgrade;
+using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
+namespace ClearCanvas.ImageServer.Rules.Jpeg2000Codec.Jpeg2000LosslessAction
 {
-	[ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-	class UpgradeFrom_1_5_10019_31163 : BaseUpgradeScript
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext, ServerRuleTypeEnum>))]
+	public class Jpeg2000LosslessSopActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext, ServerRuleTypeEnum>
 	{
-		//In versions prior to 1.5 the use of Build and Revision were swapped and so it has to be swapped here in order for the utility to properly detect the older version
-		public UpgradeFrom_1_5_10019_31163()
-			: base(new Version(1, 5, 31163, 10019), null, "UpgradeFrom_1_5_10019_31163.sql")
+		public Jpeg2000LosslessSopActionOperator()
+			: base("jpeg-2000-lossless-sop")
 		{
+		}
+
+		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
+		{
+			return new Jpeg2000LosslessSopActionItem();
+		}
+
+		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
+		{
+			if (!ruleType.Equals(ServerRuleTypeEnum.SopCompress))
+				return null;
+
+			XmlSchemaElement element = GetBaseSchema(OperatorTag);
+
+			return element;
 		}
 	}
 }

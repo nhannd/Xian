@@ -6,7 +6,7 @@
 		<asp:ServiceReference Path="ServerRuleSamples.asmx" />
 	</Services>
 </asp:ScriptManagerProxy>
-<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="500px">
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="800px">
 	<ContentTemplate>
             <asp:ValidationSummary ID="EditServerRuleValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
                 EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogValidationErrorMessage" />   			

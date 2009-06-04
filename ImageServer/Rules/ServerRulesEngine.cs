@@ -69,11 +69,11 @@ namespace ClearCanvas.ImageServer.Rules
     public class ServerRulesEngine
     {
         private readonly ServerRuleApplyTimeEnum _applyTime;
-        private readonly ServerRuleTypeEnum _ruleType = null;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly RuleEngineStatistics _stats;
-
-        private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList =
+		private readonly List<ServerRuleTypeEnum> _omitList = new List<ServerRuleTypeEnum>();
+		private readonly List<ServerRuleTypeEnum> _includeList = new List<ServerRuleTypeEnum>();
+		private readonly Dictionary<ServerRuleTypeEnum, RuleTypeCollection> _typeList =
             new Dictionary<ServerRuleTypeEnum, RuleTypeCollection>();
 
         #region Constructors
@@ -91,33 +91,10 @@ namespace ClearCanvas.ImageServer.Rules
         {
             _applyTime = applyTime;
             _serverPartitionKey = serverPartitionKey;
-
             _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
         }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <remarks>
-        /// A rules engine typically will only load rules that apply at a specific time.  The
-        /// apply time is specified by the <paramref name="applyTime"/> parameter.  This constructor
-        /// also allows for the loading of only certain types of rules through the <paramref name="type"/>
-        /// parameter.
-        /// </remarks>
-        /// <param name="applyTime">An enumerated value as to when the rules shall apply.</param>
-        /// <param name="type">A enumerated value as to the type of rule to load.</param>
-        /// <param name="serverPartitionKey">The Server Partition the rules engine applies to.</param>
-        public ServerRulesEngine(ServerRuleApplyTimeEnum applyTime, ServerRuleTypeEnum type,
-                                 ServerEntityKey serverPartitionKey)
-        {
-            _applyTime = applyTime;
-            _serverPartitionKey = serverPartitionKey;
-            _ruleType = type;
-
-            _stats = new RuleEngineStatistics(applyTime.Lookup, applyTime.LongDescription);
-        }
-
-        #endregion
+		#endregion
 
         #region Properties
 
@@ -141,6 +118,38 @@ namespace ClearCanvas.ImageServer.Rules
 
         #region Public Methods
 
+		/// <summary>
+		/// Add a specific <see cref="ServerRuleTypeEnum"/> to be omitted from the rules engine.
+		/// </summary>
+		/// <remarks>
+		/// This method can be called multiple times, however, the <see cref="AddIncludeType"/> method
+		/// cannot be called if this method has already been called.  Note that this method must be 
+		/// called before <see cref="Load"/> to have an affect.
+		/// </remarks>
+		/// <param name="type">The type to omit</param>
+		public void AddOmittedType(ServerRuleTypeEnum type)
+		{
+			if (_includeList.Count > 0)
+				throw new ApplicationException("Include list already has values, cannot add ommitted type.");
+			_omitList.Add(type);
+		}
+
+		/// <summary>
+		/// Limit the rules engine to only include specific <see cref="ServerRuleTypeEnum"/> types.
+		/// </summary>
+		/// <remarks>
+		/// This methad can be called multiple times to include multiple types, however, the
+		/// <see cref="AddOmittedType"/> method cannot be called if this method has already been 
+		/// called.  Note that this method must be called before <see cref="Load"/> to have an affect.
+		/// </remarks>
+		/// <param name="type">The type to incude.</param>
+		public void AddIncludeType(ServerRuleTypeEnum type)
+		{
+			if (_omitList.Count > 0)
+				throw new ApplicationException("Omitted list already has values, cannot add included type.");
+			_includeList.Add(type);
+		}
+
         /// <summary>
         /// Load the rules engine from the Persistent Store and compile the conditions and actions.
         /// </summary>
@@ -159,10 +168,14 @@ namespace ClearCanvas.ImageServer.Rules
                 criteria.Enabled.EqualTo(true);
                 criteria.ServerRuleApplyTimeEnum.EqualTo(_applyTime);
                 criteria.ServerPartitionKey.EqualTo(_serverPartitionKey);
-                if (_ruleType != null)
-                    criteria.ServerRuleTypeEnum.EqualTo(_ruleType);
 
-                IList<ServerRule> list = broker.Find(criteria);
+				// Add ommitted or included rule types, as appropriate
+				if (_omitList.Count > 0)
+					criteria.ServerRuleTypeEnum.NotIn(_omitList.ToArray());
+				else if (_includeList.Count > 0)
+					criteria.ServerRuleTypeEnum.In(_includeList.ToArray());
+
+            	IList<ServerRule> list = broker.Find(criteria);
 
                 // Create the specification and action compilers
                 // We'll compile the rules right away

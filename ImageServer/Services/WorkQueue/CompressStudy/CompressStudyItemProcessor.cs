@@ -47,7 +47,6 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
@@ -211,7 +210,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         
                         DicomCodecParameters parms = theCodecFactory.GetCodecParameters(item.Data);
                         DicomCompressCommand compressCommand =
-                            new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
+                            new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms);
                         processor.AddCommand(compressCommand);
 
                         SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file, false, true);

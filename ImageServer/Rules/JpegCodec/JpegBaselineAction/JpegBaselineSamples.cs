@@ -64,4 +64,17 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
 		}
 	}
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class JpegBaselineSopSample : SampleRuleBase
+	{
+		public JpegBaselineSopSample()
+			: base("JpegBaselineSopRfXaUs",
+				   "JPEG Baseline SOP Compression, RF XA US Compress",
+				   ServerRuleTypeEnum.SopCompress,
+				   "SampleJpegBaselineSop.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
+		}
+	}
 }
