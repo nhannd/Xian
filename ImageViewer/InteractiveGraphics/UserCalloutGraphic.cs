@@ -37,6 +37,7 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	//TODO (CR May09): no IPointsGraphic, add new ICalloutGraphic interface
 	[Cloneable]
 	public class UserCalloutGraphic : CalloutGraphic, ITextGraphic, IPointGraphic
 	{

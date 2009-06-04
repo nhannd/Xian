@@ -178,7 +178,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (this.DecoratedGraphic is IControlGraphic)
 			{
 				active = true; // ((IControlGraphic) this.DecoratedGraphic).CurrentHandler is IActiveControlGraphic;
-			}	
+			}
+
+			//TODO (CR May09):need active?
 
 			if (!active)
 			{

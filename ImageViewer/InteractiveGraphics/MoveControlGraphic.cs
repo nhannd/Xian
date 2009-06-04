@@ -80,6 +80,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return SR.CommandMove; }
 		}
 
+		//TODO (CR May09):private
+
 		/// <summary>
 		/// Gets a point that can be used as a landmark to quantify the difference in position of the controlled
 		/// graphic when moved by this <see cref="ControlGraphic"/>.

@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					OnStateInitialized();
 				}
 
-				Trace.WriteLine(_state.ToString());
+				//Trace.WriteLine(_state.ToString());
 			}
 		}
 

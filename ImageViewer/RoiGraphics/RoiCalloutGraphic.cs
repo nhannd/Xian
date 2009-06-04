@@ -53,9 +53,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		public RoiCalloutGraphic() : base()
 		{
+			//TODO (CR May09):own instances of analyzer
 			_roiAnalyzers.AddRange(RoiAnalyzerExtensionPoint.RoiAnalyzers);
 			_showAnalysis = RoiSettings.Default.ShowAnalysisByDefault;
 		}
+
+		//TODO (CR May09): add constructor for own analyzers
 
 		protected RoiCalloutGraphic(RoiCalloutGraphic source, ICloningContext context)
 			: base(source, context)

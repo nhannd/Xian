@@ -62,6 +62,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 		}
 	}
 
+	//TODO (CR May09): still need this enumeration?
+
 	/// <summary>
 	/// Enumerated values for the type of ROI analysis to perform.
 	/// </summary>

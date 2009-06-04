@@ -39,6 +39,8 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	//TODO (CR May09):IPointGraphic?
+
 	/// <summary>
 	/// A graphical representation of the "handles" that allow 
 	/// the user to move and resize graphics decorated by
@@ -102,7 +104,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					else
 						_location = base.SpatialTransform.ConvertToSource(value);
 
-					Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
+					//Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
 
 					this.Rectangle.Location = this.Location;
 					EventsHelper.Fire(_locationChangedEvent, this, EventArgs.Empty);

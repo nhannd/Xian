@@ -42,6 +42,8 @@ using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	//TODO (CR May09): add new ICalloutGraphic interface
+
 	/// <summary>
 	/// A graphical representation of a callout.
 	/// </summary>
@@ -116,6 +118,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (this.TextGraphic.Text != value)
 				{
 					this.TextGraphic.Text = value;
+					//TODO (CR May09):remove argument
 					OnTextChanged(new EventArgs());
 				}
 			}
@@ -385,6 +388,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#endregion
 
 		#region IExportedActionsProvider Members
+
+		//TODO (CR May09):look into protected/explicit impl.
 
 		protected virtual IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{

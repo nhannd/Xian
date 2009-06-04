@@ -39,6 +39,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	//TODO (CR May09):separate file
 	/// <summary>
 	/// Provides data for <see cref="InteractiveGraphicBuilder"/> events.
 	/// </summary>
@@ -109,6 +110,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _graphicCancelled -= value; }
 		}
 
+		//TODO (CR May09):notify vs On, Notify should not be virtual.
 		/// <summary>
 		/// Notifies listeners that the builder is done building the <see cref="Graphic"/>.
 		/// </summary>

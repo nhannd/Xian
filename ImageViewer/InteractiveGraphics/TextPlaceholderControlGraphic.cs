@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void Initialize()
 		{
-			this.Subject.VisualStateChanged += Subject_VisualStateChanged;
+			this.Subject.VisualStateChanged += OnSubjectVisualStateChanged;
 		}
 
 		/// <summary>
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			this.Subject.VisualStateChanged -= Subject_VisualStateChanged;
+			this.Subject.VisualStateChanged -= OnSubjectVisualStateChanged;
 			base.Dispose(disposing);
 		}
 
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		private void Subject_VisualStateChanged(object sender, VisualStateChangedEventArgs e)
+		private void OnSubjectVisualStateChanged(object sender, VisualStateChangedEventArgs e)
 		{
 			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;

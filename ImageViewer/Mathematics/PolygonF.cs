@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			finally
 			{
 				clock.Stop();
-				Trace.WriteLine(string.Format("{1} Polygon area calculation took {0:f4} ms", clock.Seconds*1000, _isComplex ? "Complex" : "Simple"), "Math.Polygons");
+				//Trace.WriteLine(string.Format("{1} Polygon area calculation took {0:f4} ms", clock.Seconds*1000, _isComplex ? "Complex" : "Simple"), "Math.Polygons");
 			}
 		}
 

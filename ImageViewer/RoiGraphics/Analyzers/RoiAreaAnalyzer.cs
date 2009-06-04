@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			if (!SupportsRoi(roi))
 				return null;
 
+			//TODO (CR May09): reconcile with property on RoiProvider
 			Units units = Units.Centimeters;
 
 			// performance enhancement to restrict excessive computation of polygon area.

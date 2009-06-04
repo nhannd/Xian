@@ -158,6 +158,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		//TODO (CR May09):contraction
 		private void OnSubjectPt1Changed(object sender, PointChangedEventArgs e)
 		{
 			this.SuspendControlPointEvents();

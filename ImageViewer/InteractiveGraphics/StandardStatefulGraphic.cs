@@ -123,10 +123,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _inactiveColor = value; }
 		}
 
-		private void Initialize()
-		{
-		}
-
 		private static void UpdateGraphicStyle(IGraphic graphic, Color color, bool controlGraphics)
 		{
 			if (graphic is IControlGraphic)
@@ -191,7 +187,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.InactiveColor, false);
 			Draw();
-			Trace.Write("EnterInactiveState\n");
+			//Trace.Write("EnterInactiveState\n");
 		}
 
 		protected virtual void OnEnterFocusState(IMouseInformation mouseInformation)
@@ -200,7 +196,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.FocusColor, true);
 			Draw();
-			Trace.Write("EnterFocusState\n");
+			//Trace.Write("EnterFocusState\n");
 		}
 
 		protected virtual void OnEnterSelectedState(IMouseInformation mouseInformation)
@@ -212,7 +208,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.SelectedColor, false);
 			Draw();
-			Trace.Write("EnterSelectedState\n");
+			//Trace.Write("EnterSelectedState\n");
 		}
 
 		protected virtual void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
@@ -222,7 +218,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.FocusSelectedColor, true);
 			Draw();
-			Trace.Write("EnterFocusSelectedState\n");
+			//Trace.Write("EnterFocusSelectedState\n");
 		}
 
 		#region IStandardStatefulGraphic Members

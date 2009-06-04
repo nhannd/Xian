@@ -39,6 +39,8 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
+	//TODO (CR May09):LinearUnits property, just get Length property
+
 	/// <summary>
 	/// Represents a static region of interest for the purposes of computing statistics on the contained pixels.
 	/// </summary>
@@ -232,6 +234,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return this.Contains(new PointF(x, y));
 		}
 
+		//TODO (CR May09): GetPixelCoordinates
+
 		/// <summary>
 		/// Enumerates the coordinates of points contained within the region of interest.
 		/// </summary>
@@ -253,6 +257,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				}
 			}
 		}
+
+		//TODO (CR May09): GetRawPixelValues
 
 		/// <summary>
 		/// Enumerates the raw pixel values contained within the region of interest.
