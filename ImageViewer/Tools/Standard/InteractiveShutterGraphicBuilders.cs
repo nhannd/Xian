@@ -41,40 +41,35 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		private class FlashGraphicColorController
+		private delegate void DoFlashDelegate(IVectorGraphic graphic, SynchronizationContext context);
+
+		private static void DoFlash(IVectorGraphic graphic, SynchronizationContext context)
 		{
-			private delegate void DoFlashDelegate(SynchronizationContext context);
+			context.Send(delegate
+			             	{
+			             		if (graphic.ImageViewer != null && graphic.ImageViewer.DesktopWindow != null)
+			             		{
+			             			graphic.Color = _invalidColor;
+			             			graphic.Draw();
+			             		}
+			             	}, null);
+			Thread.Sleep(_flashDelay);
+			context.Send(delegate
+			             	{
+			             		if (graphic.ImageViewer != null && graphic.ImageViewer.DesktopWindow != null)
+			             		{
+			             			graphic.Color = _normalColor;
+			             			graphic.Draw();
+			             		}
+			             	}, null);
+		}
 
-			private readonly IVectorGraphic _graphic;
-
-			private FlashGraphicColorController(IVectorGraphic graphic)
+		private static void Flash(IGraphic graphic)
+		{
+			if (graphic is IVectorGraphic)
 			{
-				_graphic = graphic;
-			}
-
-			private void DoFlash(SynchronizationContext context)
-			{
-				context.Send(delegate
-				             	{
-									_graphic.Color = _invalidColor;
-				             		_graphic.Draw();
-				             	}, null);
-				Thread.Sleep(_flashDelay);
-				context.Send(delegate
-				             	{
-				             		_graphic.Color = _normalColor;
-				             		_graphic.Draw();
-				             	}, null);
-			}
-
-			public static void Flash(IGraphic graphic)
-			{
-				if (graphic is IVectorGraphic)
-				{
-					FlashGraphicColorController controller = new FlashGraphicColorController((IVectorGraphic) graphic);
-					DoFlashDelegate doFlashDelegate = controller.DoFlash;
-					doFlashDelegate.BeginInvoke(SynchronizationContext.Current, delegate(IAsyncResult result) { doFlashDelegate.EndInvoke(result); }, null);
-				}
+				DoFlashDelegate doFlashDelegate = DoFlash;
+				doFlashDelegate.BeginInvoke((IVectorGraphic) graphic, SynchronizationContext.Current, delegate(IAsyncResult result) { doFlashDelegate.EndInvoke(result); }, null);
 			}
 		}
 
@@ -90,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				if (IsShutterTooSmall(base.Graphic))
 				{
-					FlashGraphicColorController.Flash(base.Graphic);
+					Flash(base.Graphic);
 					base.Rollback();
 					return;
 				}
@@ -111,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				if (IsShutterTooSmall(base.Graphic))
 				{
-					FlashGraphicColorController.Flash(base.Graphic);
+					Flash(base.Graphic);
 					base.Rollback();
 					return;
 				}
@@ -132,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				if (IsShutterTooSmall(base.Graphic))
 				{
-					FlashGraphicColorController.Flash(base.Graphic);
+					Flash(base.Graphic);
 					base.Rollback();
 					return;
 				}
