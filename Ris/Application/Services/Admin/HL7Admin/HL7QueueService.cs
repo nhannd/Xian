@@ -39,12 +39,10 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.HL7;
 using ClearCanvas.HL7.Brokers;
-using ClearCanvas.HL7.PreProcessing;
 using ClearCanvas.HL7.Processing;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 {
@@ -59,9 +57,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             GetHL7QueueFormDataResponse response = new GetHL7QueueFormDataResponse();
 
-            response.DirectionChoices = EnumUtils.GetEnumValueList<HL7MessageDirectionEnum>(PersistenceContext);
+            response.DirectionChoices = EnumUtils.GetEnumValueList<HL7MessageDirectionEnum>(this.PersistenceContext);
 
-            response.StatusCodeChoices = EnumUtils.GetEnumValueList<HL7MessageStatusCodeEnum>(PersistenceContext);
+            response.StatusCodeChoices = EnumUtils.GetEnumValueList<HL7MessageStatusCodeEnum>(this.PersistenceContext);
 
             //TODO: fix message type
             response.MessageTypeChoices = new List<string>();
@@ -71,9 +69,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             response.MessageTypeChoices.Add("ADT_A04");
             response.MessageTypeChoices.Add("ADT_A05");
             response.MessageTypeChoices.Add("ORM_O01");
-            response.MessageFormatChoices = EnumUtils.GetEnumValueList<HL7MessageFormatEnum>(PersistenceContext);
-            response.MessageVersionChoices = EnumUtils.GetEnumValueList<HL7MessageVersionEnum>(PersistenceContext);
-			response.PeerChoices = new List<string>(); // TODO: get values of peers from all existing messages
+            response.MessageFormatChoices = EnumUtils.GetEnumValueList<HL7MessageFormatEnum>(this.PersistenceContext);
+            response.MessageVersionChoices = EnumUtils.GetEnumValueList<HL7MessageVersionEnum>(this.PersistenceContext);
+            response.PeerChoices = new List<string>(); // TODO: get values of peers from all existing messages
 
             return response;
         }
@@ -83,54 +81,54 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         public ListHL7QueueItemsResponse ListHL7QueueItems(ListHL7QueueItemsRequest request)
         {
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
-            HL7QueueItemSearchCriteria criteria = assembler.CreateHL7QueueItemSearchCriteria(request, PersistenceContext);
+            HL7QueueItemSearchCriteria criteria = assembler.CreateHL7QueueItemSearchCriteria(request, this.PersistenceContext);
 
             return new ListHL7QueueItemsResponse(
                 CollectionUtils.Map<HL7QueueItem, HL7QueueItemSummary, List<HL7QueueItemSummary>>(
-                    PersistenceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, request.Page),
+                    this.PersistenceContext.GetBroker<IHL7QueueItemBroker>().Find(criteria, request.Page),
                     delegate(HL7QueueItem queueItem)
                     {
-                        return assembler.CreateHL7QueueItemSummary(queueItem, PersistenceContext);
+                        return assembler.CreateHL7QueueItemSummary(queueItem, this.PersistenceContext);
                     }));
         }
 
         [ReadOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
-		public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
+        public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
         {
-            HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
+            HL7QueueItem queueItem = this.PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
-            
+
             return new LoadHL7QueueItemResponse(
                 queueItem.GetRef(),
-                assembler.CreateHL7QueueItemDetail(queueItem, PersistenceContext));
+                assembler.CreateHL7QueueItemDetail(queueItem, this.PersistenceContext));
         }
 
         [ReadOperation]
         public GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatientRequest request)
         {
-            HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
+            HL7QueueItem queueItem = this.PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
 
             IList<string> identifiers;
             string assigningAuthority;
 
             try
             {
-				IHL7PeerProcessor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
+                IHL7PeerProcessor processor = HL7PeerProcessorMap.GetProcessorForPeer(queueItem.Message.Peer);
 
-				if (null == processor)
-				{
-					// no process was found that can process the message
-					// TODO: it will be problematic if queueItem doesn't exist
-					throw new System.Exception(string.Format("Cold not find processor for peer: {0}", queueItem.Message.Peer));
-				}
+                if (null == processor)
+                {
+                    // no process was found that can process the message
+                    // TODO: it will be problematic if queueItem doesn't exist
+                    throw new System.Exception(string.Format("Cold not find processor for peer: {0}", queueItem.Message.Peer));
+                }
 
-				identifiers = processor.ListReferencedPatientIdentifiers();
+                identifiers = processor.ListReferencedPatientIdentifiers();
                 if (identifiers.Count == 0)
                 {
                     return null;
                 }
-                
+
                 assigningAuthority = processor.ReferencedPatientIdentifiersAssigningAuthority();
             }
             catch (HL7ProcessingException e)
@@ -140,9 +138,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             criteria.Mrn.Id.EqualTo(identifiers[0]);
-            criteria.Mrn.AssigningAuthority.EqualTo(PersistenceContext.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(assigningAuthority));
+            criteria.Mrn.AssigningAuthority.EqualTo(this.PersistenceContext.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(assigningAuthority));
 
-            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IList<PatientProfile> profiles = profileBroker.Find(criteria);
 
             PatientProfile profile = CollectionUtils.FirstElement(profiles);
@@ -152,20 +150,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                 throw new RequestValidationException(string.Format(SR.ExceptionPatientNotFound, identifiers[0], assigningAuthority));
             }
 
-            return new GetReferencedPatientResponse(profile.Patient.GetRef(), profile.GetRef());            
+            return new GetReferencedPatientResponse(profile.Patient.GetRef(), profile.GetRef());
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
-		public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Management.HL7.QueueMonitor)]
+        public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
         {
-            HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
+            HL7QueueItem queueItem = this.PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
 
             try
             {
-				IHL7PeerProcessor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
-                processor.Process(PersistenceContext, queueItem.Message);
-                PersistenceContext.Lock(queueItem);
+                IHL7PeerProcessor processor = HL7PeerProcessorMap.GetProcessorForPeer(queueItem.Message.Peer);
+                processor.Process(queueItem.Message, this.PersistenceContext);
+                this.PersistenceContext.Lock(queueItem);
                 queueItem.SetComplete();
             }
             catch (HL7ProcessingException e)
