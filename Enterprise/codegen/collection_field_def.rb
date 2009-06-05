@@ -49,9 +49,9 @@ class CollectionFieldDef < FieldDef
     false
   end
   
-  # collection setters should be private  
+  # collection setters should be protected otherwise NHibernate will produce an error  
   def setterAccess
-	  "private"
+	  "protected"
   end
   
   # true if this field is a lazy collection

@@ -185,8 +185,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 			string sql = string.Format("alter table {0} {1}",
 				GetQualifiedName(change.Table),
-				_dialect.GetAddForeignKeyConstraintString(fk.Name, cols, GetQualifiedName(change.Table.Schema, fk.ReferencedTable), refcols));
-
+				_dialect.GetAddForeignKeyConstraintString(fk.Name, cols, GetQualifiedName(change.Table.Schema, fk.ReferencedTable), refcols, true));
+                // TODO : above line calls a method that was modified in NHibernate 2.0, set condition to true to ascertain the effects of this argument
 			return new Statement[] { new Statement(sql) };
 		}
 

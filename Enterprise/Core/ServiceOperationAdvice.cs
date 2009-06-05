@@ -35,6 +35,7 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core

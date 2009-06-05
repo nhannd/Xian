@@ -1,5 +1,6 @@
 using System;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common.Caching;
 
@@ -13,13 +14,12 @@ namespace ClearCanvas.Enterprise.Common
     {
         #region IInterceptor Members
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
             object service = invocation.InvocationTarget;
             string region = string.Format("{0}.{1}",
                 invocation.Method.DeclaringType.FullName, invocation.Method.Name);
-            object request = args[0];
-            object response;
+            object request = invocation.Arguments[0];
 
 			// check for a cached response
 			// must do this even if this operation does not support caching, because have no way of knowing
@@ -29,17 +29,20 @@ namespace ClearCanvas.Enterprise.Common
 			{
 				if (cacheKey != null && cacheClient.RegionExists(region))
 				{
-					// check cache, and return if available
-					response = cacheClient.Get(cacheKey, new CacheGetOptions(region));
-					if (response != null)
-						return response;
+					// check cache
+				    object response = cacheClient.Get(cacheKey, new CacheGetOptions(region));
+                    if(response != null)
+                    {
+                        invocation.ReturnValue = response;
+                        return;
+                    }
 				}
 
 				// no cached response is available, so invoke service operation
 				using (new OperationContextScope(service as IContextChannel))
 				{
 					// invoke the operation
-					response = invocation.Proceed(args);
+                    invocation.Proceed();
 
 					// read caching directive from headers
 					ResponseCachingDirective directive = ReadCachingDirectiveHeader();
@@ -50,16 +53,13 @@ namespace ClearCanvas.Enterprise.Common
 						// if we didn't succeed in getting a cache key, this is an error
 						if (cacheKey == null)
 							throw new InvalidOperationException(
-								string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", response.GetType().FullName));
+								string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", invocation.GetType().FullName));
 
 						// cache the response for future use
 						cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
 					}
 				}
 			}
-
-            return response;
-
         }
 
 		/// <summary>

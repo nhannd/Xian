@@ -38,6 +38,7 @@ using Iesi.Collections;
 using NHibernate.Cfg;
 using NHibernate.Mapping;
 using NHibernate.Dialect;
+using System.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -126,12 +127,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			// build set of all tables
 			HybridSet tables = new HybridSet();
-			foreach (PersistentClass pc in cfg.ClassMappings)
-			{
-				tables.AddAll(pc.TableClosureCollection);
-			}
+            foreach (PersistentClass pc in cfg.ClassMappings)
+            {
+                foreach(Table table in pc.TableClosureIterator)
+                {
+                    tables.Add(table);
+                }
+            }
 
-			foreach (Collection collection in cfg.CollectionMappings)
+		    foreach (Collection collection in cfg.CollectionMappings)
 			{
 				tables.Add(collection.CollectionTable);
 			}
@@ -155,11 +159,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return new TableInfo(
 				table.Name,
 				table.Schema,
-				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnCollection, delegate(Column column) { return new ColumnInfo(column, config, dialect); }),
+				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnIterator, delegate(Column column) { return new ColumnInfo(column, config, dialect); }),
 				new ConstraintInfo(table.PrimaryKey),
-				CollectionUtils.Map<Index, IndexInfo>(table.IndexCollection, delegate(Index index) { return new IndexInfo(index); }),
-				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyCollection, delegate(ForeignKey fk) { return new ForeignKeyInfo(fk, config); }),
-				CollectionUtils.Map<UniqueKey, ConstraintInfo>(table.UniqueKeyCollection, delegate(UniqueKey uk) { return new ConstraintInfo(uk); })
+				CollectionUtils.Map<Index, IndexInfo>(table.IndexIterator, delegate(Index index) { return new IndexInfo(index); }),
+				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyIterator, delegate(ForeignKey fk) { return new ForeignKeyInfo(fk, config); }),
+				CollectionUtils.Map<UniqueKey, ConstraintInfo>(table.UniqueKeyIterator, delegate(UniqueKey uk) { return new ConstraintInfo(uk); })
 				);
 		}
 

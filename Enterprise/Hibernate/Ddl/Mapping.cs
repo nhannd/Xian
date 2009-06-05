@@ -61,10 +61,25 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return pc;
 		}
 
+        private PersistentClass GetPersistentClass(string type)
+        {
+            PersistentClass pc = _config.GetClassMapping(type);
+            if (pc == null)
+            {
+                throw new Exception("persistent class not known: " + type);
+            }
+            return pc;
+        }
+
 		public IType GetIdentifierType(System.Type persistentClass)
 		{
 			return GetPersistentClass(persistentClass).Identifier.Type;
 		}
+
+        public IType GetIdentifierType(string persistentClass)
+        {
+            return GetPersistentClass(persistentClass).Identifier.Type;
+        }
 
 		public string GetIdentifierPropertyName(System.Type persistentClass)
 		{
@@ -75,6 +90,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			}
 			return pc.IdentifierProperty.Name;
 		}
+
+        public string GetIdentifierPropertyName(string persistentClass)
+        {
+            PersistentClass pc = GetPersistentClass(persistentClass);
+            if (!pc.HasIdentifierProperty)
+            {
+                return null;
+            }
+            return pc.IdentifierProperty.Name;
+        }
 
 		public IType GetPropertyType(System.Type persistentClass, string propertyName)
 		{
@@ -87,5 +112,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			}
 			return prop.Type;
 		}
+
+        public IType GetReferencedPropertyType(string persistentClass, string property)
+        {
+            throw new NotImplementedException("This method has not been implemented.");
+        }
+
+        public bool HasNonIdentifierPropertyNamedId(string persistentClass)
+        {
+            throw new NotImplementedException("This method has not been implemented.");
+        }
 	}
 }

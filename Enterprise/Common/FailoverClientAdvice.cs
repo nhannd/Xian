@@ -1,5 +1,6 @@
 using System;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using System.ServiceModel;
 using ClearCanvas.Common;
 
@@ -30,12 +31,12 @@ namespace ClearCanvas.Enterprise.Common
 
 		#region IInterceptor Members
 
-		public object Intercept(IInvocation invocation, params object[] args)
+		public void Intercept(IInvocation invocation)
 		{
             try
             {
                 // attempt to call the default service object
-                return invocation.Proceed(args);
+                invocation.Proceed();
             }
             catch (Exception e)
             {
@@ -43,11 +44,11 @@ namespace ClearCanvas.Enterprise.Common
                 ThrowIfFailoverNotApplicable(e);
 
                 // attempt failover
-                return DoFailover(invocation, args, e);
+                DoFailover(invocation, e);
             }
 		}
 
-        private object DoFailover(IInvocation invocation, object[] args, Exception e)
+        private object DoFailover(IInvocation invocation, Exception e)
         {
             object channel = invocation.InvocationTarget;
             EndpointAddress remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
@@ -65,7 +66,7 @@ namespace ClearCanvas.Enterprise.Common
                     // try again using this channel, being sure to dispose of it
                     using (channel as IDisposable)
                     {
-                        return invocation.Method.Invoke(channel, args);
+                        invocation.Method.Invoke(channel, invocation.Arguments);
                     }
                 }
                 catch (Exception ex)

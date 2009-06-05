@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core
@@ -44,10 +45,10 @@ namespace ClearCanvas.Enterprise.Core
     {
         #region IInterceptor Members
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
             DateTime startTime = DateTime.Now;
-            object result = invocation.Proceed(args);
+            invocation.Proceed();
             DateTime endTime = DateTime.Now;
 
 
@@ -58,8 +59,6 @@ namespace ClearCanvas.Enterprise.Core
                 startTime.ToString("yyyy-MM-dd hh:mm:ss.fff"),
                 endTime.ToString("yyyy-MM-dd hh:mm:ss.fff"),
                 (endTime - startTime).ToString());
-
-            return result;
         }
 
         #endregion

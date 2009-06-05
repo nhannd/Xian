@@ -94,13 +94,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 Table table;
                 if(!tables.TryGetValue(tableName, out table))
                     return;
-                List<Column> columns = CollectionUtils.Map<string, Column>(columnNames,
-                                           delegate (string name)
-                                           {
-                                               return CollectionUtils.SelectFirst<Column>(
-                                                   table.ColumnCollection,
-                                                   delegate(Column c) { return c.Name == name; });
-                                           });
+                List<Column> columns = new List<Column>();
+                foreach(string name in columnNames)
+                {
+                    columns.Add(CollectionUtils.SelectFirst(table.ColumnIterator,
+                        delegate(Column col)
+                            {
+                                return col.Name == name;
+                            }));
+                }
 
                 CreateIndex(table, columns);
             }

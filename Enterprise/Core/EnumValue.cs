@@ -75,7 +75,7 @@ namespace ClearCanvas.Enterprise.Core
         public virtual string Code
         {
             get { return _code; }
-            private set { _code = value; }
+            protected set { _code = value; }
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace ClearCanvas.Enterprise.Core
         public virtual string Value
         {
             get { return _value; }
-            private set { _value = value; }
+            protected set { _value = value; }
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace ClearCanvas.Enterprise.Core
         public virtual string Description
         {
             get { return _description; }
-            private set { _description = value; }
+            protected set { _description = value; }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace ClearCanvas.Enterprise.Core
         public virtual float DisplayOrder
         {
             get { return _displayOrder; }
-            private set { _displayOrder = value; }
+            protected set { _displayOrder = value; }
         }
 
 		/// <summary>
@@ -113,7 +113,7 @@ namespace ClearCanvas.Enterprise.Core
     	public virtual bool Deactivated
     	{
 			get { return _deactivated; }
-			private set { _deactivated = value; }
+            protected set { _deactivated = value; }
     	}
 
         /// <summary>

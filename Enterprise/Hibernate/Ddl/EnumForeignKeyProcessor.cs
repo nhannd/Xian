@@ -54,11 +54,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         {
             foreach (PersistentClass pc in config.ClassMappings)
             {
-                CreateConstraints(config, pc.PropertyCollection);
+                CreateConstraints(config, pc.PropertyIterator);
             }
         }
 
-		private void CreateConstraints(Configuration config, ICollection properties)
+		private void CreateConstraints(Configuration config, IEnumerable properties)
         {
             foreach (Property prop in properties)
             {
@@ -66,7 +66,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     // recur on component properties
                     Component comp = prop.Value as Component;
-                    CreateConstraints(config, comp.PropertyCollection);
+                    CreateConstraints(config, comp.PropertyIterator);
                 }
                 else if (prop.Value is Collection)
                 {
@@ -75,7 +75,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     if (coll.Element is Component)
                     {
                         Component comp = coll.Element as Component;
-                        CreateConstraints(config, comp.PropertyCollection);
+                        CreateConstraints(config, comp.PropertyIterator);
                     }
                 }
                 else
@@ -90,8 +90,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 						{
 							// build a constraint for this column
 							Table constrainedTable = prop.Value.Table;
-							Column constrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
-							constrainedTable.CreateForeignKey(null, new Column[] { constrainedColumn }, enumClass);
+							Column constrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnIterator);
+							constrainedTable.CreateForeignKey(null, new Column[] { constrainedColumn }, enumClass.FullName);
 						}
                     }
                 }
@@ -139,7 +139,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     Write(prop.Name, depth);
                     Component comp = prop.Value as Component;
-                    WriteProperties(comp.PropertyCollection, depth + 1);
+                    WriteProperties(comp.PropertyIterator, depth + 1);
                 }
                 else if (prop.Value is Collection)
                 {
@@ -148,7 +148,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     if (coll.Element is Component)
                     {
                         Component comp = coll.Element as Component;
-                        WriteProperties(comp.PropertyCollection, depth + 1);
+                        WriteProperties(comp.PropertyIterator, depth + 1);
                     }
                 }
                 else
@@ -156,7 +156,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     if (prop.Type is EnumStringType)
                     {
                         Write(prop.Name, depth);
-                        foreach (Column col in prop.ColumnCollection)
+                        foreach (Column col in prop.ColumnIterator)
                         {
                             Write(prop.Value.Table.Name + "." + col.Name + ": " + prop.Type.ReturnedClass.FullName, depth + 1);
                         }

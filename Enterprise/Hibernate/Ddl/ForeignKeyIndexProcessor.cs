@@ -72,7 +72,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             // 1. For entities, create indexes on all references to other entities and enums
             foreach (PersistentClass pc in config.ClassMappings)
             {
-                CreateIndexes(config, pc.PropertyCollection);
+                CreateIndexes(config, pc.PropertyIterator);
             }
 
             // 2. For collections of values, create indexes only on the reference to the owner
@@ -94,9 +94,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
                 // collect all columns that participate in foreign keys
                 HybridSet columns = new HybridSet();
-                foreach (ForeignKey fk in collection.CollectionTable.ForeignKeyCollection)
+                foreach (ForeignKey fk in collection.CollectionTable.ForeignKeyIterator)
                 {
-                    columns.AddAll(fk.ColumnCollection);
+                    CollectionUtils.ForEach(fk.ColumnIterator, 
+                        delegate(Column col)
+                            {
+                                columns.Add(col);
+                            });
                 }
 
                 // there should always be exactly 2 "foreign key' columns in a many-many join table, AFAIK
@@ -118,18 +122,18 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 // this is a value collection, or a one-to-many collection
 
                 // find the foreign-key that refers back to the owner table (assume there is only one of these - is this always true??)
-                ForeignKey foreignKey = CollectionUtils.SelectFirst<ForeignKey>(collection.CollectionTable.ForeignKeyCollection,
+                ForeignKey foreignKey = CollectionUtils.SelectFirst<ForeignKey>(collection.CollectionTable.ForeignKeyIterator,
                     delegate (ForeignKey fk) { return Equals(fk.ReferencedTable, collection.Table); });
 
                 // create an index on all columns in this foreign key
                 if(foreignKey != null)
                 {
-                    CreateIndex(collection.CollectionTable, new TypeSafeEnumerableWrapper<Column>(foreignKey.ColumnCollection));
+                    CreateIndex(collection.CollectionTable, new TypeSafeEnumerableWrapper<Column>(foreignKey.ColumnIterator));
                 }
             }
         }
 
-		private void CreateIndexes(Configuration config, ICollection properties)
+		private void CreateIndexes(Configuration config, IEnumerable properties)
         {
             foreach (Property prop in properties)
             {
@@ -137,7 +141,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     // recur on component properties
                     Component comp = (Component) prop.Value;
-                    CreateIndexes(config, comp.PropertyCollection);
+                    CreateIndexes(config, comp.PropertyIterator);
                 }
                 else
                 {
@@ -146,7 +150,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     {
                         // index this column
                         Table indexedTable = prop.Value.Table;
-                        Column indexedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
+                        Column indexedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnIterator);
                         CreateIndex(indexedTable, new Column[] { indexedColumn });
                     }
                 }

@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -81,7 +82,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             orderer.AddToConfiguration(_cfg);
  
             // if a second-level cache has been specified
-            if (_cfg.Properties.Contains("hibernate.cache.provider_class"))
+            if (_cfg.Properties.ContainsKey("hibernate.cache.provider_class"))
             {
                 Platform.Log(LogLevel.Info, "NHibernate 2nd-level cache: {0}", _cfg.Properties["hibernate.cache.provider_class"]);
 
@@ -91,7 +92,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
 
             // create the session factory
-            _sessionFactory = _cfg.BuildSessionFactory();
+                _sessionFactory = _cfg.BuildSessionFactory();
 
             Platform.Log(LogLevel.Info, "NHibernate initialization complete.");
         }

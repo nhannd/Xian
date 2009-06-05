@@ -54,7 +54,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			this.Name = index.Name;
 			this.Columns = CollectionUtils.Map<Column, string>(
-				index.ColumnCollection,
+				index.ColumnIterator,
 				delegate(Column column) { return column.Name; });
 		}
 

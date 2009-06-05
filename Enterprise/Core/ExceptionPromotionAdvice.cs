@@ -38,6 +38,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -48,11 +49,11 @@ namespace ClearCanvas.Enterprise.Core
     {
         #region IMethodInterceptor Members
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
             try
             {
-                return invocation.Proceed(args);
+                invocation.Proceed();
             }
             catch (Exception e)
             {

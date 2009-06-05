@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System.Security.Cryptography.X509Certificates;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using System.Collections.Generic;
 
 namespace ClearCanvas.Enterprise.Common
@@ -241,7 +242,7 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         internal class DisposableInterceptor : IInterceptor
         {
-            public object Intercept(IInvocation invocation, params object[] args)
+            public void Intercept(IInvocation invocation)
             {
                 // if the method being called is IDisposable.Dispose()
                 if (invocation.Method.DeclaringType == typeof(IDisposable)
@@ -249,16 +250,21 @@ namespace ClearCanvas.Enterprise.Common
                 {
                     //TODO before calling dispose, we should check if the target implements
                     // IClientChannel, and if so, call Close()
+                    //if(invocation.InvocationTarget is IClientChannel)
+                    //{
+                    //    IClientChannel channel = (IClientChannel)invocation.InvocationTarget;
+                    //    channel.Close();
+                    //}
 
                     // invoke the method directly on the target - do not proceed along interceptor chain
-                    IDisposable disposable = (IDisposable)invocation.InvocationTarget;
+                    IRemoteServiceProxy p = (IRemoteServiceProxy) invocation.InvocationTarget;
+                    IDisposable disposable = (IDisposable)p.GetChannel();
                     disposable.Dispose();
-                    return null;
                 }
                 else
                 {
                     // proceed normally
-                    return invocation.Proceed(args);
+                    invocation.Proceed();
                 }
             }
         }
@@ -300,8 +306,8 @@ namespace ClearCanvas.Enterprise.Common
 				return null;
 
 			// create the channel
-			// it is unfortunate that we cannot defer channel creation until an interceptor
-			// actually Proceed()s to it, but DynamicProxy1 does not support this (DP2 does!)
+			// TODO: defer channel creation until an interceptor
+			// actually Proceed()s to it (DP2 supports this)
             ChannelFactory factory = _channelFactoryProvider.GetPrimary(serviceContract);
             object channel = CreateChannel(serviceContract, factory);
 
@@ -414,18 +420,19 @@ namespace ClearCanvas.Enterprise.Common
 			// build AOP intercept chain
 			AopInterceptorChain aopIntercept = new AopInterceptorChain(_interceptors);
 
-			GeneratorContext genContext = new GeneratorContext();
-			genContext.AddMixinInstance(new RemoteServiceProxyMixin(channel));
+			ProxyGenerationOptions options = new ProxyGenerationOptions();
+			options.AddMixinInstance(new RemoteServiceProxyMixin(channel));
 
 			// create and return proxy
 			// note: _proxyGenerator does internal caching based on service contract
 			// so subsequent calls based on the same contract will be fast
 			// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
-			object proxy = _proxyGenerator.CreateCustomProxy(
-				new Type[] { serviceContract, typeof(IDisposable) },
-				aopIntercept,
-				channel,
-				genContext);
+            object proxy = _proxyGenerator.CreateInterfaceProxyWithTarget(
+                serviceContract,
+                new Type[]{typeof(IDisposable)},
+                channel,
+                options,
+                aopIntercept);
 			return proxy;
 		}
 

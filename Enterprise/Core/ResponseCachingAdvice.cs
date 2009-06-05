@@ -1,5 +1,6 @@
 using System;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -16,14 +17,12 @@ namespace ClearCanvas.Enterprise.Core
     {
         #region IInterceptor Members
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
-            object retval = invocation.Proceed(args);
+            invocation.Proceed();
 
             // if the invocation succceeded, process the caching directive
-            ProcessCacheDirective(invocation.InvocationTarget, invocation.MethodInvocationTarget, args);
-
-            return retval;
+            ProcessCacheDirective(invocation.InvocationTarget, invocation.MethodInvocationTarget, invocation.Arguments);
         }
 
 		/// <summary>

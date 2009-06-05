@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
@@ -45,20 +46,18 @@ namespace ClearCanvas.Enterprise.Core
     /// </summary>
     public class AuditAdvice : ServiceOperationAdvice, IInterceptor
     {
-		public AuditAdvice()
+        public AuditAdvice()
         {
         }
 
         #region IInterceptor Members
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
-            object retval = null;
             Exception exception = null;
             try
             {
-                retval = invocation.Proceed(args);
-                return retval;
+                invocation.Proceed();
             }
             catch (Exception e)
             {
@@ -80,8 +79,8 @@ namespace ClearCanvas.Enterprise.Core
                             operationName,
                             invocation.InvocationTarget.GetType(),
                             invocation.MethodInvocationTarget,
-                            args,
-                            retval,
+                            invocation.Arguments,
+                            invocation.ReturnValue,
                             exception);
 
                         // multiple audit recorders may be specified for a given service operation

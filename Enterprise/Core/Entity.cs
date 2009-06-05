@@ -73,7 +73,7 @@ namespace ClearCanvas.Enterprise.Core
         public virtual int Version
         {
             get { return _version; }
-            private set { _version = value; }
+            protected set { _version = value; }
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <typeparam name="TSubclass"></typeparam>
         /// <returns></returns>
-        // Note this method must not be made virtual or Castle.DynamicProxy will try to proxy it
+        // Note this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
         public TSubclass Downcast<TSubclass>()
             where TSubclass : Entity
         {
@@ -109,7 +109,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <typeparam name="TSubclass"></typeparam>
         /// <returns></returns>
-        // Note this method must not be made virtual or Castle.DynamicProxy will try to proxy it
+        // Note this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
         public bool Is<TSubclass>()
             where TSubclass : Entity
         {
@@ -122,7 +122,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <typeparam name="TSubclass"></typeparam>
         /// <returns></returns>
-        // Note this method must not be made virtual or Castle.DynamicProxy will try to proxy it
+        // Note this method must not be made virtual or Castle.DynamicProxy2 will try to proxy it
         public TSubclass As<TSubclass>()
             where TSubclass : Entity
         {

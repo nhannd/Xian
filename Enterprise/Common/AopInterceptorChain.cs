@@ -31,14 +31,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    class AopInterceptorChain : IInterceptor
+    public class AopInterceptorChain : IInterceptor
     {
+        #region IntermediateInvocation
+
         class IntermediateInvocation : IInvocation
         {
             private readonly AopInterceptorChain _owner;
@@ -52,28 +56,67 @@ namespace ClearCanvas.Enterprise.Common
                 _level = level;
             }
 
-
             #region IInvocation Members
 
             public object InvocationTarget
             {
                 get { return _rootInvocation.InvocationTarget; }
-                set { _rootInvocation.InvocationTarget = value; }
             }
 
-            public System.Reflection.MethodInfo Method
+            public Type TargetType
+            {
+                get { return _rootInvocation.TargetType; }
+            }
+
+            public object[] Arguments
+            {
+                get { return _rootInvocation.Arguments; }
+            }
+
+            public Type[] GenericArguments
+            {
+                get { return _rootInvocation.GenericArguments; }
+            }
+
+            public MethodInfo Method
             {
                 get { return _rootInvocation.Method; }
             }
 
-            public System.Reflection.MethodInfo MethodInvocationTarget
+            public MethodInfo MethodInvocationTarget
             {
                 get { return _rootInvocation.MethodInvocationTarget; }
             }
 
-            public object Proceed(params object[] args)
+            public object ReturnValue
             {
-                return _owner.NextInterceptor(_level, _rootInvocation, args);
+                get { return _rootInvocation.ReturnValue; }
+                set { _rootInvocation.ReturnValue = value; }
+            }
+
+            public void Proceed()
+            {
+                _owner.NextInterceptor(_level, _rootInvocation);
+            }
+
+            public void SetArgumentValue(int index, object value)
+            {
+                _rootInvocation.SetArgumentValue(index, value);
+            }
+
+            public object GetArgumentValue(int index)
+            {
+                return _rootInvocation.GetArgumentValue(index);
+            }
+
+            public MethodInfo GetConcreteMethod()
+            {
+                return _rootInvocation.GetConcreteMethod();
+            }
+
+            public MethodInfo GetConcreteMethodInvocationTarget()
+            {
+                return _rootInvocation.GetConcreteMethodInvocationTarget();
             }
 
             public object Proxy
@@ -84,6 +127,7 @@ namespace ClearCanvas.Enterprise.Common
             #endregion
         }
 
+        #endregion
 
         private readonly IList<IInterceptor> _interceptors;
 
@@ -95,23 +139,24 @@ namespace ClearCanvas.Enterprise.Common
 
         #region IInterceptor Members
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
-            return NextInterceptor(0, invocation, args);
+            NextInterceptor(0, invocation);
         }
 
         #endregion
 
-        private object NextInterceptor(int level, IInvocation rootInvocation, params object[] args)
+        private void NextInterceptor(int level, IInvocation rootInvocation)
         {
             if(level == _interceptors.Count)
             {
-                return rootInvocation.Proceed(args);
+                // Proceed normally
+                rootInvocation.Proceed();
             }
             else
             {
                 IInvocation ii = new IntermediateInvocation(this, level+1, rootInvocation);
-                return _interceptors[level].Intercept(ii, args);
+                _interceptors[level].Intercept(ii);
             }
         }
 

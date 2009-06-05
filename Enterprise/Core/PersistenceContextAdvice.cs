@@ -35,6 +35,7 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 
 
 namespace ClearCanvas.Enterprise.Core
@@ -48,9 +49,8 @@ namespace ClearCanvas.Enterprise.Core
         {
         }
 
-        public object Intercept(IInvocation invocation, params object[] args)
+        public void Intercept(IInvocation invocation)
         {
-            object retval;
             ServiceOperationAttribute a = GetServiceOperationAttribute(invocation);
             if (a != null)
             {
@@ -61,7 +61,7 @@ namespace ClearCanvas.Enterprise.Core
                     ConfigureAuditing(PersistenceScope.CurrentContext, a, invocation);
 
                     // proceed with invocation
-                    retval = invocation.Proceed(args);
+                    invocation.Proceed();
 
                     // auto-commit transaction
                     scope.Complete();
@@ -70,10 +70,8 @@ namespace ClearCanvas.Enterprise.Core
             else
             {
                 // no persistence context required
-                retval = invocation.Proceed(args);
+                invocation.Proceed();
             }
-
-            return retval;
         }
 
         private void ConfigureAuditing(IPersistenceContext context, ServiceOperationAttribute attribute, IInvocation invocation)

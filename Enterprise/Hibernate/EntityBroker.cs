@@ -30,15 +30,11 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core.Modelling;
 using NHibernate;
-using NHibernate.Expression;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 

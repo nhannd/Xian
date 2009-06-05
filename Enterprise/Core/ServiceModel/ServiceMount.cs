@@ -35,12 +35,14 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Text;
 using System.ServiceModel;
+
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Policy;
 using Castle.DynamicProxy;
+using Castle.Core.Interceptor;
 
 namespace ClearCanvas.Enterprise.Core.ServiceModel
 {
