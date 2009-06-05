@@ -112,6 +112,11 @@ namespace ClearCanvas.Healthcare
             return this.State == ActivityStatus.IP && this.PerformingStaff == staff;
         }
 
+        public override string Name
+        {
+            get { return "Protocol Assignment"; }
+        }
+
 		protected override void LinkProcedure(Procedure procedure)
 		{
 			if (this.Protocol == null)

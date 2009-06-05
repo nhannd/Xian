@@ -53,7 +53,12 @@ namespace ClearCanvas.Healthcare {
             get { return this.Protocol.Status == ProtocolStatus.RJ; }
         }
 
-		protected override ProcedureStep CreateScheduledCopy()
+        public override string Name
+        {
+            get { return "Protocol Resolution"; }
+        }
+
+        protected override ProcedureStep CreateScheduledCopy()
 		{
 			ProtocolResolutionStep newStep = new ProtocolResolutionStep(this.Protocol);
 			this.Procedure.AddProcedureStep(newStep);
