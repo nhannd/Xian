@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -42,6 +43,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private volatile ISopFrameData[] _frameData;
 
 		protected StandardSopDataSource() : base() {}
+
+		public override bool IsImage
+		{
+			get { return SopDataHelper.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
+		}
 
 		protected abstract StandardSopFrameData CreateFrameData(int frameNumber);
 
@@ -87,7 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected abstract class StandardSopFrameData : SopFrameData
 		{
 			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>();
-			private byte[] _pixelData = null;
+			private volatile byte[] _pixelData = null;
 
 			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent) : base(frameNumber, parent) {}
 
@@ -98,17 +104,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			public override byte[] GetNormalizedPixelData()
 			{
-				lock (this.Parent.SyncLock)
+				byte[] pixelData = _pixelData;
+				if (pixelData == null)
 				{
-					if (_pixelData == null)
+					lock (this.Parent.SyncLock)
 					{
-						_pixelData = CreateNormalizedPixelData();
-						if (_pixelData != null)
-							Diagnostics.OnLargeObjectAllocated(_pixelData.Length);
+						if (_pixelData == null)
+						{
+							pixelData = _pixelData = CreateNormalizedPixelData();
+							if (pixelData != null)
+								Diagnostics.OnLargeObjectAllocated(pixelData.Length);
+						}
 					}
-
-					return _pixelData;
 				}
+
+				return pixelData;
 			}
 
 			protected abstract byte[] CreateNormalizedPixelData();
@@ -144,21 +154,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					ReportLargeObjectsUnloaded();
 
-					this.OnUnloading();
 					_pixelData = null;
 					_overlayData.Clear();
 					this.OnUnloaded();
 				}
 			}
 
-			protected virtual void OnUnloading()
-			{
-				
-			}
-			
 			protected virtual void OnUnloaded()
 			{
-				
 			}
 
 			protected override void Dispose(bool disposing)

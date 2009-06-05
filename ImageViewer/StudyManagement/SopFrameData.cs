@@ -5,6 +5,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public interface ISopFrameData : IDisposable
 	{
+		ISopDataSource Parent { get; }
+		int FrameNumber { get; }
+
 		byte[] GetNormalizedPixelData();
 		byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
 		void Unload();
@@ -24,7 +27,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_frameNumber = frameNumber;
 		}
 
-		public SopDataSource Parent
+		public ISopDataSource Parent
 		{
 			get { return _parent; }
 		}

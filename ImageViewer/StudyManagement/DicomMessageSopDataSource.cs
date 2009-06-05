@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				// if any overlays have embedded pixel data, extract them now or forever hold your peace
 				DicomMessageBase message = this.Parent.SourceMessage;
-				OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(this.Parent);
+				OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(message.DataSet);
 				foreach (OverlayPlane overlay in overlayPlaneModule)
 				{
 					if (overlay.IsEmbedded && _overlayCache[overlay.Index, _frameIndex] == null)

@@ -35,8 +35,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public interface ILocalSopDataSource : IDicomMessageSopDataSource
 	{
+		//TODO (CR May09): same comments as for SourceMessage.
 		DicomFile File { get; }
 
+		//NOTE: will keep this in the future and remove File (replaced with ExtractDicomFile()).
 		string Filename { get; }
 	}
 }

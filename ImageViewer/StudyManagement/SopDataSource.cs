@@ -76,6 +76,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return this[DicomTags.InstanceNumber].GetInt32(0, 0); }
 		}
 
+		public abstract bool IsImage { get; }
+
 		public virtual bool IsStored
 		{
 			get { return !String.IsNullOrEmpty(_studyLoaderName); }
@@ -93,7 +95,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			internal protected set { _server = value; }
 		}
 
-		public abstract ISopFrameData GetFrameData(int frameNumber);
+		ISopFrameData ISopDataSource.GetFrameData(int frameNumber)
+		{
+			CheckIsImage();
+			return GetFrameData(frameNumber);
+		}
 
 		#endregion
 
@@ -106,22 +112,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		protected virtual bool IsImage
-		{
-			get { return SopDataHelper.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
-		}
-
 		protected void CheckIsImage()
 		{
 			if (!IsImage)
 				throw new InvalidOperationException("This functionality cannot be used for non-images.");
 		}
 
-		ISopFrameData ISopDataSource.GetFrameData(int frameNumber)
-		{
-			CheckIsImage();
-			return GetFrameData(frameNumber);
-		}
+		public abstract ISopFrameData GetFrameData(int frameNumber);
 
 		#region IDicomAttributeProvider Members
 

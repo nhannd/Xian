@@ -33,6 +33,8 @@ using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO (CR May09): delete and use InvalidOperationException in Rois
+
 	/// <summary>
 	/// Exception indicating that the parent image does not provide pixel spacing information.
 	/// </summary>

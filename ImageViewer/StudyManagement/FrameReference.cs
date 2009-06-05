@@ -74,6 +74,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			#endregion
 
+			#region ISopProvider Members
+			
+			Sop ISopProvider.Sop
+			{
+				get { return _frame.ParentImageSop; }
+			}
+
+			#endregion
+
 			#region IDisposable Members
 
 			public void Dispose()

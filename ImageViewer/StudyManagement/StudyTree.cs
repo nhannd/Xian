@@ -147,13 +147,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_sops[sop.SopInstanceUID] = sop;
 		}
 
-		//TODO: try to make this private again.
-
-		public void RemoveSop(Sop sop)
-		{
-			_sops[sop.SopInstanceUID] = null;
-		}
-
 		#region Private Methods
 
 		private void AddPatient(Sop sop)

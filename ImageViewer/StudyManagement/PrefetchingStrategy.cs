@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _imageViewer; }
 		}
 
+		//TODO (CR May09): explicit interface, no 'On'
 		protected abstract void OnStart();
 		protected abstract void OnStop();
 

@@ -37,6 +37,8 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO (CR May09): move back to ImageSop
+
 	//TODO: would like to just add IsImageStorage property to SopClass, but this'll do for now.
 	internal static class SopDataHelper
 	{

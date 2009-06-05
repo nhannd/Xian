@@ -183,11 +183,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server, studyLoaderName));
 		}
 
+		//TODO (CR May09): new constructor or factory method on IVC
 		public ImageViewerComponent CreateViewer()
 		{
 			return CreateViewer(_loadPriors);
 		}
 
+		//TODO (CR May09): new instance method on IVC
 		/// <summary>
 		/// Loads the list of studies into an <see cref="ImageViewerComponent"/>, but
 		/// does not launch the viewer.
@@ -208,6 +210,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		//TODO (CR May09): already on IVC
 		public void LaunchViewer(ImageViewerComponent imageViewer)
 		{
 			LaunchImageViewerArgs args = new LaunchImageViewerArgs(_windowBehaviour);
@@ -215,6 +218,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			ImageViewerComponent.Launch(imageViewer, args);
 		}
 
+		//TODO (CR May09): instance method on IVC
 		/// <summary>
 		/// Loads the list of studies into an <see cref="ImageViewerComponent"/> and launches it
 		/// in a <see cref="Workspace"/>.
@@ -311,6 +315,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Public
 
+		//TODO (later): create a class called OpenFilesHelper
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified local files.
 		/// </summary>

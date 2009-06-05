@@ -33,6 +33,7 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO: document this as unstable and revisit when we start to implement stuff like secondary captures.
 	public interface IDicomMessageSopDataSource : ISopDataSource
 	{
 		DicomMessageBase SourceMessage { get; }

@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return LoadStudyExceptions.Count >= TotalStudies; }
 		}
 
+		//TODO (CR May09):properties with 'Count' suffix
 		public int GetNumberOffline()
 		{
 			return CollectionUtils.Select(LoadStudyExceptions,

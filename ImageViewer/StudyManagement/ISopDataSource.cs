@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		string SopClassUid { get; }
 		string TransferSyntaxUid { get; }
 
+		bool IsImage { get; }
 		ISopFrameData GetFrameData(int frameNumber);
 
 		bool IsStored { get; }

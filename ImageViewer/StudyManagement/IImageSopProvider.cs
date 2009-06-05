@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// any type of <see cref="PresentationImage"/> that implements the provider interface.
 	/// </para>
 	/// </remarks>
-	public interface IImageSopProvider
+	public interface IImageSopProvider : ISopProvider
 	{
 		/// <summary>
 		/// Gets an <see cref="ImageSop"/>.

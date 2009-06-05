@@ -170,6 +170,15 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region ISopProvider Members
+
+		Sop ISopProvider.Sop
+		{
+			get { return _frameReference.Sop; }
+		}
+
+		#endregion
+
 		#region IDicomSoftcopyPresentationStateProvider Members
 
 		/// <summary>
