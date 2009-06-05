@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Engine;
 using NHibernate.Mapping;
@@ -39,61 +40,36 @@ using NHibernate.Type;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
-	/// <summary>
-	/// For internal use.  Copied from NHibernate source.
-	/// </summary>
-	internal class Mapping : IMapping
-	{
-		private readonly Configuration _config;
+    /// <summary>
+    /// For internal use.  Copied from NHibernate source.
+    /// </summary>
+    internal class Mapping : IMapping
+    {
+        private readonly Configuration configuration;
 
-		internal Mapping(Configuration config)
-		{
-			_config = config;
-		}
-
-		private PersistentClass GetPersistentClass(System.Type type)
-		{
-			PersistentClass pc = _config.GetClassMapping(type);
-			if (pc == null)
-			{
-				throw new Exception("persistent class not known: " + type.FullName);
-			}
-			return pc;
-		}
-
-        private PersistentClass GetPersistentClass(string type)
+        public Mapping(Configuration configuration)
         {
-            PersistentClass pc = _config.GetClassMapping(type);
+            this.configuration = configuration;
+        }
+
+        private PersistentClass GetPersistentClass(string className)
+        {
+            PersistentClass pc = configuration.GetClassMapping(className);
             if (pc == null)
             {
-                throw new Exception("persistent class not known: " + type);
+                throw new MappingException("persistent class not known: " + className);
             }
             return pc;
         }
 
-		public IType GetIdentifierType(System.Type persistentClass)
-		{
-			return GetPersistentClass(persistentClass).Identifier.Type;
-		}
-
-        public IType GetIdentifierType(string persistentClass)
+        public IType GetIdentifierType(string className)
         {
-            return GetPersistentClass(persistentClass).Identifier.Type;
+            return GetPersistentClass(className).Identifier.Type;
         }
 
-		public string GetIdentifierPropertyName(System.Type persistentClass)
-		{
-			PersistentClass pc = GetPersistentClass(persistentClass);
-			if (!pc.HasIdentifierProperty)
-			{
-				return null;
-			}
-			return pc.IdentifierProperty.Name;
-		}
-
-        public string GetIdentifierPropertyName(string persistentClass)
+        public string GetIdentifierPropertyName(string className)
         {
-            PersistentClass pc = GetPersistentClass(persistentClass);
+            PersistentClass pc = GetPersistentClass(className);
             if (!pc.HasIdentifierProperty)
             {
                 return null;
@@ -101,26 +77,21 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             return pc.IdentifierProperty.Name;
         }
 
-		public IType GetPropertyType(System.Type persistentClass, string propertyName)
-		{
-			PersistentClass pc = GetPersistentClass(persistentClass);
-			NHibernate.Mapping.Property prop = pc.GetProperty(propertyName);
-
-			if (prop == null)
-			{
-				throw new Exception("property not known: " + persistentClass.FullName + '.' + propertyName);
-			}
-			return prop.Type;
-		}
-
-        public IType GetReferencedPropertyType(string persistentClass, string property)
+        public IType GetReferencedPropertyType(string className, string propertyName)
         {
-            throw new NotImplementedException("This method has not been implemented.");
+            PersistentClass pc = GetPersistentClass(className);
+            Property prop = pc.GetProperty(propertyName);
+
+            if (prop == null)
+            {
+                throw new MappingException("property not known: " + pc.MappedClass.FullName + '.' + propertyName);
+            }
+            return prop.Type;
         }
 
-        public bool HasNonIdentifierPropertyNamedId(string persistentClass)
+        public bool HasNonIdentifierPropertyNamedId(string className)
         {
-            throw new NotImplementedException("This method has not been implemented.");
+            return "id".Equals(GetIdentifierPropertyName(className));
         }
-	}
+    }
 }

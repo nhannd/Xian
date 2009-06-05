@@ -56,7 +56,7 @@ namespace ClearCanvas.Enterprise.Common
 								string.Format("{0} is cacheable but the request class does not implement IDefinesCacheKey.", invocation.GetType().FullName));
 
 						// cache the response for future use
-						cacheClient.Put(cacheKey, response, new CachePutOptions(region, directive.TimeToLive, false));
+						cacheClient.Put(cacheKey, invocation.ReturnValue, new CachePutOptions(region, directive.TimeToLive, false));
 					}
 				}
 			}
