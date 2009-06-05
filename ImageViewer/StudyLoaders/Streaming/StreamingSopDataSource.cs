@@ -83,31 +83,37 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		#endregion
 
-		public override DicomAttribute GetDicomAttribute(DicomTag tag)
+		public override DicomAttribute this[DicomTag tag]
 		{
-			lock (SyncLock)
+			get
 			{
-				if (NeedFullHeader(tag.TagValue))
-					GetFullHeader();
+				lock(SyncLock)
+				{
+					if (NeedFullHeader(tag.TagValue))
+						GetFullHeader();
 
-				return base.GetDicomAttribute(tag);
+					return base[tag];
+				}
 			}
 		}
 
-		public override DicomAttribute GetDicomAttribute(uint tag)
+		public override DicomAttribute this[uint tag]
 		{
-			lock (SyncLock)
+			get
 			{
-				if (NeedFullHeader(tag))
-					GetFullHeader();
+				lock (SyncLock)
+				{
+					if (NeedFullHeader(tag))
+						GetFullHeader();
 
-				return base.GetDicomAttribute(tag);
+					return base[tag];
+				}
 			}
 		}
 
 		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
 		{
-			lock (SyncLock)
+			lock(SyncLock)
 			{
 				if (NeedFullHeader(tag.TagValue))
 					GetFullHeader();
@@ -143,7 +149,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				return true;
 			}
 
-			DicomAttribute attribute = base.GetDicomAttribute(tag);
+			DicomAttribute attribute = base[tag];
 			if (attribute is DicomAttributeSQ)
 			{
 				DicomSequenceItem[] items = attribute.Values as DicomSequenceItem[];

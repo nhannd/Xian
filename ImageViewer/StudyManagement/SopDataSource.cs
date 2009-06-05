@@ -93,13 +93,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			internal protected set { _server = value; }
 		}
 
-		public ISopFrameData GetFrameData(int frameNumber)
-		{
-			CheckIsImage();
-			ISopFrameData frameData;
-			OnGetFrameData(frameNumber, out frameData);
-			return frameData;
-		}
+		public abstract ISopFrameData GetFrameData(int frameNumber);
 
 		#endregion
 
@@ -112,7 +106,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		protected bool IsImage
+		protected virtual bool IsImage
 		{
 			get { return SopDataHelper.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
 		}
@@ -123,38 +117,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new InvalidOperationException("This functionality cannot be used for non-images.");
 		}
 
-		//TODO (CR May09): use explicit implementation and make virtual methods have same signature as interface method.
-		protected abstract void OnGetFrameData(int frameNumber, out ISopFrameData frameData);
+		ISopFrameData ISopDataSource.GetFrameData(int frameNumber)
+		{
+			CheckIsImage();
+			return GetFrameData(frameNumber);
+		}
 
 		#region IDicomAttributeProvider Members
 
-		public DicomAttribute this[DicomTag tag]
-		{
-			get { return GetDicomAttribute(tag); }
-		}
+		public abstract DicomAttribute this[DicomTag tag] { get; }
 
-		public DicomAttribute this[uint tag]
-		{
-			get { return GetDicomAttribute(tag); }
-		}
+		public abstract DicomAttribute this[uint tag] { get; }
 
 		DicomAttribute IDicomAttributeProvider.this[DicomTag tag]
 		{
-			get { return GetDicomAttribute(tag); }
+			get { return this[tag]; }
 			set { throw new NotSupportedException("SopDataSource objects should be considered read-only."); }
 		}
 
 		DicomAttribute IDicomAttributeProvider.this[uint tag]
 		{
-			get { return GetDicomAttribute(tag); }
+			get { return this[tag]; }
 			set { throw new NotSupportedException("SopDataSource objects should be considered read-only."); }
 		}
-
-		//TODO (CR May09): GetAttribute
-		public abstract DicomAttribute GetDicomAttribute(DicomTag tag);
-
-		public abstract DicomAttribute GetDicomAttribute(uint tag);
-
+		
 		public abstract bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute);
 
 		public abstract bool TryGetAttribute(uint tag, out DicomAttribute attribute);

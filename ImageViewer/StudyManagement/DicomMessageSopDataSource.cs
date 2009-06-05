@@ -101,37 +101,44 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override DicomAttribute GetDicomAttribute(DicomTag tag)
+
+		public override DicomAttribute this[DicomTag tag]
 		{
-			lock (SyncLock)
+			get
 			{
-				Load();
+				lock (SyncLock)
+				{
+					Load();
 
-				DicomAttribute attribute;
-				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
-					return attribute;
+					DicomAttribute attribute;
+					if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
-					return attribute;
+					if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				return _dummy[tag];
+					return _dummy[tag];
+				}
 			}
 		}
 
-		public override DicomAttribute GetDicomAttribute(uint tag)
+		public override DicomAttribute this[uint tag]
 		{
-			lock (SyncLock)
+			get
 			{
-				Load();
+				lock (SyncLock)
+				{
+					Load();
 
-				DicomAttribute attribute;
-				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
-					return attribute;
+					DicomAttribute attribute;
+					if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
-					return attribute;
+					if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				return _dummy[tag];
+					return _dummy[tag];
+				}
 			}
 		}
 
@@ -214,7 +221,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			protected override byte[] CreateNormalizedPixelData()
 			{
-				DicomMessageBase _message = this.Parent.SourceMessage;
+				DicomMessageBase message = this.Parent.SourceMessage;
 
 				CodeClock clock = new CodeClock();
 				clock.Start();
@@ -222,19 +229,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				PhotometricInterpretation photometricInterpretation;
 				byte[] rawPixelData;
 
-				if (!_message.TransferSyntax.Encapsulated)
+				if (!message.TransferSyntax.Encapsulated)
 				{
-					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(_message);
+					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
 					// DICOM library uses zero-based frame numbers
 					rawPixelData = pixelData.GetFrame(_frameIndex);
 
 					ExtractOverlayFrames(rawPixelData, pixelData.BitsAllocated);
 
-					photometricInterpretation = PhotometricInterpretation.FromCodeString(_message.DataSet[DicomTags.PhotometricInterpretation]);
+					photometricInterpretation = PhotometricInterpretation.FromCodeString(message.DataSet[DicomTags.PhotometricInterpretation]);
 				}
-				else if (DicomCodecRegistry.GetCodec(_message.TransferSyntax) != null)
+				else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
 				{
-					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(_message);
+					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
 					string pi;
 					rawPixelData = pixelData.GetFrame(_frameIndex, out pi);
 					photometricInterpretation = PhotometricInterpretation.FromCodeString(pi);
@@ -243,9 +250,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					throw new DicomCodecException("Unsupported transfer syntax");
 
 				if (photometricInterpretation.IsColor)
-					rawPixelData = ToArgb(_message.DataSet, rawPixelData, photometricInterpretation);
+					rawPixelData = ToArgb(message.DataSet, rawPixelData, photometricInterpretation);
 				else
-					NormalizeGrayscalePixels(_message.DataSet, rawPixelData, _message.TransferSyntax.Endian);
+					NormalizeGrayscalePixels(message.DataSet, rawPixelData, message.TransferSyntax.Endian);
 
 				clock.Stop();
 				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
@@ -275,7 +282,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				// if any overlays have embedded pixel data, extract them now or forever hold your peace
 				DicomMessageBase message = this.Parent.SourceMessage;
-				OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(message.DataSet);
+				OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(this.Parent);
 				foreach (OverlayPlane overlay in overlayPlaneModule)
 				{
 					if (overlay.IsEmbedded && _overlayCache[overlay.Index, _frameIndex] == null)

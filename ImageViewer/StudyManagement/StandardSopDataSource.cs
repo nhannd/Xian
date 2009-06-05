@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		protected abstract StandardSopFrameData CreateFrameData(int frameNumber);
 
-		protected sealed override void OnGetFrameData(int frameNumber, out ISopFrameData frameData)
+		public override ISopFrameData GetFrameData(int frameNumber)
 		{
 			if(_frameData == null)
 			{
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
-			frameData = _frameData[frameNumber - 1];
+			return _frameData[frameNumber - 1];
 		}
 
 		protected override void Dispose(bool disposing)
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return (StandardSopDataSource) base.Parent; }
 			}
 
-			public sealed override byte[] GetNormalizedPixelData()
+			public override byte[] GetNormalizedPixelData()
 			{
 				lock (this.Parent.SyncLock)
 				{
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			protected abstract byte[] CreateNormalizedPixelData();
 
-			public override sealed byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
 				if(overlayGroupNumber < 1)
 					throw new ArgumentOutOfRangeException("overlayGroupNumber", overlayGroupNumber, "Must be a positive, non-zero number.");
