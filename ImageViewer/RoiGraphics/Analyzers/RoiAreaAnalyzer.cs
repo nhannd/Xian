@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			string text;
 
 			Units oldUnits = areaProvider.Units;
-			areaProvider.Units = _units;
+			areaProvider.Units = areaProvider.IsCalibrated ? _units : Units.Pixels;
 
 			if (!areaProvider.IsCalibrated || _units == Units.Pixels)
 				text = String.Format(SR.FormatAreaPixels, areaProvider.Area);

@@ -86,7 +86,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private class CompositeScaleGraphic : CompositeGraphic
 		{
-			private event EventHandler _changed;
 			private readonly ScaleGraphic _horizontalScale;
 			private readonly ScaleGraphic _verticalScale;
 
@@ -100,31 +99,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 				_verticalScale.Visible = false;
 				_verticalScale.IsMirrored = true;
-			}
-
-			/// <summary>
-			/// Indicates that the ScaleGraphic have changed.
-			/// </summary>
-			public event EventHandler Changed
-			{
-				add { _changed += value; }
-				remove { _changed -= value; }
-			}
-
-			/// <summary>
-			/// Gets or sets a value indicating the visibility of the <see cref="IGraphic"/>.
-			/// </summary>
-			public override bool Visible
-			{
-				get { return base.Visible; }
-				set
-				{
-					if (base.Visible != value)
-					{
-						base.Visible = value;
-						OnChanged();
-					}
-				}
 			}
 
 			/// <summary>
@@ -160,12 +134,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 
 				base.OnDrawing();
-			}
-
-			protected virtual void OnChanged()
-			{
-				EventsHelper.Fire(_changed, this, EventArgs.Empty);
-				base.Draw();
 			}
 
 			/// <summary>

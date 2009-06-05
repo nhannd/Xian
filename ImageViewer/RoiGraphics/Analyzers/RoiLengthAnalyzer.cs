@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			string text;
 
 			Units oldUnits = lengthProvider.Units;
-			lengthProvider.Units = _units;
+			lengthProvider.Units = lengthProvider.IsCalibrated ? _units : Units.Pixels;
 
 			if (!lengthProvider.IsCalibrated || _units == Units.Pixels)
 				text = String.Format(SR.FormatLengthPixels, lengthProvider.Length);

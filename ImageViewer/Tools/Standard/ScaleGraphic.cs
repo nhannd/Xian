@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -44,13 +43,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// </summary>
 	internal class ScaleGraphic : CompositeGraphic
 	{
-		private event EventHandler _changed;
 		private readonly LinePrimitive _baseLine;
 		private readonly List<LinePrimitive> _ticklines = new List<LinePrimitive>();
 		private PointF _point1, _point2;
 		private bool _isMirrored;
 		private bool _isDirty;
-		private bool _visible;
 
 		/// <summary>
 		/// Constructs a <see cref="ScaleGraphic"/>.
@@ -116,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (_isMirrored != value)
 				{
 					_isMirrored = value;
-					OnChanged();
+					this.FlagAsDirty();
 				}
 			}
 		}
@@ -140,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (value != _point1)
 				{
 					_point1 = value;
-					OnChanged();
+					this.FlagAsDirty();
 				}
 			}
 		}
@@ -164,36 +161,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (value != _point2)
 				{
 					_point2 = value;
-					OnChanged();
+					this.FlagAsDirty();
 				}
 			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating the visibility of the <see cref="IGraphic"/>.
-		/// </summary>
-		public override bool Visible
-		{
-			// use the private variable to allow the tick computation algorithm to hide itself independently of what client code specifies
-			get { return _visible && base.Visible; }
-			set
-			{
-				if (base.Visible != value || _visible != value)
-				{
-					base.Visible = value;
-					_visible = value;
-					OnChanged();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Indicates that the ScaleGraphic has changed.
-		/// </summary>
-		public event EventHandler Changed
-		{
-			add { _changed += value; }
-			remove { _changed -= value; }
 		}
 
 		/// <summary>
@@ -213,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				_point1 = point1;
 				_point2 = point2;
-				OnChanged();
+				this.FlagAsDirty();
 			}
 		}
 
@@ -227,13 +197,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.SetEndPoints(location, location + offset);
 		}
 
-		/// <summary>
-		/// Called when the <see cref="Changed"/> event is fired.
-		/// </summary>
-		protected virtual void OnChanged()
+		private void FlagAsDirty()
 		{
 			_isDirty = true;
-			EventsHelper.Fire(_changed, this, EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -287,7 +253,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		protected virtual void UpdateScale()
 		{
 			// no point recomputing the scale if client code has made us invisible or we aren't on screen
-			if (!_visible || (base.ParentPresentationImage != null && base.ParentPresentationImage.ClientRectangle.IsEmpty))
+			if (!this.Visible || (base.ParentPresentationImage != null && base.ParentPresentationImage.ClientRectangle.IsEmpty))
 			{
 				_isDirty = true;
 				return;
@@ -312,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 				if (majorTicks == null || minorTicks == null)
 				{
-					base.Visible = false;
+					_baseLine.Visible = false;
 					return;
 				}
 
@@ -329,12 +295,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 						FormatMajorTick(ticks[minorTicks.Count + n], majorTicks[n], unitNormal);
 					}
 
-					if (!base.Visible)
-						base.Visible = true;
+					_baseLine.Visible = true;
 				}
 				else
 				{
-					base.Visible = false;
+					_baseLine.Visible = false;
 				}
 
 				_isDirty = false;

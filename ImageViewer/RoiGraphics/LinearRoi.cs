@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		#region IRoiLengthProvider Members
 
 		private double? _lengthInPixels;
-		private double? _length;
+		private double? _lengthInMm;
 
 		public double Length
 		{
@@ -150,23 +150,23 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				}
 				else
 				{
-					if (!_length.HasValue)
+					if (!_lengthInMm.HasValue)
 					{
 						if (base.NormalizedPixelSpacing.IsNull)
 							throw new UncalibratedImageException();
 
-						Units units = _units;
+						Units units = Units.Millimeters;
 						double length = 0;
 						for (int n = 1; n < _points.Count; n++)
 						{
 							length += RoiLengthAnalyzer.CalculateLength(_points[n - 1], _points[n], base.NormalizedPixelSpacing, ref units);
 						}
-						_length = length;
+						_lengthInMm = length;
 					}
 
 					if (_units == Units.Centimeters)
-						return _length.Value/10;
-					return _length.Value;
+						return _lengthInMm.Value/10;
+					return _lengthInMm.Value;
 				}
 			}
 		}

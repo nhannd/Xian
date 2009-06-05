@@ -23,7 +23,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics {
             }
         }
         
+        /// <summary>
+        /// Controls whether or not ROI stats should be shown on new ROI objects by default.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Controls whether or not ROI stats should be shown on new ROI objects by default.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowAnalysisByDefault {
@@ -35,7 +39,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics {
             }
         }
         
+        /// <summary>
+        /// Controls the preferred linear, area and volume units of ROI analysis output. (Pixels, Millimeters, Centimeters)
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Controls the preferred linear, area and volume units of ROI analysis output. (Pix" +
+            "els, Millimeters, Centimeters)")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Centimeters")]
         public global::ClearCanvas.ImageViewer.RoiGraphics.Units AnalysisUnits {
