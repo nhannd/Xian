@@ -257,10 +257,16 @@ namespace ClearCanvas.Enterprise.Common
                     //}
 
                     // invoke the method directly on the target - do not proceed along interceptor chain
-                    IRemoteServiceProxy p = (IRemoteServiceProxy) invocation.InvocationTarget;
-                    IDisposable disposable = (IDisposable)p.GetChannel();
-                    disposable.Dispose();
-                }
+                	object target = invocation.InvocationTarget;
+
+					// this is odd - it is not clear whether InvocationTarget is the proxy or the target
+					// DP seems to do different things under different circumstances, probably due to bugs
+					// we do the safe thing and check if we need to access the inner object
+					if (target is IProxyTargetAccessor)
+						target = ((IProxyTargetAccessor) target).DynProxyGetTarget();
+					IDisposable disposable = (IDisposable)target;
+					disposable.Dispose();
+				}
                 else
                 {
                     // proceed normally
@@ -408,7 +414,7 @@ namespace ClearCanvas.Enterprise.Common
             return channel;
         }
 
-        private object CreateChannelProxy(Type serviceContract, object channel)
+		private object CreateChannelProxy(Type serviceContract, object channel)
 		{
 			// get list of interceptors if not yet created
 			if (_interceptors == null)
@@ -429,7 +435,7 @@ namespace ClearCanvas.Enterprise.Common
 			// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
             object proxy = _proxyGenerator.CreateInterfaceProxyWithTarget(
                 serviceContract,
-                new Type[]{typeof(IDisposable)},
+				new Type[] { serviceContract, typeof(IDisposable) },
                 channel,
                 options,
                 aopIntercept);

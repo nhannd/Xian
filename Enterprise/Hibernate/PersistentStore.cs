@@ -92,7 +92,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
 
             // create the session factory
-                _sessionFactory = _cfg.BuildSessionFactory();
+            _sessionFactory = _cfg.BuildSessionFactory();
 
             Platform.Log(LogLevel.Info, "NHibernate initialization complete.");
         }
