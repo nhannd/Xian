@@ -62,5 +62,27 @@ namespace ClearCanvas.ImageServer.Model
 
 			return sb.ToString();
 		}
+
+		public string MessageException
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(Exception))
+				{
+					return Message
+						.Replace("<","&lt;")
+						.Replace(">","&gt;")
+						.Replace(Environment.NewLine, "<br/>");
+				}
+
+				StringBuilder sb = new StringBuilder();
+				sb.AppendLine(Message);
+				sb.AppendLine(Exception);
+				return sb.ToString()
+						.Replace("<", "&lt;")
+						.Replace(">", "&gt;")
+						.Replace(Environment.NewLine, "<br/>");
+			}
+		}
 	}
 }

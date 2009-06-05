@@ -30,7 +30,7 @@
                     	<ItemStyle Wrap="false" HorizontalAlign="Center" />
 					</asp:BoundField>
                     <asp:BoundField DataField="LogLevel" HeaderText="Log Level" HeaderStyle-Wrap="false" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
-                    <asp:BoundField DataField="Message" HeaderText="Message" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:BoundField DataField="MessageException" HeaderText="Message" HeaderStyle-HorizontalAlign="Left" HtmlEncode="false"  />
                 </Columns>
                 <EmptyDataTemplate>
                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No log messages." />
