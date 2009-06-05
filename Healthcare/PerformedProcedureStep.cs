@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare
         public virtual IDictionary<string, string> ExtendedProperties
         {
             get { return _extendedProperties; }
-            private set { _extendedProperties = value; }
+            protected set { _extendedProperties = value; }
         }
 
     }

@@ -83,32 +83,32 @@ namespace ClearCanvas.Workflow
 
         /// <summary>
         /// Gets the current state.
-        /// This property allows private set for NHibernate mapping compatability.
+        /// This property allows protected set for NHibernate mapping compatability.
         /// </summary>
         public virtual TStateEnum State
         {
             get { return _state; }
-            private set { _state = value; }
+            protected set { _state = value; }
         }
 
         /// <summary>
         /// Gets the creation time of this object.
-        /// This property allows private set for NHibernate mapping compatability.
+        /// This property allows protected set for NHibernate mapping compatability.
         /// </summary>
         public virtual DateTime CreationTime
         {
             get { return _creationTime; }
-            private set { _creationTime = value; }
+            protected set { _creationTime = value; }
         }
 
         /// <summary>
         /// Get the time of the last state change for this object.
-        /// This property allows private set for NHibernate mapping compatability.
+        /// This property allows protected set for NHibernate mapping compatability.
         /// </summary>
         public virtual DateTime LastStateChangeTime
         {
             get { return _lastStateChangeTime; }
-            private set { _lastStateChangeTime = value; }
+            protected set { _lastStateChangeTime = value; }
         }
 
         /// <summary>

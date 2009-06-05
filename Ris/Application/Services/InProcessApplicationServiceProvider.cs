@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using Castle.Core.Interceptor;
+using Castle.DynamicProxy;
 
 namespace ClearCanvas.Ris.Application.Services
 {

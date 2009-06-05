@@ -69,10 +69,10 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		[PersistentProperty]
 		[EmbeddedValue]
-		public WorklistStaffFilter InterpretedByStaffFilter
+        public virtual WorklistStaffFilter InterpretedByStaffFilter
 		{
 			get { return _interpretedByStaffFilter; }
-			set { _interpretedByStaffFilter = value; }
+            protected set { _interpretedByStaffFilter = value; }
 		}
 
 		/// <summary>
@@ -80,10 +80,10 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		[PersistentProperty]
 		[EmbeddedValue]
-		public WorklistStaffFilter TranscribedByStaffFilter
+        public virtual WorklistStaffFilter TranscribedByStaffFilter
 		{
 			get { return _transcribedByStaffFilter; }
-			set { _transcribedByStaffFilter = value; }
+            protected set { _transcribedByStaffFilter = value; }
 		}
 
 		/// <summary>
@@ -91,10 +91,10 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		[PersistentProperty]
 		[EmbeddedValue]
-		public WorklistStaffFilter VerifiedByStaffFilter
+        public virtual WorklistStaffFilter VerifiedByStaffFilter
 		{
 			get { return _verifiedByStaffFilter; }
-			set { _verifiedByStaffFilter = value; }
+            protected set { _verifiedByStaffFilter = value; }
 		}
 
 		/// <summary>
@@ -102,10 +102,10 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		[PersistentProperty]
 		[EmbeddedValue]
-		public WorklistStaffFilter SupervisedByStaffFilter
+        public virtual WorklistStaffFilter SupervisedByStaffFilter
 		{
 			get { return _supervisedByStaffFilter; }
-			set { _supervisedByStaffFilter = value; }
+            protected set { _supervisedByStaffFilter = value; }
 		}
 	}
 

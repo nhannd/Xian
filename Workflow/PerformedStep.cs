@@ -120,22 +120,22 @@ namespace ClearCanvas.Workflow
 
         /// <summary>
         /// Gets the start time of this step.
-        /// This property allows private set for NHibernate mapping compatability.
+        /// This property allows protected set for NHibernate mapping compatability.
         /// </summary>
         public virtual DateTime StartTime
         {
             get { return _startTime; }
-            private set { _startTime = value; }
+            protected set { _startTime = value; }
         }
 
         /// <summary>
         /// Gets the end time of this step.
-        /// This property allows private set for NHibernate mapping compatability.
+        /// This property allows protected set for NHibernate mapping compatability.
         /// </summary>
         public virtual DateTime? EndTime
         {
             get { return _endTime; }
-            private set { _endTime = value; }
+            protected set { _endTime = value; }
         }
 
         #endregion

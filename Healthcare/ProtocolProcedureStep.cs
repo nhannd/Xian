@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
@@ -42,6 +43,7 @@ namespace ClearCanvas.Healthcare
 
         public ProtocolProcedureStep(Protocol protocol)
         {
+            Platform.CheckForNullReference(protocol, "protocol");
             _protocol = protocol;
         }
 
@@ -54,15 +56,10 @@ namespace ClearCanvas.Healthcare
 
         #endregion
 
-        public Protocol Protocol
+        public virtual Protocol Protocol
         {
             get { return _protocol; }
             set { _protocol = value; }
-        }
-
-        public override string Name
-        {
-            get { return "Protocol"; }
         }
 
         public override bool IsPreStep

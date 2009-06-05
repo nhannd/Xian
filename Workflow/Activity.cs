@@ -86,7 +86,7 @@ namespace ClearCanvas.Workflow
         public virtual ActivityScheduling Scheduling
         {
             get { return _scheduling; }
-            private set { _scheduling = value; }
+            protected set { _scheduling = value; }
         }
 
 
@@ -97,7 +97,7 @@ namespace ClearCanvas.Workflow
         public virtual ActivityPerformer Performer
         {
             get { return _performer; }
-            private set { _performer = value; }
+            protected set { _performer = value; }
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace ClearCanvas.Workflow
         public virtual DateTime? StartTime
         {
             get { return _startTime; }
-            private set { _startTime = value; }
+            protected set { _startTime = value; }
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace ClearCanvas.Workflow
         public virtual DateTime? EndTime
         {
             get { return _endTime; }
-            private set { _endTime = value; }
+            protected set { _endTime = value; }
         }
 
         /// <summary>

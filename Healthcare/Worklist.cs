@@ -242,7 +242,7 @@ namespace ClearCanvas.Healthcare
         public virtual string FullClassName
         {
             get { return this.GetClass().FullName; }
-            private set
+            protected set
             {
                 // do nothing
             }
@@ -305,7 +305,7 @@ namespace ClearCanvas.Healthcare
         public virtual ISet<Staff> StaffSubscribers
         {
             get { return _staffSubscribers; }
-            private set { _staffSubscribers = value; }
+            protected set { _staffSubscribers = value; }
         }
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace ClearCanvas.Healthcare
         public virtual ISet<StaffGroup> GroupSubscribers
         {
             get { return _groupSubscribers; }
-            private set { _groupSubscribers = value; }
+            protected set { _groupSubscribers = value; }
         }
 
         /// <summary>
@@ -323,10 +323,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistProcedureTypeGroupFilter ProcedureTypeGroupFilter
+        public virtual WorklistProcedureTypeGroupFilter ProcedureTypeGroupFilter
         {
             get { return _procedureTypeGroupFilter; }
-            set { _procedureTypeGroupFilter = value; }
+            protected set { _procedureTypeGroupFilter = value; }
         }
 
         /// <summary>
@@ -334,10 +334,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistFacilityFilter FacilityFilter
+        public virtual WorklistFacilityFilter FacilityFilter
         {
             get { return _facilityFilter; }
-            set { _facilityFilter = value; }
+            protected set { _facilityFilter = value; }
         }
 
         /// <summary>
@@ -345,10 +345,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistPatientClassFilter PatientClassFilter
+        public virtual WorklistPatientClassFilter PatientClassFilter
         {
             get { return _patientClassFilter; }
-            set { _patientClassFilter = value; }
+            protected set { _patientClassFilter = value; }
         }
 
         /// <summary>
@@ -356,10 +356,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistPatientLocationFilter PatientLocationFilter
+        public virtual WorklistPatientLocationFilter PatientLocationFilter
         {
             get { return _patientLocationFilter; }
-            set { _patientLocationFilter = value; }
+            protected set { _patientLocationFilter = value; }
         }
 
         /// <summary>
@@ -367,10 +367,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistOrderPriorityFilter OrderPriorityFilter
+        public virtual WorklistOrderPriorityFilter OrderPriorityFilter
         {
             get { return _orderPriorityFilter; }
-            set { _orderPriorityFilter = value; }
+            protected set { _orderPriorityFilter = value; }
         }
 
         /// <summary>
@@ -378,10 +378,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistPractitionerFilter OrderingPractitionerFilter
+        public virtual WorklistPractitionerFilter OrderingPractitionerFilter
         {
             get { return _orderingPractitionerFilter; }
-            set { _orderingPractitionerFilter = value; }
+            protected set { _orderingPractitionerFilter = value; }
         }
 
         /// <summary>
@@ -389,10 +389,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistPortableFilter PortableFilter
+        public virtual WorklistPortableFilter PortableFilter
         {
             get { return _portableFilter; }
-            set { _portableFilter = value; }
+            protected set { _portableFilter = value; }
         }
 
         /// <summary>
@@ -400,10 +400,10 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         [PersistentProperty]
         [EmbeddedValue]
-        public WorklistTimeFilter TimeFilter
+        public virtual WorklistTimeFilter TimeFilter
         {
             get { return _timeFilter; }
-            set { _timeFilter = value; }
+            protected set { _timeFilter = value; }
         }
 
         #endregion

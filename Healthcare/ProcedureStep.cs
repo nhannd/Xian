@@ -156,7 +156,7 @@ namespace ClearCanvas.Healthcare
     	public virtual ProcedureStep LinkStep
     	{
 			get { return _linkStep; }
-			private set { _linkStep = value; }
+			protected set { _linkStep = value; }
     	}
 
 		/// <summary>
