@@ -116,13 +116,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             {
                 IHL7PeerProcessor processor = HL7PeerProcessorMap.GetProcessorForPeer(queueItem.Message.Peer);
 
-                if (null == processor)
-                {
-                    // no process was found that can process the message
-                    // TODO: it will be problematic if queueItem doesn't exist
-                    throw new System.Exception(string.Format("Cold not find processor for peer: {0}", queueItem.Message.Peer));
-                }
-
                 identifiers = processor.ListReferencedPatientIdentifiers();
                 if (identifiers.Count == 0)
                 {
