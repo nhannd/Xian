@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
     /// <summary>
     /// Partition list view panel.
     /// </summary>
-    public partial class PartitionArchiveGridPanel : UserControl
+    public partial class PartitionArchiveGridPanel : GridViewPanel
     {
         #region Private Members
 
@@ -68,14 +69,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
                 _partitions = value;
                 PartitionGridView.DataSource = _partitions;
             }
-        }
-
-        /// <summary>
-        /// Retrieves a reference to the embedded grid.
-        /// </summary>
-        public GridView TheGrid
-        {
-            get { return PartitionGridView; }
         }
 
         /// <summary>
@@ -125,6 +118,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             base.OnInit(e);
 
+            TheGrid = PartitionGridView;
+
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
         }
@@ -154,9 +149,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         public void UpdateUI()
         {
             DataBind();
-            
-            //SearchUpdatePanel.Update(); // force refresh
-            //((Default) Page).UpdateUI();
         }
 
         protected void PartitionGridView_RowDataBound(object sender, GridViewRowEventArgs e)

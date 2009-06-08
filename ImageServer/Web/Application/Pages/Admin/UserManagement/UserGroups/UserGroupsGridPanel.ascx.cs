@@ -32,12 +32,13 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups
 {
-    public partial class UserGroupsGridPanel : System.Web.UI.UserControl
+    public partial class UserGroupsGridPanel : GridViewPanel
     {
         #region Delegates
         public delegate void UserGroupDataSourceCreated(UserGroupDataSource theSource);
@@ -162,6 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             base.OnInit(e);
 
+            TheGrid = UserGroupGrid;
             UserGroupGrid.DataSource = UserGroupDataSourceObject;
         }
 
@@ -211,12 +213,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 DataSourceCreated(_dataSource);
 
         }
-
-		public void Refresh()
-		{
-			UserGroupsGridView.ClearSelections();
-			UserGroupsGridView.PageIndex = 0;
-			UserGroupsGridView.DataBind();
-		}
     }
 }

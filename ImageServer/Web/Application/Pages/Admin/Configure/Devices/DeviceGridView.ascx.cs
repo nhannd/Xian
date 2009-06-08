@@ -34,6 +34,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
     //
     //  Used to display the list of devices.
     //
-    public partial class DeviceGridView : UserControl
+    public partial class DeviceGridView : GridViewPanel
     {
         #region private members
 
@@ -64,14 +65,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         #endregion protected properties
 
         #region public properties
-
-        /// <summary>
-        /// Retrieve reference to the grid control being used to display the devices.
-        /// </summary>
-        public GridView TheGrid
-        {
-            get { return GridView1; }
-        }
 
         /// <summary>
         /// Gets/Sets the current selected device.
@@ -130,6 +123,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            TheGrid = GridView1;
 
             // Set up the grid
             if (Height != Unit.Empty)

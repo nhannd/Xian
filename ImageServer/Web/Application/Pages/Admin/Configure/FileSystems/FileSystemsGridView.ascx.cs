@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
     //
     //  Used to display the list of devices.
     //
-    public partial class FileSystemsGridView : UserControl
+    public partial class FileSystemsGridView : GridViewPanel
     {
         #region private members
 
@@ -56,14 +57,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         #endregion protected properties
 
         #region public properties
-
-        /// <summary>
-        /// Retrieve reference to the grid control being used to display the filesystems.
-        /// </summary>
-        public GridView TheGrid
-        {
-            get { return GridView1; }
-        }
 
         /// <summary>
         /// Gets/Sets the height of the filesystem list panel.
@@ -267,6 +260,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         {
             base.OnInit(e);
 
+            TheGrid = GridView1;
+
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
@@ -351,19 +346,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         #endregion Private Static members
 
-        #region public methods
-
-        /// <summary>
-        /// Binds the list to the control.
-        /// </summary>
-        /// <remarks>
-        /// This method must be called after setting <seeaslo cref="FileSystems"/> to update the grid with the list.
-        /// </remarks>
-        public override void DataBind()
-        {
-            TheGrid.DataBind();
-        }
-
-        #endregion // public methods
     }
 }

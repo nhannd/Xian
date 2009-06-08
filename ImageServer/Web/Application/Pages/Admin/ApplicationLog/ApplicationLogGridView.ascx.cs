@@ -38,7 +38,7 @@ using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 {
-	public partial class ApplicationLogGridView : System.Web.UI.UserControl
+	public partial class ApplicationLogGridView : GridViewPanel
 	{
 		#region Delegates
 		public delegate void ApplicationLogDataSourceCreated(ApplicationLogDataSource theSource);
@@ -156,6 +156,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
             if (_height!=Unit.Empty)
                 ContainerTable.Height = _height;
 
+		    TheGrid = ApplicationLogListControl;
 		    
 		}
 

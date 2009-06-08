@@ -82,12 +82,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                      return UserGridPanel.ResultCount;
                                                  },
                                              ImageServerConstants.GridViewPagerPosition.top);
+            UserGridPanel.Pager = GridPagerTop;
+            GridPagerTop.Reset();
 
             UserGridPanel.DataSourceCreated += delegate(UserDataSource source)
                             {
                                 source.UserName = UserNameTextBox.Text;
                                 source.DisplayName = DisplayNameTextBox.Text;
                             };
+
+            
         }
 
         protected override void OnPreRender(EventArgs e)

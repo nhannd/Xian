@@ -35,6 +35,7 @@ using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
     //
     //  Used to display the list of Archive Queue Items.
     //
-    public partial class AlertsGridPanel : System.Web.UI.UserControl
+    public partial class AlertsGridPanel : GridViewPanel
     {
         #region Delegates
         public delegate void AlertDataSourceCreated(AlertDataSource theSource);
@@ -180,18 +181,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             }
         }
 
-        public void Refresh()
-        {
-            AlertGridView.ClearSelections();
-            AlertGridView.PageIndex = 0;
-            AlertGridView.DataBind();
-        }
-
-        public void RefreshCurrentPage()
-        {
-            AlertGridView.DataBind();
-        }
-
         #endregion
 
         #region protected methods
@@ -213,6 +202,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            TheGrid = AlertGridView;
 
             // Set up the grid
             if (Height != Unit.Empty)

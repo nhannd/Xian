@@ -31,13 +31,14 @@
 
 using System;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
-    public partial class SearchResultGridView : System.Web.UI.UserControl
+    public partial class SearchResultGridView : GridViewPanel
     {
         #region Private Fields
         private DeletedStudyDataSource _dataSource;

@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 			base.OnInit(e);
 
 			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+		    ApplicationLogGridView.Pager = GridPagerTop;
 
 			ApplicationLogGridView.DataSourceCreated += delegate(ApplicationLogDataSource source)
 			                                       	{
@@ -89,9 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 
 		protected void SearchButton_Click(object sender, ImageClickEventArgs e)
 		{
-			ApplicationLogGridView.ApplicationLogListGrid.ClearSelections();
-			ApplicationLogGridView.ApplicationLogListGrid.PageIndex = 0;
-            ApplicationLogGridView.ApplicationLogListGrid.DataBind();
+            ApplicationLogGridView.Refresh();
 		}
 	}
 }

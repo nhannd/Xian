@@ -91,6 +91,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             set { _puralItemName = value; }
         }
 
+        public int ItemCount
+        {
+            get 
+            {
+                if (ViewState[ImageServerConstants.PagerItemCount] != null)
+                {
+                    return Int32.Parse(ViewState[ImageServerConstants.PagerItemCount].ToString());
+                }
+
+                int count = 0;
+                if(GetRecordCountMethod != null)
+                {
+                    count = GetRecordCountMethod();
+                    ViewState[ImageServerConstants.PagerItemCount] = count;
+                }
+
+                return count;
+            }
+            set
+            {
+                ViewState[ImageServerConstants.PagerItemCount] = value;
+            }
+        }
+
         #endregion Public Properties
 
         #region Public Delegates
@@ -128,6 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 {
                     Target.DataBind();    
                 }
+
             }
         }
 
@@ -142,7 +167,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             base.OnInit(e);
 
-            SearchUpdateProgress.AssociatedUpdatePanelID = _targetUpdatePanelID;            
+            SearchUpdateProgress.AssociatedUpdatePanelID = _targetUpdatePanelID;
         }
 
         protected void PageButtonClick(object sender, CommandEventArgs e)
@@ -221,21 +246,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         public void UpdateUI()
         {
             if (_target != null && _target.DataSource != null)
-            {
-                
+            {                
                 CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
 
                 PageCountLabel.Text =
                     string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
-                if (GetRecordCountMethod != null)
-                {
-                    int numRows = GetRecordCountMethod();
-                    ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PluralItemName);
-                } else
-                {
-                    ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
-                }
+                    ItemCountLabel.Text = string.Format("{0} {1}", ItemCount, ItemCount == 1 ? ItemName : PluralItemName);
+
 
                 if (_target.PageIndex > 0)
                 {
@@ -299,7 +317,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             PluralItemName = multipleItemLabel;
             Target = grid;
             GetRecordCountMethod = recordCount;
+            ItemCount = 0;
         }
+
+        public void Reset()
+        {
+            ViewState[ImageServerConstants.PagerItemCount] = null;
+        }
+
+        
 
         #endregion Public methods
     }

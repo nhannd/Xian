@@ -112,6 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                              StudyIntegrityQueueItemList.StudyIntegrityQueueGrid,
                                              delegate{return StudyIntegrityQueueItemList.ResultCount;},
                                              ImageServerConstants.GridViewPagerPosition.top);
+            StudyIntegrityQueueItemList.Pager = GridPagerTop;
 
 			StudyIntegrityQueueItemList.DataSourceCreated += delegate(StudyIntegrityQueueDataSource source)
 										{

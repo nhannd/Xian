@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("StudyListClientID")]
         public string StudyListClientID
         {
-            get { return StudyListGridView.StudyListGrid.ClientID; }
+            get { return StudyListGridView.TheGrid.ClientID; }
         }
 
         [ExtenderControlProperty]
@@ -147,7 +147,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
             
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+            StudyListGridView.Pager = GridPagerTop;
+            GridPagerTop.Reset();
             
             RestoreMessageBox.Confirmed += delegate(object data)
                             {

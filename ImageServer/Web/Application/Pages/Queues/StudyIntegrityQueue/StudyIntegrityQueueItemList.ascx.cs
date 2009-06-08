@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     //
     //  Used to display the list of Restore Queue Items.
     //
-    public partial class StudyIntegrityQueueItemList : System.Web.UI.UserControl
+    public partial class StudyIntegrityQueueItemList : GridViewPanel
     {
         private const string HighlightCssClass = "ConflictField";
 
@@ -185,17 +185,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             base.OnInit(e);
 
+            TheGrid = StudyIntegrityQueueGridView;
+
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            StudyIntegrityQueueGridView.SelectedIndexChanged += StudyIntegrityQueueGridView_SelectedIndexChanged;
+            TheGrid.SelectedIndexChanged += StudyIntegrityQueueGridView_SelectedIndexChanged;
 
             if (IsPostBack || Page.IsAsync)
             {
-                StudyIntegrityQueueGridView.DataSource = StudyIntegrityQueueDataSourceObject;
+                TheGrid.DataSource = StudyIntegrityQueueDataSourceObject;
             } 
 
             
@@ -219,11 +221,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             StudyIntegrityQueueGridView.PageIndex = e.NewPageIndex;
             StudyIntegrityQueueGridView.DataBind();
         }
-
-		protected void DisposeStudyIntegrityQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
-		{
-			e.Cancel = true;
-		}
 
 		protected void GetStudyIntegrityQueueDataSource(object sender, ObjectDataSourceEventArgs e)
 		{
@@ -326,23 +323,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         #endregion
-
-        #region public methods
-
-        public void Refresh()
-        {
-            StudyIntegrityQueueGrid.ClearSelections();
-            StudyIntegrityQueueGrid.PageIndex = 0;
-            StudyIntegrityQueueGrid.DataBind();
-        }
-
-        public void RefreshCurrentPage()
-        {
-            StudyIntegrityQueueGrid.DataBind();
-        }
-
-        #endregion // public methods
-
     }
 
 }

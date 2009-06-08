@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
     //
     //  Used to display the list of studies.
     //
-    public partial class StudyListGridView : System.Web.UI.UserControl
+    public partial class StudyListGridView : GridViewPanel
     {
 		#region Delegates
 		public delegate void StudyDataSourceCreated(StudyDataSource theSource);
@@ -85,15 +85,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				return _dataSource.ResultCount;
 			}
 		}
-
-        /// <summary>
-        /// Retrieve reference to the grid control being used to display the devices.
-        /// </summary>
-        public Web.Common.WebControls.UI.GridView StudyListGrid
-        {
-            get { return StudyListControl; }
-        }
-
 
         public ServerPartition Partition
         {
@@ -188,17 +179,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             base.OnInit(e);
 
+            TheGrid = StudyListControl;
+
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            StudyListControl.SelectedIndexChanged += StudyListControl_SelectedIndexChanged;
+            TheGrid.SelectedIndexChanged += StudyListControl_SelectedIndexChanged;           
 
             if(IsPostBack || Page.IsAsync)
             {
-                StudyListGrid.DataSource = StudyDataSourceObject;    
+                TheGrid.DataSource = StudyDataSourceObject;    
             } 
         }
 
@@ -244,7 +237,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
                 if (message != null)
                 {
-                    if(StudyListGrid.DataSource == null)
+                    if(TheGrid.DataSource == null)
                     {
                         message.Message = "Please enter search criteria to find studies.";    
                     } else
@@ -266,14 +259,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         protected void StudyListControl_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            StudyListControl.PageIndex = e.NewPageIndex;
-            DataBind();
-        }
-
-		protected void DisposeStudyDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
-		{
-			e.Cancel = true;
-		}
+            TheGrid.PageIndex = e.NewPageIndex;
+            StudyListControl.DataBind();
+        }	
 
 		protected void GetStudyDataSource(object sender, ObjectDataSourceEventArgs e)
 		{
@@ -293,19 +281,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				DataSourceCreated(_dataSource);
 
 		}
-
-        public void Refresh()
-        {
-            StudyListGrid.ClearSelections();
-            StudyListGrid.PageIndex = 0;
-            StudyListGrid.DataBind();
-        }
-
-        public void RefreshCurrentPage()
-        {
-            StudyListGrid.DataBind();
-        }
-
 
         #endregion
     }

@@ -119,6 +119,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, delegate { return DeviceGridViewControl1.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            DeviceGridViewControl1.Pager = GridPagerTop;
+            GridPagerTop.Reset();
             
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));

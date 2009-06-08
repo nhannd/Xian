@@ -76,6 +76,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                      return UserGroupsGridPanel.ResultCount;
                                                  },
                                              ImageServerConstants.GridViewPagerPosition.top);
+            UserGroupsGridPanel.Pager = GridPagerTop;
+            GridPagerTop.Reset();
 
             UserGroupsGridPanel.DataSourceCreated += delegate(UserGroupDataSource source)
                             {

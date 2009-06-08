@@ -33,6 +33,7 @@ using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
     //
     //  Used to display the list of services.
     //
-    public partial class ServiceLockGridView : UserControl
+    public partial class ServiceLockGridView : GridViewPanel
     {
         #region private members
         private ServiceLockCollection _services;
@@ -56,15 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
         #region public properties
 
-        /// <summary>
-        /// Retrieve reference to the grid control being used to display the services.
-        /// </summary>
-        public GridView TheGrid
-        {
-            get { return GridView; }
-        }
-
-        /// <summary>
+       /// <summary>
         /// Gets/Sets the current selected service.
         /// </summary>
         public ServiceLock SelectedServiceLock
@@ -146,6 +139,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
+
+            TheGrid = GridView;
         }
 
         protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -255,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         }
 
 
-        public void Refresh()
+        public void RefreshGridPanel()
         {
             UpdatePanel.Update();
         }

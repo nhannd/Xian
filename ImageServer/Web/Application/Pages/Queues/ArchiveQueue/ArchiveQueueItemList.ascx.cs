@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
     //
     //  Used to display the list of Archive Queue Items.
     //
-    public partial class ArchiveQueueItemList : System.Web.UI.UserControl
+    public partial class ArchiveQueueItemList : GridViewPanel
     {
 		#region Delegates
 		public delegate void ArchiveQueueDataSourceCreated(ArchiveQueueDataSource theSource);
@@ -182,6 +182,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         {
             base.OnInit(e);
 
+            TheGrid = ArchiveQueueGridView;
+
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
@@ -192,7 +194,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             if (IsPostBack || Page.IsAsync)
             {
-                ArchiveQueueGridView.DataSource = ArchiveQueueDataSourceObject;
+                TheGrid.DataSource = ArchiveQueueDataSourceObject;
             } 
         }
 
@@ -239,11 +241,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             ArchiveQueueGrid.DataBind();
         }
 
-		protected void DisposeArchiveQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
-		{
-			e.Cancel = true;
-		}
-
 		protected void GetArchiveQueueDataSource(object sender, ObjectDataSourceEventArgs e)
 		{
 			if (_dataSource == null)
@@ -285,18 +282,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         }
         #endregion
 
-
-        public void Refresh()
-        {
-            ArchiveQueueGrid.ClearSelections();
-            ArchiveQueueGrid.PageIndex = 0;
-            ArchiveQueueGridView.DataBind();
-        }
-
-        public void RefreshCurrentPage()
-        {
-            ArchiveQueueGridView.DataBind();
-        }
     }
 
 }

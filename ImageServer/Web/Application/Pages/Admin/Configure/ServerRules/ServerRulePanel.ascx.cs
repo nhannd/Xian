@@ -178,6 +178,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                                              App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
                                              ServerRuleGridViewControl.TheGrid, delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; },
                                              ImageServerConstants.GridViewPagerPosition.top);
+            ServerRuleGridViewControl.Pager = GridPagerTop;
+            GridPagerTop.Reset();
+
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();

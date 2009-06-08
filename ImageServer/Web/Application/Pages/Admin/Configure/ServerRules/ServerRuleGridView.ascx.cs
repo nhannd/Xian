@@ -34,11 +34,12 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
-	public partial class ServerRuleGridView : UserControl
+	public partial class ServerRuleGridView : GridViewPanel
 	{
 		#region private members
 		// list of devices to display
@@ -57,14 +58,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 		{
 			get { return _serverRulePanel; }
 			set { _serverRulePanel = value; }
-		}
-
-		/// <summary>
-		/// Gets a reference to the server rule list grid control
-		/// </summary>
-		public GridView TheGrid
-		{
-			get { return this.GridView; }
 		}
 
 		/// <summary>
@@ -138,6 +131,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			base.OnInit(e);
 			if (Height != Unit.Empty)
 				ContainerTable.Height = _height;
+
+		    TheGrid = this.GridView;
 		}
 
 		protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)

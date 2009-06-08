@@ -7,7 +7,7 @@
 			<asp:ObjectDataSource ID="RestoreQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.RestoreQueueDataSource"
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.RestoreQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetRestoreQueueDataSource"
-				OnObjectDisposing="DisposeRestoreQueueDataSource"/>
+				OnObjectDisposing="DisposeDataSource"/>
 				<ccUI:GridView ID="RestoreQueueGridView" runat="server"
 					OnSelectedIndexChanged="RestoreQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="RestoreQueueGridView_PageIndexChanging"

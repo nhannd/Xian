@@ -10,7 +10,7 @@
 					<asp:ObjectDataSource ID="WorkQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.WorkQueueDataSource"
 						DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.WorkQueueSummary" EnablePaging="true"
 						SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetWorkQueueDataSource"
-						OnObjectDisposing="DisposeWorkQueueDataSource"></asp:ObjectDataSource>
+						OnObjectDisposing="DisposeDataSource"></asp:ObjectDataSource>
 					<ccUI:GridView ID="WorkQueueGridView" runat="server" 
 						OnRowDataBound="WorkQueueListView_RowDataBound"
 						OnPageIndexChanged="WorkQueueListView_PageIndexChanged" 

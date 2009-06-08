@@ -98,6 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServiceSingleItem, App_GlobalResources.SR.GridPagerServiceMultipleItems, ServiceLockGridViewControl.TheGrid, delegate { return ServiceLockGridViewControl.ServiceLocks != null ? ServiceLockGridViewControl.ServiceLocks.Count : 0; }, ImageServerConstants.GridViewPagerPosition.top);
+            ServiceLockGridViewControl.Pager = GridPagerTop;
            
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
@@ -120,7 +121,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
         protected void UpdateListPanel()
         {
-            ServiceLockGridViewControl.Refresh();
+            ServiceLockGridViewControl.RefreshGridPanel();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -279,7 +280,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
             ServiceLockGridViewControl.ServiceLocks = items;
 
-            ServiceLockGridViewControl.DataBind();
+            ServiceLockGridViewControl.Refresh();
         }
 
         /// <summary>

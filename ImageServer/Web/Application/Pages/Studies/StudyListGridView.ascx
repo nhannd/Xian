@@ -7,7 +7,7 @@
 			<asp:ObjectDataSource ID="StudyDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudyDataSource"
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudySummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyDataSource"
-				OnObjectDisposing="DisposeStudyDataSource"/>
+				OnObjectDisposing="DisposeDataSource"/>
 				<ccUI:GridView ID="StudyListControl" runat="server" 
 					OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
 					OnPageIndexChanging="StudyListControl_PageIndexChanging"

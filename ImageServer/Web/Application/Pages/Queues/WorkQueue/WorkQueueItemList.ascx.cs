@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     /// parent control. 
     /// 
     /// </remarks>
-    public partial class WorkQueueItemList : System.Web.UI.UserControl
+    public partial class WorkQueueItemList : GridViewPanel
 	{
 		#region Delegates
 		public delegate void WorkQueueDataSourceCreated(WorkQueueDataSource theSource);
@@ -159,6 +159,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             base.OnInit(e);
 
+            TheGrid = WorkQueueGridView;
+
             if (_height!=Unit.Empty)
                 ListContainerTable.Height = _height;
 
@@ -166,11 +168,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
             }
-        }
 
-        protected void Page_Render()
-        {
-            
+
         }
       
         protected ServerEntityKey SelectedWorkQueueItemKey
@@ -296,22 +295,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 				DataSourceCreated(_dataSource);
     	}
 
-    	protected void DisposeWorkQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
-    	{
-			// Don't dispose the object.
-    		e.Cancel = true;
-		}
 		#endregion Protected Methods
-
-        public void Refresh()
-        {
-            WorkQueueGridView.PageIndex = 0;
-            WorkQueueGridView.DataBind();
-        }
-
-        public void RefreshCurrentPage()
-        {
-            WorkQueueGridView.DataBind();
-        }
     }
 }

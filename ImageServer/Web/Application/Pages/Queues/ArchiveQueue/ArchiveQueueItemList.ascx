@@ -7,7 +7,7 @@
 			<asp:ObjectDataSource ID="ArchiveQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.ArchiveQueueDataSource"
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.ArchiveQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetArchiveQueueDataSource"
-				OnObjectDisposing="DisposeArchiveQueueDataSource"/>
+				OnObjectDisposing="DisposeDataSource"/>
 				<ccUI:GridView ID="ArchiveQueueGridView" runat="server"
 					OnSelectedIndexChanged="ArchiveQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging"

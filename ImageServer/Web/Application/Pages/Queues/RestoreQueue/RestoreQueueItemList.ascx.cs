@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
     //
     //  Used to display the list of Restore Queue Items.
     //
-    public partial class RestoreQueueItemList : System.Web.UI.UserControl
+    public partial class RestoreQueueItemList : GridViewPanel
     {
 		#region Delegates
 		public delegate void RestoreQueueDataSourceCreated(RestoreQueueDataSource theSource);
@@ -213,6 +213,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         {
             base.OnInit(e);
 
+            TheGrid = RestoreQueueGridView;
+
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
@@ -237,7 +239,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
         protected void RestoreQueueGridView_PageIndexChanged(object sender, EventArgs e)
         {
-            DataBind();
+            RestoreQueueGridView.DataBind();
         }
 
         protected void RestoreQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -245,11 +247,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             RestoreQueueGridView.PageIndex = e.NewPageIndex;
             RestoreQueueGridView.DataBind();
         }
-
-		protected void DisposeRestoreQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
-		{
-			e.Cancel = true;
-		}
 
 		protected void GetRestoreQueueDataSource(object sender, ObjectDataSourceEventArgs e)
 		{
@@ -272,18 +269,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         #endregion
 
         #region public methods
-
-        public void Refresh()
-        {
-            RestoreQueueGrid.ClearSelections();
-            RestoreQueueGrid.PageIndex = 0;
-            RestoreQueueGrid.DataBind();
-        }
-
-        public void RefreshCurrentPage()
-        {
-            RestoreQueueGrid.DataBind(); 
-        }
 
         protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
