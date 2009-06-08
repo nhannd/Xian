@@ -1007,7 +1007,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
             }
 
-            return StudyIntegrityValidationModes.Default;
+            return _ValidationModes;
         }
 
         private void ValidateStudyState()
