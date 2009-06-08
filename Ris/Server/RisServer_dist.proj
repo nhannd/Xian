@@ -60,10 +60,6 @@
 		<ModelFiles Include="$(WorkflowDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Workflow.Hibernate.dll" />
 		<ModelFiles Include="$(HealthcareDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.dll" />
 		<ModelFiles Include="$(HealthcareDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Hibernate.dll" />
-		<ModelFiles Include="$(HL7Directory)\bin\$(Configuration)\ClearCanvas.HL7.dll" />
-		<ModelFiles Include="$(HL7Directory)\Hibernate\bin\$(Configuration)\ClearCanvas.HL7.Hibernate.dll" />
-		<ModelFiles Include="$(HL7Directory)\Hapi\bin\$(Configuration)\ClearCanvas.HL7.Hapi.dll" />
-		<ModelFiles Include="$(ReferencedAssembliesDirectory)\NHapi.*" />
 	</ItemGroup>
 	
 	<ItemGroup>

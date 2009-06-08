@@ -198,10 +198,6 @@
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\HL7\ClearCanvas.HL7.csproj">
-      <Project>{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}</Project>
-      <Name>ClearCanvas.HL7</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Workflow\ClearCanvas.Workflow.csproj">
       <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>
       <Name>ClearCanvas.Workflow</Name>
