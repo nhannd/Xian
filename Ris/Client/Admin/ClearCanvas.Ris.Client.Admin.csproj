@@ -48,11 +48,6 @@
     <Compile Include="AuthorityGroupTable.cs" />
     <Compile Include="EnumerationEditorComponent.cs" />
     <Compile Include="EnumerationSummaryComponent.cs" />
-    <Compile Include="HL7QueueItemSummaryTable.cs" />
-    <Compile Include="HL7QueuePatientSearchTool.cs" />
-    <Compile Include="HL7QueuePreviewComponent.cs" />
-    <Compile Include="HL7QueuePreviewTool.cs" />
-    <Compile Include="HL7QueueProcessItemTool.cs" />
     <Compile Include="NoteCategoryTable.cs" />
     <Compile Include="FacilitySummaryComponent.cs" />
     <Compile Include="FacilityEditorComponent.cs" />

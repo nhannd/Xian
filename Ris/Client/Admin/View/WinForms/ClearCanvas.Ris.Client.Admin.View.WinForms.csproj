@@ -79,13 +79,6 @@
       <DependentUpon>DataImportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DataImportComponentView.cs" />
-    <Compile Include="HL7QueuePreviewComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="HL7QueuePreviewComponentControl.Designer.cs">
-      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="HL7QueuePreviewComponentView.cs" />
     <Compile Include="LocationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -259,10 +252,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="DataImportComponentControl.resx">
       <DependentUpon>DataImportComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
-      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationEditorComponentControl.resx">
