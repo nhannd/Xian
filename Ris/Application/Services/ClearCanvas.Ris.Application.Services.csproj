@@ -99,7 +99,6 @@
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
     <Compile Include="FacilityAssembler.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityAdminService.cs" />
-    <Compile Include="Admin\HL7Admin\HL7QueueService.cs" />
     <Compile Include="LocationAssembler.cs" />
     <Compile Include="Admin\LocationAdmin\LocationAdminService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityAdminService.cs" />
@@ -137,7 +136,6 @@
     <Compile Include="WorklistAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
-    <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="ContactPersonAssembler.cs" />
     <Compile Include="PatientNoteCategoryAssembler.cs" />
     <Compile Include="Login\LoginService.cs" />

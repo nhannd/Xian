@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hibernate", "..\..\HL7\Hibernate\ClearCanvas.HL7.Hibernate.csproj", "{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hapi", "..\..\HL7\NHapi\ClearCanvas.HL7.Hapi.csproj", "{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hapi", "..\..\HL7\Hapi\ClearCanvas.HL7.Hapi.csproj", "{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE365C28-1573-42BB-866E-0CA92A3ACE93}"
 	ProjectSection(SolutionItems) = preProject
