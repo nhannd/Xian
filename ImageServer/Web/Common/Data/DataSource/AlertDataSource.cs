@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			AlertSelectCriteria criteria = new AlertSelectCriteria();
 
-			if (Component != null)
+			if (!string.IsNullOrEmpty(Component))
 			{
 				string key = Component;
 				key = key.Replace("*", "%");
