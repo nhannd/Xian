@@ -91,12 +91,6 @@ namespace ClearCanvas.Ris.Application.Common
 		/// </summary>
 		public static class Management
 		{
-			public static class HL7
-			{
-				[AuthorityToken(Description = "Allow access to the HL7 Interface Queue Monitor.")]
-                public const string QueueMonitor = "RIS/Management/HL7/Queue Monitor";
-			}
-
 			[AuthorityToken(Description = "Allow administration of the work queue.")]
             public const string WorkQueue = "RIS/Management/Work Queue";
 		}
