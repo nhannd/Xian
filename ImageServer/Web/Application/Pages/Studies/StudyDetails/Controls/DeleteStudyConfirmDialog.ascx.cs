@@ -249,7 +249,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 																SessionManager.Current.Credentials.DisplayName));
                         	helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
 																	study.StudyInstanceUid, 
-																	study.AccessionNumber));
+																	study.AccessionNumber ?? string.Empty));
                         	ServerPlatform.LogAuditMessage(helper);
                         }
                         catch (Exception ex)
