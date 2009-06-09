@@ -12,6 +12,7 @@
                 <td class="MainContentTitle">Study Details</td><td class="MainContentTitleButtonPanel">
                     <ccUI:ToolbarButton runat="server" ID="EditStudyButton" SkinID="EditButton" OnClick="EditStudyButton_Click" />
                     <ccUI:ToolbarButton runat="server" ID="DeleteStudyButton" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />
+                    <ccUI:ToolbarButton runat="server" ID="ReprocessStudyButton" SkinID="ReprocessButton" OnClick="ReprocessButton_Click" />
                 </td>
             </tr>
             <tr>

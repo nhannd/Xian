@@ -44,6 +44,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     public class StudyDetailsPanelEditStudyClickEventArgs : EventArgs
     { }
 
+    public class StudyDetailsPanelReprocessStudyClickEventArgs : EventArgs
+    { }
+
     /// <summary>
     /// Main panel within the <see cref="Default"/>
     /// </summary>
@@ -53,6 +56,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         private StudySummary _study;
         private EventHandler<StudyDetailsPanelDeleteStudyClickEventArgs> _deleteStudyClickedHandler;
         private EventHandler<StudyDetailsPanelEditStudyClickEventArgs> _editStudyClickedHandler;
+        private EventHandler<StudyDetailsPanelReprocessStudyClickEventArgs> _reprocessStudyClickedHandler;
+       
         #endregion Private Members
 
         #region Public Properties
@@ -78,6 +83,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             add { _editStudyClickedHandler += value; }
             remove { _editStudyClickedHandler -= value; }
+        }
+
+        public event EventHandler<StudyDetailsPanelReprocessStudyClickEventArgs> ReprocessStudyClicked
+        {
+            add { _reprocessStudyClickedHandler += value; }
+            remove { _reprocessStudyClickedHandler -= value; }
         }
         #endregion
 
@@ -125,6 +136,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 if (!EditStudyButton.Enabled)
                     EditStudyButton.ToolTip = reason;
 
+                ReprocessStudyButton.Enabled = Study.CanReprocess(out reason);
+                if (!ReprocessStudyButton.Enabled)
+                    ReprocessStudyButton.ToolTip = reason;
             }
 
             SearchUpdatePanel.Update();// force update
@@ -142,5 +156,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         #endregion Protected Methods
 
+        protected void ReprocessButton_Click(object sender, ImageClickEventArgs e)
+        {
+            EventsHelper.Fire(_reprocessStudyClickedHandler, this, new StudyDetailsPanelReprocessStudyClickEventArgs());
+        }
     }
 }

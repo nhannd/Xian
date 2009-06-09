@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -418,6 +419,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			return studyStorageAdaptor.GetFirst(criteria);
 		}
 
+        public void ReprocessStudy(ServerEntityKey key)
+        {
+            StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
+            StudyStorage storage = adaptor.Get(key);
+            StudyStorageLocation storageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
+            StudyHelper.ReprocessStudy(storageLocation);
+        }
         #endregion
+
+        
     }
 }

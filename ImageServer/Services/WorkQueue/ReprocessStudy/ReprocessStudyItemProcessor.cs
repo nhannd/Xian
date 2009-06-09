@@ -302,13 +302,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                     }, true);
         }
 
-        private void RemoveBadDicomFile(string file, string reason)
-        {
-            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
-            FileUtils.Delete(file);
-            RaiseAlert(AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
-        }
-
         private void CleanupDatabase(Model.WorkQueue item, IUpdateContext context)
         {
             IDeleteStudyStorage broker = context.GetBroker<IDeleteStudyStorage>();

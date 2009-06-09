@@ -368,6 +368,30 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			reason = String.Empty;
 			return true;
 		}
+
+	    public bool CanReprocess(out string reason)
+	    {
+            if (IsLocked)
+            {
+                reason = "Study is being locked";
+                return false;
+            }
+
+            if (IsNearline)
+            {
+                reason = "Study is nearline.";
+                return false;
+            }
+
+            if (IsProcessing)
+            {
+                reason = "Study is being processed.";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+	    }
 	}
 
 	/// <summary>

@@ -80,9 +80,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         {
             StudyDetailsPanel.EditStudyClicked += StudyDetailsPanel_EditStudyClicked;
             StudyDetailsPanel.DeleteStudyClicked += StudyDetailsPanel_DeleteStudyClicked;
+            StudyDetailsPanel.ReprocessStudyClicked += StudyDetailsPanel_ReprocessStudyClicked;
             EditStudyDialog.StudyEdited += EditStudyDialog_StudyEdited;
             DeleteConfirmDialog.Confirmed += DeleteConfirmDialog_Confirmed;
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
+        }
+
+        void StudyDetailsPanel_ReprocessStudyClicked(object sender, StudyDetailsPanelReprocessStudyClickEventArgs e)
+        {
+            ReprocessStudy();
         }
 
         void StudyDetailsPanel_DeleteStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelDeleteStudyClickEventArgs e)
@@ -93,11 +99,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         void StudyDetailsPanel_EditStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelEditStudyClickEventArgs e)
         {
             EditStudy();
-        }
-
-        void DeleteStudyConfirmDialog_StudyDeleting(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialogStudyDeletingEventArgs e)
-        {
-            
         }
 
         void DeleteStudyConfirmDialog_StudyDeleted(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialogStudyDeletedEventArgs e)
@@ -263,6 +264,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                 DeleteStudyConfirmDialog.Show();
                 updatepanel.Update();
             }
+        }
+
+        private void ReprocessStudy()
+        {
+            StudyController controller = new StudyController();
+            controller.ReprocessStudy(StudyDetailsPanel.Study.TheStudyStorage.GetKey());
+            Refresh();
         }
 
 

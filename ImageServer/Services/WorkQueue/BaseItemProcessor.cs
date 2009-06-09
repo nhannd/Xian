@@ -41,6 +41,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -1039,6 +1040,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 WorkQueueItem!=null? WorkQueueItem.WorkQueueTypeEnum.ToString():"WorkQueue",
                 -1, GetWorkQueueContextData(), TimeSpan.Zero, message, arguments);
             
+        }
+
+        protected void RemoveBadDicomFile(string file, string reason)
+        {
+            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
+            FileUtils.Delete(file);
+            RaiseAlert(AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
         }
     }
 }

@@ -278,10 +278,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 }
                 else
                 {
-                    path = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
-                    DicomFile file = new DicomFile(path);
-                    file.Load(DicomReadOptions.StorePixelDataReferences);
-                    ProcessFile(sop, file, studyXml);
+                    try
+                    {
+                        path = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
+                        DicomFile file = new DicomFile(path);
+                        file.Load(DicomReadOptions.StorePixelDataReferences);
+                        ProcessFile(sop, file, studyXml);
+                        
+                    }
+                    catch (DicomException ex)
+                    {
+                        // bad file. Remove it from the filesystem and the queue
+                        RemoveBadDicomFile(path, ex.Message);
+                        DeleteWorkQueueUid(sop);
+                        return false;
+                    }
+                    
                 }
                 
                 // Delete it out of the queue
@@ -297,25 +309,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     item.FailureDescription = String.Format("{0}:{1}", e.GetType().Name, e.Message);
 
                 sop.FailureCount++;
-                if ((sop.FailureCount > WorkQueueSettings.Instance.WorkQueueMaxFailureCount) || sop.Duplicate)
-                {
-                    sop.Failed = true;
-                    if (sop.Extension != null)
-                        for (int i = 1; i < 999; i++)
-                        {
-                            string extension = String.Format("bad{0}.dcm", i);
-                            string newPath = basePath + "." + extension;
-                            if (!File.Exists(newPath))
-                            {
-								if (File.Exists(path))
-								{
-									sop.Extension = extension;
-									File.Move(path, newPath);
-								}
-                            	break;
-                            }
-                        }
-                }
+                //if ((sop.FailureCount > WorkQueueSettings.Instance.WorkQueueMaxFailureCount) || sop.Duplicate)
+                //{
+                //    sop.Failed = true;
+                //    if (sop.Extension != null)
+                //        for (int i = 1; i < 999; i++)
+                //        {
+                //            string extension = String.Format("bad{0}.dcm", i);
+                //            string newPath = basePath + "." + extension;
+                //            if (!File.Exists(newPath))
+                //            {
+                //                if (File.Exists(path))
+                //                {
+                //                    sop.Extension = extension;
+                //                    File.Move(path, newPath);
+                //                }
+                //                break;
+                //            }
+                //        }
+                //}
                 UpdateWorkQueueUid(sop);
                 return false;
                 
@@ -325,7 +337,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 OnProcessUidEnd(item, sop);
             }            
         }
-
         #endregion
 
         #region Protected Methods

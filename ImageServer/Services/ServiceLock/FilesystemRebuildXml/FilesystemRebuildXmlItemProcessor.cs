@@ -37,6 +37,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -203,7 +204,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected error when rebuilding study XML for directory: {0}", location.FilesystemPath);
-				if (!ReprocessStudy(location))
+				if (!StudyHelper.ReprocessStudy(location))
 				{
 					Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}", location.StudyInstanceUid);
 				}
@@ -212,46 +213,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			}
 		}
 
-		/// <summary>
-		/// Create a Study Reprocess entry.
-		/// </summary>
-		/// <param name="location"></param>
-		/// <returns></returns>
-		private bool ReprocessStudy(StudyStorageLocation location)
-		{
-			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-			using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				// Unlock first
-				ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
-				LockStudyParameters lockParms = new LockStudyParameters();
-				lockParms.StudyStorageKey = location.Key;
-				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-				if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-					return false;
-
-				// Now relock
-				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
-				if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-					return false;
-
-				InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
-				columns.ScheduledTime = Platform.Time;
-				columns.ServerPartitionKey = location.ServerPartitionKey;
-				columns.StudyStorageKey = location.Key;
-				columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Low;
-				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-				columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
-				IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
-				if (insertBroker.FindOne(columns) != null)
-				{
-					ctx.Commit();
-					return true;
-				}
-
-				return false;
-			}
-		}
 
 		/// <summary>
 		/// Get the server partition
