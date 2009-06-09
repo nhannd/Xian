@@ -30,13 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -74,8 +70,9 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         /// Verifies the contents of a <see cref="DicomMessageBase"/> against a given <see cref="StudyStorageLocation"/>
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="studyStorage"></param>
         /// <returns></returns>
+        /// <param name="study"></param>
+        /// <param name="partition"></param>
         static public DifferenceCollection Compare(DicomMessageBase message, Study study, ServerPartition partition)
         {
             StudyComparer comparer = new StudyComparer();

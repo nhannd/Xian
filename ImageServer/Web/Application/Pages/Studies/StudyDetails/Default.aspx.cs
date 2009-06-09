@@ -84,11 +84,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             EditStudyDialog.StudyEdited += EditStudyDialog_StudyEdited;
             DeleteConfirmDialog.Confirmed += DeleteConfirmDialog_Confirmed;
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
+            ReprocessConfirmationDialog.Confirmed += ReprocessConfirmationDialog_Confirmed;
+        }
+
+        void ReprocessConfirmationDialog_Confirmed(object data)
+        {
+            ReprocessStudy();
         }
 
         void StudyDetailsPanel_ReprocessStudyClicked(object sender, StudyDetailsPanelReprocessStudyClickEventArgs e)
         {
-            ReprocessStudy();
+            ReprocessConfirmationDialog.Message = String.Format("Are you sure you want to reprocess this study?<BR>All study history will be deleted and all rules will be re-applied.");
+            ReprocessConfirmationDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
+            ReprocessConfirmationDialog.Show();
         }
 
         void StudyDetailsPanel_DeleteStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelDeleteStudyClickEventArgs e)
@@ -269,7 +277,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         private void ReprocessStudy()
         {
             StudyController controller = new StudyController();
-            controller.ReprocessStudy(StudyDetailsPanel.Study.TheStudyStorage.GetKey());
+            controller.ReprocessStudy(_study.TheStudyStorage.GetKey());
             Refresh();
         }
 

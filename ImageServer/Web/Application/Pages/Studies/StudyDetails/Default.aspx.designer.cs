@@ -83,6 +83,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteConfirmDialog;
         
         /// <summary>
+        /// ReprocessConfirmationDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ReprocessConfirmationDialog;
+        
+
+        /// <summary>
         /// DeleteStudyConfirmDialog control.
         /// </summary>
         /// <remarks>
