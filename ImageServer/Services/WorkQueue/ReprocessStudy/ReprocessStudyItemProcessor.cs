@@ -267,21 +267,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                             
                         if (Path.GetExtension(file) == ".dcm")
                         {
-                            DicomFile dcmFile = new DicomFile(file);
-                            dcmFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+                            try
+                            {
+                                DicomFile dcmFile = new DicomFile(file);
+                                dcmFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
 
 
-                            string seriesUid = dcmFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-                            string SopInstanceUid = dcmFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-                            if (_studyInfo[seriesUid]!=null)
-                            {
-                                _studyInfo[seriesUid].AddInstance(SopInstanceUid);
+                                string seriesUid = dcmFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+                                string SopInstanceUid = dcmFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+                                if (_studyInfo[seriesUid] != null)
+                                {
+                                    _studyInfo[seriesUid].AddInstance(SopInstanceUid);
+                                }
+                                else
+                                {
+                                    SeriesInfo series = _studyInfo.AddSeries(seriesUid);
+                                    series.AddInstance(SopInstanceUid);
+                                }
                             }
-                            else
+                            catch (DicomException ex)
                             {
-                                SeriesInfo series = _studyInfo.AddSeries(seriesUid);
-                                series.AddInstance(SopInstanceUid);                            
+                                // bad file, throw it away and issue an alert
+                                Platform.Log(LogLevel.Error, ex, "Error parsing dicom file: {0}", file);
+                                RemoveBadDicomFile(file, ex.Message);
                             }
+                            
                         }
                         else
                         {
@@ -291,7 +301,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
                     }, true);
         }
-        
+
+        private void RemoveBadDicomFile(string file, string reason)
+        {
+            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
+            FileUtils.Delete(file);
+            RaiseAlert(AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
+        }
+
         private void CleanupDatabase(Model.WorkQueue item, IUpdateContext context)
         {
             IDeleteStudyStorage broker = context.GetBroker<IDeleteStudyStorage>();

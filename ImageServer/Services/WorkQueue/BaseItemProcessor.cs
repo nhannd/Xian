@@ -632,7 +632,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				);
 		}
 
-        private WorkQueueAlertContextData GetWorkQueueContextData()
+        protected WorkQueueAlertContextData GetWorkQueueContextData()
         {
             WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
             contextData.WorkQueueItemKey = WorkQueueItem.GetKey().Key.ToString();
@@ -1031,5 +1031,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             
         }
         #endregion
+
+
+        protected void RaiseAlert(AlertLevel level, string message, params object[] arguments)
+        {
+            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, 
+                WorkQueueItem!=null? WorkQueueItem.WorkQueueTypeEnum.ToString():"WorkQueue",
+                -1, GetWorkQueueContextData(), TimeSpan.Zero, message, arguments);
+            
+        }
     }
 }
