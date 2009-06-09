@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						}
 					}
 
-					NormalizeGrayscalePixels(this.Parent, pixelData, ts.Endian);
+					NormalizeGrayscalePixels(this.Parent, pixelData);
 				}
 
 				return pixelData;

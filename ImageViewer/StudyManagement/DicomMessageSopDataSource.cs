@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Imaging;
@@ -106,40 +107,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				lock (SyncLock)
-				{
-					Load();
+			lock (SyncLock)
+			{
+				Load();
 
-					DicomAttribute attribute;
-					if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
-						return attribute;
+				DicomAttribute attribute;
+				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+					return attribute;
 
-					if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
-						return attribute;
+				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+					return attribute;
 
-					return _dummy[tag];
-				}
+				return _dummy[tag];
 			}
+		}
 		}
 
 		public override DicomAttribute this[uint tag]
 		{
 			get
 			{
-				lock (SyncLock)
-				{
-					Load();
+			lock (SyncLock)
+			{
+				Load();
 
-					DicomAttribute attribute;
-					if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
-						return attribute;
+				DicomAttribute attribute;
+				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+					return attribute;
 
-					if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
-						return attribute;
+				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+					return attribute;
 
-					return _dummy[tag];
-				}
+				return _dummy[tag];
 			}
+		}
 		}
 
 		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
@@ -252,7 +253,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (photometricInterpretation.IsColor)
 					rawPixelData = ToArgb(message.DataSet, rawPixelData, photometricInterpretation);
 				else
-					NormalizeGrayscalePixels(message.DataSet, rawPixelData, message.TransferSyntax.Endian);
+					NormalizeGrayscalePixels(message.DataSet, rawPixelData);
 
 				clock.Stop();
 				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
@@ -356,6 +357,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region Unit Test Entry Points
+
+#if UNIT_TESTS
+
+		internal static void TestNormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, Endian endian)
+		{
+			NormalizeGrayscalePixels(dicomAttributeProvider, pixelData, endian);
+		}
+
+#endif
+
+		#endregion
+
 		#region Pixel Data Processing Functions
 
 		/// <summary>
@@ -376,8 +390,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		/// <param name="dicomAttributeProvider">A dataset containing information about the representation of pixels in the <paramref name="pixelData"/>.</param>
 		/// <param name="pixelData">The pixel data buffer to normalize.</param>
-		/// <param name="endian">The endianess of the <paramref name="pixelData"/> when encoded in 16-bit words. This parameter is ignored when 8-bit encoding is used.</param>
-		protected internal static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, Endian endian)
+		protected static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData)
+		{
+			NormalizeGrayscalePixels(dicomAttributeProvider, pixelData, ByteBuffer.LocalMachineEndian);
+		}
+
+		/// <summary>
+		/// Do not call this method directly.
+		/// This method should only be called by a unit test entry point or <see cref="NormalizeGrayscalePixels(IDicomAttributeProvider,byte[])"/>.
+		/// </summary>
+		private static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, Endian endian)
 		{
 			if (dicomAttributeProvider[DicomTags.BitsAllocated].IsEmpty)
 				throw new ArgumentNullException("dicomAttributeProvider", "BitsAllocated must not be empty.");

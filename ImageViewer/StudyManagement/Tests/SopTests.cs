@@ -336,7 +336,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 			byte[] output = new byte[input.Length];
 			input.CopyTo(output, 0);
-			DicomMessageSopDataSource.NormalizeGrayscalePixels(coll, output, bigEndian ? Endian.Big : Endian.Little);
+			DicomMessageSopDataSource.TestNormalizeGrayscalePixels(coll, output, bigEndian ? Endian.Big : Endian.Little);
 			AssertArrayEquals(expected, output, string.Format("{0} Stored, {1} Allocated, High={2}, BigEndian={3}", bitsStored, bitsAllocated, highBit, bigEndian));
 		}
 
