@@ -81,7 +81,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                 // delete the device and reload the affected partition.
 
                                                 UserGroupRowData userGroup = data as UserGroupRowData;
-                                                _controller.DeleteUserGroup(userGroup);
+                                                try
+                                                {
+                                                    _controller.DeleteUserGroup(userGroup);
+                                                } catch(Exception ex)
+                                                {
+                                                    DeleteErrorMessage.Message =
+                                                        string.Format("Unable to Delete User Group \"{0}\" because there are users who are a part of this group.", userGroup.Name);
+                                                    DeleteErrorMessage.MessageStyle = "color: red; font-weight: bold";
+                                                    DeleteErrorMessage.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                                                    DeleteErrorMessage.Show();
+                                                }
                                                 UserGroupsPanel.UpdateUI();
                                             };
 
