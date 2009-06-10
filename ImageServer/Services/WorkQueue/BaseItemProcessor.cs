@@ -1069,7 +1069,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             // the server will retry this work queue entry, fail and try auto-recovery again.
             if (DeleteWorkQueueEntry(item))
             {
-                Model.WorkQueue reprocessEntry = StudyHelper.ReprocessStudy(StorageLocation);
+                Model.WorkQueue reprocessEntry = StudyHelper.ReprocessStudy(StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
                 String message =String.Format("{0} failed. Auto-recovery has been triggered. Reprocess Study entry GUID={1}", 
                         item.WorkQueueTypeEnum, reprocessEntry.GetKey().Key);
 

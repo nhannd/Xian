@@ -424,7 +424,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
             StudyStorage storage = adaptor.Get(key);
             StudyStorageLocation storageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
-            StudyHelper.ReprocessStudy(storageLocation);
+            StudyHelper.ReprocessStudy(storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
         }
         #endregion
 

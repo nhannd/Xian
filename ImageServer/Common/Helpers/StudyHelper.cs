@@ -84,8 +84,10 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         /// Creates a Study Reprocess entry and locks the study in <see cref="QueueStudyStateEnum.ReprocessScheduled"/> state.
         /// </summary>
         /// <param name="location"></param>
+        /// <param name="scheduleTime"></param>
+        /// <param name="priority"></param>
         /// <returns></returns>
-        static public WorkQueue ReprocessStudy(StudyStorageLocation location)
+        static public WorkQueue ReprocessStudy(StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
         {
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             
@@ -107,12 +109,12 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                     return null;
 
                 InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
-                columns.ScheduledTime = Platform.Time;
+                columns.ScheduledTime = scheduleTime;
                 columns.ServerPartitionKey = location.ServerPartitionKey;
                 columns.StudyStorageKey = location.Key;
-                columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Low;
+                columns.WorkQueuePriorityEnum = priority;
                 columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-                columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
+                columns.ExpirationTime = scheduleTime.Add(TimeSpan.FromMinutes(5));
                 IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
                 WorkQueue reprocessEntry = insertBroker.FindOne(columns);
                 if (reprocessEntry != null)
@@ -122,12 +124,12 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                     if (study != null)
                     {
                         Platform.Log(LogLevel.Info,
-                                     "Scheduled Study Reprocess. Study {0}, A#: {1}, Patient: {2}, ID={3}",
+                                     "Study Reprocess Scheduled for Study {0}, A#: {1}, Patient: {2}, ID={3}",
                                      study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId);
                     }
                     else
                     {
-                        Platform.Log(LogLevel.Info, "Scheduled Study Reprocess. Study {1}.",  location.StudyInstanceUid);
+                        Platform.Log(LogLevel.Info, "tudy Reprocess Scheduled for Study {1}.", location.StudyInstanceUid);
                         
                     }
                 }
