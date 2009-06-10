@@ -46,10 +46,10 @@
                             </tr>
                             <tr>
                                 <td>
+                                    <div class="DeleteStudiesTableContainer">
                                     <asp:Repeater runat="server" ID="StudyListing">
                                         <HeaderTemplate>
-                                            <table  cellspacing="0" width="100%" class="GlobalGridView"
-                                                style="border: solid 1px #3d98d1;">
+                                            <table  cellspacing="0" width="100%" class="DeleteStudiesConfirmTable">
                                                 <tr>
                                                     <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                         Patient's Name</th>
@@ -91,6 +91,7 @@
                                             </table>
                                         </FooterTemplate>
                                     </asp:Repeater>
+                                    </div>
                                 </td>
                             </tr>
                         </table>

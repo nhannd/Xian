@@ -173,6 +173,21 @@
 	padding-left:0px;
 }
 
+div.DeleteStudiesTableContainer {
+	border: 1px solid #999999;
+	margin-top: 5px;
+	width: 800px;
+	height: 200px;
+	overflow: auto;
+}
+
+.DeleteStudiesConfirmTable
+{
+    color: Black;
+    font-size: 12px;
+    width: 100%;
+}
+
 .ReasonForDeletionDropDownPanel
 {
 	border-right: gainsboro 1px solid;
