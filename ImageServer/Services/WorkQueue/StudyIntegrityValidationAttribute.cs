@@ -3,12 +3,6 @@ using ClearCanvas.ImageServer.Core.Validation;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
-    public enum RecoveryModes
-    {
-        Manual,
-        Automatic
-    }
-
     /// <summary>
     /// Attribute to specify what type of validation must be made when a work queue entry is processed.
     /// </summary>
