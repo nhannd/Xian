@@ -51,7 +51,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 StringUtilities.Combine(columns, "", delegate(Column c) { return c.Name; }));
 
             CollectionUtils.ForEach(columns,
-                delegate(Column c) { table.GetIndex(indexName).AddColumn(c); });
+                delegate(Column c) { table.GetOrCreateIndex(indexName).AddColumn(c); });
         }
     }
 }
