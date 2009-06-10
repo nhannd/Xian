@@ -36,6 +36,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             _theGrid.DataBind();
         }
 
+        public void RefreshWithoutPagerUpdate()
+        {
+            _theGrid.ClearSelections();
+            _theGrid.PageIndex = 0;
+            _theGrid.DataBind();
+        }
+
         public void RefreshAndKeepSelections()
         {
             if (_gridPager != null) _gridPager.Reset();

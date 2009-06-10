@@ -241,9 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         public void UpdateUI()
         {
             LoadData();
-            ServerPartitionGridPanel.UpdateUI();
-
-            SearchUpdatePanel.Update();
+            ServerPartitionGridPanel.Refresh();
         }
 
         #endregion Public methods

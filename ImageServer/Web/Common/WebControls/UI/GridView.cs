@@ -241,6 +241,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", stateValue);
             Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowDataKeys", selectedDataKeys);
+
+            ClearSelections();
         }
 
         protected virtual void LoadState()
@@ -382,28 +384,38 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             {
                 if (row.RowType==DataControlRowType.DataRow)
                 {
-                    
-                    if (_selectedRows.ContainsKey(row.RowIndex))
+                    if (SelectUsingDataKeys)
                     {
-                        row.RowState = DataControlRowState.Selected;
-                        row.Attributes["selected"] = "true";
-
+                        if (DataKeys != null && DataKeys.Count <= Rows.Count)
+                        {
+                            if (row.RowIndex < DataKeys.Count)
+                            {
+                                row.Attributes["dataKey"] = DataKeys[row.RowIndex].Value.ToString();
+                                if (_selectedDataKeys.ContainsKey(row.Attributes["dataKey"]))
+                                    row.Attributes["selected"] = "true";
+                                else
+                                {
+                                    row.Attributes["selected"] = "false";
+                                }
+                            }
+                            else row.Attributes["dataKey"] = "Data Key Does not exist for row with index" + row.RowIndex;
+                        }
                     }
                     else
                     {
-                        row.Attributes["selected"] = "false";
+                        if (_selectedRows.ContainsKey(row.RowIndex))
+                        {
+                            row.RowState = DataControlRowState.Selected;
+                            row.Attributes["selected"] = "true";
+                        }
+                        else
+                        {
+                            row.Attributes["selected"] = "false";
+                        }
                     }
                 }
 
-                if (SelectUsingDataKeys)
-                {
-                    if (DataKeys != null && DataKeys.Count <= Rows.Count)
-                    {
-                        if (row.RowIndex < DataKeys.Count)
-                            row.Attributes["dataKey"] = DataKeys[row.RowIndex].Value.ToString();
-                        else row.Attributes["dataKey"] = "Data Key Does not exist for row with index" + row.RowIndex;
-                    }
-                }
+
             }
             base.Render(writer);
         }
@@ -425,6 +437,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             Rows[rowIndex].Attributes["selected"] = "true";
              
             _selectedRows[rowIndex] = true;
+        }
+
+        public void Refresh()
+        {
+            ClearSelections();
+            DataBind();
         }
 
         protected override void OnInit(EventArgs e)
@@ -485,17 +503,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             base.OnDataBound(e);
 
             IsDataBound = true;
-        }
-
-        public void PageIndexChangedHandler(object sender, EventArgs e)
-        {
-            DataBind();
-        }
-
-        public void PageIndexChangingHandler(object sender, GridViewPageEventArgs e)
-        {
-            PageIndex = e.NewPageIndex;
-            DataBind();
         }
         
         #endregion Protected Methods

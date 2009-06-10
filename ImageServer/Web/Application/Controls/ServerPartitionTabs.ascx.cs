@@ -81,6 +81,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             Update(true);
         }
 
+        public ServerEntityKey GetCurrentPartitionKey()
+        {
+            ServerPartition partition = GetCurrentPartition();
+
+            return partition != null ? partition.Key : null;
+        }
+
+        public ServerPartition GetCurrentPartition()
+        {
+            if (_partitionList == null || _partitionList.Count == 0)
+                return null;
+
+            ServerPartition partition = _partitionList[PartitionTabContainer.ActiveTabIndex];
+
+            return partition;
+        }
+
+        public Control GetUserControlForCurrentPartition()
+        {
+            return GetUserControlForPartition(GetCurrentPartitionKey());
+        }
+
         public Control GetUserControlForPartition(ServerEntityKey key)
         {
             if (_mapPanel.ContainsKey(key))
@@ -111,7 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
                 if (tabDelegate != null)
                 {
-                    // create a device panel
+                    // create a panel for the control 
                     UserControl panel = tabDelegate(part);
 
                     // wrap an updatepanel around the tab
@@ -178,7 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             if (_partitionList == null || _partitionList.Count == 0)
                 return;
 
-            ServerPartition partition = _partitionList[0];
+            ServerPartition partition = _partitionList[tabIndex];
 
             Update(partition.GetKey());
         }

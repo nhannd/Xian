@@ -283,13 +283,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
-            DataBind();
+            Refresh();
         }
 
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             GridView1.PageIndex = e.NewPageIndex;
-            DataBind();
+            Refresh();
         }
 
         #endregion

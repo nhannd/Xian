@@ -346,7 +346,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void RefreshTimer_Tick(object sender, EventArgs e)
         {
-            ServerPartitionTabs.Update(true);
+            //ServerPartitionTabs.Update(true);
+            UpdatePanel updatePanel = ServerPartitionTabs.GetUserControlForCurrentPartition() as UpdatePanel;
+            
+            if(updatePanel != null)
+            {
+                ServerPartition partition = ServerPartitionTabs.GetCurrentPartition();
+                SearchPanel searchPanel = updatePanel.FindControl("SearchPanel_" + partition.AeTitle) as SearchPanel;
+                if (searchPanel != null) searchPanel.Refresh();
+            }
         }
 
         protected void OnResetWorkQueueError(object sender, WorkQueueItemResetErrorEventArgs e)

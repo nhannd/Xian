@@ -13,9 +13,7 @@
 						OnObjectDisposing="DisposeDataSource"></asp:ObjectDataSource>
 					<ccUI:GridView ID="WorkQueueGridView" runat="server" 
 						OnRowDataBound="WorkQueueListView_RowDataBound"
-						OnPageIndexChanged="WorkQueueListView_PageIndexChanged" 
 						OnDataBound="WorkQueueListView_DataBound"
-						OnSelectedIndexChanged="WorkQueueListView_SelectedIndexChanged"
 						DataKeyNames="Key" SelectUsingDataKeys="true">
 						<Columns>
 						<asp:BoundField HeaderText="Patient ID" DataField="PatientId" HeaderStyle-HorizontalAlign="Left" HeaderStyle-Wrap="false" ItemStyle-Wrap="false"/>

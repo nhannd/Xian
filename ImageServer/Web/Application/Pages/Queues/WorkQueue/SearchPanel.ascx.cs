@@ -281,10 +281,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         }
 
-        public override void DataBind()
+        public void Refresh()
         {
-            base.DataBind();
-            SearchUpdatePanel.Update();
+            workQueueItemList.RefreshCurrentPage();
         }
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
@@ -326,7 +325,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         private bool SelectedItemExists()
         {
             if (workQueueItemList.SelectedDataKey == null)
-				DataBind();
+				workQueueItemList.RefreshWithoutPagerUpdate();
 
             if (workQueueItemList.SelectedDataKey == null)
             {

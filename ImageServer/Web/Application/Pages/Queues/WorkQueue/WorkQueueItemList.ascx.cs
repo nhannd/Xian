@@ -255,11 +255,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             row.Attributes["canreprocess"] = WorkQueueController.CanReprocess(item.TheWorkQueueItem).ToString().ToLower();
         }
 
-        protected void WorkQueueListView_PageIndexChanged(object sender, EventArgs e)
-        {
-            WorkQueueGridView.DataBind();
-        }
-
         protected void WorkQueueListView_DataBound(object sender, EventArgs e)
         {
             // reselect the row based on the new order
@@ -267,14 +262,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 WorkQueueGridView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueGridView);
             }
-        }
-
-        protected void WorkQueueListView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (WorkQueueGridView.SelectedDataKey!=null)
-                SelectedWorkQueueItemKey = WorkQueueGridView.SelectedDataKey.Value as ServerEntityKey;
-
-            WorkQueueGridView.DataBind();
         }
 
     	protected void GetWorkQueueDataSource(object sender, ObjectDataSourceEventArgs e)

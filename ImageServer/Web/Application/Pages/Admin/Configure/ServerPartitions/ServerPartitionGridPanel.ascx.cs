@@ -121,11 +121,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            UpdateUI();
-        }
-
 		protected override void OnPreRender(EventArgs e)
 		{
 			foreach (GridViewRow row in TheGrid.Rows)
@@ -206,9 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
         public void UpdateUI()
         {
-            DataBind();
-
-            //  UpdatePanel1.Update(); // force refresh
+            Refresh();
         }
 
         #endregion Public methods

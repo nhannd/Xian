@@ -43,8 +43,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             this._loadClientState();
             
             if (this.get_element().rows!=null)
-            {
-            
+            {            
                 // add click and double-click handlers on each row
                 for(i = 0; i < this.get_element().rows.length; i++)
                 {
@@ -96,8 +95,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 var selectedRows = new Array();                
                 for(var i=0; i<rows.length; i++)
                 {
-                    if (rows[i].getAttribute('isdatarow')=='true' && rows[i].getAttribute('selected')=='true')
+                    if (rows[i].getAttribute('isdatarow')=='true' && rows[i].getAttribute('selected')=='true') {
                         selectedRows[selectedRows.length]=rows[i];
+                    }
                 }
                 
                 return selectedRows;
@@ -300,8 +300,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         //
         ////////////////////////////////////////////////////////////////////////////////////////////
         _selectRow : function (row)
-        {
-       
+        {       
             if (this.get_element() && !this.get_element().disabled ) 
             {
                 if (this._SelectionMode=='Multiple')
@@ -322,7 +321,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         },
         
         _unselectRow : function (row)
-        {
+        {            
             if (this.get_element() && !this.get_element().disabled ) 
             {
                 var rowIndex = parseInt(row.getAttribute('rowIndex'));
@@ -344,6 +343,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         },
                 
         _loadClientState : function(value) {
+                
             var selectedKeysField = this.get_selectedKeysStateField();
             
             if(selectedKeysField != null && selectedKeysField.value != "" && selectedKeysField.value != 'undefined') {
@@ -352,11 +352,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 var rows = this.get_element().rows;
                                               
                 if (rows!=undefined && rows!=null)
-                {
+                {                
                     for(var i=0; i<rows.length; i++)
                     {
-                        if (rows[i].getAttribute('isdatarow')=='true' && this._containsDataKey(rows[i].getAttribute('dataKey')))
-                            this._selectRow(rows[i]);                            
+                        if (rows[i].getAttribute('isdatarow')=='true') {
+                            if(this._containsDataKey(rows[i].getAttribute('dataKey'))) this._selectRow(rows[i]);                       
+                        }
                     }
                 }                
             }
@@ -379,7 +380,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         /// store the selection in a hidden client state field
         ///
         _saveClientState : function() 
-        {
+        {       
             var stateField =  this.get_clientStateField();
             var selectedKeysField = this.get_selectedKeysStateField();
             
@@ -399,8 +400,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                     for(i=0;i <rows.length; i++)
                     {
                         selectedRowIndices[selectedRowIndices.length] = rows[i].getAttribute('rowIndex');
-                        if(this._SelectUsingDataKeys)
+                        if(this._SelectUsingDataKeys) {
                             selectedRowDataKeys[selectedRowDataKeys.length] = rows[i].getAttribute('dataKey');
+                        }
                     }
                     stateField.value = Sys.Serialization.JavaScriptSerializer.serialize(selectedRowIndices);
                     

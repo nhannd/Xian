@@ -321,13 +321,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
-            TheGrid.DataBind();
+            Refresh();
         }
 
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             GridView1.PageIndex = e.NewPageIndex;
-            TheGrid.DataBind();
+            Refresh();
         }
 
         #region Private Static members

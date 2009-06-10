@@ -154,24 +154,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         #endregion
-
-        #region Events
-        /// <summary>
-        /// Defines the handler for <seealso cref="OnStudySelectionChanged"/> event.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="selectedStudies"></param>
-        public delegate void StudySelectedEventHandler(object sender, IList<StudySummary> selectedStudies);
-
-        /// <summary>
-        /// Occurs when the selected device in the list is changed.
-        /// </summary>
-        /// <remarks>
-        /// The selected device can change programmatically or by users selecting the device in the list.
-        /// </remarks>
-        public event StudySelectedEventHandler OnStudySelectionChanged;
-
-        #endregion // Events
         
         #region protected methods
      
@@ -184,10 +166,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
-
-            // The embeded grid control will show pager control if "allow paging" is set to true
-            // We want to use our own pager control instead so let's hide it.
-            TheGrid.SelectedIndexChanged += StudyListControl_SelectedIndexChanged;           
 
             if(IsPostBack || Page.IsAsync)
             {
@@ -248,20 +226,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 
             }
         }
-
-        protected void StudyListControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            IList<StudySummary> studies = SelectedStudies;
-            if (studies != null)
-                if (OnStudySelectionChanged != null)
-                    OnStudySelectionChanged(this, studies);            
-        }
-
-        protected void StudyListControl_PageIndexChanging(object sender, GridViewPageEventArgs e)
-        {
-            TheGrid.PageIndex = e.NewPageIndex;
-            StudyListControl.DataBind();
-        }	
 
 		protected void GetStudyDataSource(object sender, ObjectDataSourceEventArgs e)
 		{

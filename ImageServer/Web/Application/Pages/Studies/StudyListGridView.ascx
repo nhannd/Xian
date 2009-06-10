@@ -9,8 +9,6 @@
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyDataSource"
 				OnObjectDisposing="DisposeDataSource"/>
 				<ccUI:GridView ID="StudyListControl" runat="server" 
-					OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
-					OnPageIndexChanging="StudyListControl_PageIndexChanging"
 					OnRowDataBound="GridView_RowDataBound"
 					SelectionMode="Multiple">
 					<Columns>

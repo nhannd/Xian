@@ -258,7 +258,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
-        {           
+        {
             Refresh();
         }
         

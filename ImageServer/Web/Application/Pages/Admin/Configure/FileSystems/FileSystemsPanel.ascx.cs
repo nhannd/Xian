@@ -138,14 +138,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             TiersDropDownList.SelectedIndex = prevSelectIndex;
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            // This make sure we have the list to work with. 
-            // the list may be out-dated if the add/update event is fired later
-            // In those cases, the list must be refreshed again.
-            LoadFileSystems();
-        }
-
         #endregion Protected methods
 
         /// <summary>
@@ -176,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
                 criteria.FilesystemTierEnum.EqualTo(Tiers[TiersDropDownList.SelectedIndex - 1]);
 
             FileSystemsGridView1.FileSystems = _theController.GetFileSystems(criteria);
-            FileSystemsGridView1.DataBind();
+            FileSystemsGridView1.Refresh();
         }
 
         /// <summary>

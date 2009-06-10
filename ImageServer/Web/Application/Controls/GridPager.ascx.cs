@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     break;
             }
 
-            Target.DataBind();
+            Target.Refresh();
         }
 
         private int AdjustCurrentPageForDisplay(int page)
