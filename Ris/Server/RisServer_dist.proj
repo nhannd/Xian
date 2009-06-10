@@ -33,10 +33,6 @@
 		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 	</PropertyGroup>
 	
-	<ItemGroup>
-		<ConfigFiles Include="$(HealthcareDirectory)\Hibernate\hibernate.cfg.xml" />
-	</ItemGroup>
-	
   <ItemGroup>
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
@@ -80,6 +76,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AppConfigSourceFiles Include="$(HealthcareDirectory)\Hibernate\app.config" />
     <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
     <AppConfigSourceFiles Include="$(SolutionDir)\Executable\app.config" />
   </ItemGroup>

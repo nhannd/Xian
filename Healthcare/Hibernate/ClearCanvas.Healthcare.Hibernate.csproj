@@ -223,9 +223,6 @@
     <EmbeddedResource Include="Mappings\PatientNote.hbm.xml" />
     <EmbeddedResource Include="Mappings\RadiologistAdminWorklists.hbm.xml" />
     <EmbeddedResource Include="Brokers\PatientHistoryBroker.hbm.xml" />
-    <EmbeddedResource Include="hibernate.cfg.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="Mappings\DicomSeries.hbm.xml" />
     <EmbeddedResource Include="Mappings\ImageAvailabilityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\TranscriptionWorklists.hbm.xml" />
@@ -235,6 +232,9 @@
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\PatientNoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

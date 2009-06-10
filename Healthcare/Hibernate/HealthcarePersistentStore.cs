@@ -41,9 +41,5 @@ namespace ClearCanvas.Healthcare.Hibernate
 	[ExtensionOf(typeof(PersistentStoreExtensionPoint))]
 	public class HealthcarePersistentStore : PersistentStore
 	{
-		protected override string ConfigFileLocation
-		{
-			get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"hibernate.cfg.xml"); }
-		}
 	}
 }

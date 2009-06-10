@@ -70,8 +70,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             // create the hibernate configuration
             _cfg = new NHibernate.Cfg.Configuration();
 
-            // this will automatically read from the hibernate.xml.cfg file
-            _cfg.Configure(ConfigFileLocation);
+            // this will automatically read from the app.config
+            _cfg.Configure();
 
             Platform.Log(LogLevel.Debug, "NHibernate connection string: {0}", _cfg.Properties["connection.connection_string"]);
 
@@ -80,16 +80,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 			// TODO: we should only scan plugins that are tied to this PersistentStore, but there is currently no way to know this
 			AssembliesHbmOrderer orderer = new AssembliesHbmOrderer(Platform.PluginManager.Plugins);
             orderer.AddToConfiguration(_cfg);
- 
-            // if a second-level cache has been specified
-            if (_cfg.Properties.ContainsKey("hibernate.cache.provider_class"))
-            {
-                Platform.Log(LogLevel.Info, "NHibernate 2nd-level cache: {0}", _cfg.Properties["hibernate.cache.provider_class"]);
 
-                // setup default caching strategies for all classes/collections that don't have one explicitly
-                // specified in the mapping files
-                CreateDefaultCacheStrategies();
-            }
+            // setup default caching strategies for all classes/collections that don't have one explicitly
+            // specified in the mapping files
+            CreateDefaultCacheStrategies();
 
             // create the session factory
             _sessionFactory = _cfg.BuildSessionFactory();
@@ -133,8 +127,6 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             get { return _sessionFactory.GetAllClassMetadata(); }
         }
-
-		protected abstract string ConfigFileLocation { get; }
 
         /// <summary>
         /// Rather than explicitly specifying a cache-strategy in every class/collection mapping,
