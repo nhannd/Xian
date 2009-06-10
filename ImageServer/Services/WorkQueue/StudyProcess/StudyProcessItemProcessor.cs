@@ -42,6 +42,7 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Reconcile;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -51,6 +52,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery= RecoveryModes.Manual)]
     public class StudyProcessItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Private Members

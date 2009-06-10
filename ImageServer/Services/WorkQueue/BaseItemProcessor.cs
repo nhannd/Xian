@@ -32,6 +32,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -40,13 +42,14 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -111,7 +114,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public abstract class BaseItemProcessor: IWorkQueueItemProcessor
     {
         #region Static Fields
-        private static readonly Dictionary<Type, StudyIntegrityValidationModes> _classValidationSettings = new Dictionary<Type, StudyIntegrityValidationModes>();
+        private static readonly Dictionary<Type, StudyIntegrityValidationModes> _processorsValidationSettings = new Dictionary<Type, StudyIntegrityValidationModes>();
+        private static readonly Dictionary<Type, RecoveryModes> _processorsRecoverySettings = new Dictionary<Type, RecoveryModes>();
+        
         #endregion
 
         #region Private Fields
@@ -590,7 +595,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ExpirationTime = Platform.Time; // expire now		
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, Name, AlertTypeCodes.UnableToProcess,
-                                                GetWorkQueueContextData(), TimeSpan.Zero,
+                                                GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero,
                                                "Failing {0} WorkQueue entry ({1}), fatal error: {2}",
                                                item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription);
 							}
@@ -605,7 +610,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                               GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                               GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
 							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, item.FailureDescription);
 							}
 							else
@@ -633,25 +638,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				);
 		}
 
-        protected WorkQueueAlertContextData GetWorkQueueContextData()
-        {
-            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-            contextData.WorkQueueItemKey = WorkQueueItem.GetKey().Key.ToString();
-
-            if (StorageLocation != null && StorageLocation.Study != null)
-            {
-                contextData.StudyInfo = new StudyInfo();
-                contextData.StudyInfo.AccessionNumber = StorageLocation.Study.AccessionNumber;
-                contextData.StudyInfo.PatientsId = StorageLocation.Study.PatientId;
-                contextData.StudyInfo.PatientsName = StorageLocation.Study.PatientsName;
-                contextData.StudyInfo.ServerAE = StorageLocation.ServerPartition.AeTitle;
-                contextData.StudyInfo.StudyInstaneUid = StorageLocation.StudyInstanceUid;
-                contextData.StudyInfo.StudyDate = StorageLocation.Study.StudyDate;
-            }
-
-            return contextData;
-        }
-
+        
 
         /// <summary>
         /// Simple routine for failing a work queue item.
@@ -686,7 +673,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
                                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                                GetWorkQueueContextData(), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                                GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
                                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
                             }
                             else
@@ -984,26 +971,196 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         item.FailureDescription = ex.Message;
                         PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
 
+                        OnStudyIntegrityFailure(WorkQueueItem, ex.Message);
                     }
                     
                 }
             }
         }
 
+        protected void OnStudyIntegrityFailure(Model.WorkQueue item, string reason)
+        {
+            Platform.CheckMemberIsSet(Study, "Study"); 
+
+            RecoveryModes mode = GetProcessorRecoveryMode();
+            switch (mode)
+            {
+                case RecoveryModes.Automatic: PerformAutoRecovery(item, reason);
+                    break;
+            }
+            
+        }
+
+
+        protected static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
+        {
+            Platform.CheckForNullReference(item, "item");
+
+            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
+            contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+
+            StudyStorage storage = StudyStorage.Load(ExecutionContext.Current.PersistenceContext, item.StudyStorageKey);
+            IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
+
+            if (locations != null && locations.Count > 0)
+            {
+                StudyStorageLocation location = locations[0];
+                if (location != null)
+                {
+                    contextData.StudyInfo = new StudyInfo();
+                    contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+
+                    // study info is not always available (eg, when all images failed to process)
+                    if (location.Study != null)
+                    {
+                        contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
+                        contextData.StudyInfo.PatientsId = location.Study.PatientId;
+                        contextData.StudyInfo.PatientsName = location.Study.PatientsName;
+                        contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
+                        contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                    }
+                }
+
+            }
+
+            return contextData;
+        }
+
+
+        protected static void RaiseAlert(Model.WorkQueue item, AlertLevel level, string message, params object[] arguments)
+        {
+            WorkQueueAlertContextData alertContextData = GetWorkQueueContextData(item);
+            StringBuilder alertMessage = new StringBuilder();
+            if (alertContextData.StudyInfo != null)
+            {
+                alertMessage.AppendLine(String.Format("Study: {0}", alertContextData.StudyInfo.StudyInstaneUid));
+                alertMessage.AppendLine(String.Format("A #: {0}", alertContextData.StudyInfo.AccessionNumber ?? "N/A"));
+                alertMessage.AppendLine(String.Format("Patient: {0} , ID: {1}", alertContextData.StudyInfo.PatientsName ?? "N/A", alertContextData.StudyInfo.PatientsId ?? "N/A"));
+
+            }
+            else
+            {
+                alertMessage.AppendLine("Study: Unknown");
+            }
+
+            alertMessage.AppendLine(String.Format(message, arguments));
+
+
+            ServerPlatform.Alert(AlertCategory.Application, level,
+                item != null ? item.WorkQueueTypeEnum.ToString() : "WorkQueue",
+                -1, alertContextData, TimeSpan.Zero, alertMessage.ToString());
+
+        }
+
+        protected void RemoveBadDicomFile(string file, string reason)
+        {
+            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
+            FileUtils.Delete(file);
+            RaiseAlert(WorkQueueItem, AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
+        }
+
+        protected virtual void PerformAutoRecovery(Model.WorkQueue item, string reason)
+        {
+            Platform.Log(LogLevel.Info, "{4} failed. Reason:{5}. Attempting to perform auto-recovery for Study:{0}, A#:{1}, Patient:{2}, ID:{3}",
+                         Study.StudyInstanceUid, Study.AccessionNumber, Study.PatientsName, Study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
+                        
+            // Delete current entry first. If another process inserts new uid, we need to 
+            // keep deleting until we succeed or the server is stopped. In latter case, 
+            // the server will retry this work queue entry, fail and try auto-recovery again.
+            if (DeleteWorkQueueEntry(item))
+            {
+                Model.WorkQueue reprocessEntry = StudyHelper.ReprocessStudy(StorageLocation);
+                String message =String.Format("{0} failed. Auto-recovery has been triggered. Reprocess Study entry GUID={1}", 
+                        item.WorkQueueTypeEnum, reprocessEntry.GetKey().Key);
+
+                // raise alert with the new entry because the current one has been deleted.
+                RaiseAlert(reprocessEntry, AlertLevel.Informational, message);
+            }
+            else
+            {
+                String message = String.Format("{0} failed. Auto-recovery could not be triggered because the current entry could not be deleted.", item.WorkQueueTypeEnum.ToString());
+                RaiseAlert(item, AlertLevel.Error, message);
+            }
+        }
+
+        
         #endregion
 
         #region Private Methods
 
+        private bool DeleteWorkQueueEntry(Model.WorkQueue item)
+        {
+            DateTime startTime = DateTime.Now;
+            int retryCounter = 0;
+            TimeSpan elapsed;
+            do
+            {
+                Platform.Log(LogLevel.Info, "Deleting current work queue entry..");
+                elapsed = DateTime.Now - startTime;
+
+                using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    try
+                    {
+                        item.Delete(updateContext);
+                        updateContext.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Platform.Log(LogLevel.Error, ex, "Error occured when trying to delete current work queue entry. Retry later.");
+                        Random rand = new Random();
+                        Thread.Sleep(rand.Next(100, 500));
+
+                        if (elapsed > TimeSpan.FromMinutes(1))
+                        {
+                            if (retryCounter % 10 == 0) // reduce the frequency of the alerts
+                                RaiseAlert(item, AlertLevel.Warning, "Server has failed to delete the work queue entry for the last {0}", TimeSpanFormatter.Format(elapsed, true));
+                        }
+                        retryCounter++;
+                    }
+                }
+
+
+            }
+            while (!CancelPending && elapsed < TimeSpan.FromMinutes(5));
+            return false;
+        }
+
+        private RecoveryModes GetProcessorRecoveryMode()
+        {
+            RecoveryModes mode = RecoveryModes.Manual;
+
+            if (!_processorsRecoverySettings.TryGetValue(GetType(), out mode))
+            {
+                lock(_processorsRecoverySettings)
+                {
+                    object[] attributes = GetType().GetCustomAttributes(typeof(StudyIntegrityValidationAttribute), true);
+                    if (attributes != null && attributes.Length > 0)
+                    {
+                        StudyIntegrityValidationAttribute att = attributes[0] as StudyIntegrityValidationAttribute;
+                        if (!_processorsRecoverySettings.ContainsKey(GetType()))
+                        {
+                            _processorsRecoverySettings.Add(GetType(), att.Recovery);
+                        }
+                        return att.Recovery;
+                    }
+                }
+                
+            }
+
+            return mode;
+        }
 
         private StudyIntegrityValidationModes GetValidationTypes()
         {
-            if (!_classValidationSettings.TryGetValue(GetType(), out _ValidationModes))
+            if (!_processorsValidationSettings.TryGetValue(GetType(), out _ValidationModes))
             {
                 object[] attributes = GetType().GetCustomAttributes(typeof(StudyIntegrityValidationAttribute), true);
                 if (attributes != null && attributes.Length > 0)
                 {
                     StudyIntegrityValidationAttribute att = attributes[0] as StudyIntegrityValidationAttribute;
-                    _classValidationSettings.Add(GetType(), att.ValidationTypes);
+                    _processorsValidationSettings.Add(GetType(), att.ValidationTypes);
                     return att.ValidationTypes;
                 }
             }
@@ -1034,19 +1191,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion
 
 
-        protected void RaiseAlert(AlertLevel level, string message, params object[] arguments)
-        {
-            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, 
-                WorkQueueItem!=null? WorkQueueItem.WorkQueueTypeEnum.ToString():"WorkQueue",
-                -1, GetWorkQueueContextData(), TimeSpan.Zero, message, arguments);
-            
-        }
-
-        protected void RemoveBadDicomFile(string file, string reason)
-        {
-            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
-            FileUtils.Delete(file);
-            RaiseAlert(AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
-        }
     }
 }

@@ -42,6 +42,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -50,7 +51,9 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
-	public class CompressStudyItemProcessor : BaseItemProcessor, ICancelable
+
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
+    public class CompressStudyItemProcessor : BaseItemProcessor, ICancelable
 	{
 		#region Private Members
 		private CompressInstanceStatistics _instanceStats;

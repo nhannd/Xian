@@ -52,5 +52,10 @@ namespace ClearCanvas.ImageServer.Common.Diagnostics
         {
             get { return DiagnosticSettings.Default.SimulateTierMigrationError; }
         }
+
+        static public bool SimulateFileCorruption
+        {
+            get { return DiagnosticSettings.Default.SimulateFileCorruption; }
+        }
     }
 }

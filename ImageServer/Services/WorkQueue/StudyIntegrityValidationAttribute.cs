@@ -3,6 +3,12 @@ using ClearCanvas.ImageServer.Core.Validation;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
+    public enum RecoveryModes
+    {
+        Manual,
+        Automatic
+    }
+
     /// <summary>
     /// Attribute to specify what type of validation must be made when a work queue entry is processed.
     /// </summary>
@@ -11,6 +17,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     {
         #region Private Memebers
         private StudyIntegrityValidationModes _validationTypes;
+        private RecoveryModes _Recovery;
         #endregion
 
         #region Public Properties
@@ -19,6 +26,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get { return _validationTypes; }
             set { _validationTypes = value; }
         }
+
+        public RecoveryModes Recovery
+        {
+            get { return _Recovery; }
+            set { _Recovery = value; }
+        }
+
         #endregion
     }
 }

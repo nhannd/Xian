@@ -46,6 +46,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -243,19 +244,29 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             }
         }
 
+
         private void DeleteDuplicate(WorkQueueUid uid)
         {
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Delete Received Duplicate"))
             {
                 FileInfo duplicateFile = GetDuplicateSopFile(uid);
-                DicomFile dcmFile = new DicomFile(duplicateFile.FullName);
-                dcmFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+                try
+                {
+                    DicomFile dcmFile = new DicomFile(duplicateFile.FullName);
+                    dcmFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
 
-                if (_duplicateSopDetails == null)
-                    _duplicateSopDetails = new ImageSetDetails(dcmFile.DataSet);
+                    if (_duplicateSopDetails == null)
+                        _duplicateSopDetails = new ImageSetDetails(dcmFile.DataSet);
 
-                _duplicateSopDetails.InsertFile(dcmFile);
+                    _duplicateSopDetails.InsertFile(dcmFile);
 
+                }
+                catch(DicomException ex)
+                {
+                    // error reading the duplicate... do we care if we are deleting it anyway?
+                    Platform.Log(LogLevel.Warn, "Unable to read duplicate file: {0}. It will be deleted anyway. File={1}", ex.Message, duplicateFile.FullName);
+                }
+                
 
                 processor.AddCommand(new DeleteFileCommand(duplicateFile.FullName));
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));

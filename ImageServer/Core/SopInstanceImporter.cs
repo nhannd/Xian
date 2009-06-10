@@ -261,6 +261,14 @@ namespace ClearCanvas.ImageServer.Core
 
                             commandProcessor.AddCommand(
                                 new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
+
+                            if (ClearCanvas.ImageServer.Common.Diagnostics.Settings.SimulateFileCorruption)
+                            {
+                                Random rand = new Random();
+                                FileInfo f = new FileInfo(path);
+
+                                commandProcessor.AddCommand(new CorruptDicomFileCommand(path));
+                            }
                         }
 
                         if (commandProcessor.Execute())
@@ -443,4 +451,56 @@ namespace ClearCanvas.ImageServer.Core
         }
     
 	}
+
+    internal class CorruptDicomFileCommand : ServerCommand
+    {
+        private string _path;
+
+        public CorruptDicomFileCommand(string path):base("Corrupt file", false)
+        {
+            _path = path;
+        }
+
+        protected override void OnExecute()
+        {
+            Random rand = new Random();
+
+            if (ClearCanvas.ImageServer.Common.Diagnostics.Settings.SimulateFileCorruption)
+            {
+                ClearCanvas.ImageServer.Common.Diagnostics.RandomError.Generate(
+                    rand.Next() % 2 == 0,
+                    String.Format("Corrupting the file {0}", _path),
+                    delegate()
+                    {
+                        FileInfo f = new FileInfo(_path);
+                        long size = rand.Next(0, (int) f.Length/2);
+                        if (size <= 0)
+                        {
+                            FileStream s = FileStreamOpener.OpenForSoleUpdate(_path, FileMode.Truncate);
+                            s.Flush();
+                            s.Close();
+                        }
+                        else
+                        {
+                            FileStream s = FileStreamOpener.OpenForRead(_path, FileMode.Open);
+                            byte[] buffer = new byte[size];
+                            int bytesRead = s.Read(buffer, 0, buffer.Length);
+                            s.Close();
+
+                            s = FileStreamOpener.OpenForSoleUpdate(_path, FileMode.Truncate);
+                            s.Write(buffer, 0, bytesRead);
+                            s.Flush();
+                            s.Close();
+                        }
+                        
+                    }
+                );
+            }
+        }
+
+        protected override void OnUndo()
+        {
+            
+        }
+    }
 }

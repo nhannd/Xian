@@ -81,27 +81,30 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         }
 
         /// <summary>
-        /// Create a Study Reprocess entry.
+        /// Creates a Study Reprocess entry and locks the study in <see cref="QueueStudyStateEnum.ReprocessScheduled"/> state.
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
-        static public bool ReprocessStudy(StudyStorageLocation location)
+        static public WorkQueue ReprocessStudy(StudyStorageLocation location)
         {
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            
             using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
+                Study study = location.LoadStudy(ctx);
+
                 // Unlock first
                 ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
                 LockStudyParameters lockParms = new LockStudyParameters();
                 lockParms.StudyStorageKey = location.Key;
                 lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
                 if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                    return false;
+                    return null;
 
                 // Now relock
                 lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
                 if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                    return false;
+                    return null;
 
                 InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
                 columns.ScheduledTime = Platform.Time;
@@ -111,13 +114,25 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                 columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
                 columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
                 IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
-                if (insertBroker.FindOne(columns) != null)
+                WorkQueue reprocessEntry = insertBroker.FindOne(columns);
+                if (reprocessEntry != null)
                 {
                     ctx.Commit();
-                    return true;
+
+                    if (study != null)
+                    {
+                        Platform.Log(LogLevel.Info,
+                                     "Scheduled Study Reprocess. Study {0}, A#: {1}, Patient: {2}, ID={3}",
+                                     study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId);
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Info, "Scheduled Study Reprocess. Study {1}.",  location.StudyInstanceUid);
+                        
+                    }
                 }
 
-                return false;
+                return reprocessEntry;
             }
         }
     }
