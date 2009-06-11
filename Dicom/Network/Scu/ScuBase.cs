@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.Utilities.Statistics;
+using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
@@ -57,8 +57,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 		private string _remoteHost;
 		private int _remotePort;
 		private ScuOperationStatus _status;
-		private int _timeout = 60; // 60 second default timeout
-		private AssociationStatisticsRecorder _statsRecorder;
+		private int _readTimeout = NetworkSettings.Default.ReadTimeout;
+		private int _writeTimeout = NetworkSettings.Default.WriteTimeout;
 		private string _failureDescription = "";
         private DicomState _resultStatus;
 		private bool _logInformation = true;
@@ -168,13 +168,24 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 		#region Timeout
 		/// <summary>
-		/// Gets or sets the timeout.
+		/// Gets or sets the read timeout.
 		/// </summary>
-		/// <value>The timeout in seconds.  (Default: 60)</value>
-		public int Timeout
+		/// <remarks>Set by default to the value configured as <see cref="NetworkSettings.Default.ReadTimeout"/></remarks>
+		/// <value>The Read timeout in milliseconds.  (Default: 30000)</value>
+		public int ReadTimeout
 		{
-			get { return _timeout; }
-			set { _timeout = value; }
+			get { return _readTimeout; }
+			set { _readTimeout = value; }
+		}
+		/// <summary>
+		/// Gets or sets the write timeout.
+		/// </summary>
+		/// <remarks>Set by default to the value configured as <see cref="NetworkSettings.Default.WriteTimeout"/></remarks>
+		/// <value>The Write timeout in milliseconds.  (Default: 30000)</value>
+		public int WriteTimeout
+		{
+			get { return _writeTimeout; }
+			set { _writeTimeout = value; }
 		}
 		#endregion
 
@@ -308,8 +319,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 				AssociationParameters =
 					new ClientAssociationParameters(ClientAETitle, RemoteAE, RemoteHost, RemotePort);
 
-				AssociationParameters.ReadTimeout = Timeout*1000;
-				AssociationParameters.WriteTimeout = Timeout*1000;
+				AssociationParameters.ReadTimeout = ReadTimeout;
+				AssociationParameters.WriteTimeout = WriteTimeout;
 
 				SetPresentationContexts();
 
@@ -471,8 +482,6 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">The association.</param>
 		public virtual void OnReceiveAssociateAccept(DicomClient client, ClientAssociationParameters association)
 		{
-			_statsRecorder = new AssociationStatisticsRecorder(client);
-
 			if (LogInformation)
 				Platform.Log(LogLevel.Info, "Association Accepted from {0} to remote AE {1}:{2}", association.CallingAE,
 				             association.CalledAE, association.RemoteEndPoint.ToString());

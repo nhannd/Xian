@@ -1285,6 +1285,9 @@ namespace ClearCanvas.Dicom.Network
                     else if (_pduQueue.Count > 0)
                     {
                         //SendRawPDU(DequeuePDU());
+						// Note, if this is ever enabled, it would make sense to reset the timeout at this point.
+						// So that the timeout is really based on the last data read or written to the network, instead of 
+						// from the last time data was read from the network.
                     }
                     else if (DateTime.Now > timeout)
                     {
