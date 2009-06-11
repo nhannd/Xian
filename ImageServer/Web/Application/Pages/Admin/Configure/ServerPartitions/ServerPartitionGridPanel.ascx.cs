@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             get
             {
+                TheGrid.DataBind();
                 int index = TheGrid.PageIndex*TheGrid.PageSize + TheGrid.SelectedIndex;
 
                 if (index < 0 || index >= Partitions.Count)

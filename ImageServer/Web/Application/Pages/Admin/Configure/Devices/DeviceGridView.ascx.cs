@@ -91,7 +91,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// </summary>
         public IList<Device> Devices
         {
-            get { return _devices; }
+            get
+            {
+                return _devices;
+            }
             set
             {
                 _devices = value;

@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
                 criteria.FilesystemTierEnum.EqualTo(Tiers[TiersDropDownList.SelectedIndex - 1]);
 
             FileSystemsGridView1.FileSystems = _theController.GetFileSystems(criteria);
-            FileSystemsGridView1.Refresh();
+            FileSystemsGridView1.RefreshCurrentPage();
         }
 
         /// <summary>
@@ -193,8 +193,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
                 EditFileSystemButton.Enabled = true;
             }
 
-            // UpdatePanel UpdateMode must be set to "conditional"
-            // Calling UpdatePanel.Update() will force the client to refresh the screen
             SearchUpdatePanel.Update();
         }
 
@@ -212,6 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         protected void EditFileSystemButton_Click(object sender, ImageClickEventArgs e)
         {
             // Call the edit filesystem delegate 
+            LoadFileSystems();
             Filesystem fs = FileSystemsGridView1.SelectedFileSystem;
             if (fs != null)
             {

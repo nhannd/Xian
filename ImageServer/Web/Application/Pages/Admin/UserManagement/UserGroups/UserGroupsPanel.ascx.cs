@@ -101,11 +101,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 EditUserGroupButton.Enabled = true;
                 DeleteUserGroupButton.Enabled = true;
             }
-
-            // UpdatePanel UpdateMode must be set to "conditional"
-            // Calling UpdatePanel.Update() will force the client to refresh the screen
+            
+            UserGroupsGridPanel.RefreshCurrentPage();
             SearchUpdatePanel.Update();
-            UserGroupsGridPanel.DataBind();
         }
 
         protected void AddUserGroupButton_Click(object sender, ImageClickEventArgs e)

@@ -8,7 +8,7 @@
         <asp:TableCell VerticalAlign="top">
             <ccUI:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" 
-                OnPageIndexChanging="GridView1_PageIndexChanging" EmptyDataText="No filesystems found (Please check the filters!)"
+                EmptyDataText="No filesystems found (Please check the filters!)"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="0px">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />

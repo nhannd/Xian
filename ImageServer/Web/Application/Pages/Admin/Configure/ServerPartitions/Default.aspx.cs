@@ -170,6 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
                 String.Format(
                     "It's recommended that you disable the partition instead of deleting it.<P>Are you sure you still want to delete partition {0} and all related settings permanently?",
                     selectedPartition.AeTitle);
+            deleteConfirmBox.MessageStyle = "color: red; font-weight: bold;";
             deleteConfirmBox.Show();
         }
 

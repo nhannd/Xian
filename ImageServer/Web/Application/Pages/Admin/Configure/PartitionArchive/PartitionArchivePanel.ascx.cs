@@ -187,6 +187,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 
             PartitionArchives =
                 _theController.GetPartitions(criteria);
+            PartitionArchiveGridPanel.RefreshCurrentPage();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

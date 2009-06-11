@@ -120,6 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
+            UserGridPanel.RefreshCurrentPage();
             SearchUpdatePanel.Update();
         }
 

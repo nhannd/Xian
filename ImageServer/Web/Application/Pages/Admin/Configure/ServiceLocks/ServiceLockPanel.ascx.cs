@@ -127,12 +127,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             LoadServiceLocks();
-
         }
 
 
         protected void EditServiceScheduleButton_Click(object sender, ImageClickEventArgs e)
         {
+            LoadServiceLocks();
             ServiceLock service = ServiceLockGridViewControl.SelectedServiceLock;
             if (service != null)
             {
@@ -280,7 +280,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
             ServiceLockGridViewControl.ServiceLocks = items;
 
-            ServiceLockGridViewControl.Refresh();
+            ServiceLockGridViewControl.RefreshCurrentPage();
         }
 
         /// <summary>

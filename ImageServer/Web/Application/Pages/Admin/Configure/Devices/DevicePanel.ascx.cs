@@ -241,9 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 DeleteDeviceButton.Enabled = true;
             }
 
-            // UpdatePanel UpdateMode must be set to "conditional"
-            // Calling UpdatePanel.Update() will force the client to refresh the screen
-            SearchUpdatePanel.Update();
+            DeviceGridViewControl1.Refresh();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

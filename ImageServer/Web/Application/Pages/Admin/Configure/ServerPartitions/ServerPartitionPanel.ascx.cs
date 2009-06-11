@@ -192,6 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
             Partitions =
                 _theController.GetPartitions(criteria);
+            ServerPartitionGridPanel.DataBind();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -208,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             ServerPartition selectedPartition =
                 ServerPartitionGridPanel.SelectedPartition;
-
+            
             if (selectedPartition != null)
             {
                 EnclosingPage.EditPartition(selectedPartition);
@@ -241,7 +242,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         public void UpdateUI()
         {
             LoadData();
-            ServerPartitionGridPanel.Refresh();
+            //ServerPartitionGridPanel.Refresh();
         }
 
         #endregion Public methods

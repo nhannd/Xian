@@ -252,6 +252,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
                 EnabledRow.Visible = false;
                 UserLoginId.ReadOnly = false;
+                UserLoginId.Style.Add("Color", "#000000");
                 UserGroupListBox.ClearSelection();
             }
 

@@ -319,17 +319,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             }
         }
 
-        protected void GridView1_PageIndexChanged(object sender, EventArgs e)
-        {
-            Refresh();
-        }
-
-        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
-        {
-            GridView1.PageIndex = e.NewPageIndex;
-            Refresh();
-        }
-
         #region Private Static members
         static private bool _serviceIsOffline = false;
         static private DateTime _lastServiceAvailableTime = Platform.Time;

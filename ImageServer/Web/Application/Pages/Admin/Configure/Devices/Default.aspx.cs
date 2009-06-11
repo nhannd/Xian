@@ -136,10 +136,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                            });
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-        }
-
         #endregion  Protected methods
 
         #region Public Methods
@@ -167,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         public void OnDeleteDevice(DeviceConfigurationController controller, ServerPartition serverPartition, Device dev)
         {
-            DeleteConfirmation.Message = string.Format("Are you sure to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
+            DeleteConfirmation.Message = string.Format("Are you sure you want to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
             DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmation.Data = dev;
             DeleteConfirmation.Show();
