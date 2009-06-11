@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -82,51 +83,66 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             DicomFile dupFile = new DicomFile(duplicatePath);
             dupFile.Load();
-            if (!File.Exists(basePath))
-            {
-                // NOTE: This is special case. The file which caused dicom service to think this sop is a duplicate
-                // no longer exists in the study folder. Perhaps it has been moved to another folder during auto reconciliation.
-                // We have nothing to compare against so let's just throw it into the SIQ queue.
-                CreateDuplicateSIQEntry(uid, dupFile, null);
-            }
-            else
-            {
-                DicomFile baseFile = new DicomFile(basePath);
-                baseFile.Load();
+			if (!File.Exists(basePath))
+			{
+				// NOTE: This is special case. The file which caused dicom service to think this sop is a duplicate
+				// no longer exists in the study folder. Perhaps it has been moved to another folder during auto reconciliation.
+				// We have nothing to compare against so let's just throw it into the SIQ queue.
+				CreateDuplicateSIQEntry(uid, dupFile, null);
+			}
+			else
+			{
+				DicomFile baseFile = new DicomFile(basePath);
+				baseFile.Load();
 
-                if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
-                {
-                    string failure = String.Format("Base file transfer syntax is '{0}' while duplicate file has '{1}'",
-                                                   baseFile.TransferSyntax, dupFile.TransferSyntax);
+				if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
+				{
+					// If they're compressed, and we have a codec, lets decompress and still do the comparison
+					if (dupFile.TransferSyntax.Encapsulated 
+						&& !dupFile.TransferSyntax.LossyCompressed
+						&& DicomCodecRegistry.GetCodec(dupFile.TransferSyntax)!=null)
+					{
+						dupFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+					}
 
-                    List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
-                    DicomAttributeComparisonResult result = new DicomAttributeComparisonResult();
-                    result.ResultType = ComparisonResultType.DifferentValues;
-                    result.TagName = DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name;
-                    result.Details = failure;
-                    list.Add(result);
-                    CreateDuplicateSIQEntry(uid, dupFile, list);
-                }
-                else
-                {
-                    List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
-                    if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
-                    {
-                        Platform.Log(LogLevel.Info,
-                                     "Duplicate SOP being processed is identical.  Removing SOP: {0}",
-                                     baseFile.MediaStorageSopInstanceUid);
+					if (baseFile.TransferSyntax.Encapsulated
+						&& !baseFile.TransferSyntax.LossyCompressed
+						&& DicomCodecRegistry.GetCodec(baseFile.TransferSyntax) != null)
+					{
+						baseFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+					}
 
-                        FileInfo file = new FileInfo(duplicatePath);
-                        file.Delete();
-                    }
-                    else
-                    {
-                        CreateDuplicateSIQEntry(uid, dupFile, failureReason);
-                    }
-                }
-                
-            }
-            
+					if (dupFile.TransferSyntax.Encapsulated || baseFile.TransferSyntax.Encapsulated)
+					{
+						string failure = String.Format("Base file transfer syntax is '{0}' while duplicate file has '{1}'",
+						                               baseFile.TransferSyntax, dupFile.TransferSyntax);
+
+						List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
+						DicomAttributeComparisonResult result = new DicomAttributeComparisonResult();
+						result.ResultType = ComparisonResultType.DifferentValues;
+						result.TagName = DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name;
+						result.Details = failure;
+						list.Add(result);
+						CreateDuplicateSIQEntry(uid, dupFile, list);
+						return;
+					}
+				}
+
+				List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
+				if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
+				{
+					Platform.Log(LogLevel.Info,
+					             "Duplicate SOP being processed is identical.  Removing SOP: {0}",
+					             baseFile.MediaStorageSopInstanceUid);
+
+					FileInfo file = new FileInfo(duplicatePath);
+					file.Delete();
+				}
+				else
+				{
+					CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+				}
+			}
         }
 
         void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file, List<DicomAttributeComparisonResult> differences)
