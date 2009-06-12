@@ -273,15 +273,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         private WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
         {
+            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
+            contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+
             IList<StudyStorageLocation> storages = item.LoadStudyLocations(ExecutionContext.Current.PersistenceContext);
             if (storages != null && storages.Count > 0)
             {
                 StudyStorageLocation location = storages[0];
                 if (location.Study != null)
                 {
-                    WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-                    contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
-
                     contextData.StudyInfo = new StudyInfo();
                     contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
                     contextData.StudyInfo.PatientsId = location.Study.PatientId;
@@ -289,11 +289,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
                     contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
                     contextData.StudyInfo.StudyDate = location.Study.StudyDate;
-                    return contextData;
                 }
             }
 
-            return null;
+            return contextData;
             
         }
 

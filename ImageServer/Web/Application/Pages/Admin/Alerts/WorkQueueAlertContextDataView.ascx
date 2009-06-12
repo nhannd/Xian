@@ -9,29 +9,28 @@
     
 %>
 
-
 <div >
-<table class="WorkQueueAlertStudyTable">
+<table class="WorkQueueAlertStudyTable" cellspacing="0" cellpadding="0">
 <% if (data.StudyInfo!=null) { %>
-<tr><td>Partition</td><td><%= data.StudyInfo.ServerAE %></td></tr>
-<tr><td>Patient's Name</td><td><pre><%= data.StudyInfo.PatientsName%></pre></td></tr>
-<tr><td>Patient ID</td><td><pre><%= data.StudyInfo.PatientsId %></pre></td></tr>
-<tr><td>Study Instance UID</td><td><%= data.StudyInfo.StudyInstaneUid%></td></tr>
-<tr><td>Accession #</td><td><pre><%= data.StudyInfo.AccessionNumber%></pre></td></tr>
-<tr><td>Study Date</td><td><pre><%= data.StudyInfo.StudyDate%></pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Partition:</td><td><%= data.StudyInfo.ServerAE %></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Patient's Name:</td><td><pre><%= data.StudyInfo.PatientsName%></pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Patient ID:</td><td><pre><%= data.StudyInfo.PatientsId %></pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Study Instance UID:</td><td><%= data.StudyInfo.StudyInstaneUid%></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Accession #:</td><td><pre><%= data.StudyInfo.AccessionNumber%></pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Study Date:</td><td><pre><%= data.StudyInfo.StudyDate%></pre></td></tr>
 <%} else {%>
-<tr><td>Study</td><td>N/A</td></tr>
+<tr><td>There is no study information for this item.</td></tr>
 <%} %>
 
 </table>
 
-<table>
-    <tr>
+<table cellpadding="0" cellspacing="0" style="margin-top: 3px;">
+    <tr >
         <% if (data.StudyInfo!=null){%>
-        <td style="border-bottom:none; background-color:Transparent"><a href='<%=viewStudyUrl%>' target="_blank">View Study</a></td>
-        <td style="border-bottom:none; background-color:Transparent">|</td>
+        <td><a href='<%=viewStudyUrl%>' target="_blank" style="color: #6699CC; text-decoration: none; font-weight: bold;">View Study</a></td>
+        <td style="font-weight: bold; color: #336699;">|</td>
         <%}%>
-        <td style="border-bottom:none; background-color:Transparent"><a href='<%= viewWorkQueueUrl %>' target="_blank">View Work Queue</a></td>
+        <td><a href='<%= viewWorkQueueUrl %>' target="_blank" style="color: #6699CC; text-decoration: none; font-weight: bold;">View Work Queue</a></td>
     </tr>
 </table>
 
