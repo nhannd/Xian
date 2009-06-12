@@ -30,9 +30,11 @@
 #endregion
 
 using System;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -80,62 +82,24 @@ namespace ClearCanvas.ImageServer.Common.Helpers
             return comparer.Compare(message, study, partition.GetComparisonOptions());
         }
 
-        /// <summary>
-        /// Creates a Study Reprocess entry and locks the study in <see cref="QueueStudyStateEnum.ReprocessScheduled"/> state.
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="scheduleTime"></param>
-        /// <param name="priority"></param>
-        /// <returns></returns>
-        static public WorkQueue ReprocessStudy(StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
+        public static StudyHistory CreateStudyHistoryRecord(IUpdateContext updateContext,
+            StudyStorageLocation primaryStudyLocation, StudyStorageLocation secondaryStudyLocation, 
+            StudyHistoryTypeEnum type, object entryInfo, object changeLog)
         {
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             
-            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                Study study = location.LoadStudy(ctx);
+            StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
+            columns.InsertTime = Platform.Time;
+            columns.StudyHistoryTypeEnum = type;
+            columns.StudyStorageKey = primaryStudyLocation.GetKey();
+            if (secondaryStudyLocation!=null)
+                columns.DestStudyStorageKey = secondaryStudyLocation.GetKey();
+            else
+                columns.DestStudyStorageKey = primaryStudyLocation.GetKey();
 
-                // Unlock first
-                ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
-                LockStudyParameters lockParms = new LockStudyParameters();
-                lockParms.StudyStorageKey = location.Key;
-                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-                if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                    return null;
-
-                // Now relock
-                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
-                if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                    return null;
-
-                InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
-                columns.ScheduledTime = scheduleTime;
-                columns.ServerPartitionKey = location.ServerPartitionKey;
-                columns.StudyStorageKey = location.Key;
-                columns.WorkQueuePriorityEnum = priority;
-                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-                columns.ExpirationTime = scheduleTime.Add(TimeSpan.FromMinutes(5));
-                IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
-                WorkQueue reprocessEntry = insertBroker.FindOne(columns);
-                if (reprocessEntry != null)
-                {
-                    ctx.Commit();
-
-                    if (study != null)
-                    {
-                        Platform.Log(LogLevel.Info,
-                                     "Study Reprocess Scheduled for Study {0}, A#: {1}, Patient: {2}, ID={3}",
-                                     study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId);
-                    }
-                    else
-                    {
-                        Platform.Log(LogLevel.Info, "tudy Reprocess Scheduled for Study {1}.", location.StudyInstanceUid);
-                        
-                    }
-                }
-
-                return reprocessEntry;
-            }
+            columns.StudyData = XmlUtils.SerializeAsXmlDoc(entryInfo) ?? new XmlDocument();
+            columns.ChangeDescription = XmlUtils.SerializeAsXmlDoc(changeLog) ?? new XmlDocument();
+            IStudyHistoryEntityBroker broker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
+            return broker.Insert(columns);
         }
     }
 }

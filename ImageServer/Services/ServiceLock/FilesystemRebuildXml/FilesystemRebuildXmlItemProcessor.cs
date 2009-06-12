@@ -39,6 +39,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -204,7 +205,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected error when rebuilding study XML for directory: {0}", location.FilesystemPath);
-			    Model.WorkQueue reprocessEntry = StudyHelper.ReprocessStudy(location, Platform.Time, WorkQueuePriorityEnum.Low);
+                StudyReprocessor reprocessor = new StudyReprocessor();
+                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(location, Platform.Time, WorkQueuePriorityEnum.Low);
 				if (reprocessEntry!=null)
 				{
 					Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}", location.StudyInstanceUid);

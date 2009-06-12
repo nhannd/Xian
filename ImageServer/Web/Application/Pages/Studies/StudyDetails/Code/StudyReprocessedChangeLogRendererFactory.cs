@@ -29,62 +29,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Core.Edit;
+
+using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 
-namespace ClearCanvas.ImageServer.Core.Data
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
 {
-    public class ProcessDuplicateChangeLog
+    /// <summary>
+    /// Helper class used in rendering the information encoded of a "StudyReprocessed"
+    /// StudyHistory record.
+    /// </summary>
+    internal class StudyReprocessedChangeLogRendererFactory : IStudyHistoryColumnControlFactory
     {
-        #region Private Members
-        private DateTime _timeStamp = Platform.Time;
-        private ProcessDuplicateAction _action;
-        private ImageSetDetails _duplicateSetDetails;
-        private StudyInformation _studySnapShot;
-        private List<BaseImageLevelUpdateCommand> _studyUpdateCommands;
-            
-        #endregion
-
-        #region Public Properties
-
-        public DateTime TimeStamp
+        public Control GetChangeDescColumnControl(Control parent, StudyHistory historyRecord)
         {
-            get { return _timeStamp; }
-            set { _timeStamp = value; }
+            StudyReprocessChangeLogControl control = parent.Page.LoadControl("~/Pages/Studies/StudyDetails/Controls/StudyReprocessChangeLog.ascx") as StudyReprocessChangeLogControl;
+            control.HistoryRecord = historyRecord;
+            return control;
         }
-
-        public ProcessDuplicateAction Action
-        {
-            get { return _action; }
-            set { _action = value; }
-        }
-
-        public ImageSetDetails DuplicateDetails
-        {
-            get { return _duplicateSetDetails; }
-            set { _duplicateSetDetails = value; }
-        }
-
-        public StudyInformation StudySnapShot
-        {
-            get { return _studySnapShot; }
-            set { _studySnapShot = value; }
-        }
-
-        [XmlArray("StudyUpdateCommands")]
-        [XmlArrayItem("Command", Type = typeof(AbstractProperty<BaseImageLevelUpdateCommand>))]
-        public List<BaseImageLevelUpdateCommand> StudyUpdateCommands
-        {
-            get { return _studyUpdateCommands; }
-            set { _studyUpdateCommands = value; }
-        }
-
-        #endregion
     }
 }

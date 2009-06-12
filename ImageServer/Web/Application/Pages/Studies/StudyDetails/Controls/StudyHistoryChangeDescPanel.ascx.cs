@@ -75,6 +75,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 return new StudyEditRendererFactory();
             else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.Duplicate)
                 return new ProcessDuplicateChangeLogRendererFactory();
+            else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.Reprocessed)
+                return new StudyReprocessedChangeLogRendererFactory();
             else
                 return new DefaultStudyHistoryRendererFactory();
         }

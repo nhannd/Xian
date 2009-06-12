@@ -31,6 +31,7 @@
 
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using System;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -45,13 +46,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         public delegate string GetFilePathDelegateMethod();
 
 		#region Private Members
-		private string _path;
+		private readonly string _path;
         private string _backupPath;
 		private readonly DicomFile _file;
 		private readonly bool _failOnExists;
 		private readonly bool _saveTemp;
 		private bool _fileCreated = false;
-
+	    readonly RateStatistics _backupSpeed = new RateStatistics("BackupSpeed", RateType.BYTES);
+	    readonly RateStatistics _saveSpeed = new RateStatistics("SaveSpeed", RateType.BYTES);
 	    #endregion
 
 		/// <summary>
@@ -83,7 +85,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				try
 				{
 					_backupPath = String.Format("{0}.bak", _path);
+                    _backupSpeed.Start();
+                    FileInfo fi = new FileInfo(_path);
+                    _backupSpeed.SetData(fi.Length);
 					File.Copy(_path, _backupPath);
+                    _backupSpeed.End();
 				}
 				catch (IOException)
 				{
@@ -113,8 +119,15 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				// Set _fileCreated here, because the file has been opened.
 				if (!_saveTemp)
 					_fileCreated = true;
+
+                _saveSpeed.Start();
 				_file.Save(stream, DicomWriteOptions.Default);
 				stream.Close();
+                _saveSpeed.End();
+
+                FileInfo fi = new FileInfo(path);
+                _saveSpeed.SetData(fi.Length);
+                
 			}
 
 			if (_saveTemp)

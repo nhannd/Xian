@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         void StudyDetailsPanel_ReprocessStudyClicked(object sender, StudyDetailsPanelReprocessStudyClickEventArgs e)
         {
-            ReprocessConfirmationDialog.Message = String.Format("Are you sure you want to reprocess this study?<BR>All study history will be deleted and all rules will be re-applied.");
+            ReprocessConfirmationDialog.Message = String.Format("Are you sure you want to reprocess this study?");
             ReprocessConfirmationDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ReprocessConfirmationDialog.Show();
         }

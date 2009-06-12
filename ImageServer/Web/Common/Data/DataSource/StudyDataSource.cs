@@ -71,8 +71,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _referringPhysiciansName;
 		private string _studyTime;
 		private string _studyId;
+	    private bool _hasPendingWorkQueueItems;
 
-		#endregion Private members
+	    #endregion Private members
 
 
 		#region Public Properties
@@ -241,7 +242,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			set { _theStudyStorage = value; }
 		}
 
-		#endregion Public Properties
+	    public bool HasPendingWorkQueueItems
+	    {
+            get { return _hasPendingWorkQueueItems; }
+            set { _hasPendingWorkQueueItems = value; }
+	    }
+
+	    #endregion Public Properties
 
 
 
@@ -386,6 +393,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             if (IsProcessing)
             {
                 reason = "Study is being processed.";
+                return false;
+            }
+
+
+            if (HasPendingWorkQueueItems)
+            {
+                reason = "There is some pending work queue item(s) for this study.";
                 return false;
             }
 
@@ -641,6 +655,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				studySummary.IsReconcileRequired = true;
 			}
 
+		    IList<WorkQueue> workQueueItems = controller.GetWorkQueueItems(study);
+		    studySummary.HasPendingWorkQueueItems = CollectionUtils.Contains(workQueueItems, 
+                delegate(WorkQueue item)
+                     {
+                         return
+                             item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Idle) ||
+                             item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.InProgress) ||
+                             item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Pending);
+                     });
+
+            
 			return studySummary;
 		}
 	}

@@ -227,12 +227,14 @@ namespace ClearCanvas.ImageServer.Core
                             Study study = studyLocation.Study ??
                                           studyLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
                             if (study != null)
-                                Platform.Log(LogLevel.Info, "Received duplicate SOP {0} for patient {1}", sopInstanceUid,
-                                             study.PatientsName);
+                                Platform.Log(LogLevel.Info, "Received duplicate SOP {0} (A#:{1} StudyUid:{2}  Patient: {3}  ID:{4})", 
+                                            sopInstanceUid,
+                                            study.AccessionNumber, study.StudyInstanceUid,            
+                                            study.PatientsName, study.PatientId);
                             else
                                 Platform.Log(LogLevel.Info,
-                                             "Received duplicate SOP {0}. Existing files haven't been processed.",
-                                             sopInstanceUid);
+                                             "Received duplicate SOP {0} (StudyUid:{1}). Existing files haven't been processed.",
+                                             sopInstanceUid, studyLocation.StudyInstanceUid);
 
                             DuplicateSopProcessor dupProcessor =
                                 new DuplicateSopProcessor(commandProcessor, _partition, studyLocation);

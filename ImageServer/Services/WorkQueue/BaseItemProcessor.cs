@@ -44,6 +44,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -1069,7 +1070,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             // the server will retry this work queue entry, fail and try auto-recovery again.
             if (DeleteWorkQueueEntry(item))
             {
-                Model.WorkQueue reprocessEntry = StudyHelper.ReprocessStudy(StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+                StudyReprocessor reprocessor = new StudyReprocessor();
+
+                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
                 String message =String.Format("{0} failed. Auto-recovery has been triggered. Reprocess Study entry GUID={1}", 
                         item.WorkQueueTypeEnum, reprocessEntry.GetKey().Key);
 

@@ -897,6 +897,14 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
            (newid(),201,'Duplicate','Duplicate  Processsed','Duplicate was received and processed.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),202,'Reprocessed','Study was reprocessed','Study was reprocessed.')
+GO
+
+
+
 
 -- Canned Text
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])

@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -53,7 +54,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         private readonly SeriesSearchAdaptor _seriesAdaptor = new SeriesSearchAdaptor();
 		private readonly PartitionArchiveAdaptor _partitionArchiveAdaptor = new PartitionArchiveAdaptor();
         #endregion
-
         #region Public Methods
 
         public IList<Study> GetStudies(StudySelectCriteria criteria)
@@ -424,7 +424,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
             StudyStorage storage = adaptor.Get(key);
             StudyStorageLocation storageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
-            StudyHelper.ReprocessStudy(storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
+            StudyReprocessor reprocessor = new StudyReprocessor();
+            reprocessor.ReprocessStudy(storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
         }
         #endregion
 
