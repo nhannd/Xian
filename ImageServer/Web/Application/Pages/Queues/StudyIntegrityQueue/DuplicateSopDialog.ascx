@@ -73,8 +73,8 @@
 
 <ccAsp:ModalDialog ID="DuplicateSopReconcileModalDialog" runat="server" Title="Duplicate SOP Reconciliation">
     <ContentTemplate>       
-        <aspAjax:TabContainer runat="server" ID="TabContainer"  Width="950px">
-            <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="Overview" Height="100%" >
+        <aspAjax:TabContainer runat="server" ID="TabContainer"  Width="950px" ActiveTabIndex="0" CssClass="DialogTabControl">
+            <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="Overview" Height="100%" CssClass="DialogTabControl">
                 <ContentTemplate>                
                     <asp:Panel ID="Panel1" runat="server" CssClass="ReconcilePanel">
                         <asp:Table ID="Table1" runat="server">
@@ -135,7 +135,7 @@
                                                     <table cellpadding="0" cellspacing="0" width="100%">
                                                         <tr><td style="padding: 0px 12px 0px 4px;">
                                                             <div class="ReconcileGridViewPanel" style="height:150px;">
-                                                                <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="400px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
+                                                                <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" Width="100%" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
                                                                     <Columns>
 		                                                                <asp:TemplateField HeaderText="Description" HeaderStyle-HorizontalAlign="left" ItemStyle-HorizontalAlign="Left">						                                                        
 		                                                                    <ItemTemplate>
@@ -151,6 +151,25 @@
                                                             </div>
                                                         </td></tr>
                                                     </table>
+                                                </div>
+                                                <table cellpadding="0" cellspacing="0" width="100%">
+                                                    <tr><td style="padding-left: 10px; padding-right: 10px;"><div class="SeriesTitle">Dicom Tags</div></td></tr>
+                                                </table>
+                                                <div class="SeriesInformation">
+                                                <table cellpadding="0" cellspacing="0" width="100%">
+                                                        <tr><td style="padding: 0px 12px 0px 4px;">
+                                                <div class="ReconcileGridViewPanel" style="height:90px;">
+                                                <asp:GridView runat="server" CssClass="ReconcileComparisonResultGridView" ID="ComparisonResultGridView" Width="100%" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
+                                                <Columns>
+                                                    <asp:BoundField HeaderText="Tag" DataField="TagName" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" ItemStyle-Wrap="false" ItemStyle-VerticalAlign="Top" />
+                                                    <asp:BoundField HeaderText="Details" DataField="Details" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+                                                </Columns>
+                                                <RowStyle CssClass="ReconcileComparisonResultGridViewRow" />
+		                                        <HeaderStyle CssClass="ReconcileComparisonResultGridViewHeader" />
+                                                </asp:GridView>
+                                                </div>
+                                                    </td></tr></table>
+
                                                 </div>
                                            </asp:TableCell>
                                         </asp:TableRow>
@@ -231,7 +250,7 @@
                                             <asp:TableCell style="padding: 0px 10px 10px 10px;">
                                                 <asp:Panel ID="Panel2" runat="server" CssClass="ReconcileButtonsTable">
                                                     <asp:Table runat="server" ID="OptionTable" Width="100%" CellPadding="0" CellSpacing="0">
-                                                        <asp:TableRow style="padding-left: 5px; padding-top: 5px;padding-bottom: 5px;">
+                                                        <asp:TableRow style="padding-left: 5px; padding-top: 5px;">
                                                             <asp:TableCell><asp:radiobutton runat="server" ID="UseExistingSopRadioButton" Text=" Use Existing Demographics" GroupName="DuplicateSopDecision" Checked="true"/></asp:TableCell>
                                                             <asp:TableCell><asp:radiobutton runat="server" ID="UseDuplicateRadioButton" Text=" Use Duplicate Demographics" GroupName="DuplicateSopDecision" Checked="false"/></asp:TableCell>
                                                         </asp:TableRow>
@@ -258,6 +277,7 @@
                                     </asp:Table>                                    
                                 </asp:TableCell>
                             </asp:TableRow>
+
                         </asp:Table>
                     </asp:Panel>
                 </ContentTemplate>
@@ -266,25 +286,6 @@
                 <ContentTemplate>
                     <asp:Panel ID="Panel4" runat="server" Height="100%">
                         <asp:Panel ID="Panel5" runat="server" CssClass="AdditionalInformationPanel">
-                        <table width="100%">
-                            <tr>
-                                <td>
-                                    <div class="AdditionalInfoSectionHeader ComparisonSectionHeader">Other Differences</div>
-                                </td>
-                            </tr>
-                             <tr>
-                                <td>
-                                    <asp:GridView runat="server" CssClass="ReconcileComparisonResultGridView" ID="ComparisonResultGridView" Width="100%" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
-                                        <Columns>
-                                            <asp:BoundField HeaderText="Dicom Tag" DataField="TagName" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
-                                            <asp:BoundField HeaderText="Details" DataField="Details" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
-                                        </Columns>
-                                        <RowStyle CssClass="ReconcileComparisonResultGridViewRow" />
-		                                <HeaderStyle CssClass="ReconcileComparisonResultGridViewHeader" />
-                                    </asp:GridView>
-                                </td>
-                            </tr>
-                        </table>
                         <table width="100%">
                             <tr>
                                 <td colspan="2">
