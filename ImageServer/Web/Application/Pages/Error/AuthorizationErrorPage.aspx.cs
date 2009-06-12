@@ -75,6 +75,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
         protected void DefaultPage_Click(Object sender, EventArgs e)
         {
             String defaultPageUrl = UserProfile.GetDefaultUrl();
+			if (defaultPageUrl == null)
+				Response.End();
             Response.Redirect(defaultPageUrl);
         }
     }

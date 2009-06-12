@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web.Security;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -52,7 +49,14 @@ namespace ClearCanvas.ImageServer.Web.Common
             {
                 // user has not logged in
                 FormsAuthentication.RedirectToLoginPage();
+				// Need Response.End here, per this link:  http://www.neilpullinger.co.uk/2007/07/always-use-responseend-after.html
+            	return null;
             }
+
+			if (SessionManager.Current.User == null)
+			{
+				return ImageServerConstants.PageURLs.SearchPage;
+			}
 
             if (SessionManager.Current.User.IsInRole(AuthorityTokens.Admin.System.Configuration))
             {

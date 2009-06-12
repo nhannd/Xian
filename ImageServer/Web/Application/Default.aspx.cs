@@ -30,20 +30,8 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common;
-using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application
 {
@@ -54,7 +42,8 @@ namespace ClearCanvas.ImageServer.Web.Application
             string defaultHomePageUrl = UserProfile.GetDefaultUrl();
             if (defaultHomePageUrl == null)
             {
-                Response.Redirect(ImageServerConstants.PageURLs.SearchPage);
+				// The user isn't logged in
+            	Response.End();
             }
             else
             {
