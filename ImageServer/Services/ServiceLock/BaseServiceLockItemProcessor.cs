@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             {
                 string error = String.Format("Unable to find storage location for study {0} on partition {1}",studyInstanceUid, serverPartitionKey);
                 Platform.Log(LogLevel.Error, error);
-                throw new ApplicationException(error);
+            	return null;
             }
             return storageLocation;
         }

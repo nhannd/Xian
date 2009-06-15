@@ -233,6 +233,40 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 						try
 						{
 							StudyStorageLocation location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
+							if (location == null)
+							{
+								foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
+								{
+									FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+
+									DicomFile file = null;
+									foreach (FileInfo sopFile in sopInstanceFiles)
+									{
+										try
+										{
+											file = new DicomFile(sopFile.FullName);
+											file.Load(DicomTags.StudyId, DicomReadOptions.DoNotStorePixelDataInDataSet);
+											break;
+										}
+										catch (Exception e)
+										{
+											Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.",
+											             sopFile.FullName);
+											file = null;
+										}
+									}
+									if (file != null)
+									{
+										studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+										break;
+									}
+								}
+
+								location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
+								if (location == null)
+									continue;
+							}
+
 							ProcessStudy(location, engine, postArchivalEngine);
 							_stats.NumStudies++;
 

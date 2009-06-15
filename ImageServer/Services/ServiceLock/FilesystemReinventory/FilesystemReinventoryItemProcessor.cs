@@ -87,131 +87,139 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 						|| dateDir.FullName.EndsWith("Reconcile"))
 						continue;
 
-                    foreach(DirectoryInfo studyDir in dateDir.GetDirectories())
-                    {
+					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
+					{
 						// Check for Cancel message
 						if (CancelPending) return;
 
-                        String studyInstanceUid = studyDir.Name;
+						String studyInstanceUid = studyDir.Name;
 
-                        StudyStorageLocation location;
-                        if (false == GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
-                        {
-                        	StudyStorage storage;
-							if (GetStudyStorage(partition, studyInstanceUid, out storage))
+						StudyStorageLocation location;
+						if (false == GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+						{
+							List<FileInfo> fileList = new List<FileInfo>();
+							foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
 							{
-								Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}",studyInstanceUid, partition.Description, studyDir.ToString());
+								FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+
+								foreach (FileInfo sopFile in sopInstanceFiles)
+									fileList.Add(sopFile);
 							}
-							else
+
+							if (fileList.Count == 0)
 							{
-								List<FileInfo> fileList = new List<FileInfo>();
-								foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
-								{
-									FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+								Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
+								continue;
+							}
 
-									foreach (FileInfo sopFile in sopInstanceFiles)
-										fileList.Add(sopFile);
+							DicomFile file = null;
+							foreach (FileInfo fInfo in fileList)
+								try
+								{
+									file = new DicomFile(fInfo.FullName);
+									file.Load(DicomTags.StudyId, DicomReadOptions.DoNotStorePixelDataInDataSet);
+									break;
+								}
+								catch (Exception e)
+								{
+									Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.",
+									             fInfo.FullName);
+									file = null;
 								}
 
-								if (fileList.Count == 0)
+							if (file == null)
+							{
+								Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
+								continue;
+							}
+
+							// Do a second check, using the study instance uid from a file in the directory.
+							// had an issue with trailing periods on uids causing us to not find the 
+							// study storage, and insert a new record into the database.
+							studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+							if (false == GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+							{
+								StudyStorage storage;
+								if (GetStudyStorage(partition, studyInstanceUid, out storage))
 								{
-									Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
-									continue;
+									Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}", studyInstanceUid,
+									             partition.Description, studyDir.ToString());
 								}
-								
-								DicomFile file = null;
-								foreach (FileInfo fInfo in fileList)
-									try
-									{
-										file = new DicomFile(fInfo.FullName);
-										file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
-										break;
-									}
-									catch (Exception e)
-									{
-										Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.", fInfo.FullName);
-										file = null;
-									}
-
-								if (file == null)
+								else
 								{
-									Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
-									continue;
-								}
-
-								using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-								{
-									IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
-									InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-									insertParms.ServerPartitionKey = partition.GetKey();
-									insertParms.StudyInstanceUid = studyInstanceUid;
-									insertParms.Folder = dateDir.Name;
-									insertParms.FilesystemKey = filesystem.GetKey();
-									insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-									if (file.TransferSyntax.LosslessCompressed)
+									using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 									{
-										insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
-										insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+										IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
+										InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
+										insertParms.ServerPartitionKey = partition.GetKey();
+										insertParms.StudyInstanceUid = studyInstanceUid;
+										insertParms.Folder = dateDir.Name;
+										insertParms.FilesystemKey = filesystem.GetKey();
+										insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+										if (file.TransferSyntax.LosslessCompressed)
+										{
+											insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+											insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+										}
+										else if (file.TransferSyntax.LossyCompressed)
+										{
+											insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+											insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+										}
+										else
+										{
+											insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+											insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+										}
+
+										location = studyInsert.FindOne(insertParms);
+
+										// Lock the new study storage for study processing
+										ILockStudy lockStudy = update.GetBroker<ILockStudy>();
+										LockStudyParameters lockParms = new LockStudyParameters();
+										lockParms.StudyStorageKey = location.Key;
+										lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+										if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+											Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
+
+										update.Commit();
 									}
-									else if (file.TransferSyntax.LossyCompressed)
+
+									string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
+									if (File.Exists(studyXml))
+										FileUtils.Delete(studyXml);
+
+									foreach (FileInfo sopFile in fileList)
 									{
-										insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
-										insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+										String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
+
+										// Just use a read context here, in hopes of improving 
+										// performance.  Every other place in the code should use
+										// Update contexts when doing transactions.
+										IInsertWorkQueue workQueueInsert =
+											ReadContext.GetBroker<IInsertWorkQueue>();
+
+										InsertWorkQueueParameters queueInsertParms =
+											new InsertWorkQueueParameters();
+										queueInsertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
+										queueInsertParms.StudyStorageKey = location.GetKey();
+										queueInsertParms.ServerPartitionKey = partition.GetKey();
+										queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
+										queueInsertParms.SopInstanceUid = sopInstanceUid;
+										queueInsertParms.ScheduledTime = Platform.Time;
+										queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+										queueInsertParms.WorkQueuePriorityEnum = priority;
+
+										if (workQueueInsert.FindOne(queueInsertParms) == null)
+											Platform.Log(LogLevel.Error,
+											             "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
 									}
-									else
-									{
-										insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-										insertParms.StudyStatusEnum = StudyStatusEnum.Online;
-									}
-
-									location = studyInsert.FindOne(insertParms);
-
-									// Lock the new study storage for study processing
-									ILockStudy lockStudy = update.GetBroker<ILockStudy>();
-									LockStudyParameters lockParms = new LockStudyParameters();
-									lockParms.StudyStorageKey = location.Key;
-									lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
-									if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-										Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
-									
-									update.Commit();
-								}
-
-								string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
-								if (File.Exists(studyXml))
-									FileUtils.Delete(studyXml);
-
-								foreach (FileInfo sopFile in fileList)
-								{
-
-									String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
-
-									// Just use a read context here, in hopes of improving 
-									// performance.  Every other place in the code should use
-									// Update contexts when doing transactions.
-									IInsertWorkQueue workQueueInsert =
-										ReadContext.GetBroker<IInsertWorkQueue>();
-
-									InsertWorkQueueParameters queueInsertParms =
-										new InsertWorkQueueParameters();
-									queueInsertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
-									queueInsertParms.StudyStorageKey = location.GetKey();
-									queueInsertParms.ServerPartitionKey = partition.GetKey();
-									queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
-									queueInsertParms.SopInstanceUid = sopInstanceUid;
-									queueInsertParms.ScheduledTime = Platform.Time;
-									queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-									queueInsertParms.WorkQueuePriorityEnum = priority;
-
-									if (workQueueInsert.FindOne(queueInsertParms)==null)
-										Platform.Log(LogLevel.Error,
-													 "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
 								}
 							}
-                        }
-                    }
+						}
+					}
 
-					// Cleanup the date directory, if its empty.
+                	// Cleanup the date directory, if its empty.
                 	DirectoryUtility.DeleteIfEmpty(dateDir.FullName);
                 }
             }
