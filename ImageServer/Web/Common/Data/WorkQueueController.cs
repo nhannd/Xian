@@ -30,9 +30,11 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -363,35 +365,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
 					if (workQueueBroker.Delete(item.GetKey()))
 					{
-						// Unlock first
-						ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
-						LockStudyParameters lockParms = new LockStudyParameters();
-						lockParms.StudyStorageKey = item.StudyStorageKey;
-						lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-						if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-							return false;
-
-						// Now relock
-						lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
-						if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-							return false;
-
-						InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
-						columns.ScheduledTime = Platform.Time;
-						columns.ServerPartitionKey = item.ServerPartitionKey;
-						columns.StudyStorageKey = item.StudyStorageKey;
-						columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-						columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-						columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
-						IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
-						if (insertBroker.FindOne(columns)!=null)
-						{
-							ctx.Commit();
-							return true;
-						}
-
-						return false;
+					    IList<StudyStorageLocation> locations = item.LoadStudyLocations(ctx);
+                        if (locations!=null && locations.Count>0)
+                        {
+                            StudyReprocessor reprocessor = new StudyReprocessor();
+                            WorkQueue reprocessEntry = reprocessor.ReprocessStudy(locations[0], Platform.Time, WorkQueuePriorityEnum.High);
+                            return reprocessEntry!=null;
+                        }	
 					}
+
+                    ctx.Commit();
+				    
 				}
 			}
 			return false;

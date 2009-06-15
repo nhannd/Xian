@@ -428,11 +428,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             Platform.Log(LogLevel.Info, "Logging history record...");
             using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
+                // create the change log based on info stored in the queue entry
                 ReprocessStudyChangeLog changeLog = new ReprocessStudyChangeLog();
                 changeLog.TimeStamp = Platform.Time;
                 changeLog.StudyInstanceUid = StorageLocation.StudyInstanceUid;
-                changeLog.Reason = _queueData.ChangeLog.Reason;
-                changeLog.User = _queueData.ChangeLog.User;
+                changeLog.Reason = _queueData.ChangeLog != null ? _queueData.ChangeLog.Reason : "N/A";
+                changeLog.User = _queueData.ChangeLog != null ? _queueData.ChangeLog.User : "Unknown";
+                
                 StudyHistory history = StudyHelper.CreateStudyHistoryRecord(ctx, StorageLocation, null, StudyHistoryTypeEnum.Reprocessed, null, changeLog);
                 if (history != null)
                     ctx.Commit();
