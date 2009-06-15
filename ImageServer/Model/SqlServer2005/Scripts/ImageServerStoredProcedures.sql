@@ -3633,14 +3633,16 @@ BEGIN
 
 	DELETE Study WHERE GUID=@StudyGUID
 
-	UPDATE Patient SET 	NumberOfPatientRelatedInstances=NumberOfPatientRelatedStudies-@NumInstances WHERE GUID=@PatientGUID
-	UPDATE Patient SET 	NumberOfPatientRelatedSeries=@NumSeries WHERE GUID=@PatientGUID
+	UPDATE Patient SET 	NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances-@NumInstances WHERE GUID=@PatientGUID
+	UPDATE Patient SET 	NumberOfPatientRelatedSeries=NumberOfPatientRelatedSeries-@NumSeries WHERE GUID=@PatientGUID
 	UPDATE Patient SET 	NumberOfPatientRelatedStudies=NumberOfPatientRelatedStudies-1 WHERE GUID=@PatientGUID
 	DELETE Patient WHERE GUID=@PatientGUID AND NumberOfPatientRelatedStudies=0
+
 
 	UPDATE ServerPartition SET StudyCount=StudyCount-1 WHERE GUID=@ServerPartitionGUID	
 
 END
+GO
 '
 END
 GO
