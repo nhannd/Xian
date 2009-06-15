@@ -350,7 +350,7 @@ BEGIN
 
 	--PRINT @stmt
 	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data FROM ('' + @stmt
-	SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1 ORDER BY W.InsertTime''
+	SET @stmt = @stmt + '' ORDER BY InsertTime) AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
 
@@ -3641,7 +3641,6 @@ BEGIN
 	UPDATE ServerPartition SET StudyCount=StudyCount-1 WHERE GUID=@ServerPartitionGUID	
 
 END
-GO
 '
 END
 GO
