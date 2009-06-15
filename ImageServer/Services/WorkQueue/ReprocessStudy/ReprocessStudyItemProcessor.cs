@@ -45,9 +45,9 @@ using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Validation;
+using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
 
 
@@ -237,129 +237,137 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
             LoadState(item);
 
+            StudyXml studyXml = LoadStudyXml();
+
+            if (_queueData.State == null || !_queueData.State.ExecuteAtLeastOnce)
+            {
+                Platform.Log(LogLevel.Info,
+                             "Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                             Study.AccessionNumber, ServerPartition.Description);
+
+                CleanupDatabase();
+            }
+            else
+            {
+                Platform.Log(LogLevel.Info,
+                             "Resume Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                             Study.AccessionNumber, ServerPartition.Description);
+            }
+
+
             
-                if (_queueData.State == null || !_queueData.State.ExecuteAtLeastOnce)
-                {
-                    Platform.Log(LogLevel.Info,
-                                 "Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
-                                 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-                                 Study.AccessionNumber, ServerPartition.Description);
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info,
-                                 "Resume Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
-                                 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-                                 Study.AccessionNumber, ServerPartition.Description);
-                }
+            try
+            {
+                FileProcessor.Process(StorageLocation.GetStudyPath(), "*.*",
+                                      delegate(string path, out bool cancel)
+                                          {
+                                              #region Reprocess File
 
-
-                StudyXml studyXml = LoadStudyXml();
-
-                try
-                {
-                    FileProcessor.Process(StorageLocation.GetStudyPath(), "*.*",
-                                          delegate(string path, out bool cancel)
+                                              FileInfo file = new FileInfo(path);
+                                              if (file.Extension.Equals(".dcm"))
                                               {
-                                                  #region Reprocess File
-
-                                                  FileInfo file = new FileInfo(path);
-                                                  if (file.Extension.Equals(".dcm"))
+                                                  try
                                                   {
-                                                      try
+                                                      DicomFile dicomFile = new DicomFile(path);
+                                                      dicomFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+
+                                                      string seriesUid = dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+                                                      string instanceUid =dicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0,string.Empty);
+                                                      if (studyXml.Contains(seriesUid, instanceUid))
                                                       {
-                                                          DicomFile dicomFile = new DicomFile(path);
-                                                          dicomFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
-
-                                                          string seriesUid = dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
-                                                          string instanceUid =dicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0,string.Empty);
-                                                          if (studyXml.Contains(seriesUid, instanceUid))
+                                                          if (!seriesMap.ContainsKey(seriesUid))
                                                           {
-                                                              if (!seriesMap.ContainsKey(seriesUid))
-                                                              {
-                                                                  seriesMap.Add(seriesUid, new List<string>());
-                                                              }
-                                                              seriesMap[seriesUid].Add(instanceUid);
+                                                              seriesMap.Add(seriesUid, new List<string>());
                                                           }
-                                                          else
-                                                          {
-                                                              Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessing SOP {0} for study {1}",instanceUid, StorageLocation.StudyInstanceUid);
-                                                              ProcessingResult result = processor.ProcessFile(dicomFile, studyXml, false, true);
-                                                              switch (result.Status)
-                                                              {
-                                                                  case ProcessingStatus.Success:
-                                                                      reprocessedFileCounter++;
-                                                                      if (!seriesMap.ContainsKey(seriesUid))
-                                                                      {
-                                                                          seriesMap.Add(seriesUid, new List<string>());
-                                                                      }
-                                                                      seriesMap[seriesUid].Add(instanceUid);
-
-                                                                      Platform.Log(ServerPlatform.InstanceLogLevel,
-                                                                                   "Reprocessed SOP {0} for study {1}",
-                                                                                   instanceUid,
-                                                                                   StorageLocation.StudyInstanceUid);
-                                                                      break;
-
-                                                                  case ProcessingStatus.Failed:
-                                                                      Platform.Log(LogLevel.Error,
-                                                                                   "Failed to reprocess SOP {0} for study {1}",
-                                                                                   instanceUid,
-                                                                                   StorageLocation.StudyInstanceUid);
-                                                                      // failureDescription = ""; TODO: augment the processor to return the error
-                                                                      failureDescription =
-                                                                          String.Format("Failed to reprocess SOP {0}",
-                                                                                        instanceUid);
-                                                                      break;
-                                                              }
-                                                          }
+                                                          seriesMap[seriesUid].Add(instanceUid);
                                                       }
-                                                      catch (DicomException ex)
+                                                      else
                                                       {
-                                                          Platform.Log(LogLevel.Warn,
-                                                                       "Skip reprocessing and delete {0}: Not readable.",
-                                                                       path);
-                                                          FileUtils.Delete(path);
-                                                          failureDescription = ex.Message;
+                                                          Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessing SOP {0} for study {1}",instanceUid, StorageLocation.StudyInstanceUid);
+                                                          ProcessingResult result = processor.ProcessFile(dicomFile, studyXml, false, true);
+                                                          switch (result.Status)
+                                                          {
+                                                              case ProcessingStatus.Success:
+                                                                  reprocessedFileCounter++;
+                                                                  if (!seriesMap.ContainsKey(seriesUid))
+                                                                  {
+                                                                      seriesMap.Add(seriesUid, new List<string>());
+                                                                  }
+                                                                  seriesMap[seriesUid].Add(instanceUid);
 
-                                                          RaiseAlert(item, AlertLevel.Critical,
-                                                                     "File {0} is not readable and has been removed from study.",
-                                                                     path, StorageLocation.Study.AccessionNumber,
-                                                                     StorageLocation.Study.PatientsName,
-                                                                     StorageLocation.Study.PatientId);
+                                                                  Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessed SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
+                                                                  break;
+
+                                                              case ProcessingStatus.Failed:
+                                                                  Platform.Log(LogLevel.Error, "Failed to reprocess SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
+                                                                  // failureDescription = ""; TODO: augment the processor to return the error
+                                                                  failureDescription = String.Format("Failed to reprocess SOP {0}", instanceUid);
+                                                                  break;
+                                                          }
                                                       }
                                                   }
-                                                  else if (!file.Extension.Equals(".xml"))
+                                                  catch (DicomException ex)
                                                   {
-                                                      // not a dicom file, delete it
+                                                      Platform.Log(LogLevel.Warn, "Skip reprocessing and delete {0}: Not readable.", path);
                                                       FileUtils.Delete(path);
+                                                      failureDescription = ex.Message;
+
+                                                      RaiseAlert(item, AlertLevel.Critical,
+                                                                 "File {0} is not readable and has been removed from study.",
+                                                                 path, StorageLocation.Study.AccessionNumber,
+                                                                 StorageLocation.Study.PatientsName,
+                                                                 StorageLocation.Study.PatientId);
                                                   }
+                                              }
+                                              else if (!file.Extension.Equals(".xml"))
+                                              {
+                                                  // not a dicom file, delete it
+                                                  FileUtils.Delete(path);
+                                              }
 
-                                                  #endregion
+                                              #endregion
 
-                                                  cancel = reprocessedFileCounter >= 500;
-                                              }, true);
+                                              cancel = reprocessedFileCounter >= 500;
+                                          }, true);
 
-                    completed = reprocessedFileCounter == 0;
+                completed = reprocessedFileCounter == 0;
 
-                    EnsureConsistentObjectCount(studyXml, seriesMap);
-                    SaveStudyXml(studyXml);
-                    successful = true;
-                }
-                catch (Exception e)
+                EnsureConsistentObjectCount(studyXml, seriesMap);
+                SaveStudyXml(studyXml);
+                successful = true;
+            }
+            catch (Exception e)
+            {
+                successful = false;
+                failureDescription = e.Message;
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when reprocessing study: {0}", StorageLocation.StudyInstanceUid);
+                Platform.Log(LogLevel.Error, "Study may be in invalid unprocessed state.  Study location: {0}", StorageLocation.GetStudyPath());
+                throw;
+            }
+            finally
+            {
+                if (!successful)
                 {
-                    successful = false;
-                    failureDescription = e.Message;
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when reprocessing study: {0}",
-                                 StorageLocation.StudyInstanceUid);
-                    Platform.Log(LogLevel.Error, "Study may be in invalid unprocessed state.  Study location: {0}",
-                                 StorageLocation.GetStudyPath());
-                    throw;
-                }
-                finally
-                {
-                    if (!successful)
+                    // Update the queue state
+                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
+                        _queueData.State.ExecuteAtLeastOnce = true;
+                        IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
+                        WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
+                        parms.Data = XmlUtils.SerializeAsXmlDoc(_queueData);
+                        broker.Update(item.GetKey(), parms);
+                        updateContext.Commit();
+                    }
+                    
+                    FailQueueItem(item, failureDescription);
+                }
+                else 
+                {
+                    if (!completed)
+                    {
+                        #region Put back into Pending
                         // Update the queue state
                         using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                         {
@@ -370,47 +378,48 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                             broker.Update(item.GetKey(), parms);
                             updateContext.Commit();
                         }
-                        
-                        FailQueueItem(item, failureDescription);
+
+                        // Put it back to Pending
+                        PostProcessing(item, WorkQueueProcessorStatus.Pending, WorkQueueProcessorDatabaseUpdate.None); 
+                        #endregion
                     }
-                    else 
+                    else
                     {
-                        if (!completed)
-                        {
-                            #region Put back into Pending
-                            // Update the queue state
-                            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                            {
-                                _queueData.State.ExecuteAtLeastOnce = true;
-                                IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
-                                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
-                                parms.Data = XmlUtils.SerializeAsXmlDoc(_queueData);
-                                broker.Update(item.GetKey(), parms);
-                                updateContext.Commit();
-                            }
 
-                            // Put it back to Pending
-                            PostProcessing(item, WorkQueueProcessorStatus.Pending, WorkQueueProcessorDatabaseUpdate.None); 
-                            #endregion
-                        }
-                        else
-                        {
+                        LogHistory();
 
-                            LogHistory();
+                        // Run Study / Series Rules Engine.
+                        StudyRulesEngine engine = new StudyRulesEngine(StorageLocation, ServerPartition);
+                        engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
 
-                            // Run Study / Series Rules Engine.
-                            StudyRulesEngine engine = new StudyRulesEngine(StorageLocation, ServerPartition);
-                            engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
+                        // Log the FilesystemQueue related entries
+                        StorageLocation.LogFilesystemQueue();
 
-                            // Log the FilesystemQueue related entries
-                            StorageLocation.LogFilesystemQueue();
-
-                            PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-                            
-                            Platform.Log(LogLevel.Info, "Completed reprocessing of study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Description);
-                        }
-                    
+                        PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                        
+                        Platform.Log(LogLevel.Info, "Completed reprocessing of study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Description);
                     }
+                
+                }
+            }
+        }
+
+        private void CleanupDatabase()
+        {
+            // Delete StudyStorage related tables except the StudyStorage table itself
+            // This will reset the object count in all levels. The Study, Patient, Series
+            // records will be recreated when the file is reprocessed.
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IResetStudyStorage broker = updateContext.GetBroker<IResetStudyStorage>();
+                ResetStudyStorageParameters criteria = new ResetStudyStorageParameters();
+                criteria.StudyStorageKey = StorageLocation.GetKey();
+                if (!broker.Execute(criteria))
+                {
+                    throw new ApplicationException("Could not reset study storage");
+                }
+                else
+                    updateContext.Commit();
             }
         }
 

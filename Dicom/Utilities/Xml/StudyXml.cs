@@ -404,5 +404,16 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             return seriesXml[instanceUid];
         }
+
+        public bool Contains(string seriesUid, string instanceUid)
+        {
+            SeriesXml series = this[seriesUid];
+            if (series==null)
+            {
+                return false;
+            }
+
+            return series[instanceUid] != null;
+        }
     }
 }

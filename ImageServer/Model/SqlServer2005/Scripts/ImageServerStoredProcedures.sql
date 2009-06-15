@@ -3593,3 +3593,59 @@ END
 '
 END
 GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ResetStudyStorage]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: June 15, 2009
+-- Description:	Delete study/series level tables of a StudyStorage
+-- =============================================
+CREATE PROCEDURE ResetStudyStorage
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @StudyInstanceUid varchar(64)
+	DECLARE @StudyGUID uniqueidentifier
+	DECLARE @PatientGUID uniqueidentifier
+	DECLARE @ServerPartitionGUID uniqueidentifier
+	DECLARE @NumSeries int
+	DECLARE @NumInstances int
+
+	SELECT @ServerPartitionGUID = ServerPartitionGUID, @StudyInstanceUid = StudyInstanceUid
+	FROM StudyStorage WHERE GUID=@StudyStorageGUID
+	
+	SELECT	@StudyGUID=GUID, @PatientGUID=PatientGUID FROM Study WHERE ServerPartitionGUID=@ServerPartitionGUID AND StudyInstanceUid=@StudyInstanceUid
+
+	SELECT @NumSeries=COUNT(*) FROM Series WHERE StudyGUID=@StudyGUID
+	SELECT @NumInstances=SUM(NumberOfSeriesRelatedInstances) 
+	FROM Series WHERE StudyGUID=@StudyGUID
+
+	DELETE RequestAttributes WHERE SeriesGUID IN (SELECT GUID FROM Series WHERE StudyGUID=@StudyGUID)
+	DELETE Series WHERE StudyGUID=@StudyGUID
+
+	DELETE Study WHERE GUID=@StudyGUID
+
+	UPDATE Patient SET 	NumberOfPatientRelatedInstances=NumberOfPatientRelatedStudies-@NumInstances WHERE GUID=@PatientGUID
+	UPDATE Patient SET 	NumberOfPatientRelatedSeries=@NumSeries WHERE GUID=@PatientGUID
+	UPDATE Patient SET 	NumberOfPatientRelatedStudies=NumberOfPatientRelatedStudies-1 WHERE GUID=@PatientGUID
+	DELETE Patient WHERE GUID=@PatientGUID AND NumberOfPatientRelatedStudies=0
+
+	UPDATE ServerPartition SET StudyCount=StudyCount-1 WHERE GUID=@ServerPartitionGUID	
+
+END
+GO
+'
+END
+GO

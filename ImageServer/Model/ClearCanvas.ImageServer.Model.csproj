@@ -59,6 +59,7 @@
     <Compile Include="Brokers\IDeleteInstance.cs" />
     <Compile Include="Brokers\IInsertDuplicateQueue.cs" />
     <Compile Include="Brokers\ILockStudy.cs" />
+    <Compile Include="Brokers\IResetStudyStorage.cs" />
     <Compile Include="Brokers\IWebQueryReconcileQueue.cs" />
     <Compile Include="Brokers\IInserReconcileQueue.cs" />
     <Compile Include="Brokers\IWebQueryRestoreQueue.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="Parameters\InsertDuplicateSopReceivedQueueParameters.cs" />
     <Compile Include="Parameters\LockStudyParameters.cs" />
     <Compile Include="Parameters\AttachStudyToPatientParamaters.cs" />
+    <Compile Include="Parameters\ResetStudyStorageParameters.cs" />
     <Compile Include="Parameters\WebQueryStudyIntegrityQueueParameters.cs" />
     <Compile Include="Parameters\InsertStudyIntegrityQueueParameters.cs" />
     <Compile Include="Parameters\WebQueryRestoreQueueParameters.cs" />
