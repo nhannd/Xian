@@ -88,7 +88,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 _transaction = null;
             }
             else
-                Platform.Log(LogLevel.Error, "Attempting to commit transaction that is invalid");
+            {
+                string errorMessage = "Attempting to commit transaction that is invalid. ";
+                errorMessage += "Stack Trace: " + Environment.StackTrace;   
+
+                Platform.Log(LogLevel.Error, errorMessage);
+            }
         }
 
         #endregion

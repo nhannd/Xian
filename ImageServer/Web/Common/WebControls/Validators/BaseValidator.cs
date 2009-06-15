@@ -393,7 +393,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 							InvalidInputIndicator.TooltipLabel.Text = ErrorMessage;
                         InvalidInputIndicator.Show();
                     }
-					Platform.Log(LogLevel.Warn,"Control failed server side validation: {0}", ErrorMessage);
+
+                    string errorMessage = "No error message provided. Stack Trace -\r\n" + Environment.StackTrace;
+                    if (!String.IsNullOrEmpty(ErrorMessage)) errorMessage = ErrorMessage;
+                    else if (!string.IsNullOrEmpty(Text)) errorMessage = Text;
+                    Platform.Log(LogLevel.Warn,"Control {0} failed server side validation. Error Message: {1}", ControlToValidate, errorMessage);
                     return false;
                 }
             }
