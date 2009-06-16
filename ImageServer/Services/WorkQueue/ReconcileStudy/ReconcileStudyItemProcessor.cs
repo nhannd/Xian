@@ -35,6 +35,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// <summary>
     /// Processor to handle 'ReconcileStudy' work queue entries
     /// </summary>
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
     class ReconcileStudyItemProcessor : BaseItemProcessor
     {
         #region Private Members

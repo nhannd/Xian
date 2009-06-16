@@ -419,13 +419,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			return studyStorageAdaptor.GetFirst(criteria);
 		}
 
-        public void ReprocessStudy(ServerEntityKey key)
+        public void ReprocessStudy(String reason, ServerEntityKey key)
         {
             StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
             StudyStorage storage = adaptor.Get(key);
             StudyStorageLocation storageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
             StudyReprocessor reprocessor = new StudyReprocessor();
-            reprocessor.ReprocessStudy(storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
+            reprocessor.ReprocessStudy(reason, storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
         }
         #endregion
 

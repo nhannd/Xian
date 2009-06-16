@@ -4,5 +4,5 @@
     <% if (!String.IsNullOrEmpty(ChangeLog.User)) {%>
     By <%=ChangeLog.User %> <br />
     <% } %>
-    Reason: <%= ChangeLog.Reason %>
+    <%= ChangeLog.Reason %>
 </asp:Panel>

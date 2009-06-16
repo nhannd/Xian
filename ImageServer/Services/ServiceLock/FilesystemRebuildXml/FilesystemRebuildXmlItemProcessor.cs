@@ -206,7 +206,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected error when rebuilding study XML for directory: {0}", location.FilesystemPath);
                 StudyReprocessor reprocessor = new StudyReprocessor();
-                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(location, Platform.Time, WorkQueuePriorityEnum.Low);
+                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy("Rebuild StudyXml", location, Platform.Time, WorkQueuePriorityEnum.Low);
 				if (reprocessEntry!=null)
 				{
 					Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}", location.StudyInstanceUid);

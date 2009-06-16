@@ -33,16 +33,28 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class ResetStudyStorageParameters : ProcedureParameters
+    public class SetSeriesRelatedInstanceCountParameters : ProcedureParameters
     {
-        public ResetStudyStorageParameters()
-            : base("ResetStudyStorage")
+        public SetSeriesRelatedInstanceCountParameters(ServerEntityKey studyStorageKey, string seriesInstanceUid)
+            : base("SetSeriesRelatedInstanceCount")
         {
+            StudyStorageKey = studyStorageKey;
+            SeriesInstanceUid = seriesInstanceUid;
         }
 
         public ServerEntityKey StudyStorageKey
         {
             set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+
+        public string SeriesInstanceUid
+        {
+            set { SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
+        }
+
+        public int SeriesRelatedInstanceCount
+        {
+            set { SubCriteria["SeriesRelatedInstanceCount"] = new ProcedureParameter<int>("SeriesRelatedInstanceCount", value); } 
         }
     }
 }

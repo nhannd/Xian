@@ -30,19 +30,11 @@
 #endregion
 
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public class ResetStudyStorageParameters : ProcedureParameters
+    public interface ISetSeriesRelatedInstanceCount : IProcedureUpdateBroker<SetSeriesRelatedInstanceCountParameters>
     {
-        public ResetStudyStorageParameters()
-            : base("ResetStudyStorage")
-        {
-        }
-
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
-        }
     }
 }

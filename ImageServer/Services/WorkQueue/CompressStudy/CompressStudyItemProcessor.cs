@@ -66,6 +66,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			Platform.CheckForNullReference(sop, "sop");
 			Platform.CheckForNullReference(studyXml, "studyXml");
 
+            if (!studyXml.Contains(sop.SeriesInstanceUid, sop.SopInstanceUid))
+            {
+                // Uid was inserted but not in the study xml.
+                // Auto-recovery might have detect problem with that file and remove it from the study.
+                // Assume the study xml has been corrected and ignore the uid.
+                Platform.Log(LogLevel.Warn, "Skipping SOP {0} in series {1}. It is no longer part of the study.", sop.SopInstanceUid, sop.SeriesInstanceUid);
+
+                // Delete it out of the queue
+                DeleteWorkQueueUid(sop);
+                return true;
+            }
+
 			string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
 			basePath = Path.Combine(basePath, sop.SopInstanceUid);
 			string path;

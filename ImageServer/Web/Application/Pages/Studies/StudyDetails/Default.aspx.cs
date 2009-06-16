@@ -277,7 +277,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         private void ReprocessStudy()
         {
             StudyController controller = new StudyController();
-            controller.ReprocessStudy(_study.TheStudyStorage.GetKey());
+            controller.ReprocessStudy("Reprocess Study via GUI", _study.TheStudyStorage.GetKey());
             Refresh();
         }
 

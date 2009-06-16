@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
-    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery= RecoveryModes.Manual)]
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery= RecoveryModes.Automatic)]
     public class StudyProcessItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Private Members

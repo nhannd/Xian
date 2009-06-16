@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.Utilities
 {
@@ -49,6 +50,23 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         public delegate void CopyProcessCallback(string path);
 
         /// <summary>
+        /// Returns the number of files in the specified directory that satisfies a given condition
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="searchParttern"></param>
+        /// <param name="recursive"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static long Count(string path, string searchParttern, bool recursive, Predicate<string> condition)
+        {
+            long counter = 0;
+            FileProcessor.Process(path, searchParttern,
+                                  delegate(string file) { if (condition==null || condition(file)) counter++; },
+                                  recursive);
+            return counter;
+        }
+
+	    /// <summary>
         /// Moves a study from one location to another.
         /// </summary>
         /// <param name="source"></param>

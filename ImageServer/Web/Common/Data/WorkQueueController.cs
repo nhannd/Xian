@@ -369,7 +369,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         if (locations!=null && locations.Count>0)
                         {
                             StudyReprocessor reprocessor = new StudyReprocessor();
-                            WorkQueue reprocessEntry = reprocessor.ReprocessStudy(locations[0], Platform.Time, WorkQueuePriorityEnum.High);
+                            String reason = String.Format("Reprocess failed {0}", item.WorkQueueTypeEnum);
+                            WorkQueue reprocessEntry = reprocessor.ReprocessStudy(reason, locations[0], Platform.Time, WorkQueuePriorityEnum.High);
                             return reprocessEntry!=null;
                         }	
 					}

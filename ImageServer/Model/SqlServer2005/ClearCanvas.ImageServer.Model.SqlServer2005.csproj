@@ -44,6 +44,8 @@
     <Compile Include="Brokers\InsertDuplicateSopReceivedQueue.cs" />
     <Compile Include="Brokers\LockStudy.cs" />
     <Compile Include="Brokers\ResetStudyStorage.cs" />
+    <Compile Include="Brokers\SetSeriesRelatedInstanceCount.cs" />
+    <Compile Include="Brokers\SetStudyRelatedInstanceCount.cs" />
     <Compile Include="Brokers\WebQueryStudyIntegrityQueue.cs" />
     <Compile Include="Brokers\InsertReconcileQueue.cs" />
     <Compile Include="Brokers\WebQueryRestoreQueue.cs" />

@@ -28,21 +28,12 @@
 // OF SUCH DAMAGE.
 
 #endregion
-
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public class ResetStudyStorageParameters : ProcedureParameters
+    public interface ISetStudyRelatedInstanceCount : IProcedureUpdateBroker<SetStudyRelatedInstanceCountParameters>
     {
-        public ResetStudyStorageParameters()
-            : base("ResetStudyStorage")
-        {
-        }
-
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
-        }
     }
 }

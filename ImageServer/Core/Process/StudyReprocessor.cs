@@ -33,13 +33,11 @@ using System;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Core.Process
@@ -49,11 +47,12 @@ namespace ClearCanvas.ImageServer.Core.Process
         /// <summary>
         /// Creates a Study Reprocess entry and locks the study in <see cref="QueueStudyStateEnum.ReprocessScheduled"/> state.
         /// </summary>
+        /// <param name="reason"></param>
         /// <param name="location"></param>
         /// <param name="scheduleTime"></param>
         /// <param name="priority"></param>
         /// <returns></returns>
-        public WorkQueue ReprocessStudy(StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
+        public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
         {
             Platform.CheckForNullReference(location, "location");
 
@@ -88,11 +87,11 @@ namespace ClearCanvas.ImageServer.Core.Process
                 queueData.State = new ReprocessStudyState();
                 queueData.State.ExecuteAtLeastOnce = false; 
                 queueData.ChangeLog = new ReprocessStudyChangeLog();
-                queueData.ChangeLog.Reason = "N/A";
+                queueData.ChangeLog.Reason = reason;
                 queueData.ChangeLog.TimeStamp = Platform.Time;
                 queueData.ChangeLog.User = (Thread.CurrentPrincipal is CustomPrincipal)
                                          ? (Thread.CurrentPrincipal as CustomPrincipal).Identity.Name
-                                         : "N/A";
+                                         : String.Empty;
                 columns.WorkQueueData = XmlUtils.SerializeAsXmlDoc(queueData);
                 IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
                 WorkQueue reprocessEntry = insertBroker.FindOne(columns);

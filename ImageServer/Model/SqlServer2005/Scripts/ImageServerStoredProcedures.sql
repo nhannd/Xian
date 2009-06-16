@@ -3650,3 +3650,134 @@ END
 '
 END
 GO
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetStudyRelatedInstanceCount]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: June 16, 2009
+-- Description:	Update number of series and instances for a study
+-- =============================================
+CREATE PROCEDURE [dbo].[SetStudyRelatedInstanceCount]
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier,
+	@StudyRelatedInstanceCount int,
+	@StudyRelatedSeriesCount int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+	DECLARE @StudyInstanceUid varchar(64)
+	DECLARE @SeriesGUID uniqueidentifier
+	DECLARE @StudyGUID uniqueidentifier
+	DECLARE @PatientGUID uniqueidentifier
+	DECLARE @ServerPartitionGUID uniqueidentifier
+	DECLARE @PrevStudyRelatedInstanceCount int
+	DECLARE @PrevStudyRelatedSeriesCount int
+
+	SELECT  @ServerPartitionGUID = ss.ServerPartitionGUID, 
+			@StudyInstanceUid = st.StudyInstanceUid,
+			@StudyGUID = st.GUID,
+			@PatientGUID=st.PatientGUID,
+			@PrevStudyRelatedSeriesCount=st.NumberOfStudyRelatedSeries,
+			@PrevStudyRelatedInstanceCount=st.NumberOfStudyRelatedInstances			
+	FROM StudyStorage ss
+	JOIN Study st ON st.StudyStorageGUID=ss.GUID
+	WHERE ss.GUID=@StudyStorageGUID
+	
+	
+	DECLARE @InstanceCountDiff int
+	DECLARE @SeriesCountDiff int
+	SET @InstanceCountDiff = @StudyRelatedInstanceCount - @PrevStudyRelatedInstanceCount
+	SET @SeriesCountDiff = @StudyRelatedSeriesCount - @PrevStudyRelatedSeriesCount
+
+	-- Update the count in the Study and Patient table
+	UPDATE Study 
+	SET NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances+@InstanceCountDiff,
+		NumberOfStudyRelatedSeries =NumberOfStudyRelatedSeries+@SeriesCountDiff
+	WHERE GUID=@StudyGUID
+	
+	UPDATE Patient 
+	SET NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances+@InstanceCountDiff,
+		NumberOfPatientRelatedSeries=NumberOfPatientRelatedSeries+@SeriesCountDiff 
+	WHERE GUID=@PatientGUID	
+
+END
+'
+END
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetStudyRelatedInstanceCount]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: June 16, 2009
+-- Description:	Update number of series and instances for a study
+-- =============================================
+CREATE PROCEDURE [dbo].[SetStudyRelatedInstanceCount]
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier,
+	@StudyRelatedInstanceCount int,
+	@StudyRelatedSeriesCount int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+	DECLARE @StudyInstanceUid varchar(64)
+	DECLARE @SeriesGUID uniqueidentifier
+	DECLARE @StudyGUID uniqueidentifier
+	DECLARE @PatientGUID uniqueidentifier
+	DECLARE @ServerPartitionGUID uniqueidentifier
+	DECLARE @PrevStudyRelatedInstanceCount int
+	DECLARE @PrevStudyRelatedSeriesCount int
+
+	SELECT  @ServerPartitionGUID = ss.ServerPartitionGUID, 
+			@StudyInstanceUid = st.StudyInstanceUid,
+			@StudyGUID = st.GUID,
+			@PatientGUID=st.PatientGUID,
+			@PrevStudyRelatedSeriesCount=st.NumberOfStudyRelatedSeries,
+			@PrevStudyRelatedInstanceCount=st.NumberOfStudyRelatedInstances			
+	FROM StudyStorage ss
+	JOIN Study st ON st.StudyStorageGUID=ss.GUID
+	WHERE ss.GUID=@StudyStorageGUID
+	
+	
+	DECLARE @InstanceCountDiff int
+	DECLARE @SeriesCountDiff int
+	SET @InstanceCountDiff = @StudyRelatedInstanceCount - @PrevStudyRelatedInstanceCount
+	SET @SeriesCountDiff = @StudyRelatedSeriesCount - @PrevStudyRelatedSeriesCount
+
+	-- Update the count in the Study and Patient table
+	UPDATE Study 
+	SET NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances+@InstanceCountDiff,
+		NumberOfStudyRelatedSeries =NumberOfStudyRelatedSeries+@SeriesCountDiff
+	WHERE GUID=@StudyGUID
+	
+	UPDATE Patient 
+	SET NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances+@InstanceCountDiff,
+		NumberOfPatientRelatedSeries=NumberOfPatientRelatedSeries+@SeriesCountDiff 
+	WHERE GUID=@PatientGUID	
+
+END
+'
+END
+GO
