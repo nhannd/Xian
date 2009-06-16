@@ -98,8 +98,34 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				}
             }
 	    }
+		private string GetTempPath()
+		{
+			int count = 0;
+			string path;
 
-	    protected override void OnExecute()
+			path = String.Format("{0}_tmp", _path);
+
+			while (File.Exists(path))
+			{
+				DateTime creationTime = File.GetCreationTime(path);
+				DateTime currentTime = Platform.Time;
+				// Arbitrary check of 12 hour old file.  if the file is more than 12 hours old,
+				// we're assuming its an orphan, and an error occured when creating, so it can 
+				// be overwritten.
+				if (creationTime < currentTime.AddHours(-12.0d))
+				{
+					FileUtils.Delete(path);
+					return path;
+				}
+
+				count++;
+				path = String.Format("{0}_{1}tmp", _path, count);
+			}
+
+			return path;
+		}
+
+		protected override void OnExecute()
 		{
             if (RequiresRollback)
                 Backup();
@@ -107,9 +133,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	    	string path;
 			if (_saveTemp)
 			{
-				path = String.Format("{0}_tmp", _path);
-				if (File.Exists(path))
-					FileUtils.Delete(path);
+				path = GetTempPath();
 			}
 			else
 				path = _path;
@@ -133,7 +157,21 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			if (_saveTemp)
 			{
 				if (File.Exists(_path))
-					FileUtils.Delete(_path);
+				{
+					if (_failOnExists)
+					{
+						try
+						{
+							FileUtils.Delete(path);
+						}
+						catch
+						{}
+						throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}", _path));
+					}
+					else
+						FileUtils.Delete(_path);
+				}
+
 				File.Move(path, _path);
 				_fileCreated = true;
 			}
