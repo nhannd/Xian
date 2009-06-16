@@ -735,6 +735,7 @@ EXEC dbo.sp_executesql @statement = N'
 --  Oct 23, 2008, Removed UpdateQueueStudyState
 --  May 03, 2009, Fixed bug when completing and deleting the work queue while more work queue uids are being 
 --                by another process. When this happens, the entry is now left in Pending status.
+--  May 28, 2009, May 03 rev had bug where a Lock was not released in StudyStorage when condition was met.
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -803,6 +804,9 @@ BEGIN
 		    -- another process may have had inserted more uid. We need to leave the entry in Pending.
 			UPDATE WorkQueue SET [WorkQueueStatusEnum]=@PendingStatusEnum 
 			WHERE GUID = @WorkQueueGUID
+
+			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND Lock = 1
 		END
 	END
 	ELSE if  @WorkQueueStatusEnum = @FailedStatusEnum
@@ -3642,7 +3646,7 @@ BEGIN
 	UPDATE ServerPartition SET StudyCount=StudyCount-1 WHERE GUID=@ServerPartitionGUID	
 
 END
-GO
+
 '
 END
 GO
