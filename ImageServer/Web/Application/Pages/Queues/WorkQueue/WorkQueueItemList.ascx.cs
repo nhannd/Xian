@@ -224,9 +224,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 {
                     if (row.RowType == DataControlRowType.DataRow)
                     {
-                        WorkQueueSummary item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
-                        row.Attributes["uid"] = item.Key.ToString();
-
                         CustomizeColumns(e.Row);
                         CustomizeRowAttribute(e.Row);
                     }

@@ -78,7 +78,7 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons" style="position:relative;" >
-                                        <ccUI:ToolbarButton ID="ViewItemDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.View %>'/>
+                                        <ccUI:ToolbarButton ID="ViewItemDetailsButton" runat="server" SkinID="ViewDetailsButton" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.View %>'/>
                                         <ccUI:ToolbarButton ID="RescheduleItemButton" runat="server" SkinID="RescheduleButton" OnClick="RescheduleItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reschedule %>'/>
                                         <ccUI:ToolbarButton ID="ResetItemButton" runat="server" SkinID="ResetButton" OnClick="ResetItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reset %>'/>
                                         <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="DeleteButton" OnClick="DeleteItemButton_Click" Roles='<%= ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Delete %>'/>

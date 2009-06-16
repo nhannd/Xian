@@ -87,6 +87,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         }
 
         [ExtenderControlProperty]
+        [ClientPropertyName("ViewItemDetailsUrl")]
+        public string ViewItemDetailsURL
+        {
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.WorkQueueItemDetailsPage); }
+        }
+
+        [ExtenderControlProperty]
         [ClientPropertyName("ItemListClientID")]
         public string ItemListClientID
         {
