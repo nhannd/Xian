@@ -306,6 +306,60 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
+
+        protected static void Log(LogLevel level, String header, string message)
+        {
+            Platform.Log(level, String.Format("{0} : {1}", header, message));
+        }
+        protected static void Log(LogLevel level, String header, string message, params object[] args)
+        {
+            Platform.Log(level, String.Format("{0} : {1}", header, String.Format(message, args)));
+        }
+
+        protected void OnStudyIntegrityFailure(Model.WorkQueue item, string reason)
+        {
+            Platform.CheckMemberIsSet(Study, "Study");
+
+            RecoveryModes mode = GetProcessorRecoveryMode();
+            switch (mode)
+            {
+                case RecoveryModes.Automatic:
+                    try
+                    {
+                        if (PerformAutoRecovery(item, reason))
+                        {
+                            Platform.Log(LogLevel.Info, "Auto-recovery was successful (some operations may still be pending). Current {0} entry will resume later.", item.WorkQueueTypeEnum);
+                            PostponeItem(item);
+                        }
+                        else
+                        {
+                            // unable to recover.. fail it now
+                            Platform.Log(LogLevel.Error, "Unable to recover from previous failure. Failing the entry.");
+                            PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // unable to recover.. fail it now
+                        Platform.Log(LogLevel.Error, ex, "Unable to recover from previous failure. Failing the entry.");
+                        PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+                    }
+
+                    break;
+                default:
+                    PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+                    break;
+            }
+
+        }
+
+        protected void RemoveBadDicomFile(string file, string reason)
+        {
+            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
+            FileUtils.Delete(file);
+            RaiseAlert(WorkQueueItem, AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
+        }
+
         /// <summary>
         /// Returns the max batch size for a <see cref="WorkQueue"/> item.
         /// </summary>
@@ -543,10 +597,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				}
 				);
 
-            if (completed)
-            {
-                VerifyStudy();
-            }
 		}
 
         /// <summary>
@@ -875,7 +925,179 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-        public IList<StudyIntegrityQueue> FindSIQEntries()
+        protected static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
+        {
+            Platform.CheckForNullReference(item, "item");
+
+            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
+            contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+
+            StudyStorage storage = StudyStorage.Load(ExecutionContext.Current.PersistenceContext, item.StudyStorageKey);
+            IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
+
+            if (locations != null && locations.Count > 0)
+            {
+                StudyStorageLocation location = locations[0];
+                if (location != null)
+                {
+                    contextData.StudyInfo = new StudyInfo();
+                    contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+
+                    // study info is not always available (eg, when all images failed to process)
+                    if (location.Study != null)
+                    {
+                        contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
+                        contextData.StudyInfo.PatientsId = location.Study.PatientId;
+                        contextData.StudyInfo.PatientsName = location.Study.PatientsName;
+                        contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
+                        contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                    }
+                }
+
+            }
+
+            return contextData;
+        }
+
+
+        protected static void RaiseAlert(Model.WorkQueue item, AlertLevel level, string message, params object[] arguments)
+        {
+            WorkQueueAlertContextData alertContextData = GetWorkQueueContextData(item);
+            StringBuilder alertMessage = new StringBuilder();
+            if (alertContextData.StudyInfo != null)
+            {
+                alertMessage.AppendLine(String.Format("Study: {0}", alertContextData.StudyInfo.StudyInstaneUid));
+                alertMessage.AppendLine(String.Format("A #: {0}", alertContextData.StudyInfo.AccessionNumber ?? "N/A"));
+                alertMessage.AppendLine(String.Format("Patient: {0} , ID: {1}", alertContextData.StudyInfo.PatientsName ?? "N/A", alertContextData.StudyInfo.PatientsId ?? "N/A"));
+
+            }
+            else
+            {
+                alertMessage.AppendLine("Study: Unknown");
+            }
+
+            alertMessage.AppendLine(String.Format(message, arguments));
+
+
+            ServerPlatform.Alert(AlertCategory.Application, level,
+                item != null ? item.WorkQueueTypeEnum.ToString() : "WorkQueue",
+                -1, alertContextData, TimeSpan.Zero, alertMessage.ToString());
+
+        }
+
+
+
+        protected virtual bool PerformAutoRecovery(Model.WorkQueue item, string reason)
+        {
+
+            Platform.Log(LogLevel.Info, "{4} failed. Reason:{5}. Attempting to perform auto-recovery for Study:{0}, A#:{1}, Patient:{2}, ID:{3}",
+                         Study.StudyInstanceUid, Study.AccessionNumber, Study.PatientsName, Study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
+
+            Platform.CheckForNullReference(StorageLocation, "StorageLocation");
+            StudyXml studyXml = StorageLocation.LoadStudyXml();
+            Platform.CheckForNullReference(studyXml, "studyXml");
+
+            // Do a secondary check on the filesystem vs. the Study Xml.  
+            // If these match, then the DB is just update to reflect the valid counts.  
+            // If they don't match, a Reprocess entry is inserted into the WorkQueue.
+            String studyFolder = StorageLocation.GetStudyPath();
+            long fileCounter = DirectoryUtility.Count(studyFolder, "*.dcm", true, null);
+
+            // cache these values to avoid looping again
+            int numStudyRelatedSeriesInXml = studyXml.NumberOfStudyRelatedSeries;
+            int numStudyRelatedInstancesInXml = studyXml.NumberOfStudyRelatedInstances;
+
+            if (fileCounter != numStudyRelatedInstancesInXml)
+            {
+                // reprocess the study
+                Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears incorrect. Study needs to be reprocessed.", numStudyRelatedInstancesInXml);
+                StudyReprocessor reprocessor = new StudyReprocessor();
+                String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
+                reprocessor.ReprocessStudy(reprocessReason, StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+
+                return true; // 
+            }
+            else
+            {
+                Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
+                // update the counts in db to match the study xml
+                // Update count for each series 
+                IList<Series> seriesList = StorageLocation.Study.Series;
+
+
+                foreach (Series series in seriesList)
+                {
+                    SeriesXml seriesXml = studyXml[series.SeriesInstanceUid];
+                    if (seriesXml != null)
+                    {
+                        int numInstancesInSeriesXml = seriesXml.NumberOfSeriesRelatedInstances;
+                        if (numInstancesInSeriesXml != series.NumberOfSeriesRelatedInstances)
+                        {
+                            // Update the count in the series table. Assuming the stored procedure
+                            // will also update the count in the Study/Patient tables based on 
+                            // the new value.
+                            Log(LogLevel.Info, "AUTO-RECOVERY", "Update series in the db. UID:{0}, #Instance:{1}==>{2}", series.SeriesInstanceUid, series.NumberOfSeriesRelatedInstances, numInstancesInSeriesXml);
+                            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                            {
+                                ISetSeriesRelatedInstanceCount broker = updateContext.GetBroker<ISetSeriesRelatedInstanceCount>();
+                                SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(StorageLocation.GetKey(), series.SeriesInstanceUid);
+                                criteria.SeriesRelatedInstanceCount = numInstancesInSeriesXml;
+                                if (!broker.Execute(criteria))
+                                {
+                                    throw new ApplicationException("Unable to update series related instance count in db");
+                                }
+                                else
+                                {
+                                    updateContext.Commit();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // TODO: series in the db doesn't exist in the xml... the series was deleted from the study?
+                        // For now we just reprocess the study. Can we delete the series? If so, we need to take care of the counts.
+                        Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
+                        StudyReprocessor reprocessor = new StudyReprocessor();
+                        String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
+                        reprocessor.ReprocessStudy(reprocessReason, StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+
+                    }
+                }
+
+                if (numStudyRelatedSeriesInXml != StorageLocation.Study.NumberOfStudyRelatedSeries ||
+                    numStudyRelatedInstancesInXml != StorageLocation.Study.NumberOfStudyRelatedInstances)
+                {
+                    Log(LogLevel.Info, "AUTO-RECOVERY", "Updating study related series and instance counts in the db. #Series: {0} ==> {1}.  #Instances: {2}==>{3}",
+                                    StorageLocation.Study.NumberOfStudyRelatedSeries, numStudyRelatedSeriesInXml,
+                                    StorageLocation.Study.NumberOfStudyRelatedInstances, numStudyRelatedInstancesInXml);
+
+                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    {
+                        ISetStudyRelatedInstanceCount broker = updateContext.GetBroker<ISetStudyRelatedInstanceCount>();
+                        SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(StorageLocation.GetKey());
+                        criteria.StudyRelatedSeriesCount = numStudyRelatedSeriesInXml;
+                        criteria.StudyRelatedInstanceCount = numStudyRelatedInstancesInXml;
+                        if (!broker.Execute(criteria))
+                        {
+                            throw new ApplicationException("Unable to update study related instance count in db");
+                        }
+                        else
+                        {
+                            updateContext.Commit();
+                        }
+                    }
+                }
+
+                Log(LogLevel.Info, "AUTO-RECOVERY", "Object count in the db have been corrected.");
+                return true;
+            }
+
+        }
+
+        
+
+        protected IList<StudyIntegrityQueue> FindSIQEntries()
         {
             IStudyIntegrityQueueEntityBroker broker = ReadContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
@@ -975,289 +1197,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     try
                     {
                         OnProcessItemBegin(item);
-
-                        ProcessTime.Add(
-                            delegate
-                            {
-                                ProcessItem(item);
-                            }
-                            );
-                        OnProcessItemEnd(item);
+                        ProcessTime.Start();
+                        ProcessItem(item);
+                        ProcessTime.End();
                     }
                     catch(StudyIntegrityValidationFailure ex)
                     {
                         item.FailureDescription = ex.Message;
                         OnStudyIntegrityFailure(WorkQueueItem, ex.Message);
                     }
-                    
-                }
-            }
-        }
-
-        protected void Log(LogLevel level, String header, string message)
-        {
-            Platform.Log(level, String.Format("{0} : {1}", header, message));
-        }
-        protected void Log(LogLevel level, String header, string message, params object[] args)
-        {
-            Platform.Log(level, String.Format("{0} : {1}", header, String.Format(message, args)));
-        }
-
-        protected void OnStudyIntegrityFailure(Model.WorkQueue item, string reason)
-        {
-            Platform.CheckMemberIsSet(Study, "Study"); 
-
-            RecoveryModes mode = GetProcessorRecoveryMode();
-            switch (mode)
-            {
-                case RecoveryModes.Automatic:
-                    try
+                    finally
                     {
-                        if (PerformAutoRecovery(item, reason))
-                        {
-                            Platform.Log(LogLevel.Info, "Auto-recovery was successful (some operations may still be pending). Current {0} entry will resume later.", item.WorkQueueTypeEnum);
-                            PostponeItem(item);
-                        }
-                        else
-                        {
-                            // unable to recover.. fail it now
-                            Platform.Log(LogLevel.Error, "Unable to recover from previous failure. Failing the entry.");
-                            PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        // unable to recover.. fail it now
-                        Platform.Log(LogLevel.Error, ex, "Unable to recover from previous failure. Failing the entry.");
-                        PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
-                    }
-                    
-                    break;
-                default:
-                    PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
-                    break;
-            }
-            
-        }
-
-        protected static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
-        {
-            Platform.CheckForNullReference(item, "item");
-
-            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-            contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
-
-            StudyStorage storage = StudyStorage.Load(ExecutionContext.Current.PersistenceContext, item.StudyStorageKey);
-            IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
-
-            if (locations != null && locations.Count > 0)
-            {
-                StudyStorageLocation location = locations[0];
-                if (location != null)
-                {
-                    contextData.StudyInfo = new StudyInfo();
-                    contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
-
-                    // study info is not always available (eg, when all images failed to process)
-                    if (location.Study != null)
-                    {
-                        contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
-                        contextData.StudyInfo.PatientsId = location.Study.PatientId;
-                        contextData.StudyInfo.PatientsName = location.Study.PatientsName;
-                        contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
-                        contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                        OnProcessItemEnd(item);
                     }
                 }
-
             }
-
-            return contextData;
-        }
-
-
-        protected static void RaiseAlert(Model.WorkQueue item, AlertLevel level, string message, params object[] arguments)
-        {
-            WorkQueueAlertContextData alertContextData = GetWorkQueueContextData(item);
-            StringBuilder alertMessage = new StringBuilder();
-            if (alertContextData.StudyInfo != null)
-            {
-                alertMessage.AppendLine(String.Format("Study: {0}", alertContextData.StudyInfo.StudyInstaneUid));
-                alertMessage.AppendLine(String.Format("A #: {0}", alertContextData.StudyInfo.AccessionNumber ?? "N/A"));
-                alertMessage.AppendLine(String.Format("Patient: {0} , ID: {1}", alertContextData.StudyInfo.PatientsName ?? "N/A", alertContextData.StudyInfo.PatientsId ?? "N/A"));
-
-            }
-            else
-            {
-                alertMessage.AppendLine("Study: Unknown");
-            }
-
-            alertMessage.AppendLine(String.Format(message, arguments));
-
-
-            ServerPlatform.Alert(AlertCategory.Application, level,
-                item != null ? item.WorkQueueTypeEnum.ToString() : "WorkQueue",
-                -1, alertContextData, TimeSpan.Zero, alertMessage.ToString());
-
-        }
-
-        protected void RemoveBadDicomFile(string file, string reason)
-        {
-            Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
-            FileUtils.Delete(file);
-            RaiseAlert(WorkQueueItem, AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
-        }
-
-        protected virtual bool PerformAutoRecovery(Model.WorkQueue item, string reason)
-        {
-            
-            Platform.Log(LogLevel.Info, "{4} failed. Reason:{5}. Attempting to perform auto-recovery for Study:{0}, A#:{1}, Patient:{2}, ID:{3}",
-                         Study.StudyInstanceUid, Study.AccessionNumber, Study.PatientsName, Study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
-
-            Platform.CheckForNullReference(StorageLocation, "StorageLocation");
-            StudyXml studyXml = StorageLocation.LoadStudyXml();
-            Platform.CheckForNullReference(studyXml, "studyXml");
-            
-            // Do a secondary check on the filesystem vs. the Study Xml.  
-            // If these match, then the DB is just update to reflect the valid counts.  
-            // If they don't match, a Reprocess entry is inserted into the WorkQueue.
-            String studyFolder = StorageLocation.GetStudyPath();
-            long fileCounter = DirectoryUtility.Count(studyFolder, "*.dcm", true, null);
-
-            // cache these values to avoid looping again
-            int numStudyRelatedSeriesInXml = studyXml.NumberOfStudyRelatedSeries;
-            int numStudyRelatedInstancesInXml = studyXml.NumberOfStudyRelatedInstances;
-
-            if (fileCounter != numStudyRelatedInstancesInXml)
-            {
-                // reprocess the study
-                Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears incorrect. Study needs to be reprocessed.", numStudyRelatedInstancesInXml);
-                StudyReprocessor reprocessor = new StudyReprocessor();
-                String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                reprocessor.ReprocessStudy(reprocessReason, StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
-
-                return true; // 
-            }
-            else
-            {
-                Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
-                // update the counts in db to match the study xml
-                // Update count for each series 
-                IList<Series> seriesList = StorageLocation.Study.Series;
-               
-                    
-                foreach (Series series in seriesList)
-                {
-                    SeriesXml seriesXml = studyXml[series.SeriesInstanceUid];
-                    if (seriesXml != null)
-                    {
-                        int numInstancesInSeriesXml = seriesXml.NumberOfSeriesRelatedInstances;
-                        if (numInstancesInSeriesXml != series.NumberOfSeriesRelatedInstances)
-                        {
-                            // Update the count in the series table. Assuming the stored procedure
-                            // will also update the count in the Study/Patient tables based on 
-                            // the new value.
-                            Log(LogLevel.Info, "AUTO-RECOVERY", "Update series in the db. UID:{0}, #Instance:{1}==>{2}", series.SeriesInstanceUid, series.NumberOfSeriesRelatedInstances, numInstancesInSeriesXml);
-                            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                            {
-                                ISetSeriesRelatedInstanceCount broker = updateContext.GetBroker<ISetSeriesRelatedInstanceCount>();
-                                SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(StorageLocation.GetKey(), series.SeriesInstanceUid);
-                                criteria.SeriesRelatedInstanceCount = numInstancesInSeriesXml;
-                                if (!broker.Execute(criteria))
-                                {
-                                    throw new ApplicationException("Unable to update series related instance count in db");
-                                }
-                                else
-                                {
-                                    updateContext.Commit();
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // TODO: series in the db doesn't exist in the xml... the series was deleted from the study?
-                        // For now we just reprocess the study. Can we delete the series? If so, we need to take care of the counts.
-                        Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
-                        StudyReprocessor reprocessor = new StudyReprocessor();
-                        String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                        reprocessor.ReprocessStudy(reprocessReason, StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
-                        
-                    }
-                }
-
-                if (numStudyRelatedSeriesInXml!=StorageLocation.Study.NumberOfStudyRelatedSeries || 
-                    numStudyRelatedInstancesInXml != StorageLocation.Study.NumberOfStudyRelatedInstances)
-                {
-                    Log(LogLevel.Info, "AUTO-RECOVERY", "Updating study related series and instance counts in the db. #Series: {0} ==> {1}.  #Instances: {2}==>{3}", 
-                                    StorageLocation.Study.NumberOfStudyRelatedSeries, numStudyRelatedSeriesInXml,
-                                    StorageLocation.Study.NumberOfStudyRelatedInstances, numStudyRelatedInstancesInXml);
-
-                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                    {
-                        ISetStudyRelatedInstanceCount broker = updateContext.GetBroker<ISetStudyRelatedInstanceCount>();
-                        SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(StorageLocation.GetKey());
-                        criteria.StudyRelatedSeriesCount = numStudyRelatedSeriesInXml;
-                        criteria.StudyRelatedInstanceCount = numStudyRelatedInstancesInXml;
-                        if (!broker.Execute(criteria))
-                        {
-                            throw new ApplicationException("Unable to update study related instance count in db");
-                        }
-                        else
-                        {
-                            updateContext.Commit();
-                        }
-                    }
-                }
-                
-                Log(LogLevel.Info, "AUTO-RECOVERY", "Object count in the db have been corrected.");
-                return true;
-            }
-
         }
 
         
         #endregion
 
         #region Private Methods
-
-        private bool DeleteWorkQueueEntry(Model.WorkQueue item)
-        {
-            DateTime startTime = DateTime.Now;
-            int retryCounter = 0;
-            TimeSpan elapsed;
-            do
-            {
-                Platform.Log(LogLevel.Info, "Deleting current work queue entry..");
-                elapsed = DateTime.Now - startTime;
-
-                using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                {
-                    try
-                    {
-                        item.Delete(updateContext);
-                        updateContext.Commit();
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Platform.Log(LogLevel.Error, ex, "Error occured when trying to delete current work queue entry. Retry later.");
-                        Random rand = new Random();
-                        Thread.Sleep(rand.Next(100, 500));
-
-                        if (elapsed > TimeSpan.FromMinutes(1))
-                        {
-                            if (retryCounter % 10 == 0) // reduce the frequency of the alerts
-                                RaiseAlert(item, AlertLevel.Warning, "Server has failed to delete the work queue entry for the last {0}", TimeSpanFormatter.Format(elapsed, true));
-                        }
-                        retryCounter++;
-                    }
-                }
-
-
-            }
-            while (!CancelPending && elapsed < TimeSpan.FromMinutes(5));
-            return false;
-        }
 
         private RecoveryModes GetProcessorRecoveryMode()
         {
@@ -1307,7 +1267,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             if (ValidationModes == StudyIntegrityValidationModes.None)
                 return;
-            
+
+            Platform.Log(LogLevel.Info, "Verifying study...");
             using(ExecutionContext scope = new ExecutionContext())
             {
                 IList<StudyStorageLocation> locations = WorkQueueItem.LoadStudyLocations(scope.PersistenceContext);
@@ -1320,6 +1281,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
             
         }
+
         #endregion
 
 
