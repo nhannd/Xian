@@ -55,6 +55,7 @@ using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
     class ProcessDuplicateItemProcessor : BaseItemProcessor
     {
         private WorkQueueProcessDuplicateSop _processDuplicateEntry;

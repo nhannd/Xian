@@ -35,11 +35,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessing
 {
-	class ReconcilePostProcessingProcessor : StudyProcessItemProcessor
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
+    class ReconcilePostProcessingProcessor : StudyProcessItemProcessor
 	{
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
