@@ -212,6 +212,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 
             var row = el;
             
+            if(row.getAttribute('isEmptyDataRow') == "true" || row.getAttribute('isHeaderRow') == "true") return;
+            
             if (this.get_element() && !this.get_element().disabled) 
             {
                 this._selectRow(row);            
@@ -232,6 +234,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 el = el.parentNode;
                 
             var row = el;
+            
+            if(row.getAttribute('isEmptyDataRow') == "true" || row.getAttribute('isHeaderRow') == "true") return;
                         
             if (this.get_element() && !this.get_element().disabled ) 
             {
