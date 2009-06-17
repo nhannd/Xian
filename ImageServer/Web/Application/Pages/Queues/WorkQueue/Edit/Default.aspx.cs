@@ -126,6 +126,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             base.OnLoad(e);
             DataBind();
             UpdatePanel.Update();
+
+            //Hide the UserPanel information
+            MasterProperties master = Master as MasterProperties;
+            master.DisplayUserInformationPanel = false;
         }
 
 

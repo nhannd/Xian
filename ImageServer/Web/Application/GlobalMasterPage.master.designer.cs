@@ -161,7 +161,16 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Menu MainMenu;
-    
+
+    /// <summary>
+    /// UserInformationCell control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.TableCell MenuCell;
+
     /// <summary>
     /// UserInformationCell control.
     /// </summary>

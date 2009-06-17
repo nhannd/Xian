@@ -33,12 +33,13 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 {
-    public partial class DeviceGridView : System.Web.UI.UserControl
+    public partial class DeviceGridView : GridViewPanel
     {
         #region Private members
         // list of devices to display
@@ -47,14 +48,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
         #endregion Private members
 
         #region Public properties
-
-        /// <summary>
-        /// Retrieve reference to the grid control being used to display the devices.
-        /// </summary>
-        public GridView TheGrid
-        {
-            get { return GridView1; }
-        }
 
         /// <summary>
         /// Gets/Sets the current selected device.
@@ -144,7 +137,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
+            TheGrid = GridView1;
         }
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -153,15 +146,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-//                    e.Row.Attributes["OnClick"] =
-//                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
-//                    e.Row.Style["cursor"] = "hand";
-
-                    // For some reason, double-click won't work if single-click is used
-                    // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
-
                     CustomizeActiveColumn(e);
                     CustomizeIpAddressColumn(e);
                     CustomizeDHCPColumn(e);
@@ -308,29 +292,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                 lbl.Text = string.Empty;
             else
                 lbl.Text = dev.IpAddress;
-        }
-
-        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Device dev = SelectedDevice;
-            if (dev != null)
-                if (OnDeviceSelectionChanged != null)
-                    OnDeviceSelectionChanged(this, dev);
-        }
-
-        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
-        {
-            GridView1.PageIndex = e.NewPageIndex;
-            DataBind();
-        }
-
-        protected void GridView1_DataBound(object sender, EventArgs e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
         }
 
         #region public methods

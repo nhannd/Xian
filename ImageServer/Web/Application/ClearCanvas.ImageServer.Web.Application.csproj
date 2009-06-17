@@ -275,6 +275,7 @@
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Common\MasterProperties.cs" />
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

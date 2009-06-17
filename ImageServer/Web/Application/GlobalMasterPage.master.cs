@@ -32,14 +32,24 @@
 using System;
 using System.Configuration;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
-public partial class GlobalMasterPage : System.Web.UI.MasterPage
+public partial class GlobalMasterPage : System.Web.UI.MasterPage, MasterProperties
 {
+    private bool _displayUserInfo = true;
+
+    public bool DisplayUserInformationPanel
+    {
+        get { return _displayUserInfo; }
+        set { _displayUserInfo = value; }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (IsPostBack)
@@ -56,25 +66,34 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
 
         CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
 
-        if (id != null)
+        if (DisplayUserInformationPanel)
         {
-            Username.Text = id.DisplayName;
-        } else
-        {
-            Username.Text = "unknown";
-        }
+            if (id != null)
+            {
+                Username.Text = id.DisplayName;
+            }
+            else
+            {
+                Username.Text = "unknown";
+            }
 
-		try
-		{
-			AlertIndicator alertControl = (AlertIndicator)LoadControl("~/Controls/AlertIndicator.ascx");
-			AlertIndicatorPlaceHolder.Controls.Add(alertControl);
-		}
-		catch (Exception)
-		{
-			//No permissions for Alerts, control won't be displayed
-			//hide table cell that contains the control.
-			AlertIndicatorCell.Visible = false;
-		}
+            try
+            {
+                AlertIndicator alertControl = (AlertIndicator) LoadControl("~/Controls/AlertIndicator.ascx");
+                AlertIndicatorPlaceHolder.Controls.Add(alertControl);
+            }
+            catch (Exception)
+            {
+                //No permissions for Alerts, control won't be displayed
+                //hide table cell that contains the control.
+                AlertIndicatorCell.Visible = false;
+            }
+        }
+        else
+        {
+            UserInformationCell.Width = Unit.Percentage(0);
+            MenuCell.Width = Unit.Percentage(100);
+        }
     }
 
     private void AddIE6PngBugFixCSS()

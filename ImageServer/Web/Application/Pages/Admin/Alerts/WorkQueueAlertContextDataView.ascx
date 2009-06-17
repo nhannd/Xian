@@ -12,12 +12,12 @@
 <div >
 <table class="WorkQueueAlertStudyTable" cellspacing="0" cellpadding="0">
 <% if (data.StudyInfo!=null) { %>
-<tr><td style="font-weight: bold; color: #336699">Partition:</td><td><%= data.StudyInfo.ServerAE %></td></tr>
-<tr><td style="font-weight: bold; color: #336699">Patient's Name:</td><td><pre><%= data.StudyInfo.PatientsName%></pre></td></tr>
-<tr><td style="font-weight: bold; color: #336699">Patient ID:</td><td><pre><%= data.StudyInfo.PatientsId %></pre></td></tr>
-<tr><td style="font-weight: bold; color: #336699">Study Instance UID:</td><td><%= data.StudyInfo.StudyInstaneUid%></td></tr>
-<tr><td style="font-weight: bold; color: #336699">Accession #:</td><td><pre><%= data.StudyInfo.AccessionNumber%></pre></td></tr>
-<tr><td style="font-weight: bold; color: #336699">Study Date:</td><td><pre><%= data.StudyInfo.StudyDate%></pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Partition:</td><td><%= data.StudyInfo.ServerAE %>&nbsp;</td></tr>
+<tr><td style="font-weight: bold; color: #336699">Patient's Name:</td><td><pre><%= data.StudyInfo.PatientsName%>&nbsp;</pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Patient ID:</td><td><pre><%= data.StudyInfo.PatientsId %>&nbsp;</pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Study Instance UID:</td><td><%= data.StudyInfo.StudyInstaneUid%>&nbsp;</td></tr>
+<tr><td style="font-weight: bold; color: #336699">Accession #:</td><td><pre><%= data.StudyInfo.AccessionNumber%>&nbsp;</pre></td></tr>
+<tr><td style="font-weight: bold; color: #336699">Study Date:</td><td><pre><%= data.StudyInfo.StudyDate%>&nbsp;</pre></td></tr>
 <%} else {%>
 <tr><td>There is no study information for this item.</td></tr>
 <%} %>

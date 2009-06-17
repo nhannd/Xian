@@ -7,8 +7,8 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.DeviceGridV
         <asp:TableCell VerticalAlign="top">
         
             <ccUI:GridView ID="GridView1" runat="server" 
-                OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
-                OnPageIndexChanging="GridView1_PageIndexChanging" SelectionMode="Multiple">
+                OnRowDataBound="GridView1_RowDataBound"
+                SelectionMode="Multiple">
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" ></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>

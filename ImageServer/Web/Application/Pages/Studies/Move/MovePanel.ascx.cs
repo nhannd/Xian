@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
+            DeviceGridPanel.Pager = GridPagerTop;
 
             MoveConfirmation.Confirmed += delegate(object data)
                                               {
@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             criteria.AllowRetrieve.EqualTo(true);
 
             DeviceGridPanel.Devices = _theController.GetDevices(criteria);
-            DeviceGridPanel.DataBind();
+            DeviceGridPanel.Refresh();
         }
 
         protected void SearchButton_Click(object sender, EventArgs e)
