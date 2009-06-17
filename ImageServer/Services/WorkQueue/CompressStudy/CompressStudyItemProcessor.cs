@@ -304,6 +304,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				return;
 			}
 
+			if (Study == null)
+			{
+				item.FailureDescription =
+					String.Format("Compression item does not have a linked Study record");
+				Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+				base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+				return;
+			}
+
 			Platform.Log(LogLevel.Info,
 			             "Compressing study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4} to {5}",
 			             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
