@@ -128,6 +128,9 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
             [AuthorityToken(Description = "Allow restoring studies.")]
             public const string Restore = "PACS/Study/Restore";
+
+            [AuthorityToken(Description = "Allow reprocessing studies.")]
+            public const string Reprocess = "PACS/Study/Reprocess";
         }
 
         /// <summary>

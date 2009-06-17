@@ -378,31 +378,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 	    public bool CanReprocess(out string reason)
 	    {
-            if (IsLocked)
-            {
-                reason = "Study is being locked";
-                return false;
-            }
-
             if (IsNearline)
             {
                 reason = "Study is nearline.";
                 return false;
             }
-
+            
+            
+            if (HasPendingWorkQueueItems)
+            {
+                reason = "There is some pending work queue item(s) for this study.";
+                return false;
+            } 
+            
             if (IsProcessing)
             {
                 reason = "Study is being processed.";
                 return false;
             }
 
-
-            if (HasPendingWorkQueueItems)
-            {
-                reason = "There is some pending work queue item(s) for this study.";
-                return false;
-            }
-
+            // no pending work queue items
             reason = String.Empty;
             return true;
 	    }

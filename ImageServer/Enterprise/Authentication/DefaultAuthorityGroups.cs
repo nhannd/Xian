@@ -101,6 +101,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         AuthorityTokens.Study.Restore,
                         AuthorityTokens.Study.Search,
                         AuthorityTokens.Study.View,
+                        AuthorityTokens.Study.Reprocess,
 
                         AuthorityTokens.StudyIntegrityQueue.Search,
                         AuthorityTokens.StudyIntegrityQueue.Reconcile,
@@ -140,6 +141,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         AuthorityTokens.Study.Restore,
                         AuthorityTokens.Study.Search,
                         AuthorityTokens.Study.View,
+						AuthorityTokens.Study.Reprocess,
 
                         AuthorityTokens.StudyIntegrityQueue.Search,
                         AuthorityTokens.StudyIntegrityQueue.Reconcile,

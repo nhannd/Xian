@@ -73,6 +73,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     AuthorityTokens.Study.Restore,
                     AuthorityTokens.Study.Search,
                     AuthorityTokens.Study.View,
+                    AuthorityTokens.Study.Reprocess,
                     AuthorityTokens.StudyIntegrityQueue.Reconcile,
                     AuthorityTokens.StudyIntegrityQueue.Search,
                     AuthorityTokens.WorkQueue.Delete,

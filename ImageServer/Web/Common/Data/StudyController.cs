@@ -417,7 +417,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
 			return studyStorageAdaptor.GetFirst(criteria);
-		}
+		}   
 
         public void ReprocessStudy(String reason, ServerEntityKey key)
         {

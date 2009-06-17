@@ -114,6 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
             EditStudyButton.Roles = AuthorityTokens.Study.Edit;
+            ReprocessStudyButton.Roles = AuthorityTokens.Study.Reprocess;
         }
 
         protected override void OnPreRender(EventArgs e)
