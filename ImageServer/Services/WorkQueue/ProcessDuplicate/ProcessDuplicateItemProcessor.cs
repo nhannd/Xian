@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Move Duplicate Into Study Folder"))
             {
-                DicomFile file = LoadDicomFile(uid);
+                DicomFile file = LoadDuplicateDicomFile(uid);
                 String dupFilePath = file.Filename;
 
                 if (_duplicateSopDetails==null)
@@ -351,7 +351,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             }
         }
 
-        private DicomFile LoadDicomFile(WorkQueueUid uid)
+        private DicomFile LoadDuplicateDicomFile(WorkQueueUid uid)
         {
             FileInfo duplicateFile = GetDuplicateSopFile(uid);
             Platform.CheckTrue(duplicateFile.Exists, String.Format("Duplicate SOP doesn't exist at {0}", uid.SopInstanceUid));
@@ -367,7 +367,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             {
                 WorkQueueUid uid = WorkQueueUidList[0];
 
-                DicomFile file = LoadDicomFile(uid);
+                DicomFile file = LoadDuplicateDicomFile(uid);
 
                 Study study = new Study();
                 Patient patient = new Patient();

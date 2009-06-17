@@ -100,12 +100,11 @@ namespace ClearCanvas.ImageServer.Core.Process
 
         private void InsertWorkQueue(DicomFile file, string uidGroup)
         {
-            String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].ToString();
             String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
             
             String relativePath = StringUtilities.Combine(new string[] 
                                                               {
-                                                                  _context.StudyLocation.StudyInstanceUid, seriesUid, sopUid
+                                                                  _context.StudyLocation.StudyInstanceUid, sopUid
                                                               }, Path.DirectorySeparatorChar.ToString());
 
             relativePath = relativePath + "." + DUPLICATE_EXTENSION;
@@ -117,7 +116,6 @@ namespace ClearCanvas.ImageServer.Core.Process
 
         private void SaveDuplicate(DicomFile file, string uidGroup)
         {
-            String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].ToString();
             String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
 
             String path = Path.Combine(_context.StudyLocation.FilesystemPath, _context.StudyLocation.PartitionFolder);
@@ -126,14 +124,10 @@ namespace ClearCanvas.ImageServer.Core.Process
             path = Path.Combine(path, RECONCILE_STORAGE_FOLDER);
             _context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
-
-            path = Path.Combine(path, uidGroup);
+            path = Path.Combine(path, uidGroup /* the AE title + timestamp */);
             _context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, _context.StudyLocation.StudyInstanceUid);
-            _context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
-
-            path = Path.Combine(path, seriesUid);
             _context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
             
             path = Path.Combine(path, sopUid);
