@@ -39,6 +39,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
@@ -48,6 +50,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 {
+    
 
     /// <summary>
     /// Command for reconciling images by creating a new study or merge into an existing study.
@@ -60,6 +63,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         }
 
         private readonly CommandParameters _parameters;
+        private Dictionary<string, string> _seriesMapping;
 
         #region Constructors
 
@@ -87,8 +91,40 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             Platform.CheckForNullReference(Context.WorkQueueItem, "Context.WorkQueueItem");
             Platform.CheckForNullReference(Context.WorkQueueUidList, "Context.WorkQueueUidList");
 
+            ReconcileStudyWorkQueueData workqueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(Context.WorkQueueItem.Data);
+            _seriesMapping = new Dictionary<string, string>();
+            if (workqueueData.SeriesMappings != null)
+            {
+                foreach (SeriesMapping map in workqueueData.SeriesMappings)
+                {
+                    _seriesMapping.Add(map.OriginalSeriesUid, map.NewSeriesUid);
+                }
+            }
+
             PrintChangeList();
             ProcessUidList();
+            
+            // Update the queue data with the series mapping. 
+            // When we resume, we need the mapping to set the right series instance uid in the images.
+            using(IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
+                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
+                ReconcileStudyWorkQueueData wqData =
+                    XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(Context.WorkQueueItem.Data);
+                wqData.SeriesMappings = new List<SeriesMapping>();
+                foreach (string series in _seriesMapping.Keys)
+                {
+                    SeriesMapping map = new SeriesMapping();
+                    map.OriginalSeriesUid = series;
+                    map.NewSeriesUid = _seriesMapping[series];
+                    wqData.SeriesMappings.Add(map);
+                }
+                parms.Data = XmlUtils.SerializeAsXmlDoc(wqData);
+                if (!broker.Update(Context.WorkQueueItem.GetKey(), parms))
+                    throw new ApplicationException("Unable to update work queue state.");
+                updateContext.Commit();
+            }
         }
 
         protected override void OnUndo()
@@ -118,16 +154,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         {
             int counter = 0;
             Platform.Log(LogLevel.Info, "Populating images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
+
             foreach (WorkQueueUid uid in Context.WorkQueueUidList)
             {
                 string imagePath = GetReconcileUidPath(uid);
                 DicomFile file = new DicomFile(imagePath);
                 file.Load();
-
+                string oldSeriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
                 try
                 {
                     using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
                     {
+                        // Assign new series and instance uid
+                        string newSeriesUid;
+                        if (_seriesMapping.ContainsKey(oldSeriesUid))
+                            newSeriesUid = _seriesMapping[oldSeriesUid];
+                        else
+                        {
+                            newSeriesUid = DicomUid.GenerateUid().UID;
+                            _seriesMapping.Add(oldSeriesUid, newSeriesUid);
+                        }
+
+                        string newSopInstanceUid = DicomUid.GenerateUid().UID;
+                        file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(newSeriesUid);
+                        file.DataSet[DicomTags.SopInstanceUid].SetStringValue(newSopInstanceUid);
+                        file.MediaStorageSopInstanceUid = newSopInstanceUid;
                         foreach (BaseImageLevelUpdateCommand command in Parameters.Commands)
                         {
                             command.File = file;
@@ -140,12 +191,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
                             processor.AddCommand(new CreateStudyFolderDirectory(Context, file));
                         }
-
+                        
                         processor.AddCommand(new SaveFileCommand(Context, file));
-                        UpdateWorkQueueCommand.CommandParameters parameters =
-                            new UpdateWorkQueueCommand.CommandParameters();
-                        parameters.SeriesInstanceUid =
-                            file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+                        UpdateWorkQueueCommand.CommandParameters parameters = new UpdateWorkQueueCommand.CommandParameters();
+                        parameters.SeriesInstanceUid = newSeriesUid;
                         parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
                         parameters.Extension = "dcm";
                         parameters.IsDuplicate = false;
@@ -182,6 +231,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     CreateWorkQueueEntryForDuplicate(file, Context.WorkQueueItem, uid);
                 }
             }
+
         }
 
         private void CreateWorkQueueEntryForDuplicate(DicomFile file, Model.WorkQueue queue, Model.WorkQueueUid uid)
@@ -202,6 +252,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         }
 
         #endregion
+    }
+
+    internal class UpdateSeriesInstanceUidCommand : ServerCommand
+    {
+        public UpdateSeriesInstanceUidCommand(ReconcileStudyProcessorContext context, DicomFile file)
+            :base("Update Series Instance Uid", true)
+        {
+            
+        }
+
+        protected override void OnExecute()
+        {
+            
+        }
+
+        protected override void OnUndo()
+        {
+            
+        }
     }
 
     /// <summary>

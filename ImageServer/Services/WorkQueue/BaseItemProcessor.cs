@@ -507,7 +507,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		                     || (status == WorkQueueProcessorStatus.Idle && item.ExpirationTime < Platform.Time);
             if (completed)
             {
-                VerifyStudy();
+                if (WorkQueueSettings.Instance.EnableStudyIntegrityValidation)
+                {
+                    if (ValidationModes != StudyIntegrityValidationModes.None)
+                    {
+                        Platform.Log(LogLevel.Info, "{0} has completed (GUID={1})", item.WorkQueueTypeEnum, item.GetKey().Key);
+                        VerifyStudy(StorageLocation);
+                    }
+                }
             }
 
 			DBUpdateTime.Add(
@@ -1260,24 +1267,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             return _ValidationModes;
         }
 
-        private void VerifyStudy()
+        private void VerifyStudy(StudyStorageLocation studyStorage)
         {
-            if (!WorkQueueSettings.Instance.EnableStudyIntegrityValidation)
-                return;
-
-            if (ValidationModes == StudyIntegrityValidationModes.None)
-                return;
-
-            Platform.Log(LogLevel.Info, "Verifying study...");
+            Platform.CheckForNullReference(studyStorage, "studyStorage");
+            Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
             using(ExecutionContext scope = new ExecutionContext())
             {
-                IList<StudyStorageLocation> locations = WorkQueueItem.LoadStudyLocations(scope.PersistenceContext);
-                if (locations!=null)
-                {
-                    StudyStorageLocation location = locations[0];
-                    StudyIntegrityValidator validator = new StudyIntegrityValidator();
-                    validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), location, ValidationModes);
-                }
+                StudyIntegrityValidator validator = new StudyIntegrityValidator();
+                validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, ValidationModes);
             }
             
         }

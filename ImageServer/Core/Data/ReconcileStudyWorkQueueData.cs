@@ -31,33 +31,70 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Core.Data
 {
+    /// <summary>
+    /// Series mapping used when creating new study from images.
+    /// </summary>
+    public class SeriesMapping
+    {
+        #region Private Members
+        private string _originalSeriesUid;
+        private string _newSeriesUid; 
+        #endregion
+
+        #region Public Properties
+        public string OriginalSeriesUid
+        {
+            get { return _originalSeriesUid; }
+            set { _originalSeriesUid = value; }
+        }
+
+        public string NewSeriesUid
+        {
+            get { return _newSeriesUid; }
+            set { _newSeriesUid = value; }
+        } 
+        #endregion
+    }
+
 	/// <summary>
 	/// Represents the information encoded in the <see cref="Model.StudyIntegrityQueue.QueueData"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
 	/// </summary>
 	public class ReconcileStudyWorkQueueData
 	{
-		private string _storagePath;
-		private ImageSetDetails _details;
+        #region Private members
+        private string _storagePath;
+        private ImageSetDetails _details;
+        private List<SeriesMapping> _seriesMappings; 
+        #endregion
 
-		public string StoragePath
-		{
-			get { return _storagePath; }
-			set { _storagePath = value; }
-		}
+        #region Public Properties
+        public string StoragePath
+        {
+            get { return _storagePath; }
+            set { _storagePath = value; }
+        }
 
-		public ImageSetDetails Details
-		{
-			get
-			{
-				return _details;
-			}
-			set { _details = value; }
-		}
+        public ImageSetDetails Details
+        {
+            get
+            {
+                return _details;
+            }
+            set { _details = value; }
+        }
 
+        [XmlArray("SeriesMappings")]
+        public List<SeriesMapping> SeriesMappings
+        {
+            get { return _seriesMappings; }
+            set { _seriesMappings = value; }
+        } 
+        #endregion
 	}
 
     /// <summary>
