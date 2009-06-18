@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Common
 			if (_archiveLog == null)
 			{
 				_archiveLog = new ImageServerLogFile<TLogClass>(timestamp, _logDirectory, LogFileSize, _logType);
-				Platform.Log(LogLevel.Info, "Starting archival of {0} logs for {1}",_logType, _archiveLog.FirstTimestamp.ToShortDateString());
+				Platform.Log(LogLevel.Info, "Starting archival of {0} logs for {1}",_logType, _archiveLog.FirstTimestamp.ToLongDateString());
 			}
 
 			if (logDate.Equals(_archiveLog.Date))
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			if (_archiveLog == null) return;
 
-			Platform.Log(LogLevel.Info, "Flushing log of {0} for {1}", _logType, _archiveLog.FirstTimestamp.ToShortDateString());
+			Platform.Log(LogLevel.Info, "Flushing log of {0} for {1}", _logType, _archiveLog.FirstTimestamp.ToLongDateString());
 
 			if (!Directory.Exists(_logDirectory))
 				Directory.CreateDirectory(_logDirectory);

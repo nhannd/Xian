@@ -90,13 +90,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.PurgeAlerts
 				}
 				if (selectedFs == null)
 				{
-					Platform.Log(LogLevel.Info, "No writable filesystems for archiving logs, delaying archival.");
+					Platform.Log(LogLevel.Info, "No writable filesystems for archiving Alerts, delaying archival.");
 					UnlockServiceLock(item, true, Platform.Time.AddHours(2));
 					return;
 				}
 				item.FilesystemKey = selectedFs.Filesystem.Key;
 				archiveFilesystem = selectedFs;
 				UpdateFilesystemKey(item);
+
+				Platform.Log(LogLevel.Info, "Selecting Filesystem {0} for archiving of Alerts",
+				             selectedFs.Filesystem.Description);
+
 			}
 		
 

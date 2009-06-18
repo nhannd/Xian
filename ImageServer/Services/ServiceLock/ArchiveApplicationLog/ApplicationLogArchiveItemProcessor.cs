@@ -100,6 +100,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 				item.FilesystemKey = selectedFs.Filesystem.Key;
 				archiveFilesystem = selectedFs;
 				UpdateFilesystemKey(item);
+				Platform.Log(LogLevel.Info, "Selecting Filesystem {0} for archiving of ApplicationLog",
+				             selectedFs.Filesystem.Description);
 			}
 		
 
