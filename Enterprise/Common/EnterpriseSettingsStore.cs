@@ -54,31 +54,34 @@ namespace ClearCanvas.Enterprise.Common
 
         public Dictionary<string, string> GetSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
         {
-            Dictionary<string, string> values = new Dictionary<string,string>();
+            // choose the anonymous-access service if possible (if there are no user-scoped settings)
+            Type serviceContract = group.HasUserScopedSettings ?
+                typeof(Configuration.IConfigurationService) : typeof(IApplicationConfigurationReadService);
 
-			Platform.GetService<Configuration.IConfigurationService>(
-				delegate(Configuration.IConfigurationService service)
+            IApplicationConfigurationReadService service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
+            using (service as IDisposable)
+            {
+                Dictionary<string, string> values = new Dictionary<string, string>();
+                SettingsParser parser = new SettingsParser();
+
+                // retrieve the shared settings
+                string sharedDocument = service.GetConfigurationDocument(
+                    new GetConfigurationDocumentRequest(
+                        new ConfigurationDocumentKey(group.Name, group.Version, null, instanceKey))).Content;
+
+                parser.FromXml(sharedDocument, values);
+
+                // if the group contains user-scoped settings, get the user document
+                // and overwrite any values with the user's values
+                if (group.HasUserScopedSettings)
                 {
-                    SettingsParser parser = new SettingsParser();
-
-                    string sharedDocument = service.GetConfigurationDocument(
-						new GetConfigurationDocumentRequest(
-							new ConfigurationDocumentKey(group.Name, group.Version, null, instanceKey))).Content;
-
-                    parser.FromXml(sharedDocument, values);
-
-                    // if the group contains user-scoped settings, get the user document
-                    // and overwrite any values with the user's values
-                    if(group.HasUserScopedSettings)
-                    {
-                        string userDocument = service.GetConfigurationDocument(
-									new GetConfigurationDocumentRequest(
-										new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
-                        parser.FromXml(userDocument, values);
-                    }
-                });
-
-            return values;
+                    string userDocument = service.GetConfigurationDocument(
+                                new GetConfigurationDocumentRequest(
+                                    new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
+                    parser.FromXml(userDocument, values);
+                }
+                return values;
+            }
         }
 
         public void PutSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> dirtyValues)

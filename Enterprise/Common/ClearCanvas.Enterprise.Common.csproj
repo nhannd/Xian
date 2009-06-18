@@ -122,6 +122,7 @@
     <Compile Include="Caching\ICacheClient.cs" />
     <Compile Include="Caching\IDefinesCacheKey.cs" />
     <Compile Include="Caching\ICacheProvider.cs" />
+    <Compile Include="Configuration\IApplicationConfigurationReadService.cs" />
     <Compile Include="Configuration\ImportSettingsGroupRequest.cs" />
     <Compile Include="Configuration\ImportSettingsGroupResponse.cs" />
     <Compile Include="DefaultPrincipal.cs" />

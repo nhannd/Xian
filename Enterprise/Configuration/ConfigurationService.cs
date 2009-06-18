@@ -45,7 +45,7 @@ namespace ClearCanvas.Enterprise.Configuration
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IConfigurationService))]
-    public class ConfigurationService : CoreServiceLayer, IConfigurationService
+    public class ConfigurationService : ConfigurationServiceBase, IConfigurationService
     {
         #region IConfigurationService Members
 
@@ -55,7 +55,6 @@ namespace ClearCanvas.Enterprise.Configuration
         [ResponseCaching("GetSettingsMetadataCachingDirective")]
         public ListSettingsGroupsResponse ListSettingsGroups(ListSettingsGroupsRequest request)
         {
-        	//return new ListSettingsGroupsResponse(SettingsGroupDescriptor.ListInstalledSettingsGroups(true));
             IConfigurationSettingsGroupBroker broker = PersistenceContext.GetBroker<IConfigurationSettingsGroupBroker>();
             return new ListSettingsGroupsResponse(
                 CollectionUtils.Map<ConfigurationSettingsGroup, SettingsGroupDescriptor>(
@@ -75,8 +74,6 @@ namespace ClearCanvas.Enterprise.Configuration
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.Group, "Group");
 
-            //return new ListSettingsPropertiesResponse(
-			//	SettingsPropertyDescriptor.ListSettingsProperties(request.Group));
             ConfigurationSettingsGroupSearchCriteria where =
                 ConfigurationSettingsGroup.GetCriteria(request.Group);
 
@@ -140,15 +137,7 @@ namespace ClearCanvas.Enterprise.Configuration
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.DocumentKey, "DocumentKey");
 			
-			CheckReadAccess(request.DocumentKey.User);
-
-            IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(request.DocumentKey);
-            IList<ConfigurationDocument> documents = broker.Find(
-                new ConfigurationDocumentSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
-
-            ConfigurationDocument document = CollectionUtils.FirstElement(documents);
-            return new GetConfigurationDocumentResponse(request.DocumentKey, document == null ? null : document.Body.DocumentText);
+            return GetConfigurationDocumentHelper(request.DocumentKey);
         }
 
         // because this service is invoked by the framework, rather than by the application,
@@ -160,7 +149,7 @@ namespace ClearCanvas.Enterprise.Configuration
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.DocumentKey, "DocumentKey");
 
-			CheckWriteAccess(request.DocumentKey.User);
+			CheckWriteAccess(request.DocumentKey);
 
             IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
             ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(request.DocumentKey);
@@ -191,7 +180,7 @@ namespace ClearCanvas.Enterprise.Configuration
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.DocumentKey, "DocumentKey");
 
-			CheckWriteAccess(request.DocumentKey.User);
+			CheckWriteAccess(request.DocumentKey);
    
             try
             {
@@ -210,76 +199,6 @@ namespace ClearCanvas.Enterprise.Configuration
 
         #endregion
 
-        /// <summary>
-        /// This method is called automatically by response caching framework
-        /// to provide caching directive for configuration documents.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        private ResponseCachingDirective GetDocumentCachingDirective(GetConfigurationDocumentRequest request)
-        {
-            // if the request is for ConfigurationStoreSettings, we cannot try to load 
-            // these settings to read the values, or we'll get into an infinite recursion
-            // therefore, we assume ConfigurationStoreSettings are simply never cached.
-            // a better solution would be to allow each settings group to specify its own
-            // cacheability, and store this in the db with the settings meta-data
-            // but this is not currently implemented
-            if (request.DocumentKey.DocumentName == typeof(ConfigurationStoreSettings).FullName)
-            {
-                return ResponseCachingDirective.DoNotCacheDirective;
-            }
-
-            ConfigurationStoreSettings settings = new ConfigurationStoreSettings();
-            return new ResponseCachingDirective(
-                settings.ConfigurationCachingEnabled,
-                TimeSpan.FromSeconds(settings.ConfigurationCachingTimeToLiveSeconds),
-                ResponseCachingSite.Client);
-        }
-
-        /// <summary>
-        /// This method is called automatically by response caching framework
-        /// to provide caching directive for settings meta-data.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        private ResponseCachingDirective GetSettingsMetadataCachingDirective(object request)
-        {
-            ConfigurationStoreSettings settings = new ConfigurationStoreSettings();
-            return new ResponseCachingDirective(
-                settings.SettingsMetadataCachingEnabled,
-                TimeSpan.FromSeconds(settings.SettingsMetadataCachingTimeToLiveSeconds),
-                ResponseCachingSite.Client);
-        }
-
-        private void CheckReadAccess(string user)
-        {
-            if (string.IsNullOrEmpty(user))
-            {
-                // all users can read application configuration docs
-            }
-            else
-            {
-                // user can only read their own configuration docs
-                if (user != Thread.CurrentPrincipal.Identity.Name)
-                    throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
-            }
-        }
-
-        private void CheckWriteAccess(string user)
-        {
-            if (string.IsNullOrEmpty(user))
-            {
-                // this is an application configuration doc - need admin permission
-                if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.System.Configuration))
-                    throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
-            }
-            else
-            {
-                // user can only save their own configuration docs
-                if (user != Thread.CurrentPrincipal.Identity.Name)
-                    throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
-            }
-        }
 
         private ConfigurationDocument NewDocument(ConfigurationDocumentKey key)
         {
@@ -289,13 +208,6 @@ namespace ClearCanvas.Enterprise.Configuration
                 StringUtilities.NullIfEmpty(key.InstanceKey));
         }
 
-        private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(ConfigurationDocumentKey key)
-        {
-            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(key);
-            criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(key.Version, false, false));
-            return criteria;
-        }
-
 		private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(ConfigurationDocumentKey key)
         {
             ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(key);
@@ -303,31 +215,6 @@ namespace ClearCanvas.Enterprise.Configuration
             return criteria;
         }
 
-		private ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(ConfigurationDocumentKey key)
-        {
-            ConfigurationDocumentSearchCriteria criteria = new ConfigurationDocumentSearchCriteria();
-            criteria.DocumentName.EqualTo(key.DocumentName);
-
-            if (!string.IsNullOrEmpty(key.InstanceKey))
-            {
-                criteria.InstanceKey.EqualTo(key.InstanceKey);
-            }
-            else
-            {
-                criteria.InstanceKey.IsNull();
-            }
-
-            if (!string.IsNullOrEmpty(key.User))
-            {
-                criteria.User.EqualTo(key.User);
-            }
-            else
-            {
-                criteria.User.IsNull();
-            }
-
-            return criteria;
-        }
 
     }
 }

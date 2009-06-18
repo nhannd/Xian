@@ -43,20 +43,9 @@ namespace ClearCanvas.Enterprise.Common.Configuration
     /// </summary>
     [EnterpriseCoreService]
     [ServiceContract]
-    public interface IConfigurationService : ICoreServiceLayer
+    [Authentication(true)]
+    public interface IConfigurationService : IApplicationConfigurationReadService
     {
-        /// <summary>
-        /// Lists settings groups installed in the local plugin base.
-        /// </summary>
-        [OperationContract]
-		ListSettingsGroupsResponse ListSettingsGroups(ListSettingsGroupsRequest request);
-
-        /// <summary>
-        /// Lists the settings properties for the specified settings group.
-        /// </summary>
-        [OperationContract]
-		ListSettingsPropertiesResponse ListSettingsProperties(ListSettingsPropertiesRequest request);
-
         /// <summary>
         /// Imports meta-data for a settings group.
         /// </summary>
@@ -64,13 +53,6 @@ namespace ClearCanvas.Enterprise.Common.Configuration
         /// <returns></returns>
         [OperationContract]
         ImportSettingsGroupResponse ImportSettingsGroup(ImportSettingsGroupRequest request);
-
-        /// <summary>
-        /// Gets the document specified by the name, version, user and instance key.
-        /// The user and instance key may be null.
-        /// </summary>
-        [OperationContract]
-		GetConfigurationDocumentResponse GetConfigurationDocument(GetConfigurationDocumentRequest request);
 
         /// <summary>
         /// Sets the content for the specified document, version, user and instance key.

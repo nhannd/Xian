@@ -53,19 +53,21 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         public TextReader GetDocument(string name, Version version, string user, string instanceKey)
         {
-            string content = null;
-			Platform.GetService<Configuration.IConfigurationService>(
-				delegate(Configuration.IConfigurationService service)
-                {
-                    content = service.GetConfigurationDocument(
-						new GetConfigurationDocumentRequest(
-							new ConfigurationDocumentKey(name, version, user, instanceKey))).Content;
-                });
+            // choose the anonymous-access service if possible
+            Type serviceContract = string.IsNullOrEmpty(user) ?
+                typeof(IApplicationConfigurationReadService) : typeof(IConfigurationService);
 
-            if(content == null)
-                throw new ConfigurationDocumentNotFoundException(name, version, user, instanceKey);
+            IApplicationConfigurationReadService service = (IApplicationConfigurationReadService)Platform.GetService(serviceContract);
+            using (service as IDisposable)
+            {
+                string content = service.GetConfigurationDocument(
+                   new GetConfigurationDocumentRequest(
+                       new ConfigurationDocumentKey(name, version, user, instanceKey))).Content;
+                if (content == null)
+                    throw new ConfigurationDocumentNotFoundException(name, version, user, instanceKey);
 
-            return new StringReader(content);
+                return new StringReader(content);
+            }
         }
 
         /// <summary>

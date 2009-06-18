@@ -47,12 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationConfigurationReadService.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="*.gen.cs" />
     <Compile Include="ConfigurationDocument.cs" />
     <Compile Include="ConfigurationDocumentBody.cs" />
     <Compile Include="ConfigurationException.cs" />
     <Compile Include="ConfigurationService.cs" />
+    <Compile Include="ConfigurationServiceBase.cs" />
     <Compile Include="ConfigurationServiceRecorder.cs" />
     <Compile Include="ConfigurationSettingsGroup.cs" />
     <Compile Include="ConfigurationSettingsProperty.cs" />
