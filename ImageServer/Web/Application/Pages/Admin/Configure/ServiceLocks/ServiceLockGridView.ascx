@@ -43,20 +43,20 @@
                             <ccUI:DateTimeLabel ID="Schedule" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
-                        <ItemStyle HorizontalAlign="Center" wrap="false" />
+                        <ItemStyle HorizontalAlign="Center" Wrap="true" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Filesystem">
                         <ItemTemplate>
                             <asp:Label ID="Filesystem" runat="server" Text=""/>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
-                        <ItemStyle  />
+                        <ItemStyle HorizontalAlign="Center"/>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Processor ID">
+                    <asp:TemplateField HeaderText="Processor ID&nbsp;">
                         <ItemTemplate>
-                            <asp:Label ID="ProcessorID" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
+                            <asp:Label ID="ProcessorID" runat="server" Text='<%# Eval("ProcessorID") %>' style="padding-right: 5px;"></asp:Label>
                         </ItemTemplate>
-                        <HeaderStyle HorizontalAlign="Center" Wrap="false"/>
+                        <HeaderStyle HorizontalAlign="Center" Wrap="false" />
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>
