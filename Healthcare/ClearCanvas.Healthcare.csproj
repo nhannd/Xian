@@ -147,6 +147,7 @@
     <Compile Include="Tests\InterpretationStepTests.cs" />
     <Compile Include="Tests\ModalityProcedureStepTests.cs" />
     <Compile Include="Tests\ProcedureStepTests.cs" />
+    <Compile Include="Tests\ProcedureTests.cs" />
     <Compile Include="Tests\ProtocolAssignmentStepTests.cs" />
     <Compile Include="Tests\ProtocolProcedureStepTests.cs" />
     <Compile Include="Tests\ProtocolResolutionStepTests.cs" />
