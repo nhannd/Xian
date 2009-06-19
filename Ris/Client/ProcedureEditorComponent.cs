@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client
             _lateralityChoices = lateralityChoices;
 
             // if the requisition's procedure type is null, then it is a new procedure and checked in can be edited.
-            _isCheckedInEnabled = _requisition.ProcedureType == null;
+            _isCheckedInEnabled = _requisition.ProcedureType == null || _requisition.Status.Code == "SC";
         }
 
         /// <summary>

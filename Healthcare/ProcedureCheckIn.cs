@@ -74,7 +74,7 @@ namespace ClearCanvas.Healthcare {
 		public virtual void CheckOut(DateTime? checkOutTime)
         {
 			if (_checkOutTime != null)
-				throw new WorkflowException("Procedure already checked-in.");
+				throw new WorkflowException("Procedure already checked-out.");
 
 			_checkOutTime = checkOutTime ?? Platform.Time;
 		}
@@ -104,6 +104,15 @@ namespace ClearCanvas.Healthcare {
 		}
 
         #endregion
+
+        /// <summary>
+        /// Reverts Check-In status if not already checked out
+        /// </summary>
+        public virtual void RevertCheckIn()
+        {
+            if (!IsCheckedOut)
+                _checkInTime = null;
+        }
 
 		/// <summary>
 		/// Shifts the object in time by the specified number of days, which may be negative or positive.

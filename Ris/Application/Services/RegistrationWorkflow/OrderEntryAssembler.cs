@@ -201,6 +201,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             {
                 procedure.ProcedureCheckIn.CheckIn(null);
             }
+            else if(!requisition.CheckedIn && procedure.ProcedureCheckIn.IsCheckedIn)
+            {
+                procedure.ProcedureCheckIn.RevertCheckIn();
+            }
         }
 
         // arguably this is a business logic decision that shouldn't go here, but there is really no
