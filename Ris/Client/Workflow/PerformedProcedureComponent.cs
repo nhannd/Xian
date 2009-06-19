@@ -521,36 +521,40 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (selectedMpps != null)
 				{
-					// if downtime recovery mode, need to get the time from the user
-					DateTime? endTime = _selectedMpps.StartTime;
-					if (DowntimeRecovery.InDowntimeRecoveryMode)
-					{
-						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
-							return;
-					}
+                    switch (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue this procedure?", "Warning!", MessageBoxActions.YesNo))
+                    {
+                        case DialogBoxAction.Yes:
+                            // if downtime recovery mode, need to get the time from the user
+                            DateTime? endTime = _selectedMpps.StartTime;
+                            if (DowntimeRecovery.InDowntimeRecoveryMode)
+                            {
+                                if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
+                                    return;
+                            }
+                            DiscontinueModalityPerformedProcedureStepResponse response = null;
+                            Platform.GetService<IModalityWorkflowService>(
+                                delegate(IModalityWorkflowService service)
+                                    {
+                                        DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps);
+                                        request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
+                                        response = service.DiscontinueModalityPerformedProcedureStep(request);
+                                    });
 
-					DiscontinueModalityPerformedProcedureStepResponse response = null;
-					Platform.GetService<IModalityWorkflowService>(
-						delegate(IModalityWorkflowService service)
-						{
-							DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps);
-							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
-							response = service.DiscontinueModalityPerformedProcedureStep(request);
-						});
+                            RefreshProcedurePlanTree(response.ProcedurePlan);
 
-					RefreshProcedurePlanTree(response.ProcedurePlan);
+                            _mppsTable.Items.Replace(
+                                delegate(ModalityPerformedProcedureStepDetail mpps)
+                                    {
+                                        return mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
+                                    }, response.DiscontinuedMpps);
 
-					_mppsTable.Items.Replace(
-						delegate(ModalityPerformedProcedureStepDetail mpps)
-						{
-							return mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
-						},
-						response.DiscontinuedMpps);
-
-					_selectedMpps = response.DiscontinuedMpps;
-
-					UpdateActionEnablement();
-					_mppsTable.Sort();
+                            _selectedMpps = response.DiscontinuedMpps;
+                            UpdateActionEnablement();
+                            _mppsTable.Sort();
+                            break;
+                        case DialogBoxAction.No:
+                            break;
+                    }
 				}
 			}
 			catch (Exception e)
