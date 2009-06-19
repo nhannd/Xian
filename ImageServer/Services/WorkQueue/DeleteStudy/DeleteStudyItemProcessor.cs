@@ -90,7 +90,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 _extensions = CollectionUtils.Cast<IDeleteStudyProcessorExtension>(
                     new DeleteStudyProcessorExtensionPoint().CreateExtensions());
 
-
                 foreach (IDeleteStudyProcessorExtension ext in _extensions)
                 {
                     DeleteStudyContext context = new DeleteStudyContext();
@@ -101,7 +100,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                     context.Filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
                     ext.Initialize(context);
                 }
-
             }
 
             return _extensions;
@@ -125,10 +123,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
 				OnDeletingStudy();
 
-				Platform.Log(LogLevel.Info,
-				             "Deleting study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
-				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-				             Study.AccessionNumber, ServerPartition.Description);
+				if (Study == null)
+					Platform.Log(LogLevel.Info, "Deleting Study {0} on partition {1}",
+								 StorageLocation.StudyInstanceUid, ServerPartition.AeTitle);
+				else
+					Platform.Log(LogLevel.Info,
+					             "Deleting study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
+					             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+					             Study.AccessionNumber, ServerPartition.Description);
 
 				// Audit log
 				DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
@@ -136,8 +138,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 													EventIdentificationTypeEventOutcomeIndicator.Success);
 				helper.AddUserParticipant(new AuditProcessActiveParticipant(ServerPartition.AeTitle));
 				helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
-														Study.StudyInstanceUid,
-														Study.AccessionNumber));
+														StorageLocation.StudyInstanceUid,
+														Study == null ? string.Empty : Study.AccessionNumber));
 				ServerPlatform.LogAuditMessage(helper);
 
 
@@ -147,7 +149,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
 				OnStudyDeleted();
 
-				Platform.Log(LogLevel.Info,
+				if (Study == null)
+					Platform.Log(LogLevel.Info, "Completed Deleting Study {0} on partition {1}",
+								 StorageLocation.StudyInstanceUid, ServerPartition.AeTitle);
+				else
+					Platform.Log(LogLevel.Info,
 								 "Completed Deleting study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
 								 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
 								 Study.AccessionNumber, ServerPartition.Description);

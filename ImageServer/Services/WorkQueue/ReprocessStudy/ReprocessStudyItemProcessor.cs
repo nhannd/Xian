@@ -241,17 +241,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
             if (_queueData.State == null || !_queueData.State.ExecuteAtLeastOnce)
             {
-                Platform.Log(LogLevel.Info,
-                             "Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
-                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-                             Study.AccessionNumber, ServerPartition.Description);
+				if (Study == null)
+					Platform.Log(LogLevel.Info,
+					             "Reprocessing study {0} on Partition {1}", StorageLocation.StudyInstanceUid,
+					             ServerPartition.Description);
+				else
+					Platform.Log(LogLevel.Info,
+					             "Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+					             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+					             Study.AccessionNumber, ServerPartition.Description);
 
                 CleanupDatabase();
             }
             else
             {
-                Platform.Log(LogLevel.Info,
-                             "Resume Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+				if (Study == null)
+					Platform.Log(LogLevel.Info,
+								 "Resuming Reprocessing study {0} on Partition {1}", StorageLocation.StudyInstanceUid,
+								 ServerPartition.Description);
+				else
+					Platform.Log(LogLevel.Info,
+                             "Resuming Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
                              Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
                              Study.AccessionNumber, ServerPartition.Description);
             }

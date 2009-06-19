@@ -37,7 +37,6 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
@@ -206,7 +205,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected error when rebuilding study XML for directory: {0}", location.FilesystemPath);
                 StudyReprocessor reprocessor = new StudyReprocessor();
-                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy("Rebuild StudyXml", location, Platform.Time, WorkQueuePriorityEnum.Low);
+                WorkQueue reprocessEntry = reprocessor.ReprocessStudy("Rebuild StudyXml", location, Platform.Time, WorkQueuePriorityEnum.Low);
 				if (reprocessEntry!=null)
 				{
 					Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}", location.StudyInstanceUid);
@@ -292,8 +291,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 				UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
 			}
 			else
-
-			UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+				UnlockServiceLock(item, false, Platform.Time.AddDays(1));
 
 			Platform.Log(LogLevel.Info, "Completed rebuilding of the Study XML files for filesystem: {0}", info.Filesystem.Description);
 		}

@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
                 {
 
                     string pathPrefix = Path.Combine(_context.ServerPartition.PartitionFolder, "Deleted");
-                    _backupSubFolder = Path.Combine(pathPrefix, _context.Study.StudyInstanceUid);
+                    _backupSubFolder = Path.Combine(pathPrefix, _context.StorageLocation.StudyInstanceUid);
                 }
 
                 return _backupSubFolder;
@@ -111,7 +111,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
         public void Initialize(DeleteStudyContext context)
         {
             Platform.CheckForNullReference(context, "context");
-            Platform.CheckForNullReference(context.Study, "context.Study");
             _context = context;
 
 
@@ -179,6 +178,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             if (_context.WorkQueueItem.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy)
             {
                 Study study = _context.Study;
+
+				if (study == null)
+				{
+					Platform.Log(LogLevel.Info, "Not logging Study Delete information due to missing Study record for study: {0} on partition {1}",
+					             _context.StorageLocation.StudyInstanceUid,
+								 _context.ServerPartition.AeTitle);
+					return;
+				}
+
                 StudyStorageLocation storage = _context.StorageLocation;
 
                 using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
