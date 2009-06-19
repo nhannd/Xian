@@ -234,7 +234,7 @@ namespace ClearCanvas.Dicom.Audit
 			_userName = userName;
 
 			_networkAccessPointType = NetworkAccessPointTypeEnum.IpAddress;
-			_networkAccessPointId = DicomAuditHelper.ProcessId;
+			_networkAccessPointId = DicomAuditHelper.ProcessIpAddress;
 		}
 	}
 
@@ -252,17 +252,18 @@ namespace ClearCanvas.Dicom.Audit
 				sb.Append(aeTitle);
 				sb.Append(";");
 			}
-
+			_userId = DicomAuditHelper.ProcessId;
 			_alternateUserId = sb.ToString();
-			_networkAccessPointId = DicomAuditHelper.ProcessId;
+			_networkAccessPointId = DicomAuditHelper.ProcessIpAddress;
 			_networkAccessPointType = NetworkAccessPointTypeEnum.IpAddress;
 		}
 
 		public AuditProcessActiveParticipant(string aeTitle)
 		{
 			_userName = DicomAuditHelper.ProcessName;
+			_userId = DicomAuditHelper.ProcessId;
 			_alternateUserId = String.Format("AETITLES={0}", aeTitle);
-			_networkAccessPointId = DicomAuditHelper.ProcessId;
+			_networkAccessPointId = DicomAuditHelper.ProcessIpAddress;
 			_networkAccessPointType = NetworkAccessPointTypeEnum.IpAddress;
 		}
 	}

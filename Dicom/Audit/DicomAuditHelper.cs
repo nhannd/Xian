@@ -50,6 +50,7 @@ namespace ClearCanvas.Dicom.Audit
 	{
 		#region Static Members
 		private static string _processId;
+		private static string _processIpAddress;
 		private static readonly object _syncLock = new object();
 		private static string _application;
 		private static string _processName;
@@ -71,13 +72,13 @@ namespace ClearCanvas.Dicom.Audit
 		#endregion
 
 		#region Static Properties
-		public static string ProcessId
+		public static string ProcessIpAddress
 		{
 			get
 			{
 				lock (_syncLock)
 				{
-					if (_processId == null)
+					if (_processIpAddress == null)
 					{
 						string hostName = Dns.GetHostName();
 						IPAddress[] ipAddresses = Dns.GetHostAddresses(hostName);
@@ -85,15 +86,15 @@ namespace ClearCanvas.Dicom.Audit
 						{
 							if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
 							{
-								_processId = ip.ToString();
+								_processIpAddress = ip.ToString();
 							}
 							else if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
 							{
-								_processId = ip.ToString();
+								_processIpAddress = ip.ToString();
 							}
 						}
 					}
-					return _processId;
+					return _processIpAddress;
 				}
 			}
 		}
@@ -110,7 +111,19 @@ namespace ClearCanvas.Dicom.Audit
 			}
 		
 		}
-		
+
+		public static string ProcessId
+		{
+			get
+			{
+				lock (_syncLock)
+				{
+					if (_processId == null) _processId = Process.GetCurrentProcess().Id.ToString();
+					return _processId;
+				}
+			}
+
+		}
 		public static string Application
 		{
 			get

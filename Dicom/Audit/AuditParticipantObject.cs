@@ -271,6 +271,17 @@ namespace ClearCanvas.Dicom.Audit
 			_participantObjectName = patientName;			
 		}
 
+		public AuditPatientParticipantObject(DicomAttributeCollection collection)
+		{
+			Platform.CheckForNullReference(collection, "collection");
+
+			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.Person;
+			ParticipantObjectTypeCodeRole = ParticipantObjectTypeCodeRoleEnum.Patient;
+			ParticipantObjectIdTypeCode = ParticipantObjectIdTypeCodeEnum.PatientNumber;
+			_participantObjectId = collection[DicomTags.PatientId].ToString();
+			_participantObjectName = collection[DicomTags.PatientsName].ToString();
+		}
+
 		public string PatientId
 		{
 			get { return _participantObjectId; }

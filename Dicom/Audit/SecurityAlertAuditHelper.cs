@@ -102,7 +102,9 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// The identity of the person or process that detected the activity of
+		/// concern. If both are known, then two active participants shall be
+		/// included (both the person and the process).
 		/// </summary>
 		/// <param name="userId">
 		/// The identity of the person or process that detected the activity of
@@ -117,8 +119,14 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// The identity of the person, process, node, or other actor that
+		/// performed the activity reported by the alert. If multiple such
+		/// participants are known, then all shall be included.
 		/// </summary>
+		/// <remarks>
+		/// Note: In some cases, the user identity is not known precisely. In
+		/// such cases, the Active Participant can be left out.
+		/// </remarks>
 		/// <param name="participant">The participant.</param>
 		public void AddActiveParticipant(AuditActiveParticipant participant)
 		{
@@ -126,14 +134,6 @@ namespace ClearCanvas.Dicom.Audit
 			InternalAddActiveParticipant(participant);
 		}
 
-		/// <summary>
-		/// Add details of a Security Alert.
-		/// </summary>
-		/// <param name="study"></param>
-		public void AddPatientParticipantObject(AuditSecurityAlertParticipantObject alert)
-		{
-			InternalAddParticipantObject(alert.ParticipantObjectId, alert);
-		}
 
 		/// <summary>
 		/// Method for transforming event code enum into a CodedValueType.
@@ -168,7 +168,6 @@ namespace ClearCanvas.Dicom.Audit
 			else if (eventTypeCode == SecurityAlertEventTypeCodeEnum.UserSecurityAttributesChanged)
 				type = CodedValueType.UserSecurityAttributesChanged;
 			return type;
-
 		}
 	}
 }
