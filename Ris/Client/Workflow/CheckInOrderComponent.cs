@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                 {
                     // checks if either the check-in time is too early or too late based on a configurable time range
                     bool tooEarly = _checkInTime.AddHours(CheckInOrderSettings.Default.AcceptableCheckInTimeRange) < entry.Procedure.ScheduledStartTime;
-                    bool tooLate = _checkInTime.Subtract(new TimeSpan(CheckInOrderSettings.Default.AcceptableCheckInTimeRange)) > entry.Procedure.ScheduledStartTime;
+                    bool tooLate = _checkInTime.AddHours(-CheckInOrderSettings.Default.AcceptableCheckInTimeRange) > entry.Procedure.ScheduledStartTime;
                     if (tooEarly || tooLate)
                     {
                         switch (this.Host.DesktopWindow.ShowMessageBox(
@@ -152,8 +152,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                             case DialogBoxAction.No : 
                                 break;  // if they have decided they do not want to proceed, do nothing.
                         }
-                        
                     }
+                    // if the time falls under the acceptable time range, proceed
+                    _selectedProcedures.Add(entry.Procedure.ProcedureRef);
                 }
             }
 
