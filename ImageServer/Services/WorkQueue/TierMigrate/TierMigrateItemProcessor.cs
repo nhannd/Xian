@@ -32,7 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 				               WorkQueueProcessorStatus.Complete,
 				               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 			}
-			catch (Exception e)
+            catch (Exception e)
 			{
 				Platform.Log(LogLevel.Info, e);
 				FailQueueItem(item, e.Message);
@@ -161,7 +161,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             DateTime lastLog = DateTime.Now;
     	    int fileCounter = 0;
     	    ulong bytesCopied = 0;
-    	    int instanceCount = studyXml.NumberOfStudyRelatedInstances;
+    	    long instanceCountInXml = studyXml.NumberOfStudyRelatedInstances;
+            
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
             {
                 TierMigrationContext context = new TierMigrationContext();
@@ -177,7 +178,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyInstanceUid);
                 // don't create this directory so that it won't be backed up by MoveDirectoryCommand
 
-                MoveDirectoryCommand moveCommand = new MoveDirectoryCommand(origFolder, newPath, 
+                CopyDirectoryCommand copyDirCommand = new CopyDirectoryCommand(origFolder, newPath, 
                     delegate (string path)
                         {
                             FileInfo file = new FileInfo(path);
@@ -185,27 +186,38 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                             if (file.Extension != null && file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 fileCounter++;
-                                float pct = (float)fileCounter/instanceCount;
                                 TimeSpan elapsed = DateTime.Now - lastLog;
+                                TimeSpan totalElapsed = Platform.Time - startTime;
+                                double speedInMBPerSecond = 0;
+                                if (totalElapsed.TotalSeconds > 0)
+                                {
+                                    speedInMBPerSecond = (bytesCopied / 1024f / 1024f) / totalElapsed.TotalSeconds;
+                                }
+
                                 if (elapsed > TimeSpan.FromSeconds(WorkQueueSettings.Instance.TierMigrationProgressUpdateInSeconds))
                                 {
-                                    TimeSpan totalElapsed = Platform.Time - startTime;
-                                    double speedInMBPerSecond = 0;
-                                    if (totalElapsed.TotalSeconds>0)
+                                    StringBuilder stats = new StringBuilder();
+                                    if (instanceCountInXml!=0)
                                     {
-                                        speedInMBPerSecond = (bytesCopied/1024f/1024f)/totalElapsed.TotalSeconds;
+                                        float pct = (float)fileCounter/instanceCountInXml;
+                                        stats.AppendFormat("{0} files moved [{1:0.0}MB] since {2} ({3:0}% completed). Speed={4:0.00}MB/s", 
+                                                    fileCounter, bytesCopied/1024f/1024f, startTime, pct * 100, speedInMBPerSecond);
+                                    }
+                                    else
+                                    {
+                                        stats.AppendFormat("{0} files moved [{1:0.0}MB] since {2}. Speed={3:0.00}MB/s", 
+                                                    fileCounter, bytesCopied/1024f/1024f, startTime, speedInMBPerSecond);
+                                        
                                     }
 
-                                    Platform.Log(LogLevel.Info, "Tier migration for study {0}: {1:0}% completed. {2:0.0}MB moved. Speed={3:0.00}MB/s", 
-                                                storage.StudyInstanceUid, pct * 100, bytesCopied/1024f/1024f, speedInMBPerSecond);
-
+                                    Platform.Log(LogLevel.Info, "Tier migration for study {0}: {1}", storage.StudyInstanceUid, stats.ToString());
                                     try
                                     {
                                         using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                                         {
                                             IWorkQueueEntityBroker broker = ctx.GetBroker<IWorkQueueEntityBroker>();
                                             WorkQueueUpdateColumns parameters = new WorkQueueUpdateColumns();
-                                            parameters.FailureDescription = string.Format("{0:0}% completed since {1}. {2:0.0}MB @ {3:0.00}MB/s", pct * 100, startTime, bytesCopied / 1024f / 1024f, speedInMBPerSecond);
+                                            parameters.FailureDescription = stats.ToString();
                                             broker.Update(WorkQueueItem.GetKey(), parameters);
                                             ctx.Commit();
                                         }
@@ -213,7 +225,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                     }
                                     catch(Exception)
                                     {
-                                        //ignore it
+                                        // can't log the progress so far... just ignore it
                                     }
                                     finally
                                     {
@@ -222,7 +234,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                 }
                             }
                         });
-                processor.AddCommand(moveCommand);
+                processor.AddCommand(copyDirCommand);
+
+                DeleteDirectoryCommand delDirCommand = new DeleteDirectoryCommand(origFolder, false);
+                delDirCommand.RequiresRollback = false;
+                processor.AddCommand(delDirCommand);
                 
                 TierMigrateDatabaseUpdateCommand updateDBCommand = new TierMigrateDatabaseUpdateCommand(context);
                 processor.AddCommand(updateDBCommand);
@@ -230,11 +246,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 Platform.Log(LogLevel.Info, "Start migrating study {0}.. {1} to be moved", storage.StudyInstanceUid, ByteCountFormatter.Format(stat.StudySize));
                 if (!processor.Execute())
                 {
-                    throw new ApplicationException(processor.FailureReason);
+                    if (processor.FailureException != null)
+                        throw processor.FailureException;
+                    else
+                        throw new ApplicationException(processor.FailureReason);
                 }
 
                 stat.DBUpdate = updateDBCommand.Statistics;
-                stat.CopyFiles = moveCommand.MoveSpeed;
+                stat.CopyFiles = copyDirCommand.CopySpeed;
             }
 
             stat.ProcessSpeed.SetData(stat.StudySize);
@@ -248,6 +267,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                             stat.CopyFiles.FormattedValue,
                             stat.DBUpdate.FormattedValue,
                             TimeSpanFormatter.Format(stat.ProcessSpeed.ElapsedTime));
+
+    	    string originalPath = storage.GetStudyPath();
+            if (Directory.Exists(storage.GetStudyPath()))
+            {
+                Platform.Log(LogLevel.Info, "Original study folder could not be deleted. It must be cleaned up manually: {0}", originalPath);
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, WorkQueueItem.WorkQueueTypeEnum.ToString(), 1000, GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero,
+                    "Study has been migrated to a new tier. Original study folder must be cleaned up manually: {0}", originalPath);
+            }
 
             UpdateAverageStatistics(stat);                       
         }
@@ -325,4 +352,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 			return false;
 		}
     }
+
+    
 }

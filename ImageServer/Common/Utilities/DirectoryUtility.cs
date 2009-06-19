@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);
                 if (progressCallback != null)
                     progressCallback(fi.FullName);
-                
+             
             }
 
             // Copy each subdirectory using recursion.
@@ -208,24 +208,16 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 		/// <param name="deleteParentIfEmpty"></param>
         public static void DeleteIfExists(string dir, bool deleteParentIfEmpty)
         {
-			try
+			if (Directory.Exists(dir))
 			{
-				if (Directory.Exists(dir))
-				{
-                    DirectoryInfo parent = Directory.GetParent(dir);
-                    Directory.Delete(dir, true);
+                DirectoryInfo parent = Directory.GetParent(dir);
+                Directory.Delete(dir, true);
 
-                    if (deleteParentIfEmpty && parent != null && parent.FullName != null)
-                    {
-                        // delete the parent too
-                        DeleteIfEmpty(parent.FullName);
-                    }
-				}
-
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when deleting directory {0}", dir);
+                if (deleteParentIfEmpty && parent != null && parent.FullName != null)
+                {
+                    // delete the parent too
+                    DeleteIfEmpty(parent.FullName);
+                }
 			}
         }
     }
