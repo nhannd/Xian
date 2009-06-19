@@ -156,9 +156,7 @@
     <Compile Include="EntityRef.cs" />
     <Compile Include="EntityRefUtils.cs" />
     <Compile Include="Configuration\IConfigurationService.cs" />
-    <Compile Include="IConfigurationService.cs" />
     <Compile Include="ICoreServiceLayer.cs" />
-    <Compile Include="ITimeService.cs" />
     <Compile Include="ResponseCachingDirective.cs" />
     <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="Setup\SetupCommandLine.cs" />

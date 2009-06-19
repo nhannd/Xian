@@ -99,12 +99,12 @@ namespace ClearCanvas.Enterprise.Common
             // the only way to make this distinction is to not store any values that are same as default
 
 
-            // first obtain the meta-data for the settings group properties
-            IList<SettingsPropertyDescriptor> properties = this.ListSettingsProperties(group);
-
 			Platform.GetService<Configuration.IConfigurationService>(
 				delegate(Configuration.IConfigurationService service)
                 {
+                    // first obtain the meta-data for the settings group properties
+                    IList<SettingsPropertyDescriptor> properties = ListSettingsProperties(group, service);
+
                     SettingsParser parser = new SettingsParser();
                     Dictionary<string, string> values = new Dictionary<string, string>();
 
@@ -162,11 +162,11 @@ namespace ClearCanvas.Enterprise.Common
         {
             List<SettingsGroupDescriptor> groups = null;
 
-            // obtain the list of settings groups from the configuration service
-			Platform.GetService<Configuration.IConfigurationService>(
-				delegate(Configuration.IConfigurationService service)
+            // obtain the list of settings groups
+            Platform.GetService<IApplicationConfigurationReadService>(
+                delegate(IApplicationConfigurationReadService service)
                 {
-                	groups = service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
+                    groups = ListSettingsGroups(service);
                 });
 
             return groups;
@@ -176,13 +176,14 @@ namespace ClearCanvas.Enterprise.Common
         {
             // use the configuration service to obtain the properties
             IList<SettingsPropertyDescriptor> properties = null;
-			Platform.GetService<Configuration.IConfigurationService>(
-				delegate(Configuration.IConfigurationService service)
+			Platform.GetService<IApplicationConfigurationReadService>(
+                delegate(IApplicationConfigurationReadService service)
                 {
-                	properties = service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
+                    properties = ListSettingsProperties(group, service);
                 });
             return properties;
         }
+
 
         public bool SupportsImport
         {
@@ -200,5 +201,15 @@ namespace ClearCanvas.Enterprise.Common
         }
 
         #endregion
+
+        private static List<SettingsGroupDescriptor> ListSettingsGroups(IApplicationConfigurationReadService service)
+        {
+            return service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
+        }
+        private static IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group, IApplicationConfigurationReadService service)
+        {
+            return service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
+        }
+
     }
 }
