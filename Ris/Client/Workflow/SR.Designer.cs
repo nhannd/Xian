@@ -808,6 +808,28 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is not scheduled to be checked in until {1}
+        ///
+        ///Do you still want to check in this procedure?.
+        /// </summary>
+        internal static string MessageConfirmCheckInProcedureEarly {
+            get {
+                return ResourceManager.GetString("MessageConfirmCheckInProcedureEarly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} was scheduled to be checked in at {1}
+        ///
+        ///Do you still want to check in this procedure?.
+        /// </summary>
+        internal static string MessageConfirmCheckInProcedureLate {
+            get {
+                return ResourceManager.GetString("MessageConfirmCheckInProcedureLate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discard the selected addendum?.
         /// </summary>
         internal static string MessageConfirmDiscardSelectedAddendum {

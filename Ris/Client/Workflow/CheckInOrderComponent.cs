@@ -127,7 +127,34 @@ namespace ClearCanvas.Ris.Client.Workflow
             foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 if (entry.Checked)
-                    _selectedProcedures.Add(entry.Procedure.ProcedureRef);
+                {
+                    // checks if either the check-in time is too early or too late based on a configurable time range
+                    bool tooEarly = _checkInTime.AddHours(CheckInOrderSettings.Default.AcceptableCheckInTimeRange) < entry.Procedure.ScheduledStartTime;
+                    bool tooLate = _checkInTime.Subtract(new TimeSpan(CheckInOrderSettings.Default.AcceptableCheckInTimeRange)) > entry.Procedure.ScheduledStartTime;
+                    if (tooEarly || tooLate)
+                    {
+                        switch (this.Host.DesktopWindow.ShowMessageBox(
+                            String.Format(tooEarly ? SR.MessageConfirmCheckInProcedureEarly : SR.MessageConfirmCheckInProcedureLate, // uses a differently worded message per condition
+                                          Formatting.ProcedureFormat.Format(
+                                            new ProcedureSummary(
+                                              entry.Procedure.ProcedureRef,
+                                              entry.Procedure.OrderRef,
+                                              entry.Procedure.Index,
+                                              entry.Procedure.Type,
+                                              entry.Procedure.Laterality,
+                                              entry.Procedure.Portable)),
+                                            entry.Procedure.ScheduledStartTime),
+                                          MessageBoxActions.YesNo))
+                        {
+                            case DialogBoxAction.Yes :
+                                _selectedProcedures.Add(entry.Procedure.ProcedureRef); // if they still want to proceed, proceed normally.
+                                break;
+                            case DialogBoxAction.No : 
+                                break;  // if they have decided they do not want to proceed, do nothing.
+                        }
+                        
+                    }
+                }
             }
 
 			try
