@@ -123,12 +123,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Notifies listeners that the builder is done building the <see cref="InteractiveGraphicBuilder.Graphic"/>.
+		/// Called when the builder is done building the <see cref="InteractiveGraphicBuilder.Graphic"/>.
 		/// </summary>
-		protected override void NotifyGraphicComplete()
+		protected override void OnGraphicComplete()
 		{
 			InstallSnapPointGraphic(false);
-			base.NotifyGraphicComplete();
+			base.OnGraphicComplete();
 		}
 
 		/// <summary>

@@ -89,11 +89,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _graphicCancelled -= value; }
 		}
 
-		//TODO (CR May09):notify vs On, Notify should not be virtual.
 		/// <summary>
 		/// Notifies listeners that the builder is done building the <see cref="Graphic"/>.
 		/// </summary>
-		protected virtual void NotifyGraphicComplete()
+		protected void NotifyGraphicComplete()
 		{
 			this.OnGraphicComplete();
 			EventsHelper.Fire(_graphicComplete, this, new GraphicEventArgs(_graphic));
@@ -102,7 +101,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Notifies listeners that the builder is cancelling building the <see cref="Graphic"/> due to user cancellation.
 		/// </summary>
-		protected virtual void NotifyGraphicCancelled()
+		protected void NotifyGraphicCancelled()
 		{
 			this.OnGraphicCancelled();
 			EventsHelper.Fire(_graphicCancelled, this, new GraphicEventArgs(_graphic));

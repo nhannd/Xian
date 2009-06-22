@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				graphic.Color = _normalColor;
 			}
 
-			protected override void NotifyGraphicComplete()
+			protected override void OnGraphicComplete()
 			{
 				if (IsShutterTooSmall(base.Graphic))
 				{
@@ -89,8 +89,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					base.Rollback();
 					return;
 				}
-
-				base.NotifyGraphicComplete();
+				base.OnGraphicComplete();
 			}
 		}
 
@@ -102,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				graphic.Color = _normalColor;
 			}
 
-			protected override void NotifyGraphicComplete()
+			protected override void OnGraphicComplete()
 			{
 				if (IsShutterTooSmall(base.Graphic))
 				{
@@ -110,8 +109,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					base.Rollback();
 					return;
 				}
-
-				base.NotifyGraphicComplete();
+				base.OnGraphicComplete();
 			}
 		}
 
@@ -123,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				graphic.Color = _normalColor;
 			}
 
-			protected override void NotifyGraphicComplete()
+			protected override void OnGraphicComplete()
 			{
 				if (IsShutterTooSmall(base.Graphic))
 				{
@@ -131,8 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					base.Rollback();
 					return;
 				}
-
-				base.NotifyGraphicComplete();
+				base.OnGraphicComplete();
 			}
 		}
 	}
