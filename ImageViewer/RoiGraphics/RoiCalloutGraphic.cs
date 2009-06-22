@@ -43,6 +43,9 @@ using CoordinateSystem = ClearCanvas.ImageViewer.Graphics.CoordinateSystem;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
+	/// <summary>
+	/// A specialized callout graphic used by <see cref="RoiGraphic"/> whose text content is automatically computed by a list of <see cref="IRoiAnalyzer"/>s.
+	/// </summary>
 	[Cloneable]
 	public class RoiCalloutGraphic : CalloutGraphic
 	{
@@ -51,9 +54,16 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		[CloneIgnore]
 		private readonly List<IRoiAnalyzer> _roiAnalyzers = new List<IRoiAnalyzer>();
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="RoiCalloutGraphic"/> with all <see cref="IRoiAnalyzer"/>s extending <see cref="RoiAnalyzerExtensionPoint"/>.
+		/// </summary>
 		public RoiCalloutGraphic()
 			: this(RoiAnalyzerExtensionPoint.CreateRoiAnalyzers()) {}
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="RoiCalloutGraphic"/> witht the specified <see cref="IRoiAnalyzer"/>s.
+		/// </summary>
+		/// <param name="analyzers"></param>
 		public RoiCalloutGraphic(IEnumerable<IRoiAnalyzer> analyzers)
 			: base()
 		{
@@ -61,6 +71,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			_showAnalysis = RoiSettings.Default.ShowAnalysisByDefault;
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected RoiCalloutGraphic(RoiCalloutGraphic source, ICloningContext context)
 			: base(source, context)
 		{
@@ -68,11 +83,17 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			_roiAnalyzers.AddRange(source._roiAnalyzers);
 		}
 
+		/// <summary>
+		/// Gets the parent <see cref="RoiGraphic"/>.
+		/// </summary>
 		public new RoiGraphic ParentGraphic
 		{
 			get { return base.ParentGraphic as RoiGraphic; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating if any analysis should be displayed.
+		/// </summary>
 		public bool ShowAnalysis
 		{
 			get { return _showAnalysis; }
@@ -86,12 +107,21 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets the list of <see cref="IRoiAnalyzer"/>s that determines the text of the callout.
+		/// </summary>
 		public IList<IRoiAnalyzer> RoiAnalyzers
 		{
 			get { return _roiAnalyzers; }
 		}
 
-		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		/// <summary>
+		/// Gets a set of exported <see cref="IAction"/>s.
+		/// </summary>
+		/// <param name="site">The action model site at which the actions should reside.</param>
+		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
+		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
+		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
 			string @namespace = typeof(RoiCalloutGraphic).FullName;
@@ -110,13 +140,16 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			renameAction.SetClickHandler(this.Rename);
 
 			IActionSet actions = new ActionSet(new IAction[] {hideAction, renameAction});
-			IActionSet other = base.OnGetExportedActions(site, mouseInformation);
+			IActionSet other = base.GetExportedActions(site, mouseInformation);
 			if (other != null)
 				actions = actions.Union(other);
 
 			return actions;
 		}
 
+		/// <summary>
+		/// Invokes an interactive edit box on the name of the graphic, allowing the user to assign a name to the <see cref="RoiGraphic"/>.
+		/// </summary>
 		public void Rename()
 		{
 			RoiGraphic parent = this.ParentGraphic;
@@ -182,17 +215,39 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Forces the callout to update, allowing all the analyzers to recompute and update the text content of the callout immediately.
+		/// </summary>
 		public void Update()
 		{
 			RoiGraphic roiGraphic = this.ParentGraphic;
-			this.Update(roiGraphic.CreateRoi(), RoiAnalysisMode.Normal);
+			this.Update(roiGraphic.GetRoi(), RoiAnalysisMode.Normal);
 		}
 
+		/// <summary>
+		/// Forces the callout to update, allowing all the analyzers to recompute and update the text content of the callout immediately.
+		/// </summary>
+		/// <param name="mode">A value indicating whether or not the current region of interest is in the state of changing, and therefore whether or not analyzers should skip expensive computations.</param>
+		public void Update(RoiAnalysisMode mode)
+		{
+			RoiGraphic roiGraphic = this.ParentGraphic;
+			this.Update(roiGraphic.GetRoi(), mode);
+		}
+
+		/// <summary>
+		/// Forces the callout to update, allowing all the analyzers to recompute and update the text content of the callout immediately.
+		/// </summary>
+		/// <param name="roi">A particular region of interest information object to use when computing statistics.</param>
 		public void Update(Roi roi)
 		{
 			this.Update(roi, RoiAnalysisMode.Normal);
 		}
 
+		/// <summary>
+		/// Forces the callout to update, allowing all the analyzers to recompute and update the text content of the callout.
+		/// </summary>
+		/// <param name="roi">A particular region of interest information object to use when computing statistics.</param>
+		/// <param name="mode">A value indicating whether or not the current region of interest is in the state of changing, and therefore whether or not analyzers should skip expensive computations.</param>
 		public void Update(Roi roi, RoiAnalysisMode mode)
 		{
 			if (this.ImageViewer == null)
@@ -229,6 +284,9 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			base.Text = builder.ToString().Trim();
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="CalloutGraphic.Text"/> changes.
+		/// </summary>
 		protected override void OnTextChanged()
 		{
 			base.Visible = !(string.IsNullOrEmpty(base.Text));

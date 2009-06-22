@@ -114,13 +114,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Converts the input position vector (<paramref name="positionPatient"/>) to the coordinate
+		/// Converts the input <paramref name="positionPatient">position vector</paramref> to the coordinate
 		/// system of the image plane, moving the origin to <paramref name="originPatient"/>.
 		/// </summary>
 		/// <remarks>
 		/// Note that the resultant position vector remains in units of mm and the z-coordinate is valid.
 		/// </remarks>
-		/// <param name="positionPatient">The position vector, in patient coordinates, to be converted to the coordinate system of the image plane.</param>
+		/// <param name="positionPatient">The position vector, in patient coordinates,
+		/// to be converted to the coordinate system of the image plane.</param>
 		/// <param name="originPatient">The new origin, in patient coordinates.</param>
 		/// <returns>A position vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		public Vector3D ConvertToImagePlane(Vector3D positionPatient, Vector3D originPatient)
@@ -144,13 +145,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Converts the input position vector (<paramref name="positionPatient"/>) to the coordinate
+		/// Converts the input <paramref name="positionPatient">position vector</paramref> to the coordinate
 		/// system of the image plane, moving the origin to the top left corner of the image.
 		/// </summary>
 		/// <remarks>
 		/// Note that the resultant position vector remains in units of mm and the z-coordinate is valid.
 		/// </remarks>
-		/// <param name="positionPatient">The position vector, in patient coordinates, to be converted to the coordinate system of the image plane.</param>
+		/// <param name="positionPatient">The position vector, in patient coordinates,
+		/// to be converted to the coordinate system of the image plane.</param>
 		/// <returns>A position vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		public Vector3D ConvertToImagePlane(Vector3D positionPatient)
 		{
@@ -161,7 +163,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Converts a point in the image plane expressed in millimetres (mm) into a point expressed in pixels.
 		/// </summary>
-		/// <returns>The corresponding pixel coordinate, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
+		/// <returns>The corresponding pixel coordinate, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		public PointF? ConvertToImage(PointF positionMillimetres)
 		{
 			PixelSpacing spacing = _frame.PixelSpacing;
@@ -174,7 +176,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the normal vector describing the plane of the image in patient coordinates.
 		/// </summary>
-		/// <returns>The normal vector, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
+		/// <returns>The normal vector, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		public Vector3D GetNormalVector()
 		{
 			ImageOrientationPatient orientation = _frame.ImageOrientationPatient;
@@ -195,7 +197,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// position vector in patient coordinates, will rotate the position vector
 		/// into a coordinate system matching that of the image plane.
 		/// </summary>
-		/// <returns>The rotation matrix, or null if the <see cref="ImageSop"/>'s position information is invalid.</returns>
+		/// <returns>The rotation matrix, or null if the <see cref="Frame"/>'s position information is invalid.</returns>
 		private Matrix GetRotationMatrix()
 		{
 			if (_rotationMatrix == null)

@@ -415,6 +415,8 @@
     <Compile Include="Utilities\StudyBuilder\StudyBuilderNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNode.cs" />
     <Compile Include="Utilities\StudyBuilder\StudyNodeCollection.cs" />
+    <Compile Include="Utilities\Xml\InstanceXmlDicomAttributeCollection.cs" />
+    <Compile Include="Utilities\Xml\Tests\StudyXmlTests.cs" />
     <Compile Include="Validation\DicomValidator.cs" />
     <Compile Include="IDicomCharacterSetParser.cs" />
     <Compile Include="Network\NetworkException.cs" />

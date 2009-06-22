@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
 
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
-				serializer.FramePresentationStates.Add(frameAndPR);
+				serializer.AddImage(frameAndPR.Key, frameAndPR.Value);
 
 			_keyObjectDocuments.AddRange(serializer.Serialize());
 		}

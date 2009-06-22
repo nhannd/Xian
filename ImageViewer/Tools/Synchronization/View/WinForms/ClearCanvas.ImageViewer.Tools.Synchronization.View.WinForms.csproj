@@ -40,12 +40,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="SynchronizationToolConfigComponentView.cs" />
-    <Compile Include="SynchronizationToolConfigComponentControl.cs">
+    <Compile Include="SynchronizationToolConfigurationComponentView.cs" />
+    <Compile Include="SynchronizationToolConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SynchronizationToolConfigComponentControl.Designer.cs">
-      <DependentUpon>SynchronizationToolConfigComponentControl.cs</DependentUpon>
+    <Compile Include="SynchronizationToolConfigurationComponentControl.Designer.cs">
+      <DependentUpon>SynchronizationToolConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
@@ -83,9 +83,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SynchronizationToolConfigComponentControl.resx">
+    <EmbeddedResource Include="SynchronizationToolConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>SynchronizationToolConfigComponentControl.cs</DependentUpon>
+      <DependentUpon>SynchronizationToolConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

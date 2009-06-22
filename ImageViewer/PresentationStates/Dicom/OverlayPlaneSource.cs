@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,17 +29,26 @@
 
 #endregion
 
-using System;
-
-namespace ClearCanvas.ImageViewer.StudyManagement
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
-	//TODO (CR May09): delete and use InvalidOperationException in Rois
-
 	/// <summary>
-	/// Exception indicating that the parent image does not provide pixel spacing information.
+	/// Enumeration to indicate the source of an <see cref="OverlayPlaneGraphic"/>.
 	/// </summary>
-	public class UncalibratedImageException : Exception
+	public enum OverlayPlaneSource
 	{
-		public UncalibratedImageException() : base("The image does not provide pixel spacing information, nor has it been otherwise calibrated.") {}
+		/// <summary>
+		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was defined in the image SOP or the image SOP referenced by the presentation state SOP.
+		/// </summary>
+		Image,
+
+		/// <summary>
+		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was defined in the presentation state SOP.
+		/// </summary>
+		PresentationState,
+
+		/// <summary>
+		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was user-created.
+		/// </summary>
+		User
 	}
 }

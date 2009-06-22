@@ -1,6 +1,5 @@
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
@@ -56,7 +55,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets or sets a value indicating the type of content represented by the overlay plane.
 		/// </summary>
-		public new OverlayType Type
+		public new OverlayPlaneType Type
 		{
 			get { return base.Type; }
 			set { base.Type = value; }
@@ -65,7 +64,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets or sets a value identifying the intended purpose of the overlay.
 		/// </summary>
-		public new OverlaySubtype Subtype
+		public new OverlayPlaneSubtype Subtype
 		{
 			get { return base.Subtype; }
 			set { base.Subtype = value; }

@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Graphics;
@@ -44,8 +42,8 @@ using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// An stateful interactive graphic that consists of some subject of interest graphic
-	/// and a <see cref="CalloutGraphic">text callout</see> that describes the subject.
+	/// An standard, stateful interactive graphic that consists of some subject of interest graphic
+	/// and a <see cref="ICalloutGraphic">text callout</see> that describes the subject.
 	/// </summary>
 	/// <remarks>
 	/// <para>
@@ -69,7 +67,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private bool _notifyOnSubjectChanged = true;
 
 		[CloneIgnore]
-		private CalloutGraphic _calloutGraphic;
+		private ICalloutGraphic _calloutGraphic;
 
 		[CloneIgnore]
 		private IToolSet _toolSet;
@@ -110,60 +108,52 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#endregion
 
 		/// <summary>
-		/// Gets the <see cref="CalloutGraphic"/>.
+		/// Gets the <see cref="ICalloutGraphic"/> associated with the subject of interest..
 		/// </summary>
-		public CalloutGraphic Callout
+		public ICalloutGraphic Callout
 		{
 			get { return _calloutGraphic; }
 		}
 
-		#region IMemorable Members
-
-		/// <summary>
-		/// Creates a memento that can be used to restore the current state.
-		/// </summary>
-		public virtual object CreateMemento()
-		{
-			//return new AnnotationGraphicMemento(_subjectGraphic.CreateMemento(), _calloutGraphic.CreateMemento());
-			return null;
-		}
-
-		/// <summary>
-		/// Restores the state of an object.
-		/// </summary>
-		/// <param name="memento">The object that was
-		/// originally created with <see cref="IMemorable.CreateMemento"/>.</param>
-		/// <remarks>
-		/// The implementation of <see cref="IMemorable.SetMemento"/> should return the 
-		/// object to the original state captured by <see cref="IMemorable.CreateMemento"/>.
-		/// </remarks>
-		public virtual void SetMemento(object memento)
-		{
-			//AnnotationGraphicMemento annotationMemento = (AnnotationGraphicMemento) memento;
-			//_calloutGraphic.SetMemento(annotationMemento.CalloutMemento);
-			//_subjectGraphic.SetMemento(annotationMemento.SubjectMemento);
-		}
-
-		#endregion
-
 		#region Virtual Members
 
+		/// <summary>
+		/// Gets the namespace with which to qualify the action model site of any context menus on this graphic.
+		/// </summary>
+		/// <remarks>
+		/// <para>The default implementation uses the fully qualified name of the <see cref="AnnotationGraphic"/> type as a namespace.</para>
+		/// <para>An implementation of <see cref="AnnotationGraphic"/> can override this property to specify that an alternate action model be used instead.</para>
+		/// </remarks>
 		protected virtual string ContextMenuNamespace
 		{
 			get { return typeof (AnnotationGraphic).FullName; }
 		}
 
+		/// <summary>
+		/// Refreshes the annotation graphic by recomputing the callout position and redrawing the graphic.
+		/// </summary>
 		public virtual void Refresh()
 		{
 			this.SetCalloutLocation();
 			this.Draw();
 		}
 
-		protected virtual CalloutGraphic CreateCalloutGraphic()
+		/// <summary>
+		/// Called by <see cref="AnnotationGraphic"/> to create the <see cref="ICalloutGraphic"/> to be used by this annotation.
+		/// </summary>
+		/// <remarks>
+		/// <para>The default implementation creates a plain <see cref="CalloutGraphic"/> with no text and which is not user-modifiable.</para>
+		/// <para>Subclasses can override this method to provide callouts with automatically computed text content or which is user-interactive.</para>
+		/// </remarks>
+		/// <returns>The <see cref="ICalloutGraphic"/> to be used.</returns>
+		protected virtual ICalloutGraphic CreateCalloutGraphic()
 		{
-			return new CalloutGraphic("XCalloutGraphic");
+			return new CalloutGraphic(string.Empty);
 		}
 
+		/// <summary>
+		/// Forces a recomputation of the callout line.
+		/// </summary>
 		protected void RecomputeCalloutLine()
 		{
 			this.SetCalloutEndPoint();
@@ -179,7 +169,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.Graphics.Add(_calloutGraphic);
 			}
 
-			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
+			_calloutGraphic.TextLocationChanged += OnCalloutLocationChanged;
 
 			if (_calloutLocationStrategy == null)
 				_calloutLocationStrategy = calloutLocationStrategy ?? new AnnotationCalloutLocationStrategy();
@@ -202,7 +192,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnCloneComplete()
 		{
 			_calloutGraphic = CollectionUtils.SelectFirst(base.Graphics,
-			                                              delegate(IGraphic test) { return test is CalloutGraphic; }) as CalloutGraphic;
+														  delegate(IGraphic test) { return test is ICalloutGraphic; }) as ICalloutGraphic;
 			Platform.CheckForNullReference(_calloutGraphic, "_calloutGraphic");
 
 			this.Initialize(null);
@@ -268,7 +258,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.ResetCoordinateSystem();
 
 			_calloutGraphic.CoordinateSystem = coordinateSystem;
-			_calloutGraphic.EndPoint = endPoint;
+			_calloutGraphic.AnchorPoint = endPoint;
 			_calloutGraphic.ResetCoordinateSystem();
 		}
 
@@ -283,7 +273,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_settingCalloutLocation = true;
 
 				_calloutGraphic.CoordinateSystem = coordinateSystem;
-				_calloutGraphic.Location = location;
+				_calloutGraphic.TextLocation = location;
 				_calloutGraphic.ResetCoordinateSystem();
 
 				_settingCalloutLocation = false;
@@ -294,13 +284,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			SetCalloutEndPoint();
 		}
 
-		private void OnCalloutLocationChanged(object sender, PointChangedEventArgs e)
+		private void OnCalloutLocationChanged(object sender, EventArgs e)
 		{
 			if (!_settingCalloutLocation)
 				_calloutLocationStrategy.OnCalloutLocationChangedExternally();
 			SetCalloutEndPoint();
 		}
 
+		/// <summary>
+		/// Gets a set of exported <see cref="IAction"/>s.
+		/// </summary>
+		/// <param name="site">The action model site at which the actions should reside.</param>
+		/// <param name="mouseInformation">The mouse input when the action model was requested, such as in response to a context menu request.</param>
+		/// <returns>A set of exported <see cref="IAction"/>s.</returns>
 		public override IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			if (_toolSet == null)
@@ -310,6 +306,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IContextMenuProvider Members
 
+		/// <summary>
+		/// Gets the context menu <see cref="ActionModelNode"/> based on the current state of the mouse.
+		/// </summary>
 		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
 			IActionSet actions = this.GetExportedActions("basicgraphic-menu", mouseInformation);

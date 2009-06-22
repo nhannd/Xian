@@ -60,8 +60,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the server to load the study from, such as
-		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.
+		/// Gets the server to load the study from, such as <code>null</code> for the local
+		/// server or an <see cref="ApplicationEntity"/> object specifying the remote server.
 		/// </summary>
 		public object Server
 		{

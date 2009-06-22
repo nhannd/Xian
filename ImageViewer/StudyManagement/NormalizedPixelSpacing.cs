@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class NormalizedPixelSpacing : PixelSpacing
 	{
 		private event EventHandler _calibrated;
-		private Frame _frame;
+		private readonly Frame _frame;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="NormalizedPixelSpacing"/>.

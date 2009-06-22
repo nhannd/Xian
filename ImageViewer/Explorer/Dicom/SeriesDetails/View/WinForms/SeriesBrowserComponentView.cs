@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,43 +30,49 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.ImageViewer.Layout.Basic
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms
 {
-	//TODO: this class doesn't appear to be used.  Can we delete it?
-    public class LayoutToolViewEventArgs : EventArgs
+    /// <summary>
+	/// Provides a Windows Forms view onto <see cref="SeriesDetailsComponent"/>.
+    /// </summary>
+	[ExtensionOf(typeof(SeriesDetailsComponentViewExtensionPoint))]
+    public class SeriesBrowserComponentView : WinFormsView, IApplicationComponentView
     {
-        private int _imageBoxRows;
-        private int _imageBoxColumns;
-        private int _tileRows;
-        private int _tileColumns;
+        private SeriesDetailsComponent _component;
+        private SeriesDetailsComponentControl _control;
 
-        public LayoutToolViewEventArgs(int imageBoxRows, int imageBoxColumns, int tileRows, int tileColumns)
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
         {
-            _imageBoxRows = imageBoxRows;
-            _imageBoxColumns = imageBoxColumns;
-            _tileRows = tileRows;
-            _tileColumns = tileColumns;
+			_component = (SeriesDetailsComponent)component;
         }
 
-        public int ImageBoxRows
-        {
-            get { return _imageBoxRows; }
-        }
+        #endregion
 
-        public int ImageBoxColumns
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
         {
-            get { return _imageBoxColumns; }
-        }
-
-        public int TileRows
-        {
-            get { return _tileRows; }
-        }
-
-        public int TileColumns
-        {
-            get { return _tileColumns; }
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new SeriesDetailsComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

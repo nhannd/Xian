@@ -212,6 +212,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private Dictionary<string, string> _setStudiesDeleted;
 
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
+		private DelayedEventPublisher _processStudiesEventPublisher;
 
 		#endregion
 
@@ -300,6 +301,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			base.Start();
 
+			_processStudiesEventPublisher = new DelayedEventPublisher(DelayProcessReceivedAndRemoved);
+
 			_toolSet = new ToolSet(new StudyBrowserToolExtensionPoint(), new StudyBrowserToolContext(this));
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
@@ -320,6 +323,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Stop()
 		{
+			_processStudiesEventPublisher.Dispose();
+
 			_toolSet.Dispose();
 			_toolSet = null;
 
@@ -818,6 +823,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			existingItem.StudyDescription = sourceItem.StudyDescription;
 		}
 
+		private void DelayProcessReceivedAndRemoved(object sender, EventArgs e)
+		{
+			ProcessReceivedAndRemovedStudies();
+
+			//update the title in the view.
+			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
+		}
+
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
 		{
 			//when something gets imported, people without search permissions should not see it.
@@ -829,10 +842,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_setStudiesArrived[e.Item.StudyInstanceUid] = e.Item.StudyInstanceUid;
 			_setStudiesDeleted.Remove(e.Item.StudyInstanceUid); //can't be deleted if it's arrived.
-			ProcessReceivedAndRemovedStudies();
 
-			//update the title in the view.
-			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
+			_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
 		}
 
 		private void OnInstanceDeleted(object sender, ItemEventArgs<DeletedInstanceInformation> e)
@@ -845,10 +856,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_setStudiesDeleted[e.Item.InstanceUid] = e.Item.InstanceUid;
 			_setStudiesArrived.Remove(e.Item.InstanceUid); //can't arrive if it's deleted.
-			ProcessReceivedAndRemovedStudies();
 
-			//update the title in the view.
-			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
+			_processStudiesEventPublisher.Publish(this, EventArgs.Empty);
 		}
 
 		void OnLocalDataStoreCleared(object sender, EventArgs e)

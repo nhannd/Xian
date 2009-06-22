@@ -35,7 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SynchronizationToolConfigComponent.cs" />
+    <Compile Include="SynchronizationToolConfigurationComponent.cs" />
     <Compile Include="SynchronizationToolSettings.cs" />
     <Compile Include="SynchronizationToolSettings.Designer.cs">
       <DependentUpon>SynchronizationToolSettings.settings</DependentUpon>

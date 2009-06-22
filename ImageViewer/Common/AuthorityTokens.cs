@@ -34,19 +34,52 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+	/// <summary>
+	/// Default authority group definition class.
+	/// </summary>
 	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
 	public class DefaultAuthorityGroups : IDefineAuthorityGroups
 	{
+		/// <summary>
+		/// Administrators authority group.
+		/// </summary>
 		public const string Administrators = "Administrators";
+
+		/// <summary>
+		/// Healthcare Administrators authority group.
+		/// </summary>
 		public const string HealthcareAdministrators = "Healthcare Administrators";
+
+		/// <summary>
+		/// Clerical authority group.
+		/// </summary>
 		public const string Clerical = "Clerical";
+
+		/// <summary>
+		/// Technologists authority group.
+		/// </summary>
 		public const string Technologists = "Technologists";
+
+		/// <summary>
+		/// Radiologists authority group.
+		/// </summary>
 		public const string Radiologists = "Radiologists";
+
+		/// <summary>
+		/// Radiology Residents authority group.
+		/// </summary>
 		public const string RadiologyResidents = "Radiology Residents";
+
+		/// <summary>
+		/// Emergency Physicians authority group.
+		/// </summary>
 		public const string EmergencyPhysicians = "Emergency Physicians";
 
 		#region IDefineAuthorityGroups Members
 
+		/// <summary>
+		/// Get the authority group definitions.
+		/// </summary>
 		public AuthorityGroupDefinition[] GetAuthorityGroups()
 		{
 			return new AuthorityGroupDefinition[]
@@ -114,30 +147,60 @@ namespace ClearCanvas.ImageViewer.Common
 		#endregion
 	}
 
+	/// <summary>
+	/// Static class defining all Common Image Viewer authority tokens.
+	/// </summary>
 	public static class AuthorityTokens
 	{
+		/// <summary>
+		/// General user permission required to use any viewer components.
+		/// </summary>
 		[AuthorityToken(Description = "General user permission required to use any viewer components.")]
 		public const string General = "Viewer/General";
 
+		/// <summary>
+		/// Viewer workflow authority tokens.
+		/// </summary>
 		public class Workflow
 		{
+			/// <summary>
+			/// Generic study related authority tokens.
+			/// </summary>
 			public class Study
 			{
+				/// <summary>
+				/// Generic user permission to search the study data in the viewer.
+				/// </summary>
 				[AuthorityToken(Description = "Generic user permission to search the study data in the viewer.")]
 				public const string Search = "Viewer/Workflow/Study/Search";
 
+				/// <summary>
+				/// Generic user permission to export study data from the viewer.
+				/// </summary>
 				[AuthorityToken(Description = "Generic user permission to export study data from the viewer.")]
 				public const string Export = "Viewer/Workflow/Study/Export";
 
+				/// <summary>
+				/// Generic user permission to view study data in the viewer.
+				/// </summary>
 				[AuthorityToken(Description = "Generic user permission to view study data in the viewer.")]
 				public const string View = "Viewer/Workflow/Study/View";
 
+				/// <summary>
+				/// Generic user permission to create a new study in the viewer.
+				/// </summary>
 				[AuthorityToken(Description = "Generic user permission to create a new study in the viewer.")]
 				public const string Create = "Viewer/Workflow/Study/Create";
 
+				/// <summary>
+				/// Generic user permission to modify study data in the viewer.
+				/// </summary>
 				[AuthorityToken(Description = "Generic user permission to modify study data in the viewer.")]
 				public const string Modify = "Viewer/Workflow/Study/Modify";
 
+				/// <summary>
+				/// Generic user permission to delete a study from the viewer.
+				/// </summary>
 				[AuthorityToken(Description = "Generic user permission to delete a study from the viewer.")]
 				public const string Delete = "Viewer/Workflow/Study/Delete";
 			}

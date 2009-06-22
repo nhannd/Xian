@@ -54,7 +54,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public string SpecificCharacterSet
 		{
-			get { return _xml.Collection[DicomTags.SpecificCharacterSet].ToString(); }
+			get { return _xml[DicomTags.SpecificCharacterSet].ToString(); }
 		}
 
 		[QueryableProperty(DicomTags.StudyInstanceUid, IsHigherLevelUnique = true)]
@@ -113,12 +113,31 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public bool IsStoredTag(DicomTag tag)
 		{
+			if (_xml.IsTagExcluded(tag.TagValue))
+				return false;
+
+			if (tag.VR == DicomVr.SQvr)
+			{
+				DicomSequenceItem[] items = _xml[tag].Values as DicomSequenceItem[];
+				if (items != null)
+				{
+					foreach (DicomSequenceItem item in items)
+					{
+						if (item is InstanceXmlDicomSequenceItem)
+						{
+							if (((InstanceXmlDicomSequenceItem)item).HasExcludedTags(true))
+								return false;
+						}
+					}
+				}
+			}
+
 			bool isBinary = tag.VR == DicomVr.OBvr || tag.VR == DicomVr.OWvr || tag.VR == DicomVr.OFvr;
 			//these tags are not stored in the xml.
 			if (isBinary || tag.IsPrivate || tag.VR == DicomVr.UNvr)
 				return false;
 
-    		return true;
+			return true;
 		}
 
     	public DicomAttribute this[DicomTag tag]

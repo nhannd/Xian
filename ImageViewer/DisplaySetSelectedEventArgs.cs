@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DisplaySetSelectedEventArgs : EventArgs
 	{
-		private IDisplaySet _selectedDisplaySet;
+		private readonly IDisplaySet _selectedDisplaySet;
 
 		internal DisplaySetSelectedEventArgs(
 			IDisplaySet selectedDisplaySet)

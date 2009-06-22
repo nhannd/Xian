@@ -40,12 +40,12 @@ namespace ClearCanvas.Dicom
 	public interface IDicomAttributeProvider
 	{
 		/// <summary>
-		/// Gets the <see cref="DicomAttribute"/> for the given tag.
+		/// Gets or sets the <see cref="DicomAttribute"/> for the given tag.
 		/// </summary>
 		DicomAttribute this[DicomTag tag] { get; set; }
 
 		/// <summary>
-		/// Gets the <see cref="DicomAttribute"/> for the given tag.
+		/// Gets or sets the <see cref="DicomAttribute"/> for the given tag.
 		/// </summary>
 		DicomAttribute this[uint tag] { get; set; }
 

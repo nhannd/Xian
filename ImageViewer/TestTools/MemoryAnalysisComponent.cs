@@ -54,9 +54,11 @@ namespace ClearCanvas.ImageViewer.TestTools
 		private int _memoryIncrementKB = 512;
 		private Timer _timer;
 		private double _memoryMark;
+		private IDesktopWindow _desktopWindow;
 
-		public MemoryAnalysisComponent()
+		public MemoryAnalysisComponent(IDesktopWindow desktopWindow)
 		{
+			_desktopWindow = desktopWindow;
 			_heldMemory = new List<byte[]>();
 		}
 
@@ -120,7 +122,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			}
 			catch(OutOfMemoryException)
 			{
-				Platform.ShowMessageBox("Out of memory!");
+				_desktopWindow.ShowMessageBox("Out of memory!", MessageBoxActions.Ok);
 			}
 
 			NotifyPropertyChanged("HeapMemoryKB");

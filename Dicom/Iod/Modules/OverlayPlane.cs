@@ -684,9 +684,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			if (!this.IsMultiFrame)
 				throw new NotSupportedException("This is not a multi-frame overlay.");
 
-			int result = this.TryComputeOverlayDataBitOffset(overlayFrameNumber);
+			Platform.CheckNonNegative(overlayFrameNumber, "overlayFrameNumber");
 
-			if(result < 0)
+			int result;
+			if (!this.TryComputeOverlayDataBitOffset(overlayFrameNumber, out result))
 				throw new ArgumentOutOfRangeException("overlayFrameNumber", string.Format("No overlay frame exists at the index {0}.", overlayFrameNumber));
 
 			return result;
@@ -696,20 +697,24 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// Computes the bit offset in the <see cref="OverlayData"/> from which to read the overlay data for a specific frame.
 		/// </summary>
 		/// <param name="overlayFrameNumber">The zero-based frame number for which to compute the bit offset in the <see cref="OverlayData"/>.</param>
-		/// <returns>The offset from the beginning of the <see cref="OverlayData"/> in bits, or -1 if no overlay frame at that index.</returns>
-		public int TryComputeOverlayDataBitOffset(int overlayFrameNumber)
+		/// <param name="bitOffset">The offset from the beginning of the <see cref="OverlayData"/> in bits.</param>
+		/// <returns>True if a valid bit offset was computed; False otherwise.</returns>
+		public bool TryComputeOverlayDataBitOffset(int overlayFrameNumber, out int bitOffset)
 		{
-			Platform.CheckNonNegative(overlayFrameNumber, "overlayFrameNumber");
+			bitOffset = 0;
 
 			if (!this.IsMultiFrame)
-				return 0;
+				return true;
+			if (overlayFrameNumber <= 0)
+				return false;
 
 			int origin = this.ImageFrameOrigin ?? 0;
 			int count = this.NumberOfFramesInOverlay ?? 1;
 			if (overlayFrameNumber < origin || overlayFrameNumber >= origin + count)
-				return -1;
+				return false;
 
-			return this.OverlayRows*this.OverlayColumns*(overlayFrameNumber - origin);
+			bitOffset = this.OverlayRows*this.OverlayColumns*(overlayFrameNumber - origin);
+			return true;
 		}
 
 		/// <summary>

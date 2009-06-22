@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,30 +30,38 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.DicomGraphics
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 {
-	[Cloneable(true)]
-	[Obsolete("Use DicomGraphicsPlane")]
-	public class OverlayPlanesGraphic : CompositeGraphic
+	[MenuAction("apply", "global-menus/MenuTools/MenuFilter/MenuReset", "Apply")]
+	[MenuAction("apply", "imageviewer-filterdropdownmenu/MenuReset", "Apply")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	public class ResetFilterTool : ImageViewerTool
 	{
-		public const string Name = "Dicom Overlay Planes";
+		public ResetFilterTool() {}
 
-		internal OverlayPlanesGraphic()
+		public void Apply()
 		{
-			base.Name = Name;
-		}
+			if (this.SelectedImageGraphicProvider == null)
+				return;
 
-		public IEnumerable<OverlayPlaneGraphic> GetOverlayPlanes()
-		{
-			foreach (IGraphic graphic in Graphics)
-			{
-				if (graphic is OverlayPlaneGraphic)
-					yield return graphic as OverlayPlaneGraphic;
-			}
+			ImageGraphic image = this.SelectedImageGraphicProvider.ImageGraphic;
+			if (image == null)
+				return;
+
+			if (!(image is GrayscaleImageGraphic))
+				return;
+
+			// explicitly unload the (filtered) pixel data for the frame
+			this.SelectedImageSopProvider.Frame.UnloadPixelData();
+
+			// now draw the frame again - since we unloaded the filtered pixel data, it will reload from the original source
+			image.Draw();
 		}
 	}
 }

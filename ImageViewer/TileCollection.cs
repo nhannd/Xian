@@ -56,6 +56,9 @@ namespace ClearCanvas.ImageViewer
 			set { _locked = value; }
 		}
 
+		/// <summary>
+		/// Adds the specified item to the list.
+		/// </summary>
 		public override void Add(ITile item)
 		{
 			if (_locked)
@@ -64,6 +67,9 @@ namespace ClearCanvas.ImageViewer
 			base.Add(item);
 		}
 
+		/// <summary>
+		/// Inserts <paramref name="item"/> at the specified <paramref name="index"/>.
+		/// </summary>
 		public override void Insert(int index, ITile item)
 		{
 			if (_locked)
@@ -72,6 +78,10 @@ namespace ClearCanvas.ImageViewer
 			base.Insert(index, item);
 		}
 
+		/// <summary>
+		/// Removes the specified <paramref name="item"/> from the list.
+		/// </summary>
+		/// <returns>True if the item was in the list and was removed.</returns>
 		public override bool Remove(ITile item)
 		{
 			if (_locked)
@@ -80,6 +90,9 @@ namespace ClearCanvas.ImageViewer
 			return base.Remove(item);
 		}
 
+		/// <summary>
+		/// Removes the item at the specified <paramref name="index"/>.
+		/// </summary>
 		public override void RemoveAt(int index)
 		{
 			if (_locked)
@@ -88,6 +101,9 @@ namespace ClearCanvas.ImageViewer
 			base.RemoveAt(index);
 		}
 
+		/// <summary>
+		/// Clears the list.
+		/// </summary>
 		public override void Clear()
 		{
 			if (_locked)
@@ -96,6 +112,9 @@ namespace ClearCanvas.ImageViewer
 			base.Clear();
 		}
 
+		/// <summary>
+		/// Gets or sets the item at the specified index.
+		/// </summary>
 		public override ITile this[int index]
 		{
 			get

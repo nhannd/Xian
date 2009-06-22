@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -39,7 +38,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// A <see cref="CompositeGraphic"/> with state.
+	/// An interactive graphic that adds statefulness to the subject graphic.
 	/// </summary>
 	[Cloneable]
 	public abstract class StatefulCompositeGraphic : ControlGraphic, IStatefulGraphic, IMouseButtonHandler
@@ -73,7 +72,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Gets or sets the <see cref="GraphicState"/>.
+		/// Gets or sets the current <see cref="GraphicState"/>.
 		/// </summary>
 		public GraphicState State
 		{
@@ -110,13 +109,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				{
 					OnStateInitialized();
 				}
-
-				//Trace.WriteLine(_state.ToString());
 			}
 		}
 
 		/// <summary>
-		/// Occurs when the <see cref="GraphicState"/> has changed.
+		/// Occurs when the value of <see cref="State"/> has changed.
 		/// </summary>
 		public event EventHandler<GraphicStateChangedEventArgs> StateChanged
 		{
@@ -124,8 +121,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _stateChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="State"/> is initialized for the first time.
+		/// </summary>
 		protected virtual void OnStateInitialized() {}
 
+		/// <summary>
+		/// Called when the value of <see cref="State"/> changes.
+		/// </summary>
+		/// <param name="e">An object containing data describing the specific state change.</param>
 		protected virtual void OnStateChanged(GraphicStateChangedEventArgs e) {}
 
 		#region IMouseButtonHandler Members

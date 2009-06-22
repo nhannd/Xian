@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 {
 	public partial class LoginForm : Form
 	{
-		private string[] _facilityChoices;
+		//private string[] _facilityChoices;
 		private Point _refPoint;
 
 		public LoginForm()

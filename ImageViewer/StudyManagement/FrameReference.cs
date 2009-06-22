@@ -33,8 +33,17 @@ using System;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// Interface defining a transient reference to a <see cref="Frame"/>.
+	/// </summary>
+	/// <remarks>
+	/// See <see cref="ISopReference"/> for a detailed explanation of 'transient references'.
+	/// </remarks>
 	public interface IFrameReference : IImageSopProvider, IDisposable
 	{
+		/// <summary>
+		/// Clones an existing <see cref="IFrameReference"/>, creating a new transient reference.
+		/// </summary>
 		IFrameReference Clone();
 	}
 

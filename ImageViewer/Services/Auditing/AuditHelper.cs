@@ -173,14 +173,37 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		}
 
 		/// <summary>
-		/// Generates a "Query" event in the audit log, according to DICOM Supplement 95.
+		/// Generates a (received) "Query" event in the audit log, according to DICOM Supplement 95.
 		/// </summary>
-		/// <param name="aeTitle">The application entity on which the query is taking place.</param>
-		/// <param name="hostname">The hostname of the application entity on which the query is taking place.</param>
-		/// <param name="instances">The studies that were opened.</param>
+		/// <param name="sourceAETitle">The application entity that issued the query.</param>
+		/// <param name="sourceHostName">The hostname of the application entity that issued the query.</param>
+		/// <param name="eventResult">The result of the operation.</param>
+		public static void LogQueryReceived(string sourceAETitle, string sourceHostName, EventResult eventResult)
+		{
+			if (!_auditingEnabled)
+				return;
+
+			try
+			{
+				QueryAuditHelper auditHelper = new QueryAuditHelper(EventSource.CurrentProcess, eventResult,
+					sourceAETitle ?? LocalAETitle, sourceHostName ?? LocalHostname, LocalAETitle, LocalHostname);
+				Log(auditHelper);
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Warn, ex, _messageAuditFailed);
+			}
+		}
+
+
+		/// <summary>
+		/// Generates an (issued) "Query" event in the audit log, according to DICOM Supplement 95.
+		/// </summary>
+		/// <param name="remoteAETitle">The application entity on which the query is taking place.</param>
+		/// <param name="remoteHostName">The hostname of the application entity on which the query is taking place.</param>
 		/// <param name="eventSource">The source user or application entity which invoked the operation.</param>
 		/// <param name="eventResult">The result of the operation.</param>
-		public static void LogQueryStudies(string aeTitle, string hostname, AuditedInstances instances, EventSource eventSource, EventResult eventResult)
+		public static void LogQueryIssued(string remoteAETitle, string remoteHostName, EventSource eventSource, EventResult eventResult)
 		{
 			if (!_auditingEnabled)
 				return;
@@ -188,13 +211,9 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 			try
 			{
 				QueryAuditHelper auditHelper = new QueryAuditHelper(eventSource, eventResult,
-					LocalAETitle, LocalHostname, aeTitle ?? LocalAETitle, hostname ?? LocalHostname);
+					LocalAETitle, LocalHostname, remoteAETitle ?? LocalAETitle, remoteHostName ?? LocalHostname);
 				if (eventSource != EventSource.CurrentProcess)
 					auditHelper.AddOtherParticipant(EventSource.CurrentProcess);
-				foreach (AuditPatientParticipantObject patient in instances.EnumeratePatients())
-					auditHelper.AddPatientParticipantObject(patient);
-				foreach (AuditStudyParticipantObject study in instances.EnumerateStudies())
-					auditHelper.AddStudyParticipantObject(study);
 				Log(auditHelper);
 			}
 			catch (Exception ex)
@@ -366,6 +385,7 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 				{
 					DicomInstancesTransferredAuditHelper auditHelper = new DicomInstancesTransferredAuditHelper(eventSource, eventResult, EventReceiptAction.ActionUnknown,
 						LocalAETitle, LocalHostname, aeTitle ?? LocalAETitle, hostname ?? LocalHostname);
+					auditHelper.AddPatientParticipantObject(patient);
 					foreach (AuditStudyParticipantObject study in instances.EnumerateStudies(patient))
 						auditHelper.AddStudyParticipantObject(study);
 					Log(auditHelper);

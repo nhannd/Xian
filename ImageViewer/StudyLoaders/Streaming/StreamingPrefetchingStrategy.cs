@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		{
 		}
 
-		protected override void OnStart()
+		protected override void Start()
 		{
 			InternalStart();
 		}
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_decompressThreadPool.Start();
 		}
 		
-		protected override void OnStop()
+		protected override void Stop()
 		{
 			InternalStop();
 		}

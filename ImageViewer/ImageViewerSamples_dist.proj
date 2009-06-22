@@ -1,37 +1,101 @@
-<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- ImageViewerSamples specific postbuild step -->
+<Project DefaultTargets="Copy Sample Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TrunkDirectory>$(MSBuildProjectDirectory)\..\</TrunkDirectory>
+    <JscriptDirectory>$(TrunkDirectory)\Jscript\bin\$(Configuration)</JscriptDirectory>
+    <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+    <DistributionDesktopConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DistributionDesktopConfig>
+    <DistributionShredHostConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostConfig>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\WebBrowser\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\WebBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\Filter\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NPlot.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Volume\Mpr\bin\$(Configuration)\ClearCanvas.ImageViewer.Volume.Mpr.dll" />
-<!--ggerade: This is the list of vtk deps for the Volume.MPR assembly, use these for the real dist.proj
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtksys.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkCommon.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkFiltering.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkImaging.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
--->
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\*.*" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Itk\*.*" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\VtkItkAdapters\bin\$(Configuration)\ClearCanvas.ImageViewer.VtkItkAdapters.dll" />
-</ItemGroup>
+  <Choose>
+    <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
+      <PropertyGroup>
+        <DatabaseDirectory>$(DistributionDirectory)\dicom_datastore</DatabaseDirectory>
+        <FileStoreDirectory>.\filestore</FileStoreDirectory>
+        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
+        <HibernateConfigurationFileDataSource>dicom_datastore\viewer.sdf</HibernateConfigurationFileDataSource>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DatabaseDirectory>$(TrunkDirectory)\dicom_datastore</DatabaseDirectory>
+        <FileStoreDirectory>$(TrunkDirectory)\dicom_datastore\filestore</FileStoreDirectory>
+        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
+        <HibernateConfigurationFileDataSource>$(DatabaseFile)</HibernateConfigurationFileDataSource>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
-	<Target Name="Copy Files">
-    <!-- Run the image viewer build file -->
-    <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
+  <Choose>
+    <When Condition=" '$(TargetPlatform)' != 'x86' ">
+      <PropertyGroup>
+        <PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- assumes Win32 -->
+      <PropertyGroup>
+        <PlatformSubFolder></PlatformSubFolder>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
-		<!-- Copy ImageViewer plugins -->
-		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+  <PropertyGroup>
 
-	</Target>
+    <!--Hibernate Configuration-->
+    <HibernateConfigurationFileName>ClearCanvas.Dicom.DataStore.cfg.xml</HibernateConfigurationFileName>
+    <HibernateConfigurationFileSource>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(HibernateConfigurationFileName)</HibernateConfigurationFileSource>
+
+  </PropertyGroup>
+
+  <!--What files get copied depends on which project we are building.  The only other
+  way to do this would be to have ImageViewerDesktop_dist.config and ImageViewerShredHost_dist.config, but they would be
+  pretty much identical except for the plugins.  Also, this way, you only have to do the upkeep on one file.-->
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
+    <DesktopBuild>true</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>true</ShredHostBuild>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="$(DesktopBuild)">
+      <PropertyGroup>
+        <DistributionAppConfig>$(DistributionDesktopConfig)</DistributionAppConfig>
+       </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DistributionAppConfig>$(DistributionShredHostConfig)</DistributionAppConfig>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\Desktop\Applets\WebBrowser\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\Desktop\Applets\WebBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\Tools\ImageProcessing\Filter\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\Tools\ImageProcessing\RoiAnalysis\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\Tools\ImageProcessing\RoiAnalysis\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Volume\VTK\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Volume\VTK\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ImageViewer\VtkItkAdapters\bin\$(Configuration)\ClearCanvas.ImageViewer.VtkItkAdapters.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NPlot.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Itk\ManagedITK.*.dll" />
+    <ImageViewerSampleFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtk*.dll" />
+  </ItemGroup>
+
+  <Target Name="Copy Sample Files">
+
+    <MSBuild Projects="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)"/>
+    <Copy Condition="$(DesktopBuild)" SourceFiles="@(ImageViewerSampleFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+  </Target>
+
 </Project>
-

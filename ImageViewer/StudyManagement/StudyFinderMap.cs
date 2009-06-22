@@ -37,13 +37,17 @@ using System;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// Defines an a study finder extension point.
+	/// Defines a study finder extension point.
 	/// </summary>
 	[ExtensionPoint()]
 	public sealed class StudyFinderExtensionPoint : ExtensionPoint<IStudyFinder>
     {
     }
-    
+
+	/// <summary>
+	/// Exception thrown when an <see cref="IStudyFinder"/> with the specified
+	/// <see cref="FinderName">name</see> could not be found.
+	/// </summary>
 	public class StudyFinderNotFoundException : Exception
 	{
 		internal StudyFinderNotFoundException(string name)
@@ -51,6 +55,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			FinderName = name;
 		}
 
+		/// <summary>
+		/// Gets the name of the requested <see cref="IStudyFinder"/>.
+		/// </summary>
 		public readonly string FinderName;
 	}
 

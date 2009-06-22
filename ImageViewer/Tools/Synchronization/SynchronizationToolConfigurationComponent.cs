@@ -3,6 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
@@ -11,15 +12,16 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			yield return new ConfigurationPage<SynchronizationToolConfigComponent>("TitleSynchronizationTools");
+			if (PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+				yield return new ConfigurationPage<SynchronizationToolConfigurationComponent>("TitleSynchronizationTools");
 		}
 	}
 
 	[ExtensionPoint]
-	public sealed class SynchronizationToolConfigComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+	public sealed class SynchronizationToolConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
-	[AssociateView(typeof (SynchronizationToolConfigComponentViewExtensionPoint))]
-	public class SynchronizationToolConfigComponent : ConfigurationApplicationComponent
+	[AssociateView(typeof (SynchronizationToolConfigurationComponentViewExtensionPoint))]
+	public class SynchronizationToolConfigurationComponent : ConfigurationApplicationComponent
 	{
 		private SynchronizationToolSettings _settings;
 		private float _parallelPlaneToleranceAngle;

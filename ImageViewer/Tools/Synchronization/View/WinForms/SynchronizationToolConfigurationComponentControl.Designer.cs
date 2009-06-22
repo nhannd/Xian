@@ -1,5 +1,5 @@
 namespace ClearCanvas.ImageViewer.Tools.Synchronization.View.WinForms {
-	partial class SynchronizationToolConfigComponentControl {
+	partial class SynchronizationToolConfigurationComponentControl {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>

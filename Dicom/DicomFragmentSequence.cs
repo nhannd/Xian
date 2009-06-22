@@ -334,6 +334,12 @@ namespace ClearCanvas.Dicom
             _isNull = true;
         }
 
+		public override void SetEmptyValue()
+		{
+			_fragments.Clear();
+			_isNull = false;
+		}
+
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, string specificCharacterSet)
         {
             throw new NotImplementedException();

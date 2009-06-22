@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -15,6 +16,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[CloneIgnore]
 		private bool _suspendSubjectPointChangeEvents = false;
 
+		[CloneCopyReference]
+		private CursorToken _moveCursor;
+
 		/// <summary>
 		/// Constructs a new <see cref="AnchorPointControlGraphic"/>.
 		/// </summary>
@@ -23,6 +27,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			: base(subject)
 		{
 			Platform.CheckExpectedType(base.Subject, typeof (IPointGraphic));
+
+			_moveCursor = new CursorToken(CursorToken.SystemCursors.SizeAll);
 
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
@@ -64,6 +70,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return SR.CommandChange; }
 		}
 
+		/// <summary>
+		/// Gets or sets the cursor token to show when the mouse is hovering over the control point.
+		/// </summary>
+		public CursorToken MoveCursor
+		{
+			get { return _moveCursor; }
+			set { _moveCursor = value; }
+		}
+
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
@@ -82,6 +97,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			this.Subject.PointChanged -= OnSubjectPointChanged;
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Called by <see cref="ControlGraphic"/> in response to the framework requesting the cursor token for a particular screen coordinate via <see cref="ControlGraphic.GetCursorToken"/>.
+		/// </summary>
+		/// <param name="point">The screen coordinate for which the cursor is requested.</param>
+		protected override CursorToken GetCursorToken(Point point)
+		{
+			if (!this.IsTracking && this.Visible && this.HitTest(point))
+				return _moveCursor;
+
+			return base.GetCursorToken(point);
 		}
 
 		/// <summary>

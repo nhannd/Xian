@@ -29,20 +29,19 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	//TODO: rewrite documentation
-
 	/// <summary>
-	/// Encapsulates the creating and restoring of mementos across all
-	/// linked <see cref="IPresentationImage"/> objects.
+	/// Encapsulates the application of an <see cref="IUndoableOperation{T}"/> to a list
+	/// of <see cref="IPresentationImage"/>s and also creates an <see cref="UndoableCommand"/>
+	/// that can be entered into the <see cref="CommandHistory"/>.
 	/// </summary>
 	/// <remarks>
-	/// <para>This interface may be deprecated in a future release. Consider using the <see cref="CompositeUndoableCommand"/> instead.</para>
+	/// <para>
+	/// This interface may be deprecated in a future release. Consider using the <see cref="CompositeUndoableCommand"/> instead.</para>
 	/// <para>
 	/// It is often desirable to apply an operation across all linked 
 	/// <see cref="IPresentationImage"/> objects.  For
@@ -109,15 +108,18 @@ namespace ClearCanvas.ImageViewer
 		public UndoableCommand ApplyToAllImages()
 		{
 			_imageEnumerator.ExcludeReferenceImage = false;
-			CompositeUndoableCommand command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator);
+
+			DrawableUndoableOperationCommand<IPresentationImage> command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator);
+			command.Execute();
+
 			if (command.Count == 0)
 				return null;
-			else 
+			else
 				return command;
 		}
 
 		/// <summary>
-		/// Applies the same <see cref="IUndoableOperation{T}"/> to all linked images, but not the current image itself.
+		/// Applies the same <see cref="IUndoableOperation{T}"/> to all linked images, but not the current (reference) image itself.
 		/// </summary>
 		/// <remarks>
 		/// <para>
@@ -132,7 +134,9 @@ namespace ClearCanvas.ImageViewer
 		public UndoableCommand ApplyToLinkedImages()
 		{
 			_imageEnumerator.ExcludeReferenceImage = true;
-			CompositeUndoableCommand command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator);
+
+			DrawableUndoableOperationCommand<IPresentationImage> command = new DrawableUndoableOperationCommand<IPresentationImage>(_operation, _imageEnumerator);
+			command.Execute();
 			if (command.Count == 0)
 				return null;
 			else

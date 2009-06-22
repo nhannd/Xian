@@ -29,7 +29,7 @@
 
 #endregion
 
-using ClearCanvas.ImageViewer.StudyManagement;
+using System;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the length of the region of interest in units of length as specified by <see cref="Units"/>.
 		/// </summary>
-		/// <exception cref="UncalibratedImageException">If <see cref="Units"/> is a physical
+		/// <exception cref="InvalidOperationException">If <see cref="Units"/> is a physical
 		/// unit of measurement and the image has no pixel spacing information, nor has it been calibrated.</exception>
 		double Length { get; }
 

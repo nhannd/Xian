@@ -167,6 +167,13 @@ namespace ClearCanvas.Dicom
             base.Count = 1;
         }
 
+		public override void SetEmptyValue()
+		{
+			_values = null;
+			base.StreamLength = 0;
+			base.Count = 0;
+		}
+
         public override string ToString()
         {
             return base.Tag;

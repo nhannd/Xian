@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Dicom.Iod;
@@ -50,7 +51,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	/// </para>
 	/// <para>
 	/// New instances of a <see cref="Roi"/> should be constructed everytime the definition of the region of
-	/// interest or the underlying image pixel data has changed. The <see cref="IGraphic.CreateRoi"/>
+	/// interest or the underlying image pixel data has changed. The <see cref="IGraphic.GetRoi"/>
 	/// method allows client code to quickly construct a new instance of a <see cref="Roi"/> based on the current
 	/// definition of the graphic and the image it currently belongs to.
 	/// </para>
@@ -303,10 +304,27 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		/// <summary>
+		/// Checks if operations in the given <paramref name="units"/> are possible with the <paramref name="pixelSpacing"/> information available.
+		/// </summary>
+		/// <returns>True if such operations are valid; False if no such operation is possible.</returns>
+		protected static bool ValidateUnits(Units units, PixelSpacing pixelSpacing)
+		{
+			return (units == Units.Pixels || !pixelSpacing.IsNull);
+		}
+
+		/// <summary>
+		/// Converts an area in pixels into the given units given some particular pixel spacing.
+		/// </summary>
+		/// <param name="area">The area of pixels to be converted.</param>
+		/// <param name="units">The units into which the area should be converted.</param>
+		/// <param name="pixelSpacing">The pixel spacing information available.</param>
+		/// <returns>The equivalent area in the units of <paramref name="units"/>.</returns>
+		/// <exception cref="ArgumentException">Thrown if <paramref name="units"/> is a physical unit of measurement and <paramref name="pixelSpacing"/> is not calibrated.</exception>
 		protected static double ConvertFromSquarePixels(double area, Units units, PixelSpacing pixelSpacing)
 		{
-			if (units != Units.Pixels && pixelSpacing.IsNull)
-				throw new UncalibratedImageException();
+			if (!ValidateUnits(units, pixelSpacing))
+				throw new ArgumentException("Pixel spacing must be calibrated in order to compute physical units.", "units");
 
 			double factor = 1;
 

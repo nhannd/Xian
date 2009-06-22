@@ -31,25 +31,44 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 {
+	/// <summary>
+	/// An <see cref="IRoiAnalyzer"/> that displays the area of a <see cref="RoiGraphic"/>.
+	/// </summary>
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiAreaAnalyzer : IRoiAnalyzer
 	{
 		private Units _units = Units.Centimeters;
 
+		/// <summary>
+		/// Gets or sets the base unit of measurement in which analysis is performed.
+		/// </summary>
 		public Units Units
 		{
 			get { return _units; }
 			set { _units = value; }
 		}
 
+		/// <summary>
+		/// Checks if this analyzer class can analyze the given ROI.
+		/// </summary>
+		/// <param name="roi">The ROI to analyze.</param>
+		/// <returns>True if this class can analyze the given ROI; False otherwise.</returns>
 		public bool SupportsRoi(Roi roi)
 		{
 			return roi is IRoiAreaProvider;
 		}
 
+		/// <summary>
+		/// Analyzes the given ROI.
+		/// </summary>
+		/// <param name="roi">The ROI being analyzed.</param>
+		/// <param name="mode">The analysis mode.</param>
+		/// <returns>A string containing the analysis results, which can be appended to the analysis
+		/// callout of the associated <see cref="RoiGraphic"/>, if one exists.</returns>
 		public string Analyze(Roi roi, RoiAnalysisMode mode)
 		{
 			if (!SupportsRoi(roi))

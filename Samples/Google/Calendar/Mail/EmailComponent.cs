@@ -95,7 +95,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail
             }
 
             // exit normally
-            this.Exit(ApplicationComponentExitCode.Normal);
+            this.Exit(ApplicationComponentExitCode.Accepted);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail
         /// </summary>
         public void Cancel()
         {
-            this.Exit(ApplicationComponentExitCode.Cancelled);
+            this.Exit(ApplicationComponentExitCode.None);
         }
     }
 }

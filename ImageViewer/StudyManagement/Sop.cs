@@ -31,7 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
+using System.Collections.ObjectModel;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
@@ -39,75 +39,18 @@ using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO: rewrite the documentation.
-
 	/// <summary>
 	/// A DICOM SOP Instance.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// The purpose of the <see cref="Sop"/> class (and derived classes) is to provide convenient access to Dicom
-	/// Sop Instance data from arbitrary sources (Local File, WADO, streaming server, etc).  A number of properties are provided to 
-	/// retrieve commonly accessed Dicom Data.  These properties are not intended to be purely representative of the
-	/// actual data in the Dicom Header or to indicate when no data is available, but exist only to facilitate ease of use.
-	/// That being said, some properties will return a default value when it is reasonable to do so.  However, no implementation 
-	/// of <see cref="Sop"/> should simply manufacture data when none is present.
+	/// Note that there should no longer be any need to derive from this class; the <see cref="Sop"/>, <see cref="ImageSop"/>
+	/// and <see cref="Frame"/> classes are now just simple Bridge classes (see Bridge Design Pattern)
+	/// to <see cref="ISopDataSource"/> and <see cref="ISopFrameData"/>.  See the
+	/// remarks for <see cref="ISopDataSource"/> for more information.
 	/// </para>
-	/// <para>
-	/// Follow these guidelines when implementing <see cref="Sop"/>-derived classes:
-	/// <list>
-	/// <item>
-	/// <description>
-	/// 1) For (new) properties that represent Type 1 tags, override the <see cref="ValidateInternal"/> method (which is called by <see cref="Validate"/>),
-	///    calling the base class' <see cref="ValidateInternal"/> first, then doing further validation on those properties.  Validation on other tags can be done
-	///    at your discretion; for example, the <see cref="Sop"/> class validates that the <see cref="PatientId"/> property is non-empty, even though it is Type 2.
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 2) Override and implement all of the GetTag methods, but do not throw an exception.  See #4 for an explanation.
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 3) Override any properties that you wish to change the behaviour of how the values are returned.  All properties in <see cref="Sop"/> call
-	///    one of the <b>GetTag</b> methods to retrieve the tag value.  You may wish to retrieve certain tags differently.
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 4) <b>GetTag</b> methods should make no assumptions about return values.  If a return value cannot be determined, the default value for the
-	///    return type should be returned.  These are: "" for strings, 0 for any numeric type.  See the <b>GetTag</b> methods for more details.
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 5) As mentioned above, when returning values from properties for which no data is available, return the default value 
-	///    for the given type according to the following guidelines:
-	///    - "" for string types
-	///    - 0 for numeric types
-	///    - null for reference types that are not strings
-	///    - a valid default value when deemed appropriate
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 6) If a particular property's value is vital to functionality and has no reasonable default, it should be included in the <see cref="ValidateInternal"/>
-	///    override and considered a fault if the value is invalid.  No attempt should be made to correct data in the properties when there is no 'reasonable default'.
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 7) If a reasonable default is returned from a property, the property's documentation should reflect that.
-	/// </description>
-	/// </item>
-	/// <item>
-	/// <description>
-	/// 8) If the existence or 'true value' of a tag is important to your implementation, use one of the <b>GetTag</b> methods, rather than the
-	///    existing property (or adding a property, for that matter).
-	/// </description>
-	/// </item>
-	/// </list>
+	/// <para>Also, for more information on 'transient references' and the lifetime of <see cref="Sop"/>s,
+	/// see <see cref="ISopReference"/>.
 	/// </para>
 	/// </remarks>
 	public partial class Sop : IDisposable
@@ -132,6 +75,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _dataSourceReference.RealDataSource; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the SOP instance is 'stored',
+		/// for example in the local data store or a remote PACS server.
+		/// </summary>
 		public bool IsStored
 		{
 			get { return DataSource.IsStored; }	
@@ -917,12 +864,92 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Static Helpers
 
+		/// <summary>
+		/// Creates either a <see cref="Sop"/> or <see cref="ImageSop"/> based
+		/// on the <see cref="SopClass"/> of the given <see cref="ISopDataSource"/>.
+		/// </summary>
 		public static Sop Create(ISopDataSource dataSource)
 		{
-			if (SopDataHelper.IsImageSop(dataSource.SopClassUid))
+			if (IsImageSop(dataSource.SopClassUid))
 				return new ImageSop(dataSource);
 			else
 				return new Sop(dataSource);
+		}
+
+		internal static bool IsImageSop(string sopClassUid)
+		{
+			return IsImageSop(SopClass.GetSopClass(sopClassUid));
+		}
+
+		internal static bool IsImageSop(SopClass sopClass)
+		{
+			return _imageSopClasses.Contains(sopClass);
+		}
+
+		private static readonly ReadOnlyCollection<SopClass> _imageSopClasses = new List<SopClass>(GetImageSopClasses()).AsReadOnly();
+
+		private static IEnumerable<SopClass> GetImageSopClasses()
+		{
+			yield return SopClass.ComputedRadiographyImageStorage;
+			yield return SopClass.CtImageStorage;
+
+			yield return SopClass.DigitalIntraOralXRayImageStorageForPresentation;
+			yield return SopClass.DigitalIntraOralXRayImageStorageForProcessing;
+
+			yield return SopClass.DigitalMammographyXRayImageStorageForPresentation;
+			yield return SopClass.DigitalMammographyXRayImageStorageForProcessing;
+
+			yield return SopClass.DigitalXRayImageStorageForPresentation;
+			yield return SopClass.DigitalXRayImageStorageForProcessing;
+
+			yield return SopClass.EnhancedCtImageStorage;
+			yield return SopClass.EnhancedMrImageStorage;
+
+			yield return SopClass.EnhancedXaImageStorage;
+
+			yield return SopClass.EnhancedXrfImageStorage;
+
+			yield return SopClass.MrImageStorage;
+
+			yield return SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage;
+			yield return SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage;
+			yield return SopClass.MultiFrameSingleBitSecondaryCaptureImageStorage;
+			yield return SopClass.MultiFrameTrueColorSecondaryCaptureImageStorage;
+
+			yield return SopClass.NuclearMedicineImageStorageRetired;
+			yield return SopClass.NuclearMedicineImageStorage;
+
+			yield return SopClass.OphthalmicPhotography16BitImageStorage;
+			yield return SopClass.OphthalmicPhotography8BitImageStorage;
+			yield return SopClass.OphthalmicTomographyImageStorage;
+
+			yield return SopClass.PositronEmissionTomographyImageStorage;
+
+			yield return SopClass.RtImageStorage;
+
+			yield return SopClass.SecondaryCaptureImageStorage;
+
+			yield return SopClass.UltrasoundImageStorage;
+			yield return SopClass.UltrasoundImageStorageRetired;
+			yield return SopClass.UltrasoundMultiFrameImageStorage;
+			yield return SopClass.UltrasoundMultiFrameImageStorageRetired;
+
+			yield return SopClass.VideoEndoscopicImageStorage;
+			yield return SopClass.VideoMicroscopicImageStorage;
+			yield return SopClass.VideoPhotographicImageStorage;
+
+			yield return SopClass.VlEndoscopicImageStorage;
+			yield return SopClass.VlMicroscopicImageStorage;
+			yield return SopClass.VlPhotographicImageStorage;
+			yield return SopClass.VlSlideCoordinatesMicroscopicImageStorage;
+
+			yield return SopClass.XRay3dAngiographicImageStorage;
+			yield return SopClass.XRay3dCraniofacialImageStorage;
+
+			yield return SopClass.XRayAngiographicBiPlaneImageStorageRetired;
+			yield return SopClass.XRayAngiographicImageStorage;
+
+			yield return SopClass.XRayRadiofluoroscopicImageStorage;
 		}
 
 		#endregion

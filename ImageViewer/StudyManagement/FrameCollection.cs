@@ -82,6 +82,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region IEnumerable<Frame> Members
 
+		///<summary>
+		///Returns an enumerator that iterates through the collection.
+		///</summary>
+		///
+		///<returns>
+		///A <see cref="T:System.Collections.Generic.IEnumerator`1"></see> that can be used to iterate through the collection.
+		///</returns>
+		///<filterpriority>1</filterpriority>
 		public IEnumerator<Frame> GetEnumerator()
 		{
 			return _frames.GetEnumerator();
@@ -91,6 +99,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region IEnumerable Members
 
+		///<summary>
+		///Returns an enumerator that iterates through a collection.
+		///</summary>
+		///
+		///<returns>
+		///An <see cref="T:System.Collections.IEnumerator"></see> object that can be used to iterate through the collection.
+		///</returns>
+		///<filterpriority>2</filterpriority>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return _frames.GetEnumerator();

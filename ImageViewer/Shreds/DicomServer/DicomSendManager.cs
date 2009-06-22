@@ -493,89 +493,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Private Methods
 
-		private static IEnumerable<ISopInstance> GetStudySopInstances(IEnumerable<string> studyInstanceUids)
-		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				foreach (string studyInstanceUid in studyInstanceUids)
-				{
-					IStudy study = reader.GetStudy(studyInstanceUid);
-					if (study == null)
-					{
-						string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
-						throw new ArgumentException(message);
-					}
-
-					foreach (ISopInstance sop in study.GetSopInstances())
-						yield return sop;
-				}
-			}
-		}
-
-		private static IEnumerable<ISopInstance> GetSeriesSopInstances(string studyInstanceUid, IEnumerable<string> seriesInstanceUids)
-		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				IStudy study = reader.GetStudy(studyInstanceUid);
-				if (study == null)
-				{
-					string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
-					throw new ArgumentException(message);
-				}
-
-				foreach (string seriesInstanceUid in seriesInstanceUids)
-				{
-					ISeries series = CollectionUtils.SelectFirst(study.GetSeries(),
-										delegate(ISeries test) { return test.SeriesInstanceUid == seriesInstanceUid; });
-
-					if (series == null)
-					{
-						string message = String.Format("The specified series does not exist in the data store (study = {0}, series = {1}).", studyInstanceUid, seriesInstanceUid);
-						throw new ArgumentException(message);
-					}
-
-					foreach (ISopInstance sop in series.GetSopInstances())
-						yield return sop;
-				}
-			}
-		}
-
-		private static IEnumerable<ISopInstance> GetSopInstances(string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids)
-		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				IStudy study = reader.GetStudy(studyInstanceUid);
-				if (study == null)
-				{
-					string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
-					throw new ArgumentException(message);
-				}
-
-				ISeries series = CollectionUtils.SelectFirst(study.GetSeries(),
-									delegate(ISeries test) { return test.SeriesInstanceUid == seriesInstanceUid; });
-
-				if (series == null)
-				{
-					string message = String.Format("The specified series does not exist in the data store (study = {0}, series = {1}).", studyInstanceUid, seriesInstanceUid);
-					throw new ArgumentException(message);
-				}
-					
-				foreach (string sopInstanceUid in sopInstanceUids)
-				{
-					ISopInstance sop = CollectionUtils.SelectFirst(series.GetSopInstances(),
-										delegate(ISopInstance test) { return test.SopInstanceUid == sopInstanceUid; });
-
-					if (sop == null)
-					{
-						string message = String.Format("The specified sop instance does not exist in the data store (study = {0}, series = {1}, sop = {2}).", studyInstanceUid, seriesInstanceUid, sopInstanceUid);
-						throw new ArgumentException(message);
-					}
-
-					yield return sop;
-				}
-			}
-		}
-
 		private SendOperationReference Send(SendFilesRequest request, SendOperationProgressCallback callback)
 		{
 			lock (_syncLock)
@@ -649,19 +566,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public SendOperationReference SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request.DestinationAEInformation, request.IsBackground,
-				GetStudySopInstances(request.StudyInstanceUids), callback);
+				DataStoreQueryHelper.GetStudySopInstances(request.StudyInstanceUids), callback);
 		}
 
 		public SendOperationReference SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request.DestinationAEInformation, request.IsBackground,
-				GetSeriesSopInstances(request.StudyInstanceUid, request.SeriesInstanceUids), callback);
+				DataStoreQueryHelper.GetSeriesSopInstances(request.StudyInstanceUid, request.SeriesInstanceUids), callback);
 		}
 
 		public SendOperationReference SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request.DestinationAEInformation, request.IsBackground,
-				GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), callback);
+				DataStoreQueryHelper.GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), callback);
 		}
 
 		public SendOperationReference SendFiles(SendFilesRequest request, SendOperationProgressCallback callback)

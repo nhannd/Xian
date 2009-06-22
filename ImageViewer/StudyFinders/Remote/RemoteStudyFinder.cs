@@ -31,33 +31,25 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]
-    public class RemoteStudyFinder : IStudyFinder
+    [ExtensionOf(typeof(StudyFinderExtensionPoint))]
+    public class RemoteStudyFinder : StudyFinder
 	{
 		public RemoteStudyFinder()
+			: base("DICOM_REMOTE")
 		{
-
 		}
 
-		public string Name
-		{
-			get
-			{
-				return "DICOM_REMOTE";
-			}
-		}
-
-        public StudyItemList Query(QueryParameters queryParams, object targetServer)
+        public override StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
 			ApplicationEntity selectedServer = (ApplicationEntity)targetServer;
 
@@ -83,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			StudyItemList studyItemList = new StudyItemList();
 			foreach (DicomAttributeCollection result in results)
 			{
-				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer, this.Name);
+				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer, Name);
 
 				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
 				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");
@@ -103,14 +95,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				studyItemList.Add(item);
 			}
 
-			AuditedInstances queriedInstances = new AuditedInstances();
-			studyItemList.ForEach(delegate(StudyItem study) { queriedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUID); });
-			AuditHelper.LogQueryStudies(selectedServer.AETitle, selectedServer.Host, queriedInstances, EventSource.CurrentUser, EventResult.Success);
+			AuditHelper.LogQueryIssued(selectedServer.AETitle, selectedServer.Host, EventSource.CurrentUser, EventResult.Success);
 
 			return studyItemList;
         }
 
-		protected IList<DicomAttributeCollection> Query(ApplicationEntity server, DicomAttributeCollection requestCollection)
+		protected static IList<DicomAttributeCollection> Query(ApplicationEntity server, DicomAttributeCollection requestCollection)
 		{
 			//special case code for ModalitiesInStudy.  An IStudyFinder must accept a multi-valued
 			//string for ModalitiesInStudy (e.g. "MR\\CT") and process it appropriately for the 
@@ -140,8 +130,6 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					using (StudyRootFindScu scu = new StudyRootFindScu())
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
-
-						string myAE = ServerTree.GetClientAETitle();
 
 						IList<DicomAttributeCollection> results = scu.Find(ServerTree.GetClientAETitle(),
 							server.AETitle, server.Host, server.Port,

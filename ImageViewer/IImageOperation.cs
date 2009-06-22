@@ -30,12 +30,11 @@
 #endregion
 
 using System;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Used to apply an undoable operation to an <see cref="IPresentationImage"/>.
+	/// Used to apply an <see cref="IUndoableOperation{T}">undoable operation</see> to an <see cref="IPresentationImage"/>.
 	/// </summary>
 	[Obsolete("This interface is now obsolete.  Use IUndoableOperation<IPresentationImage> instead.")]
 	public interface IImageOperation : IUndoableOperation<IPresentationImage>

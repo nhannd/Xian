@@ -46,10 +46,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	[Obsolete("This class will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 	public class OpenStudyArgs
 	{
-		private string[] _studyInstanceUids;
-		private WindowBehaviour _windowBehaviour;
-		private object _server;
-		private string _studyLoaderName;
+		private readonly string[] _studyInstanceUids;
+		private readonly WindowBehaviour _windowBehaviour;
+		private readonly object _server;
+		private readonly string _studyLoaderName;
 
 		/// <summary>
 		/// Constructs a new <see cref="OpenStudyArgs"/> using the specified parameters.
@@ -125,12 +125,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private string _title;
 		private readonly List<LoadStudyArgs> _studiesToOpen = new List<LoadStudyArgs>();
 
-		private ImageViewerComponent _imageViewer;
-
 		#endregion
 
 		/// <summary>
-		/// Constructor.
+		/// Constructs a new instance of <see cref="OpenStudyHelper"/>.
 		/// </summary>
 		public OpenStudyHelper()
 		{
@@ -183,45 +181,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server, studyLoaderName));
 		}
 
-		//TODO (CR May09): new constructor or factory method on IVC
-		public ImageViewerComponent CreateViewer()
-		{
-			return CreateViewer(_loadPriors);
-		}
-
-		//TODO (CR May09): new instance method on IVC
 		/// <summary>
-		/// Loads the list of studies into an <see cref="ImageViewerComponent"/>, but
-		/// does not launch the viewer.
-		/// </summary>
-		/// <remarks>
-		/// </remarks>
-		public void LoadStudies(ImageViewerComponent imageViewer)
-		{
-			_imageViewer = imageViewer;
-
-			try
-			{
-				LoadStudies();
-			}
-			finally
-			{
-				_imageViewer = null;
-			}
-		}
-
-		//TODO (CR May09): already on IVC
-		public void LaunchViewer(ImageViewerComponent imageViewer)
-		{
-			LaunchImageViewerArgs args = new LaunchImageViewerArgs(_windowBehaviour);
-			args.Title = Title;
-			ImageViewerComponent.Launch(imageViewer, args);
-		}
-
-		//TODO (CR May09): instance method on IVC
-		/// <summary>
-		/// Loads the list of studies into an <see cref="ImageViewerComponent"/> and launches it
-		/// in a <see cref="Workspace"/>.
+		/// Creates the <see cref="ImageViewerComponent"/>, loads the specified studies,
+		/// and launches the <see cref="ImageViewerComponent"/>.
 		/// </summary>
 		public ImageViewerComponent OpenStudies()
 		{
@@ -241,71 +203,32 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			CodeClock codeClock = new CodeClock();
 			codeClock.Start();
 
-			ImageViewerComponent viewer = CreateViewer();
+			ImageViewerComponent viewer = CreateViewer(_loadPriors);
 
 			try
 			{
-				LoadStudies(viewer);
+				viewer.LoadStudies(_studiesToOpen);
 			}
 			catch(Exception e)
 			{
 				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
-
-				if (!AnySopsLoaded(viewer))
-				{
-					viewer.Dispose();
-					return null;
-				}
 			}
 
-			LaunchViewer(viewer);
+			if (!AnySopsLoaded(viewer))
+			{
+				viewer.Dispose();
+				return null;
+			}
+
+			LaunchImageViewerArgs args = new LaunchImageViewerArgs(_windowBehaviour);
+			args.Title = Title;
+			ImageViewerComponent.Launch(viewer, args);
 
 			codeClock.Stop();
 			string message = String.Format("TTFI: {0}", codeClock);
 			Platform.Log(LogLevel.Debug, message);
 
 			return viewer;
-		}
-
-		private void LoadStudies()
-		{
-			if (_studiesToOpen.Count == 1)
-				LoadSingleStudy();
-			else
-				LoadMultipleStudies();
-		}
-
-		private void LoadSingleStudy()
-		{
-			_imageViewer.LoadStudy(_studiesToOpen[0]);
-		}
-
-		private void LoadMultipleStudies()
-		{
-			List<Exception> loadStudyExceptions = new List<Exception>();
-
-			foreach (LoadStudyArgs args in _studiesToOpen)
-			{
-				try
-				{
-					_imageViewer.LoadStudy(args);
-				}
-				catch (LoadStudyException e)
-				{
-					string message = String.Format("An error occurred while loading study '{0}'", args.StudyInstanceUid);
-					Platform.Log(LogLevel.Error, e, message);
-					loadStudyExceptions.Add(e);
-				}
-				catch (StudyLoaderNotFoundException e)
-				{
-					string message = String.Format("An error occurred while loading study '{0}'; study loader '{1}' does not exist", args.StudyInstanceUid, args.StudyLoaderName);
-					Platform.Log(LogLevel.Error, e, message);
-					loadStudyExceptions.Add(e);
-				}
-			}
-
-			if (loadStudyExceptions.Count > 0)
-				throw new LoadMultipleStudiesException(loadStudyExceptions, _studiesToOpen.Count);
 		}
 
 		#endregion
@@ -316,10 +239,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Public
 
 		//TODO (later): create a class called OpenFilesHelper
+
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified local files.
 		/// </summary>
-		public static void OpenFiles(string[] localFileList, WindowBehaviour windowBehaviour)
+		public static IImageViewer OpenFiles(string[] localFileList, WindowBehaviour windowBehaviour)
 		{
 			Platform.CheckForNullReference(localFileList, "localFileList");
 			if (localFileList.Length == 0)
@@ -328,13 +252,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			ImageViewerComponent viewer = OpenFiles(localFileList);
 			if (viewer != null)
 				ImageViewerComponent.Launch(viewer, new LaunchImageViewerArgs(windowBehaviour));
+
+			return viewer;
 		}
 
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
 		/// </summary>
 		/// <remarks>
-		/// <para>This method has been deprecated and will be removed in the future. Use the <see cref="OpenStudies(OpenStudyArgs)"/> overload instead.</para>
+		/// <para>This method has been deprecated and will be removed in the future. Use an instance of OpenStudyHelper instead.</para>
 		/// </remarks>
 		[Obsolete("This method will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 		public static IImageViewer OpenStudies(string studyLoaderName, string[] studyInstanceUids, WindowBehaviour windowBehaviour)
@@ -350,7 +276,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
 		/// </summary>
-		/// <param name="openStudyArgs">The <see cref="OpenStudyArgs"/> object containing information about the studies to be opened.</param>
+		/// <remarks>
+		/// <para>This method has been deprecated and will be removed in the future. Use an instance of OpenStudyHelper instead.</para>
+		/// </remarks>
 		[Obsolete("This method will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 		public static IImageViewer OpenStudies(OpenStudyArgs openStudyArgs)
 		{

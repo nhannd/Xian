@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			}
 			else
 			{
-				MemoryAnalysisComponent component = new MemoryAnalysisComponent();
+				MemoryAnalysisComponent component = new MemoryAnalysisComponent(this.Context.DesktopWindow);
 				_shelf = ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow, component, "Memory Analysis",
 					                                   ShelfDisplayHint.DockFloat);
 				_shelf.Closed += delegate { _shelf = null; };

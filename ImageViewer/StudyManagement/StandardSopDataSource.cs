@@ -36,22 +36,46 @@ using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// Base implementation of a <see cref="SopDataSource"/> with built-in resource management.
+	/// </summary>
 	public abstract class StandardSopDataSource : SopDataSource
 	{
-		//I hate doing this, but it's horribly inefficient for all subclasses to do their own locking.
+		// I hate doing this, but it's horribly inefficient for all subclasses to do their own locking.
+
+		/// <summary>
+		/// Gets a lock object suitable for synchronizing access to the data source.
+		/// </summary>
 		protected readonly object SyncLock = new object();
+
 		private volatile ISopFrameData[] _frameData;
 
+		/// <summary>
+		/// Constructs a new <see cref="StandardSopDataSource"/>.
+		/// </summary>
 		protected StandardSopDataSource() : base() {}
 
+		/// <summary>
+		/// Gets a value indicating whether or not the SOP instance is an image.
+		/// </summary>
 		public override bool IsImage
 		{
-			get { return SopDataHelper.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
+			get { return Sop.IsImageSop(SopClass.GetSopClass(this.SopClassUid)); }
 		}
 
+		/// <summary>
+		/// Called by the base class to create a new <see cref="StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.
+		/// </summary>
+		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
+		/// <returns>A new <see cref="StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.</returns>
 		protected abstract StandardSopFrameData CreateFrameData(int frameNumber);
 
-		public override ISopFrameData GetFrameData(int frameNumber)
+		/// <summary>
+		/// Gets the data for a particular frame in the SOP instance.
+		/// </summary>
+		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
+		/// <returns>An <see cref="ISopFrameData"/> containing frame-specific data.</returns>
+		protected override ISopFrameData GetFrameData(int frameNumber)
 		{
 			if(_frameData == null)
 			{
@@ -69,47 +93,101 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _frameData[frameNumber - 1];
 		}
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
+		/// <param name="disposing">A value indicating whether or not the object is being disposed.</param>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 
 			if (disposing)
 			{
+				ISopFrameData[] frameData;
 				lock(SyncLock)
 				{
-					if (_frameData != null)
-					{
-						foreach (ISopFrameData frameData in _frameData)
-						{
-							frameData.Dispose();
-						}
-					}
+					frameData = _frameData;
+					_frameData = null;
+				}
+
+				if (frameData != null)
+				{
+					foreach (ISopFrameData frame in frameData)
+						frame.Dispose();
 				}
 			}
 		}
 
 		#region StandardSopFrameData class
 
+		/// <summary>
+		/// Base implementation of a <see cref="SopFrameData"/> with built-in resource mamangement.
+		/// </summary>
 		protected abstract class StandardSopFrameData : SopFrameData
 		{
+			/// <summary>
+			/// Gets a lock object suitable for synchronizing access to the frame data.
+			/// </summary>
+			protected readonly object SyncLock = new object();
+
 			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>();
 			private volatile byte[] _pixelData = null;
 
+			/// <summary>
+			/// Constructs a new <see cref="StandardSopFrameData"/>
+			/// </summary>
+			/// <param name="frameNumber">The 1-based number of this frame.</param>
+			/// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
+			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
+			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
 			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent) : base(frameNumber, parent) {}
 
+			/// <summary>
+			/// Gets the parent <see cref="StandardSopDataSource"/> to which this frame belongs.
+			/// </summary>
 			public new StandardSopDataSource Parent
 			{
 				get { return (StandardSopDataSource) base.Parent; }
 			}
 
+			/// <summary>
+			/// Gets pixel data in normalized form (8 or 16-bit grayscale, or ARGB).
+			/// </summary>
+			/// <returns></returns>
+			/// <remarks>
+			/// <i>Normalized</i> pixel data means that:
+			/// <list type="Bullet">
+			/// <item>
+			/// <description>Grayscale pixel data has embedded overlays removed and each pixel value
+			/// is padded so that it can be cast directly to the appropriate type (e.g. byte, sbyte, ushort, short).</description>
+			/// </item>
+			/// <item>
+			/// <description>Colour pixel data is always converted into ARGB format.</description>
+			/// </item>
+			/// <item>
+			/// <description>Pixel data is always uncompressed.</description>
+			/// </item>
+			/// </list>
+			/// <para>
+			/// Ensuring that the pixel data always meets the above criteria
+			/// allows clients to easily consume pixel data without having
+			/// to worry about the the multitude of DICOM photometric interpretations
+			/// and transfer syntaxes.
+			/// </para>
+			/// <para>
+			/// Pixel data is reloaded when this method is called after a 
+			/// call to <see cref="ISopFrameData.Unload"/>.
+			/// </para>
+			/// </remarks>		
 			public override byte[] GetNormalizedPixelData()
 			{
 				byte[] pixelData = _pixelData;
 				if (pixelData == null)
 				{
-					lock (this.Parent.SyncLock)
+					lock (this.SyncLock)
 					{
-						if (_pixelData == null)
+						pixelData = _pixelData;
+						if (pixelData == null)
 						{
 							pixelData = _pixelData = CreateNormalizedPixelData();
 							if (pixelData != null)
@@ -121,8 +199,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return pixelData;
 			}
 
+			/// <summary>
+			/// Called by <see cref="GetNormalizedPixelData"/> to create a new byte buffer
+			/// containing normalized pixel data for this frame (8 or 16-bit grayscale, or 32-bit ARGB).
+			/// </summary>
+			/// <returns>A new byte buffer containing the normalized pixel data.</returns>
 			protected abstract byte[] CreateNormalizedPixelData();
 
+			/// <summary>
+			/// Gets the normalized overlay pixel data buffer for a particular overlay frame
+			/// that is applicable to this image frame (8 or 16-bit grayscale, or 32-bit ARGB).
+			/// </summary>
+			/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
+			/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+			/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
 			public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
 				if(overlayGroupNumber < 1)
@@ -132,7 +222,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				int key = ((overlayFrameNumber - 1) << 8) | ((overlayGroupNumber - 1) & 0x000000ff);
 
-				lock (this.Parent.SyncLock)
+				lock (this.SyncLock)
 				{
 					byte[] data;
 					if (!_overlayData.TryGetValue(key, out data) || data == null)
@@ -146,11 +236,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
+			/// <summary>
+			/// Called by <see cref="GetNormalizedOverlayData"/> to create a new byte buffer containing normalized 
+			/// overlay pixel data for a particular overlay frame that is applicable to this image frame.
+			/// </summary>
+			/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
+			/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+			/// <returns>A new byte buffer containing the normalized overlay pixel data.</returns>
 			protected abstract byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
 
+			/// <summary>
+			/// Unloads any cached byte buffers owned by this <see cref="ISopFrameData"/>.
+			/// </summary>
+			/// <remarks>
+			/// It is sometimes necessary to manage the memory used by unloading the pixel data. 
+			/// Calling this method will not necessarily result in an immediate decrease in memory
+			/// usage, since it merely releases the reference to the pixel data; it is up to the
+			/// garbage collector to free the memory.  Calling <see cref="ISopFrameData.GetNormalizedPixelData"/>
+			/// will reload the pixel data.
+			/// </remarks>
 			public override sealed void Unload()
 			{
-				lock (this.Parent.SyncLock)
+				lock (this.SyncLock)
 				{
 					ReportLargeObjectsUnloaded();
 
@@ -160,17 +267,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
+			/// <summary>
+			/// Called by the base class when the cached byte buffers are being unloaded.
+			/// </summary>
 			protected virtual void OnUnloaded()
 			{
 			}
 
+			/// <summary>
+			/// Called by the base <see cref="SopFrameData"/> to release any owned resources.
+			/// </summary>
+			/// <param name="disposing">A value indicating whether or not the object is being disposed.</param>
 			protected override void Dispose(bool disposing)
 			{
 				base.Dispose(disposing);
 
 				if (disposing)
 				{
-					lock (Parent.SyncLock)
+					lock (this.SyncLock)
 					{
 						ReportLargeObjectsUnloaded();
 					}

@@ -134,6 +134,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _wadoServicePort; }
 		}
 
+		/// <summary>
+		/// Returns the <see cref="Name"/>, or "Unknown".
+		/// </summary>
 		public override string ToString()
 		{
 			return (_name ?? "Unknown");

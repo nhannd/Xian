@@ -39,6 +39,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 	/// </summary>
 	public sealed class RoiAnalyzerExtensionPoint : ExtensionPoint<IRoiAnalyzer>
 	{
+		/// <summary>
+		/// Creates new instances of all available <see cref="IRoiAnalyzer"/>s extending <see cref="RoiAnalyzerExtensionPoint"/>.
+		/// </summary>
+		/// <returns>An enumeration of <see cref="IRoiAnalyzer"/>s.</returns>
 		public static IEnumerable<IRoiAnalyzer> CreateRoiAnalyzers()
 		{
 			SortedList<string, IRoiAnalyzer> extensions = new SortedList<string, IRoiAnalyzer>();

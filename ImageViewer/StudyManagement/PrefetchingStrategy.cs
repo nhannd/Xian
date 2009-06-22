@@ -33,54 +33,77 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// Abstract base class for <see cref="IPrefetchingStrategy"/>.
+	/// </summary>
 	public abstract class PrefetchingStrategy : IPrefetchingStrategy
 	{
 		private IImageViewer _imageViewer;
 		private readonly string _name;
 		private readonly string _description;
 
+		/// <summary>
+		/// Constructs a new <see cref="PrefetchingStrategy"/> with the given <paramref name="name"/>
+		/// and <paramref name="description"/>.
+		/// </summary>
 		protected PrefetchingStrategy(string name, string description)
 		{
 			_name = name;
 			_description = description;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IImageViewer"/> for which data is to be prefetched.
+		/// </summary>
 		protected IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
 		}
 
-		//TODO (CR May09): explicit interface, no 'On'
-		protected abstract void OnStart();
-		protected abstract void OnStop();
+		/// <summary>
+		/// Starts prefetching.
+		/// </summary>
+		protected abstract void Start();
+
+		/// <summary>
+		/// Stops prefetching.
+		/// </summary>
+		protected abstract void Stop();
 
 		#region IPrefetchingStrategy Members
 
+		/// <summary>
+		/// Gets the friendly name of the prefetching strategy.
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
 		}
 
+		/// <summary>
+		/// Gets the friendly description of the prefetching strategy.
+		/// </summary>
 		public string Description
 		{
 			get { return _description; }
 		}
 
-		public void Start(IImageViewer imageViewer)
+		void IPrefetchingStrategy.Start(IImageViewer imageViewer)
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
 			_imageViewer = imageViewer;
-			OnStart();
+			Start();
 		}
 
-		public void Stop()
+		void IPrefetchingStrategy.Stop()
 		{
 			if(_imageViewer != null)
 			{
-				OnStop();
+				Stop();
 				_imageViewer = null;
 			}
 		}

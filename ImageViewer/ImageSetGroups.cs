@@ -56,15 +56,21 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="ISpecification"/> class for use with <see cref="IImageSet"/>s.
+	/// </summary>
 	public abstract class ImageSetSpecification : ISpecification
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ImageSetSpecification()
 		{
 		}
 
 		#region ISpecification Members
 
-		public TestResult Test(object obj)
+		TestResult ISpecification.Test(object obj)
 		{
 			if (obj is IImageSet)
 				return Test(obj as IImageSet);
@@ -74,6 +80,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Tests the given <see cref="IImageSet"/> against this specification.
+		/// </summary>
 		public abstract TestResult Test(IImageSet imageSet);
 	}
 
@@ -101,27 +110,46 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 	}
 
+	/// <summary>
+	/// A convenient class that can be used to filter <see cref="IImageSet"/>s into related groups.
+	/// </summary>
+	/// <remarks>
+	/// The real power of this class is that it responds to changes in <see cref="SourceImageSets"/>,
+	/// which is an <see cref="ObservableList{TItem}">observable list</see> of <see cref="IImageSet"/>s.
+	/// </remarks>
 	public class ImageSetGroups : IDisposable
 	{
 		private readonly RootFilteredGroup<IImageSet> _root;
 		private ObservableList<IImageSet> _sourceImageSets;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ImageSetGroups()
 		{
 			_root = new RootFilteredGroup<IImageSet>("Root", "All Patients", new PatientImageSetGroupFactory());
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ImageSetGroups(ObservableList<IImageSet> sourceImageSets)
 			: this()
 		{
 			SourceImageSets = sourceImageSets;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="RootFilteredGroup{T}">root</see> <see cref="FilteredGroup{T}">filtered group</see>.
+		/// </summary>
 		public RootFilteredGroup<IImageSet> Root
 		{
 			get { return _root; }	
 		}
 
+		/// <summary>
+		/// Gets or sets the underlying list of <see cref="IImageSet"/>s to be observed and filtered.
+		/// </summary>
 		public ObservableList<IImageSet> SourceImageSets
 		{
 			set
@@ -156,6 +184,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -166,6 +197,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases any resources used by this object.
+		/// </summary>
 		public void Dispose()
 		{
 			try

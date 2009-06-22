@@ -35,17 +35,23 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// An <see cref="UndoableCommand"/> for adding a graphic to a <see cref="GraphicCollection"/>.
+	/// </summary>
 	public class AddGraphicUndoableCommand : UndoableCommand
 	{
 		private Command _command;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public AddGraphicUndoableCommand(IGraphic graphic, GraphicCollection parentCollection)
 		{
 			_command = new AddGraphicCommand(graphic, parentCollection);
 		}
 
 		/// <summary>
-		/// <see cref="Execute"/>s the insert command.
+		/// On first call, adds the graphic to the collection.  Subsequent calls perform an insert.
 		/// </summary>
 		public override void Execute()
 		{
@@ -63,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// <see cref="Unexecute"/>s the insert command (e.g. removes the graphic).
+		/// <see cref="Unexecute"/>s the add or insert command (e.g. removes the graphic).
 		/// </summary>
 		public override void Unexecute()
 		{

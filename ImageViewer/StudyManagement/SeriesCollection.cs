@@ -34,7 +34,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// A collection of <see cref="SeriesCollection"/> objects.
+	/// A collection of <see cref="Series"/> objects.
 	/// </summary>
 	public class SeriesCollection : ObservableList<Series>
 	{

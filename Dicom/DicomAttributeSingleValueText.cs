@@ -108,6 +108,13 @@ namespace ClearCanvas.Dicom
             base.Count = 1;
         }
 
+		public override void SetEmptyValue()
+		{
+			_value = null;
+			base.StreamLength = 0;
+			base.Count = 0;
+		}
+
         /// <summary>
         /// The StreamLength of the attribute.
         /// </summary>

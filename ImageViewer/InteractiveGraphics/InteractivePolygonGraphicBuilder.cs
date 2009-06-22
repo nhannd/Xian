@@ -109,6 +109,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		protected override void Rollback()
 		{
+			InstallSnapPointGraphic(false);
 			_numberOfPointsAnchored = Math.Max(_numberOfPointsAnchored - 1, 0);
 		}
 

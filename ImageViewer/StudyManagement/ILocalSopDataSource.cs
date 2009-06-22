@@ -33,12 +33,24 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// Interface to an <see cref="ISopDataSource"/> whose internal source is
+	/// a local <see cref="DicomFile"/>.
+	/// </summary>
 	public interface ILocalSopDataSource : IDicomMessageSopDataSource
 	{
-		//TODO (CR May09): same comments as for SourceMessage.
-		DicomFile File { get; }
+		//TODO (later): remove due to thread safety issues.
+		
+		/// <summary>
+		/// Gets the source <see cref="DicomFile"/>.
+		/// </summary>
+		/// <remarks>See the remarks for <see cref="IDicomMessageSopDataSource.SourceMessage"/>.
+		/// This property will likely be removed in a future version due to thread-safety concerns.</remarks>
+		DicomFile File { get; } 
 
-		//NOTE: will keep this in the future and remove File (replaced with ExtractDicomFile()).
+		/// <summary>
+		/// Gets the filename of the source <see cref="DicomFile"/>.
+		/// </summary>
 		string Filename { get; }
 	}
 }

@@ -33,30 +33,22 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 {
-    [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]
-    public class LocalDataStoreStudyFinder : IStudyFinder
+    [ExtensionOf(typeof(StudyFinderExtensionPoint))]
+    public class LocalDataStoreStudyFinder : StudyFinder
     {
         public LocalDataStoreStudyFinder()
+			: base("DICOM_LOCAL")
         {
 
         }
 
-        public string Name
-        {
-            get
-            {
-                return "DICOM_LOCAL";
-            }
-        }
-
-        public StudyItemList Query(QueryParameters queryParams, object targetServer)
+        public override StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
 			Platform.CheckForNullReference(queryParams, "queryParams");
 
@@ -80,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			{
 				foreach (DicomAttributeCollection result in reader.Query(collection))
 				{
-					StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), null, this.Name);
+					StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), null, Name);
 					item.SpecificCharacterSet = result.SpecificCharacterSet;
 					item.PatientId = result[DicomTags.PatientId].ToString();
 					item.PatientsName = new PersonName(result[DicomTags.PatientsName].ToString());
@@ -99,9 +91,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 				}
 			}
 
-			AuditedInstances queriedInstances = new AuditedInstances();
-			studyItemList.ForEach(delegate(StudyItem study) { queriedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUID); });
-			AuditHelper.LogQueryStudies(null, null, queriedInstances, EventSource.CurrentUser, EventResult.Success);
+			AuditHelper.LogQueryIssued(null, null, EventSource.CurrentUser, EventResult.Success);
 
             return studyItemList;
         }

@@ -5,7 +5,7 @@
     <Position X="4" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>PresentationImage.cs</FileName>
-      <HashCode>QEMUACAAICBAAgAAABBCAABAFAAADgEIAABAAIAAASI=</HashCode>
+      <HashCode>UEMVACAgICBAAgAAABACAABAFACADgEIAABAAIAAATI=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -13,7 +13,7 @@
     <Position X="3.75" Y="1.75" Width="2" />
     <TypeIdentifier>
       <FileName>BasicPresentationImage.cs</FileName>
-      <HashCode>CAQAAAAAYKgAAACQAIBAADFAAAgAAAAAAAAAgAAAIAQ=</HashCode>
+      <HashCode>CAQAAAgAIKgRAgCQAIAAABFAAAgAAAAkAggAhAAAAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.1" />
   </Class>
@@ -36,7 +36,7 @@
     <Position X="4.75" Y="4.75" Width="2.75" />
     <TypeIdentifier>
       <FileName>DicomGrayscalePresentationImage.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAAAAEAAIAAA=</HashCode>
+      <HashCode>AAAQAAgAACAAARAEAQAAAgAAAQAABAAkAAAAABAIAAE=</HashCode>
     </TypeIdentifier>
     <Lollipop Orientation="Right" Position="0.1" />
   </Class>
@@ -44,7 +44,7 @@
     <Position X="2" Y="4.75" Width="2.5" />
     <TypeIdentifier>
       <FileName>DicomColorPresentationImage.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAABAAAAAAAEAAIAAA=</HashCode>
+      <HashCode>AAAQAAgAACAAARAEAAAAAgAAAQAABAAkAAAAABAIAAE=</HashCode>
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.1" />
   </Class>

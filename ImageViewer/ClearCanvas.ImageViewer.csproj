@@ -131,6 +131,7 @@
     <Compile Include="Imaging\VoiWindow.cs" />
     <Compile Include="InteractiveGraphics\AnchorPointControlGraphic.cs" />
     <Compile Include="Graphics\GraphicEventArgs.cs" />
+    <Compile Include="InteractiveGraphics\ICalloutGraphic.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneOverlays.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsPlaneShutters.cs" />
     <Compile Include="PresentationStates\Dicom\DicomGraphicsDeserializationException.cs" />
@@ -198,6 +199,17 @@
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\PolylineGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\RectangleGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\TextGraphicAnnotationSerializer.cs" />
+    <Compile Include="PresentationStates\Dicom\OverlayPlaneSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PresentationStates\Dicom\OverlayPlaneSubtype.cs" />
+    <Compile Include="PresentationStates\Dicom\OverlayPlaneType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PresentationStates\Dicom\Tests\PresentationStateTests.cs" />
+    <Compile Include="PresentationStates\Dicom\Tests\Statistics.cs" />
+    <Compile Include="PresentationStates\Dicom\Tests\TestPresentationImage.cs" />
+    <Compile Include="PresentationStates\Dicom\Tests\TestPresentationState.cs" />
     <Compile Include="PresentationStates\Dicom\UserOverlayPlaneGraphic.cs" />
     <Compile Include="PresentationStates\GeometricShutterUndoableCommand.cs" />
     <Compile Include="PresentationStates\IShutterGraphic.cs" />
@@ -366,7 +378,7 @@
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
     <Compile Include="StudyLoadedEventArgs.cs" />
     <Compile Include="StudyManagement\FrameReference.cs" />
-    <Compile Include="StudyManagement\LoadMultipleStudiesException.cs" />
+    <Compile Include="LoadMultipleStudiesException.cs" />
     <Compile Include="StudyManagement\SopFrameData.cs" />
     <Compile Include="StudyManagement\PrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\SopReference.cs" />
@@ -383,7 +395,6 @@
     <Compile Include="StudyManagement\FrameDataRetrieverFactory.cs" />
     <Compile Include="StudyManagement\OpenStudyHelper.cs" />
     <Compile Include="StudyManagement\SopDataCache.cs" />
-    <Compile Include="StudyManagement\SopDataHelper.cs" />
     <Compile Include="StudyManagement\SopDataSource.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
@@ -446,6 +457,7 @@
     </Compile>
     <Compile Include="StudyManagement\DicomMessageSopDataSource.cs" />
     <Compile Include="StudyManagement\StandardSopDataSource.cs" />
+    <Compile Include="StudyManagement\StudyFinder.cs" />
     <Compile Include="StudyManagement\StudyLoader.cs" />
     <Compile Include="IDisplaySet.cs" />
     <Compile Include="IImageBox.cs" />
@@ -459,7 +471,6 @@
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IRenderingSurface.cs" />
     <Compile Include="StudyManagement\Tests\SopTests.cs" />
-    <Compile Include="StudyManagement\UncalibratedImageException.cs" />
     <Compile Include="StudyManagement\ValidationSettings.cs" />
     <Compile Include="StudyManagement\ValidationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -589,6 +600,8 @@
   <ItemGroup>
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\CompositeGraphics.cd" />
+    <None Include="ClassDiagrams\ControlGraphics.cd" />
+    <None Include="ClassDiagrams\IControlGraphics.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />
     <None Include="ClassDiagrams\ImageViewerAndLayoutManager.cd" />
     <None Include="ClassDiagrams\GraphicSpatialTransform.cd" />
@@ -601,10 +614,9 @@
     <None Include="ClassDiagrams\PresentationImage.cd" />
     <None Include="ClassDiagrams\ImageViewerTools.cd" />
     <None Include="ClassDiagrams\PresentationImageHierarchy.cd" />
+    <None Include="ClassDiagrams\RoiGraphics.cd" />
     <None Include="ClassDiagrams\SceneGraph.cd" />
     <None Include="ClassDiagrams\GraphicStates.cd" />
-    <None Include="ClassDiagrams\InteractiveGraphics.cd" />
-    <None Include="ClassDiagrams\ROIGraphic.cd" />
     <None Include="ClassDiagrams\StatefulCompositeGraphic.cd" />
     <None Include="Annotations\AnnotationLayoutStoreSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

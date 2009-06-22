@@ -62,8 +62,11 @@ namespace ClearCanvas.Desktop.Trees
 		{
 			return;
 		}
-		
-		public virtual bool CanSetNodeText(object item)
+
+    	/// <summary>
+    	/// Asks if the item text can be changed.
+    	/// </summary>
+    	public virtual bool CanSetNodeText(object item)
 		{
 			return false;
 		}

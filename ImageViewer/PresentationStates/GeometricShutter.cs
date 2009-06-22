@@ -38,6 +38,9 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
+	/// <summary>
+	/// A geometric shutter.
+	/// </summary>
 	[Cloneable(true)]
 	public abstract class GeometricShutter
 	{
@@ -45,15 +48,27 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		internal abstract void AddToGraphicsPath(GraphicsPath path);
 
+		/// <summary>
+		/// Clones this geometric shutter.
+		/// </summary>
+		/// <returns>An identical clone.</returns>
 		public GeometricShutter Clone()
 		{
 			return CloneBuilder.Clone(this) as GeometricShutter;
 		}
 	}
 
+	/// <summary>
+	/// A circular geometric shutter.
+	/// </summary>
 	[Cloneable(true)]
 	public class CircularShutter : GeometricShutter
 	{
+		/// <summary>
+		/// Constructs a new circular geometric shutter.
+		/// </summary>
+		/// <param name="center">The centre of the circle defining the shutter boundary.</param>
+		/// <param name="radius">The radius of the circle defining the shutter boundary.</param>
 		public CircularShutter(Point center, int radius)
 		{
 			this.Center = center;
@@ -62,9 +77,19 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private CircularShutter() {}
 
+		/// <summary>
+		/// Gets the centre of the circle defining the shutter boundary.
+		/// </summary>
 		public readonly Point Center;
+
+		/// <summary>
+		/// Gets the radius of the circle defining the shutter boundary.
+		/// </summary>
 		public readonly int Radius;
 
+		/// <summary>
+		/// Gets the tightest rectangle that bounds the circle.
+		/// </summary>
 		public Rectangle BoundingRectangle
 		{
 			get
@@ -82,12 +107,26 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 	}
 
+	/// <summary>
+	/// A rectangular geometric shutter.
+	/// </summary>
 	[Cloneable(true)]
 	public class RectangularShutter : GeometricShutter
 	{
+		/// <summary>
+		/// Constructs a new rectangular geometric shutter.
+		/// </summary>
+		/// <param name="left">The left edge of the rectangle defining the shutter boundary.</param>
+		/// <param name="right">The right edge of the rectangle defining the shutter boundary.</param>
+		/// <param name="top">The top edge of the rectangle defining the shutter boundary.</param>
+		/// <param name="bottom">The bottom edge of the rectangle defining the shutter boundary.</param>
 		public RectangularShutter(int left, int right, int top, int bottom)
 			: this(new Rectangle(left, top, right - left, bottom - top)) {}
 
+		/// <summary>
+		/// Constructs a new rectangular geometric shutter.
+		/// </summary>
+		/// <param name="rectangle">The rectangle defining the shutter boundary.</param>
 		public RectangularShutter(Rectangle rectangle)
 		{
 			this.Rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
@@ -95,6 +134,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private RectangularShutter() {}
 
+		/// <summary>
+		/// Gets the rectangle defining the shutter boundary.
+		/// </summary>
 		public readonly Rectangle Rectangle;
 
 		internal override void AddToGraphicsPath(GraphicsPath path)
@@ -103,12 +145,19 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 	}
 
+	/// <summary>
+	/// A polygonal geometric shutter.
+	/// </summary>
 	[Cloneable]
 	public class PolygonalShutter : GeometricShutter
 	{
 		private readonly List<Point> _vertices;
 		private readonly ReadOnlyCollection<Point> _readOnlyVertices;
 
+		/// <summary>
+		/// Constructs a new polygonal geometric shutter.
+		/// </summary>
+		/// <param name="vertices">An ordered list of vertices defining the shutter boundary.</param>
 		public PolygonalShutter(IEnumerable<Point> vertices)
 		{
 			_vertices = new List<Point>(vertices);
@@ -118,6 +167,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		private PolygonalShutter(PolygonalShutter source, ICloningContext context)
 			: this(source._vertices) {}
 
+		/// <summary>
+		/// Gets an ordered list of vertices defining the shutter boundary.
+		/// </summary>
 		public ReadOnlyCollection<Point> Vertices
 		{
 			get { return _readOnlyVertices; }

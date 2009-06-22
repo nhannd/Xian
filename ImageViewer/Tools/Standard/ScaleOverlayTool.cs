@@ -121,11 +121,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					_verticalScale.SetEndPoints(new PointF(vScaleBounds.Right, vScaleBounds.Top), new SizeF(0, vScaleBounds.Height));
 					_verticalScale.Visible = true;
 				}
-				catch (UncalibratedImageException)
-				{
-					_horizontalScale.Visible = false;
-					_verticalScale.Visible = false;
-				}
 				finally
 				{
 					base.ResetCoordinateSystem();

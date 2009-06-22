@@ -118,13 +118,19 @@ namespace ClearCanvas.ImageViewer
 		string Name { get; }
 
 		/// <summary>
-		/// Gets or sets a description for the display set.
+		/// Gets a text description for the display set.
 		/// </summary>
+		/// <remarks>
+		/// This value will normally correspond to the series description of the contained images.
+		/// </remarks>
 		string Description { get; }
 
 		/// <summary>
-		/// Gets a number assigned to the display set, normally corresponding to a series number.
+		/// Gets the numeric identifier for the display set.
 		/// </summary>
+		/// <remarks>
+		/// This value will normally correspond to the series number of the contained DICOM images.
+		/// </remarks>
 		int Number { get; }
 
 		/// <summary>
@@ -138,7 +144,7 @@ namespace ClearCanvas.ImageViewer
 		bool Visible { get; }
 
 		/// <summary>
-		/// Gets or sets unique identifier for this <see cref="IDisplaySet"/>.
+		/// Gets a unique identifier for this <see cref="IDisplaySet"/>.
 		/// </summary>
 		string Uid { get; }
 

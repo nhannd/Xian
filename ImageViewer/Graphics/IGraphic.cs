@@ -154,13 +154,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		IGraphic Clone();
 
 		/// <summary>
-		/// Creates an object describing the region of interest on the <see cref="ParentPresentationImage"/> selected by this <see cref="IGraphic"/>.
+		/// Gets an object describing the region of interest on the <see cref="ParentPresentationImage"/> selected by this <see cref="IGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// Graphic objects that do not describe a region of interest may return null.
 		/// </remarks>
 		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
-		Roi CreateRoi();
+		Roi GetRoi();
 
 		/// <summary>
 		/// Occurs when a property is changed on a graphic, resulting in a change in the graphic's visual state.

@@ -234,6 +234,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			theFile.Load(DicomReadOptions.StorePixelDataReferences);
 
+			_studyInstanceUid = theFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			_patientsName = theFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+			_patientId = theFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+
 			return theFile;
 		}
 

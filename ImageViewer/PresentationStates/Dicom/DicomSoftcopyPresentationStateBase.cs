@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				// spatial transform defines rotation in cartesian space - dicom module defines rotation as clockwise in image space
 				// spatial transform defines both horizontal and vertical flip - dicom module defines horizontal flip only (vertical flip is 180 rotation plus horizontal flip)
 				ISpatialTransform spatialTransform = image.SpatialTransform;
-				int rotationBy90 = (spatialTransform.RotationXY%360)/90;
+				int rotationBy90 = (((spatialTransform.RotationXY%360) + 360)%360)/90;
 				int flipState = (spatialTransform.FlipX ? 2 : 0) + (spatialTransform.FlipY ? 1 : 0);
 				spatialTransformModule.ImageRotation = _spatialTransformRotationTranslation[rotationBy90 + 4*flipState];
 				spatialTransformModule.ImageHorizontalFlip = spatialTransform.FlipY ^ spatialTransform.FlipX ? ImageHorizontalFlip.Y : ImageHorizontalFlip.N;
@@ -332,7 +332,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
-		private static readonly int[] _spatialTransformRotationTranslation = new int[] {0, 270, 180, 90, 0, 90, 180, 270, 180, 270, 0, 90, 180, 90, 0, 270};
+		private static readonly int[] _spatialTransformRotationTranslation = new int[] {0, 90, 180, 270, 0, 270, 180, 90, 180, 90, 0, 270, 180, 270, 0, 90};
 
 		private static readonly string _annotationsLayerId = "USER ANNOTATIONS";
 
@@ -747,13 +747,15 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			if (module.ImageHorizontalFlip == ImageHorizontalFlip.Y)
 			{
+				spatialTransform.FlipX = false;
 				spatialTransform.FlipY = true;
-				spatialTransform.RotationXY = (360 - module.ImageRotation) % 360;// module.ImageRotation;
+				spatialTransform.RotationXY = (360 - module.ImageRotation) % 360;
 			}
 			else
 			{
+				spatialTransform.FlipX = false;
 				spatialTransform.FlipY = false;
-				spatialTransform.RotationXY = module.ImageRotation;// (360 - module.ImageRotation) % 360;
+				spatialTransform.RotationXY = module.ImageRotation;
 			}
 		}
 

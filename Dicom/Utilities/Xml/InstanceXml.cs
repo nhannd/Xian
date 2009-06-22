@@ -39,170 +39,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
-using System.Collections.ObjectModel;
 using ClearCanvas.Dicom;
+using System.Diagnostics;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
-	#region InstanceXml DicomAttribute stuff
-
-	//TODO: this is not ideal, but is the most straightforward given the current study xml design.  Later,
-	//we should refactor for a cleaner API.
-	public interface IInstanceXmlDicomAttributeCollection : IDicomAttributeProvider, IEnumerable<DicomAttribute>
-	{
-		ReadOnlyCollection<DicomTag> ExcludedTags { get; }
-
-		bool HasExcludedTags(bool recursive);
-	}
-
-	internal interface IPrivateInstanceXmlDicomAttributeCollection : IInstanceXmlDicomAttributeCollection
-	{
-		ExcludedTagsHelper ExcludedTagsHelper { get; }
-	}
-
-	internal class ExcludedTagsHelper
-	{
-		private readonly IInstanceXmlDicomAttributeCollection _parent;
-
-		private readonly ReadOnlyCollection<DicomTag> _readOnlyExcludedTags;
-		private readonly SortedList<DicomTag, DicomTag> _excludedTags;
-
-		public ExcludedTagsHelper(IInstanceXmlDicomAttributeCollection parent)
-		{
-			_parent = parent;
-			_excludedTags = new SortedList<DicomTag,DicomTag>();
-			_readOnlyExcludedTags = new ReadOnlyCollection<DicomTag>(_excludedTags.Values);
-		}
-
-		public ReadOnlyCollection<DicomTag> ExcludedTags
-		{
-			get { return _readOnlyExcludedTags; }
-		}
-
-		public void Remove(DicomTag tag)
-		{
-			DicomTag existingTag;
-			if (_excludedTags.TryGetValue(tag, out existingTag))
-				_excludedTags.Remove(existingTag);
-		}
-
-		public void Add(DicomTag tag)
-		{
-			DicomTag existingTag;
-			if (!_excludedTags.TryGetValue(tag, out existingTag))
-				_excludedTags.Add(tag, tag);
-		}
-
-		public void Add(IEnumerable<DicomTag> tagList)
-		{
-			foreach (DicomTag tag in tagList)
-				Add(tag);
-		}
-
-		public bool HasExcludedTags(bool recursive)
-		{
-			if (ExcludedTags.Count > 0)
-				return true;
-
-			if (recursive)
-			{
-				foreach (DicomAttribute attribute in _parent)
-				{
-					if (attribute is DicomAttributeSQ)
-					{
-						DicomSequenceItem[] items = attribute.Values as DicomSequenceItem[];
-						if (items != null)
-						{
-							foreach (DicomSequenceItem item in items)
-							{
-								if (item is InstanceXmlDicomSequenceItem)
-								{
-									if (((InstanceXmlDicomSequenceItem)item).HasExcludedTags(recursive))
-										return true;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			return false;
-		}
-	}
-
-	public class InstanceXmlDicomAttributeCollection : DicomAttributeCollection, IPrivateInstanceXmlDicomAttributeCollection
-	{
-		private readonly ExcludedTagsHelper _excludedTagsHelper;
-
-		internal InstanceXmlDicomAttributeCollection(DicomAttributeCollection source, bool copyBinary, bool copyPrivate, bool copyUnknown, uint stopTag)
-			: base(source, copyBinary, copyPrivate, copyUnknown, stopTag)
-		{
-			_excludedTagsHelper = new ExcludedTagsHelper(this);
-		}
-
-		internal InstanceXmlDicomAttributeCollection()
-		{
-			_excludedTagsHelper = new ExcludedTagsHelper(this);
-		}
-
-		#region IInstanceXmlDicomAttributeCollection Members
-
-		public ReadOnlyCollection<DicomTag> ExcludedTags
-		{
-			get { return _excludedTagsHelper.ExcludedTags; }
-		}
-
-		public bool HasExcludedTags(bool recursive)
-		{
-			return _excludedTagsHelper.HasExcludedTags(recursive);
-		}
-
-		#endregion
-
-		#region IInternalInstanceXmlDicomAttributeCollection Members
-
-		ExcludedTagsHelper IPrivateInstanceXmlDicomAttributeCollection.ExcludedTagsHelper
-		{
-			get { return _excludedTagsHelper; }
-		}
-
-		#endregion
-	}
-
-	public class InstanceXmlDicomSequenceItem : DicomSequenceItem, IPrivateInstanceXmlDicomAttributeCollection
-	{
-		private readonly ExcludedTagsHelper _excludedTagsHelper;
-
-		internal InstanceXmlDicomSequenceItem()
-		{
-			_excludedTagsHelper = new ExcludedTagsHelper(this);
-		}
-
-		#region IInstanceXmlDicomAttributeCollection Members
-
-		public ReadOnlyCollection<DicomTag> ExcludedTags
-		{
-			get { return _excludedTagsHelper.ExcludedTags; }
-		}
-
-		public bool HasExcludedTags(bool recursive)
-		{
-			return _excludedTagsHelper.HasExcludedTags(recursive);
-		}
-
-		#endregion
-
-		#region IInternalInstanceXmlDicomAttributeCollection Members
-
-		ExcludedTagsHelper IPrivateInstanceXmlDicomAttributeCollection.ExcludedTagsHelper
-		{
-			get { return _excludedTagsHelper; }
-		}
-
-		#endregion
-	}
-
-	#endregion
 
 	/// <summary>
 	/// Class for representing a SOP Instance as XML.
@@ -288,7 +129,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			get
 			{
-				return this[tag.TagValue];
+				ParseTo(tag.TagValue);
+				return _collection[tag.TagValue];
 			}
 		}
 
@@ -298,6 +140,19 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			{
 				ParseTo(tag);
 				return _collection[tag];
+			}
+		}
+
+		public bool IsTagExcluded(uint tag)
+		{
+			if (_collection is IInstanceXmlDicomAttributeCollection)
+			{
+				ParseTo(tag);
+				return ((IInstanceXmlDicomAttributeCollection) _collection).IsTagExcluded(tag);
+			}
+			else
+			{
+				return false;
 			}
 		}
 
@@ -321,15 +176,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			if (baseCollection != null)
 			{
+				AddExcludedTagsFromBase(baseCollection);
+
 				_baseCollectionEnumerator = baseCollection.GetEnumerator();
 				if (!_baseCollectionEnumerator.MoveNext())
 					_baseCollectionEnumerator = null;
-
-				IPrivateInstanceXmlDicomAttributeCollection privateCollection =
-					baseCollection as IPrivateInstanceXmlDicomAttributeCollection;
-				if (privateCollection != null)
-					(thisCollection as IPrivateInstanceXmlDicomAttributeCollection).ExcludedTagsHelper.Add(
-						privateCollection.ExcludedTags);
 			}
 
 			if (!instanceNode.HasChildNodes)
@@ -413,7 +264,20 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#endregion
 
-		#region Private Static Methods
+
+		#region Private Methods
+
+		private void AddExcludedTagsFromBase(DicomAttributeCollection baseCollection)
+		{
+			if (baseCollection is IPrivateInstanceXmlDicomAttributeCollection)
+			{
+				if (_collection is IPrivateInstanceXmlDicomAttributeCollection)
+				{
+					((IPrivateInstanceXmlDicomAttributeCollection)_collection).ExcludedTagsHelper.Add(
+						((IPrivateInstanceXmlDicomAttributeCollection)baseCollection).ExcludedTags);
+				}
+			}
+		}
 
 		private static StudyXmlTagInclusion AttributeShouldBeIncluded(DicomAttribute attribute, StudyXmlOutputSettings settings)
 		{
@@ -556,25 +420,34 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 									 attribute.Tag,
 									 tempString);
 					}
+
+					((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Remove(theTag);
 				}
 			}
 			else if (attributeNode.Name.Equals("EmptyAttribute"))
 			{
 				//Means that the tag should not be in this collection, but is in the base.  So, we remove it.
 				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
-				theCollection[theTag] = null;
+
+				//NOTE: we want these attributes to be in the collection and empty so that
+				//the base collection doesn't need to be modified in order to insert
+				//excluded tags in the correct order.
+				theCollection[theTag].SetEmptyValue();
+
 				((IPrivateInstanceXmlDicomAttributeCollection) theCollection).ExcludedTagsHelper.Remove(theTag);
 			}
 			else if (attributeNode.Name.Equals("ExcludedAttribute"))
 			{
 				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
+
+				//NOTE: we want these attributes to be in the collection and empty so that
+				//the base collection doesn't need to be modified in order to insert
+				//excluded tags in the correct order.
+				theCollection[theTag].SetEmptyValue();
+
 				((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Add(theTag);
 			}
 		}
-
-		#endregion
-
-		#region Private Methods
 
 		private void SwitchToCachedXml()
 		{
@@ -583,6 +456,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			if (_baseInstance != null)
 			{
+				AddExcludedTagsFromBase(_baseInstance.Collection);
+
 				_baseCollectionEnumerator = _baseInstance.Collection.GetEnumerator();
 				if (!_baseCollectionEnumerator.MoveNext())
 					_baseCollectionEnumerator = null;
@@ -643,65 +518,127 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				}
 			}
 
+			IPrivateInstanceXmlDicomAttributeCollection thisCollection = null;
+			if (collection is IPrivateInstanceXmlDicomAttributeCollection)
+			{
+				thisCollection = (IPrivateInstanceXmlDicomAttributeCollection)collection;
+				foreach (DicomTag tag in thisCollection.ExcludedTags)
+				{
+					//Artificially seed the collection with empty attributes from this
+					//instance and the base instance so we can add them in the right order.
+					//Note in the case of the base instance, this will never alter
+					//the collection because the empty attribute is already there (see ParseAttribute).
+					DicomAttribute attribute = collection[tag];
+				}
+			}
+
 			IEnumerator<DicomAttribute> baseIterator = null;
-			bool validIterator = false;
 			IPrivateInstanceXmlDicomAttributeCollection privateBaseCollection = null;
 			if (baseCollection != null)
 			{
-				baseIterator = baseCollection.GetEnumerator();
-				validIterator = baseIterator.MoveNext();
 				privateBaseCollection = baseCollection as IPrivateInstanceXmlDicomAttributeCollection;
+				if (privateBaseCollection != null)
+				{
+					foreach (DicomTag tag in privateBaseCollection.ExcludedTags)
+					{
+						//Artificially seed the collection with empty attributes from this
+						//instance and the base instance so we can add them in the right order.
+						//Note in the case of the base instance, this will never alter
+						//the collection because the empty attribute is already there (see ParseAttribute).
+						DicomAttribute attribute = collection[tag];
+					}
+				}
+
+				baseIterator = baseCollection.GetEnumerator();
+				if (!baseIterator.MoveNext())
+					baseIterator = null;
 			}
+
+			List<DicomTag> newlyExcludedTags = new List<DicomTag>();
 
 			foreach (DicomAttribute attribute in collection)
 			{
-				bool isInBase = false;
-				if (baseIterator != null && validIterator)
-				{
-					while (baseIterator.Current.Tag < attribute.Tag && validIterator)
-					{
-						XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, baseIterator.Current, "EmptyAttribute");
-						instance.AppendChild(emptyAttributeElement);
+				bool isExcludedFromThisCollection = thisCollection != null && 
+					thisCollection.IsTagExcluded(attribute.Tag.TagValue);
 
-						validIterator = baseIterator.MoveNext();
+				bool isExcludedFromBase = privateBaseCollection != null && 
+					privateBaseCollection.ExcludedTagsHelper.IsTagExcluded(attribute.Tag.TagValue);
+
+				bool isInBase = isExcludedFromBase;
+				bool isSameAsInBase = isExcludedFromThisCollection && isExcludedFromBase;
+
+				if (baseIterator != null)
+				{
+					while (baseIterator != null && baseIterator.Current.Tag < attribute.Tag)
+					{
+						if (!baseIterator.Current.IsEmpty)
+						{
+							XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, baseIterator.Current, "EmptyAttribute");
+							instance.AppendChild(emptyAttributeElement);
+						}
+
+						if (!baseIterator.MoveNext())
+							baseIterator = null;
 					}
-					if (validIterator)
+
+					if (baseIterator != null)
 					{
 						if (baseIterator.Current.Tag == attribute.Tag)
 						{
-							//The attribute exists in the base and it is not empty.
-							isInBase = true;
+							isInBase = !baseIterator.Current.IsEmpty || isExcludedFromBase;
 
-							if (!(attribute is DicomAttributeOB)
-								&& !(attribute is DicomAttributeOW)
-								&& !(attribute is DicomAttributeOF)
-								&& !(attribute is DicomFragmentSequence))
+							bool isEmpty = attribute.IsEmpty && !isExcludedFromThisCollection;
+							bool isEmptyInBase = baseIterator.Current.IsEmpty && !isExcludedFromBase;
+
+							isSameAsInBase = (isExcludedFromThisCollection && isExcludedFromBase)
+							                 || (isEmpty && isEmptyInBase);
+
+							if (!baseIterator.Current.IsEmpty && !isExcludedFromBase)
 							{
-								if (attribute.Equals(baseIterator.Current))
+								if (!(attribute is DicomAttributeOB)
+								    && !(attribute is DicomAttributeOW)
+								    && !(attribute is DicomAttributeOF)
+								    && !(attribute is DicomFragmentSequence))
 								{
-									validIterator = baseIterator.MoveNext();
-									continue; // Skip the attribute, its the same as in the base!
+									if (attribute.Equals(baseIterator.Current))
+										isSameAsInBase = true;
 								}
 							}
+
 							// Move to the next attribute for the next time through the loop
-							validIterator = baseIterator.MoveNext();
+							if (!baseIterator.MoveNext())
+								baseIterator = null;
 						}
 					}
-					if (privateBaseCollection != null && !isInBase)
-						if (privateBaseCollection.ExcludedTagsHelper.ExcludedTags.Contains(attribute.Tag))
-							isInBase = true;
+				}
+				
+				//by this point, equality has been covered for both attributes with values, empty attributes and excluded attributes.
+				if (isSameAsInBase)
+					continue;
+
+				if (isExcludedFromThisCollection)
+				{
+					XmlElement excludedAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "ExcludedAttribute");
+					instance.AppendChild(excludedAttributeElement);
+					continue;
 				}
 
-				//Only store an empty attribute when:
-				// - there is a base collection
-				// - the attribute is in the base and it is not empty.
-				if (attribute.IsEmpty && (baseCollection == null || !isInBase))
+				if (attribute.IsEmpty)
+				{
+					//Only store an empty attribute if it is in the base (either non-empty or excluded).
+					if (isInBase)
+					{
+						XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "EmptyAttribute");
+						instance.AppendChild(emptyAttributeElement);
+					}
 					continue;
+				}
 
 				StudyXmlTagInclusion inclusion = AttributeShouldBeIncluded(attribute, settings);
 				if (inclusion == StudyXmlTagInclusion.IncludeTagExclusion)
 				{
-					if (!isInBase && (privateBaseCollection == null || !privateBaseCollection.ExcludedTagsHelper.ExcludedTags.Contains(attribute.Tag)))
+					newlyExcludedTags.Add(attribute.Tag);
+					if (!isExcludedFromBase)
 					{
 						XmlElement excludedAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "ExcludedAttribute");
 						instance.AppendChild(excludedAttributeElement);
@@ -710,13 +647,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				}
 				else if (inclusion == StudyXmlTagInclusion.IgnoreTag)
 				{
-					continue;
-				}
-
-				if (attribute.IsEmpty)
-				{
-					XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "EmptyAttribute");
-					instance.AppendChild(emptyAttributeElement);
 					continue;
 				}
 
@@ -773,12 +703,28 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				instance.AppendChild(instanceElement);
 			}
 
-			if (collection is IInstanceXmlDicomAttributeCollection)
+			//fill in empty attributes past the end of this collection
+			while(baseIterator != null)
 			{
-				foreach (DicomTag excludedTag in ((IInstanceXmlDicomAttributeCollection)collection).ExcludedTags)
+				if (!baseIterator.Current.IsEmpty)
 				{
-					if (privateBaseCollection == null || !privateBaseCollection.ExcludedTagsHelper.ExcludedTags.Contains(excludedTag))
-						instance.AppendChild(CreateDicomAttributeElement(theDocument, excludedTag, "ExcludedAttribute"));
+					XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, baseIterator.Current, "EmptyAttribute");
+					instance.AppendChild(emptyAttributeElement);
+				}
+
+				if (!baseIterator.MoveNext())
+					baseIterator = null;
+			}
+
+			if (thisCollection != null)
+			{
+				//when this is the base collection, 'thisCollection' will never be null.
+				//when this is not the base collection, we switch to 'cached xml' right after this, anyway,
+				//so the fact that this won't occur is ok.
+				foreach (DicomTag tag in newlyExcludedTags)
+				{
+					collection[tag].SetEmptyValue();
+					thisCollection.ExcludedTagsHelper.Add(tag);
 				}
 			}
 

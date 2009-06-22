@@ -39,6 +39,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Exception class for when loading prior studies has failed.
+	/// </summary>
+	/// <remarks>
+	/// Because loading of priors is handled automatically by the framework, this class is both
+	/// thrown an caught by the framework, but is handled by the <see cref="ExceptionHandler"/>.
+	/// This is done to allow for custom exception handling.
+	/// </remarks>
 	public class LoadPriorStudiesException : LoadMultipleStudiesException
 	{
 		internal LoadPriorStudiesException(ICollection<Exception> exceptions, int totalStudies)
@@ -53,6 +61,9 @@ namespace ClearCanvas.ImageViewer
 			FindFailed = true;
 		}
 
+		/// <summary>
+		/// Gets whether or not it was the find operation that failed (e.g. <see cref="IPriorStudyFinder"/>).
+		/// </summary>
 		public readonly bool FindFailed;
 
 		private static string FormatMessage(ICollection<Exception> exceptions, int totalStudies)
@@ -61,9 +72,25 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
+	/// <summary>
+	/// Defines the interface for automatic loading of related (or 'prior') studies.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="ImageViewerComponent"/> automatically loads prior studies
+	/// asynchronously in the background so that developers don't have to worry about such details.
+	/// The only part of loading priors that can be customized is the search algorithm, by
+	/// implementing <see cref="IPriorStudyFinder"/>.
+	/// </remarks>
 	public interface IPriorStudyLoader
 	{
+		/// <summary>
+		/// Gets whether or not the <see cref="IPriorStudyLoader"></see> is actively searching for and/or loading priors.
+		/// </summary>
 		bool IsActive { get; }
+
+		/// <summary>
+		/// Occurs when <see cref="IsActive"/> has changed.
+		/// </summary>
 		event EventHandler IsActiveChanged;
 	}
 

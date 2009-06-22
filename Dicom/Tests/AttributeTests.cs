@@ -6808,6 +6808,21 @@ namespace ClearCanvas.Dicom.Tests
 
 		#region DicomAttribute Empty/Null Tests
 		[Test]
+		public void TestSetEmptyValue()
+		{
+			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
+			test.TestSetEmpty();
+
+			DicomFile file = new DicomFile();
+			base.SetupMultiframeXA(file.DataSet, 16, 16, 3);
+			base.SetupMetaInfo(file);
+
+			Assert.IsFalse(file.DataSet[DicomTags.PixelData].IsEmpty);
+			file.DataSet[DicomTags.PixelData].SetEmptyValue();
+			Assert.IsTrue(file.DataSet[DicomTags.PixelData].IsEmpty);
+		}
+
+    	[Test]
         public void DicomAttributeEmptyTest()
         {
 			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
@@ -6864,6 +6879,22 @@ namespace ClearCanvas.Dicom.Tests
 					tags.Add(new DicomTag(tag++, "dummy-mvtag-" + vr.Name, "dummy_mvtag_" + vr.Name, vr, false, 0, 10, false));
 				}
 				_tags = tags.AsReadOnly();
+			}
+
+			public void TestSetEmpty()
+			{
+				DicomAttributeCollection collection = new DicomAttributeCollection();
+				foreach (DicomTag tag in _tags)
+				{
+						TrySetValue(0, collection[tag]);
+						Assert.IsFalse(collection[tag].IsEmpty);
+				}
+
+				foreach (DicomAttribute attribute in collection)
+				{
+					attribute.SetEmptyValue();
+					Assert.IsTrue(attribute.IsEmpty);
+				}
 			}
 
 			public void TestEmpty() {

@@ -270,7 +270,16 @@ namespace ClearCanvas.Dicom
             SetStreamLength();
         }
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
+		public override void SetEmptyValue()
+		{
+			if (_reference != null)
+				_reference = null;
+
+			_values = null;
+			SetStreamLength();
+		}
+
+		internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb;
             if (_reference != null)

@@ -42,6 +42,10 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// An implementation of a <see cref="StandardSopDataSource"/> where a <see cref="DicomMessageBase"/>
+	/// provides all the SOP instance data.
+	/// </summary>
 	public class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
 		private readonly DicomAttributeCollection _dummy;
@@ -49,16 +53,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private bool _loaded = false;
 		private bool _loading = false;
 
+		/// <summary>
+		/// Constructs a new <see cref="DicomMessageSopDataSource"/>.
+		/// </summary>
+		/// <param name="sourceMessage">The source <see cref="DicomMessageBase"/> which provides all the SOP instance data.</param>
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{
 			_dummy = new DicomAttributeCollection();
 			_sourceMessage = sourceMessage;
 		}
 
-		// TODO: not actually thread-safe because client code can use indexers on "SourceMessage",
-		// triggering empty attributes to be inserted.
+		/// <summary>
+		/// Gets the source <see cref="DicomMessageBase"/>.
+		/// </summary>
+		/// <remarks>
+		/// See the remarks for <see cref="IDicomMessageSopDataSource"/>.
+		/// </remarks>
 		public DicomMessageBase SourceMessage
 		{
+			// TODO: not actually thread-safe because client code can use indexers on "SourceMessage",
+			// triggering empty attributes to be inserted.
+
 			get
 			{
 				lock (SyncLock)
@@ -76,9 +91,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		//TODO: push up?
+		/// <summary>
+		/// Called by the base class to ensure that all DICOM data attributes are loaded.
+		/// </summary>
 		protected virtual void EnsureLoaded()
 		{
+			//TODO: push up?
 		}
 
 		//TODO: is there a better way to do this?
@@ -102,47 +120,55 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-
+		/// <summary>
+		/// Gets the <see cref="DicomAttribute"/> for the given tag.
+		/// </summary>
 		public override DicomAttribute this[DicomTag tag]
 		{
 			get
 			{
-			lock (SyncLock)
-			{
-				Load();
+				lock (SyncLock)
+				{
+					Load();
 
-				DicomAttribute attribute;
-				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
-					return attribute;
+					DicomAttribute attribute;
+					if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
-					return attribute;
+					if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				return _dummy[tag];
+					return _dummy[tag];
+				}
 			}
 		}
-		}
 
+		/// <summary>
+		/// Gets the <see cref="DicomAttribute"/> for the given tag.
+		/// </summary>
 		public override DicomAttribute this[uint tag]
 		{
 			get
 			{
-			lock (SyncLock)
-			{
-				Load();
+				lock (SyncLock)
+				{
+					Load();
 
-				DicomAttribute attribute;
-				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
-					return attribute;
+					DicomAttribute attribute;
+					if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
-					return attribute;
+					if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+						return attribute;
 
-				return _dummy[tag];
+					return _dummy[tag];
+				}
 			}
 		}
-		}
 
+		/// <summary>
+		/// Attempts to get the attribute specified by <paramref name="tag"/>.
+		/// </summary>
 		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
 		{
 			lock (SyncLock)
@@ -156,6 +182,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Attempts to get the attribute specified by <paramref name="tag"/>.
+		/// </summary>
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
 			lock (SyncLock)
@@ -171,6 +200,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Frame Data Handling
 
+		/// <summary>
+		/// Called by the base class to create a new <see cref="StandardSopDataSource.StandardSopFrameData"/>
+		/// containing the data for a particular frame in the SOP instance.
+		/// </summary>
+		/// <param name="frameNumber">The 1-based number of the frame for which the data is to be retrieved.</param>
+		/// <returns>A new <see cref="StandardSopDataSource.StandardSopFrameData"/> containing the data for a particular frame in the SOP instance.</returns>
 		protected override StandardSopFrameData CreateFrameData(int frameNumber)
 		{
 			return new DicomMessageSopFrameData(frameNumber, this);
@@ -204,22 +239,41 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// An implementation of a <see cref="StandardSopDataSource.StandardSopFrameData"/>
+		/// where a <see cref="DicomMessageBase"/> provides all the frame data.
+		/// </summary>
 		protected class DicomMessageSopFrameData : StandardSopFrameData
 		{
 			private readonly OverlayDataCache _overlayCache = new OverlayDataCache();
 			private readonly int _frameIndex;
 
+			/// <summary>
+			/// Constructs a new <see cref="DicomMessageSopFrameData"/>
+			/// </summary>
+			/// <param name="frameNumber">The 1-based number of this frame.</param>
+			/// <param name="parent">The parent <see cref="DicomMessageSopDataSource"/> that this frame belongs to.</param>
+			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
+			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
 			public DicomMessageSopFrameData(int frameNumber, DicomMessageSopDataSource parent)
 				: base(frameNumber, parent)
 			{
 				_frameIndex = frameNumber - 1;
 			}
 
+			/// <summary>
+			/// Gets the parent <see cref="DicomMessageSopDataSource"/> to which this frame belongs.
+			/// </summary>
 			public new DicomMessageSopDataSource Parent
 			{
 				get { return (DicomMessageSopDataSource) base.Parent; }
 			}
 
+			/// <summary>
+			/// Called by the base class to create a new byte buffer containing normalized pixel data
+			/// for this frame (8 or 16-bit grayscale, or 32-bit ARGB).
+			/// </summary>
+			/// <returns>A new byte buffer containing the normalized pixel data.</returns>
 			protected override byte[] CreateNormalizedPixelData()
 			{
 				DicomMessageBase message = this.Parent.SourceMessage;
@@ -261,6 +315,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return rawPixelData;
 			}
 
+			/// <summary>
+			/// Called by the base class to create a new byte buffer containing normalized 
+			/// overlay pixel data for a particular overlay frame that is applicable to this image frame.
+			/// </summary>
+			/// <param name="overlayGroupNumber">The group number of the overlay plane (1-16).</param>
+			/// <param name="overlayFrameNumber">The 1-based frame number of the overlay frame to be retrieved.</param>
+			/// <returns>A new byte buffer containing the normalized overlay pixel data.</returns>
 			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
 				int overlayIndex = overlayGroupNumber - 1;
@@ -348,6 +409,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "LoadOverlayPlane", clock.Seconds);
 			}
 
+			/// <summary>
+			/// Called by the base class when the cached byte buffers are being unloaded.
+			/// </summary>
 			protected override void OnUnloaded()
 			{
 				_overlayCache.Clear();
@@ -395,10 +459,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			NormalizeGrayscalePixels(dicomAttributeProvider, pixelData, ByteBuffer.LocalMachineEndian);
 		}
 
-		/// <summary>
-		/// Do not call this method directly.
-		/// This method should only be called by a unit test entry point or <see cref="NormalizeGrayscalePixels(IDicomAttributeProvider,byte[])"/>.
-		/// </summary>
 		private static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, Endian endian)
 		{
 			if (dicomAttributeProvider[DicomTags.BitsAllocated].IsEmpty)

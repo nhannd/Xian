@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				if (this.CalculateCalloutLocation(out location, out coordinateSystem))
 				{
 					this.Callout.CoordinateSystem = coordinateSystem;
-					this.Callout.Location = location;
+					this.Callout.TextLocation = location;
 					this.Callout.ResetCoordinateSystem();
 				}
 			}

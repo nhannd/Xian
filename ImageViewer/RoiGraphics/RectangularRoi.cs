@@ -32,12 +32,11 @@
 using System;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	/// <summary>
-	/// Represents a rectangular region of interest.
+	/// Represents a static, rectangular region of interest for the purposes of computing statistics on the contained pixels.
 	/// </summary>
 	public class RectangularRoi : Roi, IRoiAreaProvider, IRoiStatisticsProvider
 	{
@@ -182,17 +181,24 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the area of the region of interest in the units of area as specified by <see cref="IRoiAreaProvider.Units"/>.
 		/// </summary>
-		/// <exception cref="UncalibratedImageException">If <see cref="IRoiAreaProvider.Units"/> is a physical
+		/// <exception cref="InvalidOperationException">If <see cref="IRoiAreaProvider.Units"/> is a physical
 		/// unit of measurement and the image has no pixel spacing information, nor has it been calibrated.</exception>
 		public double Area
 		{
 			get
 			{
-				if (!_area.HasValue)
+				try
 				{
-					_area = Math.Abs(_rectangle.Width*_rectangle.Height);
+					if (!_area.HasValue)
+					{
+						_area = Math.Abs(_rectangle.Width*_rectangle.Height);
+					}
+					return ConvertFromSquarePixels(_area.Value, _units, base.NormalizedPixelSpacing);
 				}
-				return ConvertFromSquarePixels(_area.Value, _units, base.NormalizedPixelSpacing);
+				catch (ArgumentException ex)
+				{
+					throw new InvalidOperationException("Pixel spacing must be calibrated in order to compute physical units.", ex);
+				}
 			}
 		}
 

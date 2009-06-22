@@ -31,16 +31,15 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO (CR May09):base studyfinder
+	//TODO (later): move this stuff into ImageViewer.Services and deprecate it.
 
-	//TODO: move this stuff into ImageViewer.Services and deprecate it (use IStudyRootQuery).
 	/// <summary>
 	/// Defines a study finder.
 	/// </summary>
 	/// <remarks>
 	/// <see cref="IStudyFinder"/> abstracts the finding of studies,
-	/// allowing different many means of finding studies (e.g., local database,
-	/// DICOM query, DICOMDIR, etc.) to be treated in the same way..
+	/// allowing many means of finding studies (e.g., local database,
+	/// DICOM query, DICOMDIR, etc.) to be treated in the same way.
 	/// </remarks>
     public interface IStudyFinder
     {
@@ -50,11 +49,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         string Name { get; }
 
 		/// <summary>
-		/// Queries for a study on a target server matching the specified query parameters.
+		/// Queries for studies on a target server matching the specified query parameters.
 		/// </summary>
-		/// <param name="queryParams"></param>
-		/// <param name="targetServer"></param>
-		/// <returns></returns>
         StudyItemList Query(QueryParameters queryParams, object targetServer);
     }
 }

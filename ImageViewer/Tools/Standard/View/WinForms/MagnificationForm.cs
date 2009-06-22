@@ -188,11 +188,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		public void UpdateMousePosition(Point positionTile)
 		{
-			// we actually only need the starting position in tile coordinates - beyond that
-			// it can all be done in screen coordinates.
 
-			// move the form's centre to the current mouse position
-			Centre = Cursor.Position;
+			Size offsetFromStartTile = new Size(positionTile.X - _startPointTile.X, positionTile.Y - _startPointTile.Y);
+			Point pointDesktop = _startPointDesktop;
+			pointDesktop.Offset(offsetFromStartTile.Width, offsetFromStartTile.Height);
+			Centre = pointDesktop;
 		}
 
 		private Point Centre

@@ -38,20 +38,41 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 {
+	/// <summary>
+	/// An <see cref="IRoiAnalyzer"/> that displays common statistics of a <see cref="RoiGraphic"/>.
+	/// </summary>
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiStatisticsAnalyzer : IRoiAnalyzer
 	{
+		/// <summary>
+		/// This property is not applicable to this analyzer.
+		/// </summary>
 		Units IRoiAnalyzer.Units
 		{
 			get { return Units.Centimeters; }
 			set { }
 		}
 
+		/// <summary>
+		/// Checks if this analyzer class can analyze the given ROI.
+		/// </summary>
+		/// <remarks>
+		/// Implementations should return a result based on the type of ROI, not on the particular current state of the ROI.
+		/// </remarks>
+		/// <param name="roi">The ROI to analyze.</param>
+		/// <returns>True if this class can analyze the given ROI; False otherwise.</returns>
 		public bool SupportsRoi(Roi roi)
 		{
 			return roi is IRoiStatisticsProvider;
 		}
 
+		/// <summary>
+		/// Analyzes the given ROI.
+		/// </summary>
+		/// <param name="roi">The ROI being analyzed.</param>
+		/// <param name="mode">The analysis mode.</param>
+		/// <returns>A string containing the analysis results, which can be appended to the analysis
+		/// callout of the associated <see cref="RoiGraphic"/>, if one exists.</returns>
 		public string Analyze(Roi roi, RoiAnalysisMode mode)
 		{
 			if (!SupportsRoi(roi))

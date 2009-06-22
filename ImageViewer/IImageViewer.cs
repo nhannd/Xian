@@ -87,11 +87,6 @@ namespace ClearCanvas.ImageViewer
 		/// no <see cref="IPresentationImage"/> is currently selected.</value>
 		IPresentationImage SelectedPresentationImage { get; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		IActionSet ExportedActions { get; }
-
         /// <summary>
         /// Gets the <see cref="CommandHistory"/> for this image viewer.
         /// </summary>
@@ -103,6 +98,14 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>		
 		string PatientsLoadedLabel { get; }
 
+		/// <summary>
+		/// Gets the <see cref="IAction"/>s exported by this <see cref="IImageViewer"/>.
+		/// </summary>
+		IActionSet ExportedActions { get; }
+
+		/// <summary>
+		/// Gets the associated <see cref="IPriorStudyLoader"/>.
+		/// </summary>
 		IPriorStudyLoader PriorStudyLoader { get; }
 
 		/// <summary>

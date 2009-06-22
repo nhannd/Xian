@@ -38,7 +38,6 @@ using ClearCanvas.Dicom.Iod.ContextGroups;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
-using ClearCanvas.Dicom.Iod.Macros.HierarchicalSeriesInstanceReference;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -46,57 +45,79 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
-	//TODO (CR May09): documentation note that API is unstable and may change.
+	/// <summary>
+	/// A class for serializing a key image series from a number of images with associated presentation states.
+	/// </summary>
+	/// <remarks>
+	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+	/// </remarks>
 	public class KeyImageSerializer
 	{
 		private readonly FramePresentationList _framePresentationStates;
-		//private readonly List<string> _docTitleMods;
 		private DateTime _datetime;
 		private string _description;
 		private string _seriesDescription;
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="KeyImageSerializer"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+		/// </remarks>
 		public KeyImageSerializer()
 		{
 			_framePresentationStates = new FramePresentationList();
 			_datetime = Platform.Time;
 		}
 
-		//TODO (CR May09):can we use an object?
-		public IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>> FramePresentationStates
-		{
-			get { return _framePresentationStates; }
-		}
-
-		//public IList<string> DocumentTitleModifiers
-		//{
-		//    get { return _docTitleMods; }
-		//}
-
+		/// <summary>
+		/// Gets or sets the series date time to use for the key object selection document.
+		/// </summary>
 		public DateTime DateTime
 		{
 			get { return _datetime; }
 			set { _datetime = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the description of the key object selection.
+		/// </summary>
 		public string Description
 		{
 			get { return _description; }
 			set { _description = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the series description.
+		/// </summary>
 		public string SeriesDescription
 		{
 			get { return _seriesDescription; }
 			set { _seriesDescription = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the key object selection document title.
+		/// </summary>
 		public KeyObjectSelectionDocumentTitle DocumentTitle
 		{
 			get { return _docTitle; }
 			set { _docTitle = value; }
 		}
 
+		/// <summary>
+		/// Adds a frame and associated presentation state to the serialization queue.
+		/// </summary>
+		public void AddImage(Frame frame, DicomSoftcopyPresentationState presentationState)
+		{
+			_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(frame, presentationState));
+		}
+
+		/// <summary>
+		/// Serializes the current contents into a number of key object selection document SOP instances.
+		/// </summary>
 		public List<DicomFile> Serialize()
 		{
 			if (_framePresentationStates.Count == 0)

@@ -4,6 +4,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+	/// <summary>
+	/// Static helper class for use when debugging.
+	/// </summary>
 	public static class Diagnostics
 	{
 		#region Memory
@@ -13,6 +16,9 @@ namespace ClearCanvas.ImageViewer.Common
 		private static readonly object _syncLock = new object();
 		private static event EventHandler _totalLargeObjectBytesChanged;
 
+		/// <summary>
+		/// Gets the running total byte count of large objects held in memory.
+		/// </summary>
 		public static long TotalLargeObjectBytes
 		{
 			get
@@ -22,6 +28,9 @@ namespace ClearCanvas.ImageViewer.Common
 			}	
 		}
 
+		/// <summary>
+		/// Occurs when <see cref="TotalLargeObjectBytes"/> has changed.
+		/// </summary>
 		public static event EventHandler TotalLargeObjectBytesChanged
 		{
 			add
@@ -40,6 +49,14 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 		}
 
+		/// <summary>
+		/// Called when a large object is allocated.
+		/// </summary>
+		/// <remarks>
+		/// Although it is not necessary to call this method when you allocate a large object,
+		/// such as a byte array for pixel data, it is recommended that you do so in order
+		/// for this class to provide accurate data.
+		/// </remarks>
 		public static void OnLargeObjectAllocated(long bytes)
 		{
 			lock(_syncLock)
@@ -50,6 +67,13 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 		}
 
+		/// <summary>
+		/// Called when a large object is released.
+		/// </summary>
+		/// <remarks>
+		/// You should call this method exactly once when you are certain the large object
+		/// in question is no longer in use.
+		/// </remarks>
 		public static void OnLargeObjectReleased(long bytes)
 		{
 			lock (_syncLock)

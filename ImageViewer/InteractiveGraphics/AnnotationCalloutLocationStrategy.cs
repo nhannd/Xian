@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the <see cref="AnnotationGraphic"/>'s Callout.
 		/// </summary>
-		protected CalloutGraphic Callout
+		protected ICalloutGraphic Callout
 		{
 			get { return _annotationGraphic.Callout; }
 		}
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual void CalculateCalloutEndPoint(out PointF endPoint, out CoordinateSystem coordinateSystem)
 		{
 			coordinateSystem = this.AnnotationGraphic.CoordinateSystem;
-			endPoint = AnnotationGraphic.Subject.GetClosestPoint(AnnotationGraphic.Callout.StartPoint);
+			endPoint = AnnotationGraphic.Subject.GetClosestPoint(AnnotationGraphic.Callout.TextLocation);
 		}
 
 		/// <summary>

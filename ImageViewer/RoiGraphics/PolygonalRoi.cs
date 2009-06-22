@@ -34,12 +34,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	/// <summary>
-	/// Represents a polygonal region of interest.
+	/// Represents a static, polygonal region of interest for the purposes of computing statistics on the contained pixels.
 	/// </summary>
 	public class PolygonalRoi : Roi, IRoiStatisticsProvider, IRoiAreaProvider
 	{
@@ -200,20 +199,27 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <summary>
 		/// Gets the area of the region of interest in the units of area as specified by <see cref="IRoiAreaProvider.Units"/>.
 		/// </summary>
-		/// <exception cref="UncalibratedImageException">If <see cref="IRoiAreaProvider.Units"/> is a physical
+		/// <exception cref="InvalidOperationException">If <see cref="IRoiAreaProvider.Units"/> is a physical
 		/// unit of measurement and the image has no pixel spacing information, nor has it been calibrated.</exception>
 		public double Area
 		{
 			get
 			{
-				if (!_area.HasValue)
+				try
 				{
-					if (_polygon == null)
-						_area = 0;
-					else
-						_area = _polygon.ComputeArea();
+					if (!_area.HasValue)
+					{
+						if (_polygon == null)
+							_area = 0;
+						else
+							_area = _polygon.ComputeArea();
+					}
+					return ConvertFromSquarePixels(_area.Value, _units, base.NormalizedPixelSpacing);
 				}
-				return ConvertFromSquarePixels(_area.Value, _units, base.NormalizedPixelSpacing);
+				catch (ArgumentException ex)
+				{
+					throw new InvalidOperationException("Pixel spacing must be calibrated in order to compute physical units.", ex);
+				}
 			}
 		}
 

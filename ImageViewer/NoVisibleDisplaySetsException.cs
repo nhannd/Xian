@@ -64,6 +64,10 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 	}
 
+	/// <summary>
+	/// Exception thrown by the <see cref="LayoutManager"/> when no display sets
+	/// were added to the <see cref="ILogicalWorkspace"/>.
+	/// </summary>
 	public class NoVisibleDisplaySetsException : Exception
 	{
 		internal NoVisibleDisplaySetsException(string message)

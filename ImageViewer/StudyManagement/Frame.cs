@@ -42,6 +42,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// Represents the DICOM concept of a frame.
 	/// </summary>
+	/// <remarks>
+	/// Note that there should no longer be any need to derive directly from this class.
+	/// See <see cref="ISopDataSource"/> and/or <see cref="Sop"/> for more information.
+	/// </remarks>
 	public partial class Frame : IDisposable
 	{
 		#region Private fields
@@ -59,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Initializes a new instance of <see cref="Frame"/> with the
 		/// specified parameters.
 		/// </summary>
-		/// <param name="parentImageSop"></param>
+		/// <param name="parentImageSop">The parent <see cref="ImageSop"/>.</param>
 		/// <param name="frameNumber">The first frame is frame 1.</param>
 		protected internal Frame(ImageSop parentImageSop, int frameNumber)
 		{
@@ -115,10 +119,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the patient orientation.
 		/// </summary>
 		/// <remarks>
-		/// A <see cref="PatientOrientation"/> is returned even when no data is available; 
-		/// it will simply have values of "" for its 
-		/// <see cref="Dicom.Iod.PatientOrientation.Row"/> and 
-		/// <see cref="Dicom.Iod.PatientOrientation.Column"/> properties.
+		/// A <see cref="Dicom.Iod.PatientOrientation"/> is returned even when no data is available; 
+		/// the <see cref="Dicom.Iod.PatientOrientation.IsEmpty"/> property will be true.
 		/// </remarks>
 		public virtual PatientOrientation PatientOrientation
 		{
@@ -292,7 +294,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the image orientation patient.
 		/// </summary>
 		/// <remarks>
-		/// Returns an <see cref="ImageOrientationPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
+		/// Returns an <see cref="Dicom.Iod.ImageOrientationPatient"/> object with zero for all its values
+		/// when no data is available or the existing data is bad/incorrect;  <see cref="Dicom.Iod.ImageOrientationPatient.IsNull"/>
+		/// will be true.
 		/// </remarks>
 		public virtual ImageOrientationPatient ImageOrientationPatient
 		{
@@ -315,7 +319,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the image position patient.
 		/// </summary>
 		/// <remarks>
-		/// Returns an <see cref="ImagePositionPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
+		/// Returns an <see cref="Dicom.Iod.ImagePositionPatient"/> object with zero for all its values when no data is
+		/// available or the existing data is bad/incorrect; <see cref="Dicom.Iod.ImagePositionPatient.IsNull"/> will be true.
 		/// </remarks>
 		public virtual ImagePositionPatient ImagePositionPatient
 		{
@@ -518,7 +523,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the pixel aspect ratio.
 		/// </summary>
 		/// <remarks>
-		/// A default value of 1/1 is returned if no data is available.
+		/// If no value exists in the image header, or the value is invalid, a <see cref="ClearCanvas.Dicom.Iod.PixelAspectRatio"/>
+		/// is returned whose <see cref="ClearCanvas.Dicom.Iod.PixelAspectRatio.IsNull"/> property evaluates to true.
 		/// </remarks>
 		public virtual PixelAspectRatio PixelAspectRatio
 		{
@@ -595,7 +601,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the window width and center.
 		/// </summary>
 		/// <remarks>
-		/// Will return as many parsable values as possible up to the first non-parsable value.  For example, if there are 3 values, but the last one is poorly encoded, 2 values will be returned.
+		/// Will return as many parsable values as possible up to the first non-parsable value.
+		/// For example, if there are 3 values, but the last one is poorly encoded, 2 values will be returned.
 		/// </remarks>
 		public virtual Window[] WindowCenterAndWidth
 		{
@@ -634,7 +641,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the window width and center explanation.
+		/// Gets the window width and center explanation(s).
 		/// </summary>
 		public virtual string[] WindowCenterAndWidthExplanation
 		{
@@ -718,10 +725,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the pixel spacing appropriate to the modality.
 		/// </summary>
 		/// <remarks>
-		/// For projection based modalities (i.e. CR, DX and MG), Imager Pixel Spacing is
-		/// returned as the pixel spacing.  For all other modalities, the standard
-		/// Pixel Spacing is returned. Clients who require the pixel spacing should use this
-		/// property as opposed to the raw DICOM pixel spacing property in <see cref="ImageSop.PixelSpacing"/>.
+		/// See the remarks for <see cref="StudyManagement.NormalizedPixelSpacing"/>.
+		/// Clients who require the pixel spacing should use this property as opposed to 
+		/// the raw DICOM pixel spacing property in <see cref="PixelSpacing"/>.
 		/// </remarks>
 		public NormalizedPixelSpacing NormalizedPixelSpacing
 		{
@@ -743,31 +749,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets pixel data in normalized form.
 		/// </summary>
-		/// <returns></returns>
 		/// <remarks>
-		/// <i>Normalized</i> pixel data means that:
-		/// <list type="Bullet">
-		/// <item>
-		/// <description>Grayscale pixel data is unchanged.</description>
-		/// </item>
-		/// <item>
-		/// <description>Colour pixel data is always converted
-		/// into ARGB format.</description>
-		/// </item>
-		/// <item>
-		/// <description>Pixel data is always uncompressed.</description>
-		/// </item>
-		/// </list>
-		/// <para>
-		/// Ensuring that the pixel data always meets the above criteria
-		/// allows clients to easily consume pixel data without having
-		/// to worry about the the multitude of DICOM photometric interpretations
-		/// and transfer syntaxes.
-		/// </para>
-		/// <para>
-		/// Pixel data is reloaded when this method is called after a 
-		/// call to <see cref="UnloadPixelData"/>.
-		/// </para>
+		/// See <see cref="ISopFrameData.GetNormalizedPixelData"/> for a detailed explanation.
 		/// </remarks>
 		public byte[] GetNormalizedPixelData()
 		{
@@ -778,17 +761,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Unloads the pixel data.
 		/// </summary>
 		/// <remarks>
-		/// It is sometimes necessary to manage the memory used by unloading the pixel data. 
-		/// Calling this method will not necessarily result in an immediate decrease in memory
-		/// usage, since it merely releases the reference to the pixel data; it is up to the
-		/// garbage collector to free the memory.  Calling <see cref="GetNormalizedPixelData"/>
-		/// will reload the pixel data.
+		/// <see cref="ISopFrameData.Unload"/> for a detailed explanation.
 		/// </remarks>
 		public void UnloadPixelData()
 		{
 			_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
 		}
 
+		/// <summary>
+		/// Creates a <see cref="IFrameReference">transient reference</see> to this <see cref="Frame"/>.
+		/// </summary>
+		/// <remarks>
+		/// See <see cref="ISopReference"/> for a detailed explanation of transient references.
+		/// </remarks>
 		public IFrameReference CreateTransientReference()
 		{
 			return new FrameReference(this);

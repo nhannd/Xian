@@ -138,6 +138,9 @@
   <data name="MenuLaplacianSharpening" xml:space="preserve">
     <value>Laplacian Sharpening</value>
   </data>
+  <data name="MenuReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
   <data name="MenuShapeDetectionSegmentation" xml:space="preserve">
     <value>Shape Detection Segmentation</value>
   </data>

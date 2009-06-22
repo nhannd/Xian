@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomServer\AssociationVerifier.cs" />
+    <Compile Include="DicomServer\DataStoreQueryHelper.cs" />
     <Compile Include="DicomServer\DicomServerManager.cs" />
     <Compile Include="DicomServer\FindScpExtension.cs" />
     <Compile Include="DicomServer\DicomServer.cs" />

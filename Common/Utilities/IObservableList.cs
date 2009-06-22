@@ -4,9 +4,8 @@ using System.Collections.Generic;
 namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
-	/// Interface for an observable list.
+	/// Interface to an observable list.
 	/// </summary>
-	/// <typeparam name="TItem"></typeparam>
 	public interface IObservableList<TItem> : IList<TItem>
 	{
 		/// <summary>

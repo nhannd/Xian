@@ -73,25 +73,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			throw new NotSupportedException();
 		}
 
-		protected override void NotifyGraphicComplete()
-		{
-			// Find the edit control graphic for the text graphic and invoke edit mode.
-			IGraphic graphic = this.Graphic;
-			while (graphic != null && !(graphic is TextEditControlGraphic) && !(graphic is UserCalloutGraphic))
-				graphic = graphic.ParentGraphic;
-			if (graphic is TextEditControlGraphic)
-				_textGraphic = (TextEditControlGraphic) graphic;
-			else if (graphic is UserCalloutGraphic)
-				_textGraphic = (UserCalloutGraphic) graphic;
+		protected abstract ITextGraphic FindTextGraphic();
 
-			base.NotifyGraphicComplete();
+		protected override void OnGraphicComplete()
+		{
+			_textGraphic = this.FindTextGraphic();
+
+			base.OnGraphicComplete();
 			this.StartEdit();
 		}
 
-		protected override void NotifyGraphicCancelled()
+		protected override void OnGraphicCancelled()
 		{
 			EventsHelper.Fire(_graphicFinalCancelled, this, new GraphicEventArgs(this.Graphic));
-			base.NotifyGraphicCancelled();
+			base.OnGraphicCancelled();
 		}
 
 		/// <summary>

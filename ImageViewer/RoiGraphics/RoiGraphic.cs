@@ -35,9 +35,15 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
+	/// <summary>
+	/// An <see cref="AnnotationGraphic"/> specifically for scenarios where the
+	/// subject of interest is an actual region of interest on an image.
+	/// </summary>
 	[Cloneable]
 	public class RoiGraphic : AnnotationGraphic
 	{
@@ -48,19 +54,40 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private Roi _roi;
 
 		[CloneIgnore]
-		private DelayedEventPublisher _delayedEventPublisher;
+		private volatile SynchronizationContext _uiThreadContext;
 
-		public RoiGraphic(IGraphic roi) : base(roi)
+		//need the lock because structs cannot be volatile.
+		[CloneIgnore]
+		private readonly object _syncLock = new object();
+		[CloneIgnore]
+		private DateTime? _lastChange;
+
+		/// <summary>
+		/// Constructs a new instance of <see cref="RoiGraphic"/>.
+		/// </summary>
+		/// <param name="roi">The graphic or control chain graphic representing the region of interest.</param>
+		public RoiGraphic(IGraphic roi)
+			: base(roi)
 		{
 			Initialize();
 		}
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="RoiGraphic"/>.
+		/// </summary>
+		/// <param name="roi">The graphic or control chain graphic representing the region of interest.</param>
+		/// <param name="calloutLocationStrategy">An <see cref="IAnnotationCalloutLocationStrategy"/> to automatically place the callout.</param>
 		public RoiGraphic(IGraphic roi, IAnnotationCalloutLocationStrategy calloutLocationStrategy)
 			: base(roi, calloutLocationStrategy)
 		{
 			Initialize();
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object from which to clone.</param>
+		/// <param name="context">The cloning context object.</param>
 		protected RoiGraphic(RoiGraphic source, ICloningContext context)
 			: base(source, context)
 		{
@@ -69,21 +96,20 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		private void Initialize()
 		{
-			_delayedEventPublisher = new DelayedEventPublisher(OnDelayedRoiChanged);
 			SetTransformValidationPolicy(this);
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="AnnotationGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				if (_delayedEventPublisher != null)
-				{
-					_delayedEventPublisher.Cancel();
-					_delayedEventPublisher.Dispose();
-					_delayedEventPublisher = null;
-				}
+				_uiThreadContext = null;
+				lock (_syncLock) { _lastChange = null; }
 			}
+
 			base.Dispose(disposing);
 		}
 
@@ -93,44 +119,73 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			Initialize();
 		}
 
-		protected override CalloutGraphic CreateCalloutGraphic()
+		/// <summary>
+		/// Called by <see cref="AnnotationGraphic"/> to create the <see cref="ICalloutGraphic"/> to be used by this annotation.
+		/// </summary>
+		/// <remarks>
+		/// <para>This implementation creates a <see cref="RoiCalloutGraphic"/> which displays values analyzed from the region of interest by a set of <see cref="IRoiAnalyzer"/>s.</para>
+		/// </remarks>
+		/// <returns>The <see cref="ICalloutGraphic"/> to be used.</returns>
+		protected override ICalloutGraphic CreateCalloutGraphic()
 		{
 			return new RoiCalloutGraphic();
 		}
 
+		/// <summary>
+		/// Gets the <see cref="RoiCalloutGraphic"/> associated with the region of interest.
+		/// </summary>
 		public new RoiCalloutGraphic Callout
 		{
-			get { return (RoiCalloutGraphic) base.Callout; }
+			get { return (RoiCalloutGraphic)base.Callout; }
 		}
 
+		/// <summary>
+		/// Gets an object representing the data of the current region of interest.
+		/// </summary>
 		public Roi Roi
 		{
 			get
 			{
 				if (_roi == null)
-					_roi = base.Subject.CreateRoi();
+					_roi = base.Subject.GetRoi();
 
 				return _roi;
 			}
 		}
 
+		/// <summary>
+		/// Occurs when the region of interest changes, thereby changing the data and invalidating any existing, computed statistics.
+		/// </summary>
 		public event EventHandler RoiChanged
 		{
 			add { _roiChanged += value; }
 			remove { _roiChanged -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when the <see cref="IGraphic.Name"/> of the graphic changes.
+		/// </summary>
 		public event EventHandler NameChanged
 		{
 			add { _nameChanged += value; }
 			remove { _nameChanged -= value; }
 		}
 
-		public override Roi CreateRoi()
+		/// <summary>
+		/// Gets an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by the <see cref="DecoratorCompositeGraphic.DecoratedGraphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// Decorated graphics that do not describe a region of interest may return null.
+		/// </remarks>
+		/// <returns>A <see cref="RoiGraphics.Roi"/> describing this region of interest, or null if the decorated graphic does not describe a region of interest.</returns>
+		public override Roi GetRoi()
 		{
-			return base.Subject.CreateRoi();
+			return base.Subject.GetRoi();
 		}
 
+		/// <summary>
+		/// Called when the value of the <see cref="Graphic.Name"/> property changes.
+		/// </summary>
 		protected override void OnNameChanged()
 		{
 			//TODO: prevent draw before initialization if the next 2 lines are uncommented
@@ -140,12 +195,20 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			EventsHelper.Fire(_nameChanged, this, new EventArgs());
 		}
 
+		/// <summary>
+		/// Refreshes the annotation graphic by recomputing the callout position and redrawing the graphic.
+		/// </summary>
 		public override void Refresh()
 		{
 			this.OnSubjectChanged();
 			base.Refresh();
 		}
 
+		/// <summary>
+		/// Called when the value of the <see cref="Graphic.ParentPresentationImage"/> property changes.
+		/// </summary>
+		/// <param name="oldParentPresentationImage">A reference to the old parent presentation image.</param>
+		/// <param name="newParentPresentationImage">A reference to the new parent presentation image.</param>
 		protected override void OnParentPresentationImageChanged(IPresentationImage oldParentPresentationImage, IPresentationImage newParentPresentationImage)
 		{
 			IImageSopProvider sopProvider = oldParentPresentationImage as IImageSopProvider;
@@ -172,11 +235,23 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			this.OnImageCalibrated();
 		}
 
+		/// <summary>
+		/// Called when properties on the <see cref="ControlGraphic.Subject"/> have changed.
+		/// </summary>
 		protected override sealed void OnSubjectChanged()
 		{
-			if (this.DecoratedGraphic is IControlGraphic)
+			if (this.DecoratedGraphic is IControlGraphic && SynchronizationContext.Current != null)
 			{
-				_delayedEventPublisher.Publish(this.Subject, EventArgs.Empty);
+				//we can't use the DelayedEventPublisher because that relies on the sync context,
+				//and we use graphics on worker threads for avi export ... so, we'll just do it custom.
+				lock (_syncLock) { _lastChange = Platform.Time; }
+
+				if (_uiThreadContext == null)
+				{
+					_uiThreadContext = SynchronizationContext.Current;
+					ThreadPool.QueueUserWorkItem(DelayedEventThread);
+				}
+
 				Analyze(true);
 			}
 			else
@@ -190,27 +265,62 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			base.OnSubjectChanged();
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="StatefulCompositeGraphic.State"/> changes.
+		/// </summary>
+		/// <param name="e">An object containing data describing the specific state change.</param>
 		protected override void OnStateChanged(GraphicStateChangedEventArgs e)
 		{
 			base.OnStateChanged(e);
 
-			_delayedEventPublisher.PublishNow();
+			OnDelayedRoiChanged();
 		}
 
+		/// <summary>
+		/// Called when the region of interest changes, thereby changing the data and invalidating any existing, computed statistics.
+		/// </summary>
 		protected virtual void OnRoiChanged()
 		{
 			EventsHelper.Fire(_roiChanged, this, EventArgs.Empty);
 		}
 
-		private void OnDelayedRoiChanged(object sender, EventArgs e)
+		private void DelayedEventThread(object nothing)
 		{
+			SynchronizationContext uiThreadContext;
+			DateTime? lastChange;
+
+			while (null != (uiThreadContext = _uiThreadContext))
+			{
+				lock (_syncLock) { lastChange = _lastChange; }
+				if (lastChange == null)
+					break;
+
+				TimeSpan timeDiff = Platform.Time.Subtract(lastChange.Value);
+				if (timeDiff.Milliseconds >= 300)
+				{
+					uiThreadContext.Post(delegate { OnDelayedRoiChanged(); }, null);
+					break;
+				}
+
+				Thread.Sleep(5);
+			}
+		}
+
+		private void OnDelayedRoiChanged()
+		{
+			if (_uiThreadContext == null)
+				return;
+
+			_uiThreadContext = null;
+			_lastChange = null;
+
 			Analyze(false);
 			this.Draw();
 		}
 
 		private void Analyze(bool responsive)
 		{
-			_roi = base.Subject.CreateRoi();
+			_roi = base.Subject.GetRoi();
 			this.Callout.Update(_roi, responsive ? RoiAnalysisMode.Responsive : RoiAnalysisMode.Normal);
 		}
 
@@ -228,6 +338,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		#region Static Helpers
 
+		/// <summary>
+		/// Convenience method to create a common elliptical, interactive region of interest.
+		/// </summary>
+		/// <returns>A new interactive region of interest graphic.</returns>
 		public static RoiGraphic CreateEllipse()
 		{
 			RoiGraphic roiGraphic = new RoiGraphic(new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new EllipsePrimitive()))));
@@ -235,6 +349,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return roiGraphic;
 		}
 
+		/// <summary>
+		/// Convenience method to create a common rectangular, interactive region of interest.
+		/// </summary>
+		/// <returns>A new interactive region of interest graphic.</returns>
 		public static RoiGraphic CreateRectangle()
 		{
 			RoiGraphic roiGraphic = new RoiGraphic(new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new RectanglePrimitive()))));
@@ -242,6 +360,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return roiGraphic;
 		}
 
+		/// <summary>
+		/// Convenience method to create a common polygonal, interactive region of interest.
+		/// </summary>
+		/// <returns>A new interactive region of interest graphic.</returns>
 		public static RoiGraphic CreatePolygon()
 		{
 			RoiGraphic roiGraphic = new RoiGraphic(new PolygonControlGraphic(true, new MoveControlGraphic(new PolylineGraphic(true))));

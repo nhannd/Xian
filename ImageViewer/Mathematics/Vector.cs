@@ -196,8 +196,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				else
 				{
 					// Parametric equation
-					ptNearest.X = (int)(pt1.X + t * dx);
-					ptNearest.Y = (int)(pt1.Y + t * dy);
+					ptNearest.X = (float)(pt1.X + t * dx);
+					ptNearest.Y = (float)(pt1.Y + t * dy);
 				}
 			}
 

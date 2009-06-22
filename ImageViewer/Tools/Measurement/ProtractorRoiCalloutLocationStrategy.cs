@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			base.AnnotationGraphic.CoordinateSystem = coordinateSystem;
 
 			// first, move the callout by the same amount the vertex moved (if it moved at all).
-			location = base.Callout.Location + calloutOffsetDestination;
+			location = base.Callout.TextLocation + calloutOffsetDestination;
 
 			PointF start = this.Roi.Points[0];
 			PointF vertex = this.Roi.Points[1];
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				//on first calculation, move the callout to the vertex.
 				_firstCalculation = false;
-				_lastVertexLocationSource = base.Callout.EndPoint;
+				_lastVertexLocationSource = base.Callout.AnchorPoint;
 			}
 
 			PointF currentVertexLocationSource = this.Roi.Points[1];

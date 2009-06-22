@@ -92,11 +92,17 @@ namespace ClearCanvas.ImageViewer.Common
 			return true;
 		}
 
+		/// <summary>
+		/// Checks whether the current user is in at least one of the specified roles/authority tokens.
+		/// </summary>
 		public static bool IsInAnyRole(params string[] authorityTokens)
 		{
 			return IsInAnyRole((IEnumerable<string>)(authorityTokens ?? new string[0]));
 		}
 
+		/// <summary>
+		/// Checks whether the current user is in at least one of the specified roles/authority tokens.
+		/// </summary>
 		public static bool IsInAnyRole(IEnumerable<string> authorityTokens)
 		{
 			if (Thread.CurrentPrincipal == null || !Thread.CurrentPrincipal.Identity.IsAuthenticated)

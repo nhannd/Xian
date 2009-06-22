@@ -37,13 +37,18 @@ using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
 using ClearCanvas.Dicom.Iod.Modules;
-using ValueType=ClearCanvas.Dicom.Iod.ValueType;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ValueType=ClearCanvas.Dicom.Iod.ValueType;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
+	/// <summary>
+	/// Represents a single key image content item being serialized in the key object document.
+	/// </summary>
+	/// <remarks>
+	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+	/// </remarks>
 	public class KeyObjectContentItem
 	{
 		internal KeyObjectContentItem(Frame frame, Sop presentationStateSop)
@@ -60,32 +65,65 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 		}
 
+		/// <summary>
+		/// Gets the frame that is being serialized.
+		/// </summary>
 		public readonly Frame Frame;
+
+		/// <summary>
+		/// Gets the presentation state SOP instance associated with this frame.
+		/// </summary>
 		public readonly Sop PresentationStateSop;
 
+		/// <summary>
+		/// Gets the grayscale softcopy presentation state decoded from the <see cref="PresentationStateSop"/>.
+		/// </summary>
 		public readonly GrayscaleSoftcopyPresentationStateIod GrayscalePresentationStateIod;
+
+		/// <summary>
+		/// Gets the color softcopy presentation state decoded from the <see cref="PresentationStateSop"/>.
+		/// </summary>
 		public readonly ColorSoftcopyPresentationStateIod ColorPresentationStateIod;
 	}
 
-	//TODO (CR May09): documentation note that API is unstable and may change.
-
+	/// <summary>
+	/// A class for deserializing a key image series into the constituent images and associated presentation states.
+	/// </summary>
+	/// <remarks>
+	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+	/// </remarks>
 	public class KeyImageDeserializer
 	{
 		private readonly StudyTree _studyTree;
 		private readonly KeyObjectSelectionDocumentIod _document;
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="KeyImageDeserializer"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+		/// </remarks>
 		public KeyImageDeserializer(Sop sourceSop, StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 			_document = new KeyObjectSelectionDocumentIod(sourceSop.DataSource);
 		}
 
+		/// <summary>
+		/// Constructs a new instance of <see cref="KeyImageDeserializer"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+		/// </remarks>
 		public KeyImageDeserializer(KeyObjectSelectionDocumentIod iod, StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 			_document = iod;
 		}
 
+		/// <summary>
+		/// Deserializes the key object selection SOP instance into a list of constituent images and associated presentation states.
+		/// </summary>
 		public IList<KeyObjectContentItem> Deserialize()
 		{
 			List<KeyObjectContentItem> contentItems = new List<KeyObjectContentItem>();

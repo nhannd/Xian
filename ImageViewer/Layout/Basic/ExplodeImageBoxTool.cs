@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (workspace == null)
 				return false;
 
-			if (imageBox.DisplaySet == null || imageBox.SelectedTile == null || imageBox.SelectedTile.PresentationImage == null)
+			if (imageBox.DisplaySet == null)
 			{
 				CancelExplodeMode();
 				return false;

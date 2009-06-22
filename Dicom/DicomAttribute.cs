@@ -99,6 +99,7 @@ namespace ClearCanvas.Dicom
         
         public abstract Type GetValueType();
         public abstract void SetNullValue();
+		public abstract void SetEmptyValue();
 
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet);
         internal abstract DicomAttribute Copy(bool copyBinary);

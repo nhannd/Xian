@@ -4,21 +4,28 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.StudyManagement
+namespace ClearCanvas.ImageViewer
 {
 	#region Exception Policy
 
 	[ExceptionPolicyFor(typeof(LoadMultipleStudiesException))]
 	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
-	public class LoadMultipleStudiesExceptionHandler : IExceptionPolicy
+	internal class LoadMultipleStudiesExceptionHandler : IExceptionPolicy
 	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public LoadMultipleStudiesExceptionHandler()
 		{
 		}
 
 		#region IExceptionPolicy Members
 
+		///<summary>
+		/// Handles the specified exception.
+		///</summary>
 		public void Handle(Exception e, IExceptionHandlingContext exceptionHandlingContext)
 		{
 			LoadMultipleStudiesException exception = (LoadMultipleStudiesException) e;
@@ -39,6 +46,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 	#endregion
 
+	/// <summary>
+	/// Exception thrown when multiple studies have failed to load.
+	/// </summary>
+	/// <seealso cref="ImageViewerComponent.LoadStudies"/>
 	public class LoadMultipleStudiesException : Exception
 	{
 		internal LoadMultipleStudiesException(ICollection<Exception> exceptions, int totalStudies)
@@ -53,73 +64,127 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			LoadStudyExceptions = new List<Exception>(exceptions).AsReadOnly();
 		}
 
+		/// <summary>
+		/// Gets the total number of studies that were loaded, or attempted to load.
+		/// </summary>
 		public readonly int TotalStudies;
+
+		/// <summary>
+		/// Gets all of the individual exceptions that occurred per study.
+		/// </summary>
 		public readonly IList<Exception> LoadStudyExceptions;
 
+		/// <summary>
+		/// Gets whether or not all the studies failed to load.
+		/// </summary>
 		public bool AllStudiesFailed
 		{
 			get { return LoadStudyExceptions.Count >= TotalStudies; }
 		}
 
-		//TODO (CR May09):properties with 'Count' suffix
-		public int GetNumberOffline()
+		/// <summary>
+		/// Gets the number of studies that failed to load because they are offline.
+		/// </summary>
+		public int OfflineCount
 		{
-			return CollectionUtils.Select(LoadStudyExceptions,
-						delegate(Exception e) { return e is OfflineLoadStudyException; }).Count;
+			get
+			{
+				return CollectionUtils.Select(LoadStudyExceptions,
+				                              delegate(Exception e) { return e is OfflineLoadStudyException; }).Count;
+			}
 		}
 
-		public int GetNumberNearline()
+		/// <summary>
+		/// Gets the number of studies that failed to load because they are nearline.
+		/// </summary>
+		public int NearlineCount
 		{
-			return CollectionUtils.Select(LoadStudyExceptions,
-						delegate(Exception e) { return e is NearlineLoadStudyException; }).Count;
+			get
+			{
+				return CollectionUtils.Select(LoadStudyExceptions,
+				                              delegate(Exception e) { return e is NearlineLoadStudyException; }).Count;
+			}
 		}
 
-		public int GetNumberIncomplete()
+		/// <summary>
+		/// Gets the number of studies that could only be partially loaded.
+		/// </summary>
+		public int IncompleteCount
 		{
-			return CollectionUtils.Select(LoadStudyExceptions,
-						delegate(Exception e)
+			get
+			{
+				return CollectionUtils.Select(LoadStudyExceptions,
+							delegate(Exception e)
 							{
 								if (e is LoadStudyException)
 									return ((LoadStudyException)e).PartiallyLoaded;
 								else
 									return false;
 							}).Count;
+			}
 		}
 
-		public int GetNumberInUse()
+		/// <summary>
+		/// Gets the number of studies that failed to load because they are in use.
+		/// </summary>
+		public int InUseCount
 		{
-			return CollectionUtils.Select(LoadStudyExceptions,
-						delegate(Exception e) { return e is InUseLoadStudyException; }).Count;
+			get
+			{
+				return CollectionUtils.Select(LoadStudyExceptions,
+				                              delegate(Exception e) { return e is InUseLoadStudyException; }).Count;
+			}
 		}
 
-		public int GetNumberNotFound()
+		/// <summary>
+		/// Gets the number of studies that failed to load because they could not be found.
+		/// </summary>
+		public int NotFoundCount
 		{
-			return CollectionUtils.Select(LoadStudyExceptions,
-						delegate(Exception e) { return e is NotFoundLoadStudyException; }).Count;
+			get
+			{
+				return CollectionUtils.Select(LoadStudyExceptions,
+							delegate(Exception e) { return e is NotFoundLoadStudyException; }).Count;
+			}
 		}
 
-		public int GetNumberStudyLoaderNotFound()
+		/// <summary>
+		/// Gets the number of studies that failed to load because there was no appropriate <see cref="IStudyLoader"/>.
+		/// </summary>
+		public int StudyLoaderNotFoundCount
 		{
-			return CollectionUtils.Select(LoadStudyExceptions,
-						delegate(Exception e) { return e is StudyLoaderNotFoundException; }).Count;
+			get
+			{
+				return CollectionUtils.Select(LoadStudyExceptions,
+							delegate(Exception e) { return e is StudyLoaderNotFoundException; }).Count;
+			}
 		}
 
-		public int GetNumberUnknownFailures()
+		/// <summary>
+		/// Gets the number of studies that failed to load for unknown reasons.
+		/// </summary>
+		public int UnknownFailureCount
 		{
-			return LoadStudyExceptions.Count - GetNumberOffline() - GetNumberNearline() - GetNumberInUse() - 
-				GetNumberNotFound() - GetNumberIncomplete() - GetNumberStudyLoaderNotFound();
+			get
+			{
+				return LoadStudyExceptions.Count - OfflineCount - NearlineCount - InUseCount -
+					NotFoundCount - IncompleteCount - StudyLoaderNotFoundCount;
+			}
 		}
 
+		/// <summary>
+		/// Gets a text summary of the exception(s).
+		/// </summary>
 		public string GetExceptionSummary()
 		{
 			StringBuilder summary = new StringBuilder();
 
-			int numberOffline = GetNumberOffline();
-			int numberNearline = GetNumberNearline();
-			int numberIncomplete = GetNumberIncomplete();
-			int numberInUse = GetNumberInUse();
-			int numberNotFound = GetNumberNotFound();
-			int numberUnknown = GetNumberUnknownFailures();
+			int numberOffline = OfflineCount;
+			int numberNearline = NearlineCount;
+			int numberIncomplete = IncompleteCount;
+			int numberInUse = InUseCount;
+			int numberNotFound = NotFoundCount;
+			int numberUnknown = UnknownFailureCount;
 
 			if (numberIncomplete > 0)
 			{

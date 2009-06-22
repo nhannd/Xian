@@ -157,6 +157,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private void OnImageBoxesChanged()
 		{
 			_strategyEnumerator = null;
+			_framesToProcess.Clear();
 			Monitor.PulseAll(_syncLock);
 		}
 

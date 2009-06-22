@@ -70,7 +70,6 @@ namespace ClearCanvas.ImageViewer.TestTools
 		
 		private Table<ReportItem> _reportTable;
 		private SimpleActionModel _menuModel;
-		private string _description;
 		private volatile SynchronizationContext _uiThreadContext;
 
 		public PerformanceAnalysisComponent()

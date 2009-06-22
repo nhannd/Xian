@@ -103,7 +103,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
                         component, SR.EmailDialogTitle);
 
-                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    if (exitCode == ApplicationComponentExitCode.Accepted)
                     {
                         // create a background task to send the mail, so that we can use a progress dialog
                         BackgroundTask sendMailTask = new BackgroundTask(

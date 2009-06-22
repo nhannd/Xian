@@ -38,9 +38,9 @@ using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class CalloutGraphicAnnotationSerializer : GraphicAnnotationSerializer<CalloutGraphic>
+	internal class CalloutGraphicAnnotationSerializer : GraphicAnnotationSerializer<ICalloutGraphic>
 	{
-		protected override void Serialize(CalloutGraphic calloutGraphic, GraphicAnnotationSequenceItem serializationState)
+		protected override void Serialize(ICalloutGraphic calloutGraphic, GraphicAnnotationSequenceItem serializationState)
 		{
 			// if the callout is not visible, don't serialize it!
 			if (!calloutGraphic.Visible)
@@ -51,13 +51,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			calloutGraphic.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(calloutGraphic.BoundingBox);
+				RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(calloutGraphic.TextBoundingBox);
 				text.BoundingBoxAnnotationUnits = GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Pixel;
 				text.BoundingBoxTextHorizontalJustification = GraphicAnnotationSequenceItem.BoundingBoxTextHorizontalJustification.Left;
 				text.BoundingBoxTopLeftHandCorner = boundingBox.Location;
 				text.BoundingBoxBottomRightHandCorner = boundingBox.Location + boundingBox.Size;
 
-				text.AnchorPoint = calloutGraphic.EndPoint;
+				text.AnchorPoint = calloutGraphic.AnchorPoint;
 				text.AnchorPointAnnotationUnits = GraphicAnnotationSequenceItem.AnchorPointAnnotationUnits.Pixel;
 				text.AnchorPointVisibility = GraphicAnnotationSequenceItem.AnchorPointVisibility.Y;
 

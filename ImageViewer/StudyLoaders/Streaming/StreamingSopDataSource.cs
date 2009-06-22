@@ -143,11 +143,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (_fullHeaderRetrieved)
 				return false;
 
-			if (CollectionUtils.Contains(AttributeCollection.ExcludedTags, 
-				delegate(DicomTag dicomTag) { return dicomTag.TagValue == tag; }))
-			{
+			if (AttributeCollection.IsTagExcluded(tag))
 				return true;
-			}
 
 			DicomAttribute attribute = base[tag];
 			if (attribute is DicomAttributeSQ)
@@ -181,9 +178,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					base.SourceMessage = imageHeader;
 					_fullHeaderRetrieved = true;
 				}
-
-				// if no result was returned, then the throw an exception with an appropriate, user-friendly message
-				throw TranslateStreamingException(retrieveException);
+				else
+				{
+					// if no result was returned, then the throw an exception with an appropriate, user-friendly message
+					throw TranslateStreamingException(retrieveException);
+				}
 			}
 		}
 
@@ -209,17 +208,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					if (retryCounter > 0)
 						Platform.Log(LogLevel.Info, "Retrying retrieve headers for Sop '{0}' (Attempt #{1})", this.SopInstanceUid, retryCounter);
 
-					CodeClock statsClock = new CodeClock();
-					statsClock.Start();
-
 					using (Stream imageHeaderStream = client.RetrieveImageHeader(_aeTitle, this.StudyInstanceUid, this.SeriesInstanceUid, this.SopInstanceUid))
 					{
 						DicomFile imageHeader = new DicomFile();
 						imageHeader.Load(imageHeaderStream);
 						result = imageHeader;
 					}
-
-					statsClock.Stop();
 
 					break;
 				}

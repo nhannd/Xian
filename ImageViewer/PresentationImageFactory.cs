@@ -49,16 +49,28 @@ namespace ClearCanvas.ImageViewer
 	{
 		private readonly StudyTree _studyTree;
 
+		/// <summary>
+		/// Constructs a new <see cref="PresentationImageFactory"/>.
+		/// </summary>
+		/// <param name="studyTree">The study tree for which images are to be built.</param>
 		public PresentationImageFactory(StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 		}
 
+		/// <summary>
+		/// Gets the study tree for which images are to be built.
+		/// </summary>
 		public StudyTree StudyTree
 		{
 			get { return _studyTree; }
 		}
 
+		/// <summary>
+		/// Creates the presentation images for a given SOP instance.
+		/// </summary>
+		/// <param name="sop">The SOP instance for which presentation images are to be created.</param>
+		/// <returns>A list of created presentation images.</returns>
 		public virtual List<IPresentationImage> CreateImages(Sop sop)
 		{
 			if (sop is ImageSop)
@@ -73,6 +85,11 @@ namespace ClearCanvas.ImageViewer
 			return new List<IPresentationImage>();
 		}
 
+		/// <summary>
+		/// Creates the presentation images for a given key object selection document.
+		/// </summary>
+		/// <param name="keyObjectDocument">The key object selection document from which presentation images are to be created.</param>
+		/// <returns>A list of created presentation images.</returns>
 		protected virtual List<IPresentationImage> CreateImages(KeyObjectSelectionDocumentIod keyObjectDocument)
 		{
 			List<IPresentationImage> images = new List<IPresentationImage>();
@@ -97,8 +114,11 @@ namespace ClearCanvas.ImageViewer
 			return images;
 		}
 
-
-
+		/// <summary>
+		/// Creates the presentation images for a given image SOP.
+		/// </summary>
+		/// <param name="imageSop">The image SOP from which presentation images are to be created.</param>
+		/// <returns>A list of created presentation images.</returns>
 		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)
 		{
 			return Create(imageSop);

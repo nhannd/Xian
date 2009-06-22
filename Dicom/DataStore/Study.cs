@@ -441,6 +441,9 @@ namespace ClearCanvas.Dicom.DataStore
 			StudyXmlOutputSettings settings = new StudyXmlOutputSettings();
 			settings.IncludePrivateValues = StudyXmlTagInclusion.IgnoreTag;
 			settings.IncludeUnknownTags = StudyXmlTagInclusion.IgnoreTag;
+			settings.IncludeLargeTags = StudyXmlTagInclusion.IncludeTagExclusion;
+			settings.MaxTagLength = 2048;
+			
 			settings.IncludeSourceFileName = true;
 
 			//Ensure the existing stuff is loaded.

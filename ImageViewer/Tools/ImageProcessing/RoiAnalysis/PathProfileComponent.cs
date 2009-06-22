@@ -39,6 +39,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
@@ -92,17 +93,17 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		public bool ComputeProfile()
 		{
-			PolyLineInteractiveGraphic polyLine = GetSelectedPolyLine();
+			IPointsGraphic line = GetSelectedPolyline();
 
 			// For now, make sure the ROI is a polyline
-			if (polyLine == null || polyLine.PolyLine.Count != 2)
+			if (line == null || line.Points.Count != 2)
 			{
 				this.Enabled = false;
 				return false;
 			}
 
 			IImageGraphicProvider imageGraphicProvider =
-				polyLine.ParentPresentationImage as IImageGraphicProvider;
+				line.ParentPresentationImage as IImageGraphicProvider;
 
 			if (imageGraphicProvider == null)
 			{
@@ -119,9 +120,9 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 				return false;
 			}
 
-			polyLine.CoordinateSystem = CoordinateSystem.Source;
-			Point pt1 = new Point((int)polyLine.PolyLine[0].X, (int)polyLine.PolyLine[0].Y);
-			Point pt2 = new Point((int)polyLine.PolyLine[1].X, (int)polyLine.PolyLine[1].Y);
+			line.CoordinateSystem = CoordinateSystem.Source;
+			Point pt1 = new Point((int)line.Points[0].X, (int)line.Points[0].Y);
+			Point pt2 = new Point((int)line.Points[1].X, (int)line.Points[1].Y);
 
 			if (pt1.X < 0 || pt1.X > image.Columns - 1 ||
 				pt2.X < 0 || pt2.X > image.Columns - 1 ||
@@ -154,22 +155,22 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 
 		protected override bool CanAnalyzeSelectedRoi()
 		{
-			return GetSelectedPolyLine() == null ? false : true;
+			return GetSelectedPolyline() == null ? false : true;
 		}
 
-		private PolyLineInteractiveGraphic GetSelectedPolyLine()
+		private IPointsGraphic GetSelectedPolyline()
 		{
 			RoiGraphic graphic = GetSelectedRoi();
 
 			if (graphic == null)
 				return null;
 
-			PolyLineInteractiveGraphic polyLine = graphic.Roi as PolyLineInteractiveGraphic;
+			IPointsGraphic line = graphic.Subject as IPointsGraphic;
 
-			if (polyLine == null)
+			if (line == null)
 				return null;
 
-			return polyLine;
+			return line;
 		}
 
 

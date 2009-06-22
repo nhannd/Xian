@@ -36,6 +36,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 	/// <summary>
 	/// Static class defining DICOM code sequences used in key object selections.
 	/// </summary>
+	/// <remarks>
+	/// <para>Due to the relatively new nature of key object support in the ClearCanvas Framework, this API may be more prone to changes in the next release.</para>
+	/// </remarks>
 	public static class KeyObjectSelectionCodeSequences
 	{
 		/// <summary>

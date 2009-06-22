@@ -33,6 +33,9 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Abstract base class for an <see cref="IPriorStudyFinder"/>.
+	/// </summary>
 	public abstract class PriorStudyFinder : IPriorStudyFinder
 	{
 		private class NullPriorStudyFinder : IPriorStudyFinder
@@ -60,14 +63,23 @@ namespace ClearCanvas.ImageViewer
 			#endregion
 		}
 
+		/// <summary>
+		/// Convenient static property for an <see cref="IPriorStudyFinder"/> that does nothing.
+		/// </summary>
 		public static readonly IPriorStudyFinder Null = new NullPriorStudyFinder();
 
 		private IImageViewer _viewer;
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
 		protected PriorStudyFinder()
 		{
 		}
 
+		/// <summary>
+		/// Gets the associated <see cref="IImageViewer"/>.
+		/// </summary>
 		protected IImageViewer Viewer
 		{
 			get { return _viewer; }	
@@ -75,13 +87,22 @@ namespace ClearCanvas.ImageViewer
 
 		#region IPriorStudyFinder Members
 
+		/// <summary>
+		/// Sets the <see cref="IImageViewer"/> for which prior studies are to found (and added/loaded).
+		/// </summary>
 		public void SetImageViewer(IImageViewer viewer)
 		{
 			_viewer = viewer;
 		}
 
+		/// <summary>
+		/// Gets the list of prior studies.
+		/// </summary>
 		public abstract StudyItemList FindPriorStudies();
 
+		/// <summary>
+		/// Cancels the search for prior studies.
+		/// </summary>
 		public abstract void Cancel();
 
 		#endregion

@@ -33,7 +33,9 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
+using System.Threading;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.RoiGraphics;
 using NUnit.Framework;
 using System.Drawing;
 using System;
@@ -442,42 +444,53 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		[Test]
 		public void TestRotationConstraints()
 		{
-			CompositeGraphic sceneGraph = CreateTestSceneGraph();
-			CompositeImageGraphic imageComposite = (CompositeImageGraphic)sceneGraph.Graphics[0];
-			ImageGraphic image = (ImageGraphic)imageComposite.Graphics[0];
-			CompositeGraphic primitiveOwner = (CompositeGraphic)imageComposite.Graphics[1];
-			Graphic primitive = (Graphic)primitiveOwner.Graphics[0];
-
-			AnnotationGraphic annotation = (AnnotationGraphic)imageComposite.Graphics[2];
-
+			SynchronizationContext oldContext = SynchronizationContext.Current;
+			if (oldContext == null)
+				SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
 			try
 			{
-				sceneGraph.SpatialTransform.RotationXY = 90;
-				imageComposite.SpatialTransform.RotationXY = 90;
-				primitiveOwner.SpatialTransform.RotationXY = 10;
-				primitive.SpatialTransform.RotationXY = -20;
-			}
-			catch(Exception)
-			{
-				Assert.Fail("These operations should not throw an exception!");
-			}
+				CompositeGraphic sceneGraph = CreateTestSceneGraph();
+				CompositeImageGraphic imageComposite = (CompositeImageGraphic) sceneGraph.Graphics[0];
+				ImageGraphic image = (ImageGraphic) imageComposite.Graphics[0];
+				CompositeGraphic primitiveOwner = (CompositeGraphic) imageComposite.Graphics[1];
+				Graphic primitive = (Graphic) primitiveOwner.Graphics[0];
 
-			Matrix cumulativeTransform;
-			try
-			{
-				imageComposite.SpatialTransform.RotationXY = 30;
-				//should throw; no non-90 degree rotations allowed on an image
-				cumulativeTransform = image.SpatialTransform.CumulativeTransform;
-				Assert.Fail("expected exception not thrown!");
+				RoiGraphic roiGraphic = (RoiGraphic) imageComposite.Graphics[2];
+
+				try
+				{
+					sceneGraph.SpatialTransform.RotationXY = 90;
+					imageComposite.SpatialTransform.RotationXY = 90;
+					primitiveOwner.SpatialTransform.RotationXY = 10;
+					primitive.SpatialTransform.RotationXY = -20;
+				}
+				catch (Exception)
+				{
+					Assert.Fail("These operations should not throw an exception!");
+				}
+
+				Matrix cumulativeTransform;
+				try
+				{
+					imageComposite.SpatialTransform.RotationXY = 30;
+					//should throw; no non-90 degree rotations allowed on an image
+					cumulativeTransform = image.SpatialTransform.CumulativeTransform;
+					Assert.Fail("expected exception not thrown!");
+				}
+				catch (ArgumentException)
+				{
+					imageComposite.SpatialTransform.RotationXY = 90;
+				}
+
+				roiGraphic.SpatialTransform.RotationXY = 100;
+				//should throw; no rotation allowed on a roi
+				cumulativeTransform = roiGraphic.SpatialTransform.CumulativeTransform;
 			}
-			catch(ArgumentException)
+			finally
 			{
-				imageComposite.SpatialTransform.RotationXY = 90;
+				if (oldContext != SynchronizationContext.Current)
+					SynchronizationContext.SetSynchronizationContext(oldContext);
 			}
-			
-			annotation.SpatialTransform.RotationXY = 100;
-			//should throw; no rotation allowed on a roi
-			cumulativeTransform = annotation.SpatialTransform.CumulativeTransform;
 		}
 
 		private static CompositeGraphic CreateTestSceneGraph()
@@ -492,9 +505,8 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			composite.Graphics.Add(leaf);
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
 
-			AnnotationGraphic annotation = new AnnotationGraphic(new EllipsePrimitive());
-			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
-			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(annotation);
+			RoiGraphic roiGraphic = new RoiGraphic(new EllipsePrimitive());
+			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(roiGraphic);
 
 			return sceneGraph;
 		}

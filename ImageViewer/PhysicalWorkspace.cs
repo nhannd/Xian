@@ -207,6 +207,13 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether the <see cref="IPhysicalWorkspace"/>'s layout
+		/// is locked.
+		/// </summary>
+		/// <remarks>
+		/// This property is useful for cases where a read-only layout is appropriate/desired.
+		/// </remarks>
 		public bool Locked
 		{
 			get { return ImageBoxes.Locked; }
@@ -250,12 +257,18 @@ namespace ClearCanvas.ImageViewer
 			remove { _drawingEvent -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when <see cref="Enabled"/> has changed.
+		/// </summary>
 		public event EventHandler EnabledChanged
 		{
 			add { _enabledChanged += value; }
 			remove { _enabledChanged -= value; }
 		}
 
+		/// <summary>
+		/// Occurs when <see cref="Locked"/> has changed.
+		/// </summary>
 		public event EventHandler LockedChanged
 		{
 			add { _lockedChanged += value; }

@@ -171,6 +171,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 						{
 							string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
 							DicomFile file = ((ILocalSopDataSource)sop.DataSource).File;
+
+							// make sure we anonymize a new instance, not the same instance that the Sop cache holds!!
+							file = new DicomFile(filename, file.MetaInfo.Copy(), file.DataSet.Copy());
 							anonymizer.Anonymize(file);
 							filePaths.Add(filename);
 							file.Save(filename);

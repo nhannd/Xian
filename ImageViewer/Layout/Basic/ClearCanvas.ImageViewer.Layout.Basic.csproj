@@ -125,7 +125,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="LayoutConfigurationApplicationComponent.cs" />
-    <Compile Include="LayoutToolViewEventArgs.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LayoutTool.cs" />
     <EmbeddedResource Include="SR.resx">

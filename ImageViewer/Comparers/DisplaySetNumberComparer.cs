@@ -31,26 +31,45 @@
 
 using System.Collections.Generic;
 using System;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
+	/// <summary>
+	/// <see cref="DisplaySetComparer"/> for sorting on <see cref="IDisplaySet.Number"/>.
+	/// </summary>
 	public class DisplaySetNumberComparer : DisplaySetComparer
 	{
+		/// <summary>
+		/// Defalt constructor.
+		/// </summary>
 		public DisplaySetNumberComparer()
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public DisplaySetNumberComparer(bool reverse)
 			: base(reverse)
 		{
 		}
 
+		/// <summary>
+		/// Gets the values to be compared for a given <see cref="IDisplaySet"/>.
+		/// </summary>
+		/// <remarks>
+		/// Returns <see cref="IDisplaySet.Number"/>, then <see cref="IDisplaySet.Name"/>.
+		/// </remarks>
 		protected IEnumerable<IComparable> GetCompareValues(DisplaySet displaySet)
 		{
 			yield return displaySet.Number;
 			yield return displaySet.Name;
 		}
 
+		/// <summary>
+		/// Compares two <see cref="IDisplaySet"/>s.
+		/// </summary>
 		public override int Compare(IDisplaySet x, IDisplaySet y)
 		{
 			if (x == y)

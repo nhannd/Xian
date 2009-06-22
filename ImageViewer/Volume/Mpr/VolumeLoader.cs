@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			catch (LoadSopsException e)
 			{
 				anyFailures = true;
-				successfulImagesInLoadFailure = e.SuccessfulImages;
+				successfulImagesInLoadFailure = e.Successful;
 				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 			}
 

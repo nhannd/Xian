@@ -206,6 +206,13 @@ namespace ClearCanvas.Dicom
             base.Count = 1;
         }
 
+		public override void SetEmptyValue()
+		{
+			_values = new string[0];
+			base.StreamLength = 0;
+			base.Count = 0;
+		}
+
     	/// <summary>
     	/// The number of values assigned to the attribute.
     	/// </summary>

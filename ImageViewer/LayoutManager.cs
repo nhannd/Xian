@@ -84,7 +84,11 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageViewer.LogicalWorkspace; }
 		}
 
-			protected PresentationImageFactory PresentationImageFactory
+		/// <summary>
+		/// Gets or sets the <see cref="PresentationImageFactory"/> that is used to create
+		/// <see cref="IPresentationImage"/>s.
+		/// </summary>
+		protected PresentationImageFactory PresentationImageFactory
 		{
 			get
 			{
@@ -139,6 +143,9 @@ namespace ClearCanvas.ImageViewer
 			OnLayoutCompleted();
 		}
 
+		/// <summary>
+		/// Called from <see cref="Layout"/> to signal that the layout is complete.
+		/// </summary>
 		protected virtual void OnLayoutCompleted()
 		{
 			_layoutCompleted = true;
@@ -174,6 +181,13 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Validates the <see cref="ILogicalWorkspace"/>.
+		/// </summary>
+		/// <remarks>
+		/// A <see cref="NoVisibleDisplaySetsException"/> is thrown if no
+		/// <see cref="IDisplaySet"/>s exist in the <see cref="ILogicalWorkspace"/>.
+		/// </remarks>
 		protected virtual void ValidateLogicalWorkspace()
 		{
 			foreach (IImageSet imageSet in _imageViewer.LogicalWorkspace.ImageSets)
@@ -353,6 +367,13 @@ namespace ClearCanvas.ImageViewer
 				SortDisplaySets(imageSet.DisplaySets);
 		}
 
+		/// <summary>
+		/// Adds new <see cref="IDisplaySet"/>s as prior studies are loaded.
+		/// </summary>
+		/// <remarks>After the initial layout has taken place, the <see cref="LayoutManager"/> observes
+		/// the <see cref="EventBroker.StudyLoaded"/> event and continually adds new <see cref="IDisplaySet"/>s
+		/// and <see cref="IImageSet"/>s as prior studies are loaded.
+		/// </remarks>
 		protected virtual void OnPriorStudyLoaded(Study study)
 		{
 			BuildFromStudy(study);
@@ -374,6 +395,15 @@ namespace ClearCanvas.ImageViewer
 			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
 		}
 
+		/// <summary>
+		/// Sorts the given <see cref="DisplaySetCollection"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>By default, sorts the <see cref="IDisplaySet"/>s and their <see cref="IPresentationImage"/>s using
+		/// the <see cref="IComparer{T}"/>s from <see cref="GetDisplaySetComparer"/> and <see cref="GetPresentationImageComparer"/>.</para>
+		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>, or to override this method entirely.</para>
+		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
+		/// </remarks>
 		protected void SortDisplaySets(DisplaySetCollection displaySets)
 		{
 			displaySets.Sort(GetDisplaySetComparer());
@@ -382,6 +412,14 @@ namespace ClearCanvas.ImageViewer
 				SortImages(displaySet.PresentationImages);
 		}
 
+		/// <summary>
+		/// Sorts the given <see cref="PresentationImageCollection"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>By default, sorts the <see cref="IPresentationImage"/>s using the <see cref="IComparer{T}"/> from <see cref="GetPresentationImageComparer"/>.</para>
+		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>, or to override this method entirely.</para>
+		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
+		/// </remarks>
 		protected void SortImages(PresentationImageCollection images)
 		{
 			images.Sort(GetPresentationImageComparer());

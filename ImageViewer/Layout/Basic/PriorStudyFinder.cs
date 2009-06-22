@@ -85,13 +85,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private static bool ShouldShowErrorMessage(LoadPriorStudiesException exception)
 		{
-			if (exception.GetNumberIncomplete() > 0)
+			if (exception.IncompleteCount > 0)
 				return true;
 
-			if (exception.GetNumberNotFound() > 0)
+			if (exception.NotFoundCount > 0)
 				return true;
 
-			if (exception.GetNumberUnknownFailures() > 0)
+			if (exception.UnknownFailureCount > 0)
 				return true;
 
 			return false;

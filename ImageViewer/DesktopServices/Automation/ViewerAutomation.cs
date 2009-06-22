@@ -298,13 +298,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 		}
 
-		private static ImageViewerComponent OpenStudies(OpenStudiesRequest args, string primaryStudyInstanceUid)
+		private static IImageViewer OpenStudies(OpenStudiesRequest args, string primaryStudyInstanceUid)
 		{
 			CompleteOpenStudyInfo(args.StudiesToOpen);
 			IDictionary<string, ApplicationEntity> serverMap = GetServerMap(args.StudiesToOpen);
 
-			OpenStudyHelper helper = new OpenStudyHelper();
-			helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
+			ImageViewerComponent viewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			List<LoadStudyArgs> loadStudyArgs = new List<LoadStudyArgs>();
 
 			foreach (OpenStudyInfo info in args.StudiesToOpen)
 			{
@@ -320,17 +320,16 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 						loader = "CC_STREAMING";
 				}
 
-				helper.AddStudy(info.StudyInstanceUid, server , loader);
+				loadStudyArgs.Add(new LoadStudyArgs(info.StudyInstanceUid, server, loader));
 			}
-
-			ImageViewerComponent viewer = helper.CreateViewer();
 
 			Exception loadException = null;
+
 			try
 			{
-				helper.LoadStudies(viewer);
+				viewer.LoadStudies(loadStudyArgs);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				loadException = e;
 			}
@@ -349,7 +348,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 			else
 			{
-				helper.LaunchViewer(viewer);
+				ImageViewerComponent.Launch(viewer, new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour));
 			}
 
 			//don't block waiting for the user to dismiss a dialog.

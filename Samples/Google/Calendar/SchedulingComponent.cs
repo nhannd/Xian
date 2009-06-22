@@ -231,7 +231,7 @@ namespace ClearCanvas.Samples.Google.Calendar
             IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
             if (viewer != null)
             {
-                Patient patient = CollectionUtils.FirstElement<Patient>(viewer.StudyTree.Patients.Values);
+                Patient patient = CollectionUtils.FirstElement<Patient>(viewer.StudyTree.Patients);
                 this.PatientInfo = string.Format("{0} {1}", patient.PatientId, patient.PatientsName);
 
                 _appointments.Items.Clear();

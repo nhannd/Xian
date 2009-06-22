@@ -40,8 +40,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class DisplaySetChangingEventArgs : EventArgs
 	{
-		private IDisplaySet _currentDisplaySet;
-		private IDisplaySet _newDisplaySet;
+		private readonly IDisplaySet _currentDisplaySet;
+		private readonly IDisplaySet _newDisplaySet;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DisplaySetChangingEventArgs"/>.

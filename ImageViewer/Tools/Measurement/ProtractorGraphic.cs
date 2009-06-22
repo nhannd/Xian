@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			Platform.CheckForNullReference(_arc, "_arc");
 		}
 
-		public override Roi CreateRoi()
+		public override Roi GetRoi()
 		{
 			return new ProtractorRoiInfo(this);
 		}

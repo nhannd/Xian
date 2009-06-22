@@ -97,9 +97,21 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets whether the workspace is currently enabled.
 		/// </summary>
 		bool Enabled { get; set; }
+
+		/// <summary>
+		/// Occurs when <see cref="Enabled"/> has changed.
+		/// </summary>
 		event EventHandler EnabledChanged;
 
+		/// <summary>
+		/// Gets or sets whether or not the <see cref="IPhysicalWorkspace"/>'s <see cref="IImageBox"/> layout
+		/// should be locked.
+		/// </summary>
 		bool Locked { get; set; }
+
+		/// <summary>
+		/// Occurs when <see cref="Locked"/> has changed.
+		/// </summary>
 		event EventHandler LockedChanged;
 
 		/// <summary>

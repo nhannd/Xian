@@ -57,7 +57,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		}
 
 		/// <summary>
-		/// Creates an instance of <see cref="BaseInstanceXml"/> based on the specified <see cref="DicomAttributeCollection"/>
+		/// Creates an instance of <see cref="BaseInstanceXml"/> based on the specified <see cref="DicomAttributeCollection"/>.
 		/// </summary>
 		/// <param name="collect1"></param>
 		/// <param name="collect2"></param>
@@ -88,6 +88,26 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					}
 				}
 			}
+
+			if (collect1 is IInstanceXmlDicomAttributeCollection && collect2 is IInstanceXmlDicomAttributeCollection)
+			{
+				IInstanceXmlDicomAttributeCollection collection2 = (IInstanceXmlDicomAttributeCollection) collect2;
+				foreach (DicomTag tag in ((IInstanceXmlDicomAttributeCollection)collect1).ExcludedTags)
+				{
+					if (collection2.ExcludedTags.Contains(tag))
+						PrivateCollection.ExcludedTagsHelper.Add(tag);
+				}
+			}
+		}
+
+		public new InstanceXmlDicomAttributeCollection Collection
+		{
+			get { return (InstanceXmlDicomAttributeCollection)base.Collection; }
+		}
+
+		internal IPrivateInstanceXmlDicomAttributeCollection PrivateCollection
+		{
+			get { return (IPrivateInstanceXmlDicomAttributeCollection)base.Collection; }
 		}
 	}
 }

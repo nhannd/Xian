@@ -44,6 +44,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
     }
 
+	/// <summary>
+	/// Exception thrown when an <see cref="IStudyLoader"/> with the specified
+	/// <see cref="LoaderName">name</see> could not be found.
+	/// </summary>
 	public class StudyLoaderNotFoundException : Exception
 	{
 		internal StudyLoaderNotFoundException(string loaderName)
@@ -51,6 +55,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			LoaderName = loaderName;
 		}
 
+		/// <summary>
+		/// Gets the name of the requested <see cref="IStudyLoader"/>.
+		/// </summary>
 		public readonly string LoaderName;
 	}
 	

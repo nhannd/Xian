@@ -49,7 +49,6 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		private PixelFormat _pixelFormat;
 		private GraphicsSource _graphicsSource;
 		private bool _useBufferedGraphics;
-		private bool _bufferedGraphicsNew;
 
 		private Bitmap _customImage;
 
@@ -64,7 +63,6 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		public TestImageRenderer()
 		{
 			_customBackBuffer = true;
-			_bufferedGraphicsNew = true;
 
 			Format = PixelFormat.Format24bppRgb;
 			Source = GraphicsSource.Default;
@@ -185,11 +183,7 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 				}
 				else
 				{
-					//if (_bufferedGraphicsNew)
-					{
-						_bufferedGraphicsNew = false;
-						Render(_bufferedGraphics.Graphics, size);
-					}
+					Render(_bufferedGraphics.Graphics, size);
 
 					DateTime start = DateTime.Now;
 					_bufferedGraphics.Render(target);
@@ -248,7 +242,6 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 				{
 					_context.MaximumBuffer = new Size(size.Width + 1, size.Height + 1);
 					_bufferedGraphics = _context.Allocate(target, new Rectangle(Point.Empty, size));
-					_bufferedGraphicsNew = true;
 				}
 			}
 		}
@@ -262,8 +255,6 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 				graphics.DrawImage(_customImage, 0, 0, size.Width, size.Height);
 			else
 				graphics.DrawImage(_image, 0, 0, size.Width, size.Height);
-
-			_bufferedGraphicsNew = false;
 
 			DateTime end = DateTime.Now;
 			_renderTime = _renderTime.Add(end.Subtract(start));

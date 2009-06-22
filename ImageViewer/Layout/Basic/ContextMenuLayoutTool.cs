@@ -192,6 +192,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     	private bool _showImageSetNames = false;
     	private bool _anyUnavailable = false;
 		private readonly IComparer<IImageSet> _comparer = new StudyDateComparer();
+		private readonly DefaultPatientReconciliationStrategy _patientReconciliationStrategy = new DefaultPatientReconciliationStrategy();
 
 		/// <summary>
         /// Constructor
@@ -232,7 +233,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				if (null == CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
 					delegate(IImageSet imageSet) { return imageSet.Uid == e.Study.StudyInstanceUID; }))
 				{
-					_imageSetGroups.Root.Add(CreateUnavailableImageSet(e.Study, e.Error));
+					PatientInformation info = new PatientInformation();
+					info.PatientId = e.Study.PatientId;
+					PatientInformation reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(info);
+
+					UnavailableImageSet imageSet = CreateUnavailableImageSet(e.Study, e.Error);
+					imageSet.PatientInfo = String.Format("{0} · {1}",
+						e.Study.PatientsName.FormattedName,
+						reconciled.PatientId);
+
+					_imageSetGroups.Root.Add(imageSet);
 				}
 			}
 		}

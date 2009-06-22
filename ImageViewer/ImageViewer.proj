@@ -22,8 +22,8 @@
 
   <PropertyGroup>
     <TargetPlatform>$(BuildPlatform)</TargetPlatform>
-    <ThinPackageOptions>ExcludeHttpDesktopServices+ExcludeShredHostService+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</ThinPackageOptions>
-    <DefaultOptions>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</DefaultOptions>
+    <ThinPackageOptions>ExcludeHttpDesktopServices+ExcludeShredHostService+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</ThinPackageOptions>
+    <DefaultOptions>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr+ExcludeSeriesDetails</DefaultOptions>
     <PackageOption>Normal</PackageOption>
     <!--<PackageOption>NormalEnterprise</PackageOption>-->
     <!--<PackageOption>Thin</PackageOption>-->

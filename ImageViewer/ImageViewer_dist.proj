@@ -52,9 +52,9 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr</OptionsFlags>-->
-        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
         <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>
       </PropertyGroup>
     </When>
@@ -180,6 +180,11 @@
   <ItemGroup>
     <StudyFiltersFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.dll" />
     <StudyFiltersFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SeriesDetailsFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\SeriesDetails\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.dll" />
+    <SeriesDetailsFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\SeriesDetails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -347,6 +352,9 @@
   <Target Name="Copy Study Filters">
     <Copy SourceFiles="@(StudyFiltersFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
+  <Target Name="Copy Series Details">
+    <Copy SourceFiles="@(SeriesDetailsFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
   <Target Name="Copy Reporting">
     <Copy SourceFiles="@(ReportingFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
@@ -398,6 +406,9 @@
     <RegexIsMatch Pattern="ExcludeStudyFilters" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyFilters" />
     </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeSeriesDetails" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeSeriesDetails" />
+    </RegexIsMatch>
     <RegexIsMatch Pattern="ExcludeReporting" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeReporting" />
     </RegexIsMatch>
@@ -423,6 +434,7 @@
     <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
     <CallTarget Condition="!$(ExcludeDicomEditor)" Targets="Copy Dicom Editor" />
     <CallTarget Condition="!$(ExcludeStudyFilters)" Targets="Copy Study Filters" />
+    <CallTarget Condition="!$(ExcludeSeriesDetails)" Targets="Copy Series Details" />
     <CallTarget Condition="!$(ExcludeReporting)" Targets="Copy Reporting" />
     <CallTarget Condition="!$(ExcludeHelpUpdate)" Targets="Copy Help Update" />
     <CallTarget Condition="!$(ExcludeDicomRemote)" Targets="Copy Dicom Remote Client Files" />

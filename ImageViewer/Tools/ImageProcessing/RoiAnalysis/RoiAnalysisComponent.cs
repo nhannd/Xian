@@ -30,12 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {

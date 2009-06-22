@@ -174,6 +174,9 @@ namespace ClearCanvas.ImageViewer
 			EventsHelper.Fire(_studyLoadedEvent, this, studyLoadedArgs);
 		}
 
+		/// <summary>
+		/// Occurs when a DICOM study has failed to load.
+		/// </summary>
 		public event EventHandler<StudyLoadFailedEventArgs> StudyLoadFailed
 		{
 			add { _studyLoadFailedEvent += value; }

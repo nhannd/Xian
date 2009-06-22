@@ -44,6 +44,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get { return (ITextGraphic) base.Graphic; }
 		}
 
+		protected override ITextGraphic FindTextGraphic()
+		{
+			IGraphic graphic = this.Graphic;
+			while (graphic != null && !(graphic is TextEditControlGraphic))
+				graphic = graphic.ParentGraphic;
+			return graphic as TextEditControlGraphic;
+		}
+
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			this.Graphic.CoordinateSystem = CoordinateSystem.Destination;

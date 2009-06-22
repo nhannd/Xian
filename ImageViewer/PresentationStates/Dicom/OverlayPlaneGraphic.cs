@@ -37,7 +37,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
@@ -60,8 +59,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private readonly OverlayPlaneSource _source;
 		private string _label;
 		private string _description;
-		private OverlaySubtype _subtype;
-		private OverlayType _type;
+		private OverlayPlaneSubtype _subtype;
+		private OverlayPlaneType _type;
 		private ushort _grayPresentationValue = 0;
 		private Color? _color;
 
@@ -110,7 +109,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_label = overlayPlaneIod.OverlayLabel;
 			_description = overlayPlaneIod.OverlayDescription;
 			_type = overlayPlaneIod.OverlayType;
-			_subtype = overlayPlaneIod.OverlaySubtype;
+			_subtype = (OverlayPlaneSubtype) overlayPlaneIod.OverlaySubtype;
 			_source = source;
 
 			GrayscaleImageGraphic overlayImageGraphic = CreateOverlayImageGraphic(overlayPlaneIod, overlayPixelData);
@@ -158,7 +157,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				7, // the high bit is now 7 after upconverting
 				false, false, // overlays aren't signed and don't get inverted
 				1, 0, // overlays have no rescale
-				new byte[rows * columns]); // new empty pixel buffer
+				new byte[rows*columns]); // new empty pixel buffer
 
 			this.Color = System.Drawing.Color.PeachPuff;
 			base.Graphics.Add(_overlayGraphic);
@@ -178,7 +177,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private void OnCloneComplete()
 		{
 			_overlayGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic graphic) { return graphic is GrayscaleImageGraphic; }) as GrayscaleImageGraphic;
+			                                              delegate(IGraphic graphic) { return graphic is GrayscaleImageGraphic; }) as GrayscaleImageGraphic;
 		}
 
 		private static GrayscaleImageGraphic CreateOverlayImageGraphic(OverlayPlane overlayPlaneIod, byte[] overlayData)
@@ -281,7 +280,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets a value indicating the type of content represented by the overlay plane.
 		/// </summary>
-		public OverlayType Type
+		public OverlayPlaneType Type
 		{
 			get { return _type; }
 			protected set { _type = value; }
@@ -290,7 +289,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Gets a value identifying the intended purpose of the overlay.
 		/// </summary>
-		public OverlaySubtype Subtype
+		public OverlayPlaneSubtype Subtype
 		{
 			get { return _subtype; }
 			protected set { _subtype = value; }
@@ -383,7 +382,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			GrayscalePixelData pixelData = _overlayGraphic.PixelData;
 			return OverlayData.CreateOverlayData(
 				pixelData.Rows, pixelData.Columns,
-				pixelData.BitsStored, 
+				pixelData.BitsStored,
 				pixelData.BitsAllocated,
 				pixelData.HighBit,
 				bigEndianWords,
@@ -566,26 +565,5 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		}
 
 		#endregion
-	}
-
-	/// <summary>
-	/// Enumeration to indicate the source of an <see cref="OverlayPlaneGraphic"/>.
-	/// </summary>
-	public enum OverlayPlaneSource
-	{
-		/// <summary>
-		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was defined in the image SOP or the image SOP referenced by the presentation state SOP.
-		/// </summary>
-		Image,
-
-		/// <summary>
-		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was defined in the presentation state SOP.
-		/// </summary>
-		PresentationState,
-
-		/// <summary>
-		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was user-created.
-		/// </summary>
-		User
 	}
 }

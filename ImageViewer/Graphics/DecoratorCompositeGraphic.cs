@@ -104,15 +104,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Creates an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by the <see cref="DecoratedGraphic"/>.
+		/// Gets an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by the <see cref="DecoratedGraphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// Decorated graphics that do not describe a region of interest may return null.
 		/// </remarks>
 		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the decorated graphic does not describe a region of interest.</returns>
-		public override Roi CreateRoi()
+		public override Roi GetRoi()
 		{
-			return this.DecoratedGraphic.CreateRoi();
+			return this.DecoratedGraphic.GetRoi();
 		}
 	}
 }

@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="roiClosedOnly">
 		/// True if this graphic should only be treated as a
 		/// closed polygon for the purposes of ROI computation
-		/// (<seealso cref="CreateRoi"/>).
+		/// (<seealso cref="GetRoi"/>).
 		/// </param>
 		public PolylineGraphic(bool roiClosedOnly) : this()
 		{
@@ -150,11 +150,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating that the <see cref="CreateRoi"/> method
+		/// Gets or sets a value indicating that the <see cref="GetRoi"/> method
 		/// should assume the shape should always be a closed polygon.
 		/// </summary>
 		/// <remarks>
-		/// If True, then <see cref="CreateRoi"/> will only ever return
+		/// If True, then <see cref="GetRoi"/> will only ever return
 		/// <see cref="PolygonalRoi"/> objects (or null, if the shape is not a closed polygon).
 		/// If False, then the method will return <see cref="PolygonalRoi"/> or <see cref="LinearRoi"/>
 		/// depending on the current shape (or null, if the shape is neither a closed polygon nor
@@ -248,13 +248,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Creates an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by this <see cref="Graphic"/>.
+		/// Gets an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by this <see cref="Graphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// Graphic objects that do not describe a region of interest may return null.
 		/// </remarks>
 		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
-		public override Roi CreateRoi()
+		public override Roi GetRoi()
 		{
 			if (_points.Count == 2 && !_roiClosedOnly)
 			{
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				return new PolygonalRoi(this);
 			}
-			return base.CreateRoi();
+			return base.GetRoi();
 		}
 
 		private void OnPointsItemAdded(object sender, IndexEventArgs e)

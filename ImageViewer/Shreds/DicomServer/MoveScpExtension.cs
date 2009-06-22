@@ -34,11 +34,14 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -169,10 +172,29 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			SendStudiesRequest request = new SendStudiesRequest();
 			request.StudyInstanceUids = studyUids;
 			request.DestinationAEInformation = remoteAEInfo;
+
+			AuditedInstances instances = new AuditedInstances();
+			EventResult result = EventResult.Success;
+
 			lock (_syncLock)
 			{
-				SendOperationReference reference = DicomSendManager.Instance.SendStudies(request, UpdateProgress);
-				_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
+				try
+				{
+					foreach (IStudy study in DataStoreQueryHelper.GetStudies(studyUids))
+						instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+					SendOperationReference reference = DicomSendManager.Instance.SendStudies(request, UpdateProgress);
+					_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
+				}
+				catch
+				{
+					result = EventResult.MajorFailure;
+					throw;
+				}
+				finally
+				{
+					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
+				}
 			}
 		}
 
@@ -185,10 +207,28 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			request.StudyInstanceUid = studyInstanceUid;
 			request.SeriesInstanceUids = seriesUids;
 
+			AuditedInstances instances = new AuditedInstances();
+			EventResult result = EventResult.Success;
+
 			lock (_syncLock)
 			{
-				SendOperationReference reference = DicomSendManager.Instance.SendSeries(request, UpdateProgress);
-				_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
+				try
+				{
+					IStudy study = DataStoreQueryHelper.GetStudy(studyInstanceUid);
+					instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+					SendOperationReference reference = DicomSendManager.Instance.SendSeries(request, UpdateProgress);
+					_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
+				}
+				catch
+				{
+					result = EventResult.MajorFailure;
+					throw;
+				}
+				finally
+				{
+					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
+				}
 			}
 		}
 
@@ -203,10 +243,28 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			request.SeriesInstanceUid = seriesInstanceUid;
 			request.SopInstanceUids = sopInstanceUids;
 
+			EventResult result = EventResult.Success;
+			AuditedInstances instances = new AuditedInstances();
+
 			lock (_syncLock)
 			{
-				SendOperationReference reference = DicomSendManager.Instance.SendSopInstances(request, UpdateProgress);
-				_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
+				try
+				{
+					IStudy study = DataStoreQueryHelper.GetStudy(studyInstanceUid);
+					instances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+
+					SendOperationReference reference = DicomSendManager.Instance.SendSopInstances(request, UpdateProgress);
+					_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
+				}
+				catch
+				{
+					result = EventResult.MajorFailure;
+					throw;
+				}
+				finally
+				{
+					AuditHelper.LogBeginSendInstances(remoteAEInfo.AETitle, remoteAEInfo.HostName, instances, EventSource.CurrentProcess, result);
+				}
 			}
 		}
 

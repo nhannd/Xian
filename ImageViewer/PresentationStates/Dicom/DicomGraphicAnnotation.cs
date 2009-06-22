@@ -294,7 +294,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				if (textItem.AnchorPointAnnotationUnits == GraphicAnnotationSequenceItem.AnchorPointAnnotationUnits.Display)
 					anchor = GetPointInSourceCoordinates(displayedArea, anchor);
 
-				callout.EndPoint = anchor;
+				callout.AnchorPoint = anchor;
 				callout.ShowArrowhead = annotationBounds.IsEmpty; // show arrowhead if graphic annotation bounds are empty
 
 				if (textItem.BoundingBoxTopLeftHandCorner.HasValue && textItem.BoundingBoxBottomRightHandCorner.HasValue)
@@ -308,14 +308,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						bottomRight = GetPointInSourceCoordinates(displayedArea, bottomRight);
 					}
 
-					callout.Location = Vector.Midpoint(topLeft, bottomRight);
+					callout.TextLocation = Vector.Midpoint(topLeft, bottomRight);
 				}
 				else
 				{
 					if (!annotationBounds.IsEmpty)
-						callout.Location = annotationBounds.Location - new SizeF(30, 30);
+						callout.TextLocation = annotationBounds.Location - new SizeF(30, 30);
 					else
-						callout.Location = anchor - new SizeF(30, 30);
+						callout.TextLocation = anchor - new SizeF(30, 30);
 				}
 
 				StandardStatefulGraphic statefulCallout = new StandardStatefulGraphic(callout);

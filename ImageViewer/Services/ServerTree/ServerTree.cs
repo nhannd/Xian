@@ -69,7 +69,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
                 });
 		}
 
-		private static void OnServerConfigurationChanged(object sender, EventArgs e)
+		internal static string GetServersXmlFileName()
+		{
+			return Path.Combine(Platform.InstallDirectory, MyServersXmlFile);
+		}
+
+    	private static void OnServerConfigurationChanged(object sender, EventArgs e)
 		{
 			try
 			{
@@ -280,7 +285,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		public void Save()
 		{
-			Stream fStream = new FileStream(MyServersXmlFile, FileMode.Create, FileAccess.Write, FileShare.Read);
+			Stream fStream = new FileStream(GetServersXmlFileName(), FileMode.Create, FileAccess.Write, FileShare.Read);
 			_serializer.Serialize(fStream, _rootNode);
             fStream.Close();
             return;
@@ -352,9 +357,10 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         {
             _rootNode = new ServerTreeRoot();
 
-			if (File.Exists(MyServersXmlFile))
+			string file = GetServersXmlFileName();
+			if (File.Exists(file))
             {
-				Stream fStream = File.OpenRead(MyServersXmlFile);
+				Stream fStream = File.OpenRead(file);
 
                 using (fStream)
                 {

@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer
 		/// <value>The <see cref="IDisplaySet"/> associated with this <see cref="IImageBox"/>.
 		/// <b>null</b> if the <see cref="IImageBox"/> is empty.</value>
 		/// <remarks>
-		/// Setting this property to a <see cref="IDisplaySet"/> automatically populates the tiles
+		/// Setting this property to an <see cref="IDisplaySet"/> automatically populates the tiles
 		/// in this <see cref="IImageBox"/> with presentation images contained in the 
 		/// <see cref="IDisplaySet"/>.  Any <see cref="IDisplaySet"/> previously associated with
 		/// this <see cref="IImageBox"/> is removed.  Setting this property to <b>null</b>

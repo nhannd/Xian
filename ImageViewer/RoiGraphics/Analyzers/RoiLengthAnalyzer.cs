@@ -33,27 +33,43 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 {
+	/// <summary>
+	/// An <see cref="IRoiAnalyzer"/> that displays the length of a <see cref="RoiGraphic"/>.
+	/// </summary>
 	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
 	public class RoiLengthAnalyzer : IRoiAnalyzer
 	{
 		private Units _units = Units.Centimeters;
 
+		/// <summary>
+		/// Gets or sets the base unit of measurement in which analysis is performed.
+		/// </summary>
 		public Units Units
 		{
 			get { return _units; }
 			set { _units = value; }
 		}
 
+		/// <summary>
+		/// Checks if this analyzer class can analyze the given ROI.
+		/// </summary>
+		/// <param name="roi">The ROI to analyze.</param>
+		/// <returns>True if this class can analyze the given ROI; False otherwise.</returns>
 		public bool SupportsRoi(Roi roi)
 		{
 			return roi is IRoiLengthProvider;
 		}
 
+		/// <summary>
+		/// Analyzes the given ROI.
+		/// </summary>
+		/// <param name="roi">The ROI being analyzed.</param>
+		/// <param name="mode">The analysis mode.</param>
+		/// <returns>A string containing the analysis results, which can be appended to the analysis
+		/// callout of the associated <see cref="RoiGraphic"/>, if one exists.</returns>
 		public string Analyze(Roi roi, RoiAnalysisMode mode)
 		{
 			if (!SupportsRoi(roi))
@@ -80,6 +96,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
 		#region Public Static Helpers
 
+		/// <summary>
+		/// Helper method to compute the physical distance between two pixels.
+		/// </summary>
+		/// <param name="point1">The first point.</param>
+		/// <param name="point2">The second point.</param>
+		/// <param name="normalizedPixelSpacing">The normalized pixel spacing of the image.</param>
+		/// <param name="units">The units in which the resultant distance is given, passed by reference. If <paramref name="normalizedPixelSpacing"/> is not calibrated, then the passed variable will change to <see cref="RoiGraphics.Units.Pixels"/>.</param>
+		/// <returns>The distance between the two points, in units of <paramref name="units"/>.</returns>
 		public static double CalculateLength(
 			PointF point1,
 			PointF point2,
@@ -111,17 +135,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			}
 
 			return length;
-		}
-
-		public static double CalculateLength(
-			IPointsGraphic polylineGraphic,
-			PixelSpacing normalizedPixelSpacing,
-			ref Units units)
-		{
-			return CalculateLength(
-				polylineGraphic.Points[0],
-				polylineGraphic.Points[1],
-				normalizedPixelSpacing, ref units);
 		}
 
 		#endregion

@@ -48,6 +48,7 @@
     </Compile>
     <Compile Include="StreamingAnalysisComponent.cs" />
     <Compile Include="StreamingAnalysisTool.cs" />
+    <Compile Include="StudyXmlTestTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

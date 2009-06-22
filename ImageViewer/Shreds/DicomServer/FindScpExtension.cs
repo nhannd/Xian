@@ -36,6 +36,8 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.ImageViewer.Services.Auditing;
+using System.Net;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -54,6 +56,33 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
 			sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 			yield return sop;
+		}
+
+		private static string GetRemoteHostName(AssociationParameters association)
+		{
+			string remoteHostName = null;
+			try
+			{
+				if (association.RemoteEndPoint != null)
+				{
+					try
+					{
+						IPHostEntry entry = Dns.GetHostEntry(association.RemoteEndPoint.Address);
+						remoteHostName = entry.HostName;
+					}
+					catch
+					{
+						remoteHostName = association.RemoteEndPoint.Address.ToString();
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				remoteHostName = null;
+				Platform.Log(LogLevel.Warn, e, "Unable to resolve remote host name for auditing.");
+			}
+
+			return remoteHostName;
 		}
 
 		public override bool OnReceiveRequest(Dicom.Network.DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
@@ -86,23 +115,47 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				catch (Exception e)
 				{
 					Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-					DicomMessage errorResponse = new DicomMessage();
-					server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-												 DicomStatuses.QueryRetrieveUnableToProcess);
 
-					return true;
+					try
+					{
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						                         DicomStatuses.QueryRetrieveUnableToProcess);
+
+						return true;
+					}
+					finally
+					{
+						AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure);
+					}
 				}
 
-				DicomMessage finalResponse = new DicomMessage();
-				server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
+				try
+				{
+					DicomMessage finalResponse = new DicomMessage();
+					server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-				return true;
+					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.Success);
+					return true;
+				}
+				catch
+				{
+					AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure);
+					throw;
+				}
 			}
 
-			Platform.Log(LogLevel.Error, "Unexpected Study Root Query/Retrieve level: {0}", level);
-			server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
-									 DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
-			return true;
+			try
+			{
+				Platform.Log(LogLevel.Error, "Unexpected Study Root Query/Retrieve level: {0}", level);
+				server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
+										 DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
+				return true;
+			}
+			finally
+			{
+				AuditHelper.LogQueryReceived(association.CallingAE, GetRemoteHostName(association), EventResult.SeriousFailure);
+			}
 		}
 	}
 }

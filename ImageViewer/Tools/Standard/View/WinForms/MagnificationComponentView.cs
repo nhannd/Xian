@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -52,9 +53,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		#region IMagnificationView Members
 
-		public void Open(float magnificationFactor, PresentationImage image, IMouseInformation mouseInformation)
+		public void Open(float magnificationFactor, PresentationImage image, Point location)
 		{
-			_form = new MagnificationForm(magnificationFactor, image, mouseInformation.Location);
+			_form = new MagnificationForm(magnificationFactor, image, location);
 			_form.Show();
 		}
 
@@ -67,12 +68,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			}
 		}
 
-		public void UpdateMouseInformation(IMouseInformation mouseInformation)
+		public void UpdateMouseLocation(Point location)
 		{
 			if (_form == null)
 				throw new InvalidOperationException("Open must be called before UpdateMouseInformation");
 
-			_form.UpdateMousePosition(mouseInformation.Location);
+			_form.UpdateMousePosition(location);
 		}
 
 		#endregion

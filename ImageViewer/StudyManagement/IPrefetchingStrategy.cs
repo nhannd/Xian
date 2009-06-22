@@ -46,17 +46,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		string Name { get; }
 
 		/// <summary>
-		/// Gets the friendly description of the prefetching strategy
+		/// Gets the friendly description of the prefetching strategy.
 		/// </summary>
 		string Description { get; }
 
 		/// <summary>
-		/// Starts prefetching pixel data in the background.
+		/// Starts prefetching pixel data in the background for the images
+		/// that have already been added into <paramref name="imageViewer"/>.
 		/// </summary>
-		/// <param name="imageViewer"></param>
-		/// <remarks>
-		/// Use <paramref name="imageViewer"/> to determine how prefetching is done.
-		/// </remarks>
 		void Start(IImageViewer imageViewer);
 
 		/// <summary>

@@ -50,10 +50,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 	public interface IMagnificationView : IView
 	{
-		void Open(float magnificationFactor, PresentationImage image, IMouseInformation mouseInformation);
+		void Open(float magnificationFactor, PresentationImage image, Point location);
 		void Close();
 		
-		void UpdateMouseInformation(IMouseInformation mouseInformation);
+		void UpdateMouseLocation(Point location);
 	}
 
 
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public MagnificationTool()
 			: base(SR.TooltipMagnification)
 		{
-			base.Behaviour |= MouseButtonHandlerBehaviour.ConstrainToTile | MouseButtonHandlerBehaviour.SuppressContextMenu;
+			base.Behaviour |= MouseButtonHandlerBehaviour.SuppressContextMenu;
 		}
 
 		public ActionModelNode MagnificationMenuModel
@@ -232,7 +232,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				MagnificationViewExtensionPoint extensionPoint = new MagnificationViewExtensionPoint();
 				IMagnificationView view = (IMagnificationView)ViewFactory.CreateView(extensionPoint);
 
-				view.Open(ToolSettings.Default.MagnificationFactor, (PresentationImage)SelectedPresentationImage, mouseInformation);
+				view.Open(ToolSettings.Default.MagnificationFactor, 
+					(PresentationImage)SelectedPresentationImage, mouseInformation.Location);
+
 				_view = view;
 				return true;
 			}
@@ -247,7 +249,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (_view != null)
 			{
-				_view.UpdateMouseInformation(mouseInformation);
+				_view.UpdateMouseLocation(ConstrainPointToTile(mouseInformation));
 				return true;
 			}
 
@@ -275,6 +277,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return _cursorToken;
 
 			return null;
+		}
+
+		private Point ConstrainPointToTile(IMouseInformation mouseInformation)
+		{
+			Rectangle rectangle = mouseInformation.Tile.ClientRectangle;
+			int x = mouseInformation.Location.X;
+			int y = mouseInformation.Location.Y;
+			if (x < rectangle.Left)
+				x = rectangle.Left;
+			if (x > rectangle.Right)
+				x = rectangle.Right;
+
+			if (y < rectangle.Top)
+				y = rectangle.Top;
+			if (y > rectangle.Bottom)
+				y = rectangle.Bottom;
+
+			return new Point(x, y);
 		}
 	}
 }

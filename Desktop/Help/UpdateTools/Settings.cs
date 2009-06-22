@@ -34,7 +34,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Desktop.Help.UpdateTools
 {
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Settings for the update tools.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class Settings
 	{

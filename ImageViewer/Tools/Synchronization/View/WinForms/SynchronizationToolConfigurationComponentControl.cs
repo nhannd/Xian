@@ -9,13 +9,13 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Synchronization.View.WinForms
 {
-	public partial class SynchronizationToolConfigComponentControl : UserControl, INotifyPropertyChanged
+	public partial class SynchronizationToolConfigurationComponentControl : UserControl, INotifyPropertyChanged
 	{
 		private event PropertyChangedEventHandler _propertyChanged;
-		private readonly SynchronizationToolConfigComponent _component;
+		private readonly SynchronizationToolConfigurationComponent _component;
 		private string _toleranceAngle;
 
-		public SynchronizationToolConfigComponentControl(SynchronizationToolConfigComponent component)
+		public SynchronizationToolConfigurationComponentControl(SynchronizationToolConfigurationComponent component)
 		{
 			InitializeComponent();
 

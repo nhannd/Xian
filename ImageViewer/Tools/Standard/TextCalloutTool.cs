@@ -412,8 +412,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			callout.LineStyle = LineStyle.Solid;
 			callout.ShowArrowhead = true;
 
-			AnchorPointControlGraphic controlGraphic = new AnchorPointControlGraphic(callout);
-			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(controlGraphic);
+			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(callout);
 			statefulGraphic.State = statefulGraphic.CreateInactiveState();
 
 			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);

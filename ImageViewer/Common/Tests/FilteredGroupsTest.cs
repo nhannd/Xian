@@ -30,6 +30,7 @@
 #endregion
 
 #if UNIT_TESTS
+#pragma warning disable 1591,0419,1574,1587
 
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;

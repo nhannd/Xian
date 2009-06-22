@@ -40,6 +40,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -122,14 +123,30 @@ namespace ClearCanvas.ImageViewer
 		Separate
 	}
 
+	/// <summary>
+	/// Arguments for launching an <see cref="ImageViewerComponent"/>.
+	/// </summary>
 	public class LaunchImageViewerArgs
 	{
+		/// <summary>
+		/// Mandatory constructor.
+		/// </summary>
 		public LaunchImageViewerArgs(WindowBehaviour windowBehaviour)
 		{
 			this.WindowBehaviour = windowBehaviour;
 		}
 
+		/// <summary>
+		/// Gets the <see cref="WindowBehaviour"/> to be used to launch the <see cref="ImageViewerComponent"/>.
+		/// </summary>
 		public readonly WindowBehaviour WindowBehaviour;
+		
+		/// <summary>
+		/// Gets or sets the title to be used for the <see cref="ImageViewerComponent"/> when launched.
+		/// </summary>
+		/// <remarks>
+		/// Leave this value null if you want the title to be automatically determined.
+		/// </remarks>
 		public string Title;
 	}
 
@@ -146,9 +163,9 @@ namespace ClearCanvas.ImageViewer
 	[AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
 	public partial class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
 	{
-		internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
+		private class ImageViewerToolContext : ToolContext, IImageViewerToolContext
 		{
-			private ImageViewerComponent _component;
+			private readonly ImageViewerComponent _component;
 
 			internal ImageViewerToolContext(ImageViewerComponent component)
 			{
@@ -179,7 +196,7 @@ namespace ClearCanvas.ImageViewer
 		private ViewerShortcutManager _shortcutManager;
 		private ToolSet _toolSet;
 		private ILayoutManager _layoutManager;
-		private AsynchronousPriorStudyLoader _priorStudyLoader;
+		private readonly AsynchronousPriorStudyLoader _priorStudyLoader;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
 		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
@@ -226,11 +243,36 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
+		/// <summary>
+		/// <see cref="ImageViewerComponent"/>
+		/// taking a <see cref="LayoutManagerCreationParameters"/> to determine
+		/// how the <see cref="LayoutManager"/> should be created, as well as an
+		/// <see cref="IPriorStudyFinder"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		///	If <paramref name="creationParameters"/> is <see cref="LayoutManagerCreationParameters.Extended"/>,
+		/// then the <see cref="LayoutManagerExtensionPoint"/> is used to create the <see cref="LayoutManager"/>.  If
+		/// no extension exists, a simple layout manager is used.
+		/// </para>
+		/// <para>If <paramref name="priorStudyFinder"/> is null or <see cref="PriorStudyFinder.Null"/>, then the
+		/// <see cref="ImageViewerComponent"/> will not automatically search for priors.
+		/// </para>
+		/// </remarks>
 		public ImageViewerComponent(LayoutManagerCreationParameters creationParameters, IPriorStudyFinder priorStudyFinder)
 			: this(CreateLayoutManager(creationParameters), priorStudyFinder)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageViewerComponent"/>
+		/// with the specified <see cref="ILayoutManager"/> and <see cref="IPriorStudyFinder"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>If <paramref name="priorStudyFinder"/> is null or <see cref="PriorStudyFinder.Null"/>, then the
+		/// <see cref="ImageViewerComponent"/> will not automatically search for priors.
+		/// </para>
+		/// </remarks>
 		public ImageViewerComponent(ILayoutManager layoutManager, IPriorStudyFinder priorStudyFinder)
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
@@ -463,6 +505,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IPriorStudyLoader"/> that uses a given <see cref="IPriorStudyFinder"/> to search
+		/// for prior studies, and adds the studies to the <see cref="IImageViewer.StudyTree"/>.
+		/// </summary>
 		public IPriorStudyLoader PriorStudyLoader
 		{
 			get { return _priorStudyLoader; }
@@ -552,7 +598,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets the <see cref="ILayoutManager"/>
+		/// Gets the <see cref="ILayoutManager"/>
 		/// </summary>
 		protected ILayoutManager LayoutManager
 		{
@@ -564,6 +610,21 @@ namespace ClearCanvas.ImageViewer
 		#region Public methods
 
 		/// <summary>
+		/// Lays out the images in the <see cref="ImageViewerComponent"/> using
+		/// the current layout manager.
+		/// </summary>
+		/// <remarks>
+		/// Immediately after <see cref="ILayoutManager.Layout"/> is called, the
+		/// <see cref="PriorStudyLoader"/> then starts searching for priors
+		/// and adding them to the <see cref="StudyTree"/>.
+		/// </remarks>
+		public void Layout()
+		{
+			this.LayoutManager.Layout();
+			_priorStudyLoader.Start();
+		}
+
+		/// <summary>
 		/// Queries for studies matching a specified set of query parameters.
 		/// </summary>
 		/// <param name="queryParameters">The search criteria.</param>
@@ -572,7 +633,7 @@ namespace ClearCanvas.ImageViewer
 		/// of different servers.</param>
 		/// <param name="studyFinderName">The name of the <see cref="IStudyFinder"/> to use, which is specified
 		/// by <see cref="IStudyFinder.Name"/>.</param>
-		/// <returns></returns>
+		/// <exception cref="StudyFinderNotFoundException">Thrown when a matching <see cref="IStudyFinder"/> does not exist.</exception>
 		public static StudyItemList FindStudy(
 			QueryParameters queryParameters,
 			object targetServer,
@@ -583,6 +644,8 @@ namespace ClearCanvas.ImageViewer
 
 			return StudyFinders[studyFinderName].Query(queryParameters, targetServer);
 		}
+
+		#region Study Loading
 
 		/// <summary>
 		/// Loads a study with a specific Study Instance UID from a specific source.
@@ -623,7 +686,12 @@ namespace ClearCanvas.ImageViewer
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
 		/// </remarks>
 		/// <param name="loadStudyArgs">A <see cref="LoadStudyArgs"/> object containing information about the study to be loaded.</param>
-		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
+		/// <exception cref="InUseLoadStudyException">The specified study is in use and cannot be opened at this time.</exception>
+		/// <exception cref="NearlineLoadStudyException">The specified study is nearline and cannot be opened at this time.</exception>
+		/// <exception cref="OfflineLoadStudyException">The specified study is offline and cannot be opened at this time.</exception>
+		/// <exception cref="NotFoundLoadStudyException">The specified study could not be found.</exception>
+		/// <exception cref="LoadStudyException">One or more images could not be opened, or an unspecified error has occurred.</exception>
+		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
 			using (SingleStudyLoader loader = new SingleStudyLoader(this, loadStudyArgs))
@@ -631,6 +699,64 @@ namespace ClearCanvas.ImageViewer
 				loader.LoadStudy();
 			}
 		}
+
+		/// <summary>
+		/// Loads multiple studies, consolidating any errors that have occurred into a single
+		/// <see cref="LoadMultipleStudiesException"/>.
+		/// </summary>
+		/// <remarks>
+		/// This method of loading studies allows studies to be partially loaded.  When an error
+		/// has occurred, the exception is simply added to a list and studies continue to be loaded.
+		/// Once complete, if any errors have occurred, a <see cref="LoadMultipleStudiesException"/> is thrown.
+		/// If only a single study was requested, the behaviour is identical to <see cref="LoadStudy(LoadStudyArgs)"/>
+		/// and the exception will be one of those described for that method, not a <see cref="LoadMultipleStudiesException"/>.
+		/// </remarks>
+		/// <exception cref="InUseLoadStudyException">(When only a single study is requested) The specified study is in use and cannot be opened at this time.</exception>
+		/// <exception cref="NearlineLoadStudyException">(When only a single study is requested) The specified study is nearline and cannot be opened at this time.</exception>
+		/// <exception cref="OfflineLoadStudyException">(When only a single study is requested) The specified study is offline and cannot be opened at this time.</exception>
+		/// <exception cref="NotFoundLoadStudyException">(When only a single study is requested) The specified study could not be found.</exception>
+		/// <exception cref="LoadStudyException">(When only a single study is requested) One or more images could not be opened, or an unspecified error has occurred.</exception>
+		/// <exception cref="LoadMultipleStudiesException">Thrown when one or more of the specified studies has completely or partially failed to load.</exception>
+		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
+		public void LoadStudies(IList<LoadStudyArgs> loadStudyArgs)
+		{
+			if (loadStudyArgs.Count == 1)
+			{
+				LoadStudy(loadStudyArgs[0]);
+			}
+			else
+			{
+				List<Exception> loadStudyExceptions = new List<Exception>();
+				foreach (LoadStudyArgs args in loadStudyArgs)
+				{
+					try
+					{
+						LoadStudy(args);
+					}
+					catch (LoadStudyException e)
+					{
+						string message = String.Format("An error occurred while loading study '{0}'", args.StudyInstanceUid);
+						Platform.Log(LogLevel.Error, e, message);
+						loadStudyExceptions.Add(e);
+					}
+					catch (StudyLoaderNotFoundException e)
+					{
+						string message =
+							String.Format("An error occurred while loading study '{0}'; study loader '{1}' does not exist",
+							              args.StudyInstanceUid, args.StudyLoaderName);
+						Platform.Log(LogLevel.Error, e, message);
+						loadStudyExceptions.Add(e);
+					}
+				}
+
+				if (loadStudyExceptions.Count > 0)
+					throw new LoadMultipleStudiesException(loadStudyExceptions, loadStudyArgs.Count);
+			}
+		}
+
+		#endregion
+
+		#region File Loading
 
 		/// <summary>
 		/// Loads images from the specified file paths.
@@ -666,15 +792,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		/// <summary>
-		/// Lays out the images in the <see cref="ImageViewerComponent"/> using
-		/// the current layout manager.
-		/// </summary>
-		public void Layout()
-		{
-			this.LayoutManager.Layout();
-			_priorStudyLoader.Start();
-		}
+		#endregion
+
+		#region Utility Methods
 
 		/// <summary>
 		/// Tries to get a reference to an <see cref="IImageViewer"/> hosted by a workspace.
@@ -689,6 +809,9 @@ namespace ClearCanvas.ImageViewer
 			return workspace.Component as IImageViewer;
 		}
 
+		/// <summary>
+		/// Launches the specified <see cref="ImageViewerComponent"/> using the parameters specified in <paramref name="launchArgs"/>.
+		/// </summary>
 		public static void Launch(ImageViewerComponent imageViewer, LaunchImageViewerArgs launchArgs)
 		{
 			IDesktopWindow window = GetLaunchWindow(launchArgs.WindowBehaviour);
@@ -742,6 +865,9 @@ namespace ClearCanvas.ImageViewer
 			Launch(imageViewer, new LaunchImageViewerArgs(WindowBehaviour.Separate));
 		}
 
+		#endregion
+		#endregion
+
 		private static IDesktopWindow GetLaunchWindow(WindowBehaviour windowBehaviour)
 		{
 			if (windowBehaviour == WindowBehaviour.Auto)
@@ -766,8 +892,6 @@ namespace ClearCanvas.ImageViewer
 
 			return window;
 		}
-
-		#endregion
 
 		#region Disposal
 

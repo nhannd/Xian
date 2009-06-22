@@ -93,7 +93,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public string SpecificCharacterSet
 		{
-			get { return GetFirstSopInstanceXml().Collection[DicomTags.SpecificCharacterSet].ToString(); }
+			get { return GetFirstSopInstanceXml()[DicomTags.SpecificCharacterSet].ToString(); }
 		}
 
 		[QueryableProperty(DicomTags.StudyInstanceUid, IsHigherLevelUnique = true)]

@@ -117,7 +117,7 @@ namespace ClearCanvas.Desktop
 		}
 	}
 
-	[SettingsGroupDescription("Stores window positions for the application, so they can be restored the next time it runs.")]
+	[SettingsGroupDescription("Stores general settings for toolbars and menus.")]
 	[SettingsProvider(typeof (StandardSettingsProvider))]
 	internal sealed partial class ToolStripSettings {}
 }

@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -39,19 +37,29 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// A <see cref="StatefulCompositeGraphic"/> that is <see cref="ISelectableGraphic">selectable</see> and
-	/// <see cref="IFocussableGraphic">focusable</see>.
+	/// An interactive graphic that adds a standard set of states to a subject graphic, making it an <see cref="IStandardStatefulGraphic"/>.
 	/// </summary>
-	/// <remarks>
-	/// Factory methods can be overridden so that customized graphic states
-	/// can be created.
-	/// </remarks>
 	[Cloneable]
 	public class StandardStatefulGraphic : StatefulCompositeGraphic, IStandardStatefulGraphic, ISelectableGraphic, IFocussableGraphic
 	{
+		/// <summary>
+		/// Gets the default value of <see cref="FocusColor"/>.
+		/// </summary>
 		protected static readonly Color DefaultFocusColor = Color.Orange;
+
+		/// <summary>
+		/// Gets the default value of <see cref="FocusSelectedColor"/>.
+		/// </summary>
 		protected static readonly Color DefaultFocusSelectedColor = Color.Tomato;
+
+		/// <summary>
+		/// Gets the default value of <see cref="SelectedColor"/>.
+		/// </summary>
 		protected static readonly Color DefaultSelectedColor = Color.Tomato;
+
+		/// <summary>
+		/// Gets the default value of <see cref="InactiveColor"/>.
+		/// </summary>
 		protected static readonly Color DefaultInactiveColor = Color.Yellow;
 
 		[CloneIgnore]
@@ -96,24 +104,36 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.State = this.CreateInactiveState();
 		}
 
+		/// <summary>
+		/// Gets or sets the color in which to display the graphic when the <see cref="StatefulCompositeGraphic.State"/> is <see cref="FocussedGraphicState"/>.
+		/// </summary>
 		public Color FocusColor
 		{
 			get { return _focusColor; }
 			set { _focusColor = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the color in which to display the graphic when the <see cref="StatefulCompositeGraphic.State"/> is <see cref="SelectedGraphicState"/>.
+		/// </summary>
 		public Color SelectedColor
 		{
 			get { return _selectedColor; }
 			set { _selectedColor = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the color in which to display the graphic when the <see cref="StatefulCompositeGraphic.State"/> is <see cref="FocussedSelectedGraphicState"/>.
+		/// </summary>
 		public Color FocusSelectedColor
 		{
 			get { return _focusSelectedColor; }
 			set { _focusSelectedColor = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the color in which to display the graphic when the <see cref="StatefulCompositeGraphic.State"/> is <see cref="InactiveGraphicState"/>.
+		/// </summary>
 		public Color InactiveColor
 		{
 			get { return _inactiveColor; }
@@ -140,6 +160,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="StatefulCompositeGraphic.State"/> is initialized for the first time.
+		/// </summary>
 		protected override void OnStateInitialized()
 		{
 			base.OnStateInitialized();
@@ -154,6 +177,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				UpdateGraphicStyle(this, this.FocusSelectedColor, true);
 		}
 
+		/// <summary>
+		/// Called when the value of <see cref="StatefulCompositeGraphic.State"/> changes.
+		/// </summary>
+		/// <param name="e">An object containing data describing the specific state change.</param>
 		protected override void OnStateChanged(GraphicStateChangedEventArgs e)
 		{
 			base.OnStateChanged(e);
@@ -168,6 +195,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				OnEnterFocusSelectedState(e.MouseInformation);
 		}
 
+		/// <summary>
+		/// Called then the graphic <see cref="StatefulCompositeGraphic.State"/> enters the inactive state.
+		/// </summary>
+		/// <param name="mouseInformation">Information about the current mouse input.</param>
 		protected virtual void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
 			// If the currently selected graphic is this one,
@@ -184,18 +215,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.InactiveColor, false);
 			Draw();
-			//Trace.Write("EnterInactiveState\n");
 		}
 
+		/// <summary>
+		/// Called then the graphic <see cref="StatefulCompositeGraphic.State"/> enters the focused state.
+		/// </summary>
+		/// <param name="mouseInformation">Information about the current mouse input.</param>
 		protected virtual void OnEnterFocusState(IMouseInformation mouseInformation)
 		{
 			this.Focussed = true;
 
 			UpdateGraphicStyle(this, this.FocusColor, true);
 			Draw();
-			//Trace.Write("EnterFocusState\n");
 		}
 
+		/// <summary>
+		/// Called then the graphic <see cref="StatefulCompositeGraphic.State"/> enters the selected state.
+		/// </summary>
+		/// <param name="mouseInformation">Information about the current mouse input.</param>
 		protected virtual void OnEnterSelectedState(IMouseInformation mouseInformation)
 		{
 			this.Selected = true;
@@ -205,9 +242,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.SelectedColor, false);
 			Draw();
-			//Trace.Write("EnterSelectedState\n");
 		}
 
+		/// <summary>
+		/// Called then the graphic <see cref="StatefulCompositeGraphic.State"/> enters the selected and focused state.
+		/// </summary>
+		/// <param name="mouseInformation">Information about the current mouse input.</param>
 		protected virtual void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
 		{
 			this.Selected = true;
@@ -215,42 +255,41 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			UpdateGraphicStyle(this, this.FocusSelectedColor, true);
 			Draw();
-			//Trace.Write("EnterFocusSelectedState\n");
 		}
 
 		#region IStandardStatefulGraphic Members
 
 		/// <summary>
-		/// Creates a new instance of <see cref="InactiveGraphicState"/>.
+		/// Creates an inactive <see cref="GraphicState"/> for the current graphic.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>An inactive <see cref="GraphicState"/> for the current graphic.</returns>
 		public virtual GraphicState CreateInactiveState()
 		{
 			return new InactiveGraphicState(this);
 		}
 
 		/// <summary>
-		/// Creates a new instance of <see cref="FocussedGraphicState"/>.
+		/// Creates a focussed <see cref="GraphicState"/> for the current graphic.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>An inactive <see cref="GraphicState"/> for the current graphic.</returns>
 		public virtual GraphicState CreateFocussedState()
 		{
 			return new FocussedGraphicState(this);
 		}
 
 		/// <summary>
-		/// Creates a new instance of <see cref="SelectedGraphicState"/>.
+		/// Creates a selected <see cref="GraphicState"/> for the current graphic.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>An inactive <see cref="GraphicState"/> for the current graphic.</returns>
 		public virtual GraphicState CreateSelectedState()
 		{
 			return new SelectedGraphicState(this);
 		}
 
 		/// <summary>
-		/// Creates a new instance of <see cref="FocussedSelectedGraphicState"/>.
+		/// Creates a focussed and selected <see cref="GraphicState"/> for the current graphic.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>An inactive <see cref="GraphicState"/> for the current graphic.</returns>
 		public virtual GraphicState CreateFocussedSelectedState()
 		{
 			return new FocussedSelectedGraphicState(this);

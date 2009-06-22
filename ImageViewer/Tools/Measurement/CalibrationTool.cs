@@ -104,15 +104,24 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			Units units = Units.Centimeters;
 
-			double length = RoiLengthAnalyzer.CalculateLength(
-				roiGraphic.Subject as IPointsGraphic,
-			    image.Frame.NormalizedPixelSpacing, 
-				ref units);
+			IPointsGraphic line = roiGraphic.Subject as IPointsGraphic;
+			line.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				double length = RoiLengthAnalyzer.CalculateLength(
+					line.Points[0], line.Points[1],
+					image.Frame.NormalizedPixelSpacing,
+					ref units);
 
-			if (units == Units.Centimeters)
-				return length;
-			else
-				return 0.0;
+				if (units == Units.Centimeters)
+					return length;
+				else
+					return 0.0;
+			}
+			finally
+			{
+				line.ResetCoordinateSystem();
+			}
 		}
 
 		private void ApplyCalibration(double lengthInMm)

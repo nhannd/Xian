@@ -111,9 +111,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 					if (!attribute.IsEmpty)
 						return true;
 				}
-			}
 
-			return base.TryGetAttribute(tag, out attribute);
+				return base.TryGetAttribute(tag, out attribute);
+			}
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
@@ -126,9 +126,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 					if (!attribute.IsEmpty)
 						return true;
 				}
-			}
 
-			return base.TryGetAttribute(tag, out attribute);
+				return base.TryGetAttribute(tag, out attribute);
+			}
 		}
 	}
 }

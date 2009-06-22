@@ -40,6 +40,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A DICOM Image SOP Instance.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Note that there should no longer be any need to derive from this class; the <see cref="Sop"/>, <see cref="ImageSop"/>
+	/// and <see cref="Frame"/> classes are now just simple Bridge classes (see Bridge Design Pattern)
+	/// to <see cref="ISopDataSource"/> and <see cref="ISopFrameData"/>.  See the
+	/// remarks for <see cref="ISopDataSource"/> for more information.
+	/// </para>
+	/// <para>Also, for more information on 'transient references' and the lifetime of <see cref="Sop"/>s,
+	/// see <see cref="ISopReference"/>.
+	/// </para>
+	/// </remarks>
 	public class ImageSop : Sop
 	{
 		private readonly object _syncLock = new object();
@@ -92,10 +103,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the patient orientation.
 		/// </summary>
 		/// <remarks>
-		/// A <see cref="PatientOrientation"/> is returned even when no data is available; 
-		/// it will simply have values of "" for its 
-		/// <see cref="Dicom.Iod.PatientOrientation.Row"/> and 
-		/// <see cref="Dicom.Iod.PatientOrientation.Column"/> properties.
+		/// A <see cref="Dicom.Iod.PatientOrientation"/> is returned even when no data is available; 
+		/// the <see cref="Dicom.Iod.PatientOrientation.IsEmpty"/> property will be true.
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PatientOrientation PatientOrientation
@@ -208,7 +217,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the image orientation patient.
 		/// </summary>
 		/// <remarks>
-		/// Returns an <see cref="ImageOrientationPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
+		/// Returns an <see cref="Dicom.Iod.ImageOrientationPatient"/> object with zero for all its values
+		/// when no data is available or the existing data is bad/incorrect;  <see cref="Dicom.Iod.ImageOrientationPatient.IsNull"/>
+		/// will be true.
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual ImageOrientationPatient ImageOrientationPatient
@@ -220,7 +231,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the image position patient.
 		/// </summary>
 		/// <remarks>
-		/// Returns an <see cref="ImagePositionPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
+		/// Returns an <see cref="Dicom.Iod.ImagePositionPatient"/> object with zero for all its values when no data is
+		/// available or the existing data is bad/incorrect; <see cref="Dicom.Iod.ImagePositionPatient.IsNull"/> will be true.
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual ImagePositionPatient ImagePositionPatient
@@ -340,7 +352,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the pixel aspect ratio.
 		/// </summary>
 		/// <remarks>
-		/// A default value of 1/1 is returned if no data is available.
+		/// If no value exists in the image header, or the value is invalid, a <see cref="ClearCanvas.Dicom.Iod.PixelAspectRatio"/>
+		/// is returned whose <see cref="ClearCanvas.Dicom.Iod.PixelAspectRatio.IsNull"/> property evaluates to true.
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PixelAspectRatio PixelAspectRatio
@@ -387,6 +400,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region VOI LUT Module
 
+		/// <summary>
+		/// Gets the <see cref="VoiDataLut"/>s from the image header.
+		/// </summary>
 		public virtual IList<VoiDataLut> VoiDataLuts
 		{
 			get { return base.GetVoiDataLuts(); }
@@ -475,25 +491,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets pixel data in normalized form.
 		/// </summary>
-		/// <returns></returns>
 		/// <remarks>
-		/// <i>Normalized</i> pixel data means that:
-		/// <list type="Bullet">
-		/// <item>
-		/// <description>Grayscale pixel data is unchanged.</description>
-		/// </item>
-		/// <item>
-		/// <description>Colour pixel data is always converted
-		/// into ARGB format.</description>
-		/// </item>
-		/// <item>
-		/// <description>Pixel data is always uncompressed.</description>
-		/// </item>
-		/// </list>
-		/// Ensuring that the pixel data always meets the above criteria
-		/// allows clients to easily consume pixel data without having
-		/// to worry about the the multitude of DICOM photometric interpretations
-		/// and transfer syntaxes.
+		/// See the comments for <see cref="Frame"/> for an explanation of 'normalized' pixel data.
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual byte[] GetNormalizedPixelData()
@@ -502,12 +501,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Factory method to create the frame at <paramref name="index"/>.
+		/// Factory method to create the frame with the specified frame number.
 		/// </summary>
-		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
-		protected virtual Frame CreateFrame(int index)
+		/// <param name="frameNumber">The numeric identifier of the <see cref="Frame"/> to create; frame numbers are <b>one-based</b>.</param>
+		protected virtual Frame CreateFrame(int frameNumber)
 		{
-			return new Frame(this, index);
+			return new Frame(this, frameNumber);
 		}
 
 		/// <summary>
@@ -528,6 +527,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				frame.Validate();
 		}
 
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
+		/// <param name="disposing">True if disposing, false if finalizing.</param>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);

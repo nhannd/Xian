@@ -122,6 +122,21 @@ namespace ClearCanvas.ImageViewer.Services
 			}
 		}
 
+		private static AuditedInstances GetAuditedInstances(IEnumerable<DicomFile> files)
+		{
+			AuditedInstances instances = new AuditedInstances();
+			foreach (DicomFile file in files)
+			{
+				string patientId = file.DataSet[DicomTags.PatientId].GetString(0, "");
+				string name = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+				string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
+				
+				instances.AddInstance(patientId, name, studyInstanceUid, file.Filename);
+			}
+
+			return instances;
+		}
+
 		public static void PublishLocal(ICollection<DicomFile> files, bool isBackground)
 		{
 			if (files.Count == 0)
@@ -129,6 +144,15 @@ namespace ClearCanvas.ImageViewer.Services
 
 			string tempFileDirectory;
 			SaveFiles(files, "Local", out tempFileDirectory);
+
+			try
+			{
+				AuditHelper.LogImportStudies(GetAuditedInstances(files), EventSource.CurrentProcess, EventResult.Success);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, "Failed to audit imported instances for published files.");
+			}
 
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try
@@ -142,15 +166,11 @@ namespace ClearCanvas.ImageViewer.Services
 				request.IsBackground = isBackground;
 				client.Import(request);
 				client.Close();
-
-				AuditHelper.LogImportStudies(new AuditedInstances(true, tempFileDirectory), EventSource.CurrentProcess, EventResult.Success);
 			}
 			catch (Exception e)
 			{
 				client.Abort();
-				string message =
-					String.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})",
-						tempFileDirectory);
+				string message = String.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})", tempFileDirectory);
 				throw new DicomFilePublishingException(message, e);
 			}
 		}
@@ -180,9 +200,7 @@ namespace ClearCanvas.ImageViewer.Services
 			catch (Exception e)
 			{
 				client.Abort();
-				string message =
-					String.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})",
-						tempFileDirectory);
+				string message = String.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})", tempFileDirectory);
 				throw new DicomFilePublishingException(message, e);
 			}
 		}

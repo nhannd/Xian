@@ -13,7 +13,7 @@
     <Position X="3" Y="4.5" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\StandardGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.GraphicState" FixedFromPoint="true" FixedToPoint="true">
       <Path>
@@ -22,26 +22,11 @@
       </Path>
     </InheritanceLine>
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreateGraphicState" Collapsed="true">
-    <Position X="6" Y="1.75" Width="1.75" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\CreateGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="2.065" />
-        <Point X="6" Y="2.065" />
-      </Path>
-    </InheritanceLine>
-  </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.FocussedGraphicState" Collapsed="true">
     <Position X="6" Y="3.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\FocussedGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAGAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
       <Path>
@@ -56,7 +41,7 @@
     <Position X="6" Y="5.75" Width="2.25" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\FocussedSelectedGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAGAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
       <Path>
@@ -71,7 +56,7 @@
     <Position X="6" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\InactiveGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAEAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
       <Path>
@@ -86,7 +71,7 @@
     <Position X="6" Y="4.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\SelectedGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAGAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
       <Path>
@@ -96,70 +81,5 @@
         <Point X="6" Y="5.159" />
       </Path>
     </InheritanceLine>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.MoveGraphicState" Collapsed="true">
-    <Position X="6" Y="6.75" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\MoveGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAQGAABAAEAAAAAAAAAAABAAAAIAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="7.065" />
-        <Point X="6" Y="7.065" />
-      </Path>
-    </InheritanceLine>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.MoveControlPointGraphicState" Collapsed="true">
-    <Position X="6" Y="7.75" Width="2.25" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\MoveControlPointGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAQGQABAAEAAAAAAAAAAABCAAAIAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="8.065" />
-        <Point X="6" Y="8.065" />
-      </Path>
-    </InheritanceLine>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreatePolyLineGraphicState" Collapsed="true">
-    <Position X="9" Y="0.75" Width="2.25" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\CreatePolyLineGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAGQAAAAEAAAAAAAAAAAAiAAAIAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreateBoundableGraphicState" Collapsed="true">
-    <Position X="9" Y="1.75" Width="2.25" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\CreateBoundableGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAAGQAAAAEAAAAAAAAAAAAiAAAIAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.CreateRoiGraphicState" Collapsed="true">
-    <Position X="9" Y="3" Width="1.75" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\CreateROIGraphicState.cs</FileName>
-      <HashCode>AAAAQAACAGAAAAAEAAAAAAAgAAAAAAAAIAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.FocussedSelectedInteractiveGraphicState" Collapsed="true">
-    <Position X="9.25" Y="6.25" Width="3" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\FocussedSelectedInteractiveGraphicState.cs</FileName>
-      <HashCode>AAAAAAAAACAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.FocussedSelectedRoiGraphicState" Collapsed="true">
-    <Position X="9.25" Y="5.25" Width="2.5" />
-    <TypeIdentifier>
-      <FileName>InteractiveGraphics\FocussedSelectedROIGraphicState.cs</FileName>
-      <HashCode>AAAAAAAASGAAAAAEAAAAAAAgAAAAAAAAIAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
   </Class>
 </ClassDiagram>

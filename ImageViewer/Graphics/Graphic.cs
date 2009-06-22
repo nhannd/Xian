@@ -355,13 +355,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Creates an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by this <see cref="Graphic"/>.
+		/// Gets an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by this <see cref="Graphic"/>.
 		/// </summary>
 		/// <remarks>
 		/// Graphic objects that do not describe a region of interest may return null.
 		/// </remarks>
 		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
-		public virtual Roi CreateRoi()
+		public virtual Roi GetRoi()
 		{
 		    return null;
 		}

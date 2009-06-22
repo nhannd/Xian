@@ -1,110 +1,100 @@
-<Project DefaultTargets="Copy Database Files;Copy Rest of Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- ImageViewer specific postbuild step -->
-	<PropertyGroup>
-		<DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
-    <SourceEmptyDatabaseFile>$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
+<Project DefaultTargets="Copy Sample Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\..\</TrunkDirectory>
+    <JscriptDirectory>$(TrunkDirectory)\Jscript\bin\$(Configuration)</JscriptDirectory>
+    <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+    <DistributionDesktopConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DistributionDesktopConfig>
+    <DistributionShredHostConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</DistributionShredHostConfig>
   </PropertyGroup>
 
+  <Choose>
+    <When Condition=" '$(ProjectOutDir)' != '$(DistributionDirectory)' ">
+      <PropertyGroup>
+        <DatabaseDirectory>$(DistributionDirectory)\dicom_datastore</DatabaseDirectory>
+        <FileStoreDirectory>.\filestore</FileStoreDirectory>
+        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
+        <HibernateConfigurationFileDataSource>dicom_datastore\viewer.sdf</HibernateConfigurationFileDataSource>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DatabaseDirectory>$(TrunkDirectory)\dicom_datastore</DatabaseDirectory>
+        <FileStoreDirectory>$(TrunkDirectory)\dicom_datastore\filestore</FileStoreDirectory>
+        <DatabaseFile>$(DatabaseDirectory)\viewer.sdf</DatabaseFile>
+        <HibernateConfigurationFileDataSource>$(DatabaseFile)</HibernateConfigurationFileDataSource>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition=" '$(TargetPlatform)' != 'x86' ">
+      <PropertyGroup>
+        <PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- assumes Win32 -->
+      <PropertyGroup>
+        <PlatformSubFolder></PlatformSubFolder>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <PropertyGroup>
+
+    <!--Hibernate Configuration-->
+    <HibernateConfigurationFileName>ClearCanvas.Dicom.DataStore.cfg.xml</HibernateConfigurationFileName>
+    <HibernateConfigurationFileSource>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(HibernateConfigurationFileName)</HibernateConfigurationFileSource>
+
+  </PropertyGroup>
+
+  <!--What files get copied depends on which project we are building.  The only other
+  way to do this would be to have ImageViewerDesktop_dist.config and ImageViewerShredHost_dist.config, but they would be
+  pretty much identical except for the plugins.  Also, this way, you only have to do the upkeep on one file.-->
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
+    <DesktopBuild>true</DesktopBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
+    <DesktopBuild>false</DesktopBuild>
+    <ShredHostBuild>true</ShredHostBuild>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="$(DesktopBuild)">
+      <PropertyGroup>
+        <DistributionAppConfig>$(DistributionDesktopConfig)</DistributionAppConfig>
+       </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DistributionAppConfig>$(DistributionShredHostConfig)</DistributionAppConfig>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
   <ItemGroup>
-    <DatabaseFiles Include="$(SourceEmptyDatabaseFile)" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Google.GData.Client.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Google.GData.Calendar.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Google.GData.AccessControl.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Google.GData.Extensions.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Google.GData.SpreadSheets.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\View\WinForms\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.View.WinForms.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Mail\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.Mail.dll" />
+    <SampleProjectFiles Include="$(TrunkDirectory)\Samples\Google\Calendar\Mail\View\WinForms\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.Mail.View.WinForms.dll" />
   </ItemGroup>
 
-  <ItemGroup>
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\NHibernateDriver\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceer30EN.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceme30.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceoledb30.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceqp30.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlcese30.dll" />
-		<SqlCEFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll" />
-	</ItemGroup>
+  <Target Name="Copy Sample Files">
 
-	<ItemGroup>
-		<HibernateConfigurationFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml" />
-	</ItemGroup>
+    <MSBuild Projects="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)"/>
+    <Copy Condition="$(DesktopBuild)" SourceFiles="@(SampleProjectFiles)" DestinationFolder="$(PluginsDirectory)" />
 
-	<ItemGroup>
-		<DicomAssemblyFiles Include="$(SolutionDir)\..\..\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
-		<DicomAssemblyFiles Include="$(SolutionDir)\..\..\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll" />
-		<DicomAssemblyFiles Include="$(SolutionDir)\..\..\..\Dicom\OffisWrapper\cppwrapper\$(Configuration)\OffisDcm.dll" />
-		<DicomAssemblyFiles Include="$(SolutionDir)\..\..\..\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
-	</ItemGroup>
+  </Target>
 
-	<ItemGroup>
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\Codecs\bin\$(Configuration)\ClearCanvas.Codecs.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Tools\Standard\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Tools\Standard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\Desktop\Edit\bin\$(Configuration)\ClearCanvas.Desktop.Edit.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Explorer\Local\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.Tools.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Explorer\Dicom\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Rendering\BilinearInterpolation\bin\$(Configuration)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\..\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\Mail\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.Mail.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\Mail\View\WinForms\bin\$(Configuration)\ClearCanvas.Samples.Google.Calendar.Mail.View.WinForms.dll" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <SharedLibraryFiles Include="$(SolutionDir)\Google.GData.Client.dll" />
-    <SharedLibraryFiles Include="$(SolutionDir)\Google.GData.Calendar.dll" />
-    <SharedLibraryFiles Include="$(SolutionDir)\Google.GData.AccessControl.dll" />
-    <SharedLibraryFiles Include="$(SolutionDir)\Google.GData.Extensions.dll" />
-    <SharedLibraryFiles Include="$(SolutionDir)\Google.GData.SpreadSheets.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-		<ConfigurationFiles Include="$(SolutionDir)\..\..\..\ImageViewer\actionmodels.xml" />
-	</ItemGroup>
-
-	<Target Name="Copy Database Files">
-		<!-- Copy database file -->
-		<MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
-		<Copy SourceFiles="@(DatabaseFiles)" DestinationFolder="$(DatabaseDirectory)" />
-		<Copy Condition="!Exists('$(DatabaseDirectory)\viewer.sdf')" SourceFiles="$(SourceEmptyDatabaseFile)" DestinationFiles="$(DatabaseDirectory)\viewer.sdf" />
-	</Target>
-
-	<Target Name="Copy Rest of Files">
-
-		<!-- Copy Sql CE files -->
-		<Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
-
-		<!-- Copy Hibernate configuration file -->
-		<Copy SourceFiles="@(HibernateConfigurationFiles)" DestinationFolder="$(DistributionDirectory)" />
-
-		<!-- Copy Dicom assemblies	 -->
-		<Copy SourceFiles="@(DicomAssemblyFiles)" DestinationFolder="$(CommonDirectory)" />
-
-		<!-- Copy ImageViewer plugins -->
-		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-
-    <!-- Copy shared libraries -->
-    <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" />
-
-    <!-- Copy config files -->
-		<Copy SourceFiles="@(ConfigurationFiles)" DestinationFolder="$(DistributionDirectory)" />
-	</Target>
 </Project>
 
