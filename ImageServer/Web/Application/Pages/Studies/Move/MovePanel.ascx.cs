@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             criteria.AllowRetrieve.EqualTo(true);
 
             DeviceGridPanel.Devices = _theController.GetDevices(criteria);
-            DeviceGridPanel.Refresh();
+            DeviceGridPanel.RefreshCurrentPage();
         }
 
         protected void SearchButton_Click(object sender, EventArgs e)
