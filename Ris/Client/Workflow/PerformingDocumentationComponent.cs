@@ -400,29 +400,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (checkedMpsRefs.Count > 0)
                 {
-                    switch(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue this procedure?", "Warning!", MessageBoxActions.YesNo))
+                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
                     {
-                        case DialogBoxAction.Yes :
-                            DateTime? discontinueTime = Platform.Time;
-                            if (DowntimeRecovery.InDowntimeRecoveryMode)
+                        DateTime? discontinueTime = Platform.Time;
+                        if (DowntimeRecovery.InDowntimeRecoveryMode)
+                        {
+                            if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
+                                return;
+                        }
+
+                        Platform.GetService<IModalityWorkflowService>(
+                            delegate(IModalityWorkflowService service)
                             {
-                                if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
-                                    return;
-                            }
+                                DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
+                                request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
+                                DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
-                            Platform.GetService<IModalityWorkflowService>(
-                                delegate(IModalityWorkflowService service)
-                                {
-                                    DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
-                                    request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
-                                    DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
-
-                                    RefreshProcedurePlanSummary(response.ProcedurePlan);
-                                    UpdateActionEnablement();
-                                });
-                            break;
-                        case DialogBoxAction.No :
-                            break;
+                                RefreshProcedurePlanSummary(response.ProcedurePlan);
+                                UpdateActionEnablement();
+                            });
                     }
                 }
             }
