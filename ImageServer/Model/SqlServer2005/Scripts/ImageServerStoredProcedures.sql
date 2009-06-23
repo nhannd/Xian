@@ -280,7 +280,7 @@ BEGIN
 
 	-- Build SELECT statement based on the paramters
 	
-	SET @stmt =			''SELECT WorkQueue.*, ROW_NUMBER() OVER(ORDER BY ScheduledTime ASC) as RowNum FROM WorkQueue ''
+	SET @stmt =			''SELECT WorkQueue.*, ROW_NUMBER() OVER(ORDER BY WorkQueue.InsertTime ASC) as RowNum FROM WorkQueue ''
 	SET @stmt = @stmt + ''LEFT JOIN StudyStorage on StudyStorage.GUID = WorkQueue.StudyStorageGUID ''
 	SET @stmt = @stmt + ''LEFT JOIN Study on Study.ServerPartitionGUID=StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid=StudyStorage.StudyInstanceUid ''
 	
@@ -350,7 +350,7 @@ BEGIN
 
 	--PRINT @stmt
 	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data FROM ('' + @stmt
-	SET @stmt = @stmt + '' ORDER BY InsertTime) AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
+	SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
 
@@ -3778,6 +3778,7 @@ BEGIN
 	WHERE GUID=@PatientGUID	
 
 END
+GO
 '
 END
 GO
