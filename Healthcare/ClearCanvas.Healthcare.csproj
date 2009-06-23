@@ -161,6 +161,7 @@
     <Compile Include="Tests\TranscriptionReviewStepTests.cs" />
     <Compile Include="Tests\TranscriptionStepTests.cs" />
     <Compile Include="Tests\VerificationStepTests.cs" />
+    <Compile Include="Tests\WorklistQueryContext.cs" />
     <Compile Include="Tests\WorklistTimePointTests.cs" />
     <Compile Include="TranscriptionReviewStep.cs" />
     <Compile Include="TranscriptionReviewStepSearchCriteria.cs" />
