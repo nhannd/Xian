@@ -44,11 +44,11 @@
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
-    <Compile Include="CheckInOrderSettings.cs" />
-    <Compile Include="CheckInOrderSettings.Designer.cs">
+    <Compile Include="CheckInOrderComponentSettings.cs" />
+    <Compile Include="CheckInOrderComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>CheckInOrderSettings.settings</DependentUpon>
+      <DependentUpon>CheckInOrderComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="DicomSeriesEditorComponent.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
@@ -221,9 +221,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="CheckInOrderSettings.settings">
+    <None Include="CheckInOrderComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>CheckInOrderSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>CheckInOrderComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="DowntimeSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

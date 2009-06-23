@@ -123,39 +123,39 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public void Accept()
         {
+            DateTime? earlyBound = _checkInTime.AddMinutes(CheckInOrderComponentSettings.Default.AcceptableCheckInEarlyTimeRange);
+            DateTime? lateBound = _checkInTime.AddMinutes(-CheckInOrderComponentSettings.Default.AcceptableCheckInLateTimeRange);
+            string earlyProcedures = "";
+            string lateProcedures = "";
+            List<CheckInOrderTableEntry> questionableProcedures = new List<CheckInOrderTableEntry>();
+
             // Get the list of Order EntityRef from the table
             foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
+                bool tooEarly = earlyBound < entry.Procedure.ScheduledStartTime;
+                bool tooLate = lateBound > entry.Procedure.ScheduledStartTime;
                 if (entry.Checked)
                 {
-                    // checks if either the check-in time is too early or too late based on a configurable time range
-                    bool tooEarly = _checkInTime.AddHours(CheckInOrderSettings.Default.AcceptableCheckInTimeRange) < entry.Procedure.ScheduledStartTime;
-                    bool tooLate = _checkInTime.AddHours(-CheckInOrderSettings.Default.AcceptableCheckInTimeRange) > entry.Procedure.ScheduledStartTime;
                     if (tooEarly || tooLate)
                     {
-                        switch (this.Host.DesktopWindow.ShowMessageBox(
-                            String.Format(tooEarly ? SR.MessageConfirmCheckInProcedureEarly : SR.MessageConfirmCheckInProcedureLate, // uses a differently worded message per condition
-                                          Formatting.ProcedureFormat.Format(
-                                            new ProcedureSummary(
-                                              entry.Procedure.ProcedureRef,
-                                              entry.Procedure.OrderRef,
-                                              entry.Procedure.Index,
-                                              entry.Procedure.Type,
-                                              entry.Procedure.Laterality,
-                                              entry.Procedure.Portable)),
-                                            entry.Procedure.ScheduledStartTime),
-                                          MessageBoxActions.YesNo))
-                        {
-                            case DialogBoxAction.Yes :
-                                _selectedProcedures.Add(entry.Procedure.ProcedureRef); // if they still want to proceed, proceed normally.
-                                break;
-                            case DialogBoxAction.No : 
-                                break;  // if they have decided they do not want to proceed, do nothing.
-                        }
+                        questionableProcedures.Add(entry);
+                        if (tooEarly)
+                            earlyProcedures += Formatting.ProcedureFormat.Format(entry.Procedure) + "\n";
+                        else
+                            lateProcedures += Formatting.ProcedureFormat.Format(entry.Procedure) + "\n";
                     }
-                    // if the time falls under the acceptable time range, proceed
                     _selectedProcedures.Add(entry.Procedure.ProcedureRef);
                 }
+            }
+
+            if(this.Host.DesktopWindow.ShowMessageBox(String.Format((earlyProcedures != "" ? SR.MessageConfirmCheckInProcedureEarly + "\n\n{0}\n" : "") +
+                                                                    (lateProcedures != "" ? SR.MessageConfirmCheckInProcedureLate + "\n\n{1}\n" : "") + 
+                                                                    "Do you still want to check-in the selected procedure(s)?", 
+                                                                    earlyProcedures, lateProcedures), 
+                                                                    MessageBoxActions.YesNo) == DialogBoxAction.No)
+            {
+                _selectedProcedures.Clear();
+                return;
             }
 
 			try

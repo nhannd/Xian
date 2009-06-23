@@ -13,11 +13,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class CheckInOrderSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class CheckInOrderComponentSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static CheckInOrderSettings defaultInstance = ((CheckInOrderSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new CheckInOrderSettings())));
+        private static CheckInOrderComponentSettings defaultInstance = ((CheckInOrderComponentSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new CheckInOrderComponentSettings())));
         
-        public static CheckInOrderSettings Default {
+        public static CheckInOrderComponentSettings Default {
             get {
                 return defaultInstance;
             }
@@ -25,10 +25,19 @@ namespace ClearCanvas.Ris.Client.Workflow {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int AcceptableCheckInTimeRange {
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public int AcceptableCheckInEarlyTimeRange {
             get {
-                return ((int)(this["AcceptableCheckInTimeRange"]));
+                return ((int)(this["AcceptableCheckInEarlyTimeRange"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("180")]
+        public int AcceptableCheckInLateTimeRange {
+            get {
+                return ((int)(this["AcceptableCheckInLateTimeRange"]));
             }
         }
     }

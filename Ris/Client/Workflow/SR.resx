@@ -367,14 +367,10 @@
     <value>The operation cannot be completed because modifications have been made by another user.  The workspace must be closed and re-opened.</value>
   </data>
   <data name="MessageConfirmCheckInProcedureEarly" xml:space="preserve">
-    <value>{0} is not scheduled to be checked in until {1}
-
-Do you still want to check in this procedure?</value>
+    <value>The following procedure(s) are being checked in earlier than expected:</value>
   </data>
   <data name="MessageConfirmCheckInProcedureLate" xml:space="preserve">
-    <value>{0} was scheduled to be checked in at {1}
-
-Do you still want to check in this procedure?</value>
+    <value>The following procedure(s) are being checked in later than expected:</value>
   </data>
   <data name="MessageConfirmDiscardSelectedAddendum" xml:space="preserve">
     <value>Discard the selected addendum?</value>

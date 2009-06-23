@@ -37,9 +37,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
     [SettingsGroupDescription("Configures behaviour of check-in procedures component.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class CheckInOrderSettings
+    internal sealed partial class CheckInOrderComponentSettings
     {
-        private CheckInOrderSettings()
+        private CheckInOrderComponentSettings()
         {
             ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
