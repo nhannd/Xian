@@ -112,6 +112,8 @@ namespace ClearCanvas.Healthcare {
         {
             if (!IsCheckedOut)
                 _checkInTime = null;
+            else
+                throw new WorkflowException("Cannot revert check-in status of a procedure already checked-out.");
         }
 
 		/// <summary>
