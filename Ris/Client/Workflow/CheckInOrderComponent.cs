@@ -148,15 +148,16 @@ namespace ClearCanvas.Ris.Client.Workflow
                 }
             }
 
-            if(this.Host.DesktopWindow.ShowMessageBox(String.Format((earlyProcedures != "" ? SR.MessageConfirmCheckInProcedureEarly + "\n\n{0}\n" : "") +
+            if(questionableProcedures.Count != 0)
+                if(this.Host.DesktopWindow.ShowMessageBox(String.Format((earlyProcedures != "" ? SR.MessageConfirmCheckInProcedureEarly + "\n\n{0}\n" : "") +
                                                                     (lateProcedures != "" ? SR.MessageConfirmCheckInProcedureLate + "\n\n{1}\n" : "") + 
                                                                     "Do you still want to check-in the selected procedure(s)?", 
                                                                     earlyProcedures, lateProcedures), 
                                                                     MessageBoxActions.YesNo) == DialogBoxAction.No)
-            {
-                _selectedProcedures.Clear();
-                return;
-            }
+                {
+                    _selectedProcedures.Clear();
+                    return;
+                }
 
 			try
 			{
