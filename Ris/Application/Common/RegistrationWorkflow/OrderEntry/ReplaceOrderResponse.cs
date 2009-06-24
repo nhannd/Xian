@@ -37,12 +37,20 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ReplaceOrderResponse : DataContractBase
     {
-        public ReplaceOrderResponse(OrderSummary summary)
+        public ReplaceOrderResponse(OrderSummary summary, bool warnUser, string warning)
         {
             this.Order = summary;
+            this.WarnUser = warnUser;
+            this.Warning = warning;
         }
 
         [DataMember]
         public OrderSummary Order;
+
+        [DataMember] 
+        public bool WarnUser;
+
+        [DataMember] 
+        public string Warning;
     }
 }

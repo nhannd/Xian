@@ -40,5 +40,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class CancelOrderResponse : DataContractBase
     {
+        public CancelOrderResponse(bool warn, string warning)
+        {
+            this.WarnUser = warn;
+            this.Warning = warning;
+        }
+
+        [DataMember] 
+        public string Warning;
+
+        [DataMember] 
+        public bool WarnUser;
     }
 }

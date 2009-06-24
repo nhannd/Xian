@@ -78,7 +78,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
+                        CancelOrderResponse response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, true));
+                        if (response.WarnUser && this.Context.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+                            response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, false));
                     });
 
                 InvalidateFolders();

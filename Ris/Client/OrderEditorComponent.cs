@@ -1148,8 +1148,14 @@ namespace ClearCanvas.Ris.Client
                         }
                         else if (_mode == Mode.ReplaceOrder)
                         {
-                            ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition);
+                            ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, true);
                             ReplaceOrderResponse response = service.ReplaceOrder(request);
+                            
+                            if (response.WarnUser &&this.Host.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel and replace this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+                                response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, false));
+                            else
+                                return;
+
                             _orderRef = response.Order.OrderRef;
 
                             this.Host.ShowMessageBox(

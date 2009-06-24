@@ -259,6 +259,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [OperationEnablement("CanReplaceOrder")]
         public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
         {
+            bool warnUser;
+            string warning;
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
@@ -275,12 +277,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ValidatePatientProfilesExist(newOrder);
 
             // cancel existing order
-			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
+			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder), request.CheckForWarnings, out warnUser, out warning);
 
             PersistenceContext.SynchState();
 
             OrderAssembler orderAssembler = new OrderAssembler();
-            return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext));
+            return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext), warnUser, warning);
         }
 
         [UpdateOperation]
@@ -288,12 +290,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Cancel)]
         public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
+            bool warnUser;
+            string warning;
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
-			CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
+            CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff), request.CheckForWarnings, out warnUser, out warning);
 
-            return new CancelOrderResponse();
+            return new CancelOrderResponse(warnUser, warning);
         }
 
     	[UpdateOperation]
@@ -511,18 +515,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return order;
         }
 
-		private void CancelOrderHelper(Order order, OrderCancelInfo info)
+		private void CancelOrderHelper(Order order, OrderCancelInfo info, bool checkForWarnings, out bool warnUser, out string warning)
 		{
-			if (order.Status == OrderStatus.SC)
+            warnUser = false;
+            warning = null;
+			
+            if (order.Status == OrderStatus.SC)
 			{
 				CancelOrderOperation op = new CancelOrderOperation();
 				op.Execute(order, info);
 			}
-			else if (order.Status == OrderStatus.IP)
-			{
-				DiscontinueOrderOperation op = new DiscontinueOrderOperation();
-				op.Execute(order, info);
-			}
+            else if (order.Status == OrderStatus.IP)
+            {
+                DiscontinueOrderOperation op = new DiscontinueOrderOperation();
+                if (checkForWarnings && (warnUser = op.WarnUser(order, out warning)))
+                    return;
+                op.Execute(order, info);
+            }
 		}
 
         private string GetAccessionNumberForOrder(OrderRequisition requisition)

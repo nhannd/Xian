@@ -37,11 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ReplaceOrderRequest : DataContractBase
     {
-        public ReplaceOrderRequest(EntityRef orderRef, EnumValueInfo cancelReason, OrderRequisition newRequisition)
+        public ReplaceOrderRequest(EntityRef orderRef, EnumValueInfo cancelReason, OrderRequisition newRequisition, bool checkForWarnings)
         {
             this.OrderRef = orderRef;
             this.CancelReason = cancelReason;
             this.Requisition = newRequisition;
+            this.CheckForWarnings = checkForWarnings;
         }
 
         /// <summary>
@@ -61,6 +62,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public OrderRequisition Requisition;
+
+        /// <summary>
+        /// Whether or not client has been warned.
+        /// </summary>
+        [DataMember] 
+        public bool CheckForWarnings;
 
     }
 }
