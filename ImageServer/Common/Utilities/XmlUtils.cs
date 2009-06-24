@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 return null;
 
             StringWriter sw = new StringWriter();
-            XmlTextWriter xmlTextWriter = new XmlTextWriter(sw);
+            CustomXmlTextWriter xmlTextWriter = new CustomXmlTextWriter(sw);
 
             XmlSerializer serializer = new XmlSerializer(obj.GetType());
             serializer.Serialize(xmlTextWriter, obj);

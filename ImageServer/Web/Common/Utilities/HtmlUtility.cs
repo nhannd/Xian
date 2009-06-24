@@ -37,6 +37,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.Utilities
 {
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
         public static string Encode(string text)
         {
             if (text == null) return string.Empty;
-            String encodedText = new SecurityElement("dummy", text).Text; //decode any escaped xml characters.
+            String encodedText = new SecurityElement("dummy", SecurityElement.Escape(text)).Text; //decode any escaped xml characters.
             return HttpUtility.HtmlEncode(encodedText).Replace(Environment.NewLine, "<BR/>");
             
         }

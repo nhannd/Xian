@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="ServerPlatform.cs" />
     <Compile Include="ThreadedService.cs" />
+    <Compile Include="Utilities\CustomXmlTextWriter.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
