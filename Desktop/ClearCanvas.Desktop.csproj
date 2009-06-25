@@ -129,6 +129,7 @@
     <Compile Include="Tables\DateTimeTableColumn.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
+    <Compile Include="Tests\FormatTests.cs" />
     <Compile Include="Tests\TableTest.cs" />
     <Compile Include="ToolStripSettings.cs" />
     <Compile Include="ToolStripSettings.Designer.cs">

@@ -11,5 +11,8 @@
     <Setting Name="DateTimeFormat" Description="Date and time format string (use hh:mm tt for non-military)" Type="System.String" Scope="User">
       <Value Profile="(Default)">dd-MMM-yyyy HH:mm</Value>
     </Setting>
+    <Setting Name="DescriptiveDateThresholdInDays" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

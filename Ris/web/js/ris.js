@@ -121,44 +121,7 @@ if(window.external)
 		
 		formatDescriptiveDateTime: function(dateTime)
 		{
-			if (dateTime == null)
-				return "";
-			
-			var today = Date.today();
-			var yesterday = today.addDays(-1);
-			var tomorrow = today.addDays(1);
-			var afterTomorrow = tomorrow.addDays(1);
-
-			if (Date.compare(dateTime, yesterday) < 0)
-			{
-				var dayDiff = Math.ceil((Date.parse(today) - Date.parse(dateTime))/(1000*60*60*24));
-
-				if (dayDiff < 31)
-				{
-					return dayDiff + " days ago";
-				}
-				else 
-				{
-					return Ris.formatDate(dateTime);
-				}
-				
-			}
-			else if (Date.compare(dateTime, yesterday) >= 0 && Date.compare(dateTime, today) < 0)
-			{
-				return "Yesterday " + Ris.formatTime(dateTime);
-			}
-			else if (Date.compare(dateTime, today) >= 0 && Date.compare(dateTime, tomorrow) < 0)
-			{
-				return "Today " + Ris.formatTime(dateTime);
-			}
-			else if (Date.compare(dateTime, tomorrow) >= 0 && Date.compare(dateTime, afterTomorrow) < 0)
-			{
-				return "Tomorrow " + Ris.formatTime(dateTime);
-			}
-			else
-			{
-				return Ris.formatDateTime(dateTime);				
-			}
+			return dateTime ? window.external.FormatDescriptiveTime(dateTime.toISOString()) : "";
 		},
 
 		// formats the specified Address object

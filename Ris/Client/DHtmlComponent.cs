@@ -164,6 +164,16 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
+            public string FormatDescriptiveTime(string isoDateString)
+            {
+                if (isoDateString == null)
+                    return "";
+
+                DateTime? input = DateTimeUtils.ParseISO(isoDateString);
+
+                return Format.Date(input, true);
+            }
+
         	public string FormatAddress(string jsml)
             {
                 AddressDetail detail = JsmlSerializer.Deserialize<AddressDetail>(jsml);

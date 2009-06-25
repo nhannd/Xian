@@ -90,7 +90,71 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string Date(DateTime? dt)
         {
-            return dt == null ? "" : dt.Value.ToString(DateFormat);
+            return Date(dt, false);
+        }
+
+        /// <summary>
+        /// Formats the specific <see cref="System.DateTime"/> as a date, descriptive if set by condition, returns an empty string if input date is null.
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="descriptive"></param>
+        /// <returns></returns>
+        public static string Date(DateTime? dt, bool descriptive)
+        {
+            if(descriptive)
+            {
+                DateTime? today = System.DateTime.Today;
+                DateTime? yesterday = today.Value.AddDays(-1);
+                DateTime? tomorrow = today.Value.AddDays(1);
+                DateTime? afterTomorrow = tomorrow.Value.AddDays(1);
+
+                if (dt < yesterday)
+                {
+                    int dayDiff = (int)Math.Ceiling(((today.Value - dt.Value).TotalDays));
+
+                    if (dayDiff < FormatSettings.Default.DescriptiveDateThresholdInDays)
+                    {
+                        return dayDiff + " days ago";
+                    }
+                    else
+                    {
+                        return DateTime(dt);
+                    }
+                }
+                else if (dt >= yesterday && dt < today)
+                {
+                    return "Yesterday " + Time(dt);
+                }
+                else if (dt >= today && dt < tomorrow)
+                {
+                    return "Today " + Time(dt);
+                }
+                else if (dt >= tomorrow && dt < afterTomorrow)
+                {
+                    return "Tomorrow " + Time(dt);
+                }
+                else if (dt > afterTomorrow)
+                {
+                    int dayDiff = (dt - today).Value.Days;
+
+                    if (dayDiff < FormatSettings.Default.DescriptiveDateThresholdInDays)
+                    {
+                        return dayDiff + " days from now";
+                    }
+                    else
+                    {
+                        return DateTime(dt);
+                    }
+                }
+                else
+                {
+                    return DateTime(dt);
+                }
+            }
+            else
+            {
+                return dt == null ? "" : dt.Value.ToString(DateFormat);
+            }
         }
 
         /// <summary>
