@@ -149,7 +149,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
             StudyListGridView.Pager = GridPagerTop;
-            GridPagerTop.Reset();
             
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
@@ -254,7 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         public void Refresh()
         {
-            StudyListGridView.Refresh();
+            StudyListGridView.RefreshCurrentPage();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             if(IsPostBack || Page.IsAsync)
             {
-                TheGrid.DataSource = StudyDataSourceObject;    
+                StudyListControl.DataSource = StudyDataSourceObject;    
             } 
         }
 
