@@ -74,8 +74,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
         {
             if (File.Exists(_dest))
             {
-                _destBackup = Path.Combine(_dest, ".bak");
-                File.Copy(_dest, _destBackup, true);
+                _destBackup = _dest + ".bak";
+                if (File.Exists(_destBackup))
+                    FileUtils.Delete(_destBackup);
+
+                FileUtils.Copy(_dest, _destBackup, true);
             }
         }
 
@@ -87,26 +90,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             }
 
             // restore backup
-            if (String.IsNullOrEmpty(_destBackup) == false)
+            if (File.Exists(_destBackup))
             {
-                if (File.Exists(_destBackup))
-                {
-                    File.Move(_destBackup, _dest);
-                }
+                File.Move(_destBackup, _dest);
             }
+            
         }
 
         #region IDisposable Members
 
         public void Dispose()
         {
-            if (!String.IsNullOrEmpty(_destBackup))
+            if (File.Exists(_destBackup))
             {
-                if (File.Exists(_destBackup))
-                {
-                    FileUtils.Delete(_destBackup);
-                }
+                FileUtils.Delete(_destBackup);
             }
+            
         }
 
         #endregion

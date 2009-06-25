@@ -305,7 +305,6 @@ namespace ClearCanvas.Dicom.Audit
 		public AuditStudyParticipantObject(string studyInstanceUid, string accession)
 		{
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
-			Platform.CheckForNullReference(accession, "accession");
 
 			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
 			_participantObjectId = studyInstanceUid;
@@ -315,7 +314,6 @@ namespace ClearCanvas.Dicom.Audit
 		public AuditStudyParticipantObject(string studyInstanceUid, string accession, string mppsUid)
 		{
 			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
-			Platform.CheckForNullReference(accession, "accession");
 			Platform.CheckForNullReference(mppsUid, "mppsUid");
 
 			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;

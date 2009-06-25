@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
                 {
                     string path = _context.Filesystem.ResolveAbsolutePath(BackupSubPath);
 
-                    Platform.Log(LogLevel.Info, "Backing up study to {0}...", path);
+                    Platform.Log(LogLevel.Info, "Saving a copy of the study to {0}...", path);
 
                     CreateDirectoryCommand mkdir = new CreateDirectoryCommand(path);
                     processor.AddCommand(mkdir);

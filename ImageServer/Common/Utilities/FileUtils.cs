@@ -61,17 +61,17 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 		/// <param name="retryMinDelay">The minimum number of milliseconds to delay when deleting.</param>
 		static public void Delete(string path, long timeout, ManualResetEvent stopSignal, int retryMinDelay)
 		{
-            if (!File.Exists(path))
-                return; //nothing to do
-
-			Exception lastException = null;
+            Exception lastException = null;
 			long begin = Environment.TickCount;
 			bool cancelled = false;
 
-			while (!cancelled)
+            while (!cancelled)
 			{
 				try
 				{
+                    if (!File.Exists(path))
+                        return; // the file is gone.
+
 					File.Delete(path);
 					return;
 				}
@@ -97,7 +97,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 				}
 			}
 
-			throw lastException;
+            if (!cancelled)
+                throw lastException;
 		}
 
 
@@ -123,9 +124,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         static public void Copy(string source, string destination, bool overwrite,
                 long timeout, ManualResetEvent stopSignal, int retryMinDelay)
         {
-            if (!File.Exists(source))
-                throw new FileNotFoundException(String.Format("Source file {0} does not exist", source), source);
-
+            
             Exception lastException = null;
             long begin = Environment.TickCount;
             bool cancelled = false;
@@ -134,6 +133,11 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             {
                 try
                 {
+                    // check if the file still exists every time in case it is moved/deleted 
+                    // so that we are not stucked in the loop
+                    if (!File.Exists(source))
+                        throw new FileNotFoundException(String.Format("Source file {0} does not exist", source), source);
+                    
                     File.Copy(source, destination, overwrite);
                     return;
                 }
@@ -159,7 +163,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 }
             }
 
-            throw lastException;
+            if (!cancelled)
+                throw lastException;
         }
 
         /// <summary>
@@ -183,7 +188,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                     // check if the file still exists every time in case it is moved/deleted 
                     // so that we are not stucked in the loop
                     if (!File.Exists(source))
-                        throw new FileNotFoundException(String.Format("Source file {0} does not exist", source), source);
+                        return null;
 
                     if (inSourceFolder)
                         backup = Path.Combine(sourceInfo.Directory.FullName, String.Format("{0}.bak({1})", sourceInfo.Name, i));

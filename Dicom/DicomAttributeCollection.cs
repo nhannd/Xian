@@ -327,6 +327,7 @@ namespace ClearCanvas.Dicom
             return attr;
         }
 
+
         /// <summary>
         /// Get a <see cref="DicomAttribute"/> for a specific DICOM tag.
         /// </summary>
@@ -358,6 +359,37 @@ namespace ClearCanvas.Dicom
 			}
 
         	return attr;
+        }
+
+
+
+        /// <summary>
+        /// Removes the specified attribute from the collection.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns><b>true</b> if the tag is successfully removed. The method also return true if the specified tag does not exist in the collection.</returns>
+        public bool RemoveAttribute(uint tag)
+        {
+            DicomAttribute attr;
+            if (!_attributeList.TryGetValue(tag, out attr))
+            {
+                // doesn't exist. Ignore it
+                return true;
+            }
+            else
+            {
+                return _attributeList.Remove(tag);
+            }
+        }
+
+        /// <summary>
+        /// Removes the specified tag from the collection.
+        /// </summary>
+        /// <param name="tag">The DICOM tag to be removed.</param>
+        /// <returns><b>true</b> if the tag is successfully removed. The method also return true if the specified tag does not exist in the collection.</returns>
+        public bool RemoveAttribute(DicomTag tag)
+        {
+            return RemoveAttribute(tag.TagValue);
         }
 
         /// <summary>

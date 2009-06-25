@@ -132,17 +132,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 					             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
 					             Study.AccessionNumber, ServerPartition.Description);
 
-				// Audit log
-				DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
-													ServerPlatform.AuditSource,
-													EventIdentificationTypeEventOutcomeIndicator.Success);
-				helper.AddUserParticipant(new AuditProcessActiveParticipant(ServerPartition.AeTitle));
-				helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
-														StorageLocation.StudyInstanceUid,
-														Study == null ? string.Empty : Study.AccessionNumber));
-				ServerPlatform.LogAuditMessage(helper);
-
-
 				RemoveFilesystem();
 
 				RemoveDatabase(item);
@@ -194,6 +183,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         protected virtual void OnStudyDeleted()
         {
+            // Audit log
+            DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
+                                                ServerPlatform.AuditSource,
+                                                EventIdentificationTypeEventOutcomeIndicator.Success);
+            helper.AddUserParticipant(new AuditProcessActiveParticipant(ServerPartition.AeTitle));
+            helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
+                                                    StorageLocation.StudyInstanceUid,
+                                                    Study == null ? string.Empty : Study.AccessionNumber));
+            ServerPlatform.LogAuditMessage(helper);
+
+
             IList<IDeleteStudyProcessorExtension> extensions = LoadExtensions();
             foreach (IDeleteStudyProcessorExtension ext in extensions)
             {

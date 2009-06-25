@@ -175,14 +175,7 @@ namespace ClearCanvas.ImageServer.TestApp
                 {
                     foreach (DicomFile file in _prevSentFiles)
                     {
-                        file.DataSet[DicomTags.PatientsName].SetStringValue(PatientsName.Text);
-                        file.DataSet[DicomTags.PatientId].SetStringValue(PatientsId.Text);
-                        file.DataSet[DicomTags.IssuerOfPatientId].SetStringValue(IssuerOfPatientsId.Text);
-                        file.DataSet[DicomTags.PatientsSex].SetStringValue(PatientsSex.Text );
-                        file.DataSet[DicomTags.PatientsBirthDate].SetStringValue(PatientsBirthdate.Text);
-                        file.DataSet[DicomTags.AccessionNumber].SetStringValue(AccessionNumber.Text);
-                        file.DataSet[DicomTags.AccessionNumber].SetStringValue(AccessionNumber.Text);
-                        file.DataSet[DicomTags.StudyDate].SetStringValue(StudyDate.Text);
+                        SetDicomFields(file);
                         scu.AddStorageInstance(new StorageInstance(file));
                     }
                     scu.ImageStoreCompleted += new EventHandler<StorageInstance>(scu_ImageStoreCompleted);
@@ -191,6 +184,49 @@ namespace ClearCanvas.ImageServer.TestApp
                 }
             }
             
+        }
+
+        private void SetDicomFields(DicomFile file)
+        {
+
+            if (!omitPatientId.Checked)
+                file.DataSet[DicomTags.PatientId].SetStringValue(PatientsId.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.PatientId);
+
+            if (!omitPatientName.Checked)
+                file.DataSet[DicomTags.PatientsName].SetStringValue(PatientsName.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.PatientsName);
+
+            if (!omitIssuerOfPatientId.Checked)
+                file.DataSet[DicomTags.IssuerOfPatientId].SetStringValue(IssuerOfPatientsId.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.IssuerOfPatientId);
+
+            if (!omitBirthdate.Checked)
+                file.DataSet[DicomTags.PatientsBirthDate].SetStringValue(PatientsBirthdate.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.PatientsBirthDate);
+
+            if (!omitGender.Checked)
+                file.DataSet[DicomTags.PatientsSex].SetStringValue(PatientsSex.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.PatientsSex);
+
+            if (!omitAccession.Checked)
+                file.DataSet[DicomTags.AccessionNumber].SetStringValue(AccessionNumber.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.AccessionNumber);
+
+
+            if (!omitStudyDate.Checked)
+                file.DataSet[DicomTags.StudyDate].SetStringValue(StudyDate.Text);
+            else
+                file.DataSet.RemoveAttribute(DicomTags.StudyDate);
+
+            file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(StudyInstanceUid.Text);
+
         }
 
         private void RandomizeFile(DicomFile file, String seriesDescription)
@@ -210,67 +246,10 @@ namespace ClearCanvas.ImageServer.TestApp
             DicomUid sopUid = DicomUid.GenerateUid();
             file.MediaStorageSopInstanceUid = sopUid.UID;
             file.DataSet[DicomTags.SopInstanceUid].SetStringValue(sopUid.UID);
-            
-            
-            file.DataSet[DicomTags.PatientId].SetStringValue(PatientsId.Text);
-            file.DataSet[DicomTags.IssuerOfPatientId].SetStringValue(IssuerOfPatientsId.Text);
-            file.DataSet[DicomTags.PatientsName].SetStringValue(PatientsName.Text);
-            file.DataSet[DicomTags.PatientsBirthDate].SetStringValue(PatientsBirthdate.Text);
-            file.DataSet[DicomTags.PatientsSex].SetStringValue(PatientsSex.Text);
-            file.DataSet[DicomTags.AccessionNumber].SetStringValue(AccessionNumber.Text);
-            file.DataSet[DicomTags.StudyDate].SetStringValue(StudyDate.Text);
-            file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(StudyInstanceUid.Text);
 
-            file.DataSet[DicomTags.SeriesDescription].SetStringValue(seriesDescription);
+            SetDicomFields(file);
 
         }
-
-        //public DialogResult InputBox(string title, string promptText, ref string value)
-        //{
-        //    if (_autoRunOn)
-        //    {
-        //        return DialogResult.OK;
-        //    }
-
-        //    Form form = new Form();
-        //    Label label = new Label();
-        //    TextBox textBox = new TextBox();
-        //    Button buttonOk = new Button();
-        //    Button buttonCancel = new Button();
-
-        //    form.Text = title;
-        //    label.Text = promptText;
-        //    textBox.Text = value;
-
-        //    buttonOk.Text = "OK";
-        //    buttonCancel.Text = "Cancel";
-        //    buttonOk.DialogResult = DialogResult.OK;
-        //    buttonCancel.DialogResult = DialogResult.Cancel;
-
-        //    label.SetBounds(9, 20, 372, 13);
-        //    textBox.SetBounds(12, 36, 372, 20);
-        //    buttonOk.SetBounds(228, 72, 75, 23);
-        //    buttonCancel.SetBounds(309, 72, 75, 23);
-
-        //    label.AutoSize = true;
-        //    textBox.Anchor = textBox.Anchor | AnchorStyles.Right;
-        //    buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        //    buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-
-        //    form.ClientSize = new Size(396, 107);
-        //    form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
-        //    form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
-        //    form.FormBorderStyle = FormBorderStyle.FixedDialog;
-        //    form.StartPosition = FormStartPosition.CenterScreen;
-        //    form.MinimizeBox = false;
-        //    form.MaximizeBox = false;
-        //    form.AcceptButton = buttonOk;
-        //    form.CancelButton = buttonCancel;
-
-        //    DialogResult dialogResult = form.ShowDialog();
-        //    value = textBox.Text;
-        //    return dialogResult;
-        //}
 
         private void LoadSamples_Click(object sender, EventArgs e)
         {
