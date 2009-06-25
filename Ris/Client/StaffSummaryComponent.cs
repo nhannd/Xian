@@ -37,12 +37,10 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -257,6 +255,19 @@ namespace ClearCanvas.Ris.Client
 										delegate(IUserAdminService userAdminService)
 										{
 											userAdminService.DeleteUser(new DeleteUserRequest(detail.UserName));
+										});
+								}
+								else
+								{
+									// not deleting user, but we should update user's display name
+									Platform.GetService<IUserAdminService>(
+										delegate(IUserAdminService userAdminService)
+										{
+											LoadUserForEditResponse editResponse = userAdminService.LoadUserForEdit(new LoadUserForEditRequest(detail.UserName));
+											UserDetail userDetail = editResponse.UserDetail;
+											userDetail.DisplayName = null;
+											
+											userAdminService.UpdateUser(new UpdateUserRequest(userDetail));
 										});
 								}
 							}

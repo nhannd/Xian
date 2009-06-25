@@ -37,7 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
 
 namespace ClearCanvas.Ris.Client

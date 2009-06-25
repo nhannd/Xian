@@ -29,13 +29,15 @@
 
 #endregion
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
-using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -53,6 +55,9 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(StaffDetailsEditorComponentViewExtensionPoint))]
 	public class StaffDetailsEditorComponent : ApplicationComponent
 	{
+		private UserLookupData _selectedUser = null;
+		private ILookupHandler _userLookupHandler;
+
 		private StaffDetail _staffDetail;
 		private readonly List<EnumValueInfo> _staffTypeChoices;
 		private readonly List<EnumValueInfo> _sexChoices;
@@ -69,21 +74,24 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			base.Start();
-		}
+			_selectedUser = GetUserForStaff(_staffDetail); 
+			_userLookupHandler = new UserLookupHandler(this.Host.DesktopWindow);
 
-		public override void Stop()
-		{
-			base.Stop();
+			base.Start();
+
+			if (!string.IsNullOrEmpty(_staffDetail.UserName) && _selectedUser == null)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageAssociatedUserNoLongerExist, _staffDetail.UserName), MessageBoxActions.Ok);
+				
+				// use the Property setter here so the _staffDetail.UserName is reset, and modified flag raised.
+				this.SelectedUser = null;
+			}
 		}
 
 		public StaffDetail StaffDetail
 		{
 			get { return _staffDetail; }
-			set
-			{
-				_staffDetail = value;
-			}
+			set { _staffDetail = value; }
 		}
 
 		#region Presentation Model
@@ -91,6 +99,27 @@ namespace ClearCanvas.Ris.Client
 		public bool ReadOnly
 		{
 			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff) == false; }
+		}
+
+		public bool IsUserAdmin
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User); }	
+		}
+
+		public ILookupHandler UserLookupHandler
+		{
+			get { return _userLookupHandler; }
+		}
+
+		public object SelectedUser
+		{
+			get { return _selectedUser; }
+			set
+			{
+				_selectedUser = (UserLookupData)value;
+				_staffDetail.UserName = _selectedUser == null ? null : _selectedUser.UserName;
+				this.Modified = true;
+			}
 		}
 
         [ValidateNotNull]
@@ -230,5 +259,38 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		private UserLookupData GetUserForStaff(StaffDetail staff)
+		{
+			UserLookupData user = null;
+
+			if (!string.IsNullOrEmpty(staff.UserName))
+			{
+				// If this staff is associated with an user, get the most updated user using IUserAdminService
+				if (this.IsUserAdmin)
+				{
+					Platform.GetService<IUserAdminService>(
+						delegate(IUserAdminService service)
+						{
+							ListUsersRequest request = new ListUsersRequest();
+							request.UserName = staff.UserName;
+							request.ExactMatchOnly = true;
+							ListUsersResponse response = service.ListUsers(request);
+							UserSummary summary = CollectionUtils.FirstElement(response.Users);
+
+							// If there is no return user, it means that the user was deleted without updating staff.
+							user = summary == null ? null : new UserLookupData(summary.UserName);
+						});
+				}
+				else
+				{
+					// if user is not a UserAdmin, don't hit the server, use the data we already have.
+					// unfortunately, we cannot detect the case where user is deleted without staff updated.
+					user = new UserLookupData(staff.UserName);
+				}
+			}
+
+			return user;
+		}
 	}
 }

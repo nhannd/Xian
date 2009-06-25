@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client

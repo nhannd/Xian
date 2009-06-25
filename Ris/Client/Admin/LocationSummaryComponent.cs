@@ -30,23 +30,17 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Tables;
-
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
-using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common;
-using System.Collections;
+using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {

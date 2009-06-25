@@ -37,9 +37,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
-using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {

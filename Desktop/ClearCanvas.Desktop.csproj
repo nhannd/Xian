@@ -101,6 +101,9 @@
     <Compile Include="DragDropOption.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="FileDialogCreationArgs.cs" />
+    <Compile Include="IPagingController.cs" />
+    <Compile Include="PagingActionModel.cs" />
+    <Compile Include="PagingController.cs" />
     <Compile Include="SelectFolderDialogCreationArgs.cs" />
     <Compile Include="GalleryItemEventArgs.cs" />
     <Compile Include="IApplicationView.cs" />
@@ -343,6 +346,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NextPageToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PreviousPageToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

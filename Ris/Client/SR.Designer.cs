@@ -1195,6 +1195,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The user ({0}) previously associated with this staff no longer exist..
+        /// </summary>
+        internal static string MessageAssociatedUserNoLongerExist {
+            get {
+                return ResourceManager.GetString("MessageAssociatedUserNoLongerExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A cancellation reason is required to replace an order..
         /// </summary>
         internal static string MessageCancellationReasonRequired {
@@ -1245,15 +1254,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageConfirmDeleteSelectedAddress {
             get {
                 return ResourceManager.GetString("MessageConfirmDeleteSelectedAddress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the selected item(s)?.
-        /// </summary>
-        internal static string MessageConfirmDeleteSelectedItems {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteSelectedItems", resourceCulture);
             }
         }
         
@@ -1987,15 +1987,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Next Page.
-        /// </summary>
-        internal static string TitleNext {
-            get {
-                return ResourceManager.GetString("TitleNext", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Note Text.
         /// </summary>
         internal static string TitleNoteText {
@@ -2091,15 +2082,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitlePractitioner {
             get {
                 return ResourceManager.GetString("TitlePractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Previous Page.
-        /// </summary>
-        internal static string TitlePrevious {
-            get {
-                return ResourceManager.GetString("TitlePrevious", resourceCulture);
             }
         }
         
@@ -2253,6 +2235,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateVisit {
             get {
                 return ResourceManager.GetString("TitleUpdateVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User.
+        /// </summary>
+        internal static string TitleUser {
+            get {
+                return ResourceManager.GetString("TitleUser", resourceCulture);
             }
         }
         

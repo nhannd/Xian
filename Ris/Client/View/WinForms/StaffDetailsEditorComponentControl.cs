@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 	/// </summary>
 	public partial class StaffDetailsEditorComponentControl : ApplicationComponentUserControl
 	{
-		private StaffDetailsEditorComponent _component;
+		private readonly StaffDetailsEditorComponent _component;
 
 		/// <summary>
 		/// Constructor
@@ -49,6 +49,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			InitializeComponent();
 			_component = component;
+
+			_userLookup.Enabled = _component.IsUserAdmin;
+			_userLookup.LookupHandler = _component.UserLookupHandler;
+			_userLookup.DataBindings.Add("Value", _component, "SelectedUser", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
 			_givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -80,6 +84,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_licenseNumber.ReadOnly = readOnly;
 			_billingNumber.ReadOnly = readOnly;
 
+			_userLookup.Enabled = !readOnly;
 			_sex.Enabled = !readOnly;
 			_staffType.Enabled = !readOnly;
 		}

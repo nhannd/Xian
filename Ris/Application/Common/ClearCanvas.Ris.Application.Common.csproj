@@ -184,7 +184,6 @@
     <Compile Include="CannedTextService\UpdateCannedTextRequest.cs" />
     <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextSummary.cs" />
-    <Compile Include="ListRequestBase.cs" />
     <Compile Include="ProtocolCodeSummary.cs" />
     <Compile Include="GetOperationEnablementRequest.cs" />
     <Compile Include="GetOperationEnablementResponse.cs" />
@@ -533,7 +532,6 @@
     <Compile Include="PatientNoteDetail.cs" />
     <Compile Include="OrderDetail.cs" />
     <Compile Include="OrderSummary.cs" />
-    <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="BrowsePatientData\ListPatientProfilesRequest.cs" />
     <Compile Include="BrowsePatientData\ListPatientProfilesResponse.cs" />
     <Compile Include="BrowsePatientData\GetOrderDetailRequest.cs" />

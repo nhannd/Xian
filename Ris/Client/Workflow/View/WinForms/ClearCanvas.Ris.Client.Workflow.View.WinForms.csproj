@@ -240,6 +240,10 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Enterprise\Desktop\ClearCanvas.Enterprise.Desktop.csproj">
+      <Project>{CBD5EBD0-7AE9-4824-AE8C-4888983E1B5B}</Project>
+      <Name>ClearCanvas.Enterprise.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\ClearCanvas.Ris.Client.csproj">
       <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
       <Name>ClearCanvas.Ris.Client</Name>

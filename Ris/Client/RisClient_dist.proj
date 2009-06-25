@@ -21,11 +21,16 @@
 	</ItemGroup>
 
   <ItemGroup>
-		<SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.Core.dll "/>
+    <SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.DynamicProxy2.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
   </ItemGroup>
 
   <ItemGroup>
+    <ClientModuleFiles Include="$(TrunkDirectory)\Enterprise\Desktop\bin\$(Configuration)\ClearCanvas.Enterprise.Desktop.dll" />
+    <ClientModuleFiles Include="$(TrunkDirectory)\Enterprise\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Enterprise.Desktop.View.WinForms.dll" />
+
     <ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />

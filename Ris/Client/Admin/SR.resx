@@ -117,21 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ColumnActive" xml:space="preserve">
-    <value>Active</value>
-  </data>
-  <data name="ColumnAuthorityGroup" xml:space="preserve">
-    <value>Authority Group</value>
-  </data>
-  <data name="ColumnAuthorityGroupName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="ColumnAuthorityTokenDescription" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="ColumnAuthorityTokenName" xml:space="preserve">
-    <value>Name</value>
-  </data>
   <data name="ColumnBed" xml:space="preserve">
     <value>Bed</value>
   </data>
@@ -237,12 +222,6 @@
   <data name="ColumnUser" xml:space="preserve">
     <value>User</value>
   </data>
-  <data name="ColumnUserId" xml:space="preserve">
-    <value>User ID</value>
-  </data>
-  <data name="ColumnUserName" xml:space="preserve">
-    <value>Name</value>
-  </data>
   <data name="DummyItemNone" xml:space="preserve">
     <value>(None)</value>
   </data>
@@ -254,9 +233,6 @@
   </data>
   <data name="ExceptionEnumValueUpdate" xml:space="preserve">
     <value>Unable to update value</value>
-  </data>
-  <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
-    <value>Unable to save Authority Group</value>
   </data>
   <data name="ExceptionSaveDiagnosticService" xml:space="preserve">
     <value>Unable to save Imaging Service</value>
@@ -281,9 +257,6 @@
   </data>
   <data name="ExceptionSaveProtocolGroup" xml:space="preserve">
     <value>Unable to savev Protocol Group</value>
-  </data>
-  <data name="ExceptionSaveUser" xml:space="preserve">
-    <value>Unable to save User</value>
   </data>
   <data name="ExceptionSaveValidationRules" xml:space="preserve">
     <value>Unable to save validation rules</value>
@@ -324,9 +297,6 @@
   <data name="MessageWorklistMustHaveName" xml:space="preserve">
     <value>Worklist must have a name</value>
   </data>
-  <data name="TitleAddAuthorityGroup" xml:space="preserve">
-    <value>Add Authority Group</value>
-  </data>
   <data name="TitleAddDiagnosticService" xml:space="preserve">
     <value>Add Imaging Service ...</value>
   </data>
@@ -350,9 +320,6 @@
   </data>
   <data name="TitleAddProtocolGroup" xml:space="preserve">
     <value>Add Protocol Group</value>
-  </data>
-  <data name="TitleAddUser" xml:space="preserve">
-    <value>Add User</value>
   </data>
   <data name="TitleAddWorklist" xml:space="preserve">
     <value>Add Worklist</value>
@@ -426,12 +393,6 @@
   <data name="TitleProtocolGroups" xml:space="preserve">
     <value>Protocol Groups</value>
   </data>
-  <data name="TitleResetPassword" xml:space="preserve">
-    <value>Reset Password</value>
-  </data>
-  <data name="TitleUpdateAuthorityGroup" xml:space="preserve">
-    <value>Update Authority Group</value>
-  </data>
   <data name="TitleUpdateDiagnosticService" xml:space="preserve">
     <value>Update Imaging Service</value>
   </data>
@@ -450,14 +411,8 @@
   <data name="TitleUpdateProcedureTypeGroup" xml:space="preserve">
     <value>Update Procedure Type Group</value>
   </data>
-  <data name="TitleUpdateUser" xml:space="preserve">
-    <value>Update User</value>
-  </data>
   <data name="TitleUpdateWorklist" xml:space="preserve">
     <value>Update Worklist</value>
-  </data>
-  <data name="TitleUser" xml:space="preserve">
-    <value>User Admin</value>
   </data>
   <data name="TitleWorklists" xml:space="preserve">
     <value>Worklists</value>

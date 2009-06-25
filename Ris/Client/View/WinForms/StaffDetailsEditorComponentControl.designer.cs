@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._licenseNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._sex = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._title = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._userLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this.SuspendLayout();
 			// 
 			// _staffType
@@ -76,88 +77,88 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffType.DisplayMember = "";
 			this._staffType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._staffType.LabelText = "StaffType";
-			this._staffType.Location = new System.Drawing.Point(13, 16);
+			this._staffType.Location = new System.Drawing.Point(12, 49);
 			this._staffType.Margin = new System.Windows.Forms.Padding(2);
 			this._staffType.Name = "_staffType";
 			this._staffType.Size = new System.Drawing.Size(150, 41);
-			this._staffType.TabIndex = 0;
+			this._staffType.TabIndex = 1;
 			this._staffType.Value = null;
 			// 
 			// _middleName
 			// 
 			this._middleName.LabelText = "Middle Name";
-			this._middleName.Location = new System.Drawing.Point(13, 124);
+			this._middleName.Location = new System.Drawing.Point(12, 139);
 			this._middleName.Margin = new System.Windows.Forms.Padding(2);
 			this._middleName.Mask = "";
 			this._middleName.Name = "_middleName";
 			this._middleName.PasswordChar = '\0';
 			this._middleName.Size = new System.Drawing.Size(150, 41);
-			this._middleName.TabIndex = 4;
+			this._middleName.TabIndex = 5;
 			this._middleName.ToolTip = null;
 			this._middleName.Value = null;
 			// 
 			// _givenName
 			// 
 			this._givenName.LabelText = "Given Name";
-			this._givenName.Location = new System.Drawing.Point(179, 70);
+			this._givenName.Location = new System.Drawing.Point(178, 94);
 			this._givenName.Margin = new System.Windows.Forms.Padding(2);
 			this._givenName.Mask = "";
 			this._givenName.Name = "_givenName";
 			this._givenName.PasswordChar = '\0';
 			this._givenName.Size = new System.Drawing.Size(150, 41);
-			this._givenName.TabIndex = 3;
+			this._givenName.TabIndex = 4;
 			this._givenName.ToolTip = null;
 			this._givenName.Value = null;
 			// 
 			// _familyName
 			// 
 			this._familyName.LabelText = "Family Name";
-			this._familyName.Location = new System.Drawing.Point(13, 70);
+			this._familyName.Location = new System.Drawing.Point(12, 94);
 			this._familyName.Margin = new System.Windows.Forms.Padding(2);
 			this._familyName.Mask = "";
 			this._familyName.Name = "_familyName";
 			this._familyName.PasswordChar = '\0';
 			this._familyName.Size = new System.Drawing.Size(150, 41);
-			this._familyName.TabIndex = 2;
+			this._familyName.TabIndex = 3;
 			this._familyName.ToolTip = null;
 			this._familyName.Value = null;
 			// 
 			// _staffId
 			// 
 			this._staffId.LabelText = "Staff ID";
-			this._staffId.Location = new System.Drawing.Point(179, 16);
+			this._staffId.Location = new System.Drawing.Point(178, 49);
 			this._staffId.Margin = new System.Windows.Forms.Padding(2);
 			this._staffId.Mask = "";
 			this._staffId.Name = "_staffId";
 			this._staffId.PasswordChar = '\0';
 			this._staffId.Size = new System.Drawing.Size(150, 41);
-			this._staffId.TabIndex = 1;
+			this._staffId.TabIndex = 2;
 			this._staffId.ToolTip = null;
 			this._staffId.Value = null;
 			// 
 			// _billingNumber
 			// 
 			this._billingNumber.LabelText = "Billing # (if applicable)";
-			this._billingNumber.Location = new System.Drawing.Point(179, 232);
+			this._billingNumber.Location = new System.Drawing.Point(178, 229);
 			this._billingNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._billingNumber.Mask = "";
 			this._billingNumber.Name = "_billingNumber";
 			this._billingNumber.PasswordChar = '\0';
 			this._billingNumber.Size = new System.Drawing.Size(150, 41);
-			this._billingNumber.TabIndex = 8;
+			this._billingNumber.TabIndex = 9;
 			this._billingNumber.ToolTip = null;
 			this._billingNumber.Value = null;
 			// 
 			// _licenseNumber
 			// 
 			this._licenseNumber.LabelText = "License # (if applicable)";
-			this._licenseNumber.Location = new System.Drawing.Point(13, 232);
+			this._licenseNumber.Location = new System.Drawing.Point(12, 229);
 			this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._licenseNumber.Mask = "";
 			this._licenseNumber.Name = "_licenseNumber";
 			this._licenseNumber.PasswordChar = '\0';
 			this._licenseNumber.Size = new System.Drawing.Size(150, 41);
-			this._licenseNumber.TabIndex = 7;
+			this._licenseNumber.TabIndex = 8;
 			this._licenseNumber.ToolTip = null;
 			this._licenseNumber.Value = null;
 			// 
@@ -167,30 +168,41 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._sex.DisplayMember = "";
 			this._sex.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._sex.LabelText = "Sex";
-			this._sex.Location = new System.Drawing.Point(179, 124);
+			this._sex.Location = new System.Drawing.Point(178, 139);
 			this._sex.Margin = new System.Windows.Forms.Padding(2);
 			this._sex.Name = "_sex";
 			this._sex.Size = new System.Drawing.Size(150, 41);
-			this._sex.TabIndex = 5;
+			this._sex.TabIndex = 6;
 			this._sex.Value = null;
 			// 
 			// _title
 			// 
 			this._title.LabelText = "Title";
-			this._title.Location = new System.Drawing.Point(13, 178);
+			this._title.Location = new System.Drawing.Point(12, 184);
 			this._title.Margin = new System.Windows.Forms.Padding(2);
 			this._title.Mask = "";
 			this._title.Name = "_title";
 			this._title.PasswordChar = '\0';
 			this._title.Size = new System.Drawing.Size(316, 41);
-			this._title.TabIndex = 6;
+			this._title.TabIndex = 7;
 			this._title.ToolTip = null;
 			this._title.Value = null;
+			// 
+			// _userLookup
+			// 
+			this._userLookup.LabelText = "User";
+			this._userLookup.Location = new System.Drawing.Point(12, 4);
+			this._userLookup.Margin = new System.Windows.Forms.Padding(2);
+			this._userLookup.Name = "_userLookup";
+			this._userLookup.Size = new System.Drawing.Size(316, 41);
+			this._userLookup.TabIndex = 0;
+			this._userLookup.Value = null;
 			// 
 			// StaffDetailsEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._userLookup);
 			this.Controls.Add(this._title);
 			this.Controls.Add(this._sex);
 			this.Controls.Add(this._billingNumber);
@@ -201,7 +213,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._familyName);
 			this.Controls.Add(this._staffType);
 			this.Name = "StaffDetailsEditorComponentControl";
-			this.Size = new System.Drawing.Size(368, 290);
+			this.Size = new System.Drawing.Size(352, 287);
 			this.ResumeLayout(false);
 
         }
@@ -217,6 +229,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TextField _licenseNumber;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _sex;
 		private ClearCanvas.Desktop.View.WinForms.TextField _title;
+		private LookupField _userLookup;
 
     }
 }

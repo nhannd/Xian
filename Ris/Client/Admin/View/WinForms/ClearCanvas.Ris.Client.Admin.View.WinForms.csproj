@@ -44,13 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorityGroupEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AuthorityGroupEditorComponentControl.Designer.cs">
-      <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="AuthorityGroupEditorComponentView.cs" />
     <Compile Include="EnumerationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -153,20 +146,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="UserEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserEditorComponentControl.Designer.cs">
-      <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UserEditorComponentView.cs" />
-    <Compile Include="UserSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserSummaryComponentControl.designer.cs">
-      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UserSummaryComponentView.cs" />
     <Compile Include="ValidationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -213,6 +192,10 @@
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Enterprise\Desktop\ClearCanvas.Enterprise.Desktop.csproj">
+      <Project>{CBD5EBD0-7AE9-4824-AE8C-4888983E1B5B}</Project>
+      <Name>ClearCanvas.Enterprise.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
       <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
       <Name>ClearCanvas.Ris.Application.Common</Name>
@@ -234,10 +217,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AuthorityGroupEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="EnumerationEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EnumerationEditorComponentControl.cs</DependentUpon>
@@ -299,14 +278,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ValidationEditorComponentControl.resx">
       <SubType>Designer</SubType>

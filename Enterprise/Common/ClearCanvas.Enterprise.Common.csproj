@@ -129,6 +129,8 @@
     <Compile Include="FailoverClientAdvice.cs" />
     <Compile Include="IChannelFactoryProvider.cs" />
     <Compile Include="IRemoteServiceProxy.cs" />
+    <Compile Include="ListRequestBase.cs" />
+    <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="ResponseCachingClientAdvice.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />

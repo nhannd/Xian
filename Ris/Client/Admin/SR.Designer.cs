@@ -61,51 +61,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Active.
-        /// </summary>
-        internal static string ColumnActive {
-            get {
-                return ResourceManager.GetString("ColumnActive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Authority Group.
-        /// </summary>
-        internal static string ColumnAuthorityGroup {
-            get {
-                return ResourceManager.GetString("ColumnAuthorityGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Name.
-        /// </summary>
-        internal static string ColumnAuthorityGroupName {
-            get {
-                return ResourceManager.GetString("ColumnAuthorityGroupName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Description.
-        /// </summary>
-        internal static string ColumnAuthorityTokenDescription {
-            get {
-                return ResourceManager.GetString("ColumnAuthorityTokenDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Name.
-        /// </summary>
-        internal static string ColumnAuthorityTokenName {
-            get {
-                return ResourceManager.GetString("ColumnAuthorityTokenName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Bed.
         /// </summary>
         internal static string ColumnBed {
@@ -421,24 +376,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User ID.
-        /// </summary>
-        internal static string ColumnUserId {
-            get {
-                return ResourceManager.GetString("ColumnUserId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Name.
-        /// </summary>
-        internal static string ColumnUserName {
-            get {
-                return ResourceManager.GetString("ColumnUserName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to (None).
         /// </summary>
         internal static string DummyItemNone {
@@ -471,15 +408,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string ExceptionEnumValueUpdate {
             get {
                 return ResourceManager.GetString("ExceptionEnumValueUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to save Authority Group.
-        /// </summary>
-        internal static string ExceptionSaveAuthorityGroup {
-            get {
-                return ResourceManager.GetString("ExceptionSaveAuthorityGroup", resourceCulture);
             }
         }
         
@@ -552,15 +480,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string ExceptionSaveProtocolGroup {
             get {
                 return ResourceManager.GetString("ExceptionSaveProtocolGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to save User.
-        /// </summary>
-        internal static string ExceptionSaveUser {
-            get {
-                return ResourceManager.GetString("ExceptionSaveUser", resourceCulture);
             }
         }
         
@@ -682,15 +601,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Authority Group.
-        /// </summary>
-        internal static string TitleAddAuthorityGroup {
-            get {
-                return ResourceManager.GetString("TitleAddAuthorityGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Imaging Service ....
         /// </summary>
         internal static string TitleAddDiagnosticService {
@@ -759,15 +669,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleAddProtocolGroup {
             get {
                 return ResourceManager.GetString("TitleAddProtocolGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add User.
-        /// </summary>
-        internal static string TitleAddUser {
-            get {
-                return ResourceManager.GetString("TitleAddUser", resourceCulture);
             }
         }
         
@@ -988,24 +889,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset Password.
-        /// </summary>
-        internal static string TitleResetPassword {
-            get {
-                return ResourceManager.GetString("TitleResetPassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Authority Group.
-        /// </summary>
-        internal static string TitleUpdateAuthorityGroup {
-            get {
-                return ResourceManager.GetString("TitleUpdateAuthorityGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update Imaging Service.
         /// </summary>
         internal static string TitleUpdateDiagnosticService {
@@ -1060,29 +943,11 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update User.
-        /// </summary>
-        internal static string TitleUpdateUser {
-            get {
-                return ResourceManager.GetString("TitleUpdateUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update Worklist.
         /// </summary>
         internal static string TitleUpdateWorklist {
             get {
                 return ResourceManager.GetString("TitleUpdateWorklist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to User Admin.
-        /// </summary>
-        internal static string TitleUser {
-            get {
-                return ResourceManager.GetString("TitleUser", resourceCulture);
             }
         }
         

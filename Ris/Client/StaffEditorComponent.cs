@@ -137,7 +137,8 @@ namespace ClearCanvas.Ris.Client
 
 		private EntityRef _staffRef;
 		private StaffDetail _staffDetail;
-		private string _staffUserName;
+
+		private string _originalStaffUserName;
 
 		// return values for staff
 		private StaffSummary _staffSummary;
@@ -201,7 +202,7 @@ namespace ClearCanvas.Ris.Client
 						_staffDetail = response.StaffDetail;
 					}
 
-					_staffUserName = _staffDetail.UserName;
+					_originalStaffUserName = _staffDetail.UserName;
 
 					this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new StaffDetailsEditorComponent(formDataResponse.StaffTypeChoices, formDataResponse.SexChoices)));
 					this.Pages.Add(new NavigatorPage("Staff/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
@@ -239,11 +240,6 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			base.Start();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
 		}
 
 		public override void Accept()
@@ -289,8 +285,12 @@ namespace ClearCanvas.Ris.Client
 					});
 
 				// if necessary, update associated user account
-				if(_staffUserName != _staffDetail.UserName)
+				if(_originalStaffUserName != _staffDetail.UserName)
 				{
+					// clear staff from the existing user
+					UpdateUserAccount(_originalStaffUserName, null);
+
+					// update the current user with the staff name
 					UpdateUserAccount(_staffDetail.UserName, _staffSummary);
 				}
 
@@ -299,17 +299,12 @@ namespace ClearCanvas.Ris.Client
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionSaveStaff, this.Host.DesktopWindow,
-					delegate()
+					delegate
 					{
 						this.ExitCode = ApplicationComponentExitCode.Error;
 						this.Host.Exit();
 					});
 			}
-		}
-
-		public override void Cancel()
-		{
-			base.Cancel();
 		}
 
 		internal static void UpdateUserAccount(string userName, StaffSummary staff)

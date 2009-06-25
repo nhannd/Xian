@@ -495,6 +495,9 @@
   <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
     <value>{0} has unreconciled records</value>
   </data>
+  <data name="MessageAssociatedUserNoLongerExist" xml:space="preserve">
+    <value>The user ({0}) previously associated with this staff no longer exist.</value>
+  </data>
   <data name="MessageCancellationReasonRequired" xml:space="preserve">
     <value>A cancellation reason is required to replace an order.</value>
   </data>
@@ -512,9 +515,6 @@
   </data>
   <data name="MessageConfirmDeleteSelectedAddress" xml:space="preserve">
     <value>Are you sure you want to delete this address?</value>
-  </data>
-  <data name="MessageConfirmDeleteSelectedItems" xml:space="preserve">
-    <value>Are you sure you want to delete the selected item(s)?</value>
   </data>
   <data name="MessageConfirmDeleteSelectedNote" xml:space="preserve">
     <value>Are you sure you want to delete this note?</value>
@@ -759,9 +759,6 @@
   <data name="TitleMoveUp" xml:space="preserve">
     <value>Move up</value>
   </data>
-  <data name="TitleNext" xml:space="preserve">
-    <value>Next Page</value>
-  </data>
   <data name="TitleNoteText" xml:space="preserve">
     <value>Note Text</value>
   </data>
@@ -794,9 +791,6 @@
   </data>
   <data name="TitlePractitioner" xml:space="preserve">
     <value>Practitioner</value>
-  </data>
-  <data name="TitlePrevious" xml:space="preserve">
-    <value>Previous Page</value>
   </data>
   <data name="TitlePrintFaxReport" xml:space="preserve">
     <value>Print/Fax Report</value>
@@ -848,6 +842,9 @@
   </data>
   <data name="TitleUpdateVisit" xml:space="preserve">
     <value>Update Visit...</value>
+  </data>
+  <data name="TitleUser" xml:space="preserve">
+    <value>User</value>
   </data>
   <data name="TitleVisits" xml:space="preserve">
     <value>Visits</value>

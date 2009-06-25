@@ -291,4 +291,10 @@
   <data name="TitleMenuOptions" xml:space="preserve">
     <value>Options</value>
   </data>
+  <data name="TitleNext" xml:space="preserve">
+    <value>Next Page</value>
+  </data>
+  <data name="TitlePrevious" xml:space="preserve">
+    <value>Previous Page</value>
+  </data>
 </root>

@@ -31,17 +31,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 
 namespace ClearCanvas.Ris.Client
 {

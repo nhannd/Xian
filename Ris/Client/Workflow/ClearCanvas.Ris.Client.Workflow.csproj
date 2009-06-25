@@ -210,6 +210,10 @@
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Desktop\ClearCanvas.Enterprise.Desktop.csproj">
+      <Project>{CBD5EBD0-7AE9-4824-AE8C-4888983E1B5B}</Project>
+      <Name>ClearCanvas.Enterprise.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
       <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
       <Name>ClearCanvas.Ris.Application.Common</Name>
