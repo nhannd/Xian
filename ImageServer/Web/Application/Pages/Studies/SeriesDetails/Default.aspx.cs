@@ -94,6 +94,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails
             _seriesInstanceUid = Request.QueryString[QUERY_KEY_SERIES_INSTANCE_UID];
 
             LoadSeriesDetails();
+
+            //Hide the UserPanel information
+            MasterProperties master = Master as MasterProperties;
+            master.DisplayUserInformationPanel = false;
         }
 
         #endregion Protected Methods
