@@ -215,9 +215,17 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 			}
             finally
 			{
-                context.Response.OutputStream.Flush();
-                context.Response.OutputStream.Close();
-			    RemoveContext(context);
+               
+                    // note: the connection might have been aborted or lost, the following
+                    try
+                    {
+                        context.Response.OutputStream.Flush();
+                        context.Response.OutputStream.Close();
+                    }
+                    finally
+                    {
+                        RemoveContext(context);
+                    }
 			}
 
 		}
