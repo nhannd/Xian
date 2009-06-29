@@ -25,6 +25,9 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
+	/// <summary>
+	/// Provides utilities for user name resolution.
+	/// </summary>
 	public class UserLookupHandler : ILookupHandler
 	{
 		class UserSuggestionProvider : SuggestionProviderBase<UserLookupData>

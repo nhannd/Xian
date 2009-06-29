@@ -1078,6 +1078,10 @@ Preview.ImagingServiceSection = function () {
 		'<p class="sectionheading">Imaging Service</p>'+
 		'<table width="100%" border="0">'+
 		'	<tr>'+
+		'		<td width="120" class="propertyname">Entered By</td>'+
+		'		<td width="200"><div id="EnteredBy"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
 		'		<td width="120" class="propertyname">Accession Number</td>'+
 		'		<td width="200"><div id="AccessionNumber"/></td>'+
 		'		<td width="120" class="propertyname">Priority</td>'+
@@ -1099,9 +1103,20 @@ Preview.ImagingServiceSection = function () {
 		'		<td width="120" class="propertyname">Indication</td>'+
 		'		<td colspan="4"><div id="ReasonForStudy"/></td>'+
 		'	</tr>'+
-		'	<tr id="CancelReasonSection">'+
-		'		<td width="120" class="propertyname">Cancel Reason</td>'+
-		'		<td width="200" colspan="4"><div id="CancelReason"/></td>'+
+		'	<tr id="CancelSection">'+
+		'		<td colspan="4">'+
+		'			<p class="subsectionheading">Order Cancelled</p>'+
+		'			<table width="100%" border="0">'+
+		'				<tr>'+
+		'					<td width="150" class="propertyname">Cancelled By</td>'+
+		'					<td><div id="CancelledBy"/></td>'+
+		'				</tr>'+
+		'				<tr>'+
+		'					<td width="150" class="propertyname">Cancel Reason</td>'+
+		'					<td><div id="CancelReason"/></td>'+
+		'				</tr>'+
+		'			</table>'+
+		'		</td>'+
 		'	</tr>'+
 		'</table>';
 		
@@ -1120,10 +1135,16 @@ Preview.ImagingServiceSection = function () {
 			Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
 			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
+			Field.setValue($("EnteredBy"), Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')');
 			if (orderDetail.CancelReason)
+			{
+				Field.setValue($("CancelledBy"), Ris.formatPersonName(orderDetail.CancelledBy.Name) + ' (' + orderDetail.CancelledBy.StaffType.Value + ')');
 				Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
+			}
 			else
-				Field.show($("CancelReasonSection"), false);
+			{
+				Field.show($("CancelSection"), false);
+			}
 		}
 	};
 

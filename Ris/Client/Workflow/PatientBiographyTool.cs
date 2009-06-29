@@ -126,24 +126,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				IWorkflowItemToolContext ctx = (IWorkflowItemToolContext) this.ContextBase;
 				WorklistItemSummaryBase item = (WorklistItemSummaryBase)ctx.Selection.Item;
-				OpenPatient(item.PatientRef, item.PatientProfileRef, ctx.DesktopWindow);
+				OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, ctx.DesktopWindow);
 			}
             else if (this.ContextBase is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
                 PatientProfileSummary profile = context.SelectedProfile;
-                OpenPatient(profile.PatientRef, profile.PatientProfileRef, context.DesktopWindow);
+                OpenPatient(profile.PatientRef, profile.PatientProfileRef, null, context.DesktopWindow);
             }
         }
 
-        protected static void OpenPatient(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
+        protected static void OpenPatient(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, IDesktopWindow window)
         {
             try
             {
                 Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef);
                 if (workspace == null)
                 {
-                    Document doc = new PatientBiographyDocument(patientRef, profileRef, window);
+                    Document doc = new PatientBiographyDocument(patientRef, profileRef, orderRef, window);
                     doc.Open();
                 }
                 else

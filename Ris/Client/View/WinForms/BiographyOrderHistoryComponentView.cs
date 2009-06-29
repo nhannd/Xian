@@ -40,7 +40,7 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="PatientOrderHistoryComponent"/>
+	/// Provides a Windows Forms view onto <see cref="BiographyOrderHistoryComponentView"/>
     /// </summary>
     [ExtensionOf(typeof(PatientOrderHistoryComponentViewExtensionPoint))]
     public class BiographyOrderHistoryComponentView : WinFormsView, IApplicationComponentView

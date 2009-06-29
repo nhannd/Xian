@@ -219,6 +219,18 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderList; }
 		}
 
+		public EntityRef SelectedOrderRef
+		{
+			get { return _selectedOrder == null ? null : _selectedOrder.OrderRef; }
+			set
+			{
+				OrderListItem initialItem = value == null ? null : CollectionUtils.SelectFirst(_orderList.Items,
+					delegate(OrderListItem item) { return item.OrderRef.Equals(value, true); });
+
+				this.SelectedOrder = new Selection(initialItem);
+			}
+		}
+
 		public ISelection SelectedOrder
 		{
 			get { return new Selection(_selectedOrder); }
@@ -229,6 +241,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedOrder = newSelection;
 					OrderSelectionChanged();
+					NotifyPropertyChanged("SelectedOrder");
 				}
 			}
 		}

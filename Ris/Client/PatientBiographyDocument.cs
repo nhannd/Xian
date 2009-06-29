@@ -29,31 +29,33 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
     public class PatientBiographyDocument : Document
     {
-        private readonly EntityRef _profileRef;
-        private readonly EntityRef _patientRef;
+		private readonly EntityRef _patientRef;
+		private readonly EntityRef _profileRef;
+    	private readonly EntityRef _orderRef;
 
-        public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
-            : base(patientRef, window)
+		public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, IDesktopWindow window)
+			: base(patientRef, window)
+		{
+			Platform.CheckForNullReference(patientRef, "patientRef");
+			Platform.CheckForNullReference(profileRef, "profileRef");
+
+			_patientRef = patientRef;
+			_profileRef = profileRef;
+		}
+
+		public PatientBiographyDocument(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, IDesktopWindow window)
+			: this(patientRef, profileRef, window)
         {
-            Platform.CheckForNullReference(patientRef, "patientRef");
-            Platform.CheckForNullReference(profileRef, "profileRef");
-
-            _profileRef = profileRef;
-            _patientRef = patientRef;
-        }
+			_orderRef = orderRef;
+		}
 
         public override string GetTitle()
         {
@@ -62,7 +64,9 @@ namespace ClearCanvas.Ris.Client
 
         public override IApplicationComponent GetComponent()
         {
-            return new BiographyOverviewComponent(_patientRef, _profileRef);
+            BiographyOverviewComponent component = new BiographyOverviewComponent(_patientRef, _profileRef);
+        	component.SelectedOrderRef = _orderRef;
+        	return component;
         }
     }    
 }
