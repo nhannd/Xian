@@ -38,8 +38,11 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
             
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
             this._OnItemListRowClickedHandler = Function.createDelegate(this,this._OnItemListRowClicked);
-            this._OnItemListRowDblClickedHandler = Function.createDelegate(this,this._OnItemListRowDblClicked);
-            this._OnViewDetailsButtonClickedHandler = Function.createDelegate(this,this._OnItemListRowDblClicked);  //Does the same thing as the double-clicked event.
+
+//  For client side handling of view item details. Currently server-side since performance is sufficient
+//  and server-side handles errors better.
+//            this._OnItemListRowDblClickedHandler = Function.createDelegate(this,this._OnItemListRowDblClicked);
+//            this._OnViewDetailsButtonClickedHandler = Function.createDelegate(this,this._OnItemListRowDblClicked);  //Does the same thing as the double-clicked event.
                         
                         
             Sys.Application.add_load(this._OnLoadHandler);
@@ -67,10 +70,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         {
             var itemlist = $find(this._ItemListClientID);
             itemlist.add_onClientRowClick(this._OnItemListRowClickedHandler);
-            itemlist.add_onClientRowDblClick(this._OnItemListRowDblClickedHandler);
+//            itemlist.add_onClientRowDblClick(this._OnItemListRowDblClickedHandler);
             
-            var viewDetailsButton = $find(this._ViewDetailsButtonClientID);
-            if(viewDetailsButton != null) viewDetailsButton.add_onClientClick( this._OnViewDetailsButtonClickedHandler );  
+//            var viewDetailsButton = $find(this._ViewDetailsButtonClientID);
+//            if(viewDetailsButton != null) viewDetailsButton.add_onClientClick( this._OnViewDetailsButtonClickedHandler );  
             
             this._updateToolbarButtonStates();
             

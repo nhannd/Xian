@@ -198,6 +198,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                     source.PriorityEnum = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
                                                             };
 
+            MessageBox.Confirmed += delegate(object data)
+                            {
+                                workQueueItemList.RefreshCurrentPage();
+                            };
+
         }
 
         /// <summary>
@@ -223,6 +228,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                         DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
                 else
                     ScheduleCalendarExtender.SelectedDate = null;
+
+
+
             } 
 
             // re-populate the drop down lists and restore their states
@@ -331,10 +339,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         private bool SelectedItemExists()
         {
-            if (workQueueItemList.SelectedDataKey == null)
-				workQueueItemList.RefreshWithoutPagerUpdate();
-
-            if (workQueueItemList.SelectedDataKey == null)
+            if (!workQueueItemList.SelectedItemExists())
             {
                 MessageBox.BackgroundCSS = string.Empty;
                 MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;

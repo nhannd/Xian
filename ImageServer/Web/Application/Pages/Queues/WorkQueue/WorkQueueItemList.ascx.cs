@@ -36,6 +36,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -280,5 +281,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     	}
 
 		#endregion Protected Methods
+
+        public bool SelectedItemExists()
+        {
+            if (SelectedDataKey == null)
+                RefreshWithoutPagerUpdate();
+
+            if(SelectedDataKey != null)
+            {
+                if (Model.WorkQueue.Load(SelectedDataKey) == null) return false;
+                return true;
+
+                WorkQueueController controller = new WorkQueueController();
+
+                WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
+
+                parameters.ServerPartitionKey = SelectedDataKey;
+
+                IList<Model.WorkQueue> summary = controller.FindWorkQueue(parameters);
+
+                if (summary.Count == 0) return false;
+                else return true;
+            } else
+            {
+                return false;
+            }
+
+        }
     }
 }
