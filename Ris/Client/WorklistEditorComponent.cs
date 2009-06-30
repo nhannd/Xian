@@ -201,13 +201,6 @@ namespace ClearCanvas.Ris.Client
                             service.LoadWorklistForEdit(new LoadWorklistForEditRequest(_worklistRef));
 
                         _worklistDetail = response.Detail;
-
-                        if (_mode == WorklistEditorMode.Duplicate)
-                        {
-                            _worklistDetail.EntityRef = null;
-                            _worklistDetail.Name = _worklistDetail.Name + " copy";
-                        }
-
                         _worklistRef = response.Detail.EntityRef;
 
                         // determine initial set of proc type groups, since worklist class already known
@@ -310,6 +303,14 @@ namespace ClearCanvas.Ris.Client
             this.ValidationStrategy = new AllComponentsValidationStrategy();
 
             base.Start();
+
+			// Modify EntityRef and add the word "copy" to the worklist name.
+			// This is done after the Start() call, so changing the worklist name will trigger a component modify changed.
+			if (_mode == WorklistEditorMode.Duplicate)
+			{
+				_worklistDetail.EntityRef = null;
+				((WorklistDetailEditorComponent)_detailComponent).Name = _worklistDetail.Name + " copy";
+			}
         }
 
     	private void OnWorklistClassChanged(object sender, EventArgs e)
