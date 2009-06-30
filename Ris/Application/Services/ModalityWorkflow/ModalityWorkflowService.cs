@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 				throw new RequestValidationException(SR.ExceptionProcedureNotCheckedIn);
 
             StartModalityProcedureStepsOperation op = new StartModalityProcedureStepsOperation();
-            ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, request.StartTime, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext), PersistenceContext);
+            ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, request.StartTime, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext));
 
             this.PersistenceContext.SynchState();
 

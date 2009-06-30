@@ -69,6 +69,7 @@
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupAdminService.cs" />
     <Compile Include="Admin\WorkQueueAdmin\WorkQueueAdminService.cs" />
     <Compile Include="DicomSeriesAssembler.cs" />
+    <Compile Include="PersistentWorkflow.cs" />
     <Compile Include="TranscriptionWorkflow\TranscriptionWorkflowService.cs" />
     <Compile Include="WorkQueueItemAssembler.cs" />
     <Compile Include="CannedTextService\CannedTextAssembler.cs" />

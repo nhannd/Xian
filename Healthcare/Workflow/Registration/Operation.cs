@@ -55,12 +55,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
         public class ReconcilePatient : RegistrationOperation
         {
-            public void Execute(List<Patient> patientsToReconcile, IPersistenceContext context)
+            public void Execute(List<Patient> patientsToReconcile, IWorkflow workflow)
             {
                 // reconcile all patients
                 for (int i = 1; i < patientsToReconcile.Count; i++)
                 {
-                    Reconcile(patientsToReconcile[0], patientsToReconcile[i], context);
+                    Reconcile(patientsToReconcile[0], patientsToReconcile[i], workflow);
                 }
             }
 
@@ -69,8 +69,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             /// </summary>
             /// <param name="thisPatient"></param>
             /// <param name="otherPatient"></param>
-            /// <param name="context"></param>
-            private void Reconcile(Patient thisPatient, Patient otherPatient, IPersistenceContext context)
+            /// <param name="workflow"></param>
+            private void Reconcile(Patient thisPatient, Patient otherPatient, IWorkflow workflow)
             {
                 if (PatientIdentifierConflictsFound(thisPatient, otherPatient))
                     throw new PatientReconciliationException("assigning authority conflict - cannot reconcile");
@@ -100,7 +100,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
                 VisitSearchCriteria visitCriteria = new VisitSearchCriteria();
                 visitCriteria.Patient.EqualTo(otherPatient);
-                IList<Visit> otherVisits = context.GetBroker<IVisitBroker>().Find(visitCriteria);
+                IList<Visit> otherVisits = workflow.GetBroker<IVisitBroker>().Find(visitCriteria);
                 foreach (Visit visit in otherVisits)
                 {
                     visit.Patient = thisPatient;
@@ -108,7 +108,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
                 OrderSearchCriteria orderCriteria = new OrderSearchCriteria();
                 orderCriteria.Patient.EqualTo(otherPatient);
-                IList<Order> otherOrders = context.GetBroker<IOrderBroker>().Find(orderCriteria);
+                IList<Order> otherOrders = workflow.GetBroker<IOrderBroker>().Find(orderCriteria);
                 foreach (Order order in otherOrders)
                 {
                     order.Patient = thisPatient;

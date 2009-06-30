@@ -38,7 +38,7 @@ namespace ClearCanvas.Workflow
 {
     public interface IWorkflow
     {
-        void AddActivity(Activity activity);
-        IPersistenceContext CurrentContext { get; }
+        void AddEntity(Entity entity);
+        TBroker GetBroker<TBroker>() where TBroker : IPersistenceBroker;
     }
 }

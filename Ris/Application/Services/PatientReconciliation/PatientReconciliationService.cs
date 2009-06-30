@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
                 throw new RequestValidationException(SR.ExceptionReconciliationRequiresAtLeast2Patients);
 
             Operations.ReconcilePatient op = new Operations.ReconcilePatient();
-            op.Execute(patients, this.PersistenceContext);
+            op.Execute(patients, new PersistentWorkflow(PersistenceContext));
 
             return new ReconcilePatientsResponse();
         }

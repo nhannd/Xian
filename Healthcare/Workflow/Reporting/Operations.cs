@@ -58,7 +58,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class SaveReport : ReportingOperation
 		{
-			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor, IPersistenceContext context)
+			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
 			{
 				step.ReportPart.Supervisor = supervisor;
 				foreach (KeyValuePair<string, string> pair in reportPartExtendedProperties)
@@ -104,7 +104,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					Report report = new Report(step.Procedure);
 					ReportPart part = report.ActivePart;
 
-					workflow.CurrentContext.Lock(report, DirtyState.New);
+                    workflow.AddEntity(report);
 
 					step.ReportPart = part;
 					step.ReportPart.Interpreter = executingStaff;
@@ -206,7 +206,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				step.ReportPart.ResetTranscription();
 
 				TranscriptionStep transcription = new TranscriptionStep(step);
-				workflow.AddActivity(transcription);
+				workflow.AddEntity(transcription);
 				return transcription;
 			}
 		}
@@ -222,7 +222,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// supervisor can be null, in which case the verification step is unassigned.
 				verification.Assign(step.ReportPart.Supervisor);
 
-				workflow.AddActivity(verification);
+				workflow.AddEntity(verification);
 				return verification;
 			}
 		}
@@ -236,10 +236,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				VerificationStep verification = new VerificationStep(step);
 				verification.Assign(executingStaff);
 				verification.Complete(executingStaff);
-				workflow.AddActivity(verification);
+				workflow.AddEntity(verification);
 
 				PublicationStep publication = CreateScheduledPublicationStep(executingStaff, verification);
-				workflow.AddActivity(publication);
+				workflow.AddEntity(publication);
 
 				return publication;
 			}
@@ -276,7 +276,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 							interpretation.Assign(assignStaff);
 
 						interpretations.Add(interpretation);
-						workflow.AddActivity(interpretation);
+						workflow.AddEntity(interpretation);
 					}
 				}
 				return interpretations;
@@ -330,7 +330,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				interpretation.Assign(executingStaff);
 				interpretation.Start(executingStaff);
 
-				workflow.AddActivity(interpretation);
+				workflow.AddEntity(interpretation);
 				return interpretation;
 			}
 
@@ -392,7 +392,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				step.Complete(executingStaff);
 
 				PublicationStep publication = CreateScheduledPublicationStep(executingStaff, step);
-				workflow.AddActivity(publication);
+				workflow.AddEntity(publication);
 
 				return publication;
 			}
@@ -437,7 +437,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				interpretation.Assign(executingStaff);
 				interpretation.ReportPart = procedure.ActiveReport.AddAddendum();
 				interpretation.ReportPart.Interpreter = executingStaff;
-				workflow.AddActivity(interpretation);
+				workflow.AddEntity(interpretation);
 				return interpretation;
 			}
 
@@ -482,7 +482,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				verification.Assign(executingStaff);
 				verification.Start(executingStaff);
 
-				workflow.AddActivity(verification);
+				workflow.AddEntity(verification);
 				return verification;
 			}
 

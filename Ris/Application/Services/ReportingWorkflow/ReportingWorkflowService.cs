@@ -740,7 +740,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 return;
 
             Operations.SaveReport saveReportOp = new Operations.SaveReport();
-            saveReportOp.Execute(step, reportPartExtendedProperties, supervisor, this.PersistenceContext);
+            saveReportOp.Execute(step, reportPartExtendedProperties, supervisor);
         }
 
         private void ValidateReportTextExists(ReportingProcedureStep step)

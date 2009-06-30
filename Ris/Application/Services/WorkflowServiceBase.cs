@@ -65,31 +65,6 @@ namespace ClearCanvas.Ris.Application.Services
 	public abstract class WorkflowServiceBase<TItemSummary> : ApplicationServiceBase, IWorkflowService
 		where TItemSummary : DataContractBase
     {
-
-		#region PersistentWorkflow class
-
-		protected class PersistentWorkflow : IWorkflow
-		{
-			private readonly IPersistenceContext _context;
-
-			public PersistentWorkflow(IPersistenceContext context)
-			{
-				_context = context;
-			}
-
-			public void AddActivity(Activity activity)
-			{
-				_context.Lock(activity, DirtyState.New);
-			}
-
-			public IPersistenceContext CurrentContext
-			{
-				get { return _context; }
-			}
-		}
-
-		#endregion
-
 		#region IWorkflowService implementation
 
 		/// <summary>

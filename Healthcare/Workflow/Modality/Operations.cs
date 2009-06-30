@@ -111,7 +111,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
 	public class StartModalityProcedureStepsOperation : ModalityOperation
 	{
-		public ModalityPerformedProcedureStep Execute(IList<ModalityProcedureStep> modalitySteps, DateTime? startTime, Staff technologist, IWorkflow workflow, IPersistenceContext context)
+		public ModalityPerformedProcedureStep Execute(IList<ModalityProcedureStep> modalitySteps, DateTime? startTime, Staff technologist, IWorkflow workflow)
 		{
 			if (modalitySteps.Count == 0)
 				throw new WorkflowException("At least one procedure step is required.");
@@ -125,7 +125,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
 			// create an mpps
 			ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep(technologist, startTime);
-			context.Lock(mpps, DirtyState.New);
+			workflow.AddEntity(mpps);
 
 			foreach (ModalityProcedureStep mps in modalitySteps)
 			{
@@ -143,7 +143,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 				{
 					ProcedureStep docStep = new DocumentationProcedureStep(step.Procedure);
 					docStep.Start(technologist, startTime);
-					context.Lock(docStep, DirtyState.New);
+					workflow.AddEntity(docStep);
 				}
 			}
 
