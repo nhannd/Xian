@@ -60,10 +60,17 @@ namespace ClearCanvas.Healthcare.Tests
         public void Test_Fail()
         {
             PublicationStep procedureStep = new PublicationStep();
+            Assert.AreEqual(0, procedureStep.FailureCount);
+            Assert.IsNull(procedureStep.LastFailureTime);
 
             procedureStep.Fail();
 
             Assert.AreEqual(1, procedureStep.FailureCount);
+            Assert.IsTrue(RoughlyEqual(procedureStep.LastFailureTime, Platform.Time));
+
+            procedureStep.Fail();
+
+            Assert.AreEqual(2, procedureStep.FailureCount);
             Assert.IsTrue(RoughlyEqual(procedureStep.LastFailureTime, Platform.Time));
         }
 
@@ -73,16 +80,32 @@ namespace ClearCanvas.Healthcare.Tests
             Procedure procedure = new Procedure();
             Report report = new Report(procedure);
             ReportPart reportPart = new ReportPart(report, 0);
+
+            // This modality procedure step is created such that when the procedure tries to update its status
+            // the detection of no ModalityProcedureSteps makes any procedure trying to update its status set itself
+            // to discontinued, which for this test, is undesirable, this situation will probably never happen
+            // in practice.
+            ModalityProcedureStep modalityStep = new ModalityProcedureStep(procedure, "New modality.", new Modality());
+
             InterpretationStep previousStep = new InterpretationStep(procedure);
             previousStep.ReportPart = reportPart;
             PublicationStep procedureStep = new PublicationStep(previousStep);
+            
             procedureStep.Start(new Staff());
-            procedure.UpdateStatus();
+
+            Assert.AreEqual(ActivityStatus.IP, procedureStep.State);
+            Assert.AreEqual(0, procedureStep.ReportPart.Index);
+            Assert.AreEqual(ReportPartStatus.D, procedureStep.ReportPart.Status);
+            Assert.IsTrue(procedureStep.AllProcedures.TrueForAll(
+                delegate(Procedure p)
+                {
+                    return p.Status == ProcedureStatus.IP;
+                }));
 
             procedureStep.Complete();
 
-            Assert.AreEqual(ReportStatus.F, procedureStep.ReportPart.Status);
-            Assert.AreEqual(0, procedureStep.ReportPart.Index);
+            Assert.AreEqual(ActivityStatus.CM, procedureStep.State);
+            Assert.AreEqual(ReportPartStatus.F, procedureStep.ReportPart.Status);
             Assert.IsTrue(procedureStep.AllProcedures.TrueForAll(
                 delegate(Procedure p)
                 {
