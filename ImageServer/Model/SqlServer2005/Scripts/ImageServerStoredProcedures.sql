@@ -156,6 +156,30 @@ DROP PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue]
 GO
 
 
+/****** Object:  StoredProcedure [dbo].[DeleteInstance]    Script Date: 06/29/2009 15:53:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteInstance]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteInstance]
+GO
+
+/****** Object:  StoredProcedure [dbo].[SetSeriesRelatedInstanceCount]    Script Date: 06/29/2009 15:53:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ResetStudyStorage]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[ResetStudyStorage]
+
+GO
+/****** Object:  StoredProcedure [dbo].[SetStudyRelatedInstanceCount]    Script Date: 06/29/2009 15:53:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetStudyRelatedInstanceCount]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[SetStudyRelatedInstanceCount]
+GO
+
+
+/****** Object:  StoredProcedure [dbo].[SetSeriesRelatedInstanceCount]    Script Date: 06/29/2009 15:53:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetSeriesRelatedInstanceCount]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[SetSeriesRelatedInstanceCount]
+GO
+
+
+
+
 /****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 16:45:14 ******/
 SET ANSI_NULLS ON
 GO
@@ -280,7 +304,7 @@ BEGIN
 
 	-- Build SELECT statement based on the paramters
 	
-	SET @stmt =			''SELECT WorkQueue.*, ROW_NUMBER() OVER(ORDER BY WorkQueue.InsertTime ASC) as RowNum FROM WorkQueue ''
+	SET @stmt =			''SELECT WorkQueue.*, ROW_NUMBER() OVER(ORDER BY ScheduledTime ASC) as RowNum FROM WorkQueue ''
 	SET @stmt = @stmt + ''LEFT JOIN StudyStorage on StudyStorage.GUID = WorkQueue.StudyStorageGUID ''
 	SET @stmt = @stmt + ''LEFT JOIN Study on Study.ServerPartitionGUID=StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid=StudyStorage.StudyInstanceUid ''
 	
@@ -350,7 +374,7 @@ BEGIN
 
 	--PRINT @stmt
 	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data FROM ('' + @stmt
-	SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
+	SET @stmt = @stmt + '' ORDER BY InsertTime) AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
 
@@ -3722,63 +3746,64 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetStudyRelatedInstanceCount]') AND type in (N'P', N'PC'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetSeriesRelatedInstanceCount]') AND type in (N'P', N'PC'))
 BEGIN
 EXEC dbo.sp_executesql @statement = N'
 -- =============================================
 -- Author:		Thanh Huynh
--- Create date: June 16, 2009
--- Description:	Update number of series and instances for a study
+-- Create date: June 19, 2009
+-- Description:	Update number of instances for a series
 -- =============================================
-CREATE PROCEDURE [dbo].[SetStudyRelatedInstanceCount]
+CREATE PROCEDURE [dbo].[SetSeriesRelatedInstanceCount]
 	-- Add the parameters for the stored procedure here
 	@StudyStorageGUID uniqueidentifier,
-	@StudyRelatedInstanceCount int,
-	@StudyRelatedSeriesCount int
+	@SeriesInstanceUid varchar(64),
+	@SeriesRelatedInstanceCount int
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-
 	DECLARE @StudyInstanceUid varchar(64)
-	DECLARE @SeriesGUID uniqueidentifier
 	DECLARE @StudyGUID uniqueidentifier
+	DECLARE @SeriesGUID uniqueidentifier
 	DECLARE @PatientGUID uniqueidentifier
 	DECLARE @ServerPartitionGUID uniqueidentifier
-	DECLARE @PrevStudyRelatedInstanceCount int
-	DECLARE @PrevStudyRelatedSeriesCount int
-
+	DECLARE @PrevSeriesRelatedInstanceCount int
+	DECLARE @PrevSeriesRelatedSeriesCount int
+	
 	SELECT  @ServerPartitionGUID = ss.ServerPartitionGUID, 
 			@StudyInstanceUid = st.StudyInstanceUid,
 			@StudyGUID = st.GUID,
+			@SeriesGUID = ser.GUID,
 			@PatientGUID=st.PatientGUID,
-			@PrevStudyRelatedSeriesCount=st.NumberOfStudyRelatedSeries,
-			@PrevStudyRelatedInstanceCount=st.NumberOfStudyRelatedInstances			
+			@PrevSeriesRelatedInstanceCount=ser.NumberOfSeriesRelatedInstances			
 	FROM StudyStorage ss
 	JOIN Study st ON st.StudyStorageGUID=ss.GUID
+	JOIN Series ser ON ser.StudyGUID = st.GUID AND ser.SeriesInstanceUid=@SeriesInstanceUid
 	WHERE ss.GUID=@StudyStorageGUID
 	
 	
 	DECLARE @InstanceCountDiff int
 	DECLARE @SeriesCountDiff int
-	SET @InstanceCountDiff = @StudyRelatedInstanceCount - @PrevStudyRelatedInstanceCount
-	SET @SeriesCountDiff = @StudyRelatedSeriesCount - @PrevStudyRelatedSeriesCount
-
+	SET @InstanceCountDiff = @SeriesRelatedInstanceCount - @PrevSeriesRelatedInstanceCount
+	
+	-- Update the count in the Series table
+	UPDATE Series 
+	SET NumberOfSeriesRelatedInstances=NumberOfSeriesRelatedInstances+@InstanceCountDiff
+	WHERE GUID=@SeriesGUID
+	
 	-- Update the count in the Study and Patient table
 	UPDATE Study 
-	SET NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances+@InstanceCountDiff,
-		NumberOfStudyRelatedSeries =NumberOfStudyRelatedSeries+@SeriesCountDiff
+	SET NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances+@InstanceCountDiff
 	WHERE GUID=@StudyGUID
 	
 	UPDATE Patient 
-	SET NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances+@InstanceCountDiff,
-		NumberOfPatientRelatedSeries=NumberOfPatientRelatedSeries+@SeriesCountDiff 
+	SET NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances+@InstanceCountDiff
 	WHERE GUID=@PatientGUID	
 
 END
-GO
 '
 END
 GO
