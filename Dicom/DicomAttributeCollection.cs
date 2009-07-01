@@ -1087,7 +1087,11 @@ namespace ClearCanvas.Dicom
             if (value != null && value != DBNull.Value)
             {
                 Type vtype = value.GetType();
-                if (vtype.IsSubclassOf(typeof(DicomSequenceItem)))
+                if (vtype == this[tag].GetType())
+                {
+                    this[tag] = (DicomAttribute)value;
+                }
+                else if (vtype.IsSubclassOf(typeof(DicomSequenceItem)))
                 {
                     DicomAttribute elem = this[tag];
                     elem.AddSequenceItem((DicomSequenceItem)value);
