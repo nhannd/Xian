@@ -211,7 +211,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 ServerPartition partition;
                 if (GetServerPartition(partitionDir.Name, out partition) == false)
                 {
-					if (!partitionDir.Name.EndsWith("_Incoming") && !partitionDir.Name.Equals("temp"))
+					if (!partitionDir.Name.EndsWith("_Incoming") && !partitionDir.Name.Equals("temp")
+					 && !partitionDir.Name.Equals("ApplicationLog") && !partitionDir.Name.Equals("AlertLog"))
 	                    Platform.Log(LogLevel.Error, "Unknown partition folder '{0}' in filesystem: {1}", partitionDir.Name,
                                  filesystem.Description);
                     continue;
