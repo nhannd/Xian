@@ -273,6 +273,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         default:
                             dataSet[tag].SetNullValue();
                             break;
+
+						// Meta tags that should have not been in the RQ, but we've already set
+						case DicomTags.RetrieveAeTitle:
+						case DicomTags.InstanceAvailability:
+						case DicomTags.SpecificCharacterSet:
+                    		break;
                     }
                 }
                 catch (Exception e)
@@ -311,9 +317,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     switch (tag)
                     {
-						case DicomTags.SpecificCharacterSet:
-							// Skip it, if included, don't overwrite the value set above.
-                    		break;
                         case DicomTags.StudyInstanceUid:
                             dataSet[DicomTags.StudyInstanceUid].SetStringValue(row.StudyInstanceUid);
                             break;
@@ -366,6 +369,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         default:
                             dataSet[tag].SetNullValue();
                             break;
+
+						// Meta tags that should have not been in the RQ, but we've already set
+						case DicomTags.RetrieveAeTitle:
+						case DicomTags.InstanceAvailability:
+						case DicomTags.SpecificCharacterSet:
+							break;
                     }
                 }
                 catch (Exception e)
@@ -397,6 +406,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
 			else
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+
+			if (false == String.IsNullOrEmpty(theStudy.SpecificCharacterSet))
+			{
+				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(theStudy.SpecificCharacterSet);
+				dataSet.SpecificCharacterSet = theStudy.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
+			}
 
             foreach (uint tag in tagList)
             {
@@ -443,6 +458,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         default:
                             dataSet[tag].SetNullValue();
                             break;
+						// Meta tags that should have not been in the RQ, but we've already set
+						case DicomTags.RetrieveAeTitle:
+						case DicomTags.InstanceAvailability:
+						case DicomTags.SpecificCharacterSet:
+							break;
                     }
                 }
                 catch (Exception e)
@@ -471,6 +491,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             DicomAttributeCollection sourceDataSet = theInstanceStream.Collection;
 
+			if (false == sourceDataSet.Contains(DicomTags.SpecificCharacterSet))
+			{
+				dataSet[DicomTags.SpecificCharacterSet].SetStringValue(sourceDataSet[DicomTags.SpecificCharacterSet].ToString());
+				dataSet.SpecificCharacterSet = sourceDataSet[DicomTags.SpecificCharacterSet].ToString(); // this will ensure the data is encoded using the specified character set
+			}
+
             foreach (uint tag in tagList)
             {
                 try
@@ -497,7 +523,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             else
                                 dataSet[tag].SetNullValue();
                             break;
-                    }
+						// Meta tags that should have not been in the RQ, but we've already set
+						case DicomTags.RetrieveAeTitle:
+						case DicomTags.InstanceAvailability:
+						case DicomTags.SpecificCharacterSet:
+							break;
+					}
                 }
                 catch (Exception e)
                 {
