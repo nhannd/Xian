@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -83,14 +84,23 @@ namespace ClearCanvas.ImageServer.Common
 
         public ServerFilesystemInfo SelectFilesystem()
         {
-            IList<ServerFilesystemInfo> list =
-                _monitor.GetFilesystems(delegate(ServerFilesystemInfo fs) { return !fs.Writeable; });
+            IList<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>(_monitor.GetFilesystems());
+            IList<ServerFilesystemInfo> writableFS = CollectionUtils.Select(list, delegate(ServerFilesystemInfo fs) { return fs.Writeable; });
 
-            if (list == null || list.Count == 0)
+            StringBuilder log = new StringBuilder();
+            if (writableFS == null || writableFS.Count == 0)
+            {
+                log.AppendLine("No writable storage found");
+                foreach (ServerFilesystemInfo fs in list)
+                {
+                    log.AppendLine(string.Format("\t{0} : {1}", fs.Filesystem.Description, fs.StatusString));
+                }
+                Platform.Log(LogLevel.Warn, log.ToString());
                 return null;
-
-            list = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
-            ServerFilesystemInfo selectedFS = CollectionUtils.FirstElement(list);
+            }
+            
+            writableFS = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
+            ServerFilesystemInfo selectedFS = CollectionUtils.FirstElement(writableFS);
             Platform.CheckForNullReference(selectedFS, "selectedFS");
             return selectedFS;
         }

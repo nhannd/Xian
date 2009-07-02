@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         /// <param name="message">The DICOM message to create the storage location for.</param>
         /// <param name="partition">The partition where the study is being sent to</param>
         /// <returns>A <see cref="StudyStorageLocation"/> instance.</returns>
-        static public StudyStorageLocation GetStudyStorageLocation(DicomMessageBase message, ServerPartition partition)
+        static public StudyStorageLocation GetWritableStudyStorageLocation(DicomMessageBase message, ServerPartition partition)
         {
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, "");

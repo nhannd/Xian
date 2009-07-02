@@ -33,7 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common
@@ -42,7 +44,7 @@ namespace ClearCanvas.ImageServer.Common
     {
         #region Private Members
         private Filesystem _filesystem;
-        private object _lock = new object();
+        private readonly object _lock = new object();
         private float _freeBytes;
         private float _totalBytes;
         private bool _online;
@@ -67,6 +69,9 @@ namespace ClearCanvas.ImageServer.Common
             get { return _online; }
         }
 
+        /// <summary>
+        /// Returns a boolean value indicating whether the filesystem is writable.
+        /// </summary>
         public bool Writeable
         {
             get
@@ -74,13 +79,13 @@ namespace ClearCanvas.ImageServer.Common
                 if (!_online || _filesystem.ReadOnly || !_filesystem.Enabled)
                     return false;
 
-                if (FreeBytes < 1024.0 * 1024.0 * 1024.0)
-                    return false;
-
-                return true;
+                return !Full;
             }
         }
-
+        
+        /// <summary>
+        /// Returns a boolean value indicating whether the filesystem is readonly.
+        /// </summary>
         public bool Readable
         {
             get
@@ -91,11 +96,55 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+        /// <summary>
+        /// Returns a boolean value indicating whether the filesystem is full.
+        /// </summary>
+        public bool Full
+        {
+            get
+            {
+                return FreeBytes / 1024f /1024f < Settings.Default.MinStorageRequiredInMB; 
+            }
+        }
+
+        /// <summary>
+        /// Returns a text that describing the different statuses of the filesystem.
+        /// </summary>
+        public string StatusString
+        {
+            get
+            {
+                StringBuilder status = new StringBuilder();
+                status.Append(Enable ? "Enabled" : "Disabled");
+                status.Append(" | ");
+                status.Append(Online ? "Online" : "Offline");
+                status.Append(" | ");
+                status.Append(Readable ? "Readable" : "Not Readable");
+                status.Append(" | ");
+                status.Append(Writeable ? "Writable" : "Not Writable");
+                status.Append(" | ");
+                status.Append(Full 
+                                ? String.Format("Full (Min Req: {0} MB)", Settings.Default.MinStorageRequiredInMB) 
+                                : String.Format("{0} Available", ByteCountFormatter.Format((ulong)FreeBytes)));
+
+                return status.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Returns the number of bytes available in the filesystem.
+        /// </summary>
         public float FreeBytes
         {
             get { return _freeBytes; }
         }
 
+        /// <summary>
+        /// Returns the number of bytes below the <see cref="Filesystem.HighWatermark"/>
+        /// </summary>
+        /// <remarks>
+        /// If the filesystem is above high watermark, <see cref="HighwaterMarkMargin"/> will become negative
+        /// </remarks>
         public float HighwaterMarkMargin
         {
             get
@@ -147,6 +196,13 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+        public bool Enable
+        {
+            get
+            {
+                return _filesystem.Enabled;
+            }
+        }
 
         #endregion
 

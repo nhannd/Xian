@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -428,6 +429,13 @@ namespace ClearCanvas.ImageServer.Common
 			lock (_lock)
 			{
 				LoadFilesystems();
+                StringBuilder log = new StringBuilder();
+			    log.AppendLine("Filesystem Status:");
+                foreach(ServerFilesystemInfo fs in _filesystemList.Values)
+                {
+                    log.AppendLine(String.Format("\t{0} : {1}", fs.Filesystem.Description, fs.StatusString));
+                }
+                Platform.Log(LogLevel.Info, log.ToString());
 
 				_fsTimer = new Timer(CheckFilesystems, this, TimeSpan.FromSeconds(Settings.Default.FilesystemCheckDelaySeconds), TimeSpan.FromSeconds(Settings.Default.FilesystemCheckDelaySeconds));
 

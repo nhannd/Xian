@@ -153,29 +153,41 @@ namespace ClearCanvas.ImageServer.Core
                         throw new ApplicationException(failureMessage);
                     }
 
-                    StudyStorageLocation studyLocation = StorageHelper.GetStudyStorageLocation(message, _partition);
+                    StudyStorageLocation studyLocation = StorageHelper.GetWritableStudyStorageLocation(message, _partition);
                     if (studyLocation == null)
                     {
                         StudyStorage storage = StudyStorage.Load(_partition.Key, studyInstanceUid);
-
+                        
                         if (storage != null)
                         {
-                            failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _partition.Description);
-                            Platform.Log(LogLevel.Error, failureMessage);
-                            if (!InsertRestore(storage.Key))
+                            if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
                             {
-                                Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
+                                failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _partition.Description);
+                                Platform.Log(LogLevel.Error, failureMessage);
+                                if (!InsertRestore(storage.Key))
+                                {
+                                    Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
+                                }
+
+                                SetError(result, DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                                throw new ApplicationException(failureMessage);
                             }
-
-                            SetError(result, DicomStatuses.StorageStorageOutOfResources, failureMessage);
-                            throw new ApplicationException(failureMessage);
+                            else
+                            {
+                                // study is not nearline but the location is not writable
+                                failureMessage = String.Format("Unable to process image, study storage location is not writeable: {0}.", sopInstanceUid);
+                                Platform.Log(LogLevel.Error, failureMessage);
+                                SetError(result, DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                                throw new ApplicationException("No writeable storage location.");
+                            }
                         }
-
-
-                        failureMessage = String.Format("Unable to process image, no writeable storage location: {0}", sopInstanceUid);
-                        Platform.Log(LogLevel.Error, failureMessage);
-                        SetError(result, DicomStatuses.StorageStorageOutOfResources, failureMessage);
-                        throw new ApplicationException("No writeable storage location.");
+                        else
+                        {
+                            failureMessage = String.Format("Unable to process image, no writeable storage location: {0}", sopInstanceUid);
+                            Platform.Log(LogLevel.Error, failureMessage);
+                            SetError(result, DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                            throw new ApplicationException("No writeable storage location.");
+                        }
                     }
 
 
@@ -264,13 +276,12 @@ namespace ClearCanvas.ImageServer.Core
                             commandProcessor.AddCommand(
                                 new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 
+                            #region SPECIAL CODE FOR TESTING
                             if (ClearCanvas.ImageServer.Common.Diagnostics.Settings.SimulateFileCorruption)
                             {
-                                Random rand = new Random();
-                                FileInfo f = new FileInfo(path);
-
                                 commandProcessor.AddCommand(new CorruptDicomFileCommand(path));
                             }
+                            #endregion
                         }
 
                         if (commandProcessor.Execute())
