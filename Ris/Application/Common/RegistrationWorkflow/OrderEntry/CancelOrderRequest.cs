@@ -44,12 +44,21 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             this.CheckForWarnings = checkWarnings;
         }
 
+        /// <summary>
+        /// Order to cancel.
+        /// </summary>
         [DataMember]
         public EntityRef OrderRef;
 
+        /// <summary>
+        /// Reason the order is being cancelled.
+        /// </summary>
         [DataMember]
         public EnumValueInfo CancelReason;
 
+        /// <summary>
+        /// Whether or not client wants the server to check for warnings.
+        /// </summary>
         [DataMember] 
         public bool CheckForWarnings;
     }

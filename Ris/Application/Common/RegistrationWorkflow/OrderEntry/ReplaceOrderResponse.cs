@@ -44,12 +44,21 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             this.Warning = warning;
         }
 
+        /// <summary>
+        /// Order to replace.
+        /// </summary>
         [DataMember]
         public OrderSummary Order;
 
+        /// <summary>
+        /// Whether or not to warn user of undesirable operation.
+        /// </summary>
         [DataMember] 
         public bool WarnUser;
 
+        /// <summary>
+        /// Warning string sent to client.
+        /// </summary>
         [DataMember] 
         public string Warning;
     }

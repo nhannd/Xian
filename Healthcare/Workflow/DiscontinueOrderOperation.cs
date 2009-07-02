@@ -39,6 +39,13 @@ namespace ClearCanvas.Healthcare.Workflow
 {
 	public class DiscontinueOrderOperation
 	{
+        /// <summary>
+        /// Executes Discontinue Order operation.
+        /// Checks if order is in progress, then executes if it is.
+        /// Otherwise, throws a WorkflowException.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="info"></param>
 		public void Execute(Order order, OrderCancelInfo info)
 		{
 			if (order.Status == OrderStatus.IP)
@@ -47,11 +54,24 @@ namespace ClearCanvas.Healthcare.Workflow
 				throw new WorkflowException(string.Format("Order with status {0} cannot be discontinued.", order.Status));
 		}
 
+        /// <summary>
+        /// Determines if discontinuing an order is possible.
+        /// The order needs to currently be in progress.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
 		public bool CanExecute(Order order)
 		{
 			return order.Status == OrderStatus.IP;
 		}
 
+        /// <summary>
+        /// Determines whether or not it is appropriate to warn the user if the operation is potentially undesirable.
+        /// Returns the result and outputs the corresponding warning message.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="warning"></param>
+        /// <returns></returns>
         public bool WarnUser(Order order, out string warning)
         {
             if(CollectionUtils.SelectFirst(order.Procedures, // gets first procedure that has....
@@ -59,9 +79,9 @@ namespace ClearCanvas.Healthcare.Workflow
                 {
                     return CollectionUtils.Contains(procedure.ReportingProcedureSteps, // .... a reporting step with active reports
                        delegate(ReportingProcedureStep procedureStep)
-                           {
-                               return !procedureStep.IsTerminated;
-                           });
+                       {
+                           return !procedureStep.IsTerminated;
+                       });
                 })!= null)
             {
                 warning = "This order has reports in progress.";

@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public OrderRequisition Requisition;
 
         /// <summary>
-        /// Whether or not client has been warned.
+        /// Whether or not client wants the server to check for warnings.
         /// </summary>
         [DataMember] 
         public bool CheckForWarnings;

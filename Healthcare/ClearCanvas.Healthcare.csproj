@@ -173,6 +173,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingWorkflowSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Workflow\Tests\CancelOrderOperationTests.cs" />
+    <Compile Include="Workflow\Tests\DiscontinueOrderOperationTests.cs" />
     <Compile Include="Workflow\Transcription\TranscriptionOperations.cs" />
     <Compile Include="WorklistFactory.cs" />
     <Compile Include="WorklistFilters.cs" />
@@ -373,6 +375,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TranscriptionRejectReasonEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Workflow\Modality\Tests\" />
+    <Folder Include="Workflow\Protocolling\Tests\" />
+    <Folder Include="Workflow\Registration\Tests\" />
+    <Folder Include="Workflow\Reporting\Tests\" />
+    <Folder Include="Workflow\Transcription\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
