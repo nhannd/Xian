@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                             context.SourceAE = "Importer";
                 
                             DicomSopProcessingResult result = _importer.Import(context);
-                            if (result.Sussessful)
+                            if (result.Successful)
                             {
                                 if (result.Duplicate)
                                 {
@@ -178,6 +178,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                             }
                             else
                             {
+                            	Platform.Log(LogLevel.Warn, "Failure importing sop: {0}", result.ErrorMessage);
                                 if (result.DicomStatus == DicomStatuses.StorageStorageOutOfResources)
                                 {
                                     _skippedStudies.Add(result.StudyInstanceUid);

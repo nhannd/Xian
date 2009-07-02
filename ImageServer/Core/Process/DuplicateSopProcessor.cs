@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
         private static void SetError(DicomSopProcessingResult result, DicomStatus status, String message)
         {
-            result.Sussessful = false;
+            result.Successful = false;
             result.DicomStatus = status;
             result.ErrorMessage = message;
         }
