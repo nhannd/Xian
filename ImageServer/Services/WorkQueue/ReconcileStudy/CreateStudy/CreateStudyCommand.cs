@@ -40,6 +40,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
@@ -242,7 +243,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
             {
                 DuplicateSopProcessor processor = new DuplicateSopProcessor(commandProcessor, Context.Partition, Context.DestStorageLocation);
-                processor.Process(sourceId, uidGroup, file);
+				DicomSopProcessingResult result = processor.Process(sourceId, uidGroup, file);
+				if (!result.Successful) throw new ApplicationException(result.ErrorMessage);
 
                 commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
                 commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));

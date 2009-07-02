@@ -245,6 +245,8 @@ namespace ClearCanvas.ImageServer.Core
                             DuplicateSopProcessor dupProcessor =
                                 new DuplicateSopProcessor(commandProcessor, _partition, studyLocation);
                             result = dupProcessor.Process(context.SourceAE, context.ContextID, file);
+							if (!result.Successful)
+								return result;
                         }
                         else
                         {
