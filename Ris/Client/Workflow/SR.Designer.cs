@@ -808,9 +808,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} is not scheduled to be checked in until {1}
-        ///
-        ///Do you still want to check in this procedure?.
+        ///   Looks up a localized string similar to The following procedure(s) are being checked in earlier than expected:.
         /// </summary>
         internal static string MessageConfirmCheckInProcedureEarly {
             get {
@@ -819,9 +817,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} was scheduled to be checked in at {1}
-        ///
-        ///Do you still want to check in this procedure?.
+        ///   Looks up a localized string similar to The following procedure(s) are being checked in later than expected:.
         /// </summary>
         internal static string MessageConfirmCheckInProcedureLate {
             get {
@@ -911,7 +907,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the protocol for {1} instead?.
+        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the protocol for {1} instead?  The {0} will be saved to your DRAFT folder..
         /// </summary>
         internal static string MessageProtocollingComponentAlreadyOpened {
             get {
@@ -938,7 +934,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the report for {1} instead?.
+        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the report for {1} instead?  The {0} will be saved to your DRAFT folder..
         /// </summary>
         internal static string MessageReportingComponentAlreadyOpened {
             get {
@@ -947,7 +943,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the protocol for {1} instead?.
+        ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the transcription for {1} instead?  The {0} will be saved to your DRAFT folder..
         /// </summary>
         internal static string MessageTranscriptionComponentAlreadyOpened {
             get {
