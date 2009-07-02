@@ -4,6 +4,7 @@ html {
 
 body {
 	font-family: Arial;
+	background: #f7f7f7 url(../images/Background.png) repeat-x top;
 }
 
 div#readOnlyHeader {
@@ -26,8 +27,8 @@ p {
 table {
 	border-collapse:collapse;
 	width:98%;
-	margin-top: 0.5em;
-	margin-left:1em;
+	margin-top: 0;
+	margin-left: 0;
 }
 
 table td {
@@ -43,12 +44,43 @@ div.addDeleteButtons {
 .tableheading {
 	vertical-align: top;
 	font-weight: bold;
-	background-color: #FFFFFF;
-	color: #000000;
+	background-color: #E1EFF8;
+	color: #205F87;
+	padding: 2px;
+}
+
+.tableheading td
+{
+	background: #f1f4f8; /* url(../images/PropertyNameBackground.png) repeat-x bottom;*/
+	 /*#EEEEEE url(../images/ProceduresTableHeadingBackground.png) repeat-x bottom;*/
+	border-bottom: solid 1px #99AACC;
+	vertical-align: text-bottom;
+}
+
+.ProceduresTable
+{
+	width: 100%;
+}
+
+.ProceduresTable td
+{
+	padding: 4px 4px 4px 4px;
+}
+
+.ProceduresTableContainer
+{
+	margin-top: 0px;
+}
+
+.NoteEntryTable 
+{
+	margin-left: 5px;
 }
 
 .propertyname {
 	font-weight: bold;
+	color: #205F87;
+	background: #f1f4f8;
 }
 
 .tabledefault {
@@ -59,7 +91,7 @@ div.addDeleteButtons {
 }
 
 .sectionheading , .subsectionheading {
-	font-size: 100%;
+	font-size: 120%;
 	font-weight: bold;
 	color: #3D98D1;
 	padding-left: 0.15em;
@@ -84,7 +116,7 @@ a.sectionheading  {
 
 .subsectionheading {
 	margin-left:1em;
-	border-bottom: 1px solid #A8D8F4;
+	border-bottom: 1px dashed #A8D8F4;
 }
 
 .pageheading {
@@ -99,16 +131,18 @@ a.sectionheading  {
 
 .patientnameheading {
 	font-family: Tahoma, Geneva, Arial;
-	font-size: 170%;
+	font-size: 180%;
 	font-weight: bold;
 	padding-left: 8px;
+	color: #1b4066;
 }
 
 .patientmrnheading {
 	font-family: Tahoma, Geneva, Arial;
-	font-size: 130%;
+	font-size: 150%;
 	font-weight: bold;
 	padding-left: 8px;
+	color: #1b4066;
 }
 
 .performedprocedureheading {
@@ -118,17 +152,59 @@ a.sectionheading  {
 	color: #3D98D1;
 }
 
+.PatientBannerTable
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+.PatientDemographicsTable
+{
+	margin: 7px 0px 0px 0px;
+	border: solid 1px #BBBBBB;		
+	background: #eef5f8 url(../images/PatientDemographicsBackground.png) repeat-x top;
+}
+
+.DemographicsLabel
+{
+	font-weight: bold;
+	font-size: 140%;
+	color: #336699;
+	padding-top: 7px;
+}
+
+.DemographicsCell
+{
+	font-size: 140%;
+	padding-top: 7px;
+}
+
+.ContactInfoDemographicsLabel
+{
+	font-weight: bold;
+	font-size: 125%;
+	color: #336699;
+	padding-top: 7px;
+}
+
+.ContactInfoDemographicsCell
+{
+	font-size: 125%;
+	padding-top: 7px;
+}
+
+
 .discrepancy {
 	background-color: #000080;
 	color: #FFFFFF;
 }
 
 tr.row0 {
-	background-color: #EEEEEE;
+	background-color: #FFFFFF;
 }
 
 tr.row1 {
-	background-color: #FFFFFF;
+	background-color: #EEEEEE;
 }
 
 tr.highlight {
@@ -315,4 +391,100 @@ div.reportPreview {
 	margin-left: 1em;
 	padding: 0.0em 0.5em 0.0em 0.5em;
 	text-align: justify;
+}
+
+.SectionHeadingBackground
+{
+	background: url(../images/SectionHeaderBackground.png) repeat-x bottom;
+	color: white;
+	font-weight: bold;
+	font-size: 130%;
+	height: 25px;
+	width: 100%;
+}
+
+.SectionHeadingLeft
+{
+	background: url(../images/SectionHeaderLeft.png) no-repeat bottom right;
+	width: 10px;
+	height: 25px;
+}
+
+.SectionHeadingRight
+{
+	background: url(../images/SectionHeaderRight.png) no-repeat bottom left;
+	width: 10px;
+	height: 25px;
+}
+
+.ContentCell
+{
+	margin: 0px;
+	padding: 0px 2px 0px 2px;
+}
+
+.ContentContainer
+{
+	border-left: solid 3px #bbbbbb; 
+	border-bottom: solid 3px #bbbbbb; 
+	border-right: solid 3px #bbbbbb; 	
+	background: white; 
+	padding: 1px 0px 0px 0px;
+}
+
+.SectionTableContainer
+{
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 10px;
+}
+
+.PatientBanner_topleft {
+	background: url(../images/roundedcornr_826631_tl.png) no-repeat top right;
+	height: 11px;
+	width: 11px;
+}
+
+.PatientBanner_top {
+	background: url(../images/roundedcornr_826631_t.png) repeat-x top;
+	height: 11px;
+	width: 1px;
+}
+
+.PatientBanner_topright {
+	background: url(../images/roundedcornr_826631_tr.png) no-repeat top left;
+	height: 11px;
+	width: 11px;
+}
+
+.PatientBanner_left {
+	background: url(../images/roundedcornr_826631_l.png) no-repeat bottom;
+	width: 11px;
+}
+
+.PatientBanner_right {
+	background: url(../images/roundedcornr_826631_r.png) no-repeat bottom left;
+	width: 11px;
+}
+
+.PatientBanner_bottomleft {
+	background: url(../images/roundedcornr_826631_bl.png) no-repeat bottom right;
+	height: 11px;
+	width: 11px;
+}
+
+.PatientBanner_bottom {
+	background: url(../images/roundedcornr_826631_b.png) repeat-x bottom;
+	height: 11px;
+	width: 1px;
+}
+
+.PatientBanner_bottomright {
+	background: url(../images/roundedcornr_826631_br.png) no-repeat bottom left;
+	height: 11px;
+	width: 11px;
+}
+
+.PatientBanner_content {
+	background: #e3f1f9 url(../images/PatientContentBackground.png) repeat-x bottom;
 }

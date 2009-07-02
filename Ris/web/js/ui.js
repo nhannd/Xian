@@ -1052,6 +1052,63 @@ var Table = {
 	}
 };
 
+
+/*
+	GetSectionHTML
+	
+	Returns the html for a section with the title banner and content.
+	
+	Parameters:
+		title - the title of the section.
+		content - the content of the section.
+
+*/
+
+function GetSectionHTML(title, content)
+{
+	var _html = 
+		"<table cellspacing='0' cellpadding='0' border='0' width='100%' style='margin-top: 20px;'>" +
+		"<tbody><tr>" +
+		"<td class='SectionHeadingLeft'></td>" +
+		"<td width='100%' class='SectionHeadingBackground'>" + title + "</td>" +
+		"<td class='SectionHeadingRight'></td>" + 
+		"</tr><tr>" +
+		"<td colspan='3' class='ContentCell'><div class='ContentContainer'>" + content + "</div></td>" +
+		"</tr></tbody></table>";
+	
+	return _html;
+}
+
+/*
+	GetSectionHTML
+	
+	Returns the html for the banner section of the pages with the content.
+	
+	Parameters:
+		content - the content of the section.
+
+*/
+
+function GetBannerHTML(content)
+{	
+	var _html = 
+		'<table cellspacing="0" cellpadding="0"><tr>' +
+		'<td class="PatientBanner_topleft"></td>' + 
+		'<td class="PatientBanner_top"></td>' + 
+		'<td class="PatientBanner_topright"></td>' +
+		'</tr><tr>' +
+		'<td class="PatientBanner_left"></td>' +
+		'<td class="PatientBanner_content">' + content + '</td>' +
+		'<td class="PatientBanner_right"></td>' +
+		'</tr><tr>' +
+		'<td class="PatientBanner_bottomleft"></td>' +
+		'<td class="PatientBanner_bottom"></td>' +
+		'<td class="PatientBanner_bottomright"></td>' +
+		'</tr></table>';
+	
+	return _html;
+}
+
 /*
 	ErrorProvider
 	

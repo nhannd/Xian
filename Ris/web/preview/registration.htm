@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="../js/ris.js"></script>
 		<script type="text/javascript" src="../js/preview.js"></script>
 		<script type="text/javascript" src="../js/layout.js"></script>
+		<script type="text/javascript" src="../js/shadedborder.js"></script>		
 		<script type="text/javascript" >
 			var imagePath = "../images";
 
@@ -89,7 +90,7 @@
 
 						Preview.ImagingServiceTable.createActive($("activeProceduresSection"), patientOrderData);
 						Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
-					}
+					}					
 				}
 				catch(e)
 				{
@@ -110,6 +111,9 @@
 			</div>
 			<div id="activeProceduresSection"></div>
 			<div id="pastProceduresSection"></div>
+			
+			<div id="test">I'm a test.</div>
+			
 		</form>
 	</body>
 </html>

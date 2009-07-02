@@ -234,11 +234,15 @@ Preview.ProceduresTableHelper = function () {
 			heading.innerText = text;
 			parentElement.appendChild(heading);
 		},
-		
-		addTable: function(parentElement)
+			
+		addTable: function(parentElement, className)
 		{
+			var htmlTableContainer = document.createElement("DIV");
+			htmlTableContainer.className = "ProceduresTableContainer";
 			var htmlTable = document.createElement("TABLE");
-			parentElement.appendChild(htmlTable);
+			if(className != null && className != "") htmlTable.className = className;
+			htmlTableContainer.appendChild(htmlTable);
+			parentElement.appendChild(htmlTableContainer);
 			var body = document.createElement("TBODY");
 			htmlTable.appendChild(body);
 			return htmlTable;
@@ -358,8 +362,7 @@ Preview.ImagingServiceTable = function () {
 			parentElement.style.display = 'block';
 		}
 
-		Preview.ProceduresTableHelper.addHeading(parentElement, sectionHeading);
-		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
 
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 			 [
@@ -436,7 +439,7 @@ Preview.ProceduresTable = function () {
 				Preview.ProceduresTableHelper.addHeading(parentElement, 'Procedures');
 			}
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -560,7 +563,7 @@ Preview.ProtocolProceduresTable = function () {
 
 			Preview.ProceduresTableHelper.addHeading(parentElement, 'Protocols');
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -741,7 +744,7 @@ Preview.ReportingProceduresTable = function () {
 						});
 				});
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					// {   label: "Image Availability",
@@ -825,7 +828,7 @@ Preview.ReportListTable = function () {
 			
 			Preview.ProceduresTableHelper.addHeading(parentElement, 'Reports');
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, null);
 
 			var reportContent = document.createElement("DIV");
 			reportContent.id = "reportContent";
@@ -884,7 +887,7 @@ Preview.OrderNotesTable = function () {
 
 		var canAcknowledge = checkBoxesProperties && checkBoxesProperties.onItemChecked && filteredNotes.find(function(note) { return note.CanAcknowledge; });
 
-		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "NoteEntryTable");
 		htmlTable = Table.createTable(htmlTable, { checkBoxes: canAcknowledge, checkBoxesProperties: checkBoxesProperties, editInPlace: false, flow: false, addColumnHeadings: false },
 		[
 			{   label: "Order Note",
@@ -920,8 +923,8 @@ Preview.OrderNotesTable = function () {
 			if(notes.length == 0)
 				return;
 
-			if (!hideHeading)
-				Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
+//			if (!hideHeading)
+//				Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
 
 			if(subsections)
 			{
@@ -1075,8 +1078,8 @@ Preview.ReportPreview = function () {
  */
 Preview.ImagingServiceSection = function () {
 	var _html = 
-		'<p class="sectionheading">Imaging Service</p>'+
-		'<table width="100%" border="0">'+
+		'<div class="SectionTableContainer">' +
+		'<table width="100%" border="0" cellspacing="5">'+
 		'	<tr>'+
 		'		<td width="120" class="propertyname">Entered By</td>'+
 		'		<td width="200"><div id="EnteredBy"/></td>'+
@@ -1118,7 +1121,7 @@ Preview.ImagingServiceSection = function () {
 		'			</table>'+
 		'		</td>'+
 		'	</tr>'+
-		'</table>';
+		'</table></div>';
 		
 	return {
 		create: function (element, orderDetail)
@@ -1150,32 +1153,50 @@ Preview.ImagingServiceSection = function () {
 
 }();
 
+Preview.SectionContainer = function () {
+
+	return {
+		create: function (element, title)
+		{				
+			element.innerHTML = GetSectionHTML(title, element.innerHTML);
+		}
+	};
+
+}();
+
+Preview.PatientBannner = function () {
+
+	return {
+		create: function (element)
+		{				
+			element.innerHTML = GetBannerHTML(element.innerHTML);
+		}
+	};
+
+}();
+
 /*
  *	Create a summary of demographic information of a single patient profile.
  */
 Preview.PatientDemographicsSection = function () {
 	var _html = 
-		'<table width="100%" border="0">'+
+		'<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">'+
 		'	<tr>'+
-		'		<td width="120" class="propertyname">Date of Birth</td>'+
-		'		<td width="200"><div id="dateOfBirth"/></td>'+
-		'		<td width="63" class="propertyname">Age</td>'+
-		'		<td width="229"><div id="age"/></td>'+
-		'	</tr>'+
-		'	<tr>'+
-		'		<td class="propertyname">Healthcard # </td>'+
-		'		<td><div id="healthcard"/></td>'+
-		'		<td width="63" class="propertyname">Sex</td>'+
-		'		<td width="229"><div id="sex"/></td>'+
+		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Healthcard #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="healthcard"/></td>'+
+		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Date of Birth:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="dateOfBirth"/></td>'+
+		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Age:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="age"/></td>'+
+		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Sex:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="sex"/></td>'+
+		'		<td width="50%">&nbsp;</td>' +	
 		'	</tr>'+
 		'	<tr id="HomePhoneRow">'+
-		'		<td class="propertyname">Home Phone</td>'+
-		'		<td colspan="4"><div id="currentHomePhone"/></td>'+
+		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Phone:</td>'+
+		'		<td colspan="8" class="ContactInfoDemographicsCell"><div id="currentHomePhone"/></td>'+
 		'	</tr>'+
 		'	<tr id="HomeAddressRow">'+
-		'		<td class="propertyname">Home Address</td>'+
-		'		<td colspan="4"><div id="currentHomeAddress"/></td>'+
+		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Address:</td>'+
+		'		<td colspan="8" class="ContactInfoDemographicsCell" nowrap="nowrap"><div id="currentHomeAddress"/></td>'+
 		'	</tr>'+
+		'	<tr><td colspan="9"><img src="../images/blank.gif" height="10" /></td></tr>'
 		'</table>';
 
 	return {
@@ -1232,7 +1253,7 @@ Preview.PatientBannerSection = function() {
  */
 Preview.BannerSection = function() {
 	var _html =
-		'<table width="100%" border="0">'+
+		'<table width="100%" border="0" cellspacing="0" cellpadding="0" class="PatientBannerTable">'+
 		'	<tr>'+
 		'		<td class="patientnameheading"><div id="line1" /></td>'+
 		'		<td rowspan="2" align="right"><div id="alerts"/></td>'+
