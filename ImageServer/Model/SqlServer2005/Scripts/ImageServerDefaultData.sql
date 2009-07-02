@@ -284,7 +284,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),102,'FilesystemStudyProcess','Filesystem Reprocess Studies','This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.')
+           (newid(),102,'FilesystemStudyProcess','Filesystem Reapply Rules','This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
