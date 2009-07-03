@@ -77,15 +77,14 @@ namespace ClearCanvas.Ris.Client
 			_selectedUser = GetUserForStaff(_staffDetail); 
 			_userLookupHandler = new UserLookupHandler(this.Host.DesktopWindow);
 
-			base.Start();
+			this.Validation.Add(new ValidationRule("SelectedUser",
+				delegate
+				{
+					bool userNoLongerExist = !string.IsNullOrEmpty(_staffDetail.UserName) && _selectedUser == null;
+					return new ValidationResult(!userNoLongerExist, string.Format(SR.MessageAssociatedUserNoLongerExist, _staffDetail.UserName));
+				}));
 
-			if (!string.IsNullOrEmpty(_staffDetail.UserName) && _selectedUser == null)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageAssociatedUserNoLongerExist, _staffDetail.UserName), MessageBoxActions.Ok);
-				
-				// use the Property setter here so the _staffDetail.UserName is reset, and modified flag raised.
-				this.SelectedUser = null;
-			}
+			base.Start();
 		}
 
 		public StaffDetail StaffDetail
@@ -113,7 +112,7 @@ namespace ClearCanvas.Ris.Client
 
 		public object SelectedUser
 		{
-			get { return _selectedUser; }
+			get { return _selectedUser == null ? _staffDetail.UserName : _selectedUser.UserName; }
 			set
 			{
 				_selectedUser = (UserLookupData)value;

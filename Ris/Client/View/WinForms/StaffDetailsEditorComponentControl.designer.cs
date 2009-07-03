@@ -76,12 +76,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffType.DataSource = null;
 			this._staffType.DisplayMember = "";
 			this._staffType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._staffType.LabelText = "StaffType";
-			this._staffType.Location = new System.Drawing.Point(12, 49);
+			this._staffType.LabelText = "Staff Type";
+			this._staffType.Location = new System.Drawing.Point(12, 2);
 			this._staffType.Margin = new System.Windows.Forms.Padding(2);
 			this._staffType.Name = "_staffType";
 			this._staffType.Size = new System.Drawing.Size(150, 41);
-			this._staffType.TabIndex = 1;
+			this._staffType.TabIndex = 0;
 			this._staffType.Value = null;
 			// 
 			// _middleName
@@ -126,13 +126,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _staffId
 			// 
 			this._staffId.LabelText = "Staff ID";
-			this._staffId.Location = new System.Drawing.Point(178, 49);
+			this._staffId.Location = new System.Drawing.Point(178, 2);
 			this._staffId.Margin = new System.Windows.Forms.Padding(2);
 			this._staffId.Mask = "";
 			this._staffId.Name = "_staffId";
 			this._staffId.PasswordChar = '\0';
 			this._staffId.Size = new System.Drawing.Size(150, 41);
-			this._staffId.TabIndex = 2;
+			this._staffId.TabIndex = 1;
 			this._staffId.ToolTip = null;
 			this._staffId.Value = null;
 			// 
@@ -190,12 +190,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _userLookup
 			// 
-			this._userLookup.LabelText = "User";
-			this._userLookup.Location = new System.Drawing.Point(12, 4);
+			this._userLookup.LabelText = "User ID";
+			this._userLookup.Location = new System.Drawing.Point(12, 47);
 			this._userLookup.Margin = new System.Windows.Forms.Padding(2);
 			this._userLookup.Name = "_userLookup";
 			this._userLookup.Size = new System.Drawing.Size(316, 41);
-			this._userLookup.TabIndex = 0;
+			this._userLookup.TabIndex = 2;
 			this._userLookup.Value = null;
 			// 
 			// StaffDetailsEditorComponentControl

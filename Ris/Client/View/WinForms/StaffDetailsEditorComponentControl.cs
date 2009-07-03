@@ -50,7 +50,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-			_userLookup.Enabled = _component.IsUserAdmin;
 			_userLookup.LookupHandler = _component.UserLookupHandler;
 			_userLookup.DataBindings.Add("Value", _component, "SelectedUser", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -84,7 +83,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_licenseNumber.ReadOnly = readOnly;
 			_billingNumber.ReadOnly = readOnly;
 
-			_userLookup.Enabled = !readOnly;
+			_userLookup.Enabled = !readOnly && _component.IsUserAdmin;
 			_sex.Enabled = !readOnly;
 			_staffType.Enabled = !readOnly;
 		}
