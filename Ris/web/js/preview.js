@@ -1192,19 +1192,19 @@ Preview.PatientDemographicsSection = function () {
 		'	<tr>'+
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Healthcard #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="healthcard"/></td>'+
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Date of Birth:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="dateOfBirth"/></td>'+
+		'   </tr><tr>' +
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Age:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="age"/></td>'+
 		'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Sex:</td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="sex"/></td>'+
-		'		<td width="50%">&nbsp;</td>' +	
 		'	</tr>'+
 		'	<tr id="HomePhoneRow">'+
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Phone:</td>'+
-		'		<td colspan="8" class="ContactInfoDemographicsCell"><div id="currentHomePhone"/></td>'+
+		'		<td colspan="3" class="ContactInfoDemographicsCell"><div id="currentHomePhone"/></td>'+
 		'	</tr>'+
 		'	<tr id="HomeAddressRow">'+
 		'		<td class="ContactInfoDemographicsLabel" nowrap="nowrap">Home Address:</td>'+
-		'		<td colspan="8" class="ContactInfoDemographicsCell" nowrap="nowrap"><div id="currentHomeAddress"/></td>'+
+		'		<td colspan="3" class="ContactInfoDemographicsCell" nowrap="nowrap"><div id="currentHomeAddress"/></td>'+
 		'	</tr>'+
-		'	<tr><td colspan="9"><img src="../images/blank.gif" height="10" /></td></tr>'
+		'	<tr><td colspan="4"><img src="../images/blank.gif" height="10" /></td></tr>'
 		'</table>';
 
 	return {

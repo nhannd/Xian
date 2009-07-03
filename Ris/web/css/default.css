@@ -5,6 +5,7 @@ html {
 body {
 	font-family: Arial;
 	background: #f7f7f7 url(../images/Background.png) repeat-x top;
+	margin: 10px 0px 0px 10px;
 }
 
 div#readOnlyHeader {
