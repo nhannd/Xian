@@ -1245,6 +1245,7 @@ Preview.PatientBannerSection = function() {
 			var patientName = Ris.formatPersonName(patientProfile.Name);
 			var patientMRN = Ris.formatMrn(patientProfile.Mrn);
 			Preview.BannerSection.create(element, patientName, patientMRN, patientName, alerts);
+			
 		}
 	};
 }();
@@ -1285,6 +1286,8 @@ Preview.BannerSection = function() {
 				alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
 			}
 			$("alerts").innerHTML = alertHtml;
+			
+			Preview.PatientBannner.create(element.parentNode);
 		}
 	};
 }();

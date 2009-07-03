@@ -4,8 +4,8 @@ html {
 
 body {
 	font-family: Arial;
-	background: #f7f7f7 url(../images/Background.png) repeat-x top;
-	margin: 10px 0px 0px 10px;
+	background: #ffffff;
+	margin: 10px 0px 10px 5px;
 }
 
 div#readOnlyHeader {
@@ -169,28 +169,28 @@ a.sectionheading  {
 .DemographicsLabel
 {
 	font-weight: bold;
-	font-size: 140%;
+	font-size: 120%;
 	color: #336699;
 	padding-top: 7px;
 }
 
 .DemographicsCell
 {
-	font-size: 140%;
+	font-size: 120%;
 	padding-top: 7px;
 }
 
 .ContactInfoDemographicsLabel
 {
 	font-weight: bold;
-	font-size: 125%;
+	font-size: 110%;
 	color: #336699;
 	padding-top: 7px;
 }
 
 .ContactInfoDemographicsCell
 {
-	font-size: 125%;
+	font-size: 110%;
 	padding-top: 7px;
 }
 
