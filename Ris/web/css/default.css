@@ -440,51 +440,51 @@ div.reportPreview {
 }
 
 .PatientBanner_topleft {
-	background: url(../images/roundedcornr_826631_tl.png) no-repeat top right;
+	background: url(../images/PatientBanner_tl.png) no-repeat top right;
 	height: 11px;
 	width: 11px;
 }
 
 .PatientBanner_top {
-	background: url(../images/roundedcornr_826631_t.png) repeat-x top;
+	background: url(../images/PatientBanner_t.png) repeat-x top;
 	height: 11px;
 	width: 1px;
 }
 
 .PatientBanner_topright {
-	background: url(../images/roundedcornr_826631_tr.png) no-repeat top left;
+	background: url(../images/PatientBanner_tr.png) no-repeat top left;
 	height: 11px;
 	width: 11px;
 }
 
 .PatientBanner_left {
-	background: url(../images/roundedcornr_826631_l.png) no-repeat bottom;
+	background: url(../images/PatientBanner_l.png) no-repeat bottom;
 	width: 11px;
 }
 
 .PatientBanner_right {
-	background: url(../images/roundedcornr_826631_r.png) no-repeat bottom left;
+	background: url(../images/PatientBanner_r.png) no-repeat bottom left;
 	width: 11px;
 }
 
 .PatientBanner_bottomleft {
-	background: url(../images/roundedcornr_826631_bl.png) no-repeat bottom right;
+	background: url(../images/PatientBanner_bl.png) no-repeat bottom right;
 	height: 11px;
 	width: 11px;
 }
 
 .PatientBanner_bottom {
-	background: url(../images/roundedcornr_826631_b.png) repeat-x bottom;
+	background: url(../images/PatientBanner_b.png) repeat-x bottom;
 	height: 11px;
 	width: 1px;
 }
 
 .PatientBanner_bottomright {
-	background: url(../images/roundedcornr_826631_br.png) no-repeat bottom left;
+	background: url(../images/PatientBanner_br.png) no-repeat bottom left;
 	height: 11px;
 	width: 11px;
 }
 
 .PatientBanner_content {
-	background: #e3f1f9 url(../images/PatientContentBackground.png) repeat-x bottom;
+	background: #e3f1f9 url(../images/PatientBannerBackground.png) repeat-x bottom;
 }
