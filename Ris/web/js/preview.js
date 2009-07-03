@@ -400,12 +400,14 @@ Preview.ImagingServiceTable = function () {
 		{
 			var activeProcedures = _getActiveProcedures(ordersList);
 			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
+			Preview.SectionContainer.create(parentElement, "Active Imaging Services");						
 		},
 		
 		createPast: function(parentElement, ordersList)
 		{
 			var pastProcedures = _getNonActiveProcedures(ordersList);
 			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
+			Preview.SectionContainer.create(parentElement, "Past Imaging Services");						
 		}
 	};
 }();
@@ -467,6 +469,8 @@ Preview.ProceduresTable = function () {
 
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(procedures);
+			
+			Preview.SectionContainer.create(parentElement, "Procedures");
 		}
 	};
 }();
@@ -940,6 +944,8 @@ Preview.OrderNotesTable = function () {
 			{
 				_createSubsection(parentElement, notes);
 			}
+			
+			Preview.SectionContainer.create(parentElement, "Order Notes");
 		},
 		
 		defaultSubsections:
@@ -1148,6 +1154,8 @@ Preview.ImagingServiceSection = function () {
 			{
 				Field.show($("CancelSection"), false);
 			}
+			
+			Preview.SectionContainer.create(element, "Imaging Service");
 		}
 	};
 
