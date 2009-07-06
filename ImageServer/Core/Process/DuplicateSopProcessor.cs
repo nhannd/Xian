@@ -62,16 +62,15 @@ namespace ClearCanvas.ImageServer.Core.Process
             Platform.CheckForNullReference(_context.StudyLocation, "_context.StudyLocation");
 
             DicomSopProcessingResult result = new DicomSopProcessingResult();
-            string failureMessage;
+            result.DicomStatus = DicomStatuses.Success;
+            result.Successful = true;
 
+            string failureMessage;
             String sopInstanceUid = file.MediaStorageSopInstanceUid;
             ServerPartition partition = _context.Partition;
 
             if (_context.Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
             {
-                result.DicomStatus = DicomStatuses.Success;
-            	result.Successful = true;
-
                 Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", sopInstanceUid);
                 return result;
             }
