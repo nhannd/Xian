@@ -11,8 +11,11 @@
     <Setting Name="DateTimeFormat" Description="Date and time format string (use hh:mm tt for non-military)" Type="System.String" Scope="User">
       <Value Profile="(Default)">dd-MMM-yyyy HH:mm</Value>
     </Setting>
-    <Setting Name="DescriptiveDateThresholdInDays" Type="System.Int32" Scope="User">
+    <Setting Name="DescriptiveDateThresholdInDays" Description="Threshold for usage of relative datetime terms. A setting of 0 turns off relative terms." Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="DescriptiveFormattingEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

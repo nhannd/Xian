@@ -104,46 +104,37 @@ namespace ClearCanvas.Desktop
             if(descriptive)
             {
                 DateTime? today = System.DateTime.Today;
-                DateTime? yesterday = today.Value.AddDays(-1);
-                DateTime? tomorrow = today.Value.AddDays(1);
-                DateTime? afterTomorrow = tomorrow.Value.AddDays(1);
 
-                if (dt < yesterday)
+                if(FormatSettings.Default.DescriptiveDateThresholdInDays < 0)
+                    FormatSettings.Default.DescriptiveDateThresholdInDays = 0;
+
+                if (FormatSettings.Default.DescriptiveFormattingEnabled &&  
+                    dt >= today.Value.AddDays(-FormatSettings.Default.DescriptiveDateThresholdInDays) &&
+                    dt <= today.Value.AddDays(FormatSettings.Default.DescriptiveDateThresholdInDays) + TimeSpan.FromSeconds(86399))
                 {
-                    int dayDiff = (int)Math.Ceiling(((today.Value - dt.Value).TotalDays));
+                    DateTime? yesterday = today.Value.AddDays(-1);
+                    DateTime? tomorrow = today.Value.AddDays(1);
+                    DateTime? afterTomorrow = tomorrow.Value.AddDays(1);
 
-                    if (dayDiff < FormatSettings.Default.DescriptiveDateThresholdInDays)
+                    if (dt < yesterday)
                     {
-                        return dayDiff + " days ago";
+                        return (int) Math.Ceiling(((today.Value - dt.Value).TotalDays)) + " days ago";
+                    }
+                    else if (dt >= yesterday && dt < today)
+                    {
+                        return "Yesterday " + Time(dt);
+                    }
+                    else if (dt >= today && dt < tomorrow)
+                    {
+                        return "Today " + Time(dt);
+                    }
+                    else if (dt >= tomorrow && dt < afterTomorrow)
+                    {
+                        return "Tomorrow " + Time(dt);
                     }
                     else
                     {
-                        return DateTime(dt);
-                    }
-                }
-                else if (dt >= yesterday && dt < today)
-                {
-                    return "Yesterday " + Time(dt);
-                }
-                else if (dt >= today && dt < tomorrow)
-                {
-                    return "Today " + Time(dt);
-                }
-                else if (dt >= tomorrow && dt < afterTomorrow)
-                {
-                    return "Tomorrow " + Time(dt);
-                }
-                else if (dt > afterTomorrow)
-                {
-                    int dayDiff = (dt - today).Value.Days;
-
-                    if (dayDiff < FormatSettings.Default.DescriptiveDateThresholdInDays)
-                    {
-                        return dayDiff + " days from now";
-                    }
-                    else
-                    {
-                        return DateTime(dt);
+                        return (dt - today).Value.Days + " days from now";
                     }
                 }
                 else
@@ -153,7 +144,7 @@ namespace ClearCanvas.Desktop
             }
             else
             {
-                return dt == null ? "" : dt.Value.ToString(DateFormat);
+                return dt == null ? "" : DateTime(dt);
             }
         }
 

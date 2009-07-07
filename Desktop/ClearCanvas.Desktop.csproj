@@ -101,6 +101,11 @@
     <Compile Include="DragDropOption.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="FileDialogCreationArgs.cs" />
+    <Compile Include="FormatSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>FormatSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="IPagingController.cs" />
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
@@ -172,11 +177,6 @@
     <Compile Include="ExceptionHandlerComponent.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="FormatSettings.cs" />
-    <Compile Include="FormatSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>FormatSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="IApplicationComponentContainer.cs" />
     <Compile Include="IBlockingOperationView.cs" />
     <Compile Include="Actions\SimpleActionModel.cs" />

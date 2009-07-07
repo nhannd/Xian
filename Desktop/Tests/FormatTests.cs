@@ -23,15 +23,15 @@ namespace ClearCanvas.Desktop.Tests
         {
             int threshold = 5;
             FormatSettings.Default.DescriptiveDateThresholdInDays = threshold;
-            DateTime? today = System.DateTime.Today;
+            DateTime? now = DateTime.Now;
+            DateTime? today = DateTime.Today;
             DateTime? yesterday = today.Value.AddDays(-1);
             DateTime? tomorrow = today.Value.AddDays(1);
-            DateTime? afterTomorrow = tomorrow.Value.AddDays(1);
             
             // if input was before yesterday
             // we test for a day before the threshold
-            Assert.AreEqual(threshold - 1 + " days ago", Format.Date(today.Value.AddDays(-(threshold - 1)), true));           // within threshold
-            Assert.AreEqual(Format.DateTime(today.Value.AddDays(-threshold)), Format.Date(today.Value.AddDays(-threshold), true));  // outside threshold
+            Assert.AreEqual(threshold + " days ago", Format.Date(now.Value.AddDays(-threshold), true));           // within threshold
+            Assert.AreEqual(Format.DateTime(now.Value.AddDays(-(threshold + 1))), Format.Date(now.Value.AddDays(-(threshold + 1)), true));  // outside threshold
             
             // if input was yesterday
             Assert.AreEqual("Yesterday " + Format.Time(yesterday), Format.Date(yesterday, true));
@@ -44,8 +44,8 @@ namespace ClearCanvas.Desktop.Tests
             
             // if input is beyond tomorrow
             // we test for a day before the threshold
-            Assert.AreEqual(threshold - 1 + " days from now", Format.Date(today.Value.AddDays(threshold - 1), true));       // within threshold
-            Assert.AreEqual(Format.DateTime(today.Value.AddDays(threshold)), Format.Date(today.Value.AddDays(threshold), true));    // outside threshold
+            Assert.AreEqual(threshold + " days from now", Format.Date(now.Value.AddDays(threshold), true));       // within threshold
+            Assert.AreEqual(Format.DateTime(now.Value.AddDays(threshold + 2)), Format.Date(now.Value.AddDays(threshold + 2), true));    // outside threshold
         }
 
         /// <summary>
@@ -60,19 +60,19 @@ namespace ClearCanvas.Desktop.Tests
         {
             int threshold = 0;
             FormatSettings.Default.DescriptiveDateThresholdInDays = threshold;
-            DateTime? today = System.DateTime.Today;
+            DateTime? now = DateTime.Now;
+            DateTime? today = DateTime.Today;
             DateTime? yesterday = today.Value.AddDays(-1);
             DateTime? tomorrow = today.Value.AddDays(1);
-            DateTime? afterTomorrow = tomorrow.Value.AddDays(1);
 
             // if input was yesterday
-            Assert.AreEqual("Yesterday " + Format.Time(yesterday), Format.Date(yesterday, true));
+            Assert.AreEqual(yesterday.Value.ToString(FormatSettings.Default.DateTimeFormat), Format.Date(yesterday, true));
 
             // if input is today
             Assert.AreEqual("Today " + Format.Time(today), Format.Date(today, true));
 
             // if input is tomorrow
-            Assert.AreEqual("Tomorrow " + Format.Time(tomorrow), Format.Date(tomorrow, true));
+            Assert.AreEqual(tomorrow.Value.ToString(FormatSettings.Default.DateTimeFormat), Format.Date(tomorrow, true));
 
             threshold = 1;
             FormatSettings.Default.DescriptiveDateThresholdInDays = threshold;
@@ -88,11 +88,21 @@ namespace ClearCanvas.Desktop.Tests
         }
 
         [Test]
-        public void Test_Date_NonDescriptive()
+        public void Test_Date_NonDescriptive_API()
         {
             DateTime? today = System.DateTime.Today;
 
-            Assert.AreEqual(today.Value.ToString(FormatSettings.Default.DateFormat), Format.Date(today, false));
+            Assert.AreEqual(today.Value.ToString(FormatSettings.Default.DateTimeFormat), Format.Date(today, false));
+        }
+
+        [Test]
+        public void Test_Date_NonDescriptive_Admin()
+        {
+            DateTime? today = System.DateTime.Today;
+
+            FormatSettings.Default.DescriptiveFormattingEnabled = false;
+
+            Assert.AreEqual(today.Value.ToString(FormatSettings.Default.DateTimeFormat), Format.Date(today, true));
         }
     }
 }
