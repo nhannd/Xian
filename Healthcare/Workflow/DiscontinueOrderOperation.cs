@@ -84,7 +84,7 @@ namespace ClearCanvas.Healthcare.Workflow
                        });
                 })!= null)
             {
-                warning = "This order has reports in progress.";
+                warning = "This order has been completed and may have reports in progress.";
                 return true;
             }
 

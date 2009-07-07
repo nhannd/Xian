@@ -203,6 +203,7 @@ namespace ClearCanvas.Healthcare.Workflow.Tests
         {
             Order order = new Order();
             Procedure procedure = new Procedure();
+            order.AddProcedure(procedure);
             ModalityProcedureStep modStep = new ModalityProcedureStep(procedure, "New mod.", new Healthcare.Modality());
             ConcreteReportingProcedureStep step = new ConcreteReportingProcedureStep(procedure);
             DiscontinueOrderOperation op = new DiscontinueOrderOperation();
@@ -222,6 +223,7 @@ namespace ClearCanvas.Healthcare.Workflow.Tests
         {
             Order order = new Order();
             Procedure procedure = new Procedure();
+            order.AddProcedure(procedure);
             ConcreteReportingProcedureStep step = new ConcreteReportingProcedureStep(procedure);
             DiscontinueOrderOperation op = new DiscontinueOrderOperation();
             step.Discontinue();
@@ -230,6 +232,32 @@ namespace ClearCanvas.Healthcare.Workflow.Tests
             Assert.AreEqual(ActivityStatus.DC, step.State);
 
             Assert.IsTrue(step.IsTerminated);
+            Assert.IsFalse(op.WarnUser(order, out warning));
+            Assert.IsNull(warning);
+        }
+
+        [Test]
+        public void Test_WarnUser_NoProcedures()
+        {
+            Order order = new Order();
+            DiscontinueOrderOperation op = new DiscontinueOrderOperation();
+            string warning;
+
+            Assert.AreEqual(0, order.Procedures.Count);
+            Assert.IsFalse(op.WarnUser(order, out warning));
+            Assert.IsNull(warning);
+        }
+
+        [Test]
+        public void Test_WarnUser_NoReportingProcedureSteps()
+        {
+            Order order = new Order();
+            Procedure procedure = new Procedure();
+            order.AddProcedure(procedure);
+            DiscontinueOrderOperation op = new DiscontinueOrderOperation();
+            string warning;
+
+            Assert.IsEmpty(procedure.ReportingProcedureSteps);
             Assert.IsFalse(op.WarnUser(order, out warning));
             Assert.IsNull(warning);
         }
