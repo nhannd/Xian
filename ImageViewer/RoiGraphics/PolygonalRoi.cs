@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	/// <summary>
 	/// Represents a static, polygonal region of interest for the purposes of computing statistics on the contained pixels.
 	/// </summary>
-	public class PolygonalRoi : Roi, IRoiStatisticsProvider, IRoiAreaProvider
+	public class PolygonalRoi : Roi, IRoiAreaProvider, IRoiStatisticsProvider
 	{
 		private readonly PolygonF _polygon;
 		private Units _units;

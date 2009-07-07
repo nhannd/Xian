@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -84,8 +85,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 				base.Enabled = CanUseLocal() && base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1;
 			else
 				base.Enabled = base.Context.SelectedStudy != null && base.Context.SelectedStudies.Count == 1 &&
-					base.Context.SelectedServerGroup.Servers.Count == 1 &&
-					base.Context.SelectedServerGroup.Servers[0] != null && base.Context.SelectedServerGroup.Servers[0].IsServer;
+					GetServerForStudy(base.Context.SelectedStudy) != null;
+		}
+
+		private IServerTreeNode GetServerForStudy(StudyItem studyItem)
+		{
+			if (base.Context.SelectedServerGroup == null || base.Context.SelectedServerGroup.Servers.Count == 0)
+			{
+				return null;
+			}
+			else if (base.Context.SelectedServerGroup.Servers.Count == 1)
+			{
+				return base.Context.SelectedServerGroup.Servers[0];
+			}
+			else
+			{
+				return CollectionUtils.SelectFirst(base.Context.SelectedServerGroup.Servers,
+					delegate(IServerTreeNode server)
+					{
+						Server theServer = server as Server;
+						if (theServer != null)
+						{
+							ApplicationEntity ae = studyItem.Server as ApplicationEntity;
+							if (ae != null)
+								return theServer.AETitle == ae.AETitle;
+						}
+
+						return false;
+					});
+			}
 		}
 
 		private static bool? _canUseLocal;
@@ -130,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			try
 			{
 				SeriesDetailsComponent component =
-					new SeriesDetailsComponent(base.Context.SelectedStudy, base.Context.SelectedServerGroup.Servers[0]);
+					new SeriesDetailsComponent(base.Context.SelectedStudy, GetServerForStudy(base.Context.SelectedStudy));
 				ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, component, SR.TitleSeriesDetails);
 			}
 			catch(Exception e)

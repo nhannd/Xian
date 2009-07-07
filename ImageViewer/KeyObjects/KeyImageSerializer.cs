@@ -354,30 +354,8 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				iod.ClinicalTrialStudy.ClinicalTrialTimePointId = sourceTrialStudy.ClinicalTrialTimePointId;
 			}
 
-			ClinicalTrialSeriesModuleIod sourceTrialSeries = new ClinicalTrialSeriesModuleIod(source);
-			if (sourceTrialSeries.HasValues()) // clinical trial series module is user optional
-			{
-				iod.ClinicalTrialSeries.ClinicalTrialCoordinatingCenterName = sourceTrialSeries.ClinicalTrialCoordinatingCenterName;
-				iod.ClinicalTrialSeries.ClinicalTrialSeriesDescription = sourceTrialSeries.ClinicalTrialSeriesDescription;
-				iod.ClinicalTrialSeries.ClinicalTrialSeriesId = sourceTrialSeries.ClinicalTrialSeriesId;
-			}
-
-			GeneralEquipmentModuleIod sourceGeneralEquipment = new GeneralEquipmentModuleIod(source);
-			if (true) // general equipment module is always required
-			{
-				iod.GeneralEquipment.DateTimeOfLastCalibrationDateTime = sourceGeneralEquipment.DateTimeOfLastCalibrationDateTime;
-				iod.GeneralEquipment.DeviceSerialNumber = sourceGeneralEquipment.DeviceSerialNumber;
-				iod.GeneralEquipment.GantryId = sourceGeneralEquipment.GantryId;
-				iod.GeneralEquipment.InstitutionAddress = sourceGeneralEquipment.InstitutionAddress;
-				iod.GeneralEquipment.InstitutionalDepartmentName = sourceGeneralEquipment.InstitutionalDepartmentName;
-				iod.GeneralEquipment.InstitutionName = sourceGeneralEquipment.InstitutionName;
-				iod.GeneralEquipment.Manufacturer = sourceGeneralEquipment.Manufacturer;
-				iod.GeneralEquipment.ManufacturersModelName = sourceGeneralEquipment.ManufacturersModelName;
-				iod.GeneralEquipment.PixelPaddingValue = sourceGeneralEquipment.PixelPaddingValue;
-				iod.GeneralEquipment.SoftwareVersions = sourceGeneralEquipment.SoftwareVersions;
-				iod.GeneralEquipment.SpatialResolution = sourceGeneralEquipment.SpatialResolution;
-				iod.GeneralEquipment.StationName = sourceGeneralEquipment.StationName;
-			}
+			// initialize the general equipment module
+			iod.GeneralEquipment.Manufacturer = "";
 
 			return iod;
 		}

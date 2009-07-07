@@ -2,84 +2,46 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.GraphicState" Collapsed="true">
-    <Position X="0.75" Y="4.5" Width="1.5" />
+    <Position X="5" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\GraphicState.cs</FileName>
       <HashCode>AAAAAAAEQGEAAAAAAAAAAAAAAAAAAAAAIAAAAAAFAAA=</HashCode>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="0.825" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" Collapsed="true">
-    <Position X="3" Y="4.5" Width="1.75" />
+    <Position X="5" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\StandardGraphicState.cs</FileName>
       <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.GraphicState" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="2.25" Y="4.812" />
-        <Point X="3" Y="4.812" />
-      </Path>
-    </InheritanceLine>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.FocussedGraphicState" Collapsed="true">
-    <Position X="6" Y="3.75" Width="1.75" />
+    <Position X="3.5" Y="4.25" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\FocussedGraphicState.cs</FileName>
       <HashCode>AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="4.065" />
-        <Point X="6" Y="4.065" />
-      </Path>
-    </InheritanceLine>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.FocussedSelectedGraphicState" Collapsed="true">
-    <Position X="6" Y="5.75" Width="2.25" />
+    <Position X="8.5" Y="4.25" Width="2.25" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\FocussedSelectedGraphicState.cs</FileName>
       <HashCode>AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="6.065" />
-        <Point X="6" Y="6.065" />
-      </Path>
-    </InheritanceLine>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.InactiveGraphicState" Collapsed="true">
-    <Position X="6" Y="2.75" Width="1.75" />
+    <Position X="1" Y="4.25" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\InactiveGraphicState.cs</FileName>
       <HashCode>AAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="3.065" />
-        <Point X="6" Y="3.065" />
-      </Path>
-    </InheritanceLine>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.InteractiveGraphics.SelectedGraphicState" Collapsed="true">
-    <Position X="6" Y="4.75" Width="1.75" />
+    <Position X="6" Y="4.25" Width="1.75" />
     <TypeIdentifier>
       <FileName>InteractiveGraphics\SelectedGraphicState.cs</FileName>
       <HashCode>AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <InheritanceLine Type="ClearCanvas.ImageViewer.InteractiveGraphics.StandardGraphicState" FixedFromPoint="true">
-      <Path>
-        <Point X="4.75" Y="4.938" />
-        <Point X="5.125" Y="4.938" />
-        <Point X="5.125" Y="5.159" />
-        <Point X="6" Y="5.159" />
-      </Path>
-    </InheritanceLine>
   </Class>
 </ClassDiagram>

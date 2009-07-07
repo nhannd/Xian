@@ -598,9 +598,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagrams\AnnotationGraphics.cd" />
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\CompositeGraphics.cd" />
     <None Include="ClassDiagrams\ControlGraphics.cd" />
+    <None Include="ClassDiagrams\DicomGraphicsPlane.cd" />
+    <None Include="ClassDiagrams\DicomVoiLutsProvider.cd" />
     <None Include="ClassDiagrams\IControlGraphics.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />
     <None Include="ClassDiagrams\ImageViewerAndLayoutManager.cd" />
@@ -614,7 +617,9 @@
     <None Include="ClassDiagrams\PresentationImage.cd" />
     <None Include="ClassDiagrams\ImageViewerTools.cd" />
     <None Include="ClassDiagrams\PresentationImageHierarchy.cd" />
+    <None Include="ClassDiagrams\PresentationState.cd" />
     <None Include="ClassDiagrams\RoiGraphics.cd" />
+    <None Include="ClassDiagrams\Rois.cd" />
     <None Include="ClassDiagrams\SceneGraph.cd" />
     <None Include="ClassDiagrams\GraphicStates.cd" />
     <None Include="ClassDiagrams\StatefulCompositeGraphic.cd" />
@@ -629,6 +634,7 @@
     <None Include="app.config" />
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
+    <None Include="ClassDiagrams\ViewerUndoSupport.cd" />
     <None Include="RoiGraphics\RoiSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RoiSettings.Designer.cs</LastGenOutput>

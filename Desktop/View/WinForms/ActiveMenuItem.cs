@@ -132,7 +132,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void UpdateVisibility()
         {
-            this.Visible = _action.Visible && (_action.Permissible || DesktopViewSettings.Default.ShowNonPermissibleActions);
+			base.Available = _action.Visible && (_action.Permissible || DesktopViewSettings.Default.ShowNonPermissibleActions);
         }
 
         private void UpdateEnablement()

@@ -582,13 +582,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					ToolStripBuilder.Clear(_contextMenuStrip.Items);
 					ToolStripBuilder.BuildMenu(_contextMenuStrip.Items, menuModel.ChildNodes);
-					e.Cancel = false;
+
+					// filter unavailable items out of list since they wreck the display of the overflow and scroll portions of the menu dropdown
+					// (ClearCanvas Ticket #4775, Microsoft Connect Issue #136061)
+					FilterUnavailableItems(_contextMenuStrip.Items);
+
+					// cancel list if, after filtering, no items are left to display.
+					e.Cancel = (_contextMenuStrip.Items.Count == 0);
 				}
 				else
+				{
 					e.Cancel = true;
+				}
 			}
 			else
+			{
 				e.Cancel = true;
+			}
 		}
 
 		private void OnInformationBoxChanged(object sender, InformationBoxChangedEventArgs e)
@@ -624,6 +634,34 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private void OnEditBoxChanged(object sender, EventArgs e)
 		{
 			_editBoxControl.EditBox = _tile.EditBox;
+		}
+
+		private static void FilterUnavailableItems(ToolStripItemCollection items)
+		{
+			List<ToolStripItem> unavailableItems = new List<ToolStripItem>();
+			foreach (ToolStripItem toolStripItem in items)
+			{
+				if (!toolStripItem.Available)
+				{
+					unavailableItems.Add(toolStripItem);
+				}
+				else if (toolStripItem is ToolStripMenuItem)
+				{
+					ToolStripMenuItem toolStripMenuItem = (ToolStripMenuItem) toolStripItem;
+					if (toolStripMenuItem.DropDownItems.Count > 0)
+					{
+						FilterUnavailableItems(toolStripMenuItem.DropDownItems);
+						if (toolStripMenuItem.DropDownItems.Count == 0)
+							unavailableItems.Add(toolStripItem);
+					}
+				}
+			}
+
+			foreach (ToolStripItem unavailableItem in unavailableItems)
+			{
+				items.Remove(unavailableItem);
+				unavailableItem.Dispose();
+			}
 		}
 	}
 }
