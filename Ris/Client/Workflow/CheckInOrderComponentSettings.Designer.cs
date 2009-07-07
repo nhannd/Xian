@@ -23,21 +23,29 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// Acceptable early check-in threshold before warning user in minutes.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Acceptable early check-in threshold before warning user in minutes.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("120")]
-        public int AcceptableCheckInEarlyTimeRange {
+        public int EarlyCheckInWarningThreshold {
             get {
-                return ((int)(this["AcceptableCheckInEarlyTimeRange"]));
+                return ((int)(this["EarlyCheckInWarningThreshold"]));
             }
         }
         
+        /// <summary>
+        /// Acceptable late check-in threshold before warning user in minutes.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Acceptable late check-in threshold before warning user in minutes.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("180")]
-        public int AcceptableCheckInLateTimeRange {
+        public int LateCheckInWarningThreshold {
             get {
-                return ((int)(this["AcceptableCheckInLateTimeRange"]));
+                return ((int)(this["LateCheckInWarningThreshold"]));
             }
         }
     }

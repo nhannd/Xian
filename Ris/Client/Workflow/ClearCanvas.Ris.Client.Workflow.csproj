@@ -43,13 +43,13 @@
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
-    <Compile Include="CheckInOrderTable.cs" />
-    <Compile Include="CheckInOrderComponentSettings.cs" />
     <Compile Include="CheckInOrderComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>CheckInOrderComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="CheckInOrderComponentSettings.cs" />
     <Compile Include="DicomSeriesEditorComponent.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
     <Compile Include="DowntimeReportEntryComponent.cs" />
