@@ -57,6 +57,7 @@ namespace ClearCanvas.Ris.Client
 	{
 		private UserLookupData _selectedUser = null;
 		private ILookupHandler _userLookupHandler;
+		private string _userNameNoLongerExist;
 
 		private StaffDetail _staffDetail;
 		private readonly List<EnumValueInfo> _staffTypeChoices;
@@ -80,8 +81,9 @@ namespace ClearCanvas.Ris.Client
 			this.Validation.Add(new ValidationRule("SelectedUser",
 				delegate
 				{
-					bool userNoLongerExist = !string.IsNullOrEmpty(_staffDetail.UserName) && _selectedUser == null;
-					return new ValidationResult(!userNoLongerExist, string.Format(SR.MessageAssociatedUserNoLongerExist, _staffDetail.UserName));
+					bool userNoLongerExist = !string.IsNullOrEmpty(_userNameNoLongerExist) 
+						&& (_selectedUser != null && _selectedUser.UserName == _userNameNoLongerExist);
+					return new ValidationResult(!userNoLongerExist, string.Format(SR.MessageAssociatedUserNoLongerExist, _userNameNoLongerExist));
 				}));
 
 			base.Start();
@@ -112,12 +114,15 @@ namespace ClearCanvas.Ris.Client
 
 		public object SelectedUser
 		{
-			get { return _selectedUser == null ? _staffDetail.UserName : _selectedUser.UserName; }
+			get { return _selectedUser; }
 			set
 			{
-				_selectedUser = (UserLookupData)value;
-				_staffDetail.UserName = _selectedUser == null ? null : _selectedUser.UserName;
-				this.Modified = true;
+				if (_selectedUser != value)
+				{
+					_selectedUser = (UserLookupData)value;
+					_staffDetail.UserName = _selectedUser == null ? null : _selectedUser.UserName;
+					this.Modified = true;
+				}
 			}
 		}
 
@@ -280,6 +285,17 @@ namespace ClearCanvas.Ris.Client
 							// If there is no return user, it means that the user was deleted without updating staff.
 							user = summary == null ? null : new UserLookupData(summary.UserName);
 						});
+
+					if (user == null)
+					{
+						_userNameNoLongerExist = staff.UserName;
+
+						// The user no longer exist, delete user name.
+						staff.UserName = null;
+						
+						// Nevertheless, display this info.
+						user = new UserLookupData(_userNameNoLongerExist);						
+					}
 				}
 				else
 				{

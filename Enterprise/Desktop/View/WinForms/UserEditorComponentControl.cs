@@ -56,6 +56,8 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
             _userId.DataBindings.Add("Value", _component, "UserId", true, DataSourceUpdateMode.OnPropertyChanged);
             _userId.DataBindings.Add("ReadOnly", _component, "IsUserIdReadOnly", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_displayName.DataBindings.Add("Value", _component, "DisplayName", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _validFrom.DataBindings.Add("Value", _component, "ValidFrom", true, DataSourceUpdateMode.OnPropertyChanged);
             _validUntil.DataBindings.Add("Value", _component, "ValidUntil", true, DataSourceUpdateMode.OnPropertyChanged);
             _accountEnabledCheckBox.DataBindings.Add("Checked", _component, "AccountEnabled", true, DataSourceUpdateMode.OnPropertyChanged);

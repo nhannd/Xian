@@ -188,6 +188,16 @@ namespace ClearCanvas.Enterprise.Desktop
             }
         }
 
+		public string DisplayName
+		{
+			get { return _userDetail.DisplayName; }
+			set
+			{
+				_userDetail.DisplayName = value;
+				this.Modified = true;
+			}
+		}
+
         public bool IsUserIdReadOnly
         {
             get { return !_isNew; }

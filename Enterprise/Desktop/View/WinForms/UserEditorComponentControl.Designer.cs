@@ -68,6 +68,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this._accountEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.label1 = new System.Windows.Forms.Label();
+			this._displayName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -80,7 +81,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._authorityGroups.ReadOnly = false;
 			this._authorityGroups.ShowToolbar = false;
 			this._authorityGroups.Size = new System.Drawing.Size(545, 197);
-			this._authorityGroups.TabIndex = 3;
+			this._authorityGroups.TabIndex = 2;
 			// 
 			// _userId
 			// 
@@ -100,7 +101,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(478, 361);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 5;
+			this._cancelButton.TabIndex = 4;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -110,7 +111,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._acceptButton.Location = new System.Drawing.Point(397, 361);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 4;
+			this._acceptButton.TabIndex = 3;
 			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -125,7 +126,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._validFrom.Name = "_validFrom";
 			this._validFrom.Nullable = true;
 			this._validFrom.Size = new System.Drawing.Size(150, 41);
-			this._validFrom.TabIndex = 2;
+			this._validFrom.TabIndex = 3;
 			this._validFrom.Value = null;
 			// 
 			// _validUntil
@@ -138,11 +139,12 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this._validUntil.Name = "_validUntil";
 			this._validUntil.Nullable = true;
 			this._validUntil.Size = new System.Drawing.Size(150, 41);
-			this._validUntil.TabIndex = 3;
+			this._validUntil.TabIndex = 4;
 			this._validUntil.Value = null;
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this._displayName);
 			this.groupBox2.Controls.Add(this._accountEnabledCheckBox);
 			this.groupBox2.Controls.Add(this._validFrom);
 			this.groupBox2.Controls.Add(this._validUntil);
@@ -157,10 +159,10 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			// _accountEnabledCheckBox
 			// 
 			this._accountEnabledCheckBox.AutoSize = true;
-			this._accountEnabledCheckBox.Location = new System.Drawing.Point(234, 38);
+			this._accountEnabledCheckBox.Location = new System.Drawing.Point(434, 38);
 			this._accountEnabledCheckBox.Name = "_accountEnabledCheckBox";
 			this._accountEnabledCheckBox.Size = new System.Drawing.Size(65, 17);
-			this._accountEnabledCheckBox.TabIndex = 1;
+			this._accountEnabledCheckBox.TabIndex = 2;
 			this._accountEnabledCheckBox.Text = "Enabled";
 			this._accountEnabledCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -170,8 +172,21 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
 			this.label1.Location = new System.Drawing.Point(8, 142);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(41, 13);
-			this.label1.TabIndex = 2;
+			this.label1.TabIndex = 1;
 			this.label1.Text = "Groups";
+			// 
+			// _displayName
+			// 
+			this._displayName.LabelText = "Display Name";
+			this._displayName.Location = new System.Drawing.Point(234, 18);
+			this._displayName.Margin = new System.Windows.Forms.Padding(2);
+			this._displayName.Mask = "";
+			this._displayName.Name = "_displayName";
+			this._displayName.PasswordChar = '\0';
+			this._displayName.Size = new System.Drawing.Size(177, 41);
+			this._displayName.TabIndex = 1;
+			this._displayName.ToolTip = null;
+			this._displayName.Value = null;
 			// 
 			// UserEditorComponentControl
 			// 
@@ -204,6 +219,7 @@ namespace ClearCanvas.Enterprise.Desktop.View.WinForms
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox _accountEnabledCheckBox;
         private System.Windows.Forms.Label label1;
+		private ClearCanvas.Desktop.View.WinForms.TextField _displayName;
 
     }
 }
