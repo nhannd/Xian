@@ -521,7 +521,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (selectedMpps != null)
 				{
-                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
                     {
                         // if downtime recovery mode, need to get the time from the user
                         DateTime? endTime = _selectedMpps.StartTime;

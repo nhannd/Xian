@@ -400,7 +400,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (checkedMpsRefs.Count > 0)
                 {
-                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
                     {
                         DateTime? discontinueTime = Platform.Time;
                         if (DowntimeRecovery.InDowntimeRecoveryMode)
