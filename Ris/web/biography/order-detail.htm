@@ -55,7 +55,8 @@
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					if (orderDetail)
 					{
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
+						var showEnterCancelByStaff = true;
+						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, showEnterCancelByStaff);
 						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 
 						// Use a custom procedures table for this page

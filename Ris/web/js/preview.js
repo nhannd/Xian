@@ -1086,9 +1086,9 @@ Preview.ImagingServiceSection = function () {
 	var _html = 
 		'<div class="SectionTableContainer">' +
 		'<table width="100%" border="0" cellspacing="5">'+
-		'	<tr>'+
+		'	<tr id="EnteredBySection">'+
 		'		<td width="120" class="propertyname">Entered By</td>'+
-		'		<td width="200"><div id="EnteredBy"/></td>'+
+		'		<td width="200" colspan="3"><div id="EnteredBy"/></td>'+
 		'	</tr>'+
 		'	<tr>'+
 		'		<td width="120" class="propertyname">Accession Number</td>'+
@@ -1116,7 +1116,7 @@ Preview.ImagingServiceSection = function () {
 		'		<td colspan="4">'+
 		'			<p class="subsectionheading">Order Cancelled</p>'+
 		'			<table width="100%" border="0">'+
-		'				<tr>'+
+		'				<tr id="CancelledBySection">'+
 		'					<td width="150" class="propertyname">Cancelled By</td>'+
 		'					<td><div id="CancelledBy"/></td>'+
 		'				</tr>'+
@@ -1130,7 +1130,7 @@ Preview.ImagingServiceSection = function () {
 		'</table></div>';
 		
 	return {
-		create: function (element, orderDetail)
+		create: function (element, orderDetail, showEnterCancelByStaff)
 		{
 			if(orderDetail == null)
 				return;
@@ -1153,6 +1153,12 @@ Preview.ImagingServiceSection = function () {
 			else
 			{
 				Field.show($("CancelSection"), false);
+			}
+			
+			if (!showEnterCancelByStaff)
+			{
+				Field.show($("EnteredBySection"), false);
+				Field.show($("CancelledBySection"), false);
 			}
 			
 			Preview.SectionContainer.create(element, "Imaging Service");
