@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -47,6 +48,35 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
+    /// <summary>
+    /// States of the tier migration entry. Used for resume after auto-recovery.
+    /// </summary>
+    public enum TierMigrationProcessingState
+    {
+        NotStated,
+        Migrated,
+    }
+
+    /// <summary>
+    /// The data in the Data column.
+    /// </summary>
+    public class TierMigrationWorkQueueData
+    {
+        #region Private Members
+        private TierMigrationProcessingState _state;
+        
+        #endregion
+
+        #region Public Properties
+
+        public TierMigrationProcessingState State
+        {
+            get { return _state; }
+            set { _state = value; }
+        } 
+        #endregion
+    }
+
     
     /// <summary>
     /// Class for processing TierMigrate <see cref="WorkQueue"/> entries.
@@ -111,51 +141,108 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			try
-			{
-				Platform.Log(LogLevel.Info,
-				             "Starting Tier Migration of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
-				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-				             Study.AccessionNumber, ServerPartition.Description);
+            Platform.Log(LogLevel.Info,
+                             "Starting Tier Migration of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                             Study.AccessionNumber, ServerPartition.Description);
 
-				DoMigrateStudy(StorageLocation);
+            // The WorkQueue Data column contains the state of the processing. It is set to "Migrated" if the entry has been
+            // successfully executed once.  
+            TierMigrationProcessingState state = GetCurrentState(item);
+            switch(state)
+            {
+                case TierMigrationProcessingState.Migrated:
+                    Platform.Log(LogLevel.Info, "Study has been migrated to {0} on {1}", StorageLocation.FilesystemPath, StorageLocation.FilesystemTierEnum.Description);
+                    PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                    break;
 
-				PostProcessing(item,
-				               WorkQueueProcessorStatus.Complete,
-				               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-			}
-            catch (Exception e)
-			{
-				Platform.Log(LogLevel.Info, e);
-				FailQueueItem(item, e.Message);
-			}
+                case TierMigrationProcessingState.NotStated:
+                    ServerFilesystemInfo currFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
+                    ServerFilesystemInfo newFilesystem = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(currFilesystem);
+                    
+                    if (newFilesystem == null)
+                    {
+                        // This entry shouldn't have been scheduled in the first place.
+                        // It's possible that the folder wasn't full when the entry was scheduled. 
+                        // Another possiblity is the study was migrated but an error was encountered when updating the entry.//
+                        // We should re-insert the filesystem queue so that if the study will be migrated if the space is freed up 
+                        // in the future.
+                        String msg = String.Format(
+                                "Study '{0}' cannot be migrated: no writable filesystem can be found in lower tiers for filesystem '{1}'. Reschedule migration for future.",
+                                StorageLocation.StudyInstanceUid, currFilesystem.Filesystem.Description);
+
+                        Platform.Log(LogLevel.Warn, msg);
+                        ReinsertFilesystemQueue();
+                        PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                    }
+                    else
+                    {
+                        DoMigrateStudy(StorageLocation, newFilesystem);
+
+                        // Update the state separately so that if the validation (done in the PostProcessing method) fails, 
+                        // we know the study has been migrated when we resume after auto-recovery has been completed.
+                        UpdateState(item, TierMigrationProcessingState.Migrated);
+                        PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                    
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException("Not implemented");
+            }
+
 		}
 
-    	private void DoMigrateStudy(StudyStorageLocation storage)
+        private static TierMigrationProcessingState GetCurrentState(Model.WorkQueue item)
         {
+            if (item.Data == null)
+            {
+                //TODO: What about old entries?
+                return TierMigrationProcessingState.NotStated;
+            }
+            else
+            {
+                TierMigrationWorkQueueData data = XmlUtils.Deserialize<TierMigrationWorkQueueData>(item.Data);
+                return data.State;
+            }
+        }
+
+        private static void UpdateState(Model.WorkQueue item, TierMigrationProcessingState state)
+        {
+            TierMigrationWorkQueueData data = new TierMigrationWorkQueueData();
+            data.State = state;
+
+            using(IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueEntityBroker broker = context.GetBroker<IWorkQueueEntityBroker>();
+                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
+                parms.Data = XmlUtils.SerializeAsXmlDoc(data);
+                if (!broker.Update(item.Key, parms))
+                    throw new ApplicationException("Unable to update work queue state");
+                else
+                    context.Commit();
+            }
+        }
+
+        /// <summary>
+        /// Migrates the study to new tier
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <param name="newFilesystem"></param>
+        private void DoMigrateStudy(StudyStorageLocation storage, ServerFilesystemInfo newFilesystem)
+        {
+            Platform.CheckForNullReference(storage, "storage");
+            Platform.CheckForNullReference(newFilesystem, "newFilesystem");
+
             TierMigrationStatistics stat = new TierMigrationStatistics();
             stat.StudyInstanceUid = storage.StudyInstanceUid;
             stat.ProcessSpeed.Start();
     	    StudyXml studyXml = storage.LoadStudyXml();
             stat.StudySize = (ulong) studyXml.GetStudySize(); 
 
-            Platform.Log(LogLevel.Info, "About to migrate study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
-			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(storage.FilesystemKey);
-			ServerFilesystemInfo newFilesystem = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(currFilesystem);
-            
-            if (newFilesystem == null)
-            {
-            	// this entry shouldn't have been scheduled in the first place.
-                String msg =
-                    String.Format(
-                        "Study '{0}' cannot be migrated: no writable filesystem can be found in lower tiers for filesystem '{1}'",
-                        storage.StudyInstanceUid,
-                        currFilesystem.Filesystem.Description);
-
-                throw new ApplicationException(msg);
-            }
-
-            Platform.Log(LogLevel.Info, "New filesystem : {0}", newFilesystem.Filesystem.Description);
+            Platform.Log(LogLevel.Info, "About to migrate study {0} from {1} to {2}", 
+                    storage.StudyInstanceUid, storage.FilesystemTierEnum, newFilesystem.Filesystem.Description);
+			
             string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
     	    DateTime startTime = Platform.Time;
             DateTime lastLog = DateTime.Now;
@@ -181,6 +268,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 CopyDirectoryCommand copyDirCommand = new CopyDirectoryCommand(origFolder, newPath, 
                     delegate (string path)
                         {
+                            // Update the progress. This is useful if the migration takes long time to complete.
+
                             FileInfo file = new FileInfo(path);
                             bytesCopied += (ulong)file.Length;
                             if (file.Extension != null && file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
@@ -276,7 +365,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     "Study has been migrated to a new tier. Original study folder must be cleaned up manually: {0}", originalPath);
             }
 
-            UpdateAverageStatistics(stat);                       
+            UpdateAverageStatistics(stat);
+            
         }
 
         private static void UpdateAverageStatistics(TierMigrationStatistics stat)
@@ -296,8 +386,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 }
             }
         }
-
-        
 
         protected override bool CanStart()
         {
@@ -323,34 +411,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 						 "Tier Migrate entry for study {0} has conflicting WorkQueue entry, reinserting into FilesystemQueue",
 						 StorageLocation.StudyInstanceUid);
 		
-			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
-				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
-				workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
-				broker.Delete(workQueueUidCriteria);
-
-				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
-				parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
-				parms.ScheduledTime = Platform.Time.AddMinutes(10);
-				parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
-				parms.FilesystemKey = StorageLocation.FilesystemKey;
-
-				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
-
-				if (false == insertQueue.Execute(parms))
-				{
-					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
-				}
-				else
-					updateContext.Commit();
-			}
+			ReinsertFilesystemQueue();
 
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 			return false;
 		}
+
+        private void ReinsertFilesystemQueue()
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+                WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+                workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
+                broker.Delete(workQueueUidCriteria);
+
+                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+                parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
+                parms.ScheduledTime = Platform.Time.AddMinutes(10);
+                parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
+                parms.FilesystemKey = StorageLocation.FilesystemKey;
+
+                IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+                if (false == insertQueue.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+                }
+                else
+                    updateContext.Commit();
+            }
+        }
     }
 
     

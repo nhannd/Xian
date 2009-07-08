@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -994,20 +995,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
 
-        protected virtual bool PerformAutoRecovery(Model.WorkQueue item, string reason)
+        protected static bool PerformAutoRecovery(Model.WorkQueue item, string reason)
         {
+            //Note: need to reload the storage location because it may have changed after the processing (eg, tier migration)
+            IList<StudyStorageLocation> storageLocations = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(item.StudyStorageKey));
+            // storageLocations cannot be null for this operation
+            Platform.CheckForNullReference(storageLocations, "storageLocations");
+            Platform.CheckTrue(storageLocations.Count >= 1, "storageLocations.Count>=1");
+
+            StudyStorageLocation storageLocation = storageLocations[0];
+            Model.Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
 
             Platform.Log(LogLevel.Info, "{4} failed. Reason:{5}. Attempting to perform auto-recovery for Study:{0}, A#:{1}, Patient:{2}, ID:{3}",
-                         Study.StudyInstanceUid, Study.AccessionNumber, Study.PatientsName, Study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
+                         study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
 
-            Platform.CheckForNullReference(StorageLocation, "StorageLocation");
-            StudyXml studyXml = StorageLocation.LoadStudyXml();
-            Platform.CheckForNullReference(studyXml, "studyXml");
-
+            StudyXml studyXml = storageLocation.LoadStudyXml();
+            Platform.CheckForNullReference(studyXml, "studyXml does not exist");
+            
             // Do a secondary check on the filesystem vs. the Study Xml.  
             // If these match, then the DB is just update to reflect the valid counts.  
             // If they don't match, a Reprocess entry is inserted into the WorkQueue.
-            String studyFolder = StorageLocation.GetStudyPath();
+            String studyFolder = storageLocation.GetStudyPath();
             long fileCounter = DirectoryUtility.Count(studyFolder, "*.dcm", true, null);
 
             // cache these values to avoid looping again
@@ -1020,7 +1028,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears incorrect. Study needs to be reprocessed.", numStudyRelatedInstancesInXml);
                 StudyReprocessor reprocessor = new StudyReprocessor();
                 String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                reprocessor.ReprocessStudy(reprocessReason, StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+                reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
 
                 return true; // 
             }
@@ -1029,7 +1037,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
                 // update the counts in db to match the study xml
                 // Update count for each series 
-                IList<Series> seriesList = StorageLocation.Study.Series;
+                IList<Series> seriesList = storageLocation.Study.Series;
 
 
                 foreach (Series series in seriesList)
@@ -1047,7 +1055,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                             {
                                 ISetSeriesRelatedInstanceCount broker = updateContext.GetBroker<ISetSeriesRelatedInstanceCount>();
-                                SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(StorageLocation.GetKey(), series.SeriesInstanceUid);
+                                SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(storageLocation.GetKey(), series.SeriesInstanceUid);
                                 criteria.SeriesRelatedInstanceCount = numInstancesInSeriesXml;
                                 if (!broker.Execute(criteria))
                                 {
@@ -1067,22 +1075,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
                         StudyReprocessor reprocessor = new StudyReprocessor();
                         String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                        reprocessor.ReprocessStudy(reprocessReason, StorageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+                        reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
 
                     }
                 }
 
-                if (numStudyRelatedSeriesInXml != StorageLocation.Study.NumberOfStudyRelatedSeries ||
-                    numStudyRelatedInstancesInXml != StorageLocation.Study.NumberOfStudyRelatedInstances)
+                if (numStudyRelatedSeriesInXml != storageLocation.Study.NumberOfStudyRelatedSeries ||
+                    numStudyRelatedInstancesInXml != storageLocation.Study.NumberOfStudyRelatedInstances)
                 {
                     Log(LogLevel.Info, "AUTO-RECOVERY", "Updating study related series and instance counts in the db. #Series: {0} ==> {1}.  #Instances: {2}==>{3}",
-                                    StorageLocation.Study.NumberOfStudyRelatedSeries, numStudyRelatedSeriesInXml,
-                                    StorageLocation.Study.NumberOfStudyRelatedInstances, numStudyRelatedInstancesInXml);
+                                    storageLocation.Study.NumberOfStudyRelatedSeries, numStudyRelatedSeriesInXml,
+                                    storageLocation.Study.NumberOfStudyRelatedInstances, numStudyRelatedInstancesInXml);
 
                     using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         ISetStudyRelatedInstanceCount broker = updateContext.GetBroker<ISetStudyRelatedInstanceCount>();
-                        SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(StorageLocation.GetKey());
+                        SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(storageLocation.GetKey());
                         criteria.StudyRelatedSeriesCount = numStudyRelatedSeriesInXml;
                         criteria.StudyRelatedInstanceCount = numStudyRelatedInstancesInXml;
                         if (!broker.Execute(criteria))
