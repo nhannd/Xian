@@ -81,14 +81,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private Patient _curPatient;
         private Patient _newPatient;
         private StudyStorage _storage;
-        private bool _originalFolderDeleted = false;
 
         private bool _patientInfoIsNotChanged;
 
         private UpdateStudyStatistics _statistics;
         private int _totalSopCount;
         private bool _restored;
-        private StudyStorageLocation _backupStudyLocation;
+        private bool _deleteOriginalFolder;
 
         #endregion
 
@@ -229,6 +228,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Statistics.InstanceCount = _study.NumberOfStudyRelatedInstances;
             Statistics.StudySize = (ulong) _oldStudyLocation.LoadStudyXml().GetStudySize();
 
+            // The study path will be changed. We will need to delete the original folder at the end.
+            // May be too simple to test if two paths are the same. But let's assume it is good enough for 99% of the time.
+            _deleteOriginalFolder = NewStudyPath != _oldStudyPath; 
             _initialized = true;
         }
 
@@ -272,27 +274,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             if (!RequiresRollback || !_initialized)
                 return;
 
-            if (_backupStudyLocation!=null)
+            if (_backupDir != null)
             {
-                if (!Directory.Exists(_oldStudyLocation.GetStudyPath()))
-                    Directory.CreateDirectory(_oldStudyLocation.GetStudyPath());
-
                 if (NewStudyPath == _oldStudyPath)
                 {
-                    // files were overwritten
+                    // Study folder was not changed. Files were overwritten.
 
                     // restore header
                     Platform.Log(LogLevel.Info, "Restoring old study header...");
-                    FileUtils.Copy(_backupStudyLocation.GetStudyXmlPath(), _oldStudyLocation.GetStudyXmlPath(), true);
-                    FileUtils.Copy(_backupStudyLocation.GetCompressedStudyXmlPath(), _oldStudyLocation.GetCompressedStudyXmlPath(), true);
+
+                    FileUtils.Copy(Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml"), _oldStudyLocation.GetStudyXmlPath(), true);
+                    FileUtils.Copy(Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml.gz"), _oldStudyLocation.GetCompressedStudyXmlPath(), true);
 
                     // restore updated SOPs
                     Platform.Log(LogLevel.Info, "Restoring old study folder... {0} sop need to be restored", _updatedSopList.Count);
                     int restoredCount = 0;
                     foreach (InstanceInfo sop in _updatedSopList)
                     {
-                        FileUtils.Copy(_backupStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid),
-                                        _oldStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid), true);
+                        string backupSopPath = Path.Combine(_backupDir, sop.SopInstanceUid + ".dcm");
+
+                        FileUtils.Copy(backupSopPath,_oldStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid), true);
 
                         restoredCount++;
                         Platform.Log(ServerPlatform.InstanceLogLevel, "Restored SOP {0} [{1} of {2}]", sop.SopInstanceUid, restoredCount, _updatedSopList.Count);
@@ -306,17 +307,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 }
                 else
                 {
-                    // files were not overwritten.
-
-                    DirectoryUtility.DeleteIfExists(NewStudyPath, true);
-                    if (_originalFolderDeleted)
-                    {
-                        // the old folder was removed. It must be restored entirely
-                        Platform.Log(LogLevel.Info, "Restoring original study folder");
-                        DirectoryUtility.Copy(_backupStudyLocation.GetStudyPath(), _oldStudyLocation.GetStudyPath());
-                    }
-
-                    SimulateErrors();
+                    // Different study folder was used. Original folder must be kept around 
+                    // because we are rolling back.
+                    _deleteOriginalFolder = false;
                 }
             }
 
@@ -523,13 +516,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 				xmlStream.Close();
 				gzipStream.Close();
             }
-
-            if (NewStudyPath!=_oldStudyPath)
-            {
-                Platform.Log(LogLevel.Info, "Removing old study folder...");
-                DirectoryUtility.DeleteIfExists(_oldStudyPath, true);
-                _originalFolderDeleted = true;
-            }
         }
 
         private void SaveFile(DicomFile file)
@@ -577,17 +563,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private void BackupFilesystem()
         {
-            Platform.Log(LogLevel.Info, "Backing up current study folder...");
-            _backupStudyLocation = _oldStudyLocation.Clone() as StudyStorageLocation;
-            
-            //change the filesystem path and remove the partition and study folders
-            _backupStudyLocation.FilesystemPath = ExecutionContext.Current.BackupDirectory;
-            _backupStudyLocation.StudyFolderRelativePath = _backupStudyLocation.StudyInstanceUid;
-
+            Platform.Log(LogLevel.Info, "Backing up current study folder to {0}", _backupDir);
             StudyXml studyXml = _oldStudyLocation.LoadStudyXml();
-            Directory.CreateDirectory(_backupStudyLocation.GetStudyPath());
-            FileUtils.Copy(_oldStudyLocation.GetStudyXmlPath(), _backupStudyLocation.GetStudyXmlPath(), true);
-            FileUtils.Copy(_oldStudyLocation.GetCompressedStudyXmlPath(), _backupStudyLocation.GetCompressedStudyXmlPath(), true);
+            FileUtils.Copy(_oldStudyLocation.GetStudyXmlPath(), Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml"), true);
+            FileUtils.Copy(_oldStudyLocation.GetCompressedStudyXmlPath(), Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml.gz"), true);
 
             foreach(SeriesXml seriesXml in studyXml)
             {
@@ -595,13 +574,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 {
                     string existingFile = _oldStudyLocation.GetSopInstancePath(seriesXml.SeriesInstanceUid, instanceXml.SopInstanceUid);
 
-                    FileInfo backupPath = new FileInfo(_backupStudyLocation.GetSopInstancePath(seriesXml.SeriesInstanceUid, instanceXml.SopInstanceUid));
-                    Directory.CreateDirectory(backupPath.Directory.FullName);
+                    FileInfo backupPath = new FileInfo(Path.Combine(_backupDir, instanceXml.SopInstanceUid + ".dcm"));
                     FileUtils.Copy(existingFile, backupPath.FullName, true );
                 }
             }
 
-            Platform.Log(LogLevel.Info, "A copy of {0} has been saved to {1}.", _oldStudyInstanceUid, _backupDir);
+            Platform.Log(LogLevel.Info, "A copy of {0} has been saved in {1}.", _oldStudyInstanceUid, _backupDir);
         }
 
 
@@ -618,6 +596,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             }
             else
             {
+                if (NewStudyPath != _oldStudyPath && _deleteOriginalFolder)
+                {
+                    Platform.Log(LogLevel.Info, "Removing old study folder...");
+                    DirectoryUtility.DeleteIfExists(_oldStudyPath, true);
+                }
+                
                 CleaupBackupFiles();
             }
         }
