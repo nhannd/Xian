@@ -37,6 +37,7 @@
     <Compile Include="Data\ProcessDuplicateChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyQueueData.cs" />
+    <Compile Include="DicomProcessingResult.cs" />
     <Compile Include="Edit\BaseImageLevelUpdateCommand.cs" />
     <Compile Include="Process\StudyReprocessor.cs" />
     <Compile Include="Reconcile\InsertDuplicateQueueEntryCommand.cs" />
@@ -51,7 +52,7 @@
     <Compile Include="Data\StudyInformation.cs" />
     <Compile Include="Data\StudyReconcileAction.cs" />
     <Compile Include="Data\StudyReconcileDescriptor.cs" />
-    <Compile Include="Process\DuplicateSopProcessor.cs" />
+    <Compile Include="Process\DuplicateSopProcessorHelper.cs" />
     <Compile Include="Edit\ImageUpdateCommandBuilder.cs" />
     <Compile Include="Reconcile\ImageReconciler.cs" />
     <Compile Include="Process\InsertInstanceCommand.cs" />

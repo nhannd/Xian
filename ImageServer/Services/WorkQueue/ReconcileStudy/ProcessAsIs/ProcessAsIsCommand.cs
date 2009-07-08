@@ -158,8 +158,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
             String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
             using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
             {
-                DuplicateSopProcessor processor = new DuplicateSopProcessor(commandProcessor, Context.Partition, Context.DestStorageLocation);
-                DicomSopProcessingResult result = processor.Process(sourceId, uidGroup, file);
+                DuplicateSopProcessorHelper processorHelper = new DuplicateSopProcessorHelper(commandProcessor, Context.Partition, Context.DestStorageLocation);
+                DicomProcessingResult result = processorHelper.Process(sourceId, uidGroup, file);
 				if (!result.Successful) throw new ApplicationException(result.ErrorMessage);
 
                 commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));

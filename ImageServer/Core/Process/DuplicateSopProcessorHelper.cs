@@ -48,13 +48,13 @@ namespace ClearCanvas.ImageServer.Core.Process
         public StudyStorageLocation StudyLocation;
     }
 
-    public class DuplicateSopProcessor
+    public class DuplicateSopProcessorHelper
     {
         private const string DUPLICATE_EXTENSION = "dup";
         private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
         private readonly DuplicateSopProcessorContext _context;
 
-        public DuplicateSopProcessor(
+        public DuplicateSopProcessorHelper(
             ServerCommandProcessor processor, 
             ServerPartition partition,
             StudyStorageLocation studyLocation
@@ -76,14 +76,9 @@ namespace ClearCanvas.ImageServer.Core.Process
 
         }
 
-        private static void SetError(DicomSopProcessingResult result, DicomStatus status, String message)
-        {
-            result.Successful = false;
-            result.DicomStatus = status;
-            result.ErrorMessage = message;
-        }
+       
 
-        public DicomSopProcessingResult Process(String sourceId,String uidGroup, DicomFile file)
+        public DicomProcessingResult Process(String sourceId,String uidGroup, DicomFile file)
         {
             Platform.CheckForNullReference(sourceId, "sourceId");
             Platform.CheckForNullReference(uidGroup, "uidGroup");
@@ -92,7 +87,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             Platform.CheckForNullReference(_context, "_context");
             Platform.CheckForNullReference(_context.StudyLocation, "_context.StudyLocation");
 
-            DicomSopProcessingResult result = new DicomSopProcessingResult();
+            DicomProcessingResult result = new DicomProcessingResult();
             result.DicomStatus = DicomStatuses.Success;
             result.Successful = true;
 
@@ -109,7 +104,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             {
                 failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
                 Platform.Log(LogLevel.Info, failureMessage);
-                SetError(result, DicomStatuses.DuplicateSOPInstance, failureMessage);
+                result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
             	return result;
             }
             else if (_context.Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
@@ -120,7 +115,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             else
             {
                 failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", partition.DuplicateSopPolicyEnum);
-                SetError(result, DicomStatuses.DuplicateSOPInstance, failureMessage);
+                result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
             	return result;
             }
             

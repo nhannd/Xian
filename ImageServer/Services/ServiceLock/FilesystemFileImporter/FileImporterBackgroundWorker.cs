@@ -149,11 +149,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         if (!skipped)
                         {
                             SopInstanceImporterContext context = new SopInstanceImporterContext();
-                            context.ContextID = String.Format("Importer_{0}", _startTimeStamp.ToString("yyyyMMddhhmmss"));
+                            context.ContextID = String.Format("{0}_{1}",_parms.PartitionAE, _startTimeStamp.ToString("yyyyMMddhhmmss"));
                             context.Message = file;
-                            context.SourceAE = "Importer";
+                            context.SourceAE = _parms.PartitionAE;
                 
-                            DicomSopProcessingResult result = _importer.Import(context);
+                            DicomProcessingResult result = _importer.Import(context);
                             if (result.Successful)
                             {
                                 if (result.Duplicate)

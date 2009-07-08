@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 context.ContextID = String.Format("{0}_{1}", association.CallingAE, association.TimeStamp.ToString("yyyyMMddhhmmss"));
                 context.Message = message;
                 context.SourceAE = association.CallingAE;
-                DicomSopProcessingResult result = importer.Import(context);
+                DicomProcessingResult result = importer.Import(context);
 
                 if (result.Successful)
                 {

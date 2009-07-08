@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Model
                                String.Format("Cannot copy data from StudyIntegrityQueue record of type {0}",
                                              studyIntegrityQueueEntry.StudyIntegrityReasonEnum));
 
-            this.SetKey(studyIntegrityQueueEntry.GetKey());
+            this.SetKey(studyIntegrityQueueEntry.Key);
             this.Description = studyIntegrityQueueEntry.Description;
             this.InsertTime = studyIntegrityQueueEntry.InsertTime;
             this.QueueData = studyIntegrityQueueEntry.QueueData;
