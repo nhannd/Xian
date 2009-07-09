@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 	{
 		//In versions prior to 1.5 the use of Build and Revision were swapped and so it has to be swapped here in order for the utility to properly detect the older version
 		public UpgradeFrom_1_5_10019_31163()
-			: base(new Version(1, 5, 31163, 10019), null, "UpgradeFrom_1_5_10019_31163.sql")
+			: base(new Version(1, 5, 10019, 31163), null, "UpgradeFrom_1_5_10019_31163.sql")
 		{
 		}
 	}
