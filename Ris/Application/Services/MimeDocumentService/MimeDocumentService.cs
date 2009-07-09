@@ -45,16 +45,15 @@ namespace ClearCanvas.Ris.Application.Services.MimeDocumentService
         public GetAttachDocumentFormDataResponse GetAttachDocumentFormData(GetAttachDocumentFormDataRequest request)
         {
             return new GetAttachDocumentFormDataResponse(
-                EnumUtils.GetEnumValueList<PatientAttachmentCategoryEnum>(this.PersistenceContext),
-                EnumUtils.GetEnumValueList<OrderAttachmentCategoryEnum>(this.PersistenceContext));
+                EnumUtils.GetEnumValueList<PatientAttachmentCategoryEnum>(PersistenceContext),
+                EnumUtils.GetEnumValueList<OrderAttachmentCategoryEnum>(PersistenceContext));
         }
 
         [ReadOperation]
         public GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request)
         {
-            MimeDocumentData data = this.PersistenceContext.Load<MimeDocumentData>(request.DocumentDataRef);
-
-            return new GetDocumentDataResponse(data.BinaryData);
+            MimeDocument document = PersistenceContext.Load<MimeDocument>(request.DocumentRef);
+            return new GetDocumentDataResponse(document.Data.BinaryData);
         }
     }
 }

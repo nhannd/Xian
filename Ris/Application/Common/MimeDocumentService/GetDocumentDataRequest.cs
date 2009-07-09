@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
     [DataContract]
     public class GetDocumentDataRequest : DataContractBase
     {
-        public GetDocumentDataRequest(EntityRef documentDataRef)
+        public GetDocumentDataRequest(EntityRef documentRef)
         {
-            this.DocumentDataRef = documentDataRef;
+            this.DocumentRef = documentRef;
         }
 
         [DataMember]
-        public EntityRef DocumentDataRef;
+        public EntityRef DocumentRef;
     }
 }

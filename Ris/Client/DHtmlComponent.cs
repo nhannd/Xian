@@ -259,6 +259,12 @@ namespace ClearCanvas.Ris.Client
                 return _actionModelRenderer.GetHTML(_component.GetActionModel(), labelSearch, actionLabel);
             }
 
+            public string GetMimeDocumentUrl(string jsml)
+            {
+                MimeDocumentSummary mimeDoc = JsmlSerializer.Deserialize<MimeDocumentSummary>(jsml);
+                return MimeDocument.DownloadToTempFile(mimeDoc.DocumentRef, mimeDoc.FileExtension);
+            }
+
             public string ResolveStaffName(string search)
             {
                 StaffSummary staff;

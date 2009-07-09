@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             MimeDocumentAssembler mimeDocAssembler = new MimeDocumentAssembler();
             attachment.Category = EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context);
-            mimeDocAssembler.UpdateMimeDocument(attachment.Document, summary.Document);
+            mimeDocAssembler.UpdateMimeDocumentSummary(attachment.Document, summary.Document);
         }
     }
 }

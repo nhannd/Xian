@@ -81,6 +81,7 @@
     <Compile Include="IEHeaderFooterSettings.cs" />
     <Compile Include="HomepageConfigurationComponent.cs" />
     <Compile Include="IExtensionPageProvider.cs" />
+    <Compile Include="MimeDocument.cs" />
     <Compile Include="OrderNoteConversationRecipientsSettingsHelper.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />

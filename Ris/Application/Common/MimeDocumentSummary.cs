@@ -50,9 +50,6 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string FileExtension;
 
-        [DataMember]
-        public EntityRef BinaryDataRef;
-
         public MimeDocumentSummary As<T>()
             where T : MimeDocumentSummary
         {
@@ -62,7 +59,6 @@ namespace ClearCanvas.Ris.Application.Common
             doc.CreationTime = this.CreationTime;
             doc.MimeType = this.MimeType;
             doc.FileExtension = this.FileExtension;
-            doc.BinaryDataRef = this.BinaryDataRef;
 
             return doc;
         }

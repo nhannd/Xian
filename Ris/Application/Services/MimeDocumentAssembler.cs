@@ -40,18 +40,17 @@ namespace ClearCanvas.Ris.Application.Services
         {
             MimeDocumentSummary summary = new MimeDocumentSummary();
             
-            UpdateMimeDocument(doc, summary);
+            UpdateMimeDocumentSummary(doc, summary);
 
             return summary;
         }
 
-        public void UpdateMimeDocument(MimeDocument doc, MimeDocumentSummary summary)
+        public void UpdateMimeDocumentSummary(MimeDocument doc, MimeDocumentSummary summary)
         {
             summary.DocumentRef = doc.GetRef();
             summary.CreationTime = doc.CreationTime;
             summary.MimeType = doc.MimeType;
             summary.FileExtension = doc.FileExtension;
-            summary.BinaryDataRef = doc.Data.GetRef();
         }
     }
 }

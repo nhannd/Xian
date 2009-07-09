@@ -269,7 +269,7 @@ namespace ClearCanvas.Ris.Client
                             if (item == null)
                                 this.ClearPreviewData();
                             else
-                                this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.BinaryDataRef);
+                                this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.DocumentRef);
                         }
                         else
                         {
@@ -277,7 +277,7 @@ namespace ClearCanvas.Ris.Client
                             if (item == null)
                                 this.ClearPreviewData();
                             else
-                                this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.BinaryDataRef);
+                                this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.DocumentRef);
                         }
                     }
                 }
@@ -335,35 +335,23 @@ namespace ClearCanvas.Ris.Client
             EventsHelper.Fire(_dataChanged, this, EventArgs.Empty);
         }
 
-		protected void SetPreviewData(string mimeType, string fileExtension, EntityRef dataRef)
+		protected void SetPreviewData(string mimeType, string fileExtension, EntityRef documentRef)
         {
-            if (dataRef == null)
+            if (documentRef != null)
             {
-                _tempFileName = null;                    
+                try
+                {
+                    _tempFileName = MimeDocument.DownloadToTempFile(documentRef, fileExtension);
+                }
+                catch (Exception e)
+                {
+                    _tempFileName = null;
+                    ExceptionHandler.Report(e, SR.ExceptionFailedToDisplayDocument, this.Host.DesktopWindow);
+                }
             }
             else
             {
-                string tempFile = TempFileManager.Instance.GetTempFile(dataRef);
-                if (String.IsNullOrEmpty(tempFile))
-                {
-                    try
-                    {
-                        Byte[] data = RetrieveData(dataRef);
-                        _tempFileName = TempFileManager.Instance.CreateTemporaryFile(dataRef, fileExtension, data);
-                    }
-                    catch (Exception e)
-                    {
-                        _tempFileName = null;
-                        ExceptionHandler.Report(e, SR.ExceptionFailedToDisplayDocument, this.Host.DesktopWindow);
-                    }
-                }
-                else
-                {
-                    if (Equals(_tempFileName, tempFile))
-                        return;  // nothing has changed
-
-                    _tempFileName = tempFile;
-                }
+                _tempFileName = null;
             }
 
             EventsHelper.Fire(_dataChanged, this, EventArgs.Empty);
@@ -383,20 +371,6 @@ namespace ClearCanvas.Ris.Client
         public void SaveChanges()
         {
             EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
-        }
-
-        private static byte[] RetrieveData(EntityRef dataRef)
-        {
-            byte[] data = null;
-
-            Platform.GetService<IMimeDocumentService>(
-                delegate(IMimeDocumentService service)
-                    {
-                        GetDocumentDataResponse response = service.GetDocumentData(new GetDocumentDataRequest(dataRef));
-                        data = response.BinaryData;
-                    });
-
-            return data;
         }
 
         #endregion

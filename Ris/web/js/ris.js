@@ -254,6 +254,11 @@ if(window.external)
 		notifyScriptCompleted: function()
 		{
 			return window.external.OnScriptCompleted();
+		},
+		
+		getMimeDocumentUrl: function(mimeDocumentSummary)
+		{
+			return window.external.GetMimeDocumentUrl(JSML.create(mimeDocumentSummary, "MimeDocument"));
 		}
 	};
 	
