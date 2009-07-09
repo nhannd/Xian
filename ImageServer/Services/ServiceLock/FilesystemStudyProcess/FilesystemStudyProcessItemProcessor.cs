@@ -243,6 +243,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 									DicomFile file = null;
 									foreach (FileInfo sopFile in sopInstanceFiles)
 									{
+										if (!sopFile.FullName.EndsWith(".dcm"))
+											continue;
+
 										try
 										{
 											file = new DicomFile(sopFile.FullName);
