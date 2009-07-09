@@ -125,6 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 				if (!ruleTypeList.ContainsKey(extension.Type))
 					ruleTypeList.Add(extension.Type, extension.ApplyTimeList);
 			}
+
 			return ruleTypeList;
 		}
 
@@ -352,8 +353,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			Dictionary<ServerRuleTypeEnum, IList<ServerRuleApplyTimeEnum>> ruleTypeList = LoadRuleTypes(extensions);
 
 			if (ruleTypeList.ContainsKey(_rule.ServerRuleTypeEnum))
-				_rule.ServerRuleApplyTimeEnum = ruleTypeList[_rule.ServerRuleTypeEnum][RuleApplyTimeDropDownList.SelectedIndex];
-
+			{
+				string val = Request[RuleApplyTimeDropDownList.UniqueID];
+				foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[_rule.ServerRuleTypeEnum])
+				{
+					_rule.ServerRuleApplyTimeEnum = applyTime;
+					if (val.Equals(applyTime.Description))
+					{
+						_rule.ServerRuleApplyTimeEnum = applyTime;
+						break;
+					}
+				}
+			}
+			
 			_rule.Enabled = EnabledCheckBox.Checked;
 			_rule.DefaultRule = DefaultCheckBox.Checked;
 			_rule.ServerPartitionKey = Partition.GetKey();
@@ -459,7 +471,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
 				// Do the drop down lists
 				bool first = true;
-				foreach (ServerRuleTypeEnum type in ruleTypeList.Keys)
+				List<ServerRuleTypeEnum> list = new List<ServerRuleTypeEnum>();
+				list.AddRange(ruleTypeList.Keys);
+
+				// Sort the list by description
+				list.Sort(new Comparison<ServerRuleTypeEnum>(delegate (ServerRuleTypeEnum type1, ServerRuleTypeEnum type2)
+				                                             	{
+				                                             		return type1.Description.CompareTo(type2.Description);
+				                                             	}));
+				
+				foreach (ServerRuleTypeEnum type in list)
 				{
 					if (first)
 					{
