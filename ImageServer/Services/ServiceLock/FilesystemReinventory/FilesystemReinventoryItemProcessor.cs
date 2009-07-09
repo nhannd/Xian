@@ -32,7 +32,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -116,16 +118,69 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 			}
 		}
 
-		private static List<FileInfo> LoadSopFiles(DirectoryInfo studyDir)
+		private List<FileInfo> LoadSopFiles(DirectoryInfo studyDir, bool cleanup)
 		{
-			List<FileInfo> fileList = new List<FileInfo>();
-			foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
-			{
-				FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+		    List<string> filesDeleted = new List<string>();
+            List<FileInfo> fileList = new List<FileInfo>();
+            FileProcessor.Process(studyDir.FullName, "*.*",
+		                          delegate(string filePath, out bool cancel)
+		                              {
+		                                  cancel = CancelPending;
+                                          if (cancel)
+                                          {
+                                              return;
+                                          }
 
-				foreach (FileInfo sopFile in sopInstanceFiles)
-					fileList.Add(sopFile);
-			}
+                                          FileInfo file = new FileInfo(filePath);
+                                          if (file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
+                                          {
+                                              fileList.Add(file);    
+                                          }
+                                          else
+                                          {
+                                              if (file.Extension.Equals(".xml", StringComparison.InvariantCultureIgnoreCase) || 
+                                                  file.Extension.Equals(".gz", StringComparison.InvariantCultureIgnoreCase))
+                                              {
+                                                  // is header file
+                                              }
+                                              else
+                                              {
+                                                  // TODO: Should we be smarter when dealing with left-over files?
+                                                  // For eg, if we encounter 123.dcm_temp that appears to be
+                                                  // a complete version of a corrupted 123.dcm, shouldn't we replace
+                                                  // 123.dcm with the 123.dcm_temp instead of deleting 123.dcm_temp?
+
+                                                  // Delete it
+                                                  if (cleanup)
+                                                  {
+                                                      file.Delete();
+                                                      filesDeleted.Add(filePath);
+                                                  } 
+                                              }
+                                              
+                                          }
+                                          
+		                              },
+		                          true);
+
+            if (filesDeleted.Count>0)
+            {
+                // Raise alerts. Each alert lists 10 files that were deleted.
+                int count = 0;
+                StringBuilder msg = new StringBuilder();
+                foreach(string file in filesDeleted)
+                {
+                    count++;
+                    msg.AppendLine(String.Format("{0};", file));
+                    
+                    if (count % 10 == 0 || count == filesDeleted.Count)
+                    {
+                        ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "Reinventory", 10000, null, TimeSpan.Zero, "Following files were removed:{0}", msg.ToString());
+                        msg = new StringBuilder();
+                    }
+                }
+                
+            }
 			return fileList;
 		}
 
@@ -157,137 +212,148 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 						StudyStorageLocation location;
 						if (GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
 						{
-							int integrityQueueCount;
-							int workQueueCount;
-							Study theStudy = GetStudyAndQueues(location, out integrityQueueCount, out workQueueCount);
-							if (theStudy != null)
-								continue;
+                            #region Study record exists in db
 
-							if (integrityQueueCount != 0 && workQueueCount != 0)
-								continue;
+                            int integrityQueueCount;
+                            int workQueueCount;
+                            Study theStudy = GetStudyAndQueues(location, out integrityQueueCount, out workQueueCount);
+                            if (theStudy != null)
+                                continue;
 
-							fileList = LoadSopFiles(studyDir);
+                            if (integrityQueueCount != 0 && workQueueCount != 0)
+                                continue;
 
-							if (fileList.Count == 0)
-							{
-								Platform.Log(LogLevel.Warn, "Found empty study folder with StorageLocation, deleteing StorageLocation: {0}\\{1}",
-								             dateDir.Name, studyDir.Name);
-								studyDir.Delete(true);
+                            fileList = LoadSopFiles(studyDir, false);
 
-								RemoveStudyStorage(location);
-								continue;
-							}
+                            if (fileList.Count == 0)
+                            {
+                                Platform.Log(LogLevel.Warn, "Found empty study folder with StorageLocation, deleteing StorageLocation: {0}\\{1}",
+                                             dateDir.Name, studyDir.Name);
+                                studyDir.Delete(true);
 
-							// Lock the new study storage for study processing
-							if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled))
-							{
-								using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-								{
-									ILockStudy lockStudy = update.GetBroker<ILockStudy>();
-									LockStudyParameters lockParms = new LockStudyParameters();
-									lockParms.StudyStorageKey = location.Key;
-									lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
-									if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-										Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
+                                RemoveStudyStorage(location);
+                                continue;
+                            }
 
-									update.Commit();
-								}
-							}
+                            // Lock the new study storage for study processing
+                            if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled))
+                            {
+                                using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                                {
+                                    ILockStudy lockStudy = update.GetBroker<ILockStudy>();
+                                    LockStudyParameters lockParms = new LockStudyParameters();
+                                    lockParms.StudyStorageKey = location.Key;
+                                    lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+                                    if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+                                        Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
+
+                                    update.Commit();
+                                }
+                            } 
+                            #endregion
 						}
 						else
 						{
-							fileList = LoadSopFiles(studyDir);
+                            #region Directory not in DB, 
 
-							if (fileList.Count == 0)
-							{
-								Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
-								continue;
-							}
+                            fileList = LoadSopFiles(studyDir, true);
 
-							DicomFile file = null;
-							foreach (FileInfo fInfo in fileList)
-								try
-								{
-									file = new DicomFile(fInfo.FullName);
-									file.Load(DicomTags.StudyId, DicomReadOptions.DoNotStorePixelDataInDataSet);
-									break;
-								}
-								catch (Exception e)
-								{
-									Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.",
-									             fInfo.FullName);
-									file = null;
-								}
+                            if (fileList.Count == 0)
+                            {
+                                Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
+                                continue;
+                            }
 
-							if (file == null)
-							{
-								Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
-								continue;
-							}
+                            DicomFile file = null;
+                            foreach (FileInfo fInfo in fileList)
+                                try
+                                {
+                                    file = new DicomFile(fInfo.FullName);
+                                    file.Load(DicomTags.StudyId, DicomReadOptions.DoNotStorePixelDataInDataSet);
+                                    break;
+                                }
+                                catch (Exception e)
+                                {
+                                    Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.",
+                                                 fInfo.FullName);
+                                    file = null;
+                                }
 
-							// Do a second check, using the study instance uid from a file in the directory.
-							// had an issue with trailing periods on uids causing us to not find the 
-							// study storage, and insert a new record into the database.
-							studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
-							if (GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
-							{
-								continue;
-							}
+                            if (file == null)
+                            {
+                                Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
+                                continue;
+                            }
 
-							StudyStorage storage;
-							if (GetStudyStorage(partition, studyInstanceUid, out storage))
-							{
-								Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}", studyInstanceUid,
-								             partition.Description, studyDir.ToString());
-								continue;
-							}
+                            // Do a second check, using the study instance uid from a file in the directory.
+                            // had an issue with trailing periods on uids causing us to not find the 
+                            // study storage, and insert a new record into the database.
+                            studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+                            if (GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+                            {
+                                continue;
+                            }
 
-							Platform.Log(LogLevel.Info, "Reinventory inserting study storage location for {0} on partition {1}", studyInstanceUid,
-							             partition.Description);
+                            StudyStorage storage;
+                            if (GetStudyStorage(partition, studyInstanceUid, out storage))
+                            {
+                                Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}", studyInstanceUid,
+                                             partition.Description, studyDir.ToString());
+                                continue;
+                            }
 
-							// Insert StudyStorage
-							using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-							{
-								IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
-								InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-								insertParms.ServerPartitionKey = partition.GetKey();
-								insertParms.StudyInstanceUid = studyInstanceUid;
-								insertParms.Folder = dateDir.Name;
-								insertParms.FilesystemKey = filesystem.GetKey();
-								insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-								if (file.TransferSyntax.LosslessCompressed)
-								{
-									insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
-									insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-								}
-								else if (file.TransferSyntax.LossyCompressed)
-								{
-									insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
-									insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-								}
-								else
-								{
-									insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-									insertParms.StudyStatusEnum = StudyStatusEnum.Online;
-								}
+                            Platform.Log(LogLevel.Info, "Reinventory inserting study storage location for {0} on partition {1}", studyInstanceUid,
+                                         partition.Description);
 
-								location = studyInsert.FindOne(insertParms);
+                            // Insert StudyStorage
+                            using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                            {
+                                IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
+                                InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
+                                insertParms.ServerPartitionKey = partition.GetKey();
+                                insertParms.StudyInstanceUid = studyInstanceUid;
+                                insertParms.Folder = dateDir.Name;
+                                insertParms.FilesystemKey = filesystem.GetKey();
+                                insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+                                if (file.TransferSyntax.LosslessCompressed)
+                                {
+                                    insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+                                    insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+                                }
+                                else if (file.TransferSyntax.LossyCompressed)
+                                {
+                                    insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+                                    insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+                                }
+                                else
+                                {
+                                    insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+                                    insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+                                }
 
-								// Lock the new study storage for study processing
-								ILockStudy lockStudy = update.GetBroker<ILockStudy>();
-								LockStudyParameters lockParms = new LockStudyParameters();
-								lockParms.StudyStorageKey = location.Key;
-								lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
-								if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-									Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
+                                location = studyInsert.FindOne(insertParms);
 
-								update.Commit();
-							}							
+                                // Lock the new study storage for study processing
+                                ILockStudy lockStudy = update.GetBroker<ILockStudy>();
+                                LockStudyParameters lockParms = new LockStudyParameters();
+                                lockParms.StudyStorageKey = location.Key;
+                                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+                                if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+                                    Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
+
+                                update.Commit();
+                            }		 
+                            #endregion					
 						}
 
-						string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
+					    string studyXml = location.GetStudyXmlPath();
 						if (File.Exists(studyXml))
 							FileUtils.Delete(studyXml);
+
+                        string studyGZipXml = location.GetCompressedStudyXmlPath();
+                        if (File.Exists(studyGZipXml))
+                            FileUtils.Delete(studyGZipXml);
+
 
 						foreach (FileInfo sopFile in fileList)
 						{
