@@ -394,6 +394,11 @@ div.reportPreview {
 	text-align: justify;
 }
 
+.SectionContainer
+{
+	margin: 12px 0px 0px 0px;
+}
+
 .SectionHeadingBackground
 {
 	background: url(../images/SectionHeaderBackground.png) repeat-x bottom;
@@ -439,6 +444,11 @@ div.reportPreview {
 	padding-bottom: 7px;
 	padding-left: 10px;
 }
+
+
+/*
+ * PatientBanner - used to display information about the patient on the preview pages (e.g. registration.htm)
+ */
 
 .PatientBanner_topleft {
 	background: url(../images/PatientBanner_tl.png) no-repeat top right;

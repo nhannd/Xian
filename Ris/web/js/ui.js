@@ -1067,7 +1067,7 @@ var Table = {
 function GetSectionHTML(title, content)
 {
 	var _html = 
-		"<table cellspacing='0' cellpadding='0' border='0' width='100%' style='margin-top: 20px;'>" +
+		"<table cellspacing='0' cellpadding='0' border='0' width='100%' class='SectionContainer'>" +
 		"<tbody><tr>" +
 		"<td class='SectionHeadingLeft'></td>" +
 		"<td width='100%' class='SectionHeadingBackground'>" + title + "</td>" +
@@ -1080,9 +1080,9 @@ function GetSectionHTML(title, content)
 }
 
 /*
-	GetSectionHTML
+	GetBannerHTML
 	
-	Returns the html for the banner section of the pages with the content.
+	Returns the html for the banner section of the pages with the content (i.e. patient demographics).
 	
 	Parameters:
 		content - the content of the section.
