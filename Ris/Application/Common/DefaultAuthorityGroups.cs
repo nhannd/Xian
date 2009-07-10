@@ -106,8 +106,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Admin.Data.StaffGroup,
                         AuthorityTokens.Admin.Data.Worklist,
 
-						AuthorityTokens.Management.HL7.QueueMonitor,
-
 						AuthorityTokens.FolderSystems.Booking,
 						AuthorityTokens.FolderSystems.Registration,
 						AuthorityTokens.FolderSystems.Performing,
