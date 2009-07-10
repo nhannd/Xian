@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 						enumList += String.Format(@"myEle = document.createElement('option') ;
                     myEle.value = '{0}';
                     myEle.text = '{1}';
-                    applyTimeList.add(myEle) ;", applyTimeEnum, applyTimeEnum.Description);
+                    applyTimeList.add(myEle) ;", applyTimeEnum.Lookup, applyTimeEnum.Description);
 					}
 					break;
 				}
@@ -358,7 +358,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 				foreach (ServerRuleApplyTimeEnum applyTime in ruleTypeList[_rule.ServerRuleTypeEnum])
 				{
 					_rule.ServerRuleApplyTimeEnum = applyTime;
-					if (val.Equals(applyTime.Description))
+					if (val.Equals(applyTime.Lookup))
 					{
 						_rule.ServerRuleApplyTimeEnum = applyTime;
 						break;
