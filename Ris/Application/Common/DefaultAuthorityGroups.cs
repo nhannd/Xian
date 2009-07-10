@@ -61,6 +61,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(HealthcareAdmin,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.CannedText.Group,
@@ -105,6 +106,8 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Admin.Data.StaffGroup,
                         AuthorityTokens.Admin.Data.Worklist,
 
+						AuthorityTokens.Management.HL7.QueueMonitor,
+
 						AuthorityTokens.FolderSystems.Booking,
 						AuthorityTokens.FolderSystems.Registration,
 						AuthorityTokens.FolderSystems.Performing,
@@ -118,6 +121,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(Clerical,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.Patient.Create,
@@ -142,6 +146,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(Technologists,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.Order.Create,
@@ -159,6 +164,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(Radiologists,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.Report.Create,
@@ -177,6 +183,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(RadiologyResidents,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.HomePage.View,
 						AuthorityTokens.Workflow.PatientBiography.View,
 						AuthorityTokens.Workflow.CannedText.Personal,
 						AuthorityTokens.Workflow.Report.Create,
@@ -191,6 +198,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(EmergencyPhysicians,
                     new string[] 
                     {
+                        AuthorityTokens.Workflow.HomePage.View,
                         AuthorityTokens.Workflow.PatientBiography.View,
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
