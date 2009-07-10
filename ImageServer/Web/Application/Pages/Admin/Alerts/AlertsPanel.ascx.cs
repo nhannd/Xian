@@ -41,6 +41,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
+using ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -155,7 +156,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
             AlertsGridPanel.Pager = GridPagerTop;
-            GridPagerTop.Reset();
+            //GridPagerTop.Reset();
 
             ClearInsertDateButton.OnClientClick = ScriptHelper.ClearDate(InsertDateFilter.ClientID, InsertDateCalendarExtender.ClientID);
             
@@ -275,7 +276,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            AlertsGridPanel.DataBind();   
+          	AlertsGridPanel.Refresh();
         }
 
         protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
