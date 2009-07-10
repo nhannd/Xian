@@ -186,16 +186,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     return locationAssembler.CreateLocationSummary(l);
                 });
 
+			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
+			response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
 
-            response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-                this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
-                delegate(StaffGroup group)
-                {
-                    return staffGroupAssembler.CreateSummary(group);
-                });
-
-            response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
-            response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
+			// add extra data iff editing a user-defined worklist (bug #4871)
+			if (request.UserDefinedWorklist)
+			{
+				response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+					this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
+					delegate(StaffGroup group)
+					{
+						return staffGroupAssembler.CreateSummary(group);
+					});
+			}
 
             return response;
         }

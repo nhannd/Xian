@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		private readonly object _duplicateWorklistActionKey = new object();
 		private string _name;
 		private WorklistClassSummary _worklistClass;
-		private ArrayList _worklistClassChoices = new ArrayList();
+		private readonly ArrayList _worklistClassChoices = new ArrayList();
 		private bool _includeUseDefinedWorklists;
 
 		public override void Start()
@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<IWorklistAdminService>(
 					delegate(IWorklistAdminService service)
 					{
-						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
+						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest(false));
 						_worklistClassChoices.Add(_filterNone);
 						response.WorklistClasses.Sort(
 							delegate(WorklistClassSummary x, WorklistClassSummary y)

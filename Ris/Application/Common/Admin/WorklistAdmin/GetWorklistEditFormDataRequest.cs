@@ -38,5 +38,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class GetWorklistEditFormDataRequest : DataContractBase
     {
+    	public GetWorklistEditFormDataRequest(bool userDefinedWorklist)
+    	{
+    		UserDefinedWorklist = userDefinedWorklist;
+    	}
+
+    	/// <summary>
+		/// Specifies whether to obtain form data specific to creating user-defined worklists.
+		/// </summary>
+		[DataMember]
+    	public bool UserDefinedWorklist;
     }
 }
