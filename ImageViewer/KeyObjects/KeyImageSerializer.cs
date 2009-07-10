@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				{
 					IContentSequence koDescription = iod.SrDocumentContent.CreateContentSequence();
 					koDescription.InitializeAttributes();
-					koDescription.ConceptNameCodeSequence = KeyObjectSelectionCodeSequences.DocumentTitleModifier;
+					koDescription.ConceptNameCodeSequence = KeyObjectSelectionCodeSequences.KeyObjectDescription;
 					koDescription.TextValue = _description;
 					koDescription.RelationshipType = RelationshipType.Contains;
 					koDescription.ReferencedContentItemIdentifier = new uint[] {1};

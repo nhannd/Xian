@@ -391,12 +391,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			List<KeyValuePair<string, Exception>> failedServerInfo = new List<KeyValuePair<string, Exception>>();
 			StudyItemList aggregateStudyItemList = Query(queryParams, failedServerInfo);
 
-			this.ResultsTitle = String.Format(SR.FormatStudiesFound, aggregateStudyItemList.Count, _selectedServerGroup.Name);
+			Table<StudyItem> table = _searchResults[_selectedServerGroup.GroupID].StudyList;
+			PopulateTable(table, aggregateStudyItemList, false);
+			this.ResultsTitle = String.Format(SR.FormatStudiesFound, table.Items.Count, _selectedServerGroup.Name);
 
 			//Update the results title in the component and add the new results.
 			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = this.ResultsTitle;
-			Table<StudyItem> table = _searchResults[_selectedServerGroup.GroupID].StudyList;
-			PopulateTable(table, aggregateStudyItemList, false);
+
 			table.Sort();
 
             // Re-throw the last exception with a list of failed server name, if any

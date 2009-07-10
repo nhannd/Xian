@@ -45,7 +45,7 @@
     <Position X="4.75" Y="6" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\Sop.cs</FileName>
-      <HashCode>NogAAAMUgTCACkJVC1CFQoDMABxCABCAQAYZWBBAAEA=</HashCode>
+      <HashCode>NogAAAMUATGACgIVC1CFRoBFEBxSAFCIgEYYWBBAAGA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="DataSource" />
@@ -53,20 +53,13 @@
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Delegate Name="ClearCanvas.ImageViewer.StudyManagement.Sop.GetTagDelegate&lt;T&gt;" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>StudyManagement\Sop.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
-    </NestedTypes>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.StudyManagement.ImageSop" Collapsed="true">
     <Position X="4.75" Y="7" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\ImageSop.cs</FileName>
-      <HashCode>UAEAAACAICOgrEAgQICEZMMAAAAgAAEAAAJQIAkAQAE=</HashCode>
+      <HashCode>UAEAAACAICOgrEAgQICEZMMAAAAgAAEAAAJQIAkAQAU=</HashCode>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Frames" />
@@ -76,7 +69,7 @@
     <Position X="0.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <FileName>ImageViewerComponent.cs</FileName>
-      <HashCode>QCCAoCABUChgIAAAwAEAAEAEFUAYERAIIIgCCEAYIMQ=</HashCode>
+      <HashCode>SCCAsCABUChgIAgAxAEAAEAEFWCYEBAIIIgCCEAYIMQ=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="StudyTree" />
@@ -92,7 +85,7 @@
     <Position X="6.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\Frame.cs</FileName>
-      <HashCode>UwEAAACAYCOgjEQAQICA5FOAABAiAAgAAAJRIAkgICg=</HashCode>
+      <HashCode>UwEAAACAYCOgjEQAQICA5EOAABAiAAgAgAJRIAkgICg=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -100,7 +93,7 @@
     <Position X="11" Y="5.25" Width="2.25" />
     <TypeIdentifier>
       <FileName>StudyManagement\DicomMessageSopDataSource.cs</FileName>
-      <HashCode>AAAAAAEAAAAAAAAAEACAAAAAABAAAABCACAAAAAAAAA=</HashCode>
+      <HashCode>gAAAgAEAAAAAAAAAHACAAAEACBAAAAACAAAAAABgAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -116,14 +109,14 @@
     <Position X="11" Y="4" Width="2.25" />
     <TypeIdentifier>
       <FileName>StudyManagement\StandardSopDataSource.cs</FileName>
-      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAABAAAYIAAAAAAA=</HashCode>
+      <HashCode>AAIAAAAAACAAAAAACAAAAAACAAAAAIAAAAAAAAAgAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.StudyManagement.SopDataSource" Collapsed="true">
     <Position X="11.25" Y="3" Width="1.75" />
     <TypeIdentifier>
       <FileName>StudyManagement\SopDataSource.cs</FileName>
-      <HashCode>AAABAAAAIIAAAABACACAAEIAAAAAAIAQACAIiAAAQBA=</HashCode>
+      <HashCode>AAoAAgAAIKAAAAAASACAAAIAAEAAAIAQAEIAigAAQBA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -145,7 +138,7 @@
     <Position X="7.5" Y="6" Width="2.25" />
     <TypeIdentifier>
       <FileName>StudyManagement\ISopDataSource.cs</FileName>
-      <HashCode>AAAAAAAAIIAAAABAAAAAAEIAAAAAAAAQAAAACAAAABA=</HashCode>
+      <HashCode>AAIAAgAAIIAAAAAAAAAAAAIAAAAAAIAQAEAACgAAQBA=</HashCode>
     </TypeIdentifier>
   </Interface>
 </ClassDiagram>

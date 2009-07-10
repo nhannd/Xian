@@ -32,7 +32,7 @@
     </NestedTypes>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.RoiGraphics.LinearRoi" Collapsed="true">
-    <Position X="3.25" Y="1.75" Width="1.5" />
+    <Position X="3.25" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>RoiGraphics\LinearRoi.cs</FileName>
       <HashCode>AAAAAAAAAAAAgAAAkAAAAABAAAAAAAAAEAAQAAgQKAI=</HashCode>
@@ -40,8 +40,8 @@
     <InheritanceLine Type="ClearCanvas.ImageViewer.RoiGraphics.Roi" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="2.5" Y="1.125" />
-        <Point X="4.062" Y="1.125" />
-        <Point X="4.062" Y="1.75" />
+        <Point X="4.197" Y="1.125" />
+        <Point X="4.197" Y="1.75" />
       </Path>
     </InheritanceLine>
     <Lollipop Position="0.919" />
@@ -77,7 +77,7 @@
     <Lollipop Position="1.023" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.RoiGraphics.Analyzers.RoiLengthAnalyzer" Collapsed="true">
-    <Position X="3.25" Y="3" Width="1.5" />
+    <Position X="3.25" Y="3" Width="1.75" />
     <TypeIdentifier>
       <FileName>RoiGraphics\Analyzers\RoiLengthAnalyzer.cs</FileName>
       <HashCode>AAAAAAAAAAIAAEgAAAAAAAAAAAAAAAAAEAAAAAAAAAI=</HashCode>

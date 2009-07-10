@@ -43,19 +43,21 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
+using ClearCanvas.Dicom.Codec;
 
 namespace ClearCanvas.ImageViewer.TestTools
 {
 	//Note: this class was basically copied from the anonymization tool and is *not* the correct
 	//way to do this.  It's just a quick and dirty tool for testing purposes.
 	//It should really be integrated into the viewer services.  Actually, so should anonymization!
-	[MenuAction("activate", "dicomstudybrowser-contextmenu/Compress J2K", "CompressJ2K")]
+
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class ChangeTransferSyntaxTool : StudyBrowserTool
 	{
 		private string _tempPath;
 		private static object _localStudyLoader = null;
-		
+		private TransferSyntax _syntax;
+
 		public ChangeTransferSyntaxTool()
 		{
 		}
@@ -91,14 +93,45 @@ namespace ClearCanvas.ImageViewer.TestTools
 			}
 		}
 
-		public void CompressJ2K()
+		public override IActionSet Actions
 		{
+			get
+			{
+				List<IAction> actions = new List<IAction>();
+				IResourceResolver resolver = new ResourceResolver(typeof(ChangeTransferSyntaxTool).GetType().Assembly);
+
+				actions.Add(CreateAction(TransferSyntax.ExplicitVrLittleEndian, resolver));
+				actions.Add(CreateAction(TransferSyntax.ImplicitVrLittleEndian, resolver));
+
+				foreach (IDicomCodecFactory factory in ClearCanvas.Dicom.Codec.DicomCodecRegistry.GetCodecFactories())
+				{
+					actions.Add(CreateAction(factory.CodecTransferSyntax, resolver));
+				}
+
+				return new ActionSet(actions);
+			}
+		}
+
+		private IAction CreateAction(TransferSyntax syntax, IResourceResolver resolver)
+		{
+			ClickAction action = new ClickAction(syntax.UidString,
+					new ActionPath("dicomstudybrowser-contextmenu/Change Transfer Syntax/" + syntax.ToString(), resolver),
+					ClickActionFlags.None, resolver);
+			action.SetClickHandler(delegate { ChangeToSyntax(syntax); });
+			action.Label = syntax.ToString();
+			return action;
+		}
+
+		public void ChangeToSyntax(TransferSyntax syntax)
+		{
+			_syntax = syntax;
+
 			StudyItem selectedStudy = this.Context.SelectedStudy;
 
 			BackgroundTask task = null;
 			try
 			{
-				task = new BackgroundTask(CompressJ2K, false, this.Context.SelectedStudy);
+				task = new BackgroundTask(ChangeToSyntax, false, this.Context.SelectedStudy);
 				ProgressDialog.Show(task, this.Context.DesktopWindow, true);
 			}
 			catch(Exception e)
@@ -116,7 +149,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			}
 		}
 
-		private void CompressJ2K(IBackgroundTaskContext context)
+		private void ChangeToSyntax(IBackgroundTaskContext context)
 		{
 			StudyItem study = (StudyItem)context.UserState;
 
@@ -124,8 +157,10 @@ namespace ClearCanvas.ImageViewer.TestTools
 			{
 				_tempPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ClearCanvas");
 				_tempPath = System.IO.Path.Combine(_tempPath, "Compression");
+				_tempPath = System.IO.Path.Combine(_tempPath, Path.GetRandomFileName());
 
-				context.ReportProgress(new BackgroundTaskProgress(0, "Compressing Study J2K Lossless ..."));
+				string message = String.Format("Changing transfer syntax to: {0}", _syntax);
+				context.ReportProgress(new BackgroundTaskProgress(0, message));
 
 				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUID, null));
 				if (numberOfSops <= 0)
@@ -140,7 +175,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 						{
 							string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
 							DicomFile file = ((ILocalSopDataSource)sop.DataSource).File;
-							file.ChangeTransferSyntax(TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
+							file.ChangeTransferSyntax(_syntax);
 							file.Save(filename);
 						}
 					}
