@@ -84,11 +84,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 					throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}",_path));
 				try
 				{
-					_backupPath = String.Format("{0}.bak", _path);
+
                     _backupSpeed.Start();
                     FileInfo fi = new FileInfo(_path);
+                    _backupPath = FileUtils.Backup(_path);
                     _backupSpeed.SetData(fi.Length);
-					File.Copy(_path, _backupPath);
                     _backupSpeed.End();
 				}
 				catch (IOException)

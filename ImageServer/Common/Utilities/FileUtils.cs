@@ -169,9 +169,10 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
         /// <summary>
         /// Creates copy of the specified file and returns the path to the backup file.
+        /// This method allows a file to be backed up more than once with different extensions.
         /// </summary>
         /// <param name="source"></param>
-        /// <returns>The path to the backup file. Null if the file is not backed up.</returns>
+        /// <returns>The path to the backup file. Null if the file is not backed up (it doesn't exist).</returns>
         /// <param name="inSourceFolder">A boolean value indicating whether to save the backup in the same folder</param>
         /// <remarks>If the file is in use, retry will be attempted until it succeeds.</remarks>
         static public string Backup(string source, bool inSourceFolder)
@@ -222,6 +223,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
         /// <summary>
         /// Creates copy of the specified file and returns the path to the backup file.
+        /// This method allows a file to be backed up more than once with different extensions.
         /// </summary>
         /// <param name="source"></param>
         /// <returns>The path to the backup file. Null if the file is not backed up.</returns>
