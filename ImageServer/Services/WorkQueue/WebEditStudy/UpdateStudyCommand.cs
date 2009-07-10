@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -82,12 +83,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private Patient _newPatient;
         private StudyStorage _storage;
 
-        private bool _patientInfoIsNotChanged;
-
-        private UpdateStudyStatistics _statistics;
+        private readonly UpdateStudyStatistics _statistics;
         private int _totalSopCount;
         private bool _restored;
         private bool _deleteOriginalFolder;
+
+        private bool _patientInfoIsNotChanged;
 
         #endregion
 
@@ -248,15 +249,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             StringBuilder log = new StringBuilder();
             log.AppendLine(String.Format("Study to be updated:"));
-            log.AppendLine(String.Format("\tServer Partition: {0}\n", _partition.AeTitle));
-            log.AppendLine(String.Format("\tStorage GUID: {0}\n", _oldStudyLocation.GetKey().Key));
-            log.AppendLine(String.Format("\tPatient ID: {0}\n", _study.PatientId));
-            log.AppendLine(String.Format("\tPatient Name: {0}\n", _study.PatientsName));
-            log.AppendLine(String.Format("\tAccession #: {0}\n", _study.AccessionNumber));
-            log.AppendLine(String.Format("\tStudy ID : {0}\n", _study.StudyId));
-            log.AppendLine(String.Format("\tStudy Date : {0}\n", _study.StudyDate));
-            log.AppendLine(String.Format("\tStudy Instance Uid: {0}\n", _study.StudyInstanceUid));
-            log.AppendLine(String.Format("\tInstance Count: {0}\n", _study.NumberOfStudyRelatedInstances));
+            log.AppendLine(String.Format("\tServer Partition: {0}", _partition.AeTitle));
+            log.AppendLine(String.Format("\tStorage GUID: {0}", _oldStudyLocation.GetKey().Key));
+            log.AppendLine(String.Format("\tPatient ID: {0}", _study.PatientId));
+            log.AppendLine(String.Format("\tPatient Name: {0}", _study.PatientsName));
+            log.AppendLine(String.Format("\tAccession #: {0}", _study.AccessionNumber));
+            log.AppendLine(String.Format("\tStudy ID : {0}", _study.StudyId));
+            log.AppendLine(String.Format("\tStudy Date : {0}", _study.StudyDate));
+            log.AppendLine(String.Format("\tStudy Instance Uid: {0}", _study.StudyInstanceUid));
+            log.AppendLine(String.Format("\tInstance Count: {0}", _study.NumberOfStudyRelatedInstances));
             log.AppendLine(String.Format("\tCurrent location: {0}", _oldStudyPath));
             log.AppendLine();
             log.AppendLine("Changes to be applied:");
@@ -264,7 +265,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             {
                 log.AppendLine(String.Format("\t{0}", cmd));
             }
-
+            
             log.AppendLine(String.Format("\tNew location: {0}", NewStudyPath));
             Platform.Log(LogLevel.Info, log);
         }
@@ -316,7 +317,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             
         }
 
-        private void SimulateErrors()
+        private static void SimulateErrors()
         {
             RandomError.Generate(Settings.SimulateEditError, "Update study errors");
         }
@@ -332,13 +333,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     ImageLevelUpdateEntry entry = (command as IUpdateImageTagCommand).UpdateEntry;
                     if (entityMap.ContainsKey(entry.TagPath.Tag))
                     {
-                        entityMap[entry.TagPath.Tag].SetValue(entity, entry.GetStringValue(), null);
+                        string value = entry.GetStringValue();
+                        DicomTag tag = entry.TagPath.Tag;
+                        if (tag.TagValue == DicomTags.PatientsSex)
+                        {
+                            // Valid Patient's Sex value : "M", "F" or "O"
+                            if (!String.IsNullOrEmpty(value) && !value.ToUpper().Equals("M") && !value.ToUpper().Equals("F"))
+                                value = "O";
+                        }
+                        
+                        if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
+                            throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
+                        
                     }
                 }
 
             }
 
         }
+
+        
 
         private void LoadEntities()
         {

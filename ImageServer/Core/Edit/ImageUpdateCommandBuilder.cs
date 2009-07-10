@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
@@ -112,7 +113,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     SetTagCommand cmd = new SetTagCommand(tag.TagValue, attribute.ToString());
                     commandList.Add(cmd);
                 }
-               
+                else
+                {
+                    // tag doesn't exist, set to empty
+                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, string.Empty);
+                    commandList.Add(cmd);
+                }
             }
 			
             return commandList;
@@ -194,6 +200,98 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 	public class EntityDicomMap : Dictionary<DicomTag, PropertyInfo>
 	{
+        /// <summary>
+        /// Populate the corresponding Dicom property in the specified object with the given value.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="tag"></param>
+        /// <param name="value"></param>
+        /// <returns>true if the target contains the field corresponding to the specified tag and it can be set</returns>
+        public  bool Populate(object target, DicomTag tag, string value)
+        {
+            Platform.CheckForNullReference(target, "target");
+            Platform.CheckForNullReference(tag, "tag");
+
+            if (!this.ContainsKey(tag))
+                return false;
+
+            PropertyInfo prop = this[tag];
+            if (!prop.CanWrite)
+            {
+                Platform.Log(LogLevel.Error, "Cannot set readonly property {0}.{1}.", target.GetType().Name, prop.Name);
+                return false;
+            }
+
+            if (prop.PropertyType == typeof(string))
+            {   
+                this[tag].SetValue(target, value, null);
+            }
+            else if (prop.PropertyType == typeof(int) && prop.CanWrite)
+            {
+                if (value != null)
+                {
+                    int result;
+                    if (int.TryParse(value, out result))
+                        this[tag].SetValue(target, result, null);
+                    else
+                    {
+                        Platform.Log(LogLevel.Warn, "Cannot populate {0}.{1} with {2}: Cannot convert String to int.", target.GetType().Name, prop.Name, value);
+                        return false;
+                    }
+                }
+
+            }
+            else if (prop.PropertyType == typeof(bool))
+            {
+                if (value != null)
+                {
+                    bool result;
+                    if (bool.TryParse(value, out result))
+                        this[tag].SetValue(target, result, null);
+                    else
+                    {
+                        Platform.Log(LogLevel.Warn, "Cannot populate {0}.{1} with {2}: Cannot convert String to boolean.", target.GetType().Name, prop.Name, value);
+                        return false;
+                    }
+                }
+            }
+            else if (prop.PropertyType == typeof(DateTime))
+            {
+                if (value != null)
+                {
+                    DateTime result;
+                    if (DateTime.TryParse(value, out result))
+                        this[tag].SetValue(target, result, null);
+                    else
+                    {
+                        Platform.Log(LogLevel.Warn, "Cannot populate {0}.{1} with {2}: Cannot convert String to DateTime.", target.GetType().Name, prop.Name, value);
+                        return false;
+                    }
+                }
+            }
+            else if (prop.PropertyType == typeof(Decimal))
+            {
+                if (value != null)
+                {
+                    Decimal result;
+                    if (Decimal.TryParse(value, out result))
+                        this[tag].SetValue(target, result, null);
+                    else
+                    {
+                        Platform.Log(LogLevel.Warn, "Cannot populate {0}.{1} with {2}: Cannot convert String to Decimal.", target.GetType().Name, prop.Name, value);
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                Platform.Log(LogLevel.Warn, "Cannot populate {0}.{1} with {2}: convertion from String to {3} is not supported.", target.GetType().Name, prop.Name, value, prop.PropertyType);
+                return false;
+            }
+
+            return true;
+        }
+
 	}
 
 	public class EntityDicomMapManager : Dictionary<Type, EntityDicomMap>

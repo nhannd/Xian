@@ -53,6 +53,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
+
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
     [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
@@ -139,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 {
                     case ProcessDuplicateAction.OverwriteUseDuplicates:
                         Platform.Log(LogLevel.Info, "Update Existing Study w/ Duplicate Info");
-                        _studyUpdateCommands = GetStudyUpdateCommands();
+                        _studyUpdateCommands = BuildUpdateStudyCommandsFromDuplicate();
                         using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Existing Study w/ Duplicate Info"))
                         {
                             processor.AddCommand(new UpdateStudyCommand(ServerPartition, StorageLocation, _studyUpdateCommands));
@@ -153,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                     case ProcessDuplicateAction.OverwriteUseExisting:
                         ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
                         _duplicateUpdateCommands = new List<BaseImageLevelUpdateCommand>();
-                        _duplicateUpdateCommands.AddRange(commandBuilder.BuildCommands<Study>(StorageLocation));
+                        _duplicateUpdateCommands.AddRange(commandBuilder.BuildCommands<StudyMatchingMap>(StorageLocation));
                         PrintCommands(_duplicateUpdateCommands);
                         break;
                 }
@@ -360,22 +361,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             return file;
         }
 
-        private List<BaseImageLevelUpdateCommand> GetStudyUpdateCommands()
+        /// <summary>
+        /// Gets the commands to update the study 
+        /// </summary>
+        /// <returns></returns>
+        private List<BaseImageLevelUpdateCommand> BuildUpdateStudyCommandsFromDuplicate()
         {
             List<BaseImageLevelUpdateCommand> commands = new List<BaseImageLevelUpdateCommand>();
             if (WorkQueueUidList.Count>0)
             {
                 WorkQueueUid uid = WorkQueueUidList[0];
-
                 DicomFile file = LoadDuplicateDicomFile(uid);
-
-                Study study = new Study();
-                Patient patient = new Patient();
-                file.DataSet.LoadDicomFields(study);
-                file.DataSet.LoadDicomFields(patient);
-
                 ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
-                commands.AddRange(commandBuilder.BuildCommands<Study>(file.DataSet));
+                // Create a list of commands to update the existing study based on what's defined in StudyMatchingMap
+                // The value will be taken from the content of the duplicate image.
+                commands.AddRange(commandBuilder.BuildCommands<StudyMatchingMap>(file.DataSet));
             }
 
             return commands;
