@@ -345,6 +345,14 @@
   <data name="FormatContinuousWorkflowDescription" xml:space="preserve">
     <value>{0} from the "{1}" worklist</value>
   </data>
+  <data name="FormatEarlyProcedureCheckInList" xml:space="preserve">
+    <value>{0} early by {1} hours {2} minutes
+</value>
+  </data>
+  <data name="FormatLateProcedureCheckInList" xml:space="preserve">
+    <value>{0} late by {1} hours {2} minutes
+</value>
+  </data>
   <data name="FormatProtocolFolderName" xml:space="preserve">
     <value>Protocolling from the "{0}" worklist</value>
   </data>

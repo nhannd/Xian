@@ -745,6 +745,26 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} early by {1} hours {2} minutes
+        ///.
+        /// </summary>
+        internal static string FormatEarlyProcedureCheckInList {
+            get {
+                return ResourceManager.GetString("FormatEarlyProcedureCheckInList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} late by {1} hours {2} minutes
+        ///.
+        /// </summary>
+        internal static string FormatLateProcedureCheckInList {
+            get {
+                return ResourceManager.GetString("FormatLateProcedureCheckInList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protocolling from the &quot;{0}&quot; worklist.
         /// </summary>
         internal static string FormatProtocolFolderName {

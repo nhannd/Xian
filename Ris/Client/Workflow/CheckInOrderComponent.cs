@@ -127,35 +127,34 @@ namespace ClearCanvas.Ris.Client.Workflow
             DateTime? lateBound = _checkInTime.AddMinutes(-CheckInOrderComponentSettings.Default.LateCheckInWarningThreshold);
             string earlyProcedures = "";
             string lateProcedures = "";
-            List<CheckInOrderTableEntry> questionableProcedures = new List<CheckInOrderTableEntry>();
 
             // Get the list of Order EntityRef from the table
             foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 DateTime? scheduledStartTime = entry.Procedure.ScheduledStartTime;
+                TimeSpan checkInTimeDifference = scheduledStartTime.Value - _checkInTime;
                 bool tooEarly = earlyBound < scheduledStartTime;
                 bool tooLate = lateBound > scheduledStartTime;
                 if (entry.Checked)
                 {
                     if (tooEarly || tooLate)
                     {
-                        questionableProcedures.Add(entry);
                         if (tooEarly)
-                            earlyProcedures += Formatting.ProcedureFormat.Format(entry.Procedure) + 
-                                " early by " + 
-                                ((scheduledStartTime.Value - _checkInTime).Days * 24 + (scheduledStartTime.Value - _checkInTime).Hours) + " hours " + 
-                                (scheduledStartTime.Value - _checkInTime).Minutes % 60 + " minutes" + "\n";
+                            earlyProcedures += String.Format(SR.FormatEarlyProcedureCheckInList, 
+                                                                Formatting.ProcedureFormat.Format(entry.Procedure),
+                                                                (checkInTimeDifference.Days * 24 + checkInTimeDifference.Hours),
+                                                                checkInTimeDifference.Minutes);
                         else
-                            lateProcedures += Formatting.ProcedureFormat.Format(entry.Procedure) +
-                                " late by " +
-                                ((_checkInTime - scheduledStartTime.Value).Days * 24 + (_checkInTime - scheduledStartTime.Value).Hours) + " hours " +
-                                (_checkInTime - scheduledStartTime.Value).Minutes % 60 + " minutes" + "\n";
+                            lateProcedures += String.Format(SR.FormatLateProcedureCheckInList,
+                                                                Formatting.ProcedureFormat.Format(entry.Procedure),
+                                                                ((-checkInTimeDifference).Days * 24 + (-checkInTimeDifference).Hours),
+                                                                (-checkInTimeDifference).Minutes);
                     }
                     _selectedProcedures.Add(entry.Procedure.ProcedureRef);
                 }
             }
 
-            if(questionableProcedures.Count != 0)
+            if(earlyProcedures != "" || lateProcedures != "")
                 if(this.Host.DesktopWindow.ShowMessageBox(String.Format((earlyProcedures != "" ? SR.MessageConfirmCheckInProcedure + "\n\n{0}" : "") +
                                                                     (lateProcedures != "" ? "{1}\n" : "") + 
                                                                     "Do you still want to check-in the selected procedure(s)?", 
