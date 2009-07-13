@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Application.Services
                 );
         }
 
-        public void UpdateStaffGroup(StaffGroup group, StaffGroupDetail detail, bool updateWorklist, IPersistenceContext context)
+        public void UpdateStaffGroup(StaffGroup group, StaffGroupDetail detail, bool updateWorklist, bool isNewStaffGroup, IPersistenceContext context)
         {
             group.Name = detail.Name;
             group.Description = detail.Description;
@@ -124,7 +124,10 @@ namespace ClearCanvas.Ris.Application.Services
 			if (updateWorklist)
 			{
 				StaffGroupWorklistCollectionSynchronizeHelper helper = new StaffGroupWorklistCollectionSynchronizeHelper(group, context);
-				IList<Worklist> originalWorklists = context.GetBroker<IWorklistBroker>().Find(group);
+				IList<Worklist> originalWorklists = isNewStaffGroup 
+					? new List<Worklist>()
+					: context.GetBroker<IWorklistBroker>().Find(group);
+
 				helper.Synchronize(originalWorklists, detail.Worklists);
 			}
         }

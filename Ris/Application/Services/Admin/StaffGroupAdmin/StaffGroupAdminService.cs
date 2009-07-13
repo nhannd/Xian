@@ -160,7 +160,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 
             StaffGroupAssembler assembler = new StaffGroupAssembler();
 			bool worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
-			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, PersistenceContext);
+        	bool isNewStaffGroup = true;
+			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, isNewStaffGroup, PersistenceContext);
 
             PersistenceContext.Lock(item, DirtyState.New);
             PersistenceContext.SynchState();
@@ -180,7 +181,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 
             StaffGroupAssembler assembler = new StaffGroupAssembler();
 			bool worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
-            assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, PersistenceContext);
+			bool isNewStaffGroup = false;
+			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, isNewStaffGroup, PersistenceContext);
 
             PersistenceContext.SynchState();
 
@@ -195,6 +197,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 			{
 				IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
 				StaffGroup item = broker.Load(request.StaffGroupRef, EntityLoadFlags.Proxy);
+
+				// Remove worklist association before deleting a staff group
+				IList<Worklist> worklists = PersistenceContext.GetBroker<IWorklistBroker>().Find(item);
+				CollectionUtils.ForEach(worklists,
+					delegate(Worklist worklist) { worklist.GroupSubscribers.Remove(item); });
+				
 				broker.Delete(item);
 				PersistenceContext.SynchState();
 				return new DeleteStaffGroupResponse();
