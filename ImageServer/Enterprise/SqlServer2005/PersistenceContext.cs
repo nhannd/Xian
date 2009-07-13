@@ -66,6 +66,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         {
             get { return _connection; }
         }
+
+		public int CommandTimeout
+		{
+			get { return SqlServerSettings.Default.CommandTimeout; }
+		}
         #endregion
 
         #region IPersistenceContext Members

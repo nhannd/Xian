@@ -133,6 +133,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 			{
 				cmd.Connection = context.Connection;
 				cmd.Transaction = context.Transaction;
+				cmd.CommandTimeout = context.CommandTimeout;
 
 				foreach (string line in lines)
 				{
