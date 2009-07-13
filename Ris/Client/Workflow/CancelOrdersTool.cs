@@ -67,20 +67,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         protected bool ExecuteCore(WorklistItemSummaryBase item)
         {
-            bool proceed = true;
-
-            Platform.GetService<IOrderEntryService>(
-                delegate(IOrderEntryService service)
-                {
-                    GetCancelOrderFormDataResponse cancelOrderFormData = service.GetCancelOrderFormData(new GetCancelOrderFormDataRequest());
-                    CancelOrderResponse response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderFormData.CancelReasonChoices[0], true));
-                    if (response.WarnUser && this.Context.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel this order?", MessageBoxActions.YesNo) == DialogBoxAction.No)
-                        proceed = false;
-                });
-
-            if (proceed != true)
-                return false; 
-
             CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Context.DesktopWindow,
@@ -92,7 +78,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        CancelOrderResponse response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, false));
+                        CancelOrderResponse response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, true));
+                        if (response.WarnUser && this.Context.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+                            response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, false));
                     });
 
                 InvalidateFolders();
