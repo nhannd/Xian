@@ -123,8 +123,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public void Accept()
         {
-            DateTime? earlyBound = _checkInTime.AddMinutes(CheckInOrderComponentSettings.Default.EarlyCheckInWarningThreshold);
-            DateTime? lateBound = _checkInTime.AddMinutes(-CheckInOrderComponentSettings.Default.LateCheckInWarningThreshold);
+            DateTime? earlyBound = _checkInTime.AddMinutes(CheckInSettings.Default.EarlyCheckInWarningThreshold);
+            DateTime? lateBound = _checkInTime.AddMinutes(-CheckInSettings.Default.LateCheckInWarningThreshold);
             string earlyProcedures = "";
             string lateProcedures = "";
 

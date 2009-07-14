@@ -492,6 +492,12 @@
   <data name="MessageAlertLanguageNotEnglish" xml:space="preserve">
     <value>{0} speaks: {1}</value>
   </data>
+  <data name="MessageAlertScheduledTimeTooEarly" xml:space="preserve">
+    <value>Scheduled start time is too early to check-in procedure</value>
+  </data>
+  <data name="MessageAlertScheduledTimeTooLate" xml:space="preserve">
+    <value>Scheduled start time is too late to check-in procedure</value>
+  </data>
   <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
     <value>{0} has unreconciled records</value>
   </data>

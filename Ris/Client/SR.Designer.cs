@@ -1186,6 +1186,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scheduled start time is too early to check-in procedure.
+        /// </summary>
+        internal static string MessageAlertScheduledTimeTooEarly {
+            get {
+                return ResourceManager.GetString("MessageAlertScheduledTimeTooEarly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scheduled start time is too late to check-in procedure.
+        /// </summary>
+        internal static string MessageAlertScheduledTimeTooLate {
+            get {
+                return ResourceManager.GetString("MessageAlertScheduledTimeTooLate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} has unreconciled records.
         /// </summary>
         internal static string MessageAlertUnreconciledRecords {

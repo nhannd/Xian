@@ -105,13 +105,6 @@
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PriorReportComponentView.cs" />
-    <Compile Include="ProcedureEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProcedureEditorComponentControl.Designer.cs">
-      <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProcedureEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolEditorComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -276,10 +269,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PerformedProcedureComponentControl.resx">
       <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProcedureEditorComponentControl.resx">
-      <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReconciliationComponentControl.resx">
