@@ -158,6 +158,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["IpAddress"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="LastAccessedTime")]
+        public ISearchCondition<DateTime> LastAccessedTime
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("LastAccessedTime"))
+              {
+                 SubCriteria["LastAccessedTime"] = new SearchCondition<DateTime>("LastAccessedTime");
+              }
+              return (ISearchCondition<DateTime>)SubCriteria["LastAccessedTime"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
         public ISearchCondition<Int32> Port
         {

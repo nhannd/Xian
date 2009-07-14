@@ -52,7 +52,7 @@ public partial class FilesystemQueueTypeEnum : ServerEnum
 
       #region Public Static Properties
       /// <summary>
-      /// A record telling when a study is eligable for deletion.  The study will be completely removed from the system.
+      /// A record telling when a study is eligible for deletion.  The study will be completely removed from the system.
       /// </summary>
       public static FilesystemQueueTypeEnum DeleteStudy
       {

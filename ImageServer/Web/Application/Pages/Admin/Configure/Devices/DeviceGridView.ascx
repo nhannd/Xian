@@ -1,3 +1,4 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DeviceGridView"
     Codebehind="DeviceGridView.ascx.cs" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="cc1" %>
@@ -44,6 +45,13 @@
                             <asp:Label ID="ServerParitionLabel" runat="server" Text="Label"></asp:Label>
                         </ItemTemplate>
                     </asp:TemplateField>
+            		<asp:TemplateField HeaderText="Last Accessed">
+						<headerstyle wrap="false" horizontalalign="Center" />
+						<itemstyle wrap="false" horizontalalign="Center" />
+						<ItemTemplate>
+							<asp:Label ID="LastAccessed" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("LastAccessedTime")) %>'></asp:Label>
+						</ItemTemplate>
+					</asp:TemplateField>
                     <asp:TemplateField HeaderText="Features" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:PlaceHolder ID="FeaturePlaceHolder" runat="server"></asp:PlaceHolder>

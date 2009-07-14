@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.Boolean _dhcp_
             ,System.Boolean _enabled_
             ,System.String _ipAddress_
+            ,System.DateTime _lastAccessedTime_
             ,System.Int32 _port_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
             ,System.Int16 _throttleMaxConnections_
@@ -69,6 +70,7 @@ namespace ClearCanvas.ImageServer.Model
             _dhcp = _dhcp_;
             _enabled = _enabled_;
             _ipAddress = _ipAddress_;
+            _lastAccessedTime = _lastAccessedTime_;
             _port = _port_;
             _serverPartitionKey = _serverPartitionKey_;
             _throttleMaxConnections = _throttleMaxConnections_;
@@ -85,6 +87,7 @@ namespace ClearCanvas.ImageServer.Model
         private Boolean _dhcp;
         private Boolean _enabled;
         private String _ipAddress;
+        private DateTime _lastAccessedTime;
         private Int32 _port;
         private ServerEntityKey _serverPartitionKey;
         private Int16 _throttleMaxConnections;
@@ -145,6 +148,12 @@ namespace ClearCanvas.ImageServer.Model
         get { return _ipAddress; }
         set { _ipAddress = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="LastAccessedTime")]
+        public DateTime LastAccessedTime
+        {
+        get { return _lastAccessedTime; }
+        set { _lastAccessedTime = value; }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
         public Int32 Port
         {
@@ -201,6 +210,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.Dhcp = entity.Dhcp;
             updateColumns.Enabled = entity.Enabled;
             updateColumns.IpAddress = entity.IpAddress;
+            updateColumns.LastAccessedTime = entity.LastAccessedTime;
             updateColumns.Port = entity.Port;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ThrottleMaxConnections = entity.ThrottleMaxConnections;

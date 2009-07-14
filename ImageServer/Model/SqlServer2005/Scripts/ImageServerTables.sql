@@ -712,7 +712,8 @@ CREATE TABLE [dbo].[Device](
 	[AllowQuery] [bit] NOT NULL CONSTRAINT [DF_Device_AllowQuery]  DEFAULT ((0)),
 	[AllowAutoRoute] [bit] NOT NULL CONSTRAINT [DF_Device_AllowAutoRoute]  DEFAULT ((1)),
 	[ThrottleMaxConnections] [smallint] NOT NULL CONSTRAINT [DF_Device_MaxConnections]  DEFAULT ((-1)),
- CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
+    [LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_Device_LastAccessedTime]  DEFAULT (getdate()),
+CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]

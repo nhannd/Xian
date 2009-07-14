@@ -87,6 +87,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["IpAddress"] = new EntityUpdateColumn<String>("IpAddress", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="LastAccessedTime")]
+        public DateTime LastAccessedTime
+        {
+            set { SubParameters["LastAccessedTime"] = new EntityUpdateColumn<DateTime>("LastAccessedTime", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
         public Int32 Port
         {
