@@ -75,11 +75,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             get { return _context.Partition; }
         }
 
-        protected FilesystemSelector Selector
-        {
-            get { return _context.FilesystemSelector; }
-        }
-
         protected Device Device
         {
             get { return _device; }

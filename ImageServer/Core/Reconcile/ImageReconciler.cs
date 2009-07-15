@@ -227,7 +227,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		{
 			Platform.CheckForNullReference(ExistingStudyLocation, "ExistingStudyLocation");
             
-			DifferenceCollection list = StudyHelper.Compare(message, ExistingStudy, Partition);
+			StudyComparer comparer = new StudyComparer();
+			DifferenceCollection list = comparer.Compare(message, ExistingStudy, Partition.GetComparisonOptions());
 
 			if (list.Count == 1)
 			{

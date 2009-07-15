@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				QueryRestoreQueueParameters parms = new QueryRestoreQueueParameters();
 
 				parms.PartitionArchiveKey = _partitionArchive.GetKey();
-				parms.ProcessorId = ServiceTools.ProcessorId;
+				parms.ProcessorId = ServerPlatform.ProcessorId;
 				parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Pending;
 				IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
 
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				QueryArchiveQueueParameters parms = new QueryArchiveQueueParameters();
 
 				parms.PartitionArchiveKey = _partitionArchive.GetKey();
-				parms.ProcessorId = ServiceTools.ProcessorId;
+				parms.ProcessorId = ServerPlatform.ProcessorId;
 
 				IQueryArchiveQueue broker = updateContext.GetBroker<IQueryArchiveQueue>();
 
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				IArchiveQueueEntityBroker broker = updateContext.GetBroker<IArchiveQueueEntityBroker>();
 
 				ArchiveQueueSelectCriteria criteria = new ArchiveQueueSelectCriteria();
-				criteria.ProcessorId.EqualTo(ServiceTools.ProcessorId);
+				criteria.ProcessorId.EqualTo(ServerPlatform.ProcessorId);
 				criteria.ArchiveQueueStatusEnum.EqualTo(ArchiveQueueStatusEnum.InProgress);
 
 				IList<ArchiveQueue> failedList = broker.Find(criteria);
@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				selectStudyStorage.PartitionArchiveKey.EqualTo(_partitionArchive.Key);
 
 				RestoreQueueSelectCriteria criteria = new RestoreQueueSelectCriteria();
-				criteria.ProcessorId.EqualTo(ServiceTools.ProcessorId);
+				criteria.ProcessorId.EqualTo(ServerPlatform.ProcessorId);
 				criteria.RestoreQueueStatusEnum.EqualTo(RestoreQueueStatusEnum.InProgress);
 				criteria.ArchiveStudyStorageRelatedEntityCondition.Exists(selectStudyStorage);
 

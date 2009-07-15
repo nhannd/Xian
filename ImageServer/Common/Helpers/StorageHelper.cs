@@ -31,9 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -63,7 +60,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
 
             if (checkExisting)
             {
-                StudyStorage storage = StudyHelper.FindStorage(persistenceContext, studyInstanceUid, partition);
+            	StudyStorage storage = StudyStorage.Load(persistenceContext, partition.Key, studyInstanceUid);
                 if (storage != null)
                 {
                     folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
@@ -80,9 +77,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                                 : String.IsNullOrEmpty(studyDate)
                                       ? ImageServerCommonConfiguration.DefaultStudyRootFolder
                                       : studyDate;
-
             return folder;
-
         }
 
 
@@ -107,7 +102,6 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                 return null;
             }
 
-
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
@@ -118,8 +112,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
 
                 if (studyLocationList.Count == 0)
                 {
-                    StudyStorage storage = StudyHelper.FindStorage(updateContext, studyInstanceUid, partition);
-
+					StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
                     if (storage != null)
                     {
                         Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
@@ -170,7 +163,5 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                 return studyLocationList[0];
             }
         }
-
     }
-
 }

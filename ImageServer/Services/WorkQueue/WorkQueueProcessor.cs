@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				{
 					try
 					{
-						Model.WorkQueue queueListItem = GetWorkQueueItem(ServiceTools.ProcessorId);
+						Model.WorkQueue queueListItem = GetWorkQueueItem(ServerPlatform.ProcessorId);
 						if (queueListItem == null)
 						{
 							/* No result found, or reach max queue entries for each type */
@@ -334,7 +334,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     {
                         IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
                         UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                        parms.ProcessorID = ServiceTools.ProcessorId;
+                        parms.ProcessorID = ServerPlatform.ProcessorId;
 
                         parms.WorkQueueKey = item.GetKey();
                         parms.StudyStorageKey = item.StudyStorageKey;

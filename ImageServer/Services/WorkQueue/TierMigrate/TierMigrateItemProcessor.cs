@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     {
                         IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
                         UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                        parms.ProcessorID = ServiceTools.ProcessorId;
+                        parms.ProcessorID = ServerPlatform.ProcessorId;
 
                         parms.WorkQueueKey = item.GetKey();
                         parms.StudyStorageKey = item.StudyStorageKey;

@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				QueryRestoreQueueParameters parms = new QueryRestoreQueueParameters();
 
 				parms.PartitionArchiveKey = _partitionArchive.GetKey();
-				parms.ProcessorId = ServiceTools.ProcessorId;
+				parms.ProcessorId = ServerPlatform.ProcessorId;
 				parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Restoring;
 				IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
 
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					QueryRestoreQueueParameters parms = new QueryRestoreQueueParameters();
 
 					parms.PartitionArchiveKey = _partitionArchive.GetKey();
-					parms.ProcessorId = ServiceTools.ProcessorId;
+					parms.ProcessorId = ServerPlatform.ProcessorId;
 					parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Pending;
 					IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
 

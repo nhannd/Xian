@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
                     }
 
                     StudyDeleteExtendedInfo extInfo = new StudyDeleteExtendedInfo();
-                    extInfo.ServerInstanceId = ServiceTools.ServerInstanceId;
+                    extInfo.ServerInstanceId = ServerPlatform.ServerInstanceId;
                     parms.ExtendedInfo = XmlUtils.SerializeAsString(extInfo);
 
                     StudyDeleteRecord deleteRecord = broker.Insert(parms);

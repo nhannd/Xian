@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		private void StartListeners(ServerPartition part)
 		{
 			DicomScpContext parms =
-				new DicomScpContext(part, new FilesystemSelector(FilesystemMonitor.Instance));
+				new DicomScpContext(part);
 
 			if (DicomSettings.Default.ListenIPV4)
 			{

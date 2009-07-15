@@ -69,17 +69,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
 			processor.InstanceStats.Description = sopInstanceUid;
 
-
 			if (Study != null)
 			{
-				DifferenceCollection list = StudyHelper.Compare(file, Study, ServerPartition);
+				StudyComparer comparer = new StudyComparer();
+				DifferenceCollection list = comparer.Compare(file, Study, ServerPartition.GetComparisonOptions());
 				if (list != null && list.Count > 0)
 				{
 					Platform.Log(LogLevel.Warn, "Dicom file contains information inconsistent with the study in the system");
 				}
-
 			}
-
 	
 			processor.ProcessFile(file, stream, queueUid.Duplicate, false);
 
@@ -89,7 +87,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 
 			// Update the statistics
 			_statistics.NumInstances++;
-
 		}
 	}
 }

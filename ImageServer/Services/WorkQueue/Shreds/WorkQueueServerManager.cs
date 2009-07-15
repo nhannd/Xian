@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 			{
 				IWorkQueueReset reset = ctx.GetBroker<IWorkQueueReset>();
 				WorkQueueResetParameters parms = new WorkQueueResetParameters();
-				parms.ProcessorID = ServiceTools.ProcessorId;
+				parms.ProcessorID = ServerPlatform.ProcessorId;
 
 				// reschedule to start again now
 				parms.RescheduleTime = Platform.Time;

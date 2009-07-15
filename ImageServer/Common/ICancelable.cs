@@ -31,6 +31,9 @@
 
 namespace ClearCanvas.ImageServer.Common
 {
+	/// <summary>
+	/// Interface for canceable events or services
+	/// </summary>
 	public interface ICancelable
 	{
 		void Cancel();

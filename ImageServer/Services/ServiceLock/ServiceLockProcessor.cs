@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 					    {
 						    IQueryServiceLock select = updateContext.GetBroker<IQueryServiceLock>();
 						    ServiceLockQueryParameters parms = new ServiceLockQueryParameters();
-						    parms.ProcessorId = ServiceTools.ProcessorId;
+						    parms.ProcessorId = ServerPlatform.ProcessorId;
 
 						    queueListItem = select.FindOne(parms);
 						    updateContext.Commit();
@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             {
                 IResetServiceLock reset = updateContext.GetBroker<IResetServiceLock>();
                 ServiceLockResetParameters parms = new ServiceLockResetParameters();
-                parms.ProcessorId = ServiceTools.ProcessorId;
+                parms.ProcessorId = ServerPlatform.ProcessorId;
 
                 IList<Model.ServiceLock> modifiedList = reset.Find(parms);
 

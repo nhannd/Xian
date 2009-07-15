@@ -73,7 +73,6 @@
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
-    <Compile Include="Helpers\StudyHelper.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="IAlertService.cs" />
     <Compile Include="ICancelable.cs" />
@@ -89,7 +88,6 @@
     <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
-    <Compile Include="ServiceTools.cs" />
     <Compile Include="FileStreamOpener.cs" />
     <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>

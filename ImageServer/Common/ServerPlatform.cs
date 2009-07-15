@@ -30,16 +30,23 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Common
 {
+	/// <summary>
+	/// A collection of useful ImageServer utility functions.
+	/// </summary>
     static public class ServerPlatform
     {
         #region Private Fields
@@ -47,9 +54,11 @@ namespace ClearCanvas.ImageServer.Common
         private static string _tempDir;
         private static readonly object _syncLock = new object();
     	private static DicomAuditSource _auditSource;
-    	private static AuditLog _log; 
-        #endregion
-
+    	private static AuditLog _log;
+    	private static string _hostId;
+    	private static string _serverInstanceId;
+    	private static string _processorId;
+    	#endregion
 
         /// <summary>
         /// Generates an alert message with an expiration time.
@@ -72,7 +81,7 @@ namespace ClearCanvas.ImageServer.Common
             if (service != null)
             {
                 AlertSource src = new AlertSource(source);
-                src.Host = ServiceTools.ServerInstanceId;
+                src.Host = ServerInstanceId;
                 Alert alert = new Alert();
                 alert.Category = category;
                 alert.Level = level;
@@ -197,5 +206,137 @@ namespace ClearCanvas.ImageServer.Common
     	{
 			get { return Settings.Default.InstanceLogging ? LogLevel.Info : LogLevel.Debug; }
     	}
+
+    	/// <summary>
+    	/// Returns a string that can be used to identify the host machine where the server is running
+    	/// </summary>
+    	public static string HostId
+    	{
+    		get
+    		{
+    			if (String.IsNullOrEmpty(_hostId))
+    			{
+    				String strHostName = Dns.GetHostName();
+    				if (String.IsNullOrEmpty(strHostName) == false)
+    					_hostId = strHostName;
+    				else
+    				{
+    					// Find host by name
+    					IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
+
+    					// Enumerate IP addresses, pick an IPv4 address first
+    					foreach (IPAddress ipaddress in iphostentry.AddressList)
+    					{
+    						if (ipaddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+    						{
+    							_hostId = ipaddress.ToString();
+    							break;
+    						}
+    					}
+    				}
+    			}
+
+    			return _hostId;
+    		}
+    	}
+
+		/// <summary>
+		/// Server Instance Id
+		/// </summary>
+    	public static string ServerInstanceId
+    	{
+    		get
+    		{
+    			if (String.IsNullOrEmpty(_serverInstanceId))
+    			{
+    				_serverInstanceId = String.Format("Host={0}/Pid={1}", HostId, Process.GetCurrentProcess().Id);
+    			}
+
+    			return _serverInstanceId;
+    		}
+    	}
+
+    	/// <summary>
+    	/// A string representing the ID of the work queue processor.
+    	/// </summary>
+    	/// <remarks>
+    	/// <para>
+    	/// This ID is used to reset the work queue items.
+    	/// </para>
+    	/// <para>
+    	/// For the time being, the machine ID is tied to the IP address. Assumimg the server
+    	/// will be installed on a machine with DHCP disabled or if the DNS server always assign
+    	/// the same IP for the machine, this will work fine.
+    	/// </para>
+    	/// <para>
+    	/// Because of this implemenation, all instances of WorkQueueProcessor will have the same ID.
+    	/// </para>
+    	/// </remarks>
+    	public static string ProcessorId
+    	{
+    		get
+    		{
+    			if (_processorId == null)
+    			{
+    				try
+    				{
+    					String strHostName = Dns.GetHostName();
+
+    					// Find host by name
+    					IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
+
+    					// Enumerate IP addresses, pick an IPv4 address first
+    					foreach (IPAddress ipaddress in iphostentry.AddressList)
+    					{
+    						if (ipaddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+    						{
+    							_processorId = ipaddress.ToString();
+    							break;
+    						}
+    					}
+    					if (_processorId == null)
+    					{
+    						foreach (IPAddress ipaddress in iphostentry.AddressList)
+    						{
+    							_processorId = ipaddress.ToString();
+    							break;
+    						}
+    					}
+    				}
+    				catch (Exception e)
+    				{
+    					Platform.Log(LogLevel.Error, e, "Cannot resolve hostname into IP address");
+    				}
+    			}
+
+    			if (_processorId == null)
+    			{
+    				Platform.Log(LogLevel.Warn, "Could not determine hostname or IP address of the local machine. Work Queue Processor ID is set to Unknown");
+    				_processorId = "Unknown";
+
+    			}
+
+    			return _processorId;
+    		}
+    	}
+
+		public static StudyHistory CreateStudyHistoryRecord(IUpdateContext updateContext,
+			StudyStorageLocation primaryStudyLocation, StudyStorageLocation secondaryStudyLocation,
+			StudyHistoryTypeEnum type, object entryInfo, object changeLog)
+		{
+			StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
+			columns.InsertTime = Platform.Time;
+			columns.StudyHistoryTypeEnum = type;
+			columns.StudyStorageKey = primaryStudyLocation.GetKey();
+			if (secondaryStudyLocation != null)
+				columns.DestStudyStorageKey = secondaryStudyLocation.GetKey();
+			else
+				columns.DestStudyStorageKey = primaryStudyLocation.GetKey();
+
+			columns.StudyData = XmlUtils.SerializeAsXmlDoc(entryInfo) ?? new XmlDocument();
+			columns.ChangeDescription = XmlUtils.SerializeAsXmlDoc(changeLog) ?? new XmlDocument();
+			IStudyHistoryEntityBroker broker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
+			return broker.Insert(columns);
+		}
     }
 }

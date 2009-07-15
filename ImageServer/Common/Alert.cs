@@ -30,12 +30,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Common
 {
@@ -135,7 +130,7 @@ namespace ClearCanvas.ImageServer.Common
         public AlertSource(string name)
         {
             _name = name;
-            _host = ServiceTools.ServerInstanceId;
+            _host = ServerPlatform.ServerInstanceId;
         }
 
         #endregion

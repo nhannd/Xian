@@ -40,16 +40,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     public class DicomScpContext
     {
         #region Constructors
-        public DicomScpContext(ServerPartition partition, FilesystemSelector selector)
+        public DicomScpContext(ServerPartition partition)
         {
             _partition = partition;
-            _selector = selector;
         }
         #endregion
 
         #region Private Members
         private ServerPartition _partition;
-        private readonly FilesystemSelector _selector;
         #endregion
 
         #region Properties
@@ -57,10 +55,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             get { return _partition; }
 			set { _partition = value; }
-        }
-        public FilesystemSelector FilesystemSelector
-        {
-            get { return _selector; }
         }
         #endregion
     }

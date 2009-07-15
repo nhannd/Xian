@@ -38,18 +38,16 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
-
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 {
@@ -445,7 +443,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 changeLog.Reason = _queueData.ChangeLog != null ? _queueData.ChangeLog.Reason : "N/A";
                 changeLog.User = _queueData.ChangeLog != null ? _queueData.ChangeLog.User : "Unknown";
                 
-                StudyHistory history = StudyHelper.CreateStudyHistoryRecord(ctx, StorageLocation, null, StudyHistoryTypeEnum.Reprocessed, null, changeLog);
+                StudyHistory history = ServerPlatform.CreateStudyHistoryRecord(ctx, StorageLocation, null, StudyHistoryTypeEnum.Reprocessed, null, changeLog);
                 if (history != null)
                     ctx.Commit();
             }
@@ -568,8 +566,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 broker.Update(StorageLocation.Study.GetKey(), columns);
                 updateContext.Commit();
             }
-
-
         }
 
         #endregion

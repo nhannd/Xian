@@ -278,7 +278,8 @@ namespace ClearCanvas.ImageServer.Core
 			}
 			else
 			{
-				DifferenceCollection list = StudyHelper.Compare(message, _context.Study, _context.Partition);
+				StudyComparer comparer = new StudyComparer();
+				DifferenceCollection list = comparer.Compare(message, _context.Study, _context.Partition.GetComparisonOptions());
 
 				if (list != null && list.Count > 0)
 				{

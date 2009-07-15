@@ -41,13 +41,13 @@ namespace ClearCanvas.ImageServer.Core.Data
 		[EnumInfo(ShortDescription = "Discard", LongDescription = "Discarded conflicting images")]
 		Discard,
 
-		[EnumInfoAttribute(ShortDescription = "Merge", LongDescription = "Merged study and conflicting images")]
+		[EnumInfo(ShortDescription = "Merge", LongDescription = "Merged study and conflicting images")]
 		Merge,
 
-		[EnumInfoAttribute(ShortDescription = "Split Studies", LongDescription = "Created new study from conflicting images")]
+		[EnumInfo(ShortDescription = "Split Studies", LongDescription = "Created new study from conflicting images")]
 		CreateNewStudy,
 
-		[EnumInfoAttribute(ShortDescription = "Process As Is", LongDescription = "Processed the images normally")]
+		[EnumInfo(ShortDescription = "Process As Is", LongDescription = "Processed the images normally")]
 		ProcessAsIs
 	}
 }

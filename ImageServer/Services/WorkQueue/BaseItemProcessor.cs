@@ -725,7 +725,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         {
                             IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
                             UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                            parms.ProcessorID = ServiceTools.ProcessorId;
+                            parms.ProcessorID = ServerPlatform.ProcessorId;
 
                             parms.WorkQueueKey = item.GetKey();
                             parms.StudyStorageKey = item.StudyStorageKey;
@@ -882,7 +882,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
                        parms.WorkQueueKey = item.GetKey();
                        parms.StudyStorageKey = item.StudyStorageKey;
-                       parms.ProcessorID = ServiceTools.ProcessorId;
+                       parms.ProcessorID = ServerPlatform.ProcessorId;
                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
                        parms.ScheduledTime = newScheduledTime;
                        parms.ExpirationTime = expireTime;

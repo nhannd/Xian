@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         }
 
-        private void CreateWorkQueueEntryForDuplicate(DicomFile file, Model.WorkQueue queue, Model.WorkQueueUid uid)
+        private void CreateWorkQueueEntryForDuplicate(DicomFile file, Model.WorkQueue queue, WorkQueueUid uid)
         {
             Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
             String sourceId = queue.GroupID ?? queue.GetKey().Key.ToString();
@@ -254,25 +254,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         }
 
         #endregion
-    }
-
-    internal class UpdateSeriesInstanceUidCommand : ServerCommand
-    {
-        public UpdateSeriesInstanceUidCommand(ReconcileStudyProcessorContext context, DicomFile file)
-            :base("Update Series Instance Uid", true)
-        {
-            
-        }
-
-        protected override void OnExecute()
-        {
-            
-        }
-
-        protected override void OnUndo()
-        {
-            
-        }
     }
 
     /// <summary>
