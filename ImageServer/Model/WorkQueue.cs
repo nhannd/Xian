@@ -100,5 +100,17 @@ namespace ClearCanvas.ImageServer.Model
             StudyStorage storage = LoadStudyStorage(context);
             return StudyStorageLocation.FindStorageLocations(context, storage);
         }
+
+        public StudyStorage StudyStorage
+        {
+            get
+            {
+                if (_studyStorage==null)
+                {
+                    _studyStorage = Model.StudyStorage.Load(this.StudyStorageKey);
+                }
+                return _studyStorage;
+            }
+        }
     }
 }

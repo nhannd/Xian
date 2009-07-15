@@ -107,12 +107,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
         protected override bool CanStart()
         {
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
-
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
+                                                                           new WorkQueueTypeEnum[]
+                                                                               {
+                                                                                   WorkQueueTypeEnum.StudyProcess,
+                                                                                   WorkQueueTypeEnum.ReconcileStudy
+                                                                               },
+                                                                           new WorkQueueStatusEnum[]
+                                                                               {
+                                                                                   WorkQueueStatusEnum.Idle,
+                                                                                   WorkQueueStatusEnum.InProgress,
+                                                                                   WorkQueueStatusEnum.Pending
+                                                                               });
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
 				PostponeItem(WorkQueueItem);

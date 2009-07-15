@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Core.Validation;
@@ -91,16 +92,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 
         protected override bool CanStart()
         {
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
-
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
+                new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy },
+                new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
+            
             if (relatedItems != null && relatedItems.Count > 0)
             {
                 // can't do it now. Reschedule it for future
-                relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
+                List<Model.WorkQueue> list = CollectionUtils.Sort(relatedItems, delegate(Model.WorkQueue item1, Model.WorkQueue item2)
                                       {
                                           return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
                                       });

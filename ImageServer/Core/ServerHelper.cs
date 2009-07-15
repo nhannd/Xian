@@ -31,14 +31,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Core
@@ -170,6 +171,9 @@ namespace ClearCanvas.ImageServer.Core
         /// <returns>Reference to the <see cref="RestoreQueue"/> that was inserted.</returns>
         static public RestoreQueue InsertRestoreRequest(StudyStorage storage)
         {
+            // TODO:
+            // Check the stored procedure to see if it will insert another request if one already exists
+
             Platform.CheckForNullReference(storage, "storage");
 
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -203,6 +207,54 @@ namespace ClearCanvas.ImageServer.Core
             Platform.CheckForNullReference(storageLocation, "storageLocation");
 
             return InsertRestoreRequest(storageLocation.StudyStorage);
+        }
+
+        /// <summary>
+        /// Finds a list of <see cref="StudyIntegrityQueue"/> related to the specified <see cref="StudyStorage"/>.
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <param name="filter">A delegate that will be used to filter the returned list. Pass in Null to get the entire list.</param>
+        /// <returns>A list of  <see cref="StudyIntegrityQueue"/></returns>
+        static public IList<StudyIntegrityQueue> FindSIQEntries(StudyStorage studyStorage, Predicate<StudyIntegrityQueue> filter)
+        {
+            using (ExecutionContext scope = new ExecutionContext())
+            {
+                IStudyIntegrityQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+                StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
+                criteria.StudyStorageKey.EqualTo(studyStorage.Key);
+                criteria.InsertTime.SortDesc(0);
+                IList<StudyIntegrityQueue> list = broker.Find(criteria);
+                if (filter != null)
+                {
+                    CollectionUtils.Remove(list, filter);
+                }
+                return list;
+            }
+        }
+
+        /// <summary>
+        /// Finds a list of <see cref="WorkQueue"/> related to the specified <see cref="studyStorage"/>.
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <param name="filter">A delegate that will be used to filter the returned list. Pass in Null to get the entire list.</param>
+        /// <returns>A list of  <see cref="WorkQueue"/></returns>
+        static public IList<WorkQueue> FindWorkQueueEntries(StudyStorage studyStorage, Predicate<WorkQueue> filter)
+        {
+            Platform.CheckForNullReference(studyStorage, "studyStorage");
+
+            using (ExecutionContext scope = new ExecutionContext())
+            {
+                IWorkQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IWorkQueueEntityBroker>();
+                WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
+                criteria.StudyStorageKey.EqualTo(studyStorage.Key);
+                criteria.InsertTime.SortDesc(0);
+                IList<WorkQueue> list = broker.Find(criteria);
+                if (filter != null)
+                {
+                    CollectionUtils.Remove(list, filter);
+                }
+                return list;
+            }
         }
     }
 }

@@ -154,19 +154,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         {
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[]
-                                                       {
-                                                           WorkQueueTypeEnum.StudyProcess,
-                                                            WorkQueueTypeEnum.ReconcileStudy
-                                                       });
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[]
-                                                         {
-                                                             WorkQueueStatusEnum.Idle,
-                                                             WorkQueueStatusEnum.Pending,
-                                                             WorkQueueStatusEnum.InProgress
-                                                            });
 
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
+                                                        new WorkQueueTypeEnum[]
+                                                           {
+                                                               WorkQueueTypeEnum.StudyProcess,
+                                                               WorkQueueTypeEnum.ReconcileStudy
+                                                           },
+                                                         new WorkQueueStatusEnum[]
+                                                            {
+                                                                 WorkQueueStatusEnum.Idle,
+                                                                 WorkQueueStatusEnum.Pending,
+                                                                 WorkQueueStatusEnum.InProgress
+                                                            });
 
             if (! (relatedItems == null || relatedItems.Count == 0))
             {

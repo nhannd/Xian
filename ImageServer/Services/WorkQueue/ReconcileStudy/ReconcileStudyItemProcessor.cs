@@ -110,15 +110,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         protected override bool CanStart()
         {
             // cannot start if the existing study is scheduled for update
-            WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(WorkQueueItem.ServerPartitionKey);
-            criteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            criteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[]
+            IList<Model.WorkQueue> items = FindRelatedWorkQueueItems(WorkQueueItem, new WorkQueueTypeEnum[]
                                               {
                                                   WorkQueueTypeEnum.ReprocessStudy
-                                              });
-
-            List<Model.WorkQueue> items = FindRelatedWorkQueueItems(WorkQueueItem, criteria);
+                                              }, 
+                                              null);
             if (!( items==null || items.Count == 0))
             {
 				PostponeItem(WorkQueueItem);

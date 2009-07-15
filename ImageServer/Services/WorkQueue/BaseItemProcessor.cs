@@ -44,6 +44,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -901,15 +902,55 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                );
         }
 
-
-        protected List<Model.WorkQueue> FindRelatedWorkQueueItems(Model.WorkQueue item, WorkQueueSelectCriteria criteria)
+        /// <summary>
+        /// Returns a list of related <see cref="Model.WorkQueue"/> with specified types and status (both are optional).
+        /// and related to the given <see cref="Model.WorkQueue"/> 
+        /// </summary>
+        /// <param name="workQueueItem"></param>
+        /// <param name="types"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        protected static IList<Model.WorkQueue> FindRelatedWorkQueueItems(Model.WorkQueue workQueueItem,
+            IEnumerable<WorkQueueTypeEnum> types, IEnumerable<WorkQueueStatusEnum> status)
         {
-            IWorkQueueEntityBroker broker = ReadContext.GetBroker<IWorkQueueEntityBroker>();
-            List<Model.WorkQueue> list = CollectionUtils.Cast<Model.WorkQueue>(broker.Find(criteria));
-            return list.FindAll(delegate(Model.WorkQueue testItem)
+            IList<Model.WorkQueue> list = ServerHelper.FindWorkQueueEntries(workQueueItem.StudyStorage, null);
+
+            if (list==null)
+                return null;
+
+            // remove the current item 
+            CollectionUtils.Remove(list, delegate(Model.WorkQueue item)
+                                            {
+                                                return item.Key.Equals(workQueueItem.Key);
+                                            });
+
+            // Remove items if the type is in not the list
+            if (types != null)
+            {
+                list = CollectionUtils.Select(list, 
+                    delegate(Model.WorkQueue item)
+                    {
+                        return CollectionUtils.Contains(types, delegate(WorkQueueTypeEnum t)
                                     {
-                                        return !testItem.GetKey().Equals(item.GetKey());
+                                        return t.Equals( item.WorkQueueTypeEnum);
                                     });
+                                });
+            }
+
+            // Remove items if the type is in the list
+            if (status != null)
+            {
+                list = CollectionUtils.Select(list,
+                    delegate(Model.WorkQueue item)
+                    {
+                        return CollectionUtils.Contains(status, delegate(WorkQueueStatusEnum s)
+                                    {
+                                        return s.Equals(item.WorkQueueStatusEnum);
+                                    });
+                    });
+            }
+
+            return list;
         }
 
 
@@ -1111,17 +1152,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         
-
-        protected IList<StudyIntegrityQueue> FindSIQEntries()
-        {
-            IStudyIntegrityQueueEntityBroker broker = ReadContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
-            StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
-            criteria.StudyStorageKey.EqualTo(StorageLocation.GetKey());
-            criteria.InsertTime.SortDesc(0);
-            IList<StudyIntegrityQueue> list = broker.Find(criteria);
-            return list;
-        }
-
 
         /// <summary>
         /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 

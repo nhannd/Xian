@@ -57,7 +57,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #region Constructors
 
-
+        /// <summary>
+        /// Creates an execution scope in current thread
+        /// where persistence context can be re-used.
+        /// </summary>
         public ExecutionContext()
             : this(Guid.NewGuid().ToString())
         {

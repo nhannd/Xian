@@ -258,17 +258,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             Model.WorkQueue item = WorkQueueItem;
 
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(
+            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item,
                 new WorkQueueTypeEnum[]
                 {
                     WorkQueueTypeEnum.StudyProcess,
                     WorkQueueTypeEnum.ReconcileStudy
-                });
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
+                }, null);
 
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
 				PostponeItem(WorkQueueItem);

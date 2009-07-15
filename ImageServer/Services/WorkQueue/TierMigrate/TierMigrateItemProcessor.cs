@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -389,19 +390,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         protected override bool CanStart()
         {
-			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[]
+			
+			IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
+                                                    new WorkQueueTypeEnum[]
 			                                           {
 			                                               WorkQueueTypeEnum.StudyProcess, 
                                                            WorkQueueTypeEnum.ReconcileStudy, 
                                                            WorkQueueTypeEnum.ProcessDuplicate,
                                                            WorkQueueTypeEnum.ReconcilePostProcess,
                                                            WorkQueueTypeEnum.ReconcileCleanup
-                                                        });
-			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+                                                        }, null);
 
-            IList<StudyIntegrityQueue> reconcileList = FindSIQEntries();
+            IList<StudyIntegrityQueue> reconcileList = ServerHelper.FindSIQEntries(WorkQueueItem.StudyStorage, null);
             
             if ((relatedItems == null || relatedItems.Count == 0) && (reconcileList == null || reconcileList.Count == 0))
                 return true; // nothing related in the work queue and nothing in the reconcile queue

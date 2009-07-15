@@ -33,17 +33,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Core
 {
@@ -223,9 +220,8 @@ namespace ClearCanvas.ImageServer.Core
                                              "Received duplicate SOP {0} (StudyUid:{1}). Existing files haven't been processed.",
                                              sopInstanceUid, studyLocation.StudyInstanceUid);
 
-                            DuplicateSopProcessorHelper dupProcessorHelper =
-                                new DuplicateSopProcessorHelper(commandProcessor, _partition, studyLocation);
-                            result = dupProcessorHelper.Process(context.SourceAE, context.ContextID, file);
+                            SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, studyLocation, context.ContextID);
+                            result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
 							if (!result.Successful)
 								return result;
                         }
@@ -316,9 +312,9 @@ namespace ClearCanvas.ImageServer.Core
 			return file;
 		}
 
-        static private bool HasUnprocessedCopy(SopInstanceImporterContext context, StudyStorageLocation storage)
+        static private bool HasUnprocessedCopy(SopInstanceImporterContext context, StudyStorageLocation storageLocation)
         {
-            IList<WorkQueue> workQueues = FindWorkQueueEntries(storage, null);
+            IList<WorkQueue> workQueues = ServerHelper.FindWorkQueueEntries(storageLocation.StudyStorage, null);
             foreach (WorkQueue queue in workQueues)
             {
                 if (queue.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReconcileStudy))
@@ -334,7 +330,7 @@ namespace ClearCanvas.ImageServer.Core
                 }
             }
 
-            IList<StudyIntegrityQueue> list = FindSIQEntries(storage, null);
+            IList<StudyIntegrityQueue> list = ServerHelper.FindSIQEntries(storageLocation.StudyStorage, null);
             if (list == null || list.Count == 0) return false;
 
             foreach (StudyIntegrityQueue entry in list)
@@ -357,41 +353,6 @@ namespace ClearCanvas.ImageServer.Core
 
             return false;
         }
-
-        static public IList<StudyIntegrityQueue> FindSIQEntries(StudyStorageLocation study, Predicate<StudyIntegrityQueue> filter)
-        {
-            using (ExecutionContext scope = new ExecutionContext())
-            {
-                IStudyIntegrityQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
-                StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
-                criteria.StudyStorageKey.EqualTo(study.GetKey());
-                criteria.InsertTime.SortDesc(0);
-                IList<StudyIntegrityQueue> list = broker.Find(criteria);
-                if (filter != null)
-                {
-                    CollectionUtils.Remove(list, filter);
-                }
-                return list;
-            }
-        }
-
-        static public IList<WorkQueue> FindWorkQueueEntries(StudyStorageLocation study, Predicate<WorkQueue> filter)
-        {
-            using (ExecutionContext scope = new ExecutionContext())
-            {
-                IWorkQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IWorkQueueEntityBroker>();
-                WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
-                criteria.StudyStorageKey.EqualTo(study.GetKey());
-                criteria.InsertTime.SortDesc(0);
-                IList<WorkQueue> list = broker.Find(criteria);
-                if (filter != null)
-                {
-                    CollectionUtils.Remove(list, filter);
-                }
-                return list;
-            }
-        }
-    
 	}
 
 	/// <summary>

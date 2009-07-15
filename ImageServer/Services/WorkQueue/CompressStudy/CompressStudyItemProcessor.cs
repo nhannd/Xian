@@ -382,10 +382,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
         protected override bool CanStart()
         {
-			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+			IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, 
+                new WorkQueueTypeEnum[]
+			    {
+			        WorkQueueTypeEnum.StudyProcess, 
+                    WorkQueueTypeEnum.ReconcileStudy
+                }, null);
+
 			if (relatedItems == null || relatedItems.Count == 0)
 				return true;
 
