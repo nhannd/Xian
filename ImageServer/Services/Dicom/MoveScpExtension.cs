@@ -40,6 +40,7 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -141,7 +142,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					}
 					else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
 					{
-						if (false == InsertRestore(studyStorage.GetKey()))
+						if (null == ServerHelper.InsertRestoreRequest(studyStorage))
 						{
 							Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
 							return false;
@@ -170,10 +171,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Create a list of DICOM SOP Instances to move based on a Series level C-MOVE-RQ
         /// </summary>
-        /// <param name="read"></param>
+        /// <param name="persistenceContext"></param>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private bool GetSopListForSeries(IReadContext read, DicomMessageBase msg)
+        private bool GetSopListForSeries(IPersistenceContext persistenceContext, DicomMessageBase msg)
         {
 
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
@@ -191,7 +192,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				}
 				else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
 				{
-					if (false == InsertRestore(studyStorage.GetKey()))
+                    if (null == ServerHelper.InsertRestoreRequest(studyStorage))
 					{
 						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
 						return false;
@@ -206,7 +207,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					return false;
             }
 
-			IStudyEntityBroker select = read.GetBroker<IStudyEntityBroker>();
+			IStudyEntityBroker select = persistenceContext.GetBroker<IStudyEntityBroker>();
 
 			StudySelectCriteria criteria = new StudySelectCriteria();
 			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
@@ -246,7 +247,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				}
 				else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
 				{
-					if (false == InsertRestore(studyStorage.GetKey()))
+                    if (null == ServerHelper.InsertRestoreRequest(studyStorage))
 					{
 						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
 						return false;

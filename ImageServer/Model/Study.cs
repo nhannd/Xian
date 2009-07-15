@@ -117,5 +117,11 @@ namespace ClearCanvas.ImageServer.Model
             }
             return _patient;
         }
+
+
+        public StudyStorage LoadStudyStorage(IPersistenceContext context)
+        {
+            return StudyStorage.Load(this.StudyStorageKey);
+        }
     }
 }

@@ -31,12 +31,9 @@
 
 using System;
 using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 using ClearCanvas.ImageServer.Services.Streaming.Shreds;
 

@@ -39,15 +39,11 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Process;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Core
 {
@@ -84,7 +80,6 @@ namespace ClearCanvas.ImageServer.Core
 	public class SopInstanceImporter
 	{
 		private readonly ServerPartition _partition;
-		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         
 		public SopInstanceImporter(String partitionAE)
 			:this(ServerPartitionMonitor.Instance.GetPartition(partitionAE))
@@ -137,7 +132,7 @@ namespace ClearCanvas.ImageServer.Core
             {
                 try
                 {
-                    StudyStorageLocation studyLocation = StorageHelper.GetWritableStudyStorageLocation(message, _partition);
+                    StudyStorageLocation studyLocation = ServerHelper.GetWritableStudyStorageLocation(message, _partition);
                     if (studyLocation == null)
                     {
                         StudyStorage storage = StudyStorage.Load(_partition.Key, studyInstanceUid);
@@ -148,7 +143,7 @@ namespace ClearCanvas.ImageServer.Core
                             {
                                 failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _partition.Description);
                                 Platform.Log(LogLevel.Error, failureMessage);
-                                if (!InsertRestore(storage.Key))
+                                if (ServerHelper.InsertRestoreRequest(storage) == null)
                                 {
                                     Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
                                 }
@@ -190,7 +185,7 @@ namespace ClearCanvas.ImageServer.Core
                             failureMessage = String.Format("Study {0} on partition {1} can't accept new images due to lossy compression of the study.  Restoring study.",
                                                            studyLocation.StudyInstanceUid, _partition.Description);
                             Platform.Log(LogLevel.Error, failureMessage);
-                            if (!InsertRestore(studyLocation.Key))
+                            if (ServerHelper.InsertRestoreRequest(studyLocation) == null)
                             {
                                 Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
                             }
@@ -293,25 +288,7 @@ namespace ClearCanvas.ImageServer.Core
             return result;
 		}
 
-		private bool InsertRestore(ServerEntityKey studyStorageKey)
-		{
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
-
-				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-				parms.StudyStorageKey = studyStorageKey;
-
-				RestoreQueue queue = broker.FindOne(parms);
-
-				if (queue == null)
-					return false;
-
-				updateContext.Commit();
-			}
-
-			return true;
-		}
+		
 
 		static private DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
 		{

@@ -71,7 +71,6 @@
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
-    <Compile Include="Helpers\StorageHelper.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="IAlertService.cs" />

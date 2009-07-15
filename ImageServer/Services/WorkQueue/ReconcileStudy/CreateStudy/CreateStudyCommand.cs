@@ -38,7 +38,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
@@ -290,7 +289,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             String studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
             String studyDate = file.DataSet[DicomTags.StudyDate].ToString();
 
-            String folder = StorageHelper.ResolveStorageFolder(Context.Partition, studyInstanceUid, studyDate, UpdateContext, true);
+            String folder = ServerHelper.ResolveStorageFolder(Context.Partition, studyInstanceUid, studyDate, UpdateContext, true);
             
             IQueryStudyStorageLocation locQuery = UpdateContext.GetBroker<IQueryStudyStorageLocation>();
             StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();

@@ -29,8 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -48,28 +50,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		public bool RestoreStudy(Study theStudy)
 		{
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				IStudyStorageEntityBroker query = updateContext.GetBroker<IStudyStorageEntityBroker>();
+		    RestoreQueue restore = ServerHelper.InsertRestoreRequest(theStudy.LoadStudyStorage(HttpContextData.Current.ReadContext));
+            if (restore!=null)
+                throw new ApplicationException("Unable to restore the study. See the log file for details.");
 
-				StudyStorageSelectCriteria queryParms = new StudyStorageSelectCriteria();
-				queryParms.StudyInstanceUid.EqualTo(theStudy.StudyInstanceUid);
-				queryParms.ServerPartitionKey.EqualTo(theStudy.ServerPartitionKey);
-
-				StudyStorage storage = query.FindOne(queryParms);
-				
-				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
-
-				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-				parms.StudyStorageKey = storage.Key;
-
-				IList<RestoreQueue> storageList = broker.Find(parms);
-
-				if (storageList.Count == 0)
-					return false;
-
-				updateContext.Commit();
-			}
 			return true;
 		}
 	}

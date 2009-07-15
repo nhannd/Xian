@@ -91,30 +91,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns></returns>
         protected abstract DicomPresContextResult OnVerifyAssociation(AssociationParameters association, byte pcid);
 
-		/// <summary>
-		/// Insert a RestoreQueue record for a given study.
-		/// </summary>
-		/// <param name="studyStorageKey">The <see cref="StudyStorage"/> key to insert the record for.</param>
-		/// <returns></returns>
-		protected bool InsertRestore(ServerEntityKey studyStorageKey)
-		{
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
-
-				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-				parms.StudyStorageKey = studyStorageKey;
-
-				RestoreQueue queue = broker.FindOne(parms);
-
-				if (queue == null)
-					return false;
-
-				updateContext.Commit();
-			}
-
-			return true;
-		}
         #endregion
 
         #region Public Methods

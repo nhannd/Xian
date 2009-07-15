@@ -115,6 +115,7 @@ namespace ClearCanvas.ImageServer.Model
         private StudyXml _studyXml;
         private string _studyUidFolder;
         private string _studyFolderRelativePath;
+        private StudyStorage _studyStorage;
 
         #endregion
 
@@ -302,6 +303,8 @@ namespace ClearCanvas.ImageServer.Model
             
         }
 
+        
+
         public string GetStudyPath()
         {
             string path = Path.Combine(FilesystemPath, StudyFolderRelativePath);
@@ -321,6 +324,27 @@ namespace ClearCanvas.ImageServer.Model
                 }
             }
             set { _studyFolderRelativePath = value; }
+        }
+
+        /// <summary>
+        /// Gets the related <seealso cref="StudyStorage"/> entity.
+        /// </summary>
+        public StudyStorage StudyStorage
+        {
+            get
+            {
+                if (_studyStorage==null)
+                {
+                    lock(SyncRoot)
+                    {
+                        using(IReadContext readContext= PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                        {
+                            _studyStorage = StudyStorage.Load(readContext, Key);
+                        }
+                    }
+                }
+                return _studyStorage;
+            }
         }
 
 
@@ -658,6 +682,7 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         #endregion
+
 
     }
 }

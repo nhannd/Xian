@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -31,17 +31,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Common.Helpers
+namespace ClearCanvas.ImageServer.Core
 {
-    
-    public static class StorageHelper
+    /// <summary>
+    /// Helper class shared by all code.
+    /// </summary>
+    public static class ServerHelper
     {
         /// <summary>
         /// Returns the name of the directory in the filesytem
@@ -49,37 +54,31 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         /// </summary>
         /// <returns></returns>
         /// 
-        public static string ResolveStorageFolder(
-            ServerPartition partition, 
-            string studyInstanceUid, 
-            string studyDate,
-            IPersistenceContext persistenceContext,
-            bool checkExisting)
+        public static string ResolveStorageFolder(ServerPartition partition, string studyInstanceUid, string studyDate, IPersistenceContext persistenceContext,bool checkExisting)
         {
             string folder;
 
             if (checkExisting)
             {
-            	StudyStorage storage = StudyStorage.Load(persistenceContext, partition.Key, studyInstanceUid);
+                StudyStorage storage = StudyStorage.Load(persistenceContext, partition.Key, studyInstanceUid);
                 if (storage != null)
                 {
                     folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
-                                    ? storage.InsertTime.ToString("yyyyMMdd")
-                                    : String.IsNullOrEmpty(studyDate)
-                                          ? ImageServerCommonConfiguration.DefaultStudyRootFolder
-                                          : studyDate;
+                                 ? storage.InsertTime.ToString("yyyyMMdd")
+                                 : String.IsNullOrEmpty(studyDate)
+                                       ? ImageServerCommonConfiguration.DefaultStudyRootFolder
+                                       : studyDate;
                     return folder;
                 }
             }
 
             folder = ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder
-                                ? Platform.Time.ToString("yyyyMMdd")
-                                : String.IsNullOrEmpty(studyDate)
-                                      ? ImageServerCommonConfiguration.DefaultStudyRootFolder
-                                      : studyDate;
+                         ? Platform.Time.ToString("yyyyMMdd")
+                         : String.IsNullOrEmpty(studyDate)
+                               ? ImageServerCommonConfiguration.DefaultStudyRootFolder
+                               : studyDate;
             return folder;
         }
-
 
         /// <summary>
         /// Checks for a storage location for the study in the database, and creates a new location
@@ -112,7 +111,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
 
                 if (studyLocationList.Count == 0)
                 {
-					StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
+                    StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
                     if (storage != null)
                     {
                         Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
@@ -162,6 +161,48 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                 // Also, should the above check for writeable location check the other availab
                 return studyLocationList[0];
             }
+        }
+
+        /// <summary>
+        /// Insert a request to restore the specified <seealso cref="StudyStorage"/>
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <returns>Reference to the <see cref="RestoreQueue"/> that was inserted.</returns>
+        static public RestoreQueue InsertRestoreRequest(StudyStorage storage)
+        {
+            Platform.CheckForNullReference(storage, "storage");
+
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
+
+                InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
+                parms.StudyStorageKey = storage.Key;
+
+                RestoreQueue queue = broker.FindOne(parms);
+
+                if (queue == null)
+                {
+                    Platform.Log(LogLevel.Error, "Unable to request restore for study {0}", storage.StudyInstanceUid);
+                    return null;
+                }
+
+                updateContext.Commit();
+                Platform.Log(LogLevel.Info, "Restore requested for study {0}", storage.StudyInstanceUid);
+                return queue;
+            }
+        }
+
+        /// <summary>
+        /// Insert a request to restore the specified <seealso cref="StudyStorageLocation"/>
+        /// </summary>
+        /// <param name="storageLocation"></param>
+        /// <returns>Reference to the <see cref="RestoreQueue"/> that was inserted.</returns>
+        static public RestoreQueue InsertRestoreRequest(StudyStorageLocation storageLocation)
+        {
+            Platform.CheckForNullReference(storageLocation, "storageLocation");
+
+            return InsertRestoreRequest(storageLocation.StudyStorage);
         }
     }
 }

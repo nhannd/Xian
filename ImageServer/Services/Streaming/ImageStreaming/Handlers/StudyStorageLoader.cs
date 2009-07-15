@@ -30,15 +30,11 @@
 #endregion
 
 using System;
-using System.IO;
-using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
@@ -123,7 +119,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
 		#region Public Methods
 
-		private void CheckNearline(string studyInstanceUid, ServerPartition partition)
+		private static void CheckNearline(string studyInstanceUid, ServerPartition partition)
 		{
 			StudyStorage storage = StudyStorage.Load(partition.Key, studyInstanceUid);
             
@@ -134,20 +130,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
 			if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
 			{
-				using (
-					IUpdateContext updateContext =
-						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-				{
-					IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
-
-					InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-					parms.StudyStorageKey = storage.Key;
-
-					RestoreQueue queue = broker.FindOne(parms);
-
-					if (queue != null)
-						updateContext.Commit();
-				}
+				ServerHelper.InsertRestoreRequest(storage);
 			}
 		}
 
