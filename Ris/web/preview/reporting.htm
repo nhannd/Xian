@@ -100,6 +100,7 @@
 				if (reportDetail)
 				{
 					Preview.ReportPreview.create($("report"), reportDetail);
+					Preview.SectionContainer.create($("report"), "Report");
 					Preview.ReportPreview.toggleTranscriptionErrors(worklistItem.HasErrors);
 				}
 				else
@@ -127,8 +128,10 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-			<div id="patientBannerSection"></div>
-			<div id="patientDemographicsSection"></div>
+			<div id="patientBanner">
+				<div id="patientBannerSection"></div>
+				<div id="patientDemographicsSection"></div>
+			</div>
 			
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
@@ -138,7 +141,6 @@
 			</div>
 
 			<div id="reportSection">
-				<p id="reportheading" class="sectionheading">Report</p>
 				<div id="report"></div>
 			</div>
 			

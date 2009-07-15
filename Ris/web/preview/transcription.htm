@@ -89,7 +89,10 @@
 
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 				if (reportDetail)
+				{
 					Preview.ReportPreview.create($("report"), reportDetail);
+					Preview.SectionContainer.create($("report"), "Report");
+				}
 				else
 					Field.show($("reportSection"), false);
 			}
@@ -103,8 +106,10 @@
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<div id="patientBannerSection"></div>
-			<div id="patientDemographicsSection"></div>
+			<div id="patientBanner">
+				<div id="patientBannerSection"></div>
+				<div id="patientDemographicsSection"></div>
+			</div>
 			
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
@@ -112,7 +117,6 @@
 			</div>
 
 			<div id="reportSection">
-				<p id="reportheading" class="sectionheading">Report</p>
 				<div id="report"></div>
 			</div>
 		</form>

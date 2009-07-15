@@ -387,13 +387,6 @@ input.unresolved {
 	background-color: #FFF5C3;
 }
 
-div.reportPreview {
-	width: 93%;
-	margin-left: 1em;
-	padding: 0.0em 0.5em 0.0em 0.5em;
-	text-align: justify;
-}
-
 .SectionContainer
 {
 	margin: 12px 0px 0px 0px;

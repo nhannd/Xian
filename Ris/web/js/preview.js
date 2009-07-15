@@ -565,8 +565,6 @@ Preview.ProtocolProceduresTable = function () {
 						});
 				});
 
-			Preview.ProceduresTableHelper.addHeading(parentElement, 'Protocols');
-
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
@@ -594,6 +592,8 @@ Preview.ProtocolProceduresTable = function () {
 
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(procGroupings);
+
+			Preview.SectionContainer.create(parentElement, "Protocols");
 		}
 	};
 }();
@@ -779,6 +779,8 @@ Preview.ReportingProceduresTable = function () {
 
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(procGroupings);
+			
+			Preview.SectionContainer.create(parentElement, "Procedures");
 		}
 	};
 }();
@@ -830,8 +832,6 @@ Preview.ReportListTable = function () {
 				parentElement.style.display = 'block';
 			}
 			
-			Preview.ProceduresTableHelper.addHeading(parentElement, 'Reports');
-
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, null);
 
 			var reportContent = document.createElement("DIV");
@@ -859,6 +859,8 @@ Preview.ReportListTable = function () {
 			htmlTable.highlightClassName = "highlight";
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(reportList);
+			
+			Preview.SectionContainer.create(parentElement, "Reports");
 		}
 	};
 }();
@@ -1038,8 +1040,6 @@ Preview.ReportPreview = function () {
 		{
 			if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 				return "";
-
-			element.className = 'reportPreview';
 
 			var formattedReport = "<br>";
 
