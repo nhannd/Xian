@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
         public static String Normalize(string name, NormalizeOptions options)
         {
-            string value = name;
+            string value = name.Trim();
             if (IsSet(options, NormalizeOptions.TrimSpaces))
             {
                 value = Regex.Replace(value, "[ ]+", " "); // remove 

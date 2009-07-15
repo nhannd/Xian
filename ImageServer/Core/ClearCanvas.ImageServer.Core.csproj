@@ -69,6 +69,7 @@
     <Compile Include="Reconcile\MoveReconcileImageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reconcile\ReconcileImageContext.cs" />
+    <Compile Include="Reconcile\Test\ImageReconcilerTest.cs" />
     <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="SopInstanceProcessor.cs" />
     <Compile Include="UpdateStudyStatusCommand.cs" />

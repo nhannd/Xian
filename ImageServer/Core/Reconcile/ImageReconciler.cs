@@ -110,6 +110,56 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 		#region Private Methods
 
+        internal static bool LookLikeSameNames(string name1, string name2)
+        {
+            name1 = StringUtilities.EmptyIfNull(name1);
+            name2 = StringUtilities.EmptyIfNull(name2);
+            string normalizedS1 = DicomNameUtils.Normalize(name1, DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents | DicomNameUtils.NormalizeOptions.TrimSpaces);
+            string normalizedS2 = DicomNameUtils.Normalize(name2, DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents | DicomNameUtils.NormalizeOptions.TrimSpaces);
+
+
+            // if both have "^", may need manual reconciliation
+            // eg: "John ^ Smith" vs  "John  Smith^^" ==> manual
+            //     "John ^ Smith" vs  "John ^ Smith^^" ==> auto
+            if (name1.Contains("^") && name2.Contains("^"))
+            {
+                PersonName n1 = new PersonName(normalizedS1);
+                PersonName n2 = new PersonName(normalizedS2);
+                if (n1.AreSame(n2, PersonNameComparisonOptions.CaseInsensitive))
+                    return true;
+                else
+                    return false;
+            }
+
+
+            if (normalizedS1.Length != normalizedS2.Length) return false;
+
+            normalizedS1 = normalizedS1.ToUpper();
+            normalizedS2 = normalizedS2.ToUpper();
+
+            if (normalizedS1.Equals(normalizedS2))
+                return true;
+
+            for (int i = 0; i < normalizedS1.Length; i++)
+            {
+                // If S1[i] is ^ or space, S2[i] must be either ^ or space to be considered being the same
+                // Otherwise, S1[i] must be the same as S2[i].
+                if (normalizedS1[i] == '^' || normalizedS1[i] == ' ')
+                {
+                    if (normalizedS2[i] != '^' && normalizedS2[i] != ' ')
+                        return false;
+                }
+                else
+                {
+                    if (normalizedS1[i] != normalizedS2[i])
+                        return false;
+
+                }
+            }
+            return true;
+        }
+
+
 		private void LoadStudyHistories(StudyStorageLocation studyStorage, bool reload)
 		{
 			if (_studyHistoryList == null || reload)
@@ -184,7 +234,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				ComparisionDifference different = list[0];
 				if (different.DicomTag.TagValue == DicomTags.PatientsName)
 				{
-					if (DifferentOnlyByCarets(different.ExpectValue, different.RealValue))
+					if (LookLikeSameNames(different.ExpectValue, different.RealValue))
 					{
 						AutoCorrectPatientsName(StudyReconcileAction.Merge);
 						return true;
@@ -195,45 +245,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			return false;
 		}
 
-		static bool DifferentOnlyByCarets(string s1, string s2)
-		{
-			s1 = StringUtilities.EmptyIfNull(s1);
-			s2 = StringUtilities.EmptyIfNull(s2);
-			string normalizedS1 = DicomNameUtils.Normalize(s1, DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents | DicomNameUtils.NormalizeOptions.TrimSpaces);
-			string normalizedS2 = DicomNameUtils.Normalize(s2, DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents | DicomNameUtils.NormalizeOptions.TrimSpaces);
-
-            
-			// if both have "^", may need manual reconciliation
-			// eg: "John ^ Smith" vs  "John  Smith^^" ==> manual
-			//     "John ^ Smith" vs  "John ^ Smith^^" ==> auto
-			if (s1.Contains("^") && s2.Contains("^"))
-			{
-				PersonName n1 = new PersonName(normalizedS1);
-				PersonName n2 = new PersonName(normalizedS2);
-				if (n1.AreSame(n2, PersonNameComparisonOptions.CaseInsensitive))
-					return true;
-				else
-					return false;
-			}
-
-            
-			if (normalizedS1.Length != normalizedS2.Length) return false;
-
-			normalizedS1 = normalizedS1.ToUpper();
-			normalizedS2 = normalizedS2.ToUpper();
-
-
-			for (int i = 0; i < normalizedS1.Length; i++)
-			{
-				if (normalizedS1[i] != normalizedS2[i])
-				{
-					if (normalizedS1[i] == '^' && normalizedS2[i] != ' ') return false;
-					if (normalizedS2[i] == '^' && normalizedS1[i] != ' ') return false;
-				}
-			}
-			return true;
-		}
-
+		
 		private void AutoCorrectPatientsName(StudyReconcileAction method)
 		{
 			Platform.Log(LogLevel.Info, "Scheduling auto reconciliation to correct patient name...");
