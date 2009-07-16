@@ -90,7 +90,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public static string Date(DateTime? dt)
         {
-            return Date(dt, false);
+            return dt == null ? "" : Date(dt.Value);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         public static string Date(DateTime? dt, bool descriptive)
         {
-            if(descriptive)
+            if(descriptive && dt != null)
             {
                 DateTime? today = System.DateTime.Today;
 
@@ -139,12 +139,12 @@ namespace ClearCanvas.Desktop
                 }
                 else
                 {
-                    return DateTime(dt);
+                    return Date(dt);
                 }
             }
             else
             {
-                return dt == null ? "" : DateTime(dt);
+                return Date(dt);
             }
         }
 
