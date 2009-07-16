@@ -148,10 +148,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         skipped = _skippedStudies.Contains(studyInstanceUid);
                         if (!skipped)
                         {
-                            SopInstanceImporterContext context = new SopInstanceImporterContext();
-                            context.ContextID = String.Format("{0}_{1}",_parms.PartitionAE, _startTimeStamp.ToString("yyyyMMddhhmmss"));
-                            context.Message = file;
-                            context.SourceAE = _parms.PartitionAE;
+                            SopInstanceImporterContext context = new SopInstanceImporterContext(
+                                String.Format("{0}_{1}", _parms.PartitionAE, _startTimeStamp.ToString("yyyyMMddhhmmss")),
+                                _parms.PartitionAE, file);
                 
                             DicomProcessingResult result = _importer.Import(context);
                             if (result.Successful)

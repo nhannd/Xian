@@ -41,7 +41,6 @@ namespace ClearCanvas.ImageServer.Model
     {
         #region Private Fields
         static private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        private readonly object _syncRoot = new object();
         private IList<Series> _series = null;
         private Patient _patient=null;
         #endregion
@@ -54,20 +53,20 @@ namespace ClearCanvas.ImageServer.Model
         {
             get
             {
-                lock (_syncRoot)
+                if (_series == null)
                 {
-                    if (_series == null)
+                    lock (SyncRoot)
                     {
-                        using(IReadContext readContext = _store.OpenReadContext())
+                        using (IReadContext readContext = _store.OpenReadContext())
                         {
                             ISeriesEntityBroker broker = readContext.GetBroker<ISeriesEntityBroker>();
                             SeriesSelectCriteria criteria = new SeriesSelectCriteria();
                             criteria.StudyKey.EqualTo(this.GetKey());
                             _series = broker.Find(criteria);
                         }
-                        
                     }
                 }
+
                 return _series;
             }
         }
@@ -79,6 +78,16 @@ namespace ClearCanvas.ImageServer.Model
         {
             get
             {
+                if (_patient==null)
+                {
+                    lock (SyncRoot)
+                    {
+                        using (IReadContext readContext = _store.OpenReadContext())
+                        {
+                            _patient = Model.Patient.Load(this.PatientKey);
+                        }
+                    }
+                }
                 return _patient;
             }
         }
@@ -107,7 +116,7 @@ namespace ClearCanvas.ImageServer.Model
         {
             if (_patient==null)
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (_patient == null)
                     {

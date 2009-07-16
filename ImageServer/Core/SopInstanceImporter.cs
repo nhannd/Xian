@@ -48,9 +48,16 @@ namespace ClearCanvas.ImageServer.Core
 
     public class SopInstanceImporterContext
     {
-        public String ContextID; 
-        public string SourceAE; 
-        public DicomMessageBase Message;
+        private readonly String _contextID;
+        private readonly string _sourceAE;
+        private readonly DicomMessageBase _message;
+
+        public SopInstanceImporterContext(string id, string sourceAE, DicomMessageBase message)
+        {
+            _contextID = id;
+            _sourceAE = sourceAE;
+            _message = message;
+        }
 
         public string GetDuplicateStorageFolder()
         {
@@ -61,7 +68,7 @@ namespace ClearCanvas.ImageServer.Core
         {
             get
             {
-                return Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+                return DICOMMessage.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             }
         }
 
@@ -69,8 +76,23 @@ namespace ClearCanvas.ImageServer.Core
         {
             get
             {
-                return Message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+                return DICOMMessage.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             }
+        }
+
+        public string ContextID
+        {
+            get { return _contextID; }
+        }
+
+        public string SourceAE
+        {
+            get { return _sourceAE; }
+        }
+
+        public DicomMessageBase DICOMMessage
+        {
+            get { return _message; }
         }
     }
 
@@ -92,9 +114,8 @@ namespace ClearCanvas.ImageServer.Core
         public DicomProcessingResult Import(SopInstanceImporterContext context)
 		{
             Platform.CheckForNullReference(context, "context");
-        	DicomMessageBase message;
-            message = context.Message;
-			String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+        	DicomMessageBase message = context.DICOMMessage;
+            String studyInstanceUid =  message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
 			String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
 			String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
 			String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);

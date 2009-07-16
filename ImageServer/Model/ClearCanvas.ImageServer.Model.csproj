@@ -313,7 +313,6 @@
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
     <Compile Include="StudyDeleteRecord.cs" />
     <Compile Include="StudyDeleteRecord.gen.cs" />
-    <Compile Include="StudyHistory.cs" />
     <Compile Include="StudyHistory.gen.cs" />
     <Compile Include="StudyHistoryTypeEnum.gen.cs" />
     <Compile Include="StudyIntegrityQueue.cs" />

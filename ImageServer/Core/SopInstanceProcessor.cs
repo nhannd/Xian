@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -38,6 +39,9 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
@@ -257,9 +261,13 @@ namespace ClearCanvas.ImageServer.Core
 		    return result;
 		}
 
-		#endregion
+
+
+	    #endregion
 
 		#region Private Methods
+
+       
 
 		/// <summary>
 		/// Returns a value indicating whether the Dicom image must be reconciled.

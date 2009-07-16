@@ -138,10 +138,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             try
             {
                 SopInstanceImporter importer = new SopInstanceImporter(Partition);
-                SopInstanceImporterContext context = new SopInstanceImporterContext();
-                context.ContextID = String.Format("{0}_{1}", association.CallingAE, association.TimeStamp.ToString("yyyyMMddhhmmss"));
-                context.Message = message;
-                context.SourceAE = association.CallingAE;
+                SopInstanceImporterContext context = new SopInstanceImporterContext(
+                    String.Format("{0}_{1}", association.CallingAE, association.TimeStamp.ToString("yyyyMMddhhmmss")),
+                    association.CallingAE, message);
+
                 DicomProcessingResult result = importer.Import(context);
 
                 if (result.Successful)

@@ -12,6 +12,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
     public class StudyMatchingMap
     {
         #region Private Members
+        private string _studyInstanceUid;
         private string _patientsName;
         private string _patientId;
         private string _IssuerOfPatientId;
@@ -61,6 +62,13 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             get { return _accessionNumber; }
             set { _accessionNumber = value; }
+        }
+
+        [DicomField(DicomTags.StudyInstanceUid)]
+        public string StudyInstanceUid
+        {
+            get { return _studyInstanceUid; }
+            set { _studyInstanceUid = value; }
         }
 
         #endregion

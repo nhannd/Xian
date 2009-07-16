@@ -61,17 +61,33 @@ namespace ClearCanvas.ImageServer.Model
                 return _partition;
             }
         }
-		
-		#endregion
+
+        public Study Study
+        {
+            get
+            {
+                if (_study==null)
+                {
+                    lock (SyncRoot)
+                    {
+                        // TODO: Use ExecutionContext to re-use db connection if possible
+                        // This however requires breaking the Common --> Model dependency.
+                        using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                        {
+                            _study = LoadStudy(readContext);
+                        }
+                    }
+                }
+
+                return _study;
+            }
+        }
+
+        #endregion
 		
 		public Study LoadStudy(IPersistenceContext context)
         {
-            if (_study==null)
-            {
-                _study = Study.Find(context, this.StudyInstanceUid, this.ServerPartition);
-            }
-            return _study;
-            
+            return Study.Find(context, this.StudyInstanceUid, this.ServerPartition);
         }
 		
         public void Archive(IUpdateContext context)

@@ -46,7 +46,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class StudyStorageLocation : ServerEntity, ICloneable
+    public class StudyStorageLocation : ServerEntity, ICloneable, IEquatable<StudyStorageLocation>
     {
         private const string STUDY_XML_EXTENSION = "xml";
         private const string STUDY_XML_GZIP_EXTENSION = "xml.gz";
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Model
         private string _studyUidFolder;
         private string _studyFolderRelativePath;
         private StudyStorage _studyStorage;
-
+        private Patient _patient;
         #endregion
 
         #region Public Properties
@@ -337,6 +337,8 @@ namespace ClearCanvas.ImageServer.Model
                 {
                     lock(SyncRoot)
                     {
+                        // TODO: Use ExecutionContext to re-use db connection if possible
+                        // This however requires breaking the Common --> Model dependency.
                         using(IReadContext readContext= PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                         {
                             _studyStorage = StudyStorage.Load(readContext, Key);
@@ -344,6 +346,26 @@ namespace ClearCanvas.ImageServer.Model
                     }
                 }
                 return _studyStorage;
+            }
+        }
+
+        public Patient Patient
+        {
+            get {
+
+                if (_patient==null)
+                {
+                    lock (SyncRoot)
+                    {
+                        // TODO: Use ExecutionContext to re-use db connection if possible
+                        // This however requires breaking the Common --> Model dependency.
+                        using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                        {
+                            _patient = Patient.Load(readContext, StudyStorage.Study.PatientKey);
+                        }
+                    }
+                }
+                return _patient;
             }
         }
 
@@ -684,5 +706,15 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
 
+
+        #region IEquatable<StudyStorageLocation> Members
+
+        public bool Equals(StudyStorageLocation other)
+        {
+            // TODO: We may need more sophisticated method to determine if 2 locations are the same, especially if mapped drives are used.
+            return this.GetStudyPath().Equals(other.GetStudyPath(), StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        #endregion
     }
 }

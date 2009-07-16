@@ -256,5 +256,62 @@ namespace ClearCanvas.ImageServer.Core
                 return list;
             }
         }
+
+        /// <summary>
+        /// Finds a list of <see cref="StudyHistory"/> records of the specified <see cref="StudyHistoryTypeEnum"/> 
+        /// for the specified <see cref="StudyStorage"/>.
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <returns></returns>
+        static public IList<StudyHistory> FindStudyHistories(StudyStorage studyStorage, IEnumerable<StudyHistoryTypeEnum> types)
+        {
+            // Use of ExecutionContext to re-use db connection if possible
+            using (ExecutionContext scope = new ExecutionContext())
+            {
+                IStudyHistoryEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyHistoryEntityBroker>();
+                StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
+                criteria.StudyStorageKey.EqualTo(studyStorage.Key);
+                criteria.StudyHistoryTypeEnum.EqualTo(StudyHistoryTypeEnum.StudyReconciled);
+
+                if (types!=null)
+                {
+                    criteria.StudyHistoryTypeEnum.In(types);
+                }
+
+                criteria.InsertTime.SortAsc(0);
+                IList<StudyHistory> historyList = broker.Find(criteria);
+                return historyList;
+            } 
+        }
+
+        /// <summary>
+        /// Finds all <see cref="StudyHistory"/> records for the specified <see cref="StudyStorage"/>.
+        /// </summary>
+        /// <param name="studyStorage"></param>
+        /// <returns></returns>
+        static public IList<StudyHistory> FindStudyHistories(StudyStorage studyStorage)
+        {
+            return FindStudyHistories(studyStorage, null);
+        }
+
+        static public StudyStorageLocation GetStudyOnlineStorageLocation(StudyStorage studyStorage, out bool restoreRequested)
+        {
+            restoreRequested = false;
+
+            //Load a list of locations from the db
+            IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(studyStorage);
+            if (locations == null || locations.Count==0)
+            {
+                if (studyStorage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+                {
+                    RestoreQueue restoreQueue = ServerHelper.InsertRestoreRequest(studyStorage);
+                    restoreRequested = restoreQueue != null;
+                }
+                return null;
+            }
+
+            return locations[0];
+
+        }
     }
 }

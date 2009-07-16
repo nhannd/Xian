@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		private StudyStorageLocation _existingStudyLocation;
 		private string _sopInstanceUid;
 		private ReconcileImageContext _reconcileContext;
-		private List<StudyHistory> _studyHistoryList;
+        private List<StudyHistory> _studyHistoryList;
 
 		#endregion
 
@@ -160,30 +160,18 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         }
 
 
-		private void LoadStudyHistories(StudyStorageLocation studyStorage, bool reload)
-		{
-			if (_studyHistoryList == null || reload)
-			{
-				// Results are sorted in the Find by InsertTime.
-				_studyHistoryList = new List<StudyHistory>(StudyHistory.Find(studyStorage));
-			}
-			return;
-		}
-
 		private IList<StudyHistory> FindReconcileHistories(DicomFile file)
 		{
 			ImageSetDescriptor fileDesc = new ImageSetDescriptor(file.DataSet);
 
-			LoadStudyHistories(ExistingStudyLocation, false);
+			_studyHistoryList = new List<StudyHistory>(ServerHelper.FindStudyHistories( ExistingStudyLocation.StudyStorage));
 
 			IList<StudyHistory> reconcileHistories = _studyHistoryList.FindAll(
 				delegate(StudyHistory item)
 					{
 						if (item.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
 						{
-							ImageSetDescriptor desc =
-								XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-
+							ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
 							return desc.Equals(fileDesc);
 						}
 						else
@@ -193,15 +181,15 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			if (reconcileHistories==null || reconcileHistories.Count==0)
 			{
-				// no history found in cache... reload the list?
-				LoadStudyHistories(ExistingStudyLocation, true);
+				// no history found in cache... reload the list and search again one more time
+                _studyHistoryList = new List<StudyHistory>(ServerHelper.FindStudyHistories(ExistingStudyLocation.StudyStorage));
+
 				reconcileHistories = _studyHistoryList.FindAll(
 					delegate(StudyHistory item)
 						{
 							if (item.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
 							{
-								ImageSetDescriptor desc =
-									XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+								ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
 								return desc.Equals(fileDesc);
 							}
 							else
