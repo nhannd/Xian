@@ -50,17 +50,17 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         #region IEnumBroker Members
 
-    	public IList<EnumValue> Load(Type enumValueClass, bool includeDeactivated)
-    	{
-			return LoadTable<EnumValue>(enumValueClass, includeDeactivated);
-		}
+        public IList<EnumValue> Load(Type enumValueClass, bool includeDeactivated)
+        {
+            return LoadTable<EnumValue>(enumValueClass, includeDeactivated);
+        }
 
-    	public IList<TEnumValue> Load<TEnumValue>(bool includeDeactivated) where TEnumValue : EnumValue
-    	{
-			return LoadTable<TEnumValue>(typeof(TEnumValue), includeDeactivated);
-		}
+        public IList<TEnumValue> Load<TEnumValue>(bool includeDeactivated) where TEnumValue : EnumValue
+        {
+            return LoadTable<TEnumValue>(typeof(TEnumValue), includeDeactivated);
+        }
 
-    	public EnumValue Find(Type enumValueClass, string code)
+        public EnumValue Find(Type enumValueClass, string code)
         {
             Platform.CheckForEmptyString(code, "code");
             return this.Context.LoadEnumValue(enumValueClass, code, true);
@@ -72,7 +72,27 @@ namespace ClearCanvas.Enterprise.Hibernate
             return (TEnumValue)Find(typeof(TEnumValue), code);
         }
 
-		public EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated)
+        public EnumValue TryFind(Type enumValueClass, string code)
+        {
+            Platform.CheckForEmptyString(code, "code");
+
+            EnumValue foundEnumValue = CollectionUtils.SelectFirst(
+                Load(enumValueClass, false), 
+                delegate(EnumValue enumValue) { return enumValue.Code == code; });
+
+            if(foundEnumValue == null)
+                throw new EnumValueNotFoundException(enumValueClass, code, null);
+
+            return foundEnumValue;
+        }
+
+        public TEnumValue TryFind<TEnumValue>(string code)
+            where TEnumValue : EnumValue
+        {
+            return (TEnumValue)TryFind(typeof(TEnumValue), code);
+        }
+
+        public EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated)
         {
             EnumValue ev = (EnumValue)Activator.CreateInstance(enumValueClass, true);
             UpdateValue(ev, code, value, description, displayOrder, deactivated);
@@ -82,7 +102,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return ev;
         }
 
-		public EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated)
+        public EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated)
         {
             EnumValue ev = this.Context.LoadEnumValue(enumValueClass, code, false); 
             UpdateValue(ev, code, value, description, displayOrder, deactivated);
@@ -100,14 +120,14 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         private IList<T> LoadTable<T>(Type enumValueClass, bool includeDeactivated)
         {
-			HqlQuery q = new HqlQuery(string.Format("from {0}", enumValueClass.FullName));
+            HqlQuery q = new HqlQuery(string.Format("from {0}", enumValueClass.FullName));
 
-			// bug : NHibernate does not properly convert property to column name, therefore we use the column name for now
-			if (!includeDeactivated)
-				q.Conditions.Add(new HqlCondition("Deactivated_ = ?", false));
+            // bug : NHibernate does not properly convert property to column name, therefore we use the column name for now
+            if (!includeDeactivated)
+                q.Conditions.Add(new HqlCondition("Deactivated_ = ?", false));
 
-			// bug : NHibernate does not properly convert property to column name, therefore we use the column name for now
-			q.Sorts.Add(new HqlSort("DisplayOrder_", true, 0));
+            // bug : NHibernate does not properly convert property to column name, therefore we use the column name for now
+            q.Sorts.Add(new HqlSort("DisplayOrder_", true, 0));
 
             // caching these queries will be very efficient, because the tables rarely change
             q.Cacheable = true;
@@ -120,8 +140,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             SetEnumValueProperty(ev, "Value", value);
             SetEnumValueProperty(ev, "Description", description);
             SetEnumValueProperty(ev, "DisplayOrder", displayOrder);
-			SetEnumValueProperty(ev, "Deactivated", deactivated);
-		}
+            SetEnumValueProperty(ev, "Deactivated", deactivated);
+        }
 
         private static void SetEnumValueProperty(EnumValue ev, string property, object value)
         {
