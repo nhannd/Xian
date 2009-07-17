@@ -45,5 +45,7 @@
   <Target Name="BuildSolutions" >
     <MSBuild Projects=".\Client\RisClient.proj" Properties="Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);KeyFile=$(KeyFile)" />
     <MSBuild Projects=".\Server\RisServer.proj" Properties="Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);KeyFile=$(KeyFile)" />
+	<!--<MSBuild Projects=".\Shreds\MwlServer\MwlServer.proj" Properties="Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);KeyFile=$(KeyFile)" />
+    <MSBuild Projects="..\HL7\Server\HL7Server.proj" Properties="Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);KeyFile=$(KeyFile)" />-->
   </Target>
 </Project>
