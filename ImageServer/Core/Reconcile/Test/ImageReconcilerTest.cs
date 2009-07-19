@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.ImageServer.Common.Utilities;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.Test
@@ -41,51 +42,51 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Test
         {
 
 
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva^Siva"), "These are different. Should return false.");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva^Siva"), "These are different. Should return false.");
 
             // Both names don't have ^
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", "Selva Siva"), "Identical");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", "Selva SIVA"), "letter case");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva SIVA", "Selva Siva"), "letter case");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", "   Selva  Siva  "), "Trailing/Leading Spaces");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("   Selva  Siva  ", "Selva Siva"), "Trailing/Leading Spaces");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", "Selva Siva"), "Identical");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", "Selva SIVA"), "letter case");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva SIVA", "Selva Siva"), "letter case");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", "   Selva  Siva  "), "Trailing/Leading Spaces");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("   Selva  Siva  ", "Selva Siva"), "Trailing/Leading Spaces");
             
             // Only one of the names has ^
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", "Selva^Siva"), "One has ^");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva Siva"), "One has ^");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", "Selva^Siva"), "One has ^");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva Siva"), "One has ^");
 
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", "Selva^SIVA"), "letter case");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^SIVA", "Selva Siva"), "letter case");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", "Selva^SIVA"), "letter case");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^SIVA", "Selva Siva"), "letter case");
 
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", " Selva ^ Siva "), "Trailing/Leading Spaces");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames(" Selva ^ Siva ", "Selva Siva"), "Trailing/Leading Spaces");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", " Selva ^ Siva "), "Trailing/Leading Spaces");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames(" Selva ^ Siva ", "Selva Siva"), "Trailing/Leading Spaces");
 
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva Siva", " Selva ^ Siva ^ ^ ^"), "Trailing Empty Components");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames(" Selva ^ Siva ^ ^ ^", "Selva Siva"), "Trailing Empty Components");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva Siva", " Selva ^ Siva ^ ^ ^"), "Trailing Empty Components");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames(" Selva ^ Siva ^ ^ ^", "Selva Siva"), "Trailing Empty Components");
 
             // Both names have ^
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva^SIVA"), "letter case");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^SIVA", "Selva^Siva"), "letter case");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva^SIVA"), "letter case");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^SIVA", "Selva^Siva"), "letter case");
 
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^Siva", " Selva ^ Siva "), "Trailing/Leading Spaces");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames(" Selva ^ Siva ", "Selva^Siva"), "Trailing/Leading Spaces");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^Siva", " Selva ^ Siva "), "Trailing/Leading Spaces");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames(" Selva ^ Siva ", "Selva^Siva"), "Trailing/Leading Spaces");
 
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames("Selva^Siva", " Selva ^ Siva ^ ^ ^"), "Trailing Empty Components");
-            Assert.IsTrue(ImageReconciler.LookLikeSameNames(" Selva ^ Siva ^ ^ ^", "Selva^Siva"), "Trailing Empty Components");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames("Selva^Siva", " Selva ^ Siva ^ ^ ^"), "Trailing Empty Components");
+            Assert.IsTrue(DicomNameUtils.LookLikeSameNames(" Selva ^ Siva ^ ^ ^", "Selva^Siva"), "Trailing Empty Components");
 
             // Spaces in between... names are not the same
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva Siva", "Selva Si va"));
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva Siv a", "Selva Siva"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva Siva", "Selva Si va"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva Siv a", "Selva Siva"));
 
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva Si va"));
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva Si va", "Selva^Siva"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva Si va"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva Si va", "Selva^Siva"));
 
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva^Si va"));
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva^Si va", "Selva^Siva"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva^Si va"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva^Si va", "Selva^Siva"));
 
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva^^Siva"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva^^Siva"));
 
-            Assert.IsFalse(ImageReconciler.LookLikeSameNames("Selva^Siva", "Selva^Siva^Jr"));
+            Assert.IsFalse(DicomNameUtils.LookLikeSameNames("Selva^Siva", "Selva^Siva^Jr"));
             
         }
 

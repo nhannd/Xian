@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageServer.Core
 
             _instanceStats.ProcessTime.Start();
 
-            if (ShouldReconcile(file) && compare)
+            if (compare && ShouldReconcile(file))
 			{
 				ScheduleReconcile(file);
                 result.Status = ProcessingStatus.Reconciled;
@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageServer.Core
 			reconciler.ExistingStudy = _context.Study;
 			reconciler.ExistingStudyLocation = _context.StorageLocation;
 			reconciler.Partition = _context.Partition;
-			reconciler.ReconcileImage(file);
+			reconciler.ScheduleReconcile(file);
 		}
 
        

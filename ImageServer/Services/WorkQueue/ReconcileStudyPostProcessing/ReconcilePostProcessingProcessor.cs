@@ -43,6 +43,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
     [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
     class ReconcilePostProcessingProcessor : StudyProcessItemProcessor
 	{
+        protected override PreProcessingResult PreProcessFile(DicomFile file)
+        {
+            // Return a result indicating the file has been reconciled.
+            PreProcessingResult result = new PreProcessingResult();
+            result.AutoReconciled = true;
+
+            return result;
+        }
+
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
 			LoadUids(item);
@@ -58,8 +67,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 				base.ProcessItem(item);
 		}
 
-		protected override void ProcessFile(Model.WorkQueueUid queueUid, DicomFile file, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream)
+		protected override void ProcessFile(Model.WorkQueueUid queueUid, DicomFile file, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream, bool compare)
 		{
+            Platform.CheckFalse(compare, "compare");
+
 			SopInstanceProcessor processor = new SopInstanceProcessor(_context);
 
 			long fileSize;

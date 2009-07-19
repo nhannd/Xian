@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
@@ -42,8 +43,6 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
-using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -51,6 +50,7 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+
  
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
@@ -64,7 +64,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
     	private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
-
         #endregion
 
         #region Public Properties
@@ -173,7 +172,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="queueUid"></param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
         /// <param name="file">The file being processed.</param>
-        protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream)
+        protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream, bool compare)
         {
             SopInstanceProcessor processor = new SopInstanceProcessor( _context);
  
@@ -186,7 +185,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			processor.InstanceStats.FileSize = (ulong)fileSize;
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
 			processor.InstanceStats.Description = sopInstanceUid;
-        	processor.ProcessFile(file, stream, queueUid.Duplicate, true);
+            processor.ProcessFile(file, stream, queueUid.Duplicate, compare);
 			
 			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)
@@ -294,7 +293,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (sop.Duplicate && sop.Extension != null)
                 {
                     path = GetDuplicateUidPath(sop);
-                    ProcessDuplicate(sop, basePath + ".dcm", path);
+                    DicomFile file = new DicomFile(path);
+                    file.Load();
+
+                    PreProcessingResult result = PreProcessFile(file);
+                    if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
+                    {
+                        ProcessDuplicate(sop, basePath + ".dcm", path);
+                    }
+                    else
+                    {
+                        FileUtils.Delete(path);
+                    }
+                    
                 }
                 else
                 {
@@ -303,13 +314,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         path = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
                         DicomFile file = new DicomFile(path);
                         file.Load();
-                        
-                        PreProcessFile(file);
 
+                        PreProcessingResult result = PreProcessFile(file);
+                        
                         if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
                         {
                             // still belong to this study
-                            ProcessFile(sop, file, studyXml);
+                            ProcessFile(sop, file, studyXml, result.AutoReconciled? false:true);
                         }
                         else
                         {
@@ -350,119 +361,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
         #endregion
 
-        private IList<StudyHistory> FindReconcileHistories(DicomFile file)
-        {
-            ImageSetDescriptor fileDesc = new ImageSetDescriptor(file.DataSet);
-
-            List<StudyHistory> studyHistoryList = new List<StudyHistory>(
-                    ServerHelper.FindStudyHistories(StorageLocation.StudyStorage,
-                            new StudyHistoryTypeEnum[] { StudyHistoryTypeEnum.StudyReconciled }));
-
-            IList<StudyHistory> reconcileHistories = studyHistoryList.FindAll(
-                delegate(StudyHistory item)
-                {
-                    ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-                    return desc.Equals(fileDesc);
-                });
-
-            if (reconcileHistories == null || reconcileHistories.Count == 0)
-            {
-                // no history found in cache... reload the list and search again one more time
-                studyHistoryList = new List<StudyHistory>(
-                    ServerHelper.FindStudyHistories(StorageLocation.StudyStorage,
-                            new StudyHistoryTypeEnum[] { StudyHistoryTypeEnum.StudyReconciled }));
-
-                reconcileHistories = studyHistoryList.FindAll(
-                    delegate(StudyHistory item)
-                    {
-                        ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-                        return desc.Equals(fileDesc);
-                    });
-
-            }
-
-            return reconcileHistories;
-        }
 
         /// <summary>
         /// Apply changes to the file prior to processing it.
         /// </summary>
         /// <param name="file"></param>
-        private void PreProcessFile(DicomFile file)
+        protected virtual PreProcessingResult PreProcessFile(DicomFile file)
         {
-            // TODO: correct the patient's name if they don't match
+            PreProcessingResult result = new PreProcessingResult();
+            bool updated = false;
+            AutoReconciler autoBaseReconciler = new AutoReconciler(StorageLocation);
+            PreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
+            updated |= reconcileResult != null;
 
-            // Update the file based on the reconciliation in the past
-            IList<StudyHistory> histories = FindReconcileHistories(file);
-            if (histories != null && histories.Count > 0)
+            PatientNameAutoCorrection patNameCorrection = new PatientNameAutoCorrection(StorageLocation);
+            PreProcessingResult updateResult = patNameCorrection.Process(file);
+            updated |= updateResult != null;
+
+            // if the studyuid is modified, the file will be deleted by the caller.
+            if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
             {
-                StudyHistory lastHistory = histories[0];
-                StudyStorage storage = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-
-                bool restored;
-                StudyStorageLocation dest = ServerHelper.GetStudyOnlineStorageLocation(storage, out restored);
-                if (dest != null)
-                {
-                    // TODO: check if writable?
-                    ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
-                    IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(dest);
-
-                    using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Image According to History"))
-                    {
-                        foreach (BaseImageLevelUpdateCommand cmd in commands)
-                        {
-                            cmd.File = file;
-                            processor.AddCommand(cmd);
-                        }
-
-                        if (!processor.Execute())
-                        {
-                            if (processor.FailureException != null)
-                            {
-                                throw processor.FailureException;
-                            }
-                            else
-                                throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update image to match target study. Reason: {0}", processor.FailureReason));
-                        }
-                    }
-
-                    if (dest.Equals(StorageLocation))
-                    {
-                        // The file has been modified based on the 
-                        Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Update SOP {0} to match study {1}, A#: {2}, Patient: {3}, ID:{4}",
-                            file.MediaStorageSopInstanceUid,
-                            dest.StudyInstanceUid, dest.Study.AccessionNumber, dest.Study.Patient.PatientsName, dest.Study.Patient.PatientId
-                        ); 
-                        
-                        file.Save();
-                    }
-                    else
-                    {
-                        // Now we have modified the file to match the destination study, we can import the file again
-                        Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Move SOP {0} from study {1} to study {2}, A#: {3}, Patient: {4}, ID:{5}",
-                            file.MediaStorageSopInstanceUid,
-                            StorageLocation.StudyInstanceUid,
-                            dest.StudyInstanceUid, dest.Study.AccessionNumber, dest.Study.Patient.PatientsName, dest.Study.Patient.PatientId
-                        );
-
-                        SopInstanceImporter importer = new SopInstanceImporter(dest.ServerPartition);
-                        SopInstanceImporterContext context = new SopInstanceImporterContext(String.Empty, file.SourceApplicationEntityTitle, file);
-                        DicomProcessingResult result = importer.Import(context);
-
-                        if (!result.Successful)
-                        {
-                            throw new ApplicationException("Unable to import image to destination study");
-                        }
-                    }
-                    
-                }
-                else
-                    throw new NotImplementedException("Destination study is not online");
-
+                if (updated)
+                    file.Save();
             }
 
+            
+            return result;
         }
-
 
         #region Protected Methods
 

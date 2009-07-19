@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -61,50 +60,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		}
 		#endregion
 
-		string GetUnifiedPatientName(string name1, string name2)
-		{
-			name1 =
-				DicomNameUtils.Normalize(name1,
-				                         DicomNameUtils.NormalizeOptions.TrimSpaces |
-				                         DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents);
-			name2 =
-				DicomNameUtils.Normalize(name2,
-				                         DicomNameUtils.NormalizeOptions.TrimSpaces |
-				                         DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents);
-
-			if (name1.Length != name2.Length)
-			{
-				throw new ApplicationException(String.Format("Unable to unify names: {0} and {1}", name1, name2));
-			}
-
-			StringBuilder value = new StringBuilder();
-			for (int i = 0; i < name1.Length; i++)
-			{
-				if (Char.ToUpper(name1[i]) == Char.ToUpper(name2[i]))
-				{
-					value.Append(name1[i]);
-				}
-				else
-				{
-					if (name1[i] != '^' && name2[i] != '^')
-					{
-						throw new ApplicationException(String.Format("Unable to unify names: {0} and {1}", name1, name2));
-					}
-					else // one of them is ^
-					{
-						if (name1[i] != ' ' && name2[i] != ' ')
-						{
-							throw new ApplicationException(String.Format("Unable to unify names: {0} and {1}", name1, name2));
-						}
-						else
-						{
-							value.Append('^');
-						}
-					}
-				}
-			}
-			return value.ToString();
-		}
 
 		protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
 		{
@@ -112,7 +67,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			desc.ExistingStudy = StudyInformation.CreateFrom(_context.CurrentStudy);
 			desc.ImageSetData = _context.ImageSet;
 			desc.Action = StudyReconcileAction.Merge;
-			string newPatientName = GetUnifiedPatientName(desc.ExistingStudy.PatientInfo.Name, _context.ImageSet[DicomTags.PatientsName].Value);
+			string newPatientName = DicomNameUtils.ResolvePatientName(desc.ExistingStudy.PatientInfo.Name, _context.ImageSet[DicomTags.PatientsName].Value);
 
 			if (!desc.ExistingStudy.PatientInfo.Name.Equals(newPatientName))
 			{

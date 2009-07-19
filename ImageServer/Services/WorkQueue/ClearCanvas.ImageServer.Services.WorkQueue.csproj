@@ -85,6 +85,7 @@
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
     <Compile Include="RecoveryModes.cs" />
     <Compile Include="StudyIntegrityValidationAttribute.cs" />
+    <Compile Include="StudyProcess\PreProcessors.cs" />
     <Compile Include="WebEditStudy\InstanceInfo.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
     <Compile Include="WebEditStudy\PatientInfo.cs" />
