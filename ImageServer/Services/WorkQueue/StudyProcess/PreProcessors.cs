@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     {
         #region Private Members
         private bool _autoReconciled;
+        private bool _discardImage;
         #endregion
 
         /// <summary>
@@ -64,6 +65,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { _autoReconciled = value; }
         }
 
+        /// <summary>
+        /// Indicates whether or not the file should be discarded.
+        /// </summary>
+        public bool DiscardImage
+        {
+            get { return _discardImage; }
+            set { _discardImage = value; }
+        }
     }
     
     /// <summary>
@@ -284,6 +293,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                     case StudyReconcileAction.Discard:
                         preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard);
+                        preProcessingResult.DiscardImage = true;
                         break;
 
                     case StudyReconcileAction.ProcessAsIs:
@@ -389,8 +399,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     class PatientNameAutoCorrection: BasePreprocessor, IStudyPreProcessor
     {
-        private string _contextID;
-
         class PatientNameAutoCorrectionResult : PreProcessingResult
         {
             private string _oldPatientsName;
@@ -409,6 +417,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
 
         }
+        
+        #region Private Members
+        private string _contextID; 
+        #endregion
 
         #region Constructors
         /// <summary>

@@ -297,15 +297,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     file.Load();
 
                     PreProcessingResult result = PreProcessFile(sop, file);
-                    // TODO: What are we gonna do with the result?
 
-                    if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
+                    if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
+                            || result.DiscardImage)
                     {
-                        ProcessDuplicate(sop, basePath + ".dcm", path);
+                    	FileUtils.Delete(path);
                     }
-                    else
-                    {
-                        FileUtils.Delete(path);
+                    else {
+                    	ProcessDuplicate(sop, basePath + ".dcm", path);
                     }
                     
                 }
@@ -318,15 +317,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         file.Load();
 
                         PreProcessingResult result = PreProcessFile(sop, file);
-                        
-                        if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
+                        if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
+                            || result.DiscardImage)
                         {
-                            // still belong to this study
-                            ProcessFile(sop, file, studyXml, result.AutoReconciled? false:true);
+                            FileUtils.Delete(path);
                         }
                         else
                         {
-                            FileUtils.Delete(path);
+                            ProcessFile(sop, file, studyXml, result.AutoReconciled? false:true);
                         }
                     }
                     catch (DicomException ex)
@@ -380,6 +378,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             AutoReconciler autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
             PreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
             updated |= reconcileResult != null;
+            
+            if (reconcileResult!=null && reconcileResult.DiscardImage)
+            {
+                result.DiscardImage = true;
+            }
 
             PatientNameAutoCorrection patNameCorrection = new PatientNameAutoCorrection(contextID, StorageLocation);
             PreProcessingResult updateResult = patNameCorrection.Process(file);
