@@ -423,7 +423,7 @@ Preview.ImagingServiceTable = function () {
  */
 Preview.ProceduresTable = function () {
 	return {
-		create: function(parentElement, procedures, addSectionHeading)
+		create: function(parentElement, procedures, options)
 		{
 			if(procedures.length == 0)
 			{
@@ -435,7 +435,7 @@ Preview.ProceduresTable = function () {
 				parentElement.style.display = 'block';
 			}
 			
-			if(addSectionHeading)
+			if(options && options.AddSectionHeading)
 			{
 				Preview.ProceduresTableHelper.addHeading(parentElement, 'Procedures');
 			}
@@ -1075,7 +1075,7 @@ Preview.ReportPreview = function () {
 
 			element.innerHTML = formattedReport;
 			
-			if (options.UseSectionContainer)
+			if (options && options.UseSectionContainer)
 				Preview.SectionContainer.create(element, "Report");
 		},
 		
@@ -1432,6 +1432,217 @@ Preview.OrderNoteSection = function() {
 			html += '</table>';
 			
 			element.innerHTML = html;
+		}
+	};
+}();
+
+Preview.OrderedProceduresTable = function() {
+
+	return {
+		create: function(parentElement, procedures)
+		{
+			if(procedures.length == 0)
+			{
+				parentElement.style.display = 'none';
+				return;
+			}
+			else
+			{
+				parentElement.style.display = 'block';
+			}
+
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
+			var htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+				[
+					{	label: "Procedure",
+						cellType: "html",
+						getValue: function(item) 
+						{
+							var html = "";
+							var formattedProcedureStatus = Preview.ProceduresTableHelper.formatProcedureStatus(item.Status, item.ScheduledStartTime, item.StartTime, item.CheckInTime, item.CheckOutTime);
+							
+							html += "<p class='sectionheading'>";
+							html += "	<a href='javascript:void(0)' class='collapsibleHeading' onclick='toggleCollapsed(this)'><span class='plusMinus'>+</span>" + Ris.formatProcedureName(item) + "</a>";
+							html += "</p>";
+							html += "<div class='collapsibleContent'>";
+							html += "<table>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Status</td>";
+							html += "	<td width='200'>" + formattedProcedureStatus + "</td>";
+							html += "	<td width='120' class='propertyname'>Performing Facility</td>";
+							html += "	<td width='200'>" + item.PerformingFacility.Name + "</td>";
+							html += "</tr>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Scheduled Start Time</td>";
+							html += "	<td width='200'>" + Ris.formatDateTime(item.ScheduledStartTime) + "</td>";
+							html += "	<td width='120' class='propertyname'>Check-In Time</td>";
+							html += "	<td width='200'>" + Ris.formatDateTime(item.CheckInTime) + "</td>";
+							html += "</tr>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Performing Start Time</td>";
+							html += "	<td width='200'>" + Ris.formatDateTime(item.StartTime) + "</td>";
+							html += "	<td width='120' class='propertyname'>Performing End Time</td>";
+							html += "	<td width='200'>" + Ris.formatDateTime(item.CheckOutTime) + "</td>";
+							html += "</tr>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Report Published Time</td>";
+							if(item.Status.Code == 'CA' || item.Status.Code == 'DC')
+							{
+								html += "	<td width='200'></td>";
+							}
+							else
+							{
+								html += "	<td width='200'>" + Ris.formatDateTime(item.EndTime) + "</td>";
+							}
+							html += "</tr>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Cancelled Time</td>";
+							if(item.Status.Code == 'CA' || item.Status.Code == 'DC')
+							{
+								html += "	<td width='200'>" + Ris.formatDateTime(item.EndTime) + "</td>";
+							}
+							else
+							{
+								html += "	<td width='200'></td>";
+							}
+							html += "</tr>";
+							html += "</table>";
+							html += "</div>";
+
+							return html;
+						}
+					}
+				]);
+
+			htmlTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			htmlTable.bindItems(procedures);
+
+			Preview.SectionContainer.create(parentElement, "Ordered Procedures");
+		}
+	}
+}();
+
+/*
+ *	Create a table of details for a single visit.
+ */ 
+Preview.VisitDetailsSection = function () {
+
+	var _html = 
+		'<div class="SectionTableContainer">'+
+		'	<table cellspacing="5">'+
+		'		<tr>'+
+		'			<td>'+
+		'				<div class="pageheading" id="VisitNumber"></div>'+
+		'				<div class="pageheading2" id="Facility"></div>'+
+		'			</td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Visit Status</td>'+
+		'			<td width="200"><div id="VisitStatus"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Patient Class</td>'+
+		'			<td width="200"><div id="PatientClass"/></td>'+
+		'			<td width="120" class="propertyname">Patient Type</td>'+
+		'			<td width="200"><div id="PatientType"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Admission Type</td>'+
+		'			<td width="200"><div id="AdmissionType"/></td>'+
+		'			<td width="120" class="propertyname">Discharge Disposition</td>'+
+		'			<td width="200"><div id="DischargeDisposition"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Admit Date/Time</td>'+
+		'			<td width="200"><div id="AdmitTime"/></td>'+
+		'			<td width="120" class="propertyname">Discharge Date/Time</td>'+
+		'			<td width="200"><div id="DischargeTime"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Current Location</td>'+
+		'			<td width="200"><div id="CurrentLocation"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Pre-Admit Number</td>'+
+		'			<td><div id="PreAdmitNumber"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">VIP?</td>'+
+		'			<td><div id="VipFlag"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Ambulatory Statuses</td>'+
+		'			<td><div id="AmbulatoryStatuses"/></td>'+
+		'		</tr>'+
+		'	</table>'+
+		'</div>';
+
+	return 	{
+		create: function(element, visitDetail) {
+
+			if(visitDetail == null)
+				return;
+
+			element.innerHTML = _html;
+
+			Field.setValue($("VisitNumber"), Ris.formatMrn(visitDetail.VisitNumber));
+			Field.setValue($("Facility"), visitDetail.Facility.Name);
+			Field.setValue($("VisitStatus"), visitDetail.Status.Value);
+			Field.setValue($("AdmitTime"), Ris.formatDateTime(visitDetail.AdmitTime));
+			Field.setValue($("DischargeTime"), Ris.formatDateTime(visitDetail.DischargeTime));
+			Field.setValue($("PatientClass"), visitDetail.PatientClass.Value);
+			Field.setValue($("PatientType"), visitDetail.PatientType.Value);
+			Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
+			Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
+			Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
+			Field.setValue($("PreAdmitNumber"), visitDetail.PreadmitNumber);
+			Field.setValue($("VipFlag"), visitDetail.VipIndicator ? "Yes" : "No");
+			
+			var ambulatoryStatuses = String.combine(visitDetail.AmbulatoryStatuses.map(function(status) { return status.Value; }), ", ");
+			Field.setValue($("AmbulatoryStatuses"), ambulatoryStatuses);
+
+			Preview.SectionContainer.create(element, "Visit Details");
+		}
+	};
+}();
+
+/*
+ *	Create a summary of the physician details of a single visit.
+ */ 
+Preview.PhysiciansSection = function () {
+
+	var _html = 
+		'<div class="SectionTableContainer">'+
+		'	<table cellspacing="5">'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Attending Physician</td>'+
+		'			<td><div id="AttendingPhysician"/></td>'+
+		'			<td width="120" class="propertyname">Referring Physician</td>'+
+		'			<td><div id="ReferringPhysician"/></td>'+
+		'		</tr>'+
+		'		<tr>'+
+		'			<td width="120" class="propertyname">Consulting Physician</td>'+
+		'			<td><div id="ConsultingPhysician"/></td>'+
+		'			<td width="120" class="propertyname">Admitting Physician</td>'+
+		'			<td><div id="AdmittingPhysician"/></td>'+
+		'		</tr>'+
+		'	</table>'+
+		'</div>';
+
+	return 	{
+		create: function(element, visitDetail) {
+
+			if(visitDetail == null || visitDetail.ExtendedProperties == null)
+				return;
+
+			element.innerHTML = _html;
+
+			Field.setValue($("AttendingPhysician"), visitDetail.ExtendedProperties.AttendingPhysician);
+			Field.setValue($("ReferringPhysician"), visitDetail.ExtendedProperties.ReferringPhysician);
+			Field.setValue($("ConsultingPhysician"), visitDetail.ExtendedProperties.ConsultingPhysician);
+			Field.setValue($("AdmittingPhysician"), visitDetail.ExtendedProperties.AdmittingPhysician);
+
+			Preview.SectionContainer.create(element, "Physicians");
 		}
 	};
 }();

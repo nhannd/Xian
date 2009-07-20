@@ -49,7 +49,7 @@
 	                var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
 					if (orderDetail)
 					{
-						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures, true);
+						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 
 						// select CT and MRI procedures
 						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);

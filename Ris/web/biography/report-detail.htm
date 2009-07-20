@@ -18,14 +18,10 @@
 
 			function onBodyLoad()
 			{
-
-				scaleWidth();
-
 				if(!Ris)
 					return;
 
 				try
-
 				{
 					var reportRef = Ris.getHealthcareContext();
 					if (reportRef == null)
@@ -67,7 +63,6 @@
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<div id="reportSection">
-				<p id="reportheading" class="sectionheading">Report</p>
 				<div id="report"></div>
 			</div>
 		</form>

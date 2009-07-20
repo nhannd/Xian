@@ -46,7 +46,7 @@
 					var data = service.getData(request);
 
 					var report = data.GetReportDetailResponse.Report;
-					Preview.ReportPreview.create($("preview"), report);
+					Preview.ReportPreview.create($("previewSection"), report);
 
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
@@ -62,10 +62,7 @@
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<div id="notesSection"></div>
-			<div id="previewSection">
-				<p class="sectionheading">Report</p>
-				<div id="preview"/>
-			</div>
+			<div id="previewSection"></div>
 		</form>
 	</body>
 </html>

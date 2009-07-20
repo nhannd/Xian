@@ -49,18 +49,13 @@
 						return;
 					}
 
-					var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
-					Preview.BannerSection.create($("alertsSection"), "", "", "", orderAlerts);
-
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					if (orderDetail)
 					{
-						var showEnterCancelByStaff = true;
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, showEnterCancelByStaff);
+						var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
+						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, { ShowEnterCancelByStaff: true, Alerts: orderAlerts });
+						Preview.OrderedProceduresTable.create($("orderedProceduresSection"), orderDetail.Procedures);
 						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
-
-						// Use a custom procedures table for this page
-						initProcedureTable(orderDetail.Procedures);
 					}
 					else
 					{
@@ -73,85 +68,13 @@
 					Field.setValue($("myForm"), message);
 				}
 			}
-			
-			function initProcedureTable(procedures)
-			{
-				procedures = procedures || {};
-
-				var table = Table.createTable($("proceduresTable"), { editInPlace: false, flow: false },
-					[
-						{	label: "Procedure",
-							cellType: "html",
-							getValue: function(item) 
-							{
-								var html = "";
-								var formattedProcedureStatus = Preview.ProceduresTableHelper.formatProcedureStatus(item.Status, item.ScheduledStartTime, item.StartTime, item.CheckInTime, item.CheckOutTime);
-								
-								html += "<table>";
-								html += "<tr>";
-								html += "	<td class='sectionheading' colspan='4'>" + Ris.formatProcedureName(item) + "</td>";
-								html += "</tr>";
-								html += "<tr>";
-								html += "	<td width='120' class='propertyname'>Status</td>";
-								html += "	<td width='200'>" + formattedProcedureStatus + "</td>";
-								html += "	<td width='120' class='propertyname'>Performing Facility</td>";
-								html += "	<td width='200'>" + item.PerformingFacility.Name + "</td>";
-								html += "</tr>";
-								html += "<tr>";
-								html += "	<td width='120' class='propertyname'>Scheduled Start Time</td>";
-								html += "	<td width='200'>" + Ris.formatDateTime(item.ScheduledStartTime) + "</td>";
-								html += "	<td width='120' class='propertyname'>Check-In Time</td>";
-								html += "	<td width='200'>" + Ris.formatDateTime(item.CheckInTime) + "</td>";
-								html += "</tr>";
-								html += "<tr>";
-								html += "	<td width='120' class='propertyname'>Performing Start Time</td>";
-								html += "	<td width='200'>" + Ris.formatDateTime(item.StartTime) + "</td>";
-								html += "	<td width='120' class='propertyname'>Performing End Time</td>";
-								html += "	<td width='200'>" + Ris.formatDateTime(item.CheckOutTime) + "</td>";
-								html += "</tr>";
-								html += "<tr>";
-								html += "	<td width='120' class='propertyname'>Report Published Time</td>";
-								if(item.Status.Code == 'CA' || item.Status.Code == 'DC')
-								{
-									html += "	<td width='200'></td>";
-								}
-								else
-								{
-									html += "	<td width='200'>" + Ris.formatDateTime(item.EndTime) + "</td>";
-								}
-								html += "</tr>";
-								html += "<tr>";
-								html += "	<td width='120' class='propertyname'>Cancelled Time</td>";
-								if(item.Status.Code == 'CA' || item.Status.Code == 'DC')
-								{
-									html += "	<td width='200'>" + Ris.formatDateTime(item.EndTime) + "</td>";
-								}
-								else
-								{
-									html += "	<td width='200'></td>";
-								}
-								html += "</tr>";
-								html += "</table>";
-
-								return html;
-							}
-						}
-					]);
-
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems(procedures);
-			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<div id="alertsSection"></div>
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
-
-				<p class="sectionheading">Ordered Procedures</p>
-				<table id="proceduresTable"></table>
-
+				<div id="orderedProceduresSection"></div>
 				<div id="notesSection"></div>
 			</div>
 		</form>
