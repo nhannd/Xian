@@ -41,12 +41,13 @@
 						Field.setValue($("myForm"), "");
 						return;
 					}
-
+alert("here");
 					var visitDetail = data.GetVisitDetailResponse.Visit;
 					if(visitDetail)
 					{
-						Field.setValue($("VisitNumber"), Ris.formatMrn(visitDetail.VisitNumber));
-						Field.setValue($("Facility"), visitDetail.Facility.Name);
+						Preview.BannerSection.create($("VisitBanner"), Ris.formatMrn(visitDetail.VisitNumber), visitDetail.Facility.Name, "", null);
+						Preview.SectionContainer.create($("VisitDetailsSection"), "Visit Details");
+
 						Field.setValue($("VisitStatus"), visitDetail.Status.Value);
 						Field.setValue($("AdmitTime"), Ris.formatDateTime(visitDetail.AdmitTime));
 						Field.setValue($("DischargeTime"), Ris.formatDateTime(visitDetail.DischargeTime));
@@ -60,6 +61,15 @@
 						
 						var ambulatoryStatuses = String.combine(visitDetail.AmbulatoryStatuses.map(function(status) { return status.Value; }), ", ");
 						Field.setValue($("AmbulatoryStatuses"), ambulatoryStatuses);
+
+						if (visitDetail.ExtendedProperties)
+						{
+							Preview.SectionContainer.create($("PhysiciansSection"), "Physicians");
+							Field.setValue($("AttendingPhysician"), visitDetail.ExtendedProperties.AttendingPhysician);
+							Field.setValue($("ReferringPhysician"), visitDetail.ExtendedProperties.ReferringPhysician);
+							Field.setValue($("ConsultingPhysician"), visitDetail.ExtendedProperties.ConsultingPhysician);
+							Field.setValue($("AdmittingPhysician"), visitDetail.ExtendedProperties.AdmittingPhysician);
+						}
 					}
 				}
 				catch(e)
@@ -72,51 +82,70 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-			<div class="pageheading" id="VisitNumber"></div>
-			<div class="pageheading2" id="Facility"></div>
-			<div class="sectionheading">Visit Details</div>
-			<table>
-				<tr>
-					<td width="120" class="propertyname">Visit Status</td>
-					<td width="200"><div id="VisitStatus"/></td>
-					<td width="120" class="propertyname"></td>
-					<td width="200"></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Patient Class</td>
-					<td width="200"><div id="PatientClass"/></td>
-					<td width="120" class="propertyname">Patient Type</td>
-					<td width="200"><div id="PatientType"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Admission Type</td>
-					<td width="200"><div id="AdmissionType"/></td>
-					<td width="120" class="propertyname">Discharge Disposition</td>
-					<td width="200"><div id="DischargeDisposition"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Admit Date/Time</td>
-					<td width="200"><div id="AdmitTime"/></td>
-					<td width="120" class="propertyname">Discharge Date/Time</td>
-					<td width="200"><div id="DischargeTime"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Current Location</td>
-					<td width="200"><div id="CurrentLocation"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Pre-Admit Number</td>
-					<td><div id="PreAdmitNumber"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">VIP?</td>
-					<td><div id="VipFlag"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Ambulatory Statuses</td>
-					<td><div id="AmbulatoryStatuses"/></td>
-				</tr>
-			</table>
+			<div id="BannerSection">
+				<div id="VisitBanner"></div>
+			</div>
+			<div id="VisitDetailsSection">
+				<table>
+					<tr>
+						<td width="120" class="propertyname">Visit Status</td>
+						<td width="200"><div id="VisitStatus"/></td>
+						<td width="120" class="propertyname"></td>
+						<td width="200"></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Patient Class</td>
+						<td width="200"><div id="PatientClass"/></td>
+						<td width="120" class="propertyname">Patient Type</td>
+						<td width="200"><div id="PatientType"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Admission Type</td>
+						<td width="200"><div id="AdmissionType"/></td>
+						<td width="120" class="propertyname">Discharge Disposition</td>
+						<td width="200"><div id="DischargeDisposition"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Admit Date/Time</td>
+						<td width="200"><div id="AdmitTime"/></td>
+						<td width="120" class="propertyname">Discharge Date/Time</td>
+						<td width="200"><div id="DischargeTime"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Current Location</td>
+						<td width="200"><div id="CurrentLocation"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Pre-Admit Number</td>
+						<td><div id="PreAdmitNumber"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">VIP?</td>
+						<td><div id="VipFlag"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Ambulatory Statuses</td>
+						<td><div id="AmbulatoryStatuses"/></td>
+					</tr>
+				</table>
+			</div>
+			
+			<div id="PhysiciansSection">
+				<table>
+					<tr>
+						<td width="120" class="propertyname">Attending Physician</td>
+						<td><div id="AttendingPhysician"/></td>
+						<td width="120" class="propertyname">Referring Physician</td>
+						<td><div id="ReferringPhysician"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Consulting Physician</td>
+						<td><div id="ConsultingPhysician"/></td>
+						<td width="120" class="propertyname">Admitting Physician</td>
+						<td><div id="AdmittingPhysician"/></td>
+					</tr>
+				</table>
+			</div>
 		</form>
 	</body>
 </html>

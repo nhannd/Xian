@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,43 +29,46 @@
 
 #endregion
 
-using System.Windows.Forms;
-using ClearCanvas.Desktop.View.WinForms;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="BiographyOverviewComponent"/>
+    /// Provides application settings for banner.
     /// </summary>
-    public partial class BiographyOverviewComponentControl : ApplicationComponentUserControl
+    /// <remarks>
+    /// This code is adapted from the Visual Studio generated template code;  the generated code has been removed from the project.  Additional 
+    /// settings need to be manually added to this class.
+    /// </remarks>
+    [SettingsGroupDescription("")]
+    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+    public sealed class BannerSettings : global::System.Configuration.ApplicationSettingsBase
     {
-        private readonly BiographyOverviewComponent _component;
+        private static BannerSettings defaultInstance = ((BannerSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new BannerSettings())));
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public BiographyOverviewComponentControl(BiographyOverviewComponent component)
-            : base(component)
+        private BannerSettings()
         {
-            InitializeComponent();
-            _component = component;
-
-            _overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight; 
-
-            Control banner = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
-            banner.Dock = DockStyle.Fill;
-            _bannerPanel.Controls.Add(banner);
-
-            Control content = (Control)_component.ContentComponentHost.ComponentView.GuiElement;
-            content.Dock = DockStyle.Fill;
-            _contentPanel.Controls.Add(content);
-
-			this.Load += BiographyOverviewComponentControl_Load;
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
 
-		private void BiographyOverviewComponentControl_Load(object sender, System.EventArgs e)
-		{
-			_component.OnControlLoad();
-		}
+        public static BannerSettings Default {
+            get {
+                return defaultInstance;
+            }
+        }
+
+        /// <summary>
+        /// Defined the height of banner in pixels.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Defined the height of banner in pixels.")]
+        [global::System.Configuration.DefaultSettingValueAttribute("95")]
+        public int BannerHeight {
+            get {
+                return ((int)(this["BannerHeight"]));
+            }
+        }
     }
 }

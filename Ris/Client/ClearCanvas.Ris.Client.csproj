@@ -48,6 +48,7 @@
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="AsyncLoader.cs" />
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="BannerSettings.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
     <Compile Include="BiographyPublishReportTools.cs" />

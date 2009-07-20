@@ -214,6 +214,11 @@ namespace ClearCanvas.Ris.Client
             get { return _contentComponentHost; }
         }
 
+        public int BannerHeight
+        {
+            get { return BannerSettings.Default.BannerHeight; }
+        }
+
         #endregion
 
 		// Bug 4786: TableView has trouble selecting items other than the first item

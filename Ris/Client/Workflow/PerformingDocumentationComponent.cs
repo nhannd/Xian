@@ -244,6 +244,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         #region Presentation Model Methods
 
+        public int BannerHeight
+        {
+            get { return BannerSettings.Default.BannerHeight; }
+        }
+
         public ApplicationComponentHost BannerHost
         {
             get { return _bannerComponentHost; }

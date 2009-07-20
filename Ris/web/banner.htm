@@ -53,12 +53,13 @@
 					// update patient demography
 					var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
 					var patientName = Ris.formatPersonName(patientProfile.Name);
+					var patientMrn = Ris.formatMrn(patientProfile.Mrn);
 					if (patientProfile)
 					{
 						Field.setValue($("name"), patientName);
-						$("name").title = patientName;
-						Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
-						$("mrn").title =  Ris.formatMrn(patientProfile.Mrn);
+						Field.setTooltip($("name"), patientName);
+						Field.setValue($("mrn"), patientMrn);
+						Field.setTooltip($("mrn"), patientMrn);
 						Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 						Field.setValue($("agesex"), 
@@ -72,16 +73,15 @@
 						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+						Field.setTooltip($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 						Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
+						Field.setTooltip($("DiagnosticService"), orderDetail.DiagnosticService.Name);
 
-						var orderedProcedures = String.combine(
-							orderDetail.Procedures.select(
+						var orderedProcedures = orderDetail.Procedures.select(
 								function(rp) { return rp.Status.Code != "CA" && rp.Status.Code != "DC"; }
-							).map(
-								function(rp) { return Ris.formatProcedureName(rp); }
-							), 
-							", ");
-						Field.setValue($("Procedures"), orderedProcedures);
+							);
+
+						setProceduresField($("Procedure"), orderedProcedures);
 					}
 					else
 					{
@@ -106,12 +106,42 @@
 				}
 				
 			}
-		</script>
+			
+			function setProceduresField(element, procedures)
+			{
+				var procedureNames = procedures.map(
+						function(rp) { return Ris.formatProcedureName(rp); }
+					);
+
+				var displayName = "";
+				var tooltip = "";
+				if (procedureNames.length > 2)
+				{
+					displayName += procedureNames[0] + ", " + procedureNames[1] + ", ";
+					displayName += "more...";
+					tooltip = String.combine(procedureNames, ", ");
+				}
+				else
+				{
+					displayName = String.combine(procedureNames, ", ");
+					tooltip = displayName;
+				}
+
+				Field.setTooltip($("Procedures"), tooltip);
+				Field.setValue($("Procedures"), displayName);
+			}		</script>
 		<style>
+			.singleLineNoWrap {
+				overflow:hidden; 
+				text-overflow:ellipsis; 
+				white-space: nowrap;
+			}
+
 			.patientnameheading {
 				overflow:hidden; 
 				text-overflow:ellipsis; 
 				white-space: nowrap;
+				width:250px;
 			}
 
 			.patientmrnheading {
@@ -119,43 +149,33 @@
 				text-overflow:ellipsis; 
 				white-space: nowrap;
 			}
-			
-			.nameMrnColumn {
-				overflow:hidden;
-				float:left;
-				text-overflow: ellipsis;
-				width: 18%;
-			}
 		</style>
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<table width="100%" cellspacing="0" cellpadding="0" border="0">
 				<tr><td class="GlobalPatientBanner_topleft"></td><td class="GlobalPatientBanner_top"></td><td class="GlobalPatientBanner_topright"></td></tr>
-				<tr><td class="GlobalPatientBanner_left"></td><td class="GlobalPatientBanner_content">			
+				<tr><td class="GlobalPatientBanner_left"></td><td class="GlobalPatientBanner_content">
 					<div class="GlobalPatientBanner_Container">
-			<span class="nameMrnColumn">
-				<div class="patientnameheading" id="name"></div>
-				<div class="patientmrnheading"id="mrn"></div>
-			</span>
-  			<table border="0" id="bannerTable" width="80%" style="{position:absolute; top: 0px;}">
-				<tr>
-					<td>
-						<table border="0" id="profileTable">
+						<table border="0" width="100%">
 							<tr>
+								<td>
+									<div class="patientnameheading" id="name"></div>
+									<div class="patientmrnheading"id="mrn"></div>
+								</td>
 								<td>
 									<table border="0" id="profileTable">
 										<tr>
-											<td class="propertyname">Healthcard #</td>
-											<td class="propertyvalue"><div id="healthcard"/></td>
+											<td class="propertyname" nowrap>Healthcard #</td>
+											<td class="propertyvalue" nowrap><div id="healthcard"/></td>
 										</tr>
 										<tr>
-											<td class="propertyname">Date of Birth</td>
-											<td class="propertyvalue"><div id="dateOfBirth"/></td>
+											<td class="propertyname" nowrap>Date of Birth</td>
+											<td class="propertyvalue" nowrap><div id="dateOfBirth"/></td>
 										</tr>
 										<tr>
-											<td class="propertyname">Age / Sex</td>
-											<td class="propertyvalue"><div id="agesex"/></td>
+											<td class="propertyname" nowrap>Age / Sex</td>
+											<td class="propertyvalue" nowrap><div id="agesex"/></td>
 										</tr>
 									</table>
 								</td>
@@ -163,36 +183,32 @@
 								<td>
 									<table border="0" id="orderTable">
 										<tr>
-											<td class="propertyname">Accession #</td>
-											<td class="propertyvalue"><div id="AccessionNumber"/></td>
-											<td class="propertyname">Priority</td>
-											<td class="propertyvalue"><div id="OrderPriority"/></td>
+											<td class="propertyname" nowrap>Accession #</td>
+											<td class="propertyvalue" nowrap><div id="AccessionNumber"/></td>
+											<td class="propertyname" nowrap>Imaging Service</td>
+											<td class="propertyvalue"><div id="DiagnosticService" class="singleLineNoWrap" style="width:250px"/></td>
 										</tr>
 										<tr>
-											<td class="propertyname">Ordering Physician</td>
-											<td class="propertyvalue"><div id="OrderingPhysician"/></td>
+											<td class="propertyname" nowrap>Ordering Physician</td>
+											<td class="propertyvalue"><div id="OrderingPhysician" class="singleLineNoWrap" style="width:120px"/></td>
 											<td class="propertyname" rowspan="2">Procedures</td>
 											<td class="propertyvalue" rowspan="2"><div id="Procedures"/></td>
 										</tr>
 										<tr>
-											<td class="propertyname">Imaging Service</td>
-											<td class="propertyvalue"><div id="DiagnosticService"/></td>
+											<td class="propertyname">Priority</td>
+											<td class="propertyvalue"><div id="OrderPriority"/></td>
 										</tr>
 									</table>
 								</td>
+								<td class="alerticons" align="right" >
+									<div id="alerts" />
+								</td>
 							</tr>
 						</table>
-					</td>
-					<td align="right" class="alerticons">
-						<div id="alerts" />
-					</td>
-				</tr>
-			</table>
-								</div>
+					</div>
 					</td><td class="GlobalPatientBanner_right"></td></tr>
 				<tr><td class="GlobalPatientBanner_bottomleft"></td><td class="GlobalPatientBanner_bottom"></td><td class="GlobalPatientBanner_bottomright"></td></tr>								
 			</table>
-
 		</form>
 	</body>
 </html>

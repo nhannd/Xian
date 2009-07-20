@@ -174,6 +174,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+        public int BannerHeight
+        {
+            get { return BannerSettings.Default.BannerHeight; }
+        }
+
 		private ReportingWorklistItem WorklistItem
 		{
 			get { return _worklistItemManager.WorklistItem; }

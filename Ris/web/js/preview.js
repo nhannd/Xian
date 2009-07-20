@@ -235,12 +235,11 @@ Preview.ProceduresTableHelper = function () {
 			parentElement.appendChild(heading);
 		},
 			
-		addTable: function(parentElement, className)
+		addTable: function(parentElement)
 		{
 			var htmlTableContainer = document.createElement("DIV");
 			htmlTableContainer.className = "ProceduresTableContainer";
 			var htmlTable = document.createElement("TABLE");
-			if(className != null && className != "") htmlTable.className = className;
 			htmlTableContainer.appendChild(htmlTable);
 			parentElement.appendChild(htmlTableContainer);
 			var body = document.createElement("TBODY");
@@ -362,7 +361,7 @@ Preview.ImagingServiceTable = function () {
 			parentElement.style.display = 'block';
 		}
 
-		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 			 [
@@ -436,12 +435,12 @@ Preview.ProceduresTable = function () {
 				parentElement.style.display = 'block';
 			}
 			
-			if(!!addSectionHeading)
+			if(addSectionHeading)
 			{
 				Preview.ProceduresTableHelper.addHeading(parentElement, 'Procedures');
 			}
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -565,7 +564,7 @@ Preview.ProtocolProceduresTable = function () {
 						});
 				});
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -748,7 +747,7 @@ Preview.ReportingProceduresTable = function () {
 						});
 				});
 
-			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "ProceduresTable");
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					// {   label: "Image Availability",
@@ -1036,7 +1035,7 @@ Preview.ReportPreview = function () {
 	}
 
 	return {
-		create: function(element, report)
+		create: function(element, report, options)
 		{
 			if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 				return "";
@@ -1054,22 +1053,30 @@ Preview.ReportPreview = function () {
 					var parsedReportContent = _parseReportContent(addendumContent);
 					if (parsedReportContent)
 					{
+						formattedReport += "<div class='reportPreview'>";
 						formattedReport += "<b>Addendum " + _formatReportStatus(addendumPart, true) + ": </b><br><br>";
 						formattedReport += parsedReportContent;
 						formattedReport += _formatReportPerformer(addendumPart);
 						formattedReport += "<br><br>";
+						formattedReport += "</div>";
 					}
 				}
 			}
 
 			var part0 = report.Parts[0];
 			var reportContent = part0 && part0.ExtendedProperties && part0.ExtendedProperties.ReportContent ? part0.ExtendedProperties.ReportContent : "";
+			formattedReport += "<div class='reportPreview'>";
 			formattedReport += "<b>Report" + _formatReportStatus(part0) + "</b>";
 			formattedReport += "<br><br>";
 			formattedReport += _parseReportContent(reportContent);
 			formattedReport += _formatReportPerformer(part0);
+			formattedReport += "<br><br>";
+			formattedReport += "</div>";
 
 			element.innerHTML = formattedReport;
+			
+			if (options.UseSectionContainer)
+				Preview.SectionContainer.create(element, "Report");
 		},
 		
 		toggleTranscriptionErrors: function(hasErrors)
@@ -1086,10 +1093,6 @@ Preview.ImagingServiceSection = function () {
 	var _html = 
 		'<div class="SectionTableContainer">' +
 		'<table width="100%" border="0" cellspacing="5">'+
-		'	<tr id="EnteredBySection">'+
-		'		<td width="120" class="propertyname">Entered By</td>'+
-		'		<td width="200" colspan="3"><div id="EnteredBy"/></td>'+
-		'	</tr>'+
 		'	<tr>'+
 		'		<td width="120" class="propertyname">Accession Number</td>'+
 		'		<td width="200"><div id="AccessionNumber"/></td>'+
@@ -1112,6 +1115,14 @@ Preview.ImagingServiceSection = function () {
 		'		<td width="120" class="propertyname">Indication</td>'+
 		'		<td colspan="4"><div id="ReasonForStudy"/></td>'+
 		'	</tr>'+
+		'	<tr id="EnteredBySection">'+
+		'		<td width="120" class="propertyname">Entered By</td>'+
+		'		<td width="200" colspan="3"><div id="EnteredBy"/></td>'+
+		'	</tr>'+
+		'	<tr id="AlertsSection">'+
+		'		<td width="120" class="propertyname">Alerts</td>'+
+		'		<td width="200" colspan="3"><div id="Alerts"/></td>'+
+		'	</tr>'+
 		'	<tr id="CancelSection">'+
 		'		<td colspan="4">'+
 		'			<p class="subsectionheading">Order Cancelled</p>'+
@@ -1130,7 +1141,7 @@ Preview.ImagingServiceSection = function () {
 		'</table></div>';
 		
 	return {
-		create: function (element, orderDetail, showEnterCancelByStaff)
+		create: function (element, orderDetail, options)
 		{
 			if(orderDetail == null)
 				return;
@@ -1155,10 +1166,21 @@ Preview.ImagingServiceSection = function () {
 				Field.show($("CancelSection"), false);
 			}
 			
-			if (!showEnterCancelByStaff)
+			Field.show($("EnteredBySection"), false);
+			Field.show($("CancelledBySection"), false);
+			Field.show($("AlertsSection"), false);
+			if (options)
 			{
-				Field.show($("EnteredBySection"), false);
-				Field.show($("CancelledBySection"), false);
+				Field.show($("EnteredBySection"), options.ShowEnterCancelByStaff);
+				Field.show($("CancelledBySection"), options.ShowEnterCancelByStaff);
+				
+				if (options.Alerts && options.Alerts.length > 0)
+				{
+					Field.show($("AlertsSection"), true);
+					var alertHtml = "";
+					options.Alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item); });
+					Field.setPreFormattedValue($("Alerts"), alertHtml);
+				}
 			}
 			
 			Preview.SectionContainer.create(element, "Imaging Service");
@@ -1372,7 +1394,6 @@ Preview.OrderNoteSection = function() {
 	return {
 		create: function(element, note)
 		{
-
 			if(note == null)
 				return;
 

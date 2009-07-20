@@ -51,6 +51,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_component = component;
             InitializeComponent();
 
+            _overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight; 
+
 			Control banner = (Control)_component.BannerHost.ComponentView.GuiElement;
 			banner.Dock = DockStyle.Fill;
 			_bannerPanel.Controls.Add(banner);

@@ -50,8 +50,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			: base(component)
 		{
 			InitializeComponent();
-
 			_component = component;
+
+            _overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight; 
 
 			Control orderSummary = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
 			orderSummary.Dock = DockStyle.Fill;

@@ -27,7 +27,7 @@ p {
 
 table {
 	border-collapse:collapse;
-	width:98%;
+	width:100%;
 	margin-top: 0;
 	margin-left: 0;
 }
@@ -56,11 +56,6 @@ div.addDeleteButtons {
 	 /*#EEEEEE url(../images/ProceduresTableHeadingBackground.png) repeat-x bottom;*/
 	border-bottom: solid 1px #99AACC;
 	vertical-align: text-bottom;
-}
-
-.ProceduresTable
-{
-	width: 100%;
 }
 
 .ProceduresTable td
@@ -385,6 +380,13 @@ img {
 
 input.unresolved {
 	background-color: #FFF5C3;
+}
+
+div.reportPreview {
+	width: 93%;
+	margin-left: 1em;
+	padding: 0.0em 0.5em 0.0em 0.5em;
+	text-align: justify;
 }
 
 .SectionContainer
