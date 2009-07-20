@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,27 +29,41 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
-	[ExtensionOf(typeof(FolderPickerExtensionPoint))]
-	public class FolderPicker : IFolderPicker {
-		#region IFolderPicker Members
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStripFilterItems
+{
+	[ExtensionOf(typeof (FilterMenuActionViewExtensionPoint))]
+	public class LayoutChangerActionView : WinFormsView, IActionView
+	{
+		private FilterMenuAction _action;
+		private FilterMenuToolStripItem _control;
 
-		public string GetFolder() {
-			using(FolderBrowserDialog dlg = new FolderBrowserDialog())
-			{
-				if (dlg.ShowDialog() == DialogResult.OK)
-					return dlg.SelectedPath;
-
-				return null;
-			}
+		/// <summary>
+		/// Called by the framework to set the action that the view looks at.
+		/// </summary>
+		public void SetAction(IAction action)
+		{
+			_action = (FilterMenuAction) action;
 		}
 
-		#endregion
+		/// <summary>
+		/// Gets the <see cref="System.Windows.Forms.Control"/> that implements this view, allowing
+		/// a parent view to insert the control as one of its children.
+		/// </summary>
+		public override object GuiElement
+		{
+			get
+			{
+				if (_control == null)
+				{
+					_control = new FilterMenuToolStripItem(_action);
+				}
+				return _control;
+			}
+		}
 	}
 }

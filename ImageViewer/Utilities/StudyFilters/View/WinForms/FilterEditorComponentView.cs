@@ -29,12 +29,14 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 {
+	[Obsolete]
 	[ExtensionOf(typeof(FilterEditorComponentViewExtensionPoint))]
 	internal class FilterEditorComponentView : WinFormsView, IApplicationComponentView
 	{

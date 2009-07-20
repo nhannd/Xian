@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get { return base.Context.Component; }
 		}
 
-		protected StudyFilterColumnCollection Columns
+		protected IStudyFilterColumnCollection Columns
 		{
 			get { return base.Context.Component.Columns; }
 		}

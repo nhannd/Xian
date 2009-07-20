@@ -36,6 +36,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
 	[ButtonAction("show", DefaultToolbarActionSite + "/ToolbarAddRemoveColumns", "Show")]
+	[IconSet("show", IconScheme.Colour, "Icons.AddRemoveColumnsSmall.png", "Icons.AddRemoveColumnsSmall.png", "Icons.AddRemoveColumnsSmall.png")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class AddRemoveColumnsTool : StudyFilterTool
 	{
@@ -47,10 +48,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			if (action == DialogBoxAction.Ok)
 			{
 				base.Columns.Clear();
-				foreach (StudyFilterColumn column in component.Columns)
+				foreach (StudyFilterColumn.ColumnDefinition column in component.Columns)
 				{
-					base.Columns.Add(column);
+					base.Columns.Add(column.Create());
 				}
+
+				base.Component.Refresh();
 			}
 		}
 	}

@@ -40,14 +40,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 	public sealed class FilterEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> { }
 
 	[AssociateView(typeof(FilterEditorComponentViewExtensionPoint))]
-	public class FilterEditorComponent : ApplicationComponent, IStudyFilterColumnCollectionCallbacks
+	public class FilterEditorComponent : ApplicationComponent
 	{
-		private readonly StudyFilterColumnCollection _availableColumns;
+		private readonly List<string> _availableColumns;
 		private readonly List<FilterNodeBase> _filters;
 
 		public FilterEditorComponent()
 		{
-			_availableColumns = new StudyFilterColumnCollection(this);
+			_availableColumns = new List<string>();
 			_filters = new List<FilterNodeBase>();
 		}
 
@@ -56,13 +56,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		{
 			foreach (StudyFilterColumn column in columns)
 			{
-				_availableColumns.Add(column);
+				_availableColumns.Add(column.Key);
 			}
 
 			_filters.AddRange(filters);
 		}
 
-		public StudyFilterColumnCollection AvailableColumns
+		public IList<string> AvailableColumns
 		{
 			get { return _availableColumns; }
 		}
@@ -71,14 +71,5 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		{
 			get { return _filters; }
 		}
-
-		#region IStudyFilterColumnCollectionCallbacks Members
-
-		void IStudyFilterColumnCollectionCallbacks.ColumnInserted(int index, StudyFilterColumn newColumn) {}
-		void IStudyFilterColumnCollectionCallbacks.ColumnRemoved(int index, StudyFilterColumn oldColumn) {}
-		void IStudyFilterColumnCollectionCallbacks.ColumnChanged(int index, StudyFilterColumn oldColumn, StudyFilterColumn newColumn) {}
-		void IStudyFilterColumnCollectionCallbacks.ColumnsChanged(IEnumerable<StudyFilterColumn> newColumns) {}
-
-		#endregion
 	}
 }

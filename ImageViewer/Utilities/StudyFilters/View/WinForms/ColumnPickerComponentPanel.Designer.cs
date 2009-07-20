@@ -254,6 +254,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms {
 			this._lstSpecialColumns.Name = "_lstSpecialColumns";
 			this._lstSpecialColumns.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this._lstSpecialColumns.Size = new System.Drawing.Size(276, 82);
+			this._lstSpecialColumns.Sorted = true;
 			this._lstSpecialColumns.TabIndex = 0;
 			this._lstSpecialColumns.DoubleClick += new System.EventHandler(this._lstSpecialColumns_DoubleClick);
 			this._lstSpecialColumns.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this._lstSpecialColumns_PreviewKeyDown);

@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
 
 		public override bool Evaluate(StudyItem item)
 		{
-			return base.Column.GetValue(item).CompareTo(_compare) > 0;
+			return base.Column.GetText(item).CompareTo(_compare) > 0;
 		}
 
 		public override string ToString()
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
 
 		public override bool Evaluate(StudyItem item)
 		{
-			return base.Column.GetValue(item).CompareTo(_compare) < 0;
+			return base.Column.GetText(item).CompareTo(_compare) < 0;
 		}
 
 		public override string ToString()
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
 
 		public override bool Evaluate(StudyItem item)
 		{
-			return base.Column.GetValue(item).CompareTo(_compare) >= 0;
+			return base.Column.GetText(item).CompareTo(_compare) >= 0;
 		}
 
 		public override string ToString()
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
 
 		public override bool Evaluate(StudyItem item)
 		{
-			return base.Column.GetValue(item).CompareTo(_compare) <= 0;
+			return base.Column.GetText(item).CompareTo(_compare) <= 0;
 		}
 
 		public override string ToString()
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
 
 		public override bool Evaluate(StudyItem item)
 		{
-			return base.Column.GetValue(item).StartsWith(_compare);
+			return base.Column.GetText(item).StartsWith(_compare);
 		}
 
 		public override string ToString()
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
 
 		public override bool Evaluate(StudyItem item)
 		{
-			return base.Column.GetValue(item).EndsWith(_compare);
+			return base.Column.GetText(item).EndsWith(_compare);
 		}
 
 		public override string ToString()

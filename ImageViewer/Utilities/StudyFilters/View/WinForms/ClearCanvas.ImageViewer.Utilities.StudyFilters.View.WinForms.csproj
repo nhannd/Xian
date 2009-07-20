@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeNotifier.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StudyFilterColumnHeaderCell.cs" />
     <Compile Include="ExportComponentPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -50,7 +57,6 @@
       <DependentUpon>FilterEditorComponentPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="FilterEditorComponentView.cs" />
-    <Compile Include="FolderPicker.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -74,6 +80,31 @@
     <Compile Include="StudyFilterTableView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ToolStripFilterItems\CompareFilterMenuActionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ToolStripFilterItems\CompareFilterMenuActionControl.Designer.cs">
+      <DependentUpon>CompareFilterMenuActionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolStripFilterItems\CompareFilterMenuActionView.cs" />
+    <Compile Include="ToolStripFilterItems\CompareFilterToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolStripFilterItems\ListFilterControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ToolStripFilterItems\ListFilterControl.Designer.cs">
+      <DependentUpon>ListFilterControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolStripFilterItems\ListFilterMenuActionView.cs" />
+    <Compile Include="ToolStripFilterItems\ListFilterToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolStripFilterItems\FilterMenuActionView.cs" />
+    <Compile Include="ToolStripFilterItems\FilterMenuToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UpdateColumnFilterTool.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -131,9 +162,22 @@
       <SubType>Designer</SubType>
       <DependentUpon>ColumnPickerComponentPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="StudyFilterComponentPanel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyFilterComponentPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolStripFilterItems\CompareFilterMenuActionControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CompareFilterMenuActionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ToolStripFilterItems\ListFilterControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ListFilterControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

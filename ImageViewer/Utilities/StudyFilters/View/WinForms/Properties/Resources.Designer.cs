@@ -60,5 +60,23 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Propertie
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (null).
+        /// </summary>
+        internal static string LabelNullValue {
+            get {
+                return ResourceManager.GetString("LabelNullValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select All.
+        /// </summary>
+        internal static string LabelSelectAll {
+            get {
+                return ResourceManager.GetString("LabelSelectAll", resourceCulture);
+            }
+        }
     }
 }

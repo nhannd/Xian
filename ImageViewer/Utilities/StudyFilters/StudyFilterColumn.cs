@@ -31,321 +31,200 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Dicom;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
-	public abstract class StudyFilterColumn : IEquatable<StudyFilterColumn>
+	public abstract partial class StudyFilterColumn : IComparer<StudyItem>
 	{
-		private StudyFilterColumn() {}
+		private IStudyFilter _owner;
+
+		protected StudyFilterColumn() {}
+
+		public IStudyFilter Owner
+		{
+			get { return _owner; }
+			internal set
+			{
+				if (_owner != value)
+				{
+					if (_owner != null)
+					{
+						_owner.ItemAdded -= Owner_ItemAdded;
+						_owner.ItemRemoved -= Owner_ItemRemoved;
+
+						// dispose filter root after disposing tools, since some tools might hold references to the filter root
+						this.DisposeTools();
+						this.Owner.FilterPredicates.Remove(_columnFilterRoot);
+						_columnFilterRoot = null;
+					}
+
+					_owner = value;
+
+					if (_owner != null)
+					{
+						_columnFilterRoot = new ColumnRootFilterPredicate();
+						this.Owner.FilterPredicates.Add(_columnFilterRoot);
+
+						_owner.ItemAdded += Owner_ItemAdded;
+						_owner.ItemRemoved += Owner_ItemRemoved;
+					}
+
+					this.OnOwnerChanged();
+				}
+			}
+		}
 
 		public abstract string Name { get; }
 
-		public override sealed bool Equals(object obj)
+		public abstract string Key { get; }
+
+		public virtual string GetText(StudyItem item)
 		{
-			if (obj is StudyFilterColumn)
-				return this.Equals((StudyFilterColumn) obj);
+			object value = this.GetValue(item);
+			if (value == null)
+				return string.Empty;
+			return value.ToString();
+		}
+
+		public abstract object GetValue(StudyItem item);
+
+		public abstract Type GetValueType();
+
+		public virtual bool Parse(string input, out object output)
+		{
+			output = null;
 			return false;
 		}
 
-		public override int GetHashCode()
+		public virtual int Compare(StudyItem x, StudyItem y)
 		{
-			return base.GetHashCode();
+			return 0;
 		}
-
-		public abstract string Key { get; }
-
-		public abstract bool Equals(StudyFilterColumn other);
-
-		public abstract string GetValue(StudyItem item);
 
 		public override sealed string ToString()
 		{
 			return this.Name;
 		}
 
-		internal abstract TableColumnBase<StudyItem> CreateColumn();
+		internal abstract TableColumnBase<StudyItem> CreateTableColumn();
 
-		public static StudyFilterColumn GetColumn(string key)
+		#region Event Handling
+
+		private void Owner_ItemAdded(object sender, EventArgs e)
 		{
-			StudyFilterColumn column = CollectionUtils.SelectFirst(GetSpecialColumns(), delegate(StudyFilterColumn test) { return test.Key == key; });
-			if (column != null)
-				return column;
-
-			try
-			{
-				uint dicomTag = uint.Parse(key, NumberStyles.AllowHexSpecifier);
-				return new DicomTagColumn(dicomTag);
-			}
-			catch (Exception) {}
-
-			return null;
+			this.OnOwnerItemAdded();
 		}
 
-		public static StudyFilterColumn GetDicomTagColumn(uint dicomTag)
+		private void Owner_ItemRemoved(object sender, EventArgs e)
 		{
-			return new DicomTagColumn(dicomTag);
+			this.OnOwnerItemRemoved();
 		}
 
-		public static StudyFilterColumn GetDicomTagColumn(DicomTag dicomTag)
+		protected virtual void OnOwnerItemAdded() {}
+
+		protected virtual void OnOwnerItemRemoved() {}
+
+		protected virtual void OnOwnerChanged() {}
+
+		#endregion
+
+		#region Tools and Actions
+
+		private ToolSet _tools;
+		private ActionModelNode _actionModel;
+
+		public ToolSet Tools
 		{
-			return GetDicomTagColumn(dicomTag.TagValue);
-		}
-
-		public static IEnumerable<StudyFilterColumn> GetSpecialColumns()
-		{
-			yield return Filename;
-			yield return Directory;
-			yield return Path;
-			yield return Extension;
-			yield return FileSize;
-		}
-
-		public static readonly StudyFilterColumn Filename = new FilenameColumn();
-		public static readonly StudyFilterColumn Directory = new DirectoryColumn();
-		public static readonly StudyFilterColumn Path = new PathColumn();
-		public static readonly StudyFilterColumn Extension = new ExtensionColumn();
-		public static readonly StudyFilterColumn FileSize = new FileSizeColumn();
-
-		private class DicomTagColumn : StudyFilterColumn
-		{
-			private readonly uint _dicomTag;
-			private readonly string _tagName;
-
-			public DicomTagColumn(uint dicomTag)
+			get
 			{
-				_dicomTag = dicomTag;
+				if (_tools == null)
+					_tools = new ToolSet(new StudyFilterColumnToolExtensionPoint(), new ToolContext(this));
 
-				DicomTag tag = DicomTagDictionary.GetDicomTag(dicomTag);
-				if (tag == null)
-					_tagName = string.Format(SR.FormatUnknownDicomTag, (dicomTag >> 16) & 0x0000FFFF, dicomTag & 0x0000FFFF);
-				else if ((dicomTag & 0xFFE10000) == 0x60000000)
-					_tagName = string.Format(SR.FormatRepeatingDicomTag, tag.Name, (dicomTag >> 16) & 0x0000FFFF, dicomTag & 0x0000FFFF, ((dicomTag >> 16) & 0x000000FF)/2 + 1);
-				else
-					_tagName = string.Format(SR.FormatDicomTag, tag.Name, (dicomTag >> 16) & 0x0000FFFF, dicomTag & 0x0000FFFF);
-			}
-
-			public override string Name
-			{
-				get { return _tagName; }
-			}
-
-			public override string Key
-			{
-				get { return _dicomTag.ToString("x8"); }
-			}
-
-			public override int GetHashCode()
-			{
-				return BitConverter.ToInt32(BitConverter.GetBytes(_dicomTag ^ 0x752F9B6D), 0);
-			}
-
-			public override bool Equals(StudyFilterColumn other)
-			{
-				if (other is DicomTagColumn)
-					return this._dicomTag == ((DicomTagColumn) other)._dicomTag;
-				return false;
-			}
-
-			public override string GetValue(StudyItem item)
-			{
-				return item[_dicomTag];
-			}
-
-			internal override TableColumnBase<StudyItem> CreateColumn()
-			{
-				return new TableColumn<StudyItem, string>(_tagName, this.GetValue);
+				return _tools;
 			}
 		}
 
-		private class FileSizeColumn : StudyFilterColumn
+		public ActionModelNode FilterMenuModel
 		{
-			public override int GetHashCode()
+			get
 			{
-				return 0x5645E200;
-			}
+				if (_actionModel == null)
+					_actionModel = ActionModelRoot.CreateModel(this.GetType().Namespace, "studyfilters-columnfilters", this.Tools.Actions);
 
-			public override string Name
-			{
-				get { return SR.FileSize; }
-			}
-
-			public override string Key
-			{
-				get { return "FileSize"; }
-			}
-
-			public override bool Equals(StudyFilterColumn other)
-			{
-				return other is FileSizeColumn;
-			}
-
-			public override string GetValue(StudyItem item)
-			{
-				return item.File.Length.ToString();
-			}
-
-			internal override TableColumnBase<StudyItem> CreateColumn()
-			{
-				return new TableColumn<StudyItem, string>(this.Name, GetFileSizeValue, null, 1f, CompareFileSizeValues);
-			}
-
-			private static string GetFileSizeValue(StudyItem item)
-			{
-				long size = item.File.Length;
-
-				if (size < 768) // less than 768 bytes
-					return string.Format(SR.FormatFileSizeBytes, size);
-				else if (size < 786432) // between 768 bytes and 768 KiB
-					return string.Format(SR.FormatFileSizeKB, size/1024.0);
-				else if (size < 805306368) // between 768 KiB and 768 MiB
-					return string.Format(SR.FormatFileSizeMB, size/1048576.0);
-				else if (size < 824633720832) // between 768 MiB and 768 GiB
-					return string.Format(SR.FormatFileSizeGB, size/1073741824.0);
-
-				// and finally, in the event of having a file greater than 768 GiB...
-				return string.Format(SR.FormatFileSizeTB, size/1099511627776.0);
-			}
-
-			private static int CompareFileSizeValues(StudyItem x, StudyItem y)
-			{
-				return x.File.Length.CompareTo(y.File.Length);
+				return _actionModel;
 			}
 		}
 
-		private class FilenameColumn : StudyFilterColumn
+		private void DisposeTools()
 		{
-			public override string Name
-			{
-				get { return SR.Filename; }
-			}
+			// if column is removed from an owner, dispose any tools which are hanging on
+			if (_actionModel != null)
+				_actionModel = null;
 
-			public override string Key
+			if (_tools != null)
 			{
-				get { return "Filename"; }
-			}
-
-			public override int GetHashCode()
-			{
-				return 0x3CE181E1;
-			}
-
-			public override bool Equals(StudyFilterColumn other)
-			{
-				return other is FilenameColumn;
-			}
-
-			public override string GetValue(StudyItem item)
-			{
-				return item.File.Name;
-			}
-
-			internal override TableColumnBase<StudyItem> CreateColumn()
-			{
-				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
+				_tools.Dispose();
+				_tools = null;
 			}
 		}
 
-		private class PathColumn : StudyFilterColumn
+		private class ToolContext : IStudyFilterColumnToolContext
 		{
-			public override string Name
+			private readonly StudyFilterColumn _column;
+
+			public ToolContext(StudyFilterColumn column)
 			{
-				get { return SR.Path; }
+				_column = column;
 			}
 
-			public override string Key
+			public StudyFilterColumn Column
 			{
-				get { return "Path"; }
-			}
-
-			public override int GetHashCode()
-			{
-				return -0x2C08BB91;
-			}
-
-			public override bool Equals(StudyFilterColumn other)
-			{
-				return other is PathColumn;
-			}
-
-			public override string GetValue(StudyItem item)
-			{
-				return item.File.FullName;
-			}
-
-			internal override TableColumnBase<StudyItem> CreateColumn()
-			{
-				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
+				get { return _column; }
 			}
 		}
 
-		private class DirectoryColumn : StudyFilterColumn
+		#endregion
+
+		#region Column Filter
+
+		private ColumnRootFilterPredicate _columnFilterRoot;
+
+		public CompositeFilterPredicate ColumnFilterRoot
 		{
-			public override string Name
-			{
-				get { return SR.Directory; }
-			}
+			get { return _columnFilterRoot; }
+		}
 
-			public override string Key
-			{
-				get { return "Directory"; }
-			}
+		public bool IsColumnFiltered
+		{
+			get { return _columnFilterRoot != null && _columnFilterRoot.Predicates.Count > 0; }
+		}
 
-			public override int GetHashCode()
+		private void ClearColumnFilterRoot()
+		{
+			if(_columnFilterRoot != null && this.Owner != null)
 			{
-				return 0x032D888C;
-			}
-
-			public override bool Equals(StudyFilterColumn other)
-			{
-				return other is DirectoryColumn;
-			}
-
-			public override string GetValue(StudyItem item)
-			{
-				return item.File.DirectoryName;
-			}
-
-			internal override TableColumnBase<StudyItem> CreateColumn()
-			{
-				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
+				
+				_columnFilterRoot = null;
 			}
 		}
 
-		private class ExtensionColumn : StudyFilterColumn
+		private class ColumnRootFilterPredicate : CompositeFilterPredicate
 		{
-			public override string Name
+			public override bool Evaluate(StudyItem item)
 			{
-				get { return SR.Extension; }
-			}
-
-			public override string Key
-			{
-				get { return "Extension"; }
-			}
-
-			public override int GetHashCode()
-			{
-				return 0x146B4377;
-			}
-
-			public override bool Equals(StudyFilterColumn other)
-			{
-				return other is ExtensionColumn;
-			}
-
-			public override string GetValue(StudyItem item)
-			{
-				return item.File.Extension;
-			}
-
-			internal override TableColumnBase<StudyItem> CreateColumn()
-			{
-				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
+				foreach (FilterPredicate predicate in base.Predicates)
+				{
+					if (!predicate.Evaluate(item))
+						return false;
+				}
+				return true;
 			}
 		}
+
+		#endregion
 	}
 }

@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 {
@@ -41,28 +40,25 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 	{
 		private readonly ColumnPickerComponent _component;
 
-		private ColumnPickerComponentPanel()
+		public ColumnPickerComponentPanel(ColumnPickerComponent component)
 		{
 			InitializeComponent();
-		}
 
-		public ColumnPickerComponentPanel(ColumnPickerComponent component) : this()
-		{
 			_component = component;
 
-			foreach (StudyFilterColumn column in component.Columns)
+			foreach (StudyFilterColumn.ColumnDefinition column in component.Columns)
 			{
 				_lstSelectedColumns.Items.Add(column);
 			}
 
-			foreach (StudyFilterColumn column in StudyFilterColumn.GetSpecialColumns())
+			foreach (StudyFilterColumn.ColumnDefinition column in StudyFilterColumn.SpecialColumnDefinitions)
 			{
 				_lstSpecialColumns.Items.Add(column);
 			}
 
-			foreach (DicomTag dicomTag in DicomTagDictionary.GetDicomTagList())
+			foreach (StudyFilterColumn.ColumnDefinition column in StudyFilterColumn.DicomTagColumnDefinitions)
 			{
-				_lstDicomColumns.Items.Add(StudyFilterColumn.GetDicomTagColumn(dicomTag));
+				_lstDicomColumns.Items.Add(column);
 			}
 		}
 
@@ -74,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			{
 				foreach (object selectedItem in _lstSpecialColumns.SelectedItems)
 				{
-					StudyFilterColumn column = selectedItem as StudyFilterColumn;
+					StudyFilterColumn.ColumnDefinition column = selectedItem as StudyFilterColumn.ColumnDefinition;
 					if (column == null)
 						continue;
 					if (_lstSelectedColumns.Items.Contains(column))
@@ -117,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			{
 				foreach (object selectedItem in _lstDicomColumns.SelectedItems)
 				{
-					StudyFilterColumn column = selectedItem as StudyFilterColumn;
+					StudyFilterColumn.ColumnDefinition column = selectedItem as StudyFilterColumn.ColumnDefinition;
 					if (column == null)
 						continue;
 					if (_lstSelectedColumns.Items.Contains(column))
@@ -210,14 +206,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 				ushort element = ushort.Parse(_txtDicomTagElement.Text, NumberStyles.AllowHexSpecifier);
 				uint tag = (uint) (group << 16) + element;
 
-				StudyFilterColumn column = StudyFilterColumn.GetDicomTagColumn(tag);
+				StudyFilterColumn.ColumnDefinition column = StudyFilterColumn.GetColumnDefinition(tag);
 				if (_lstSelectedColumns.Items.Contains(column))
 					return;
 
 				_lstSelectedColumns.Items.Add(column);
 				_component.Columns.Add(column);
 			}
-			catch (Exception) {}
+			catch (FormatException) {}
 		}
 
 		private void _txtDicomTagGroup_TextChanged(object sender, EventArgs e)
@@ -269,12 +265,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 		{
 			if (_lstSelectedColumns.SelectedItems != null && _lstSelectedColumns.SelectedItems.Count > 0)
 			{
-				List<StudyFilterColumn> list = new List<StudyFilterColumn>();
+				List<StudyFilterColumn.ColumnDefinition> list = new List<StudyFilterColumn.ColumnDefinition>();
 				foreach (object column in _lstSelectedColumns.SelectedItems)
 				{
-					list.Add((StudyFilterColumn) column);
+					list.Add((StudyFilterColumn.ColumnDefinition) column);
 				}
-				foreach (StudyFilterColumn column in list)
+				foreach (StudyFilterColumn.ColumnDefinition column in list)
 				{
 					_lstSelectedColumns.Items.Remove(column);
 					_component.Columns.Remove(column);
@@ -288,7 +284,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			{
 				int index = _lstSelectedColumns.SelectedIndex;
 				int newIndex = index - 1;
-				StudyFilterColumn column = (StudyFilterColumn) _lstSelectedColumns.SelectedItem;
+				StudyFilterColumn.ColumnDefinition column = (StudyFilterColumn.ColumnDefinition) _lstSelectedColumns.SelectedItem;
 				if (newIndex >= 0)
 				{
 					_lstSelectedColumns.Items.RemoveAt(index);
@@ -306,7 +302,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			{
 				int index = _lstSelectedColumns.SelectedIndex;
 				int newIndex = index + 1;
-				StudyFilterColumn column = (StudyFilterColumn) _lstSelectedColumns.SelectedItem;
+				StudyFilterColumn.ColumnDefinition column = (StudyFilterColumn.ColumnDefinition) _lstSelectedColumns.SelectedItem;
 				if (newIndex < _lstSelectedColumns.Items.Count)
 				{
 					_lstSelectedColumns.Items.RemoveAt(index);

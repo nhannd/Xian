@@ -38,6 +38,7 @@ using ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 {
+	[Obsolete]
 	public partial class FilterEditorComponentPanel : UserControl
 	{
 		private readonly FilterEditorComponent _component;

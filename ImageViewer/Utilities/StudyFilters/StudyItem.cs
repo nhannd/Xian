@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Dicom;
 
@@ -51,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get { return _file; }
 		}
 
-		public string this[uint tag]
+		public DicomAttribute this[uint tag]
 		{
 			get
 			{
@@ -59,19 +60,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				if (!_dcf.DataSet.TryGetAttribute(tag, out attribute))
 				{
 					if (!_dcf.MetaInfo.TryGetAttribute(tag, out attribute))
-						return SR.LabelNonExistentValue;
+						return null;
 				}
-
-				if (attribute.IsEmpty)
-					return SR.LabelNonExistentValue;
-				if (attribute is DicomAttributeOB || attribute is DicomAttributeOF || attribute is DicomAttributeOW || attribute is DicomAttributeSQ)
-					return SR.LabelBinaryTagValue;
-				if (attribute is DicomAttributeUN)
-					return SR.LabelVRUnknown;
-				if (attribute.IsNull)
-					return SR.LabelNullTagValue;
-
-				return attribute.ToString();
+				return attribute;
 			}
 		}
 	}

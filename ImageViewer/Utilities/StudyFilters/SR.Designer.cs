@@ -70,11 +70,74 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CD-ROM Media.
+        /// </summary>
+        internal static string CDRomMedia {
+            get {
+                return ResourceManager.GetString("CDRomMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date Accessed.
+        /// </summary>
+        internal static string DateAccessed {
+            get {
+                return ResourceManager.GetString("DateAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date Created.
+        /// </summary>
+        internal static string DateCreated {
+            get {
+                return ResourceManager.GetString("DateCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date Modified.
+        /// </summary>
+        internal static string DateModified {
+            get {
+                return ResourceManager.GetString("DateModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Directory.
         /// </summary>
         internal static string Directory {
             get {
                 return ResourceManager.GetString("Directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drive.
+        /// </summary>
+        internal static string Drive {
+            get {
+                return ResourceManager.GetString("Drive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drive Format.
+        /// </summary>
+        internal static string DriveFormat {
+            get {
+                return ResourceManager.GetString("DriveFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drive Type.
+        /// </summary>
+        internal static string DriveType {
+            get {
+                return ResourceManager.GetString("DriveType", resourceCulture);
             }
         }
         
@@ -124,7 +187,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} ({1:x4},{2:x4}).
+        ///   Looks up a localized string similar to Fixed Media.
+        /// </summary>
+        internal static string FixedMedia {
+            get {
+                return ResourceManager.GetString("FixedMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {2} ({0:x4},{1:x4}).
         /// </summary>
         internal static string FormatDicomTag {
             get {
@@ -178,7 +250,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} #{3} ({1:x4},{2:x4}).
+        ///   Looks up a localized string similar to {2} #{3} ({0:x4},{1:x4}).
         /// </summary>
         internal static string FormatRepeatingDicomTag {
             get {
@@ -196,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (binary).
+        ///   Looks up a localized string similar to ({0} length={1}).
         /// </summary>
         internal static string LabelBinaryTagValue {
             get {
@@ -223,11 +295,47 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (VR=UN).
+        ///   Looks up a localized string similar to ({0} data).
+        /// </summary>
+        internal static string LabelVRIncorrect {
+            get {
+                return ResourceManager.GetString("LabelVRIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (UN data).
         /// </summary>
         internal static string LabelVRUnknown {
             get {
                 return ResourceManager.GetString("LabelVRUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Clear Filters.
+        /// </summary>
+        internal static string MenuClearFilters {
+            get {
+                return ResourceManager.GetString("MenuClearFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export &amp;Anonymized to....
+        /// </summary>
+        internal static string MenuExportAnonymized {
+            get {
+                return ResourceManager.GetString("MenuExportAnonymized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export &amp;Copy to....
+        /// </summary>
+        internal static string MenuExportCopy {
+            get {
+                return ResourceManager.GetString("MenuExportCopy", resourceCulture);
             }
         }
         
@@ -237,6 +345,105 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         internal static string MenuOpenInStudyFilters {
             get {
                 return ResourceManager.GetString("MenuOpenInStudyFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort &amp;Ascending.
+        /// </summary>
+        internal static string MenuSortAscending {
+            get {
+                return ResourceManager.GetString("MenuSortAscending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort &amp;A to Z.
+        /// </summary>
+        internal static string MenuSortAscendingLexically {
+            get {
+                return ResourceManager.GetString("MenuSortAscendingLexically", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by &amp;Increasing Order.
+        /// </summary>
+        internal static string MenuSortAscendingNumerically {
+            get {
+                return ResourceManager.GetString("MenuSortAscendingNumerically", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort &amp;Ascending.
+        /// </summary>
+        internal static string MenuSortAscendingSpatially {
+            get {
+                return ResourceManager.GetString("MenuSortAscendingSpatially", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort from Earliest to Latest.
+        /// </summary>
+        internal static string MenuSortAscendingTemporally {
+            get {
+                return ResourceManager.GetString("MenuSortAscendingTemporally", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort &amp;Descending.
+        /// </summary>
+        internal static string MenuSortDescending {
+            get {
+                return ResourceManager.GetString("MenuSortDescending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort &amp;Z to A.
+        /// </summary>
+        internal static string MenuSortDescendingLexically {
+            get {
+                return ResourceManager.GetString("MenuSortDescendingLexically", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by &amp;Descreasing Order.
+        /// </summary>
+        internal static string MenuSortDescendingNumerically {
+            get {
+                return ResourceManager.GetString("MenuSortDescendingNumerically", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort &amp;Descending.
+        /// </summary>
+        internal static string MenuSortDescendingSpatially {
+            get {
+                return ResourceManager.GetString("MenuSortDescendingSpatially", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort from Latest to Earliest.
+        /// </summary>
+        internal static string MenuSortDescendingTemporally {
+            get {
+                return ResourceManager.GetString("MenuSortDescendingTemporally", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Value Filters.
+        /// </summary>
+        internal static string MenuValueFilters {
+            get {
+                return ResourceManager.GetString("MenuValueFilters", resourceCulture);
             }
         }
         
@@ -268,11 +475,38 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Networked Media.
+        /// </summary>
+        internal static string NetworkMedia {
+            get {
+                return ResourceManager.GetString("NetworkMedia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Path.
         /// </summary>
         internal static string Path {
             get {
                 return ResourceManager.GetString("Path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RAM.
+        /// </summary>
+        internal static string RAM {
+            get {
+                return ResourceManager.GetString("RAM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removable Media.
+        /// </summary>
+        internal static string RemovableMedia {
+            get {
+                return ResourceManager.GetString("RemovableMedia", resourceCulture);
             }
         }
         
@@ -295,20 +529,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export....
-        /// </summary>
-        internal static string ToolbarAnonymizeExport {
-            get {
-                return ResourceManager.GetString("ToolbarAnonymizeExport", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit Filters.
         /// </summary>
         internal static string ToolbarEditFilters {
             get {
                 return ResourceManager.GetString("ToolbarEditFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        internal static string ToolbarExport {
+            get {
+                return ResourceManager.GetString("ToolbarExport", resourceCulture);
             }
         }
         
@@ -331,20 +565,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save To....
-        /// </summary>
-        internal static string ToolbarSaveTo {
-            get {
-                return ResourceManager.GetString("ToolbarSaveTo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Opens the selected DICOM files in a table for filtering purposes.
         /// </summary>
         internal static string TooltipOpenInStudyFilters {
             get {
                 return ResourceManager.GetString("TooltipOpenInStudyFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string Unknown {
+            get {
+                return ResourceManager.GetString("Unknown", resourceCulture);
             }
         }
     }

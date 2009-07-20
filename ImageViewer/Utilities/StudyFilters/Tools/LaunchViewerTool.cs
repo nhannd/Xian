@@ -31,11 +31,13 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
 	[ButtonAction("launch", DefaultToolbarActionSite + "/ToolbarLaunchInViewer", "Launch")]
+	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class LaunchViewerTool : StudyFilterTool
 	{

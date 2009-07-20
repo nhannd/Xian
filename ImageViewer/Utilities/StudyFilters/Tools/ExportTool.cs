@@ -41,12 +41,21 @@ using Path=System.IO.Path;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	[ButtonAction("export", DefaultToolbarActionSite + "/ToolbarAnonymizeExport", "Export")]
-	[ButtonAction("saveto", DefaultToolbarActionSite + "/ToolbarSaveTo", "SaveTo")]
+	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
+	[IconSet("export", IconScheme.Colour, "Icons.SaveSmall.png", "Icons.SaveSmall.png", "Icons.SaveSmall.png")]
+	[MenuAction("exportAnonymized", "studyfilters-exportdropdown/MenuExportAnonymized", "ExportAnonymized")]
+	[MenuAction("exportAnonymized", DefaultContextMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
+	[MenuAction("exportCopy", "studyfilters-exportdropdown/MenuExportCopy", "ExportCopy")]
+	[MenuAction("exportCopy", DefaultContextMenuActionSite + "/MenuExportCopy", "ExportCopy")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class ExportTool : StudyFilterTool
 	{
-		public void Export()
+		public ActionModelNode DropDownActionModel
+		{
+			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "studyfilters-exportdropdown", this.Actions); }
+		}
+
+		public void ExportAnonymized()
 		{
 			try
 			{
@@ -74,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			}
 		}
 
-		public void SaveTo()
+		public void ExportCopy()
 		{
 			try
 			{

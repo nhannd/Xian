@@ -120,8 +120,29 @@
   <data name="AddRemoveColumns" xml:space="preserve">
     <value>Add/Remove Columns</value>
   </data>
+  <data name="CDRomMedia" xml:space="preserve">
+    <value>CD-ROM Media</value>
+  </data>
+  <data name="DateAccessed" xml:space="preserve">
+    <value>Date Accessed</value>
+  </data>
+  <data name="DateCreated" xml:space="preserve">
+    <value>Date Created</value>
+  </data>
+  <data name="DateModified" xml:space="preserve">
+    <value>Date Modified</value>
+  </data>
   <data name="Directory" xml:space="preserve">
     <value>Directory</value>
+  </data>
+  <data name="Drive" xml:space="preserve">
+    <value>Drive</value>
+  </data>
+  <data name="DriveFormat" xml:space="preserve">
+    <value>Drive Format</value>
+  </data>
+  <data name="DriveType" xml:space="preserve">
+    <value>Drive Type</value>
   </data>
   <data name="EditFilters" xml:space="preserve">
     <value>Edit Filters</value>
@@ -138,8 +159,11 @@
   <data name="FileSize" xml:space="preserve">
     <value>File Size</value>
   </data>
+  <data name="FixedMedia" xml:space="preserve">
+    <value>Fixed Media</value>
+  </data>
   <data name="FormatDicomTag" xml:space="preserve">
-    <value>{0} ({1:x4},{2:x4})</value>
+    <value>{2} ({0:x4},{1:x4})</value>
   </data>
   <data name="FormatFileSizeBytes" xml:space="preserve">
     <value>{0} Bytes</value>
@@ -157,13 +181,14 @@
     <value>{0:f2} TiB</value>
   </data>
   <data name="FormatRepeatingDicomTag" xml:space="preserve">
-    <value>{0} #{3} ({1:x4},{2:x4})</value>
+    <value>{2} #{3} ({0:x4},{1:x4})</value>
   </data>
   <data name="FormatUnknownDicomTag" xml:space="preserve">
     <value>({0:x4},{1:x4})</value>
   </data>
   <data name="LabelBinaryTagValue" xml:space="preserve">
-    <value>(binary)</value>
+    <value>({0} length={1})</value>
+    <comment>{0}=actual VR, {1}=length</comment>
   </data>
   <data name="LabelNonExistentValue" xml:space="preserve">
     <value />
@@ -171,11 +196,57 @@
   <data name="LabelNullTagValue" xml:space="preserve">
     <value>(null)</value>
   </data>
+  <data name="LabelVRIncorrect" xml:space="preserve">
+    <value>({0} data)</value>
+    <comment>{0}=actual VR, {1}=expected VR</comment>
+  </data>
   <data name="LabelVRUnknown" xml:space="preserve">
-    <value>(VR=UN)</value>
+    <value>(UN data)</value>
+  </data>
+  <data name="MenuClearFilters" xml:space="preserve">
+    <value>&amp;Clear Filters</value>
+  </data>
+  <data name="MenuExportAnonymized" xml:space="preserve">
+    <value>Export &amp;Anonymized to...</value>
+  </data>
+  <data name="MenuExportCopy" xml:space="preserve">
+    <value>Export &amp;Copy to...</value>
   </data>
   <data name="MenuOpenInStudyFilters" xml:space="preserve">
     <value>Open in Study Filters</value>
+  </data>
+  <data name="MenuSortAscending" xml:space="preserve">
+    <value>Sort &amp;Ascending</value>
+  </data>
+  <data name="MenuSortAscendingLexically" xml:space="preserve">
+    <value>Sort &amp;A to Z</value>
+  </data>
+  <data name="MenuSortAscendingNumerically" xml:space="preserve">
+    <value>Sort by &amp;Increasing Order</value>
+  </data>
+  <data name="MenuSortAscendingSpatially" xml:space="preserve">
+    <value>Sort &amp;Ascending</value>
+  </data>
+  <data name="MenuSortAscendingTemporally" xml:space="preserve">
+    <value>Sort from Earliest to Latest</value>
+  </data>
+  <data name="MenuSortDescending" xml:space="preserve">
+    <value>Sort &amp;Descending</value>
+  </data>
+  <data name="MenuSortDescendingLexically" xml:space="preserve">
+    <value>Sort &amp;Z to A</value>
+  </data>
+  <data name="MenuSortDescendingNumerically" xml:space="preserve">
+    <value>Sort by &amp;Descreasing Order</value>
+  </data>
+  <data name="MenuSortDescendingSpatially" xml:space="preserve">
+    <value>Sort &amp;Descending</value>
+  </data>
+  <data name="MenuSortDescendingTemporally" xml:space="preserve">
+    <value>Sort from Latest to Earliest</value>
+  </data>
+  <data name="MenuValueFilters" xml:space="preserve">
+    <value>&amp;Value Filters</value>
   </data>
   <data name="MessageDicomException" xml:space="preserve">
     <value>Invalid DICOM file: {0}</value>
@@ -186,8 +257,17 @@
   <data name="MessageSelectOutputLocation" xml:space="preserve">
     <value>Select output location:</value>
   </data>
+  <data name="NetworkMedia" xml:space="preserve">
+    <value>Networked Media</value>
+  </data>
   <data name="Path" xml:space="preserve">
     <value>Path</value>
+  </data>
+  <data name="RAM" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="RemovableMedia" xml:space="preserve">
+    <value>Removable Media</value>
   </data>
   <data name="StudyFilters" xml:space="preserve">
     <value>Study Filters</value>
@@ -195,11 +275,11 @@
   <data name="ToolbarAddRemoveColumns" xml:space="preserve">
     <value>Add/Remove Columns</value>
   </data>
-  <data name="ToolbarAnonymizeExport" xml:space="preserve">
-    <value>Export...</value>
-  </data>
   <data name="ToolbarEditFilters" xml:space="preserve">
     <value>Edit Filters</value>
+  </data>
+  <data name="ToolbarExport" xml:space="preserve">
+    <value>Export</value>
   </data>
   <data name="ToolbarFilter" xml:space="preserve">
     <value>Filter</value>
@@ -207,10 +287,10 @@
   <data name="ToolbarLaunchInViewer" xml:space="preserve">
     <value>Launch in Viewer</value>
   </data>
-  <data name="ToolbarSaveTo" xml:space="preserve">
-    <value>Save To...</value>
-  </data>
   <data name="TooltipOpenInStudyFilters" xml:space="preserve">
     <value>Opens the selected DICOM files in a table for filtering purposes</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Unknown</value>
   </data>
 </root>

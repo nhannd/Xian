@@ -34,14 +34,56 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Columns\AttributeTagDicomTagColumn.cs" />
+    <Compile Include="Columns\BinaryDicomTagColumn.cs" />
+    <Compile Include="Columns\DateTimeDicomTagColumn.cs" />
+    <Compile Include="Columns\DicomObject.cs" />
+    <Compile Include="Columns\DicomTagColumn.cs" />
+    <Compile Include="Columns\FileDateAccessedColumn.cs" />
+    <Compile Include="Columns\FileDateCreatedColumn.cs" />
+    <Compile Include="Columns\FileDateModifiedColumn.cs" />
+    <Compile Include="Columns\FileDateTime.cs" />
+    <Compile Include="Columns\FileSize.cs" />
+    <Compile Include="Columns\FloatingPointDicomTagColumn.cs" />
+    <Compile Include="Columns\IntegerDicomTagColumn.cs" />
+    <Compile Include="Columns\MultiValuedDicomTagColumn.cs" />
+    <Compile Include="Columns\SpecialColumn.cs" />
+    <Compile Include="Columns\StringDicomTagColumn.cs" />
+    <Compile Include="Columns\DirectoryColumn.cs" />
+    <Compile Include="Columns\DriveColumn.cs" />
+    <Compile Include="Columns\DriveFormatColumn.cs" />
+    <Compile Include="Columns\DriveTypeColumn.cs" />
+    <Compile Include="Columns\ExtensionColumn.cs" />
+    <Compile Include="Columns\FilenameColumn.cs" />
+    <Compile Include="Columns\FileSizeColumn.cs" />
+    <Compile Include="Columns\TextDicomTagColumn.cs" />
+    <Compile Include="Columns\AgeDicomTagColumn.cs" />
+    <Compile Include="Columns\UnsignedDicomTagColumn.cs" />
+    <Compile Include="Columns\PathColumn.cs" />
     <Compile Include="Export\ExportComponent.cs" />
     <Compile Include="FilterEditorComponent.cs" />
+    <Compile Include="ISortableColumn.cs" />
+    <Compile Include="IValueIndexedColumn.cs" />
+    <Compile Include="StudyFilterColumnBase.cs" />
+    <Compile Include="StudyFilterColumnDefinitions.cs" />
+    <Compile Include="Tools\Actions\CompareFilterMenuAction.cs" />
+    <Compile Include="Tools\Actions\FilterMenuAction.cs" />
     <Compile Include="FilterNodes\And.cs" />
     <Compile Include="FilterNodes\Not.cs" />
     <Compile Include="FilterNodes\FilterNodeBase.cs" />
     <Compile Include="FilterNodes\Or.cs" />
     <Compile Include="FilterNodes\Value.cs" />
-    <Compile Include="FolderPicker.cs" />
+    <Compile Include="StudyFilterColumnTool.cs" />
+    <Compile Include="Tools\Actions\ListFilterMenuAction.cs" />
+    <Compile Include="Tools\ClearColumnFiltersTool.cs" />
+    <Compile Include="Tools\CompareValueColumnFilterTool.cs" />
+    <Compile Include="Tools\QuickValueColumnFilterTool.cs" />
+    <Compile Include="Tools\ColumnSortTool.cs" />
+    <Compile Include="Columns\DicomObjectArray.cs" />
+    <Compile Include="Columns\DicomArray.cs" />
+    <Compile Include="Utilities\FilterPredicate.cs" />
+    <Compile Include="IStudyFilter.cs" />
+    <Compile Include="Utilities\SortPredicate.cs" />
     <Compile Include="StudyFilterSettings.cs" />
     <Compile Include="Tools\AddRemoveColumnsTool.cs" />
     <Compile Include="Tools\ApplyFiltersTool.cs" />
@@ -66,6 +108,9 @@
     <Compile Include="StudyItemSelection.cs" />
     <Compile Include="StudyFilterTool.cs" />
     <Compile Include="StudyItem.cs" />
+    <Compile Include="Columns\DicomAge.cs" />
+    <Compile Include="Utilities\ValueIndex.cs" />
+    <Compile Include="Utilities\ValueFilterPredicate.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -112,6 +157,22 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StudyFilterSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SortAscendingSmall.png" />
+    <EmbeddedResource Include="Icons\SortDescendingSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddRemoveColumnsSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ClearFiltersSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SaveSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OpenToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

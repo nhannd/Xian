@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 		public StudyFilterComponentPanel(StudyFilterComponent component) : this()
 		{
 			_component = component;
+			_component.FilterPredicatesChanged += new EventHandler(_component_FilterPredicatesChanged);
 
 			ActionModelRoot toolbarActions = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms", StudyFilterTool.DefaultToolbarActionSite, _component.ExportedActions);
 			ToolStripBuilder.ToolStripBuilderStyle defaultStyle = new ToolStripBuilder.ToolStripBuilderStyle();
@@ -56,7 +57,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			ToolStripBuilder.BuildToolbar(_toolbar.Items, toolbarActions.ChildNodes, myStyle);
 
 			_tableView.Table = component.Table;
+			_tableView.ColumnFilterMenuStripClosed += new EventHandler(_tableView_ColumnFilterMenuStripClosed);
 			_tableView.ContextActionModelDelegate = this.GetContextMenuModel;
+			_tableView.ColumnFilterActionModelDelegate = this.GetColumnFilterMenuModel;
 			_tableView.ReadOnly = true;
 		}
 
@@ -65,6 +68,26 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			if (row >= 0)
 				return null;
 			return ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms", StudyFilterTool.DefaultContextMenuActionSite, _component.ExportedActions);
+		}
+
+		private ActionModelNode GetColumnFilterMenuModel(int row, int column)
+		{
+			return _component.Columns[column].FilterMenuModel;
+		}
+
+		private void _component_FilterPredicatesChanged(object sender, EventArgs e)
+		{
+			foreach (StudyFilterColumn column in (IEnumerable<StudyFilterColumn>) _component.Columns)
+			{
+				_tableView.SetColumnFilteringActive(_component.Columns.IndexOf(column), column.IsColumnFiltered);
+				//_tableView.SetColumnFilteringActive(column.Key, column.IsColumnFiltered);
+			}
+		}
+
+		private void _tableView_ColumnFilterMenuStripClosed(object sender, EventArgs e)
+		{
+			// if the filter menu closes, refresh the component if it is now dirty
+			_component.Refresh(false);
 		}
 
 		private void _tableView_SelectionChanged(object sender, EventArgs e)
