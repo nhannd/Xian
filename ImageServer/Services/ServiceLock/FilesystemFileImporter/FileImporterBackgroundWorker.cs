@@ -51,9 +51,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         #region Private Fields
         private DateTime _startTimeStamp = Platform.Time;
         private readonly DirectoryImporterParameters _parms;
-        SopInstanceImporter _importer;
         private readonly List<string> _skippedStudies = new List<String>();
         private  EventHandler<SopImportedEventArgs> _sopImportedHandlers;
+        private SopInstanceImporter _importer;
+
         #endregion
 
         #region Constructors
@@ -86,7 +87,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             
             if (_parms.Directory.Exists)
             {
-                _importer = new SopInstanceImporter(_parms.PartitionAE);
                 
                 int counter = 0;
                 Platform.Log(LogLevel.Debug, "Importing dicom files from {0}", _parms.Directory.FullName);
@@ -148,11 +148,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         skipped = _skippedStudies.Contains(studyInstanceUid);
                         if (!skipped)
                         {
-                            SopInstanceImporterContext context = new SopInstanceImporterContext(
-                                String.Format("{0}_{1}", _parms.PartitionAE, _startTimeStamp.ToString("yyyyMMddhhmmss")),
-                                _parms.PartitionAE, file);
-                
-                            DicomProcessingResult result = _importer.Import(context);
+                            InitializeImporter();
+
+                            DicomProcessingResult result = _importer.Import(file);
                             if (result.Successful)
                             {
                                 if (result.Duplicate)
@@ -216,7 +214,20 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             }
 
             return importedSopCount;
-        }    
+        }
+
+        private void InitializeImporter()
+        {
+            if (_importer==null)
+            {
+                SopInstanceImporterContext context = new SopInstanceImporterContext(
+                                String.Format("{0}_{1}", _parms.PartitionAE, _startTimeStamp.ToString("yyyyMMddhhmmss")),
+                                _parms.PartitionAE, _parms.PartitionAE);
+
+                _importer = new SopInstanceImporter(context);
+            }
+           
+        }
 
         #endregion
     }

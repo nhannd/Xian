@@ -45,143 +45,185 @@ using ClearCanvas.ImageServer.Model;
 namespace ClearCanvas.ImageServer.Core
 {
 
-
+    /// <summary>
+    /// Encapsulates the context of the application when <see cref="SopInstanceImporter"/> is called.
+    /// </summary>
     public class SopInstanceImporterContext
     {
+        #region Private Members
         private readonly String _contextID;
         private readonly string _sourceAE;
-        private readonly DicomMessageBase _message;
+        private readonly ServerPartition _partition;
+        #endregion
 
-        public SopInstanceImporterContext(string id, string sourceAE, DicomMessageBase message)
+        #region Constructors
+
+        /// <summary>
+        /// Creates an instance of <see cref="SopInstanceImporterContext"/> to be used
+        /// by <see cref="SopInstanceImporter"/> 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="sourceAE">Source AE title where the image(s) are imported from</param>
+        /// <param name="serverAE">Target AE title where the image(s) will be imported to</param>
+        public SopInstanceImporterContext(string id, string sourceAE, string serverAE)
+            :
+            this(id, sourceAE, ServerPartitionMonitor.Instance.GetPartition(serverAE))
         {
-            _contextID = id;
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="SopInstanceImporterContext"/> to be used
+        /// by <see cref="SopInstanceImporter"/> 
+        /// </summary>
+        /// <param name="contextID">The ID assigned to the context. This will be used as the name of storage folder in case of duplicate.</param>
+        /// <param name="sourceAE">Source AE title of the image(s) to be imported</param>
+        /// <param name="partition">The <see cref="ServerPartition"/> which the image(s) will be imported to</param>
+        public SopInstanceImporterContext(string contextID, string sourceAE, ServerPartition partition)
+        {
+            Platform.CheckForEmptyString(contextID, "contextID");
+            Platform.CheckForNullReference(partition, "partition");
+            _contextID = contextID;
             _sourceAE = sourceAE;
-            _message = message;
+            _partition = partition;
         }
+        
+        #endregion
 
-        public string GetDuplicateStorageFolder()
-        {
-            return ContextID;
-        }
-
-        public string SeriesInstanceUid
-        {
-            get
-            {
-                return DICOMMessage.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-            }
-        }
-
-        public string SopInstanceUid
-        {
-            get
-            {
-                return DICOMMessage.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-            }
-        }
-
+        /// <summary>
+        /// Gets the ID of this context
+        /// </summary>
         public string ContextID
         {
             get { return _contextID; }
         }
 
+        /// <summary>
+        /// Gets the source AE title where the image(s) are imported from
+        /// </summary>
         public string SourceAE
         {
             get { return _sourceAE; }
         }
 
-        public DicomMessageBase DICOMMessage
+        /// <summary>
+        /// Gets <see cref="ServerPartition"/> where the image(s) will be imported to
+        /// </summary>
+        public ServerPartition Partition
         {
-            get { return _message; }
+            get { return _partition; }
         }
     }
 
+    /// <summary>
+    /// Helper class to import a DICOM image into the system.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="SopInstanceImporter"/> provides a consistent mean of
+    /// getting DICOM instances into Image Server. Imported DICOM instances
+    /// will be inserted into the <see cref="WorkQueue"/> for processing. Proper checks will be
+    /// done if the duplicate object policy is set for the partition. Duplicates will be 
+    /// ignored, rejected or inserted into the <see cref="StudyIntegrityQueue"/> for manual intervention.
+    /// 
+    /// </remarks>
 	public class SopInstanceImporter
 	{
-		private readonly ServerPartition _partition;
-        
-		public SopInstanceImporter(String partitionAE)
-			:this(ServerPartitionMonitor.Instance.GetPartition(partitionAE))
-		{
-		}
+        #region Private Members
+        private readonly SopInstanceImporterContext _context; 
+        #endregion
 
-		public SopInstanceImporter(ServerPartition partition)
-		{
-			Platform.CheckForNullReference(partition, "partition");
-			_partition = partition;
-		}
+        #region Constructors
 
-        public DicomProcessingResult Import(SopInstanceImporterContext context)
-		{
+        /// <summary>
+        /// Creates an instance of <see cref="SopInstanceImporter"/> to import DICOM object(s)
+        /// into the system.
+        /// </summary>
+        /// <param name="context">The context of the operation.</param>
+        public SopInstanceImporter(SopInstanceImporterContext context)
+        {
             Platform.CheckForNullReference(context, "context");
-        	DicomMessageBase message = context.DICOMMessage;
-            String studyInstanceUid =  message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
-			String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
-			String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
-			String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
+            _context = context;
+        } 
+        #endregion
 
-			DicomProcessingResult result = new DicomProcessingResult();
-			result.Successful = true; // assumed for now 
-			result.StudyInstanceUid = studyInstanceUid;
-			result.SeriesInstanceUid = seriesInstanceUid;
-			result.SopInstanceUid = sopInstanceUid;
-			result.AccessionNumber = accessionNumber;
+        #region Public Methods
+        /// <summary>
+        /// Imports the specified <see cref="DicomMessageBase"/> object into the system.
+        /// The object will be inserted into the <see cref="WorkQueue"/> for processing and
+        /// if it's a duplicate, proper checks will be done and depending on the policy, it will be 
+        /// ignored, rejected or inserted into the <see cref="StudyIntegrityQueue"/> for manual intervention.
+        /// </summary>
+        /// <param name="message">The DICOM object to be imported.</param>
+        /// <returns>An instance of <see cref="DicomProcessingResult"/> that describes the result of the processing.</returns>
+        public DicomProcessingResult Import(DicomMessageBase message)
+        {
+            Platform.CheckForNullReference(message, "message");
+            String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+            String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+            String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
+            String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
 
-          	string failureMessage;
-			if (studyInstanceUid.Length > 64 || seriesInstanceUid.Length > 64 || sopInstanceUid.Length > 64)
-			{
-				if (studyInstanceUid.Length > 64)
-					failureMessage =
-						string.Format("Study Instance UID is > 64 bytes in the SOP Instance being imported: {0}", studyInstanceUid);
-				else if (seriesInstanceUid.Length > 64)
-					failureMessage =
-						string.Format("Series Instance UID is > 64 bytes in the SOP Instance being imported: {0}", seriesInstanceUid);
-				else
-					failureMessage =
-						string.Format("SOP Instance UID is > 64 bytes in the SOP Instance being imported: {0}", sopInstanceUid);
+            DicomProcessingResult result = new DicomProcessingResult();
+            result.Successful = true; // assumed for now 
+            result.StudyInstanceUid = studyInstanceUid;
+            result.SeriesInstanceUid = seriesInstanceUid;
+            result.SopInstanceUid = sopInstanceUid;
+            result.AccessionNumber = accessionNumber;
 
-				result.SetError(DicomStatuses.AttributeValueOutOfRange, failureMessage);
-				return result;
-			}
+            string failureMessage;
+            if (studyInstanceUid.Length > 64 || seriesInstanceUid.Length > 64 || sopInstanceUid.Length > 64)
+            {
+                if (studyInstanceUid.Length > 64)
+                    failureMessage =
+                        string.Format("Study Instance UID is > 64 bytes in the SOP Instance being imported: {0}", studyInstanceUid);
+                else if (seriesInstanceUid.Length > 64)
+                    failureMessage =
+                        string.Format("Series Instance UID is > 64 bytes in the SOP Instance being imported: {0}", seriesInstanceUid);
+                else
+                    failureMessage =
+                        string.Format("SOP Instance UID is > 64 bytes in the SOP Instance being imported: {0}", sopInstanceUid);
 
-        	// Use the command processor for rollback capabilities.
+                result.SetError(DicomStatuses.AttributeValueOutOfRange, failureMessage);
+                return result;
+            }
+
+            // Use the command processor for rollback capabilities.
             using (ServerCommandProcessor commandProcessor =
                 new ServerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
             {
                 try
                 {
-                    StudyStorageLocation studyLocation = ServerHelper.GetWritableStudyStorageLocation(message, _partition);
+                    StudyStorageLocation studyLocation = ServerHelper.GetWritableStudyStorageLocation(message, _context.Partition);
                     if (studyLocation == null)
                     {
-                        StudyStorage storage = StudyStorage.Load(_partition.Key, studyInstanceUid);
-                        
+                        StudyStorage storage = StudyStorage.Load(_context.Partition.Key, studyInstanceUid);
+
                         if (storage != null)
                         {
                             if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
                             {
-                                failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _partition.Description);
+                                failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _context.Partition.Description);
                                 Platform.Log(LogLevel.Error, failureMessage);
                                 if (ServerHelper.InsertRestoreRequest(storage) == null)
                                 {
                                     Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
                                 }
 
-								result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
-                            	return result;
+                                result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
+                                return result;
                             }
                             else
                             {
                                 // study is not nearline but the location is not writable
                                 failureMessage = String.Format("Unable to process image, study storage location is not writeable: {0}.", sopInstanceUid);
-                                result.SetError( DicomStatuses.StorageStorageOutOfResources, failureMessage);
-                            	return result;
+                                result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                                return result;
                             }
                         }
                         else
                         {
                             failureMessage = String.Format("Unable to process image, no writeable storage location: {0}", sopInstanceUid);
                             result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
-							return result;
+                            return result;
                         }
                     }
 
@@ -190,9 +232,9 @@ namespace ClearCanvas.ImageServer.Core
                         && (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled)))
                     {
                         failureMessage = String.Format("Study {0} on partition {1} is being processed: {2}, can't accept new images.",
-                                                       studyLocation.StudyInstanceUid, _partition.Description, studyLocation.QueueStudyStateEnum.Description);
+                                                       studyLocation.StudyInstanceUid, _context.Partition.Description, studyLocation.QueueStudyStateEnum.Description);
                         result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
-						return result;
+                        return result;
                     }
                     else if (studyLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
                     {
@@ -201,15 +243,15 @@ namespace ClearCanvas.ImageServer.Core
                         {
                             result.DicomStatus = DicomStatuses.StorageStorageOutOfResources;
                             failureMessage = String.Format("Study {0} on partition {1} can't accept new images due to lossy compression of the study.  Restoring study.",
-                                                           studyLocation.StudyInstanceUid, _partition.Description);
+                                                           studyLocation.StudyInstanceUid, _context.Partition.Description);
                             Platform.Log(LogLevel.Error, failureMessage);
                             if (ServerHelper.InsertRestoreRequest(studyLocation) == null)
                             {
                                 Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
                             }
 
-							result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
-							return result;
+                            result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                            return result;
                         }
                     }
 
@@ -217,13 +259,13 @@ namespace ClearCanvas.ImageServer.Core
                     bool dupImage = false;
                     string extension = null;
                     String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
-                    DicomFile file = ConvertToDicomFile(message, finalDest, context.SourceAE);
+                    DicomFile file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
 
-                    if (HasUnprocessedCopy(context, studyLocation))
+                    if (HasUnprocessedCopy(studyLocation, message))
                     {
                         failureMessage = string.Format("Another copy of the SOP Instance was received but has not been processed: {0}", sopInstanceUid);
                         result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
-						return result;
+                        return result;
                     }
                     else
                     {
@@ -232,19 +274,19 @@ namespace ClearCanvas.ImageServer.Core
                             Study study = studyLocation.Study ??
                                           studyLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
                             if (study != null)
-                                Platform.Log(LogLevel.Info, "Received duplicate SOP {0} (A#:{1} StudyUid:{2}  Patient: {3}  ID:{4})", 
+                                Platform.Log(LogLevel.Info, "Received duplicate SOP {0} (A#:{1} StudyUid:{2}  Patient: {3}  ID:{4})",
                                             sopInstanceUid,
-                                            study.AccessionNumber, study.StudyInstanceUid,            
+                                            study.AccessionNumber, study.StudyInstanceUid,
                                             study.PatientsName, study.PatientId);
                             else
                                 Platform.Log(LogLevel.Info,
                                              "Received duplicate SOP {0} (StudyUid:{1}). Existing files haven't been processed.",
                                              sopInstanceUid, studyLocation.StudyInstanceUid);
 
-                            SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, studyLocation, context.ContextID);
+                            SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, studyLocation, _context.ContextID);
                             result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
-							if (!result.Successful)
-								return result;
+                            if (!result.Successful)
+                                return result;
                         }
                         else
                         {
@@ -280,7 +322,7 @@ namespace ClearCanvas.ImageServer.Core
 
                         if (commandProcessor.Execute())
                         {
-                            result.DicomStatus = DicomStatuses.Success;                           
+                            result.DicomStatus = DicomStatuses.Success;
                         }
                         else
                         {
@@ -296,45 +338,49 @@ namespace ClearCanvas.ImageServer.Core
                 catch (Exception e)
                 {
                     Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", commandProcessor.Description);
-					commandProcessor.Rollback();
-					result.SetError(result.DicomStatus ?? DicomStatuses.ProcessingFailure, e.Message);
+                    commandProcessor.Rollback();
+                    result.SetError(result.DicomStatus ?? DicomStatuses.ProcessingFailure, e.Message);
                     return result;
                 }
             }
-            
+
             return result;
-		}
+        }
+        
+        #endregion
 
-		
+        #region Private Methods
 
-		static private DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
-		{
-			// This routine sets some of the group 0x0002 elements.
-			DicomFile file;
-			if (message is DicomFile)
-			{
-				file = message as DicomFile;
-			}
-			else if (message is DicomMessage)
-			{
-				file = new DicomFile(message as DicomMessage, filename);
-			}
-			else
-			{
-				throw new NotSupportedException(String.Format("Cannot convert {0} to DicomFile", message.GetType()));
-			}
-
-			file.SourceApplicationEntityTitle = sourceAE;
-			if (message.TransferSyntax.Encapsulated)
-				file.TransferSyntax = message.TransferSyntax;
-			else
-				file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-
-			return file;
-		}
-
-        static private bool HasUnprocessedCopy(SopInstanceImporterContext context, StudyStorageLocation storageLocation)
+        static private DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
         {
+            // This routine sets some of the group 0x0002 elements.
+            DicomFile file;
+            if (message is DicomFile)
+            {
+                file = message as DicomFile;
+            }
+            else if (message is DicomMessage)
+            {
+                file = new DicomFile(message as DicomMessage, filename);
+            }
+            else
+            {
+                throw new NotSupportedException(String.Format("Cannot convert {0} to DicomFile", message.GetType()));
+            }
+
+            file.SourceApplicationEntityTitle = sourceAE;
+            if (message.TransferSyntax.Encapsulated)
+                file.TransferSyntax = message.TransferSyntax;
+            else
+                file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            return file;
+        }
+
+        static private bool HasUnprocessedCopy(StudyStorageLocation storageLocation, DicomMessageBase message)
+        {
+            string seriesUid = message.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            string sopUid = message.DataSet[DicomTags.SopInstanceUid].ToString();
             IList<WorkQueue> workQueues = ServerHelper.FindWorkQueueEntries(storageLocation.StudyStorage, null);
             foreach (WorkQueue queue in workQueues)
             {
@@ -344,7 +390,7 @@ namespace ClearCanvas.ImageServer.Core
                     ReconcileStudyWorkQueueData queueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(entry.Data);
                     if (queueData != null)
                     {
-                        String path = entry.GetSopPath(context.SeriesInstanceUid, context.SopInstanceUid);
+                        String path = entry.GetSopPath(seriesUid, sopUid);
                         if (File.Exists(path))
                             return true;
                     }
@@ -359,14 +405,14 @@ namespace ClearCanvas.ImageServer.Core
                 if (entry.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.Duplicate))
                 {
                     DuplicateSopReceivedQueue duplicateEntry = new DuplicateSopReceivedQueue(entry);
-                    String path = duplicateEntry.GetSopPath(context.SeriesInstanceUid, context.SopInstanceUid);
+                    String path = duplicateEntry.GetSopPath(seriesUid, sopUid);
                     if (File.Exists(path))
                         return true;
                 }
                 else if (entry.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
                 {
                     InconsistentDataSIQEntry duplicateEntry = new InconsistentDataSIQEntry(entry);
-                    String path = duplicateEntry.GetSopPath(context.SeriesInstanceUid, context.SopInstanceUid);
+                    String path = duplicateEntry.GetSopPath(seriesUid, sopUid);
                     if (File.Exists(path))
                         return true;
                 }
@@ -374,6 +420,8 @@ namespace ClearCanvas.ImageServer.Core
 
             return false;
         }
+        
+        #endregion
 	}
 
 	/// <summary>

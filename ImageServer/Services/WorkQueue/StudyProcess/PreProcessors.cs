@@ -28,8 +28,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <returns>An instance of <see cref="PreProcessingResult"/> containing the result of the processing. NULL if 
         /// the change has been made to the file.</returns>
         PreProcessingResult Process(DicomFile file);
+
+        /// <summary>
+        /// Gets or sets the <see cref="StudyStorageLocation"/> of the study which the 
+        /// DICOM file(s) belong to.
+        /// </summary>
         StudyStorageLocation StorageLocation { get; set;}
 
+        /// <summary>
+        /// Gets or sets the description of the pre-processor.
+        /// </summary>
         string Description
         {
             get;
@@ -98,16 +106,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         
         #endregion
         #region Public Properties
+
+        /// <summary>
+        /// Gets the DICOM tag being updated.
+        /// </summary>
         public DicomTag Tag
         {
             get { return _tag; }
         }
 
+        /// <summary>
+        /// Gets the original value of the DICOM tag being updated.
+        /// </summary>
         public string OriginalValue
         {
             get { return _originalValue; }
         }
 
+        /// <summary>
+        /// Gets the new value of the DICOM tag being updated.
+        /// </summary>
         public string NewValue
         {
             get { return _newValue; }
@@ -121,13 +139,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// Class implementing <see cref="IStudyPreProcessor"/> to update a DICOM image
     /// based on past reconciliation.
     /// </summary>
-    class AutoReconciler : IStudyPreProcessor
+    class AutoReconciler : BasePreprocessor, IStudyPreProcessor
     {
+        private readonly string _contextID;
+
         class AutoReconcilerResult : PreProcessingResult
         {
+            #region Private Members
             private readonly StudyReconcileAction _action;
             private IList<UpdateItem> _changes = new List<UpdateItem>();
-            
+            #endregion
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="action"></param>
             public AutoReconcilerResult(StudyReconcileAction action)
             {
                 AutoReconciled = true; 
@@ -135,13 +161,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 
             }
                         
-
+            /// <summary>
+            /// Gets or sets the list of changes made when <see cref="AutoReconciler"/> was executed on a DICOM file.
+            /// </summary>
             public IList<UpdateItem> Changes
             {
                 get { return _changes; }
                 set { _changes = value; }
             }
 
+            /// <summary>
+            /// Gets other action that was used when <see cref="AutoReconciler"/> was executed on a DICOM file.
+            /// </summary>
             public StudyReconcileAction Action
             {
                 get { return _action; }
@@ -151,8 +182,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
         
         #region Private Members
-        private StudyStorageLocation _storageLocation;
-        private string _description; 
+
         #endregion
 
         #region Constructors
@@ -160,36 +190,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Creates an instance of <see cref="AutoReconciler"/> to update
         /// a DICOM file according to the history.
         /// </summary>
+        /// <param name="contextID">Context ID of the operation. Used to identify files belonging to the same group (usually from the same association).</param>
         /// <param name="storageLocation"></param>
-        public AutoReconciler(StudyStorageLocation storageLocation)
+        public AutoReconciler(String contextID, StudyStorageLocation storageLocation) 
+            : base("AUTO-RECONCILE", storageLocation)
         {
-            Platform.CheckForNullReference(storageLocation, "storageLocation");
-
-            Description = "AUTO-RECONCILE";
-            _storageLocation = storageLocation;
+            Platform.CheckForEmptyString(contextID, "contextID");
+            _contextID = contextID;
         } 
         #endregion
 
         #region IStudyPreProcessor Members
-
-
-        public StudyStorageLocation StorageLocation
-        {
-            get
-            {
-                return _storageLocation;
-            }
-            set
-            {
-                _storageLocation = value;
-            }
-        }
-
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
 
         public PreProcessingResult Process(DicomFile file)
         {
@@ -198,9 +209,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             AutoReconcilerResult preProcessingResult = null;
 
             // Update the file based on the reconciliation in the past
-            StudyStorageLocation dest = _storageLocation;
+            StudyStorageLocation dest = StorageLocation;
             bool belongsToAnotherStudy = false;
-            IList<StudyHistory> histories = FindReconcileHistories(_storageLocation, file);
+            IList<StudyHistory> histories = FindReconcileHistories(StorageLocation, file);
             if (histories != null && histories.Count > 0)
             {
                 #region Update the files based on history...
@@ -221,7 +232,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
                             dest = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
 
-                            belongsToAnotherStudy = !dest.Equals(_storageLocation);
+                            belongsToAnotherStudy = !dest.Equals(StorageLocation);
                             ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
                             IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(destinationStudy);
 
@@ -254,9 +265,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             }
                             if (belongsToAnotherStudy)
                             {
-                                SopInstanceImporter importer = new SopInstanceImporter(dest.ServerPartition);
-                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(String.Empty, file.SourceApplicationEntityTitle, file);
-                                DicomProcessingResult result = importer.Import(importContext);
+                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(_contextID, file.SourceApplicationEntityTitle, dest.ServerPartition);
+                                SopInstanceImporter importer = new SopInstanceImporter(importContext);
+                                DicomProcessingResult result = importer.Import(file);
 
                                 if (!result.Successful)
                                 {
@@ -284,7 +295,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             dest = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
                             preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);
 
-                            belongsToAnotherStudy = !dest.Equals(_storageLocation);
+                            belongsToAnotherStudy = !dest.Equals(StorageLocation);
 
                             if (belongsToAnotherStudy)
                             {
@@ -295,9 +306,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                                 dest.StudyInstanceUid));
 
                                 file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(dest.StudyInstanceUid);
-                                SopInstanceImporter importer = new SopInstanceImporter(dest.ServerPartition);
-                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(String.Empty, file.SourceApplicationEntityTitle, file);
-                                DicomProcessingResult result = importer.Import(importContext);
+                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(
+                                        _contextID,
+                                        file.SourceApplicationEntityTitle, dest.ServerPartition);
+                                SopInstanceImporter importer = new SopInstanceImporter(importContext);
+                                DicomProcessingResult result = importer.Import(file);
 
                                 if (!result.Successful)
                                 {
@@ -374,8 +387,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// Class implementing <see cref="IStudyPreProcessor"/> to correct the patient's name
     /// in the DICOM file if it doesn't match what is in the system.
     /// </summary>
-    class PatientNameAutoCorrection : IStudyPreProcessor
+    class PatientNameAutoCorrection: BasePreprocessor, IStudyPreProcessor
     {
+        private string _contextID;
+
         class PatientNameAutoCorrectionResult : PreProcessingResult
         {
             private string _oldPatientsName;
@@ -400,45 +415,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Creates an instance of <see cref="PatientNameAutoCorrection"/> to fix
         /// the patient's name in a DICOM file to match a study.
         /// </summary>
+        /// <param name="contextID"></param>
         /// <param name="storageLocation"></param>
-        public PatientNameAutoCorrection(StudyStorageLocation storageLocation)
+        public PatientNameAutoCorrection(String contextID, StudyStorageLocation storageLocation)
+            : base("AUTO-CORRECTION : PATIENT'S NAME", storageLocation)
         {
-            Platform.CheckForNullReference(storageLocation, "storageLocation");
-            Description = "AUTO-CORRECTION-PATIEN'S TNAME";
-            _storageLocation = storageLocation;
+            _contextID = contextID;
         }
-        
-        #endregion
-        #region Private Members
-        private StudyStorageLocation _storageLocation;
-        private string _description; 
         #endregion
 
         #region IStudyPreProcessor Members
-        public string Description
-        {
-            get
-            {
-                return _description;
-            }
-            set
-            {
-                _description = value;
-            }
-        }
-        public StudyStorageLocation StorageLocation
-        {
-            get
-            {
-                return _storageLocation;
-            }
-            set
-            {
-                _storageLocation = value;
-            }
-        }
 
-    
         public PreProcessingResult Process(DicomFile file)
         {
 

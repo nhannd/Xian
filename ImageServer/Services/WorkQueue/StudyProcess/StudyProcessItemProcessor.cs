@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
@@ -172,6 +171,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="queueUid"></param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
         /// <param name="file">The file being processed.</param>
+        /// <param name="compare">Indicates whether to compare the DICOM file against the study in the system.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream, bool compare)
         {
             SopInstanceProcessor processor = new SopInstanceProcessor( _context);
@@ -296,7 +296,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     DicomFile file = new DicomFile(path);
                     file.Load();
 
-                    PreProcessingResult result = PreProcessFile(file);
+                    PreProcessingResult result = PreProcessFile(sop, file);
+                    // TODO: What are we gonna do with the result?
+
                     if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
                     {
                         ProcessDuplicate(sop, basePath + ".dcm", path);
@@ -315,7 +317,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         DicomFile file = new DicomFile(path);
                         file.Load();
 
-                        PreProcessingResult result = PreProcessFile(file);
+                        PreProcessingResult result = PreProcessFile(sop, file);
                         
                         if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
                         {
@@ -365,16 +367,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// Apply changes to the file prior to processing it.
         /// </summary>
+        /// <param name="uid"></param>
         /// <param name="file"></param>
-        protected virtual PreProcessingResult PreProcessFile(DicomFile file)
+        protected virtual PreProcessingResult PreProcessFile(WorkQueueUid uid, DicomFile file)
         {
+            String contextID = uid.GroupID ?? String.Format("{0}_{1}",
+                String.IsNullOrEmpty(file.SourceApplicationEntityTitle) ? ServerPartition.AeTitle : file.SourceApplicationEntityTitle, 
+                WorkQueueItem.InsertTime.ToString("yyyyMMddHHmmss"));
+
             PreProcessingResult result = new PreProcessingResult();
             bool updated = false;
-            AutoReconciler autoBaseReconciler = new AutoReconciler(StorageLocation);
+            AutoReconciler autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
             PreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
             updated |= reconcileResult != null;
 
-            PatientNameAutoCorrection patNameCorrection = new PatientNameAutoCorrection(StorageLocation);
+            PatientNameAutoCorrection patNameCorrection = new PatientNameAutoCorrection(contextID, StorageLocation);
             PreProcessingResult updateResult = patNameCorrection.Process(file);
             updated |= updateResult != null;
 
