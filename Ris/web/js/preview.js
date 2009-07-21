@@ -1605,14 +1605,16 @@ Preview.VisitDetailsSection = function () {
 		'<div class="SectionTableContainer">'+
 		'	<table cellspacing="5">'+
 		'		<tr>'+
-		'			<td>'+
-		'				<div class="pageheading" id="VisitNumber"></div>'+
-		'				<div class="pageheading2" id="Facility"></div>'+
-		'			</td>'+
+		'			<td width="120" class="propertyname">Visit Number</td>'+
+		'			<td width="200"><div id="VisitNumber"/></td>'+
+		'			<td width="120" class="propertyname">Facility</td>'+
+		'			<td width="200"><div id="Facility"/></td>'+
 		'		</tr>'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Visit Status</td>'+
 		'			<td width="200"><div id="VisitStatus"/></td>'+
+		'			<td width="120" class="propertyname">Current Location</td>'+
+		'			<td width="200"><div id="CurrentLocation"/></td>'+
 		'		</tr>'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Patient Class</td>'+
@@ -1631,10 +1633,6 @@ Preview.VisitDetailsSection = function () {
 		'			<td width="200"><div id="AdmitTime"/></td>'+
 		'			<td width="120" class="propertyname">Discharge Date/Time</td>'+
 		'			<td width="200"><div id="DischargeTime"/></td>'+
-		'		</tr>'+
-		'		<tr>'+
-		'			<td width="120" class="propertyname">Current Location</td>'+
-		'			<td width="200"><div id="CurrentLocation"/></td>'+
 		'		</tr>'+
 		'		<tr>'+
 		'			<td width="120" class="propertyname">Pre-Admit Number</td>'+

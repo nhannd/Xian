@@ -497,3 +497,16 @@ div.reportPreview {
 .PatientBanner_content {
 	background: #e3f1f9 url(../images/PatientBannerBackground.png) repeat-x bottom;
 }
+
+a:link {
+ color: #205F87;
+}
+a:visited {
+ color: #205F87;
+}
+a:hover {
+ color: #205F87;
+}
+a:active {
+ color: #205F87;
+}
