@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
@@ -131,7 +132,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
         private void Complete()
         {
-            DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
+            DirectoryInfo dir = new DirectoryInfo(_reconcileQueueData.StoragePath);
+            DirectoryUtility.DeleteIfEmpty(dir.FullName);
+            if (dir.Parent!=null)
+                DirectoryUtility.DeleteIfEmpty(dir.Parent.FullName);
+
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
