@@ -549,7 +549,9 @@ namespace ClearCanvas.Dicom.IO
                         }
                         else if (_tag == DicomTag.SequenceDelimitationItem)
                         {
-                            _sqrs.Pop();
+							SequenceRecord rec2 = _sqrs.Pop();
+							if (rec2._current==null)
+								rec2._parent[rec._tag].SetNullValue();                      
                         }
 
                         if (rec._len != UndefinedLength)
@@ -615,7 +617,6 @@ namespace ClearCanvas.Dicom.IO
                         {
                             if (_vr == DicomVr.SQvr)
                             {
-                                // Zero length sequences should not be saved, they're just ignored.
                                 if (_len == 0)
                                 {
                                     DicomAttributeCollection ds;
@@ -625,13 +626,9 @@ namespace ClearCanvas.Dicom.IO
                                         ds = rec._current;
                                     }
                                     else
-                                        ds = _dataset;
+                                        ds = _dataset;                                   
 
-                                    DicomAttribute elem = _tag.CreateDicomAttribute();
-
-                                    elem.Values = new DicomSequenceItem[0];
-
-                                    ds[_tag] = elem;
+                                    ds[_tag].SetNullValue();
                                 }
                                 else
                                 {

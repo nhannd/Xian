@@ -276,6 +276,9 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.PerformedProcedureStepStartTime].SetStringValue("143600");
             theSet[DicomTags.PerformedProcedureStepId].SetStringValue("UNKNOWN");
 
+			// Null SQ Test
+			theSet[DicomTags.ReferencedStudySequence].SetNullValue();
+
 			// FL & FD tags for testing
 			theSet[DicomTags.SlabThickness].SetFloat64(0,0.1234567d);
 			theSet[DicomTags.CalciumScoringMassFactorPatient].SetFloat32(0, 0.7654321f);
