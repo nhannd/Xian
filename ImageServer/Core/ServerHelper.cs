@@ -313,5 +313,23 @@ namespace ClearCanvas.ImageServer.Core
             return locations[0];
 
         }
+
+        /// <summary>
+        /// Gets a string value that represents the group ID for a <see cref="DicomFile"/> based on
+        /// the source/destination AE title and the application-provided timestamp.
+        /// </summary>
+        /// <param name="file">The <see cref="DicomFile"/></param>
+        /// <param name="partition">The <see cref="ServerPartition"/> where the file belongs to</param>
+        /// <param name="timestamp">Optional timestamp to be used to generate the group ID. 
+        /// If null, the current timestamp will be used.</param>
+        /// <returns></returns>
+        public static string GetUidGroup(DicomFile file, ServerPartition partition, DateTime? timestamp)
+        {
+            return String.Format("{0}_{1}",
+                                 String.IsNullOrEmpty(file.SourceApplicationEntityTitle)
+                                     ? partition.AeTitle
+                                     : file.SourceApplicationEntityTitle,
+                                     timestamp!=null? timestamp.Value.ToString("yyyyMMddHHmmss"): Platform.Time.ToString("yyyyMMddHHmmss"));
+        }
     }
 }

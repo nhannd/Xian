@@ -130,6 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					update.WorkQueueKey = newWorkQueueItem.GetKey();
 					update.SeriesInstanceUid = uid.SeriesInstanceUid;
 					update.SopInstanceUid = uid.SopInstanceUid;
+				    update.RelativePath = uid.RelativePath;
 					workQueueUidAdaptor.Add(context, update);
 				}
 

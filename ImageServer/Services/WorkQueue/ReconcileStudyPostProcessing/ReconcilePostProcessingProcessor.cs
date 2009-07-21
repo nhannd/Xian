@@ -89,8 +89,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 					Platform.Log(LogLevel.Warn, "Dicom file contains information inconsistent with the study in the system");
 				}
 			}
-	
-			processor.ProcessFile(file, stream, queueUid.Duplicate, false);
+
+		    string groupID = ServerHelper.GetUidGroup(file, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
+            processor.ProcessFile(groupID, file, stream, queueUid.Duplicate, false);
 
 			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)

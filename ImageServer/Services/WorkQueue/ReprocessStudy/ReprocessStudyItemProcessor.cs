@@ -294,7 +294,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                       else
                                                       {
                                                           Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessing SOP {0} for study {1}",instanceUid, StorageLocation.StudyInstanceUid);
-                                                          ProcessingResult result = processor.ProcessFile(dicomFile, studyXml, false, true);
+                                                          string groupID = ServerHelper.GetUidGroup(dicomFile, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
+                                                          ProcessingResult result = processor.ProcessFile(groupID, dicomFile, studyXml, false, true);
                                                           switch (result.Status)
                                                           {
                                                               case ProcessingStatus.Success:

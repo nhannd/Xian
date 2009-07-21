@@ -42,7 +42,7 @@ using ClearCanvas.ImageServer.Model;
 namespace ClearCanvas.ImageServer.Core.Process
 {
     /// <summary>
-    /// Represents the context during processing of duplicate SOPs.
+    /// Represents the context during processing of DICOM object.
     /// </summary>
     public class SopProcessingContext
     {
@@ -88,10 +88,6 @@ namespace ClearCanvas.ImageServer.Core.Process
             get { return _uidGroup; }
         }
 
-        public ServerPartition Partition
-        {
-            get { return _partition; }
-        } 
         #endregion
     }
 
@@ -136,26 +132,26 @@ namespace ClearCanvas.ImageServer.Core.Process
             String sopInstanceUid = file.MediaStorageSopInstanceUid;
 
 
-            if (context.Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
+            if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
             {
                 Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", sopInstanceUid);
                 return result;
             }
-            else if (context.Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
+            else if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
             {
                 failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
                 Platform.Log(LogLevel.Info, failureMessage);
                 result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
                 return result;
             }
-            else if (context.Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
+            else if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
             {
                 SaveDuplicate(context, file);
                 InsertWorkQueue(context, file);
             }
             else
             {
-                failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", context.Partition.DuplicateSopPolicyEnum);
+                failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum);
                 result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
                 return result;
             }

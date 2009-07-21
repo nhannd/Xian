@@ -103,11 +103,6 @@ namespace ClearCanvas.ImageServer.Core
 
 		}
 
-        internal StudyStorageLocation StorageLocation
-		{
-			get { return _storageLocation; }
-		}
-
 	    public ServerRulesEngine SopProcessedRulesEngine
 		{
 			get
@@ -179,6 +174,12 @@ namespace ClearCanvas.ImageServer.Core
                 }
 			}
 		}
+
+	    public StudyStorageLocation StorageLocation
+	    {
+	        get { return _storageLocation; }
+	    }
+
 	    #endregion
 	}
 
@@ -226,25 +227,31 @@ namespace ClearCanvas.ImageServer.Core
 		/// </summary>
 		/// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
 		/// <param name="duplicate"></param>
+		/// <param name="group"></param>
 		/// <param name="file"></param>
 		/// <param name="compare"></param>
-        public virtual ProcessingResult ProcessFile(DicomFile file, StudyXml stream, bool duplicate, bool compare)
+        public virtual ProcessingResult ProcessFile(String group, DicomFile file, StudyXml stream, bool duplicate, bool compare)
 		{
-		    ProcessingResult result = new ProcessingResult();
+            _instanceStats.ProcessTime.Start();
+            ProcessingResult result = new ProcessingResult();
             result.Status = ProcessingStatus.Failed; // will reset later
 
-            _instanceStats.ProcessTime.Start();
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
+            {
+                SopProcessingContext processingContext = new SopProcessingContext(processor, _context.StorageLocation, group);
 
-            if (compare && ShouldReconcile(file))
-			{
-				ScheduleReconcile(file);
-                result.Status = ProcessingStatus.Reconciled;
-			}
-			else
-			{
-				InsertInstance(file, stream);
-			    result.Status = ProcessingStatus.Success;
-			}
+                if (compare && ShouldReconcile(processingContext, file))
+                {
+                    ScheduleReconcile(processingContext, file);
+                    result.Status = ProcessingStatus.Reconciled;
+                }
+                else
+                {
+                    InsertInstance(file, stream);
+                    result.Status = ProcessingStatus.Success;
+                }
+            }
+            
 
 			_instanceStats.ProcessTime.End();
 
@@ -274,7 +281,7 @@ namespace ClearCanvas.ImageServer.Core
 		/// </summary>
 		/// <param name="message">The Dicom message</param>
 		/// <returns></returns>
-		private bool ShouldReconcile(DicomMessageBase message)
+		private bool ShouldReconcile(SopProcessingContext context, DicomMessageBase message)
 		{
 			Platform.CheckForNullReference(_context, "_context");
 			Platform.CheckForNullReference(message, "message");
@@ -287,7 +294,7 @@ namespace ClearCanvas.ImageServer.Core
 			else
 			{
 				StudyComparer comparer = new StudyComparer();
-				DifferenceCollection list = comparer.Compare(message, _context.Study, _context.Partition.GetComparisonOptions());
+                DifferenceCollection list = comparer.Compare(message, context.StudyLocation.Study, context.StudyLocation.ServerPartition.GetComparisonOptions());
 
 				if (list != null && list.Count > 0)
 				{
@@ -313,16 +320,12 @@ namespace ClearCanvas.ImageServer.Core
 		/// <summary>
 		/// Schedules a reconciliation for the specified <see cref="DicomFile"/>
 		/// </summary>
+		/// <param name="context"></param>
 		/// <param name="file"></param>
-		private void ScheduleReconcile(DicomFile file)
+		private static void ScheduleReconcile(SopProcessingContext context, DicomFile file)
 		{
-			ImageReconciler reconciler;
-			reconciler = new ImageReconciler();
-			reconciler.ReadContext = _context.ReadContext;
-			reconciler.ExistingStudy = _context.Study;
-			reconciler.ExistingStudyLocation = _context.StorageLocation;
-			reconciler.Partition = _context.Partition;
-			reconciler.ScheduleReconcile(file);
+			ImageReconciler reconciler = new ImageReconciler(context);
+			reconciler.ScheduleReconcile(file, StudyIntegrityReasonEnum.InconsistentData);
 		}
 
        

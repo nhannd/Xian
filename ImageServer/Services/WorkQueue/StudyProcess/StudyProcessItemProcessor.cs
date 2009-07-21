@@ -185,7 +185,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			processor.InstanceStats.FileSize = (ulong)fileSize;
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
 			processor.InstanceStats.Description = sopInstanceUid;
-            processor.ProcessFile(file, stream, queueUid.Duplicate, compare);
+
+            string group = queueUid.GroupID ?? ServerHelper.GetUidGroup(file, ServerPartition, WorkQueueItem.InsertTime);
+
+            ProcessingResult result = processor.ProcessFile(group, file, stream, queueUid.Duplicate, compare);
+
+            if (result.Status == ProcessingStatus.Reconciled)
+            {
+                // file has been saved in another place for reconcilation
+                FileUtils.Delete(fileInfo.FullName);
+            }
 			
 			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)

@@ -95,6 +95,15 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["StudyIntegrityReasonEnum"] = new ProcedureParameter<ServerEnum>("StudyIntegrityReasonEnum", value); }
         }
-        
+
+        public String GroupID
+        {
+            set { SubCriteria["GroupID"] = new ProcedureParameter<String>("GroupID", value); }
+        }
+        public String UidRelativePath
+        {
+            set { SubCriteria["UidRelativePath"] = new ProcedureParameter<String>("UidRelativePath", value); }
+        }
+	
     }
 }

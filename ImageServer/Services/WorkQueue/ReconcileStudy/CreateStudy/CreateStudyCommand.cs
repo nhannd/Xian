@@ -228,17 +228,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                 }
                 catch (InstanceAlreadyExistsException)
                 {
-                    CreateWorkQueueEntryForDuplicate(file, Context.WorkQueueItem, uid);
+                    CreateWorkQueueEntryForDuplicate(file, Context.WorkQueueItem, uid, Context.DestStorageLocation.ServerPartition);
                 }
             }
 
         }
 
-        private void CreateWorkQueueEntryForDuplicate(DicomFile file, Model.WorkQueue queue, WorkQueueUid uid)
+        private void CreateWorkQueueEntryForDuplicate(DicomFile file, Model.WorkQueue queue, WorkQueueUid uid, ServerPartition partition)
         {
             Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
-            String sourceId = queue.GroupID ?? queue.GetKey().Key.ToString();
-            String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
+            String uidGroup = queue.GroupID ?? ServerHelper.GetUidGroup(file, partition, queue.InsertTime );
             using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
             {
                 SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, Context.DestStorageLocation, uidGroup);

@@ -3251,6 +3251,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Last update: May 01, 2009
 -- Description:	Insert or update StudyIntegrity Queue based on supplied data
 --
+-- July 21, 2009: Add GroupID and UidRelativePath (for ticket #4929)
 -- May 01, 2009: Include StudyIntegrityReasonEnum in the Select statement
 -- Nov 06, 2008: Change to insert [StudyIntegrityQueueUid] record only if it doesn''t exist.
 --
@@ -3266,6 +3267,8 @@ CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 	@SopInstanceUid varchar(64),
 	@StudyData xml,
 	@QueueData xml=null,
+	@GroupID varchar(256) = null,
+	@UidRelativePath varchar(256)=null,
 	@StudyIntegrityReasonEnum smallint
 AS
 BEGIN
@@ -3278,34 +3281,49 @@ BEGIN
 	SELECT @QueueStudyStateEnumReconcileRequired = Enum FROM QueueStudyStateEnum WHERE Lookup=''ReconcileRequired''
 
 	-- Look for existing StudyIntegrityQueue entry
-	SELECT TOP 1 @Guid=GUID 
-	FROM	[dbo].[StudyIntegrityQueue] siq
-	WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
-			AND  [StudyStorageGUID]=@StudyStorageGUID
-			AND  [StudyIntegrityReasonEnum] = @StudyIntegrityReasonEnum
-			AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
-			AND  NOT EXISTS(
-				SELECT * FROM [StudyIntegrityQueueUid] siqid
-				WHERE siqid.StudyIntegrityQueueGUID = siq.GUID
-				AND siqid.SeriesInstanceUid = @SeriesInstanceUid
-				AND siqid.SopInstanceUid = @SopInstanceUid)
-	ORDER BY [InsertTime] DESC	
+	IF @GroupID IS NULL
+		SELECT TOP 1 @Guid=GUID 
+		FROM	[dbo].[StudyIntegrityQueue] siq
+		WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
+				AND  [StudyStorageGUID]=@StudyStorageGUID
+				AND  [StudyIntegrityReasonEnum] = @StudyIntegrityReasonEnum
+				AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
+				AND  NOT EXISTS(
+					SELECT * FROM [StudyIntegrityQueueUid] siqid
+					WHERE siqid.StudyIntegrityQueueGUID = siq.GUID
+					AND siqid.SeriesInstanceUid = @SeriesInstanceUid
+					AND siqid.SopInstanceUid = @SopInstanceUid)
+		ORDER BY [InsertTime] DESC	
+	ELSE
+		SELECT TOP 1 @Guid=GUID 
+		FROM	[dbo].[StudyIntegrityQueue] siq
+		WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
+				AND  [StudyStorageGUID]=@StudyStorageGUID
+				AND  [StudyIntegrityReasonEnum] = @StudyIntegrityReasonEnum
+				AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
+				AND  [GroupID]=@GroupID
+				AND  NOT EXISTS(
+					SELECT * FROM [StudyIntegrityQueueUid] siqid
+					WHERE siqid.StudyIntegrityQueueGUID = siq.GUID
+					AND siqid.SeriesInstanceUid = @SeriesInstanceUid
+					AND siqid.SopInstanceUid = @SopInstanceUid)
+		ORDER BY [InsertTime] DESC	
 
 	IF @@ROWCOUNT = 0
 	BEGIN
 		-- PRINT ''Not found''
 		SET @Guid=newid()
 
-		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[QueueData],[StudyIntegrityReasonEnum])
-		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@StudyIntegrityReasonEnum)
+		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[QueueData],[StudyIntegrityReasonEnum],[GroupID])
+		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@StudyIntegrityReasonEnum,@GroupID)
 	END
 
 
 	IF NOT EXISTS(SELECT GUID FROM [StudyIntegrityQueueUid] 
 				WHERE [StudyIntegrityQueueGUID]=@Guid AND [SeriesInstanceUid]=@SeriesInstanceUid AND [SopInstanceUid]=@SopInstanceUid)
 	BEGIN
-		INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
-		VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
+		INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid],[RelativePath])
+		VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid,@UidRelativePath)
 	END
 
 	COMMIT TRANSACTION

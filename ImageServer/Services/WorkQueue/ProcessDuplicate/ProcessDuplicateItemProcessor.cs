@@ -332,7 +332,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 // because in both cases, the study and the duplicates are modified to be the same.
 
                 ProcessReplacedSOPInstance processReplaced =
-                        new ProcessReplacedSOPInstance(StorageLocation.ServerPartition, studyXml, file, compare);
+                        new ProcessReplacedSOPInstance(WorkQueueItem, uid, StorageLocation.ServerPartition, studyXml, file, compare);
                 processor.AddCommand(processReplaced);
 
                 processor.AddCommand(new DeleteFileCommand(file.Filename));
@@ -566,15 +566,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         private ProcessingResult _result;
         private readonly StudyXml _studyXml;
         private readonly bool _compare;
+        private readonly Model.WorkQueue _item;
+        private readonly WorkQueueUid _uid;
 
-        public ProcessReplacedSOPInstance(ServerPartition partition, StudyXml studyXml, DicomFile file, bool compare)
+        public ProcessReplacedSOPInstance(Model.WorkQueue item, WorkQueueUid uid, ServerPartition partition, StudyXml studyXml, DicomFile file, bool compare)
             : base("ProcessReplacedSOPInstance", true)
         {
+            _item = item;
+            _uid = uid;
             _partition = partition;
             _file = file;
             _compare = compare;
             _studyXml = studyXml;
         }
+
 
         protected override void OnExecute(IUpdateContext updateContext)
         {
@@ -588,7 +593,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             {
                 StudyProcessorContext context = new StudyProcessorContext(_storageLocation);
                 SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
-                _result = sopInstanceProcessor.ProcessFile(_file, _studyXml, true, _compare);
+                string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
+
+                _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, true, _compare);
                 if (_result.Status == ProcessingStatus.Failed)
                 {
                     throw new ApplicationException("Unable to process file");

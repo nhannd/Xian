@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -56,8 +57,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
         protected string GetReconcileUidPath(WorkQueueUid sop)
         {
-            string imagePath = Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
-            return imagePath;
+            if (String.IsNullOrEmpty(sop.RelativePath))
+            {
+                return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
+            }
+            else
+                return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
         }
 
         
