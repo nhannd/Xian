@@ -1189,23 +1189,97 @@ Preview.ImagingServiceSection = function () {
 
 }();
 
+
+/*
+ *	Create a contrainer for the element with the specified title.
+ */
 Preview.SectionContainer = function () {
+
+	var _createContainer = function(element, title)
+	{
+		var _createContentContainer = function(contentElement)
+		{
+			var divElement = document.createElement("div");
+			divElement.className = "ContentContainer";
+			divElement.appendChild(contentElement);
+			return divElement;
+		};
+		
+		var _createCell = function(row, className, text)
+		{
+			var cell = row.insertCell();
+			cell.className = className;
+			cell.innerText = text || "";
+			return cell;
+		};
+
+		var content = _createContentContainer(element);
+
+		var table = document.createElement("table");
+		var body = document.createElement("tbody");
+		table.className = "SectionContainer";
+		table.appendChild(body);
+
+		var row, cell;
+		row = body.insertRow();
+		_createCell(row, "SectionHeadingLeft");
+		_createCell(row, "SectionHeadingBackground", title);
+		_createCell(row, "SectionHeadingRight");
+
+		row = body.insertRow();
+		cell = _createCell(row, "ContentCell");
+		cell.colSpan = "3";
+		cell.appendChild(content);
+
+		return table;
+	};
 
 	return {
 		create: function (element, title)
-		{				
-			element.innerHTML = GetSectionHTML(title, element.innerHTML);
+		{
+			// no need to create a contrainer if the element is hidden
+			if (element.style.display == 'none')
+				return;
+
+			// Replace the element with the new element that is encased in the container.
+			// We cannot simply use innerHTML because all the event handler of the element will not
+			// be propagated to the new element.  Hence the DOM manipulation to preserve the handlers.
+			var parent = element.parentNode;
+			var nextSibling = element.nextSibling;
+			var newElement = _createContainer(element, title);
+			if (nextSibling)
+				parent.insertBefore(newElement, nextSibling);
+			else
+				parent.appendChild(newElement);
 		}
 	};
 
 }();
 
+/*
+ *	Create a banner section of the pages with the content (i.e. patient demographics).
+ */
 Preview.PatientBannner = function () {
 
 	return {
 		create: function (element)
-		{				
-			element.innerHTML = GetBannerHTML(element.innerHTML);
+		{
+			var html = 
+				'<table cellspacing="0" cellpadding="0"><tr>' +
+				'<td class="PatientBanner_topleft"></td>' + 
+				'<td class="PatientBanner_top"></td>' + 
+				'<td class="PatientBanner_topright"></td>' +
+				'</tr><tr>' +
+				'<td class="PatientBanner_left"></td>' +
+				'<td class="PatientBanner_content">' + element.innerHTML + '</td>' +
+				'<td class="PatientBanner_right"></td>' +
+				'</tr><tr>' +
+				'<td class="PatientBanner_bottomleft"></td>' +
+				'<td class="PatientBanner_bottom"></td>' +
+				'<td class="PatientBanner_bottomright"></td>' +
+				'</tr></table>';
+
+			element.innerHTML = html;
 		}
 	};
 
