@@ -34,7 +34,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -42,8 +41,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	//[IconSet("activate", IconScheme.Colour, "", "Icons.DicomFileImportActivityMedium.png", "Icons.DicomFileImportActivityLarge.png")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-	[ViewerActionPermission("activate", Common.AuthorityTokens.Workflow.Study.Modify)]
-	[ViewerActionPermission("activate", Services.AuthorityTokens.Management.DataStore)]
+	[ViewerActionPermission("activate", ImageViewer.Services.AuthorityTokens.Study.Import)]
 
 	public class DicomFileImportActivityTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{

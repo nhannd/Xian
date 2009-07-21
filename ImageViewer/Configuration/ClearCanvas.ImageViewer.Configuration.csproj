@@ -34,6 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="DefaultServersConfigurationPageProvider.cs" />
     <Compile Include="DefaultServers.cs" />
     <Compile Include="DefaultServersConfigurationComponent.cs" />

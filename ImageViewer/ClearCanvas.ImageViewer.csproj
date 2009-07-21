@@ -117,10 +117,10 @@
     <Compile Include="BaseTools\GraphicTool.cs" />
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="CloningExceptions.cs" />
-    <Compile Include="Common\AuthorityTokens.cs" />
+    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
-    <Compile Include="Common\ViewerActionPermissionAttribute.cs" />
+    <Compile Include="ViewerActionPermissionAttribute.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />

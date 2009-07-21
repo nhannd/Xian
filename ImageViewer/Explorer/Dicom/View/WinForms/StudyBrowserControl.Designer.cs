@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
 			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
@@ -72,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._resultsTitleBar.Location = new System.Drawing.Point(0, 0);
 			this._resultsTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._resultsTitleBar.Name = "_resultsTitleBar";
-			this._resultsTitleBar.Size = new System.Drawing.Size(623, 30);
+			this._resultsTitleBar.Size = new System.Drawing.Size(731, 30);
 			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._resultsTitleBar.TabIndex = 3;
 			this._resultsTitleBar.Text = "10 results found on server";
@@ -81,14 +80,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._studyTableView.Location = new System.Drawing.Point(0, 30);
-			this._studyTableView.MenuModel = null;
 			this._studyTableView.Name = "_studyTableView";
 			this._studyTableView.ReadOnly = false;
-			this._studyTableView.Selection = selection1;
-			this._studyTableView.Size = new System.Drawing.Size(623, 325);
+			this._studyTableView.Size = new System.Drawing.Size(731, 325);
 			this._studyTableView.TabIndex = 0;
-			this._studyTableView.Table = null;
-			this._studyTableView.ToolbarModel = null;
 			// 
 			// StudyBrowserControl
 			// 
@@ -99,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.Controls.Add(this._resultsTitleBar);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "StudyBrowserControl";
-			this.Size = new System.Drawing.Size(623, 355);
+			this.Size = new System.Drawing.Size(731, 355);
 			this.ResumeLayout(false);
 
 		}

@@ -238,7 +238,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			BuildPublishingInfo();
 
 			bool remotePublishFailed = false;
-			if (PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Export))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 			{
 				foreach (KeyValuePair<Server, List<DicomFile>> pair in _remotePublishingInfo)
 				{

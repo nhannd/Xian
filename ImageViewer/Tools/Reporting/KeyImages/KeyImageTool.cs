@@ -48,13 +48,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	[Tooltip("create", "TooltipCreateKeyImage")]
 	[IconSet("create", IconScheme.Colour, "Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png")]
 	[EnabledStateObserver("create", "Enabled", "EnabledChanged")]
-	[ViewerActionPermission("create", Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ViewerActionPermission("create", AuthorityTokens.KeyImages)]
 
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowKeyImages", "Show")]
 	[Tooltip("show", "TooltipShowKeyImages")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
 	[EnabledStateObserver("show", "ShowEnabled", "ShowEnabledChanged")]
-	[ViewerActionPermission("show", Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ViewerActionPermission("show", AuthorityTokens.KeyImages)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	internal class KeyImageTool : ImageViewerTool
@@ -99,8 +99,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			base.Initialize();
 			KeyImageClipboard.OnViewerOpened(base.Context.Viewer);
 
-			base.Enabled = LocalDataStoreActivityMonitor.IsConnected && 
-				PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Modify);
+			base.Enabled = LocalDataStoreActivityMonitor.IsConnected &&
+				PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 
 			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.Connected += this.OnConnected;
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			base.Enabled = base.SelectedPresentationImage is IImageSopProvider &&
 					((IImageSopProvider)base.SelectedPresentationImage).ImageSop.DataSource.IsStored &&
 			          LocalDataStoreActivityMonitor.IsConnected &&
-					  PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Modify);
+					  PermissionsHelper.IsInRole(AuthorityTokens.KeyImages);
 
 			this.ShowEnabled = LocalDataStoreActivityMonitor.IsConnected;
 		}

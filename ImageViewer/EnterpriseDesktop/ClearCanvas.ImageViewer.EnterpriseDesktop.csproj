@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="IChangePasswordDialog.cs" />
     <Compile Include="ILoginDialog.cs" />
+    <Compile Include="ImportAuthorityTokensTool.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

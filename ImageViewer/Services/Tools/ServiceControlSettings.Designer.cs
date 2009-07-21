@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas Shred Host Service")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas Workstation Shred Host Service")]
         public string ServiceName {
             get {
                 return ((string)(this["ServiceName"]));

@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		internal static KeyImageInformation GetKeyImageInformation(IImageViewer viewer)
 		{
-			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+			if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
 
 			if (viewer != null)
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (shelf == null)
 				return null;
 
-			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+			if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
 
 			KeyImageClipboardComponent component = shelf.Component as KeyImageClipboardComponent;
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			Platform.CheckForNullReference(image, "image");
 			Platform.CheckForNullReference(image.ImageViewer, "image.ImageViewer");
 
-			if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Modify))
+			if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 				throw new PolicyException(SR.ExceptionCreateKeyImagePermissionDenied);
 
 			KeyImageInformation info = GetKeyImageInformation(image.ImageViewer);
@@ -250,7 +250,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public static void Show(IDesktopWindow desktopWindow)
 		{
-			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+			if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
 
 			IShelf shelf = GetClipboardShelf(desktopWindow);

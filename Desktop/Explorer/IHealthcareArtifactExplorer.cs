@@ -29,22 +29,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop.Explorer
 {
 	public interface IHealthcareArtifactExplorer
 	{
-		string Name
-		{
-			get;
-		}
+		string Name { get; }
 
-		IApplicationComponent Component 
-		{ 
-			get; 
-		}
+		bool IsAvailable { get; }
+
+		IApplicationComponent Component { get; }
 	}
 }

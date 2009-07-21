@@ -151,6 +151,7 @@
 
   <ItemGroup>
     <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
+    <StudyBrowserFiles Include="$(TrunkDirectory)\Desktop\Explorer\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.View.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.dll" />
     <StudyBrowserFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Dicom\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.dll" />

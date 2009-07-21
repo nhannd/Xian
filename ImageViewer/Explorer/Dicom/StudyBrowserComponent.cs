@@ -366,9 +366,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
-			if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Search))
-				throw new PolicyException(SR.MessageSearchStudyPermissionDenied);
-
 			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
 				_setStudiesArrived.Clear();
 
@@ -834,10 +831,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
 		{
-			//when something gets imported, people without search permissions should not see it.
-			if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Search))
-				return;
-
 			if (_setStudiesArrived.ContainsKey(e.Item.StudyInstanceUid))
 				return;
 

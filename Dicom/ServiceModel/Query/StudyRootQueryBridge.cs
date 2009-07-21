@@ -150,7 +150,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 			SeriesIdentifier criteria = new SeriesIdentifier();
 			criteria.StudyInstanceUid = studyInstanceUid;
-			return SeriesQuery(studyInstanceUid);
+			return SeriesQuery(criteria);
 		}
 
 		/// <summary>

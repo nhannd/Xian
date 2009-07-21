@@ -29,72 +29,122 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.ImageViewer.Services
 {
-	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
-	internal class DefaultAuthorityGroups : IDefineAuthorityGroups
+	internal class DefaultAuthorityGroups
 	{
-		//TODO: make these only exist in ImageViewer.Common once desktop refactoring is done and this assembly essentially moves to Common
-		public const string Administrators = "Administrators";
+		/// <summary>
+		/// Healthcare Administrators authority group.
+		/// </summary>
 		public const string HealthcareAdministrators = "Healthcare Administrators";
-		public const string Clerical = "Clerical";
-		public const string Technologists = "Technologists";
-		public const string Radiologists = "Radiologists";
-		public const string RadiologyResidents = "Radiology Residents";
-		public const string EmergencyPhysicians = "Emergency Physicians";
 
+		/// <summary>
+		/// Clerical authority group.
+		/// </summary>
+		public const string Clerical = "Clerical";
+
+		/// <summary>
+		/// Technologists authority group.
+		/// </summary>
+		public const string Technologists = "Technologists";
+
+		/// <summary>
+		/// Radiologists authority group.
+		/// </summary>
+		public const string Radiologists = "Radiologists";
+
+		/// <summary>
+		/// Radiology Residents authority group.
+		/// </summary>
+		public const string RadiologyResidents = "Radiology Residents";
+
+		/// <summary>
+		/// Emergency Physicians authority group.
+		/// </summary>
+		public const string EmergencyPhysicians = "Emergency Physicians";
+	}
+	
+	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+	internal class DefineAuthorityGroups : IDefineAuthorityGroups
+	{
 		#region IDefineAuthorityGroups Members
 
+		/// <summary>
+		/// Get the authority group definitions.
+		/// </summary>
 		public AuthorityGroupDefinition[] GetAuthorityGroups()
 		{
 			return new AuthorityGroupDefinition[]
             {
-                new AuthorityGroupDefinition(Administrators,
-                    new string[]
+                new AuthorityGroupDefinition(DefaultAuthorityGroups.HealthcareAdministrators,
+                    new string[] 
                     {
-						AuthorityTokens.Admin.System.DiskspaceManagement,
-						AuthorityTokens.Admin.System.DataStore,
-						AuthorityTokens.Admin.System.DicomServer,
-						AuthorityTokens.Management.Services,
-						AuthorityTokens.Management.DataStore,
-						AuthorityTokens.Management.DicomServer
-                    })
-			};
+						AuthorityTokens.Study.Delete,
+						AuthorityTokens.Study.Retrieve,
+						AuthorityTokens.Study.Send,
+						AuthorityTokens.Study.Import
+                    }),
+
+				new AuthorityGroupDefinition(DefaultAuthorityGroups.Technologists,
+                    new string[] 
+                    {
+						AuthorityTokens.Study.Delete,
+						AuthorityTokens.Study.Retrieve,
+						AuthorityTokens.Study.Send,
+						AuthorityTokens.Study.Import
+                    }),
+
+                new AuthorityGroupDefinition(DefaultAuthorityGroups.Radiologists,
+                    new string[] 
+                    {
+						AuthorityTokens.Study.Delete,
+						AuthorityTokens.Study.Retrieve,
+						AuthorityTokens.Study.Send,
+						AuthorityTokens.Study.Import
+                   }),
+
+                new AuthorityGroupDefinition(DefaultAuthorityGroups.RadiologyResidents,
+                    new string[] 
+                    {
+						AuthorityTokens.Study.Delete,
+						AuthorityTokens.Study.Retrieve,
+						AuthorityTokens.Study.Send,
+						AuthorityTokens.Study.Import
+                   }),
+
+                new AuthorityGroupDefinition(DefaultAuthorityGroups.EmergencyPhysicians,
+                    new string[] 
+                    {
+						AuthorityTokens.Study.Delete,
+						AuthorityTokens.Study.Retrieve
+                    }),
+            };
 		}
 
 		#endregion
 	}
-
-	public class AuthorityTokens
+	
+	public static class AuthorityTokens
 	{
-		public class Admin
+		public class Study
 		{
-			public class System
-			{
-				[AuthorityToken(Description = "Allows administrative configuration of Diskspace Management.")]
-				public const string DiskspaceManagement = "Viewer/Admin/System/Diskspace Management";
+			[AuthorityToken(Description = "Permission to send a study to another DICOM device (e.g. another workstation or PACS).")]
+			public const string Send = "Viewer/Study/Send";
 
-				[AuthorityToken(Description = "Allows administrative configuration of the viewer Data Store.")]
-				public const string DataStore = "Viewer/Admin/System/Data Store";
+			[AuthorityToken(Description = "Permission to delete a study from the local store.")]
+			public const string Delete = "Viewer/Study/Delete";
 
-				[AuthorityToken(Description = "Allows administrative configuration of the viewer DICOM Server.")]
-				public const string DicomServer = "Viewer/Admin/System/DICOM Server";
-			}
-		}
+			[AuthorityToken(Description = "Permission to retrieve a study to the local store.")]
+			public const string Retrieve = "Viewer/Study/Retrieve";
 
-		public class Management
-		{
-			[AuthorityToken(Description = "Allow management of the viewer services (e.g restarting shred host).")]
-			public const string Services = "Viewer/Management/Services";
-
-			[AuthorityToken(Description = "Allow management of the Data Store (e.g. Reindexing).")]
-			public const string DataStore = "Viewer/Management/Data Store";
-
-			[AuthorityToken(Description = "Allow management of the viewer DICOM Server.")]
-			public const string DicomServer = "Viewer/Management/DICOM Server";
+			[AuthorityToken(Description = "Permission to import study data into the local store.")]
+			public const string Import = "Viewer/Study/Import";
 		}
 	}
 }

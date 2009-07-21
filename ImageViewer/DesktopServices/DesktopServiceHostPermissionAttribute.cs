@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 		public DesktopServiceHostPermissionAttribute(params string[] authorityTokens)
 		{
 			List<string> viewerTokens = new List<string>();
-			viewerTokens.Add(Common.AuthorityTokens.General);
+			viewerTokens.Add(ImageViewer.AuthorityTokens.ViewerVisible);
 			viewerTokens.AddRange(authorityTokens);
 			AuthorityTokens = viewerTokens.AsReadOnly();
 		}

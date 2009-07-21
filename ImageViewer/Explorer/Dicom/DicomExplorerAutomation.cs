@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	#region Hosting
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	[DesktopServiceHostPermission(new string[] { Common.AuthorityTokens.Workflow.Study.Search })]
 	public class DicomExplorerAutomationServiceHostTool : DesktopServiceHostTool
 	{
 		public DicomExplorerAutomationServiceHostTool()

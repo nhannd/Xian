@@ -44,48 +44,113 @@ namespace ClearCanvas.Desktop.Explorer
 	{
 	}
 
-	//[MenuAction("show", "global-menus/MenuFile/MenuExplorer", "Show", KeyStroke = XKeys.Control | XKeys.S)]
-	//[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarExplorer", "Show")]
-	//[Tooltip("show", "TooltipExplorer")]
-	//[IconSet("show", IconScheme.Colour, "Icons.ExplorerToolSmall.png", "Icons.ExplorerToolMedium.png", "Icons.ExplorerToolLarge.png")]
-	//[GroupHint("show", "Application.Browsing.Explorer")]
+	[MenuAction("show", "global-menus/MenuFile/MenuExplorer", "Show", KeyStroke = XKeys.Control | XKeys.E)]
+	[IconSet("show", IconScheme.Colour, "Icons.ExplorerToolSmall.png", "Icons.ExplorerToolMedium.png", "Icons.ExplorerToolLarge.png")]
+	[GroupHint("show", "Application.Browsing.Explorer")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-    public class ExplorerTool : Tool<IDesktopToolContext>
+    public sealed class ExplorerTool : Tool<IDesktopToolContext>
 	{
-		private static IWorkspace _workspace;
+    	private bool _isMainWindowTool = false;
+		private static int _toolCount = 0;
+
+		private static IDesktopObject _desktopObject;
 
 		public ExplorerTool()
 		{
 		}
 
+		private static bool IsWorkspaceUnclosable
+		{
+			get
+			{
+				return ExplorerLocalSettings.Default.ExplorerIsPrimary;
+			}
+		}
+
+		private static bool IsWorkspaceClosable
+		{
+			get
+			{
+				return !ExplorerLocalSettings.Default.ExplorerIsPrimary;
+			}
+		}
+
+		private static bool LaunchAsShelf
+		{
+			get
+			{
+				if (ExplorerLocalSettings.Default.ExplorerIsPrimary)
+					return false;
+
+				return ExplorerSettings.Default.LaunchAsShelf;
+			}	
+		}
+
+		private static bool LaunchAtStartup
+		{
+			get
+			{
+				if (ExplorerLocalSettings.Default.ExplorerIsPrimary)
+					return true;
+
+				return ExplorerSettings.Default.LaunchAtStartup;
+			}
+		}
+
+		public override IActionSet Actions
+		{
+			get
+			{
+				if (IsWorkspaceUnclosable || !_isMainWindowTool || GetExplorers().Count == 0)
+				{
+					return new ActionSet();
+				}
+				else
+				{
+					return base.Actions;
+				}
+			}
+		}
+
 		public override void Initialize()
 		{
-			Show();
+			if (_toolCount == 0)
+				_isMainWindowTool = true;
+			
+			++_toolCount;
+
+			if (_isMainWindowTool && LaunchAtStartup)
+				ShowInternal();
+
 			base.Initialize();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			--_toolCount;
+
+			if (_isMainWindowTool)
+				CloseChildDesktopWindows();
+
+			base.Dispose(disposing);
 		}
 
 		public void Show()
 		{
-			// We only ever want one explorer
-			if (_workspace != null)
-				return;
+			BlockingOperation.Run(delegate { ShowInternal(); });
+		}
 
-			List<IHealthcareArtifactExplorer> healthcareArtifactExplorers = new List<IHealthcareArtifactExplorer>();
-			try
+		private void ShowInternal()
+		{
+			if (_desktopObject != null)
 			{
-				HealthcareArtifactExplorerExtensionPoint xp = new HealthcareArtifactExplorerExtensionPoint();
-				object[] extensions = xp.CreateExtensions();
-				foreach (IHealthcareArtifactExplorer explorer in extensions)
-					healthcareArtifactExplorers.Add(explorer);
-			}
-			catch(NotSupportedException)
-			{
+				_desktopObject.Activate();
 				return;
 			}
 
 			List<TabPage> pages = new List<TabPage>();
-			foreach (IHealthcareArtifactExplorer explorer in healthcareArtifactExplorers)
+			foreach (IHealthcareArtifactExplorer explorer in GetExplorers())
 			{
 				IApplicationComponent component = explorer.Component;
 				if (component != null)
@@ -99,24 +164,48 @@ namespace ClearCanvas.Desktop.Explorer
 			foreach (TabPage page in pages)
 				container.Pages.Add(page);
 
-			WorkspaceCreationArgs args = new WorkspaceCreationArgs();
-			args.Component = container;
-			args.Title = SR.TitleExplorer;
-			// We don't want this workspace to be closable; the explorer
-			// should be visible at all times.
-			args.UserClosable = false;
+			if (LaunchAsShelf)
+			{
+				ShelfCreationArgs args = new ShelfCreationArgs();
+				args.Component = container;
+				args.Title = SR.TitleExplorer;
+				args.Name = "Explorer";
+				args.DisplayHint = ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide;
 
-		    _workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
-            _workspace.Closed += 
-                delegate
+				_desktopObject = ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow, args);
+			}
+			else
+			{
+				WorkspaceCreationArgs args = new WorkspaceCreationArgs();
+				args.Component = container;
+				args.Title = SR.TitleExplorer;
+				args.Name = "Explorer";
+				args.UserClosable = IsWorkspaceClosable;
+
+				_desktopObject = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
+			}
+
+			_desktopObject.Closed += delegate { _desktopObject = null; };
+		}
+
+		internal static List<IHealthcareArtifactExplorer> GetExplorers()
+		{
+			List<IHealthcareArtifactExplorer> healthcareArtifactExplorers = new List<IHealthcareArtifactExplorer>();
+			try
+			{
+				HealthcareArtifactExplorerExtensionPoint xp = new HealthcareArtifactExplorerExtensionPoint();
+				object[] extensions = xp.CreateExtensions();
+				foreach (IHealthcareArtifactExplorer explorer in extensions)
 				{
-					_workspace = null;
+					if (explorer.IsAvailable)
+						healthcareArtifactExplorers.Add(explorer);
+				}
+			}
+			catch (NotSupportedException)
+			{
+			}
 
-					// The Explorer drives the image viewer, so if it's closing
-					// we assume that any child image viewer windows should close too
-					CloseChildDesktopWindows();
-				};
-
+			return healthcareArtifactExplorers;
 		}
 
 		private void CloseChildDesktopWindows()

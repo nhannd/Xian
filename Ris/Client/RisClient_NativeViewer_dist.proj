@@ -2,13 +2,16 @@
 
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.XmlReplaceValue" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\</TrunkDirectory>
     <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeMpr</DefaultOptions>
+    <DesktopExecutableConfig>$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config</DesktopExecutableConfig>
+    <ShredHostExecutableConfig>$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config</ShredHostExecutableConfig>
   </PropertyGroup>
-    
+
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
     <RisClientBuild>false</RisClientBuild>
     <ShredHostBuild>false</ShredHostBuild>
@@ -28,14 +31,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AppConfigSourceFiles Include="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+    <AppConfigSourceFiles Include="$(DesktopExecutableConfig)" />
     <!--Although not explicitly including the enterprise desktop stuff, we do need the enterprise common settings -->
     <AppConfigSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config" />
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_dist.config" />
   </ItemGroup>
 
   <ItemGroup>
-    <ShredHostAppConfigFiles Include="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+    <ShredHostAppConfigFiles Include="$(ShredHostExecutableConfig)" />
     <!--Although not explicitly including the enterprise desktop stuff, we do need the enterprise common settings -->
     <ShredHostAppConfigFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config" />
     <ShredHostAppConfigFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_Shreds_dist.config" />
@@ -61,15 +64,21 @@
     <Copy Condition="!$(ShredHostBuild)"  SourceFiles="@(ViewerIntegrationFiles)" DestinationFolder="$(PluginsDirectory)" />
 
     <!-- Completely replace the app.config because this one is significantly different from the viewer's. -->
-    <CombineAppConfigs Condition="$(RisClientBuild)" SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+    <CombineAppConfigs Condition="$(RisClientBuild)" SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DesktopExecutableConfig)" />
 
-    <CombineAppConfigs Condition="$(ShredHostBuild)" SourceFiles="@(ShredHostAppConfigFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+    <CombineAppConfigs Condition="$(ShredHostBuild)" SourceFiles="@(ShredHostAppConfigFiles)" OutputFile="$(ShredHostExecutableConfig)" />
 
     <RegexIsMatch Pattern="CopyDefaultAEServers" Input="$(Options)" >
       <Output TaskParameter="IsMatch" PropertyName="CopyDefaultAEServers" />
     </RegexIsMatch>
 
     <Copy Condition="$(CopyDefaultAEServers) And !$(OtoBuild)"  SourceFiles="$(MSBuildProjectDirectory)\RisClient_NativeViewer_DicomAEServers.xml" DestinationFiles="$(DistributionDirectory)\DicomAEServers.xml" />
+
+    <XmlReplaceValue
+       NodeMustExist ="False"  
+       File="$(DesktopExecutableConfig)"
+       XPath="//configuration/applicationSettings/ClearCanvas.Desktop.Explorer.ExplorerLocalSettings/setting[@name='ExplorerIsPrimary']/value"
+       Value="False"/>
 
   </Target>
   

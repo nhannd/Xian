@@ -51,8 +51,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 
 	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
-	[ViewerActionPermission("show", ImageViewer.Common.AuthorityTokens.Workflow.Study.Search)]
-
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class ShowSeriesDetailsTool : StudyBrowserTool
 	{

@@ -49,10 +49,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
-
-			if (PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
 				listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("TitleWindowLevel"));
-
 			return listPages.AsReadOnly();
 		}
 

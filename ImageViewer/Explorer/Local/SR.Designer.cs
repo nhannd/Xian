@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-	internal class SR {
+    public class SR {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Explorer.Local.SR", typeof(SR).Assembly);
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
-        internal static string MenuOpenFiles {
+        public static string MenuOpenFiles {
             get {
                 return ResourceManager.GetString("MenuOpenFiles", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         /// <summary>
         ///   Looks up a localized string similar to The specified file could not be found..
         /// </summary>
-        internal static string MessageFileNotFound {
+        public static string MessageFileNotFound {
             get {
                 return ResourceManager.GetString("MessageFileNotFound", resourceCulture);
             }
@@ -81,16 +81,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         /// <summary>
         ///   Looks up a localized string similar to {0} images failed to load..
         /// </summary>
-        internal static string MessageFormatImagesFailedToLoad {
+        public static string MessageFormatImagesFailedToLoad {
             get {
                 return ResourceManager.GetString("MessageFormatImagesFailedToLoad", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to open images in the viewer..
+        /// </summary>
+        public static string MessagePermissionToOpenFilesDenied {
+            get {
+                return ResourceManager.GetString("MessagePermissionToOpenFilesDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My Computer.
         /// </summary>
-        internal static string MyComputer {
+        public static string MyComputer {
             get {
                 return ResourceManager.GetString("MyComputer", resourceCulture);
             }
@@ -99,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         /// <summary>
         ///   Looks up a localized string similar to Open Dicom Files.
         /// </summary>
-        internal static string OpenDicomFilesVerbose {
+        public static string OpenDicomFilesVerbose {
             get {
                 return ResourceManager.GetString("OpenDicomFilesVerbose", resourceCulture);
             }
@@ -108,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         /// <summary>
         ///   Looks up a localized string similar to Open MPR.
         /// </summary>
-        internal static string OpenMprFilesVerbose {
+        public static string OpenMprFilesVerbose {
             get {
                 return ResourceManager.GetString("OpenMprFilesVerbose", resourceCulture);
             }
@@ -117,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         /// <summary>
         ///   Looks up a localized string similar to Image.
         /// </summary>
-        internal static string TitleImageViewer {
+        public static string TitleImageViewer {
             get {
                 return ResourceManager.GetString("TitleImageViewer", resourceCulture);
             }

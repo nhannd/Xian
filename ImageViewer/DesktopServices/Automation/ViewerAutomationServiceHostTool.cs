@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 	//[ButtonAction("test", "global-menus/Test/Test Automation Client", "TestClient")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	[DesktopServiceHostPermission(new string[] { Common.AuthorityTokens.Workflow.Study.View })]
+	[DesktopServiceHostPermission(new string[] { AuthorityTokens.Study.Open })]
 	public class ViewerAutomationServiceHostTool : DesktopServiceHostTool
 	{
 		public ViewerAutomationServiceHostTool()

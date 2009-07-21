@@ -39,6 +39,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -102,6 +103,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
 			serverTreeComponent.ShowLocalDataStoreNode = HasLocalDatastoreSupport();
+			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
+			serverTreeComponent.IsReadOnly = !hasEditPermission;
 
 			StudyBrowserComponent studyBrowserComponent = new StudyBrowserComponent();
 

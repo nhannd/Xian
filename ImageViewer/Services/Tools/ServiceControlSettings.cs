@@ -35,7 +35,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[SettingsGroupDescription("Provides settings for control of services.")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[SettingsProvider(typeof(LocalFileSettingsProvider))]
 	internal sealed partial class ServiceControlSettings
 	{
 		private ServiceControlSettings()

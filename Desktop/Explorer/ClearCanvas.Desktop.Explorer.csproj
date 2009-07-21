@@ -70,9 +70,14 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -89,6 +94,19 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExplorerLocalSettings.cs" />
+    <Compile Include="ExplorerLocalSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ExplorerLocalSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ExplorerConfigurationComponent.cs" />
+    <Compile Include="ExplorerSettings.cs" />
+    <Compile Include="ExplorerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ExplorerSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ExplorerTool.cs" />
     <Compile Include="IHealthcareArtifactExplorer.cs" />
@@ -122,6 +140,17 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ExplorerToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ExplorerLocalSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ExplorerLocalSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ExplorerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ExplorerSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

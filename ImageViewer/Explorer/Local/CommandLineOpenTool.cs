@@ -39,6 +39,7 @@ using ClearCanvas.Common.Utilities;
 using System.IO;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
@@ -57,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 				return;
 
 			_alreadyProcessed = true;
-			
+
 			base.Initialize();
 
 			try
@@ -68,6 +69,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 
 				if (args.Count > 0)
 				{
+					if (!PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.ViewerVisible))
+					{
+						this.Context.DesktopWindow.ShowMessageBox(SR.MessagePermissionToOpenFilesDenied, MessageBoxActions.Ok);
+						return;
+					}
+
 					CommandLine commandLine = new CommandLine(args.ToArray());
 					List<string> files = BuildFileList(commandLine.Positional);
 					if (files.Count > 0)

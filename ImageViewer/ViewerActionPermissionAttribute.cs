@@ -30,17 +30,16 @@
 #endregion
 
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Common
+namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// Associates authority tokens with a viewer-specific action.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// All tokens specified will be ANDed with <see cref="AuthorityTokens.General"/>, which is a global token
+	/// All tokens specified will be ANDed with <see cref="AuthorityTokens.ViewerVisible"/>, which is a global token
 	/// intended to limit access to all viewer-specific functionality.
 	/// </para>
 	/// <para>
@@ -74,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Common
 			authorityTokens = authorityTokens ?? new string[0];
 			string[] viewerTokens = new string[authorityTokens.Length + 1];
 			
-			viewerTokens[0] = AuthorityTokens.General;
+			viewerTokens[0] = AuthorityTokens.ViewerVisible;
 			
 			for (int i = 0; i < authorityTokens.Length; ++i)
 				viewerTokens[i + 1] = authorityTokens[i];

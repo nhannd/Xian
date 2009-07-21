@@ -73,9 +73,16 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			//enable only if it's a server or server group, and is not the "My Servers" root node.
-			this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
-			               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
+			if (this.Context.IsReadOnly)
+			{
+				this.Enabled = false;
+			}
+			else
+			{
+				//enable only if it's a server or server group, and is not the "My Servers" root node.
+				this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
+				               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
+			}
 		}
 	}
 }

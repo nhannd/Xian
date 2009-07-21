@@ -156,9 +156,6 @@
   <data name="ColumnHeadingStudyDescription" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="DicomExplorerConfiguration" xml:space="preserve">
-    <value>DICOM Explorer</value>
-  </data>
   <data name="FormatStudiesFound" xml:space="preserve">
     <value>{0} studies found on {1}</value>
   </data>
@@ -196,6 +193,12 @@ Are you sure you want to continue?</value>
   </data>
   <data name="MessageSearchStudyPermissionDenied" xml:space="preserve">
     <value>Permission to search studies is denied.</value>
+  </data>
+  <data name="PathDicom" xml:space="preserve">
+    <value>DICOM</value>
+  </data>
+  <data name="PathExplorer" xml:space="preserve">
+    <value>Explorer</value>
   </data>
   <data name="TitleDicomExplorer" xml:space="preserve">
     <value>DICOM</value>

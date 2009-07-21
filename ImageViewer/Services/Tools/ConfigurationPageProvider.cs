@@ -49,10 +49,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			if (PermissionsHelper.IsInRole(ImageViewer.Services.AuthorityTokens.Admin.System.DicomServer))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DicomServer))
 				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
 
-			if (PermissionsHelper.IsInRole(ImageViewer.Services.AuthorityTokens.Admin.System.DiskspaceManagement))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.Administration.DiskspaceManager))
 				listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
 
 			return listPages.AsReadOnly();

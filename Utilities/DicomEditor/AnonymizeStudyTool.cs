@@ -37,7 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
-using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.Auditing;
@@ -53,7 +53,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[Tooltip("activate", "TooltipAnonymizeStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
 
-	[ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Create)]
+	[ViewerActionPermission("activate", AuthorityTokens.Study.Anonymize)]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class AnonymizeStudyTool : StudyBrowserTool

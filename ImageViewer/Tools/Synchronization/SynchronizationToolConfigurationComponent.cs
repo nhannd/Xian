@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			if (PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
 				yield return new ConfigurationPage<SynchronizationToolConfigurationComponent>("TitleSynchronizationTools");
 		}
 	}

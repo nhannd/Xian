@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[Tooltip("activate", "TooltipOpenStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
 
-	[ViewerActionPermission("activate", Common.AuthorityTokens.Workflow.Study.View)]
+	[ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Open)]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				if (numberOfSelectedStudies == 0)
 					return;
 
-				if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+				if (!PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.Study.Open))
 				{
 					Context.DesktopWindow.ShowMessageBox(SR.MessageOpenStudyPermissionDenied, MessageBoxActions.Ok);
 					return;

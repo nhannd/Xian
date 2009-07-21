@@ -57,10 +57,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
-
-			if (PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
 				listPages.Add(new ConfigurationPage<LayoutConfigurationApplicationComponent>(BasicLayoutConfigurationPath));
-
 			return listPages.AsReadOnly();
 		}
 

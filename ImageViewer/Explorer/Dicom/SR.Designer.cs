@@ -178,15 +178,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DICOM Explorer.
-        /// </summary>
-        internal static string DicomExplorerConfiguration {
-            get {
-                return ResourceManager.GetString("DicomExplorerConfiguration", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} studies found on {1}.
         /// </summary>
         internal static string FormatStudiesFound {
@@ -287,6 +278,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageSearchStudyPermissionDenied {
             get {
                 return ResourceManager.GetString("MessageSearchStudyPermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DICOM.
+        /// </summary>
+        internal static string PathDicom {
+            get {
+                return ResourceManager.GetString("PathDicom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Explorer.
+        /// </summary>
+        internal static string PathExplorer {
+            get {
+                return ResourceManager.GetString("PathExplorer", resourceCulture);
             }
         }
         

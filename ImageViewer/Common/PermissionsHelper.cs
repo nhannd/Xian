@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -42,18 +43,11 @@ namespace ClearCanvas.ImageViewer.Common
 	/// </summary>
 	/// <remarks>
 	/// Regardless of what is input, each of the methods in this class will unconditionally check for
-	/// general viewer permission (<see cref="AuthorityTokens.General"/>).
+	/// the <see cref="AuthorityTokens.ViewerVisible"/> token, which is a global token intended to limit
+	/// access to all viewer components.
 	/// </remarks>
 	public static class PermissionsHelper
 	{
-		/// <summary>
-		/// Determines whether the current user has general viewer usage permission (<see cref="AuthorityTokens.General"/>).
-		/// </summary>
-		public static bool HasGeneralViewerPermission()
-		{
-			return IsInRoles();
-		}
-
 		/// <summary>
 		/// Checks whether the current user has the correct permissions based on the provided authority token.
 		/// </summary>
@@ -78,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Common
 			if (Thread.CurrentPrincipal == null || !Thread.CurrentPrincipal.Identity.IsAuthenticated)
 				return true;
 
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.General))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewerVisible))
 				return false;
 
 			authorityTokens = authorityTokens ?? new string[0];
@@ -108,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Common
 			if (Thread.CurrentPrincipal == null || !Thread.CurrentPrincipal.Identity.IsAuthenticated)
 				return true;
 
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.General))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.ViewerVisible))
 				return false; //doesn't matter which roles they're in.
 
 			authorityTokens = authorityTokens ?? new string[0];

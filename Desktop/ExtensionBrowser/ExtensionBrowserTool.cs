@@ -29,18 +29,13 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.ExtensionBrowser.PluginView;
-using ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView;
 
 namespace ClearCanvas.Desktop.ExtensionBrowser
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuUtilities/MenuExtensionBrowser", "Show", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.Control | XKeys.E)]
+	[MenuAction("show", "global-menus/MenuTools/MenuUtilities/MenuExtensionBrowser", "Show", Flags = ClickActionFlags.CheckAction)]
 	[ActionPermission("show", AuthorityTokens.Desktop.ExtensionBrowser)]
 	[GroupHint("show", "Application.Browsing.Extensions")]
 

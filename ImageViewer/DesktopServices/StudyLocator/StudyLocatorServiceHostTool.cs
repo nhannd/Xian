@@ -32,11 +32,8 @@
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.ServiceModel.Security;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
@@ -46,7 +43,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 	/// </summary>
 	//[ButtonAction("test", "global-menus/Test/Test Study Locator Client", "TestClient")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	[DesktopServiceHostPermission(new string[] { Common.AuthorityTokens.Workflow.Study.Search })]
 	public class StudyLocatorServiceHostTool : DesktopServiceHostTool
 	{
 		public StudyLocatorServiceHostTool()

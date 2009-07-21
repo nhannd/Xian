@@ -36,7 +36,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Common;
 using TimeoutException=System.ServiceProcess.TimeoutException;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
@@ -44,17 +43,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[MenuAction("start", "global-menus/MenuTools/MenuServices/MenuStart", "StartService")]
 	[EnabledStateObserver("start", "StartEnabled", "EnabledChanged")]
 	[IconSet("start", IconScheme.Colour, "Icons.StartServiceToolSmall.png", "Icons.StartServiceToolMedium.png", "Icons.StartServiceToolLarge.png")]
-	[ViewerActionPermission("start", AuthorityTokens.Management.Services)]
+	[ViewerActionPermission("start", AuthorityTokens.Administration.Services)]
 
 	[MenuAction("stop", "global-menus/MenuTools/MenuServices/MenuStop", "StopService")]
 	[EnabledStateObserver("stop", "StopEnabled", "EnabledChanged")]
 	[IconSet("stop", IconScheme.Colour, "Icons.StopServiceToolSmall.png", "Icons.StopServiceToolMedium.png", "Icons.StopServiceToolLarge.png")]
-	[ViewerActionPermission("stop", AuthorityTokens.Management.Services)]
+	[ViewerActionPermission("stop", AuthorityTokens.Administration.Services)]
 
 	[MenuAction("restart", "global-menus/MenuTools/MenuServices/MenuRestart", "RestartService")]
 	[EnabledStateObserver("restart", "StopEnabled", "EnabledChanged")]
 	[IconSet("restart", IconScheme.Colour, "Icons.RestartServiceToolSmall.png", "Icons.RestartServiceToolMedium.png", "Icons.RestartServiceToolLarge.png")]
-	[ViewerActionPermission("restart", AuthorityTokens.Management.Services)]
+	[ViewerActionPermission("restart", AuthorityTokens.Administration.Services)]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ServiceControlTool : Tool<IDesktopToolContext>
@@ -138,9 +137,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					StopEnabled = controller.Status == ServiceControllerStatus.Running;
 				}
 			}
-			catch(Exception)
+			catch(Exception e)
 			{
-				Platform.Log(LogLevel.Debug, "Failed to determine state of service '{0}'.", ServiceControlSettings.Default.ServiceName);
+				Platform.Log(LogLevel.Debug, e, "Failed to determine state of service '{0}'.", ServiceControlSettings.Default.ServiceName);
 				StartEnabled = false;
 				StopEnabled = false;
 			}

@@ -29,13 +29,10 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Common;
-using AuthorityTokens=ClearCanvas.Desktop.Configuration.AuthorityTokens;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -53,8 +50,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			if (PermissionsHelper.HasGeneralViewerPermission())
-				listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>("DicomExplorerConfiguration"));
+			if (PermissionsHelper.IsInRole(AuthorityTokens.DicomExplorer))
+				listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>("PathExplorer/PathDicom"));
 
 			return listPages.AsReadOnly();
 		}

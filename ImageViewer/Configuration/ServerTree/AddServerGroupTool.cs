@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			this.Enabled = this.Context.ServerTree.CurrentNode.IsServerGroup;
+			this.Enabled = !this.Context.IsReadOnly && this.Context.ServerTree.CurrentNode.IsServerGroup;
 		}
 	}
 }

@@ -58,7 +58,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		AEServerGroup SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
-        
+
+		bool IsReadOnly { get; }
 		int UpdateType { get; set; }
 	}
 
@@ -96,6 +97,11 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
+			}
+
+			public bool IsReadOnly
+			{
+				get { return _component.IsReadOnly; }
 			}
 
 			public int UpdateType
