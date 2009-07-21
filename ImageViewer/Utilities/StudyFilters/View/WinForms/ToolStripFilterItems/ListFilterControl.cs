@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions;
@@ -6,33 +7,47 @@ using ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Properties;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStripFilterItems
 {
-	public partial class ListFilterControl : UserControl
+	public partial class ListFilterControl : UserControl, IClickableHostedControl
 	{
-		private event EventHandler _resetDropDownFocus;
-		private readonly IListFilterDataSource _dataSource;
+		public event EventHandler ResetDropDownFocusRequested;
+		public event EventHandler CloseDropDownRequested;
+
+		private readonly Size _defaultSize;
+		private readonly ListFilterMenuAction _action;
 		private bool _ignoreItemCheck = false;
 
-		public ListFilterControl(IListFilterDataSource dataSource)
+		public ListFilterControl(ListFilterMenuAction action)
 		{
 			InitializeComponent();
+			_defaultSize = base.Size;
 
-			_dataSource = dataSource;
+			_action = action;
 
-			_ignoreItemCheck = true;
-
-			_listBox.Items.Add(new SelectAllValues());
-			foreach (object value in dataSource.Values)
-			{
-				_listBox.Items.Add(new ValueWrapper(value), dataSource.GetSelectedState(value));
-			}
-			_listBox.SetItemCheckState(0, GetCombinedCheckState());
-			_ignoreItemCheck = false;
+			ResetListBox();
 		}
 
-		public event EventHandler ResetDropDownFocus
+		public override Size GetPreferredSize(Size proposedSize)
 		{
-			add { _resetDropDownFocus += value; }
-			remove { _resetDropDownFocus -= value; }
+			Size size = base.GetPreferredSize(proposedSize);
+			return new Size(Math.Max(_defaultSize.Width, size.Width), Math.Max(_defaultSize.Height, size.Height));
+		}
+
+		private void ResetListBox()
+		{
+			_ignoreItemCheck = true;
+			try
+			{
+				_listBox.Items.Add(new SelectAllValues());
+				foreach (object value in _action.DataSource.Values)
+				{
+					_listBox.Items.Add(new ValueWrapper(value), _action.DataSource.GetSelectedState(value));
+				}
+				_listBox.SetItemCheckState(0, GetCombinedCheckState());
+			}
+			finally
+			{
+				_ignoreItemCheck = false;
+			}
 		}
 
 		private CheckState GetCombinedCheckState()
@@ -47,9 +62,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			else return CheckState.Indeterminate;
 		}
 
+		private void CloseDropDown()
+		{
+			EventsHelper.Fire(this.CloseDropDownRequested, this, EventArgs.Empty);
+		}
+
 		private void _listBox_MouseLeave(object sender, EventArgs e)
 		{
-			EventsHelper.Fire(_resetDropDownFocus, this, EventArgs.Empty);
+			EventsHelper.Fire(this.ResetDropDownFocusRequested, this, EventArgs.Empty);
 		}
 
 		private void _listBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -67,13 +87,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 					{
 						for (int n = 1; n < _listBox.Items.Count; n++)
 							_listBox.SetItemChecked(n, true);
-						_dataSource.SetAllSelectedState(true);
 					}
 					else if (e.NewValue == CheckState.Unchecked)
 					{
 						for (int n = 1; n < _listBox.Items.Count; n++)
 							_listBox.SetItemChecked(n, false);
-						_dataSource.SetAllSelectedState(false);
 					}
 				}
 				else
@@ -93,14 +111,37 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 						_listBox.SetItemCheckState(0, CheckState.Indeterminate);
 					else
 						_listBox.SetItemCheckState(0, e.NewValue);
-
-					_dataSource.SetSelectedState(wrapper.Value, e.NewValue == CheckState.Checked);
 				}
 			}
 			finally
 			{
 				_ignoreItemCheck = false;
 			}
+		}
+
+		private void _btnOk_Click(object sender, EventArgs e)
+		{
+			CheckState combined = GetCombinedCheckState();
+			switch (combined)
+			{
+				case CheckState.Checked:
+					_action.DataSource.SetAllSelectedState(true);
+					break;
+				case CheckState.Unchecked:
+					_action.DataSource.SetAllSelectedState(false);
+					break;
+				default:
+					for (int n = 1; n < _listBox.Items.Count; n++)
+						_action.DataSource.SetSelectedState(((ValueWrapper) _listBox.Items[n]).Value, _listBox.GetItemChecked(n));
+					break;
+			}
+			CloseDropDown();
+		}
+
+		private void _btnCancel_Click(object sender, EventArgs e)
+		{
+			CloseDropDown();
+			ResetListBox();
 		}
 
 		private class ValueWrapper
@@ -110,16 +151,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			public ValueWrapper(object value)
 			{
 				this.Value = value;
-			}
-
-			public virtual bool IsMetaValue
-			{
-				get { return false; }
-			}
-
-			public virtual bool ValueEquals(object value)
-			{
-				return (value == null && this.Value == null) || (value != null && value.Equals(this.Value));
 			}
 
 			public override string ToString()
@@ -132,19 +163,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			}
 		}
 
-		private class SelectAllValues : ValueWrapper
+		private sealed class SelectAllValues : ValueWrapper
 		{
 			public SelectAllValues() : base(null) {}
-
-			public override bool IsMetaValue
-			{
-				get { return true; }
-			}
-
-			public override bool ValueEquals(object value)
-			{
-				return false;
-			}
 
 			public override string ToString()
 			{

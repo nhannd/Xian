@@ -4,17 +4,17 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
 {
 	[ExtensionPoint]
-	public sealed class StudyFilterColumnToolExtensionPoint : ExtensionPoint<ITool> {}
+	public sealed class AutoFilterToolExtensionPoint : ExtensionPoint<ITool> {}
 
-	public interface IStudyFilterColumnToolContext : IToolContext
+	public interface IAutoFilterToolContext : IToolContext
 	{
 		StudyFilterColumn Column { get; }
 	}
 
-	public abstract class StudyFilterColumnTool : Tool<IStudyFilterColumnToolContext>
+	public abstract class AutoFilterTool : Tool<IAutoFilterToolContext>
 	{
 		public event EventHandler VisibleChanged;
 
@@ -38,16 +38,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get { return base.Context.Column; }
 		}
 
-		public CompositeFilterPredicate ColumnFilterRoot
+		public CompositeFilterPredicate AutoFilterRoot
 		{
-			get { return base.Context.Column.ColumnFilterRoot; }
+			get { return base.Context.Column.AutoFilterRoot; }
 		}
 
 		public IStudyFilter StudyFilter
 		{
 			get { return base.Context.Column.Owner; }
 		}
-		
+
 		protected virtual bool IsColumnSupported()
 		{
 			return true;

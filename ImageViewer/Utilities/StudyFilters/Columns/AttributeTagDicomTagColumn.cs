@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 {
 	public class AttributeTagDicomTagColumn : UnsignedDicomTagColumn
 	{
+		private static readonly Regex _pattern = new Regex(@"^(?<Open>[(])?\s*([0-9a-fA-F]{4})\s*[,]?\s*([0-9a-fA-F]{4})\s*(?(Open)[)]|)$", RegexOptions.Compiled);
+
 		public AttributeTagDicomTagColumn(DicomTag dicomTag) : base(dicomTag) {}
 
-		public override DicomArray<uint> GetTypedValue(DicomAttribute attribute)
+		public override DicomArray<uint> GetTypedValue(StudyItem item)
 		{
+			DicomAttribute attribute = item[base.Tag];
+
 			if (attribute == null)
 				return null;
 			if (attribute.IsNull)
@@ -32,6 +37,21 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 				return null;
 			}
 			return new DicomArray<uint>(result, FormatArray(result));
+		}
+
+		public override bool Parse(string input, out DicomArray<uint> output)
+		{
+			return DicomArray<uint>.TryParse(input, TagTryParse, out output);
+		}
+
+		private static bool TagTryParse(string s, out uint result)
+		{
+			result = 0;
+
+			Match m = _pattern.Match(s);
+			if (m.Success)
+				result = uint.Parse(m.Groups[1].Value + ushort.Parse(m.Groups[2].Value));
+			return m.Success;
 		}
 
 		private static string FormatArray(IEnumerable<uint?> input)

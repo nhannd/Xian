@@ -2,12 +2,14 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 {
-	public class IntegerDicomTagColumn : MultiValuedDicomTagColumn<int>, INumericSortableColumn
+	public class IntegerDicomTagColumn : DicomTagColumn<DicomArray<int>>, INumericSortableColumn
 	{
 		public IntegerDicomTagColumn(DicomTag dicomTag) : base(dicomTag) {}
 
-		public override DicomArray<int> GetTypedValue(DicomAttribute attribute)
+		public override DicomArray<int> GetTypedValue(StudyItem item)
 		{
+			DicomAttribute attribute = item[base.Tag];
+
 			if (attribute == null)
 				return null;
 			if (attribute.IsNull)
@@ -29,6 +31,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 				return null;
 			}
 			return new DicomArray<int>(result);
+		}
+
+		public override bool Parse(string input, out DicomArray<int> output)
+		{
+			return DicomArray<int>.TryParse(input, int.TryParse, out output);
 		}
 
 		public override int Compare(StudyItem x, StudyItem y)

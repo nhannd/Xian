@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 	public class ListFilterMenuActionView : WinFormsView, IActionView
 	{
 		private ListFilterMenuAction _action;
-		private ListFilterToolStripItem _control;
+		private ClickableToolStripControlHost _control;
 
 		public void SetAction(IAction component)
 		{
@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			{
 				if (_control == null)
 				{
-					_control = new ListFilterToolStripItem(_action);
+					_control = new ClickableToolStripControlHost(new ListFilterControl(_action));
 				}
 				return _control;
 			}

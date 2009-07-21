@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
 {
 	[MenuAction("sortUp", "studyfilters-columnfilters/MenuSortAscending", "SortAscending")]
 	[IconSet("sortUp", IconScheme.Colour, "Icons.SortAscendingSmall.png", "Icons.SortAscendingSmall.png", "Icons.SortAscendingSmall.png")]
@@ -11,8 +11,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("sortDown", "studyfilters-columnfilters/MenuSortDescending", "SortDescending")]
 	[IconSet("sortDown", IconScheme.Colour, "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png")]
 	[VisibleStateObserver("sortDown", "Visible", "VisibleChanged")]
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
-	public class ColumnSortTool : StudyFilterColumnTool
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
+	public class ColumnSortTool : AutoFilterTool
 	{
 		protected override bool IsColumnSupported()
 		{
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("sortDown", "studyfilters-columnfilters/MenuSortDescendingLexically", "SortDescending")]
 	[IconSet("sortDown", IconScheme.Colour, "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png")]
 	[VisibleStateObserver("sortDown", "Visible", "VisibleChanged")]
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
 	public class LexicalColumnSortTool : ColumnSortTool
 	{
 		protected override bool IsColumnSupported()
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("sortDown", "studyfilters-columnfilters/MenuSortDescendingTemporally", "SortDescending")]
 	[IconSet("sortDown", IconScheme.Colour, "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png")]
 	[VisibleStateObserver("sortDown", "Visible", "VisibleChanged")]
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
 	public class TemporalColumnSortTool : ColumnSortTool
 	{
 		protected override bool IsColumnSupported()
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("sortDown", "studyfilters-columnfilters/MenuSortDescendingNumerically", "SortDescending")]
 	[IconSet("sortDown", IconScheme.Colour, "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png")]
 	[VisibleStateObserver("sortDown", "Visible", "VisibleChanged")]
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
 	public class NumericalColumnSortTool : ColumnSortTool
 	{
 		protected override bool IsColumnSupported()
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	[MenuAction("sortDown", "studyfilters-columnfilters/MenuSortDescendingSpatially", "SortDescending")]
 	[IconSet("sortDown", IconScheme.Colour, "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png", "Icons.SortDescendingSmall.png")]
 	[VisibleStateObserver("sortDown", "Visible", "VisibleChanged")]
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
 	public class SpatialColumnSortTool : ColumnSortTool
 	{
 		protected override bool IsColumnSupported()

@@ -46,7 +46,6 @@
     <Compile Include="Columns\FileSize.cs" />
     <Compile Include="Columns\FloatingPointDicomTagColumn.cs" />
     <Compile Include="Columns\IntegerDicomTagColumn.cs" />
-    <Compile Include="Columns\MultiValuedDicomTagColumn.cs" />
     <Compile Include="Columns\SpecialColumn.cs" />
     <Compile Include="Columns\StringDicomTagColumn.cs" />
     <Compile Include="Columns\DirectoryColumn.cs" />
@@ -67,18 +66,18 @@
     <Compile Include="StudyFilterColumnBase.cs" />
     <Compile Include="StudyFilterColumnDefinitions.cs" />
     <Compile Include="Tools\Actions\CompareFilterMenuAction.cs" />
-    <Compile Include="Tools\Actions\FilterMenuAction.cs" />
     <Compile Include="FilterNodes\And.cs" />
     <Compile Include="FilterNodes\Not.cs" />
     <Compile Include="FilterNodes\FilterNodeBase.cs" />
     <Compile Include="FilterNodes\Or.cs" />
     <Compile Include="FilterNodes\Value.cs" />
-    <Compile Include="StudyFilterColumnTool.cs" />
+    <Compile Include="Tools\Actions\IFilterMenuActionOwner.cs" />
+    <Compile Include="Tools\AutoFilters\AutoFilterTool.cs" />
     <Compile Include="Tools\Actions\ListFilterMenuAction.cs" />
-    <Compile Include="Tools\ClearColumnFiltersTool.cs" />
-    <Compile Include="Tools\CompareValueColumnFilterTool.cs" />
-    <Compile Include="Tools\QuickValueColumnFilterTool.cs" />
-    <Compile Include="Tools\ColumnSortTool.cs" />
+    <Compile Include="Tools\AutoFilters\ClearColumnFiltersTool.cs" />
+    <Compile Include="Tools\AutoFilters\CompareValueColumnFilterTool.cs" />
+    <Compile Include="Tools\AutoFilters\QuickValueColumnFilterTool.cs" />
+    <Compile Include="Tools\AutoFilters\ColumnSortTool.cs" />
     <Compile Include="Columns\DicomObjectArray.cs" />
     <Compile Include="Columns\DicomArray.cs" />
     <Compile Include="Utilities\FilterPredicate.cs" />
@@ -109,7 +108,6 @@
     <Compile Include="StudyFilterTool.cs" />
     <Compile Include="StudyItem.cs" />
     <Compile Include="Columns\DicomAge.cs" />
-    <Compile Include="Utilities\ValueIndex.cs" />
     <Compile Include="Utilities\ValueFilterPredicate.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -98,17 +98,39 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 					return true;
 				}
 
+				int countParserAttempts = 0;
+				int countParserFailures = 0;
+
 				List<T?> list = new List<T?>();
 				foreach (string elementString in s.Split(new char[] { '\\' }, StringSplitOptions.None))
 				{
-					T element;
-					if (elementParser(elementString, out element))
-						list.Add(element);
-					else
+					if (string.IsNullOrEmpty(elementString))
+					{
 						list.Add(null);
+					}
+					else
+					{
+						countParserAttempts++;
+
+						T element;
+						if (elementParser(elementString, out element))
+						{
+							list.Add(element);
+						}
+						else
+						{
+							list.Add(null);
+							countParserFailures++;
+						}
+					}
 				}
-				result = new DicomArray<T>(list);
-				return true;
+
+				// the overall parse succeeds if every non-empty element parsed succeeded (or if everything was empty and nothing was parsed)
+				if (countParserAttempts == 0 || countParserAttempts != countParserFailures)
+				{
+					result = new DicomArray<T>(list);
+					return true;
+				}
 			}
 			result = null;
 			return false;

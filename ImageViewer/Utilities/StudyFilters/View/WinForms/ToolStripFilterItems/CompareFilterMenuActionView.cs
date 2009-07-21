@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 	public class CompareFilterMenuActionView : WinFormsView, IActionView
 	{
 		private CompareFilterMenuAction _action;
-		private ToolStripItem _control;
+		private ClickableToolStripControlHost _control;
 
 		public void SetAction(IAction action)
 		{
@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStrip
 			{
 				if (_control == null)
 				{
-					_control = new CompareFilterToolStripItem(_action);
+					_control = new ClickableToolStripControlHost(new CompareFilterMenuActionControl(_action));
 				}
 				return _control;
 			}

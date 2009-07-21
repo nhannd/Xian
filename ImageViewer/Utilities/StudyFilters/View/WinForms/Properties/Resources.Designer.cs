@@ -61,6 +61,67 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Propertie
             }
         }
         
+        internal static System.Drawing.Bitmap FilterHeaderCellGlyph {
+            get {
+                object obj = ResourceManager.GetObject("FilterHeaderCellGlyph", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to =.
+        /// </summary>
+        internal static string LabelEqualsOperator {
+            get {
+                return ResourceManager.GetString("LabelEqualsOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &gt;.
+        /// </summary>
+        internal static string LabelGreaterThanOperator {
+            get {
+                return ResourceManager.GetString("LabelGreaterThanOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≥.
+        /// </summary>
+        internal static string LabelGreaterThanOrEqualsOperator {
+            get {
+                return ResourceManager.GetString("LabelGreaterThanOrEqualsOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;.
+        /// </summary>
+        internal static string LabelLessThanOperator {
+            get {
+                return ResourceManager.GetString("LabelLessThanOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≤.
+        /// </summary>
+        internal static string LabelLessThanOrEqualsOperator {
+            get {
+                return ResourceManager.GetString("LabelLessThanOrEqualsOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ≠.
+        /// </summary>
+        internal static string LabelNotEqualsOperator {
+            get {
+                return ResourceManager.GetString("LabelNotEqualsOperator", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to (null).
         /// </summary>
@@ -76,6 +137,69 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Propertie
         internal static string LabelSelectAll {
             get {
                 return ResourceManager.GetString("LabelSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to parse input due to invalid format..
+        /// </summary>
+        internal static string MessageParsingFailed {
+            get {
+                return ResourceManager.GetString("MessageParsingFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equal to.
+        /// </summary>
+        internal static string TooltipEqualsOperator {
+            get {
+                return ResourceManager.GetString("TooltipEqualsOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Greater Than.
+        /// </summary>
+        internal static string TooltipGreaterThanOperator {
+            get {
+                return ResourceManager.GetString("TooltipGreaterThanOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Greater Than or Equal to.
+        /// </summary>
+        internal static string TooltipGreaterThanOrEqualsOperator {
+            get {
+                return ResourceManager.GetString("TooltipGreaterThanOrEqualsOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Less Than.
+        /// </summary>
+        internal static string TooltipLessThanOperator {
+            get {
+                return ResourceManager.GetString("TooltipLessThanOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Less Than or Equal to.
+        /// </summary>
+        internal static string TooltipLessThanOrEqualsOperator {
+            get {
+                return ResourceManager.GetString("TooltipLessThanOrEqualsOperator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Equal to.
+        /// </summary>
+        internal static string TooltipNotEqualsOperator {
+            get {
+                return ResourceManager.GetString("TooltipNotEqualsOperator", resourceCulture);
             }
         }
     }

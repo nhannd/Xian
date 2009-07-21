@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
@@ -58,16 +59,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 						// dispose filter root after disposing tools, since some tools might hold references to the filter root
 						this.DisposeTools();
-						this.Owner.FilterPredicates.Remove(_columnFilterRoot);
-						_columnFilterRoot = null;
+						this.Owner.FilterPredicates.Remove(_autoFilterRoot);
+						_autoFilterRoot = null;
 					}
 
 					_owner = value;
 
 					if (_owner != null)
 					{
-						_columnFilterRoot = new ColumnRootFilterPredicate();
-						this.Owner.FilterPredicates.Add(_columnFilterRoot);
+						_autoFilterRoot = new AutoFilterRootPredicate();
+						this.Owner.FilterPredicates.Add(_autoFilterRoot);
 
 						_owner.ItemAdded += Owner_ItemAdded;
 						_owner.ItemRemoved += Owner_ItemRemoved;
@@ -142,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			get
 			{
 				if (_tools == null)
-					_tools = new ToolSet(new StudyFilterColumnToolExtensionPoint(), new ToolContext(this));
+					_tools = new ToolSet(new AutoFilterToolExtensionPoint(), new ToolContext(this));
 
 				return _tools;
 			}
@@ -172,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			}
 		}
 
-		private class ToolContext : IStudyFilterColumnToolContext
+		private class ToolContext : IAutoFilterToolContext
 		{
 			private readonly StudyFilterColumn _column;
 
@@ -191,28 +192,19 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		#region Column Filter
 
-		private ColumnRootFilterPredicate _columnFilterRoot;
+		private AutoFilterRootPredicate _autoFilterRoot;
 
-		public CompositeFilterPredicate ColumnFilterRoot
+		public CompositeFilterPredicate AutoFilterRoot
 		{
-			get { return _columnFilterRoot; }
+			get { return _autoFilterRoot; }
 		}
 
 		public bool IsColumnFiltered
 		{
-			get { return _columnFilterRoot != null && _columnFilterRoot.Predicates.Count > 0; }
+			get { return _autoFilterRoot != null && _autoFilterRoot.IsActive; }
 		}
 
-		private void ClearColumnFilterRoot()
-		{
-			if(_columnFilterRoot != null && this.Owner != null)
-			{
-				
-				_columnFilterRoot = null;
-			}
-		}
-
-		private class ColumnRootFilterPredicate : CompositeFilterPredicate
+		private class AutoFilterRootPredicate : CompositeFilterPredicate
 		{
 			public override bool Evaluate(StudyItem item)
 			{

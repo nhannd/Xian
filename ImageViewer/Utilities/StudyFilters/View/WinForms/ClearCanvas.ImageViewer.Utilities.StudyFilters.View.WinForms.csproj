@@ -36,11 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeNotifier.cs" />
-    <Compile Include="SR.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
     <Compile Include="StudyFilterColumnHeaderCell.cs" />
     <Compile Include="ExportComponentPanel.cs">
       <SubType>UserControl</SubType>
@@ -80,6 +75,9 @@
     <Compile Include="StudyFilterTableView.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ToolStripFilterItems\ClickableToolStripControlHost.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ToolStripFilterItems\CompareFilterMenuActionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -87,9 +85,6 @@
       <DependentUpon>CompareFilterMenuActionControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripFilterItems\CompareFilterMenuActionView.cs" />
-    <Compile Include="ToolStripFilterItems\CompareFilterToolStripItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ToolStripFilterItems\ListFilterControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -97,14 +92,6 @@
       <DependentUpon>ListFilterControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolStripFilterItems\ListFilterMenuActionView.cs" />
-    <Compile Include="ToolStripFilterItems\ListFilterToolStripItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ToolStripFilterItems\FilterMenuActionView.cs" />
-    <Compile Include="ToolStripFilterItems\FilterMenuToolStripItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UpdateColumnFilterTool.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -162,11 +149,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>ColumnPickerComponentPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SR.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SR.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="StudyFilterComponentPanel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyFilterComponentPanel.cs</DependentUpon>
@@ -191,6 +173,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\BuilderDelete.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\FilterHeaderCellGlyph.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

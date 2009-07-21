@@ -117,10 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="FilterHeaderCellGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAALEwAA
+        CxMBAJqcGAAAAapJREFUOE+lk01LQkEUhivsN/i1NBBXUT/hCoIrA7mmuNDCRbqocOOmwvoBFtjG5CZB
+        RW6slQniB+a6wkttcqkFgrWS0Ms9bzMXFKOEwoEzzMd5n3Nm5swsgJmpGgdMY5o4n79V6vU6ybJM9/cP
+        VK1WqVgs0vX1DZ1fXFImc0YnJ2lKJBIUi8VofT1ETqeTSVn2vNvZ3VMfHh/R7b5DURQMBgP0ej0276LV
+        boPvVSoVpFIphEIhiKIIvV6vjgBms9kSjx9Qo9HQRKrK94A+A72+veHp+RmFQgHJZBJutxsGgwFMszQO
+        mGcLC5vbW6jV7tDpdLRMuh/vmrhUKiGdTsPn8xGLTMx3mdncCMAHbEGDbIQjxKO1Wi28NJsolctIHh/D
+        7/fDaDR+E38DjENEj0eVJIkasoxcLodoNAqTyfRD/AMwBrGsrnoVfnGSdAq73c7PvDhMe/zZJ9aAKHr6
+        V9ks4vF9OBwOmlQrEwFer69/eHiEYHANNpvt/4BAINgPhyMQBAE6nU4rmt9sYgYu18qnINhhtVo5QCua
+        fwH++j+m+ki/PuNfIw/9vgC4yoxe5Vq6IAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="LabelEqualsOperator" xml:space="preserve">
+    <value>=</value>
+  </data>
+  <data name="LabelGreaterThanOperator" xml:space="preserve">
+    <value>&gt;</value>
+  </data>
+  <data name="LabelGreaterThanOrEqualsOperator" xml:space="preserve">
+    <value>≥</value>
+  </data>
+  <data name="LabelLessThanOperator" xml:space="preserve">
+    <value>&lt;</value>
+  </data>
+  <data name="LabelLessThanOrEqualsOperator" xml:space="preserve">
+    <value>≤</value>
+  </data>
+  <data name="LabelNotEqualsOperator" xml:space="preserve">
+    <value>≠</value>
+  </data>
   <data name="LabelNullValue" xml:space="preserve">
     <value>(null)</value>
   </data>
   <data name="LabelSelectAll" xml:space="preserve">
     <value>Select All</value>
+  </data>
+  <data name="MessageParsingFailed" xml:space="preserve">
+    <value>Unable to parse input due to invalid format.</value>
+  </data>
+  <data name="TooltipEqualsOperator" xml:space="preserve">
+    <value>Equal to</value>
+  </data>
+  <data name="TooltipGreaterThanOperator" xml:space="preserve">
+    <value>Greater Than</value>
+  </data>
+  <data name="TooltipGreaterThanOrEqualsOperator" xml:space="preserve">
+    <value>Greater Than or Equal to</value>
+  </data>
+  <data name="TooltipLessThanOperator" xml:space="preserve">
+    <value>Less Than</value>
+  </data>
+  <data name="TooltipLessThanOrEqualsOperator" xml:space="preserve">
+    <value>Less Than or Equal to</value>
+  </data>
+  <data name="TooltipNotEqualsOperator" xml:space="preserve">
+    <value>Not Equal to</value>
   </data>
 </root>

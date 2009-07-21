@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions
 {
@@ -13,106 +14,162 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions
 	[AssociateView(typeof (CompareFilterMenuActionViewExtensionPoint))]
 	public class CompareFilterMenuAction : Action
 	{
-		private readonly int _allowedModesMask;
-		private event EventHandler _currentModeChanged;
-		private event EventHandler _valueChanged;
-		private event EventHandler _refreshRequested;
+		private readonly IFilterMenuActionOwner _owner;
+		private readonly IList<CompareFilterMode> _allowedModes;
 
-		private CompareFilterMode _currentMode;
-		private string _value;
-
-		public CompareFilterMenuAction(string actionID, ActionPath actionPath, CompareFilterMode allowedModes, IResourceResolver resourceResolver)
+		public CompareFilterMenuAction(string actionID, ActionPath actionPath, IFilterMenuActionOwner owner, IList<CompareFilterMode> allowedModes, IResourceResolver resourceResolver)
 			: base(actionID, actionPath, resourceResolver)
 		{
-			Platform.CheckTrue(allowedModes != 0, "allowedModes should be non-empty");
-			_allowedModesMask = (int)allowedModes;
+			Platform.CheckTrue(allowedModes.Count > 0, "allowedModes should be non-empty");
+			_allowedModes = allowedModes;
+			_owner = owner;
+		}
 
-			foreach (CompareFilterMode mode in this.AllowedModes)
+		private Predicate Filter
+		{
+			get
 			{
-				_currentMode = mode;
-				break;
+				Predicate filter = Predicate.Find(_owner.ParentFilterPredicate.Predicates, base.ActionID);
+				if (filter == null)
+				{
+					filter = new Predicate(_owner.Column, base.ActionID);
+					filter.CurrentMode = _allowedModes[0];
+					_owner.ParentFilterPredicate.Predicates.Add(filter);	
+				}
+				return filter;
 			}
+		}
+
+		public IList<CompareFilterMode> AllowedModes
+		{
+			get { return _allowedModes; }
 		}
 
 		public CompareFilterMode CurrentMode
 		{
-			get { return _currentMode; }
-			set
-			{
-				value = (CompareFilterMode) ((int) value & _allowedModesMask);
-				Platform.CheckTrue(value != 0, "That mode is not allowed");
-				if (_currentMode != value)
-				{
-					_currentMode = value;
-					EventsHelper.Fire(_currentModeChanged, this, EventArgs.Empty);
-				}
-			}
+			get { return this.Filter.CurrentMode; }
+			set { this.Filter.CurrentMode = value; }
 		}
 
 		public string Value
 		{
-			get { return _value; }
-			set
-			{
-				if (_value != value)
-				{
-					_value = value;
-					EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
-				}
-			}
+			get { return this.Filter.Value; }
+			set { this.Filter.Value = value; }
 		}
 
-		public event EventHandler CurrentModeChanged
-		{
-			add { _currentModeChanged += value; }
-			remove { _currentModeChanged -= value; }
-		}
-
-		public event EventHandler ValueChanged
-		{
-			add { _valueChanged += value; }
-			remove { _valueChanged -= value; }
-		}
-
-		public event EventHandler RefreshRequested
-		{
-			add { _refreshRequested += value; }
-			remove { _refreshRequested -= value; }
-		}
-
-		public void Refresh()
-		{
-			//EventsHelper.Fire(_refreshRequested, this, EventArgs.Empty);
-		}
-
-		public void ToggleMode( )
-		{
-			List<CompareFilterMode> list = new List<CompareFilterMode>(this.AllowedModes);
-			int index = (Math.Max(-1, list.IndexOf(this.CurrentMode)) + 1) % list.Count;
-			this.CurrentMode = list[index];
-		}
-
-		public IEnumerable<CompareFilterMode> AllowedModes
-		{
-			get
-			{
-				foreach (int mode in Enum.GetValues(typeof(CompareFilterMode)))
-				{
-					if((_allowedModesMask & mode) == mode)
-						yield return (CompareFilterMode) mode;
-				}
-			}
-		}
-
-		public static CompareFilterMenuAction CreateAction(Type callingType, string actionID, string actionPath, CompareFilterMode allowedModes, IResourceResolver resourceResolver)
+		public static CompareFilterMenuAction CreateAction(Type callingType, string actionID, string actionPath, IFilterMenuActionOwner owner, IList<CompareFilterMode> allowedModes, IResourceResolver resourceResolver)
 		{
 			CompareFilterMenuAction action = new CompareFilterMenuAction(
 				string.Format("{0}:{1}", callingType.FullName, actionID),
 				new ActionPath(actionPath, resourceResolver),
-				allowedModes, resourceResolver);
+				owner, allowedModes, resourceResolver);
 			action.Label = action.Path.LastSegment.LocalizedText;
 			action.Persistent = true;
 			return action;
+		}
+
+		public class Predicate : FilterPredicate
+		{
+			public event EventHandler CurrentModeChanged;
+			public event EventHandler ValueChanged;
+
+			private readonly StudyFilterColumn _column;
+			private readonly string _id;
+			private CompareFilterMode _mode;
+			private string _stringValue = null;
+			private object _value = null;
+
+			internal Predicate(StudyFilterColumn column, string id)
+			{
+				_column = column;
+				_id = id;
+			}
+
+			internal static Predicate Find(IEnumerable<FilterPredicate> haystack, string id)
+			{
+				foreach (FilterPredicate predicate in haystack)
+				{
+					if (predicate is Predicate && ((Predicate) predicate)._id == id)
+						return (Predicate) predicate;
+				}
+				return null;
+			}
+
+			public CompareFilterMode CurrentMode
+			{
+				get { return _mode; }
+				set
+				{
+					if (_mode != value)
+					{
+						_mode = value;
+						EventsHelper.Fire(this.CurrentModeChanged, this, EventArgs.Empty);
+
+						base.OnChanged();
+					}
+				}
+			}
+
+			public string Value
+			{
+				get { return _stringValue; }
+				set
+				{
+					if (_stringValue != value)
+					{
+						object newValue = null;
+						if (!string.IsNullOrEmpty(value))
+						{
+							if (!_column.Parse(value, out newValue))
+								throw new FormatException();
+						}
+
+						_stringValue = value;
+						_value = newValue;
+						EventsHelper.Fire(this.ValueChanged, this, EventArgs.Empty);
+
+						base.OnChanged();
+					}
+				}
+			}
+
+			public bool IsActive
+			{
+				get { return !string.IsNullOrEmpty(_stringValue); }
+			}
+
+			public override bool Evaluate(StudyItem item)
+			{
+				if (!IsActive)
+					return true;
+
+				int result = Compare(_column.GetValue(item), _value);
+				switch (_mode)
+				{
+					case CompareFilterMode.LessThan:
+						return result < 0;
+					case CompareFilterMode.LessThenOrEquals:
+						return result <= 0;
+					case CompareFilterMode.GreaterThan:
+						return result > 0;
+					case CompareFilterMode.GreaterThanOrEquals:
+						return result >= 0;
+					case CompareFilterMode.NotEquals:
+						return result != 0;
+					case CompareFilterMode.Equals:
+					default:
+						return result == 0;
+				}
+			}
+
+			private static int Compare(object x, object y)
+			{
+				if (x is IComparable)
+					return ((IComparable) x).CompareTo(y);
+				else if (y is IComparable)
+					return -((IComparable) y).CompareTo(x);
+				return 0;
+			}
 		}
 	}
 

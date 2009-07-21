@@ -1,31 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 {
-	public class DateTimeDicomTagColumn : MultiValuedDicomTagColumn<DateTime>, ITemporalSortableColumn
+	public class DateTimeDicomTagColumn : DicomTagColumn<DicomArray<DateTime>>, ITemporalSortableColumn
 	{
-		public DateTimeDicomTagColumn(DicomTag dicomTag) : base(dicomTag) {}
+		private readonly string _dateTimeFormat;
 
-		public override DicomArray<DateTime> GetTypedValue(DicomAttribute attribute)
+		public DateTimeDicomTagColumn(DicomTag dicomTag) : base(dicomTag)
 		{
+			_dateTimeFormat = "f";
+			if (base.VR == "DA")
+				_dateTimeFormat = "d";
+			else if (base.VR == "TM")
+				_dateTimeFormat = "t";
+		}
+
+		private bool DateTimeTryParseExact(string s, out DateTime result)
+		{
+			return DateTime.TryParseExact(s, _dateTimeFormat, CultureInfo.CurrentCulture, DateTimeStyles.None, out result);
+		}
+
+		public override DicomArray<DateTime> GetTypedValue(StudyItem item)
+		{
+			DicomAttribute attribute = item[base.Tag];
+
 			if (attribute == null)
 				return null;
 			if (attribute.IsNull)
 				return new DicomArray<DateTime>();
-			
-			// try parsing as a normal DateTime - if that fails, then default to parsing as a DICOM encoded date/time
-			DicomArray<DateTime> normalParseResult;
-			if (DicomArray<DateTime>.TryParse(attribute.ToString(), DateTime.TryParse, out normalParseResult))
-			{
-				bool anyNonNull = false;
-				foreach (DateTime? dateTime in normalParseResult)
-					anyNonNull |= dateTime.HasValue;
-				if(anyNonNull)
-					return normalParseResult;
-			}
 
 			DateTime?[] result;
 			try
@@ -43,13 +50,34 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 				return null;
 			}
 
-			string elementFormat = "f";
-			if (base.VR == "DA")
-				elementFormat = "d";
-			else if (base.VR == "TM")
-				elementFormat = "t";
+			return new DicomArray<DateTime>(result, FormatArray(result, _dateTimeFormat));
+		}
 
-			return new DicomArray<DateTime>(result, FormatArray(result, elementFormat));
+		public override bool Parse(string input, out DicomArray<DateTime> output)
+		{
+			if (DicomArray<DateTime>.TryParse(input, DateTimeTryParseExact, out output))
+				return true;
+
+			if (DicomArray<DateTime>.TryParse(input, DateTime.TryParse, out output))
+				return true;
+
+			switch (base.VR)
+			{
+				case "DA":
+					if (DicomArray<DateTime>.TryParse(input, DateParser.Parse, out output))
+						return true;
+					break;
+				case "TM":
+					if (DicomArray<DateTime>.TryParse(input, TimeParser.Parse, out output))
+						return true;
+					break;
+				case "DT":
+				default:
+					if (DicomArray<DateTime>.TryParse(input, DateTimeParser.Parse, out output))
+						return true;
+					break;
+			}
+			return false;
 		}
 
 		public override int Compare(StudyItem x, StudyItem y)

@@ -76,6 +76,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities
 			get { return _predicates; }
 		}
 
+		public virtual bool IsActive
+		{
+			get
+			{
+				foreach (FilterPredicate predicate in _predicates)
+				{
+					if (predicate is CompositeFilterPredicate && !((CompositeFilterPredicate)predicate).IsActive)
+						continue;
+					return true;
+				}
+				return false;
+			}
+		}
+
 		private void Predicates_Added(object sender, ListEventArgs<FilterPredicate> e)
 		{
 			e.Item.Changed += FilterPredicate_Changed;

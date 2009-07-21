@@ -3,15 +3,14 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
 {
 	[MenuAction("clear", "studyfilters-columnfilters/MenuClearFilters", "Clear")]
 	[EnabledStateObserver("clear", "Enabled", "EnabledChanged")]
 	[IconSet("clear", IconScheme.Colour, "Icons.ClearFiltersSmall.png", "Icons.ClearFiltersSmall.png", "Icons.ClearFiltersSmall.png")]
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
-	public class ClearColumnFiltersTool : StudyFilterColumnTool
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
+	public class ClearColumnFiltersTool : AutoFilterTool
 	{
 		public event EventHandler EnabledChanged;
 
@@ -32,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		public void Clear()
 		{
-			base.Column.ColumnFilterRoot.Predicates.Clear();
+			base.Column.AutoFilterRoot.Predicates.Clear();
 			base.StudyFilter.Refresh();
 		}
 

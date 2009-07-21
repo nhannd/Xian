@@ -5,10 +5,10 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
 {
-	[ExtensionOf(typeof (StudyFilterColumnToolExtensionPoint))]
-	public class QuickValueColumnFilterTool : StudyFilterColumnTool, IListFilterDataSource
+	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
+	public class QuickValueColumnFilterTool : AutoFilterTool, IListFilterDataSource
 	{
 		protected override bool IsColumnSupported()
 		{
@@ -19,10 +19,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 		{
 			get
 			{
-				QuickValuePredicateFilter filter = QuickValuePredicateFilter.Find(base.ColumnFilterRoot.Predicates, base.Column);
-				if(filter == null)
+				QuickValuePredicateFilter filter = QuickValuePredicateFilter.Find(base.AutoFilterRoot.Predicates, base.Column);
+				if (filter == null)
 				{
-					base.ColumnFilterRoot.Predicates.Add(filter = new QuickValuePredicateFilter(this.Column));
+					base.AutoFilterRoot.Predicates.Add(filter = new QuickValuePredicateFilter(this.Column));
 					foreach (object value in ((IValueIndexedColumn) base.Column).UniqueValues)
 						filter.InstallFilter(value);
 				}
@@ -32,9 +32,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		private void ClearQuickValueFilter()
 		{
-			QuickValuePredicateFilter filter = QuickValuePredicateFilter.Find(base.ColumnFilterRoot.Predicates, base.Column);
+			QuickValuePredicateFilter filter = QuickValuePredicateFilter.Find(base.AutoFilterRoot.Predicates, base.Column);
 			if (filter != null)
-				this.ColumnFilterRoot.Predicates.Remove(filter);
+				this.AutoFilterRoot.Predicates.Remove(filter);
 		}
 
 		public override IActionSet Actions
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		bool IListFilterDataSource.GetSelectedState(object value)
 		{
-			if (QuickValuePredicateFilter.Find(base.ColumnFilterRoot.Predicates, base.Column) == null)
+			if (QuickValuePredicateFilter.Find(base.AutoFilterRoot.Predicates, base.Column) == null)
 				return true;
 
 			ValueFilterPredicate result;

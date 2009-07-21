@@ -224,8 +224,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 						state = ComboBoxState.Disabled;
 					else if (this.IsDropDownShowing)
 						state = ComboBoxState.Pressed;
-					else if (_filtered)
-						state = ComboBoxState.Hot;
 					ComboBoxRenderer.DrawDropDownButton(graphics, buttonBounds, state);
 				}
 				else
@@ -241,59 +239,34 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 						state = PushButtonState.Pressed;
 						pressedOffset = 1;
 					}
-					else if (_filtered)
-					{
-						state = PushButtonState.Hot;
-					}
 					ButtonRenderer.DrawButton(graphics, buttonBounds, state);
+					graphics.FillPolygon(this.DropDownEnabled ? SystemBrushes.ControlText : SystemBrushes.InactiveCaption,
+					                     new Point[]
+					                     	{
+					                     		new Point(
+					                     			buttonBounds.Width/2 +
+					                     			buttonBounds.Left - 1 + pressedOffset,
+					                     			buttonBounds.Height*3/4 +
+					                     			buttonBounds.Top - 1 + pressedOffset),
+					                     		new Point(
+					                     			buttonBounds.Width/4 +
+					                     			buttonBounds.Left + pressedOffset,
+					                     			buttonBounds.Height/2 +
+					                     			buttonBounds.Top - 1 + pressedOffset),
+					                     		new Point(
+					                     			buttonBounds.Width*3/4 +
+					                     			buttonBounds.Left - 1 + pressedOffset,
+					                     			buttonBounds.Height/2 +
+					                     			buttonBounds.Top - 1 + pressedOffset)
+					                     	});
+				}
 
-					// If there is a filter in effect for the column, paint the 
-					// down arrow as an unfilled triangle. If there is no filter 
-					// in effect, paint the down arrow as a filled triangle.
-					if (_filtered)
-					{
-						graphics.DrawPolygon(this.DropDownEnabled ? SystemPens.ControlText : SystemPens.InactiveCaption,
-						                     new Point[]
-						                     	{
-						                     		new Point(
-						                     			buttonBounds.Width/2 +
-						                     			buttonBounds.Left - 1 + pressedOffset,
-						                     			buttonBounds.Height*3/4 +
-						                     			buttonBounds.Top - 1 + pressedOffset),
-						                     		new Point(
-						                     			buttonBounds.Width/4 +
-						                     			buttonBounds.Left + pressedOffset,
-						                     			buttonBounds.Height/2 +
-						                     			buttonBounds.Top - 1 + pressedOffset),
-						                     		new Point(
-						                     			buttonBounds.Width*3/4 +
-						                     			buttonBounds.Left - 1 + pressedOffset,
-						                     			buttonBounds.Height/2 +
-						                     			buttonBounds.Top - 1 + pressedOffset)
-						                     	});
-					}
-					else
-					{
-						graphics.FillPolygon(this.DropDownEnabled ? SystemBrushes.ControlText : SystemBrushes.InactiveCaption,
-						                     new Point[]
-						                     	{
-						                     		new Point(
-						                     			buttonBounds.Width/2 +
-						                     			buttonBounds.Left - 1 + pressedOffset,
-						                     			buttonBounds.Height*3/4 +
-						                     			buttonBounds.Top - 1 + pressedOffset),
-						                     		new Point(
-						                     			buttonBounds.Width/4 +
-						                     			buttonBounds.Left + pressedOffset,
-						                     			buttonBounds.Height/2 +
-						                     			buttonBounds.Top - 1 + pressedOffset),
-						                     		new Point(
-						                     			buttonBounds.Width*3/4 +
-						                     			buttonBounds.Left - 1 + pressedOffset,
-						                     			buttonBounds.Height/2 +
-						                     			buttonBounds.Top - 1 + pressedOffset)
-						                     	});
-					}
+				// and then paint a filtering and/or sorting glyph
+				if(_filtered)
+				{
+					Bitmap glyph = Properties.Resources.FilterHeaderCellGlyph;
+					Rectangle cbb = this.DataGridView.GetCellDisplayRectangle(this.ColumnIndex, -1, false);
+					graphics.DrawImage(glyph, new Rectangle(buttonBounds.Left - glyph.Width - 3, (cbb.Height - glyph.Height) / 2, glyph.Width, glyph.Height));
 				}
 			}
 		}
