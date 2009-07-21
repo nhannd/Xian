@@ -362,8 +362,22 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
-                    ListCheckedSummmaryTableItems(),
+            	List<ProcedurePlanSummaryTableItem> checkedItems = ListCheckedSummmaryTableItems();
+            	ProcedurePlanSummaryTableItem firstItem = CollectionUtils.FirstElement(checkedItems);
+
+				if (CollectionUtils.Contains(checkedItems,
+					delegate (ProcedurePlanSummaryTableItem item)
+					{
+						return item.ModalityProcedureStep.Modality.Id != firstItem.ModalityProcedureStep.Modality.Id;
+					}))
+				{
+					this.Host.ShowMessageBox("Cannot start procedure steps of different modalities at the same time.",
+					                         MessageBoxActions.Ok);
+					return;
+				}
+
+                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef>(
+					checkedItems,
                     delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.ProcedureStepRef; });
 
                 if (checkedMpsRefs.Count > 0)
