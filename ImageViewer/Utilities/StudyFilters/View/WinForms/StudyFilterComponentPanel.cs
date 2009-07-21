@@ -57,6 +57,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			ToolStripBuilder.BuildToolbar(_toolbar.Items, toolbarActions.ChildNodes, myStyle);
 
 			_tableView.Table = component.Table;
+			_tableView.MultiSelect = true;
 			_tableView.ColumnFilterMenuStripClosed += new EventHandler(_tableView_ColumnFilterMenuStripClosed);
 			_tableView.ContextActionModelDelegate = this.GetContextMenuModel;
 			_tableView.ColumnFilterActionModelDelegate = this.GetColumnFilterMenuModel;
@@ -65,9 +66,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 
 		private ActionModelNode GetContextMenuModel(int row, int column)
 		{
-			if (row >= 0)
-				return null;
-			return ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms", StudyFilterTool.DefaultContextMenuActionSite, _component.ExportedActions);
+			StudyItem activeItem = null;
+			if (row >= 0 && row < _component.Items.Count)
+				activeItem = _component.Items[row];
+
+			StudyFilterColumn activeColumn = null;
+			if (column >= 0 && column < _component.Columns.Count)
+				activeColumn = _component.Columns[column];
+
+			return _component.GetContextMenuActionModel(activeItem, activeColumn);
 		}
 
 		private ActionModelNode GetColumnFilterMenuModel(int row, int column)
@@ -80,7 +87,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			foreach (StudyFilterColumn column in (IEnumerable<StudyFilterColumn>) _component.Columns)
 			{
 				_tableView.SetColumnFilteringActive(_component.Columns.IndexOf(column), column.IsColumnFiltered);
-				//_tableView.SetColumnFilteringActive(column.Key, column.IsColumnFiltered);
 			}
 		}
 

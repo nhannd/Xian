@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		private event EventHandler _itemRemoved;
 		private event EventHandler _filterPredicatesChanged;
 		private event EventHandler _sortPredicatesChanged;
+		private event EventHandler _isStaleChanged;
 
 		private readonly Table<StudyItem> _table;
 		private readonly StudyFilterColumnCollection _columns;
@@ -61,10 +63,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		private readonly ObservableList<StudyItem> _masterList;
 		private readonly SortPredicateRoot _sortPredicate;
 		private readonly FilterPredicateRoot _filterPredicate;
-		private event EventHandler _isStaleChanged;
+		private StudyFilterToolContext _toolContext;
 		private ToolSet _toolset;
 		private IActionSet _actions;
 		private bool _isStale;
+		private bool _bulkOperationsMode;
 
 		public StudyFilterComponent()
 		{
@@ -97,6 +100,23 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		#region Misc
 
+		/// <summary>
+		/// Gets or sets a value indicating whether or not the component should operate in bulk operations mode.
+		/// </summary>
+		/// <remarks>
+		/// The component runs special code to speed up operations involving small numbers of changing items.
+		/// These optimizations can be detrimental when large numbers of items are changed in one large operation.
+		/// Setting the component to run in bulk operations mode will temporarily disable these optimizations.
+		/// During and after bulk operations, the displayed table will only update if <see cref="Refresh()"/>
+		/// is explicitly called. If <see cref="Refresh()"/> is not called after ending bulk operations, the table
+		/// will remain stale.
+		/// </remarks>
+		public bool BulkOperationsMode
+		{
+			get { return _bulkOperationsMode; }
+			set { _bulkOperationsMode = value; }
+		}
+
 		public Table<StudyItem> Table
 		{
 			get { return _table; }
@@ -111,7 +131,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		{
 			base.Start();
 
-			_toolset = new ToolSet(new StudyFilterToolExtensionPoint(), new StudyFilterToolContext(this));
+			_toolContext = new StudyFilterToolContext(this);
+			_toolset = new ToolSet(new StudyFilterToolExtensionPoint(), _toolContext);
 			_actions = _toolset.Actions;
 
 			// restore columns from settings
@@ -126,6 +147,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			_actions = null;
 			_toolset.Dispose();
 			_toolset = null;
+			_toolContext = null;
+
 			_table.Filter();
 
 			base.Stop();
@@ -159,11 +182,41 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		private void OnMasterListItemRemoved(object sender, ListEventArgs<StudyItem> e)
 		{
+			if (!_bulkOperationsMode)
+			{
+				// if the item passes the filter, then it's probably being shown in the table right now - remove it!
+				if (_filterPredicate.Test(e.Item))
+				{
+					_table.Items.Remove(e.Item);
+
+					// and now we don't have to flag the filtered table as stale
+				}
+			}
+			else
+			{
+				this.IsStale = true;
+			}
+
 			EventsHelper.Fire(_itemRemoved, this, EventArgs.Empty);
 		}
 
 		private void OnMasterListItemAdded(object sender, ListEventArgs<StudyItem> e)
 		{
+			if (!_bulkOperationsMode)
+			{
+				// if the item passes the filter, then immediately add it to the table
+				if (_filterPredicate.Test(e.Item))
+				{
+					_sortPredicate.Insert(_table.Items, e.Item);
+
+					// and now we don't have to flag the filtered table as stale
+				}
+			}
+			else
+			{
+				this.IsStale = true;
+			}
+
 			EventsHelper.Fire(_itemAdded, this, EventArgs.Empty);
 		}
 
@@ -265,6 +318,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		{
 			private readonly StudyFilterComponent _component;
 
+			private event EventHandler _activeChanged;
+
+			private StudyItem _activeItem = null;
+			private StudyFilterColumn _activeColumn = null;
+
 			public StudyFilterToolContext(StudyFilterComponent component)
 			{
 				_component = component;
@@ -279,11 +337,44 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			{
 				get { return _component.Host.DesktopWindow; }
 			}
+
+			public StudyItem ActiveItem
+			{
+				get { return _activeItem; }
+			}
+
+			public StudyFilterColumn ActiveColumn
+			{
+				get { return _activeColumn; }
+			}
+
+			public event EventHandler ActiveChanged
+			{
+				add { _activeChanged += value; }
+				remove { _activeChanged -= value; }
+			}
+
+			internal void SetActiveCell(StudyItem item, StudyFilterColumn column)
+			{
+				_activeItem = item;
+				_activeColumn = column;
+				EventsHelper.Fire(_activeChanged, this, EventArgs.Empty);
+			}
 		}
 
 		#endregion
 
-		#region Staleness and caching support
+		#region Context Menu Support
+
+		public ActionModelNode GetContextMenuActionModel(StudyItem item, StudyFilterColumn column)
+		{
+			_toolContext.SetActiveCell(item, column);
+			return ActionModelRoot.CreateModel(this.GetType().FullName, StudyFilterTool.DefaultContextMenuActionSite, _actions);
+		}
+
+		#endregion
+
+		#region Staleness/Caching Support
 
 		public bool IsStale
 		{
@@ -314,11 +405,18 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			this.IsStale = true;
 		}
 
+		/// <summary>
+		/// If the displayed data is stale, reapplies the predicates to the dataset and updates the display.
+		/// </summary>
 		public void Refresh()
 		{
-			this.Refresh(true);
+			this.Refresh(false);
 		}
 
+		/// <summary>
+		/// Reapplies the predicates to the dataset and updates the display.
+		/// </summary>
+		/// <param name="force">A value indicating whether or not to perform the refresh even if the data is not stale.</param>
 		public void Refresh(bool force)
 		{
 			if (force || this.IsStale)
@@ -379,6 +477,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				return filtered;
 			}
 
+			/// <summary>
+			/// Tests the filter on the specified item. O{1}
+			/// </summary>
+			public bool Test(StudyItem item)
+			{
+				return _predicate.Evaluate(item);
+			}
+
 			private void Predicates_Changed(object sender, EventArgs e)
 			{
 				_owner.IsStale = true;
@@ -426,6 +532,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			public void Sort(IList<StudyItem> list)
 			{
 				MergeSort(this, list, 0, list.Count);
+			}
+
+			/// <summary>
+			/// Inserts the specified item into a list. O{log(n)}
+			/// </summary>
+			public void Insert(IList<StudyItem> list, StudyItem item)
+			{
+				list.Insert(BinarySearch(this, list, item, 0, list.Count), item);
 			}
 
 			private void Predicates_Changed(object sender, ListEventArgs<SortPredicate> e)
@@ -490,6 +604,42 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 					foreach (StudyItem item in merged)
 						list[k++] = item;
 				}
+			}
+
+			#endregion
+
+			#region Search Implementation
+
+			/// <summary>
+			/// Performs a binary search on the given <paramref name="list"/> using the given <paramref name="comparer"/>
+			/// for the expected index of <paramref name="item"/>.
+			/// The range of items searched is [<paramref name="rangeStart"/>, <paramref name="rangeStop"/>).
+			/// </summary>
+			private static int BinarySearch(IComparer<StudyItem> comparer, IList<StudyItem> list, StudyItem item, int rangeStart, int rangeStop)
+			{
+				int rangeLength = rangeStop - rangeStart;
+
+				int result;
+				if (rangeLength == 1)
+				{
+					if (comparer.Compare(item, list[rangeStart]) >= 0)
+						result = rangeStop;
+					else
+						result = rangeStart;
+				}
+				else if (rangeLength == 0)
+				{
+					result = rangeStop;
+				}
+				else
+				{
+					rangeLength = rangeStart + rangeLength/2;
+					if (comparer.Compare(item, list[rangeLength]) >= 0)
+						result = BinarySearch(comparer, list, item, rangeLength, rangeStop);
+					else
+						result = BinarySearch(comparer, list, item, rangeStart, rangeLength);
+				}
+				return result;
 			}
 
 			#endregion

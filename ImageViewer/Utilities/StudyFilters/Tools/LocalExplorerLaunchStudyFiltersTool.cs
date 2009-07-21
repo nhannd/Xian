@@ -30,43 +30,36 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Explorer.Local;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	public sealed class Or : FilterNodeBase
+	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenInStudyFilters", "Open")]
+	[Tooltip("Open", "TooltipOpenInStudyFilters")]
+	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
+	public class LocalExplorerLaunchStudyFiltersTool : Tool<ILocalImageExplorerToolContext>
 	{
-		private readonly IList<FilterNodeBase> _operands;
-
-		public Or(params FilterNodeBase[] operands)
+		public void Open()
 		{
-			List<FilterNodeBase> list = new List<FilterNodeBase>();
-			list.AddRange(operands);
-			_operands = list.AsReadOnly();
-		}
+			List<string> paths = new List<string>();
+			foreach (string path in base.Context.SelectedPaths)
+				paths.Add(path);
 
-		public Or(IEnumerable<FilterNodeBase> operands)
-		{
-			List<FilterNodeBase> list = new List<FilterNodeBase>();
-			list.AddRange(operands);
-			_operands = list.AsReadOnly();
-		}
+			StudyFilterComponent component = new StudyFilterComponent();
+			component.BulkOperationsMode = true;
 
-		public IList<FilterNodeBase> Operands
-		{
-			get { return _operands; }
-		}
-
-		public override bool Evaluate(StudyItem item)
-		{
-			if (_operands.Count == 0)
-				return true;
-
-			foreach (FilterNodeBase operand in _operands)
+			if (StudyFilterComponentLoadHelper.Load(component, base.Context.DesktopWindow, true, paths))
 			{
-				if (operand.Evaluate(item))
-					return true;
+				component.Refresh(true);
+				base.Context.DesktopWindow.Workspaces.AddNew(component, SR.StudyFilters);
 			}
-			return false;
+
+			component.BulkOperationsMode = false;
 		}
 	}
 }

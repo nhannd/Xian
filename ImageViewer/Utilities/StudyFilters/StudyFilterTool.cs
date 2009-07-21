@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 
@@ -43,6 +44,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 	{
 		StudyFilterComponent Component { get; }
 		IDesktopWindow DesktopWindow { get; }
+
+		StudyItem ActiveItem { get; }
+		StudyFilterColumn ActiveColumn { get; }
 	}
 
 	public abstract class StudyFilterTool : Tool<IStudyFilterToolContext>
@@ -87,6 +91,26 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			this.OnSelectionChanged();
 		}
 
-		protected virtual void OnSelectionChanged() {}
+		protected virtual void OnSelectionChanged()
+		{
+			this.AtLeastOneSelected = this.Selection.Count > 0;
+		}
+
+		private bool _atLeastOneSelected;
+
+		public event EventHandler AtLeastOneSelectedChanged;
+
+		public bool AtLeastOneSelected
+		{
+			get { return _atLeastOneSelected; }
+			private set
+			{
+				if (_atLeastOneSelected != value)
+				{
+					_atLeastOneSelected = value;
+					EventsHelper.Fire(this.AtLeastOneSelectedChanged, this, EventArgs.Empty);
+				}
+			}
+		}
 	}
 }

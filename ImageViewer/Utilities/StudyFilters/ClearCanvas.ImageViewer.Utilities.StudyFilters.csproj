@@ -60,18 +60,13 @@
     <Compile Include="Columns\UnsignedDicomTagColumn.cs" />
     <Compile Include="Columns\PathColumn.cs" />
     <Compile Include="Export\ExportComponent.cs" />
-    <Compile Include="FilterEditorComponent.cs" />
     <Compile Include="ISortableColumn.cs" />
     <Compile Include="IValueIndexedColumn.cs" />
     <Compile Include="StudyFilterColumnBase.cs" />
     <Compile Include="StudyFilterColumnDefinitions.cs" />
     <Compile Include="Tools\Actions\CompareFilterMenuAction.cs" />
-    <Compile Include="FilterNodes\And.cs" />
-    <Compile Include="FilterNodes\Not.cs" />
-    <Compile Include="FilterNodes\FilterNodeBase.cs" />
-    <Compile Include="FilterNodes\Or.cs" />
-    <Compile Include="FilterNodes\Value.cs" />
     <Compile Include="Tools\Actions\IFilterMenuActionOwner.cs" />
+    <Compile Include="Tools\AddItemsTool.cs" />
     <Compile Include="Tools\AutoFilters\AutoFilterTool.cs" />
     <Compile Include="Tools\Actions\ListFilterMenuAction.cs" />
     <Compile Include="Tools\AutoFilters\ClearColumnFiltersTool.cs" />
@@ -80,15 +75,18 @@
     <Compile Include="Tools\AutoFilters\ColumnSortTool.cs" />
     <Compile Include="Columns\DicomObjectArray.cs" />
     <Compile Include="Columns\DicomArray.cs" />
+    <Compile Include="Tools\LaunchStudyFiltersTool.cs" />
+    <Compile Include="Tools\RemoveItemsTool.cs" />
+    <Compile Include="Tools\StudyFilterComponentLoadHelper.cs" />
+    <Compile Include="Utilities\ExtendedOpenFilesDialog.cs" />
     <Compile Include="Utilities\FilterPredicate.cs" />
     <Compile Include="IStudyFilter.cs" />
     <Compile Include="Utilities\SortPredicate.cs" />
     <Compile Include="StudyFilterSettings.cs" />
     <Compile Include="Tools\AddRemoveColumnsTool.cs" />
-    <Compile Include="Tools\ApplyFiltersTool.cs" />
     <Compile Include="Tools\ExportTool.cs" />
     <Compile Include="Tools\LaunchViewerTool.cs" />
-    <Compile Include="Tools\LocalExplorerTool.cs" />
+    <Compile Include="Tools\LocalExplorerLaunchStudyFiltersTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -171,6 +169,21 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\OpenToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\StudyFilterToolLarge.png" />
+    <EmbeddedResource Include="Icons\StudyFilterToolMedium.png" />
+    <EmbeddedResource Include="Icons\StudyFilterToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddItemsToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddItemsToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddItemsToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
+    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

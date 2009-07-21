@@ -35,14 +35,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
 		{
 			this.RemoveSort();
 			this.StudyFilter.SortPredicates.Insert(0, this.CreateAscendingSortPredicate());
-			this.StudyFilter.Refresh();
+			this.StudyFilter.Refresh(true);
 		}
 
 		public void SortDescending()
 		{
 			this.RemoveSort();
 			this.StudyFilter.SortPredicates.Insert(0, this.CreateDescendingSortPredicate());
-			this.StudyFilter.Refresh();
+			this.StudyFilter.Refresh(true);
 		}
 
 		protected virtual SortPredicate CreateAscendingSortPredicate()

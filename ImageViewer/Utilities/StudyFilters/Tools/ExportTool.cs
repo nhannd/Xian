@@ -43,16 +43,18 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
 	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
 	[IconSet("export", IconScheme.Colour, "Icons.SaveSmall.png", "Icons.SaveSmall.png", "Icons.SaveSmall.png")]
-	[MenuAction("exportAnonymized", "studyfilters-exportdropdown/MenuExportAnonymized", "ExportAnonymized")]
+	[MenuAction("exportAnonymized", DropDownMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
 	[MenuAction("exportAnonymized", DefaultContextMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
-	[MenuAction("exportCopy", "studyfilters-exportdropdown/MenuExportCopy", "ExportCopy")]
+	[MenuAction("exportCopy", DropDownMenuActionSite + "/MenuExportCopy", "ExportCopy")]
 	[MenuAction("exportCopy", DefaultContextMenuActionSite + "/MenuExportCopy", "ExportCopy")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class ExportTool : StudyFilterTool
 	{
+		public const string DropDownMenuActionSite = "studyfilters-exportdropdown";
+
 		public ActionModelNode DropDownActionModel
 		{
-			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "studyfilters-exportdropdown", this.Actions); }
+			get { return ActionModelRoot.CreateModel(this.GetType().FullName, DropDownMenuActionSite, this.Actions); }
 		}
 
 		public void ExportAnonymized()

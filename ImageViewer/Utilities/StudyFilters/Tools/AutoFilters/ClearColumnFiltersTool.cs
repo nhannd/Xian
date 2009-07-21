@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
 		public void Clear()
 		{
 			base.Column.AutoFilterRoot.Predicates.Clear();
-			base.StudyFilter.Refresh();
+			base.StudyFilter.Refresh(true);
 		}
 
 		private void StudyFilter_FilterPredicatesChanged(object sender, EventArgs e)

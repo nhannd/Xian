@@ -186,6 +186,9 @@
   <data name="FormatUnknownDicomTag" xml:space="preserve">
     <value>({0:x4},{1:x4})</value>
   </data>
+  <data name="LabelAllFiles" xml:space="preserve">
+    <value>All Files</value>
+  </data>
   <data name="LabelBinaryTagValue" xml:space="preserve">
     <value>({0} length={1})</value>
     <comment>{0}=actual VR, {1}=length</comment>
@@ -203,6 +206,12 @@
   <data name="LabelVRUnknown" xml:space="preserve">
     <value>(UN data)</value>
   </data>
+  <data name="MenuAddFiles" xml:space="preserve">
+    <value>Select &amp;Files...</value>
+  </data>
+  <data name="MenuAddFolders" xml:space="preserve">
+    <value>Select a Fol&amp;der...</value>
+  </data>
   <data name="MenuClearFilters" xml:space="preserve">
     <value>&amp;Clear Filters</value>
   </data>
@@ -213,7 +222,10 @@
     <value>Export &amp;Copy to...</value>
   </data>
   <data name="MenuOpenInStudyFilters" xml:space="preserve">
-    <value>Open in Study Filters</value>
+    <value>Open in Study &amp;Filters...</value>
+  </data>
+  <data name="MenuRemoveItems" xml:space="preserve">
+    <value>&amp;Remove Items</value>
   </data>
   <data name="MenuSortAscending" xml:space="preserve">
     <value>Sort &amp;Ascending</value>
@@ -228,7 +240,7 @@
     <value>Sort &amp;Ascending</value>
   </data>
   <data name="MenuSortAscendingTemporally" xml:space="preserve">
-    <value>Sort from Earliest to Latest</value>
+    <value>Sort from &amp;Earliest to Latest</value>
   </data>
   <data name="MenuSortDescending" xml:space="preserve">
     <value>Sort &amp;Descending</value>
@@ -243,7 +255,10 @@
     <value>Sort &amp;Descending</value>
   </data>
   <data name="MenuSortDescendingTemporally" xml:space="preserve">
-    <value>Sort from Latest to Earliest</value>
+    <value>Sort from &amp;Latest to Earliest</value>
+  </data>
+  <data name="MenuStudyFilters" xml:space="preserve">
+    <value>Study &amp;Filters</value>
   </data>
   <data name="MenuValueFilters" xml:space="preserve">
     <value>&amp;Value Filters</value>
@@ -253,6 +268,15 @@
   </data>
   <data name="MessageInvalidPath" xml:space="preserve">
     <value>Invalid path or filename: {0}</value>
+  </data>
+  <data name="MessageLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="MessageSelectAddFilesFolder" xml:space="preserve">
+    <value>Select a folder from which to recursively add files.</value>
+  </data>
+  <data name="MessageSelectFolderToFilter" xml:space="preserve">
+    <value>Select a folder to filter.</value>
   </data>
   <data name="MessageSelectOutputLocation" xml:space="preserve">
     <value>Select output location:</value>
@@ -272,6 +296,9 @@
   <data name="StudyFilters" xml:space="preserve">
     <value>Study Filters</value>
   </data>
+  <data name="ToolbarAddItems" xml:space="preserve">
+    <value>Add Items</value>
+  </data>
   <data name="ToolbarAddRemoveColumns" xml:space="preserve">
     <value>Add/Remove Columns</value>
   </data>
@@ -286,6 +313,9 @@
   </data>
   <data name="ToolbarLaunchInViewer" xml:space="preserve">
     <value>Launch in Viewer</value>
+  </data>
+  <data name="ToolbarRemoveItems" xml:space="preserve">
+    <value>Remove Items</value>
   </data>
   <data name="TooltipOpenInStudyFilters" xml:space="preserve">
     <value>Opens the selected DICOM files in a table for filtering purposes</value>

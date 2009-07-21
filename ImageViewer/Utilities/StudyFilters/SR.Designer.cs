@@ -268,6 +268,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Files.
+        /// </summary>
+        internal static string LabelAllFiles {
+            get {
+                return ResourceManager.GetString("LabelAllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ({0} length={1}).
         /// </summary>
         internal static string LabelBinaryTagValue {
@@ -313,6 +322,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select &amp;Files....
+        /// </summary>
+        internal static string MenuAddFiles {
+            get {
+                return ResourceManager.GetString("MenuAddFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a Fol&amp;der....
+        /// </summary>
+        internal static string MenuAddFolders {
+            get {
+                return ResourceManager.GetString("MenuAddFolders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Clear Filters.
         /// </summary>
         internal static string MenuClearFilters {
@@ -340,11 +367,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open in Study Filters.
+        ///   Looks up a localized string similar to Open in Study &amp;Filters....
         /// </summary>
         internal static string MenuOpenInStudyFilters {
             get {
                 return ResourceManager.GetString("MenuOpenInStudyFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Remove Items.
+        /// </summary>
+        internal static string MenuRemoveItems {
+            get {
+                return ResourceManager.GetString("MenuRemoveItems", resourceCulture);
             }
         }
         
@@ -385,7 +421,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sort from Earliest to Latest.
+        ///   Looks up a localized string similar to Sort from &amp;Earliest to Latest.
         /// </summary>
         internal static string MenuSortAscendingTemporally {
             get {
@@ -430,11 +466,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sort from Latest to Earliest.
+        ///   Looks up a localized string similar to Sort from &amp;Latest to Earliest.
         /// </summary>
         internal static string MenuSortDescendingTemporally {
             get {
                 return ResourceManager.GetString("MenuSortDescendingTemporally", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study &amp;Filters.
+        /// </summary>
+        internal static string MenuStudyFilters {
+            get {
+                return ResourceManager.GetString("MenuStudyFilters", resourceCulture);
             }
         }
         
@@ -462,6 +507,33 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         internal static string MessageInvalidPath {
             get {
                 return ResourceManager.GetString("MessageInvalidPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        internal static string MessageLoading {
+            get {
+                return ResourceManager.GetString("MessageLoading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a folder from which to recursively add files..
+        /// </summary>
+        internal static string MessageSelectAddFilesFolder {
+            get {
+                return ResourceManager.GetString("MessageSelectAddFilesFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a folder to filter..
+        /// </summary>
+        internal static string MessageSelectFolderToFilter {
+            get {
+                return ResourceManager.GetString("MessageSelectFolderToFilter", resourceCulture);
             }
         }
         
@@ -520,6 +592,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Items.
+        /// </summary>
+        internal static string ToolbarAddItems {
+            get {
+                return ResourceManager.GetString("ToolbarAddItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add/Remove Columns.
         /// </summary>
         internal static string ToolbarAddRemoveColumns {
@@ -561,6 +642,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         internal static string ToolbarLaunchInViewer {
             get {
                 return ResourceManager.GetString("ToolbarLaunchInViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Items.
+        /// </summary>
+        internal static string ToolbarRemoveItems {
+            get {
+                return ResourceManager.GetString("ToolbarRemoveItems", resourceCulture);
             }
         }
         

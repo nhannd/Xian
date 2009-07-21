@@ -7,6 +7,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 	public interface IStudyFilter
 	{
 		IList<StudyItem> Items { get; }
+		StudyItemSelection Selection { get; }
 
 		event EventHandler ItemAdded;
 		event EventHandler ItemRemoved;
@@ -30,9 +31,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		IList<FilterPredicate> FilterPredicates { get; }
 
 		/// <summary>
-		/// Forces the data to be updated and any predicates to be reapplied.
+		/// If the displayed data is stale, reapplies the predicates to the dataset and updates the display.
 		/// </summary>
 		void Refresh();
+
+		/// <summary>
+		/// Reapplies the predicates to the dataset and updates the display.
+		/// </summary>
+		/// <param name="force">A value indicating whether or not to perform the refresh even if the data is not stale.</param>
 		void Refresh(bool force);
 		event EventHandler FilterPredicatesChanged;
 		event EventHandler SortPredicatesChanged;
