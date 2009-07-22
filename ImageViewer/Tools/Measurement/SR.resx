@@ -184,7 +184,7 @@
     <value>Calibrate</value>
   </data>
   <data name="ToolsMeasurementFormatDegrees" xml:space="preserve">
-    <value>{0:F0}°</value>
+    <value>{0:F1}°</value>
   </data>
   <data name="ToolsMeasurementSetVertex" xml:space="preserve">
     <value>Set Vertex</value>

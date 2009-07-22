@@ -94,9 +94,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 					return sb.ToString();
 				}
 
-				int mean = (int) Math.Round(statisticsProvider.Mean);
-
-				int stdDev = (int) Math.Round(statisticsProvider.StandardDeviation);
+				double mean = statisticsProvider.Mean;
+				double stdDev = statisticsProvider.StandardDeviation;
 
 				if (roi.Modality == "CT")
 				{
