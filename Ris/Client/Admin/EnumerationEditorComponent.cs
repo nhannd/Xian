@@ -99,6 +99,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
+			this.Validation.Add(new ValidationRule("Code",
+				delegate 
+				{
+					bool duplicateCode = CollectionUtils.Contains(_otherValues,
+						delegate(EnumValueAdminInfo other) { return other.Code.Equals(_enumValue.Code, StringComparison.InvariantCultureIgnoreCase); });
+					return new ValidationResult(!duplicateCode, string.Format("Code {0} is already defined.", _enumValue.Code));
+				}));
             base.Start();
         }
 
