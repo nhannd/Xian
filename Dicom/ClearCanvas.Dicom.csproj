@@ -218,6 +218,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DirectoryRecordSequenceItem.cs" />
     <Compile Include="IDicomAttributeProvider.cs" />
     <Compile Include="Iod\DataLut.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
@@ -401,6 +402,7 @@
     <Compile Include="ServiceModel\Streaming\StudyNotFoundFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsInUseFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
+    <Compile Include="Tests\DicomDirectoryTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
     <Compile Include="Utilities\StudyBuilder\DicomConverter.cs" />
     <Compile Include="Utilities\StudyBuilder\IUidCollection.cs" />

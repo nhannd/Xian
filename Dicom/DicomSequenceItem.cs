@@ -108,46 +108,4 @@ namespace ClearCanvas.Dicom
         #endregion
 
     }
-    #region DirectoryRecordSequenceItem Class
-    internal class DirectoryRecordSequenceItem : DicomSequenceItem
-    {
-        private DirectoryRecordSequenceItem _lowerLevelRecord;
-        private DirectoryRecordSequenceItem _nextRecord;
-        private uint _offset;
-
-        public DirectoryRecordSequenceItem LowerLevelRecord
-        {
-            get { return _lowerLevelRecord; }
-            set { _lowerLevelRecord = value; }
-        }
-        public DirectoryRecordSequenceItem NextRecord
-        {
-            get { return _nextRecord; }
-            set { _nextRecord = value; }
-        }
-
-        public uint Offset
-        {
-            get { return _offset; }
-            set { _offset = value; }
-        }
-
-        public override string ToString()
-        {
-            string toString = String.Empty;
-            string recordType = base[DicomTags.DirectoryRecordType].GetString(0, "");
-            if (recordType == DicomDirectoryWriter.DirectoryRecordTypeImage)
-                toString = base[DicomTags.ReferencedSopInstanceUidInFile].GetString(0, "");
-            else if (recordType == DicomDirectoryWriter.DirectoryRecordTypeSeries)
-                toString = base[DicomTags.SeriesInstanceUid].GetString(0, "");
-            else if (recordType == DicomDirectoryWriter.DirectoryRecordTypeStudy)
-                toString = base[DicomTags.StudyInstanceUid].GetString(0, "");
-            else if (recordType == DicomDirectoryWriter.DirectoryRecordTypePatient)
-                toString = base[DicomTags.PatientId].GetString(0, "") + " " + base[DicomTags.PatientsName].GetString(0, "");
-
-            return recordType + " " + toString;
-        }
-    }
-    #endregion
-
 }

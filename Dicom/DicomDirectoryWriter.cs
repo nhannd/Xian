@@ -122,6 +122,14 @@ namespace ClearCanvas.Dicom
 
         #region Public Properties
 
+		/// <summary>
+		/// Gets the root directory record.  May be set to null if no directory records exist.
+		/// </summary>
+    	public DirectoryRecordSequenceItem RootDirectoryRecord
+    	{
+			get { return _rootRecord; }
+    	}
+
         //NOTE: these are mostly wrappers around the DicomFile properties
 
         /// <summary>
@@ -248,7 +256,7 @@ namespace ClearCanvas.Dicom
                     DirectoryRecordSequenceItem studyRecord;
                     DirectoryRecordSequenceItem seriesRecord;
 
-                    if (this._rootRecord == null)
+                    if (_rootRecord == null)
                         _rootRecord = patientRecord = CreatePatientItem(dicomFile);
                     else
                         patientRecord = GetExistingOrCreateNewPatient(_rootRecord, dicomFile);
@@ -275,6 +283,9 @@ namespace ClearCanvas.Dicom
                     throw;
                 }
             }
+
+			// Clear out the DICOMDIR after adding
+			_dicomFiles.Clear();
 
             _directoryRecordSequence.ClearSequenceItems();
 
@@ -323,7 +334,7 @@ namespace ClearCanvas.Dicom
                 _dicomDirFile.DataSet[DicomTags.OffsetOfTheLastDirectoryRecordOfTheRootDirectoryEntity].Values = 0;
             }
 
-            // Add this at the end so it does not mess up offset vlue...
+            // Add this at the end so it does not mess up offset value...
             _dicomDirFile.DataSet[DicomTags.SopClassUid].Values = DicomUids.MediaStorageDirectoryStorage.UID;
 
             try
@@ -334,8 +345,53 @@ namespace ClearCanvas.Dicom
             catch (Exception ex)
             {
                 Platform.Log(LogLevel.Error, ex, "Error saving dicom File {0}", fileName);
+            	throw;
             }
         }
+
+		public void Load(string filename)
+		{
+			try
+			{
+				_dicomDirFile.Load(DicomReadOptions.Default, filename);
+
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "Error loading dicom File {0}", filename);
+				throw;
+			}
+			Dictionary<uint, DirectoryRecordSequenceItem> lookup = new Dictionary<uint, DirectoryRecordSequenceItem>();
+
+			foreach (DirectoryRecordSequenceItem sqItem in _directoryRecordSequence.Values as DicomSequenceItem[])
+			{
+				lookup.Add(sqItem.Offset, sqItem);
+			}
+
+			uint offset;
+			offset = _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].GetUInt32(0, 0);
+			lookup.TryGetValue(offset, out _rootRecord);
+
+			foreach (DirectoryRecordSequenceItem sqItem in _directoryRecordSequence.Values as DicomSequenceItem[])
+			{
+				offset = sqItem[DicomTags.OffsetOfTheNextDirectoryRecord].GetUInt32(0, 0);
+
+				DirectoryRecordSequenceItem foundItem;
+				if (lookup.TryGetValue(offset, out foundItem))
+					sqItem.NextRecord = foundItem;
+				else
+					sqItem.NextRecord = null;
+
+				offset = sqItem[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].GetUInt32(0, 0);
+
+				if (lookup.TryGetValue(offset, out foundItem))
+					sqItem.LowerLevelRecord = foundItem;
+				else
+					sqItem.LowerLevelRecord = null;
+
+			}
+
+		}
 
         /// <summary>
         /// Adds the dicom image file to the list of images to add.
@@ -377,7 +433,7 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public string Dump(string prefix, DicomDumpOptions options)
         {
-            return this._dicomDirFile.Dump(prefix, options);
+            return _dicomDirFile.Dump(prefix, options);
         }
 
         #endregion

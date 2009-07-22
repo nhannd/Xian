@@ -495,6 +495,14 @@ namespace ClearCanvas.Dicom.IO
 
                             DicomSequenceItem ds = new DicomSequenceItem();
 
+							if (rec._tag.TagValue.Equals(DicomTags.DirectoryRecordSequence))
+							{
+								DirectoryRecordSequenceItem dr = new DirectoryRecordSequenceItem();
+								dr.Offset = (uint)_pos;
+
+								ds = dr;
+							}
+
                             rec._current = ds;
 							if (rec._tag.VR.Equals(DicomVr.UNvr))
 							{
