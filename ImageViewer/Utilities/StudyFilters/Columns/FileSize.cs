@@ -17,6 +17,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public int CompareTo(object obj)
 		{
+			if (obj == null)
+				return 1;
 			if (obj is FileSize)
 				return this.CompareTo((FileSize) obj);
 			throw new ArgumentException("Parameter must be a FileSize.", "obj");

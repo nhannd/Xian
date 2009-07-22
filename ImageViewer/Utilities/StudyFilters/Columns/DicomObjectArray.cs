@@ -36,6 +36,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public int CompareTo(object obj)
 		{
+			if (obj == null)
+				return 1;
 			if (obj is DicomObjectArray<T>)
 				return this.CompareTo((DicomObjectArray<T>)obj);
 			throw new ArgumentException(string.Format("Parameter must be a DicomObjectArray<{0}>.", typeof(T).Name), "obj");

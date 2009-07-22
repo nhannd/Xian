@@ -174,6 +174,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 		public int CompareTo(object obj)
 		{
+			if (obj == null)
+				return 1;
 			if (obj is DicomAge)
 				return this.CompareTo((DicomAge) obj);
 			throw new ArgumentException("Parameter must be a DicomAge.", "obj");

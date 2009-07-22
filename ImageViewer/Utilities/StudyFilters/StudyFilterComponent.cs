@@ -421,14 +421,21 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		{
 			if (force || this.IsStale)
 			{
-				_table.Items.Clear();
+				try
+				{
+					_table.Items.Clear();
 
-				IList<StudyItem> result = _filterPredicate.Filter(_masterList);
-				_sortPredicate.Sort(result);
+					IList<StudyItem> result = _filterPredicate.Filter(_masterList);
+					_sortPredicate.Sort(result);
 
-				_table.Items.AddRange(result);
+					_table.Items.AddRange(result);
 
-				this.IsStale = false;
+					this.IsStale = false;
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex, "An unexpected error occured evaluating the table's sort and filter predicates.");
+				}
 			}
 		}
 
