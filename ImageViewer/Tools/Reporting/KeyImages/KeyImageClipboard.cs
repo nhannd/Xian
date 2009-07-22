@@ -250,6 +250,16 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public static void Show(IDesktopWindow desktopWindow)
 		{
+			Show(desktopWindow, ShelfDisplayHint.DockLeft);
+		}
+
+		public static void Show(ShelfDisplayHint displayHint)
+		{
+			Show(Application.ActiveDesktopWindow, displayHint);
+		}
+
+		public static void Show(IDesktopWindow desktopWindow, ShelfDisplayHint displayHint)
+		{
 			if (!PermissionsHelper.IsInRole(AuthorityTokens.KeyImages))
 				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
 
@@ -263,7 +273,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				Workspace activeWorkspace = desktopWindow.ActiveWorkspace;
 				KeyImageInformation info = GetKeyImageInformation(activeWorkspace) ?? new KeyImageInformation();
 				ClipboardComponent component = new KeyImageClipboardComponent(info);
-				shelf = ApplicationComponent.LaunchAsShelf(desktopWindow, component, SR.TitleKeyImages, ShelfDisplayHint.DockLeft);
+				shelf = ApplicationComponent.LaunchAsShelf(desktopWindow, component, SR.TitleKeyImages, displayHint);
 				shelf.Closed += OnClipboardShelfClosed;
 
 				_clipboardShelves[desktopWindow] = shelf;

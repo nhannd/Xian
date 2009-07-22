@@ -63,6 +63,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private readonly FlashOverlayController _flashOverlayController;
 		private bool _showEnabled;
+		private bool _firstKeyImageCreation = true;
 		private event EventHandler _showEnabledChanged;
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
@@ -171,6 +172,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				{
 					KeyImageClipboard.Add(image);
 					_flashOverlayController.Flash(image);
+				}
+
+				if (_firstKeyImageCreation && this.ShowEnabled)
+				{
+					KeyImageClipboard.Show(ShelfDisplayHint.DockAutoHide | ShelfDisplayHint.DockLeft);
+					_firstKeyImageCreation = false;
 				}
 			}
 			catch (Exception ex)
