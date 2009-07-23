@@ -91,7 +91,7 @@
 				{
 					var procedure = reportDetail.Procedures[0];
 					createReportLetterhead(procedure.PerformingFacility ? procedure.PerformingFacility.Code : null);
-					Preview.ReportPreview.create($("preview"), reportDetail);
+					Preview.ReportPreview.create($("reportSection"), reportDetail);
 				}
 				
 				var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;
@@ -269,7 +269,7 @@
 			</div>
 			<div class="clear"></div>
 		</div>
-		<div id="preview"></div>
+		<div id="reportSection"></div>
 		<div id="endofreport">***** END OF REPORT *****</div>
 		<div id="footer">(Medical Imaging Report for <span class="propertyname">Patient:</span> <span id="patientFooter"></span>; <span class="propertyname">MRN:</span> <span id="mrnFooter"></span>)</div>
 		<pre id="renderedReport" style="{white-space:normal;}"></pre>

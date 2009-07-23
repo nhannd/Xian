@@ -14,6 +14,7 @@
 		<script type="text/javascript" src="../js/structuredreportsummary.js"></script>
 		<script type="text/javascript" >
 			var errorProvider = new ErrorProvider();
+			var imagePath = "../images";
 
 			function onBodyLoad()
 			{
@@ -46,7 +47,7 @@
 					var data = service.getData(request);
 
 					var report = data.GetReportDetailResponse.Report;
-					Preview.ReportPreview.create($("previewSection"), report);
+					Preview.ReportPreview.create($("reportSection"), report);
 
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
@@ -62,7 +63,7 @@
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<div id="notesSection"></div>
-			<div id="previewSection"></div>
+			<div id="reportSection"></div>
 		</form>
 	</body>
 </html>

@@ -95,13 +95,7 @@
 					}
 
 					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-					if (reportDetail)
-					{
-						Preview.ReportPreview.create($("report"), reportDetail);
-						Preview.SectionContainer.create($("report"), "Report");
-					}
-					else
-						Field.show($("reportSection"), false);
+					Preview.ReportPreview.create($("reportSection"), reportDetail);
 						
 					// update active and past RIC tables
 					var patientOrderData = data.ListOrdersResponse.Orders;
@@ -136,10 +130,7 @@
 				<div id="notesSection"></div>
 			</div>
 
-			<div id="reportSection">
-				<div id="report"></div>
-			</div>
-
+			<div id="reportSection"></div>
 			<div id="activeProceduresSection"></div>
 			<div id="pastProceduresSection"></div>
 		</form>

@@ -47,10 +47,7 @@
 					}
 
 					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-					if (reportDetail)
-						Preview.ReportPreview.create($("report"), reportDetail);
-					else
-						Field.show($("reportSection"), false);
+					Preview.ReportPreview.create($("reportSection"), reportDetail);
 				}
 				catch(e)
 				{
@@ -62,9 +59,7 @@
 	</head>
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<div id="reportSection">
-				<div id="report"></div>
-			</div>
+			<div id="reportSection"></div>
 		</form>
 	</body>
 </html>

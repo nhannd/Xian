@@ -811,10 +811,7 @@ Preview.ReportListTable = function () {
 		}
 
 		var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-		if (reportDetail)
-			Preview.ReportPreview.create($("reportContent"), reportDetail);
-		else
-			Field.show($("reportContent"), false);
+		Preview.ReportPreview.create($("reportContent"), reportDetail, { hideSectionContainer: true });
 	};	
 		
 
@@ -1038,7 +1035,14 @@ Preview.ReportPreview = function () {
 		create: function(element, report, options)
 		{
 			if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
-				return "";
+			{
+				element.style.display = 'none';
+				return;
+			}
+
+			// force options to boolean values
+			options = options || {};
+			options.hideSectionContainer = !!options.hideSectionContainer;
 
 			var formattedReport = "<br>";
 
@@ -1075,7 +1079,7 @@ Preview.ReportPreview = function () {
 
 			element.innerHTML = formattedReport;
 			
-			if (options && options.UseSectionContainer)
+			if (!options.hideSectionContainer)
 				Preview.SectionContainer.create(element, "Report");
 		},
 		
