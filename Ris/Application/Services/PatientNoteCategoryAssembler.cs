@@ -44,9 +44,6 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public PatientNoteCategoryDetail CreateNoteCategoryDetail(PatientNoteCategory category, IPersistenceContext context)
         {
-            if (category == null)
-                return null;
-
         	return new PatientNoteCategoryDetail(
         		category.GetRef(),
         		category.Name,
@@ -57,18 +54,12 @@ namespace ClearCanvas.Ris.Application.Services
 
         public PatientNoteCategorySummary CreateNoteCategorySummary(PatientNoteCategory category, IPersistenceContext context)
         {
-            if (category == null)
-                return null;
-
-            PatientNoteCategorySummary summary = new PatientNoteCategorySummary();
-
-            summary.NoteCategoryRef = category.GetRef();
-            summary.Name = category.Name;
-            summary.Description = category.Description;
-
-            summary.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
-
-            return summary;
+            return new PatientNoteCategorySummary(
+                category.GetRef(),
+                category.Name,
+                category.Description,
+                EnumUtils.GetEnumValueInfo(category.Severity, context),
+                category.Deactivated);
         }
 
         public void UpdateNoteCategory(PatientNoteCategoryDetail detail, PatientNoteCategory category)
@@ -76,6 +67,7 @@ namespace ClearCanvas.Ris.Application.Services
             category.Name = detail.Category;
             category.Description = detail.Description;
             category.Severity = EnumUtils.GetEnumValue<NoteSeverity>(detail.Severity);
+            category.Deactivated = detail.Deactivated;
         }
     }
 }
