@@ -49,5 +49,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
                          "$find('" + calendarExtenderID + "').set_selectedDate(null);" +
                          "return false;";
         }
+
+        public static string CheckDateRange(string fromDateTextBoxID, string toDateTextBoxID, string textBoxID, string calendarExtenderID, string message)
+        {
+            return
+                "CheckDateRange(document.getElementById('" + fromDateTextBoxID + "').value, document.getElementById('" +
+                toDateTextBoxID + "').value, '" + textBoxID + "' , '" + calendarExtenderID + "' , '" + message + "'); return false;";
+        }
     }
 }

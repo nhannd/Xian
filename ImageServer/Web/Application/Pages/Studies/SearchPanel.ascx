@@ -20,7 +20,21 @@ function MultiSelect() {
             oneOrMoreSelected: '% Selected',
             style: 'width: 120px;'
         });   
+        
+        $("#<%=StatusListBox.ClientID %>").multiSelect({
+            noneSelected: '',
+            oneOrMoreSelected: '% Selected',
+            style: 'width: 120px;'
+        });   
 
+}
+
+function CheckDateRange(fromDate, toDate, textBoxId, calendarExtenderId, message) {
+    if(new Date(fromDate) > new Date(toDate)) {
+        alert(message);
+        document.getElementById(textBoxId).value='';
+        $find(calendarExtenderId).set_selectedDate(null);
+    }
 }
 </script>
             <asp:Table runat="server">
@@ -52,10 +66,15 @@ function MultiSelect() {
                                                 <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Accession Number" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label5" runat="server" Text="Study Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
-                                                <asp:LinkButton ID="ClearStudyDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
-                                                <ccUI:TextBox ID="StudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" />
+                                                <asp:Label ID="Label5" runat="server" Text="From Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
+                                                <asp:LinkButton ID="ClearFromStudyDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
+                                                <ccUI:TextBox ID="FromStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" />
                                             </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label7" runat="server" Text="To Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
+                                                <asp:LinkButton ID="ClearToStudyDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 35px;"/><br />
+                                                <ccUI:TextBox ID="ToStudyDate" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Study Date" />
+                                            </td>                                            
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
@@ -82,6 +101,16 @@ function MultiSelect() {
                                                     <asp:ListItem Value="XA">XA</asp:ListItem>                                                                                                                                                            
                                                 </asp:ListBox>
                                             </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label8" runat="server" Text="Status" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:ListBox runat="server" id="StatusListBox" SelectionMode="Multiple">
+                                                    <asp:ListItem Value="Online">Online</asp:ListItem>
+                                                    <asp:ListItem Value="OnlineLossless">Lossless</asp:ListItem>
+                                                    <asp:ListItem Value="OnlineLossy">Lossy</asp:ListItem>
+                                                    <asp:ListItem Value="Nearline">Nearline</asp:ListItem>                                                    
+                                                </asp:ListBox>
+                                            </td>
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
@@ -98,7 +127,10 @@ function MultiSelect() {
                             </tr>
                         </table>
 
-                        <ccUI:CalendarExtender ID="StudyDateCalendarExtender" runat="server" TargetControlID="StudyDate"
+                        <ccUI:CalendarExtender ID="FromStudyDateCalendarExtender" runat="server" TargetControlID="FromStudyDate"
+                            CssClass="Calendar">
+                        </ccUI:CalendarExtender>
+                        <ccUI:CalendarExtender ID="ToStudyDateCalendarExtender" runat="server" TargetControlID="ToStudyDate"
                             CssClass="Calendar">
                         </ccUI:CalendarExtender>
                     </asp:TableCell>

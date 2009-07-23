@@ -145,7 +145,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         private void SetupChildControls()
         {
-            ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
+            ClearToStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID);
+            ClearFromStudyDateButton.Attributes["onclick"] = ScriptHelper.ClearDate(FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID);
+            ToStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDate.ClientID, ToStudyDateCalendarExtender.ClientID, "To Date must be greater than From Date");
+            FromStudyDate.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromStudyDate.ClientID, ToStudyDate.ClientID, FromStudyDate.ClientID, FromStudyDateCalendarExtender.ClientID, "From Date must be less than To Date");
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
             StudyListGridView.Pager = GridPagerTop;
@@ -181,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             StudyListGridView.DataSourceCreated += delegate(StudyDataSource source)
                                         {
                                             source.Partition = ServerPartition;
-                                            source.DateFormats = StudyDateCalendarExtender.Format;
+                                            source.DateFormats = ToStudyDateCalendarExtender.Format;
 
                                             if (!String.IsNullOrEmpty(PatientId.Text))
                                                 source.PatientId = PatientId.Text;
@@ -189,8 +192,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                                 source.PatientName = PatientName.Text;
                                             if (!String.IsNullOrEmpty(AccessionNumber.Text))
                                                 source.AccessionNumber = AccessionNumber.Text;
-                                            if (!String.IsNullOrEmpty(StudyDate.Text))
-                                                source.StudyDate = StudyDate.Text;
+                                            if (!String.IsNullOrEmpty(ToStudyDate.Text))
+                                                source.ToStudyDate = ToStudyDate.Text;
+                                            if (!String.IsNullOrEmpty(FromStudyDate.Text))
+                                                source.FromStudyDate = FromStudyDate.Text;
                                             if (!String.IsNullOrEmpty(StudyDescription.Text))
                                                 source.StudyDescription = StudyDescription.Text;
 
@@ -205,6 +210,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                                     }
                                                 }
                                                 source.Modalities = modalities.ToArray();
+                                            }
+
+                                            if (StatusListBox.SelectedIndex > -1)
+                                            {
+                                                List<string> statuses = new List<string>();
+                                                foreach (ListItem status in StatusListBox.Items)
+                                                {
+                                                    if (status.Selected)
+                                                    {
+                                                        statuses.Add(status.Value);
+                                                    }
+                                                }
+                                                source.Statuses = statuses.ToArray();
                                             }
                                         };
 
@@ -228,7 +246,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             PatientName.Text = string.Empty;
             AccessionNumber.Text = string.Empty;
             StudyDescription.Text = string.Empty;
-            StudyDate.Text = string.Empty;
+            ToStudyDate.Text = string.Empty;
+            FromStudyDate.Text = string.Empty;
         }
 
         #endregion Public Methods
@@ -244,11 +263,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            StudyDate.Text = Request[StudyDate.UniqueID];
-            if (!String.IsNullOrEmpty(StudyDate.Text))
-                StudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(StudyDate.Text, StudyDateCalendarExtender.Format, null);
+            ToStudyDate.Text = Request[ToStudyDate.UniqueID];
+            FromStudyDate.Text = Request[FromStudyDate.UniqueID];
+            if (!String.IsNullOrEmpty(ToStudyDate.Text))
+                ToStudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(ToStudyDate.Text, ToStudyDateCalendarExtender.Format, null);
             else
-                StudyDateCalendarExtender.SelectedDate = null;
+                ToStudyDateCalendarExtender.SelectedDate = null;
+
+            if (!String.IsNullOrEmpty(FromStudyDate.Text))
+                FromStudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(FromStudyDate.Text, FromStudyDateCalendarExtender.Format, null);
+            else
+                FromStudyDateCalendarExtender.SelectedDate = null;
         }
 
         public void Refresh()

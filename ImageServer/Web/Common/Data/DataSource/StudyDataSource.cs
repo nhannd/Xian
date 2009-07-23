@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -420,13 +421,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _patientId;
 		private string _patientName;
 		private string _studyDescription;
-		private string _studyDate;
+		private string _toStudyDate;
+        private string _fromStudyDate;
 		private int _resultCount;
 		private ServerPartition _partition;
 		private string _dateFormats;
 		private IList<StudySummary> _list = new List<StudySummary>();
 		private readonly string STUDYDATE_DATEFORMAT = "yyyyMMdd";
 		private string[] _modalities;
+        private string[] _statuses;
 		#endregion
 
 		#region Public Properties
@@ -451,11 +454,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _studyDescription; }
 			set { _studyDescription = value; }
 		}
-		public string StudyDate
+
+        public string ToStudyDate
 		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
+			get { return _toStudyDate; }
+			set { _toStudyDate = value; }
 		}
+
+        public string FromStudyDate
+        {
+            get { return _fromStudyDate; }
+            set { _fromStudyDate = value; }
+        }
 
 		public ServerPartition Partition
 		{
@@ -484,6 +494,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _modalities; }
 			set { _modalities = value; }
 		}
+
+        public string[] Statuses
+        {
+            get { return _statuses; }
+            set { _statuses = value; }
+        }
 		#endregion
 
 		#region Private Methods
@@ -519,11 +535,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				criteria.AccessionNumber.Like(key);
 			}
 
-			if (!String.IsNullOrEmpty(StudyDate))
+            if (!String.IsNullOrEmpty(ToStudyDate) && !String.IsNullOrEmpty(FromStudyDate))
 			{
-				string key = DateTime.ParseExact(StudyDate, DateFormats, null).ToString(STUDYDATE_DATEFORMAT);
-				criteria.StudyDate.EqualTo(key);
-			}
+                string toKey = DateTime.ParseExact(ToStudyDate, DateFormats, null).ToString(STUDYDATE_DATEFORMAT) + " 23:59:59.997";
+                string fromKey = DateTime.ParseExact(FromStudyDate, DateFormats, null).ToString(STUDYDATE_DATEFORMAT);
+				criteria.StudyDate.Between(fromKey, toKey);
+            }
+            else if (!String.IsNullOrEmpty(ToStudyDate))
+            {
+                string toKey = DateTime.ParseExact(ToStudyDate, DateFormats, null).ToString(STUDYDATE_DATEFORMAT);
+                criteria.StudyDate.LessThanOrEqualTo(toKey);
+            }
+            else if (!String.IsNullOrEmpty(FromStudyDate))
+            {
+                string fromKey = DateTime.ParseExact(FromStudyDate, DateFormats, null).ToString(STUDYDATE_DATEFORMAT);
+                criteria.StudyDate.MoreThanOrEqualTo(fromKey);
+            }
 
 			if (!String.IsNullOrEmpty(StudyDescription))
 			{
@@ -543,6 +570,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 				criteria.SeriesRelatedEntityCondition.Exists(seriesCriteria);
 			}
+
+            if (Statuses != null && Statuses.Length > 0)
+            {
+                StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
+                if (Statuses.Length == 1)
+                    storageCriteria.StudyStatusEnum.EqualTo(StudyStatusEnum.GetEnum(Statuses[0]));
+                else
+                {
+                    List<StudyStatusEnum> statusList = new List<StudyStatusEnum>();
+                    foreach(string status in Statuses)
+                    {
+                        statusList.Add(StudyStatusEnum.GetEnum(status));
+                    }
+
+                    storageCriteria.StudyStatusEnum.In(statusList);
+                }
+
+                criteria.StudyStorageRelatedEntityCondition.Exists(storageCriteria);
+            }
 
 			return criteria;
 		}

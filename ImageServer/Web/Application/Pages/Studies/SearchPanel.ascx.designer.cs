@@ -110,22 +110,49 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::System.Web.UI.WebControls.Label Label5;
         
         /// <summary>
-        /// ClearStudyDateButton control.
+        /// ClearFromStudyDateButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton ClearStudyDateButton;
+        protected global::System.Web.UI.WebControls.LinkButton ClearFromStudyDateButton;
         
         /// <summary>
-        /// StudyDate control.
+        /// FromStudyDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox StudyDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox FromStudyDate;
+        
+        /// <summary>
+        /// Label7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label7;
+        
+        /// <summary>
+        /// ClearToStudyDateButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton ClearToStudyDateButton;
+        
+        /// <summary>
+        /// ToStudyDate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox ToStudyDate;
         
         /// <summary>
         /// Label4 control.
@@ -164,6 +191,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::System.Web.UI.WebControls.ListBox ModalityListBox;
         
         /// <summary>
+        /// Label8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label8;
+        
+        /// <summary>
+        /// StatusListBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ListBox StatusListBox;
+        
+        /// <summary>
         /// Panel1 control.
         /// </summary>
         /// <remarks>
@@ -182,13 +227,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchButton;
         
         /// <summary>
-        /// StudyDateCalendarExtender control.
+        /// FromStudyDateCalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender StudyDateCalendarExtender;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender FromStudyDateCalendarExtender;
+        
+        /// <summary>
+        /// ToStudyDateCalendarExtender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender ToStudyDateCalendarExtender;
         
         /// <summary>
         /// ToolBarUpdatePanel control.
