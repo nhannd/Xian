@@ -55,6 +55,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
+				if(LoginSession.Current.Staff == null)
+				{
+					this.Context.DesktopWindow.ShowMessageBox(
+						string.Format("There is no staff profile associated with the user '{0}'", LoginSession.Current.UserName),
+						MessageBoxActions.Ok);
+					return;
+				}
+				
 				StaffEditorComponent component = new StaffEditorComponent(LoginSession.Current.Staff.StaffRef);
 
 				ApplicationComponent.LaunchAsDialog(
