@@ -35,6 +35,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -104,6 +105,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
+            FileSystemsConfigurationController fileSystemController = new FileSystemsConfigurationController();
+            IList<Model.Filesystem> fileSystems = fileSystemController.GetAllFileSystems();
+
+            foreach(Model.Filesystem fs in fileSystems)
+            {
+                FileSystemFilter.Items.Add(new ListItem(fs.Description, fs.Key.ToString()));
+            }
+            
             ConfirmEditDialog.Confirmed += ConfirmEditDialog_Confirmed;
 
         }
@@ -229,6 +238,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
                     criteria.Enabled.EqualTo(true);
                 else
                     criteria.Enabled.EqualTo(false);
+            }
+
+            if (FileSystemFilter.SelectedIndex != -1)
+            {
+                FileSystemsConfigurationController fsController = new FileSystemsConfigurationController();
+                List<ServerEntityKey> fileSystemKeys = new List<ServerEntityKey>();
+                foreach (ListItem fileSystem in FileSystemFilter.Items)
+                {
+                    if (fileSystem.Selected)
+                    {
+                        fileSystemKeys.Add(new ServerEntityKey("FileSystem", fileSystem.Value));
+                    }
+                }
+
+                IList<Model.Filesystem> fs = fsController.GetFileSystems(fileSystemKeys);
+
+                if(fs != null)
+                {
+                    List<ServerEntityKey> entityKeys = new List<ServerEntityKey>();
+                    foreach(Filesystem f in fs)
+                    {
+                        entityKeys.Add(f.Key);
+                    }
+                    criteria.FilesystemKey.In(entityKeys);    
+                }                
             }
 
             IList<ServiceLock> services = controller.GetServiceLocks(criteria);

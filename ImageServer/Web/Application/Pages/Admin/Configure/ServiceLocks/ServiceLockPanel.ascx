@@ -3,11 +3,26 @@
 <%@ Register Src="ServiceLockGridView.ascx" TagName="ServiceLockGridView" TagPrefix="localAsp" %>
 <%@ Register Src="EditServiceLockDialog.ascx" TagName="EditServiceLockDialog" TagPrefix="localAsp" %>
 
+<ccAsp:JQuery ID="JQuery1" runat="server" MultiSelect="true" />
+
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
+       
+    <script type="text/Javascript">
+
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+
+function MultiSelect() {
+        
+        $("#<%=FileSystemFilter.ClientID %>").multiSelect({
+            noneSelected: '',
+            oneOrMoreSelected: '% Selected',
+            style: 'width: 120px;'
+        });   
+
+}
     
-        <script>
-    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
     </script>
     
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0">
@@ -27,6 +42,9 @@
                                                 <asp:Label ID="Label3" runat="server" Text="Status" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label2" runat="server" Text="File System" CssClass="SearchTextBoxLabel"></asp:Label><br />
+                                                <asp:ListBox ID="FileSystemFilter" runat="server" CssClass="SearchDropDownList" SelectionMode="Multiple"></asp:ListBox></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click"/></asp:Panel>
                                             </td>
