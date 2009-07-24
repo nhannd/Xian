@@ -34,8 +34,8 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A Voi Lut Manager, which is responsible for managing installation and restoration
-	/// of Voi Luts via the Memento pattern.
+	/// A VOI LUT Manager, which is responsible for managing installation and restoration
+	/// of VOI LUTs via the Memento pattern.
 	/// </summary>
 	/// <remarks>
 	/// Implementors must not return null from the <see cref="GetLut"/> method.
@@ -45,19 +45,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IVoiLutManager : IMemorable
 	{
 		/// <summary>
-		/// Gets the currently installed Voi Lut.
+		/// Gets the currently installed VOI LUT.
 		/// </summary>
-		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
+		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
 		IComposableLut GetLut();
 
 		/// <summary>
-		/// Installs a new Voi Lut.
+		/// Installs a new VOI LUT.
 		/// </summary>
-		/// <param name="lut">The Lut to be installed.</param>
+		/// <param name="lut">The LUT to be installed.</param>
 		void InstallLut(IComposableLut lut);
 
 		/// <summary>
-		/// Gets or sets whether the output of the Voi Lut should be inverted for display.
+		/// Gets or sets whether the output of the VOI LUT should be inverted for display.
 		/// </summary>
 		bool Invert { get; set; }
 
@@ -65,5 +65,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Toggles the state of the <see cref="Invert"/> property.
 		/// </summary>
 		void ToggleInvert();
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the LUT should be used in rendering the parent object.
+		/// </summary>
+		bool Enabled { get; set; }
 	}
 }

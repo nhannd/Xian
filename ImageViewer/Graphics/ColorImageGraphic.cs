@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Imaging;
 
@@ -44,8 +46,36 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// opacity (i.e. alpha) of each pixel.
 	/// </remarks>
 	[Cloneable]
-	public class ColorImageGraphic : ImageGraphic
+	public class ColorImageGraphic
+		: ImageGraphic,
+		IVoiLutProvider
 	{
+		/// <summary>
+		/// We only support VOI LUTs right now, but theoretically we
+		/// can implement ICC Profiles with an "ICC Transform LUT"
+		/// after the VOI.
+		/// </summary>
+		private enum Luts
+		{
+			/// <summary>
+			/// This LUT is initially a <see cref="NeutralColorLinearLut"/>,
+			/// but may be replaced by W/L tools with something else, such as
+			/// <see cref="BasicVoiLutLinear"/>
+			/// </summary>
+			Voi = 0
+		}
+
+		#region Private Fields
+
+		private bool _invert;
+
+		private LutComposer _lutComposer;
+		private IVoiLutManager _voiLutManager;
+
+		#endregion
+
+		#region Public constructors
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="ColorImageGraphic"/>
 		/// with the specified image parameters.
@@ -102,6 +132,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
+
+			if (source.LutComposer.LutCollection.Count > (int) Luts.Voi) //clone the voi lut.
+				this.InstallVoiLut(source.VoiLut.Clone());
+		}
+
+		#endregion
+
+		#region Public properties
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the LUT should be used in rendering this graphic.
+		/// </summary>
+		public bool VoiLutsEnabled
+		{
+			get { return this.VoiLutManager.Enabled; }
+			set { this.VoiLutManager.Enabled = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether or not the image should be inverted.
+		/// </summary>
+		/// <remarks>
+		/// Inversion is equivalent to polarity.
+		/// </remarks>
+		public bool Invert
+		{
+			get { return _invert; }
+			set { _invert = value; }
 		}
 
 		/// <summary>
@@ -115,6 +173,82 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		#region IVoiLutProvider Members
+
+		/// <summary>
+		/// Retrieves this image's <see cref="IVoiLutManager"/>.
+		/// </summary>
+		public IVoiLutManager VoiLutManager
+		{
+			get
+			{
+				if (_voiLutManager == null)
+					_voiLutManager = new ColorVoiLutManager(this);
+
+				return _voiLutManager;
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Gets or sets the LUT used to select and rescale values of interest in the color pixel data <b>on a per-channel basis</b>.
+		/// </summary>
+		public IComposableLut VoiLut
+		{
+			get
+			{
+				InitializeNecessaryLuts(Luts.Voi);
+				return this.LutComposer.LutCollection[(int) Luts.Voi];
+			}
+		}
+
+		/// <summary>
+		/// The output lut composed of all LUTs in the pipeline.
+		/// </summary>
+		public IComposedLut OutputLut
+		{
+			get
+			{
+				InitializeNecessaryLuts(Luts.Voi);
+				return this.LutComposer;
+			}
+		}
+
+		#endregion
+
+		#region Private properties
+
+		private LutComposer LutComposer
+		{
+			get
+			{
+				if (_lutComposer == null)
+					_lutComposer = new LutComposer(8, false);
+
+				return _lutComposer;
+			}
+		}
+
+		#endregion
+
+		#region Disposal
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_lutComposer != null)
+					_lutComposer.Dispose();
+			}
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Creates an object that encapsulates the pixel data.
 		/// </summary>
@@ -126,5 +260,40 @@ namespace ClearCanvas.ImageViewer.Graphics
 			else
 				return new ColorPixelData(this.Rows, this.Columns, this.PixelDataGetter);
 		}
+
+		#region Private methods
+
+		private void InitializeNecessaryLuts(Luts luts)
+		{
+			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == (int) Luts.Voi)
+			{
+				IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(this.ParentPresentationImage);
+
+				if (lut == null)
+					lut = new NeutralColorLinearLut();
+
+				InstallVoiLut(lut);
+			}
+		}
+
+		#endregion
+
+		#region Internal Properties / Methods
+
+		internal void InstallVoiLut(IComposableLut voiLut)
+		{
+			Platform.CheckForNullReference(voiLut, "voiLut");
+
+			if (this.LutComposer.LutCollection.Count == (int) Luts.Voi)
+			{
+				this.LutComposer.LutCollection.Add(voiLut);
+			}
+			else
+			{
+				this.LutComposer.LutCollection[(int) Luts.Voi] = voiLut;
+			}
+		}
+
+		#endregion
 	}
 }

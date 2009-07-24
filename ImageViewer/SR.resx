@@ -302,6 +302,9 @@
   <data name="FormatDescriptionModalityLutLinear" xml:space="preserve">
     <value>Slope: {0:F2} Int.: {1:F2}</value>
   </data>
+  <data name="FormatDescriptionNeutralColorLinearLut" xml:space="preserve">
+    <value>W:{0} L:{1} (Neutral)</value>
+  </data>
   <data name="FormatDescriptionPresentationStateLinearLut" xml:space="preserve">
     <value>W:{0} L:{1} ({2})</value>
   </data>

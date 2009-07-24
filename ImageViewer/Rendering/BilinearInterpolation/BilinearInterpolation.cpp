@@ -606,6 +606,97 @@ void InterpolateBilinearSignedSub16(
 	}
 }
 
+void InterpolateBilinearRGB1ChanLut(
+
+		BYTE* pDstPixelData,
+
+		float dstRegionWidth,
+		float dstRegionHeight,
+		int xDstIncrement,
+		int yDstIncrement,
+
+		BYTE* pSrcPixelData,
+		unsigned int srcWidth,
+		unsigned int srcHeight,
+		float srcRegionOriginY,
+
+		int xSrcStride,
+		int ySrcStride,
+		unsigned int srcNextChannelOffset,
+
+		float xRatio,
+		float yRatio,
+
+		LUTDATA* pLutData,
+
+		std::auto_ptr<int>& spxSrcPixels,
+		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
+{
+
+    float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
+
+	for (float y = 0; y < dstRegionHeight; ++y)
+	{
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
+
+		//a necessary evil, I'm afraid.
+		if (ySrcCoordinate < 0)
+			ySrcCoordinate = 0;
+		else if (ySrcCoordinate > srcSlightlyLessThanHeightMinusOne)
+			ySrcCoordinate = srcSlightlyLessThanHeightMinusOne; //force it to be just barely before the last pixel.
+
+		int ySrcPixel = (int)ySrcCoordinate;
+		int dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
+
+		BYTE* pRowDstPixelData = pDstPixelData;
+		BYTE* pRowSrcPixelData = pSrcPixelData + ySrcPixel * ySrcStride;
+	    
+		int* pxPixel = spxSrcPixels.get();
+		int* pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
+		
+		for (unsigned int x = 0; x < dstRegionWidth; ++x)
+		{
+            BYTE* pSrcPixel00 = pRowSrcPixelData + (*pxPixel) * xSrcStride; 
+    
+            for (int i = 0; i < 3; ++i)
+            {
+                BYTE* pSrcPixel01 = pSrcPixel00 + xSrcStride;
+                BYTE* pSrcPixel10 = pSrcPixel00 + ySrcStride;
+                BYTE* pSrcPixel11 = pSrcPixel10 + xSrcStride;
+
+				int yInterpolated1 = (*pSrcPixel00 << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel10 - *pSrcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+				int yInterpolated2 = (*pSrcPixel01 << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
+				int IFinal = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+                pRowDstPixelData[i] = (BYTE) (*(pLutData->LutData + (BYTE)(IFinal) - pLutData->FirstMappedPixelValue)); //R(i=0), G(1), B(2), A(3)
+
+                pSrcPixel00 += srcNextChannelOffset;
+            }
+
+			{
+                BYTE* pSrcPixel01 = pSrcPixel00 + xSrcStride;
+                BYTE* pSrcPixel10 = pSrcPixel00 + ySrcStride;
+                BYTE* pSrcPixel11 = pSrcPixel10 + xSrcStride;
+
+				int yInterpolated1 = (*pSrcPixel00 << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel10 - *pSrcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+				int yInterpolated2 = (*pSrcPixel01 << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
+				int IFinal = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+                pRowDstPixelData[3] = (BYTE)(IFinal); //R(i=0), G(1), B(2), A(3)
+
+                pSrcPixel00 += srcNextChannelOffset;
+			}
+
+			pRowDstPixelData += xDstIncrement;
+			++pxPixel;
+			++pdxFixed;
+		}
+
+
+		pDstPixelData += yDstIncrement;
+	}
+}
+
 void InterpolateBilinearRGB(
 
 		BYTE* pDstPixelData,
@@ -810,6 +901,9 @@ BOOL InterpolateBilinear
 		else
 			srcNextChannelOffset = srcWidth * srcHeight;
 
+		if (pLutData == NULL)
+		{
+
 		InterpolateBilinearRGB(
 				pDstPixelData,
 				floatDstRegionWidth,
@@ -827,6 +921,31 @@ BOOL InterpolateBilinear
 				yRatio,
 				spxSrcPixels,
 				spdxFixedAtSrcPixelCoordinates);
+
+		}
+		else
+		{
+
+		InterpolateBilinearRGB1ChanLut(
+				pDstPixelData,
+				floatDstRegionWidth,
+				(float)dstRegionHeight,
+				xDstIncrement,
+				yDstIncrement,
+				pSrcPixelData,
+				srcWidth,
+				srcHeight,
+				srcRegionRectTop,
+				xSrcStride,
+				ySrcStride,
+				srcNextChannelOffset,
+				xRatio,
+				yRatio,
+				pLutData,
+				spxSrcPixels,
+				spdxFixedAtSrcPixelCoordinates);
+
+		}
 	}
 	else
 	{

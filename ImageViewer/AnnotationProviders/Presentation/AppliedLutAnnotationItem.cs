@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 			IVoiLutProvider image = presentationImage as IVoiLutProvider;
 
-			if (image == null)
+			if (image == null || !image.VoiLutManager.Enabled)
 				return String.Empty;
 
 			IComposableLut voiLut = image.VoiLutManager.GetLut();

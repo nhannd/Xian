@@ -81,6 +81,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			foreach (T image in images)
 			{
+				if (!image.VoiLutManager.Enabled)
+					continue;
+
 				SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem sequenceItem = new SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem();
 				sequenceItem.InitializeAttributes();
 				sequenceItem.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};

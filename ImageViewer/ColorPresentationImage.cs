@@ -39,7 +39,9 @@ namespace ClearCanvas.ImageViewer
 	/// A colour <see cref="PresentationImage"/>.
 	/// </summary>
 	[Cloneable]
-	public class ColorPresentationImage : BasicPresentationImage
+	public class ColorPresentationImage
+		: BasicPresentationImage,
+		IVoiLutProvider
 	{
 		#region Private fields
 
@@ -153,5 +155,26 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return (ColorImageGraphic)base.ImageGraphic;  }	
 		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether VOI LUTs should be used in rendering this image.
+		/// </summary>
+		public bool VoiLutsEnabled
+		{
+			get { return this.VoiLutManager.Enabled; }
+			set { this.VoiLutManager.Enabled = value; }
+		}
+
+		#region IVoiLutProvider Members
+
+		/// <summary>
+		/// Gets this image's <see cref="IVoiLutManager"/>.
+		/// </summary>
+		public IVoiLutManager VoiLutManager
+		{
+			get { return this.ImageGraphic.VoiLutManager; }
+		}
+
+		#endregion
 	}
 }

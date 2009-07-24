@@ -49,6 +49,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private bool _recalculate = true;
 		private bool _validated = false;
 
+		private int _minInputValue = int.MinValue;
+		private int _maxInputValue = int.MaxValue;
+
 		private ComposedLutPool _lutPool;
 		private string _key = String.Empty;
 
@@ -57,11 +60,42 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Initializes a new instance of <see cref="LutComposer"/>.
 		/// </summary>
-		public LutComposer()
+		public LutComposer() : base()
 		{
-			this.LutCollection.ItemAdded += new EventHandler<ListEventArgs<IComposableLut>>(OnLutAdded);
-			this.LutCollection.ItemChanging += new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanging);
-			this.LutCollection.ItemChanged += new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanged);
+			this.LutCollection.ItemAdded += OnLutAdded;
+			this.LutCollection.ItemChanging += OnLutChanging;
+			this.LutCollection.ItemChanged += OnLutChanged;
+			this.LutCollection.ItemRemoved += OnLutRemoved;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="LutComposer"/>.
+		/// </summary>
+		/// <param name="minInputValue">The smallest input value that can be used to perform a lookup in the composed table.</param>
+		/// <param name="maxInputValue">The largest input value that can be used to perform a lookup in the composed table.</param>
+		public LutComposer(int minInputValue, int maxInputValue) : this()
+		{
+			_minInputValue = minInputValue;
+			_maxInputValue = maxInputValue;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="LutComposer"/>.
+		/// </summary>
+		/// <param name="inputBits">The number of bits used by the input values to the composed lookup table.</param>
+		/// <param name="inputIsSigned">A value indicating whether or not the input values are signed.</param>
+		public LutComposer(int inputBits, bool inputIsSigned) : this()
+		{
+			if (inputIsSigned)
+			{
+				_minInputValue = -(1 << (inputBits - 1));
+				_maxInputValue = (1 << (inputBits - 1)) - 1;
+			}
+			else
+			{
+				_minInputValue = 0;
+				_maxInputValue = (1 << inputBits) - 1;
+			}
 		}
 
 		#region Public Properties
@@ -161,6 +195,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void SyncMinMaxValues()
 		{
+			if (this.LutCollection.Count > 0)
+			{
+				this.LutCollection[0].MinInputValue = _minInputValue;
+				this.LutCollection[0].MaxInputValue = _maxInputValue;
+			}
+
 			for (int i = 1; i < this.LutCollection.Count; ++i)
 			{
 				IComposableLut curLut = this.LutCollection[i];
@@ -175,20 +215,30 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void OnLutChanging(object sender, ListEventArgs<IComposableLut> e)
 		{
-			e.Item.LutChanged -= new EventHandler(OnLutValuesChanged);
+			e.Item.LutChanged -= OnLutValuesChanged;
 		}
 
 		private void OnLutChanged(object sender, ListEventArgs<IComposableLut> e)
 		{
-			_recalculate = true;
+			e.Item.LutChanged += OnLutValuesChanged;
 			SyncMinMaxValues();
-			OnLutAdded(sender, e);
+			_recalculate = true;
+			_validated = false;
+		}
+
+		private void OnLutRemoved(object sender, ListEventArgs<IComposableLut> e)
+		{
+			e.Item.LutChanged -= OnLutValuesChanged;
+			SyncMinMaxValues();
+			_recalculate = true;
+			_validated = false;
 		}
 
 		private void OnLutAdded(object sender, ListEventArgs<IComposableLut> e)
 		{
-			e.Item.LutChanged += new EventHandler(OnLutValuesChanged);
+			e.Item.LutChanged += OnLutValuesChanged;
 			SyncMinMaxValues();
+			_recalculate = true;
 			_validated = false;
 		}
 
@@ -289,19 +339,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region ILut Members
 
 		/// <summary>
-		/// Gets the minimum input value.
+		/// Gets or sets the minimum input value.
 		/// </summary>
 		public int MinInputValue
 		{
-			get { return FirstLut.MinInputValue; }
+			get { return _minInputValue; }
+			set
+			{
+				if (_minInputValue != value)
+				{
+					_minInputValue = value;
+
+					SyncMinMaxValues();
+					_recalculate = true;
+					_validated = false;
+				}
+			}
 		}
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets or sets the maximum input value.
 		/// </summary>
 		public int MaxInputValue
 		{
-			get { return FirstLut.MaxInputValue; }
+			get { return _maxInputValue; }
+			set
+			{
+				if (_maxInputValue != value)
+				{
+					_maxInputValue = value;
+
+					SyncMinMaxValues();
+					_recalculate = true;
+					_validated = false;
+				}
+			}
 		}
 
 		/// <summary>
@@ -347,9 +419,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			try
 			{
-				this.LutCollection.ItemAdded -= new EventHandler<ListEventArgs<IComposableLut>>(OnLutAdded);
-				this.LutCollection.ItemChanging -= new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanging);
-				this.LutCollection.ItemChanged -= new EventHandler<ListEventArgs<IComposableLut>>(OnLutChanged);
+				this.LutCollection.ItemAdded -= OnLutAdded;
+				this.LutCollection.ItemChanging -= OnLutChanging;
+				this.LutCollection.ItemChanged -= OnLutChanged;
+				this.LutCollection.ItemRemoved -= OnLutRemoved;
 
 				Dispose(true);
 				GC.SuppressFinalize(this);

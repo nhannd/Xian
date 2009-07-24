@@ -348,7 +348,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_lutComposer == null)
-					_lutComposer = new LutComposer();
+					_lutComposer = new LutComposer(this.BitsStored, this.IsSigned);
 
 				return _lutComposer;
 			}

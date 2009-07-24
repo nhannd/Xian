@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
 
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
 
@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
 
@@ -271,7 +271,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
 			lutComposer.LutCollection.Add(new GrayscaleColorMap());
@@ -317,7 +317,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(bitsStored, isSigned);
 			lutComposer.LutCollection.Add(modalityLUT);
 			lutComposer.LutCollection.Add(voiLUT);
 
@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
 
-			LutComposer lutComposer = new LutComposer();
+			LutComposer lutComposer = new LutComposer(0, 4095);
 			lutComposer.LutCollection.Add(voiLUT);
 			int[] data = lutComposer.Data;
 		}

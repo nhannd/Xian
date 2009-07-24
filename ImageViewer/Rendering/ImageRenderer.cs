@@ -150,22 +150,53 @@ namespace ClearCanvas.ImageViewer.Rendering
 				{
 					int srcBytesPerPixel = 4;
 
-					ImageInterpolatorBilinear.Interpolate(
-						srcViewableRectangle,
-						pSrcPixelData,
-						image.Columns,
-						image.Rows,
-						srcBytesPerPixel,
-						32,
-						dstViewableRectangle,
-						(byte*)pDstPixelData,
-						dstWidth,
-						dstBytesPerPixel,
-						IsRotated(image),
-						null,
-						true,
-						false,
-						false);
+					if (image.VoiLutsEnabled)
+					{
+						int[] finalLutBuffer = ConstructFinalLut(image.OutputLut, image.Invert);
+						fixed (int* pFinalLutData = finalLutBuffer)
+						{
+							ImageInterpolatorBilinear.LutData lutData;
+							lutData.Data = pFinalLutData;
+							lutData.FirstMappedPixelData = image.OutputLut.MinInputValue;
+							lutData.Length = finalLutBuffer.Length;
+
+							ImageInterpolatorBilinear.Interpolate(
+								srcViewableRectangle,
+								pSrcPixelData,
+								image.Columns,
+								image.Rows,
+								srcBytesPerPixel,
+								32,
+								dstViewableRectangle,
+								(byte*) pDstPixelData,
+								dstWidth,
+								dstBytesPerPixel,
+								IsRotated(image),
+								&lutData, //ok because it's a local variable in an unsafe method, therefore it's already fixed.
+								true,
+								false,
+								false);
+						}
+					}
+					else
+					{
+						ImageInterpolatorBilinear.Interpolate(
+							srcViewableRectangle,
+							pSrcPixelData,
+							image.Columns,
+							image.Rows,
+							srcBytesPerPixel,
+							32,
+							dstViewableRectangle,
+							(byte*) pDstPixelData,
+							dstWidth,
+							dstBytesPerPixel,
+							IsRotated(image),
+							null,
+							true,
+							false,
+							false);
+					}
 				}
 			}
 		}
@@ -240,6 +271,45 @@ namespace ClearCanvas.ImageViewer.Rendering
 							for (int i = 0; i < numberOfEntries; ++i)
 								*(pFinalLut++) = pColorMapData[lastColorMappedPixelValue - *(pOutputLutData + i)];
 						}
+					}
+				}
+			}
+
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("ImageRenderer", "ConstructFinalLut", clock.Seconds);
+
+			return _finalLutBuffer;
+		}
+
+		private static int[] ConstructFinalLut(IComposedLut outputLut, bool invert)
+		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			int[] outputLutData = outputLut.Data;
+
+			if (_finalLutBuffer == null || _finalLutBuffer.Length != outputLutData.Length)
+				_finalLutBuffer = new int[outputLutData.Length];
+
+			int numberOfEntries = _finalLutBuffer.Length;
+
+			fixed (int* pOutputLutData = outputLutData)
+			{
+				fixed (int* pFinalLutData = _finalLutBuffer)
+				{
+					int* pFinalLut = pFinalLutData;
+
+					if (!invert)
+					{
+						int firstColorMappedPixelValue = outputLut.MinOutputValue;
+						for (int i = 0; i < numberOfEntries; ++i)
+							*(pFinalLut++) = *(pOutputLutData + i) - firstColorMappedPixelValue;
+					}
+					else
+					{
+						int lastColorMappedPixelValue = outputLut.MaxOutputValue;
+						for (int i = 0; i < numberOfEntries; ++i)
+							*(pFinalLut++) = lastColorMappedPixelValue - *(pOutputLutData + i);
 					}
 				}
 			}

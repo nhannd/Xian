@@ -223,10 +223,53 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			public static bool CanCreateFrom(IPresentationImage presentationImage)
 			{
-				if (IsVoiLutProvider(presentationImage) && IsGrayScaleImage(presentationImage) && IsImageSopProvider(presentationImage))
+				if (IsVoiLutProvider(presentationImage) && IsVoiLutEnabled(presentationImage) && IsGrayScaleImage(presentationImage) && IsImageSopProvider(presentationImage))
 				{
 					// this preset applies to any IDicomVoiLutsProvider, since in the absence of any presentation or image luts, we always have a min/max algorithm
 					return presentationImage is IDicomVoiLutsProvider;
+				}
+				return false;
+			}
+		}
+
+		#endregion
+
+		#region Lut Application for Color Images
+
+		private class ColorLutApplicator
+		{
+			private readonly IPresentationImage _image;
+
+			public ColorLutApplicator(IPresentationImage image)
+			{
+				_image = image;
+			}
+
+			private IVoiLutManager VoiLutManager
+			{
+				get { return ((IVoiLutProvider) _image).VoiLutManager; }
+			}
+
+			public IComposableLut GetInitialLut()
+			{
+				return new NeutralColorLinearLut();
+			}
+
+			public void ApplyInitialLut()
+			{
+				this.VoiLutManager.InstallLut(this.GetInitialLut());
+			}
+
+			public void ApplyNextLut()
+			{
+				this.ApplyInitialLut();
+			}
+
+			public static bool CanCreateFrom(IPresentationImage presentationImage)
+			{
+				if (IsVoiLutProvider(presentationImage) && IsVoiLutEnabled(presentationImage) && IsColorImage(presentationImage) && IsImageSopProvider(presentationImage))
+				{
+					return true;
 				}
 				return false;
 			}
@@ -248,7 +291,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 		public override bool AppliesTo(IPresentationImage presentationImage)
 		{
-			return LutApplicator.CanCreateFrom(presentationImage);
+			return LutApplicator.CanCreateFrom(presentationImage)
+			       || ColorLutApplicator.CanCreateFrom(presentationImage);
 		}
 
 		public override void Apply(IPresentationImage presentationImage)
@@ -256,18 +300,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			// TODO: Later, when we've enabled all the factories, we need to change this functionality so it 
 			// is purely 'auto'; no min/max algorithm, as it is currently.
 
-			if (!AppliesTo(presentationImage))
+			if (LutApplicator.CanCreateFrom(presentationImage))
+				new LutApplicator(presentationImage).ApplyNextLut();
+			else if (ColorLutApplicator.CanCreateFrom(presentationImage))
+				new ColorLutApplicator(presentationImage).ApplyNextLut();
+			else
 				throw new InvalidOperationException("The input presentation image is not supported.");
-
-			new LutApplicator(presentationImage).ApplyNextLut();
 		}
 
 		internal static IComposableLut GetInitialLut(IPresentationImage presentationImage)
 		{
-			if (!LutApplicator.CanCreateFrom(presentationImage))
+			if (LutApplicator.CanCreateFrom(presentationImage))
+				return new LutApplicator(presentationImage).GetInitialLut();
+			else if (ColorLutApplicator.CanCreateFrom(presentationImage))
+				return new ColorLutApplicator(presentationImage).GetInitialLut();
+			else
 				return null;
-
-			return new LutApplicator(presentationImage).GetInitialLut();
 		}
 	}
 }

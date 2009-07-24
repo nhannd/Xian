@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private bool CanWindowLevel()
 		{
 			IVoiLutManager manager = GetSelectedImageVoiLutManager();
-			return manager != null && manager.GetLut() is IVoiLutLinear;
+			return manager != null && manager.Enabled && manager.GetLut() is IVoiLutLinear;
 		}
 
 		private void CaptureBeginState()

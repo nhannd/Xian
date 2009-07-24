@@ -579,7 +579,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
 			//The image's LutComposer is private, so we just replicate it here and recalculate.
 			GrayscaleImageGraphic graphic = (GrayscaleImageGraphic) _image;
-			LutComposer composer = new LutComposer();
+			LutComposer composer = new LutComposer(graphic.BitsStored, graphic.IsSigned);
 			composer.LutCollection.Add(graphic.ModalityLut);
 			composer.LutCollection.Add(graphic.VoiLut);
 			composer.LutCollection.Add(new GrayscaleColorMap());
