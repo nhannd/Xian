@@ -36,6 +36,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
@@ -191,6 +192,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingStudy.Series;
             ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingStudyInfo.Series;
+
+            StudyStorage storage =
+                StudyStorage.Load(HttpContextData.Current.ReadContext, StudyIntegrityQueueItem.StudyStorageKey);
+
+            IList<StudyStorageLocation> studyLocations = StudyStorageLocation.FindStorageLocations(storage);
+            StudyLocation.Text = studyLocations[0].GetStudyPath();
+
+            if(ReconcileDetails != null)
+            {
+                ConflictingStudyLocation.Text = ReconcileDetails.GetFolderPath();    
+            } else
+            {
+                ConflictingStudyLocation.Text = "Not Specified.";
+            }
+            
+
             base.DataBind();
         }
 

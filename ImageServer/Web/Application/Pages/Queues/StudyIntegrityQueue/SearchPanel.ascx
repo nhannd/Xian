@@ -3,11 +3,25 @@
 
 <%@ Register Src="StudyIntegrityQueueItemList.ascx" TagName="StudyIntegrityQueueItemList" TagPrefix="localAsp" %>
 
+<ccAsp:JQuery ID="JQuery1" runat="server" MultiSelect="true" />
+
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
     
-    <script>
-    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+<script type="text/Javascript">
+
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+
+function MultiSelect() {
+       
+        $("#<%=ReasonListBox.ClientID %>").multiSelect({
+            noneSelected: '',
+            oneOrMoreSelected: '% Selected',
+            style: 'width: 150px;'
+        });   
+
+}
     </script>    
 
             <asp:Table runat="server">
@@ -41,6 +55,12 @@
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />
                                                 <asp:TextBox ID="ReceivedDate" runat="server" CssClass="SearchDateBox" />
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label5" runat="server" Text="Reason" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:ListBox runat="server" id="ReasonListBox" SelectionMode="Multiple">                                             
+                                                </asp:ListBox>
                                             </td>
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>

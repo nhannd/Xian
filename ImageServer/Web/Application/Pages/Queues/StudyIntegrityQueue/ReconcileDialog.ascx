@@ -3,6 +3,9 @@
 
 <ccAsp:ModalDialog ID="ReconcileItemModalDialog" runat="server" Width="900px" Title='<%$ Resources:Titles, ReconcileStudyDialog %>'>
     <ContentTemplate> 
+        <aspAjax:TabContainer runat="server" ID="TabContainer"  Width="950px" ActiveTabIndex="0" CssClass="DialogTabControl">
+            <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="Overview" Height="100%" CssClass="DialogTabControl">
+                <ContentTemplate>                    
         <div class="ReconcilePanel">
             <asp:Table runat="server">
                 <asp:TableRow CssClass="ReconcileHeaderRow">
@@ -160,6 +163,36 @@
                 </asp:TableRow>
             </asp:Table>
         </div>
+        </ContentTemplate>
+            </aspAjax:TabPanel>
+            <aspAjax:TabPanel runat="server" id="DetailsTab" HeaderText="Additional Info">
+                <ContentTemplate>
+                    <asp:Panel ID="Panel4" runat="server" Height="100%">
+                        <asp:Panel ID="Panel5" runat="server" CssClass="AdditionalInformationPanel">
+                        <table width="100%">
+                            <tr>
+                                <td colspan="2">
+                                    <div class="AdditionalInfoSectionHeader FilesystemSectionHeader">Filesystem Locations</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="DialogLabelBackground" style="margin-left:5px;"><asp:Label ID="Label10" runat="server" CssClass="DialogTextBoxLabel" Text="Study Location"></asp:Label></td>
+                                <td ><asp:Label runat="server" ID="StudyLocation"></asp:Label></td>
+                            </tr>
+                            
+                            <tr >
+                                <td class="DialogLabelBackground" style="margin-left:5px;"><asp:Label ID="Label12" runat="server" CssClass="DialogTextBoxLabel" Text="Conflicting Study Location"></asp:Label></td>
+                                <td><asp:Label runat="server" ID="ConflictingStudyLocation"></asp:Label></td>
+                            </tr>
+                        </table>                        
+                        
+                        </asp:Panel>
+                        
+                        
+                    </asp:Panel>
+                </ContentTemplate>
+            </aspAjax:TabPanel>
+        </aspAjax:TabContainer>
                 <table cellpadding="0" cellspacing="0" width="100%">
                     <tr>
                         <td align="right">

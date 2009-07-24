@@ -30,7 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -126,10 +128,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 										        source.AccessionNumber = "*" + AccessionNumber.Text + "*";
                                             if (!String.IsNullOrEmpty(ReceivedDate.Text))
                                                 source.InsertTime =ReceivedDate.Text;
+
+                                            if (ReasonListBox.SelectedIndex > -1)
+                                            {
+                                                List<StudyIntegrityReasonEnum> reasonEnums = new List<StudyIntegrityReasonEnum>();
+                                                foreach (ListItem item in ReasonListBox.Items)
+                                                {
+                                                    if (item.Selected)
+                                                    {
+                                                        reasonEnums.Add(StudyIntegrityReasonEnum.GetEnum(item.Value));
+                                                    }
+                                                }
+
+                                                source.ReasonEnum = reasonEnums;
+                                            }
 										};
 
             ReconcileButton.Roles =
                 AuthorityTokens.StudyIntegrityQueue.Reconcile;
+
+            List<StudyIntegrityReasonEnum> reasons = StudyIntegrityReasonEnum.GetAll();
+            foreach(StudyIntegrityReasonEnum reason in reasons)
+            {
+                ReasonListBox.Items.Add(new ListItem(reason.Description, reason.Lookup));
+            }
+
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
