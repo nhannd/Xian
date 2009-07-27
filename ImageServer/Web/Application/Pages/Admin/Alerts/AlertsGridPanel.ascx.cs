@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.Drawing;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -255,8 +256,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                         LinkButton appLogLink = e.Row.FindControl("AppLogLink") as LinkButton;
 
 
-                            DateTime startTime = alert.InsertTime.AddSeconds(-30);
-                            DateTime endTime = alert.InsertTime.AddSeconds(30);
+                        int timeRange = int.Parse(ConfigurationManager.AppSettings["AlertTimeRange"]);
+
+                            DateTime startTime = alert.InsertTime.AddSeconds(-timeRange/2);
+                            DateTime endTime = alert.InsertTime.AddSeconds(timeRange / 2);
                             appLogLink.PostBackUrl = ImageServerConstants.PageURLs.ApplicationLog + "?From=" +
                                                      HttpUtility.UrlEncode(startTime.ToString("yyyy-MM-dd") + " " +
                                                                            startTime.ToString("HH:mm:ss")) + "&To=" +

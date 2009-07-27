@@ -1,0 +1,202 @@
+/*=====================
+ * Study Details
+ *=====================*/
+.StudyDetailsMessage
+{
+    text-align:center; 
+    font-size: 16px; 
+    font-weight: bold; 
+    background: #FFFFCC url(../../../PersistantImage.ashx?key=ErrorMessageBackground) repeat-x;
+    padding: 3px;
+    margin: 4px;
+    color: #FF0000;
+    border: solid 1px #ff0000;
+}
+
+.EditStudyDialogErrorMessage
+{
+    text-align:center; 
+    font-size: 12px; 
+    font-weight: bold; 
+    background: #FFFFCC url(../../../PersistantImage.ashx?key=ErrorMessageBackground) repeat-x;
+    padding: 3px;
+    margin: 4px;
+    color: #FF0000;
+    border: solid 1px #ff0000;
+}
+
+.PatientName
+{
+    font-size: 24px;
+    font-weight: bold;
+    color: #205F87
+}
+
+.PatientInfo
+{
+    color: #205F87;
+    white-space: nowrap;
+    font-size: 18px;   
+}
+
+.PatientSummaryTable
+{
+    background: #eeeeee url(../../../PersistantImage.ashx?key=PatientSummaryBackground) repeat-x;
+    padding: 2px 1px 2px 1px;
+    border: solid 1px #999999;
+}
+
+.StudyDetailsView
+{
+    font-family: Sans-Serif;
+    font-size: 16px;
+    background-color: White;
+    padding: 1px 1px 1px 1px;
+}
+
+.StudyDetailsViewHeader
+{
+    font-weight: bold;
+    color: #336699;
+    border-right: dashed 1px White;
+    width: 200px;
+}
+
+.StudyDetailsViewHeader td
+{
+    border: solid 1px #cccccc;
+    padding-left: 10px;
+}
+
+.StudyDetailsSubTitle
+{
+    font-size: 14;
+    font-weight: bold;
+    color: #205F87;
+    padding-left: 2px;
+    padding-bottom: 3px;
+}
+
+.CloseButton
+{
+    color: White;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.Spacer
+{
+    background-color: #3D98D1;
+}
+
+.StudySummary
+{
+    border: solid 1px #3d98d1;
+    background-color: White;
+    font-size: 12px;
+}
+
+.StudySummaryHeader
+{
+    padding-left: 5px;
+    color: #205F87;
+	font-weight: bold;
+	width: 200px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.StudySummaryRow td
+{
+    border-bottom: solid 2px #eeeeee;
+}
+
+/*============================
+ * Series Details
+ *===========================*/
+
+.SeriesDetailsPanel
+{
+    background: #B8D9EE;
+    height: 28px;
+    padding-top: 4px;
+}
+
+.SeriesDetailsGridView
+{
+    border: solid 1px #3d98d1;
+}
+
+.SeriesDetailsGridViewHeader
+{
+	background-color: White;
+	text-align: left;
+	color: #205F87;
+	font-weight: bold;
+	width: 200px;
+}
+
+/*======================================
+    History tab
+========================================*/
+.HistoryDetailContainer
+{  
+	margin-top:5px;
+	margin-right:5px;
+	margin-bottom:5px;
+	/*border-left: #dadada 1px dotted;*/
+}
+
+
+
+.HistoryDetailsHeading
+{
+	background: #d7eafd;
+}
+
+.HistoryDetailsSectionPanel
+{
+	border-right: #cccccc 1px dotted;
+	border-top: #cccccc 1px dotted;
+	border-left: #cccccc 1px dotted;
+	border-bottom: #cccccc 1px dotted;
+	background-color: #f2f5ff;
+}
+
+.HistoryDetailTable
+{
+}
+
+.HistoryDetailTable tr td
+{
+	padding-left:0px;
+}
+
+div.DeleteStudiesTableContainer {
+	border: 1px solid #999999;
+	margin-top: 5px;
+	width: 800px;
+	height: 200px;
+	overflow: auto;
+}
+
+.DeleteStudiesConfirmTable
+{
+    color: Black;
+    font-size: 12px;
+    width: 100%;
+}
+
+.ReasonForDeletionDropDownPanel
+{
+	border-right: gainsboro 1px solid;
+	border-top: gainsboro 1px solid;
+	border-left: gainsboro 1px solid;
+	border-bottom: gainsboro 1px solid;
+	background-color: whitesmoke;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
