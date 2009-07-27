@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using System.Web;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
@@ -250,6 +251,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                             level.ForeColor = Color.Red;
                         }
                         level.Text = alert.Level;
+
+                        LinkButton appLogLink = e.Row.FindControl("AppLogLink") as LinkButton;
+
+
+                            DateTime startTime = alert.InsertTime.AddSeconds(-30);
+                            DateTime endTime = alert.InsertTime.AddSeconds(30);
+                            appLogLink.PostBackUrl = ImageServerConstants.PageURLs.ApplicationLog + "?From=" +
+                                                     HttpUtility.UrlEncode(startTime.ToString("yyyy-MM-dd") + " " +
+                                                                           startTime.ToString("HH:mm:ss")) + "&To=" +
+                                                     HttpUtility.UrlEncode(endTime.ToString("yyyy-MM-dd") + " " +
+                                                                           endTime.ToString("HH:mm:ss"));
+
                     }
 
                     if (alert.ContextData!=null)

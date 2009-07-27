@@ -48,7 +48,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 {
 	public partial class ApplicationLogSearchPanel : System.Web.UI.UserControl
 	{
-		protected override void OnInit(EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack && !Page.IsAsync)
+            {
+                string startTime = Request["From"];
+                string endTime = Request["To"];
+
+                if (startTime != null && endTime != null)
+                {
+                    FromFilter.Text = startTime;
+                    ToFilter.Text = endTime;
+                    ApplicationLogGridView.SetDataSource();
+                    ApplicationLogGridView.Refresh();
+                }
+            }
+        }
+
+	    protected override void OnInit(EventArgs e)
 		{
 			base.OnInit(e);
 

@@ -146,15 +146,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 
 		protected override void OnInit(EventArgs e)
 		{
-			base.OnInit(e);
-
-            if (IsPostBack || Page.IsAsync)
-            {
-                ApplicationLogListControl.DataSource = ApplicationLogDataSourceObject;
-            } 
+			base.OnInit(e);           
 
             if (_height!=Unit.Empty)
                 ContainerTable.Height = _height;
+
+            if(IsPostBack || Page.IsAsync)
+            {
+                ApplicationLogListControl.DataSource = ApplicationLogDataSourceObject;
+            }
 
 		    TheGrid = ApplicationLogListControl;
 		    
@@ -209,6 +209,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 			ApplicationLogListControl.PageIndex = e.NewPageIndex;
 			ApplicationLogListControl.DataBind();
 		}
+
+        public void SetDataSource()
+        {
+            ApplicationLogListControl.DataSource = ApplicationLogDataSourceObject;
+        }
 
 	}
 }

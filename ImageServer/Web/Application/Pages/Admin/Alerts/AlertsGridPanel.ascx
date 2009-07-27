@@ -19,12 +19,13 @@
                     <asp:TemplateField HeaderText="Content">
 					    <itemtemplate>
 					        <%# Eval("Message") %>
+					        <asp:LinkButton runat="server" ID="AppLogLink" Text="[Logs]" CssClass="LogInfo"/>
 					        <asp:PlaceHolder runat="server" ID="DetailsHoverPlaceHolder"></asp:PlaceHolder>
 					    </itemtemplate>
 				    </asp:TemplateField>
                     <asp:BoundField DataField="Component" HeaderText="Component" HeaderStyle-HorizontalAlign="Left" />
                     <asp:BoundField DataField="Source" HeaderText="Source" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
-                    <asp:BoundField DataField="InsertTime" HeaderText="Insert Date" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+                    <asp:BoundField DataField="InsertTime" HeaderText="Insert&nbsp;Date" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
                     <asp:TemplateField HeaderText="Level" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 					    <itemtemplate>
                             <asp:Label ID="Level" Text="" runat="server" />

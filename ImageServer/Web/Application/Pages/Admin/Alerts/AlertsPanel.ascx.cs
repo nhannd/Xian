@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
             AlertsGridPanel.Pager = GridPagerTop;
-            //GridPagerTop.Reset();
+            GridPagerTop.Reset();
 
             ClearInsertDateButton.OnClientClick = ScriptHelper.ClearDate(InsertDateFilter.ClientID, InsertDateCalendarExtender.ClientID);
             

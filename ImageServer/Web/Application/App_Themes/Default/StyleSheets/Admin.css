@@ -124,8 +124,15 @@ div.DeleteAlertTableContainer {
 	display: inline;
 	font-size: 11px;
 	color: Blue;
-	margin-left:5px;
-	margin-right:5px;
+	text-decoration: none;
+}
+
+.LogInfo
+{
+	display: inline;
+	font-size: 11px;
+	color: Blue;
+    text-decoration: none;
 }
 
 .WorkQueueAlertStudyTable
