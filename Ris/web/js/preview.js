@@ -1265,25 +1265,68 @@ Preview.SectionContainer = function () {
  */
 Preview.PatientBannner = function () {
 
+	var _createContentContainer = function(contentElement)
+	{
+		var divElement = document.createElement("div");
+		divElement.appendChild(contentElement);
+		return divElement;
+	};
+
+	var _createContainer = function(element)
+	{
+		var _createCell = function(row, className, text)
+		{
+			var cell = row.insertCell();
+			cell.className = className;
+			cell.innerText = text || "";
+			return cell;
+		};
+
+		var content = _createContentContainer(element);
+
+		var table = document.createElement("table");
+		var body = document.createElement("tbody");
+		table.style.borderSpacing = 0;
+		table.style.padding = 0;
+		table.appendChild(body);
+
+		var row, cell;
+		row = body.insertRow();
+		_createCell(row, "PatientBanner_topleft");
+		_createCell(row, "PatientBanner_top");
+		_createCell(row, "PatientBanner_topright");
+
+		row = body.insertRow();
+		_createCell(row, "PatientBanner_left");
+		cell = _createCell(row, "PatientBanner_content");
+		cell.appendChild(content);
+		_createCell(row, "PatientBanner_right");
+
+		row = body.insertRow();
+		_createCell(row, "PatientBanner_bottomleft");
+		_createCell(row, "PatientBanner_bottom");
+		_createCell(row, "PatientBanner_bottomright");
+
+		return table;
+	};
+
 	return {
 		create: function (element)
 		{
-			var html = 
-				'<table cellspacing="0" cellpadding="0"><tr>' +
-				'<td class="PatientBanner_topleft"></td>' + 
-				'<td class="PatientBanner_top"></td>' + 
-				'<td class="PatientBanner_topright"></td>' +
-				'</tr><tr>' +
-				'<td class="PatientBanner_left"></td>' +
-				'<td class="PatientBanner_content">' + element.innerHTML + '</td>' +
-				'<td class="PatientBanner_right"></td>' +
-				'</tr><tr>' +
-				'<td class="PatientBanner_bottomleft"></td>' +
-				'<td class="PatientBanner_bottom"></td>' +
-				'<td class="PatientBanner_bottomright"></td>' +
-				'</tr></table>';
+			// no need to create a contrainer if the element is hidden
+			if (element.style.display == 'none')
+				return;
 
-			element.innerHTML = html;
+			// Replace the element with the new element that is encased in the container.
+			// We cannot simply use innerHTML because all the event handler of the element will not
+			// be propagated to the new element.  Hence the DOM manipulation to preserve the handlers.
+			var parent = element.parentNode;
+			var nextSibling = element.nextSibling;
+			var newElement = _createContainer(element);
+			if (nextSibling)
+				parent.insertBefore(newElement, nextSibling);
+			else
+				parent.appendChild(newElement);
 		}
 	};
 
