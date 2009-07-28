@@ -89,7 +89,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 filter.UserName = "%" + UserName.Replace("*","%").Replace("?","_");
 				filter.DisplayName = "%" + DisplayName.Replace("*", "%").Replace("?", "_");
                 filter.Page.FirstRow = startRowIndex;
-                filter.Page.MaxRows = maximumRows;
 
                 users = CollectionUtils.Map<UserSummary, UserRowData>(
                     service.FindUsers(filter),
@@ -121,8 +120,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public int SelectCount()
         {
-            if (ResultCount != 0) return ResultCount;
-
             // Ignore the search results
             InternalSelect(0, 1, out _resultCount);
 
