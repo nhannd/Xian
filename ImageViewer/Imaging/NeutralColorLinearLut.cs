@@ -35,98 +35,127 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	[Cloneable]
+	/// <summary>
+	/// A 1-to-1 pass-through composable LUT (i.e. a null transform).
+	/// </summary>
+	[Cloneable(true)]
 	public sealed class NeutralColorLinearLut : ComposableLut, IVoiLutLinear
 	{
-		private int _channelBitDepth;
-		private double _windowWidth;
-		private double _windowCentre;
 		private int _minInputValue;
 		private int _maxInputValue;
-		private int _minOutputValue;
-		private int _maxOutputValue;
 
+		/// <summary>
+		/// Constructs a 1-to-1 pass-through composable LUT for 8-bit unsigned values.
+		/// </summary>
 		public NeutralColorLinearLut()
 		{
-			_channelBitDepth = 8;
-			_minInputValue = _minOutputValue = 0;
-			_maxInputValue = _maxOutputValue = 255;
-			_windowWidth = 256;
-			_windowCentre = 128;
-		}
-
-		public NeutralColorLinearLut(int channelBitDepth)
-		{
-			Platform.CheckArgumentRange(channelBitDepth, 1, 256, "channelBitDepth");
-			_channelBitDepth = channelBitDepth;
-			_minInputValue = _minOutputValue = 0;
-			_maxInputValue = _maxOutputValue = (1 << channelBitDepth) - 1;
-			_windowWidth = 1 << channelBitDepth;
-			_windowCentre = 1 << (channelBitDepth - 1);
+			_minInputValue = 0;
+			_maxInputValue = 255;
 		}
 
 		/// <summary>
-		/// Cloning constructor.
+		/// Constructs a 1-to-1 pass-through composable LUT for unsigned values.
 		/// </summary>
-		/// <param name="source">The source object from which to clone.</param>
-		/// <param name="context">The cloning context object.</param>
-		private NeutralColorLinearLut(NeutralColorLinearLut source, ICloningContext context) : base()
+		/// <param name="channelBitDepth">The bit-depth of the unsigned values.</param>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the bit-depth is not between 1 and 31, inclusive.</exception>
+		public NeutralColorLinearLut(int channelBitDepth)
 		{
-			context.CloneFields(source, this);
+			Platform.CheckArgumentRange(channelBitDepth, 1, 31, "channelBitDepth");
+			_minInputValue = 0;
+			_maxInputValue = (1 << channelBitDepth) - 1;
 		}
 
+		/// <summary>
+		/// Gets an abbreviated description of the LUT.
+		/// </summary>
 		public override string GetDescription()
 		{
 			return string.Format(SR.FormatDescriptionNeutralColorLinearLut, WindowWidth, WindowCenter);
 		}
 
+		/// <summary>
+		/// Gets or sets the minimum input value.
+		/// </summary>
 		public override int MinInputValue
 		{
 			get { return _minInputValue; }
 			set { _minInputValue = value; }
 		}
 
+		/// <summary>
+		/// Gets the maximum input value.
+		/// </summary>
 		public override int MaxInputValue
 		{
 			get { return _maxInputValue; }
 			set { _maxInputValue = value; }
 		}
 
+		/// <summary>
+		/// Gets the minimum output value.
+		/// </summary>
+		/// <remarks>
+		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly <see cref="MinInputValue"/>.
+		/// </remarks>
 		public override int MinOutputValue
 		{
-			get { return _minOutputValue; }
-			protected set { _minOutputValue = value; }
+			get { return _minInputValue; }
+			protected set { throw new NotSupportedException(); }
 		}
 
+		/// <summary>
+		/// Gets the maximum output value.
+		/// </summary>
+		/// <remarks>
+		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>.
+		/// </remarks>
 		public override int MaxOutputValue
 		{
-			get { return _maxOutputValue; }
-			protected set { _maxOutputValue = value; }
+			get { return _maxInputValue; }
+			protected set { throw new NotSupportedException(); }
 		}
 
+		/// <summary>
+		/// Gets the output value of the lut at a given input index.
+		/// </summary>
+		/// <remarks>
+		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, the value is always exactly <paramref name="index"/>.
+		/// </remarks>
 		public override int this[int index]
 		{
 			get { return index; }
 			protected set { throw new NotSupportedException(); }
 		}
 
-		public override string GetKey()
-		{
-			return string.Format("NEUTRAL_{0}BIT", _channelBitDepth);
-		}
-
-		#region IVoiLutLinear Members
-
+		/// <summary>
+		/// Gets the window width.
+		/// </summary>
+		/// <remarks>
+		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1.
+		/// </remarks>
 		public double WindowWidth
 		{
-			get { return _windowWidth; }
+			get { return _maxInputValue - _minInputValue + 1; }
 		}
 
+		/// <summary>
+		/// Gets the window centre.
+		/// </summary>
+		/// <remarks>
+		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly (<see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1)/2.
+		/// </remarks>
 		public double WindowCenter
 		{
-			get { return _windowCentre; }
+			get { return this.WindowWidth/2; }
 		}
 
-		#endregion
+		/// <summary>
+		/// Gets a string key that identifies this particular LUT's characteristics, so that 
+		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
+		/// </summary>
+		public override string GetKey()
+		{
+			return string.Format("NEUTRAL_{0}_to_{1}", _minInputValue, _maxInputValue);
+		}
 	}
 }
