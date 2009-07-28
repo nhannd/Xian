@@ -103,6 +103,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adapter.GetFileSystems(criteria);
         }
 
+        public IList<Filesystem> GetFileSystems(IList<ServerEntityKey> keys)
+        {
+            List<Filesystem> fileSystems = new List<Filesystem>();
+
+            foreach(ServerEntityKey key in keys)
+            {
+                fileSystems.Add(LoadFileSystem(key));
+            }
+
+            return fileSystems;
+        }
+
         public IList<Filesystem> GetAllFileSystems()
         {
             return _adapter.GetAllFileSystems();
