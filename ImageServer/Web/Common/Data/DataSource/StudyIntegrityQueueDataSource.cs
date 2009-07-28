@@ -31,7 +31,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Dicom;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
@@ -50,6 +52,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         private StudyInfo _existingStudy;
         private ImageSetDetails _conflictingImages;
         private StudyInfo _conflictingStudyInfo;
+        private StudyStorageLocation _location;
+        private StudyStorage _studyStorage;
 
         #endregion
 
@@ -134,6 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             private string _accessionNumber;
             private string _studyInstanceUID;
             private string _studyDate;
+
             public IEnumerable<SeriesDetails> Series
             {
                 get { return _series; }
@@ -209,6 +214,30 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             get { return _conflictingStudyInfo; }
             set { _conflictingStudyInfo = value; }
+        }
+
+        public string GetFolderPath()
+        {
+            if (_location == null)
+            {
+                if (_studyStorage == null)
+                {
+                    using (IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                        _studyStorage = StudyStorage.Load(context, _item.StudyStorageKey);
+                    }
+                }
+
+                _location = StudyStorageLocation.FindStorageLocations(_studyStorage)[0];
+
+            }
+
+            String path = Path.Combine(_location.FilesystemPath, _location.PartitionFolder);
+            path = Path.Combine(path, "Reconcile");
+            if(!string.IsNullOrEmpty(_item.GroupID)) path = Path.Combine(path, _item.GroupID);
+            path = Path.Combine(path, _location.StudyInstanceUid);
+
+            return path;
         }
     }
 
@@ -379,7 +408,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _insertTime;
 		private int _resultCount;
 		private ServerPartition _partition;
-		private StudyIntegrityReasonEnum _reasonEnum;
+	    private IList<StudyIntegrityReasonEnum> _reasonEnum = new List<StudyIntegrityReasonEnum>();
 
 		private string _dateFormats;
 		private IList<StudyIntegrityQueueSummary> _list = new List<StudyIntegrityQueueSummary>();
@@ -418,7 +447,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _partition; }
 			set { _partition = value; }
 		}
-		public StudyIntegrityReasonEnum ReasonEnum
+		public IList<StudyIntegrityReasonEnum> ReasonEnum
 		{
 			get { return _reasonEnum; }
 			set { _reasonEnum = value; }
@@ -500,7 +529,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
                 ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
                 queueDescription.Parse(item.Description);
-
                 
                 if (item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
                     summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
@@ -611,6 +639,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				DateTime insertTime = DateTime.Parse(InsertTime);
 				criteria.InsertTime.Between(insertTime, insertTime.AddHours(24));
 			}
+
+            if(ReasonEnum.Count > 0)
+            {
+                criteria.StudyIntegrityReasonEnum.In(ReasonEnum);
+            }
 
 			// Must do a sort order for range search to work right in this release.
 			criteria.InsertTime.SortAsc(0);
