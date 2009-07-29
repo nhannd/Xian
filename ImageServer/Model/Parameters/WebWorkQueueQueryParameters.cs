@@ -58,6 +58,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 			set { SubCriteria["PatientsName"] = new ProcedureParameter<string>("PatientsName", value); }
         }
 
+        public string ProcessorID
+        {
+            set { SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
+        }
+
         public DateTime? ScheduledTime
         {
             set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime?>("ScheduledTime", value); }

@@ -284,10 +284,13 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: December 16, 2007
 -- Description:	Query WorkQueue entries based on criteria
 --				
+-- History:
+--		07/29/09 - Added ProcessorID parameter. (Jon Bluks)
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
 	@PatientID nvarchar(64) = null,
+	@ProcessorID nvarchar(64) = null,	
 	@PatientsName nvarchar(64) = null,
 	@ScheduledTime datetime = null,
 	@Type nvarchar(64) = null,
@@ -367,6 +370,14 @@ BEGIN
 			SET @where = @where + '' AND ''
 
 		SET @where = @where + ''Study.PatientsName Like ''''%'' + @PatientsName + ''%'''' ''
+	END
+	
+	IF (@ProcessorID IS NOT NULL and @ProcessorID<>'''')
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''WorkQueue.ProcessorID Like ''''%'' + @ProcessorID + ''%'''' ''
 	END
 
 	if (@where<>'''')

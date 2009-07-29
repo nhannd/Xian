@@ -157,6 +157,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                 source.PatientsName = PatientName.Text;
                                                                 source.Partition = ServerPartition;
                                                                 source.PatientId = PatientId.Text;
+                                                                source.ProcessingServer = ProcessingServer.Text;
 
                                                                 if(ScheduleCalendarExtender.SelectedDate != null)
                                                                 {

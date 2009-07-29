@@ -142,6 +142,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _dateFormats;
 		private IList<WorkQueueSummary> _list = new List<WorkQueueSummary>();
 		private IList<ServerEntityKey> _searchKeys;
+	    private string _processingServer;
 		#endregion
 
 		#region Public Properties
@@ -160,6 +161,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _patientName; }
 			set { _patientName = value; }
 		}
+
+	    public string ProcessingServer
+	    {
+            get { return _processingServer; }
+            set { _processingServer = value; }
+	    }
 
 		public ServerPartition Partition
 		{
@@ -249,6 +256,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				key = "%" + key + "%";
 				parameters.PatientID = key;
 			}
+            if (!string.IsNullOrEmpty(ProcessingServer))
+            {
+                string key = ProcessingServer.Replace("*", "%");
+                key = key.Replace("?", "_");
+                key = "%" + key + "%";
+                parameters.ProcessorID = key;
+            }
 
 			if (String.IsNullOrEmpty(ScheduledDate))
 				parameters.ScheduledTime = null;
