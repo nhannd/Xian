@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class PatientAttachmentSummary : DataContractBase
     {
-        public PatientAttachmentSummary(EnumValueInfo category, MimeDocumentSummary document)
+        public PatientAttachmentSummary(EnumValueInfo category, AttachedDocumentSummary document)
         {
             this.Category = category;
             this.Document = document;
@@ -47,6 +47,6 @@ namespace ClearCanvas.Ris.Application.Common
         public EnumValueInfo Category;
 
         [DataMember]
-        public MimeDocumentSummary Document;
+        public AttachedDocumentSummary Document;
     }
 }

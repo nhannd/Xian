@@ -29,38 +29,28 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Common
+namespace ClearCanvas.Ris.Application.Services
 {
-    [DataContract]
-    public class MimeDocumentSummary : DataContractBase
+    public class AttachedDocumentAssembler
     {
-        [DataMember]
-        public EntityRef DocumentRef;
-
-        [DataMember]
-        public DateTime? CreationTime;
-
-        [DataMember]
-        public string MimeType;
-
-        [DataMember]
-        public string FileExtension;
-
-        public MimeDocumentSummary As<T>()
-            where T : MimeDocumentSummary
+        public AttachedDocumentSummary CreateAttachedDocumentSummary(AttachedDocument doc)
         {
-            MimeDocumentSummary doc = new MimeDocumentSummary();
+            AttachedDocumentSummary summary = new AttachedDocumentSummary();
+            
+            UpdateAttachedDocumentSummary(doc, summary);
 
-            doc.DocumentRef = this.DocumentRef;
-            doc.CreationTime = this.CreationTime;
-            doc.MimeType = this.MimeType;
-            doc.FileExtension = this.FileExtension;
+            return summary;
+        }
 
-            return doc;
+        public void UpdateAttachedDocumentSummary(AttachedDocument doc, AttachedDocumentSummary summary)
+        {
+            summary.DocumentRef = doc.GetRef();
+            summary.CreationTime = doc.CreationTime;
+            summary.MimeType = doc.MimeType;
+            summary.FileExtension = doc.FileExtension;
         }
     }
 }

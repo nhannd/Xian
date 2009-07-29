@@ -1,23 +1,20 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.MimeDocumentService;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.AttachedDocumentService;
 
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Provides methods for working with MIME documents stored on
-    /// the RIS server.
+    /// Provides methods for working with MIME documents stored on the RIS server.
     /// </summary>
-    public static class MimeDocument
+    public static class AttachedDocument
     {
         /// <summary>
         /// Downloads the specified binary data document to a temporary file with the
         /// specified extension.
         /// </summary>
-        /// <param name="dataRef"></param>
+        /// <param name="documentRef"></param>
         /// <param name="fileExtension"></param>
         /// <returns></returns>
         public static string DownloadToTempFile(EntityRef documentRef, string fileExtension)
@@ -38,8 +35,8 @@ namespace ClearCanvas.Ris.Client
         {
             byte[] data = null;
 
-            Platform.GetService<IMimeDocumentService>(
-                delegate(IMimeDocumentService service)
+            Platform.GetService<IAttachedDocumentService>(
+                delegate(IAttachedDocumentService service)
                 {
                     GetDocumentDataResponse response = service.GetDocumentData(new GetDocumentDataRequest(dataRef));
                     data = response.BinaryData;

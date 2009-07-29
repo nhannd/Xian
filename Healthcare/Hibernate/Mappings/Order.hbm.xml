@@ -61,7 +61,7 @@
 				<many-to-one name="Category" column="Category_" class="OrderAttachmentCategoryEnum"/>
 
 				<!-- this is supposed to be an one-to-one mapping with document, but unique="true is currently not supported with value member"  -->
-				<many-to-one name="Document" column="MimeDocumentOID_" class="MimeDocument" not-null="true" cascade="all" fetch="join"/>
+				<many-to-one name="Document" column="AttachedDocumentOID_" class="AttachedDocument" not-null="true" cascade="all" fetch="join"/>
 			</composite-element>
 		</idbag>
 

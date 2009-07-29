@@ -20,7 +20,7 @@
 
 					var faxboxItem = Ris.getHealthcareContext();
 
-					var faxUrl = faxboxItem ? Ris.getMimeDocumentUrl(faxboxItem.FaxDocument) : "about:blank";
+					var faxUrl = faxboxItem ? Ris.getAttachedDocumentUrl(faxboxItem.FaxDocument) : "about:blank";
 					
 					var urlExtension = faxUrl.substring(faxUrl.length - 3, faxUrl.length).toLowerCase();;
 					if (urlExtension == "pdf")

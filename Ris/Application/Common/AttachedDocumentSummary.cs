@@ -30,44 +30,37 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Application.Common
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="MimeDocumentPreviewComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(MimeDocumentPreviewComponentViewExtensionPoint))]
-    public class MimeDocumentPreviewComponentView : WinFormsView, IApplicationComponentView
+    [DataContract]
+    public class AttachedDocumentSummary : DataContractBase
     {
-        private MimeDocumentPreviewComponent _component;
-        private MimeDocumentPreviewComponentControl _control;
+        [DataMember]
+        public EntityRef DocumentRef;
 
+        [DataMember]
+        public DateTime? CreationTime;
 
-        #region IApplicationComponentView Members
+        [DataMember]
+        public string MimeType;
 
-        public void SetComponent(IApplicationComponent component)
+        [DataMember]
+        public string FileExtension;
+
+        public AttachedDocumentSummary As<T>()
+            where T : AttachedDocumentSummary
         {
-            _component = (MimeDocumentPreviewComponent)component;
-        }
+            AttachedDocumentSummary doc = new AttachedDocumentSummary();
 
-        #endregion
+            doc.DocumentRef = this.DocumentRef;
+            doc.CreationTime = this.CreationTime;
+            doc.MimeType = this.MimeType;
+            doc.FileExtension = this.FileExtension;
 
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new MimeDocumentPreviewComponentControl(_component);
-                }
-                return _control;
-            }
+            return doc;
         }
     }
 }

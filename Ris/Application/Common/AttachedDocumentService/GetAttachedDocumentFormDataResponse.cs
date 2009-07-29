@@ -29,28 +29,28 @@
 
 #endregion
 
-using ClearCanvas.Healthcare;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Application.Services
+namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
 {
-    public class MimeDocumentAssembler
+    [DataContract]
+    public class GetAttachedDocumentFormDataResponse : DataContractBase
     {
-        public MimeDocumentSummary CreateMimeDocumentSummary(MimeDocument doc)
+        public GetAttachedDocumentFormDataResponse(
+            List<EnumValueInfo> patientAttachmentCategoryChoices,
+            List<EnumValueInfo> orderAttachmentCategoryChoices)
         {
-            MimeDocumentSummary summary = new MimeDocumentSummary();
-            
-            UpdateMimeDocumentSummary(doc, summary);
-
-            return summary;
+            this.PatientAttachmentCategoryChoices = patientAttachmentCategoryChoices;
+            this.OrderAttachmentCategoryChoices = orderAttachmentCategoryChoices;
         }
 
-        public void UpdateMimeDocumentSummary(MimeDocument doc, MimeDocumentSummary summary)
-        {
-            summary.DocumentRef = doc.GetRef();
-            summary.CreationTime = doc.CreationTime;
-            summary.MimeType = doc.MimeType;
-            summary.FileExtension = doc.FileExtension;
-        }
+        [DataMember]
+        public List<EnumValueInfo> PatientAttachmentCategoryChoices;
+
+        [DataMember]
+        public List<EnumValueInfo> OrderAttachmentCategoryChoices;
     }
 }

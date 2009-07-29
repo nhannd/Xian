@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class MimeDocumentPreviewComponentControl
+    partial class AttachedDocumentPreviewComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -73,12 +73,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._attachments.Size = new System.Drawing.Size(415, 76);
 			this._attachments.TabIndex = 0;
 			// 
-			// MimeDocumentPreviewComponentControl
+			// AttachedDocumentPreviewComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._splitContainer);
-			this.Name = "MimeDocumentPreviewComponentControl";
+			this.Name = "AttachedDocumentPreviewComponentControl";
 			this.Size = new System.Drawing.Size(415, 440);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.Panel2.ResumeLayout(false);

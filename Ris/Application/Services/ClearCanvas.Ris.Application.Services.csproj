@@ -92,7 +92,7 @@
     <Compile Include="PatientAttachmentAssembler.cs" />
     <Compile Include="ProtocolAssembler.cs" />
     <Compile Include="ReportAssembler.cs" />
-    <Compile Include="MimeDocumentService\MimeDocumentService.cs" />
+    <Compile Include="AttachedDocumentService\AttachedDocumentService.cs" />
     <Compile Include="ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\EnumerationAdmin\EnumerationAdminService.cs" />
     <Compile Include="Admin\Import\ImportService.cs" />
@@ -129,7 +129,7 @@
     <Compile Include="VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
-    <Compile Include="MimeDocumentAssembler.cs" />
+    <Compile Include="AttachedDocumentAssembler.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />

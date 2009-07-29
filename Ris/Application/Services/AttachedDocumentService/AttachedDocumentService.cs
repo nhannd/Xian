@@ -29,14 +29,31 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common.AttachedDocumentService;
+using ClearCanvas.Ris.Application.Services;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Ris.Application.Services.AttachedDocumentService
 {
-    [DataContract]
-    public class GetAttachDocumentFormDataRequest : DataContractBase
+    [ServiceImplementsContract(typeof(IAttachedDocumentService))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    public class AttachedDocumentService : ApplicationServiceBase, IAttachedDocumentService
     {
-        // nothing
+        [ReadOperation]
+        public GetAttachedDocumentFormDataResponse GetAttachedDocumentFormData(GetAttachedDocumentFormDataRequest request)
+        {
+            return new GetAttachedDocumentFormDataResponse(
+                EnumUtils.GetEnumValueList<PatientAttachmentCategoryEnum>(PersistenceContext),
+                EnumUtils.GetEnumValueList<OrderAttachmentCategoryEnum>(PersistenceContext));
+        }
+
+        [ReadOperation]
+        public GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request)
+        {
+            AttachedDocument document = PersistenceContext.Load<AttachedDocument>(request.DocumentRef);
+            return new GetDocumentDataResponse(document.Data.BinaryData);
+        }
     }
 }

@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client
         private ContactPersonsSummaryComponent _contactPersonsSummary;
         private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
         private PatientNoteSummaryComponent _notesSummary;
-        private MimeDocumentPreviewComponent _documentSummary;
+        private AttachedDocumentPreviewComponent _documentSummary;
 
         /// <summary>
         /// Constructs an editor to edit the specified profile
@@ -164,7 +164,7 @@ namespace ClearCanvas.Ris.Client
 						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
                     {
                         this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
-                        this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
+                        this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new AttachedDocumentPreviewComponent(true, true)));
                         
                         _notesSummary.Subject = _profile.Notes;
                         _documentSummary.PatientAttachments = _profile.Attachments;

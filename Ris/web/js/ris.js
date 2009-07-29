@@ -256,9 +256,9 @@ if(window.external)
 			return window.external.OnScriptCompleted();
 		},
 		
-		getMimeDocumentUrl: function(mimeDocumentSummary)
+		getAttachedDocumentUrl: function(attachedDocumentSummary)
 		{
-			return window.external.GetMimeDocumentUrl(JSML.create(mimeDocumentSummary, "MimeDocument"));
+			return window.external.GetAttachedDocumentUrl(JSML.create(attachedDocumentSummary, "AttachedDocument"));
 		}
 	};
 	

@@ -29,49 +29,52 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Hibernate.Ddl;
-using NHibernate.Cfg;
-using NHibernate.Dialect;
+using System;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Healthcare.Hibernate.Brokers
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class MimeDocumentDataBroker
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="AttachedDocumentPreviewComponent"/>
+    /// </summary>
+    public partial class AttachedDocumentPreviewComponentControl : ApplicationComponentUserControl
     {
-        private static readonly string TABLE_NAME = "MimeDocumentData_";
-        private static readonly string COLUMN_NAME = "BinaryData_";
-        private static readonly string COLUMN_TYPE = "varbinary(max) not null";
+        private readonly AttachedDocumentPreviewComponent _component;
 
-        /// <summary>
-        /// Extension to generate DDL to create and initialize the Accession Sequence table
-        /// </summary>
-        [ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
-        public class MimeDocumentDataDdlScriptGenerator : DdlScriptGenerator
+        public AttachedDocumentPreviewComponentControl(AttachedDocumentPreviewComponent component)
+            :base(component)
         {
-            #region IDdlScriptGenerator Members
+            InitializeComponent();
+            _component = component;
 
-            public override string[] GenerateCreateScripts(Configuration config)
+            _splitContainer.Panel1Collapsed = _component.ShowSummary == false;
+            _attachments.ShowToolbar = _component.ShowToolbar;
+
+            _attachments.Table = _component.Attachments;
+            _attachments.MenuModel = _component.AttachmentActionModel;
+            _attachments.ToolbarModel = _component.AttachmentActionModel;
+            _attachments.DataBindings.Add("Selection", _component, "Selection", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            RefreshPreview();
+
+            _component.DataChanged += _component_DataChanged;
+        }
+
+        void _component_DataChanged(object sender, EventArgs e)
+        {
+            RefreshPreview();
+        }
+
+        void RefreshPreview()
+        {
+            if (String.IsNullOrEmpty(_component.TempFileName))
             {
-                string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
-                string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
-
-                return new string[]
-				{
-                    string.Format("alter table {0} alter column {1} {2}", tableName, COLUMN_NAME, COLUMN_TYPE)
-				};
+                _browser.Url = new Uri("about:blank");
+                return;
             }
 
-        	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
-        	{
-				return new string[] { };    // nothing to do
-			}
-
-        	public override string[] GenerateDropScripts(Configuration config)
-            {
-                return new string[] { };    // nothing to do
-            }
-
-            #endregion
+            _browser.Url = new Uri(_component.TempFileName);
         }
     }
 }

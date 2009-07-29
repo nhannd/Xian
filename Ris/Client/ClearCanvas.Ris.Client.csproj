@@ -83,7 +83,7 @@
     <Compile Include="IEHeaderFooterSettings.cs" />
     <Compile Include="HomepageConfigurationComponent.cs" />
     <Compile Include="IExtensionPageProvider.cs" />
-    <Compile Include="MimeDocument.cs" />
+    <Compile Include="AttachedDocument.cs" />
     <Compile Include="OrderNoteConversationRecipientsSettingsHelper.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
@@ -223,7 +223,7 @@
     <Compile Include="ExternalPractitionerEditorComponent.cs" />
     <Compile Include="ExternalPractitionerLookupHandler.cs" />
     <Compile Include="ExternalPractitionerSummaryComponent.cs" />
-    <Compile Include="MimeDocumentPreviewComponent.cs" />
+    <Compile Include="AttachedDocumentPreviewComponent.cs" />
     <Compile Include="ILookupHandler.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="DocumentManager.cs" />

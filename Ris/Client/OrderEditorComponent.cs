@@ -228,7 +228,7 @@ namespace ClearCanvas.Ris.Client
 
         private event EventHandler _changeCommitted;
 
-        private readonly MimeDocumentPreviewComponent _attachmentSummaryComponent;
+        private readonly AttachedDocumentPreviewComponent _attachmentSummaryComponent;
         private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
         private TabComponentContainer _rightHandComponentContainer;
@@ -362,7 +362,7 @@ namespace ClearCanvas.Ris.Client
             _noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
             _noteSummaryComponent.ModifiedChanged += delegate { this.Modified = true; };
 
-            _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
+            _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(true, true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
             this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
             _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
         }

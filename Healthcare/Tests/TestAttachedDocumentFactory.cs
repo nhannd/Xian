@@ -35,17 +35,17 @@ using System.Text;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestMimeDocumentFactory
+    internal static class TestAttachedDocumentFactory
     {
-        internal static MimeDocument CreateMimeDocument()
+        internal static AttachedDocument CreateAttachedDocument()
         {
             string testString = "Test Mime Document";
 
-            return new MimeDocument(
+            return new AttachedDocument(
                 "txt", 
                 "txt", 
-                DateTime.Now, 
-                new MimeDocumentData(Encoding.ASCII.GetBytes(testString)));
+                DateTime.Now,
+                new AttachedDocumentData(Encoding.ASCII.GetBytes(testString)));
         }
     }
 }

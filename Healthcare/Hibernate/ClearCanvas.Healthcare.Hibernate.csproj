@@ -51,7 +51,7 @@
     <Compile Include="Brokers\OptimizedWorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\OrderNoteboxItemBroker.cs" />
     <Compile Include="Brokers\ProcedureTypeGroupBroker.cs" />
-    <Compile Include="Brokers\MimeDocumentDataBroker.cs" />
+    <Compile Include="Brokers\AttachedDocumentDataBroker.cs" />
     <Compile Include="Brokers\PatientHistoryBroker.cs" />
     <Compile Include="Brokers\PriorReportBroker.cs" />
     <Compile Include="Brokers\ProtocolGroupBroker.cs" />
@@ -187,8 +187,8 @@
     <EmbeddedResource Include="Mappings\ReportStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportPartStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProcedureStatusEnum.hbm.xml" />
-    <EmbeddedResource Include="Mappings\MimeDocument.hbm.xml" />
-    <EmbeddedResource Include="Mappings\MimeDocumentData.hbm.xml" />
+    <EmbeddedResource Include="Mappings\AttachedDocument.hbm.xml" />
+    <EmbeddedResource Include="Mappings\AttachedDocumentData.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientAttachmentCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\OrderAttachmentCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\DocumentationProcedureStep.hbm.xml" />

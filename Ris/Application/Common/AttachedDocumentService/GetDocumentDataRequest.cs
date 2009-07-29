@@ -29,52 +29,20 @@
 
 #endregion
 
-using System;
-using System.Windows.Forms;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="MimeDocumentPreviewComponent"/>
-    /// </summary>
-    public partial class MimeDocumentPreviewComponentControl : ApplicationComponentUserControl
+    [DataContract]
+    public class GetDocumentDataRequest : DataContractBase
     {
-        private readonly MimeDocumentPreviewComponent _component;
-
-        public MimeDocumentPreviewComponentControl(MimeDocumentPreviewComponent component)
-            :base(component)
+        public GetDocumentDataRequest(EntityRef documentRef)
         {
-            InitializeComponent();
-            _component = component;
-
-            _splitContainer.Panel1Collapsed = _component.ShowSummary == false;
-            _attachments.ShowToolbar = _component.ShowToolbar;
-
-            _attachments.Table = _component.Attachments;
-            _attachments.MenuModel = _component.AttachmentActionModel;
-            _attachments.ToolbarModel = _component.AttachmentActionModel;
-            _attachments.DataBindings.Add("Selection", _component, "Selection", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            RefreshPreview();
-
-            _component.DataChanged += _component_DataChanged;
+            this.DocumentRef = documentRef;
         }
 
-        void _component_DataChanged(object sender, EventArgs e)
-        {
-            RefreshPreview();
-        }
-
-        void RefreshPreview()
-        {
-            if (String.IsNullOrEmpty(_component.TempFileName))
-            {
-                _browser.Url = new Uri("about:blank");
-                return;
-            }
-
-            _browser.Url = new Uri(_component.TempFileName);
-        }
+        [DataMember]
+        public EntityRef DocumentRef;
     }
 }

@@ -32,14 +32,14 @@
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
 {
     [RisApplicationService]
     [ServiceContract]
-    public interface IMimeDocumentService
+    public interface IAttachedDocumentService
     {
         [OperationContract]
-        GetAttachDocumentFormDataResponse GetAttachDocumentFormData(GetAttachDocumentFormDataRequest request);
+        GetAttachedDocumentFormDataResponse GetAttachedDocumentFormData(GetAttachedDocumentFormDataRequest request);
 
         /// <summary>
         /// Get the binary data of the document

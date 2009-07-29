@@ -29,27 +29,20 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
+using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-using ClearCanvas.Enterprise.Core;
+namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
+{
+    [DataContract]
+    public class GetDocumentDataResponse : DataContractBase
+    {
+        public GetDocumentDataResponse(byte[] binaryData)
+        {
+            this.BinaryData = binaryData;
+        }
 
-namespace ClearCanvas.Healthcare {
-
-
-    /// <summary>
-    /// MimeDocumentData entity
-    /// </summary>
-	public partial class MimeDocumentData : ClearCanvas.Enterprise.Core.Entity
-	{
-	
-		/// <summary>
-		/// This method is called from the constructor.  Use this method to implement any custom
-		/// object initialization.
-		/// </summary>
-		private void CustomInitialize()
-		{
-		}
-	}
+        [DataMember]
+        public byte[] BinaryData;
+    }
 }

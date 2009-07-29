@@ -32,17 +32,11 @@
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
 {
     [DataContract]
-    public class GetDocumentDataRequest : DataContractBase
+    public class GetAttachedDocumentFormDataRequest : DataContractBase
     {
-        public GetDocumentDataRequest(EntityRef documentRef)
-        {
-            this.DocumentRef = documentRef;
-        }
-
-        [DataMember]
-        public EntityRef DocumentRef;
+        // nothing
     }
 }

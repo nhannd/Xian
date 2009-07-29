@@ -80,24 +80,24 @@ namespace ClearCanvas.Ris.Application.Services
 
         public OrderAttachmentSummary CreateOrderAttachmentSummary(OrderAttachment attachment)
         {
-            MimeDocumentAssembler mimeDocAssembler = new MimeDocumentAssembler();
+            AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
             return new OrderAttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
-                mimeDocAssembler.CreateMimeDocumentSummary(attachment.Document));
+                attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
         public OrderAttachment CreateOrderAttachment(OrderAttachmentSummary summary, IPersistenceContext context)
         {
             return new OrderAttachment(
                 EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
-                context.Load<MimeDocument>(summary.Document.DocumentRef));
+                context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 
         public void UpdateOrderAttachment(OrderAttachment attachment, OrderAttachmentSummary summary, IPersistenceContext context)
         {
-            MimeDocumentAssembler mimeDocAssembler = new MimeDocumentAssembler();
+            AttachedDocumentAssembler mimeDocAssembler = new AttachedDocumentAssembler();
             attachment.Category = EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context);
-            mimeDocAssembler.UpdateMimeDocumentSummary(attachment.Document, summary.Document);
+            mimeDocAssembler.UpdateAttachedDocumentSummary(attachment.Document, summary.Document);
         }
     }
 }

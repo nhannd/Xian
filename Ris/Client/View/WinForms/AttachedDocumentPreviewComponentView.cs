@@ -29,31 +29,45 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common.MimeDocumentService;
-using ClearCanvas.Ris.Application.Services;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Services.MimeDocumentService
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    [ServiceImplementsContract(typeof(IMimeDocumentService))]
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class MimeDocumentService : ApplicationServiceBase, IMimeDocumentService
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="AttachedDocumentPreviewComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(AttachedDocumentPreviewComponentViewExtensionPoint))]
+    public class AttachedDocumentPreviewComponentView : WinFormsView, IApplicationComponentView
     {
-        [ReadOperation]
-        public GetAttachDocumentFormDataResponse GetAttachDocumentFormData(GetAttachDocumentFormDataRequest request)
+        private AttachedDocumentPreviewComponent _component;
+        private AttachedDocumentPreviewComponentControl _control;
+
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            return new GetAttachDocumentFormDataResponse(
-                EnumUtils.GetEnumValueList<PatientAttachmentCategoryEnum>(PersistenceContext),
-                EnumUtils.GetEnumValueList<OrderAttachmentCategoryEnum>(PersistenceContext));
+            _component = (AttachedDocumentPreviewComponent)component;
         }
 
-        [ReadOperation]
-        public GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request)
+        #endregion
+
+        public override object GuiElement
         {
-            MimeDocument document = PersistenceContext.Load<MimeDocument>(request.DocumentRef);
-            return new GetDocumentDataResponse(document.Data.BinaryData);
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new AttachedDocumentPreviewComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

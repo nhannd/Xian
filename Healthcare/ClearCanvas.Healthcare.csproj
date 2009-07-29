@@ -68,6 +68,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Alerts\ReconciliationAlert.cs" />
+    <Compile Include="AttachedDocument.cs" />
+    <Compile Include="AttachedDocumentData.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
     <Compile Include="Brokers\IPatientHistoryBroker.cs" />
@@ -187,8 +189,6 @@
     <Compile Include="DocumentationProcedureStep.cs" />
     <Compile Include="DocumentationProcedureStepSearchCriteria.cs" />
     <Compile Include="ExternalPractitioner.cs" />
-    <Compile Include="MimeDocument.cs" />
-    <Compile Include="MimeDocumentData.cs" />
     <Compile Include="OrderAttachment.cs" />
     <Compile Include="PatientAttachment.cs" />
     <Compile Include="PatientIdentifier.cs" />
@@ -225,7 +225,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\TestMimeDocumentFactory.cs" />
+    <Compile Include="Tests\TestAttachedDocumentFactory.cs" />
     <Compile Include="Tests\TestOrderAttachmentFactory.cs" />
     <Compile Include="Tests\TestDiagnosticServiceFactory.cs" />
     <Compile Include="Tests\TestVisitFactory.cs" />

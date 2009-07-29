@@ -29,20 +29,49 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Hibernate.Ddl;
+using NHibernate.Cfg;
+using NHibernate.Dialect;
 
-namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
+namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    [DataContract]
-    public class GetDocumentDataResponse : DataContractBase
+    public partial class AttachedDocumentDataBroker
     {
-        public GetDocumentDataResponse(byte[] binaryData)
-        {
-            this.BinaryData = binaryData;
-        }
+        private static readonly string TABLE_NAME = "AttachedDocumentData_";
+        private static readonly string COLUMN_NAME = "BinaryData_";
+        private static readonly string COLUMN_TYPE = "varbinary(max) not null";
 
-        [DataMember]
-        public byte[] BinaryData;
+        /// <summary>
+        /// Extension to generate DDL to create and initialize the Accession Sequence table
+        /// </summary>
+        [ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
+        public class AttachedDocumentDataDdlScriptGenerator : DdlScriptGenerator
+        {
+            #region IDdlScriptGenerator Members
+
+            public override string[] GenerateCreateScripts(Configuration config)
+            {
+                string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+                string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
+
+                return new string[]
+				{
+                    string.Format("alter table {0} alter column {1} {2}", tableName, COLUMN_NAME, COLUMN_TYPE)
+				};
+            }
+
+        	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
+        	{
+				return new string[] { };    // nothing to do
+			}
+
+        	public override string[] GenerateDropScripts(Configuration config)
+            {
+                return new string[] { };    // nothing to do
+            }
+
+            #endregion
+        }
     }
 }

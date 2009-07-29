@@ -80,24 +80,24 @@ namespace ClearCanvas.Ris.Application.Services
 
         public PatientAttachmentSummary CreatePatientAttachmentSummary(PatientAttachment attachment)
         {
-            MimeDocumentAssembler mimeDocAssembler = new MimeDocumentAssembler();
+            AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
             return new PatientAttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
-                mimeDocAssembler.CreateMimeDocumentSummary(attachment.Document));
+                attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
         public PatientAttachment CreatePatientAttachment(PatientAttachmentSummary summary, IPersistenceContext context)
         {
             return new PatientAttachment(
                 EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context),
-                context.Load<MimeDocument>(summary.Document.DocumentRef));
+                context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 
         public void UpdatePatientAttachment(PatientAttachment attachment, PatientAttachmentSummary summary, IPersistenceContext context)
         {
-            MimeDocumentAssembler mimeDocAssembler = new MimeDocumentAssembler();
+            AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
             attachment.Category = EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context);
-            mimeDocAssembler.UpdateMimeDocumentSummary(attachment.Document, summary.Document);
+            attachedDocAssembler.UpdateAttachedDocumentSummary(attachment.Document, summary.Document);
         }
     }
 }

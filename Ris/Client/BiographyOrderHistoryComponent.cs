@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Client
 
 		private BiographyOrderDetailViewComponent _orderDetailComponent;
 		private VisitDetailViewComponent _visitDetailComponent;
-		private MimeDocumentPreviewComponent _orderDocumentComponent;
+		private AttachedDocumentPreviewComponent _orderDocumentComponent;
 		private BiographyOrderReportsComponent _orderReportsComponent;
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderReportsComponent = new BiographyOrderReportsComponent();
-			_orderDocumentComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
+			_orderDocumentComponent = new AttachedDocumentPreviewComponent(true, true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true);
 
 			_rightHandComponentContainer = new TabComponentContainer();

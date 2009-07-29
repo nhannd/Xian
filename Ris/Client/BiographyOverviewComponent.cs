@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Client
             _orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
-            MimeDocumentPreviewComponent documentComponent = new MimeDocumentPreviewComponent();
+            AttachedDocumentPreviewComponent documentComponent = new AttachedDocumentPreviewComponent();
 			BiographyVisitHistoryComponent visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
             documentComponent.PatientAttachments = _patientProfile.Attachments;
 

@@ -34,29 +34,28 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.MimeDocumentService;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Extension point for views onto <see cref="MimeDocumentPreviewComponent"/>
+    /// Extension point for views onto <see cref="AttachedDocumentPreviewComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class MimeDocumentPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class AttachedDocumentPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
     [ExtensionPoint]
-    public class MimeDocumentToolExtensionPoint : ExtensionPoint<ITool>
+    public class AttachedDocumentToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public interface IMimeDocumentToolContext : IToolContext
+    public interface IAttachedDocumentToolContext : IToolContext
     {
         event EventHandler SelectedDocumentChanged;
         EntityRef SelectedDocumentRef { get; }
@@ -68,10 +67,10 @@ namespace ClearCanvas.Ris.Client
     }
 
     /// <summary>
-    /// MimeDocumentPreviewComponent class
+    /// AttachedDocumentPreviewComponent class
     /// </summary>
-    [AssociateView(typeof(MimeDocumentPreviewComponentViewExtensionPoint))]
-    public class MimeDocumentPreviewComponent : ApplicationComponent
+    [AssociateView(typeof(AttachedDocumentPreviewComponentViewExtensionPoint))]
+    public class AttachedDocumentPreviewComponent : ApplicationComponent
     {
         public enum AttachmentMode
         {
@@ -79,16 +78,16 @@ namespace ClearCanvas.Ris.Client
             Order
         }
 
-        class MimeDocumentToolContext : ToolContext, IMimeDocumentToolContext
+        class AttachedDocumentToolContext : ToolContext, IAttachedDocumentToolContext
         {
-            private readonly MimeDocumentPreviewComponent _component;
+            private readonly AttachedDocumentPreviewComponent _component;
 
-            internal MimeDocumentToolContext(MimeDocumentPreviewComponent component)
+            internal AttachedDocumentToolContext(AttachedDocumentPreviewComponent component)
             {
                 _component = component;
             }
 
-            #region IMimeDocumentToolContext Members
+            #region IAttachedDocumentToolContext Members
 
             public event EventHandler SelectedDocumentChanged
             {
@@ -140,7 +139,7 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Default Constructor to show summary but hide all tools
         /// </summary>
-        public MimeDocumentPreviewComponent()
+        public AttachedDocumentPreviewComponent()
             : this(true, false, AttachmentMode.Patient)
         {
         }
@@ -149,7 +148,7 @@ namespace ClearCanvas.Ris.Client
         /// Constructor to show/hide the summary section
         /// </summary>
         /// <param name="showSummary">True to show the summary section, false to hide it</param>
-        public MimeDocumentPreviewComponent(bool showSummary)
+        public AttachedDocumentPreviewComponent(bool showSummary)
             : this(showSummary, false, AttachmentMode.Patient)
         {
         }
@@ -159,7 +158,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="showSummary">True to show the summary section, false to hide it</param>
         /// <param name="showToolbar">True to show the summary toolbar, false to hide it</param>
-        public MimeDocumentPreviewComponent(bool showSummary, bool showToolbar)
+        public AttachedDocumentPreviewComponent(bool showSummary, bool showToolbar)
             : this(showSummary, showToolbar, AttachmentMode.Patient)
         {
             _showSummary = showSummary;
@@ -175,7 +174,7 @@ namespace ClearCanvas.Ris.Client
         /// <param name="showSummary">True to show the summary section, false to hide it</param>
         /// <param name="showToolbar">True to show the summary toolbar, false to hide it</param>
         /// <param name="mode">Set the component attachment mode</param>
-        public MimeDocumentPreviewComponent(bool showSummary, bool showToolbar, AttachmentMode mode)
+        public AttachedDocumentPreviewComponent(bool showSummary, bool showToolbar, AttachmentMode mode)
         {
             _showSummary = showSummary;
             _showToolbar = showToolbar;
@@ -187,7 +186,7 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            _toolSet = new ToolSet(new MimeDocumentToolExtensionPoint(), new MimeDocumentToolContext(this));
+            _toolSet = new ToolSet(new AttachedDocumentToolExtensionPoint(), new AttachedDocumentToolContext(this));
             base.Start();
         }
 
@@ -242,7 +241,7 @@ namespace ClearCanvas.Ris.Client
 
         public ActionModelRoot AttachmentActionModel
         {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "mimedocument-items", _toolSet.Actions); }
+            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "attached-document-items", _toolSet.Actions); }
         }
 
         public override IActionSet ExportedActions
@@ -341,7 +340,7 @@ namespace ClearCanvas.Ris.Client
             {
                 try
                 {
-                    _tempFileName = MimeDocument.DownloadToTempFile(documentRef, fileExtension);
+                    _tempFileName = AttachedDocument.DownloadToTempFile(documentRef, fileExtension);
                 }
                 catch (Exception e)
                 {

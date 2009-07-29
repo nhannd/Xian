@@ -281,11 +281,11 @@
     <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationResponse.cs" />
     <Compile Include="PatientAttachmentSummary.cs" />
     <Compile Include="OrderAttachmentSummary.cs" />
-    <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
-    <Compile Include="MimeDocumentService\GetAttachFaxFormDataResponse.cs" />
-    <Compile Include="MimeDocumentService\GetDocumentDataRequest.cs" />
-    <Compile Include="MimeDocumentService\GetDocumentDataResponse.cs" />
-    <Compile Include="MimeDocumentService\IMimeDocumentService.cs" />
+    <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataRequest.cs" />
+    <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataResponse.cs" />
+    <Compile Include="AttachedDocumentService\GetDocumentDataRequest.cs" />
+    <Compile Include="AttachedDocumentService\GetDocumentDataResponse.cs" />
+    <Compile Include="AttachedDocumentService\IAttachedDocumentService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueRequest.cs" />
@@ -450,7 +450,7 @@
     <Compile Include="Admin\WorklistAdmin\WorklistAdminDetail.cs" />
     <Compile Include="CompositeIdentifierDetail.cs" />
     <Compile Include="DefaultAuthorityGroups.cs" />
-    <Compile Include="MimeDocumentSummary.cs" />
+    <Compile Include="AttachedDocumentSummary.cs" />
     <Compile Include="Jsml\GetOperationNamesRequest.cs" />
     <Compile Include="Jsml\GetOperationNamesResponse.cs" />
     <Compile Include="Jsml\IJsmlShimService.cs" />
