@@ -78,11 +78,14 @@ namespace ClearCanvas.Ris.Application.Services
             synchronizer.Synchronize(domainList, sourceList);
         }
 
-        public PatientAttachmentSummary CreatePatientAttachmentSummary(PatientAttachment attachment)
+        public PatientAttachmentSummary CreatePatientAttachmentSummary(PatientAttachment attachment, IPersistenceContext context)
         {
             AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
+            StaffAssembler staffAssembler = new StaffAssembler();
+
             return new PatientAttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
+                staffAssembler.CreateStaffSummary(attachment.AttachedBy, context),
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
@@ -90,6 +93,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             return new PatientAttachment(
                 EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context),
+                context.Load<Staff>(summary.AttachedBy.StaffRef),
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 

@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Application.Services
 				detail.Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(attachments,
 					delegate(OrderAttachment a)
                     {
-						return orderAttachmentAssembler.CreateOrderAttachmentSummary(a);
+						return orderAttachmentAssembler.CreateOrderAttachmentSummary(a, context);
                     });
             }
 

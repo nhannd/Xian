@@ -50,6 +50,7 @@ namespace ClearCanvas.Healthcare.Tests
         {
             return new OrderAttachment(
                 new OrderAttachmentCategoryEnum("PD", "Pending", null),
+                TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)),
                 TestAttachedDocumentFactory.CreateAttachedDocument());
         }
     }

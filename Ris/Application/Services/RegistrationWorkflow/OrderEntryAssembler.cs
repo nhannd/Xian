@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 order.Attachments,
                 delegate(OrderAttachment attachment)
                 {
-                    return attachmentAssembler.CreateOrderAttachmentSummary(attachment);
+                    return attachmentAssembler.CreateOrderAttachmentSummary(attachment, context);
                 });
 
             requisition.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(

@@ -37,14 +37,18 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class OrderAttachmentSummary : DataContractBase
     {
-        public OrderAttachmentSummary(EnumValueInfo category, AttachedDocumentSummary document)
+        public OrderAttachmentSummary(EnumValueInfo category, StaffSummary attachedBy, AttachedDocumentSummary document)
         {
             this.Category = category;
+            this.AttachedBy = attachedBy;
             this.Document = document;
         }
 
         [DataMember]
         public EnumValueInfo Category;
+
+        [DataMember]
+        public StaffSummary AttachedBy;
 
         [DataMember]
         public AttachedDocumentSummary Document;

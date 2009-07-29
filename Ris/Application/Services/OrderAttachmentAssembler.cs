@@ -78,11 +78,14 @@ namespace ClearCanvas.Ris.Application.Services
             synchronizer.Synchronize(domainList, sourceList);
         }
 
-        public OrderAttachmentSummary CreateOrderAttachmentSummary(OrderAttachment attachment)
+        public OrderAttachmentSummary CreateOrderAttachmentSummary(OrderAttachment attachment, IPersistenceContext context)
         {
             AttachedDocumentAssembler attachedDocAssembler = new AttachedDocumentAssembler();
+            StaffAssembler staffAssembler = new StaffAssembler();
+
             return new OrderAttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
+                staffAssembler.CreateStaffSummary(attachment.AttachedBy, context),
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
@@ -90,6 +93,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             return new OrderAttachment(
                 EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
+                context.Load<Staff>(summary.AttachedBy.StaffRef),
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 

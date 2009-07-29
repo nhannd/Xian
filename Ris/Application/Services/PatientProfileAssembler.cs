@@ -150,7 +150,7 @@ namespace ClearCanvas.Ris.Application.Services
                 foreach (PatientAttachment a in profile.Patient.Attachments)
                 {
                     
-                    detail.Attachments.Add(attachmentAssembler.CreatePatientAttachmentSummary(a));
+                    detail.Attachments.Add(attachmentAssembler.CreatePatientAttachmentSummary(a, context));
                 }
             }
 
