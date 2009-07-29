@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                 noteAssembler.Synchronize(patient, detail.Notes, CurrentUserStaff, PersistenceContext);
 
                 PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
-                attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, PersistenceContext);
+                attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, this.CurrentUserStaff, PersistenceContext);
             }
 
             if(updateProfile)

@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // synchronize Order.Attachments from order requisition
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
-            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, context);
+            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, currentStaff, context);
 
             // synchronize Order.Notes from order requisition
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();

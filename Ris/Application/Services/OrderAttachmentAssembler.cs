@@ -43,12 +43,14 @@ namespace ClearCanvas.Ris.Application.Services
         {
             private readonly OrderAttachmentAssembler _assembler;
             private readonly IPersistenceContext _context;
+            private readonly Staff _currentUserStaff;
 
-            public OrderAttachmentSynchronizeHelper(OrderAttachmentAssembler assembler, IPersistenceContext context)
+            public OrderAttachmentSynchronizeHelper(OrderAttachmentAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
                 :base(true, true)
             {
                 _assembler = assembler;
                 _context = context;
+                _currentUserStaff = currentUserStaff;
             }
 
             protected override bool CompareItems(OrderAttachment domainItem, OrderAttachmentSummary sourceItem)
@@ -58,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override void AddItem(OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
             {
-                domainList.Add(_assembler.CreateOrderAttachment(sourceItem, _context));
+                domainList.Add(_assembler.CreateOrderAttachment(sourceItem, _currentUserStaff, _context));
             }
 
             protected override void UpdateItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
@@ -72,9 +74,9 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        public void Synchronize(IList<OrderAttachment> domainList, IList<OrderAttachmentSummary> sourceList, IPersistenceContext context)
+        public void Synchronize(IList<OrderAttachment> domainList, IList<OrderAttachmentSummary> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
-            OrderAttachmentSynchronizeHelper synchronizer = new OrderAttachmentSynchronizeHelper(this, context);
+            OrderAttachmentSynchronizeHelper synchronizer = new OrderAttachmentSynchronizeHelper(this, currentUserStaff, context);
             synchronizer.Synchronize(domainList, sourceList);
         }
 
@@ -89,11 +91,11 @@ namespace ClearCanvas.Ris.Application.Services
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
-        public OrderAttachment CreateOrderAttachment(OrderAttachmentSummary summary, IPersistenceContext context)
+        public OrderAttachment CreateOrderAttachment(OrderAttachmentSummary summary, Staff currentUserStaff, IPersistenceContext context)
         {
             return new OrderAttachment(
                 EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
-                context.Load<Staff>(summary.AttachedBy.StaffRef),
+                summary.AttachedBy == null ? currentUserStaff : context.Load<Staff>(summary.AttachedBy.StaffRef),
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 

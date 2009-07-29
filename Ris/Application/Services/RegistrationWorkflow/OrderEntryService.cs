@@ -501,7 +501,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // add attachments
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
-            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.PersistenceContext);
+            attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.CurrentUserStaff, this.PersistenceContext);
 
             if (requisition.ExtendedProperties != null)
             {

@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
             this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>(SR.ColumnCategory,
                 delegate(PatientAttachmentSummary summary) { return summary.Category.Value; }, 0.2f));
             this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>(SR.ColumnAttachedBy,
-                delegate(PatientAttachmentSummary summary) { return PersonNameFormat.Format(summary.AttachedBy.Name); }, 0.2f));
+                delegate(PatientAttachmentSummary summary) { return summary.AttachedBy == null ? "me" : PersonNameFormat.Format(summary.AttachedBy.Name); }, 0.2f));
 
             // Sort the table by descending date initially
             int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<PatientAttachmentSummary> column)

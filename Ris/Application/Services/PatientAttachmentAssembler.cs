@@ -43,12 +43,14 @@ namespace ClearCanvas.Ris.Application.Services
         {
             private readonly PatientAttachmentAssembler _assembler;
             private readonly IPersistenceContext _context;
+            private readonly Staff _currentUserStaff;
 
-            public PatientAttachmentSynchronizeHelper(PatientAttachmentAssembler assembler, IPersistenceContext context)
+            public PatientAttachmentSynchronizeHelper(PatientAttachmentAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
                 :base(true, true)
             {
                 _assembler = assembler;
                 _context = context;
+                _currentUserStaff = currentUserStaff;
             }
 
             protected override bool CompareItems(PatientAttachment domainItem, PatientAttachmentSummary sourceItem)
@@ -58,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override void AddItem(PatientAttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
             {
-                domainList.Add(_assembler.CreatePatientAttachment(sourceItem, _context));
+                domainList.Add(_assembler.CreatePatientAttachment(sourceItem, _currentUserStaff, _context));
             }
 
             protected override void UpdateItem(PatientAttachment domainItem, PatientAttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
@@ -72,9 +74,9 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        public void Synchronize(IList<PatientAttachment> domainList, IList<PatientAttachmentSummary> sourceList, IPersistenceContext context)
+        public void Synchronize(IList<PatientAttachment> domainList, IList<PatientAttachmentSummary> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
-            PatientAttachmentSynchronizeHelper synchronizer = new PatientAttachmentSynchronizeHelper(this, context);
+            PatientAttachmentSynchronizeHelper synchronizer = new PatientAttachmentSynchronizeHelper(this, currentUserStaff, context);
             synchronizer.Synchronize(domainList, sourceList);
         }
 
@@ -89,11 +91,11 @@ namespace ClearCanvas.Ris.Application.Services
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
-        public PatientAttachment CreatePatientAttachment(PatientAttachmentSummary summary, IPersistenceContext context)
+        public PatientAttachment CreatePatientAttachment(PatientAttachmentSummary summary, Staff currentUserStaff, IPersistenceContext context)
         {
             return new PatientAttachment(
                 EnumUtils.GetEnumValue<PatientAttachmentCategoryEnum>(summary.Category, context),
-                context.Load<Staff>(summary.AttachedBy.StaffRef),
+                summary.AttachedBy == null ? currentUserStaff : context.Load<Staff>(summary.AttachedBy.StaffRef),
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 
