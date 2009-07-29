@@ -7,10 +7,10 @@
 		<version name="Version" column="Version_"/>
 		<component name="Mrn" class="PatientIdentifier">
 			<property name="Id" type="String">
-				<column name="MrnId_" unique-key="Mrn" not-null="true" length="50"/>
+				<column name="MrnId_" unique-key="MrnKey_" not-null="true" length="50"/>
 			</property>
 			<many-to-one name="AssigningAuthority" class="InformationAuthorityEnum">
-				<column name="MrnAssigningAuthority_" unique-key="Mrn" not-null="true"/>
+				<column name="MrnAssigningAuthority_" unique-key="MrnKey_" not-null="true"/>
 			</many-to-one>
 		</component>
 		<idbag name="ExpiredMrns" lazy="true" table="PatientProfileExpiredMrn_">

@@ -51,13 +51,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 		}
 
-		internal ForeignKeyInfo(ForeignKey fk, Configuration config)
-			: base(fk)
+		internal ForeignKeyInfo(Table table, ForeignKey fk, Configuration config)
+			: base("FK_", table.Name, fk.ColumnIterator, null)
 		{
 			//note: the fk object has a ReferencedTable property, but it doesn't always seem to be set
 			//the reference class property is always set, so we use it instead to get the referenced table 
-			Table table = config.GetClassMapping(fk.ReferencedEntityName).Table;
-			_referencedTable = table.Name;
+			Table referencedTable = config.GetClassMapping(fk.ReferencedEntityName).Table;
+			_referencedTable = referencedTable.Name;
 			_referencedColumns = CollectionUtils.Map<Column, string>(
 				table.PrimaryKey.ColumnIterator,
 				delegate(Column column) { return column.Name; });

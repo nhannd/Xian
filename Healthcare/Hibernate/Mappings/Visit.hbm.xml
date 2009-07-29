@@ -9,10 +9,10 @@
 
 		<component name="VisitNumber" class="VisitNumber">
 			<property name="Id" type="String">
-				<column name="VisitNumberId_" unique-key="VisitNumber" not-null="true" length="50"/>
+				<column name="VisitNumberId_" unique-key="VisitNumberKey_" not-null="true" length="50"/>
 			</property>
 			<many-to-one name="AssigningAuthority" class="InformationAuthorityEnum">
-				<column name="VisitNumberAssigningAuthority_" unique-key="VisitNumber" not-null="true"/>
+				<column name="VisitNumberAssigningAuthority_" unique-key="VisitNumberKey_" not-null="true"/>
 			</many-to-one>
 		</component>
 

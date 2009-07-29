@@ -7,19 +7,19 @@
 	<version name="Version" column="Version_"/>
 
 	  <property name="Name" type="String">
-		  <column name="Name_" unique-key="CannedTextId" not-null="true" length="100"/>
+		  <column name="Name_" unique-key="CannedTextKey_" not-null="true" length="100"/>
 	  </property>
 
 	  <property name="Category" type="String">
-		  <column name="Category_" unique-key="CannedTextId" not-null="true" length="255"/>
+		  <column name="Category_" unique-key="CannedTextKey_" not-null="true" length="255"/>
 	  </property>
 
 	  <many-to-one name="Staff" class="Staff" fetch="join">
-		  <column name="StaffOID_" unique-key="CannedTextId"/>
+		  <column name="StaffOID_" unique-key="CannedTextKey_"/>
 	  </many-to-one>
 
 	  <many-to-one name="StaffGroup" class="StaffGroup" fetch="join">
-		  <column name="StaffGroupOID_" unique-key="CannedTextId"/>
+		  <column name="StaffGroupOID_" unique-key="CannedTextKey_"/>
 	  </many-to-one>
 
 	<property name="Text" column="Text_" type="StringClob" length ="65000" not-null="true" />

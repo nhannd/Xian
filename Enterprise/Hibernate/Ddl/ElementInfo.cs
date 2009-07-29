@@ -31,7 +31,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
+using System.Collections;
+using ClearCanvas.Common.Utilities;
+using NHibernate.Mapping;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -39,7 +43,49 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 	/// Defines an element in a relational database model.
 	/// </summary>
     public abstract class ElementInfo
-    {
+	{
+		#region Utilities
+
+		/// <summary>
+		/// Creates a unique name for the element by combining the prefix, table, and element strings
+		/// along with a generated hash that is a function of the table and element.
+		/// </summary>
+		/// <param name="prefix"></param>
+		/// <param name="table"></param>
+		/// <param name="element"></param>
+		/// <returns></returns>
+		protected static string MakeName(string prefix, string table, string element)
+		{
+			// use MD5 to obtain a 32-character hex string that is a unique function of the table and element
+			byte[] bytes = Encoding.UTF8.GetBytes(table + element);
+			byte[] hash = new MD5CryptoServiceProvider().ComputeHash(bytes);
+			string code = BitConverter.ToString(hash).Replace("-", "");
+
+			// return a value that is at most 64 chars long
+			return prefix + Truncate(element, 64 - prefix.Length - code.Length) + code;
+		}
+
+		/// <summary>
+		/// Creates a unique name for the element by combining the prefix, table, and element strings
+		/// along with a generated hash that is a function of the table and element.
+		/// </summary>
+		/// <param name="prefix"></param>
+		/// <param name="table"></param>
+		/// <param name="columns"></param>
+		/// <returns></returns>
+		protected static string MakeName(string prefix, string table, IEnumerable<Column> columns)
+		{
+			// concat column names into single string
+			string columnNames = StringUtilities.Combine(
+				new TypeSafeEnumerableWrapper<Column>(columns),
+				"", delegate(Column c) { return c.Name; });
+
+			return MakeName(prefix, table, columnNames);
+		}
+
+		#endregion
+
+
 		/// <summary>
 		/// Gets the unique identity of the element.
 		/// </summary>
@@ -69,5 +115,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         {
             return this.Identity.GetHashCode();
         }
-    }
+
+		private static string Truncate(string input, int len)
+		{
+			return (len >= input.Length) ? input : input.Substring(0, len);
+		}
+	}
 }

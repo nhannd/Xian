@@ -8,10 +8,10 @@
     <version name="Version" column="Version_"/>
     
     <property name="Name" type="String">
-      <column name="Name_" unique-key="SettingsGroupKey" not-null="true"/>
+      <column name="Name_" unique-key="SettingsGroupKey_" not-null="true"/>
     </property>
     <property name="VersionString" type="String">
-      <column name="VersionString_" unique-key="SettingsGroupKey" length="30" not-null="true"/>
+      <column name="VersionString_" unique-key="SettingsGroupKey_" length="30" not-null="true"/>
     </property>
     <property name="Description" column="Description_" type="String" length="1000"/>
     <property name="AssemblyQualifiedTypeName" column="AssemblyQualifiedTypeName_" type="String" length="500"/>

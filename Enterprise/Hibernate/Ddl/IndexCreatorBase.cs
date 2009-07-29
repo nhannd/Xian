@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         protected void CreateIndex(Table table, IEnumerable<Column> columns)
         {
-            string indexName = string.Format("IX_{0}",
+            string indexName = string.Format("IX_{0}{1}", table.Name,
                 StringUtilities.Combine(columns, "", delegate(Column c) { return c.Name; }));
 
             CollectionUtils.ForEach(columns,

@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Mapping;
+using System.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -51,11 +52,44 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 		}
 
-		internal ConstraintInfo(Constraint constraint)
+		/// <summary>
+		/// Constructor for creating a constraint from a Hibnerate PrimaryKey object.
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="constraint"></param>
+		internal ConstraintInfo(Table table, PrimaryKey constraint)
+			: this("PK_", table.Name, constraint.ColumnIterator, null)
 		{
-			_name = constraint.Name;
+		}
+
+		/// <summary>
+		/// Constructor for creating a constraint from a Hibnerate UniqueKey object.
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="constraint"></param>
+		internal ConstraintInfo(Table table, UniqueKey constraint)
+			: this("UQ_", table.Name, constraint.ColumnIterator, constraint.Name)
+		{
+		}
+
+		/// <summary>
+		/// Constructor for creating a unique constraint on a single column.
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="column"></param>
+		internal ConstraintInfo(Table table, Column column)
+			: this("UQ_", table.Name, new Column[] { column }, null)
+		{
+		}
+
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		protected ConstraintInfo(string prefix, string table, IEnumerable<Column> columns, string constraintName)
+		{
+			_name = string.IsNullOrEmpty(constraintName) ? MakeName(prefix, table, columns) : MakeName(prefix, table, constraintName);
 			_columns = CollectionUtils.Map<Column, string>(
-				constraint.ColumnIterator,
+				columns,
 				delegate(Column column) { return column.Name; });
 		}
 

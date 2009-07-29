@@ -82,7 +82,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		{
 			TableInfo table = change.Table;
 
-			StringBuilder buf = new StringBuilder("create table ")
+			StringBuilder sql = new StringBuilder("create table ")
 				.Append(GetQualifiedName(table))
 				.Append(" (");
 
@@ -93,26 +93,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 						return GetColumnDefinitionString(col);
 					}), ", ");
 
-			buf.Append(columns);
+			sql.Append(columns);
 
 			if (table.PrimaryKey != null)
 			{
-				buf.Append(',').Append(GetPrimaryKeyString(table.PrimaryKey));
+				sql.Append(',').Append(GetPrimaryKeyString(table.PrimaryKey));
 			}
 
-			buf.Append(")");
+			sql.Append(")");
 
-			List<Statement> statements = new List<Statement>();
-			statements.Add(new Statement(buf.ToString()));
-
-			// add named column unique constraints
-			CollectionUtils.ForEach(table.Columns,
-				delegate(ColumnInfo col)
-					{
-						statements.AddRange(RenderColumnUniqueConstraint(table, null, col));
-					});
-			
-			return statements.ToArray();
+			return new Statement[] { new Statement(sql.ToString()) };
 		}
 
 		public virtual Statement[] Render(DropTableChange change)
@@ -123,11 +113,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		public virtual Statement[] Render(AddColumnChange change)
 		{
 			string sql = string.Format("alter table {0} add {1}", GetQualifiedName(change.Table), GetColumnDefinitionString(change.Column));
-
-			List<Statement> statements = new List<Statement>();
-			statements.Add(new Statement(sql));
-			statements.AddRange(RenderColumnUniqueConstraint(change.Table, null, change.Column));
-			return statements.ToArray();
+			return new Statement[] { new Statement(sql) };
 		}
 
 		public virtual Statement[] Render(DropColumnChange change)
@@ -186,7 +172,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			string sql = string.Format("alter table {0} {1}",
 				GetQualifiedName(change.Table),
 				_dialect.GetAddForeignKeyConstraintString(fk.Name, cols, GetQualifiedName(change.Table.Schema, fk.ReferencedTable), refcols, true));
-                // TODO : above line calls a method that was modified in NHibernate 2.0, set condition to true to ascertain the effects of this argument
+
 			return new Statement[] { new Statement(sql) };
 		}
 
@@ -217,11 +203,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		public virtual Statement[] Render(ModifyColumnChange change)
 		{
 			string sql = string.Format("alter table {0} alter column {1}", GetQualifiedName(change.Table), GetColumnDefinitionString(change.Column));
-
-			List<Statement> statements = new List<Statement>();
-			statements.Add(new Statement(sql));
-			statements.AddRange(RenderColumnUniqueConstraint(change.Table, change.Initial, change.Column));
-			return statements.ToArray();
+			return new Statement[] { new Statement(sql) };
 		}
 
         public virtual Statement[] Render(AddEnumValueChange change)
@@ -348,52 +330,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			}
 
 			return colStr.ToString();
-		}
-
-		#endregion
-
-		#region Column Unique Constraint Helper
-
-		protected Statement[] RenderColumnUniqueConstraint(TableInfo table, ColumnInfo initial, ColumnInfo desired)
-		{
-			if (initial == null)
-			{
-				if (desired.Unique && _dialect.SupportsUnique)
-					return new Statement[] { AddColumnUniqueConstraint(table, desired) };
-			}
-			else if (desired.Unique != initial.Unique)
-			{
-				if (desired.Unique && _dialect.SupportsUnique)
-					return new Statement[] { AddColumnUniqueConstraint(table, desired) };
-				else
-					return new Statement[] { DropColumnUniqueConstraint(table, desired) };
-			}
-
-			return new Statement[] { };
-		}
-		
-		protected Statement AddColumnUniqueConstraint(TableInfo table, ColumnInfo column)
-		{
-			string sql = string.Format("alter table {0} add constraint {1} unique nonclustered ({2})",
-				GetQualifiedName(table),
-				GetColumnUniqueConstraintString(table, column),
-				column.Name);
-
-			return new Statement(sql);
-		}
-
-		protected Statement DropColumnUniqueConstraint(TableInfo table, ColumnInfo column)
-		{
-			string sql = string.Format("alter table {0} drop constraint {1}",
-				GetQualifiedName(table),
-				GetColumnUniqueConstraintString(table, column));
-
-			return new Statement(sql);
-		}
-
-		protected string GetColumnUniqueConstraintString(TableInfo table, ColumnInfo column)
-		{
-			return string.Format("UQ__{0}___{1}", table.Name, column.Name);
 		}
 
 		#endregion

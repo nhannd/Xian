@@ -38,7 +38,6 @@ using Iesi.Collections;
 using NHibernate.Cfg;
 using NHibernate.Mapping;
 using NHibernate.Dialect;
-using System.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -127,15 +126,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			// build set of all tables
 			HybridSet tables = new HybridSet();
-            foreach (PersistentClass pc in cfg.ClassMappings)
-            {
-                foreach(Table table in pc.TableClosureIterator)
-                {
-                    tables.Add(table);
-                }
-            }
+			foreach (PersistentClass pc in cfg.ClassMappings)
+			{
+				foreach (Table table in pc.TableClosureIterator)
+				{
+					tables.Add(table);
+				}
+			}
 
-		    foreach (Collection collection in cfg.CollectionMappings)
+			foreach (Collection collection in cfg.CollectionMappings)
 			{
 				tables.Add(collection.CollectionTable);
 			}
@@ -156,14 +155,28 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private static TableInfo BuildTableInfo(Table table, Configuration config)
 		{
 			Dialect dialect = Dialect.GetDialect(config.Properties);
+
+			// map the set of additional unique constraints (not including individual unique columns)
+			List<ConstraintInfo> uniqueKeys = CollectionUtils.Map<UniqueKey, ConstraintInfo>(
+				table.UniqueKeyIterator, delegate(UniqueKey uk) { return new ConstraintInfo(table, uk); });
+
+			// explicitly model any unique columns as unique constraints
+			foreach (Column col in table.ColumnIterator)
+			{
+				if(col.Unique)
+				{
+					uniqueKeys.Add(new ConstraintInfo(table, col));
+				}
+			}
+
 			return new TableInfo(
 				table.Name,
 				table.Schema,
 				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnIterator, delegate(Column column) { return new ColumnInfo(column, config, dialect); }),
-				new ConstraintInfo(table.PrimaryKey),
-				CollectionUtils.Map<Index, IndexInfo>(table.IndexIterator, delegate(Index index) { return new IndexInfo(index); }),
-				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyIterator, delegate(ForeignKey fk) { return new ForeignKeyInfo(fk, config); }),
-				CollectionUtils.Map<UniqueKey, ConstraintInfo>(table.UniqueKeyIterator, delegate(UniqueKey uk) { return new ConstraintInfo(uk); })
+				new ConstraintInfo(table, table.PrimaryKey),
+				CollectionUtils.Map<Index, IndexInfo>(table.IndexIterator, delegate(Index index) { return new IndexInfo(table, index); }),
+				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyIterator, delegate(ForeignKey fk) { return new ForeignKeyInfo(table, fk, config); }),
+				uniqueKeys
 				);
 		}
 

@@ -45,7 +45,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private string _name;
 		private int _length;
 		private bool _nullable;
-		private bool _unique;
 		private string _sqlType;
 
 		/// <summary>
@@ -67,7 +66,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			_name = column.Name;
 			_length = column.Length;
 			_nullable = column.IsNullable;
-			_unique = column.IsUnique;
 			_sqlType = column.GetSqlType(dialect, new Mapping(config));
 		}
 
@@ -102,16 +100,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the column is defined as unique.
-		/// </summary>
-		[DataMember]
-		public bool Unique
-		{
-			get { return _unique; }
-			private set { _unique = value; }
-		}
-
-		/// <summary>
 		/// Gets the SQL data type of the column.
 		/// </summary>
 		[DataMember]
@@ -131,7 +119,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return this.Name == that.Name
 				&& this.Length == that.Length
 				&& this.Nullable == that.Nullable
-				&& this.Unique == that.Unique
 				&& this.SqlType == that.SqlType;
 		}
 

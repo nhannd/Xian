@@ -50,10 +50,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 		}
 
-		internal IndexInfo(Index index)
+		internal IndexInfo(Table table, Index index)
 		{
-			this.Name = index.Name;
-			this.Columns = CollectionUtils.Map<Column, string>(
+			_name = MakeName("IX_", table.Name, index.ColumnIterator);
+			_columns = CollectionUtils.Map<Column, string>(
 				index.ColumnIterator,
 				delegate(Column column) { return column.Name; });
 		}
