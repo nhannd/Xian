@@ -120,6 +120,8 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="Imaging\NeutralColorLinearLut.cs" />
+    <Compile Include="Imaging\ColorVoiLutManager.cs" />
     <Compile Include="ViewerActionPermissionAttribute.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
