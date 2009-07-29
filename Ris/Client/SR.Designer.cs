@@ -115,6 +115,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attached By.
+        /// </summary>
+        internal static string ColumnAttachedBy {
+            get {
+                return ResourceManager.GetString("ColumnAttachedBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Author.
         /// </summary>
         internal static string ColumnAuthor {
@@ -192,6 +201,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnCurrentLocation {
             get {
                 return ResourceManager.GetString("ColumnCurrentLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        internal static string ColumnDate {
+            get {
+                return ResourceManager.GetString("ColumnDate", resourceCulture);
             }
         }
         

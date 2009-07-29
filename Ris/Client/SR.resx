@@ -135,6 +135,9 @@
   <data name="ColumnAmbulatoryStatus" xml:space="preserve">
     <value>Ambulatory Status</value>
   </data>
+  <data name="ColumnAttachedBy" xml:space="preserve">
+    <value>Attached By</value>
+  </data>
   <data name="ColumnAuthor" xml:space="preserve">
     <value>Author</value>
   </data>
@@ -161,6 +164,9 @@
   </data>
   <data name="ColumnCurrentLocation" xml:space="preserve">
     <value>Current Location</value>
+  </data>
+  <data name="ColumnDate" xml:space="preserve">
+    <value>Date</value>
   </data>
   <data name="ColumnDateOfBirth" xml:space="preserve">
     <value>Date Of Birth</value>

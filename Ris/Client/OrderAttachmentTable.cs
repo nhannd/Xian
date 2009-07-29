@@ -31,6 +31,7 @@
 
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -38,14 +39,16 @@ namespace ClearCanvas.Ris.Client
     {
         public OrderAttachmentTable()
         {
-            this.Columns.Add(new DateTableColumn<OrderAttachmentSummary>("Date",
+            this.Columns.Add(new DateTableColumn<OrderAttachmentSummary>(SR.ColumnDate,
                 delegate(OrderAttachmentSummary summary) { return summary.Document.CreationTime; }, 0.2f));
-            this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>("Category",
+            this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>(SR.ColumnCategory,
                 delegate(OrderAttachmentSummary summary) { return summary.Category.Value; }, 0.2f));
+            this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>(SR.ColumnAttachedBy,
+                delegate(OrderAttachmentSummary summary) { return PersonNameFormat.Format(summary.AttachedBy.Name); }, 0.2f));
 
             // Sort the table by descending date initially
             int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<OrderAttachmentSummary> column)
-                { return column.Name.Equals("Date"); });
+                { return column.Name.Equals(SR.ColumnDate); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], false));
         }
