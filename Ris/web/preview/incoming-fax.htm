@@ -20,7 +20,7 @@
 
 					var faxboxItem = Ris.getHealthcareContext();
 
-					var faxUrl = faxboxItem ? Ris.getAttachedDocumentUrl(faxboxItem.FaxDocument) : "about:blank";
+					var faxUrl = faxboxItem ? Ris.getAttachedDocumentUrl(faxboxItem.Document) : "about:blank";
 					
 					var urlExtension = faxUrl.substring(faxUrl.length - 3, faxUrl.length).toLowerCase();;
 					if (urlExtension == "pdf")
@@ -132,16 +132,16 @@
 			this.zoomOut = function()
 				{
 					var currentZoomIndex = _preDefinedZoom.indexOf(_currentZoom);
-					if (currentZoomIndex + 1 < _preDefinedZoom.length)
-						this.setZoom(_preDefinedZoom[currentZoomIndex + 1]);
+					if (currentZoomIndex - 1 > 0)
+						this.setZoom(_preDefinedZoom[currentZoomIndex - 1]);
 				}
 
 			// Sets the magnification to the next largest zoom.
 			this.zoomIn = function()
 				{
 					var currentZoomIndex = _preDefinedZoom.indexOf(_currentZoom);
-					if (currentZoomIndex - 1 > 0)
-						this.setZoom(_preDefinedZoom[currentZoomIndex - 1]);
+					if (currentZoomIndex + 1 < _preDefinedZoom.length)
+						this.setZoom(_preDefinedZoom[currentZoomIndex + 1]);
 				}
 
 			this.createToolbar = function(id)
