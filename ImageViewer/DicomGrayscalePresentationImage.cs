@@ -120,6 +120,11 @@ namespace ClearCanvas.ImageViewer
 
 		private void Initialize()
 		{
+			if (base.ImageGraphic.VoiLutStrategy == null)
+			{
+				base.ImageGraphic.VoiLutStrategy = GraphicVoiLutStrategy.CreateStrategy(GetInitialVoiLut);
+			}
+
 			if (_dicomGraphics == null)
 			{
 				_dicomGraphics = new CompositeGraphic();
@@ -130,6 +135,15 @@ namespace ClearCanvas.ImageViewer
 					delegate(IGraphic test) { return test is ImageGraphic; });
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(imageGraphic) + 1, _dicomGraphics);
 			}
+		}
+
+		private static IComposableLut GetInitialVoiLut(IGraphic graphic)
+		{
+			GrayscaleImageGraphic grayImageGraphic = (GrayscaleImageGraphic) graphic;
+			IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage);
+			if (lut == null)
+				lut = new MinMaxPixelCalculatedLinearLut(grayImageGraphic.PixelData, grayImageGraphic.ModalityLut);
+			return lut;
 		}
 
 		/// <summary>

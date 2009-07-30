@@ -68,6 +68,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private LutFactory _lutFactory;
 		private IVoiLutManager _voiLutManager;
 
+		[CloneCopyReference]
+		private IGraphicVoiLutStrategy _voiLutStrategy;
+
 		private IColorMapManager _colorMapManager;
 		private IDataLut _colorMap;
 
@@ -240,6 +243,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return _invert; }
 			set { _invert = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the VOI LUT selection strategy for this <see cref="GrayscaleImageGraphic"/>.
+		/// </summary>
+		public IGraphicVoiLutStrategy VoiLutStrategy
+		{
+			get { return _voiLutStrategy; }
+			set { _voiLutStrategy = value; }
 		}
 
 		/// <summary>
@@ -450,10 +462,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
 			{
-				IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(this.ParentPresentationImage);
-				
+				IComposableLut lut = null;
+
+				if (_voiLutStrategy != null)
+					lut = _voiLutStrategy.GetInitialVoiLut(this);
+
 				if (lut == null)
-					lut = new MinMaxPixelCalculatedLinearLut(this.PixelData, this.ModalityLut);
+					lut = new IdentityVoiLinearLut();
 
 				InstallVoiLut(lut);
 			}

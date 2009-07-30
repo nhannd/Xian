@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			public IComposableLut GetInitialLut()
 			{
-				return new NeutralColorLinearLut();
+				return new IdentityVoiLinearLut();
 			}
 
 			public void ApplyInitialLut()

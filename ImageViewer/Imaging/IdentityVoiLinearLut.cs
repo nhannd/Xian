@@ -36,10 +36,10 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A 1-to-1 pass-through composable LUT (i.e. a null transform).
+	/// A 1-to-1 pass-through composable LUT (i.e. the identity transform).
 	/// </summary>
 	[Cloneable(true)]
-	public sealed class NeutralColorLinearLut : ComposableLut, IVoiLutLinear
+	public sealed class IdentityVoiLinearLut : ComposableLut, IVoiLutLinear
 	{
 		private int _minInputValue;
 		private int _maxInputValue;
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Constructs a 1-to-1 pass-through composable LUT for 8-bit unsigned values.
 		/// </summary>
-		public NeutralColorLinearLut()
+		public IdentityVoiLinearLut()
 		{
 			_minInputValue = 0;
 			_maxInputValue = 255;
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="channelBitDepth">The bit-depth of the unsigned values.</param>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the bit-depth is not between 1 and 31, inclusive.</exception>
-		public NeutralColorLinearLut(int channelBitDepth)
+		public IdentityVoiLinearLut(int channelBitDepth)
 		{
 			Platform.CheckArgumentRange(channelBitDepth, 1, 31, "channelBitDepth");
 			_minInputValue = 0;
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return string.Format(SR.FormatDescriptionNeutralColorLinearLut, WindowWidth, WindowCenter);
+			return string.Format(SR.FormatDescriptionIdentityVoiLinearLut, WindowWidth, WindowCenter);
 		}
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the minimum output value.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly <see cref="MinInputValue"/>.
+		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly <see cref="MinInputValue"/>.
 		/// </remarks>
 		public override int MinOutputValue
 		{
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the maximum output value.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>.
+		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>.
 		/// </remarks>
 		public override int MaxOutputValue
 		{
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the output value of the lut at a given input index.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, the value is always exactly <paramref name="index"/>.
+		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, the value is always exactly <paramref name="index"/>.
 		/// </remarks>
 		public override int this[int index]
 		{
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the window width.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1.
+		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly <see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1.
 		/// </remarks>
 		public double WindowWidth
 		{
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets the window centre.
 		/// </summary>
 		/// <remarks>
-		/// Due to the nature of a <see cref="NeutralColorLinearLut"/>, this value is always exactly (<see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1)/2.
+		/// Due to the nature of a <see cref="IdentityVoiLinearLut"/>, this value is always exactly (<see cref="MaxInputValue"/>-<see cref="MinInputValue"/>+1)/2.
 		/// </remarks>
 		public double WindowCenter
 		{
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetKey()
 		{
-			return string.Format("NEUTRAL_{0}_to_{1}", _minInputValue, _maxInputValue);
+			return string.Format("IDENTITY_{0}_to_{1}", _minInputValue, _maxInputValue);
 		}
 	}
 }

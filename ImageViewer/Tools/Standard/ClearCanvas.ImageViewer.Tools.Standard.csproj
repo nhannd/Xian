@@ -194,6 +194,7 @@
     <Compile Include="SortMenuItemFactory.cs" />
     <Compile Include="TextOverlayTool.cs" />
     <Compile Include="WindowLevelTool.cs" />
+    <Compile Include="WindowLevelToolSensitivity.cs" />
     <Compile Include="ZoomTool.cs" />
   </ItemGroup>
   <ItemGroup>

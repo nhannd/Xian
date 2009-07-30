@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private enum Luts
 		{
 			/// <summary>
-			/// This LUT is initially a <see cref="NeutralColorLinearLut"/>,
+			/// This LUT is initially a <see cref="IdentityVoiLinearLut"/>,
 			/// but may be replaced by W/L tools with something else, such as
 			/// <see cref="BasicVoiLutLinear"/>
 			/// </summary>
@@ -71,6 +71,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private LutComposer _lutComposer;
 		private IVoiLutManager _voiLutManager;
+
+		[CloneCopyReference]
+		private IGraphicVoiLutStrategy _voiLutStrategy;
 
 		#endregion
 
@@ -148,6 +151,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return this.VoiLutManager.Enabled; }
 			set { this.VoiLutManager.Enabled = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the VOI LUT selection strategy for this <see cref="ColorImageGraphic"/>.
+		/// </summary>
+		public IGraphicVoiLutStrategy VoiLutStrategy
+		{
+			get { return _voiLutStrategy; }
+			set { _voiLutStrategy = value; }
 		}
 
 		/// <summary>
@@ -267,10 +279,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == (int) Luts.Voi)
 			{
-				IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(this.ParentPresentationImage);
+				IComposableLut lut = null;
+				
+				if (_voiLutStrategy != null)
+					lut = _voiLutStrategy.GetInitialVoiLut(this);
 
 				if (lut == null)
-					lut = new NeutralColorLinearLut();
+					lut = new IdentityVoiLinearLut();
 
 				InstallVoiLut(lut);
 			}

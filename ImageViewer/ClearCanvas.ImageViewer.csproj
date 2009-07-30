@@ -120,7 +120,14 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\Diagnostics.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
-    <Compile Include="Imaging\NeutralColorLinearLut.cs" />
+    <Compile Include="DicomPresentationImageSettings.cs" />
+    <Compile Include="DicomPresentationImageSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DicomPresentationImageSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Graphics\IGraphicVoiLutStrategy.cs" />
+    <Compile Include="Imaging\IdentityVoiLinearLut.cs" />
     <Compile Include="Imaging\ColorVoiLutManager.cs" />
     <Compile Include="ViewerActionPermissionAttribute.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
@@ -637,6 +644,10 @@
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
     <None Include="ClassDiagrams\ViewerUndoSupport.cd" />
+    <None Include="DicomPresentationImageSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DicomPresentationImageSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="RoiGraphics\RoiSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RoiSettings.Designer.cs</LastGenOutput>

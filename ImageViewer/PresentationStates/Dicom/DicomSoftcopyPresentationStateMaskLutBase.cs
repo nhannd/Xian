@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			descriptor[0] = inputLength;
 			if (descriptor[0] == 65536)
 				descriptor[0] = 0;
-			descriptor[1] = voiLut.MinInputValue;
+			descriptor[1] = voiLut.FirstMappedPixelValue;
 			descriptor[2] = 16;
 
 			ushort[] data = new ushort[inputLength];

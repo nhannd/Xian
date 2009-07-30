@@ -592,6 +592,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} (Identity).
+        /// </summary>
+        public static string FormatDescriptionIdentityVoiLinearLut {
+            get {
+                return ResourceManager.GetString("FormatDescriptionIdentityVoiLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1} (Min/Max).
         /// </summary>
         public static string FormatDescriptionMinMaxCalculatedLinearLut {
@@ -606,15 +615,6 @@ namespace ClearCanvas.ImageViewer {
         public static string FormatDescriptionModalityLutLinear {
             get {
                 return ResourceManager.GetString("FormatDescriptionModalityLutLinear", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to W:{0} L:{1} (Neutral).
-        /// </summary>
-        public static string FormatDescriptionNeutralColorLinearLut {
-            get {
-                return ResourceManager.GetString("FormatDescriptionNeutralColorLinearLut", resourceCulture);
             }
         }
         

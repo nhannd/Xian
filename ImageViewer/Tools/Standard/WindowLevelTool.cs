@@ -127,22 +127,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementWindowWidth()
 		{
-			IncrementWindowWithUndo(10, 0);
+			IncrementWindowWithUndo(this.CurrentSensitivity, 0);
 		}
 
 		private void DecrementWindowWidth()
 		{
-			IncrementWindowWithUndo(-10, 0);
+			IncrementWindowWithUndo(-this.CurrentSensitivity, 0);
 		}
 
 		private void IncrementWindowCenter()
 		{
-			IncrementWindowWithUndo(0, 10);
+			IncrementWindowWithUndo(0, this.CurrentSensitivity);
 		}
 
 		private void DecrementWindowCenter()
 		{
-			IncrementWindowWithUndo(0, -10);
+			IncrementWindowWithUndo(0, -this.CurrentSensitivity);
 		}
 
 		private void IncrementWindow(double windowIncrement, double levelIncrement)
@@ -210,7 +210,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			IncrementWindow(this.DeltaX * 10, this.DeltaY * 10);
+			double sensitivity = this.CurrentSensitivity;
+			IncrementWindow(this.DeltaX * sensitivity, this.DeltaY * sensitivity);
 
 			return true;
 		}

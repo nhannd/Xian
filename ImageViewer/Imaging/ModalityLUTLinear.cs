@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		/// <summary>
-		/// Initializes a new instance of ModalityLUTLinear with the specified parameters.
+		/// Initializes a new instance of <see cref="ModalityLutLinear"/> with the specified parameters.
 		/// </summary>
 		/// <param name="bitsStored">Indicates the number of bits stored of the associated pixel data.</param>
 		/// <param name="isSigned">Indicates whether or not the associated pixel data is signed.</param>

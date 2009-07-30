@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -106,6 +107,15 @@ namespace ClearCanvas.ImageViewer
 
 		private void Initialize()
 		{
+			base.VoiLutsEnabled = DicomPresentationImageSettings.Default.AllowWindowingOnColorImages;
+
+			if (base.ImageGraphic.VoiLutStrategy == null)
+			{
+				base.ImageGraphic.VoiLutStrategy = GraphicVoiLutStrategy.CreateStrategy(
+					delegate(IGraphic graphic) { return InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage); }
+					);
+			}
+
 			if (_dicomGraphics == null)
 			{
 				_dicomGraphics = new CompositeGraphic();
