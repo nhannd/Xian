@@ -88,7 +88,10 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 			public string Name
 			{
-				get { return _displaySet.Name; }
+				get
+				{
+					return String.Format(SR.FormatThumbnailName, _displaySet.Name, _displaySet.PresentationImages.Count);
+				}
 				set { throw new NotSupportedException("Renaming thumbnails is not allowed."); }
 			}
 

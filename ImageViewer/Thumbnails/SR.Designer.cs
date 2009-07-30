@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}\n({1} images).
+        /// </summary>
+        internal static string FormatThumbnailName {
+            get {
+                return ResourceManager.GetString("FormatThumbnailName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thumbnails.
         /// </summary>
         internal static string MenuShowThumbnails {
