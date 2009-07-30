@@ -40,6 +40,27 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[KeyboardAction("delete", "imageviewer-keyboard/DeleteSelectedGraphic", "Delete", KeyStroke = XKeys.Delete)]
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class DeleteSelectedAnnotationTool : ImageViewerTool
+	{
+		public DeleteSelectedAnnotationTool()
+		{
+		}
+
+		public void Delete()
+		{
+			if (base.SelectedPresentationImage != null && base.SelectedPresentationImage.SelectedGraphic != null)
+			{
+				DrawableUndoableCommand command = new DrawableUndoableCommand(base.SelectedPresentationImage);
+				command.Enqueue(new RemoveGraphicUndoableCommand(base.SelectedPresentationImage.SelectedGraphic));
+				command.Execute();
+				command.Name = SR.CommandDeleteAnnotation;
+				base.SelectedPresentationImage.ImageViewer.CommandHistory.AddCommand(command);
+			}
+		}
+	}
+
 	[MenuAction("delete", "basicgraphic-menu/MenuDeleteAnnotation", "Delete")]
 	[IconSet("delete", IconScheme.Colour, "DeleteAnnotationToolSmall.png", "DeleteAnnotationToolMedium.png", "DeleteAnnotationToolLarge.png")]
 	[GroupHint("delete", "Tools.Annotations.Delete")]
