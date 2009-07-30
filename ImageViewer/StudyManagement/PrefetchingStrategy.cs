@@ -95,8 +95,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		void IPrefetchingStrategy.Start(IImageViewer imageViewer)
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
-			_imageViewer = imageViewer;
-			Start();
+
+			//Only start if we haven't already been started.
+			if (_imageViewer == null)
+			{
+				_imageViewer = imageViewer;
+				Start();
+			}
 		}
 
 		void IPrefetchingStrategy.Stop()
