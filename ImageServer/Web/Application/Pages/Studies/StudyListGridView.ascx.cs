@@ -30,11 +30,14 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
@@ -55,6 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         private ServerPartition _partition;
         private Unit _height;
     	private StudyDataSource _dataSource;
+        private Dictionary<string, StudySummary> _studyDictionary = new Dictionary<string, StudySummary>();
         #endregion Private members
 
         #region Public properties
@@ -101,18 +105,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             {
                 if(!StudyListControl.IsDataBound) StudyListControl.DataBind();
 
-                if (Studies==null || Studies.Count == 0)
+                if (_studyDictionary.Count == 0)
                     return null;
 
-                int[] rows = StudyListControl.SelectedIndices;
+                string[] rows = StudyListControl.SelectedDataKeys;
                 if (rows == null || rows.Length == 0)
                     return null;
 
 				IList<StudySummary> studies = new List<StudySummary>();
                 for(int i=0; i<rows.Length; i++)
                 {
-					if (rows[i] < Studies.Count)
-						studies.Add(Studies[rows[i]]);
+                    studies.Add(_studyDictionary[rows[i]]);
                 }
 
                 return studies;
@@ -131,6 +134,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             set
             {
                 _studies = value;
+                foreach(StudySummary study in _studies)
+                {
+                    _studyDictionary.Add(study.Key.ToString(), study);
+                }
             }
         }
 
@@ -247,6 +254,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 		}
 
         #endregion
+
     }
 
 }
