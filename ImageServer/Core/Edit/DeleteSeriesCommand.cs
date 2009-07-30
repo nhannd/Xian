@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             this.StudyStorageKey = studyStorageLocation.Key;
             this.ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             this.ScheduledTime = now;
-            
+            this.ExpirationTime = now.AddMinutes(15);
             DeleteSeriesQueueData data = new DeleteSeriesQueueData();
             data.SeriesInstanceUid = seriesInstanceUid;
             data.Reason = reason;
