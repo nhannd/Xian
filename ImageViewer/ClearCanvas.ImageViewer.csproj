@@ -129,6 +129,8 @@
     <Compile Include="Graphics\IGraphicVoiLutStrategy.cs" />
     <Compile Include="Imaging\IdentityVoiLinearLut.cs" />
     <Compile Include="Imaging\ColorVoiLutManager.cs" />
+    <Compile Include="Rendering\Tests\ImageRendererVoiLutTests.cs" />
+    <Compile Include="Tests\TestPattern.cs" />
     <Compile Include="ViewerActionPermissionAttribute.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
@@ -216,7 +218,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PresentationStates\Dicom\Tests\PresentationStateTests.cs" />
-    <Compile Include="PresentationStates\Dicom\Tests\Statistics.cs" />
+    <Compile Include="Tests\Statistics.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\TestPresentationImage.cs" />
     <Compile Include="PresentationStates\Dicom\Tests\TestPresentationState.cs" />
     <Compile Include="PresentationStates\Dicom\UserOverlayPlaneGraphic.cs" />

@@ -35,11 +35,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
+using ClearCanvas.ImageViewer.Tests;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 {
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 
 		private readonly ImageSop _imageSop;
 
-		public TestPresentationImage() : base(CreateTestPattern())
+		public TestPresentationImage() : base(TestPattern.CreateRGBKCorners(new Size(_width, _height)))
 		{
 			DicomFile dcf = new DicomFile();
 			dcf.DataSet[DicomTags.StudyInstanceUid].SetStringValue("1");
@@ -63,45 +63,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 			dcf.MetaInfo[DicomTags.MediaStorageSopClassUid].SetStringValue(SopClass.RawDataStorageUid);
 			dcf.MetaInfo[DicomTags.MediaStorageSopInstanceUid].SetStringValue("3");
 			_imageSop = new ImageSop(new TestDataSource(dcf));
-		}
-
-		private static ColorImageGraphic CreateTestPattern()
-		{
-			ColorImageGraphic imageGraphic = new ColorImageGraphic(_height, _width);
-			for (int x = 0; x < _width; x++)
-			{
-				for (int y = 0; y < _height; y++)
-				{
-					imageGraphic.PixelData.SetPixel(x, y, PickColor(x, y));
-				}
-			}
-			return imageGraphic;
-		}
-
-		private static Color PickColor(int x, int y)
-		{
-			if (x < _width/2)
-			{
-				if (y < _height/2)
-				{
-					return Color.Red;
-				}
-				else
-				{
-					return Color.LimeGreen;
-				}
-			}
-			else
-			{
-				if (y < _height/2)
-				{
-					return Color.Blue;
-				}
-				else
-				{
-					return Color.Black;
-				}
-			}
 		}
 
 		public Statistics Diff(TestPresentationImage other)

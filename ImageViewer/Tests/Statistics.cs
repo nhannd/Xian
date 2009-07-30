@@ -36,7 +36,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 #if	UNIT_TESTS
 #pragma warning disable 1591,0419,1574,1587
 
-namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
+namespace ClearCanvas.ImageViewer.Tests
 {
 	internal class Statistics
 	{

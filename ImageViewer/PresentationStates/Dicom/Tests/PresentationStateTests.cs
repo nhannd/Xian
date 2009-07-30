@@ -35,6 +35,7 @@
 using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.ImageViewer.Tests;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
