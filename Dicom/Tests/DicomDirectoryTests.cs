@@ -48,7 +48,7 @@ namespace ClearCanvas.Dicom.Tests
 			SetupMR(file.DataSet);
 			SetupMetaInfo(file);
 
-			DicomDirectoryWriter writer = new DicomDirectoryWriter();
+			DicomDirectory writer = new DicomDirectory("");
 
 			writer.AddFile(file, "DIR001\\FILE001");
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.Dicom.Tests
 			writer.Save("DICOMDIR");
 
 
-			DicomDirectoryWriter reader = new DicomDirectoryWriter();
+			DicomDirectory reader = new DicomDirectory("");
 
 			reader.Load("DICOMDIR");
 

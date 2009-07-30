@@ -208,7 +208,7 @@
     <Compile Include="DicomAttributeComparisonResult.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
-    <Compile Include="DicomDirectoryWriter.cs" />
+    <Compile Include="DicomDirectory.cs" />
     <Compile Include="DicomFragmentSequence.cs" />
     <Compile Include="DicomImplementation.cs" />
     <Compile Include="DicomMessage.cs" />

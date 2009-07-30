@@ -39,10 +39,10 @@ namespace ClearCanvas.Dicom
 	//TODO: Move to Utilities?  Should it just be DicomDirectory with both add/remove functionality (and both Load/Save methods).
 
     /// <summary>
-    /// This class writes a Dicom Directory file.  
+    /// This class reads and/or writes a Dicom Directory file.  
     /// </summary>
     /// <example>
-    /// using (DicomDirectoryWriter dicomDirectory = new DicomDirectoryWriter())
+    /// using (DicomDirectory dicomDirectory = new DicomDirectory())
     /// {
     ///     dicomDirectory.SourceApplicationEntityTitle = "UNO";
     ///     dicomDirectory.FileSetId = "My File Set Desc";
@@ -52,7 +52,7 @@ namespace ClearCanvas.Dicom
     ///     dicomDirectory.Save("C:\\Temp\\DICOMDIR");
     ///  }
     /// </example>
-    public class DicomDirectoryWriter : IDisposable
+    public class DicomDirectory : IDisposable
     {
         #region Internal Constants
         internal const string DirectoryRecordTypePatient = "PATIENT";
@@ -83,11 +83,13 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
-        /// <summary>
+
+    	/// <summary>
         /// Initializes a new instance of the DicomDirectory class.
         /// </summary>
         /// <remarks>Sets most default values which can be changed via </remarks>
-        public DicomDirectoryWriter()
+        /// <param name="aeTitle">The AE Title of the Media Reader/Writer accessing the DICOMDIR</param>
+        public DicomDirectory(string aeTitle)
         {
             try
             {
@@ -95,7 +97,7 @@ namespace ClearCanvas.Dicom
 
                 _dicomDirFile.MetaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[2] { 0x00, 0x01 };
                 _dicomDirFile.MediaStorageSopClassUid = DicomUids.MediaStorageDirectoryStorage.UID;
-                _dicomDirFile.SourceApplicationEntityTitle = String.Empty;
+                _dicomDirFile.SourceApplicationEntityTitle = aeTitle;
                 _dicomDirFile.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
                 //_dicomDirFile.PrivateInformationCreatorUid = String.Empty;
@@ -103,12 +105,12 @@ namespace ClearCanvas.Dicom
                 ImplementationVersionName = DicomImplementation.Version;
                 ImplementationClassUid = DicomImplementation.ClassUID.UID;
 
-                 _dicomDirFile.MediaStorageSopInstanceUid = DicomUid.GenerateUid().UID;
+                _dicomDirFile.MediaStorageSopInstanceUid = DicomUid.GenerateUid().UID;
 
                 // Set zero value so we can calculate the file Offset
-                _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].Values = (uint)0;
-                _dicomDirFile.DataSet[DicomTags.OffsetOfTheLastDirectoryRecordOfTheRootDirectoryEntity].Values = 0;
-                _dicomDirFile.DataSet[DicomTags.FileSetConsistencyFlag].Values = 0;
+				_dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].SetUInt32(0, 0);
+                _dicomDirFile.DataSet[DicomTags.OffsetOfTheLastDirectoryRecordOfTheRootDirectoryEntity].SetUInt32(0,0);
+                _dicomDirFile.DataSet[DicomTags.FileSetConsistencyFlag].SetUInt16(0,0);
 
                 _directoryRecordSequence = (DicomAttributeSQ)_dicomDirFile.DataSet[DicomTags.DirectoryRecordSequence];
             }
@@ -233,14 +235,14 @@ namespace ClearCanvas.Dicom
 
         #region Public Methods
         /// <summary>
-        /// Saves the Dicom Dir to the specified file name.
+        /// Saves the DICOMDIR to the specified file name.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
         public void Save(string fileName)
         {
             DicomWriteOptions options = DicomWriteOptions.None;
 
-            if (_dicomFiles.Count == 0)
+            if (_dicomFiles.Count == 0 && _directoryRecordSequence.Count == 0)
                 throw new InvalidOperationException("No Dicom Files added, cannot save dicom directory");
 
             _saveFileName = fileName;
@@ -248,40 +250,7 @@ namespace ClearCanvas.Dicom
             foreach (DicomFile dicomFile in _dicomFiles.Keys)
             {
                 string optionalRelativeRootPath = _dicomFiles[dicomFile];
-                try
-                {
-                    if (dicomFile.DataSet.Count == 0)
-                        dicomFile.Load(DicomReadOptions.Default);
-                    DirectoryRecordSequenceItem patientRecord;
-                    DirectoryRecordSequenceItem studyRecord;
-                    DirectoryRecordSequenceItem seriesRecord;
-
-                    if (_rootRecord == null)
-                        _rootRecord = patientRecord = CreatePatientItem(dicomFile);
-                    else
-                        patientRecord = GetExistingOrCreateNewPatient(_rootRecord, dicomFile);
-
-                    if (patientRecord.LowerLevelRecord == null)
-                        patientRecord.LowerLevelRecord = studyRecord = CreateStudyItem(dicomFile);
-                    else
-                        studyRecord = GetExistingOrCreateNewStudy(patientRecord.LowerLevelRecord, dicomFile);
-
-                    if (studyRecord.LowerLevelRecord == null)
-                        studyRecord.LowerLevelRecord = seriesRecord = CreateSeriesItem(dicomFile);
-                    else
-                        seriesRecord = GetExistingOrCreateNewSeries(studyRecord.LowerLevelRecord, dicomFile);
-
-                    if (seriesRecord.LowerLevelRecord == null)
-                        seriesRecord.LowerLevelRecord = CreateImageItem(dicomFile, optionalRelativeRootPath);
-                    else
-                        GetExistingOrCreateNewImage(seriesRecord.LowerLevelRecord, dicomFile, optionalRelativeRootPath);
-
-                }
-                catch (Exception ex)
-                {
-                    Platform.Log(LogLevel.Error, ex, "Error adding image {0} to directory file", dicomFile.Filename);
-                    throw;
-                }
+				InsertFile(dicomFile,optionalRelativeRootPath);
             }
 
 			// Clear out the DICOMDIR after adding
@@ -349,6 +318,10 @@ namespace ClearCanvas.Dicom
             }
         }
 
+		/// <summary>
+		/// Loads the specified DICOMDIR file.
+		/// </summary>
+		/// <param name="filename">The path to the DICOMDIR file.</param>
 		public void Load(string filename)
 		{
 			try
@@ -361,6 +334,9 @@ namespace ClearCanvas.Dicom
 				Platform.Log(LogLevel.Error, ex, "Error loading dicom File {0}", filename);
 				throw;
 			}
+
+			// Create a Dictionary containing the offsets within the DICOMDIR of each directory record and the 
+			// corresponding DirectoryREcordSequenceItem objects.
 			Dictionary<uint, DirectoryRecordSequenceItem> lookup = new Dictionary<uint, DirectoryRecordSequenceItem>();
 
 			foreach (DirectoryRecordSequenceItem sqItem in _directoryRecordSequence.Values as DicomSequenceItem[])
@@ -368,10 +344,13 @@ namespace ClearCanvas.Dicom
 				lookup.Add(sqItem.Offset, sqItem);
 			}
 
+			// Get the root Directory Record.
 			uint offset;
 			offset = _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].GetUInt32(0, 0);
 			lookup.TryGetValue(offset, out _rootRecord);
 
+			// Now traverse through the remainder of the directory records, and match up the offsets with the directory
+			// records so we can build up the tree structure.
 			foreach (DirectoryRecordSequenceItem sqItem in _directoryRecordSequence.Values as DicomSequenceItem[])
 			{
 				offset = sqItem[DicomTags.OffsetOfTheNextDirectoryRecord].GetUInt32(0, 0);
@@ -388,9 +367,7 @@ namespace ClearCanvas.Dicom
 					sqItem.LowerLevelRecord = foundItem;
 				else
 					sqItem.LowerLevelRecord = null;
-
 			}
-
 		}
 
         /// <summary>
@@ -439,8 +416,50 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Private Methods
+		/// <summary>
+		/// Called to insert a DICOM file into the directory record structure.
+		/// </summary>
+		/// <param name="dicomFile"></param>
+		/// <param name="optionalRelativeRootPath"></param>
+		private void InsertFile(DicomFile dicomFile, string optionalRelativeRootPath)
+		{
+			try
+			{
+				if (dicomFile.DataSet.Count == 0)
+					dicomFile.Load(DicomReadOptions.Default);
 
-        /// <summary>
+				DirectoryRecordSequenceItem patientRecord;
+				DirectoryRecordSequenceItem studyRecord;
+				DirectoryRecordSequenceItem seriesRecord;
+
+				if (_rootRecord == null)
+					_rootRecord = patientRecord = CreatePatientItem(dicomFile);
+				else
+					patientRecord = GetExistingOrCreateNewPatient(_rootRecord, dicomFile);
+
+				if (patientRecord.LowerLevelRecord == null)
+					patientRecord.LowerLevelRecord = studyRecord = CreateStudyItem(dicomFile);
+				else
+					studyRecord = GetExistingOrCreateNewStudy(patientRecord.LowerLevelRecord, dicomFile);
+
+				if (studyRecord.LowerLevelRecord == null)
+					studyRecord.LowerLevelRecord = seriesRecord = CreateSeriesItem(dicomFile);
+				else
+					seriesRecord = GetExistingOrCreateNewSeries(studyRecord.LowerLevelRecord, dicomFile);
+
+				if (seriesRecord.LowerLevelRecord == null)
+					seriesRecord.LowerLevelRecord = CreateImageItem(dicomFile, optionalRelativeRootPath);
+				else
+					GetExistingOrCreateNewImage(seriesRecord.LowerLevelRecord, dicomFile, optionalRelativeRootPath);
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "Error adding image {0} to directory file", dicomFile.Filename);
+				throw;
+			}
+		}
+
+    	/// <summary>
         /// Traverse the directory record tree and insert them into the directory record sequence.
         /// </summary>
         private void AddDirectoryRecordsToSequenceItem(DirectoryRecordSequenceItem root)
@@ -798,4 +817,155 @@ namespace ClearCanvas.Dicom
 
         #endregion
     }
+
+	public class DirectoryRecordTypeAttribute: Attribute
+	{
+		private string _name;
+		public string Name
+		{
+			get { return _name;}
+			set { _name = value;}
+		}
+		public DirectoryRecordTypeAttribute(string name)
+		{
+			_name = name;
+		}
+	}
+
+	public enum  DirectoryRecordType
+	{
+		[DirectoryRecordType("PATIENT")]
+		PATIENT,
+		[DirectoryRecordType("STUDY")]
+		STUDY,
+		[DirectoryRecordType("SERIES")]
+		SERIES,
+		[DirectoryRecordType("IMAGE")]
+		IMAGE,
+		[DirectoryRecordType("RT DOSE")]
+		RT_DOSE,
+		[DirectoryRecordType("RT STRUCTURE SET")]
+		RT_STRUCTURE_SET,
+		[DirectoryRecordType("RT PLAN")]
+		RT_PLAN,
+		[DirectoryRecordType("RT TREAT RECORD")]
+		RT_TREAT_RECORD,
+		[DirectoryRecordType("PRESENTATION")]
+		PRESENTATION,
+		[DirectoryRecordType("WAVEFORM")]
+		WAVEFORM,
+		[DirectoryRecordType("SR DOCUMENT")]
+		SR_DOCUMENT,
+		[DirectoryRecordType("KEY OBJECT DOC")]
+		KEY_OBJECT_DOC,
+		[DirectoryRecordType("SPECTROSCOPY")]
+		SPECTROSCOPY,
+		[DirectoryRecordType("RAW DATA")]
+		RAW_DATA,
+		[DirectoryRecordType("REGISTRATION")]
+		REGISTRATION,
+		[DirectoryRecordType("FIDUCIAL")]
+		FIDUCIAL,
+		[DirectoryRecordType("HANGING PROTOCOL")]
+		HANGING_PROTOCOL,
+		[DirectoryRecordType("ENCAP DOC")]
+		ENCAP_DOC,
+		[DirectoryRecordType("HL7 STRUC DOC")]
+		HL7_STRUC_DOC,
+		[DirectoryRecordType("VALUE MAP")]
+		VALUE_MAP,
+		[DirectoryRecordType("STEREOMETRIC")]
+		STEREOMETRIC,
+		[DirectoryRecordType("PRIVATE")]
+		PRIVATE,
+	}
+
+	internal static class DirectoryRecordDictionary
+	{
+		private static Dictionary<string, DirectoryRecordType> _sopClassLookup = new Dictionary<string, DirectoryRecordType>();
+		static DirectoryRecordDictionary()
+		{
+
+			_sopClassLookup.Add(SopClass.RtBeamsTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
+			_sopClassLookup.Add(SopClass.AmbulatoryEcgWaveformStorageUid, DirectoryRecordType.WAVEFORM);
+			_sopClassLookup.Add(SopClass.BasicTextSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
+			_sopClassLookup.Add(SopClass.BasicVoiceAudioWaveformStorageUid, DirectoryRecordType.WAVEFORM);
+			_sopClassLookup.Add(SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
+			_sopClassLookup.Add(SopClass.CardiacElectrophysiologyWaveformStorageUid, DirectoryRecordType.WAVEFORM);
+			_sopClassLookup.Add(SopClass.ChestCadSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
+			_sopClassLookup.Add(SopClass.ColorSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
+			_sopClassLookup.Add(SopClass.ComprehensiveSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
+			_sopClassLookup.Add(SopClass.ComputedRadiographyImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.CtImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.DeformableSpatialRegistrationStorageUid, DirectoryRecordType.REGISTRATION);
+			_sopClassLookup.Add(SopClass.DigitalIntraOralXRayImageStorageForPresentationUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.DigitalIntraOralXRayImageStorageForProcessingUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.DigitalMammographyXRayImageStorageForPresentationUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.DigitalMammographyXRayImageStorageForProcessingUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.DigitalXRayImageStorageForPresentationUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.EncapsulatedCdaStorageUid, DirectoryRecordType.HL7_STRUC_DOC);
+			_sopClassLookup.Add(SopClass.EncapsulatedPdfStorageUid, DirectoryRecordType.ENCAP_DOC);
+			_sopClassLookup.Add(SopClass.EnhancedCtImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.EnhancedMrImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.EnhancedSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
+			_sopClassLookup.Add(SopClass.EnhancedXaImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.EnhancedXrfImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.GeneralEcgWaveformStorageUid, DirectoryRecordType.WAVEFORM);
+			_sopClassLookup.Add(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
+			_sopClassLookup.Add(SopClass.HangingProtocolStorageUid, DirectoryRecordType.HANGING_PROTOCOL);
+			_sopClassLookup.Add(SopClass.HemodynamicWaveformStorageUid, DirectoryRecordType.WAVEFORM);
+			_sopClassLookup.Add(SopClass.KeyObjectSelectionDocumentStorageUid, DirectoryRecordType.KEY_OBJECT_DOC);
+			_sopClassLookup.Add(SopClass.MammographyCadSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
+			_sopClassLookup.Add(SopClass.MrImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.MrSpectroscopyStorageUid, DirectoryRecordType.SPECTROSCOPY);
+			_sopClassLookup.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.NuclearMedicineImageStorageRetiredUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.NuclearMedicineImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.OphthalmicPhotography16BitImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.OphthalmicPhotography8BitImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.OphthalmicTomographyImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.PositronEmissionTomographyImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
+            _sopClassLookup.Add(SopClass.RawDataStorageUid, DirectoryRecordType.RAW_DATA);
+            _sopClassLookup.Add(SopClass.RealWorldValueMappingStorageUid, DirectoryRecordType.VALUE_MAP);
+            _sopClassLookup.Add(SopClass.RtBeamsTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
+            _sopClassLookup.Add(SopClass.RtBrachyTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
+            _sopClassLookup.Add(SopClass.RtDoseStorageUid, DirectoryRecordType.RT_DOSE);
+            _sopClassLookup.Add(SopClass.RtImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.RtIonBeamsTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
+            _sopClassLookup.Add(SopClass.RtIonPlanStorageUid, DirectoryRecordType.RT_PLAN);
+            _sopClassLookup.Add(SopClass.RtPlanStorageUid, DirectoryRecordType.RT_PLAN);
+            _sopClassLookup.Add(SopClass.RtStructureSetStorageUid, DirectoryRecordType.RT_STRUCTURE_SET);
+            _sopClassLookup.Add(SopClass.RtTreatmentSummaryRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
+            _sopClassLookup.Add(SopClass.SecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.SegmentationStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.SpatialFiducialsStorageUid, DirectoryRecordType.FIDUCIAL);
+            _sopClassLookup.Add(SopClass.SpatialRegistrationStorageUid, DirectoryRecordType.REGISTRATION);
+            _sopClassLookup.Add(SopClass.StereometricRelationshipStorageUid, DirectoryRecordType.STEREOMETRIC);
+            _sopClassLookup.Add(SopClass.SubstanceAdministrationLoggingSopClassUid, DirectoryRecordType.SR_DOCUMENT);
+            _sopClassLookup.Add(SopClass.UltrasoundImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.UltrasoundImageStorageRetiredUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.UltrasoundMultiFrameImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.UltrasoundMultiFrameImageStorageRetiredUid,DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.VideoEndoscopicImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.VideoMicroscopicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.VideoPhotographicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.VlEndoscopicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.VlMicroscopicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.VlPhotographicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.VlSlideCoordinatesMicroscopicImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.XRay3dAngiographicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.XRay3dCraniofacialImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.XRayAngiographicImageStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.XRayRadiationDoseSrStorageUid, DirectoryRecordType.IMAGE);
+            _sopClassLookup.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, DirectoryRecordType.IMAGE);
+
+
+		}
+	}
 }

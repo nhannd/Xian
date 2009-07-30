@@ -75,13 +75,13 @@ namespace ClearCanvas.Dicom
 		{
 			string toString = String.Empty;
 			string recordType = base[DicomTags.DirectoryRecordType].GetString(0, "");
-			if (recordType == DicomDirectoryWriter.DirectoryRecordTypeImage)
+			if (recordType == DicomDirectory.DirectoryRecordTypeImage)
 				toString = base[DicomTags.ReferencedSopInstanceUidInFile].GetString(0, "");
-			else if (recordType == DicomDirectoryWriter.DirectoryRecordTypeSeries)
+			else if (recordType == DicomDirectory.DirectoryRecordTypeSeries)
 				toString = base[DicomTags.SeriesInstanceUid].GetString(0, "");
-			else if (recordType == DicomDirectoryWriter.DirectoryRecordTypeStudy)
+			else if (recordType == DicomDirectory.DirectoryRecordTypeStudy)
 				toString = base[DicomTags.StudyInstanceUid].GetString(0, "");
-			else if (recordType == DicomDirectoryWriter.DirectoryRecordTypePatient)
+			else if (recordType == DicomDirectory.DirectoryRecordTypePatient)
 				toString = base[DicomTags.PatientId].GetString(0, "") + " " + base[DicomTags.PatientsName].GetString(0, "");
 
 			return recordType + " " + toString;
