@@ -117,6 +117,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return VerificationResult.Canceled;
 			else if (base.Status == ScuOperationStatus.TimeoutExpired)
 				return VerificationResult.TimeoutExpired;
+            else if (Status == ScuOperationStatus.AssociationRejected)
+                return VerificationResult.AssociationRejected;
 			else
 				return _verificationResult;
 		}
@@ -267,6 +269,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 		TimeoutExpired = 2,
 
 		/// <summary></summary>
-		Canceled = 3
+		Canceled = 3,
+
+        AssociationRejected
 	}
 }
