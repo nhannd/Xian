@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.Sequences
 {
@@ -138,7 +139,11 @@ namespace ClearCanvas.Dicom.Iod.Sequences
             get { return base.DicomAttributeProvider[DicomTags.PreMedication].GetString(0, String.Empty); }
             set { base.DicomAttributeProvider[DicomTags.PreMedication].SetString(0, value); }
         }
-        
+
+        public SequenceIodList<CodeSequenceMacro> ScheduledProtocolCodeSequenceList
+        {
+            get { return new SequenceIodList<CodeSequenceMacro>(DicomAttributeProvider[DicomTags.ScheduledProtocolCodeSequence] as DicomAttributeSQ); }
+        }
        #endregion
 
         #region Public Methods

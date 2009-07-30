@@ -203,8 +203,9 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 
             DicomFile dicomFile = new DicomFile(filePath);
             dicomFile.Load();
-            AddDicomFileValues(dicomFile);
+            AddDicomFileValues(dicomFile.DataSet);
         }
+
 
         /// <summary>
         /// Adds the attribute values for the specified <see cref="dicomFile"/>.  Tags it sets are:
@@ -216,46 +217,48 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             if (dicomFile == null)
                 throw new ArgumentNullException("dicomFile");
-
-            try
-            {
-				uint[] dicomTags = new uint[]
-                    {
-                        DicomTags.ImageType,
-                        DicomTags.SopClassUid,
-                        DicomTags.SopInstanceUid,
-                        DicomTags.StudyInstanceUid,
-                        DicomTags.SamplesPerPixel,
-                        DicomTags.PhotometricInterpretation,
-                        DicomTags.NumberOfFrames,
-                        DicomTags.Rows,
-                        DicomTags.Columns,
-                        DicomTags.BitsAllocated,
-                        DicomTags.BitsStored,
-                        DicomTags.HighBit,
-                        DicomTags.PixelRepresentation,
-                        DicomTags.SmallestImagePixelValue,
-                        DicomTags.LargestImagePixelValue,
-                        DicomTags.WindowCenter,
-                        DicomTags.WindowWidth,
-                        DicomTags.PixelData
-                    };
-
-                foreach (uint dicomTag in dicomTags)
-                {
-                    DicomAttribute dicomAttribute;
-                    if (dicomFile.DataSet.TryGetAttribute(dicomTag, out dicomAttribute))
-                        DicomAttributeProvider[dicomTag].Values = dicomAttribute.Values;
-                }
-            }
-            catch (Exception ex)
-            {
-                Platform.Log(LogLevel.Error, ex, "Exception adding dicom file value for file: {0}", dicomFile.Filename);
-                throw;
-            }
+            AddDicomFileValues(dicomFile.DataSet);
         }
 
+        public void AddDicomFileValues(IDicomAttributeProvider dicomAttributes)
+        {
+			uint[] dicomTags = new uint[]
+                {
+                    DicomTags.ImageType,
+                    DicomTags.SopClassUid,
+                    DicomTags.SopInstanceUid,
+                    DicomTags.StudyInstanceUid,
+                    DicomTags.SamplesPerPixel,
+                    DicomTags.PhotometricInterpretation,
+                    DicomTags.NumberOfFrames,
+                    DicomTags.Rows,
+                    DicomTags.Columns,
+                    DicomTags.BitsAllocated,
+                    DicomTags.BitsStored,
+                    DicomTags.HighBit,
+                    DicomTags.PixelRepresentation,
+                    DicomTags.SmallestImagePixelValue,
+                    DicomTags.LargestImagePixelValue,
+                    DicomTags.WindowCenter,
+                    DicomTags.WindowWidth,
+                    DicomTags.PixelData
+                };
+
+            foreach (uint dicomTag in dicomTags)
+            {
+                try
+                {
+
+                    DicomAttribute dicomAttribute;
+                    if (dicomAttributes.TryGetAttribute(dicomTag, out dicomAttribute))
+                        DicomAttributeProvider[dicomTag].Values = dicomAttribute.Values;
+                }
+                catch (Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Exception adding dicom tag value for uint: " + dicomTag);
+                    throw;
+                }
+            }
+        }
     }
-
-
 }
