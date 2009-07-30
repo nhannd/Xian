@@ -68,6 +68,7 @@ namespace Jpeg {
 			throw gcnew ApplicationException("Invalid quality specified for JPEG Process 24: " + qualityString);
 
 		codecParms->Quality = quality;
+		codecParms->ConvertColorspaceToRGB = true;
 
 		return codecParms;
 	}
@@ -82,8 +83,14 @@ namespace Jpeg {
 	String^ DicomJpegLossless14CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegLosslessNonHierarchicalProcess14->Name;	
 	}
-	DicomCodecParameters^ DicomJpegLossless14CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
-		return gcnew DicomJpegParameters();
+	DicomCodecParameters^ DicomJpegLossless14CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet)
+	{
+		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
+
+		codecParms->Quality = 1;
+		codecParms->ConvertColorspaceToRGB = false;
+
+		return codecParms;
 	}
 	DicomCodecParameters^ DicomJpegLossless14CodecFactory::GetCodecParameters(XmlDocument^ parms)
     {
@@ -105,8 +112,14 @@ namespace Jpeg {
 	String^ DicomJpegLossless14SV1CodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1->Name;	
 	}
-	DicomCodecParameters^ DicomJpegLossless14SV1CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
-		return gcnew DicomJpegParameters();
+	DicomCodecParameters^ DicomJpegLossless14SV1CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet)
+	{
+		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
+
+		codecParms->Quality = 1;
+		codecParms->ConvertColorspaceToRGB = false;
+
+		return codecParms;
 	}
 	DicomCodecParameters^ DicomJpegLossless14SV1CodecFactory::GetCodecParameters(XmlDocument^ parms)
     {

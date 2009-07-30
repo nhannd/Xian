@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeFileTransferSyntaxTool.cs" />
     <Compile Include="ChangeTransferSyntaxTool.cs" />
     <Compile Include="MemoryAnalysisComponent.cs" />
     <Compile Include="MemoryAnalysisTool.cs" />
@@ -82,6 +83,10 @@
     <ProjectReference Include="..\Explorer\Dicom\ClearCanvas.ImageViewer.Explorer.Dicom.csproj">
       <Project>{14111EC7-C62E-4483-8573-7C04986D048F}</Project>
       <Name>ClearCanvas.ImageViewer.Explorer.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Explorer\Local\ClearCanvas.ImageViewer.Explorer.Local.csproj">
+      <Project>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</Project>
+      <Name>ClearCanvas.ImageViewer.Explorer.Local</Name>
     </ProjectReference>
     <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>

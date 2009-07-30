@@ -114,8 +114,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					if (ts == TransferSyntax.Jpeg2000ImageCompression ||
 					    ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
 					    ts == TransferSyntax.JpegExtendedProcess24 ||
-					    ts == TransferSyntax.JpegBaselineProcess1 ||
-					    ts == TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1)
+					    ts == TransferSyntax.JpegBaselineProcess1)
 						pi = PhotometricInterpretation.Rgb;
 
 					pixelData = ToArgb(this.Parent, pixelData, pi);

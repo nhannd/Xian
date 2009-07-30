@@ -150,6 +150,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 		}
 
 		#endregion
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_imageSop.Dispose();
+			}
+		}
 	}
 }
 

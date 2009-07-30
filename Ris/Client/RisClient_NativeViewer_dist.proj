@@ -32,8 +32,7 @@
 
   <ItemGroup>
     <AppConfigSourceFiles Include="$(DesktopExecutableConfig)" />
-    <!--Although not explicitly including the enterprise desktop stuff, we do need the enterprise common settings -->
-    <AppConfigSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer.EnterpriseCommon_dist.config" />
+    <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_dist.config" />
   </ItemGroup>
 
@@ -74,7 +73,7 @@
 
     <Copy Condition="$(CopyDefaultAEServers) And !$(OtoBuild)"  SourceFiles="$(MSBuildProjectDirectory)\RisClient_NativeViewer_DicomAEServers.xml" DestinationFiles="$(DistributionDirectory)\DicomAEServers.xml" />
 
-    <XmlReplaceValue
+    <XmlReplaceValue Condition="$(RisClientBuild)" 
        NodeMustExist ="False"  
        File="$(DesktopExecutableConfig)"
        XPath="//configuration/applicationSettings/ClearCanvas.Desktop.Explorer.ExplorerLocalSettings/setting[@name='ExplorerIsPrimary']/value"
