@@ -1362,7 +1362,29 @@ namespace ClearCanvas.Dicom
                 return true;
             }
         }
-        
+
+        public override object Values
+        {
+            get
+            {
+                return base.Values;
+            }
+            set
+            {
+                // look for specific float or double, if not then pass on to base
+                if (value != null && (value is float || value is double || value is int))
+                {
+                    if (value is float)
+                        SetFloat32(0, (float)value);
+                    if (value is double)
+                        SetFloat64(0, (double)value);
+                    if (value is int)
+                        SetInt32(0, (int)value);
+                    return;
+                }
+                base.Values = value;
+            }
+        }
     }
     #endregion
 
@@ -1964,7 +1986,39 @@ namespace ClearCanvas.Dicom
 			_values[_values.Length - 1] = value.ToString();
             this.StreamLength = (uint)ToString().Length;
         	this.Count = _values.Length;
-        }        
+        }
+
+        public override object Values
+        {
+            get { return _values; }
+            set
+            {
+                if (value == null)
+                {
+                    _values = null;
+                    StreamLength = 0;
+                    return;
+                }
+
+                if (value is Int16 || value is Int32 || value is Int64)
+                {
+                    // reset in case had more than 1 value
+                    //_values = null or new string[0];
+                    //StreamLength = 0;
+                    if (value is Int16)
+                        SetInt16(0, (Int16)value);
+                    else if (value is Int32)
+                        SetInt32(0, (Int32)value);
+                    else if (value is Int64)
+                        SetInt64(0, (Int64)value);
+                }
+                else
+                {
+                    base.Values = value;
+                }
+
+            }
+        }
     }
     #endregion
 
