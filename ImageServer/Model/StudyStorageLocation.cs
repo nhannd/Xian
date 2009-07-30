@@ -369,6 +369,11 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
+        public bool IsNearline
+        {
+            get { return StudyStatusEnum.Equals(Model.StudyStatusEnum.Nearline); }
+        }
+
 
         /// <summary>
         /// Acquires a lock on the study for processing

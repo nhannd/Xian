@@ -64,6 +64,7 @@
     <Compile Include="Diagnostics\RandomError.cs" />
     <Compile Include="Diagnostics\Settings.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
+    <Compile Include="Exceptions\InvalidStudyStateOperationException.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />

@@ -31,16 +31,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Core
 {
@@ -330,6 +331,36 @@ namespace ClearCanvas.ImageServer.Core
                                      ? partition.AeTitle
                                      : file.SourceApplicationEntityTitle,
                                      timestamp!=null? timestamp.Value.ToString("yyyyMMddHHmmss"): Platform.Time.ToString("yyyyMMddHHmmss"));
+        }
+
+        /// <summary>
+        /// Returns all <see cref="StudyStorageLocation"/> of a study.
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <param name="studyInstanceUid"></param>
+        /// <returns></returns>
+        public static IList<StudyStorageLocation> FindStudyStorages(ServerPartition partition, string studyInstanceUid)
+        {
+            Platform.CheckForNullReference(partition,"partition");
+            Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
+            
+            using(ExecutionContext context = new ExecutionContext())
+            {
+                StudyStorage storage = StudyStorage.Load(context.PersistenceContext, partition.Key, studyInstanceUid);
+                return StudyStorageLocation.FindStorageLocations(context.PersistenceContext, storage);
+            }
+            
+        }
+
+        /// <summary>
+        /// Returns the current logged in user.
+        /// </summary>
+        public static string CurrentUserName
+        {
+            get
+            {
+                return Thread.CurrentPrincipal.Identity.Name;
+            }
         }
     }
 }

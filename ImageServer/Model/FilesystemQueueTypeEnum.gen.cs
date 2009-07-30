@@ -66,21 +66,21 @@ public partial class FilesystemQueueTypeEnum : ServerEnum
           get { return _PurgeStudy; }
       }
       /// <summary>
-      /// A record telling when a study is eligable to be migrated to a lower tier filesystem.
+      /// A record telling when a study is eligible to be migrated to a lower tier filesystem.
       /// </summary>
       public static FilesystemQueueTypeEnum TierMigrate
       {
           get { return _TierMigrate; }
       }
       /// <summary>
-      /// A record telling when a study is eligable for lossless compression and the type of compression to be performed on the study.
+      /// A record telling when a study is eligible for lossless compression and the type of compression to be performed on the study.
       /// </summary>
       public static FilesystemQueueTypeEnum LosslessCompress
       {
           get { return _LosslessCompress; }
       }
       /// <summary>
-      /// A record telling when a study is eligable for lossy compression and the type of compression to be performed.
+      /// A record telling when a study is eligible for lossy compression and the type of compression to be performed.
       /// </summary>
       public static FilesystemQueueTypeEnum LossyCompress
       {
