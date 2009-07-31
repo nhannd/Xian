@@ -29,16 +29,13 @@
 
 #endregion
 
-using System.Drawing;
-using System.Drawing.Imaging;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Graphics;
-using NUnit.Framework;
-
 #if	UNIT_TESTS
-
 #pragma warning disable 1591,0419,1574,1587
 
+using System.Drawing;
+using System.Drawing.Imaging;
+using ClearCanvas.ImageViewer.Graphics;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
