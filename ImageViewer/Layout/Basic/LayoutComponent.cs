@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -270,6 +271,164 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			NotifyPropertyChanged("TileSectionEnabled");
 		}
 
+		private static object[,] GetImageBoxMementos(IPhysicalWorkspace physicalWorkspace)
+		{
+			int rows = physicalWorkspace.Rows;
+			int columns = physicalWorkspace.Columns;
+
+			object[,] oldImageBoxMementos = new object[rows, columns];
+
+			for (int row = 0; row < rows; ++row)
+			{
+				for (int column = 0; column < columns; ++column)
+				{
+					oldImageBoxMementos[row, column] = physicalWorkspace[row, column].CreateMemento();
+				}
+			}
+
+			return oldImageBoxMementos;
+		}
+
+		private static Queue GetOffScreenMementos(IPhysicalWorkspace physicalWorkspace, object[,] oldImageBoxMementos)
+		{
+			int oldRows = oldImageBoxMementos.GetLength(0);
+			int oldColumns = oldImageBoxMementos.GetLength(1);
+
+			int newRows = physicalWorkspace.Rows;
+			int newColumns = physicalWorkspace.Columns;
+
+			int sameRows = Math.Min(oldRows, newRows);
+			int sameColumns = Math.Min(oldColumns, newColumns);
+
+			Queue offScreenMementos = new Queue();
+			//Get mementos for all the display sets that have gone off-screen, from top-to-bottom, left-to-right.
+
+			for (int row = 0; row < sameRows; ++row)
+			{
+				for (int column = sameColumns; column < oldColumns; ++column)
+				{
+					offScreenMementos.Enqueue(oldImageBoxMementos[row, column]);
+				}
+			}
+
+			for (int row = sameRows; row < oldRows; ++row)
+			{
+				for (int column = 0; column < oldColumns; ++column)
+				{
+					offScreenMementos.Enqueue(oldImageBoxMementos[row, column]);
+				}
+			}
+
+			return offScreenMementos;
+		}
+
+		private static IEnumerable<IImageBox> GetNewImageBoxes(IPhysicalWorkspace physicalWorkspace, int oldRows, int oldColumns)
+		{
+			int newRows = physicalWorkspace.Rows;
+			int newColumns = physicalWorkspace.Columns;
+
+			int sameRows = Math.Min(oldRows, newRows);
+			int sameColumns = Math.Min(oldColumns, newColumns);
+
+			for (int row = 0; row < sameRows; ++row)
+			{
+				for (int column = sameColumns; column < newColumns; ++column)
+				{
+					yield return physicalWorkspace[row, column];
+				}
+			}
+
+			for (int row = sameRows; row < newRows; ++row)
+			{
+				for (int column = 0; column < newColumns; ++column)
+				{
+					yield return physicalWorkspace[row, column];
+				}
+			}
+		}
+
+		private static IDisplaySet GetNextDisplaySet(IPhysicalWorkspace physicalWorkspace)
+		{
+			foreach (IImageSet imageSet in physicalWorkspace.LogicalWorkspace.ImageSets)
+			{
+				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+				{
+					bool alreadyVisible = false;
+					foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
+					{
+						if (imageBox.DisplaySet != null && imageBox.DisplaySet.Uid == displaySet.Uid)
+						{
+							alreadyVisible = true;
+							break;
+						}
+					}
+
+					if (!alreadyVisible)
+						return displaySet.CreateFreshCopy();
+				}
+			}
+
+			return null;
+		}
+
+		private static void FillImageBoxes(IEnumerable<IImageBox> imageBoxes, Queue oldImageBoxMementos)
+		{
+			foreach (IImageBox imageBox in imageBoxes)
+			{
+				if (oldImageBoxMementos.Count > 0)
+				{
+					imageBox.SetMemento(oldImageBoxMementos.Dequeue());
+				}
+				else
+				{
+					imageBox.SetTileGrid(1, 1);
+					imageBox.DisplaySet = GetNextDisplaySet(imageBox.ParentPhysicalWorkspace);
+				}
+			}
+		}
+
+		private static void SetImageBoxLayout(IPhysicalWorkspace physicalWorkspace, int rows, int columns)
+		{
+			object[,] oldImageBoxMementos = GetImageBoxMementos(physicalWorkspace);
+
+			physicalWorkspace.SetImageBoxGrid(rows, columns);
+
+			Queue offScreenMementos = GetOffScreenMementos(physicalWorkspace, oldImageBoxMementos);
+
+			int newRows = physicalWorkspace.Rows;
+			int newColumns = physicalWorkspace.Columns;
+
+			int oldRows = oldImageBoxMementos.GetLength(0);
+			int oldColumns = oldImageBoxMementos.GetLength(1);
+
+			int sameRows = Math.Min(oldRows, newRows);
+			int sameColumns = Math.Min(oldColumns, newColumns);
+
+			// Try to keep existing display sets in the same row/column position, if possible.
+			for (int row = 0; row < sameRows; ++row)
+			{
+				for (int column = 0; column < sameColumns; ++column)
+				{
+					physicalWorkspace[row, column].SetMemento(oldImageBoxMementos[row, column]);
+				}
+			}
+
+			// Fill in new image boxes preferably with display sets that went 'off-screen',
+			// followed by new ones that are not already visible.
+			FillImageBoxes(GetNewImageBoxes(physicalWorkspace, oldRows, oldColumns), offScreenMementos);
+		}
+
+		private static void SetImageBoxLayoutSimple(IPhysicalWorkspace physicalWorkspace, int rows, int columns)
+		{
+			Queue oldMementos = new Queue();
+			foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
+				oldMementos.Enqueue(imageBox.CreateMemento());
+
+			physicalWorkspace.SetImageBoxGrid(rows, columns);
+
+			FillImageBoxes(physicalWorkspace.ImageBoxes, oldMementos);
+		}
+
 		public static void SetImageBoxLayout(IImageViewer imageViewer, int rows, int columns)
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
@@ -280,42 +439,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (physicalWorkspace.Locked)
 				return;
 
-			int tileRows = Math.Max(1, physicalWorkspace.SelectedImageBox.Rows);
-			int tileColumns = Math.Max(1, physicalWorkspace.SelectedImageBox.Columns);
-
 			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(physicalWorkspace);
 			memorableCommand.BeginState = physicalWorkspace.CreateMemento();
 
-			int oldRows = physicalWorkspace.Rows;
-			int oldColumns = physicalWorkspace.Columns;
-			KeyValuePair<IDisplaySet, int>[,] oldDisplaySets = new KeyValuePair<IDisplaySet, int>[oldRows,oldColumns];
-			for (int row = 0; row < oldRows; ++row)
+			bool isOldLayoutRectangular = physicalWorkspace.Rows > 0 && physicalWorkspace.Columns > 0;
+			if (isOldLayoutRectangular)
 			{
-				for (int column = 0; column < oldColumns; ++column)
-				{
-					IImageBox imageBox = physicalWorkspace[row, column];
-					oldDisplaySets[row, column] = new KeyValuePair<IDisplaySet, int>(imageBox.DisplaySet, imageBox.TopLeftPresentationImageIndex);
-				}
+				SetImageBoxLayout(physicalWorkspace, rows, columns);
 			}
-
-			physicalWorkspace.SetImageBoxGrid(rows, columns);
-
-			foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
-				imageBox.SetTileGrid(tileRows, tileColumns);
-
-			// Try to keep existing display sets in the same row/column position.
-			for (int row = 0; row < physicalWorkspace.Rows && row < oldRows; ++row)
+			else
 			{
-				for (int column = 0; column < physicalWorkspace.Columns && column < oldColumns; ++column)
-				{
-					KeyValuePair<IDisplaySet, int> kvp = oldDisplaySets[row, column];
-					if (kvp.Key != null)
-					{
-						IImageBox imageBox = physicalWorkspace[row, column];
-						imageBox.DisplaySet = kvp.Key;
-						imageBox.TopLeftPresentationImageIndex = kvp.Value;
-					}
-				}
+				SetImageBoxLayoutSimple(physicalWorkspace, rows, columns);
 			}
 
 			physicalWorkspace.Draw();
