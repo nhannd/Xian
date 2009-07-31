@@ -57,6 +57,7 @@
     <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\ICreatePatientForStudy.cs" />
     <Compile Include="Brokers\IDeleteInstance.cs" />
+    <Compile Include="Brokers\IDeleteSeries.cs" />
     <Compile Include="Brokers\IInsertDuplicateQueue.cs" />
     <Compile Include="Brokers\ILockStudy.cs" />
     <Compile Include="Brokers\IResetStudyStorage.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
     <Compile Include="Parameters\DeleteInstanceParameters.cs" />
+    <Compile Include="Parameters\DeleteSeriesParameters.cs" />
     <Compile Include="Parameters\InsertDuplicateSopReceivedQueueParameters.cs" />
     <Compile Include="Parameters\LockStudyParameters.cs" />
     <Compile Include="Parameters\AttachStudyToPatientParamaters.cs" />

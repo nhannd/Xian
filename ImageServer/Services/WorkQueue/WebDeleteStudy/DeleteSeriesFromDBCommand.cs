@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,10 +30,33 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
- 
+    internal class DeleteSeriesFromDBCommand : ServerDatabaseCommand
+    {
+        private readonly StudyStorageLocation _location;
+        private readonly string _seriesUid;
+
+        public DeleteSeriesFromDBCommand(StudyStorageLocation location, string seriesUid)
+            : base(String.Format("Delete Series In DB {0}", seriesUid), true)
+        {
+            _location = location;
+            _seriesUid = seriesUid;
+        }
+
+        protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+        {
+            IDeleteSeries broker = updateContext.GetBroker<IDeleteSeries>();
+            DeleteSeriesParameters criteria = new DeleteSeriesParameters();
+            criteria.StudyStorageKey = _location.Key;
+            criteria.SeriesInstanceUid = _seriesUid;
+            if (!broker.Execute(criteria))
+                throw new ApplicationException("Error occurred when calling DeleteSeries");
+        }
+    }
 }

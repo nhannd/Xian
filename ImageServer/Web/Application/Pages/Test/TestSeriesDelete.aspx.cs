@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
 using System.Collections;
@@ -25,9 +26,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Test
         protected void DeleteClick(object sender, EventArgs e)
         {
             ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(ServerAE.Text);
+
             using(IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                StudyEditorHelper.DeleteSeries(ctx, partition, StudyUID.Text, SeriesUID.Text, "Testing");
+                List<string> series = new List<string>(SeriesUID.Text.Split(','));
+                StudyEditorHelper.DeleteSeries(ctx, partition, StudyUID.Text, series, "Testing");
                 ctx.Commit();
             }
         }

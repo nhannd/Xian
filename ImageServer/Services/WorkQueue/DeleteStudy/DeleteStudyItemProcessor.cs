@@ -52,13 +52,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         #endregion
 
         #region Private Methods
-		private void RemoveFilesystem()
+
+        protected void RemoveFilesystem()
 		{
 			string path = StorageLocation.GetStudyPath();
 		    DirectoryUtility.DeleteIfExists(path, true);
 		}
 
-    	private void RemoveDatabase(Model.WorkQueue item)
+        protected void RemoveDatabase(Model.WorkQueue item)
         {
 			// NOTE:  This was an IUpdateContext, however, it was modified to be an IReadContext
 			// after having problems w/ locks on asystem with a fair amount of load.  The 
@@ -83,7 +84,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             }
         }
 
-        private IList<IDeleteStudyProcessorExtension> LoadExtensions()
+        protected IList<IDeleteStudyProcessorExtension> LoadExtensions()
         {
             if (_extensions == null)
             {

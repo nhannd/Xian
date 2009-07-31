@@ -33,8 +33,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Exceptions;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -52,11 +54,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="context">The persistence context used for database connection.</param>
         /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
         /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
-        /// <param name="seriesInstanceUid">The Series Instance Uid of the series to be deleted.</param>
+        /// <param name="seriesInstanceUids">The Series Instance Uid of the series to be deleted.</param>
         /// <param name="reason">The reason for deleting the series.</param>
         /// <returns>A list of DeleteSeries <see cref="WorkQueue"/> entries inserted into the system.</returns>
         /// <exception cref="InvalidStudyStateOperationException"></exception>
-        public static IList<WorkQueue> DeleteSeries(IUpdateContext context, ServerPartition partition, string studyInstanceUid, string seriesInstanceUid, string reason)
+        public static IList<WorkQueue> DeleteSeries(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<string> seriesInstanceUids, string reason)
         {
             // Find all location of the study in the system and insert series delete request
             IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
@@ -69,10 +71,27 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     throw new InvalidStudyStateOperationException("Study Is Nealine. It must be restored first.");
                 }
 
-                // insert a delete series request
-                WorkQueue request = InsertDeleteSeriesRequest(context, location, seriesInstanceUid, reason);
-                Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.DeleteSeries));
-                entries.Add(request);
+                try
+                {
+                    string failureReason;
+                    if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.WebDeleteScheduled, out failureReason))
+                    {
+                        // insert a delete series request
+                        WorkQueue request = InsertDeleteSeriesRequest(context, location, seriesInstanceUids, reason);
+                        Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebDeleteStudy));
+                        entries.Add(request);
+                    }
+                    else
+                    {
+                        throw new ApplicationException(String.Format("Unable to lock storage location {0} for deletion : {1}", location.Key, failureReason));
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Errors occurred when trying to insert delete request");
+                    if (!ServerHelper.UnlockStudy(location.Key))
+                        throw new ApplicationException("Unable to unlock the study");
+                }
             }
 
             return entries;
@@ -84,14 +103,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// </summary>
         /// <param name="context"></param>
         /// <param name="location"></param>
-        /// <param name="seriesInstanceUid"></param>
+        /// <param name="seriesInstanceUids"></param>
         /// <param name="reason"></param>
         /// <exception cref="ApplicationException">If the "DeleteSeries" Work Queue entry cannot be inserted.</exception>
-        private static WorkQueue InsertDeleteSeriesRequest(IUpdateContext context, StudyStorageLocation location, string seriesInstanceUid, string reason)
+        private static WorkQueue InsertDeleteSeriesRequest(IUpdateContext context, StudyStorageLocation location, List<string> seriesInstanceUids, string reason)
         {
         
             IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new DeleteSeriesWorkQueueParameters(location, seriesInstanceUid, reason);
+            InsertWorkQueueParameters criteria = new DeleteSeriesWorkQueueParameters(location, seriesInstanceUids, reason);
             WorkQueue deleteSeriesEntry = broker.FindOne(criteria);
             if (deleteSeriesEntry != null)
             {
@@ -99,28 +118,33 @@ namespace ClearCanvas.ImageServer.Core.Edit
             }
             else
                 throw new ApplicationException( String.Format("Unable to insert a Delete Series request for series {0} in study {1}",
-                    seriesInstanceUid, location.StudyInstanceUid));
+                    StringUtilities.Combine(seriesInstanceUids, ","), location.StudyInstanceUid));
             
         }
     }
 
     class DeleteSeriesWorkQueueParameters : InsertWorkQueueParameters
     {
-        public DeleteSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, string reason)
+        public DeleteSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, List<string> seriesInstanceUids, string reason)
         {
             DateTime now = Platform.Time;
-            this.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteSeries;
+            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
+            data.SeriesInstanceUids = seriesInstanceUids;
+            data.Timestamp = Platform.Time;
+            data.Reason = reason;
+            data.Timestamp = now;
+            data.UserName = ServerHelper.CurrentUserName;
+
+            
+            
+            this.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
             this.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
             this.StudyStorageKey = studyStorageLocation.Key;
             this.ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             this.ScheduledTime = now;
             this.ExpirationTime = now.AddMinutes(15);
-            DeleteSeriesQueueData data = new DeleteSeriesQueueData();
-            data.SeriesInstanceUid = seriesInstanceUid;
-            data.Reason = reason;
-            data.Timestamp = now;
-            data.UserName = ServerHelper.CurrentUserName;
-
+            this.WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
+            
         }
     }
 }

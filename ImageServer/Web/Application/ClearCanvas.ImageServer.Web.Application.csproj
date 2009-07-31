@@ -1112,6 +1112,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>WorkQueueSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Test\TestSeriesDelete.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>TestSeriesDelete.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Test\TestSeriesDelete.aspx.designer.cs">
+      <DependentUpon>TestSeriesDelete.aspx</DependentUpon>
+    </Compile>
     <Compile Include="PersistantImage.ashx.cs">
       <DependentUpon>PersistantImage.ashx</DependentUpon>
     </Compile>
@@ -1338,6 +1345,7 @@
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
+    <Content Include="Pages\Test\TestSeriesDelete.aspx" />
     <Content Include="Scripts\jquery\jquery.scrollabletable.js" />
     <Content Include="Users.xml" />
     <Content Include="Default.aspx" />

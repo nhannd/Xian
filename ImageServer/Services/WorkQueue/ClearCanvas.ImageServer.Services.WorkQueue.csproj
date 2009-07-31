@@ -87,6 +87,8 @@
     <Compile Include="StudyIntegrityValidationAttribute.cs" />
     <Compile Include="StudyProcess\BasePreprocessor.cs" />
     <Compile Include="StudyProcess\PreProcessors.cs" />
+    <Compile Include="WebDeleteStudy\DeleteSeriesFromDBCommand.cs" />
+    <Compile Include="WebDeleteStudy\RemoveSeriesFromStudyXml.cs" />
     <Compile Include="WebEditStudy\InstanceInfo.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
     <Compile Include="WebEditStudy\PatientInfo.cs" />

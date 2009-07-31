@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -196,8 +197,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 
                     StudyDeleteRecordUpdateColumns parms = new StudyDeleteRecordUpdateColumns();
                     parms.Timestamp = Platform.Time;
-                    WebDeleteStudyData extendedInfo =
-                        XmlUtils.Deserialize<WebDeleteStudyData>(_context.WorkQueueItem.Data);
+                    WebDeleteStudyLevelQueueData extendedInfo =
+                        XmlUtils.Deserialize<WebDeleteStudyLevelQueueData>(_context.WorkQueueItem.Data);
 
                     parms.Reason = extendedInfo != null? 
                                                            extendedInfo.Reason:_context.WorkQueueItem.WorkQueueTypeEnum.LongDescription;

@@ -177,6 +177,11 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetSe
 DROP PROCEDURE [dbo].[SetSeriesRelatedInstanceCount]
 GO
 
+/****** Object:  StoredProcedure [dbo].[DeleteSeries]    Script Date: 07/31/2009 11:31:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteSeries]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteSeries]
+GO
+
 
 
 
@@ -3836,3 +3841,63 @@ END
 '
 END
 GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteSeries]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: July 30, 2009
+-- Description:	Delete a series and update the count
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteSeries] 
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier, 
+	@SeriesInstanceUID varchar(64)	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @StudyGUID uniqueidentifier
+	DECLARE @PatientGUID uniqueidentifier
+	SELECT @StudyGUID=GUID, @PatientGUID=PatientGUID  
+	FROM Study	WHERE StudyStorageGUID=@StudyStorageGUID
+
+	DECLARE @SeriesGUID uniqueidentifier
+	DECLARE @InstanceCount int
+	
+	SELECT @SeriesGUID=GUID, @InstanceCount = NumberOfSeriesRelatedInstances
+	FROM Series WHERE StudyGUID=@StudyGUID AND SeriesInstanceUid =@SeriesInstanceUID
+
+
+	IF @SeriesGUID IS NOT NULL
+	BEGIN	
+		BEGIN TRANSACTION
+
+			UPDATE	Study 
+			SET		NumberOfStudyRelatedSeries=NumberOfStudyRelatedSeries-1,
+					NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances-@InstanceCount
+			WHERE	GUID=@StudyGUID
+
+			UPDATE	Patient 
+			SET		NumberOfPatientRelatedSeries=NumberOfPatientRelatedSeries-1,
+					NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances-@InstanceCount
+			WHERE	GUID=@PatientGUID
+
+			DELETE Series WHERE GUID=@SeriesGUID
+			DELETE RequestAttributes WHERE SeriesGUID=@SeriesGUID
+
+		COMMIT TRANSACTION 
+	END
+END
+'
+END
+GO
+

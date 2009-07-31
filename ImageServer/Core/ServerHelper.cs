@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -347,9 +348,66 @@ namespace ClearCanvas.ImageServer.Core
             using(ExecutionContext context = new ExecutionContext())
             {
                 StudyStorage storage = StudyStorage.Load(context.PersistenceContext, partition.Key, studyInstanceUid);
-                return StudyStorageLocation.FindStorageLocations(context.PersistenceContext, storage);
+                if (storage != null)
+                    return StudyStorageLocation.FindStorageLocations(context.PersistenceContext, storage);
+                else
+                    return null;
             }
-            
+        }
+
+        /// <summary>
+        /// Sets the Queue Study State of the study.
+        /// </summary>
+        /// <param name="studyStorageKey">The <see cref="ServerEntityKey"/> of the <see cref="StudyStorage"/> record.</param>
+        /// <param name="state">The state of the study to set</param>
+        /// <param name="failureReason">A string value describing why the state could not be set.</param>
+        /// <returns>True if the state of the study was successfully set. False otherwise.</returns>
+        public static bool LockStudy(ServerEntityKey studyStorageKey, QueueStudyStateEnum state, out string failureReason)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
+                LockStudyParameters lockStudyParams = new LockStudyParameters();
+                lockStudyParams.StudyStorageKey = studyStorageKey;
+                lockStudyParams.QueueStudyStateEnum = state;
+
+                if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
+                {
+                    failureReason = lockStudyParams.FailureReason;
+                    return false;
+                }
+                else
+                {
+                    updateContext.Commit();
+                    failureReason = null;
+                    return true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets the state of the study set by <see cref="LockStudy"/>.
+        /// </summary>
+        /// <param name="studyStorageKey"></param>
+        /// <returns></returns>
+        public static bool UnlockStudy(ServerEntityKey studyStorageKey)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
+                LockStudyParameters lockStudyParams = new LockStudyParameters();
+                lockStudyParams.StudyStorageKey = studyStorageKey;
+                lockStudyParams.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+
+                if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
+                    return false;
+
+                else
+                {
+                    updateContext.Commit();
+                    return true;
+                }
+            }
         }
 
         /// <summary>

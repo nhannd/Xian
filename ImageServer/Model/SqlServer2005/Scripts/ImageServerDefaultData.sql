@@ -90,12 +90,6 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
 GO
 
 
-INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
-           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES
-           (newid(),115,'DeleteSeries','Delete Series','Delete Series.')
-GO
-
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]

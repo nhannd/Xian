@@ -34,8 +34,8 @@ using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 insertParms.ScheduledTime = Platform.Time; // spread by 15 seconds
                 insertParms.ExpirationTime = Platform.Time.AddMinutes(1);
 
-			    WebDeleteStudyData extendedData = new WebDeleteStudyData();
+			    WebDeleteStudyLevelQueueData extendedData = new WebDeleteStudyLevelQueueData();
                 extendedData.Reason = reason;
                 insertParms.WorkQueueData = XmlUtils.SerializeAsXmlDoc(extendedData);
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
