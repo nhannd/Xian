@@ -49,6 +49,8 @@
     </Compile>
     <Compile Include="DicomExplorerConfigurationPageProvider.cs" />
     <Compile Include="SearchPanelComponent.cs" />
+    <Compile Include="SearchResult.cs" />
+    <Compile Include="FilterDuplicateStudiesTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -124,6 +126,9 @@
     <EmbeddedResource Include="Icons\OpenToolLarge.png" />
     <EmbeddedResource Include="Icons\OpenToolMedium.png" />
     <EmbeddedResource Include="Icons\OpenToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowAllStudiesToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

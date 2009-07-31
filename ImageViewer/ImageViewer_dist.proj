@@ -55,7 +55,7 @@
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeEnterprise+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeHttpDesktopServices+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
         <!--<OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeMpr+ExcludeSeriesDetails</OptionsFlags>-->
-        <OptionsFlags>ExcludeStudyComposer+ExcludeStudyFilters+ExcludeEnterprise+ExcludeMpr</OptionsFlags>
+        <OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>

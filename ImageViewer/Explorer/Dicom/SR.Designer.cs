@@ -363,11 +363,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide duplicate studies.
+        /// </summary>
+        internal static string TooltipHideDuplicateStudies {
+            get {
+                return ResourceManager.GetString("TooltipHideDuplicateStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open study.
         /// </summary>
         internal static string TooltipOpenStudy {
             get {
                 return ResourceManager.GetString("TooltipOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show all studies.
+        /// </summary>
+        internal static string TooltipShowAllStudies {
+            get {
+                return ResourceManager.GetString("TooltipShowAllStudies", resourceCulture);
             }
         }
         

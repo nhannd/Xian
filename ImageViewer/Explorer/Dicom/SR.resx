@@ -221,8 +221,14 @@ Are you sure you want to continue?</value>
   <data name="ToolbarOpenStudy" xml:space="preserve">
     <value>Open</value>
   </data>
+  <data name="TooltipHideDuplicateStudies" xml:space="preserve">
+    <value>Hide duplicate studies</value>
+  </data>
   <data name="TooltipOpenStudy" xml:space="preserve">
     <value>Open study</value>
+  </data>
+  <data name="TooltipShowAllStudies" xml:space="preserve">
+    <value>Show all studies</value>
   </data>
   <data name="ValidationInvalidCharacters" xml:space="preserve">
     <value>Contains invalid characters.</value>

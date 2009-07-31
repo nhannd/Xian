@@ -51,9 +51,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			ClearCanvasStyle.SetTitleBarStyle(_resultsTitleBar);
 
 			_studyBrowserComponent = component;
-			_studyBrowserComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
+			_studyBrowserComponent.StudyTableChanged += delegate { _studyTableView.Table = _studyBrowserComponent.StudyTable; };
 
-			_studyTableView.Table = _studyBrowserComponent.StudyList;
+			_studyTableView.Table = _studyBrowserComponent.StudyTable;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
 			_studyTableView.MenuModel = _studyBrowserComponent.ContextMenuModel;
 			_studyTableView.SelectionChanged += new EventHandler(OnStudyTableViewSelectionChanged);
@@ -63,11 +63,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_bindingSource.DataSource = _studyBrowserComponent;
 
 			_resultsTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "ResultsTitle", true, DataSourceUpdateMode.OnPropertyChanged);
-		}
-
-		void OnSelectedServerChanged(object sender, EventArgs e)
-		{
-            _studyTableView.Table = _studyBrowserComponent.StudyList;
 		}
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)

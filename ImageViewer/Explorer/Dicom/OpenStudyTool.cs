@@ -46,7 +46,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[IconSet("activate", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
 
 	[ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Open)]
-	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{
 		public OpenStudyTool()
