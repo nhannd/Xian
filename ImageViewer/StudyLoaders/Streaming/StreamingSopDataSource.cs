@@ -38,6 +38,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -237,8 +238,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					// log the retry (exception trace at debug level only)
 					Platform.Log(LogLevel.Warn, "Failed to retrieve headers for Sop '{0}'; Retrying in {1} ms", this.SopInstanceUid, retryDelay);
 					Platform.Log(LogLevel.Debug, ex, "[GetHeaders Fail-Retry] Sop: {0}, Retry in: {1} ms", this.SopInstanceUid, retryDelay);
-					Thread.Sleep(retryDelay);
-
+					
+					MemoryManager.Collect(retryDelay);
 					retryDelay *= 2;
 				}
 			}

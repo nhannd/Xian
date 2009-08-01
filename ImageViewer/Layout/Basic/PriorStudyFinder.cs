@@ -135,6 +135,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
 					foreach (StudyRootStudyIdentifier study in studies)
 					{
+						if (_cancel)
+							break;
+
 						StudyItem studyItem = ConvertToStudyItem(study);
 						if (studyItem != Null)
 							results.Add(studyItem);

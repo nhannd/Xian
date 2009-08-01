@@ -36,6 +36,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Threading;
@@ -304,8 +305,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						// log the retry (exception trace at debug level only)
 						Platform.Log(LogLevel.Warn, "Failed to retrieve pixel data for Sop '{0}'; Retrying in {1} ms", this.SopInstanceUid, retryDelay);
 						Platform.Log(LogLevel.Debug, ex, "[Retrieve Fail-Retry] Sop/Frame: {0}/{1}, Retry in: {2} ms", this.SopInstanceUid, this.FrameNumber - 1, retryDelay);
-						Thread.Sleep(retryDelay);
-
+						MemoryManager.Collect(retryDelay);
 						retryDelay *= 2;
 					}
 				}

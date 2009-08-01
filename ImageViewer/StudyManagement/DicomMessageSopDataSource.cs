@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -282,13 +283,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				clock.Start();
 
 				PhotometricInterpretation photometricInterpretation;
-				byte[] rawPixelData;
+				byte[] rawPixelData = null;
 
 				if (!message.TransferSyntax.Encapsulated)
 				{
 					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
 					// DICOM library uses zero-based frame numbers
-					rawPixelData = pixelData.GetFrame(_frameIndex);
+					MemoryManager.Execute(delegate
+					                      	{
+					                      		rawPixelData = pixelData.GetFrame(_frameIndex);
+					                      	}, 1500);
 
 					ExtractOverlayFrames(rawPixelData, pixelData.BitsAllocated);
 
@@ -297,8 +301,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
 				{
 					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
-					string pi;
-					rawPixelData = pixelData.GetFrame(_frameIndex, out pi);
+					string pi = null;
+					
+					MemoryManager.Execute(delegate
+					                      	{
+					                      		rawPixelData = pixelData.GetFrame(_frameIndex, out pi);
+											}, 1500);
+
 					photometricInterpretation = PhotometricInterpretation.FromCodeString(pi);
 				}
 				else
@@ -590,7 +599,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			int rows = dicomAttributeProvider[DicomTags.Rows].GetInt32(0, 0);
 			int columns = dicomAttributeProvider[DicomTags.Columns].GetInt32(0, 0);
 			int sizeInBytes = rows * columns * 4;
-			byte[] argbPixelData = new byte[sizeInBytes];
+			byte[] argbPixelData = MemoryManager.Allocate<byte>(sizeInBytes);
 
 			// Convert palette colour images to ARGB so we don't get interpolation artifacts
 			// when rendering.

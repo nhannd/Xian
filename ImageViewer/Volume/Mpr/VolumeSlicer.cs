@@ -42,6 +42,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using vtk;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -441,7 +442,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int[] sliceDimensions = sliceImageData.GetDimensions();
 			int sliceDataSize = sliceDimensions[0] * sliceDimensions[1];
 			IntPtr sliceDataPtr = sliceImageData.GetScalarPointer();
-			byte[] pixelData = new byte[sliceDataSize * sizeof(short)];
+			byte[] pixelData = MemoryManager.Allocate<byte>(sliceDataSize * sizeof(short));
 
 			Marshal.Copy(sliceDataPtr, pixelData, 0, sliceDataSize * sizeof(short));
 			return pixelData;
@@ -525,7 +526,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int sliceDataSize = sliceDimensions[0] * sliceDimensions[1];
 			IntPtr slabDataPtr = slabImageData.GetScalarPointer();
 
-			byte[] pixelData = new byte[sliceDataSize * sizeof(short)];
+			byte[] pixelData = MemoryManager.Allocate<byte>(sliceDataSize * sizeof(short));
 
 			// Init with first slice
 			Marshal.Copy(slabDataPtr, pixelData, 0, sliceDataSize * sizeof(short));

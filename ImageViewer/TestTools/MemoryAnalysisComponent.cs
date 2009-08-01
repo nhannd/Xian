@@ -157,11 +157,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 		public void Collect()
 		{
-			for (int i = 0; i < 5; ++i)
-			{
-				Thread.Sleep(500);
-				GC.Collect();
-			}
+			MemoryManager.Collect();
 		}
 
 		public override void Start()

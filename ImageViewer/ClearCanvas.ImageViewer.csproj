@@ -119,6 +119,9 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Common\Diagnostics.cs" />
+    <Compile Include="Common\ILargeObjectContainer.cs" />
+    <Compile Include="Common\MemoryManagementStrategy.cs" />
+    <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="DicomPresentationImageSettings.cs" />
     <Compile Include="DicomPresentationImageSettings.Designer.cs">

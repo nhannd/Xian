@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.Common;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -123,7 +125,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Base implementation of a <see cref="SopFrameData"/> with built-in resource mamangement.
 		/// </summary>
-		protected abstract class StandardSopFrameData : SopFrameData
+		protected abstract class StandardSopFrameData : SopFrameData, ILargeObjectContainer
 		{
 			/// <summary>
 			/// Gets a lock object suitable for synchronizing access to the frame data.
@@ -133,6 +135,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			private readonly Dictionary<int, byte[]> _overlayData = new Dictionary<int, byte[]>();
 			private volatile byte[] _pixelData = null;
 
+			private readonly LargeObjectContainerData _largeObjectContainerData = new LargeObjectContainerData(Guid.NewGuid().ToString());
+
 			/// <summary>
 			/// Constructs a new <see cref="StandardSopFrameData"/>
 			/// </summary>
@@ -140,7 +144,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
 			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
 			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
-			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent) : base(frameNumber, parent) {}
+			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent)
+				: this(frameNumber, parent, RegenerationCost.Low)
+			{
+			}
+
+			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent, RegenerationCost regenerationCost) 
+				: base(frameNumber, parent)
+			{
+				_largeObjectContainerData.RegenerationCost = regenerationCost;
+			}
 
 			/// <summary>
 			/// Gets the parent <see cref="StandardSopDataSource"/> to which this frame belongs.
@@ -148,6 +161,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public new StandardSopDataSource Parent
 			{
 				get { return (StandardSopDataSource) base.Parent; }
+			}
+
+			protected RegenerationCost RegenerationCost
+			{
+				get { return _largeObjectContainerData.RegenerationCost; }
+				set { _largeObjectContainerData.RegenerationCost = value; }
 			}
 
 			/// <summary>
@@ -181,6 +200,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </remarks>		
 			public override byte[] GetNormalizedPixelData()
 			{
+				_largeObjectContainerData.LastAccessTime = Platform.Time;
+
 				byte[] pixelData = _pixelData;
 				if (pixelData == null)
 				{
@@ -191,12 +212,38 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						{
 							pixelData = _pixelData = CreateNormalizedPixelData();
 							if (pixelData != null)
+							{
+								Platform.Log(LogLevel.Debug, "Created pixel data of length {0}", pixelData.Length);
+								UpdateLargeObjectInfo();
+								MemoryManager.Add(this);
 								Diagnostics.OnLargeObjectAllocated(pixelData.Length);
+							}
 						}
 					}
 				}
 
 				return pixelData;
+			}
+
+			private void UpdateLargeObjectInfo()
+			{
+				if (_pixelData == null)
+				{
+					_largeObjectContainerData.LargeObjectCount = 0;
+					_largeObjectContainerData.TotalBytesHeld = 0;
+				}
+				else
+				{
+					_largeObjectContainerData.LargeObjectCount = 1;
+					_largeObjectContainerData.TotalBytesHeld = _pixelData.Length;
+				}
+
+				_largeObjectContainerData.LargeObjectCount += _overlayData.Count;
+				foreach (KeyValuePair<int, byte[]> pair in _overlayData)
+				{
+					if (pair.Value != null)
+						_largeObjectContainerData.TotalBytesHeld += (long)pair.Value.Length;
+				}
 			}
 
 			/// <summary>
@@ -215,6 +262,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <returns>A byte buffer containing the normalized overlay pixel data.</returns>
 			public override byte[] GetNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
+				_largeObjectContainerData.LastAccessTime = Platform.Time;
+
 				if(overlayGroupNumber < 1)
 					throw new ArgumentOutOfRangeException("overlayGroupNumber", overlayGroupNumber, "Must be a positive, non-zero number.");
 				if (overlayFrameNumber < 1)
@@ -229,7 +278,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						_overlayData[key] = data = CreateNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber);
 						if (data != null)
+						{
+							UpdateLargeObjectInfo();
+							MemoryManager.Add(this);
 							Diagnostics.OnLargeObjectAllocated(data.Length);
+						}
 					}
 
 					return data;
@@ -264,6 +317,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					_pixelData = null;
 					_overlayData.Clear();
 					this.OnUnloaded();
+
+					UpdateLargeObjectInfo();
+					MemoryManager.Remove(this);
 				}
 			}
 
@@ -287,6 +343,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					lock (this.SyncLock)
 					{
 						ReportLargeObjectsUnloaded();
+
+						_pixelData = null;
+						_overlayData.Clear();
+
+						MemoryManager.Remove(this);
 					}
 				}
 			}
@@ -302,6 +363,50 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						Diagnostics.OnLargeObjectReleased(overlayData.Length);
 				}
 			}
+
+			#region ILargeObjectContainer Members
+
+			string ILargeObjectContainer.Identifier
+			{
+				get { return _largeObjectContainerData.Identifier; }
+			}
+
+			int ILargeObjectContainer.LargeObjectCount
+			{
+				get { return _largeObjectContainerData.LargeObjectCount; }
+			}
+
+			long ILargeObjectContainer.TotalBytesHeld
+			{
+				get { return _largeObjectContainerData.TotalBytesHeld; }
+			}
+
+			DateTime ILargeObjectContainer.LastAccessTime
+			{
+				get { return _largeObjectContainerData.LastAccessTime; }
+			}
+
+			RegenerationCost ILargeObjectContainer.RegenerationCost
+			{
+				get { return _largeObjectContainerData.RegenerationCost; }
+			}
+
+			bool ILargeObjectContainer.IsLocked
+			{
+				get { return _largeObjectContainerData.IsLocked; }
+			}
+
+			void ILargeObjectContainer.Lock()
+			{
+				_largeObjectContainerData.Lock();
+			}
+
+			void ILargeObjectContainer.Unlock()
+			{
+				_largeObjectContainerData.Unlock();
+			}
+
+			#endregion
 		}
 
 		#endregion

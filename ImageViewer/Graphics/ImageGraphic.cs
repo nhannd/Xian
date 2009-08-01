@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Validation;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -102,13 +103,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <paramref name="columns"/> is negative, or <paramref name="bitsPerPixel"/>
 		/// is not one of 8, 16 or 32.</exception>
 		protected ImageGraphic(int rows, int columns, int bitsPerPixel)
-			: this(rows, columns, bitsPerPixel, new byte[rows * columns * bitsPerPixel / 8])
+			: this(rows, columns, bitsPerPixel, AllocatePixelData(rows, columns, bitsPerPixel))
 		{
 		}
 
+		private static byte[] AllocatePixelData(int rows, int columns, int bitsPerPixel)
+		{
+			return MemoryManager.Allocate<byte>(rows*columns*bitsPerPixel/8);
+		}
+
 		/// <summary>
-		/// Initializes a new instance of <see cref="ImageGraphic"/>
-		/// with the specified image parameters.
+		/// Initializes a new instance of <see cref="ImageGraphic"/>		/// with the specified image parameters.
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>

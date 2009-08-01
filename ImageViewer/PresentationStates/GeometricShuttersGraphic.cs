@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 			int stride = _imageRectangle.Width*4;
 			int size = _imageRectangle.Height*stride;
-			_buffer = new byte[size];
+			_buffer = MemoryManager.Allocate<byte>(size);
 			Diagnostics.OnLargeObjectAllocated(_buffer.Length);
 
 			GCHandle bufferHandle = GCHandle.Alloc(_buffer, GCHandleType.Pinned);

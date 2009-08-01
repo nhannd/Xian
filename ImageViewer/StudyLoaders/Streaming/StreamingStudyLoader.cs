@@ -35,7 +35,6 @@ using System.IO;
 using System.IO.Compression;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageViewer.Services.Auditing;
@@ -122,6 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				using (Stream stream = client.GetStudyHeader(ServerTree.GetClientAETitle(), headerParams))
 				{
 					headerXmlDocument = DecompressHeaderStreamToXml(stream);
+					stream.Close();
 				}
 				client.Close();
 				return headerXmlDocument;
@@ -148,9 +148,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private static XmlDocument DecompressHeaderStreamToXml(Stream stream)
 		{
 			GZipStream gzStream = new GZipStream(stream, CompressionMode.Decompress);
+			XmlDocument doc;
+			using (gzStream)
+			{
+				doc = new XmlDocument();
+				doc.Load(gzStream);
+				Platform.Log(LogLevel.Debug, "Unzipped gzip header stream");
 
-			XmlDocument doc = new XmlDocument();
-			doc.Load(gzStream);
+				gzStream.Close();
+			}
+
 			return doc;
 		}
 	}
