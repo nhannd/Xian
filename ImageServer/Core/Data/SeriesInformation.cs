@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 		private string _seriesDescription;
 		private string _modality;
 		private int _numberOfInstances = 0;
+	    private string _sourceAE;
 		#endregion
 
 		#region Constructors
@@ -62,6 +63,8 @@ namespace ClearCanvas.ImageServer.Core.Data
 				SeriesDescription = attributeProvider[DicomTags.SeriesDescription].ToString();
 			if (attributeProvider[DicomTags.Modality] != null)
 				Modality = attributeProvider[DicomTags.Modality].ToString();
+            if (attributeProvider[DicomTags.SourceApplicationEntityTitle] != null)
+                SourceAE = attributeProvider[DicomTags.SourceApplicationEntityTitle].ToString();
 
             if (attributeProvider[DicomTags.NumberOfSeriesRelatedInstances] != null)
                 Int32.TryParse(attributeProvider[DicomTags.NumberOfSeriesRelatedInstances].ToString(), out _numberOfInstances);
@@ -83,19 +86,26 @@ namespace ClearCanvas.ImageServer.Core.Data
 			get { return _modality; }
 			set { _modality = value; }
 		}
-		public string SeriesDescription
+
+        public string SeriesDescription
 		{
 			get { return _seriesDescription; }
 			set { _seriesDescription = value; }
 		}
 
-		public int NumberOfInstances
+        public int NumberOfInstances
 		{
 			get { return _numberOfInstances; }
 			set { _numberOfInstances = value; }
 		}
 
-		#endregion
+        public string SourceAE
+	    {
+	        get { return _sourceAE; }
+	        set { _sourceAE = value; }
+	    }
+
+	    #endregion
 
 	}
 }

@@ -31,7 +31,9 @@
 
 
 using System.Web.UI;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy.Extensions.LogHistory;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code

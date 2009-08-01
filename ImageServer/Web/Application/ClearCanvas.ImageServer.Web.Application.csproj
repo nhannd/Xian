@@ -332,6 +332,7 @@
     <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ProcessDuplicateChangeLogRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ReconcileStudyRendererFactory.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Code\SeriesDeletionChangeLogRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyEditRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyHistoryDecoder.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyReprocessedChangeLogRendererFactory.cs" />
@@ -362,6 +363,13 @@
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\ReconcileHistoryDetailsColumn.ascx.designer.cs">
       <DependentUpon>ReconcileHistoryDetailsColumn.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx.cs">
+      <DependentUpon>SeriesDeleteChangeLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx.designer.cs">
+      <DependentUpon>SeriesDeleteChangeLog.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx.cs">
       <DependentUpon>StudyHistoryChangeDescPanel.ascx</DependentUpon>
@@ -1344,6 +1352,7 @@
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
     <Content Include="Pages\Test\TestSeriesDelete.aspx" />
     <Content Include="Scripts\jquery\jquery.scrollabletable.js" />

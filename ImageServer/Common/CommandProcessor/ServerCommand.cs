@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using System.Xml.Serialization;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
@@ -51,7 +53,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly ServerCommandStatistics _stats;
         private ExecutionContext _executionContext;
 	    private bool _rollBackRequested;
-	    #endregion
+
+	    private EventHandler _executingEventHandlers;
+        #endregion
 
 		#region Public property
 
@@ -122,6 +126,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	    #endregion
 
 		#region Events
+        /// <summary>
+        /// Occurs when <see cref="Execute"/> begins.
+        /// </summary>
+        public event EventHandler Executing
+        {
+            add { _executingEventHandlers += value; }
+            remove { _executingEventHandlers -= value; }
+        }
 		#endregion
 
 		#region Public Methods
@@ -133,6 +145,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			try
 			{
 				_stats.Start();
+                EventsHelper.Fire(_executingEventHandlers, this, new EventArgs());
 				OnExecute();    
 			}
 			finally

@@ -37,6 +37,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -51,10 +52,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
     public class WebDeleteStudyItemProcessor : DeleteStudyItemProcessor
     {
         private DeletionLevel _level;
+        private string _reason;
+        private string _userId;
+        private IList<IWebDeleteProcessorExtension> _extensions;
+        private List<Series> _seriesToDelete;
 
         public DeletionLevel Level
         {
             get { return _level; }
+        }
+
+        public string Reason
+        {
+            get { return _reason; }
+        }
+
+        public string UserID
+        {
+            get { return _userId; }
         }
 
         #region Overridden Protected Methods
@@ -65,6 +80,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
             WebDeleteWorkQueueEntryData data = ParseQueueData(item);
             _level = data.Level;
+            _reason = data.Reason;
+            _userId = data.UserId;
         }
 
         protected override void ProcessItem(Model.WorkQueue item)
@@ -114,9 +131,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             Study study = StorageLocation.Study;
             Platform.CheckForNullReference(study, "Study record doesn't exist");
 
-            Platform.Log(LogLevel.Info, "Processing Series Level Deletion for Study {1}, A#: {2}",
+            Platform.Log(LogLevel.Info, "Processing Series Level Deletion for Study {0}, A#: {1}",
                                          study.StudyInstanceUid, study.AccessionNumber);
 
+            _seriesToDelete = new List<Series>();
             bool completed = false;
             try
             {
@@ -128,11 +146,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                     StudyXml studyXml = StorageLocation.LoadStudyXml();
                     IList<Series> existingSeries = StorageLocation.Study.Series;
 
+                    // Add commands to delete the folders and update the xml
                     foreach (string seriesUid in queueData.SeriesInstanceUids)
                     {
-                        Platform.Log(LogLevel.Info, "Deleting Series {0} from Study {1}, A#: {2}", seriesUid,
-                                         study.StudyInstanceUid, study.AccessionNumber);
-
                         // Delete from study XML
                         if (studyXml.Contains(seriesUid))
                         {
@@ -148,16 +164,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                             DeleteDirectoryCommand delDir = new DeleteDirectoryCommand(path, true);
                             processor.AddCommand(delDir);
                         }
-
-                        // Delete from DB
-                        bool existInDB = CollectionUtils.Contains(existingSeries, delegate(Series series) { return series.SeriesInstanceUid == seriesUid; });
-                        if (existInDB)
-                        {
-                            DeleteSeriesFromDBCommand delSeries = new DeleteSeriesFromDBCommand(StorageLocation, seriesUid);
-                            processor.AddCommand(delSeries);
-                        }
-
                     }
+
+                    // Add commands to update the db.. these commands are executed at the end.
+                    foreach (string seriesUid in queueData.SeriesInstanceUids)
+                    {
+                        // Delete from DB
+                        Series theSeries = CollectionUtils.SelectFirst(existingSeries, delegate(Series series) { return series.SeriesInstanceUid == seriesUid; });
+                        if (theSeries!=null)
+                        {
+                            _seriesToDelete.Add(theSeries);
+                            DeleteSeriesFromDBCommand delSeries = new DeleteSeriesFromDBCommand(StorageLocation, theSeries);
+                            processor.AddCommand(delSeries);
+                            delSeries.Executing += new EventHandler(DeleteSeriesFromDB_Executing);
+                        }
+                    }
+
+                    processor.AddCommand(new SaveXmlCommand(studyXml, StorageLocation));
 
                     if (!processor.Execute())
                         throw new ApplicationException(
@@ -165,8 +188,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                                          study.StudyInstanceUid, study.AccessionNumber));
                     else
                     {
-                        Platform.Log(LogLevel.Info, "Updating study xml...");
-                        WriteStudyStream(StorageLocation.GetStudyXmlPath(), StorageLocation.GetCompressedStudyXmlPath(), studyXml);
+                        foreach (Series series in _seriesToDelete)
+                        {
+                            OnSeriesDeleted(series);
+                        }
                     }
                 }
 
@@ -177,6 +202,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             {
                 if (completed)
                 {
+                    OnCompleted();
                     PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
                 }
                 else
@@ -185,6 +211,75 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                 }
             }
             
+        }
+
+        private void OnCompleted()
+        {
+            EnsureWebDeleteExtensionsLoaded();
+            foreach (IWebDeleteProcessorExtension extension in _extensions)
+            {
+                try
+                {
+                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, Reason, UserID);
+                    extension.OnCompleted(context, _seriesToDelete);
+                }
+                catch (Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Error occurred in the extension but was ignored");
+                }
+            }
+        }
+
+
+        private void DeleteSeriesFromDB_Executing(object sender, EventArgs e)
+        {
+            DeleteSeriesFromDBCommand cmd = sender as DeleteSeriesFromDBCommand;
+            OnDeletingSeriesInDatabase(cmd.Series);
+        }
+
+        private void OnDeletingSeriesInDatabase(Series series)
+        {
+            EnsureWebDeleteExtensionsLoaded();
+            foreach(IWebDeleteProcessorExtension extension in _extensions)
+            {
+                try
+                {
+                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, Reason, UserID);
+                    extension.OnSeriesDeleting(context, series);
+                }   
+                catch(Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Error occurred in the extension but was ignored");
+                }
+            }
+
+        }
+        private void OnSeriesDeleted(Series seriesUid)
+        {
+            EnsureWebDeleteExtensionsLoaded();
+            foreach (IWebDeleteProcessorExtension extension in _extensions)
+            {
+                try
+                {
+                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, Reason, UserID);
+                    extension.OnSeriesDeleted(context, seriesUid);
+                }
+                catch (Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Error occurred in the extension but was ignored");
+                }
+            }
+        }
+
+        private IList<IWebDeleteProcessorExtension> EnsureWebDeleteExtensionsLoaded()
+        {
+            if (_extensions==null)
+            {
+                WebDeleteProcessorExtensionPoint xp = new WebDeleteProcessorExtensionPoint();
+                _extensions = CollectionUtils.Cast<IWebDeleteProcessorExtension>(xp.CreateExtensions());    
+            }
+
+            return _extensions;
         }
 
         private void ProcessStudyLevelDelete(Model.WorkQueue item)
@@ -218,51 +313,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                              Study.AccessionNumber, ServerPartition.Description);
         }
 
-        private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
-        {
-            XmlDocument doc = theStream.GetMemento(new StudyXmlOutputSettings());
-
-            // allocate the random number generator here, in case we need it below
-            Random rand = new Random();
-            string tmpStreamFile = streamFile + "_tmp";
-            string tmpGzStreamFile = gzStreamFile + "_tmp";
-            for (int i = 0; ; i++)
-                try
-                {
-                    if (File.Exists(tmpStreamFile))
-                        FileUtils.Delete(tmpStreamFile);
-                    if (File.Exists(tmpGzStreamFile))
-                        FileUtils.Delete(tmpGzStreamFile);
-
-                    using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
-                                      gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
-                    {
-                        StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
-                        xmlStream.Close();
-                        gzipStream.Close();
-                    }
-
-                    if (File.Exists(streamFile))
-                        FileUtils.Delete(streamFile);
-                    File.Move(tmpStreamFile, streamFile);
-                    if (File.Exists(gzStreamFile))
-                        FileUtils.Delete(gzStreamFile);
-                    File.Move(tmpGzStreamFile, gzStreamFile);
-                    return;
-                }
-                catch (IOException)
-                {
-                    if (i < 5)
-                    {
-                        Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
-                        continue;
-                    }
-
-                    throw;
-                }
-        } 
+        
         #endregion
     
     }
 
+    internal class DeleteSeriesCommandProcessorEventArgs:EventArgs
+    {
+        private readonly string _seriesInstanceUid;
+
+        public DeleteSeriesCommandProcessorEventArgs(string seriesInstanceUid)
+        {
+            _seriesInstanceUid = seriesInstanceUid;
+        }
+
+        public string SeriesInstanceUid
+        {
+            get { return _seriesInstanceUid; }
+        }
+    }
 }

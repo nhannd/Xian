@@ -18,6 +18,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
     {
         private DeletionLevel _level;
         private string _reason;
+        private string _userId;
+        private string _userName;
+        private DateTime _timestamp;
 
         public string Reason
         {
@@ -29,6 +32,23 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             get { return _level; }
             set { _level = value; }
+        }
+
+        public string UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        public DateTime Timestamp
+        {
+            get { return _timestamp; }
+            set { _timestamp = value; }
+        }
+
+        public WebDeleteWorkQueueEntryData()
+        {
+            this.Level = DeletionLevel.Series;
         }
     }
 
@@ -44,26 +64,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
     [XmlRoot("WebDeleteWorkQueueEntry")]
     public class WebDeleteSeriesLevelQueueData : WebDeleteWorkQueueEntryData
     {
-        private string _userName;
-        private DateTime _timestamp;
         private List<string> _seriesInstanceUids;
-
-        public WebDeleteSeriesLevelQueueData()
-        {
-            this.Level = DeletionLevel.Series;
-        }
-
-        public string UserName
-        {
-            get { return _userName; }
-            set { _userName = value; }
-        }
-
-        public DateTime Timestamp
-        {
-            get { return _timestamp; }
-            set { _timestamp = value; }
-        }
 
         public List<string> SeriesInstanceUids
         {

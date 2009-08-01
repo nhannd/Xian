@@ -133,9 +133,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             data.Timestamp = Platform.Time;
             data.Reason = reason;
             data.Timestamp = now;
-            data.UserName = ServerHelper.CurrentUserName;
-
-            
+            data.UserId = ServerHelper.CurrentUserName;
             
             this.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
             this.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;

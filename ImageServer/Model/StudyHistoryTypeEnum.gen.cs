@@ -47,6 +47,7 @@ public partial class StudyHistoryTypeEnum : ServerEnum
       private static readonly StudyHistoryTypeEnum _WebEdited = GetEnum("WebEdited");
       private static readonly StudyHistoryTypeEnum _Duplicate = GetEnum("Duplicate");
       private static readonly StudyHistoryTypeEnum _Reprocessed = GetEnum("Reprocessed");
+      private static readonly StudyHistoryTypeEnum _SeriesDeleted = GetEnum("SeriesDeleted");
       #endregion
 
       #region Public Static Properties
@@ -77,6 +78,13 @@ public partial class StudyHistoryTypeEnum : ServerEnum
       public static StudyHistoryTypeEnum Reprocessed
       {
           get { return _Reprocessed; }
+      }
+      /// <summary>
+      /// One or more series was deleted manually.
+      /// </summary>
+      public static StudyHistoryTypeEnum SeriesDeleted
+      {
+          get { return _SeriesDeleted; }
       }
 
       #endregion

@@ -29,44 +29,61 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 {
-    internal class DeleteSeriesFromDBCommand : ServerDatabaseCommand
+    public class WebDeleteProcessorContext
     {
-        private readonly StudyStorageLocation _location;
-        private readonly Series _series;
+        private readonly WebDeleteStudyItemProcessor _processor;
+        private readonly DeletionLevel _level;
+        private readonly string _reason;
+        private readonly string _userName;
+        private readonly StudyStorageLocation _storageLocation;
 
-        public DeleteSeriesFromDBCommand(StudyStorageLocation location, Series series)
-            : base(String.Format("Delete Series In DB {0}", series.SeriesInstanceUid), true)
+        public WebDeleteProcessorContext(WebDeleteStudyItemProcessor processor, DeletionLevel level, StudyStorageLocation storageLocation, string reason, string userName)
         {
-            _location = location;
-            _series = series;
+            _processor = processor;
+            _storageLocation = storageLocation;
+            _userName = userName;
+            _reason = reason;
+            _level = level;
         }
 
-        public Series Series
+        public WebDeleteStudyItemProcessor Processor
         {
-            get { return _series; }
+            get { return _processor; }
         }
 
-
-        protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+        public DeletionLevel Level
         {
-            IDeleteSeries broker = updateContext.GetBroker<IDeleteSeries>();
-            DeleteSeriesParameters criteria = new DeleteSeriesParameters();
-            criteria.StudyStorageKey = _location.Key;
-            criteria.SeriesInstanceUid = _series.SeriesInstanceUid;
-            if (!broker.Execute(criteria))
-                throw new ApplicationException("Error occurred when calling DeleteSeries");
+            get { return _level; }
+        }
+
+        public string Reason
+        {
+            get { return _reason; }
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+        }
+
+        public StudyStorageLocation StorageLocation
+        {
+            get { return _storageLocation; }
         }
     }
-
-    internal class DeleteSeriesFromDBCommandEventArgs:EventArgs
+    public interface IWebDeleteProcessorExtension
     {
+        void OnSeriesDeleting(WebDeleteProcessorContext context, Series series);
+        void OnSeriesDeleted(WebDeleteProcessorContext context, Series series);
+        void OnCompleted(WebDeleteProcessorContext context, IList<Series> series);
     }
+
+    public class WebDeleteProcessorExtensionPoint:ExtensionPoint<IWebDeleteProcessorExtension>{}
 }

@@ -905,7 +905,11 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
            (newid(),202,'Reprocessed','Study was reprocessed','Study was reprocessed.')
 GO
 
-
+INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),203,'SeriesDeleted','One or more series was deleted','One or more series was deleted manually.')
+GO
 
 
 -- Canned Text

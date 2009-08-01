@@ -132,6 +132,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                           }
 
                                           FileInfo file = new FileInfo(filePath);
+
+                                          // if the file is located in a "deleted" directory then skip it
+                                          if (file.DirectoryName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase))
+                                              return;
+					    
+
                                           if (file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
                                           {
                                               fileList.Add(file);    
@@ -197,13 +203,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
                 foreach(DirectoryInfo dateDir in partitionDir.GetDirectories())
                 {
-					if (dateDir.FullName.EndsWith("Deleted")
-						|| dateDir.FullName.EndsWith("Reconcile"))
+                    if (dateDir.FullName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase)
+                        || dateDir.FullName.EndsWith("Reconcile", StringComparison.InvariantCultureIgnoreCase))
 						continue;
                 	List<FileInfo> fileList;
 
 					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
 					{
+                        if (studyDir.FullName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase))
+                            continue;
+					    
 						// Check for Cancel message
 						if (CancelPending) return;
 

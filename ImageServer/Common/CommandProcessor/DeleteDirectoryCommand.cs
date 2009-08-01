@@ -42,8 +42,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     {
         #region Private Members
         private readonly string _dir;
-        private string _backupDir;
         private readonly bool _failIfError;
+        private bool _sourceDirRenamed;
+
         #endregion
 
         #region Constructors
@@ -66,7 +67,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
             try
             {
-                DirectoryUtility.DeleteIfExists(_dir);
+                if (Directory.Exists(_dir))
+                {
+                    Directory.Move(_dir, _dir +".deleted");
+                    _sourceDirRenamed = true;
+                }
+                
             }
             catch (Exception ex)
             {
@@ -82,20 +88,20 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         protected override void OnUndo()
         {
-            if (Directory.Exists(_backupDir))
+            // the directory has been backed up.. it can be restored
+            try
             {
-                // the directory has been backed up.. it can be restored
-                try
+                if (_sourceDirRenamed)
                 {
-                    DirectoryUtility.DeleteIfExists(_dir);
-                    DirectoryUtility.Copy(_backupDir, _dir);
-                }
-                catch (Exception ex)
-                {
-                    Platform.Log(LogLevel.Error, ex, "Error occurred while restoring {0}", _dir);
-                    throw;
+                    Directory.Move(_dir + ".deleted", _dir);
                 }
             }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, "Error occurred while restoring {0}", _dir);
+                throw;
+            }
+            
         }
 
         #endregion
@@ -104,11 +110,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         private void Backup()
         {
-            if (Directory.Exists(_dir))
-            {
-                _backupDir = Path.Combine(ExecutionContext.BackupDirectory, "CopyDirSrcFolder");
-                DirectoryUtility.Copy(_dir, _backupDir);
-            }
+            //if (Directory.Exists(_dir))
+            //{
+            //    _backupDir = Path.Combine(ExecutionContext.BackupDirectory, "CopyDirSrcFolder");
+            //    DirectoryUtility.Copy(_dir, _backupDir);
+            //}
         }
 
         #endregion
@@ -117,16 +123,21 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         public void Dispose()
         {
-            if (Directory.Exists(_backupDir))
+            //if (Directory.Exists(_backupDir))
+            //{
+            //    try
+            //    {
+            //        DirectoryUtility.DeleteIfExists(_backupDir);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Platform.Log(LogLevel.Warn, ex, "Error has occurred when cleaning up backup directory: {0}", _backupDir);
+            //    }
+            //}
+
+            if (!RollBackRequested)
             {
-                try
-                {
-                    DirectoryUtility.DeleteIfExists(_backupDir);
-                }
-                catch (Exception ex)
-                {
-                    Platform.Log(LogLevel.Warn, ex, "Error has occurred when cleaning up backup directory: {0}", _backupDir);
-                }
+                DirectoryUtility.DeleteIfExists(_dir + ".deleted");
             }
         }
 
