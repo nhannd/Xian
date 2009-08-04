@@ -62,9 +62,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         protected override void OnExecute()
         {
-            if (RequiresRollback)
-                Backup();
-
             try
             {
                 if (Directory.Exists(_dir))
@@ -106,35 +103,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #endregion
 
-        #region Private Methods
-
-        private void Backup()
-        {
-            //if (Directory.Exists(_dir))
-            //{
-            //    _backupDir = Path.Combine(ExecutionContext.BackupDirectory, "CopyDirSrcFolder");
-            //    DirectoryUtility.Copy(_dir, _backupDir);
-            //}
-        }
-
-        #endregion
 
         #region IDisposable Members
 
         public void Dispose()
         {
-            //if (Directory.Exists(_backupDir))
-            //{
-            //    try
-            //    {
-            //        DirectoryUtility.DeleteIfExists(_backupDir);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Platform.Log(LogLevel.Warn, ex, "Error has occurred when cleaning up backup directory: {0}", _backupDir);
-            //    }
-            //}
-
             if (!RollBackRequested)
             {
                 DirectoryUtility.DeleteIfExists(_dir + ".deleted");
