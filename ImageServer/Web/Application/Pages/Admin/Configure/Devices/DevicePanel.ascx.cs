@@ -240,8 +240,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 EditDeviceButton.Enabled = true;
                 DeleteDeviceButton.Enabled = true;
             }
-
-            DeviceGridViewControl1.Refresh();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

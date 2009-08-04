@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -228,13 +229,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             StudyProcessorContext context = new StudyProcessorContext(StorageLocation);
             SopInstanceProcessor processor = new SopInstanceProcessor(context);
             Dictionary<string, List<string>> seriesMap = new Dictionary<string, List<string>>();
-            int reprocessedFileCounter = 0;
+
             bool successful = true;
             string failureDescription = null;
             bool completed = false;
 
+            // The processor stores its state in the Data column
             LoadState(item);
-
+            
             StudyXml studyXml = LoadStudyXml();
 
             if (_queueData.State == null || !_queueData.State.ExecuteAtLeastOnce)
@@ -253,7 +255,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
             else
             {
-				if (Study == null)
+                if (_queueData.State.Completed)
+                {
+                    #region SAFE-GUARD CODE: PREVENT INFINITE LOOP
+                    // The processor indicated it had completed reprocessing in previous run. The entry should have been removed and this block of code should never be called.
+                    // However, we have seen ReprocessStudy entries that mysterously contain rows in the WorkQueueUid table.
+                    // The rows prevent the entry from being removed from the database and the ReprocessStudy keeps repeating itself.
+                    
+                    if (Platform.Time - item.ScheduledTime < TimeSpan.FromHours(12))
+                    {
+                        // maybe there was db error in previous attempt to remove the entry. Let's try again.
+                        Platform.Log(LogLevel.Info, "Resuming Reprocessing study {0} but it was already completed!!!", StorageLocation.StudyInstanceUid);
+                        PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                    }
+                    else
+                    {
+                        // we are definitely stuck.
+                        Platform.Log(LogLevel.Error, "ReprocessStudy {0} for study {1} appears stuck. Aborting it.", item.Key, StorageLocation.StudyInstanceUid);
+                        item.FailureDescription = "This entry had completed but could not be removed.";
+                        PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+                    }
+
+                    return;
+
+                    #endregion
+                }
+
+                if (Study == null)
 					Platform.Log(LogLevel.Info,
 								 "Resuming Reprocessing study {0} on Partition {1}", StorageLocation.StudyInstanceUid,
 								 ServerPartition.Description);
@@ -262,25 +290,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                              "Resuming Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
                              Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
                              Study.AccessionNumber, ServerPartition.Description);
+                
             }
 
-
+            int reprocessedCounter = 0;
             
             try
             {
+                // Traverse the directories, process 500 files at a time
                 FileProcessor.Process(StorageLocation.GetStudyPath(), "*.*",
                                       delegate(string path, out bool cancel)
                                           {
                                               #region Reprocess File
 
                                               FileInfo file = new FileInfo(path);
-                                              if (file.Extension.Equals(".dcm"))
+                                              
+                                              // ignore all files except those ending ".dcm"
+                                              // ignore "bad(0).dcm" files too
+                                              if (Regex.IsMatch(file.Name.ToUpper(), "[0-9]+\\.DCM$"))
                                               {
                                                   try
                                                   {
                                                       DicomFile dicomFile = new DicomFile(path);
-                                                      dicomFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
-
+                                                      dicomFile.Load(DicomReadOptions.StorePixelDataReferences);
+                                                      
                                                       string seriesUid = dicomFile.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
                                                       string instanceUid =dicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0,string.Empty);
                                                       if (studyXml.Contains(seriesUid, instanceUid))
@@ -289,7 +322,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                           {
                                                               seriesMap.Add(seriesUid, new List<string>());
                                                           }
-                                                          seriesMap[seriesUid].Add(instanceUid);
+                                                          if (!seriesMap[seriesUid].Contains(instanceUid))
+                                                              seriesMap[seriesUid].Add(instanceUid);
+                                                          else
+                                                          {
+                                                              Platform.Log(LogLevel.Warn, "SOP Instance UID in {0} appears more than once in the study.", path);
+                                                          }
                                                       }
                                                       else
                                                       {
@@ -299,20 +337,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                           switch (result.Status)
                                                           {
                                                               case ProcessingStatus.Success:
-                                                                  reprocessedFileCounter++;
+                                                                  reprocessedCounter++;
                                                                   if (!seriesMap.ContainsKey(seriesUid))
                                                                   {
                                                                       seriesMap.Add(seriesUid, new List<string>());
                                                                   }
-                                                                  seriesMap[seriesUid].Add(instanceUid);
 
-                                                                  Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessed SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
+                                                                  if (!seriesMap[seriesUid].Contains(instanceUid))
+                                                                      seriesMap[seriesUid].Add(instanceUid);
+                                                                  else
+                                                                  {
+                                                                      Platform.Log(LogLevel.Warn, "SOP Instance UID in {0} appears more than once in the study.", path);
+                                                                  }
                                                                   break;
 
                                                               case ProcessingStatus.Failed:
                                                                   Platform.Log(LogLevel.Error, "Failed to reprocess SOP {0} for study {1}", instanceUid, StorageLocation.StudyInstanceUid);
                                                                   // failureDescription = ""; TODO: augment the processor to return the error
                                                                   failureDescription = String.Format("Failed to reprocess SOP {0}", instanceUid);
+
+
                                                                   break;
                                                           }
                                                       }
@@ -330,21 +374,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                                  StorageLocation.Study.PatientId);
                                                   }
                                               }
-                                              else if (!file.Extension.Equals(".xml"))
+                                              else if (!file.Extension.Equals(".xml") && !file.Extension.Equals(".gz"))
                                               {
-                                                  // not a dicom file, delete it
+                                                  // not a ".dcm" or header file, delete it
                                                   FileUtils.Delete(path);
                                               }
 
                                               #endregion
 
-                                              cancel = reprocessedFileCounter >= 500;
+                                              cancel = reprocessedCounter >= 500;
                                           }, true);
-
-                completed = reprocessedFileCounter == 0;
 
                 EnsureConsistentObjectCount(studyXml, seriesMap);
                 SaveStudyXml(studyXml);
+
+                // Completed if either all files have been reprocessed 
+                // or no more dicom files left that can be reprocessed.
+                completed = reprocessedCounter == 0;
                 successful = true;
             }
             catch (Exception e)
@@ -357,44 +403,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
             finally
             {
+                // Update the state
+                _queueData.State.ExecuteAtLeastOnce = true;
+                _queueData.State.Completed = completed;
+                SaveState(item, _queueData);
+                    
                 if (!successful)
                 {
-                    // Update the queue state
-                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                    {
-                        _queueData.State.ExecuteAtLeastOnce = true;
-                        IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
-                        WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
-                        parms.Data = XmlUtils.SerializeAsXmlDoc(_queueData);
-                        broker.Update(item.GetKey(), parms);
-                        updateContext.Commit();
-                    }
-                    
                     FailQueueItem(item, failureDescription);
                 }
                 else 
                 {
                     if (!completed)
                     {
-                        #region Put back into Pending
-                        // Update the queue state
-                        using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                        {
-                            _queueData.State.ExecuteAtLeastOnce = true;
-                            IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
-                            WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
-                            parms.Data = XmlUtils.SerializeAsXmlDoc(_queueData);
-                            broker.Update(item.GetKey(), parms);
-                            updateContext.Commit();
-                        }
-
                         // Put it back to Pending
-                        PostProcessing(item, WorkQueueProcessorStatus.Pending, WorkQueueProcessorDatabaseUpdate.None); 
-                        #endregion
+                        PostProcessing(item, WorkQueueProcessorStatus.Pending, WorkQueueProcessorDatabaseUpdate.None);
                     }
                     else
                     {
-
                         LogHistory();
 
                         // Run Study / Series Rules Engine.
@@ -405,11 +431,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                         StorageLocation.LogFilesystemQueue();
 
                         PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-                        
+
                         Platform.Log(LogLevel.Info, "Completed reprocessing of study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Description);
+                        
                     }
                 
                 }
+            }
+        }
+
+        private void SaveState(Model.WorkQueue item, ReprocessStudyQueueData queueData)
+        {
+            // Update the queue state
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                queueData.State.ExecuteAtLeastOnce = true;
+                IWorkQueueEntityBroker broker = updateContext.GetBroker<IWorkQueueEntityBroker>();
+                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
+                parms.Data = XmlUtils.SerializeAsXmlDoc(_queueData);
+                broker.Update(item.GetKey(), parms);
+                updateContext.Commit();
             }
         }
 
@@ -434,7 +475,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
         private void LogHistory()
         {
-            Platform.Log(LogLevel.Info, "Logging history record...");
+            Platform.Log(LogLevel.Debug, "Logging history record...");
             using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 // create the change log based on info stored in the queue entry
@@ -504,6 +545,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
         private void EnsureConsistentObjectCount(StudyXml studyXml, IDictionary<string, List<string>> processedSeriesMap)
         {
+            // We have to ensure that the counts in studyXml and what we have processed are consistent.
+            // Files or folder may be reprocessed but then become missing when then entry is resumed.
+            // We have to removed them from the studyXml before committing the it.
+
             Platform.Log(LogLevel.Info, "Verifying study xml against the filesystems");
             int filesProcessed = 0;
             foreach (string seriesUid in processedSeriesMap.Keys)
@@ -511,7 +556,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 filesProcessed += processedSeriesMap[seriesUid].Count;
             }
 
-            // used to keep track of the series to be removed. We can't remove the item from the study xml while we are 
+            // Used to keep track of the series to be removed.
+            // We can't remove the item from the study xml while we are 
             // interating through it
             List<string> seriesToRemove = new List<string>();
             foreach(SeriesXml seriesXml in studyXml)

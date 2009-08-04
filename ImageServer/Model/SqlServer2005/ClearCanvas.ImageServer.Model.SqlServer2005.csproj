@@ -140,6 +140,7 @@
     <Compile Include="UpgradeScripts\BaseUpgradeScript.cs" />
     <Compile Include="UpgradeScripts\IUpgradeScript.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10019_31163.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_1_5_10588_32543.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

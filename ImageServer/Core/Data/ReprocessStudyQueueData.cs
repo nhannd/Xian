@@ -22,11 +22,18 @@ namespace ClearCanvas.ImageServer.Core.Data
     public class ReprocessStudyState
     {
         private bool _executeAtLeastOnce;
+        private bool _completed;
 
         public bool ExecuteAtLeastOnce
         {
             get { return _executeAtLeastOnce; }
             set { _executeAtLeastOnce = value; }
+        }
+
+        public bool Completed
+        {
+            get { return _completed; }
+            set { _completed = value; }
         }
     }
 }
