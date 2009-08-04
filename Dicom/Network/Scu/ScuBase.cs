@@ -292,7 +292,18 @@ namespace ClearCanvas.Dicom.Network.Scu
 			}
 			return iodList;
 		}
-	
+
+        public void Abort()
+        {
+            if (_dicomClient != null)
+            {
+				// Force a 2.5 second timeout
+                _dicomClient.Abort(2500);
+				_dicomClient.Dispose();
+            	_dicomClient = null;
+            }
+        }
+
 		#endregion
 
 		#region Protected Methods...

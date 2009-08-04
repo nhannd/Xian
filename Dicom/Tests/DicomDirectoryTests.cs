@@ -29,6 +29,8 @@
 
 #endregion
 
+#if UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -81,3 +83,5 @@ namespace ClearCanvas.Dicom.Tests
 		}
 	}
 }
+
+#endif

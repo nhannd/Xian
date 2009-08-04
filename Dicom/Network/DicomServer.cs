@@ -127,7 +127,6 @@ namespace ClearCanvas.Dicom.Network
         #region Constructors
 
         internal DicomServer(Socket socket, Dictionary<string,ListenerInfo> appList)
-            : base()
         {
             IPEndPoint remote = (IPEndPoint)socket.RemoteEndPoint;
 
@@ -215,9 +214,11 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Close the association.
         /// </summary>
-        protected override void CloseNetwork()
+		/// <param name="millisecondsTimeout">The timeout in milliseconds to wait for the closure
+		/// of the network thread.</param>
+		protected override void CloseNetwork(int millisecondsTimeout)
         {
-			ShutdownNetworkThread();
+			ShutdownNetworkThread(millisecondsTimeout);
 			lock (this)
             {
                 if (_network != null)
@@ -237,7 +238,8 @@ namespace ClearCanvas.Dicom.Network
                     _closedEvent.Set();
                     _closedEvent = null;
                 }
-            }
+				_state = DicomAssociationState.Sta1_Idle;
+            }			
         }
 
         /// <summary>
@@ -293,8 +295,8 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                if (_handler != null && base._state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
-                    _handler.OnNetworkError(this, this._assoc as ServerAssociationParameters, e);
+                if (_handler != null && _state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+                    _handler.OnNetworkError(this, _assoc as ServerAssociationParameters, e);
             }
             catch (Exception x) 
             {
@@ -303,7 +305,7 @@ namespace ClearCanvas.Dicom.Network
 
             _closedOnError = true;
             if (closeConnection)
-                CloseNetwork();
+				CloseNetwork(Timeout.Infinite);
         }
 
         /// <summary>
@@ -360,7 +362,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                _handler.OnDimseTimeout(this, this._assoc as ServerAssociationParameters);
+                _handler.OnDimseTimeout(this, _assoc as ServerAssociationParameters);
             }
             catch (Exception e)
             {
@@ -372,7 +374,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveAbort(this, this._assoc as ServerAssociationParameters, source, reason);
+                _handler.OnReceiveAbort(this, _assoc as ServerAssociationParameters, source, reason);
             }
             catch (Exception e) 
             {
@@ -380,14 +382,14 @@ namespace ClearCanvas.Dicom.Network
             }
 
             _closedOnError = true;
-            CloseNetwork();
+			CloseNetwork(Timeout.Infinite);
         }
 
         protected override void OnReceiveReleaseRequest()
         {
             try
             {
-                _handler.OnReceiveReleaseRequest(this, this._assoc as ServerAssociationParameters);
+                _handler.OnReceiveReleaseRequest(this, _assoc as ServerAssociationParameters);
                 
             }
             catch (Exception e)
@@ -402,7 +404,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveRequestMessage(this, this._assoc as ServerAssociationParameters, pcid, msg);
+                _handler.OnReceiveRequestMessage(this, _assoc as ServerAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {
@@ -416,7 +418,7 @@ namespace ClearCanvas.Dicom.Network
 
             try
             {
-                _handler.OnReceiveResponseMessage(this, this._assoc as ServerAssociationParameters, pcid, msg);
+                _handler.OnReceiveResponseMessage(this, _assoc as ServerAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {
@@ -457,8 +459,9 @@ namespace ClearCanvas.Dicom.Network
                 return;
             if (disposing)
             {
-                // Dispose of other Managed objects, ie
-                CloseNetwork();
+                // Dispose of other Managed objects, 
+				// 2500 millisecond timeout
+                Abort(2500);
             }
             // FREE UNMANAGED RESOURCES
             _disposed = true;

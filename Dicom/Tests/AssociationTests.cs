@@ -44,7 +44,8 @@ namespace ClearCanvas.Dicom.Tests
     {
         AssociationReject,
         AssociationAbort,
-        SendMR
+        SendMR,
+		Receive
     }
 
     public class ClientHandler : IDicomClientHandler
@@ -174,28 +175,48 @@ namespace ClearCanvas.Dicom.Tests
 
         public void OnReceiveRequestMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            DicomAttributeCollection testSet = new DicomAttributeCollection();
+        	if (_type == TestTypes.SendMR)
+        	{
+        		DicomAttributeCollection testSet = new DicomAttributeCollection();
 
-            _test.SetupMR(testSet);
+        		_test.SetupMR(testSet);
 
-            bool same = testSet.Equals(message.DataSet);
-
-
-            string studyId = message.DataSet[DicomTags.StudyId].GetString(0, "");
-            Assert.AreEqual(studyId, "1933");
+        		bool same = testSet.Equals(message.DataSet);
 
 
-            DicomUid sopInstanceUid;
-            bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
-            if (!ok)
-            {
-                server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
-                return;
-            }
+        		string studyId = message.DataSet[DicomTags.StudyId].GetString(0, "");
+        		Assert.AreEqual(studyId, "1933");
 
-            server.SendCStoreResponse(presentationID, message.MessageId,sopInstanceUid.UID, DicomStatuses.Success);
 
-        }
+        		DicomUid sopInstanceUid;
+        		bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
+        		if (!ok)
+        		{
+        			server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+        			return;
+        		}
+
+        		server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID, DicomStatuses.Success);
+        	}
+        	else if (_type == TestTypes.Receive)
+        	{
+				DicomUid sopInstanceUid;
+				bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
+				if (!ok)
+				{
+					server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.InvalidPDUParameter);
+					return;
+				}
+
+				server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID, DicomStatuses.Success);
+			}
+        	else
+        	{
+				Platform.Log(LogLevel.Error,"Unexpected test type mode");
+				server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.InvalidPDUParameter);
+				return;        		
+        	}
+    }
 
         public void OnReceiveResponseMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
@@ -254,7 +275,7 @@ namespace ClearCanvas.Dicom.Tests
 
 
             handler._threadStop.WaitOne();
-            client.Close();
+            client.Dispose();
 
             _serverType = TestTypes.AssociationReject;
 
@@ -270,7 +291,7 @@ namespace ClearCanvas.Dicom.Tests
             client = DicomClient.Connect(clientParameters, clientHandler);
 
             handler._threadStop.WaitOne();
-            client.Close();
+            client.Dispose();
 
 
             DicomServer.StopListening(serverParameters);
@@ -312,7 +333,7 @@ namespace ClearCanvas.Dicom.Tests
 
             handler._threadStop.WaitOne();
 
-            client.Close();
+            client.Dispose();
 
             DicomServer.StopListening(serverParameters);
         }

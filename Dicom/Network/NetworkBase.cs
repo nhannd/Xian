@@ -230,14 +230,14 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Method for shutting down the network thread.  Should only be called from the CloseNetwork() routine.
         /// </summary>
-        protected void ShutdownNetworkThread()
+        protected void ShutdownNetworkThread(int millisecondsTimeout)
         {
             _stop = true;
             if (_thread != null)
             {
                 if (!Thread.CurrentThread.Equals(_thread))
                 {
-                    _thread.Join();
+                    _thread.Join(millisecondsTimeout);
                     _thread = null;
                 }
             }
@@ -246,7 +246,9 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Method for closing the network connection.
         /// </summary>
-        protected abstract void CloseNetwork();
+        /// <param name="millisecondsTimeout">The timeout in milliseconds to wait for the closure
+        /// of the network.</param>
+        protected abstract void CloseNetwork(int millisecondsTimeout);
 
         /// <summary>
         /// Internal routine for enqueueing a PDU for transfer.
@@ -625,6 +627,67 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Methods
+
+		/// <summary>
+		/// Force a shutdown of the DICOM connection.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This routine will force the network connection for the <see cref="DicomClient"/> or 
+		/// <see cref="DicomServer"/>to be closed and the background thread for processing the 
+		/// association to shutdown.  The routine will block for the number of milliseconds specified
+		/// by <param name="millisecondTimeout"/>.
+		/// </para>
+		/// <para>
+		/// Note, for a graceful shutdown the <see cref="SendAssociateAbort"/> or 
+		/// <see cref="SendReleaseRequest"/> methods should be called.  These routines
+		/// will gracefully shutdown DICOM connections.  The <see cref="DicomClient.Join()"/>
+		/// method can then be called to wait for the background thread to clean up.
+		/// </para>
+		/// </remarks>
+		public void Abort(int millisecondTimeout)
+		{
+			try
+			{
+				if (_state != DicomAssociationState.Sta1_Idle
+				 && _state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+					SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+			}
+			finally
+			{
+				CloseNetwork(millisecondTimeout);
+			}
+		}
+
+		/// <summary>
+		/// Force a shutdown of the DICOM connection.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This routine will force the network connection for the <see cref="DicomClient"/> or 
+		/// <see cref="DicomServer"/>to be closed and the background thread for processing the 
+		/// association to shutdown.  The routine will block until the shutdown has completed.
+		/// </para>
+		/// <para>
+		/// Note, for a graceful shutdown the <see cref="SendAssociateAbort"/> or 
+		/// <see cref="SendReleaseRequest"/> methods should be called.  These routines
+		/// will gracefully shutdown DICOM connections.  The <see cref="DicomClient.Join()"/>
+		/// method can then be called to wait for the background thread to clean up.
+		/// </para>
+		/// </remarks>
+		public void Abort()
+		{
+			try
+			{
+				if (_state != DicomAssociationState.Sta1_Idle
+				 && _state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+					SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+			}
+			finally
+			{
+				CloseNetwork(Timeout.Infinite);
+			}
+		}
 
         /// <summary>
         /// Returns the next message Id to be used over the association.
@@ -1755,8 +1818,7 @@ namespace ClearCanvas.Dicom.Network
 			SendDimse(presentationID, message.CommandSet, message.DataSet);
 
 		}
-        #endregion
-
+      
         private static void LogSendReceive(bool receive, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
         {
 			if (Platform.IsLogLevelEnabled(LogLevel.Debug))
@@ -1766,7 +1828,8 @@ namespace ClearCanvas.Dicom.Network
 				             receiveOrSend + " MetaInfo:\r\n" + (metaInfo != null ? metaInfo.DumpString : String.Empty));
 				Platform.Log(LogLevel.Debug, receiveOrSend + " DataSet:\r\n" + (dataSet != null ? dataSet.DumpString : String.Empty));
 			}
-        }
+		}
+		#endregion		
     }
 }
  

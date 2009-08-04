@@ -213,7 +213,7 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
-        private void ConnectTLS()
+    	private void ConnectTLS()
         {
             _closedOnError = false;
 
@@ -260,27 +260,6 @@ namespace ClearCanvas.Dicom.Network
             return client;
 		}
 
-
-        /// <summary>
-        /// Force a shutdown of the client DICOM connection.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This routine will force the network connection for the <see cref="DicomClient"/> to be closed
-        /// and the background thread for processing the association to shutdown.  The routine will block 
-        /// until the shutdown has completed.
-        /// </para>
-        /// <para>
-        /// Note, for a graceful shutdown the <see cref="NetworkBase.SendAssociateAbort"/> or 
-        /// <see cref="NetworkBase.SendReleaseRequest"/> methods should be called.  These routines
-        /// will gracefully shutdown DICOM connections.
-        /// </para>
-        /// </remarks>
-        public void Close()
-        {
-            ShutdownNetworkThread();
-        }
-
         /// <summary>
         /// Wait for the background thread for the client to close.
         /// </summary>
@@ -299,6 +278,7 @@ namespace ClearCanvas.Dicom.Network
         {
             return _closedEvent.WaitOne(timeout, true);
         }
+
 		#endregion
 
 		#region NetworkBase Overrides
@@ -306,28 +286,31 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Close the DICOM connection.
         /// </summary>
-        protected override void CloseNetwork()
+		/// <param name="millisecondsTimeout">The timeout in milliseconds to wait for the closure
+		/// of the network thread.</param>
+        protected override void CloseNetwork(int millisecondsTimeout)
         {
-			ShutdownNetworkThread();
+			ShutdownNetworkThread(millisecondsTimeout);
 			lock (this)
             {
                 if (_network != null)
                 {
                     _network.Close();
+                	_network.Dispose();
                     _network = null;
                 }
                 if (_socket != null)
                 {
                     if (_socket.Connected)
                         _socket.Close();
-
                     _socket = null;
                 }
                 if (_closedEvent != null)
                 {
                     _closedEvent.Set();
                 }
-            }
+				_state = DicomAssociationState.Sta1_Idle;
+            }        	
         }
 
         private void OnClientConnected()
@@ -390,7 +373,7 @@ namespace ClearCanvas.Dicom.Network
 
 			_closedOnError = true;
             if (closeConnection)
-                CloseNetwork();
+				CloseNetwork(System.Threading.Timeout.Infinite);
 		}
 
 		protected override void OnDimseTimeout() {
@@ -422,7 +405,7 @@ namespace ClearCanvas.Dicom.Network
             _handler.OnReceiveAssociateReject(this, _assoc as ClientAssociationParameters, result, source, reason);
 
             _closedOnError = true;
-			CloseNetwork();
+			CloseNetwork(System.Threading.Timeout.Infinite);
 		}
 
 		protected override void OnReceiveAbort(DicomAbortSource source, DicomAbortReason reason) {
@@ -435,7 +418,7 @@ namespace ClearCanvas.Dicom.Network
                 OnUserException(e, "Unexpected exception on OnReceiveAbort");
             }
 			_closedOnError = true;
-			CloseNetwork();
+			CloseNetwork(System.Threading.Timeout.Infinite);
 		}
 
 		protected override void OnReceiveReleaseResponse() {
@@ -448,7 +431,7 @@ namespace ClearCanvas.Dicom.Network
                 OnUserException(e, "Unexpected exception on OnReceiveReleaseResponse");
             }
             _closedOnError = false;
-            CloseNetwork();
+			CloseNetwork(System.Threading.Timeout.Infinite);
 		}
 
         protected override void OnReceiveDimseRequest(byte pcid, DicomMessage msg)
@@ -509,8 +492,9 @@ namespace ClearCanvas.Dicom.Network
                 return;
             if (disposing)
             {
-                // Dispose of other Managed objects, ie
-                CloseNetwork();
+                // Dispose of other Managed objects,
+				// 2500 millisecond timeout
+                Abort(2500);
             }
             // FREE UNMANAGED RESOURCES
             _disposed = true;
