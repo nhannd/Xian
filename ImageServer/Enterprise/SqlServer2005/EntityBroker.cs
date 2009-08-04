@@ -388,7 +388,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             StringBuilder sb = new StringBuilder();
             if (maxRows == null || startIndex == null)
                 sb.AppendFormat("SELECT * FROM {0}", entityName);
-            else if (startIndex.Value == 0)
+			// had a bug at the tail end of the 1.5 release where Web GUI queries w/ paging did not work properly
+			// using the TOP syntax for the selects was not giving the same results as the ROW_NUMBER() syntax.
+			// Since this code is also used extensively when we do a FindOne() call, made it so in that case we
+		    // still do the TOP, but use ROW_NUMBER syntax for other situations, which would include the web gui.
+            else if (startIndex.Value == 0 && maxRows.Value == 1)
                 sb.AppendFormat("SELECT TOP {0} * FROM {1}", maxRows, entityName);
 			else
             {
@@ -427,7 +431,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 				if (orderBy.Length > 0)
 					sb.AppendFormat(" {0}", orderBy);
 			}
-			else if (startIndex.Value == 0)
+			else if (startIndex.Value == 0 && maxRows.Value == 1)
 			{
 				if (orderBy.Length > 0)
 					sb.AppendFormat(" {0}", orderBy);
