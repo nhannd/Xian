@@ -176,6 +176,19 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         }
 
         /// <summary>
+        /// Removes a series from the StudyXml.
+        /// </summary>
+        /// <param name="seriesInstanceUid">The Series Instance UID of the series to be removed.</param>
+        /// <returns>true if the series is removed or does not exist.</returns>
+        public bool RemoveSeries(string seriesInstanceUid)
+        {
+            if (Contains(seriesInstanceUid))
+                return _seriesList.Remove(seriesInstanceUid);
+            else
+                return true; // treated as ok.
+        }
+
+        /// <summary>
         /// Remove a specific SOP instance from the StudyXml.
         /// </summary>
         /// <param name="seriesInstanceUid">The Series Instance Uid of the instance to be removed</param>
@@ -405,6 +418,22 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             return seriesXml[instanceUid];
         }
 
+        /// <summary>
+        /// Returns a boolean indicating whether the specified series exists in the study XML.
+        /// </summary>
+        /// <param name="seriesUid">The Series Instance UID of the series to check</param>
+        /// <returns>True if the series exists in the study XML</returns>
+        public bool Contains(string seriesUid)
+        {
+            return _seriesList.ContainsKey(seriesUid);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating whether the specified SOP instance exists in the study XML.
+        /// </summary>
+        /// <param name="seriesUid">The Series Instance UID of the SOP instance to check</param>
+        /// <param name="instanceUid">The SOP Instance UID of the SOP instance to check</param>
+        /// <returns>True if the SOP instance exists in the study XML</returns>
         public bool Contains(string seriesUid, string instanceUid)
         {
             SeriesXml series = this[seriesUid];
