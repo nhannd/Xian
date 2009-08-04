@@ -59,7 +59,6 @@
     <Compile Include="IProcedureUpdateBroker.cs" />
     <Compile Include="EntitySelectCriteria.cs" />
     <Compile Include="LoginCredentials.cs" />
-    <Compile Include="RemoteCoreServiceProvider.cs" />
     <Compile Include="ServerEntity.cs" />
     <Compile Include="ServerEntityKey.cs" />
     <Compile Include="ProcedureParameter.cs" />
