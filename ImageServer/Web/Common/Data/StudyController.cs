@@ -132,6 +132,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 insertParms.ExpirationTime = Platform.Time.AddMinutes(1);
 
 			    WebDeleteStudyLevelQueueData extendedData = new WebDeleteStudyLevelQueueData();
+			    extendedData.Level = DeletionLevel.Study;
                 extendedData.Reason = reason;
                 insertParms.WorkQueueData = XmlUtils.SerializeAsXmlDoc(extendedData);
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
