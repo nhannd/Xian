@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	internal enum MprDisplaySetIdentifier
+	public enum MprDisplaySetIdentifier
 	{
 		Identity,
 		OrthoX,
@@ -47,7 +47,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		Oblique
 	}
 
-	internal class MprDisplaySet : DisplaySet
+	[System.Obsolete("JY")]
+	public class MprDisplaySet : DisplaySet
 	{
 		private readonly MprDisplaySetIdentifier _identifier;
 		private VolumeSlicer _slicer;
@@ -67,17 +68,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public int RotateAboutX
 		{
-			get { return _slicer.RotateAboutX; }	
+			get { return _slicer.Slicing.RotateAboutX; }	
 		}
 
 		public int RotateAboutY
 		{
-			get { return _slicer.RotateAboutY; }
+			get { return _slicer.Slicing.RotateAboutY; }
 		}
 		
 		public int RotateAboutZ
 		{
-			get { return _slicer.RotateAboutZ; }
+			get { return _slicer.Slicing.RotateAboutZ; }
 		}
 
 		public static MprDisplaySet Create(MprDisplaySetIdentifier identifier, Volume volume)
@@ -87,24 +88,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			string name;
 			if (identifier == MprDisplaySetIdentifier.Identity)
 			{
-				slicer.SetSlicePlaneIdentity();
+				slicer.Slicing = VolumeSlicing.CreateIdentitySlicing();
 				name = "MPR (Identity)";
 			}
 			else if (identifier == MprDisplaySetIdentifier.OrthoX)
 			{
-				slicer.SetSlicePlaneOrthoX();
+				slicer.Slicing = VolumeSlicing.CreateOrthogonalXSlicing();
 				name = "MPR (OrthoX)";
 			}
 			else if (identifier == MprDisplaySetIdentifier.OrthoY)
 			{
-				slicer.SetSlicePlaneOrthoY();
+				slicer.Slicing = VolumeSlicing.CreateOrthogonalYSlicing();
 				name = "MPR (OrthoY)";
 			}
 			else
 			{
 				//TODO: Ideally we wouldn't have to set this initially right? The imagebox
 				//	didn't want an empty display set so choose some reasonable default oblique
-				slicer.SetSlicePlaneRotateDegrees(90, 0, 45);
+				slicer.Slicing = VolumeSlicing.CreateSlicing(90, 0, 45);
 				name = "MPR (Oblique)";
 			}
 
@@ -133,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (oldImage is IVoiLutProvider)
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
+			_slicer.Slicing = VolumeSlicing.CreateSlicing(_slicer.Volume, sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
 			_slicer.PopulateDisplaySetOneImage(this);
 
 			if (lut != null || transformMemento != null)
@@ -215,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			try
 			{
-				_slicer.SetSlicePlaneRotateDegrees(rotateX, rotateY, rotateZ);
+				_slicer.Slicing = VolumeSlicing.CreateSlicing(rotateX, rotateY, rotateZ);
 				_slicer.PopulateDisplaySetFull(this);
 			}
 			catch

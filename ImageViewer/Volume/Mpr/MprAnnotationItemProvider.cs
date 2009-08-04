@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,28 +29,38 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageViewer.Mathematics;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Anno
 {
-	internal class VolumeHelper
+	[ExtensionOf(typeof (AnnotationItemProviderExtensionPoint))]
+	public class MprAnnotationItemProvider : AnnotationItemProvider
 	{
-		public static Matrix OrientationMatrixFromVectors(Vector3D xVec, Vector3D yVec, Vector3D zVec)
+		private readonly PlaneGlyphAnnotationItem _planeGlyph = new PlaneGlyphAnnotationItem();
+
+		public MprAnnotationItemProvider()
+			: base("AnnotationItemProviders.Mpr", new AnnotationResourceResolver(typeof (MprAnnotationItemProvider).Assembly)) {}
+
+		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
 		{
-			return new Matrix
-				(new float[4, 4]
-				       	{
-				       		{xVec.X, xVec.Y, xVec.Z, 0},
-				       		{yVec.X, yVec.Y, yVec.Z, 0},
-				       		{zVec.X, zVec.Y, zVec.Z, 0},
-				       		{0, 0, 0, 1}
-				       	});
+			yield return _planeGlyph;
 		}
 
-		public static bool EqualsWithinTolerance(double d1, double d2, float tolerance)
+		private sealed class PlaneGlyphAnnotationItem : AnnotationItem
 		{
-			return Math.Abs(d1 - d2) < tolerance;
+			public PlaneGlyphAnnotationItem()
+				: base("Mpr.Glyph", new AnnotationResourceResolver(typeof(PlaneGlyphAnnotationItem).Assembly)) { }
+
+			public override string GetAnnotationText(IPresentationImage presentationImage)
+			{
+				if (presentationImage == null)
+					return string.Empty;
+
+				return "glyph";
+			}
 		}
 	}
 }

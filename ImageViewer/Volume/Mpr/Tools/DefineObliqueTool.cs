@@ -42,7 +42,7 @@ using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
@@ -50,11 +50,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[IconSet("activate", IconScheme.Colour, "Icons.DefineObliqueToolLarge.png", "Icons.DefineObliqueToolMedium.png", "Icons.DefineObliqueToolSmall.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
-
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class DefineObliqueTool : MouseImageViewerTool
+	//TODO JY
+	[ExtensionOf(typeof(MprViewerToolExtensionPoint))]
+	public class DefineObliqueTool : MprViewerTool
 	{
-		private MprImageViewerToolHelper _toolHelper;
 		private PolylineGraphic _polyLine;
 		private InteractivePolylineGraphicBuilder _graphicBuilder;
 		private CompositeUndoableCommand _undoableCommand;
@@ -83,8 +82,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public override void Initialize()
 		{
 			base.Initialize();
-
-			_toolHelper = new MprImageViewerToolHelper(Context);
 
 			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
@@ -135,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private bool _fullSetCreated = false;
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
-			MprDisplaySet displaySet = _toolHelper.GetObliqueDisplaySet();
+			MprDisplaySet displaySet = base.GetObliqueDisplaySet();
 			if (displaySet != null && _fullSetCreated == false)
 			{
 				displaySet.CreateFullObliqueDisplaySet();
@@ -248,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
 
-			_toolHelper.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, _startPatient, _endPatient);
+			base.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, _startPatient, _endPatient);
 			_fullSetCreated = false;
 		}
 
@@ -299,9 +296,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private bool IsValidImage(IPresentationImage image)
 		{
-			return _toolHelper.IsIdentityImage(image) 
-				|| _toolHelper.IsOrthoXImage(image)
-				|| _toolHelper.IsOrthoYImage(image);
+			return base.IsIdentityImage(image) 
+			       || base.IsOrthoXImage(image)
+			       || base.IsOrthoYImage(image);
 		}
 	}
 }

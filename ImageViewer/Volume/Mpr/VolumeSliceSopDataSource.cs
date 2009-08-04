@@ -29,29 +29,64 @@
 
 #endregion
 
+using System;
+using System.Diagnostics;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	//TODO: share a 'model' data source between all the slices and remove it from Volume class.
-	//class ModelVolumeSliceSopDataSource : DicomMessageSopDataSource
-	//{
-	//    private readonly Volume _volume;
-	//    private readonly DicomMessageBase _modelDicom;
-	//}
-
-	class VolumeSliceSopDataSource : DicomMessageSopDataSource 
+	// TODO JY
+	public class VolumeSliceSopDataSource : StandardSopDataSource 
 	{
 		private readonly VolumeSlicer _volumeSlicer;
 		private readonly Matrix _resliceMatrix;
+		private readonly IDicomAttributeProvider _volumeSopDataSourcePrototype;
+		private readonly DicomAttributeCollection _instanceAttributes;
 
-		internal VolumeSliceSopDataSource(DicomMessageBase sourceMessage, VolumeSlicer slicer, Matrix resliceMatrix)
-			: base(sourceMessage)
+		internal VolumeSliceSopDataSource(IDicomAttributeProvider sourceMessage, VolumeSlicer slicer, Matrix resliceMatrix)
 		{
 			_volumeSlicer = slicer;
 			_resliceMatrix = new Matrix(resliceMatrix);
+			_volumeSopDataSourcePrototype = sourceMessage;
+			_instanceAttributes = new DicomAttributeCollection(); 
+		}
+
+		public override DicomAttribute this[DicomTag tag]
+		{
+			get
+			{
+				DicomAttribute attribute;
+				if (_volumeSopDataSourcePrototype.TryGetAttribute(tag, out attribute))
+					return attribute;
+				return _instanceAttributes[tag];
+			}
+		}
+
+		public override DicomAttribute this[uint tag]
+		{
+			get
+			{
+				DicomAttribute attribute;
+				if (_volumeSopDataSourcePrototype.TryGetAttribute(tag, out attribute))
+					return attribute;
+				return _instanceAttributes[tag];
+			}
+		}
+
+		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
+		{
+			if (_volumeSopDataSourcePrototype.TryGetAttribute(tag, out attribute))
+				return true;
+			return _instanceAttributes.TryGetAttribute(tag, out attribute);
+		}
+
+		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
+		{
+			if (_volumeSopDataSourcePrototype.TryGetAttribute(tag, out attribute))
+				return true;
+			return _instanceAttributes.TryGetAttribute(tag, out attribute);
 		}
 
 		protected override StandardSopFrameData CreateFrameData(int frameNumber)
@@ -59,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return new VolumeSliceSopFrameData(frameNumber, this);
 		}
 
-		protected class VolumeSliceSopFrameData : DicomMessageSopFrameData
+		protected class VolumeSliceSopFrameData : StandardSopFrameData
 		{
 			public VolumeSliceSopFrameData(int frameNumber, VolumeSliceSopDataSource parent) : base(frameNumber, parent) {}
 
@@ -71,6 +106,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			protected override byte[] CreateNormalizedPixelData()
 			{
 				return this.Parent._volumeSlicer.GenerateFrameNormalizedPixelData(this.Parent._resliceMatrix);
+			}
+
+			protected override void OnUnloaded()
+			{
+				base.OnUnloaded();
+			}
+
+			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			{
+				Debug.Assert(false, "We should never get here... we don't support overlays in the volume (yet)!!!");
+				return new byte[0];
 			}
 		}
 	}

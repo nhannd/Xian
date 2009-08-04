@@ -33,7 +33,11 @@ using System;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 using vtk;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
@@ -50,7 +54,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// patient orientation (i.e. axial, sagittal, coronal captured images are all normalized in volume space).
 	/// The patient orientation is derived from the DICOM image orientation.
 	///  </summary>
-	public class Volume : IDisposable
+	/// TODO JY
+	public partial class Volume : IDisposable
 	{
 		#region Private fields
 
@@ -58,6 +63,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//	arrays is set, which defines whether the data for this volume is signed or unsigned.
 		private short[] _volShortArray;
 		private ushort[] _volUnsignedShortArray;
+
 		// Size of each of the volume array dimensions
 		private readonly Size3D _arrayDimensions;
 
@@ -84,47 +90,60 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private bool _disposed;
 
-		// This is currently used to hold a clone of portions of the incoming images DICOM headers,
-		//	it is then used to generate our resliced image's headers. A future refactoring plans
-		//	to move this to a SopDataSource abstraction.
-		private readonly DicomMessageBase _modelDicom;
+		private readonly string _description;
+		private readonly VolumeSopDataSourcePrototype _modelDicom;
 
 		#endregion
 
-		#region Initialization
+		#region Constructors
 
 		/// <summary>
-		/// Signed Volume. Volumes are typically created and initialized by a <see cref="VolumeBuilder"/>
+		/// Constructs a <see cref="Volume"/> using a volume data array of signed 16-bit words.
 		/// </summary>
-		internal Volume(short[] volShortArray, Size3D arrayDimensions, Vector3D spacing, Vector3D originPatient,
-		                Matrix orientationPateintMatrix, DicomMessageBase modelDicom, int padValue)
-			: this(arrayDimensions, spacing, originPatient, orientationPateintMatrix, modelDicom, padValue)
-		{
-			_volShortArray = volShortArray;
-		}
+		/// <remarks>
+		/// Consider using one of the static helpers such as <see cref="CreateVolume(IDisplaySet)"/> to construct and automatically fill a <see cref="Volume"/>.
+		/// </remarks>
+		public Volume(short[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
+		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue)
+			: this(data, null, dimensions, spacing, originPatient, orientationPatient,
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue) {}
 
 		/// <summary>
-		/// Unsigned Volume. Volumes are typically created and initialized by a <see cref="VolumeBuilder"/>
+		/// Constructs a <see cref="Volume"/> using a volume data array of unsigned 16-bit words.
 		/// </summary>
-		internal Volume(ushort[] volUnsignedShortArray, Size3D arrayDimensions, Vector3D spacing, Vector3D originPatient,
-		                Matrix orientationPatientMatrix, DicomMessageBase modelDicom, int padValue)
-			: this(arrayDimensions, spacing, originPatient, orientationPatientMatrix, modelDicom, padValue)
-		{
-			_volUnsignedShortArray = volUnsignedShortArray;
-		}
+		/// <remarks>
+		/// Consider using one of the static helpers such as <see cref="CreateVolume(IDisplaySet)"/> to construct and automatically fill a <see cref="Volume"/>.
+		/// </remarks>
+		public Volume(ushort[] data, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
+		              Matrix orientationPatient, IDicomAttributeProvider dicomAttributeModel, int paddingValue)
+			: this(null, data, dimensions, spacing, originPatient, orientationPatient,
+			       VolumeSopDataSourcePrototype.Create(dicomAttributeModel), paddingValue) {}
 
-		private Volume(Size3D arrayDimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix,
-		               DicomMessageBase modelDicom, int padValue)
+		private Volume(short[] dataInt16, ushort[] dataUInt16, Size3D dimensions, Vector3D spacing, Vector3D originPatient,
+		               Matrix orientationPatient, VolumeSopDataSourcePrototype sopDataSourcePrototype, int paddingValue)
 		{
-			_arrayDimensions = arrayDimensions;
+			Platform.CheckTrue(dataInt16 != null ^ dataUInt16 != null, "Exactly one of dataInt16 and dataUInt16 must be non-null.");
+			_volShortArray = dataInt16;
+			_volUnsignedShortArray = dataUInt16;
+
+			_arrayDimensions = dimensions;
 			_spacing = spacing;
 			_originPatient = originPatient;
-			_orientationPatientMatrix = orientationPatientMatrix;
-			_modelDicom = modelDicom;
-			_padValue = padValue;
+			_orientationPatientMatrix = orientationPatient;
+			_modelDicom = sopDataSourcePrototype;
+			_padValue = paddingValue;
+
+			PersonName patientName = new PersonName(sopDataSourcePrototype[DicomTags.PatientsName].ToString());
+			string patientId = sopDataSourcePrototype[DicomTags.PatientId].ToString();
+			_description = string.Format("MPR {0} - {1}", patientName.FormattedName, patientId);
 		}
 
 		#endregion
+
+		public string Description
+		{
+			get { return _description; }
+		}
 
 		#region Public properties
 
@@ -351,7 +370,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Implementation
 
-		internal DicomMessageBase _ModelDicom
+		internal IDicomAttributeProvider DataSet
 		{
 			get { return _modelDicom; }
 		}

@@ -30,85 +30,101 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	internal class MprImageViewerToolHelper
+	[ExtensionPoint]
+	public sealed class MprViewerToolExtensionPoint : ExtensionPoint<ITool> {}
+
+	public interface IMprViewerToolContext : IImageViewerToolContext
 	{
-		public readonly IImageViewerToolContext _context;
+		new MprViewerComponent Viewer { get; }
+	}
 
-		public MprImageViewerToolHelper(IImageViewerToolContext context)
+	public abstract class MprViewerTool : MouseImageViewerTool
+	{
+		protected MprViewerTool() {}
+
+		public new MprViewerComponent ImageViewer
 		{
-			_context = context;
+			get { return (MprViewerComponent) base.ImageViewer; }
 		}
 
-		public MprLayoutManager GetMprLayoutManager()
+		public new IMprViewerToolContext Context
 		{
-			if (_context.Viewer is MprImageViewerComponent)
-				return ((MprImageViewerComponent)_context.Viewer).LayoutManager as MprLayoutManager;
-
-			return null;
+			get { return (IMprViewerToolContext) base.Context; }
 		}
 
+		[Obsolete("JY")]
 		public bool IsMprImage(IPresentationImage image)
 		{
 			return image.ParentDisplaySet is MprDisplaySet;
 		}
 
+		[Obsolete("JY")]
 		public bool IsIdentityImage(IPresentationImage image)
 		{
 			return IsMprImage(image, MprDisplaySetIdentifier.Identity);
 		}
 
+		[Obsolete("JY")]
 		public bool IsOrthoXImage(IPresentationImage image)
 		{
 			return IsMprImage(image, MprDisplaySetIdentifier.OrthoX);
 		}
 
+		[Obsolete("JY")]
 		public bool IsOrthoYImage(IPresentationImage image)
 		{
 			return IsMprImage(image, MprDisplaySetIdentifier.OrthoY);
 		}
 
+		[Obsolete("JY")]
 		public bool IsObliqueImage(IPresentationImage image)
 		{
 			return IsMprImage(image, MprDisplaySetIdentifier.Oblique);
 		}
-		
+
+		[Obsolete("JY")]
 		public MprDisplaySet GetIdentityDisplaySet()
 		{
 			return FindMprDisplaySet(MprDisplaySetIdentifier.Identity);
 		}
 
+		[Obsolete("JY")]
 		public MprDisplaySet GetOrthoYDisplaySet()
 		{
 			return FindMprDisplaySet(MprDisplaySetIdentifier.OrthoY);
 		}
 
+		[Obsolete("JY")]
 		public MprDisplaySet GetOrthoXDisplaySet()
 		{
 			return FindMprDisplaySet(MprDisplaySetIdentifier.OrthoX);
 		}
 
+		[Obsolete("JY")]
 		public MprDisplaySet GetObliqueDisplaySet()
 		{
 			return FindMprDisplaySet(MprDisplaySetIdentifier.Oblique);
 		}
 
+		[Obsolete("JY")]
 		private static bool IsMprImage(IPresentationImage image, MprDisplaySetIdentifier identifier)
 		{
 			if (image == null || image.ParentDisplaySet == null)
 				return false;
 
-			return image.ParentDisplaySet is MprDisplaySet && ((MprDisplaySet)image.ParentDisplaySet).Identifier == identifier;
+			return image.ParentDisplaySet is MprDisplaySet && ((MprDisplaySet) image.ParentDisplaySet).Identifier == identifier;
 		}
 
+		[Obsolete("JY")]
 		private MprDisplaySet FindMprDisplaySet(MprDisplaySetIdentifier identifier)
 		{
-			IPhysicalWorkspace workspace = _context.Viewer.PhysicalWorkspace;
+			IPhysicalWorkspace workspace = this.ImageViewer.PhysicalWorkspace;
 			foreach (IImageBox imageBox in workspace.ImageBoxes)
 			{
 				MprDisplaySet displaySet = imageBox.DisplaySet as MprDisplaySet;

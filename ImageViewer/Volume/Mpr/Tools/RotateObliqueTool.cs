@@ -40,8 +40,9 @@ using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
+	//TODO JY
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
 	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
@@ -51,11 +52,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	[GroupHint("activate", "Tools.Mpr.Manipulation.Rotate")]
 
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class RotateObliqueTool : MouseImageViewerTool
+	[ExtensionOf(typeof(MprViewerToolExtensionPoint))]
+	public partial class RotateObliqueTool : MprViewerTool
 	{
-		private MprImageViewerToolHelper _toolHelper;
-
 		private PinwheelGraphic _currentPinwheelGraphic;
 		private bool _rotatingGraphic = false;
 		private int _rotationAxis = -1;
@@ -84,9 +83,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			base.Initialize();
 
-			_toolHelper = new MprImageViewerToolHelper(Context);
-
-			Visible = _toolHelper.GetMprLayoutManager() != null;
+			Visible = true;
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -121,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				PointF mouse = mouseInformation.Location;
 				double angle = Vector.SubtendedAngle(mouse, vertex, rotationAnchor);
 
-				MprDisplaySet obliqueDisplaySet = _toolHelper.GetObliqueDisplaySet();
+				MprDisplaySet obliqueDisplaySet = base.GetObliqueDisplaySet();
 				int rotationX = obliqueDisplaySet.RotateAboutX;
 				int rotationY = obliqueDisplaySet.RotateAboutY;
 				int rotationZ = obliqueDisplaySet.RotateAboutZ;
@@ -199,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (selectedImage == null)
 				return;
 
-			if (!_toolHelper.IsMprImage(selectedImage))
+			if (!base.IsMprImage(selectedImage))
 				return;
 
 			MprDisplaySet displaySet = (MprDisplaySet)selectedImage.ParentDisplaySet;
@@ -259,7 +256,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private int GetRotationAngle()
 		{
-			MprDisplaySet obliqueDisplaySet = _toolHelper.GetObliqueDisplaySet();
+			MprDisplaySet obliqueDisplaySet = base.GetObliqueDisplaySet();
 			int rotationX = obliqueDisplaySet.RotateAboutX;
 			int rotationY = obliqueDisplaySet.RotateAboutY;
 			int rotationZ = obliqueDisplaySet.RotateAboutZ;

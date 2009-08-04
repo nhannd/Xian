@@ -31,12 +31,14 @@
 
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Mathematics;
 using vtk;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 {
-	internal class VtkHelper
+	internal static class VtkHelper
 	{
 		#region Error Handling helpers
 
@@ -48,18 +50,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public static void VtkEventCallback(vtkObject vtkObj, uint eventId, object obj, IntPtr ptr)
 		{
-			switch ((EventIds)eventId)
+			const string unexpectedMessage = "Unexpected VTK event received.";
+			const string message = "VTK Event 0x{0:x4}: {1}";
+
+			switch ((EventIds) eventId)
 			{
-				case EventIds.ErrorEvent:
 				case EventIds.WarningEvent:
-					{
-						string explanation = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(ptr);
-						Debug.WriteLine(explanation);
-						//TODO: Hook into CC logging/exception framework
-					}
+					string warnDetails = Marshal.PtrToStringAnsi(ptr);
+					Platform.Log(LogLevel.Warn, message, eventId, warnDetails);
+					break;
+				case EventIds.ErrorEvent:
+					string errorDetails = Marshal.PtrToStringAnsi(ptr);
+					Platform.Log(LogLevel.Error, message, eventId, errorDetails);
 					break;
 				default:
-					Debug.Fail("Unexpected VTK event received");
+					Platform.Log(LogLevel.Fatal, unexpectedMessage);
+					Debug.Fail(unexpectedMessage);
 					break;
 			}
 		}
@@ -68,8 +74,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Convert to VTK helpers
 
-		// Note: vtkMatrix4x4 and Math.Matrix are transposed! This is due to the
-		//	fact that vtkMatrix4x4 uses an x,y interface where Matrix uses a row,col interface.
+		/// <summary>
+		/// Converts a <see cref="Matrix"/> to a <see cref="vtkMatrix4x4"/>.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="vtkMatrix4x4"/> matrix is equivalent to <see cref="Matrix"/> transposed!
+		/// This is due to the fact that vtkMatrix4x4 uses (x,y) addresses whereas Matrix
+		/// uses (row,column).
+		/// </remarks>
+		/// <param name="matrix">The source <see cref="Matrix"/>.</param>
+		/// <returns>The equivalent <see cref="vtkMatrix4x4"/>.</returns>
 		public static vtkMatrix4x4 ConvertToVtkMatrix(Matrix matrix)
 		{
 			vtkMatrix4x4 vtkMatrix = new vtkMatrix4x4();

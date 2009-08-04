@@ -39,33 +39,26 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 using vtk;
-using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	/// <summary>
 	/// Volume utility class aids in extracting 2D slices from a Volume
 	/// </summary>
+	[System.Obsolete("JY")]
 	public class VolumeSlicer
 	{
 		#region Private fields
 
 		private readonly Volume _volume;
-		private Matrix _resliceAxes;
 
-		private Vector3D _sliceThroughPointPatient;
-		private float _sliceExtentXmm;
-		private float _sliceExtentYmm;
+		private VolumeSlicing _slicing;
 		private float _sliceSpacing;
-
-		private int _rotateAboutX;
-		private int _rotateAboutY;
-		private int _rotateAboutZ;
-
-		private InterpolationModes _interpolationMode = InterpolationModes.Linear;
 
 		#endregion
 
@@ -76,133 +69,80 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_volume = vol;
 		}
 
+		public Volume Volume
+		{
+			get { return _volume; }
+		}
+
+		public VolumeSlicing Slicing
+		{
+			get { return _slicing; }
+			set { _slicing = value; }
+		}
+
 		#region Slicer Settings
 
-		public void SetSlicePlaneIdentity()
+		private float GetSliceSpacing()
 		{
-			_resliceAxes = CreateResliceAxesIdentity();
-		}
-
-		public void SetSlicePlaneOrthoX()
-		{
-			_resliceAxes = CreateResliceAxesOrthoX();
-		}
-
-		public void SetSlicePlaneOrthoY()
-		{
-			_resliceAxes = CreateResliceAxesOrthoY();
-		}
-
-		public void SetSlicePlaneRotateDegrees(int rotateX, int rotateY, int rotateZ)
-		{
-			RotateAboutX = rotateX;
-			RotateAboutY = rotateY;
-			RotateAboutZ = rotateZ;
-			_resliceAxes = CreateResliceAxesRotateDegrees(rotateX, rotateY, rotateZ);
-		}
-
-		public Vector3D SliceThroughPointPatient
-		{
-			set { _sliceThroughPointPatient = new Vector3D(value); }
-		}
-
-		public float SliceExtentXMillimeters
-		{
-			set { _sliceExtentXmm = value; }
-		}
-
-		public float SliceExtentYMillimeters
-		{
-			set { _sliceExtentYmm = value; }
-		}
-
-		/// <summary>
-		/// Allows specification of the slice plane, through point, and extent via two points in patient space
-		/// </summary>
-		/// <param name="sourceOrientationColumnPatient"></param>
-		/// <param name="sourceOrientationRowPatient"></param>
-		/// <param name="startPointPatient"></param>
-		/// <param name="endPointPatient"></param>
-		public void SetSlicePlanePatient(Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
-										 Vector3D startPointPatient, Vector3D endPointPatient)
-		{
-			Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
-			Vector3D normalLinePatient = (endPointPatient - startPointPatient).Normalize();
-			Vector3D normalPerpLinePatient = sourceOrientationNormalPatient.Cross(normalLinePatient);
-
-			Vector3D slicePlanePatientX = normalLinePatient;
-			Vector3D slicePlanePatientY = sourceOrientationNormalPatient;
-			Vector3D slicePlanePatientZ = normalPerpLinePatient;
-
-			Matrix slicePlanePatientOrientation = VolumeHelper.OrientationMatrixFromVectors(slicePlanePatientX, slicePlanePatientY, slicePlanePatientZ);
-
-			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
-			Vector3D lineMiddlePointPatient = new Vector3D(
-				(startPointPatient.X + endPointPatient.X) / 2,
-				(startPointPatient.Y + endPointPatient.Y) / 2,
-				(startPointPatient.Z + endPointPatient.Z) / 2);
-
-			this.SliceThroughPointPatient = lineMiddlePointPatient;
-
-			this.SliceExtentXMillimeters = (endPointPatient - startPointPatient).Magnitude;
-		}
-
-		public float SliceSpacing
-		{
-			get
+			if (_sliceSpacing == 0f)
 			{
+				_sliceSpacing = _slicing.SliceSpacing;
 				if (_sliceSpacing == 0f)
 					_sliceSpacing = GetDefaultSpacing();
-				return _sliceSpacing;
 			}
-			set { _sliceSpacing = value; }	
-		}
-
-		public enum InterpolationModes
-		{
-			NearestNeighbor,
-			Linear,
-			Cubic
-		}
-
-		public InterpolationModes InterpolationMode
-		{
-			get { return _interpolationMode; }
-			set { _interpolationMode = value; }
-		}
-
-		public int RotateAboutX
-		{
-			get { return _rotateAboutX; }
-			private set { _rotateAboutX = value; }
-		}
-
-		public int RotateAboutY
-		{
-			get { return _rotateAboutY; }
-			private set { _rotateAboutY = value; }
-		}
-
-		public int RotateAboutZ
-		{
-			get { return _rotateAboutZ; }
-			private set { _rotateAboutZ = value; }
+			return _sliceSpacing;
 		}
 
 		#endregion
 
 		#region Create Slice interface
 
-		public ImageSop CreateSliceImageSop(Vector3D point)
+		private ImageSop CreateSliceImageSop(Vector3D point)
 		{
 			// You must first call one of the SetSlicePlane methods before calling this.
-			Debug.Assert(_resliceAxes != null);
+			Debug.Assert(_slicing != null);
 
 			ReslicePoint = point;
 
-			DicomFile sliceDicom = CreateSliceDicom();
+			VolumeSliceSopDataSource sliceDicom = new VolumeSliceSopDataSource(_volume.DataSet, this, _slicing.ResliceAxes);
 
-			return new ImageSop(new VolumeSliceSopDataSource(sliceDicom, this, _resliceAxes));
+			// ensure each sop has unique Uid
+			sliceDicom[DicomTags.SopInstanceUid].SetString(0, DicomUid.GenerateUid().UID);
+
+			// Update rows and columns to reflect actual output size
+			int columns = GetSliceExtentX();
+			int rows = GetSliceExtentY();
+			sliceDicom[DicomTags.Columns].SetUInt16(0, (ushort)columns);
+			sliceDicom[DicomTags.Rows].SetUInt16(0, (ushort)rows);
+
+			// Update Image Orientation (patient)
+			//
+			Matrix resliceAxesPatientOrientation = _volume.RotateToPatientOrientation(_slicing.ResliceAxes);
+
+			ImageOrientationPatient imageOrientation =
+				new ImageOrientationPatient(resliceAxesPatientOrientation[0, 0],
+											resliceAxesPatientOrientation[0, 1],
+											resliceAxesPatientOrientation[0, 2],
+											resliceAxesPatientOrientation[1, 0],
+											resliceAxesPatientOrientation[1, 1],
+											resliceAxesPatientOrientation[1, 2]);
+
+			sliceDicom[DicomTags.ImageOrientationPatient].SetFloat32(0, (float)imageOrientation.RowX);
+			sliceDicom[DicomTags.ImageOrientationPatient].SetFloat32(1, (float)imageOrientation.RowY);
+			sliceDicom[DicomTags.ImageOrientationPatient].SetFloat32(2, (float)imageOrientation.RowZ);
+			sliceDicom[DicomTags.ImageOrientationPatient].SetFloat32(3, (float)imageOrientation.ColumnX);
+			sliceDicom[DicomTags.ImageOrientationPatient].SetFloat32(4, (float)imageOrientation.ColumnY);
+			sliceDicom[DicomTags.ImageOrientationPatient].SetFloat32(5, (float)imageOrientation.ColumnZ);
+
+			// Update Image Position (patient)
+			//
+			Vector3D topLeftOfSlicePatient = GetTopLeftOfSlicePatient(columns, rows);
+
+			sliceDicom[DicomTags.ImagePositionPatient].SetFloat32(0, topLeftOfSlicePatient.X);
+			sliceDicom[DicomTags.ImagePositionPatient].SetFloat32(1, topLeftOfSlicePatient.Y);
+			sliceDicom[DicomTags.ImagePositionPatient].SetFloat32(2, topLeftOfSlicePatient.Z);
+
+			return new ImageSop(sliceDicom);
 		}
 
 		#endregion
@@ -210,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#region Create DisplaySet interface
 
 		//TODO: resolve naming before plane is set.
-		public DisplaySet CreateDisplaySet(string displaySetName)
+		private DisplaySet CreateDisplaySet(string displaySetName)
 		{
 			string name = String.Format("MPR ({0})", displaySetName);
 			DisplaySet displaySet = new DisplaySet(name, Guid.NewGuid().ToString());
@@ -232,14 +172,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D initialThroughPoint = GetSliceThroughPoint();
 
 			// Determine spacing vector along which we will slice
-			Vector3D spacingVector = SliceSpacing * GetSliceNormalVector();
+			Vector3D spacingVector = GetSliceSpacing() * GetSliceNormalVector();
 			// I chose to use the volume diagonal magnitude to define the maximum number of slices as
 			//	it seemed like a reasonable upper limit to the number of slices in a display set.
 			//	Note that in the worst case scenario, this would only generate half the number of possible
 			//	slices. Consider the slice plane with normal along the volume diagonal, and through point
 			//	on a corner of the volume. This would require the full maxSlices defined here, but because
 			//	we start half way in one direction we would only get half of what is possible.
-			int maxSlices = (int)(_volume.DiagonalMagnitude / SliceSpacing + 0.5f);
+			int maxSlices = (int)(_volume.DiagonalMagnitude / GetSliceSpacing() + 0.5f);
 
 			// Start slicing half way in one direction. Chose to start positive and step
 			//	negative as it creates a DisplaySet that is sorted such that the MPR sort
@@ -285,8 +225,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private Vector3D GetSliceThroughPoint()
 		{
 			Vector3D throughPoint;
-			if (_sliceThroughPointPatient != null)
-				throughPoint = _volume.ConvertToVolume(_sliceThroughPointPatient);
+			if (_slicing.SliceThroughPointPatient != null)
+				throughPoint = _volume.ConvertToVolume(_slicing.SliceThroughPointPatient);
 			else
 				throughPoint = _volume.CenterPoint;
 			return throughPoint;
@@ -296,7 +236,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			ImageSop imageSop = CreateSliceImageSop(throughPoint);
 			DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
-			SetSeriesLevelDicomAttributes(presImage, sliceIndex, displaySet.Uid, SliceSpacing);
+			SetSeriesLevelDicomAttributes(presImage, sliceIndex, displaySet.Uid, GetSliceSpacing());
 			displaySet.PresentationImages.Add(presImage);
 			imageSop.Dispose();
 		}
@@ -411,7 +351,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				float originY = -sliceExtentY * EffectiveSpacing / 2;
 				reslicer.SetOutputOrigin(originX, originY, 0);
 
-				switch (_interpolationMode)
+				switch (_slicing.InterpolationMode)
 				{
 					case InterpolationModes.NearestNeighbor:
 						reslicer.SetInterpolationModeToNearestNeighbor();
@@ -493,7 +433,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				float originY = -sliceExtentY * EffectiveSpacing / 2;
 				reslicer.SetOutputOrigin(originX, originY, 0);
 
-				switch (_interpolationMode)
+				switch (_slicing.InterpolationMode)
 				{
 					case InterpolationModes.NearestNeighbor:
 						reslicer.SetInterpolationModeToNearestNeighbor();
@@ -581,8 +521,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// Derived frome either a specified extent in millimeters or from the volume dimensions (default)
 		private int GetSliceExtentX()
 		{
-			if (_sliceExtentXmm != 0f)
-				return (int)(_sliceExtentXmm / EffectiveSpacing + 0.5f);
+			if (_slicing.SliceExtentXMillimeters != 0f)
+				return (int)(_slicing.SliceExtentXMillimeters / EffectiveSpacing + 0.5f);
 			else
 				return MaxOutputImageDimension;
 		}
@@ -590,8 +530,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// Derived frome either a specified extent in millimeters or from the volume dimensions (default)
 		private int GetSliceExtentY()
 		{
-			if (_sliceExtentYmm != 0f)
-				return (int)(_sliceExtentYmm / EffectiveSpacing + 0.5f);
+			if (_slicing.SliceExtentYMillimeters != 0f)
+				return (int)(_slicing.SliceExtentYMillimeters / EffectiveSpacing + 0.5f);
 			else
 				return MaxOutputImageDimension;
 		}
@@ -626,60 +566,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private static void SetSeriesLevelDicomAttributes(IImageSopProvider presImage, int sliceIndex,
 														  string seriesInstanceUid, float increment)
 		{
-			IDicomMessageSopDataSource dicomData = (IDicomMessageSopDataSource)presImage.ImageSop.DataSource;
-			dicomData.SourceMessage.DataSet[DicomTags.SeriesInstanceUid].SetString(0, seriesInstanceUid);
-			dicomData.SourceMessage.DataSet[DicomTags.InstanceNumber].SetString(0, Convert.ToString(sliceIndex + 1));
+			ISopDataSource dicomData = presImage.ImageSop.DataSource;
+			dicomData[DicomTags.SeriesInstanceUid].SetString(0, seriesInstanceUid);
+			dicomData[DicomTags.InstanceNumber].SetString(0, Convert.ToString(sliceIndex + 1));
 
 			// Note: These are required by the spatial locator
 			float thicknessAndSpacing = Math.Abs(increment);
-			dicomData.SourceMessage.DataSet[DicomTags.SliceThickness].SetFloat32(0, thicknessAndSpacing);
-			dicomData.SourceMessage.DataSet[DicomTags.SpacingBetweenSlices].SetFloat32(0, thicknessAndSpacing);
-		}
-
-		private DicomFile CreateSliceDicom()
-		{
-			// Start with the volume's model Dicom attributes
-			DicomMessageBase modelDicom = _volume._ModelDicom;
-			DicomFile sliceDicom = new DicomFile("", modelDicom.MetaInfo.Copy(), modelDicom.DataSet.Copy());
-			DicomAttributeCollection sliceDataSet = sliceDicom.DataSet;
-
-			// ensure each sop has unique Uid
-			sliceDataSet[DicomTags.SopInstanceUid].SetString(0, DicomUid.GenerateUid().UID);
-
-			// Update rows and columns to reflect actual output size
-			int columns = GetSliceExtentX();
-			int rows = GetSliceExtentY();
-			sliceDataSet[DicomTags.Columns].SetUInt16(0, (ushort)columns);
-			sliceDataSet[DicomTags.Rows].SetUInt16(0, (ushort) rows);
-
-			// Update Image Orientation (patient)
-			//
-			Matrix resliceAxesPatientOrientation = _volume.RotateToPatientOrientation(_resliceAxes);
-
-			ImageOrientationPatient imageOrientation =
-				new ImageOrientationPatient(resliceAxesPatientOrientation[0, 0],
-				                            resliceAxesPatientOrientation[0, 1],
-				                            resliceAxesPatientOrientation[0, 2],
-				                            resliceAxesPatientOrientation[1, 0],
-				                            resliceAxesPatientOrientation[1, 1],
-				                            resliceAxesPatientOrientation[1, 2]);
-
-			sliceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(0, (float) imageOrientation.RowX);
-			sliceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(1, (float) imageOrientation.RowY);
-			sliceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(2, (float) imageOrientation.RowZ);
-			sliceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(3, (float) imageOrientation.ColumnX);
-			sliceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(4, (float) imageOrientation.ColumnY);
-			sliceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(5, (float) imageOrientation.ColumnZ);
-
-			// Update Image Position (patient)
-			//
-			Vector3D topLeftOfSlicePatient = GetTopLeftOfSlicePatient(columns, rows);
-
-			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(0, topLeftOfSlicePatient.X);
-			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(1, topLeftOfSlicePatient.Y);
-			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(2, topLeftOfSlicePatient.Z);
-
-			return sliceDicom;
+			dicomData[DicomTags.SliceThickness].SetFloat32(0, thicknessAndSpacing);
+			dicomData[DicomTags.SpacingBetweenSlices].SetFloat32(0, thicknessAndSpacing);
 		}
 
 		// VTK treats the reslice point as the center of the output image. Given the plane orientation
@@ -711,16 +605,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private Vector3D GetSliceXVector()
 		{
+			Matrix _resliceAxes = _slicing.ResliceAxes;
 			return new Vector3D(_resliceAxes[0, 0], _resliceAxes[0, 1], _resliceAxes[0, 2]);
 		}
 
 		private Vector3D GetSliceYVector()
 		{
+			Matrix _resliceAxes = _slicing.ResliceAxes;
 			return new Vector3D(_resliceAxes[1, 0], _resliceAxes[1, 1], _resliceAxes[1, 2]);
 		}
 		
 		private Vector3D GetSliceNormalVector()
 		{
+			Matrix _resliceAxes = _slicing.ResliceAxes;
 			return new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
 		}
 
@@ -728,137 +625,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
+				Matrix _resliceAxes = _slicing.ResliceAxes;
 				return new Vector3D(_resliceAxes[3, 0],
 				                    _resliceAxes[3, 1],
 				                    _resliceAxes[3, 2]);
 			}
 			set
 			{
+				Matrix _resliceAxes = _slicing.ResliceAxes;
 				_resliceAxes[3, 0] = value.X;
 				_resliceAxes[3, 1] = value.Y;
 				_resliceAxes[3, 2] = value.Z;
 			}
 		}
-
-		private static Matrix CreateResliceAxesIdentity()
-		{
-			return new Matrix(new float[4, 4]
-			                        	{
-			                        		{1, 0, 0, 0},
-			                        		{0, 1, 0, 0},
-			                        		{0, 0, 1, 0},
-			                        		{0, 0, 0, 1}
-			                        	});
-		}
-
-		private static Matrix CreateResliceAxesOrthoY()
-		{
-			return new Matrix(new float[4,4]
-			                        	{
-			                        		{0, 1, 0, 0},
-			                        		{0, 0, -1, 0},
-			                        		{1, 0, 0, 0},
-			                        		{0, 0, 0, 1}
-			                        	});
-		}
-
-		private static Matrix CreateResliceAxesOrthoX()
-		{
-			return new Matrix(new float[4,4]
-			                        	{
-			                        		{1, 0, 0, 0},
-			                        		{0, 0, -1, 0},
-			                        		{0, 1, 0, 0},
-			                        		{0, 0, 0, 1}
-			                        	});
-		}
-
-		#region Slice Rotation stuff
-
-		private static Matrix CreateResliceAxesRotateDegrees(int rotateX, int rotateY, int rotateZ)
-		{
-			Matrix aboutX = CalcRotateMatrixAboutX(rotateX);
-			Matrix aboutY = CalcRotateMatrixAboutY(rotateY);
-			Matrix aboutZ = CalcRotateMatrixAboutZ(rotateZ);
-
-			return aboutX * aboutY * aboutZ;
-		}
-
-		private static readonly Matrix _identityMatrix = new Matrix(new float[4,4]
-		                                                                  	{
-		                                                                  		{1, 0, 0, 0},
-		                                                                  		{0, 1, 0, 0},
-		                                                                  		{0, 0, 1, 0},
-		                                                                  		{0, 0, 0, 1}
-		                                                                  	});
-
-		private static Matrix CalcRotateMatrixAboutX(int rotateXdegrees)
-		{
-			Matrix aboutX;
-
-			if (rotateXdegrees != 0)
-			{
-				float sinX = (float) Math.Sin(rotateXdegrees * Math.PI / 180);
-				float cosX = (float) Math.Cos(rotateXdegrees * Math.PI / 180);
-				aboutX = new Matrix(new float[4,4]
-				                          	{
-				                          		{1, 0, 0, 0},
-				                          		{0, cosX, -sinX, 0},
-				                          		{0, sinX, cosX, 0},
-				                          		{0, 0, 0, 1}
-				                          	});
-			}
-			else
-				aboutX = _identityMatrix;
-
-			return aboutX;
-		}
-
-		private static Matrix CalcRotateMatrixAboutY(int rotateYdegrees)
-		{
-			Matrix aboutY;
-
-			if (rotateYdegrees != 0)
-			{
-				float sinY = (float) Math.Sin(rotateYdegrees * Math.PI / 180);
-				float cosY = (float) Math.Cos(rotateYdegrees * Math.PI / 180);
-				aboutY = new Matrix(new float[4,4]
-				                          	{
-				                          		{cosY, 0, sinY, 0},
-				                          		{0, 1, 0, 0},
-				                          		{-sinY, 0, cosY, 0},
-				                          		{0, 0, 0, 1}
-				                          	});
-			}
-			else
-				aboutY = _identityMatrix;
-
-			return aboutY;
-		}
-
-		private static Matrix CalcRotateMatrixAboutZ(int rotateZdegrees)
-		{
-			Matrix aboutZ;
-
-			if (rotateZdegrees != 0)
-			{
-				float sinZ = (float) Math.Sin(rotateZdegrees * Math.PI / 180);
-				float cosZ = (float) Math.Cos(rotateZdegrees * Math.PI / 180);
-				aboutZ = new Matrix(new float[4,4]
-				                          	{
-				                          		{cosZ, -sinZ, 0, 0},
-				                          		{sinZ, cosZ, 0, 0},
-				                          		{0, 0, 1, 0},
-				                          		{0, 0, 0, 1}
-				                          	});
-			}
-			else
-				aboutZ = _identityMatrix;
-
-			return aboutZ;
-		}
-
-		#endregion
 
 		#endregion
 

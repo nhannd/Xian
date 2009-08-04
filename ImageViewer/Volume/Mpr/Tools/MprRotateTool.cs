@@ -40,8 +40,9 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NullFX.Win32;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
+	//TODO JY
 	[MouseToolButton(XMouseButtons.Right, false)]
 	// Note: This combined with GetKeyState hack allowed me to have shift key alter this tool (rotates about Z)
 	[DefaultMouseToolButton(XMouseButtons.Right, ModifierFlags.Shift)]
@@ -56,12 +57,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	// Note: I don't expect this to be a real tool in the long run, this was just an easy way to enable
 	//	and test oblique slicing
 #if DEBUG
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof(MprViewerToolExtensionPoint))]
 #endif
-	public class RotateMprTool : MouseImageViewerTool
+	public class RotateMprTool : MprViewerTool
 	{
-		private MprImageViewerToolHelper _toolHelper;
-
 		public RotateMprTool()
 		{
 			this.CursorToken = new CursorToken("Icons.RotateMprToolSmall.png", this.GetType().Assembly);
@@ -122,8 +121,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public override void Initialize()
 		{
 			base.Initialize();
-
-			_toolHelper = new MprImageViewerToolHelper(Context);
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -133,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_mouseDownLocation = mouseInformation.Location;
 			_lockedIn = false;
 
-			_obliqueDisplaySet = _toolHelper.GetObliqueDisplaySet();
+			_obliqueDisplaySet = base.GetObliqueDisplaySet();
 			if (_obliqueDisplaySet == null)
 				return false;
 
