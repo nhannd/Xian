@@ -29,40 +29,36 @@
 
 #endregion
 
-using System;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
+namespace ClearCanvas.ImageServer.Enterprise
 {
-    /// <summary>
-    /// Defines the interface of a extension to <see cref="WebEditStudyItemProcessor"/>
-    /// </summary>
-    public interface IWebEditStudyProcessorExtension : IDisposable
+    [ExtensionOf(typeof(ServiceProviderExtensionPoint), Enabled = true)]
+    class RemoteServiceProvider : RemoteCoreServiceProvider
     {
-        /// <summary>
-        /// Gets a value indicating whether the extension is enabled.
-        /// </summary>
-        bool Enabled { get; }
+        protected override string UserName
+        {
+            get
+            {
+                CustomPrincipal principal = Thread.CurrentPrincipal as CustomPrincipal;
+                Platform.CheckForNullReference(principal, "principal");
+                Platform.CheckMemberIsSet(principal.Credentials, "principal.Credentials");
+                return principal.Credentials.UserName;
+            }
+        }
 
-        /// <summary>
-        /// Initializes the extension.
-        /// </summary>
-        /// <param name="workQueueProcessor"></param>
-        void Initialize(WebEditStudyItemProcessor workQueueProcessor);
-
-        /// <summary>
-        /// Called when study is about to be updated.
-        /// </summary>
-        /// <param name="context"></param>
-        void OnStudyEditing(WebEditStudyContext context);
-
-        /// <summary>
-        /// Called after the study has been updated.
-        /// </summary>
-        /// <param name="context"></param>
-        void OnStudyEdited(WebEditStudyContext context);
+        protected override string Password
+        {
+            get
+            {
+                CustomPrincipal principal = Thread.CurrentPrincipal as CustomPrincipal;
+                Platform.CheckForNullReference(principal, "principal");
+                Platform.CheckMemberIsSet(principal.Credentials, "principal.Credentials");
+                Platform.CheckMemberIsSet(principal.Credentials.SessionToken, "principal.Credentials.SessionToken");
+                return principal.Credentials.SessionToken.Id;
+            }
+        }
     }
-
-    public class WebEditStudyProcessorExtensionPoint:ExtensionPoint<IWebEditStudyProcessorExtension>
-    {}
 }
