@@ -422,6 +422,7 @@ namespace ClearCanvas.Dicom
 			set
 			{
 				_rescaleSlope = value;
+				//G12 everywhere else.
 				_rescaleSlopeString = _rescaleSlope.ToString("G10");
 			}
 		}
@@ -431,6 +432,7 @@ namespace ClearCanvas.Dicom
 			set
 			{
 				_rescapeIntercept = value;
+				//G12 everywhere else.
 				_rescaleInterceptString = _rescapeIntercept.ToString("G10");
 			}
 		}

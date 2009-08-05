@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageServer.Core.Data
     {
         private bool _executeAtLeastOnce;
         private bool _completed;
+        private int _completeAttemptCount;
 
         public bool ExecuteAtLeastOnce
         {
@@ -34,6 +35,12 @@ namespace ClearCanvas.ImageServer.Core.Data
         {
             get { return _completed; }
             set { _completed = value; }
+        }
+
+        public int CompleteAttemptCount
+        {
+            get { return _completeAttemptCount; }
+            set { _completeAttemptCount = value; }
         }
     }
 }

@@ -540,11 +540,42 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return false;
 			}
 
-			if (_moveOriginatorAe == null)
-				client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
-			else
-				client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, _moveOriginatorAe,
-				                         _moveOriginatorMessageId, msg);
+			try
+			{
+				if (_moveOriginatorAe == null)
+					client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
+				else
+					client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, _moveOriginatorAe,
+					                         _moveOriginatorMessageId, msg);
+			}
+			catch(NetworkException)
+			{
+				throw; //This is a DicomException-derived class that we want to throw.
+			}
+			catch(DicomCodecException e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing or decompressing file before send {0}", fileToSend.Filename);
+
+				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+				fileToSend.ExtendedFailureDescription = "Error decompressing or compressing file before send.";
+				OnImageStoreCompleted(fileToSend);
+				_failureSubOperations++;
+				_remainingSubOperations--;
+				return false;
+
+			}
+			catch(DicomException e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception while sending file {0}", fileToSend.Filename);
+
+				fileToSend.SendStatus = DicomStatuses.ProcessingFailure;
+				fileToSend.ExtendedFailureDescription = "Unexpected exception while sending file.";
+				OnImageStoreCompleted(fileToSend);
+				_failureSubOperations++;
+				_remainingSubOperations--;
+				return false;
+			}
+
 			return true;
 		}
 

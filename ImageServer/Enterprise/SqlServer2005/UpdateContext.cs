@@ -83,8 +83,27 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         {
             if (_transaction != null && _transaction.Connection != null)
             {
-                _transaction.Commit();
-                _transaction.Dispose();
+				try
+				{
+					_transaction.Commit();
+				}
+				catch (SqlException e)
+				{
+					// Discovered during 1.5 testing that when an timeout exception happens on
+					// a Commit(), the transaction is still committed in the background.  
+					// Added in a catch of the timeout exception only (by looking at SqlException.Number == -2 
+					// to identify a timeout exception), and also logged a warning message.
+					// 
+					// Found -2 magic number for timeout here:  
+					// http://blog.colinmackay.net/archive/2007/06/23/65.aspx
+					// and here:
+					// http://social.msdn.microsoft.com/Forums/en-US/csharpgeneral/thread/2e30b3b1-2481-4a8d-b458-4dd4ec799a3f
+					if (e.Number != -2)
+						throw;
+
+					Platform.Log(LogLevel.Warn,e,"Timeout encountered on Commit of transaction.  Assuming transaction has completed.");
+				}
+            	_transaction.Dispose();
                 _transaction = null;
             }
             else

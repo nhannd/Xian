@@ -185,6 +185,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 					if (!file.TransferSyntax.Encapsulated)
 					{
+						//TODO: just move this right into ChangeTransferSyntax?
+
 						// Check if Overlay is embedded in pixels
 						OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(file.DataSet);
 						for (int i = 0; i < 16; i++)

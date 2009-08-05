@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		#region Constructors
 
 		public InsertInstanceXmlCommand(StudyXml stream, string path, StudyXmlOutputSettings outputSettings)
-			: base("Insert into Study XML", false)
+			: base("Insert into Study XML", true)
 		{
 			Platform.CheckForNullReference(stream, "StudyStream object");
 			Platform.CheckForNullReference(path, "Path to DICOM File");

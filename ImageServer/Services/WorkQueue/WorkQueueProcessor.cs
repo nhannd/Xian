@@ -377,10 +377,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 catch(Exception ex)
                 {
-                    Platform.Log(LogLevel.Error, "Error occurred when calling FailQueueItem. Retry later. {0}", ex.Message);
+                    Platform.Log(LogLevel.Error,  "Error occurred when calling FailQueueItem. Retry later. {0}", ex.Message);
                     _terminateEvent.WaitOne(2000, false);
                     if (_stop)
+                    {
+                        Platform.Log(LogLevel.Warn, "Service is stopping. Retry to fail the entry is terminated.");
                         break;
+                    }
+                        
                 }                
             }
         }

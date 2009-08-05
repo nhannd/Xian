@@ -258,11 +258,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 if (_queueData.State.Completed)
                 {
                     #region SAFE-GUARD CODE: PREVENT INFINITE LOOP
+
                     // The processor indicated it had completed reprocessing in previous run. The entry should have been removed and this block of code should never be called.
                     // However, we have seen ReprocessStudy entries that mysterously contain rows in the WorkQueueUid table.
                     // The rows prevent the entry from being removed from the database and the ReprocessStudy keeps repeating itself.
+
                     
-                    if (Platform.Time - item.ScheduledTime < TimeSpan.FromHours(12))
+                    // update the state first, increment the CompleteAttemptCount
+                    _queueData.State.ExecuteAtLeastOnce = true;
+                    _queueData.State.Completed = true;
+                    _queueData.State.CompleteAttemptCount++;
+                    SaveState(item, _queueData);
+
+                    if (_queueData.State.CompleteAttemptCount < 10)
                     {
                         // maybe there was db error in previous attempt to remove the entry. Let's try again.
                         Platform.Log(LogLevel.Info, "Resuming Reprocessing study {0} but it was already completed!!!", StorageLocation.StudyInstanceUid);
@@ -406,6 +414,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 // Update the state
                 _queueData.State.ExecuteAtLeastOnce = true;
                 _queueData.State.Completed = completed;
+                _queueData.State.CompleteAttemptCount++;
                 SaveState(item, _queueData);
                     
                 if (!successful)

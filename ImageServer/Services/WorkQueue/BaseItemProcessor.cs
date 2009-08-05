@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Threading;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -120,6 +122,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion
 
         #region Private Fields
+        private const int MAX_DB_RETRY = 5;
         private string _name = "Work Queue";
         private IReadContext _readContext;
         private TimeSpanStatistics _storageLocationLoadTime = new TimeSpanStatistics();
@@ -135,7 +138,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     	private bool _cancelPending = false;
     	private readonly object _syncRoot = new object();
         private StudyIntegrityValidationModes _ValidationModes = StudyIntegrityValidationModes.None;
-
+        
         #endregion
 
         #region Constructors
@@ -635,6 +638,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// <param name="processorFailureType">The failure is unrecoverable</param>
 		protected virtual void PostProcessingFailure(Model.WorkQueue item, WorkQueueProcessorFailureType processorFailureType)
 		{
+    	    int retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    #region Fail the entry
+
 			DBUpdateTime.Add(
 				delegate
 					{
@@ -691,7 +701,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
 								parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
 								parms.ExpirationTime =
-									Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount)*
+                                       Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
 									                         settings.WorkQueueFailureDelayMinutes);
 							}
 
@@ -706,10 +716,67 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						}
 					}
 				);
+
+                    break; // done
+                    #endregion
+		}
+                catch (Exception ex)
+                {
+                    if (ex is PersistenceException || ex is SqlException)
+                    {
+                        if (retryCount > MAX_DB_RETRY)
+                        {
+                            Platform.Log(LogLevel.Error, ex, "Error occurred when calling PostProcessingFailure. Max db retry count has been reached.");
+                            
+                            // can't do anything except throwing it.
+                            throw;
+                        }
+
+                        Platform.Log(LogLevel.Error, ex, "Error occurred when calling PostProcessingFailure(). Retry later. GUID={0}", item.Key);
+                        SleepForRetry();
+
+                        // If service is stoping then stop
+                        if (CancelPending)
+                        {
+                            Platform.Log(LogLevel.Warn, "Stop is requested. Attempt to fail WorkQueue entry is now terminated.");
+                            break;
+                        }
+                        retryCount++;
+                    }
+                    else
+                        throw;
+                }
+            }
+        
 		}
 
-        
+        /// <summary>
+        /// Put the workqueue thread to sleep for 2-3 minutes.
+        /// </summary>
+        /// <remarks>
+        /// This method does not return until 2-3 minutes later or if the service is stoppping.
+        /// </remarks>
+        private void SleepForRetry()
+        {
+            DateTime start = Platform.Time;
+            Random rand = new Random();
+            while(!CancelPending)
+            {
+                // sleep, wake up every 1-3 sec and check if the service is stopping
+                Thread.Sleep(rand.Next(1000,3000));
+                if (CancelPending)
+                {
+                    break;
+                }
 
+                // Sleep for 2-3 minutes
+                DateTime now = Platform.Time;
+                if (now - start > TimeSpan.FromMinutes(rand.Next(2, 3)))
+                    break;
+            }
+        }
+
+        
         /// <summary>
         /// Simple routine for failing a work queue item.
         /// </summary>
@@ -717,9 +784,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="failureDescription">The reason for the failure.</param>
         protected virtual void FailQueueItem(Model.WorkQueue item, string failureDescription)
         {
+            int retryCount = 0;
+            while (true)
+            {
+                try
+                {
             DBUpdateTime.Add(
                 delegate
                     {
+                            #region Remove the WorkQueue entry
                         using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                         {
                             IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
@@ -736,15 +809,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             {
                                 Platform.Log(LogLevel.Error,
                                              "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
-                                             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
+                                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1,
+                                                 failureDescription);
                                 parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                                 parms.ScheduledTime = Platform.Time;
                                 parms.ExpirationTime = Platform.Time.AddDays(1);
 
 
-                                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                                GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
-                                                item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription);
+                                    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name,
+                                                         AlertTypeCodes.UnableToProcess,
+                                                         GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero,
+                                                         "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                                         item.WorkQueueTypeEnum, item.GetKey(),
+                                                         item.FailureCount + 1, failureDescription);
                             }
                             else
                             {
@@ -752,23 +829,54 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                              "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
                                              item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
                                 parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                                parms.ScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
+                                    parms.ScheduledTime =
+                                        Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
                                 parms.ExpirationTime =
-                                    Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
+                                        Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount -
+                                                                  item.FailureCount) *
                                                              settings.WorkQueueFailureDelayMinutes);
-
                             }
 
                             if (false == update.Execute(parms))
                             {
-                                Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
+                                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
+                                                 item.WorkQueueTypeEnum,
                                              item.GetKey().ToString());
                             }
                             else
                                 updateContext.Commit();
+                            } 
+                            #endregion
+                        });
+                    break; // done
                         }
+                catch (Exception ex)
+                {
+                    
+                    if (ex is PersistenceException || ex is SqlException)
+                    {
+                        if (retryCount > MAX_DB_RETRY)
+                        {
+                            Platform.Log(LogLevel.Error, ex, "Error occurred when calling FailQueueItem. Max db retry count has been reached.");
+                            throw;
                     }
-                );
+
+                        Platform.Log(LogLevel.Error, ex, "Error occurred when calling FailQueueItem. Retry later. GUID={0}", item.Key);
+                        SleepForRetry();
+
+                        // Service is stoping
+                        if (CancelPending)
+                        {
+                            Platform.Log(LogLevel.Warn, "Stop is requested. Attempt to fail WorkQueue entry is now terminated.");
+                            break;
+        }
+                        retryCount++;
+                    }
+                    else
+                        throw;
+                }
+            }
+            
         }
 
 
@@ -778,8 +886,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="sop">The <see cref="WorkQueueUid"/> entry to delete.</param>
         protected virtual void DeleteWorkQueueUid(WorkQueueUid sop)
         {
-            DBUpdateTime.Add(
-                TimeSpanStatisticsHelper.Measure(
+            // Must retry in case of db error.
+            // Failure to do so may lead to orphaned WorkQueueUid and FileNotFoundException 
+            // when the work queue is reset.
+    	    int retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    TimeSpanStatistics time = TimeSpanStatisticsHelper.Measure(
                         delegate
                             {
                                 using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -787,10 +902,42 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                     IWorkQueueUidEntityBroker delete = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
 
                                     delete.Delete(sop.GetKey());
-
                                     updateContext.Commit();
                                 }
-                            }));
+                        });
+
+                    DBUpdateTime.Add(time);
+                    break; // done
+        }
+                catch (Exception ex)
+                {
+                    if (ex is PersistenceException || ex is SqlException)
+                    {
+                        if (retryCount > MAX_DB_RETRY)
+                        {
+                            Platform.Log(LogLevel.Error, ex, "Error occurred when calling DeleteWorkQueueUid. Max db retry count has been reached.");
+                            WorkQueueItem.FailureDescription = String.Format("Error occurred when calling DeleteWorkQueueUid. Max db retry count has been reached.");
+                            PostProcessingFailure(WorkQueueItem, WorkQueueProcessorFailureType.Fatal);
+                            return;
+                        }
+
+                        Platform.Log(LogLevel.Error, ex, "Error occurred when calling DeleteWorkQueueUid(). Retry later. SOPUID={0}", sop.SopInstanceUid);
+                        SleepForRetry();
+
+
+                        // Service is stoping
+                        if (CancelPending)
+                        {
+                            Platform.Log(LogLevel.Warn, "Termination Requested. DeleteWorkQueueUid() is now terminated.");
+                            break;
+                        }
+                        retryCount++;
+                    }
+                    else
+                        throw;
+                }
+            }
+
         }
 
         /// <summary>

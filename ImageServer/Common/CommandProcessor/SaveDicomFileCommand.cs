@@ -114,6 +114,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				// be overwritten.
 				if (creationTime < currentTime.AddHours(-12.0d))
 				{
+					//TODO: FileUtils.Delete does throw exceptions ... shouldn't we just keep iterating?
 					FileUtils.Delete(path);
 					return path;
 				}
@@ -146,6 +147,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
                 _saveSpeed.Start();
 				_file.Save(stream, DicomWriteOptions.Default);
+				//TODO: We flush in most other places, should we do it here?
 				stream.Close();
                 _saveSpeed.End();
 

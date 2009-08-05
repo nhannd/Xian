@@ -94,8 +94,12 @@ namespace ClearCanvas.Dicom
                 if (parameters == null)
                     parameters = DicomCodecRegistry.GetCodecParameters(newTransferSyntax, DataSet);
 
-                if (DataSet.Contains(DicomTags.PixelData))
+            	DicomAttribute pixelData;
+                if (DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData))
                 {
+					if (pixelData.IsNull)
+						throw new DicomCodecException("Sop pixel data has no valid value and cannot be compressed.");
+
                     DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
                     DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
 
@@ -105,9 +109,25 @@ namespace ClearCanvas.Dicom
 					codec.Encode(pd, fragments, parameters);
 
                     fragments.UpdateMessage(this);
+
+					//TODO: should we validate the number of frames in the compressed data?
+					if (!DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData) || pixelData.IsNull)
+						throw new DicomCodecException("Sop has no pixel data after compression.");
                 }
                 else
-                    TransferSyntax = newTransferSyntax;
+                {
+					//A bit cheap, but check for basic image attributes - if any exist
+					// and are non-empty, there should probably be pixel data too.
+
+					DicomAttribute attribute;
+					if (DataSet.TryGetAttribute(DicomTags.Rows, out attribute) && !attribute.IsNull)
+						throw new DicomCodecException("Suspect Sop appears to be an image (Rows is non-empty), but has no pixel data.");
+
+					if (DataSet.TryGetAttribute(DicomTags.Columns, out attribute) && !attribute.IsNull)
+						throw new DicomCodecException("Suspect Sop appears to be an image (Columns is non-empty), but has no pixel data.");
+
+                	TransferSyntax = newTransferSyntax;
+				}
             }
             else
             {
@@ -125,9 +145,13 @@ namespace ClearCanvas.Dicom
                         parameters = DicomCodecRegistry.GetCodecParameters(TransferSyntax, DataSet);
                 }
 
-                if (DataSet.Contains(DicomTags.PixelData))
-                {
-                    DicomCompressedPixelData fragments = new DicomCompressedPixelData(DataSet);
+				DicomAttribute pixelData;
+				if (DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData))
+				{
+					if (pixelData.IsNull)
+						throw new DicomCodecException("Sop pixel data has no valid value and cannot be decompressed.");
+
+					DicomCompressedPixelData fragments = new DicomCompressedPixelData(DataSet);
                     DicomUncompressedPixelData pd = new DicomUncompressedPixelData(fragments);
 
                     codec.Decode(fragments, pd, parameters);
@@ -135,9 +159,23 @@ namespace ClearCanvas.Dicom
                     pd.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
                     pd.UpdateMessage(this);
-                }
+
+					//TODO: should we validate the number of frames in the decompressed data?
+					if (!DataSet.TryGetAttribute(DicomTags.PixelData, out pixelData) || pixelData.IsNull)
+						throw new DicomCodecException("Sop has no pixel data after decompression.");
+				}
                 else
-                    TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                {
+					//NOTE: doing this for consistency, really.
+					DicomAttribute attribute;
+					if (DataSet.TryGetAttribute(DicomTags.Rows, out attribute) && !attribute.IsNull)
+						throw new DicomCodecException("Suspect Sop appears to be an image (Rows is non-empty), but has no pixel data.");
+
+					if (DataSet.TryGetAttribute(DicomTags.Columns, out attribute) && !attribute.IsNull)
+						throw new DicomCodecException("Suspect Sop appears to be an image (Columns is non-empty), but has no pixel data.");
+					
+					TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                }
             }
         }
 

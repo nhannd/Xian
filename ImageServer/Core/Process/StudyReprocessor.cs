@@ -52,69 +52,78 @@ namespace ClearCanvas.ImageServer.Core.Process
         /// <param name="scheduleTime"></param>
         /// <param name="priority"></param>
         /// <returns></returns>
-        public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
+		public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
         {
-            Platform.CheckForNullReference(location, "location");
+        	Platform.CheckForNullReference(location, "location");
 
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            
-            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                Study study = location.LoadStudy(ctx);
+        	IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
 
-                // Unlock first
-                ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
-                LockStudyParameters lockParms = new LockStudyParameters();
-                lockParms.StudyStorageKey = location.Key;
-                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-                if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                    return null;
+        	using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+        	{
+				WorkQueue reprocessEntry = ReprocessStudy(ctx, reason, location, scheduleTime, priority);
+        		if (reprocessEntry != null)
+        		{
+        			ctx.Commit();
+        		}
 
-                // Now relock
-                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
-                if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                    return null;
-
-                InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
-                columns.ScheduledTime = scheduleTime;
-                columns.ServerPartitionKey = location.ServerPartitionKey;
-                columns.StudyStorageKey = location.Key;
-                columns.WorkQueuePriorityEnum = priority;
-                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-                columns.ExpirationTime = scheduleTime.Add(TimeSpan.FromMinutes(5));
-
-                ReprocessStudyQueueData queueData = new ReprocessStudyQueueData();
-                queueData.State = new ReprocessStudyState();
-                queueData.State.ExecuteAtLeastOnce = false; 
-                queueData.ChangeLog = new ReprocessStudyChangeLog();
-                queueData.ChangeLog.Reason = reason;
-                queueData.ChangeLog.TimeStamp = Platform.Time;
-                queueData.ChangeLog.User = (Thread.CurrentPrincipal is CustomPrincipal)
-                                         ? (Thread.CurrentPrincipal as CustomPrincipal).Identity.Name
-                                         : String.Empty;
-                columns.WorkQueueData = XmlUtils.SerializeAsXmlDoc(queueData);
-                IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
-                WorkQueue reprocessEntry = insertBroker.FindOne(columns);
-                if (reprocessEntry != null)
-                {
-                    ctx.Commit();
-
-                    if (study != null)
-                    {
-                        Platform.Log(LogLevel.Info,
-                                     "Study Reprocess Scheduled for Study {0}, A#: {1}, Patient: {2}, ID={3}",
-                                     study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId);
-                    }
-                    else
-                    {
-                        Platform.Log(LogLevel.Info, "Study Reprocess Scheduled for Study {1}.", location.StudyInstanceUid);
-
-                    }
-                }
-
-                return reprocessEntry;
-            }
+        		return reprocessEntry;
+        	}
         }
 
+		public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
+		{
+			Platform.CheckForNullReference(location, "location");
+
+			Study study = location.LoadStudy(ctx);
+
+			// Unlock first
+			ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
+			LockStudyParameters lockParms = new LockStudyParameters();
+			lockParms.StudyStorageKey = location.Key;
+			lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+			if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+				return null;
+
+			// Now relock
+			lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
+			if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+				return null;
+
+			InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
+			columns.ScheduledTime = scheduleTime;
+			columns.ServerPartitionKey = location.ServerPartitionKey;
+			columns.StudyStorageKey = location.Key;
+			columns.WorkQueuePriorityEnum = priority;
+			columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
+			columns.ExpirationTime = scheduleTime.Add(TimeSpan.FromMinutes(5));
+
+			ReprocessStudyQueueData queueData = new ReprocessStudyQueueData();
+			queueData.State = new ReprocessStudyState();
+			queueData.State.ExecuteAtLeastOnce = false;
+			queueData.ChangeLog = new ReprocessStudyChangeLog();
+			queueData.ChangeLog.Reason = reason;
+			queueData.ChangeLog.TimeStamp = Platform.Time;
+			queueData.ChangeLog.User = (Thread.CurrentPrincipal is CustomPrincipal)
+			                           	? (Thread.CurrentPrincipal as CustomPrincipal).Identity.Name
+			                           	: String.Empty;
+			columns.WorkQueueData = XmlUtils.SerializeAsXmlDoc(queueData);
+			IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
+			WorkQueue reprocessEntry = insertBroker.FindOne(columns);
+			if (reprocessEntry != null)
+			{
+				if (study != null)
+				{
+					Platform.Log(LogLevel.Info,
+					             "Study Reprocess Scheduled for Study {0}, A#: {1}, Patient: {2}, ID={3}",
+					             study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId);
+				}
+				else
+				{
+					Platform.Log(LogLevel.Info, "Study Reprocess Scheduled for Study {0}.", location.StudyInstanceUid);
+				}
+			}
+
+			return reprocessEntry;
+		}
     }
 }

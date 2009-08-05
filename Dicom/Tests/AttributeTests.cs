@@ -6806,7 +6806,37 @@ namespace ClearCanvas.Dicom.Tests
 
         #endregion
 
-		#region DicomAttribute Empty/Null Tests
+		[Test]
+		public void TestCopy()
+		{
+			DicomAttributeCollection collection = new DicomAttributeCollection();
+			SetupMR(collection);
+			DicomAttributeCollection copy = collection.Copy(true, true, true);
+			Assert.AreEqual(collection.Count, copy.Count);
+
+			foreach(DicomAttribute attribute in collection)
+			{
+				DicomAttribute attribute2 = copy[attribute.Tag];
+				Assert.AreEqual(attribute2, attribute);
+			}
+
+			Assert.AreEqual(collection, copy);
+
+			collection = new DicomAttributeCollection();
+			SetupMultiframeXA(collection, 512, 512, 5);
+			copy = collection.Copy(true, true, true);
+			Assert.AreEqual(collection.Count, copy.Count);
+
+			foreach (DicomAttribute attribute in collection)
+			{
+				DicomAttribute attribute2 = copy[attribute.Tag];
+				Assert.AreEqual(attribute2, attribute);
+			}
+
+			Assert.AreEqual(collection, copy);
+		}
+
+    	#region DicomAttribute Empty/Null Tests
 		[Test]
 		public void TestSetEmptyValue()
 		{
@@ -6820,6 +6850,23 @@ namespace ClearCanvas.Dicom.Tests
 			Assert.IsFalse(file.DataSet[DicomTags.PixelData].IsEmpty);
 			file.DataSet[DicomTags.PixelData].SetEmptyValue();
 			Assert.IsTrue(file.DataSet[DicomTags.PixelData].IsEmpty);
+			Assert.AreEqual(file.DataSet[DicomTags.PixelData].StreamLength, 0);
+		}
+
+		[Test]
+		public void TestSetNullValue()
+		{
+			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
+			test.TestSetNull();
+
+			DicomFile file = new DicomFile();
+			base.SetupMultiframeXA(file.DataSet, 16, 16, 3);
+			base.SetupMetaInfo(file);
+
+			Assert.IsFalse(file.DataSet[DicomTags.PixelData].IsNull);
+			file.DataSet[DicomTags.PixelData].SetNullValue();
+			Assert.IsTrue(file.DataSet[DicomTags.PixelData].IsNull);
+			Assert.AreEqual(file.DataSet[DicomTags.PixelData].StreamLength, 0);
 		}
 
     	[Test]
@@ -6886,14 +6933,34 @@ namespace ClearCanvas.Dicom.Tests
 				DicomAttributeCollection collection = new DicomAttributeCollection();
 				foreach (DicomTag tag in _tags)
 				{
-						TrySetValue(0, collection[tag]);
-						Assert.IsFalse(collection[tag].IsEmpty);
+					TrySetValue(0, collection[tag]);
+					Assert.IsFalse(collection[tag].IsEmpty);
+					Assert.IsFalse(collection[tag].IsNull);
 				}
 
 				foreach (DicomAttribute attribute in collection)
 				{
 					attribute.SetEmptyValue();
 					Assert.IsTrue(attribute.IsEmpty);
+					Assert.IsFalse(attribute.IsNull);
+				}
+			}
+
+			public void TestSetNull()
+			{
+				DicomAttributeCollection collection = new DicomAttributeCollection();
+				foreach (DicomTag tag in _tags)
+				{
+					TrySetValue(0, collection[tag]);
+					Assert.IsFalse(collection[tag].IsEmpty);
+					Assert.IsFalse(collection[tag].IsNull);
+				}
+
+				foreach (DicomAttribute attribute in collection)
+				{
+					attribute.SetNullValue();
+					Assert.IsTrue(attribute.IsNull);
+					Assert.IsFalse(attribute.IsEmpty);
 				}
 			}
 

@@ -206,7 +206,9 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                     }
                     catch(Exception)
                     {
-                        // try another file name
+						//NOTE: this method would cause an infinite loop if the filesystem cannot be written to.
+                        
+						// try another file name
                     }
 
                     if (filenameAbtained)
