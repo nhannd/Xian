@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	{
 		private event EventHandler _slicerParamsChanged;
 		private IVolumeSlicerParams _slicerParams;
-		private Volume _volume; // TODO JY: lose the direct reference, we should all hold transient references
+		private IVolumeReference _volume;
 
 		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams) : this(volume, slicerParams, null, null) {}
 
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Platform.CheckForNullReference(volume, "volume");
 			Platform.CheckForNullReference(slicerParams, "slicerParams");
 
-			_volume = volume;
+			_volume = volume.CreateTransientReference();
 			_slicerParams = slicerParams;
 
 			base.Description = _slicerParams.Description;
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Volume Volume
 		{
-			get { return _volume; }
+			get { return _volume.Volume; }
 		}
 
 		public IVolumeSlicerParams SlicerParams
@@ -98,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			if (disposing)
 			{
+				_volume.Dispose();
 				_volume = null;
 			}
 			base.Dispose(disposing);
@@ -110,13 +111,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			foreach (IPresentationImage image in images)
 				image.Dispose();
 
-			VolumeSlicer slicer = new VolumeSlicer(_volume, _slicerParams, base.Uid);
-			foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
+			using (VolumeSlicer slicer = new VolumeSlicer(_volume.Volume, _slicerParams, base.Uid))
 			{
-				ImageSop imageSop = new ImageSop(dataSource);
-				foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
+				foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
 				{
-					this.PresentationImages.Add(image);
+					ImageSop imageSop = new ImageSop(dataSource);
+					foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
+					{
+						this.PresentationImages.Add(image);
+					}
 				}
 			}
 		}

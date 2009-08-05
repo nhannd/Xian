@@ -34,9 +34,7 @@ using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 using vtk;
 
@@ -154,8 +152,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				return new Vector3D(ArrayDimensions.Width * VoxelSpacing.X, ArrayDimensions.Height * VoxelSpacing.Y,
-				                    ArrayDimensions.Depth * VoxelSpacing.Z);
+				return new Vector3D(ArrayDimensions.Width*VoxelSpacing.X, ArrayDimensions.Height*VoxelSpacing.Y,
+				                    ArrayDimensions.Depth*VoxelSpacing.Z);
 			}
 		}
 
@@ -207,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float MaxXCoord
 		{
-			get { return (Origin.X + VoxelSpacing.X * ArrayDimensions.Width); }
+			get { return (Origin.X + VoxelSpacing.X*ArrayDimensions.Width); }
 		}
 
 		public float MinYCoord
@@ -217,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float MaxYCoord
 		{
-			get { return (Origin.Y + VoxelSpacing.Y * ArrayDimensions.Height); }
+			get { return (Origin.Y + VoxelSpacing.Y*ArrayDimensions.Height); }
 		}
 
 		public float MinZCoord
@@ -227,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float MaxZCoord
 		{
-			get { return (Origin.Z + VoxelSpacing.Z * ArrayDimensions.Depth); }
+			get { return (Origin.Z + VoxelSpacing.Z*ArrayDimensions.Depth); }
 		}
 
 		public float MinSpacing
@@ -264,9 +262,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				return (float)Math.Sqrt(Dimensions.X * Dimensions.X +
-										 Dimensions.Y * Dimensions.Y +
-										 Dimensions.Z * Dimensions.Z);
+				return (float) Math.Sqrt(Dimensions.X*Dimensions.X +
+				                         Dimensions.Y*Dimensions.Y +
+				                         Dimensions.Z*Dimensions.Z);
 			}
 		}
 
@@ -277,9 +275,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				Vector3D center = new Vector3D(Origin.X + VoxelSpacing.X * 0.5f * ArrayDimensions.Width,
-											   Origin.Y + VoxelSpacing.Y * 0.5f * ArrayDimensions.Height,
-											   Origin.Z + VoxelSpacing.Z * 0.5f * ArrayDimensions.Depth);
+				Vector3D center = new Vector3D(Origin.X + VoxelSpacing.X*0.5f*ArrayDimensions.Width,
+				                               Origin.Y + VoxelSpacing.Y*0.5f*ArrayDimensions.Height,
+				                               Origin.Z + VoxelSpacing.Z*0.5f*ArrayDimensions.Depth);
 				return center;
 			}
 		}
@@ -313,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Transform volume position to patient position
 			Matrix imagePositionMatrix = new Matrix(1, 4);
 			imagePositionMatrix.SetRow(0, volumePosition.X, volumePosition.Y, volumePosition.Z, 1F);
-			Matrix patientPositionMatrix = imagePositionMatrix * volumePatientTransform;
+			Matrix patientPositionMatrix = imagePositionMatrix*volumePatientTransform;
 
 			Vector3D patientPosition = new Vector3D(patientPositionMatrix[0, 0], patientPositionMatrix[0, 1],
 			                                        patientPositionMatrix[0, 2]);
@@ -331,7 +329,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Transform patient position to volume position
 			Matrix patientPositionMatrix = new Matrix(1, 4);
 			patientPositionMatrix.SetRow(0, patientPosition.X, patientPosition.Y, patientPosition.Z, 1F);
-			Matrix imagePositionMatrix = patientPositionMatrix * patientVolumeTransform;
+			Matrix imagePositionMatrix = patientPositionMatrix*patientVolumeTransform;
 
 			Vector3D imagePosition = new Vector3D(imagePositionMatrix[0, 0], imagePositionMatrix[0, 1],
 			                                      imagePositionMatrix[0, 2]);
@@ -340,13 +338,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Matrix RotateToPatientOrientation(Matrix orientationVolume)
 		{
-			Matrix orientationPatient = orientationVolume * OrientationPatientMatrix;
+			Matrix orientationPatient = orientationVolume*OrientationPatientMatrix;
 			return orientationPatient;
 		}
 
 		public Matrix RotateToVolumeOrientation(Matrix orientationPatient)
 		{
-			Matrix orientationVolume = orientationPatient * OrientationPatientMatrix.Transpose();
+			Matrix orientationVolume = orientationPatient*OrientationPatientMatrix.Transpose();
 			return orientationVolume;
 		}
 
@@ -354,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			Matrix volumePos = new Matrix(1, 4);
 			volumePos.SetRow(0, volumeVec.X, volumeVec.Y, volumeVec.Z, 1F);
-			Matrix patientPos = volumePos * OrientationPatientMatrix;
+			Matrix patientPos = volumePos*OrientationPatientMatrix;
 			return new Vector3D(patientPos[0, 0], patientPos[0, 1], patientPos[0, 2]);
 		}
 
@@ -362,7 +360,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			Matrix patientPos = new Matrix(1, 4);
 			patientPos.SetRow(0, patientVec.X, patientVec.Y, patientVec.Z, 1F);
-			Matrix volumePos = patientPos * OrientationPatientMatrix.Transpose();
+			Matrix volumePos = patientPos*OrientationPatientMatrix.Transpose();
 			return new Vector3D(volumePos[0, 0], volumePos[0, 1], volumePos[0, 2]);
 		}
 
@@ -452,19 +450,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#endregion
 
 		#region Disposal
-
-		public void Dispose()
-		{
-			try
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-			}
-		}
 
 		protected void Dispose(bool disposing)
 		{

@@ -35,18 +35,14 @@ using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	// TODO JY
-	// TODO JY - we may have to introduce a transient reference cache on Volume similar to IFrameReference
-	//   for the scenario where we clipboard something, then close the workspace, then call Unload for some reason, and then still expect the Sop to refetch the data
-	public partial class VolumeSliceSopDataSource : StandardSopDataSource 
+	public class VolumeSliceSopDataSource : StandardSopDataSource
 	{
-		private readonly Volume _volume;
+		private readonly IVolumeReference _volume;
 		private readonly IVolumeSlicerParams _slicerParams;
 		private readonly Matrix _resliceMatrix;
 		private readonly DicomAttributeCollection _instanceDataSet;
@@ -60,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Platform.CheckForNullReference(throughPoints, "throughPoints");
 			Platform.CheckTrue(throughPoints.Count > 0, "At least one through point must be specified.");
 
-			_volume = volume;
+			_volume = volume.CreateTransientReference();
 			_slicerParams = slicerParams;
 			_resliceMatrix = new Matrix(slicerParams.SlicingPlaneRotation);
 			_resliceMatrix[3, 0] = throughPoints[0].X;
@@ -82,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_instanceDataSet[DicomTags.Rows].SetInt32(0, frameSize.Height);
 
 			// assign Image Orientation (Patient)
-			Matrix resliceAxesPatientOrientation = _volume.RotateToPatientOrientation(_resliceMatrix);
+			Matrix resliceAxesPatientOrientation = _volume.Volume.RotateToPatientOrientation(_resliceMatrix);
 			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(0, resliceAxesPatientOrientation[0, 0]);
 			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(1, resliceAxesPatientOrientation[0, 1]);
 			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(2, resliceAxesPatientOrientation[0, 2]);
@@ -105,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Volume Volume
 		{
-			get { return _volume; }
+			get { return _volume.Volume; }
 		}
 
 		public IVolumeSlicerParams SlicerParams
@@ -118,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				DicomAttribute attribute;
-				if (_volume.DataSet.TryGetAttribute(tag, out attribute))
+				if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
 					return attribute;
 				return _instanceDataSet[tag];
 			}
@@ -129,7 +125,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				DicomAttribute attribute;
-				if (_volume.DataSet.TryGetAttribute(tag, out attribute))
+				if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
 					return attribute;
 				return _instanceDataSet[tag];
 			}
@@ -137,14 +133,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
 		{
-			if (_volume.DataSet.TryGetAttribute(tag, out attribute))
+			if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
 				return true;
 			return _instanceDataSet.TryGetAttribute(tag, out attribute);
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			if (_volume.DataSet.TryGetAttribute(tag, out attribute))
+			if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
 				return true;
 			return _instanceDataSet.TryGetAttribute(tag, out attribute);
 		}
@@ -153,6 +149,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			Platform.CheckArgumentRange(frameNumber, 1, _throughPoints.Count, "frameNumber");
 			return new VolumeSliceSopFrameData(frameNumber, this);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_volume.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		protected class VolumeSliceSopFrameData : StandardSopFrameData
@@ -171,8 +176,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			protected override byte[] CreateNormalizedPixelData()
 			{
-				VolumeSlicer slicer = new VolumeSlicer(this.Parent.Volume, this.Parent.SlicerParams, this.Parent.SeriesInstanceUid);
-				return slicer.CreateSliceNormalizedPixelData(this.ThroughPoint);
+				using (VolumeSlicer slicer = new VolumeSlicer(this.Parent.Volume, this.Parent.SlicerParams, this.Parent.SeriesInstanceUid))
+				{
+					return slicer.CreateSliceNormalizedPixelData(this.ThroughPoint);
+				}
 			}
 
 			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
@@ -197,8 +204,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// These offsets define the x and y vector magnitudes to arrive at our point
 			float effectiveSpacing = GetEffectiveSpacing(volume);
-			float offsetX = centerImageCoord.X * effectiveSpacing;
-			float offsetY = centerImageCoord.Y * effectiveSpacing;
+			float offsetX = centerImageCoord.X*effectiveSpacing;
+			float offsetY = centerImageCoord.Y*effectiveSpacing;
 
 			// To determine top left of slice in volume, subtract offset vectors along x and y
 			//
@@ -207,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D xVec = new Vector3D(resliceAxes[0, 0], resliceAxes[0, 1], resliceAxes[0, 2]);
 			Vector3D yVec = new Vector3D(resliceAxes[1, 0], resliceAxes[1, 1], resliceAxes[1, 2]);
 			// Offset along x and y from reslicePoint
-			Vector3D topLeftOfSliceVolume = throughPoint - (offsetX * xVec + offsetY * yVec);
+			Vector3D topLeftOfSliceVolume = throughPoint - (offsetX*xVec + offsetY*yVec);
 
 			// Convert volume point to patient space
 			return volume.ConvertToPatient(topLeftOfSliceVolume);

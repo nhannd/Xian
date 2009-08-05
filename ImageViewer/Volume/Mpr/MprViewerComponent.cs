@@ -47,8 +47,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private IToolSet _mprViewerToolSet;
 		private IActionSet _mprViewerActionSet;
 
-		// TODO JY: lose the ownership of Volume - we should all hold transient references to it instead
-		private Volume _volume;
+		private IVolumeReference _volume;
 
 		private string _title;
 
@@ -57,12 +56,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public MprViewerComponent(Volume volume) : base(new MprLayoutManager(), null)
 		{
 			Platform.CheckForNullReference(volume, "volume");
-			_volume = volume;
+			_volume = volume.CreateTransientReference();
 		}
 
 		public Volume Volume
 		{
-			get { return _volume; }
+			get { return _volume.Volume; }
 		}
 
 		public string Title
@@ -70,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				if (_title == null)
-					_title = _volume.Description;
+					_title = _volume.Volume.Description;
 				return _title;
 			}
 			set { _title = value; }

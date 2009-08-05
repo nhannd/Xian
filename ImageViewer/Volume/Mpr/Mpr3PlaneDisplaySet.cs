@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	public sealed class Mpr3PlaneDisplaySet : DisplaySet
 	{
 		private static readonly IVolumeSlicerParams[] _planes = new IVolumeSlicerParams[] {VolumeSlicerParams.Identity, VolumeSlicerParams.OrthogonalX, VolumeSlicerParams.OrthogonalY};
-		private Volume _volume;
+		private IVolumeReference _volume;
 
 		public Mpr3PlaneDisplaySet(Volume volume) : this(volume, null, null) {}
 
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			Platform.CheckForNullReference(volume, "volume");
 
-			_volume = volume;
+			_volume = volume.CreateTransientReference();
 
 			base.Description = "3-Plane";
 
@@ -62,13 +62,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Volume Volume
 		{
-			get { return _volume; }
+			get { return _volume.Volume; }
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
+				_volume.Dispose();
 				_volume = null;
 			}
 			base.Dispose(disposing);
@@ -84,16 +85,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int instanceNumber = 0;
 			foreach (IVolumeSlicerParams slicerParams in _planes)
 			{
-				VolumeSlicer slicer = new VolumeSlicer(_volume, slicerParams, base.Uid);
-				foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
+				using (VolumeSlicer slicer = new VolumeSlicer(_volume.Volume, slicerParams, base.Uid))
 				{
-					// we're appending multiple slicings, so override the instance number that the slicer generates
-					dataSource[DicomTags.InstanceNumber].SetInt32(0, ++instanceNumber);
-
-					ImageSop imageSop = new ImageSop(dataSource);
-					foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
+					foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
 					{
-						this.PresentationImages.Add(image);
+						// we're appending multiple slicings, so override the instance number that the slicer generates
+						dataSource[DicomTags.InstanceNumber].SetInt32(0, ++instanceNumber);
+
+						ImageSop imageSop = new ImageSop(dataSource);
+						foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
+						{
+							this.PresentationImages.Add(image);
+						}
 					}
 				}
 			}
