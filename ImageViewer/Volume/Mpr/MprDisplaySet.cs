@@ -30,89 +30,100 @@
 #endregion
 
 using System;
-using System.Drawing;
-using ClearCanvas.ImageViewer.Mathematics;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	public enum MprDisplaySetIdentifier
-	{
-		Identity,
-		OrthoX,
-		OrthoY,
-		Oblique
-	}
-
-	[System.Obsolete("JY")]
+	/// <summary>
+	/// A basic, single-plane slice view of an MPR <see cref="Volume"/>.
+	/// </summary>
 	public class MprDisplaySet : DisplaySet
 	{
-		private readonly MprDisplaySetIdentifier _identifier;
-		private VolumeSlicer _slicer;
+		private event EventHandler _slicerParamsChanged;
+		private IVolumeSlicerParams _slicerParams;
+		private Volume _volume; // TODO JY: lose the direct reference, we should all hold transient references
 
-		private MprDisplaySet(string name, string uid, string description, MprDisplaySetIdentifier identifier, VolumeSlicer slicer)
-		: base(name, uid)
+		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams) : this(volume, slicerParams, null, null) {}
+
+		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams, string name) : this(volume, slicerParams, name, DicomUid.GenerateUid().UID) {}
+
+		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams, string name, string uid) : base(name, uid)
 		{
-			base.Description = description;
-			_identifier = identifier;
-			_slicer = slicer;
+			Platform.CheckForNullReference(volume, "volume");
+			Platform.CheckForNullReference(slicerParams, "slicerParams");
+
+			_volume = volume;
+			_slicerParams = slicerParams;
+
+			base.Description = _slicerParams.Description;
+
+			this.Reslice();
 		}
 
-		public MprDisplaySetIdentifier Identifier
+		public Volume Volume
 		{
-			get { return _identifier; }	
+			get { return _volume; }
 		}
 
-		public int RotateAboutX
+		public IVolumeSlicerParams SlicerParams
 		{
-			get { return _slicer.Slicing.RotateAboutX; }	
-		}
-
-		public int RotateAboutY
-		{
-			get { return _slicer.Slicing.RotateAboutY; }
-		}
-		
-		public int RotateAboutZ
-		{
-			get { return _slicer.Slicing.RotateAboutZ; }
-		}
-
-		public static MprDisplaySet Create(MprDisplaySetIdentifier identifier, Volume volume)
-		{
-			VolumeSlicer slicer = new VolumeSlicer(volume);
-
-			string name;
-			if (identifier == MprDisplaySetIdentifier.Identity)
+			get { return _slicerParams; }
+			set
 			{
-				slicer.Slicing = VolumeSlicing.CreateIdentitySlicing();
-				name = "MPR (Identity)";
+				if (_slicerParams != value)
+				{
+					_slicerParams = value;
+					this.OnSlicerParamsChanged();
+				}
 			}
-			else if (identifier == MprDisplaySetIdentifier.OrthoX)
-			{
-				slicer.Slicing = VolumeSlicing.CreateOrthogonalXSlicing();
-				name = "MPR (OrthoX)";
-			}
-			else if (identifier == MprDisplaySetIdentifier.OrthoY)
-			{
-				slicer.Slicing = VolumeSlicing.CreateOrthogonalYSlicing();
-				name = "MPR (OrthoY)";
-			}
-			else
-			{
-				//TODO: Ideally we wouldn't have to set this initially right? The imagebox
-				//	didn't want an empty display set so choose some reasonable default oblique
-				slicer.Slicing = VolumeSlicing.CreateSlicing(90, 0, 45);
-				name = "MPR (Oblique)";
-			}
-
-			MprDisplaySet displaySet = new MprDisplaySet(name, DicomUid.GenerateUid().UID, name, identifier, slicer);
-			slicer.PopulateDisplaySetFull(displaySet);
-			return displaySet;
 		}
+
+		public event EventHandler SlicerParamsChanged
+		{
+			add { _slicerParamsChanged += value; }
+			remove { _slicerParamsChanged -= value; }
+		}
+
+		protected virtual void OnSlicerParamsChanged()
+		{
+			this.Reslice();
+			EventsHelper.Fire(_slicerParamsChanged, this, EventArgs.Empty);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_volume = null;
+			}
+			base.Dispose(disposing);
+		}
+
+		protected void Reslice()
+		{
+			List<IPresentationImage> images = new List<IPresentationImage>(this.PresentationImages);
+			this.PresentationImages.Clear();
+			foreach (IPresentationImage image in images)
+				image.Dispose();
+
+			VolumeSlicer slicer = new VolumeSlicer(_volume, _slicerParams, base.Uid);
+			foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
+			{
+				ImageSop imageSop = new ImageSop(dataSource);
+				foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
+				{
+					this.PresentationImages.Add(image);
+				}
+			}
+		}
+
+		#region Old Stuff for Experimental Tools
+
+#if EXPERIMENTAL_TOOLS
 
 		private Vector3D _startPoint, _endPoint;
 		public void SetCutLine(Vector3D sourceOrientationColumn, Vector3D sourceOrientationRow, Vector3D startPoint, Vector3D endPoint)
@@ -134,8 +145,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (oldImage is IVoiLutProvider)
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			_slicer.Slicing = VolumeSlicing.CreateSlicing(_slicer.Volume, sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
-			_slicer.PopulateDisplaySetOneImage(this);
+			_slicer.Slicing = VolumeSlicerParams.CreateSlicing(_slicer.Volume, sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
+			this.Reslice();
 
 			if (lut != null || transformMemento != null)
 			{
@@ -173,7 +184,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (oldImage is IVoiLutProvider)
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			_slicer.PopulateDisplaySetFull(this);
+			this.Reslice();
 
 			if (lut != null || transformMemento != null)
 			{
@@ -216,8 +227,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			try
 			{
-				_slicer.Slicing = VolumeSlicing.CreateSlicing(rotateX, rotateY, rotateZ);
-				_slicer.PopulateDisplaySetFull(this);
+				_slicerParams = new VolumeSlicerParams(rotateX, rotateY, rotateZ);
+				this.Reslice();
 			}
 			catch
 			{
@@ -267,12 +278,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return closestImage;
 		}
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-				_slicer = null;
+#endif
 
-			base.Dispose(disposing);
-		}
+		#endregion
 	}
 }

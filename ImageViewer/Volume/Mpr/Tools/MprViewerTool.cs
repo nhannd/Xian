@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -58,81 +57,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			get { return (IMprViewerToolContext) base.Context; }
 		}
 
-		[Obsolete("JY")]
 		public bool IsMprImage(IPresentationImage image)
 		{
 			return image.ParentDisplaySet is MprDisplaySet;
-		}
-
-		[Obsolete("JY")]
-		public bool IsIdentityImage(IPresentationImage image)
-		{
-			return IsMprImage(image, MprDisplaySetIdentifier.Identity);
-		}
-
-		[Obsolete("JY")]
-		public bool IsOrthoXImage(IPresentationImage image)
-		{
-			return IsMprImage(image, MprDisplaySetIdentifier.OrthoX);
-		}
-
-		[Obsolete("JY")]
-		public bool IsOrthoYImage(IPresentationImage image)
-		{
-			return IsMprImage(image, MprDisplaySetIdentifier.OrthoY);
-		}
-
-		[Obsolete("JY")]
-		public bool IsObliqueImage(IPresentationImage image)
-		{
-			return IsMprImage(image, MprDisplaySetIdentifier.Oblique);
-		}
-
-		[Obsolete("JY")]
-		public MprDisplaySet GetIdentityDisplaySet()
-		{
-			return FindMprDisplaySet(MprDisplaySetIdentifier.Identity);
-		}
-
-		[Obsolete("JY")]
-		public MprDisplaySet GetOrthoYDisplaySet()
-		{
-			return FindMprDisplaySet(MprDisplaySetIdentifier.OrthoY);
-		}
-
-		[Obsolete("JY")]
-		public MprDisplaySet GetOrthoXDisplaySet()
-		{
-			return FindMprDisplaySet(MprDisplaySetIdentifier.OrthoX);
-		}
-
-		[Obsolete("JY")]
-		public MprDisplaySet GetObliqueDisplaySet()
-		{
-			return FindMprDisplaySet(MprDisplaySetIdentifier.Oblique);
-		}
-
-		[Obsolete("JY")]
-		private static bool IsMprImage(IPresentationImage image, MprDisplaySetIdentifier identifier)
-		{
-			if (image == null || image.ParentDisplaySet == null)
-				return false;
-
-			return image.ParentDisplaySet is MprDisplaySet && ((MprDisplaySet) image.ParentDisplaySet).Identifier == identifier;
-		}
-
-		[Obsolete("JY")]
-		private MprDisplaySet FindMprDisplaySet(MprDisplaySetIdentifier identifier)
-		{
-			IPhysicalWorkspace workspace = this.ImageViewer.PhysicalWorkspace;
-			foreach (IImageBox imageBox in workspace.ImageBoxes)
-			{
-				MprDisplaySet displaySet = imageBox.DisplaySet as MprDisplaySet;
-				if (displaySet != null && displaySet.Identifier == identifier)
-					return displaySet;
-			}
-
-			return null;
 		}
 	}
 }

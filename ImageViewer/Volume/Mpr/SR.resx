@@ -117,19 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MenuVolume" xml:space="preserve">
-    <value>Volume Tools</value>
-  </data>
-  <data name="MenuOpenMpr" xml:space="preserve">
-    <value>Open Images in MPR</value>
-  </data>
-  <data name="MprWorkspaceTitlePrefix" xml:space="preserve">
-    <value>MPR - </value>
-  </data>
-  <data name="MessageFormatOpeningImages" xml:space="preserve">
-    <value>Opening {0} of {1} images</value>
+  <data name="MenuOpenWithMpr" xml:space="preserve">
+    <value>Open with &amp;MPR...</value>
   </data>
   <data name="MessageBuildingMprVolume" xml:space="preserve">
     <value>Building MPR Volume...</value>
+  </data>
+  <data name="FormatMprDisplaySetName" xml:space="preserve">
+    <value>MPR ({0})</value>
+  </data>
+  <data name="MenuOpenSelectionWithMpr" xml:space="preserve">
+    <value>Open Selection with &amp;MPR</value>
+  </data>
+  <data name="MenuVolume" xml:space="preserve">
+    <value>&amp;Volume</value>
+  </data>
+  <data name="ToolbarOpenSelectionWithMpr" xml:space="preserve">
+    <value>Open Selection with MPR</value>
+  </data>
+  <data name="FormatSliceCustom" xml:space="preserve">
+    <value>{0:f0}-{1:f0}-{2:f0}</value>
+  </data>
+  <data name="FormatSliceIdentity" xml:space="preserve">
+    <value>Identity</value>
+  </data>
+  <data name="FormatSliceOrthogonalX" xml:space="preserve">
+    <value>OrthoX</value>
+  </data>
+  <data name="FormatSliceOrthogonalY" xml:space="preserve">
+    <value>OrthoY</value>
   </data>
 </root>

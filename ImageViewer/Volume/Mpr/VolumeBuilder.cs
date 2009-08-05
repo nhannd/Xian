@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			private Matrix _imageOrientationPatient;
 			private Vector3D _imagePositionPatient;
-			private Vector3D _pixelSpacing;
+			private Vector3D _voxelSpacing;
 			private Size3D _volumeSize;
 			private double? _gantryTilt;
 			private int? _pixelPaddingValue;
@@ -110,18 +110,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 			}
 
-			private Vector3D PixelSpacing
+			private Vector3D VoxelSpacing
 			{
 				get
 				{
-					if (_pixelSpacing == null)
+					if (_voxelSpacing == null)
 					{
 						Frame frame0 = _frames[0].Frame;
 						Frame frame1 = _frames[1].Frame;
 						PixelSpacing pixelSpacing = frame0.PixelSpacing;
-						_pixelSpacing = new Vector3D((float) pixelSpacing.Column, (float) pixelSpacing.Row, CalcSpaceBetweenPlanes(frame0, frame1));
+						_voxelSpacing = new Vector3D((float) pixelSpacing.Column, (float) pixelSpacing.Row, CalcSpaceBetweenPlanes(frame0, frame1));
 					}
-					return _pixelSpacing;
+					return _voxelSpacing;
 				}
 			}
 
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						double padRowsMm = Math.Tan(this.GantryTilt)*(_frames[_frames.Count - 1].Frame.ImagePositionPatient.Z - _frames[0].Frame.ImagePositionPatient.Z);
 
 						// ensure this pad is always positive for sizing calculations
-						_paddingRows = Math.Abs((int) (padRowsMm/this.PixelSpacing.Y + 0.5f));
+						_paddingRows = Math.Abs((int) (padRowsMm/this.VoxelSpacing.Y + 0.5f));
 					}
 					return _paddingRows.Value;
 				}
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					ushort[] volumeArray = BuildVolumeArray((ushort) this.PixelPaddingValue);
 
-					Volume vol = new Volume(null, volumeArray, this.VolumeSize, this.PixelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
+					Volume vol = new Volume(null, volumeArray, this.VolumeSize, this.VoxelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
 					                        this.PixelPaddingValue);
 					return vol;
 				}
@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					short[] volumeArray = BuildVolumeArray((short) this.PixelPaddingValue);
 
-					Volume vol = new Volume(volumeArray, null, this.VolumeSize, this.PixelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
+					Volume vol = new Volume(volumeArray, null, this.VolumeSize, this.VoxelSpacing, this.ImagePositionPatient, this.ImageOrientationPatient, sopDataSourcePrototype,
 					                        this.PixelPaddingValue);
 					return vol;
 				}
@@ -259,7 +259,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				int position = 0;
 				for (int n = 0; n < _frames.Count; n++)
 				{
-					position = CopyFrameData(_frames[n].Frame, volumeData, position, pixelPadValue, lastFramePos, this.VolumeSize, this.PaddingRows, this.GantryTilt, this.PixelSpacing);
+					position = CopyFrameData(_frames[n].Frame, volumeData, position, pixelPadValue, lastFramePos, this.VolumeSize, this.PaddingRows, this.GantryTilt, this.VoxelSpacing);
 					_callback(n, _frames.Count);
 				}
 
@@ -374,6 +374,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// ensure we have at least 3 frames
 				if (_frames.Count < 3)
 					throw new CreateVolumeException("Source dataset must contain at least three frames.");
+
+				// ensure all frames have are from the same series, and have the same frame of reference
+				string studyInstanceUid = _frames[0].Frame.StudyInstanceUID;
+				string seriesInstanceUid = _frames[0].Frame.SeriesInstanceUID;
+				string frameOfReferenceUid = _frames[0].Frame.FrameOfReferenceUid;
+				foreach (IFrameReference frame in _frames)
+				{
+					if (frame.Frame.StudyInstanceUID != studyInstanceUid)
+						throw new CreateVolumeException("Each frame in the source dataset must be from the same study.");
+					if (frame.Frame.SeriesInstanceUID != seriesInstanceUid)
+						throw new CreateVolumeException("Each frame in the source dataset must be from the same series.");
+					if (frame.Frame.FrameOfReferenceUid != frameOfReferenceUid)
+						throw new CreateVolumeException("Each frame in the source dataset must have the same frame of reference.");
+				}
 
 				// ensure all frames have the same orientation
 				ImageOrientationPatient orient = _frames[0].Frame.ImageOrientationPatient;

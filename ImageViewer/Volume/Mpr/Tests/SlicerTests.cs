@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,42 +29,39 @@
 
 #endregion
 
-using ClearCanvas.ImageViewer.StudyManagement;
+#if	UNIT_TESTS
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+#pragma warning disable 1591,0419,1574,1587
+
+using NUnit.Framework;
+
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Tests
 {
-	/// <summary>
-	/// The VolumeSliceFrame is owned by the VolumeSliceImageSop which maintains references to
-	/// the volume and slice matrix which are used to generate the pixel data for this frame.
-	/// </summary>
-	internal class VolumeSliceFrame : Frame
+	[TestFixture]
+	public class SlicerTests
 	{
-		private byte[] _pixelData;
+		public SlicerTests() {}
 
-		public VolumeSliceFrame(VolumeSliceImageSop parentImageSop, int frameNumber)
-			: base(parentImageSop, frameNumber)
+		[Test]
+		public void TestInverseRotationMatrices()
 		{
-		}
-
-		public void SetPixelData(byte[] pixelData)
-		{
-			_pixelData = pixelData;
-		}
-
-		protected override byte[] CreateNormalizedPixelData()
-		{
-			if (_pixelData == null)
+			for (int x = 0; x < 360; x += 15)
 			{
-				_pixelData = VolumeSlicer.GenerateFramePixelData(ParentVolumeSliceImageSop.Volume,
-				                                                 ParentVolumeSliceImageSop.SliceMatrix);
+				for (int y = 0; y < 360; y += 15)
+				{
+					for (int z = 0; z < 360; z += 15)
+					{
+						VolumeSlicerParams expected = new VolumeSlicerParams(x, y, z);
+						VolumeSlicerParams test = new VolumeSlicerParams(expected.SlicingPlaneRotation);
+
+						Assert.AreEqual(expected.RotateAboutX, test.RotateAboutX, float.Epsilon*10, "Computation Error in X: Q={0},{1},{2}", x, y, z);
+						Assert.AreEqual(expected.RotateAboutY, test.RotateAboutY, float.Epsilon*10, "Computation Error in Y: Q={0},{1},{2}", x, y, z);
+						Assert.AreEqual(expected.RotateAboutZ, test.RotateAboutZ, float.Epsilon*10, "Computation Error in Z: Q={0},{1},{2}", x, y, z);
+					}
+				}
 			}
-
-			return _pixelData;
-		}
-
-		private VolumeSliceImageSop ParentVolumeSliceImageSop
-		{
-			get { return (VolumeSliceImageSop)ParentImageSop; }
 		}
 	}
 }
+
+#endif

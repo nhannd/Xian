@@ -16,18 +16,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			private readonly DicomAttributeCollection _collection = new DicomAttributeCollection();
 
-			public bool Contains(DicomTag tag)
-			{
-				DicomAttribute attribute;
-				return this.TryGetAttribute(tag, out attribute);
-			}
-
-			public bool Contains(uint tag)
-			{
-				DicomAttribute attribute;
-				return this.TryGetAttribute(tag, out attribute);
-			}
-
 			public DicomAttribute this[DicomTag tag]
 			{
 				get { return _collection[tag]; }
@@ -75,25 +63,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				foreach (uint tag in ClinicalTrialStudyModuleIod.DefinedTags)
 					volumeDataSet[tag] = source[tag].Copy();
 
-				
+				// TODO JY: flesh out these other modules.
 
-				//Sop Common
-				volumeDataSet[DicomTags.SopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);
-
-				//Series
+				// generate and cache Series Module attributes that are common among all slicings
 				volumeDataSet[DicomTags.Modality] = source[DicomTags.Modality].Copy();
 				volumeDataSet[DicomTags.SeriesNumber].SetStringValue("0");
 				volumeDataSet[DicomTags.SeriesDescription] = source[DicomTags.SeriesDescription].Copy();
 
-				//SC Equipment
+				// generate General Equipment Module
+
+				// generate SC Equipment Module
 				volumeDataSet[DicomTags.ConversionType].SetStringValue("WSD");
 
-				//General Image
+				// generate General Image Module
 				volumeDataSet[DicomTags.ImageType].SetStringValue(@"DERIVED\SECONDARY");
 				volumeDataSet[DicomTags.PixelSpacing] = source[DicomTags.PixelSpacing].Copy();
 				volumeDataSet[DicomTags.FrameOfReferenceUid] = source[DicomTags.FrameOfReferenceUid].Copy();
 
-				//Image Pixel
+				// generate Image Pixel Module
 				volumeDataSet[DicomTags.SamplesPerPixel] = source[DicomTags.SamplesPerPixel].Copy();
 				volumeDataSet[DicomTags.PhotometricInterpretation] = source[DicomTags.PhotometricInterpretation].Copy();
 				volumeDataSet[DicomTags.BitsAllocated] = source[DicomTags.BitsAllocated].Copy();
@@ -107,10 +94,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				volumeDataSet[DicomTags.SmallestPixelValueInSeries] = source[DicomTags.SmallestPixelValueInSeries];
 				volumeDataSet[DicomTags.LargestPixelValueInSeries] = source[DicomTags.LargestPixelValueInSeries];
 
+				// generate VOI LUT Module
 				volumeDataSet[DicomTags.WindowWidth] = source[DicomTags.WindowWidth].Copy();
 				volumeDataSet[DicomTags.WindowCenter] = source[DicomTags.WindowCenter].Copy();
 				volumeDataSet[DicomTags.RescaleSlope] = source[DicomTags.RescaleSlope].Copy();
 				volumeDataSet[DicomTags.RescaleIntercept] = source[DicomTags.RescaleIntercept].Copy();
+
+				// generate SOP Common Module
+				volumeDataSet[DicomTags.SopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);
 
 				return prototype;
 			}

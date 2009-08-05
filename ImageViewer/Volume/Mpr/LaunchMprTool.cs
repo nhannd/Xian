@@ -30,17 +30,21 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	[MenuAction("open", "imageviewer-contextmenu/MenuVolume/MenuOpenMpr", "LaunchMpr")]
-	[ButtonAction("open", "global-toolbars/ToolbarOpenMpr", "LaunchMpr")]
+	[ButtonAction("open", "global-toolbars/ToolbarOpenSelectionWithMpr", "LaunchMpr")]
+	[MenuAction("open", "imageviewer-contextmenu/MenuOpenWithMpr", "LaunchMpr")]
+	[MenuAction("open", "global-menus/MenuTools/MenuVolume/MenuOpenSelectionWithMpr", "LaunchMpr")]
 	[IconSet("open", IconScheme.Colour, "Icons.OpenMprToolLarge.png", "Icons.OpenMprToolMedium.png", "Icons.OpenMprToolSmall.png")]
 	[EnabledStateObserver("open", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
@@ -81,14 +85,30 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Exception exception = null;
 			Volume volume = null;
 
-			BackgroundTask task = new BackgroundTask(LoadVolume, true, this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+			IPresentationImage currentImage = this.Context.Viewer.SelectedPresentationImage;
+			if (currentImage == null)
+				return;
+
+			BackgroundTask task = new BackgroundTask(LoadVolume, true, FilterSourceFrames(currentImage.ParentDisplaySet, currentImage));
 			task.Terminated += delegate(object sender, BackgroundTaskTerminatedEventArgs e)
 			                   	{
 			                   		exception = e.Exception;
-									if (e.Reason == BackgroundTaskTerminatedReason.Completed)
+			                   		if (e.Reason == BackgroundTaskTerminatedReason.Completed)
 			                   			volume = (Volume) e.Result;
 			                   	};
-			ProgressDialog.Show(task, base.Context.DesktopWindow, true, ProgressBarStyle.Blocks);
+
+			try
+			{
+				ProgressDialog.Show(task, base.Context.DesktopWindow, true, ProgressBarStyle.Blocks);
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+			}
+			finally
+			{
+				task.Dispose();
+			}
 
 			if (exception != null)
 			{
@@ -112,12 +132,43 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
+		private static IEnumerable<Frame> FilterSourceFrames(IDisplaySet displaySet, IPresentationImage currentImage)
+		{
+			if (currentImage is IImageSopProvider)
+			{
+				Frame currentFrame = ((IImageSopProvider) currentImage).Frame;
+				string studyInstanceUid = currentFrame.StudyInstanceUID;
+				string seriesInstanceUid = currentFrame.SeriesInstanceUID;
+				string frameOfReferenceUid = currentFrame.FrameOfReferenceUid;
+				ImageOrientationPatient imageOrientationPatient = currentFrame.ImageOrientationPatient;
+
+				// perform a very basic filtering of the selected display set based on the currently selected image
+				foreach (IPresentationImage image in displaySet.PresentationImages)
+				{
+					if (image == currentImage)
+					{
+						yield return currentFrame;
+					}
+					else if (image is IImageSopProvider)
+					{
+						Frame frame = ((IImageSopProvider) image).Frame;
+						if (frame.StudyInstanceUID == studyInstanceUid
+						    && frame.SeriesInstanceUID == seriesInstanceUid
+						    && frame.FrameOfReferenceUid == frameOfReferenceUid
+						    && !frame.ImageOrientationPatient.IsNull
+						    && frame.ImageOrientationPatient.EqualsWithinTolerance(imageOrientationPatient, .01f))
+							yield return frame;
+					}
+				}
+			}
+		}
+
 		private static void LoadVolume(IBackgroundTaskContext context)
 		{
 			try
 			{
-				IDisplaySet displaySet = (IDisplaySet) context.UserState;
-				Volume volume = Volume.CreateVolume(displaySet,
+				IEnumerable<Frame> frames = (IEnumerable<Frame>) context.UserState;
+				Volume volume = Volume.CreateVolume(frames,
 				                                    delegate(int i, int count)
 				                                    	{
 				                                    		if (context.CancelRequested)

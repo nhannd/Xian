@@ -29,11 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Tools;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
@@ -45,11 +47,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private IToolSet _mprViewerToolSet;
 		private IActionSet _mprViewerActionSet;
 
+		// TODO JY: lose the ownership of Volume - we should all hold transient references to it instead
 		private Volume _volume;
-		private MprDisplaySet _identityDisplaySet;
-		private MprDisplaySet _orthoXDisplaySet;
-		private MprDisplaySet _orthoYDisplaySet;
-		private MprDisplaySet _obliqueDisplaySet;
 
 		private string _title;
 
@@ -59,6 +58,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			Platform.CheckForNullReference(volume, "volume");
 			_volume = volume;
+		}
+
+		public Volume Volume
+		{
+			get { return _volume; }
 		}
 
 		public string Title
@@ -77,11 +81,30 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _mprViewerActionSet; }
 		}
 
+		public override ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		{
+			return ActionModelRoot.CreateModel(typeof (MprViewerComponent).FullName, "imageviewer-contextmenu", this.ExportedActions);
+		}
+
+		private static bool ImageViewerToolActionPredicate(IAction action)
+		{
+			// exclude all Layout tools because we have our own fixed layout manager
+			if (action.ActionID.StartsWith("ClearCanvas.ImageViewer.Layout.Basic."))
+				return false;
+
+			// exclude all Reporting tools because we would need to store the secondary capture for any reporting to work
+			if (action.ActionID.StartsWith("ClearCanvas.ImageViewer.Tools.Reporting"))
+				return false;
+
+			// default: include
+			return true;
+		}
+
 		public override void Start()
 		{
 			base.Start();
-			_mprViewerToolSet = new ToolSet(new MprViewerToolExtensionPoint(), new ToolContext(this));
-			_mprViewerActionSet = _mprViewerToolSet.Actions.Union(base.ExportedActions);
+			_mprViewerToolSet = new ToolSet(new MprViewerToolExtensionPoint(), new MprViewerToolContext(this));
+			_mprViewerActionSet = _mprViewerToolSet.Actions.Union(base.ExportedActions.Select(ImageViewerToolActionPredicate));
 		}
 
 		public override void Stop()
@@ -92,13 +115,27 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			base.Stop();
 		}
 
-		#region ToolContext
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_volume != null)
+				{
+					_volume.Dispose();
+					_volume = null;
+				}
+			}
 
-		private class ToolContext : IMprViewerToolContext
+			base.Dispose(disposing);
+		}
+
+		#region Tool Context
+
+		private class MprViewerToolContext : IMprViewerToolContext
 		{
 			private readonly MprViewerComponent _viewer;
 
-			public ToolContext(MprViewerComponent viewer)
+			public MprViewerToolContext(MprViewerComponent viewer)
 			{
 				_viewer = viewer;
 			}
@@ -121,88 +158,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
-		public MprDisplaySet IdentityDisplaySet
-		{
-			get
-			{
-				if (_identityDisplaySet == null)
-					_identityDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.Identity, _volume);
-				return _identityDisplaySet;
-			}
-		}
-
-		public MprDisplaySet OrthoXDisplaySet
-		{
-			get
-			{
-				if (_orthoXDisplaySet == null)
-					_orthoXDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.OrthoY, _volume);
-				return _orthoXDisplaySet;
-			}
-		}
-
-		public MprDisplaySet OrthoYDisplaySet
-		{
-			get
-			{
-				if (_orthoYDisplaySet == null)
-					_orthoYDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.OrthoX, _volume);
-				return _orthoYDisplaySet;
-			}
-		}
-
-		public MprDisplaySet ObliqueDisplaySet
-		{
-			get
-			{
-				if (_obliqueDisplaySet == null)
-					_obliqueDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.Oblique, _volume);
-				return _obliqueDisplaySet;
-			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (_identityDisplaySet != null)
-				{
-					_identityDisplaySet.Dispose();
-					_identityDisplaySet = null;
-				}
-
-				if (_orthoXDisplaySet != null)
-				{
-					_orthoXDisplaySet.Dispose();
-					_orthoXDisplaySet = null;
-				}
-
-				if (_orthoYDisplaySet != null)
-				{
-					_orthoYDisplaySet.Dispose();
-					_orthoYDisplaySet = null;
-				}
-
-				if (_obliqueDisplaySet != null)
-				{
-					_obliqueDisplaySet.Dispose();
-					_obliqueDisplaySet = null;
-				}
-
-				if (_volume != null)
-				{
-					_volume.Dispose();
-					_volume = null;
-				}
-			}
-
-			base.Dispose(disposing);
-		}
+		#region Layout Manager
 
 		private class MprLayoutManager : LayoutManager
 		{
 			public override void Layout()
 			{
+				this.BuildLogicalWorkspace();
 				this.LayoutPhysicalWorkspace();
 				this.FillPhysicalWorkspace();
 				this.ImageViewer.PhysicalWorkspace.Draw();
@@ -223,19 +185,41 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				base.ImageViewer.PhysicalWorkspace.Locked = true;
 			}
 
+			protected static IEnumerable<IVolumeSlicerParams> GetDefaultViews()
+			{
+				yield return VolumeSlicerParams.Identity;
+				yield return VolumeSlicerParams.OrthogonalX;
+				yield return VolumeSlicerParams.OrthogonalY;
+				yield return new VolumeSlicerParams(90, 0, 45);
+			}
+
+			protected override void BuildLogicalWorkspace()
+			{
+				int number = 0;
+				ImageSet imageSet = new ImageSet();
+				foreach (IVolumeSlicerParams slicerParams in GetDefaultViews())
+				{
+					string name = string.Format(SR.FormatMprDisplaySetName, slicerParams.Description);
+					MprDisplaySet displaySet = new MprDisplaySet(this.ImageViewer.Volume, slicerParams, name);
+					displaySet.Description = name;
+					displaySet.Number = ++number;
+					imageSet.DisplaySets.Add(displaySet);
+				}
+				this.ImageViewer.LogicalWorkspace.ImageSets.Add(imageSet);
+			}
+
 			protected override void FillPhysicalWorkspace()
 			{
+				base.FillPhysicalWorkspace();
+
 				// Let's start out in the middle of each stack
-				IPhysicalWorkspace physicalWorkspace = this.ImageViewer.PhysicalWorkspace;
-				physicalWorkspace.ImageBoxes[0].DisplaySet = this.ImageViewer.IdentityDisplaySet;
-				physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = this.ImageViewer.IdentityDisplaySet.PresentationImages.Count/2;
-				physicalWorkspace.ImageBoxes[1].DisplaySet = this.ImageViewer.OrthoXDisplaySet;
-				physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = this.ImageViewer.OrthoXDisplaySet.PresentationImages.Count/2;
-				physicalWorkspace.ImageBoxes[2].DisplaySet = this.ImageViewer.OrthoYDisplaySet;
-				physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = this.ImageViewer.OrthoYDisplaySet.PresentationImages.Count/2;
-				physicalWorkspace.ImageBoxes[3].DisplaySet = this.ImageViewer.ObliqueDisplaySet;
-				physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = this.ImageViewer.ObliqueDisplaySet.PresentationImages.Count/2;
+				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
+				{
+					imageBox.TopLeftPresentationImageIndex = imageBox.DisplaySet.PresentationImages.Count/2;
+				}
 			}
 		}
+
+		#endregion
 	}
 }

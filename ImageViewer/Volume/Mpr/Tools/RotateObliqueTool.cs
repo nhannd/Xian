@@ -29,6 +29,8 @@
 
 #endregion
 
+#if EXPERIMENTAL_TOOLS
+
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
@@ -272,3 +274,5 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		}
 	}
 }
+
+#endif
