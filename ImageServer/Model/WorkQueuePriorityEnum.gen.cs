@@ -46,6 +46,7 @@ public partial class WorkQueuePriorityEnum : ServerEnum
       private static readonly WorkQueuePriorityEnum _Low = GetEnum("Low");
       private static readonly WorkQueuePriorityEnum _Medium = GetEnum("Medium");
       private static readonly WorkQueuePriorityEnum _High = GetEnum("High");
+      private static readonly WorkQueuePriorityEnum _Stat = GetEnum("Stat");
       #endregion
 
       #region Public Static Properties
@@ -69,6 +70,13 @@ public partial class WorkQueuePriorityEnum : ServerEnum
       public static WorkQueuePriorityEnum High
       {
           get { return _High; }
+      }
+      /// <summary>
+      /// Stat priority
+      /// </summary>
+      public static WorkQueuePriorityEnum Stat
+      {
+          get { return _Stat; }
       }
 
       #endregion

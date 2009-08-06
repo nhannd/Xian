@@ -199,6 +199,11 @@ INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
            (newid(),300,'High','High','High priority')
 GO
 
+INSERT INTO [ImageServer].[dbo].WorkQueuePriorityEnum
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),400,'Stat','Stat','Stat priority')
+GO
 
 -- ServerRuleApplyTimeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]

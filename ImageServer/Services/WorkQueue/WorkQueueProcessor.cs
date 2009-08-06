@@ -257,21 +257,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			processor.Dispose();
 		}
 
-        private void RaiseAlert(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem, string error)
-        {
-            using(ExecutionContext context = new  ExecutionContext())
-            {
-                 ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
-									 processor.Name, AlertTypeCodes.UnableToProcess,
-                                     GetWorkQueueContextData(queueItem), TimeSpan.Zero,
-									 "Work Queue item failed: Type={0}, GUID={1}: {2}",
-									 queueItem.WorkQueueTypeEnum,
-                                     queueItem.GetKey(), error);
-            }
-           
-        }
+		private static void RaiseAlert(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem, string error)
+		{
+			ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
+			                     processor.Name, AlertTypeCodes.UnableToProcess,
+			                     GetWorkQueueContextData(queueItem), TimeSpan.Zero,
+			                     "Work Queue item failed: Type={0}, GUID={1}: {2}",
+			                     queueItem.WorkQueueTypeEnum,
+			                     queueItem.GetKey(), error);
+		}
 
-        private WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
+    	private static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
         {
             WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
             contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
@@ -402,9 +398,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		{
 			Model.WorkQueue queueListItem = null;
 
+			// First check for Stat WorkQueue items.
+			if (_threadPool.MemoryLimitedThreadsAvailable)
+			{
+				using (
+					IUpdateContext updateContext =
+						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
+					parms.ProcessorID = processorId;
+					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat;
+
+					queueListItem = select.FindOne(parms);
+					if (queueListItem != null)
+						updateContext.Commit();
+				}
+			}
+
 			// If we don't have the max high priority threads in use,
 			// first see if there's any available
-			if (_threadPool.HighPriorityThreadsAvailable)
+			if (queueListItem == null
+			    && _threadPool.HighPriorityThreadsAvailable)
 			{
 				using (
 					IUpdateContext updateContext =
@@ -416,7 +431,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
 					queueListItem = select.FindOne(parms);
-
 					if (queueListItem != null)
 						updateContext.Commit();
 				}
@@ -425,29 +439,46 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			// If we didn't find a high priority work queue item, and we have threads 
 			// available for memory limited work queue items, query for the next queue item available.
 			if (queueListItem == null
-				&& _threadPool.MemoryLimitedThreadsAvailable)
+			    && _threadPool.MemoryLimitedThreadsAvailable)
 			{
-				using (
-					IUpdateContext updateContext =
-						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				using (IUpdateContext updateContext =
+					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
 					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
 					parms.ProcessorID = processorId;
 
 					queueListItem = select.FindOne(parms);
-
 					if (queueListItem != null)
 						updateContext.Commit();
 				}
 			}
 
 			// This logic only accessed if memory limited and priority threads are used up 
-			if (queueListItem == null)
+			if (queueListItem == null
+			    && !_threadPool.MemoryLimitedThreadsAvailable)
 			{
-				using (
-					IUpdateContext updateContext =
-						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				using (IUpdateContext updateContext =
+					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
+					parms.ProcessorID = processorId;
+					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat;
+					parms.WorkQueueTypeEnumList = GetNonMemoryLimitedTypeString();
+
+					queueListItem = select.FindOne(parms);
+					if (queueListItem != null)
+						updateContext.Commit();
+				}
+			}
+
+			// This logic only accessed if memory limited and priority threads are used up 
+			if (queueListItem == null
+			    && !_threadPool.MemoryLimitedThreadsAvailable)
+			{
+				using (IUpdateContext updateContext =
+					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
 					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
@@ -455,15 +486,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					parms.WorkQueueTypeEnumList = GetNonMemoryLimitedTypeString();
 
 					queueListItem = select.FindOne(parms);
-
 					if (queueListItem != null)
 						updateContext.Commit();
 				}
 			}
 
+
 			return queueListItem;
 		}
 
-        #endregion
+    	#endregion
     }
 }

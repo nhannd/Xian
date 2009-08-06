@@ -208,6 +208,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				if (queueItem.WorkQueuePriorityEnum.Equals(WorkQueuePriorityEnum.High))
 					_highPriorityCount--;
 
+				if (queueItem.WorkQueuePriorityEnum.Equals(WorkQueuePriorityEnum.Stat))
+					_highPriorityCount--;
+
 				if (!_nonMemoryLimitedList.ContainsKey(queueItem.WorkQueueTypeEnum))
 					_memoryLimitedCount--;
 
@@ -237,6 +240,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			lock (_syncLock)
 			{
 				if (item.WorkQueuePriorityEnum.Equals(WorkQueuePriorityEnum.High))
+					_highPriorityCount++;
+				if (item.WorkQueuePriorityEnum.Equals(WorkQueuePriorityEnum.Stat))
 					_highPriorityCount++;
 				if (!_nonMemoryLimitedList.ContainsKey(item.WorkQueueTypeEnum))
 					_memoryLimitedCount++;

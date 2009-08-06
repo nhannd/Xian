@@ -1,4 +1,4 @@
-USE [ImageServer]
+USE [ImageServerBackup]
 GO
 /****** Object:  Table [dbo].[ServerTransferSyntax]    Script Date: 07/16/2008 23:49:16 ******/
 SET ANSI_NULLS ON
@@ -452,7 +452,7 @@ CREATE NONCLUSTERED INDEX [IX_WorkQueue_ScheduledTime] ON [dbo].[WorkQueue]
 	[WorkQueueStatusEnum] ASC,
 	[WorkQueueTypeEnum] ASC
 )
-INCLUDE ( [StudyStorageGUID]) WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+INCLUDE ( [StudyStorageGUID], [WorkQueuePriorityEnum]) WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueue]') AND name = N'IX_WorkQueue_StudyStorageGUID')
 CREATE NONCLUSTERED INDEX [IX_WorkQueue_StudyStorageGUID] ON [dbo].[WorkQueue] 
@@ -465,13 +465,6 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Wo
 CREATE NONCLUSTERED INDEX [IX_WorkQueue_WorkQueuePriorityEnum] ON [dbo].[WorkQueue] 
 (
 	[WorkQueuePriorityEnum] ASC
-)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueue]') AND name = N'IX_WorkQueue_StudyHistoryGUID')
-CREATE NONCLUSTERED INDEX [IX_WorkQueue_StudyHistoryGUID] ON [dbo].[WorkQueue] 
-(
-	[StudyHistoryGUID] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
 GO
 
@@ -1459,7 +1452,7 @@ CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_AcccessionNumber] ON [dbo].[Stud
 	[AccessionNumber] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
-USE [ImageServer]
+USE [ImageServerBackup]
 GO
 /****** Object:  Index [IX_StudyDeleteRecord_PatientId]    Script Date: 11/28/2008 13:27:11 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_PatientId] ON [dbo].[StudyDeleteRecord] 
@@ -1468,7 +1461,7 @@ CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_PatientId] ON [dbo].[StudyDelete
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 
-USE [ImageServer]
+USE [ImageServerBackup]
 GO
 /****** Object:  Index [IX_StudyDeleteRecord_PatientsName]    Script Date: 11/28/2008 13:27:19 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_PatientsName] ON [dbo].[StudyDeleteRecord] 

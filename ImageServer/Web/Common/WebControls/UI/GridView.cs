@@ -37,7 +37,6 @@ using System.Text;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.ImageServer.Enterprise;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js", "text/javascript")]
 
@@ -250,27 +249,25 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             JavaScriptSerializer serializer = new JavaScriptSerializer();
 
             string selectedKeysValue = Page.Request[ClientID + "SelectedRowDataKeys"];
-            if (!string.IsNullOrEmpty(selectedKeysValue) && selectedKeysValue != "null")
-            {
-                string[] dataRows = serializer.Deserialize<string[]>(selectedKeysValue);
-                foreach (string r in dataRows)
-                {
-                    _selectedDataKeys[r] = true;
-                }
-            }
-
-            string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
-            if (!string.IsNullOrEmpty(statesValue))
-            {
-                int[] rows = serializer.Deserialize<int[]>(statesValue);
-                foreach (int r in rows)
-                {
-                    _selectedRows[r] = true;
-                }
-            }
-
-
-
+			if (!string.IsNullOrEmpty(selectedKeysValue) && selectedKeysValue != "null")
+			{
+				string[] dataRows = serializer.Deserialize<string[]>(selectedKeysValue);
+				foreach (string r in dataRows)
+				{
+					if (!string.IsNullOrEmpty(r))
+						_selectedDataKeys[r] = true;
+				}
+			}
+		
+			string statesValue = Page.Request[ClientID + "SelectedRowIndices"];
+			if (!string.IsNullOrEmpty(statesValue))
+			{
+				int[] rows = serializer.Deserialize<int[]>(statesValue);
+				foreach (int r in rows)
+				{
+					_selectedRows[r] = true;
+				}
+			}			
         }
 
         /// <summary>
@@ -294,9 +291,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                         }
                     }
             }
-
-            _selectedRows = new Hashtable();
-
+			_selectedRows = new Hashtable();
+			_selectedDataKeys = new Hashtable();
         }
 
         #endregion Public Methods
@@ -541,9 +537,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             #region -- Font General --
             if (s.Font.Size != FontUnit.Empty)
                 sb.Append("font-size:" + s.Font.Size + ";");
-            if (s.Font.Bold == true)
+            if (s.Font.Bold)
                 sb.Append("font-weight:Bold;");
-            if (s.Font.Italic == true)
+            if (s.Font.Italic)
                 sb.Append("font-style:Italic;");
             #endregion
 
@@ -569,11 +565,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             #region - Text Decoration --
             ArrayList decorList = new ArrayList();
-            if (s.Font.Underline == true)
+            if (s.Font.Underline)
                 decorList.Add("underline");
-            if (s.Font.Overline == true)
+            if (s.Font.Overline)
                 decorList.Add("overline");
-            if (s.Font.Strikeout == true)
+            if (s.Font.Strikeout)
                 decorList.Add("line-through");
             if (decorList.Count > 0)
             {
@@ -593,9 +589,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             #region -- Height and Width --
             if (!s.Height.IsEmpty)
-                sb.Append("height:" + s.Height.ToString() + ";");
+                sb.Append("height:" + s.Height + ";");
             if (!s.Width.IsEmpty)
-                sb.Append("width:" + s.Width.ToString() + ";");
+                sb.Append("width:" + s.Width + ";");
             #endregion
 
             return sb.ToString();
