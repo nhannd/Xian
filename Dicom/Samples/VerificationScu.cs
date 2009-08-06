@@ -30,13 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
-using System.IO;
 using System.Runtime.Remoting.Messaging;
-
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Samples
@@ -53,7 +48,7 @@ namespace ClearCanvas.Dicom.Samples
         #endregion
 
         #region Protected Properties...
-        private System.Threading.AutoResetEvent _progressEvent = new System.Threading.AutoResetEvent(false);
+        private readonly System.Threading.AutoResetEvent _progressEvent = new System.Threading.AutoResetEvent(false);
         protected System.Threading.AutoResetEvent ProgressEvent
         {
             get { return _progressEvent; }
@@ -61,10 +56,8 @@ namespace ClearCanvas.Dicom.Samples
         #endregion
 
         #region Constructors
-        public VerificationScu()
-        {
-        }
-        #endregion
+
+    	#endregion
 
         #region Public Methods
         /// <summary>
@@ -133,7 +126,7 @@ namespace ClearCanvas.Dicom.Samples
 
         public IAsyncResult BeginVerify(string clientAETitle, string remoteAE, string remoteHost, int remotePort, AsyncCallback callback, object asyncState)
         {
-            VerifyDelegate verifyDelegate = new VerifyDelegate(this.Verify);
+            VerifyDelegate verifyDelegate = this.Verify;
 
             return verifyDelegate.BeginInvoke(clientAETitle, remoteAE, remoteHost, remotePort, callback, asyncState);
         }
@@ -145,7 +138,7 @@ namespace ClearCanvas.Dicom.Samples
                 Logger.LogInfo("Canceling verify...");
                 _verificationResult = VerificationResult.Canceled;
                 if (_dicomClient != null)
-                    _dicomClient.Close();
+                    _dicomClient.Abort();
                 ProgressEvent.Set();
             }
         }
@@ -160,7 +153,7 @@ namespace ClearCanvas.Dicom.Samples
             VerifyDelegate verifyDelegate = ((AsyncResult)ar).AsyncDelegate as VerifyDelegate;
             if (verifyDelegate != null)
             {
-                return (VerificationResult)verifyDelegate.EndInvoke(ar);
+                return verifyDelegate.EndInvoke(ar);
             }
             else
                 throw new InvalidOperationException("cannot get results, asynchresult is null");
