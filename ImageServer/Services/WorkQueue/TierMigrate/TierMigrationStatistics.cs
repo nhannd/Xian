@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
@@ -105,6 +106,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             set { this["CopyFiles"] = value; }
         }
 
+        public TimeSpanStatistics DeleteDirTime
+        {
+            get
+            {
+                if (this["DeleteDirTime"] == null)
+                    this["DeleteDirTime"] = new TimeSpanStatistics("DeleteDirTime");
+
+                return (this["DeleteDirTime"] as TimeSpanStatistics);
+            }
+            set { this["DeleteDirTime"] = value; }
+        }
     }
 
     internal class TierMigrationAverageStatistics : StatisticsSet

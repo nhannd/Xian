@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 			
             string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
     	    DateTime startTime = Platform.Time;
-            DateTime lastLog = DateTime.Now;
+            DateTime lastLog = Platform.Time;
     	    int fileCounter = 0;
     	    ulong bytesCopied = 0;
     	    long instanceCountInXml = studyXml.NumberOfStudyRelatedInstances;
@@ -273,10 +273,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
                             FileInfo file = new FileInfo(path);
                             bytesCopied += (ulong)file.Length;
+                            fileCounter++;
                             if (file.Extension != null && file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                fileCounter++;
-                                TimeSpan elapsed = DateTime.Now - lastLog;
+                                TimeSpan elapsed = Platform.Time - lastLog;
                                 TimeSpan totalElapsed = Platform.Time - startTime;
                                 double speedInMBPerSecond = 0;
                                 if (totalElapsed.TotalSeconds > 0)
@@ -286,18 +286,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
                                 if (elapsed > TimeSpan.FromSeconds(WorkQueueSettings.Instance.TierMigrationProgressUpdateInSeconds))
                                 {
+                                    #region Log Progress
+
                                     StringBuilder stats = new StringBuilder();
-                                    if (instanceCountInXml!=0)
+                                    if (instanceCountInXml != 0)
                                     {
-                                        float pct = (float)fileCounter/instanceCountInXml;
-                                        stats.AppendFormat("{0} files moved [{1:0.0}MB] since {2} ({3:0}% completed). Speed={4:0.00}MB/s", 
-                                                    fileCounter, bytesCopied/1024f/1024f, startTime, pct * 100, speedInMBPerSecond);
+                                        float pct = (float)fileCounter / instanceCountInXml;
+                                        stats.AppendFormat("{0} files moved [{1:0.0}MB] since {2} ({3:0}% completed). Speed={4:0.00}MB/s",
+                                                    fileCounter, bytesCopied / 1024f / 1024f, startTime, pct * 100, speedInMBPerSecond);
                                     }
                                     else
                                     {
-                                        stats.AppendFormat("{0} files moved [{1:0.0}MB] since {2}. Speed={3:0.00}MB/s", 
-                                                    fileCounter, bytesCopied/1024f/1024f, startTime, speedInMBPerSecond);
-                                        
+                                        stats.AppendFormat("{0} files moved [{1:0.0}MB] since {2}. Speed={3:0.00}MB/s",
+                                                    fileCounter, bytesCopied / 1024f / 1024f, startTime, speedInMBPerSecond);
+
                                     }
 
                                     Platform.Log(LogLevel.Info, "Tier migration for study {0}: {1}", storage.StudyInstanceUid, stats.ToString());
@@ -311,16 +313,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                             broker.Update(WorkQueueItem.GetKey(), parameters);
                                             ctx.Commit();
                                         }
-                                        
+
                                     }
-                                    catch(Exception)
+                                    catch (Exception)
                                     {
                                         // can't log the progress so far... just ignore it
                                     }
                                     finally
                                     {
                                         lastLog = DateTime.Now;
-                                    }
+                                    } 
+                                    #endregion
                                 }
                             }
                         });
@@ -333,7 +336,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 TierMigrateDatabaseUpdateCommand updateDBCommand = new TierMigrateDatabaseUpdateCommand(context);
                 processor.AddCommand(updateDBCommand);
 
-                Platform.Log(LogLevel.Info, "Start migrating study {0}.. {1} to be moved", storage.StudyInstanceUid, ByteCountFormatter.Format(stat.StudySize));
+                Platform.Log(LogLevel.Info, "Start migrating study {0}.. expecting {1} to be moved", storage.StudyInstanceUid, ByteCountFormatter.Format(stat.StudySize));
                 if (!processor.Execute())
                 {
                     if (processor.FailureException != null)
@@ -344,19 +347,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
                 stat.DBUpdate = updateDBCommand.Statistics;
                 stat.CopyFiles = copyDirCommand.CopySpeed;
+                stat.DeleteDirTime = delDirCommand.Statistics;
             }
 
-            stat.ProcessSpeed.SetData(stat.StudySize);
+            stat.ProcessSpeed.SetData(bytesCopied);
             stat.ProcessSpeed.End();
 
-            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} in {7} [ {3} images, {4} @ {5}]. DB Update={6}",
-                            storage.StudyInstanceUid, storage.FilesystemTierEnum, 
-                            newFilesystem.Filesystem.FilesystemTierEnum, 
-                            studyXml.NumberOfStudyRelatedInstances,
-                            ByteCountFormatter.Format(stat.StudySize),
+            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} in {3} [ {4} files, {5} @ {6}, DB Update={7}, Remove Dir={8}]",
+                            storage.StudyInstanceUid, 
+                            storage.FilesystemTierEnum,
+                            newFilesystem.Filesystem.FilesystemTierEnum,
+                            TimeSpanFormatter.Format(stat.ProcessSpeed.ElapsedTime), 
+                            fileCounter,
+                            ByteCountFormatter.Format(bytesCopied), 
                             stat.CopyFiles.FormattedValue,
                             stat.DBUpdate.FormattedValue,
-                            TimeSpanFormatter.Format(stat.ProcessSpeed.ElapsedTime));
+                            stat.DeleteDirTime.FormattedValue);
 
     	    string originalPath = storage.GetStudyPath();
             if (Directory.Exists(storage.GetStudyPath()))

@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private readonly string _dir;
         private readonly bool _failIfError;
         private bool _sourceDirRenamed;
-
+        private readonly TimeSpanStatistics _deleteTime = new TimeSpanStatistics("DeleteDirectoryTime");
         #endregion
 
         #region Constructors
@@ -54,6 +55,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             _dir = dir;
             _failIfError = failIfError;
+        }
+
+		/// <summary>
+		/// Gets the time spent on deleting the directory.
+		/// </summary>
+        public TimeSpanStatistics DeleteTime
+        {
+            get { return _deleteTime; }
         }
 
         #endregion
@@ -110,7 +119,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             if (!RollBackRequested)
             {
-                DirectoryUtility.DeleteIfExists(_dir + ".deleted");
+                DeleteTime.Start();
+                DirectoryUtility.DeleteIfExists(_dir + ".deleted"); 
+                DeleteTime.End();
             }
         }
 
