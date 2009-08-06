@@ -38,7 +38,6 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -183,9 +182,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 {
                     StudyStorage destStorage = StudyStorage.Load(_context.History.DestStudyStorageKey);
                     _context.DestStorageLocation = StudyStorageLocation.FindStorageLocations(destStorage)[0];
-                }
-
-                
+                }                
             }
         }
 

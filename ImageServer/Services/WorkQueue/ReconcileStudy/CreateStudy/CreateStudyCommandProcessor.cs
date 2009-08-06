@@ -31,6 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 
@@ -69,14 +70,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         {
             Platform.CheckForNullReference(context, "context");
             _context = context;
-            CreateStudyCommandXmlParser parser = new CreateStudyCommandXmlParser();
-            ReconcileCreateStudyDescriptor desc = parser.Parse(_context.History.ChangeDescription);
+
+			ReconcileCreateStudyDescriptor desc = XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(_context.History.ChangeDescription);
 
             if (_context.History.DestStudyStorageKey == null)
             {
-                CreateStudyCommand.CommandParameters paramaters = new CreateStudyCommand.CommandParameters();
-                paramaters.Commands = desc.Commands;
-                CreateStudyCommand command = new CreateStudyCommand(context, paramaters);
+                CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters();
+                parameters.Commands = desc.Commands;
+                CreateStudyCommand command = new CreateStudyCommand(context, parameters);
                 AddCommand(command);
             }
             else

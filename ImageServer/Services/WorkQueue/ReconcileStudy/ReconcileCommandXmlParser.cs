@@ -61,7 +61,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// </remarks>
     class ReconcileCommandXmlParser
     {
-
         #region Public Methods
         /// <summary>
         /// </summary>
@@ -94,6 +93,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             return null;
         }
         #endregion
-
     }
 }

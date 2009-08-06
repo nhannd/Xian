@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         #endregion
 
-
         #region Overriden Protected Methods
         protected override void OnExecute()
         {
@@ -373,7 +372,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         private ServerCommandProcessor _processor;
 
         public CreateStudyFolderDirectory(ReconcileStudyProcessorContext context, DicomFile file)
-            : base("SaveFileCommand", true, context, file)
+			: base("CreateStudyFolderDirectory", true, context, file)
         {
         }
 

@@ -31,6 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
@@ -58,8 +59,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         {
             Platform.CheckForNullReference(context, "context");
             _context = context;
-            MergeStudyCommandXmlParser parser = new MergeStudyCommandXmlParser();
-            ReconcileMergeToExistingStudyDescriptor desc = parser.Parse(_context.History.ChangeDescription);
+			ReconcileMergeToExistingStudyDescriptor desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(_context.History.ChangeDescription);
                 
             if (_context.History.DestStudyStorageKey == null)
             {
