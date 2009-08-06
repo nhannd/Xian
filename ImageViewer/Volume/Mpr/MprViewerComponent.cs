@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -208,17 +209,77 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				throw new NotSupportedException();
 			}
 
+			[Cloneable]
+			private class MprDisplaySet : DisplaySet, IDisplaySet
+			{
+				[CloneCopyReference]
+				private IMprSliceSet _sliceSet;
+
+				public MprDisplaySet(string name, IMprSliceSet sliceSet) : base(name, sliceSet.Uid)
+				{
+					_sliceSet = sliceSet;
+					_sliceSet.SliceSopsChanged += sliceSet_SliceSopsChanged;
+
+					FillPresentationImages();
+				}
+
+				protected MprDisplaySet(MprDisplaySet source, ICloningContext context)
+				{
+					context.CloneFields(source, this);
+				}
+
+				[OnCloneComplete]
+				private void OnCloneComplete()
+				{
+					_sliceSet.SliceSopsChanged += sliceSet_SliceSopsChanged;
+				}
+
+				protected override void Dispose(bool disposing)
+				{
+					if (disposing)
+					{
+						_sliceSet.SliceSopsChanged -= sliceSet_SliceSopsChanged;
+						_sliceSet = null;
+					}
+					base.Dispose(disposing);
+				}
+
+				IDisplaySet IDisplaySet.CreateFreshCopy()
+				{
+					return (IDisplaySet) CloneBuilder.Clone(this);
+				}
+
+				IDisplaySet IDisplaySet.Clone()
+				{
+					return (IDisplaySet) CloneBuilder.Clone(this);
+				}
+
+				private void sliceSet_SliceSopsChanged(object sender, EventArgs e)
+				{
+					// clear old presentation images
+					List<IPresentationImage> images = new List<IPresentationImage>(this.PresentationImages);
+					this.PresentationImages.Clear();
+					foreach (IPresentationImage image in this.PresentationImages)
+						image.Dispose();
+
+					// repopulate with new slices
+					this.FillPresentationImages();
+				}
+
+				private void FillPresentationImages()
+				{
+					foreach (MprSliceSop sop in _sliceSet.SliceSops)
+					{
+						foreach (IPresentationImage image in PresentationImageFactory.Create(sop))
+							base.PresentationImages.Add(image);
+					}
+				}
+			}
+
 			protected virtual IDisplaySet CreateDisplaySet(int number, IMprSliceSet sliceSet)
 			{
 				string name = string.Format(SR.FormatMprDisplaySetName, sliceSet.Description);
-				DisplaySet displaySet = new DisplaySet(name, sliceSet.Uid);
-				foreach (Sop sop in sliceSet.SliceSops)
-				{
-					foreach (IPresentationImage image in PresentationImageFactory.CreateImages(sop))
-					{
-						displaySet.PresentationImages.Add(image);
-					}
-				}
+				DisplaySet displaySet = new MprDisplaySet(name, sliceSet);
 				displaySet.Description = name;
 				displaySet.Number = number;
 				return displaySet;

@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		IVolumeReference Clone();
 	}
 
-	public partial class Volume
+	partial class Volume
 	{
 		private class VolumeReference : IVolumeReference
 		{

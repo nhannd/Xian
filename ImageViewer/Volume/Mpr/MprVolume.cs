@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
@@ -68,8 +69,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (sliceSets != null)
 			{
 				foreach (IMprSliceSet sliceSet in sliceSets)
+				{
+					if (sliceSet is IInternalMprSliceSet)
+						((IInternalMprSliceSet) sliceSet).Parent = this;
 					_sliceSets.Add(sliceSet);
+				}
 			}
+			_sliceSets.EnableEvents = true;
+			_sliceSets.ItemAdded += OnItemAdded;
+			_sliceSets.ItemChanged += OnItemAdded;
+			_sliceSets.ItemChanging += OnItemRemoved;
+			_sliceSets.ItemRemoved += OnItemRemoved;
 		}
 
 		public Volume Volume
@@ -115,6 +125,28 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
+		protected virtual void OnSliceSetRemoved(IMprSliceSet item)
+		{
+			if (item is IInternalMprSliceSet)
+				((IInternalMprSliceSet) item).Parent = null;
+		}
+
+		protected virtual void OnSliceSetAdded(IMprSliceSet item)
+		{
+			if (item is IInternalMprSliceSet)
+				((IInternalMprSliceSet)item).Parent = this;
+		}
+
+		private void OnItemRemoved(object sender, ListEventArgs<IMprSliceSet> e)
+		{
+			this.OnSliceSetRemoved(e.Item);
+		}
+
+		private void OnItemAdded(object sender, ListEventArgs<IMprSliceSet> e)
+		{
+			this.OnSliceSetAdded(e.Item);
+		}
+
 		#region Disposal
 
 		public void Dispose()
@@ -136,6 +168,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				if (_sliceSets != null)
 				{
+					_sliceSets.ItemAdded -= OnItemAdded;
+					_sliceSets.ItemChanged -= OnItemAdded;
+					_sliceSets.ItemChanging -= OnItemRemoved;
+					_sliceSets.ItemRemoved -= OnItemRemoved;
 					_sliceSets.Dispose();
 					_sliceSets = null;
 				}
@@ -149,5 +185,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		#endregion
+	}
+
+	/// <summary>
+	/// Same as <see cref="IMprSliceSet"/>, but adds an internal <see cref="Parent"/> setter.
+	/// </summary>
+	/// <remarks>
+	/// This internal interface is only used to let <see cref="MprVolume"/> decide whether or not
+	/// to automatically manage the parent relationship of an <see cref="IMprSliceSet"/>. If a
+	/// class implements the <see cref="IMprSliceSet"/> interface directly, it is responsible for
+	/// managing the parent relationship on its own. Do <b><i>not</i></b> make this interface
+	/// public just to <see cref="MprVolume"/> do your work for you.
+	/// </remarks>
+	internal interface IInternalMprSliceSet : IMprSliceSet
+	{
+		new IMprVolume Parent { get; set; }
 	}
 }

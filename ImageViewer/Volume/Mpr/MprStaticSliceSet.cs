@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -76,14 +75,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected void Reslice()
 		{
-			base.ClearAndDisposeSops();
-
-			using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, _slicerParams, base.Uid))
+			base.SuspendSliceSopsChangedEvent();
+			try
 			{
-				foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
+				base.ClearAndDisposeSops();
+
+				using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, _slicerParams, base.Uid))
 				{
-					base.SliceSops.Add(new ImageSop(dataSource));
+					foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
+					{
+						base.SliceSops.Add(new MprSliceSop(dataSource));
+					}
 				}
+			}
+			finally
+			{
+				base.ResumeSliceSopsChangedEvent(true);
 			}
 		}
 

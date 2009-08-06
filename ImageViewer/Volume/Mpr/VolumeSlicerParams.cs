@@ -209,8 +209,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			VolumeSlicerParams slicerParams = new VolumeSlicerParams(_resliceAxes);
 
-			slicerParams._sliceThroughPointPatient = new Vector3D(lineMiddlePointPatient);
-			slicerParams._sliceExtentXmm = (endPointPatient - startPointPatient).Magnitude;
+			slicerParams.SliceThroughPointPatient = new Vector3D(lineMiddlePointPatient);
+			slicerParams.SliceExtentXMillimeters = (endPointPatient - startPointPatient).Magnitude;
 
 			return slicerParams;
 		}

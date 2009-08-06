@@ -32,50 +32,63 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
 	[ExtensionPoint]
 	public sealed class MprViewerToolExtensionPoint : ExtensionPoint<ITool> {}
 
-	public interface IMprViewerTool : ITool
-	{
-		MprViewerComponent ImageViewer { get; }
-		IMprViewerToolContext Context { get; }
-	}
-
 	public interface IMprViewerToolContext : IImageViewerToolContext
 	{
 		new MprViewerComponent Viewer { get; }
 	}
 
-	public abstract class MprViewerTool : ImageViewerTool, IMprViewerTool
+	public abstract class MprViewerTool : MouseImageViewerTool
 	{
 		protected MprViewerTool() {}
 
 		public new MprViewerComponent ImageViewer
 		{
-			get { return (MprViewerComponent) base.ImageViewer; }
+			get { return base.ImageViewer as MprViewerComponent; }
 		}
 
 		public new IMprViewerToolContext Context
 		{
-			get { return (IMprViewerToolContext) base.Context; }
-		}
-	}
-
-	public abstract class MouseMprViewerTool : MouseImageViewerTool, IMprViewerTool
-	{
-		protected MouseMprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
-		{
-			get { return (MprViewerComponent) base.ImageViewer; }
+			get { return base.Context as IMprViewerToolContext; }
 		}
 
-		public new IMprViewerToolContext Context
+		protected MprSliceSop SelectedMprSliceSop
 		{
-			get { return (IMprViewerToolContext) base.Context; }
+			get
+			{
+				IImageSopProvider selectedImageSopProvider = base.SelectedImageSopProvider;
+				if (selectedImageSopProvider != null)
+					return selectedImageSopProvider.ImageSop as MprSliceSop;
+				return null;
+			}
+		}
+
+		protected IMprSliceSet SelectedMprSliceSet
+		{
+			get
+			{
+				MprSliceSop selectedMprSliceSop = this.SelectedMprSliceSop;
+				if (selectedMprSliceSop != null)
+					return selectedMprSliceSop.Parent;
+				return null;
+			}
+		}
+
+		protected IMprVolume SelectedMprVolume
+		{
+			get
+			{
+				IMprSliceSet selectedMprSliceSet = this.SelectedMprSliceSet;
+				if (selectedMprSliceSet != null)
+					return selectedMprSliceSet.Parent;
+				return null;
+			}
 		}
 	}
 }

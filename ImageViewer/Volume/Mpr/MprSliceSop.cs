@@ -29,48 +29,29 @@
 
 #endregion
 
-using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	/// <summary>
-	/// A standard 3-plane slice view of an MPR <see cref="Volume"/>.
-	/// </summary>
-	public sealed class Mpr3PlaneSliceSet : MprSliceSet
+	public class MprSliceSop : ImageSop
 	{
-		private static readonly IVolumeSlicerParams[] _planes = new IVolumeSlicerParams[] {VolumeSlicerParams.Identity, VolumeSlicerParams.OrthogonalX, VolumeSlicerParams.OrthogonalY};
+		// JY: In general, it is bad practice to derive your own special Sop classes since it
+		// results in messy inheritance problems when new SOP types are introduced (e.g. KO, PR).
+		// Fortunately for us, MPR slices will ALWAYS be an ImageSop.
 
-		public Mpr3PlaneSliceSet(Volume volume) : base(volume)
+		private IMprSliceSet _parent;
+
+		public MprSliceSop(ISliceSopDataSource dataSource) : base(dataSource) {}
+
+		public IMprSliceSet Parent
 		{
-			base.Description = SR.ThreePlane;
-			this.Reslice();
+			get { return _parent; }
+			internal set { _parent = value; }
 		}
 
-		private void Reslice()
+		public new ISliceSopDataSource DataSource
 		{
-			base.SuspendSliceSopsChangedEvent();
-			try
-			{
-				base.ClearAndDisposeSops();
-
-				int instanceNumber = 0;
-				foreach (IVolumeSlicerParams slicerParams in _planes)
-				{
-					using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, slicerParams, base.Uid))
-					{
-						foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
-						{
-							// we're appending multiple slicings, so override the instance number that the slicer generates
-							dataSource[DicomTags.InstanceNumber].SetInt32(0, ++instanceNumber);
-							base.SliceSops.Add(new MprSliceSop(dataSource));
-						}
-					}
-				}
-			}
-			finally
-			{
-				base.ResumeSliceSopsChangedEvent(true);
-			}
+			get { return (ISliceSopDataSource) base.DataSource; }
 		}
 	}
 }

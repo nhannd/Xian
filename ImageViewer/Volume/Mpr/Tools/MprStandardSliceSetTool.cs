@@ -29,8 +29,6 @@
 
 #endregion
 
-#if EXPERIMENTAL_TOOLS
-
 using System;
 using System.Diagnostics;
 using ClearCanvas.Common;
@@ -47,45 +45,22 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
-	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Define Oblique", "Select", Flags = ClickActionFlags.CheckAction)]
+	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Define Oblique", "Select", Flags = ClickActionFlags.CheckAction)]
 	[IconSet("activate", IconScheme.Colour, "Icons.DefineObliqueToolLarge.png", "Icons.DefineObliqueToolMedium.png", "Icons.DefineObliqueToolSmall.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	//TODO JY
-	[ExtensionOf(typeof(MprViewerToolExtensionPoint))]
-	public class DefineObliqueTool : MprViewerTool
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class MprStandardSliceSetTool : MprViewerTool
 	{
 		private PolylineGraphic _polyLine;
 		private InteractivePolylineGraphicBuilder _graphicBuilder;
 		private CompositeUndoableCommand _undoableCommand;
-		private bool _visible;
 
-		public DefineObliqueTool()
+		public MprStandardSliceSetTool()
 		{
-			Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
-		}
-
-		public event EventHandler VisibleChanged;
-
-		public bool Visible
-		{
-			get { return _visible; }
-			set
-			{
-				if (_visible != value)
-				{
-					_visible = value;
-					EventsHelper.Fire(VisibleChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			Visible = IsValidImage(this.SelectedPresentationImage);
+			base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
 		private void RemoveGraphic()
@@ -119,29 +94,23 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 		private void OnActivationChanged(object sender, EventArgs e)
 		{
-			RemoveGraphic();
+			//RemoveGraphic();
 		}
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			RemoveGraphic();
-			Visible = IsValidImage(this.SelectedPresentationImage);
+			base.Enabled = (base.ImageViewer != null && base.SelectedMprSliceSop != null);
+
+			//RemoveGraphic();
+
+			base.OnPresentationImageSelected(sender, e);
 		}
 
-		// This hack works around the problem where the OnTileSelected gets called in
-		//	situations where the DisplaySet has already been created. No need to recreate every time.
-		//  Ideally there would be a better way for the tool to know when to Create the full set.
-		private bool _fullSetCreated = false;
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
-			MprDisplaySet displaySet = base.GetObliqueDisplaySet();
-			if (displaySet != null && _fullSetCreated == false)
-			{
-				displaySet.CreateFullObliqueDisplaySet();
-				_fullSetCreated = true;
-			}
-			RemoveGraphic();
-			Visible = IsValidImage(this.SelectedPresentationImage);
+			//RemoveGraphic();
+
+			base.OnTileSelected(sender, e);
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -152,9 +121,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				return _graphicBuilder.Start(mouseInformation);
 
 			IPresentationImage image = mouseInformation.Tile.PresentationImage;
-
-			if (!IsValidImage(image))
-				return false;
 
 			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
 			if (provider == null)
@@ -247,8 +213,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
 
-			base.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, _startPatient, _endPatient);
-			_fullSetCreated = false;
+			IMprStandardSliceSet sliceSet = base.SelectedMprVolume.SliceSets[3] as IMprStandardSliceSet;
+			if (sliceSet != null && !sliceSet.IsReadOnly)
+			{
+				IImageBox imageBox = 
+				CollectionUtils.SelectFirst(base.ImageViewer.PhysicalWorkspace.ImageBoxes, delegate(IImageBox test) { return test.DisplaySet.Uid == sliceSet.Uid; });
+				IDisplaySet displaySet = imageBox.DisplaySet;
+				imageBox.DisplaySet = null;
+
+				sliceSet.SlicerParams = VolumeSlicerParams.CreateSlicing(sliceSet.Volume, orientationColumn, orientationRow, _startPatient, _endPatient);
+
+				imageBox.DisplaySet = displaySet;
+				imageBox.TopLeftPresentationImageIndex = imageBox.DisplaySet.PresentationImages.Count / 2;
+				imageBox.DisplaySet.Draw();
+			}
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)
@@ -265,7 +243,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				return false;
 
 			if (_graphicBuilder.Stop(mouseInformation))
+			{
 				return true;
+			}
 
 			//RemoveGraphic();
 			return false;
@@ -280,14 +260,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			RemoveGraphic();
 		}
 
-		public void Apply()
-		{
-			if (!Visible)
-				return;
-
-			Select();
-		}
-
 		public override CursorToken GetCursorToken(Point point)
 		{
 			if (_graphicBuilder != null)
@@ -295,14 +267,5 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			return base.GetCursorToken(point);
 		}
-
-		private bool IsValidImage(IPresentationImage image)
-		{
-			return base.IsIdentityImage(image) 
-			       || base.IsOrthoXImage(image)
-			       || base.IsOrthoYImage(image);
-		}
 	}
 }
-
-#endif

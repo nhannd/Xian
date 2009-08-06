@@ -32,8 +32,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
@@ -43,22 +43,32 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		string Uid { get; }
 		string Description { get; }
 		Volume Volume { get; }
-		IList<Sop> SliceSops { get; }
+		IMprVolume Parent { get; }
+		IList<MprSliceSop> SliceSops { get; }
+		event EventHandler SliceSopsChanged;
 	}
 
-	public abstract class MprSliceSet : IMprSliceSet
+	public abstract class MprSliceSet : IInternalMprSliceSet
 	{
+		private event EventHandler _sliceSopsChanged;
 		private readonly string _uid = DicomUid.GenerateUid().UID;
+		private bool _sliceSopsChangedSuspended = false;
 		private string _description = string.Empty;
+		private IMprVolume _parent;
 		private IVolumeReference _volume;
-		private ObservableDisposableList<Sop> _sliceSops;
+		private ObservableDisposableList<MprSliceSop> _sliceSops;
 
 		protected MprSliceSet(Volume volume)
 		{
 			Platform.CheckForNullReference(volume, "volume");
 			_volume = volume.CreateTransientReference();
 
-			_sliceSops = new ObservableDisposableList<Sop>();
+			_sliceSops = new ObservableDisposableList<MprSliceSop>();
+			_sliceSops.EnableEvents = true;
+			_sliceSops.ItemAdded += OnItemAdded;
+			_sliceSops.ItemChanged += OnItemChanged;
+			_sliceSops.ItemChanging += OnItemChanging;
+			_sliceSops.ItemRemoved += OnItemRemoved;
 		}
 
 		public string Uid
@@ -77,19 +87,100 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _volume.Volume; }
 		}
 
-		public IList<Sop> SliceSops
+		public IList<MprSliceSop> SliceSops
 		{
 			get { return _sliceSops; }
+		}
+
+		public event EventHandler SliceSopsChanged
+		{
+			add { _sliceSopsChanged += value; }
+			remove { _sliceSopsChanged -= value; }
+		}
+
+		public IMprVolume Parent
+		{
+			get { return _parent; }
+		}
+
+		IMprVolume IInternalMprSliceSet.Parent
+		{
+			get { return _parent; }
+			set { _parent = value; }
+		}
+
+		protected void SuspendSliceSopsChangedEvent()
+		{
+			_sliceSopsChangedSuspended = true;
+		}
+
+		protected void ResumeSliceSopsChangedEvent(bool fireNow)
+		{
+			_sliceSopsChangedSuspended = false;
+			if (fireNow)
+				this.OnSliceSopsChanged();
 		}
 
 		protected void ClearAndDisposeSops()
 		{
 			// not quite the same as ObservableDisposableList<Sop>.Dispose() since we want to keep our list!
-			List<Sop> temp = new List<Sop>(_sliceSops);
+			bool enableEvents = _sliceSops.EnableEvents;
 			_sliceSops.EnableEvents = false;
-			_sliceSops.Clear();
-			foreach (Sop sop in temp)
-				sop.Dispose();
+			try
+			{
+				List<MprSliceSop> temp = new List<MprSliceSop>(_sliceSops);
+				_sliceSops.Clear();
+				foreach (MprSliceSop sop in temp)
+				{
+					sop.Parent = null;
+					sop.Dispose();
+				}
+			}
+			finally
+			{
+				_sliceSops.EnableEvents = enableEvents;
+			}
+		}
+
+		protected virtual void OnSliceSopRemoved(MprSliceSop item)
+		{
+			item.Parent = null;
+		}
+
+		protected virtual void OnSliceSopAdded(MprSliceSop item)
+		{
+			item.Parent = this;
+		}
+
+		protected virtual void OnSliceSopsChanged()
+		{
+			EventsHelper.Fire(_sliceSopsChanged, this, EventArgs.Empty);
+		}
+
+		private void OnItemAdded(object sender, ListEventArgs<MprSliceSop> e)
+		{
+			this.OnSliceSopAdded(e.Item);
+			if (!_sliceSopsChangedSuspended)
+				this.OnSliceSopsChanged();
+		}
+
+		private void OnItemRemoved(object sender, ListEventArgs<MprSliceSop> e)
+		{
+			this.OnSliceSopRemoved(e.Item);
+			if (!_sliceSopsChangedSuspended)
+				this.OnSliceSopsChanged();
+		}
+
+		private void OnItemChanging(object sender, ListEventArgs<MprSliceSop> e)
+		{
+			this.OnSliceSopRemoved(e.Item);
+		}
+
+		private void OnItemChanged(object sender, ListEventArgs<MprSliceSop> e)
+		{
+			this.OnSliceSopAdded(e.Item);
+			if (!_sliceSopsChangedSuspended)
+				this.OnSliceSopsChanged();
 		}
 
 		#region Disposal
@@ -113,6 +204,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				if (_sliceSops != null)
 				{
+					_sliceSops.ItemAdded -= OnItemAdded;
+					_sliceSops.ItemChanged -= OnItemChanged;
+					_sliceSops.ItemChanging -= OnItemChanging;
+					_sliceSops.ItemRemoved -= OnItemRemoved;
 					_sliceSops.Dispose();
 					_sliceSops = null;
 				}
