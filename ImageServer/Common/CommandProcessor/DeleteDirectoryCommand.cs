@@ -117,7 +117,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         public void Dispose()
         {
-            if (!RollBackRequested)
+        	// If not rolling back and the dir was renamed by this command 
+        	// then delete it. Otherwise, just leave the ".deleted" directory
+            if (!RollBackRequested && _sourceDirRenamed)
             {
                 DeleteTime.Start();
                 DirectoryUtility.DeleteIfExists(_dir + ".deleted"); 
