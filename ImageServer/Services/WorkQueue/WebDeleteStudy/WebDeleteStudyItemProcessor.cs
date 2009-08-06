@@ -32,13 +32,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Edit;
@@ -176,7 +172,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                             _seriesToDelete.Add(theSeries);
                             DeleteSeriesFromDBCommand delSeries = new DeleteSeriesFromDBCommand(StorageLocation, theSeries);
                             processor.AddCommand(delSeries);
-                            delSeries.Executing += new EventHandler(DeleteSeriesFromDB_Executing);
+                            delSeries.Executing += DeleteSeriesFromDB_Executing;
+                        }
+                        else
+                        {
+                            // Series doesn't exist 
+                            Platform.Log(LogLevel.Info, "Series {0} is invalid or no longer exists", seriesUid);
                         }
                     }
 
@@ -185,7 +186,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                     if (!processor.Execute())
                         throw new ApplicationException(
                             String.Format("Error occurred when series from Study {0}, A#: {1}",
-                                         study.StudyInstanceUid, study.AccessionNumber));
+                                         study.StudyInstanceUid, study.AccessionNumber), processor.FailureException);
                     else
                     {
                         foreach (Series series in _seriesToDelete)

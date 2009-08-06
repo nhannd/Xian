@@ -9,9 +9,12 @@
 <body>
     <form id="form1" runat="server">
     <div>
+        Server AE
         <asp:TextBox runat="server" ID="ServerAE"></asp:TextBox>
-        <asp:TextBox runat="server" ID="StudyUID"></asp:TextBox>
-        <asp:TextBox runat="server" ID="SeriesUID"></asp:TextBox>
+        Study Instance UID
+        <asp:TextBox runat="server" ID="StudyUID" Width="200px"></asp:TextBox>
+        Series Instance UID(s)
+        <asp:TextBox runat="server" ID="SeriesUID" Width="200px"></asp:TextBox>
         <asp:Button runat="server" ID="Delete" Text="Delete" OnClick="DeleteClick" />
     </div>
     </form>
