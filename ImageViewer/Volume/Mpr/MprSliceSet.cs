@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,35 +29,47 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	/// <summary>
-	/// A standard 3-plane slice view of an MPR <see cref="Volume"/>.
-	/// </summary>
-	public sealed class Mpr3PlaneDisplaySet : DisplaySet
+	public interface IMprSliceSet : IDisposable
 	{
-		private static readonly IVolumeSlicerParams[] _planes = new IVolumeSlicerParams[] {VolumeSlicerParams.Identity, VolumeSlicerParams.OrthogonalX, VolumeSlicerParams.OrthogonalY};
+		string Uid { get; }
+		string Description { get; }
+		Volume Volume { get; }
+		IList<Sop> SliceSops { get; }
+	}
+
+	public abstract class MprSliceSet : IMprSliceSet
+	{
+		private readonly string _uid = DicomUid.GenerateUid().UID;
+		private string _description = string.Empty;
 		private IVolumeReference _volume;
+		private ObservableDisposableList<Sop> _sliceSops;
 
-		public Mpr3PlaneDisplaySet(Volume volume) : this(volume, null, null) {}
-
-		public Mpr3PlaneDisplaySet(Volume volume, string name) : this(volume, name, DicomUid.GenerateUid().UID) {}
-
-		public Mpr3PlaneDisplaySet(Volume volume, string name, string uid)
-			: base(name, uid)
+		protected MprSliceSet(Volume volume)
 		{
 			Platform.CheckForNullReference(volume, "volume");
-
 			_volume = volume.CreateTransientReference();
 
-			base.Description = "3-Plane";
+			_sliceSops = new ObservableDisposableList<Sop>();
+		}
 
-			this.Reslice();
+		public string Uid
+		{
+			get { return _uid; }
+		}
+
+		public string Description
+		{
+			get { return _description; }
+			protected set { _description = value; }
 		}
 
 		public Volume Volume
@@ -65,41 +77,54 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _volume.Volume; }
 		}
 
-		protected override void Dispose(bool disposing)
+		public IList<Sop> SliceSops
+		{
+			get { return _sliceSops; }
+		}
+
+		protected void ClearAndDisposeSops()
+		{
+			// not quite the same as ObservableDisposableList<Sop>.Dispose() since we want to keep our list!
+			List<Sop> temp = new List<Sop>(_sliceSops);
+			_sliceSops.EnableEvents = false;
+			_sliceSops.Clear();
+			foreach (Sop sop in temp)
+				sop.Dispose();
+		}
+
+		#region Disposal
+
+		public void Dispose()
+		{
+			try
+			{
+				this.Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+			}
+		}
+
+		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				_volume.Dispose();
-				_volume = null;
-			}
-			base.Dispose(disposing);
-		}
-
-		private void Reslice()
-		{
-			List<IPresentationImage> images = new List<IPresentationImage>(this.PresentationImages);
-			this.PresentationImages.Clear();
-			foreach (IPresentationImage image in images)
-				image.Dispose();
-
-			int instanceNumber = 0;
-			foreach (IVolumeSlicerParams slicerParams in _planes)
-			{
-				using (VolumeSlicer slicer = new VolumeSlicer(_volume.Volume, slicerParams, base.Uid))
+				if (_sliceSops != null)
 				{
-					foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
-					{
-						// we're appending multiple slicings, so override the instance number that the slicer generates
-						dataSource[DicomTags.InstanceNumber].SetInt32(0, ++instanceNumber);
+					_sliceSops.Dispose();
+					_sliceSops = null;
+				}
 
-						ImageSop imageSop = new ImageSop(dataSource);
-						foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
-						{
-							this.PresentationImages.Add(image);
-						}
-					}
+				if (_volume != null)
+				{
+					_volume.Dispose();
+					_volume = null;
 				}
 			}
 		}
+
+		#endregion
 	}
 }

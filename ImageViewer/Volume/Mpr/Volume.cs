@@ -131,9 +131,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_modelDicom = sopDataSourcePrototype;
 			_padValue = paddingValue;
 
+			// Generate a descriptive name for the volume
 			PersonName patientName = new PersonName(sopDataSourcePrototype[DicomTags.PatientsName].ToString());
 			string patientId = sopDataSourcePrototype[DicomTags.PatientId].ToString();
-			_description = string.Format("MPR {0} - {1}", patientName.FormattedName, patientId);
+			string seriesDescription = sopDataSourcePrototype[DicomTags.SeriesDescription].ToString();
+			if (string.IsNullOrEmpty(seriesDescription))
+				_description = string.Format(SR.FormatVolumeLabel, patientName.FormattedName, patientId, seriesDescription);
+			else
+				_description = string.Format(SR.FormatVolumeLabelWithSeries, patientName.FormattedName, patientId, seriesDescription);
 		}
 
 		#endregion
@@ -416,9 +421,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// operating on the volume, call <see cref="ReleasePinnedVtkVolume"/>.
 		/// </summary>
 		/// <returns></returns>
-		//TODO: Wrap with disposable object and have released on Dispose
 		internal vtkImageData ObtainPinnedVtkVolume()
 		{
+			//TODO: Wrap with disposable object and have released on Dispose
+
 			// Create the VTK volume wrapper if it doesn't exist
 			if (_cachedVtkVolume == null)
 				_cachedVtkVolume = CreateVtkVolume();

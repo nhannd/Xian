@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,53 +29,38 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 {
-	[ExtensionPoint]
-	public sealed class MprViewerToolExtensionPoint : ExtensionPoint<ITool> {}
-
-	public interface IMprViewerTool : ITool
+	internal class ObservableDisposableList<T> : ObservableList<T>, IDisposable where T : IDisposable
 	{
-		MprViewerComponent ImageViewer { get; }
-		IMprViewerToolContext Context { get; }
-	}
-
-	public interface IMprViewerToolContext : IImageViewerToolContext
-	{
-		new MprViewerComponent Viewer { get; }
-	}
-
-	public abstract class MprViewerTool : ImageViewerTool, IMprViewerTool
-	{
-		protected MprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
+		public void Dispose()
 		{
-			get { return (MprViewerComponent) base.ImageViewer; }
+			try
+			{
+				this.Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+			}
 		}
 
-		public new IMprViewerToolContext Context
+		protected virtual void Dispose(bool disposing)
 		{
-			get { return (IMprViewerToolContext) base.Context; }
-		}
-	}
-
-	public abstract class MouseMprViewerTool : MouseImageViewerTool, IMprViewerTool
-	{
-		protected MouseMprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
-		{
-			get { return (MprViewerComponent) base.ImageViewer; }
-		}
-
-		public new IMprViewerToolContext Context
-		{
-			get { return (IMprViewerToolContext) base.Context; }
+			if (disposing)
+			{
+				List<T> temp = new List<T>(this);
+				this.EnableEvents = false;
+				this.Clear();
+				foreach (T t in temp)
+					t.Dispose();
+			}
 		}
 	}
 }

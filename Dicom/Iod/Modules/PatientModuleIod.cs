@@ -615,6 +615,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				yield return DicomTags.BreedRegistrationSequence;
 				yield return DicomTags.DeIdentificationMethod;
 				yield return DicomTags.DeIdentificationMethodCodeSequence;
+				yield return DicomTags.EthnicGroup;
 				yield return DicomTags.IssuerOfPatientId;
 				yield return DicomTags.OtherPatientIds;
 				yield return DicomTags.OtherPatientIdsSequence;
@@ -626,6 +627,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				yield return DicomTags.PatientIdentityRemoved;
 				yield return DicomTags.PatientsBirthDate;
 				yield return DicomTags.PatientsBirthTime;
+				yield return DicomTags.PatientsName;
 				yield return DicomTags.PatientSpeciesCodeSequence;
 				yield return DicomTags.PatientSpeciesDescription;
 				yield return DicomTags.PatientsSex;

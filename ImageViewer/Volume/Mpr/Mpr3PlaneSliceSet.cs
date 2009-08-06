@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,53 +29,41 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
+namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	[ExtensionPoint]
-	public sealed class MprViewerToolExtensionPoint : ExtensionPoint<ITool> {}
-
-	public interface IMprViewerTool : ITool
+	/// <summary>
+	/// A standard 3-plane slice view of an MPR <see cref="Volume"/>.
+	/// </summary>
+	public sealed class Mpr3PlaneSliceSet : MprSliceSet
 	{
-		MprViewerComponent ImageViewer { get; }
-		IMprViewerToolContext Context { get; }
-	}
+		private static readonly IVolumeSlicerParams[] _planes = new IVolumeSlicerParams[] {VolumeSlicerParams.Identity, VolumeSlicerParams.OrthogonalX, VolumeSlicerParams.OrthogonalY};
 
-	public interface IMprViewerToolContext : IImageViewerToolContext
-	{
-		new MprViewerComponent Viewer { get; }
-	}
-
-	public abstract class MprViewerTool : ImageViewerTool, IMprViewerTool
-	{
-		protected MprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
+		public Mpr3PlaneSliceSet(Volume volume) : base(volume)
 		{
-			get { return (MprViewerComponent) base.ImageViewer; }
+			base.Description = SR.ThreePlane;
+			this.Reslice();
 		}
 
-		public new IMprViewerToolContext Context
+		private void Reslice()
 		{
-			get { return (IMprViewerToolContext) base.Context; }
-		}
-	}
+			base.ClearAndDisposeSops();
 
-	public abstract class MouseMprViewerTool : MouseImageViewerTool, IMprViewerTool
-	{
-		protected MouseMprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
-		{
-			get { return (MprViewerComponent) base.ImageViewer; }
-		}
-
-		public new IMprViewerToolContext Context
-		{
-			get { return (IMprViewerToolContext) base.Context; }
+			int instanceNumber = 0;
+			foreach (IVolumeSlicerParams slicerParams in _planes)
+			{
+				using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, slicerParams, base.Uid))
+				{
+					foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
+					{
+						// we're appending multiple slicings, so override the instance number that the slicer generates
+						dataSource[DicomTags.InstanceNumber].SetInt32(0, ++instanceNumber);
+						base.SliceSops.Add(new ImageSop(dataSource));
+					}
+				}
+			}
 		}
 	}
 }

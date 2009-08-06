@@ -63,17 +63,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MprStaticSliceSet.cs" />
+    <Compile Include="MprStandardSliceSet.cs" />
     <Compile Include="IVolumeSlicerParams.cs" />
-    <Compile Include="Mpr3PlaneDisplaySet.cs" />
+    <Compile Include="Mpr3PlaneSliceSet.cs" />
     <Compile Include="MprAnnotationItemProvider.cs" />
+    <Compile Include="MprVolume.cs" />
     <Compile Include="ReadOnlyVolumeSlicerParams.cs" />
     <Compile Include="Tests\SlicerTests.cs" />
-    <Compile Include="VolumeReference.cs" />
-    <Compile Include="VolumeSlicerParams.cs" />
-    <Compile Include="MprDisplaySet.cs" />
     <Compile Include="Tools\DefineObliqueTool.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\ObservableDisposableList.cs" />
+    <Compile Include="Utilities\ProgressTask.cs" />
+    <Compile Include="VolumeReference.cs" />
+    <Compile Include="VolumeSlicerParams.cs" />
+    <Compile Include="MprSliceSet.cs" />
     <Compile Include="Tools\MprRotateTool.cs">
       <SubType>Code</SubType>
     </Compile>

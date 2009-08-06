@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -39,6 +40,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -83,20 +85,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public void LaunchMpr()
 		{
 			Exception exception = null;
-			Volume volume = null;
 
 			IPresentationImage currentImage = this.Context.Viewer.SelectedPresentationImage;
 			if (currentImage == null)
 				return;
 
-			BackgroundTask task = new BackgroundTask(LoadVolume, true, FilterSourceFrames(currentImage.ParentDisplaySet, currentImage));
-			task.Terminated += delegate(object sender, BackgroundTaskTerminatedEventArgs e)
-			                   	{
-			                   		exception = e.Exception;
-			                   		if (e.Reason == BackgroundTaskTerminatedReason.Completed)
-			                   			volume = (Volume) e.Result;
-			                   	};
-
+			BackgroundTaskParams @params = new BackgroundTaskParams(FilterSourceFrames(currentImage.ParentDisplaySet, currentImage));
+			BackgroundTask task = new BackgroundTask(LoadVolume, true, @params);
+			task.Terminated += delegate(object sender, BackgroundTaskTerminatedEventArgs e) { exception = e.Exception; };
 			try
 			{
 				ProgressDialog.Show(task, base.Context.DesktopWindow, true, ProgressBarStyle.Blocks);
@@ -112,23 +108,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			if (exception != null)
 			{
-				ExceptionHandler.Report(exception, "A failure occured while generating the MPR volume.", base.Context.DesktopWindow);
+				ExceptionHandler.Report(exception, SR.ExceptionMprLoadFailure, base.Context.DesktopWindow);
 				return;
-			}
-
-			if (volume != null)
-			{
-				try
-				{
-					MprViewerComponent component = new MprViewerComponent(volume);
-					LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
-					args.Title = component.Title;
-					MprViewerComponent.Launch(component, args);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				}
 			}
 		}
 
@@ -167,15 +148,41 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			try
 			{
-				IEnumerable<Frame> frames = (IEnumerable<Frame>) context.UserState;
-				Volume volume = Volume.CreateVolume(frames,
+				ProgressTask mainTask = new ProgressTask();
+				mainTask.AddSubTask("BUILD", 90);
+				mainTask.AddSubTask("LAYOUT", 10);
+
+				context.ReportProgress(new BackgroundTaskProgress(mainTask.IntPercent, string.Format(SR.MessageInitializingMpr, mainTask.Progress)));
+
+				BackgroundTaskParams @params = (BackgroundTaskParams) context.UserState;
+				Volume volume = Volume.CreateVolume(@params.Frames,
 				                                    delegate(int i, int count)
 				                                    	{
 				                                    		if (context.CancelRequested)
 				                                    			throw new BackgroundTaskCancelledException();
-				                                    		context.ReportProgress(new BackgroundTaskProgress(i, count, SR.MessageBuildingMprVolume));
+				                                    		if (i == 0)
+				                                    			mainTask["BUILD"].AddSubTask("", count);
+				                                    		mainTask["BUILD"][""].Increment();
+				                                    		string message = string.Format(SR.MessageBuildingMprVolumeProgress, mainTask.Progress, i + 1, count, mainTask["BUILD"].Progress);
+				                                    		context.ReportProgress(new BackgroundTaskProgress(mainTask.IntPercent, message));
 				                                    	});
-				context.Complete(volume);
+
+				mainTask["BUILD"].MarkComplete();
+				context.ReportProgress(new BackgroundTaskProgress(mainTask.IntPercent, string.Format(SR.MessagePerformingMprWorkspaceLayout, mainTask.Progress)));
+
+				@params.SynchronizationContext.Send(delegate
+				                                    	{
+				                                    		MprViewerComponent component = new MprViewerComponent(volume);
+				                                    		component.Layout();
+				                                    		LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
+				                                    		args.Title = component.Title;
+				                                    		MprViewerComponent.Launch(component, args);
+				                                    	}, null);
+
+				mainTask["LAYOUT"].MarkComplete();
+				context.ReportProgress(new BackgroundTaskProgress(mainTask.IntPercent, string.Format(SR.MessageDone, mainTask.Progress)));
+
+				context.Complete();
 			}
 			catch (BackgroundTaskCancelledException)
 			{
@@ -188,6 +195,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		private sealed class BackgroundTaskCancelledException : Exception {}
+
+		private class BackgroundTaskParams
+		{
+			public readonly IEnumerable<Frame> Frames;
+			public readonly SynchronizationContext SynchronizationContext;
+
+			public BackgroundTaskParams(IEnumerable<Frame> frames)
+			{
+				this.Frames = frames;
+				this.SynchronizationContext = SynchronizationContext.Current;
+			}
+		}
+
+		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		{
+			if (e.SelectedPresentationImage != null)
+				this.UpdateEnabled(e.SelectedPresentationImage.ParentDisplaySet);
+			else
+				this.UpdateEnabled(null);
+		}
 
 		private void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
 		{

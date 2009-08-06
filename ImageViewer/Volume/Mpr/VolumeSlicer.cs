@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return _sliceSpacing;
 		}
 
-		public IEnumerable<VolumeSliceSopDataSource> CreateSlices()
+		public IEnumerable<ISliceSopDataSource> CreateSlices()
 		{
 			Vector3D initialThroughPoint = GetSliceThroughPoint();
 

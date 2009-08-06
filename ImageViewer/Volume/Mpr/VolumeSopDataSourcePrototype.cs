@@ -102,6 +102,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				volumeDataSet[DicomTags.SeriesDescription] = source[DicomTags.SeriesDescription].Copy();
 
 				// generate General Equipment Module
+				// these is a ticket to properly implement the GenEq module in all created instances.
+				// the ticket is specific to KO and PR, but it should equally apply to these MPR SCs
 
 				// generate SC Equipment Module
 				volumeDataSet[DicomTags.ConversionType].SetStringValue("WSD");

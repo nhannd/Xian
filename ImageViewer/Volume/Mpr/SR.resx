@@ -122,9 +122,11 @@
   </data>
   <data name="MessageBuildingMprVolume" xml:space="preserve">
     <value>Building MPR Volume...</value>
+    <comment>0 - Overall Progress</comment>
   </data>
   <data name="FormatMprDisplaySetName" xml:space="preserve">
     <value>MPR ({0})</value>
+    <comment>0 - Slice Plane Description</comment>
   </data>
   <data name="MenuOpenSelectionWithMpr" xml:space="preserve">
     <value>Open Selection with &amp;MPR</value>
@@ -137,14 +139,55 @@
   </data>
   <data name="FormatSliceCustom" xml:space="preserve">
     <value>{0:f0}-{1:f0}-{2:f0}</value>
+    <comment>0 - Slice Plane Rotation About X Axis, 1 - ... About Y Axis, 2 - ... About Z Axis</comment>
   </data>
   <data name="FormatSliceIdentity" xml:space="preserve">
     <value>Identity</value>
+    <comment>0 - Slice Plane Rotation About X Axis, 1 - ... About Y Axis, 2 - ... About Z Axis</comment>
   </data>
   <data name="FormatSliceOrthogonalX" xml:space="preserve">
     <value>OrthoX</value>
+    <comment>0 - Slice Plane Rotation About X Axis, 1 - ... About Y Axis, 2 - ... About Z Axis</comment>
   </data>
   <data name="FormatSliceOrthogonalY" xml:space="preserve">
     <value>OrthoY</value>
+    <comment>0 - Slice Plane Rotation About X Axis, 1 - ... About Y Axis, 2 - ... About Z Axis</comment>
+  </data>
+  <data name="ThreePlane" xml:space="preserve">
+    <value>3 Plane</value>
+  </data>
+  <data name="FormatVolumeLabel" xml:space="preserve">
+    <value>{0} - {1}</value>
+    <comment>0 - Patient Name, 1 - Patient ID, 2 - Series Description</comment>
+  </data>
+  <data name="FormatVolumeLabelWithSeries" xml:space="preserve">
+    <value>{2} ({0} - {1})</value>
+    <comment>0 - Patient Name, 1 - Patient ID, 2 - Series Description</comment>
+  </data>
+  <data name="VolumeLabelSeparator" xml:space="preserve">
+    <value>::</value>
+  </data>
+  <data name="MessageBuildingMprVolumeProgress" xml:space="preserve">
+    <value>Building MPR Volume (Frame {1} of {2})...</value>
+    <comment>0 - Overall Progress, 1 - Current Frame Number, 2 - Total Frames, 3 - Volume Frame Progress</comment>
+  </data>
+  <data name="MessageDone" xml:space="preserve">
+    <value>Done!</value>
+    <comment>0 - Overall Progress</comment>
+  </data>
+  <data name="MessageInitializingMpr" xml:space="preserve">
+    <value>Initializing MPR...</value>
+    <comment>0 - Overall Progress</comment>
+  </data>
+  <data name="MessagePerformingMprWorkspaceLayout" xml:space="preserve">
+    <value>Performing MPR Workspace Layout...</value>
+    <comment>0 - Overall Progress</comment>
+  </data>
+  <data name="ExceptionMprLoadFailure" xml:space="preserve">
+    <value>Unable to load the selected images in MPR</value>
+  </data>
+  <data name="FormatMprWorkspaceTitle" xml:space="preserve">
+    <value>MPR {0}</value>
+    <comment>0 - Volume Label</comment>
   </data>
 </root>

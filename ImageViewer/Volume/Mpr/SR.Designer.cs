@@ -61,11 +61,29 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to load the selected images in MPR.
+        /// </summary>
+        public static string ExceptionMprLoadFailure {
+            get {
+                return ResourceManager.GetString("ExceptionMprLoadFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MPR ({0}).
         /// </summary>
         public static string FormatMprDisplaySetName {
             get {
                 return ResourceManager.GetString("FormatMprDisplaySetName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MPR {0}.
+        /// </summary>
+        public static string FormatMprWorkspaceTitle {
+            get {
+                return ResourceManager.GetString("FormatMprWorkspaceTitle", resourceCulture);
             }
         }
         
@@ -106,6 +124,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} - {1}.
+        /// </summary>
+        public static string FormatVolumeLabel {
+            get {
+                return ResourceManager.GetString("FormatVolumeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {2} ({0} - {1}).
+        /// </summary>
+        public static string FormatVolumeLabelWithSeries {
+            get {
+                return ResourceManager.GetString("FormatVolumeLabelWithSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Selection with &amp;MPR.
         /// </summary>
         public static string MenuOpenSelectionWithMpr {
@@ -142,11 +178,65 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Building MPR Volume (Frame {1} of {2})....
+        /// </summary>
+        public static string MessageBuildingMprVolumeProgress {
+            get {
+                return ResourceManager.GetString("MessageBuildingMprVolumeProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Done!.
+        /// </summary>
+        public static string MessageDone {
+            get {
+                return ResourceManager.GetString("MessageDone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializing MPR....
+        /// </summary>
+        public static string MessageInitializingMpr {
+            get {
+                return ResourceManager.GetString("MessageInitializingMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performing MPR Workspace Layout....
+        /// </summary>
+        public static string MessagePerformingMprWorkspaceLayout {
+            get {
+                return ResourceManager.GetString("MessagePerformingMprWorkspaceLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 3 Plane.
+        /// </summary>
+        public static string ThreePlane {
+            get {
+                return ResourceManager.GetString("ThreePlane", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Selection with MPR.
         /// </summary>
         public static string ToolbarOpenSelectionWithMpr {
             get {
                 return ResourceManager.GetString("ToolbarOpenSelectionWithMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ::.
+        /// </summary>
+        public static string VolumeLabelSeparator {
+            get {
+                return ResourceManager.GetString("VolumeLabelSeparator", resourceCulture);
             }
         }
     }

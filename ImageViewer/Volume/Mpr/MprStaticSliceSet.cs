@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,53 +29,67 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
+namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	[ExtensionPoint]
-	public sealed class MprViewerToolExtensionPoint : ExtensionPoint<ITool> {}
-
-	public interface IMprViewerTool : ITool
+	/// <summary>
+	/// A basic, immutable, single-plane slice view of an MPR <see cref="Volume"/>.
+	/// </summary>
+	public class MprStaticSliceSet : MprSliceSet, IMprStandardSliceSet
 	{
-		MprViewerComponent ImageViewer { get; }
-		IMprViewerToolContext Context { get; }
-	}
+		private readonly IVolumeSlicerParams _slicerParams;
 
-	public interface IMprViewerToolContext : IImageViewerToolContext
-	{
-		new MprViewerComponent Viewer { get; }
-	}
-
-	public abstract class MprViewerTool : ImageViewerTool, IMprViewerTool
-	{
-		protected MprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
+		public MprStaticSliceSet(Volume volume, IVolumeSlicerParams slicerParams)
+			: base(volume)
 		{
-			get { return (MprViewerComponent) base.ImageViewer; }
+			Platform.CheckForNullReference(slicerParams, "slicerParams");
+			_slicerParams = slicerParams;
+
+			base.Description = slicerParams.Description;
+			this.Reslice();
 		}
 
-		public new IMprViewerToolContext Context
+		public IVolumeSlicerParams SlicerParams
 		{
-			get { return (IMprViewerToolContext) base.Context; }
-		}
-	}
-
-	public abstract class MouseMprViewerTool : MouseImageViewerTool, IMprViewerTool
-	{
-		protected MouseMprViewerTool() {}
-
-		public new MprViewerComponent ImageViewer
-		{
-			get { return (MprViewerComponent) base.ImageViewer; }
+			get { return _slicerParams; }
 		}
 
-		public new IMprViewerToolContext Context
+		bool IMprStandardSliceSet.IsReadOnly
 		{
-			get { return (IMprViewerToolContext) base.Context; }
+			get { return true; }
+		}
+
+		IVolumeSlicerParams IMprStandardSliceSet.SlicerParams
+		{
+			get { return this.SlicerParams; }
+			set { throw new NotSupportedException(); }
+		}
+
+		event EventHandler IMprStandardSliceSet.SlicerParamsChanged
+		{
+			add { }
+			remove { }
+		}
+
+		protected void Reslice()
+		{
+			base.ClearAndDisposeSops();
+
+			using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, _slicerParams, base.Uid))
+			{
+				foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
+				{
+					base.SliceSops.Add(new ImageSop(dataSource));
+				}
+			}
+		}
+
+		public static MprStaticSliceSet CreateIdentitySliceSet(Volume volume)
+		{
+			return new MprStaticSliceSet(volume, VolumeSlicerParams.Identity);
 		}
 	}
 }

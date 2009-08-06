@@ -30,43 +30,39 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	public interface IMprStandardSliceSet : IMprSliceSet
+	{
+		bool IsReadOnly { get; }
+		IVolumeSlicerParams SlicerParams { get; set; }
+		event EventHandler SlicerParamsChanged;
+	}
+
 	/// <summary>
-	/// A basic, single-plane slice view of an MPR <see cref="Volume"/>.
+	/// A basic, mutable, single-plane slice view of an MPR <see cref="Volume"/>.
 	/// </summary>
-	public class MprDisplaySet : DisplaySet
+	public class MprStandardSliceSet : MprSliceSet, IMprStandardSliceSet
 	{
 		private event EventHandler _slicerParamsChanged;
 		private IVolumeSlicerParams _slicerParams;
-		private IVolumeReference _volume;
 
-		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams) : this(volume, slicerParams, null, null) {}
-
-		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams, string name) : this(volume, slicerParams, name, DicomUid.GenerateUid().UID) {}
-
-		public MprDisplaySet(Volume volume, IVolumeSlicerParams slicerParams, string name, string uid) : base(name, uid)
+		public MprStandardSliceSet(Volume volume, IVolumeSlicerParams slicerParams) : base(volume)
 		{
-			Platform.CheckForNullReference(volume, "volume");
 			Platform.CheckForNullReference(slicerParams, "slicerParams");
-
-			_volume = volume.CreateTransientReference();
 			_slicerParams = slicerParams;
 
-			base.Description = _slicerParams.Description;
-
+			base.Description = slicerParams.Description;
 			this.Reslice();
 		}
 
-		public Volume Volume
+		bool IMprStandardSliceSet.IsReadOnly
 		{
-			get { return _volume.Volume; }
+			get { return false; }
 		}
 
 		public IVolumeSlicerParams SlicerParams
@@ -94,32 +90,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			EventsHelper.Fire(_slicerParamsChanged, this, EventArgs.Empty);
 		}
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				_volume.Dispose();
-				_volume = null;
-			}
-			base.Dispose(disposing);
-		}
-
 		protected void Reslice()
 		{
-			List<IPresentationImage> images = new List<IPresentationImage>(this.PresentationImages);
-			this.PresentationImages.Clear();
-			foreach (IPresentationImage image in images)
-				image.Dispose();
+			base.ClearAndDisposeSops();
 
-			using (VolumeSlicer slicer = new VolumeSlicer(_volume.Volume, _slicerParams, base.Uid))
+			using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, _slicerParams, base.Uid))
 			{
-				foreach (VolumeSliceSopDataSource dataSource in slicer.CreateSlices())
+				foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
 				{
-					ImageSop imageSop = new ImageSop(dataSource);
-					foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
-					{
-						this.PresentationImages.Add(image);
-					}
+					base.SliceSops.Add(new ImageSop(dataSource));
 				}
 			}
 		}

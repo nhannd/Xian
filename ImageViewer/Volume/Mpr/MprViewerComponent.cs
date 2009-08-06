@@ -29,14 +29,16 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common;
+using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Tools;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -47,21 +49,31 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private IToolSet _mprViewerToolSet;
 		private IActionSet _mprViewerActionSet;
 
-		private IVolumeReference _volume;
+		private ObservableDisposableList<IMprVolume> _volumes;
 
 		private string _title;
 
 		#endregion
 
-		public MprViewerComponent(Volume volume) : base(new MprLayoutManager(), null)
+		public MprViewerComponent(Volume volume) : this()
 		{
-			Platform.CheckForNullReference(volume, "volume");
-			_volume = volume.CreateTransientReference();
+			_volumes.Add(new MprVolume(volume));
 		}
 
-		public Volume Volume
+		public MprViewerComponent(IMprVolume volume) : this()
 		{
-			get { return _volume.Volume; }
+			_volumes.Add(volume);
+		}
+
+		public MprViewerComponent() : base(new MprLayoutManager(), null)
+		{
+			_volumes = new ObservableDisposableList<IMprVolume>();
+			_volumes.EnableEvents = true;
+		}
+
+		public new IObservableList<IMprVolume> StudyTree
+		{
+			get { return _volumes; }
 		}
 
 		public string Title
@@ -69,10 +81,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				if (_title == null)
-					_title = _volume.Volume.Description;
+					_title = this.SuggestTitle();
 				return _title;
 			}
-			set { _title = value; }
+			set
+			{
+				if (_title != value)
+				{
+					_title = value;
+					base.NotifyPropertyChanged("Title");
+				}
+			}
+		}
+
+		protected virtual string SuggestTitle()
+		{
+			return StringUtilities.Combine(this.StudyTree, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; });
 		}
 
 		public override IActionSet ExportedActions
@@ -92,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return false;
 
 			// exclude all Reporting tools because we would need to store the secondary capture for any reporting to work
-			if (action.ActionID.StartsWith("ClearCanvas.ImageViewer.Tools.Reporting"))
+			if (action.ActionID.StartsWith("ClearCanvas.ImageViewer.Tools.Reporting."))
 				return false;
 
 			// default: include
@@ -118,10 +142,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			if (disposing)
 			{
-				if (_volume != null)
+				if (_volumes != null)
 				{
-					_volume.Dispose();
-					_volume = null;
+					_volumes.Dispose();
+					_volumes = null;
 				}
 			}
 
@@ -174,6 +198,51 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				get { return (MprViewerComponent) base.ImageViewer; }
 			}
 
+			protected override sealed IDisplaySet CreateDisplaySet(Series series)
+			{
+				throw new NotSupportedException();
+			}
+
+			protected override sealed IImageSet CreateImageSet(Study study)
+			{
+				throw new NotSupportedException();
+			}
+
+			protected virtual IDisplaySet CreateDisplaySet(int number, IMprSliceSet sliceSet)
+			{
+				string name = string.Format(SR.FormatMprDisplaySetName, sliceSet.Description);
+				DisplaySet displaySet = new DisplaySet(name, sliceSet.Uid);
+				foreach (Sop sop in sliceSet.SliceSops)
+				{
+					foreach (IPresentationImage image in PresentationImageFactory.CreateImages(sop))
+					{
+						displaySet.PresentationImages.Add(image);
+					}
+				}
+				displaySet.Description = name;
+				displaySet.Number = number;
+				return displaySet;
+			}
+
+			protected virtual IImageSet CreateImageSet(MprVolume volume)
+			{
+				int number = 0;
+				ImageSet imageSet = new ImageSet();
+				foreach (IMprSliceSet sliceSet in volume.SliceSets)
+				{
+					imageSet.DisplaySets.Add(CreateDisplaySet(++number, sliceSet));
+				}
+				return imageSet;
+			}
+
+			protected override void BuildLogicalWorkspace()
+			{
+				foreach (MprVolume volume in this.ImageViewer.StudyTree)
+				{
+					this.ImageViewer.LogicalWorkspace.ImageSets.Add(CreateImageSet(volume));
+				}
+			}
+
 			protected override void LayoutPhysicalWorkspace()
 			{
 				base.ImageViewer.PhysicalWorkspace.SetImageBoxGrid(2, 2);
@@ -182,29 +251,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					imageBox.SetTileGrid(1, 1);
 
 				base.ImageViewer.PhysicalWorkspace.Locked = true;
-			}
-
-			protected static IEnumerable<IVolumeSlicerParams> GetDefaultViews()
-			{
-				yield return VolumeSlicerParams.Identity;
-				yield return VolumeSlicerParams.OrthogonalX;
-				yield return VolumeSlicerParams.OrthogonalY;
-				yield return new VolumeSlicerParams(90, 0, 45);
-			}
-
-			protected override void BuildLogicalWorkspace()
-			{
-				int number = 0;
-				ImageSet imageSet = new ImageSet();
-				foreach (IVolumeSlicerParams slicerParams in GetDefaultViews())
-				{
-					string name = string.Format(SR.FormatMprDisplaySetName, slicerParams.Description);
-					MprDisplaySet displaySet = new MprDisplaySet(this.ImageViewer.Volume, slicerParams, name);
-					displaySet.Description = name;
-					displaySet.Number = ++number;
-					imageSet.DisplaySets.Add(displaySet);
-				}
-				this.ImageViewer.LogicalWorkspace.ImageSets.Add(imageSet);
 			}
 
 			protected override void FillPhysicalWorkspace()
