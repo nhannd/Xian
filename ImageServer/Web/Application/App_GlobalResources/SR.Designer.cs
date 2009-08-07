@@ -178,6 +178,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the following series?.
+        /// </summary>
+        internal static string DeleteSeriesMessage {
+            get {
+                return ResourceManager.GetString("DeleteSeriesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DEVICEAE.
         /// </summary>
         internal static string DeviceAE {

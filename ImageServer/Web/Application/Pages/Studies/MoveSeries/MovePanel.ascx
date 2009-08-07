@@ -74,4 +74,4 @@
     </ContentTemplate>
 </asp:UpdatePanel>
 
-<ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="Move Confirmation"/>
+<ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="Move Series Confirmation"/>

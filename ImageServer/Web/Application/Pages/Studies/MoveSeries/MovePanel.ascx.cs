@@ -136,16 +136,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                                               {
                     ScriptManager.RegisterStartupScript(Page, Page.GetType(), "alertScript", "self.close();", true);
 
-                    // Create the move request, although it really isn't needed.
-                    MoveRequest moveData = new MoveRequest();
-                    moveData.SelectedStudy = SeriesGridView.Study;
-                    moveData.DestinationDevice = DeviceGridPanel.SelectedDevice;
-                    moveData.Series = SeriesGridView.SeriesList;
-                    moveData.Partition = SeriesGridView.Partition;
-                    MoveConfirmation.Data = moveData;
+                    MoveRequest moveData = MoveConfirmation.Data as MoveRequest;
 
                     StudyController studyController = new StudyController();
-                    studyController.MoveStudy(moveData.SelectedStudy, moveData.DestinationDevice, SeriesGridView.SeriesList);
+                    studyController.MoveStudy(moveData.SelectedStudy, moveData.DestinationDevice, moveData.Series);
                                               };
 
         }
@@ -284,6 +278,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                 MoveConfirmation.Message += DialogHelper.createSeriesTable(SeriesGridView.SeriesList);
 
                 MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+
+                // Create the move request, although it really isn't needed.
+                MoveRequest moveData = new MoveRequest();
+                moveData.SelectedStudy = SeriesGridView.Study;
+                moveData.DestinationDevice = DeviceGridPanel.SelectedDevice;
+                moveData.Series = SeriesGridView.SeriesList;
+                moveData.Partition = SeriesGridView.Partition;
+                MoveConfirmation.Data = moveData;
+
                 MoveConfirmation.Show();
             }
         }

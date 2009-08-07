@@ -30,9 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Scripts.StudyDetailsTabs.js", "application/x-javascript")]
@@ -45,7 +49,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     public partial class StudyDetailsTabs : ScriptUserControl
     {
 
+
+
         #region Private Members
+
+        [Serializable]
+        private class DeleteRequest
+        {
+            private Study _study;
+            private ServerPartition _partition;
+            private IList<Series> _series;
+            private string _reason;
+
+            public Study SelectedStudy
+            {
+                get { return _study; }
+                set { _study = value; }
+            }
+
+            public ServerPartition Partition
+            {
+                get { return _partition; }
+                set { _partition = value; }
+            }
+
+            public IList<Series> Series
+            {
+                get { return _series; }
+                set { _series = value; }
+            }
+
+            public string Reason
+            {
+                get { return _reason; }
+                set { _reason = value; }
+            }
+        }
 
         private StudySummary _study;
         private ServerPartition _partition;
@@ -115,6 +154,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         #region Protected Methods
 
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            DeleteConfirmation.Confirmed += delegate(object data)
+                                              {
+                                                  ScriptManager.RegisterStartupScript(Page, Page.GetType(),
+                                                                                      "alertScript", "self.close();",
+                                                                                      true);
+
+                                                  DeleteRequest deleteRequest = DeleteConfirmation.Data as DeleteRequest;
+
+                                                  StudyController studyController = new StudyController();
+                                                  studyController.DeleteSeries(deleteRequest.SelectedStudy, deleteRequest.Series, deleteRequest.Reason);
+                                              };
+        }
+
         protected override void OnPreRender(EventArgs e)
         {
             int[] selectedSeriesIndices = SeriesGridView.SeriesListControl.SelectedIndices;
@@ -123,6 +179,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             DeleteSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;
 
             base.OnPreRender(e);
+        }
+
+        protected void DeleteSeriesButton_Click(object sender, ImageClickEventArgs e)
+        {
+            DeleteConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.DeleteSeriesMessage));
+
+            IList<Series> items = SeriesGridView.SelectedItems;
+
+            DeleteConfirmation.Message += DialogHelper.createSeriesTable(items);
+            DeleteConfirmation.Message += "<div style='text-align: right; padding-top: 5px; font-weight: bold; color: #336699'>Reason: &nbsp;<input type='Text' name='ReasonText' width='450'></div>";
+
+            DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.OKCANCEL;
+
+            // Create the delete request
+            DeleteRequest deleteData = new DeleteRequest();
+            deleteData.SelectedStudy = SeriesGridView.Study.TheStudy;
+            deleteData.Series = SeriesGridView.SelectedItems;
+            deleteData.Partition = SeriesGridView.Partition;
+            deleteData.Reason = "";
+            DeleteConfirmation.Data = deleteData;
+            
+            DeleteConfirmation.Show();
         }
 
         #endregion Protected Methods

@@ -37,7 +37,7 @@
                                     <div style="padding-top: 5px; padding-left: 1px;" />
                                         <ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewDetailsButton" />&nbsp;
                                         <ccUI:ToolbarButton runat="server" ID="MoveSeriesButton" SkinID="MoveButton" />&nbsp;
-                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="DeleteButton" />
+                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="DeleteButton" OnClick="DeleteSeriesButton_Click"/>
                                     </div>
                                 </td>
                             </tr>
@@ -108,3 +108,5 @@
         </ContentTemplate>
     </aspAjax:TabPanel>
 </aspAjax:TabContainer>
+
+<ccAsp:MessageBox ID="DeleteConfirmation" runat="server" Title="Delete Series Confirmation"/>

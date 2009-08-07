@@ -432,4 +432,7 @@
   <data name="MoveSeriesMessage" xml:space="preserve">
     <value>The following series will be moved to {0}:</value>
   </data>
+  <data name="DeleteSeriesMessage" xml:space="preserve">
+    <value>Are you sure you want to delete the following series?</value>
+  </data>
 </root>

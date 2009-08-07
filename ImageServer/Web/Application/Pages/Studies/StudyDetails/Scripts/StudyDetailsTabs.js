@@ -39,7 +39,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this._OnSeriesListClickedHandler = Function.createDelegate(this,this._OnSeriesListClicked);
             this._OnViewSeriesButtonClickedHandler = Function.createDelegate(this,this._OnViewSeriesButtonClicked);
             this._OnMoveSeriesButtonClickedHandler = Function.createDelegate(this,this._OnMoveSeriesButtonClicked);
-            this._OnDeleteSeriesButtonClickedHandler = Function.createDelegate(this,this._OnDeleteSeriesButtonClicked);
             this._updateToolbarButtonStates();
             
             Sys.Application.add_load(this._OnLoadHandler);
@@ -62,13 +61,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             {
                 viewSeriesBtn.remove_onClientClick(this._OnViewSeriesButtonClickedHandler);
             }
-            
-            var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
-            if (deleteSeriesBtn!=null)
-            {
-                deleteSeriesBtn.remove_onClientClick(this._OnDeleteSeriesButtonClickedHandler);
-            }
-            
+                        
             var moveSeriesBtn = $find(this._MoveSeriesButtonClientID); 
             if (moveSeriesBtn!=null)
             {
@@ -96,15 +89,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             }
             
             var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
-            var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
             var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);            
             if (viewSeriesBtn!=null)
             {
                 viewSeriesBtn.add_onClientClick(this._OnViewSeriesButtonClickedHandler);
-            }
-            if (deleteSeriesBtn!=null)
-            {
-                deleteSeriesBtn.add_onClientClick(this._OnDeletSeriesButtonClickedHandler);
             }
             if (moveSeriesBtn!=null)
             {
@@ -115,23 +103,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         // called when the user clicks on the series list
         _OnSeriesListClicked : function(src, event)
         {
-            var serieslist = $find(this._SeriesListClientID);
-            if (serieslist!=null)
-            {
-                var rows = serieslist.getSelectedRowElements();
-                var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
-                var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
-                var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);
-                if (viewSeriesBtn!=null) {
-                    viewSeriesBtn.set_enable(rows.length>0);
-                }
-                if (deleteSeriesBtn!=null) {
-                    deleteSeriesBtn.set_enable(rows.length>0);
-                }
-                if (moveSeriesBtn!=null) {
-                    moveSeriesBtn.set_enable(rows.length>0);
-                }                                
-            }
+            this._updateToolbarButtonStates();
         },
         
         _OnViewSeriesButtonClicked : function()
@@ -158,17 +130,37 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                       
             this._enableDeleteButton(false);
             this._enableMoveButton(false);
-            this._enableViewDetailsButton(false);                        
-
+            this._enableViewDetailsButton(false);     
+            
             if (serieslist!=null )
             {
                 var rows = serieslist.getSelectedRowElements();
                 
                 if (rows!=null && rows.length>0)
                 {
-                    this._enableDeleteButton(true);
-                    this._enableMoveButton(true);
-                    this._enableViewDetailsButton(true);  
+                    var selectedSeriesCount = rows.length; 
+                    var canMoveCount=0;   
+		            var canDeleteCount=0;  
+		            
+		            debugger;               
+		            
+		            for(i=0; i<rows.length; i++)
+                    {
+                        if (this._canMoveSeries(rows[i]))
+                        {
+                            canMoveCount++;
+                        }
+                        if (this._canDeleteSeries(rows[i]))
+                        {
+                            canDeleteCount++;
+                        }
+                    }
+                    
+
+                
+                    this._enableDeleteButton(canDeleteCount==selectedSeriesCount);
+                    this._enableMoveButton(canMoveCount==selectedSeriesCount);
+                    this._enableViewDetailsButton(true);                  
                 }
             }
         },
@@ -259,6 +251,18 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             return row.getAttribute("seriesuid");
         },
         
+         _canDeleteSeries:function(row)
+        {
+            //"candelete" is a custom attribute injected by the study list control
+            return row.getAttribute('candelete')=='true';
+        },
+        
+        _canMoveSeries:function(row)
+        {
+            //"canmove" is a custom attribute injected by the study list control
+            return row.getAttribute('canmove')=='true';
+        },
+        
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Public methods
@@ -330,7 +334,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         get_PatientBirthDateClientID : function() {
             return this._PatientBirthDateClientID;
         }
-
     }
 
     // Register the class as a type that inherits from Sys.UI.Control.

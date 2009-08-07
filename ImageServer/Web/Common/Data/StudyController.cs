@@ -147,6 +147,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			}
         }
 
+        public void DeleteSeries(Study study, IList<Series> series, string reason)
+        {
+            // Load the Partition
+            ServerPartitionConfigController partitionConfigController = new ServerPartitionConfigController();
+            ServerPartition partition = partitionConfigController.GetPartition(study.ServerPartitionKey);
+
+            List<string> seriesUids = new List<string>();
+            foreach (Series s in series)
+            {
+                seriesUids.Add(s.SeriesInstanceUid);
+            }
+
+            using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                StudyEditorHelper.DeleteSeries(ctx, partition, study.StudyInstanceUid, seriesUids, reason);
+                ctx.Commit();
+            }
+        }
+
 		/// <summary>
 		/// Restore a nearline study.
 		/// </summary>
@@ -204,9 +223,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					parameters.DeviceKey = device.Key;
 					broker.FindOne(parameters);
 
-					context.Commit();
-				}
-			}
+                using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    StudyEditorHelper.MoveSeries(ctx, partition, study.StudyInstanceUid, seriesUids);
+                    ctx.Commit();
+                }
+            }
+            else
+            {
+                WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                columns.ServerPartitionKey = study.ServerPartitionKey;
 
         	return true;
         }
@@ -260,6 +289,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public bool IsScheduledForDelete(Study study)
         {
             return IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebDeleteStudy);
+        }
+
+        public bool CanManipulateSeries(Study study)
+        {
+            if(IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebDeleteStudy) ||
+               IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebMoveStudy))
+            {
+                return false;
+            }
+            
+            return true;
         }
 
         private ServerEntityKey GetStudyStorageGUID(Study study)

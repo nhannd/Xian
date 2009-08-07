@@ -86,6 +86,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { _series = value; }
         }
 
+        public IList<Model.Series> SelectedItems
+        {
+            get
+            {
+                if (!SeriesListControl.IsDataBound) SeriesListControl.DataBind();
+
+                if (Series == null || Series.Count == 0)
+                    return null;
+
+                int[] rows = SeriesListControl.SelectedIndices;
+                if (rows == null || rows.Length == 0)
+                    return null;
+
+                IList<Model.Series> seriesItems = new List<Model.Series>();
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    if (rows[i] < Series.Count)
+                    {
+                        seriesItems.Add(Series[rows[i]]);
+                    }
+                }
+
+                return seriesItems;
+            }
+        }
+
         [ExtenderControlProperty]
         [ClientPropertyName("SeriesListClientID")]
         public string SeriesListClientID
@@ -152,6 +178,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     row.Attributes["serverae"] = _serverPartition.AeTitle;
                     row.Attributes["studyuid"] = _study.StudyInstanceUid;
                     row.Attributes["seriesuid"] = series.SeriesInstanceUid;
+
+                    StudyController controller = new StudyController();
+                    if (controller.CanManipulateSeries(Study.TheStudy))
+                    {
+                        row.Attributes.Add("candelete", "true");
+                        row.Attributes.Add("canmove", "true");
+                    }
                 }
             }
 
