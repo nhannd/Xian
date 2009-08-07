@@ -54,13 +54,12 @@
                         <tr><td style="border:none">
                         <div style="margin-left:2px;">
                              <table width="100%" class="DuplicateDialogSeriesTable">
-                                <tr class="DuplicateDialogSeriesTableHeader"><td>Description</td><td>Modality</td><td>Instances</td><td>Source AE</td></tr>
+                                <tr class="DuplicateDialogSeriesTableHeader"><td>Description</td><td>Modality</td><td>Instances</td></tr>
                                 <% foreach (SeriesInformation series in ChangeLog.Series) {%>
                                         <tr>
                                             <td><%= series.SeriesDescription %></td>
                                             <td><%= series.Modality %></td>
                                             <td><%= series.NumberOfInstances %></td>
-                                            <td><%= series.SourceAE %></td>
                                         </tr>
                                 <% }%>
                             </table>
