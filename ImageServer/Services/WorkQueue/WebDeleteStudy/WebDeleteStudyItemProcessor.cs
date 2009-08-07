@@ -142,27 +142,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             bool completed = false;
             try
             {
-                WebDeleteSeriesLevelQueueData queueData = XmlUtils.Deserialize<WebDeleteSeriesLevelQueueData>(item.Data);
+            	// Load the list of Series to be deleted from the WorkQueueUid
+            	LoadUids(item);
 
-                using (ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Deleting Series from study {0}, A#:{1}, Patient: {2}, ID:{3}",
-                            study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId)))
+				// Go through the list of series and add commands
+				// to delete each of them. It's all or nothing.                
+                using (ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Deleting Series from study {0}, A#:{1}, Patient: {2}, ID:{3}", study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId)))
                 {
                     StudyXml studyXml = StorageLocation.LoadStudyXml();
                     IList<Series> existingSeries = StorageLocation.Study.Series;
 
+                    
                     // Add commands to delete the folders and update the xml
-                    foreach (string seriesUid in queueData.SeriesInstanceUids)
+                    foreach (WorkQueueUid uid in WorkQueueUidList)
                     {
                         // Delete from study XML
-                        if (studyXml.Contains(seriesUid))
+                        if (studyXml.Contains(uid.SeriesInstanceUid))
                         {
                             //Note: DeleteDirectoryCommand  doesn't throw exception if the folder doesn't exist
-                            RemoveSeriesFromStudyXml xmlUpdate = new RemoveSeriesFromStudyXml(studyXml, seriesUid);
+                            RemoveSeriesFromStudyXml xmlUpdate = new RemoveSeriesFromStudyXml(studyXml, uid.SeriesInstanceUid);
                             processor.AddCommand(xmlUpdate);
                         }
 
                         // Delete from filesystem
-                        string path = StorageLocation.GetSeriesPath(seriesUid);
+                        string path = StorageLocation.GetSeriesPath(uid.SeriesInstanceUid);
                         if (Directory.Exists(path))
                         {
                             DeleteDirectoryCommand delDir = new DeleteDirectoryCommand(path, true);
@@ -170,11 +173,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                         }
                     }
 
-                    // Add commands to update the db.. these commands are executed at the end.
-                    foreach (string seriesUid in queueData.SeriesInstanceUids)
+					// flush the updated xml to disk
+                    processor.AddCommand(new SaveXmlCommand(studyXml, StorageLocation));
+
+                    
+
+                    // Update the db.. NOTE: these commands are executed at the end.
+                    foreach (WorkQueueUid uid in WorkQueueUidList)
                     {
                         // Delete from DB
-                        Series theSeries = CollectionUtils.SelectFirst(existingSeries, delegate(Series series) { return series.SeriesInstanceUid == seriesUid; });
+                        Series theSeries = CollectionUtils.SelectFirst(existingSeries, delegate(Series series) { return series.SeriesInstanceUid == uid.SeriesInstanceUid; });
                         if (theSeries!=null)
                         {
                             _seriesToDelete.Add(theSeries);
@@ -185,11 +193,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                         else
                         {
                             // Series doesn't exist 
-                            Platform.Log(LogLevel.Info, "Series {0} is invalid or no longer exists", seriesUid);
+                            Platform.Log(LogLevel.Info, "Series {0} is invalid or no longer exists", uid.SeriesInstanceUid);
                         }
-                    }
 
-                    processor.AddCommand(new SaveXmlCommand(studyXml, StorageLocation));
+						// The WorkQueueUid must be cleared before the entry can be removed from the queue
+                        DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
+                        processor.AddCommand(deleteUid);
+                    }
 
                     if (!processor.Execute())
                         throw new ApplicationException(
@@ -280,15 +290,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             }
         }
 
-        private IList<IWebDeleteProcessorExtension> EnsureWebDeleteExtensionsLoaded()
+        private void EnsureWebDeleteExtensionsLoaded()
         {
             if (_extensions==null)
             {
                 WebDeleteProcessorExtensionPoint xp = new WebDeleteProcessorExtensionPoint();
                 _extensions = CollectionUtils.Cast<IWebDeleteProcessorExtension>(xp.CreateExtensions());    
             }
-
-            return _extensions;
         }
 
         private void ProcessStudyLevelDelete(Model.WorkQueue item)

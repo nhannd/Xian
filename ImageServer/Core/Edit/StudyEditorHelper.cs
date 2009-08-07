@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             {
                 if (location.IsNearline)
                 {
-                    throw new InvalidStudyStateOperationException("Study Is Nealine. It must be restored first.");
+                    throw new InvalidStudyStateOperationException("Study Is Nearline. It must be restored first.");
                 }
 
                 try
@@ -156,18 +156,23 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <exception cref="ApplicationException">If the "DeleteSeries" Work Queue entry cannot be inserted.</exception>
         private static WorkQueue InsertDeleteSeriesRequest(IUpdateContext context, StudyStorageLocation location, List<string> seriesInstanceUids, string reason)
         {
-        
-            IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new DeleteSeriesWorkQueueParameters(location, seriesInstanceUids, reason);
-            WorkQueue deleteSeriesEntry = broker.FindOne(criteria);
-            if (deleteSeriesEntry != null)
+            // Create a work queue entry and append the series instance uid into the WorkQueueUid table
+
+            WorkQueue deleteSeriesEntry = null;
+            foreach(string uid in seriesInstanceUids)
             {
-                return deleteSeriesEntry;
+                IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+                InsertWorkQueueParameters criteria = new DeleteSeriesWorkQueueParameters(location, uid, reason);
+                deleteSeriesEntry = broker.FindOne(criteria);
+                if (deleteSeriesEntry == null)
+                {
+                    throw new ApplicationException(
+                        String.Format("Unable to insert a Delete Series request for series {0} in study {1}",
+                                      uid, location.StudyInstanceUid));
+                }
             }
-            else
-                throw new ApplicationException( String.Format("Unable to insert a Delete Series request for series {0} in study {1}",
-                    StringUtilities.Combine(seriesInstanceUids, ","), location.StudyInstanceUid));
-            
+
+            return deleteSeriesEntry;
         }
 
         /// <summary>
@@ -196,22 +201,22 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
     class DeleteSeriesWorkQueueParameters : InsertWorkQueueParameters
     {
-        public DeleteSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, List<string> seriesInstanceUids, string reason)
+        public DeleteSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, string reason)
         {
             DateTime now = Platform.Time;
             WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
-            data.SeriesInstanceUids = seriesInstanceUids;
             data.Reason = reason;
             data.Timestamp = now;
             data.UserId = ServerHelper.CurrentUserName;
             
-            this.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
-            this.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
-            this.StudyStorageKey = studyStorageLocation.Key;
-            this.ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
-            this.ScheduledTime = now;
-            this.ExpirationTime = now.AddMinutes(15);
-            this.WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
+            WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
+            WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+            StudyStorageKey = studyStorageLocation.Key;
+            ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
+            ScheduledTime = now;
+            ExpirationTime = now.AddMinutes(15);
+            SeriesInstanceUid = seriesInstanceUid;
+            WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
         }
     }
 
@@ -221,7 +226,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             DateTime now = Platform.Time;
             WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
-            data.SeriesInstanceUids = seriesInstanceUids;
             data.Timestamp = now;
             data.UserId = ServerHelper.CurrentUserName;
 
