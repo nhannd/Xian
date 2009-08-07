@@ -31,40 +31,55 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
-namespace ClearCanvas.ImageViewer.Volume.Mpr
+namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	[ExtensionOf(typeof (AnnotationItemProviderExtensionPoint))]
-	public class MprAnnotationItemProvider : AnnotationItemProvider
+	[MouseToolButton(XMouseButtons.Left, false)]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	public partial class DefineSlicePlaneTool : MouseImageViewerToolMaster<MprViewerTool>
 	{
-		private readonly MprDisplaySetIdentifierAnnotationItem _mprDisplaySetIdentifier = new MprDisplaySetIdentifierAnnotationItem();
-
-		public MprAnnotationItemProvider()
-			: base("AnnotationItemProviders.Mpr", new AnnotationResourceResolver(typeof (MprAnnotationItemProvider).Assembly)) {}
-
-		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
+		protected override IEnumerable<MprViewerTool> CreateTools()
 		{
-			yield return _mprDisplaySetIdentifier;
-		}
-
-		private sealed class MprDisplaySetIdentifierAnnotationItem : AnnotationItem
-		{
-			public MprDisplaySetIdentifierAnnotationItem()
-				: base("Mpr.Glyph", new AnnotationResourceResolver(typeof (MprDisplaySetIdentifierAnnotationItem).Assembly)) {}
-
-			public override string GetAnnotationText(IPresentationImage presentationImage)
+			foreach (IMprVolume volume in this.ImageViewer.StudyTree)
 			{
-				if (presentationImage != null)
+				foreach (IMprSliceSet sliceSet in volume.SliceSets)
 				{
-					MprDisplaySet displaySet = presentationImage.ParentDisplaySet as MprDisplaySet;
-					if (displaySet != null && displaySet.SliceSet is IMprStandardSliceSet)
+					IMprStandardSliceSet standardSliceSet = sliceSet as IMprStandardSliceSet;
+					if (standardSliceSet != null && !standardSliceSet.IsReadOnly)
 					{
-						return displaySet.SliceSet.Description;
+						ModifyStandardSliceSetTool tool = new ModifyStandardSliceSetTool();
+						tool.SliceSet = standardSliceSet;
+						yield return tool;
 					}
 				}
-				return null;
 			}
+		}
+
+		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		{
+			base.OnPresentationImageSelected(sender, e);
+			base.Enabled = (this.ImageViewer != null);
+		}
+
+		public new MprViewerComponent ImageViewer
+		{
+			get { return base.ImageViewer as MprViewerComponent; }
+		}
+
+		protected static IImageBox FindImageBox(IMprSliceSet sliceSet, MprViewerComponent viewer)
+		{
+			if (sliceSet == null || viewer == null)
+				return null;
+
+			foreach (IImageBox imageBox in viewer.PhysicalWorkspace.ImageBoxes)
+			{
+				if (imageBox.DisplaySet != null && imageBox.DisplaySet.Uid == sliceSet.Uid)
+					return imageBox;
+			}
+			return null;
 		}
 	}
 }

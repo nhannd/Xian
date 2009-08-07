@@ -29,41 +29,81 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	[ExtensionOf(typeof (AnnotationItemProviderExtensionPoint))]
-	public class MprAnnotationItemProvider : AnnotationItemProvider
+	[Cloneable]
+	public class MprDisplaySet : DisplaySet, IDisplaySet
 	{
-		private readonly MprDisplaySetIdentifierAnnotationItem _mprDisplaySetIdentifier = new MprDisplaySetIdentifierAnnotationItem();
+		[CloneCopyReference]
+		private IMprSliceSet _sliceSet;
 
-		public MprAnnotationItemProvider()
-			: base("AnnotationItemProviders.Mpr", new AnnotationResourceResolver(typeof (MprAnnotationItemProvider).Assembly)) {}
-
-		public override IEnumerable<IAnnotationItem> GetAnnotationItems()
+		public MprDisplaySet(string name, IMprSliceSet sliceSet)
+			: base(name, sliceSet.Uid)
 		{
-			yield return _mprDisplaySetIdentifier;
+			_sliceSet = sliceSet;
+			_sliceSet.SliceSopsChanged += sliceSet_SliceSopsChanged;
+
+			FillPresentationImages();
 		}
 
-		private sealed class MprDisplaySetIdentifierAnnotationItem : AnnotationItem
+		protected MprDisplaySet(MprDisplaySet source, ICloningContext context)
 		{
-			public MprDisplaySetIdentifierAnnotationItem()
-				: base("Mpr.Glyph", new AnnotationResourceResolver(typeof (MprDisplaySetIdentifierAnnotationItem).Assembly)) {}
+			context.CloneFields(source, this);
+		}
 
-			public override string GetAnnotationText(IPresentationImage presentationImage)
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_sliceSet.SliceSopsChanged += sliceSet_SliceSopsChanged;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
 			{
-				if (presentationImage != null)
-				{
-					MprDisplaySet displaySet = presentationImage.ParentDisplaySet as MprDisplaySet;
-					if (displaySet != null && displaySet.SliceSet is IMprStandardSliceSet)
-					{
-						return displaySet.SliceSet.Description;
-					}
-				}
-				return null;
+				_sliceSet.SliceSopsChanged -= sliceSet_SliceSopsChanged;
+				_sliceSet = null;
+			}
+			base.Dispose(disposing);
+		}
+
+		public IMprSliceSet SliceSet
+		{
+			get { return _sliceSet; }
+		}
+
+		IDisplaySet IDisplaySet.CreateFreshCopy()
+		{
+			return (IDisplaySet) CloneBuilder.Clone(this);
+		}
+
+		IDisplaySet IDisplaySet.Clone()
+		{
+			return (IDisplaySet) CloneBuilder.Clone(this);
+		}
+
+		private void sliceSet_SliceSopsChanged(object sender, EventArgs e)
+		{
+			// clear old presentation images
+			List<IPresentationImage> images = new List<IPresentationImage>(this.PresentationImages);
+			this.PresentationImages.Clear();
+			foreach (IPresentationImage image in this.PresentationImages)
+				image.Dispose();
+
+			// repopulate with new slices
+			this.FillPresentationImages();
+		}
+
+		private void FillPresentationImages()
+		{
+			foreach (MprSliceSop sop in _sliceSet.SliceSops)
+			{
+				foreach (IPresentationImage image in PresentationImageFactory.Create(sop))
+					base.PresentationImages.Add(image);
 			}
 		}
 	}

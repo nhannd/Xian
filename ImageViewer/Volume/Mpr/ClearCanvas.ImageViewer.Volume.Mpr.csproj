@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MprDisplaySet.cs" />
     <Compile Include="MprSliceSop.cs" />
     <Compile Include="MprStaticSliceSet.cs" />
     <Compile Include="MprStandardSliceSet.cs" />
@@ -72,7 +73,11 @@
     <Compile Include="MprVolume.cs" />
     <Compile Include="ReadOnlyVolumeSlicerParams.cs" />
     <Compile Include="Tests\SlicerTests.cs" />
-    <Compile Include="Tools\MprStandardSliceSetTool.cs">
+    <Compile Include="Utilities\MouseImageViewerToolMaster.cs" />
+    <Compile Include="Tools\DefineSlicePlaneTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tools\ModifyStandardSliceSetTool.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\ObservableDisposableList.cs" />

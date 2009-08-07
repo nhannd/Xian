@@ -190,4 +190,11 @@
     <value>MPR {0}</value>
     <comment>0 - Volume Label</comment>
   </data>
+  <data name="MenuDefineSlicePlane" xml:space="preserve">
+    <value>Define Slice Plane</value>
+  </data>
+  <data name="MenuDefineSlicePlaneFor" xml:space="preserve">
+    <value>Define Slice Plane for {0}</value>
+    <comment>0 - Name of Display Set</comment>
+  </data>
 </root>

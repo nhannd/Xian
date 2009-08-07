@@ -142,6 +142,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Define Slice Plane.
+        /// </summary>
+        internal static string MenuDefineSlicePlane {
+            get {
+                return ResourceManager.GetString("MenuDefineSlicePlane", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Define Slice Plane for {0}.
+        /// </summary>
+        internal static string MenuDefineSlicePlaneFor {
+            get {
+                return ResourceManager.GetString("MenuDefineSlicePlaneFor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Selection with &amp;MPR.
         /// </summary>
         internal static string MenuOpenSelectionWithMpr {
