@@ -138,7 +138,7 @@
     <value>Open Selection with MPR</value>
   </data>
   <data name="FormatSliceCustom" xml:space="preserve">
-    <value>{0:f0}-{1:f0}-{2:f0}</value>
+    <value>(X{0:f0}° x Y{1:f0}° x Z{2:f0}°)</value>
     <comment>0 - Slice Plane Rotation About X Axis, 1 - ... About Y Axis, 2 - ... About Z Axis</comment>
   </data>
   <data name="FormatSliceIdentity" xml:space="preserve">

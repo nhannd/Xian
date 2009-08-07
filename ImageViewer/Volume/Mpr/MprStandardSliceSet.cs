@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		protected virtual void OnSlicerParamsChanged()
 		{
 			this.Reslice();
+			base.Description = this.SlicerParams.Description;
 			EventsHelper.Fire(_slicerParamsChanged, this, EventArgs.Empty);
 		}
 

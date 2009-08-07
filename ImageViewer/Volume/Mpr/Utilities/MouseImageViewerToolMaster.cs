@@ -46,8 +46,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		private IToolSet _toolSet;
 		private IActionSet _actionSet;
 		private T _selectedTool;
+		private string _tooltip;
+		private event EventHandler _tooltipChanged;
 
 		protected MouseImageViewerToolMaster() {}
+
+		#region Selected Slave Tool
 
 		protected T SelectedTool
 		{
@@ -86,6 +90,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			this.MouseWheelShortcut = new MouseWheelShortcut();
 		}
 
+		#endregion
+
+		#region Slave Tools and Actions
+
+		protected abstract IEnumerable<T> CreateTools();
+
 		public override IActionSet Actions
 		{
 			get
@@ -101,54 +111,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			}
 		}
 
-		protected abstract IEnumerable<T> CreateTools();
+		#endregion
+
+		#region Initialization and Disposal
 
 		protected virtual void OnToolInitialized(T tool)
 		{
 			tool.ActivationChanged += OnToolActivationChanged;
-			tool.DefaultMouseButtonShortcutChanged += tool_DefaultMouseButtonShortcutChanged;
-			tool.MouseButtonChanged += tool_MouseButtonChanged;
-			tool.MouseWheelShortcutChanged += tool_MouseWheelShortcutChanged;
-			tool.TooltipChanged += tool_TooltipChanged;
+			tool.DefaultMouseButtonShortcutChanged += OnToolDefaultMouseButtonShortcutChanged;
+			tool.MouseButtonChanged += OnToolMouseButtonChanged;
+			tool.MouseWheelShortcutChanged += OnToolMouseWheelShortcutChanged;
+			tool.TooltipChanged += OnToolTooltipChanged;
 		}
 
 		protected virtual void OnToolDisposing(T tool)
 		{
-			tool.TooltipChanged -= tool_TooltipChanged;
-			tool.MouseWheelShortcutChanged -= tool_MouseWheelShortcutChanged;
-			tool.MouseButtonChanged -= tool_MouseButtonChanged;
-			tool.DefaultMouseButtonShortcutChanged -= tool_DefaultMouseButtonShortcutChanged;
+			tool.TooltipChanged -= OnToolTooltipChanged;
+			tool.MouseWheelShortcutChanged -= OnToolMouseWheelShortcutChanged;
+			tool.MouseButtonChanged -= OnToolMouseButtonChanged;
+			tool.DefaultMouseButtonShortcutChanged -= OnToolDefaultMouseButtonShortcutChanged;
 			tool.ActivationChanged -= OnToolActivationChanged;
-		}
-
-		private void OnToolActivationChanged(object sender, EventArgs e)
-		{
-			this.SelectedTool = (T) sender;
-			foreach (T tool in _toolSet.Tools)
-			{
-				if (tool != sender)
-					tool.Active = false;
-			}
-		}
-
-		private void tool_TooltipChanged(object sender, EventArgs e) {}
-
-		private void tool_MouseWheelShortcutChanged(object sender, EventArgs e)
-		{
-			if (this.SelectedTool == sender)
-				this.MouseWheelShortcut = this.SelectedTool.MouseWheelShortcut;
-		}
-
-		private void tool_MouseButtonChanged(object sender, EventArgs e)
-		{
-			if (this.SelectedTool == sender)
-				this.MouseButton = this.SelectedTool.MouseButton;
-		}
-
-		private void tool_DefaultMouseButtonShortcutChanged(object sender, EventArgs e)
-		{
-			if (this.SelectedTool == sender)
-				this.DefaultMouseButtonShortcut = this.SelectedTool.DefaultMouseButtonShortcut;
 		}
 
 		public override void Initialize()
@@ -164,7 +146,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		{
 			if (disposing)
 			{
-				_actionSet = null;
+				this._actionSet = null;
+				this.SelectedTool = null;
 
 				if (_toolSet != null)
 				{
@@ -178,19 +161,110 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			base.Dispose(disposing);
 		}
 
+		#endregion
+
+		#region Tool Activation
+
+		private bool _suspendToolActivationChangedEvent = false;
+
+		protected virtual void OnToolActivationChanged(object sender, EventArgs e)
+		{
+			T tool = (T) sender;
+			if (tool.Active)
+				this.SelectedTool = tool;
+			ResyncToolActivation();
+		}
+
 		protected override void OnActivationChanged()
 		{
 			base.OnActivationChanged();
 			if (!this.Active)
 				this.SelectedTool = null;
+			ResyncToolActivation();
 		}
 
-		#region Mouse Input Forwarding
-
-		public override void Cancel()
+		private void ResyncToolActivation()
 		{
-			if (this.SelectedTool != null)
-				this.SelectedTool.Cancel();
+			if (_suspendToolActivationChangedEvent)
+				return;
+
+			_suspendToolActivationChangedEvent = true;
+			try
+			{
+				T selectedTool = this.SelectedTool;
+				foreach (T tool in _toolSet.Tools)
+					tool.Active = (tool == selectedTool);
+
+				// call it one more time just to make sure
+				if (selectedTool != null)
+					selectedTool.Select();
+			}
+			finally
+			{
+				_suspendToolActivationChangedEvent = false;
+			}
+		}
+
+		#endregion
+
+		#region Tool Property Forwarding
+
+		public override string Tooltip
+		{
+			get { return this.TooltipCore; }
+		}
+
+		protected string TooltipCore
+		{
+			get { return _tooltip; }
+			set
+			{
+				if (_tooltip != value)
+				{
+					_tooltip = value;
+					EventsHelper.Fire(_tooltipChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { _tooltipChanged += value; }
+			remove { _tooltipChanged -= value; }
+		}
+
+		/// <summary>
+		/// This property is not applicable to this class, since tooltips are forwarded from the selected slave tool.
+		/// </summary>
+		[Obsolete("Tooltips are forwarded from the selected slave tool.")]
+		protected override sealed string TooltipPrefix
+		{
+			get { return string.Empty; }
+			set { }
+		}
+
+		protected virtual void OnToolTooltipChanged(object sender, EventArgs e)
+		{
+			if (this.SelectedTool == sender)
+				this.TooltipCore = this.SelectedTool.Tooltip;
+		}
+
+		protected virtual void OnToolMouseWheelShortcutChanged(object sender, EventArgs e)
+		{
+			if (this.SelectedTool == sender)
+				this.MouseWheelShortcut = this.SelectedTool.MouseWheelShortcut;
+		}
+
+		protected virtual void OnToolMouseButtonChanged(object sender, EventArgs e)
+		{
+			if (this.SelectedTool == sender)
+				this.MouseButton = this.SelectedTool.MouseButton;
+		}
+
+		protected virtual void OnToolDefaultMouseButtonShortcutChanged(object sender, EventArgs e)
+		{
+			if (this.SelectedTool == sender)
+				this.DefaultMouseButtonShortcut = this.SelectedTool.DefaultMouseButtonShortcut;
 		}
 
 		public override CursorToken GetCursorToken(Point point)
@@ -200,30 +274,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			return base.GetCursorToken(point);
 		}
 
+		#endregion
+
+		#region Mouse Input Forwarding
+
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			if (this.SelectedTool != null)
 				return this.SelectedTool.Start(mouseInformation);
 			return base.Start(mouseInformation);
-		}
-
-		public override void StartWheel()
-		{
-			if (this.SelectedTool != null)
-				this.SelectedTool.StartWheel();
-		}
-
-		public override bool Stop(IMouseInformation mouseInformation)
-		{
-			if (this.SelectedTool != null)
-				return this.SelectedTool.Stop(mouseInformation);
-			return base.Stop(mouseInformation);
-		}
-
-		public override void StopWheel()
-		{
-			if (this.SelectedTool != null)
-				this.SelectedTool.StopWheel();
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)
@@ -233,15 +292,40 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			return base.Track(mouseInformation);
 		}
 
+		public override bool Stop(IMouseInformation mouseInformation)
+		{
+			if (this.SelectedTool != null)
+				return this.SelectedTool.Stop(mouseInformation);
+			return base.Stop(mouseInformation);
+		}
+
+		public override void Cancel()
+		{
+			if (this.SelectedTool != null)
+				this.SelectedTool.Cancel();
+		}
+
+		public override void StartWheel()
+		{
+			if (this.SelectedTool != null)
+				this.SelectedTool.StartWheel();
+		}
+
 		public override void Wheel(int wheelDelta)
 		{
 			if (this.SelectedTool != null)
 				this.SelectedTool.Wheel(wheelDelta);
 		}
 
+		public override void StopWheel()
+		{
+			if (this.SelectedTool != null)
+				this.SelectedTool.StopWheel();
+		}
+
 		#endregion
 
-		#region ToolContext
+		#region ToolContext Class
 
 		private class ToolContext : IImageViewerToolContext
 		{
@@ -265,7 +349,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		#endregion
 
-		#region CustomActionAttributeProcessor
+		#region CustomActionAttributeProcessor Class
 
 		private static class CustomActionAttributeProcessor
 		{
@@ -317,7 +401,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 			private static string GetQualifiedActionID(ActionAttribute a, object actionTarget)
 			{
-				return string.Format("{0}_{1:x8}", a.QualifiedActionID(actionTarget), actionTarget.GetHashCode());
+				return string.Format("{0}_{1:X8}", a.QualifiedActionID(actionTarget), actionTarget.GetHashCode());
 			}
 
 			/// <summary>

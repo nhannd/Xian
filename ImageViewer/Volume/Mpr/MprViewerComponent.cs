@@ -230,6 +230,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					imageSet.DisplaySets.Add(CreateDisplaySet(++number, sliceSet));
 				}
+				imageSet.Name = volume.Description;
 				return imageSet;
 			}
 
@@ -253,7 +254,35 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			protected override void FillPhysicalWorkspace()
 			{
-				base.FillPhysicalWorkspace();
+				// Do our own filling. The base method clones the display set, which is:
+				// 1. Time consuming, because of the header generation
+				// 2. Useless, because it can never be shown, and the workspace is locked anyway so you don't need to "recover" the original
+				// 3. Makes reslicing slow, since you generate two sets of presentation images
+				// 4. All of the above
+
+				IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+				ILogicalWorkspace logicalWorkspace = ImageViewer.LogicalWorkspace;
+
+				if (logicalWorkspace.ImageSets.Count == 0)
+					return;
+
+				int imageSetIndex = 0;
+				int displaySetIndex = 0;
+
+				foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
+				{
+					if (displaySetIndex == logicalWorkspace.ImageSets[imageSetIndex].DisplaySets.Count)
+					{
+						imageSetIndex++;
+						displaySetIndex = 0;
+
+						if (imageSetIndex == logicalWorkspace.ImageSets.Count)
+							break;
+					}
+
+					imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
+					displaySetIndex++;
+				}
 
 				// Let's start out in the middle of each stack
 				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)

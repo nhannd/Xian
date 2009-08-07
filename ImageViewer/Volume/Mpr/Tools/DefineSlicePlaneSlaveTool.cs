@@ -44,40 +44,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
 	partial class DefineSlicePlaneTool
 	{
-		[MouseToolButton(XMouseButtons.Left, false)]
 		[MenuAction("activate", "imageviewer-contextmenu/MenuDefineSlicePlane", "Select", Flags = ClickActionFlags.CheckAction)]
 		[ButtonAction("activate", "global-toolbars/ToolbarsMpr/MenuDefineSlicePlane", "Select", Flags = ClickActionFlags.CheckAction)]
 		[IconSet("activate", IconScheme.Colour, "Icons.DefineObliqueToolLarge.png", "Icons.DefineObliqueToolMedium.png", "Icons.DefineObliqueToolSmall.png")]
 		[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 		[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 		[LabelValueObserver("activate", "Label", "SliceSetChanged")]
-		//TODO JY
-		private class ModifyStandardSliceSetTool : MprViewerTool
+		[MouseToolButton(XMouseButtons.Left, false)]
+		private class DefineSlicePlaneSlaveTool : MprViewerTool
 		{
-			private PolylineGraphic _polyLine;
+			private SliceLineGraphic _graphic;
 			private InteractivePolylineGraphicBuilder _graphicBuilder;
-			private CompositeUndoableCommand _undoableCommand;
 
-			private IMprStandardSliceSet _sliceSet;
+			private Color _hotColor = Color.SkyBlue;
+			private Color _normalColor = Color.CornflowerBlue;
 
-			public ModifyStandardSliceSetTool()
+			public DefineSlicePlaneSlaveTool()
 			{
 				base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
-			}
-
-			public event EventHandler SliceSetChanged;
-
-			public IMprStandardSliceSet SliceSet
-			{
-				get { return _sliceSet; }
-				set
-				{
-					if (_sliceSet != value)
-					{
-						_sliceSet = value;
-						EventsHelper.Fire(this.SliceSetChanged, this, EventArgs.Empty);
-					}
-				}
 			}
 
 			public string Label
@@ -94,23 +78,77 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				}
 			}
 
-			private void RemoveGraphic()
+			public Color HotColor
 			{
-				if (_polyLine != null)
+				get { return _hotColor; }
+				set { _hotColor = value; }
+			}
+
+			public Color NormalColor
+			{
+				get { return _normalColor; }
+				set { _normalColor = value; }
+			}
+
+			protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+			{
+				base.OnPresentationImageSelected(sender, e);
+
+				IImageBox imageBox = FindImageBox(this.SliceSet, this.ImageViewer);
+
+				// only allow tool if we're in a MprViewerComponent, and we're not going to be operating on ourself!
+				base.Enabled = (this.ImageViewer != null) &&
+					(imageBox != null && this.SelectedPresentationImage != null && this.SelectedPresentationImage.ParentDisplaySet != imageBox.DisplaySet);
+
+				// only translocate the graphic if the user is stacking through the display set
+				if (_graphic.ParentPresentationImage.ParentDisplaySet == this.SelectedPresentationImage.ParentDisplaySet)
+					SliceLineGraphic.TranslocateGraphic(_graphic, this.SelectedPresentationImage);
+			}
+
+			#region Controlled SliceSet
+
+			public event EventHandler SliceSetChanged;
+
+			private IMprStandardSliceSet _sliceSet;
+
+			public IMprStandardSliceSet SliceSet
+			{
+				get { return _sliceSet; }
+				set
 				{
-					IPresentationImage image = _polyLine.ParentPresentationImage;
+					if (_sliceSet != value)
+					{
+						if (_sliceSet != null)
+						{
+							//_sliceSet.SlicerParamsChanged -= _sliceSet_SlicerParamsChanged;
+						}
 
-					_undoableCommand.Unexecute();
-					_undoableCommand = null;
+						_sliceSet = value;
 
-					RemoveGraphicBuilder();
+						if (_sliceSet != null)
+						{
+							//_sliceSet.SlicerParamsChanged += _sliceSet_SlicerParamsChanged;
+						}
 
-					_polyLine.Points.PointChanged -= OnAnchorPointChanged;
-					_polyLine.Drawing -= OnPolyLineDrawing;
-					_polyLine.Dispose();
-					_polyLine = null;
-					image.Draw();
+						EventsHelper.Fire(this.SliceSetChanged, this, EventArgs.Empty);
+					}
 				}
+			}
+
+			#endregion
+
+			public void UpdateText()
+			{
+				if (this.SliceSet != null)
+				{
+					IImageBox imageBox = FindImageBox(this.SliceSet, this.ImageViewer);
+					if (imageBox != null && imageBox.DisplaySet != null)
+					{
+						_graphic.Text = string.Format("{0}", imageBox.DisplaySet.Description, this.SliceSet.Description);
+						return;
+					}
+				}
+				_graphic.Text = string.Empty;
 			}
 
 			private void RemoveGraphicBuilder()
@@ -123,13 +161,51 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				}
 			}
 
-			private void OnActivationChanged(object sender, EventArgs e)
+			public override void Initialize()
 			{
-				//RemoveGraphic();
+				base.Initialize();
+
+				_graphic = SliceLineGraphic.CreateSliceLineGraphic(this.ImageViewer, this.SliceSet, this.HotColor, this.NormalColor);
+				_graphic.LineGraphic.Points.PointChanged += OnAnchorPointChanged;
+				_graphic.Drawing += OnPolyLineDrawing;
+				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
+				{
+					if (imageBox.DisplaySet.Uid != this.SliceSet.Uid)
+					{
+						SliceLineGraphic.AddSliceLineGraphic(_graphic, imageBox.TopLeftPresentationImage);
+						break;
+					}
+				}
+			}
+
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing)
+				{
+					if (this.SliceSet != null)
+					{
+						this.SliceSet = null;
+					}
+
+					if (_graphic != null)
+					{
+						SliceLineGraphic.RemoveSliceLineGraphic(_graphic);
+						_graphic.LineGraphic.Points.PointChanged -= OnAnchorPointChanged;
+						_graphic.Drawing -= OnPolyLineDrawing;
+						_graphic.Dispose();
+						_graphic = null;
+					}
+				}
+
+				base.Dispose(disposing);
 			}
 
 			public override bool Start(IMouseInformation mouseInformation)
 			{
+				// don't let the tool start if we're disabled!
+				if (!this.Enabled)
+					return false;
+
 				base.Start(mouseInformation);
 
 				if (_graphicBuilder != null)
@@ -141,30 +217,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (provider == null)
 					return false;
 
-				RemoveGraphic();
+				SliceLineGraphic.TranslocateGraphic(_graphic, this.SelectedPresentationImage);
 
-				_polyLine = new PolylineGraphic();
+				// The interactive graphic builders typically operate on new, pristine graphics
+				// Since our graphic isn't new, clear the points from it! (Otherwise you'll end up with a polyline)
+				_graphic.LineGraphic.Points.Clear();
 
-				StandardStatefulGraphic statefulPolyline = new StandardStatefulGraphic(new VerticesControlGraphic(new MoveControlGraphic(_polyLine)));
-				statefulPolyline.InactiveColor = Color.CornflowerBlue;
-				statefulPolyline.FocusColor = Color.Cyan;
-				statefulPolyline.SelectedColor = Color.Blue;
-				statefulPolyline.FocusSelectedColor = Color.Blue;
-				statefulPolyline.State = statefulPolyline.CreateInactiveState();
-
-				_undoableCommand = new CompositeUndoableCommand();
-				_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(statefulPolyline, provider.OverlayGraphics, provider.OverlayGraphics.Count));
-				_undoableCommand.Execute();
-
-				_graphicBuilder = new InteractivePolylineGraphicBuilder(2, _polyLine);
+				_graphicBuilder = new InteractivePolylineGraphicBuilder(2, _graphic.LineGraphic);
 				_graphicBuilder.GraphicComplete += OnGraphicBuilderDone;
 				_graphicBuilder.GraphicCancelled += OnGraphicBuilderDone;
 
 				if (_graphicBuilder.Start(mouseInformation))
 				{
-					_polyLine.Points.PointChanged += OnAnchorPointChanged;
-					_polyLine.Drawing += OnPolyLineDrawing;
-					base.ActivationChanged += OnActivationChanged;
 					return true;
 				}
 
@@ -184,15 +248,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			private void OnPolyLineDrawing(object sender, EventArgs e)
 			{
 #if true
-				_polyLine.CoordinateSystem = CoordinateSystem.Destination;
+				// there must be two points already...
+				if (_graphic.LineGraphic.Points.Count > 1)
+				{
+					_graphic.CoordinateSystem = CoordinateSystem.Destination;
 
-				PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.Points[0]);
-				PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine.Points[1]);
+					PointF start = _graphic.SpatialTransform.ConvertToSource(_graphic.LineGraphic.Points[0]);
+					PointF end = _graphic.SpatialTransform.ConvertToSource(_graphic.LineGraphic.Points[1]);
 
-				_polyLine.ResetCoordinateSystem();
+					_graphic.ResetCoordinateSystem();
 
-				_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
-				_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+					_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
+					_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+				}
 #endif
 			}
 
@@ -218,29 +286,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if ((_startPatient - _endPatient).Magnitude < 5*base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
 					return;
 
-				Vector3D orientationRow = new Vector3D(
-					(float) SelectedImageSopProvider.Frame.ImageOrientationPatient.RowX,
-					(float) SelectedImageSopProvider.Frame.ImageOrientationPatient.RowY,
-					(float) SelectedImageSopProvider.Frame.ImageOrientationPatient.RowZ);
+				SetSlicePlane(this.SelectedPresentationImage, this.SliceSet, _startPatient, _endPatient);
 
-				Vector3D orientationColumn = new Vector3D(
-					(float) SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnX,
-					(float) SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
-					(float) SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
-
-				if (this.SliceSet != null && !this.SliceSet.IsReadOnly)
-				{
-					IImageBox imageBox =
-						CollectionUtils.SelectFirst(base.ImageViewer.PhysicalWorkspace.ImageBoxes, delegate(IImageBox test) { return test.DisplaySet.Uid == this.SliceSet.Uid; });
-					IDisplaySet displaySet = imageBox.DisplaySet;
-					imageBox.DisplaySet = null;
-
-					this.SliceSet.SlicerParams = VolumeSlicerParams.CreateSlicing(this.SliceSet.Volume, orientationColumn, orientationRow, _startPatient, _endPatient);
-
-					imageBox.DisplaySet = displaySet;
-					imageBox.TopLeftPresentationImageIndex = imageBox.DisplaySet.PresentationImages.Count/2;
-					imageBox.DisplaySet.Draw();
-				}
+				this.UpdateText();
 			}
 
 			public override bool Track(IMouseInformation mouseInformation)
@@ -271,7 +319,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					return;
 
 				_graphicBuilder.Cancel();
-				RemoveGraphic();
 			}
 
 			public override CursorToken GetCursorToken(Point point)

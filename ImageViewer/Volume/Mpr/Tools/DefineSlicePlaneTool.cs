@@ -30,19 +30,30 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public partial class DefineSlicePlaneTool : MouseImageViewerToolMaster<MprViewerTool>
 	{
+		private static readonly Color[,] _colors = {
+		                                           	{Color.Red, Color.Crimson},
+		                                           	{Color.Blue, Color.Navy},
+		                                           	{Color.Lime, Color.Green},
+		                                           	{Color.Yellow, Color.Olive},
+		                                           	{Color.Violet, Color.Purple},
+		                                           	{Color.Cyan, Color.Turquoise},
+		                                           	{Color.White, Color.WhiteSmoke}
+		                                           };
+
 		protected override IEnumerable<MprViewerTool> CreateTools()
 		{
+			int index = 0;
+
+			// create one instance of the slave tool for each mutable slice set
 			foreach (IMprVolume volume in this.ImageViewer.StudyTree)
 			{
 				foreach (IMprSliceSet sliceSet in volume.SliceSets)
@@ -50,18 +61,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					IMprStandardSliceSet standardSliceSet = sliceSet as IMprStandardSliceSet;
 					if (standardSliceSet != null && !standardSliceSet.IsReadOnly)
 					{
-						ModifyStandardSliceSetTool tool = new ModifyStandardSliceSetTool();
+						DefineSlicePlaneSlaveTool tool = new DefineSlicePlaneSlaveTool();
 						tool.SliceSet = standardSliceSet;
+						tool.HotColor = _colors[index, 0];
+						tool.NormalColor = _colors[index, 1];
+						index = (index + 1)%_colors.Length; // advance to next color
 						yield return tool;
 					}
 				}
 			}
-		}
-
-		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
-		{
-			base.OnPresentationImageSelected(sender, e);
-			base.Enabled = (this.ImageViewer != null);
 		}
 
 		public new MprViewerComponent ImageViewer
