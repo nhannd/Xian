@@ -33,11 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
@@ -165,51 +162,53 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return MoveStudy(study, device, null);
         }
 
-        public bool MoveStudy(Study study, Device device, IList<Series> series)
+        public bool MoveStudy(Study study, Device device, IList<Series> seriesList)
         {
-            if (series != null)
-            {
-                // Load the Partition
-                ServerPartitionConfigController partitionConfigController = new ServerPartitionConfigController();
-                ServerPartition partition = partitionConfigController.GetPartition(study.ServerPartitionKey);
-                
-                List<string> seriesUids = new List<string>();
-                foreach(Series s in series)
-                {
-                    seriesUids.Add(s.SeriesInstanceUid);
-                }
+			DateTime scheduledTime = Platform.Time.AddSeconds(10);
+			if (seriesList != null)
+			{
+				using (
+					IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					foreach (Series series in seriesList)
+					{
+						IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+						InsertWorkQueueParameters parameters = new InsertWorkQueueParameters();
+						parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+						parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+						parameters.StudyStorageKey = study.StudyStorageKey;
+						parameters.ServerPartitionKey = study.ServerPartitionKey;
+						parameters.ScheduledTime = scheduledTime;
+						parameters.ExpirationTime = scheduledTime.AddMinutes(4);
+						parameters.SeriesInstanceUid = series.SeriesInstanceUid;
+						parameters.DeviceKey = device.Key;
+						broker.FindOne(parameters);
+					}
+					context.Commit();
+					return true;
+				}
+			}
+			else
+			{
+				using (
+					IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+					InsertWorkQueueParameters parameters = new InsertWorkQueueParameters();
+					parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+					parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+					parameters.StudyStorageKey = study.StudyStorageKey;
+					parameters.ServerPartitionKey = study.ServerPartitionKey;
+					parameters.ScheduledTime = scheduledTime;
+					parameters.ExpirationTime = scheduledTime.AddMinutes(4);
+					parameters.DeviceKey = device.Key;
+					broker.FindOne(parameters);
 
-                using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                {
-                    StudyEditorHelper.MoveSeries(ctx, partition, study.StudyInstanceUid, seriesUids);
-                }
-            }
-            else
-            {
-                WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                columns.ServerPartitionKey = study.ServerPartitionKey;
+					context.Commit();
+				}
+			}
 
-                StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-                StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
-
-                columns.StudyStorageKey = storage.Key;
-                DateTime time = Platform.Time;
-                columns.ScheduledTime = time;
-                columns.ExpirationTime = time.AddMinutes(4);
-                columns.FailureCount = 0;
-                columns.DeviceKey = device.Key;
-
-                workqueueAdaptor.Add(columns);
-            }
-
-            return true;
+        	return true;
         }
 
         public void EditStudy(Study study, XmlDocument modifiedFields)

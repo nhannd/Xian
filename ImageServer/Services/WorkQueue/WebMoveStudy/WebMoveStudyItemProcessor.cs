@@ -53,6 +53,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
         /// <returns></returns>
         protected override IList<StorageInstance> GetStorageInstanceList()
         {
+        	IList<WorkQueueUid> seriesList = WorkQueueUidList;
+
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
 
             List<StorageInstance> list = new List<StorageInstance>(); 
@@ -60,7 +62,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
             StudyXml studyXml = LoadStudyXml(StorageLocation);
             foreach (SeriesXml seriesXml in studyXml)
             {
-                foreach (InstanceXml instanceXml in seriesXml)
+				if (seriesList.Count > 0)
+				{
+					bool found = false;
+					foreach (WorkQueueUid uid in seriesList)
+					{
+						if (!string.IsNullOrEmpty(uid.SeriesInstanceUid))
+							if (uid.SeriesInstanceUid.Equals(seriesXml.SeriesInstanceUid))
+							{
+								found = true;
+								break;
+							}
+					}
+					if (!found) continue;
+				}
+            	foreach (InstanceXml instanceXml in seriesXml)
                 {
                     string seriesPath = Path.Combine(studyPath, seriesXml.SeriesInstanceUid);
                     string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ".dcm");
