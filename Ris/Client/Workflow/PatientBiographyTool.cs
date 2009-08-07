@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.OrderNotes;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -54,6 +55,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
@@ -124,9 +126,17 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
 			if(this.ContextBase is IWorkflowItemToolContext)
 			{
-				IWorkflowItemToolContext ctx = (IWorkflowItemToolContext) this.ContextBase;
-				WorklistItemSummaryBase item = (WorklistItemSummaryBase)ctx.Selection.Item;
-				OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, ctx.DesktopWindow);
+                IWorkflowItemToolContext context = (IWorkflowItemToolContext)ContextBase;
+                if (this.Context is IOrderNoteboxItemToolContext)
+                {
+                    OrderNoteboxItemSummary item = (OrderNoteboxItemSummary)context.Selection.Item;
+                    OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+                }
+                else
+                {
+                    WorklistItemSummaryBase item = (WorklistItemSummaryBase) context.Selection.Item;
+                    OpenPatient(item.PatientRef, item.PatientProfileRef, item.OrderRef, context.DesktopWindow);
+                }
 			}
             else if (this.ContextBase is IPatientSearchToolContext)
             {
