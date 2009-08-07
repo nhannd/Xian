@@ -246,15 +246,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 FailQueueItem(queueItem, error);
 			    RaiseAlert(processor, queueItem, error);
-				
+			}
+            finally
+			{
+                // Signal the parent thread, so it can query again
+                _threadStop.Set();
+
+                // Cleanup the processor
+                processor.Dispose();
 			}
 
-
-			// Signal the parent thread, so it can query again
-			_threadStop.Set();
-
-			// Cleanup the processor
-			processor.Dispose();
 		}
 
 		private static void RaiseAlert(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem, string error)
@@ -270,24 +271,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     	private static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
         {
             WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-            contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+    	    contextData.WorkQueueItemKey = item.Key.ToString();
 
-            IList<StudyStorageLocation> storages = item.LoadStudyLocations(ExecutionContext.Current.PersistenceContext);
-            if (storages != null && storages.Count > 0)
+            using(IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
-                StudyStorageLocation location = storages[0];
-                if (location.Study != null)
+                IList<StudyStorageLocation> storages = item.LoadStudyLocations(readContext);
+                if (storages != null && storages.Count > 0)
                 {
-                    contextData.StudyInfo = new StudyInfo();
-                    contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
-                    contextData.StudyInfo.PatientsId = location.Study.PatientId;
-                    contextData.StudyInfo.PatientsName = location.Study.PatientsName;
-                    contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
-                    contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
-                    contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                    StudyStorageLocation location = storages[0];
+                    if (location.Study != null)
+                    {
+                        contextData.StudyInfo = new StudyInfo();
+                        contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
+                        contextData.StudyInfo.PatientsId = location.Study.PatientId;
+                        contextData.StudyInfo.PatientsName = location.Study.PatientsName;
+                        contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
+                        contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+                        contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                    }
                 }
-            }
 
+            }
+            
             return contextData;
             
         }
