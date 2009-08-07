@@ -29,39 +29,12 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Core.Reconcile;
-using ClearCanvas.ImageServer.Model;
-
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
+namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-    public partial class ReconcileHistoryDetailsColumn : System.Web.UI.UserControl
-    {
-        private StudyHistory _historyRecord;
-        private StudyReconcileDescriptor _description;
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        public StudyHistory HistoryRecord
-        {
-            set { _historyRecord = value; }
-        }
-
-        public StudyReconcileDescriptor ReconcileHistory
-        {
-            get
-            {
-                if (_description == null && _historyRecord!=null)
-                {
-                    StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
-                    _description =parser.Parse(_historyRecord.ChangeDescription);
-                }
-                return _description;
-            }
-        }
-    }
+	/// <summary>
+	/// Defines the common interface of commands used by 'ReconcileStudy' processor
+	/// </summary>
+	public interface IReconcileServerCommand
+	{
+	}
 }

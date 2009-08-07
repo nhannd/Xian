@@ -29,23 +29,33 @@
 
 #endregion
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Reconcile;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
+
+namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-    class InstanceInfo
-    {
-        private string _seriesInstanceUid;
-        private string _sopInstanceUid;
+	/// <summary>
+	/// Command to update the study history record
+	/// </summary>
+	class UpdateHistoryCommand : ServerDatabaseCommand<ReconcileStudyProcessorContext>
+	{
+		public UpdateHistoryCommand(ReconcileStudyProcessorContext context)
+			: base("UpdateHistoryCommand", true, context)
+		{
+            
+		}
 
-        public string SeriesInstanceUid
-        {
-            get { return _seriesInstanceUid; }
-            set { _seriesInstanceUid = value; }
-        }
-
-        public string SopInstanceUid
-        {
-            get { return _sopInstanceUid; }
-            set { _sopInstanceUid = value; }
-        }
-    }
+		protected override void OnExecute(IUpdateContext updateContext)
+		{
+			IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
+			StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
+			parms.DestStudyStorageKey = Context.DestStorageLocation.Key;
+			historyUpdateBroker.Update(Context.History.Key, parms);
+		}
+	}
 }

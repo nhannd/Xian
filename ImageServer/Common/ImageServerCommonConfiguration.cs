@@ -113,6 +113,14 @@ namespace ClearCanvas.ImageServer.Common
                 }
             }
         }
+
+		public static int WorkQueueMaxFailureCount
+    	{
+    		get
+    		{
+				return Settings.Default.WorkQueueMaxFailureCount;
+    		}
+    	}
         
     }
 }

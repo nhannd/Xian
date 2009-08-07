@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
@@ -97,18 +98,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
         }
 
-        protected override bool CanStart()
-        {
-            if (!StorageLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.WebDeleteScheduled)
-                && !LockStudyState(WorkQueueItem, QueueStudyStateEnum.WebDeleteScheduled))
-            {
-                PostponeItem(WorkQueueItem);
-                return false;
-            }
+		protected override bool CanStart()
+		{
+			string failureReason;
+			if (!StorageLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.WebDeleteScheduled)
+			    &&
+			    !ServerHelper.LockStudy(WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.WebDeleteScheduled, out failureReason))
+			{
+				Platform.Log(LogLevel.Debug,
+				             "ProcessDuplicate cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
+				             failureReason);
 
-            return base.CanStart();
-        } 
-        #endregion
+				PostponeItem(WorkQueueItem);
+				return false;
+			}
+
+			return base.CanStart();
+		}
+
+    	#endregion
 
         #region Private Methods
 

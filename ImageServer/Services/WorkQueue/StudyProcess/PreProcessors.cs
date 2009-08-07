@@ -10,8 +10,8 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -108,9 +108,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file"></param>
         public UpdateItem(IUpdateImageTagCommand command, DicomFile file)
         {
-            this._tag = command.UpdateEntry.TagPath.Tag;
-            this._originalValue = file.DataSet[Tag].ToString();
-            this._newValue = command.UpdateEntry.Value != null ? command.UpdateEntry.Value.ToString() : String.Empty;
+            _tag = command.UpdateEntry.TagPath.Tag;
+            _originalValue = file.DataSet[Tag].ToString();
+            _newValue = command.UpdateEntry.Value != null ? command.UpdateEntry.Value.ToString() : String.Empty;
         }
         
         #endregion
@@ -218,9 +218,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             AutoReconcilerResult preProcessingResult = null;
 
             // Update the file based on the reconciliation in the past
-            StudyStorageLocation dest = StorageLocation;
-            bool belongsToAnotherStudy = false;
-            IList<StudyHistory> histories = FindReconcileHistories(StorageLocation, file);
+            StudyStorageLocation dest;
+        	IList<StudyHistory> histories = FindReconcileHistories(StorageLocation, file);
             if (histories != null && histories.Count > 0)
             {
                 #region Update the files based on history...
@@ -235,7 +234,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     case StudyReconcileAction.CreateNewStudy:
                     case StudyReconcileAction.Merge:
                         #region Update Images to match destination study
-                        if (lastHistory.DestStudyStorageKey != null)
+
+                		bool belongsToAnotherStudy;
+                		if (lastHistory.DestStudyStorageKey != null)
                         {
                             preProcessingResult = new AutoReconcilerResult(changeLog.Action);
                             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
@@ -299,8 +300,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     case StudyReconcileAction.ProcessAsIs:
                         if (lastHistory.DestStudyStorageKey != null)
                         {
-                            preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);
-                        
                             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
                             dest = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
                             preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);

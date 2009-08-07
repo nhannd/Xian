@@ -29,39 +29,38 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Reconcile;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Core.Reconcile.Discard;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
+namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 {
-    public partial class ReconcileHistoryDetailsColumn : System.Web.UI.UserControl
-    {
-        private StudyHistory _historyRecord;
-        private StudyReconcileDescriptor _description;
+	/// <summary>
+	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "Discard" operation
+	/// </summary>
+	class DiscardImageCommandProcessor : ServerCommandProcessor, IReconcileProcessor
+	{
+		public DiscardImageCommandProcessor()
+			: base("Discard Image")
+		{
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
+		}
+		public string Name
+		{
+			get { return "Discard Image Processor"; }
+		}
+		#region IReconcileProcessor Members
 
-        }
+		public void Initialize(ReconcileStudyProcessorContext context)
+		{
+			Platform.CheckForNullReference(context, "context");
 
-        public StudyHistory HistoryRecord
-        {
-            set { _historyRecord = value; }
-        }
+			DiscardImagesCommand discard = new DiscardImagesCommand(context);
 
-        public StudyReconcileDescriptor ReconcileHistory
-        {
-            get
-            {
-                if (_description == null && _historyRecord!=null)
-                {
-                    StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
-                    _description =parser.Parse(_historyRecord.ChangeDescription);
-                }
-                return _description;
-            }
-        }
-    }
+			AddCommand(discard);
+		}
+
+		#endregion
+	}
 }

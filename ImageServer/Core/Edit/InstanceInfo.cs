@@ -29,36 +29,23 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard
+namespace ClearCanvas.ImageServer.Core.Edit
 {
-    /// <summary>
-    /// A processor implementing <see cref="IReconcileProcessor"/> to handle "Discard" operation
-    /// </summary>
-    class DiscardImageCommandProcessor : ServerCommandProcessor, IReconcileProcessor
-    {
-        public DiscardImageCommandProcessor()
-            : base("Discard Image")
-        {
+	class InstanceInfo
+	{
+		private string _seriesInstanceUid;
+		private string _sopInstanceUid;
 
-        }
-        public string Name
-        {
-            get { return "Discard Image Processor"; }
-        }
-        #region IReconcileProcessor Members
+		public string SeriesInstanceUid
+		{
+			get { return _seriesInstanceUid; }
+			set { _seriesInstanceUid = value; }
+		}
 
-        public void Initialize(ReconcileStudyProcessorContext context)
-        {
-            Platform.CheckForNullReference(context, "context");
-
-            DiscardImagesCommand discard = new DiscardImagesCommand(context);
-
-            AddCommand(discard);
-        }
-
-        #endregion
-    }
+		public string SopInstanceUid
+		{
+			get { return _sopInstanceUid; }
+			set { _sopInstanceUid = value; }
+		}
+	}
 }

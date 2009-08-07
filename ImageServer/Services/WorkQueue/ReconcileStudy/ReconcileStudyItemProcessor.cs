@@ -29,13 +29,13 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 
@@ -187,33 +187,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// Defines the interface of processors that processes different types of 'ReconcileStudy' entries
-    /// </summary>
-    interface IReconcileProcessor : IDisposable
-    {
-        /// <summary>
-        /// Gets the name of the processor
-        /// </summary>
-        String Name { get; }
-
-        /// <summary>
-        /// Gets the reason why <see cref="Execute"/> failed.
-        /// </summary>
-        String FailureReason { get;}
-
-        /// <summary>
-        /// Initializes the processor with the specified context
-        /// </summary>
-        /// <param name="context"></param>
-        void Initialize(ReconcileStudyProcessorContext context);
-
-        /// <summary>
-        /// Executes the processor
-        /// </summary>
-        /// <returns></returns>
-        bool Execute();        
     }
 }

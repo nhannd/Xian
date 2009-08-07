@@ -33,53 +33,54 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Reconcile;
+using ClearCanvas.ImageServer.Core.Reconcile.MergeStudy;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
+namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 {
-    /// <summary>
-    /// A processor implementing <see cref="IReconcileProcessor"/> to handle "MergeStudy" operation
-    /// </summary>
-    class MergeStudyCommandProcessor : ServerCommandProcessor, IReconcileProcessor
-    {
-        private ReconcileStudyProcessorContext _context;
-        public MergeStudyCommandProcessor()
-            : base("Merge Study")
-        {
+	/// <summary>
+	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "MergeStudy" operation
+	/// </summary>
+	class MergeStudyCommandProcessor : ServerCommandProcessor, IReconcileProcessor
+	{
+		private ReconcileStudyProcessorContext _context;
+		public MergeStudyCommandProcessor()
+			: base("Merge Study")
+		{
 
-        }
+		}
 
-        public string Name
-        {
-            get { return "Merge Study Processor"; }
-        }
+		public string Name
+		{
+			get { return "Merge Study Processor"; }
+		}
     
-        #region IReconcileProcessor Members
+		#region IReconcileProcessor Members
 
-        public void Initialize(ReconcileStudyProcessorContext context)
-        {
-            Platform.CheckForNullReference(context, "context");
-            _context = context;
+		public void Initialize(ReconcileStudyProcessorContext context)
+		{
+			Platform.CheckForNullReference(context, "context");
+			_context = context;
 			ReconcileMergeToExistingStudyDescriptor desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(_context.History.ChangeDescription);
                 
-            if (_context.History.DestStudyStorageKey == null)
-            {
-                ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
-                parameters.UpdateDestination = true;
-                parameters.Commands = desc.Commands;
-                MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
-                AddCommand(command);
-            }
-            else
-            {
-                ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
-                parameters.UpdateDestination = false; // the target study has been assigned (ie, this entry has been excecuted at least once), we don't need to update the study again (for performance reason).
-                parameters.Commands = desc.Commands;
-                MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
-                AddCommand(command);
-            }
-        }
+			if (_context.History.DestStudyStorageKey == null)
+			{
+				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
+				parameters.UpdateDestination = true;
+				parameters.Commands = desc.Commands;
+				MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
+				AddCommand(command);
+			}
+			else
+			{
+				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
+				parameters.UpdateDestination = false; // the target study has been assigned (ie, this entry has been excecuted at least once), we don't need to update the study again (for performance reason).
+				parameters.Commands = desc.Commands;
+				MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
+				AddCommand(command);
+			}
+		}
 
-        #endregion
-    }
-    
+		#endregion
+	}
 }

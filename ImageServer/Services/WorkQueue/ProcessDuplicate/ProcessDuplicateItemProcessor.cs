@@ -51,7 +51,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
@@ -85,11 +84,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             // If it fails, postpone the processing instead of failing
             if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ProcessingScheduled)
             {
-                if (!LockStudyState(WorkQueueItem, QueueStudyStateEnum.ProcessingScheduled))
+            	string failureReason;
+                if (!ServerHelper.LockStudy(WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled, out failureReason))
                 {
                     Platform.Log(LogLevel.Debug,
-                                 "ProcessDuplicate cannot start at this point. Study is being locked by another processor. Current state={0}",
-                                 StorageLocation.QueueStudyStateEnum);
+                                 "ProcessDuplicate cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
+                                 failureReason);
                     PostponeItem(WorkQueueItem);
                     return false;
                 }

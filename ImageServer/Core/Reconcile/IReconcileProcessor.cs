@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,38 +30,34 @@
 #endregion
 
 using System;
-using System.Xml;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
+namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-    public class StudyReconcileDescriptorParser
-    {
-        public StudyReconcileDescriptor Parse(XmlDocument doc)
-        {
-            if (doc.DocumentElement != null)
-            {
-                if (doc.DocumentElement.Name == "Reconcile")
-                {
-                    return XmlUtils.Deserialize<StudyReconcileDescriptor>(doc.DocumentElement);
-                }
-                else
-                {
-					// Note, the prior software versions had "MergeStudy", "CreateStudy"
-					// and "Discard" Document Elements.  With 1.5, they were all changed
-					// to "Reconcile".
-					if (doc.DocumentElement.Name == "MergeStudy"
-					  ||doc.DocumentElement.Name == "CreateStudy"
-					  ||doc.DocumentElement.Name == "Discard")
-						throw new NotSupportedException(String.Format("ReconcileStudy Command from prior version no longer supported: {0}", doc.DocumentElement.Name));
-                
-                    throw new NotSupportedException(String.Format("ReconcileStudy Command: {0}", doc.DocumentElement.Name));
-                }
+	/// <summary>
+	/// Defines the interface of processors that processes different types of 'ReconcileStudy' entries
+	/// </summary>
+	public interface IReconcileProcessor : IDisposable
+	{
+		/// <summary>
+		/// Gets the name of the processor
+		/// </summary>
+		String Name { get; }
 
-            }
+		/// <summary>
+		/// Gets the reason why <see cref="Execute"/> failed.
+		/// </summary>
+		String FailureReason { get;}
 
-            return null;
-        }
-    }
+		/// <summary>
+		/// Initializes the processor with the specified context
+		/// </summary>
+		/// <param name="context"></param>
+		void Initialize(ReconcileStudyProcessorContext context);
+
+		/// <summary>
+		/// Executes the processor
+		/// </summary>
+		/// <returns></returns>
+		bool Execute();
+	}
 }

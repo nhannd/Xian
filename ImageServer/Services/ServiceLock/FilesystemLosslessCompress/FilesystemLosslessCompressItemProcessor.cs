@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 				
 					try
 					{
-						WorkQueue entry  = workQueueInsert.FindOne(insertParms);
+						Model.WorkQueue entry  = workQueueInsert.FindOne(insertParms);
 
 						InsertWorkQueueUidFromStudyXml(studyXml, update, entry.GetKey());
 

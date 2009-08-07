@@ -32,8 +32,8 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code

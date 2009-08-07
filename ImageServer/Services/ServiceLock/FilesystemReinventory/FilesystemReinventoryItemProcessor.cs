@@ -39,6 +39,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -247,17 +248,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                             // Lock the new study storage for study processing
                             if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled))
                             {
-                                using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-                                {
-                                    ILockStudy lockStudy = update.GetBroker<ILockStudy>();
-                                    LockStudyParameters lockParms = new LockStudyParameters();
-                                    lockParms.StudyStorageKey = location.Key;
-                                    lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
-                                    if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
-                                        Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
-
-                                    update.Commit();
-                                }
+                            	string failureReason;
+								if (!ServerHelper.LockStudy(location.Key,QueueStudyStateEnum.ProcessingScheduled, out failureReason))
+                                    Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
                             } 
                             #endregion
 						}

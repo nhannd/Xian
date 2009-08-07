@@ -1098,27 +1098,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             return list;
         }
 
-
-        protected static bool LockStudyState(Model.WorkQueue item, QueueStudyStateEnum state)
-        {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
-                LockStudyParameters lockStudyParams = new LockStudyParameters();
-                lockStudyParams.StudyStorageKey = item.StudyStorageKey;
-                lockStudyParams.QueueStudyStateEnum = state;
-
-                if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
-                    return false;
-
-                else
-                {
-                    updateContext.Commit();
-                    return true;
-                }
-            }
-        }
-
         protected static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
@@ -1411,7 +1390,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         private RecoveryModes GetProcessorRecoveryMode()
         {
-            RecoveryModes mode = RecoveryModes.Manual;
+            RecoveryModes mode;
 
             if (!_processorsRecoverySettings.TryGetValue(GetType(), out mode))
             {

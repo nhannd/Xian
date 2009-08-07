@@ -29,34 +29,74 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
+namespace ClearCanvas.ImageServer.Core.Edit
 {
+	/// <summary>
+	/// Stores statistics of a WorkQueue instance processing.
+	/// </summary>
+	public class UpdateStudyStatistics : StatisticsSet
+	{
+		#region Constructors
 
-    /// <summary>
-    /// "MergeStudy" xml parser.
-    /// </summary>
-    public class ProcessAsIsCommandXmlParser
-    {
-        public ReconcileProcessAsIsDescriptor Parse(XmlDocument doc)
-        {
-            if (doc == null)
-                return null;
+		public UpdateStudyStatistics(string studyInstanceUid)
+			: this("UpdateStudy", studyInstanceUid)
+		{ }
 
-            if (doc.DocumentElement.Name == "Reconcile")
-            {
-                return XmlUtils.Deserialize<ReconcileProcessAsIsDescriptor>(doc.DocumentElement);
-            }
-            else
-            {
-                throw new ApplicationException("Unexpected xml format");
-            }
-        }
-    }
+		public UpdateStudyStatistics(string name, string studyInstanceUid)
+			: base(name)
+		{
+			AddField("StudyInstanceUid", studyInstanceUid);
+		}
+
+		#endregion Constructors
+
+		#region Public Properties
+
+        
+		public TimeSpanStatistics ProcessTime
+		{
+			get
+			{
+				if (this["ProcessTime"] == null)
+					this["ProcessTime"] = new TimeSpanStatistics("ProcessTime");
+
+				return (this["ProcessTime"] as TimeSpanStatistics);
+			}
+			set { this["ProcessTime"] = value; }
+		}
+
+		public ulong StudySize
+		{
+			set
+			{
+				this["StudySize"] = new ByteCountStatistics("StudySize", value);
+			}
+			get
+			{
+				if (this["StudySize"] == null)
+					this["StudySize"] = new ByteCountStatistics("StudySize");
+
+				return ((ByteCountStatistics)this["StudySize"]).Value;
+			}
+		}
+
+		public int InstanceCount
+		{
+			set
+			{
+				this["InstanceCount"] = new Statistics<int>("InstanceCount", value);
+			}
+			get
+			{
+				if (this["InstanceCount"] == null)
+					this["InstanceCount"] = new Statistics<int>("InstanceCount");
+
+				return ((Statistics<int>)this["InstanceCount"]).Value;
+			}
+		}
+
+		#endregion Public Properties
+	}
 }

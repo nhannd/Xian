@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(_storageLocationKey);
 			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.PurgeStudy, WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.CompressStudy, WorkQueueTypeEnum.MigrateStudy });
-            IList<WorkQueue> workQueueItems = workQueueBroker.Find(workQueueCriteria);
+            IList<Model.WorkQueue> workQueueItems = workQueueBroker.Find(workQueueCriteria);
 
             foreach (FilesystemQueue queue in filesystemQueueItems)
             {
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 			if (!_applyTime.Equals(ServerRuleApplyTimeEnum.StudyArchived))
 			{
 				// delete work queue
-				foreach (WorkQueue item in workQueueItems)
+				foreach (Model.WorkQueue item in workQueueItems)
 				{
 					if (!item.Delete(updateContext))
 						throw new ApplicationException("Unable to delete items in the work queue");

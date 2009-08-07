@@ -121,14 +121,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                         _connectionCounter++;
                         if (SqlServerSettings.Default.ConnectionPoolUsageWarningLevel<=0)
                         {
-                            Platform.Log(LogLevel.Warn, "# Db Connections={0}", _connectionCounter);
+                            Platform.Log(LogLevel.Warn, "# Max SqlConnection Pool Size={0}, current Db Connections={1}", _maxPoolSize, _connectionCounter);
                         }
                         else if (_connectionCounter > _maxPoolSize / SqlServerSettings.Default.ConnectionPoolUsageWarningLevel)
                         {
                             if (_connectionCounter%3==0)
                             {
-                                Platform.Log(LogLevel.Warn, "# Db Connections={0}", _connectionCounter);
-                            }
+								Platform.Log(LogLevel.Warn, "# Max SqlConnection Pool Size={0}, current Db Connections={1}", _maxPoolSize, _connectionCounter);
+							}
                         }
                     }
 				    return connection;

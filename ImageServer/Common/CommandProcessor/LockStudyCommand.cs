@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,65 +30,51 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Web.Common.Data
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-	public class RestoreQueueController
+	/// <summary>
+	/// <see cref="ServerDatabaseCommand"/> for Locking or Unlocking a Study.
+	/// </summary>
+	public class LockStudyCommand : ServerDatabaseCommand
 	{
-        private readonly RestoreQueueAdaptor _adaptor = new RestoreQueueAdaptor();
+		private readonly QueueStudyStateEnum _queueStudyState;
+		private readonly bool? _lock;
+		private readonly ServerEntityKey _studyStorageKey;
 
-
-		/// <summary>
-		/// Gets a list of <see cref="RestoreQueue"/> items with specified criteria
-		/// </summary>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public IList<RestoreQueue> FindRestoreQueue(WebQueryRestoreQueueParameters parameters)
+		public LockStudyCommand(ServerEntityKey studyStorageKey, QueueStudyStateEnum studyState) : base("LockStudy", true)
 		{
-			try
-			{
-				IList<RestoreQueue> list;
-
-				IWebQueryRestoreQueue broker = HttpContextData.Current.ReadContext.GetBroker<IWebQueryRestoreQueue>();
-				list = broker.Find(parameters);
-
-				return list;
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, "FindRestoreQueue failed", e);
-				return new List<RestoreQueue>();
-			}
+			_studyStorageKey = studyStorageKey;
+			_queueStudyState = studyState;
 		}
 
-        public bool DeleteRestoreQueueItem(RestoreQueue item)
-        {
-        	bool retValue;
-			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+		public LockStudyCommand(ServerEntityKey studyStorageKey, bool lockValue)
+			: base("LockStudy", true)
+		{
+			_studyStorageKey = studyStorageKey;
+			_lock = lockValue;
+		}
+
+		protected override void OnExecute(IUpdateContext updateContext)
+		{
+			ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
+			LockStudyParameters lockParms = new LockStudyParameters();
+			lockParms.StudyStorageKey = _studyStorageKey;
+			if (_queueStudyState != null)
+				lockParms.QueueStudyStateEnum = _queueStudyState;
+			if (_lock.HasValue)
+				lockParms.Lock = _lock.Value;
+			bool retVal = lockStudyBroker.Execute(lockParms);
+
+			if (!retVal || !lockParms.Successful)
 			{
-				ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
-				LockStudyParameters parms = new LockStudyParameters();
-				parms.StudyStorageKey = item.StudyStorageKey;
-				parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-				if (!lockStudyBroker.Execute(parms))
-					return false;
-				if (!parms.Successful)
-					return false;
-
-				retValue = _adaptor.Delete(updateContext, item.Key);
-
-				updateContext.Commit();
-
-				return retValue;
+				throw new ApplicationException(String.Format("Unable to lock the study: {0}", lockParms.FailureReason));
 			}
-        }
-
-        
+		}
 	}
 }

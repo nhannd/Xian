@@ -33,64 +33,65 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
+using ClearCanvas.ImageServer.Core.Reconcile;
+using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
+using ClearCanvas.ImageServer.Core.Reconcile.MergeStudy;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
+namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
-    /// <summary>
-    /// A processor implementing <see cref="IReconcileProcessor"/> to handle "CreateStudy" operation
-    /// </summary>
-    class ReconcileCreateStudyProcessor : ServerCommandProcessor, IReconcileProcessor
-    {
-        #region Private Members
-        private ReconcileStudyProcessorContext _context;
-        #endregion
+	/// <summary>
+	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "CreateStudy" operation
+	/// </summary>
+	class ReconcileCreateStudyProcessor : ServerCommandProcessor, IReconcileProcessor
+	{
+		#region Private Members
+		private ReconcileStudyProcessorContext _context;
+		#endregion
 
-        #region Constructors
-        /// <summary>
-        /// Create an instance of <see cref="ReconcileCreateStudyProcessor"/>
-        /// </summary>
-        public ReconcileCreateStudyProcessor()
-            : base("Create Study")
-        {
+		#region Constructors
+		/// <summary>
+		/// Create an instance of <see cref="ReconcileCreateStudyProcessor"/>
+		/// </summary>
+		public ReconcileCreateStudyProcessor()
+			: base("Create Study")
+		{
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region IReconcileProcessor Members
+		#region IReconcileProcessor Members
 
 
-        public string Name
-        {
-            get { return "Create Study Processor"; }
-        }
+		public string Name
+		{
+			get { return "Create Study Processor"; }
+		}
 
-        public void Initialize(ReconcileStudyProcessorContext context)
-        {
-            Platform.CheckForNullReference(context, "context");
-            _context = context;
+		public void Initialize(ReconcileStudyProcessorContext context)
+		{
+			Platform.CheckForNullReference(context, "context");
+			_context = context;
 
 			ReconcileCreateStudyDescriptor desc = XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(_context.History.ChangeDescription);
 
-            if (_context.History.DestStudyStorageKey == null)
-            {
-                CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters();
-                parameters.Commands = desc.Commands;
-                CreateStudyCommand command = new CreateStudyCommand(context, parameters);
-                AddCommand(command);
-            }
-            else
-            {
-                ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
-                parameters.Commands = desc.Commands;
-                parameters.UpdateDestination = false;
-                MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
-                AddCommand(command);
-            }
-        }
+			if (_context.History.DestStudyStorageKey == null)
+			{
+				CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters();
+				parameters.Commands = desc.Commands;
+				CreateStudyCommand command = new CreateStudyCommand(context, parameters);
+				AddCommand(command);
+			}
+			else
+			{
+				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
+				parameters.Commands = desc.Commands;
+				parameters.UpdateDestination = false;
+				MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
+				AddCommand(command);
+			}
+		}
 
-        #endregion      
-    }
-    
+		#endregion      
+	}
 }

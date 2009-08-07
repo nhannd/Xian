@@ -69,18 +69,7 @@
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
     <Compile Include="ReconcileStudyPostProcessing\ReconcilePostProcessingProcessor.cs" />
     <Compile Include="ReconcileStudyPostProcessing\ReconcilePostProcessingProcessorFactoryExtension.cs" />
-    <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommand.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ReconcileStudy\UpdateHistoryCommand.cs" />
-    <Compile Include="ReconcileStudy\SaveFileCommand.cs" />
-    <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
-    <Compile Include="ReconcileStudy\ProcessAsIs\ProcessAsIsCommand.cs" />
-    <Compile Include="ReconcileStudy\ProcessAsIs\ProcessAsIsCommandXmlParser.cs" />
-    <Compile Include="ReconcileStudy\ReconcileCommandBase.cs" />
-    <Compile Include="ReconcileStudy\ProcessAsIs\ReconcileProcessAsIsProcessor.cs" />
-    <Compile Include="ReconcileStudy\ReconcileDescriptionParser.cs" />
-    <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
+    <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="RecoveryModes.cs" />
     <Compile Include="StudyIntegrityValidationAttribute.cs" />
     <Compile Include="StudyProcess\BasePreprocessor.cs" />
@@ -89,27 +78,13 @@
     <Compile Include="WebDeleteStudy\Extensions\LogHistory\LogHistoryExtension.cs" />
     <Compile Include="WebDeleteStudy\IWebDeleteProcessorExtension.cs" />
     <Compile Include="WebDeleteStudy\RemoveSeriesFromStudyXml.cs" />
-    <Compile Include="WebEditStudy\InstanceInfo.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
-    <Compile Include="WebEditStudy\PatientInfo.cs" />
-    <Compile Include="WebEditStudy\UpdateStudyStatistics.cs" />
     <Compile Include="WebEditStudy\WebEditStudyHistoryRecord.cs" />
     <Compile Include="WebEditStudy\WebEditStudyCommandCompiler.cs" />
     <Compile Include="WebEditStudy\WebEditStudyContext.cs" />
     <Compile Include="WebEditStudy\Extensions\LogHistory\LogHistory.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyProcessorExtension.cs" />
-    <Compile Include="WebEditStudy\UpdateStudyCommand.cs" />
-    <Compile Include="ReconcileStudy\Mapping.cs" />
-    <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandProcessor.cs" />
-    <Compile Include="ReconcileStudy\IReconcileServerCommand.cs" />
-    <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommand.cs" />
-    <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommandProcessor.cs" />
-    <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommandXmlParser.cs" />
-    <Compile Include="ReconcileStudy\ReconcileCommandXmlParser.cs" />
-    <Compile Include="ReconcileStudy\Discard\DiscardImagesCommand.cs" />
-    <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
-    <Compile Include="ReconcileStudy\ReconcileStudyProcessorContext.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />
     <Compile Include="Shreds\WorkQueueServerExtension.cs" />

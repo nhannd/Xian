@@ -29,15 +29,39 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.ImageServer.Model;
+using System;
+using System.Xml;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
+namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-    /// <summary>
-    /// Defines the common interface of commands used by 'ReconcileStudy' processor
-    /// </summary>
-    public interface IReconcileServerCommand
-    {
-    }
+	public class StudyReconcileDescriptorParser
+	{
+		public StudyReconcileDescriptor Parse(XmlDocument doc)
+		{
+			if (doc.DocumentElement != null)
+			{
+				if (doc.DocumentElement.Name == "Reconcile")
+				{
+					return XmlUtils.Deserialize<StudyReconcileDescriptor>(doc.DocumentElement);
+				}
+				else
+				{
+					// Note, the prior software versions had "MergeStudy", "CreateStudy"
+					// and "Discard" Document Elements.  With 1.5, they were all changed
+					// to "Reconcile".
+					if (doc.DocumentElement.Name == "MergeStudy"
+					    ||doc.DocumentElement.Name == "CreateStudy"
+					    ||doc.DocumentElement.Name == "Discard")
+						throw new NotSupportedException(String.Format("ReconcileStudy Command from prior version no longer supported: {0}", doc.DocumentElement.Name));
+                
+					throw new NotSupportedException(String.Format("ReconcileStudy Command: {0}", doc.DocumentElement.Name));
+				}
+
+			}
+
+			return null;
+		}
+	}
 }

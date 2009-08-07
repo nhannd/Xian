@@ -92,8 +92,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             parms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
             parms.StudyStorageKey = _storageLocation.GetKey();
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-            parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-            parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+            parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+            parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
             parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;

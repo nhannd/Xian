@@ -308,7 +308,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
 				
-                    WorkQueue insertItem = insertBroker.FindOne(insertParms);
+                    Model.WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
                     {
                         Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
@@ -390,7 +390,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
 					
-                    WorkQueue insertItem = insertBroker.FindOne(insertParms);
+                    Model.WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
 					{
 						Platform.Log(LogLevel.Error, "Unexpected problem inserting 'PurgeStudy' record into WorkQueue for Study {0}",
@@ -479,7 +479,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
         			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledTime);
-        			WorkQueue insertItem = broker.FindOne(insertParms);
+        			Model.WorkQueue insertItem = broker.FindOne(insertParms);
 					if (insertItem == null)
         			{
         				Platform.Log(LogLevel.Error,

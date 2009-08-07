@@ -30,65 +30,82 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Web.Common.Data
+namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-	public class RestoreQueueController
+	internal abstract class ReconcileCommandBase : ServerCommand<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
 	{
-        private readonly RestoreQueueAdaptor _adaptor = new RestoreQueueAdaptor();
-
-
+        
 		/// <summary>
-		/// Gets a list of <see cref="RestoreQueue"/> items with specified criteria
+		/// Creates an instance of <see cref="ServerCommand"/>
 		/// </summary>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public IList<RestoreQueue> FindRestoreQueue(WebQueryRestoreQueueParameters parameters)
+		/// <param name="description"></param>
+		/// <param name="requiresRollback"></param>
+		/// <param name="context"></param>
+		public ReconcileCommandBase(string description, bool requiresRollback, ReconcileStudyProcessorContext context)
+			: base(description, requiresRollback, context)
+		{
+		}
+
+		protected string GetReconcileUidPath(WorkQueueUid sop)
+		{
+			if (String.IsNullOrEmpty(sop.RelativePath))
+			{
+				return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
+			}
+			else
+				return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
+		}
+
+        
+		#region IDisposable Members
+
+		public void Dispose()
 		{
 			try
 			{
-				IList<RestoreQueue> list;
-
-				IWebQueryRestoreQueue broker = HttpContextData.Current.ReadContext.GetBroker<IWebQueryRestoreQueue>();
-				list = broker.Find(parameters);
-
-				return list;
+				DirectoryUtility.DeleteIfEmpty(Context.ReconcileWorkQueueData.StoragePath);
 			}
-			catch (Exception e)
+			catch(IOException ex)
 			{
-				Platform.Log(LogLevel.Error, "FindRestoreQueue failed", e);
-				return new List<RestoreQueue>();
+				Platform.Log(LogLevel.Warn, ex, "Unable to cleanup {0}", Context.ReconcileWorkQueueData.StoragePath);
 			}
 		}
 
-        public bool DeleteRestoreQueueItem(RestoreQueue item)
-        {
-        	bool retValue;
+		#endregion
+
+		protected static void FailUid(WorkQueueUid sop, bool retry)
+		{
 			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
-				LockStudyParameters parms = new LockStudyParameters();
-				parms.StudyStorageKey = item.StudyStorageKey;
-				parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-				if (!lockStudyBroker.Execute(parms))
-					return false;
-				if (!parms.Successful)
-					return false;
+				IWorkQueueUidEntityBroker uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+				if (!retry)
+					columns.Failed = true;
+				else
+				{
+					if (sop.FailureCount >= ImageServerCommonConfiguration.WorkQueueMaxFailureCount)
+					{
+						columns.Failed = true;
+					}
+					else
+					{
+						columns.FailureCount = sop.FailureCount++;
+					}
+				}
 
-				retValue = _adaptor.Delete(updateContext, item.Key);
-
+				uidUpdateBroker.Update(sop.GetKey(), columns);
 				updateContext.Commit();
-
-				return retValue;
 			}
-        }
-
-        
+		}
 	}
 }
