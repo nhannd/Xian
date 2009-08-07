@@ -14,7 +14,7 @@
                         MouseHoverRowHighlightEnabled = "true"
                         RowHighlightColor = "#EEEEEE"
                         SelectionMode="Multiple"
-                        GridLines="Horizontal" BackColor="White">
+                        GridLines="Horizontal" BackColor="White" >
                         <Columns>
                             <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
                                 <HeaderStyle Wrap="False" />    

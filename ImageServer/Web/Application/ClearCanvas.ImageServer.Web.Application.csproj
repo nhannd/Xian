@@ -328,6 +328,43 @@
     <Compile Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx.designer.cs">
       <DependentUpon>DuplicateSopDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\DeviceGridView.ascx.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\DeviceGridView.ascx.designer.cs">
+      <DependentUpon>DeviceGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\MovePanel.ascx.cs">
+      <DependentUpon>MovePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\MovePanel.ascx.designer.cs">
+      <DependentUpon>MovePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\PatientSummary.cs" />
+    <Compile Include="Pages\Studies\MoveSeries\PatientSummaryAssembler.cs" />
+    <Compile Include="Pages\Studies\MoveSeries\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\SeriesGridView.ascx.cs">
+      <DependentUpon>SeriesGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\MoveSeries\SeriesGridView.ascx.designer.cs">
+      <DependentUpon>SeriesGridView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ProcessDuplicateChangeLogRendererFactory.cs" />
@@ -1351,6 +1388,12 @@
     <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
+    <Content Include="Pages\Studies\MoveSeries\Default.aspx" />
+    <Content Include="Pages\Studies\MoveSeries\DeviceGridView.ascx" />
+    <Content Include="Pages\Studies\MoveSeries\MovePanel.ascx" />
+    <EmbeddedResource Include="Pages\Studies\MoveSeries\MovePanel.js" />
+    <Content Include="Pages\Studies\MoveSeries\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\Studies\MoveSeries\SeriesGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />

@@ -33,8 +33,11 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
@@ -159,27 +162,52 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool MoveStudy(Study study, Device device)
         {
-            WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-            columns.ServerPartitionKey = study.ServerPartitionKey;
+            return MoveStudy(study, device, null);
+        }
 
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+        public bool MoveStudy(Study study, Device device, IList<Series> series)
+        {
+            if (series != null)
+            {
+                // Load the Partition
+                ServerPartitionConfigController partitionConfigController = new ServerPartitionConfigController();
+                ServerPartition partition = partitionConfigController.GetPartition(study.ServerPartitionKey);
+                
+                List<string> seriesUids = new List<string>();
+                foreach(Series s in series)
+                {
+                    seriesUids.Add(s.SeriesInstanceUid);
+                }
 
-            StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+                using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    StudyEditorHelper.MoveSeries(ctx, partition, study.StudyInstanceUid, seriesUids);
+                }
+            }
+            else
+            {
+                WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                columns.ServerPartitionKey = study.ServerPartitionKey;
 
-            columns.StudyStorageKey = storage.Key;
-            DateTime time = Platform.Time;
-            columns.ScheduledTime = time;
-            columns.ExpirationTime = time.AddMinutes(4);
-            columns.FailureCount = 0;
-            columns.DeviceKey = device.Key;
+                StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
-            workqueueAdaptor.Add(columns);
+                StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+
+                columns.StudyStorageKey = storage.Key;
+                DateTime time = Platform.Time;
+                columns.ScheduledTime = time;
+                columns.ExpirationTime = time.AddMinutes(4);
+                columns.FailureCount = 0;
+                columns.DeviceKey = device.Key;
+
+                workqueueAdaptor.Add(columns);
+            }
 
             return true;
         }
@@ -428,6 +456,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             StudyReprocessor reprocessor = new StudyReprocessor();
             reprocessor.ReprocessStudy(reason, storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
         }
+
         #endregion
 
         

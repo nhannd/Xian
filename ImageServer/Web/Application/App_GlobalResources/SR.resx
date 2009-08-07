@@ -429,4 +429,7 @@
   <data name="SingleAlertDelete" xml:space="preserve">
     <value>Are you sure you want to delete this Alert item?</value>
   </data>
+  <data name="MoveSeriesMessage" xml:space="preserve">
+    <value>The following series will be moved to {0}:</value>
+  </data>
 </root>

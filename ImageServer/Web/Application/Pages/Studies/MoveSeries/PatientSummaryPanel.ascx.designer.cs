@@ -8,78 +8,96 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries {
     
     
     /// <summary>
-    /// StudyDetailsPanel class.
+    /// PatientSummaryPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class StudyDetailsPanel {
+    public partial class PatientSummaryPanel {
         
         /// <summary>
-        /// SearchUpdatePanel control.
+        /// personName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PersonNameLabel personName;
         
         /// <summary>
-        /// EditStudyButton control.
+        /// Label2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditStudyButton;
+        protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// DeleteStudyButton control.
+        /// PatientId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteStudyButton;
+        protected global::System.Web.UI.WebControls.Label PatientId;
         
         /// <summary>
-        /// ReprocessStudyButton control.
+        /// Label3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ReprocessStudyButton;
+        protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// StudyStateAlertPanel control.
+        /// PatientDOB control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyStateAlertPanel StudyStateAlertPanel;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.DALabel PatientDOB;
         
         /// <summary>
-        /// PatientSummaryPanel control.
+        /// Label4 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.PatientSummaryPanel PatientSummaryPanel;
+        protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// StudyDetailsTabs control.
+        /// PatientAge control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs StudyDetailsTabs;
+        protected global::System.Web.UI.WebControls.Label PatientAge;
+        
+        /// <summary>
+        /// Label5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label5;
+        
+        /// <summary>
+        /// PatientSex control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label PatientSex;
     }
 }

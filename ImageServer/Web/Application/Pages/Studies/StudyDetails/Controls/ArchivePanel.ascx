@@ -9,6 +9,7 @@
 				<ContentTemplate>
 					<div class="StudyDetailsSubTitle">
 						Archive Queue</div>
+                    <div style="border: solid 1px #3d98d1;">						
 					<ccUI:GridView ID="ArchiveQueueGridView" runat="server" AutoGenerateColumns="False"
 						CssClass="GlobalGridView" CellPadding="0" CaptionAlign="Top" Width="100%" OnPageIndexChanged="ArchiveQueueGridView_PageIndexChanged"
 						OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging" SelectionMode="Disabled"
@@ -46,6 +47,7 @@
 						<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 						<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
 					</ccUI:GridView>
+					</div>
 				</ContentTemplate>
 			</asp:UpdatePanel>
 		</td>
@@ -54,6 +56,7 @@
 		<td>
 			<div class="StudyDetailsSubTitle" style="margin-top: 9px;">
 				Archive Study Storage</div>
+			<div style="border: solid 1px #3d98d1;">
 			<ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" AutoGenerateColumns="False"
 				CssClass="GlobalGridView" CellPadding="0" CaptionAlign="Top" Width="100%" SelectionMode="Disabled"
 				MouseHoverRowHighlightEnabled="false" GridLines="Horizontal" BackColor="White"
@@ -95,6 +98,7 @@
 				<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 				<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
 			</ccUI:GridView>
+			</div>
 		</td>
 	</tr>
 </table>

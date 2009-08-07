@@ -65,6 +65,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewSeriesButton;
         
         /// <summary>
+        /// MoveSeriesButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton MoveSeriesButton;
+        
+        /// <summary>
+        /// DeleteSeriesButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteSeriesButton;
+        
+        /// <summary>
         /// SeriesGridView control.
         /// </summary>
         /// <remarks>

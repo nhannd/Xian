@@ -62,6 +62,7 @@ public class ImageServerConstants
         public const string BarChartPage = "~/Pages/Common/BarChart.aspx?pct={0}&high={1}&low={2}";
         public const string AdminUserPage = "~/Pages/Admin/UserManagement/Users/Default.aspx";
         public const string MoveStudyPage = "~/Pages/Studies/Move/Default.aspx";
+        public const string MoveSeriesPage = "~/Pages/Studies/MoveSeries/Default.aspx";
         public const string SeriesDetailsPage = "~/Pages/Studies/SeriesDetails/Default.aspx";
         public const string StudyDetailsPage = "~/Pages/Studies/StudyDetails/Default.aspx";
 		public const string SearchPage = "~/Pages/Studies/Default.aspx";
@@ -110,6 +111,7 @@ public class ImageServerConstants
     {
         public const string ServerAE = "serverae";
         public const string StudyUID = "studyuid";
+        public const string SeriesUID = "seriesuid";
     }
 
     public class ContextKeys

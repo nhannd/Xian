@@ -207,7 +207,7 @@ Global.css - Defines the global styles for the entire web application relating
 .MainContentTitleButtonPanel
 {
     text-align: right;
-    background: url(../../../PersistantImage.ashx?key=MainContentTitleBackground) repeat-x;
+    background: #3d98d1;
     padding-right: 4px; 
 }
 

@@ -64,6 +64,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
 			return message;
 		}
 
+        public static string createSeriesTable(IList<Series> series)
+        {
+            string message;
+
+            message =
+                "<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Modality</td><td colspan=\"2\">Description</td><td colspan=\"2\">Related Instances</td><td colspan=\"2\">Instance UID</td></tr>";
+
+            int i = 0;
+            foreach (Series s in series)
+            {
+                String text = String.Format("<tr class=\"ConfirmDialogItemText\"><td>{0}</td><td>&nbsp;</td><td>{1}</td><td>&nbsp;</td><td>{2}</td><td>&nbsp;</td><td>{3}</td></tr>",
+                                 s.Modality, s.SeriesDescription, s.NumberOfSeriesRelatedInstances, s.SeriesInstanceUid);
+                message += text;
+
+                i++;
+            }
+            message += "</table>";
+
+            return message;
+        }
+
 		public static string createStudyTable(IList<StudySummary> studies)
 		{
 			string message;

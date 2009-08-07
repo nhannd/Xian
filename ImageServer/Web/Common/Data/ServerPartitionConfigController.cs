@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -101,6 +102,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public IList<ServerPartition> GetPartitions(ServerPartitionSelectCriteria criteria)
         {
             return _serverAdapter.GetServerPartitions(criteria);
+        }
+
+        /// <summary>
+        /// Retrieves a list of <seealso cref="ServerPartition"/> matching the specified criteria.
+        /// </summary>
+        /// <returns>A list of partitions</returns>
+        public ServerPartition GetPartition(ServerEntityKey key)
+        {
+            return _serverAdapter.GetServerPartition(key);
         }
 
         /// <summary>

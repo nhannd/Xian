@@ -75,6 +75,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.SeriesDetailsPage); }
         }
 
+        [ExtenderControlProperty]
+        [ClientPropertyName("SendSeriesPageUrl")]
+        public string SendSeriesPageUrl
+        {
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.MoveSeriesPage); }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("MoveSeriesButtonClientID")]
+        public string MoveSeriesButtonClientID
+        {
+            get { return MoveSeriesButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteSeriesButtonClientID")]
+        public string DeleteSeriesButtonClientID
+        {
+            get { return DeleteSeriesButton.ClientID; }
+        }
+
         /// <summary>
         /// Sets or gets the displayed study
         /// </summary>
@@ -98,6 +119,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             int[] selectedSeriesIndices = SeriesGridView.SeriesListControl.SelectedIndices;
             ViewSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;
+            MoveSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;
+            DeleteSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;
 
             base.OnPreRender(e);
         }

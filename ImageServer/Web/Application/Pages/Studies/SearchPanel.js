@@ -191,10 +191,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                         var serverae = this._getServerPartitionAE(rows[i]);
                         if (instanceuid!=undefined && serverae!=undefined)
                         {
-                            if (urlCount == 1)
-                            url = String.format('{0}?serverae={1}&studyuid{3}={2}', this._SendStudyPageUrl, serverae, instanceuid, urlCount);
-                            else
-                            url = String.format('{0}&studyuid{3}={2}', url, serverae, instanceuid, urlCount);
+                            if (urlCount == 1) {
+                                url = String.format('{0}?serverae={1}&studyuid{3}={2}', this._SendStudyPageUrl, serverae, instanceuid, urlCount);
+                            } else {
+                                url = String.format('{0}&studyuid{3}={2}', url, serverae, instanceuid, urlCount);
+                            }
+                            
                             urlCount++;
                         }
                     }
@@ -251,8 +253,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                 
             }
         },
-        
-        
         
         _enableDeleteButton : function(en)
         {

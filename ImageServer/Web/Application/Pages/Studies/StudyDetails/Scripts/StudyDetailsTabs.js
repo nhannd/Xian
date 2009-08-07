@@ -38,6 +38,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
             this._OnSeriesListClickedHandler = Function.createDelegate(this,this._OnSeriesListClicked);
             this._OnViewSeriesButtonClickedHandler = Function.createDelegate(this,this._OnViewSeriesButtonClicked);
+            this._OnMoveSeriesButtonClickedHandler = Function.createDelegate(this,this._OnMoveSeriesButtonClicked);
+            this._OnDeleteSeriesButtonClickedHandler = Function.createDelegate(this,this._OnDeleteSeriesButtonClicked);
+            this._updateToolbarButtonStates();
             
             Sys.Application.add_load(this._OnLoadHandler);
                  
@@ -60,6 +63,18 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                 viewSeriesBtn.remove_onClientClick(this._OnViewSeriesButtonClickedHandler);
             }
             
+            var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
+            if (deleteSeriesBtn!=null)
+            {
+                deleteSeriesBtn.remove_onClientClick(this._OnDeleteSeriesButtonClickedHandler);
+            }
+            
+            var moveSeriesBtn = $find(this._MoveSeriesButtonClientID); 
+            if (moveSeriesBtn!=null)
+            {
+                moveSeriesBtn.remove_onClientClick(this._OnMoveSeriesButtonClickedHandler);
+            }
+            
             Sys.Application.remove_load(this._OnLoadHandler);
         },
         
@@ -72,7 +87,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
               
         /// called whenever the page is reloaded or partially reloaded
         _OnLoad : function()
-        {
+        {           
             var serieslist = $find(this._SeriesListClientID);
             if (serieslist!=null)
             {
@@ -81,9 +96,19 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             }
             
             var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
+            var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
+            var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);            
             if (viewSeriesBtn!=null)
             {
                 viewSeriesBtn.add_onClientClick(this._OnViewSeriesButtonClickedHandler);
+            }
+            if (deleteSeriesBtn!=null)
+            {
+                deleteSeriesBtn.add_onClientClick(this._OnDeletSeriesButtonClickedHandler);
+            }
+            if (moveSeriesBtn!=null)
+            {
+                moveSeriesBtn.add_onClientClick(this._OnMoveSeriesButtonClickedHandler);
             }
         },
         
@@ -95,9 +120,17 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             {
                 var rows = serieslist.getSelectedRowElements();
                 var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
+                var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
+                var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);
                 if (viewSeriesBtn!=null) {
                     viewSeriesBtn.set_enable(rows.length>0);
                 }
+                if (deleteSeriesBtn!=null) {
+                    deleteSeriesBtn.set_enable(rows.length>0);
+                }
+                if (moveSeriesBtn!=null) {
+                    moveSeriesBtn.set_enable(rows.length>0);
+                }                                
             }
         },
         
@@ -117,6 +150,92 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                     window.open(url);
                 }
             }
+        },
+        
+        _updateToolbarButtonStates : function()
+        {
+            var serieslist = $find(this._SeriesListClientID);
+                      
+            this._enableDeleteButton(false);
+            this._enableMoveButton(false);
+            this._enableViewDetailsButton(false);                        
+
+            if (serieslist!=null )
+            {
+                var rows = serieslist.getSelectedRowElements();
+                
+                if (rows!=null && rows.length>0)
+                {
+                    this._enableDeleteButton(true);
+                    this._enableMoveButton(true);
+                    this._enableViewDetailsButton(true);  
+                }
+            }
+        },
+        
+        _OnDeleteSeriesButtonClicked : function()
+        {
+            var serieslist = $find(this._SeriesListClientID);
+            if (serieslist!=null)
+            {
+                var rows = serieslist.getSelectedRowElements();
+                for(i=0;i<rows.length;i++)
+                {
+                    var url = String.format("{0}?serverae={1}&studyuid={2}&seriesuid={3}", 
+                           this._OpenSeriesPageUrl,
+                           this._getServerAE(rows[i]),
+                           this._getStudyUid(rows[i]),
+                           this._getSeriesUid(rows[i]));
+                    window.open(url);
+                }
+            }
+        },
+        
+        _OnMoveSeriesButtonClicked : function()
+        {
+            var serieslist = $find(this._SeriesListClientID);
+            if (serieslist!=null)
+            {
+                var rows = serieslist.getSelectedRowElements();
+                var urlCount = 1;
+                var url = "";
+                
+                for(i=0;i<rows.length;i++)
+                {                    
+                    var studyuid = this._getStudyUid(rows[i]);
+                    var serverae = this._getServerAE(rows[i]);
+                    var seriesuid = this._getSeriesUid(rows[i]);
+                    if (studyuid!=undefined && serverae!=undefined && seriesuid!=undefined)
+                    {
+                        if (urlCount == 1)
+                            url = String.format('{0}?serverae={1}&studyuid={2}&seriesuid{4}={3}', this._SendSeriesPageUrl, serverae, studyuid, seriesuid, urlCount);
+                        else
+                            url += String.format('&seriesuid{1}={0}', seriesuid, urlCount);
+                            
+                        urlCount++;
+                    }
+                }
+                          
+                window.open(url);
+            }
+        },
+        
+         _enableViewDetailsButton : function(en)
+        {
+            var viewSeriesBtn = $find(this._ViewSeriesButtonClientID);
+            if(viewSeriesBtn != null) viewSeriesBtn.set_enable(en);
+        },
+        
+         _enableMoveButton : function(en)
+        {
+            var moveSeriesBtn = $find(this._MoveSeriesButtonClientID);
+            if(moveSeriesBtn != null) moveSeriesBtn.set_enable(en);
+        },
+        
+         _enableDeleteButton : function(en)
+        {
+            var deleteSeriesBtn = $find(this._DeleteSeriesButtonClientID);
+            if(deleteSeriesBtn != null) deleteSeriesBtn.set_enable(en);
         },
                 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,6 +291,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             this.raisePropertyChanged('OpenSeriesPageUrl');
         },
         
+        get_SendSeriesPageUrl : function() {
+            return this._SendSeriesPageUrl;
+        },
+
+        set_SendSeriesPageUrl: function(value) {
+            this._SendSeriesPageUrl = value;
+            this.raisePropertyChanged('SendSeriesPageUrl');
+        },
+        
         get_ViewSeriesButtonClientID : function() {
             return this._ViewSeriesButtonClientID;
         },
@@ -179,6 +307,24 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         set_ViewSeriesButtonClientID : function(value) {
             this._ViewSeriesButtonClientID = value;
             this.raisePropertyChanged('ViewSeriesButtonClientID');
+        },
+        
+        get_MoveSeriesButtonClientID : function() {
+            return this._MoveSeriesButtonClientID;
+        },
+       
+        set_MoveSeriesButtonClientID : function(value) {
+            this._MoveSeriesButtonClientID = value;
+            this.raisePropertyChanged('MoveSeriesButtonClientID');
+        },
+        
+        get_DeleteSeriesButtonClientID : function() {
+            return this._DeleteSeriesButtonClientID;
+        },
+       
+        set_DeleteSeriesButtonClientID : function(value) {
+            this._DeleteSeriesButtonClientID = value;
+            this.raisePropertyChanged('DeleteSeriesButtonClientID');
         },
         
         get_PatientBirthDateClientID : function() {

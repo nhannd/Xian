@@ -34,11 +34,16 @@
                         <table width="100%" cellpadding="4" cellspacing="0" style="background-color: #B8D8EE;">
                             <tr>
                                 <td>
-                                    <div style="padding-top: 5px; padding-left: 1px;" /><ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewDetailsButton" /></div></td>
+                                    <div style="padding-top: 5px; padding-left: 1px;" />
+                                        <ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewDetailsButton" />&nbsp;
+                                        <ccUI:ToolbarButton runat="server" ID="MoveSeriesButton" SkinID="MoveButton" />&nbsp;
+                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="DeleteButton" />
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <localAsp:SeriesGridView ID="SeriesGridView" runat="server" />
+                                            <div style="border: solid 1px #3d98d1;"><localAsp:SeriesGridView ID="SeriesGridView" runat="server" /></div>
                                 </td>
                             </tr>
                         </table>
@@ -52,7 +57,7 @@
             <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
                 <tr>
                     <td>
-                        <localAsp:WorkQueueGridView ID="WorkQueueGridView" runat="server" />
+                        <div style="border: solid 1px #3d98d1;"><localAsp:WorkQueueGridView ID="WorkQueueGridView" runat="server" /></div>
                     </td>
                 </tr>
             </table>
@@ -63,7 +68,7 @@
             <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
                 <tr>
                     <td>
-                        <localAsp:FileSystemQueueGridView ID="FSQueueGridView" runat="server" />
+                        <div style="border: solid 1px #3d98d1;"><localAsp:FileSystemQueueGridView ID="FSQueueGridView" runat="server" /></div>
                     </td>
                 </tr>
             </table>
@@ -96,7 +101,7 @@
             <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
                 <tr>
                     <td>
-                        <localAsp:HistoryPanel ID="HistoryPanel" runat="server" />
+                        <div style="border: solid 1px #3d98d1;"><localAsp:HistoryPanel ID="HistoryPanel" runat="server" /></div>
                     </td>
                 </tr>
             </table>

@@ -592,6 +592,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following series will be moved to {0}:.
+        /// </summary>
+        internal static string MoveSeriesMessage {
+            get {
+                return ResourceManager.GetString("MoveSeriesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following studies will be moved to {0}:.
         /// </summary>
         internal static string MoveStudyMessage {

@@ -8,51 +8,42 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries {
     
     
     /// <summary>
-    /// ArchivePanel class.
+    /// Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ArchivePanel {
+    public partial class Default {
         
         /// <summary>
-        /// ScriptManagerProxy1 control.
+        /// Table1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
+        protected global::System.Web.UI.WebControls.Table Table1;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// LinkButton1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
         
         /// <summary>
-        /// ArchiveQueueGridView control.
+        /// MoveSeriesPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView ArchiveQueueGridView;
-        
-        /// <summary>
-        /// ArchiveStudyStorageGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView ArchiveStudyStorageGridView;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.MovePanel MoveSeriesPanel;
     }
 }
