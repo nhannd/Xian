@@ -47,12 +47,13 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Rules;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {
 	/// <summary>
-	/// Command for updating a study.
+	/// <see cref="ServerDatabaseCommand"/> for updating a study.
 	/// </summary>
 	/// <remarks>
 	/// 
@@ -88,7 +89,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		private bool _deleteOriginalFolder;
 
 		private bool _patientInfoIsNotChanged;
-
+		private readonly ServerRulesEngine _rulesEngine;
 		#endregion
 
 		#region Constructors
@@ -101,9 +102,25 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			_oldStudyLocation = studyLocation;
 			_commands = imageLevelCommands;
 			_statistics = new UpdateStudyStatistics(_oldStudyLocation.StudyInstanceUid);
-
+			_rulesEngine = null;
 		}
 
+		public UpdateStudyCommand(ServerPartition partition,
+								  StudyStorageLocation studyLocation,
+								  IList<BaseImageLevelUpdateCommand> imageLevelCommands,
+								  ServerRulesEngine rulesEngine)
+			: base("Update existing study", true)
+		{
+			_partition = partition;
+			_oldStudyLocation = studyLocation;
+			_commands = imageLevelCommands;
+			_statistics = new UpdateStudyStatistics(_oldStudyLocation.StudyInstanceUid);
+			_rulesEngine = rulesEngine;
+		}
+
+		#endregion
+
+		#region Properties
 		public new UpdateStudyStatistics Statistics
 		{
 			get { return _statistics; }
@@ -349,9 +366,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 			}
 
-		}
-
-        
+		}        
 
 		private void LoadEntities()
 		{
@@ -490,6 +505,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 						SaveFile(file);
 
+
 						_updatedSopList.Add(instance);
 
 						long fileSize = 0;
@@ -565,6 +581,13 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 				SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false, true);
 				filesystemUpdateProcessor.AddCommand(saveCommand);
+
+				if (_rulesEngine != null)
+				{
+					ServerActionContext context = new ServerActionContext(file, _oldStudyLocation.FilesystemKey, _partition.Key, _oldStudyLocation.Key);
+					context.CommandProcessor = filesystemUpdateProcessor;
+					_rulesEngine.Execute(context);
+				}
 
 				if (!filesystemUpdateProcessor.Execute())
 				{

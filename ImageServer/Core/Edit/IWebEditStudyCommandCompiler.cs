@@ -29,40 +29,27 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
+using System.Xml;
+using ClearCanvas.ImageServer.Core.Edit;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
+namespace ClearCanvas.ImageServer.Core.Edit
 {
-    /// <summary>
-    /// Defines the interface of a extension to <see cref="WebEditStudyItemProcessor"/>
-    /// </summary>
-    public interface IWebEditStudyProcessorExtension : IDisposable
-    {
-        /// <summary>
-        /// Gets a value indicating whether the extension is enabled.
-        /// </summary>
-        bool Enabled { get; }
+	/// <summary>
+	/// Defines the interface of a compiler to generate 
+	/// <see cref="BaseImageLevelUpdateCommand"/> from a XML specification.
+	/// </summary>
+	public interface IWebEditStudyCommandCompiler
+	{
+		/// <summary>
+		/// Name of the command to be generated
+		/// </summary>
+		string CommandName { get; }
 
-        /// <summary>
-        /// Initializes the extension.
-        /// </summary>
-        /// <param name="workQueueProcessor"></param>
-        void Initialize(WebEditStudyItemProcessor workQueueProcessor);
-
-        /// <summary>
-        /// Called when study is about to be updated.
-        /// </summary>
-        /// <param name="context"></param>
-        void OnStudyEditing(WebEditStudyContext context);
-
-        /// <summary>
-        /// Called after the study has been updated.
-        /// </summary>
-        /// <param name="context"></param>
-        void OnStudyEdited(WebEditStudyContext context);
-    }
-
-    public class WebEditStudyProcessorExtensionPoint:ExtensionPoint<IWebEditStudyProcessorExtension>
-    {}
+		/// <summary>
+		/// Generates the <see cref="BaseImageLevelUpdateCommand"/>
+		/// </summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		BaseImageLevelUpdateCommand Compile(XmlReader reader);
+	}
 }

@@ -44,7 +44,8 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                    "Sample_AutoRouteMultiTag.xml")
         {
             ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
-        }
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopEdited);
+		}
     }
 
     [ExtensionOf(typeof (SampleRuleExtensionPoint))]
@@ -57,6 +58,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                    "Sample_AutoRouteSimple.xml")
         {
             ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
-        }
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopEdited);
+		}
     }
 }

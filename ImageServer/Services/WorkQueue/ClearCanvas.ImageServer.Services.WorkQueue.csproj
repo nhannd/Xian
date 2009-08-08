@@ -78,12 +78,6 @@
     <Compile Include="WebDeleteStudy\Extensions\LogHistory\LogHistoryExtension.cs" />
     <Compile Include="WebDeleteStudy\IWebDeleteProcessorExtension.cs" />
     <Compile Include="WebDeleteStudy\RemoveSeriesFromStudyXml.cs" />
-    <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
-    <Compile Include="WebEditStudy\WebEditStudyHistoryRecord.cs" />
-    <Compile Include="WebEditStudy\WebEditStudyCommandCompiler.cs" />
-    <Compile Include="WebEditStudy\WebEditStudyContext.cs" />
-    <Compile Include="WebEditStudy\Extensions\LogHistory\LogHistory.cs" />
-    <Compile Include="WebEditStudy\IWebEditStudyProcessorExtension.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />

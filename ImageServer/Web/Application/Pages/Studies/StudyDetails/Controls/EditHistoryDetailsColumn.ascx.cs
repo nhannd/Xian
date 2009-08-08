@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 

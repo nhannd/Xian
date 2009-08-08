@@ -43,13 +43,19 @@
     <Compile Include="Data\ReprocessStudyQueueData.cs" />
     <Compile Include="DicomProcessingResult.cs" />
     <Compile Include="Edit\BaseImageLevelUpdateCommand.cs" />
+    <Compile Include="Edit\Extensions\LogHistory\LogHistory.cs" />
     <Compile Include="Edit\InstanceInfo.cs" />
+    <Compile Include="Edit\IWebEditStudyCommandCompiler.cs" />
+    <Compile Include="Edit\IWebEditStudyProcessorExtension.cs" />
     <Compile Include="Edit\PatientInfo.cs" />
     <Compile Include="Edit\StudyEditorHelper.cs" />
     <Compile Include="Edit\UpdateStudyCommand.cs" />
     <Compile Include="Edit\UpdateStudyStatistics.cs" />
     <Compile Include="Edit\WebDeleteWorkQueueEntryData.cs" />
     <Compile Include="Edit\StudyMatchingMap.cs" />
+    <Compile Include="Edit\WebEditStudyCommandCompiler.cs" />
+    <Compile Include="Edit\WebEditStudyContext.cs" />
+    <Compile Include="Edit\WebEditStudyHistoryRecord.cs" />
     <Compile Include="Process\StudyReprocessor.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommandProcessor.cs" />
@@ -97,6 +103,7 @@
     <Compile Include="ServerHelper.cs" />
     <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="SopInstanceProcessor.cs" />
+    <Compile Include="StudyEditor.cs" />
     <Compile Include="UpdateStudyStatusCommand.cs" />
     <Compile Include="Validation\StudyInfo.cs" />
     <Compile Include="Validation\StudyIntegrityValidationFailure.cs" />

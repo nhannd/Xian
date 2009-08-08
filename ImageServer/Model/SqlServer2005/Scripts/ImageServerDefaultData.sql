@@ -242,6 +242,12 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            (newid(),105,'StudyRestored','Study Restored','Apply rule after a Study has been restored')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),106,'SopEdited','SOP Edited','Apply rule when a SOP Instance is edited')
+GO
+
 
 -- FilesystemQueueTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
