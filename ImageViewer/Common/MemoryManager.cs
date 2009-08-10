@@ -83,6 +83,7 @@ namespace ClearCanvas.ImageViewer.Common
 				if (_collectionThread == null)
 				{
 					_collectionThread = new Thread(RunCollectionThread);
+					_collectionThread.Priority = ThreadPriority.BelowNormal;
 					_collectionThread.IsBackground = true;
 					_collectionThread.Start();
 				}

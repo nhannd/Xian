@@ -93,12 +93,14 @@ namespace ClearCanvas.ImageViewer.Common
 
 		protected void OnMemoryCollected(MemoryCollectedEventArgs args)
 		{
-			ThreadPool.QueueUserWorkItem(NotifyMemoryCollected, args);
-		}
-
-		private void NotifyMemoryCollected(object memoryCollectedEventArgs)
-		{
-			EventsHelper.Fire(_memoryCollected, this, (MemoryCollectedEventArgs)memoryCollectedEventArgs);
+			try
+			{
+				EventsHelper.Fire(_memoryCollected, this, args);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Debug, e, "Memory management strategy failed to fire memory collected event.");
+			}
 		}
 	}
 
@@ -119,9 +121,13 @@ namespace ClearCanvas.ImageViewer.Common
 				{
 					try
 					{
-						ILargeObjectContainer container = _reference.Target as ILargeObjectContainer;
-						if (container == null)
-							_reference = null;
+						ILargeObjectContainer container = null;
+						if (_reference != null)
+						{
+							container = _reference.Target as ILargeObjectContainer;
+							if (container == null)
+								_reference = null;
+						}
 
 						return container;
 					}
@@ -223,7 +229,6 @@ namespace ClearCanvas.ImageViewer.Common
 		private void CleanupDeadItems()
 		{
 			List<string> keysToRemove = new List<string>();
-			_largeObjectEnumerator = null;
 
 			foreach (KeyValuePair<string, Item> item in _largeObjectContainers)
 			{
@@ -239,6 +244,14 @@ namespace ClearCanvas.ImageViewer.Common
 
 		private long EstimateTotalLargeObjectBytes()
 		{
+			try
+			{
+				return Process.GetCurrentProcess().VirtualMemorySize64;
+			}
+			catch(PlatformNotSupportedException)
+			{
+			}
+
 			long largeObjectBytes = 0;
 			bool alreadyLogged = false;
 			foreach (KeyValuePair<string, Item> item in _largeObjectContainers)
@@ -264,19 +277,28 @@ namespace ClearCanvas.ImageViewer.Common
 			return largeObjectBytes;
 		}
 
+		private long GetMemoryHighWatermarkBytes()
+		{
+			const long OneGigabyte = 1000 * 1024 * 1024;
+
+			return OneGigabyte;
+		}
+
+		private long GetLowWatermarkBytes(long highWatermark)
+		{
+			return highWatermark/2;
+		}
+
 		private void DoCollect()
 		{
 			_enumerationComplete = false;
 
-			const long OneGigabyte = 1000 * 1024 * 1024;
-			const long FiveHundredMB = 500 * 1024 * 1024;
-
-			long estimatedLargeObjectBytes = Process.GetCurrentProcess().VirtualMemorySize64;
-			long highWatermark = FiveHundredMB;
+			long estimatedLargeObjectBytes = EstimateTotalLargeObjectBytes();
+			long highWatermark = GetMemoryHighWatermarkBytes();
 			if (estimatedLargeObjectBytes < highWatermark)
 				return;
 
-			long lowWatermark = highWatermark / 2;
+			long lowWatermark = GetLowWatermarkBytes(highWatermark);
 			long bytesToCollect = highWatermark - lowWatermark;
 
 			long totalBytesCollected = 0;
