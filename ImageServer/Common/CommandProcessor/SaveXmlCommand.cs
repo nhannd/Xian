@@ -138,9 +138,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     if (File.Exists(streamFile))
                         FileUtils.Delete(streamFile);
                     File.Move(tmpStreamFile, streamFile);
-                    if (File.Exists(gzStreamFile))
-                        FileUtils.Delete(gzStreamFile);
-                    File.Move(tmpGzStreamFile, gzStreamFile);
+                    if (File.Exists(_gzPath))
+                        FileUtils.Delete(_gzPath);
+                    File.Move(tmpGzStreamFile, _gzPath);
                     return;
                 }
                 catch (IOException)
