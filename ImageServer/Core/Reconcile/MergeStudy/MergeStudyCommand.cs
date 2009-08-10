@@ -80,12 +80,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		{
 			Platform.CheckForNullReference(Context, "Context");
 
-			string failureReason;
-			if (!ServerHelper.LockStudy(Context.WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled,
-										out failureReason))
-			{
-				throw new ApplicationException(failureReason);
-			}
+			// No need to lock the study here, it was already locked.
+			//string failureReason;
+			//if (!ServerHelper.LockStudy(Context.WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled,
+			//							out failureReason))
+			//{
+			//	throw new ApplicationException(failureReason);
+			//}
 
 			DetermineDestination();
 
