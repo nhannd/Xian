@@ -528,6 +528,7 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		private string _studyDescription;
 		private DateTime? _studyDateFrom;
 		private DateTime? _studyDateTo;
+		private string _referringPhysiciansName;
 		private List<string> _modalities = new List<string>();
 
 		public DicomExplorerSearchCriteria()
@@ -574,6 +575,13 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		{
 			get { return _studyDescription; }
 			set { _studyDescription = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public string ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+			set { _referringPhysiciansName = value; }
 		}
 
 		[DataMember(IsRequired = true)]

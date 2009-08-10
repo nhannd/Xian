@@ -151,6 +151,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Referring Physician.
+        /// </summary>
+        internal static string ColumnHeadingReferringPhysician {
+            get {
+                return ResourceManager.GetString("ColumnHeadingReferringPhysician", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server.
         /// </summary>
         internal static string ColumnHeadingServer {

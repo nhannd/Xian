@@ -35,6 +35,8 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
+	//TODO: Get rid of this class?
+
 	/// <summary>
 	/// Static helper class for use when debugging.
 	/// </summary>
@@ -44,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		private static long _totalLargeObjectMemoryBytes = 0;
 
-		private static readonly object _syncLock = new object();
+		private static readonly object _syncLock = new object(); 
 		private static event EventHandler _totalLargeObjectBytesChanged;
 
 		/// <summary>

@@ -16,14 +16,15 @@
   </PropertyGroup>
 
 	<ItemGroup Condition="$(DesktopBuild)">
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\Ide\bin\$(Configuration)\ClearCanvas.Oto.Ide.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
-    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Oto\bin\$(Configuration)\ClearCanvas.ImageViewer.Oto.dll" />
+		<ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Oto\Ide\bin\$(Configuration)\ClearCanvas.Oto.Ide.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Oto\bin\$(Configuration)\ClearCanvas.ImageViewer.Oto.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\Dicom\DataStore\SetupApplication\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.SetupApplication.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
@@ -46,6 +47,7 @@
 		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
     <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(PluginsDirectory)\..\Oto\scripts" ContinueOnError="true" />
     <Copy SourceFiles="@(CommonFiles)" DestinationFolder="$(PluginsDirectory)\..\common" ContinueOnError="true" />
+
   </Target>
 </Project>
 

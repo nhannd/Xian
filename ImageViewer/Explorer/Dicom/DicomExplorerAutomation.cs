@@ -209,6 +209,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			searchPanel.StudyDateFrom = searchCriteria.StudyDateFrom;
 			searchPanel.StudyDateTo = searchCriteria.StudyDateTo;
 			searchPanel.StudyDescription = searchCriteria.StudyDescription;
+			searchPanel.ReferringPhysiciansName = searchCriteria.ReferringPhysiciansName;
 			searchPanel.SearchModalities = searchCriteria.Modalities ?? new List<string>();
 		}
 	}

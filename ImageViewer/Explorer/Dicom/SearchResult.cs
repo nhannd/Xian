@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				SR.ColumnHeadingDateOfBirth,
 				delegate(StudyItem item) { return GetDateStringFromDicomDA(item.PatientsBirthDate); },
 				null,
-				0.3F,
+				0.4F,
 				delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); });
 
 			_studyTable.Columns.Add(column);
@@ -226,7 +226,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingAccessionNumber,
 				delegate(StudyItem item) { return item.AccessionNumber; },
-				0.4F);
+				0.45F);
 
 			_studyTable.Columns.Add(column);
 
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				SR.ColumnHeadingStudyDate,
 				delegate(StudyItem item) { return GetDateStringFromDicomDA(item.StudyDate); },
 				null,
-				0.3F,
+				0.4F,
 				delegate(StudyItem one, StudyItem two) { return one.StudyDate.CompareTo(two.StudyDate); });
 
 			_studyTable.Columns.Add(column);
@@ -242,14 +242,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingStudyDescription,
 				delegate(StudyItem item) { return item.StudyDescription; },
-				1.0f);
+				0.75F);
 
 			_studyTable.Columns.Add(column);
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingModality,
 				delegate(StudyItem item) { return item.ModalitiesInStudy; },
-				0.3f);
+				0.25f);
+
+			_studyTable.Columns.Add(column);
+
+			column = new TableColumn<StudyItem, string>(
+				SR.ColumnHeadingReferringPhysician,
+				delegate(StudyItem item)
+					{
+						if (item.ReferringPhysiciansName != null)
+							return item.ReferringPhysiciansName.FormattedName;
+						else
+							return "";
+					},
+				0.6f);
 
 			_studyTable.Columns.Add(column);
 

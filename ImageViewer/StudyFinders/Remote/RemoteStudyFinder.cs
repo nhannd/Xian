@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.PatientId].SetStringValue(queryParams["PatientId"]);
 			requestCollection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
 			requestCollection[DicomTags.PatientsName].SetStringValue(queryParams["PatientsName"]);
+			requestCollection[DicomTags.ReferringPhysiciansName].SetStringValue(queryParams["ReferringPhysiciansName"]);
 			requestCollection[DicomTags.StudyDate].SetStringValue(queryParams["StudyDate"]);
 			requestCollection[DicomTags.StudyTime].SetStringValue("");
 			requestCollection[DicomTags.StudyDescription].SetStringValue(queryParams["StudyDescription"]);
@@ -85,6 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				item.StudyTime = result[DicomTags.StudyTime].GetString(0, "");
 				item.PatientId = result[DicomTags.PatientId].GetString(0, "");
 				item.PatientsName = new PersonName(result[DicomTags.PatientsName].GetString(0, ""));
+				item.ReferringPhysiciansName = new PersonName(result[DicomTags.ReferringPhysiciansName].GetString(0, ""));
 				item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
 				item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
 				item.SpecificCharacterSet = result.SpecificCharacterSet;

@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _title;
 
 		private string _name = "";
+		private string _referringPhysiciansName = "";
 		private string _patientID = "";
 		private string _accessionNumber = "";
 		private string _studyDescription = "";
@@ -177,6 +178,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		public string ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+			set
+			{
+				_referringPhysiciansName = value ?? "";
+				NotifyPropertyChanged("ReferringPhysiciansName");
+			}
+		}
+
 		public DateTime? StudyDateFrom
 		{
 			get
@@ -245,6 +256,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.PatientsName = "";
 			this.AccessionNumber = "";
 			this.StudyDescription = "";
+			this.ReferringPhysiciansName = "";
 			this.SearchModalities = new List<string>(); //clear the checked modalities.
 
 			InternalClearDates();
@@ -313,16 +325,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			return minimumDate;
-		}
-
-		internal string[] GetPatientsNameComponents()
-		{
-			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
-			string patientsName = PatientsName.Trim();
-			if (String.IsNullOrEmpty(patientsName))
-				return new string[0];
-
-			return patientsName.Split(new char[] { separator }, StringSplitOptions.None);
 		}
 
 		[ValidationMethodFor("StudyDateFrom")]

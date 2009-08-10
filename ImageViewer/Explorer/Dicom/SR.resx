@@ -147,6 +147,9 @@
   <data name="ColumnHeadingPhoneticName" xml:space="preserve">
     <value>Phonetic Name</value>
   </data>
+  <data name="ColumnHeadingReferringPhysician" xml:space="preserve">
+    <value>Referring Physician</value>
+  </data>
   <data name="ColumnHeadingServer" xml:space="preserve">
     <value>Server</value>
   </data>

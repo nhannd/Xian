@@ -60,7 +60,9 @@ namespace ClearCanvas.Dicom.DataStore
     	private string _studyId;
     	private string _accessionNumber;
     	private string _studyDescription;
-    	private DateTime? _studyDate;
+		private PersonName _referringPhysiciansName;
+		private string _referringPhysiciansNameRaw;
+		private DateTime? _studyDate;
 		private string _studyDateRaw;
     	private string _studyTimeRaw;
 		private ReadOnlyCollection<string> _modalitiesInStudy;
@@ -164,6 +166,19 @@ namespace ClearCanvas.Dicom.DataStore
     		get { return _studyDescription; }
 			set { SetClassMember(ref _studyDescription, value); }
     	}
+
+		[QueryableProperty(DicomTags.ReferringPhysiciansName, IsRequired = true)]
+		public virtual PersonName ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+			set { SetClassMember(ref _referringPhysiciansName, value); }
+		}
+
+		public virtual string ReferringPhysiciansNameRaw
+		{
+			get { return _referringPhysiciansNameRaw; }
+			set { SetClassMember(ref _referringPhysiciansNameRaw, value); }
+		}
 
 		[QueryableProperty(DicomTags.StudyDate, IsRequired = true, ReturnProperty = "StudyDateRaw")]
 		public virtual DateTime? StudyDate
@@ -381,6 +396,10 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.PatientsName];
 			PatientsName = new PersonName(attribute.ToString());
 			PatientsNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(PatientsName, sopInstanceDataset.SpecificCharacterSet);
+
+			attribute = sopInstanceDataset[DicomTags.ReferringPhysiciansName];
+			ReferringPhysiciansName = new PersonName(attribute.ToString());
+			ReferringPhysiciansNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(ReferringPhysiciansName, sopInstanceDataset.SpecificCharacterSet);
 
 			attribute = sopInstanceDataset[DicomTags.PatientsSex];
 			PatientsSex = attribute.ToString();

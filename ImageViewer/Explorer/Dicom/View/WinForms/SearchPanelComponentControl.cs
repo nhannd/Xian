@@ -69,7 +69,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_studyDateFrom.DataBindings.Add("Value", component, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studyDateTo.DataBindings.Add("Value", component, "StudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
-			
+
+        	this._referringPhysiciansName.DataBindings.Add("Value", component, "ReferringPhysiciansName", true,
+        	                                               DataSourceUpdateMode.OnPropertyChanged);
 			_modalityPicker.DataBindings.Add("CheckedModalities", component, "SearchModalities", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 

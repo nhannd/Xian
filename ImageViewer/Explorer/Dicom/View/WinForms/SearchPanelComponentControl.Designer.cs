@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchTodayButton = new System.Windows.Forms.Button();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._modalityPicker = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.ModalityPicker();
+			this._referringPhysiciansName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.SuspendLayout();
 			// 
 			// _patientID
@@ -158,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchButton.Location = new System.Drawing.Point(710, 63);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(90, 22);
-			this._searchButton.TabIndex = 7;
+			this._searchButton.TabIndex = 8;
 			this._searchButton.Text = "Search";
 			this._searchButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchButton.UseVisualStyleBackColor = true;
@@ -170,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchLastWeekButton.Location = new System.Drawing.Point(806, 93);
 			this._searchLastWeekButton.Name = "_searchLastWeekButton";
 			this._searchLastWeekButton.Size = new System.Drawing.Size(90, 22);
-			this._searchLastWeekButton.TabIndex = 10;
+			this._searchLastWeekButton.TabIndex = 11;
 			this._searchLastWeekButton.Text = "Last 7 days";
 			this._searchLastWeekButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchLastWeekButton.UseVisualStyleBackColor = true;
@@ -182,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._clearButton.Location = new System.Drawing.Point(710, 93);
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.Size = new System.Drawing.Size(90, 22);
-			this._clearButton.TabIndex = 9;
+			this._clearButton.TabIndex = 10;
 			this._clearButton.Text = "Clear";
 			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._clearButton.UseVisualStyleBackColor = true;
@@ -194,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._searchTodayButton.Location = new System.Drawing.Point(806, 63);
 			this._searchTodayButton.Name = "_searchTodayButton";
 			this._searchTodayButton.Size = new System.Drawing.Size(90, 22);
-			this._searchTodayButton.TabIndex = 8;
+			this._searchTodayButton.TabIndex = 9;
 			this._searchTodayButton.Text = "Today";
 			this._searchTodayButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchTodayButton.UseVisualStyleBackColor = true;
@@ -217,17 +218,31 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._modalityPicker.AutoSize = true;
 			this._modalityPicker.LabelText = "Modality";
-			this._modalityPicker.Location = new System.Drawing.Point(359, 95);
+			this._modalityPicker.Location = new System.Drawing.Point(530, 95);
 			this._modalityPicker.Margin = new System.Windows.Forms.Padding(2);
 			this._modalityPicker.Name = "_modalityPicker";
 			this._modalityPicker.Size = new System.Drawing.Size(156, 41);
-			this._modalityPicker.TabIndex = 6;
+			this._modalityPicker.TabIndex = 7;
+			// 
+			// _referringPhysiciansName
+			// 
+			this._referringPhysiciansName.LabelText = "Referring Physician";
+			this._referringPhysiciansName.Location = new System.Drawing.Point(359, 95);
+			this._referringPhysiciansName.Margin = new System.Windows.Forms.Padding(2);
+			this._referringPhysiciansName.Mask = "";
+			this._referringPhysiciansName.Name = "_referringPhysiciansName";
+			this._referringPhysiciansName.PasswordChar = '\0';
+			this._referringPhysiciansName.Size = new System.Drawing.Size(156, 41);
+			this._referringPhysiciansName.TabIndex = 6;
+			this._referringPhysiciansName.ToolTip = null;
+			this._referringPhysiciansName.Value = null;
 			// 
 			// SearchPanelComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Controls.Add(this._referringPhysiciansName);
 			this.Controls.Add(this._titleBar);
 			this.Controls.Add(this._patientID);
 			this.Controls.Add(this._patientsName);
@@ -261,5 +276,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.TextField _studyDescription;
 		private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
 		private ModalityPicker _modalityPicker;
+		private ClearCanvas.Desktop.View.WinForms.TextField _referringPhysiciansName;
     }
 }

@@ -475,34 +475,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
 
-			string patientsName = "";
-
-			string[] patientsNameComponents = _searchPanelComponent.GetPatientsNameComponents();
-			if (patientsNameComponents.Length == 1)
-			{
-				//Open name search
-				patientsName = String.Format("*{0}*", patientsNameComponents[0].Trim());
-			}
-			else if (patientsNameComponents.Length > 1)
-			{
-				if (String.IsNullOrEmpty(patientsNameComponents[0]))
-				{
-					//Open name search - should never get here
-					patientsName = String.Format("*{0}*", patientsNameComponents[1].Trim());
-				}
-				else if (String.IsNullOrEmpty(patientsNameComponents[1]))
-				{
-					//Pure Last Name search
-					patientsName = String.Format("{0}*", patientsNameComponents[0].Trim());
-				}
-				else
-				{
-					//Last Name, First Name search
-					patientsName = String.Format("{0}*{1}*", patientsNameComponents[0].Trim(), patientsNameComponents[1].Trim());
-				}
-			}
-
+			string patientsName = ConvertNameToSearchCriteria(_searchPanelComponent.PatientsName);
 			Trace.WriteLine(String.Format("Patient's Name Search: {0}", patientsName));
+
+			string referringPhysiciansName = ConvertNameToSearchCriteria(_searchPanelComponent.ReferringPhysiciansName);
+			Trace.WriteLine(String.Format("Referring Physician's Name Search: {0}", referringPhysiciansName));
 
 			string patientId = "";
 			if (!String.IsNullOrEmpty(_searchPanelComponent.PatientID))
@@ -527,6 +504,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			QueryParameters queryParams = new QueryParameters();
 			queryParams.Add("PatientsName", patientsName);
+			queryParams.Add("ReferringPhysiciansName", referringPhysiciansName); 
 			queryParams.Add("PatientId", patientId);
 			queryParams.Add("AccessionNumber", accessionNumber);
 			queryParams.Add("StudyDescription", studyDescription);
@@ -535,6 +513,47 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			queryParams.Add("StudyInstanceUid", "");
 
 			return queryParams;
+		}
+
+		private static string[] GetNameComponents(string unparsedName)
+		{
+			unparsedName = unparsedName ?? "";
+			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
+			string name = unparsedName.Trim();
+			if (String.IsNullOrEmpty(name))
+				return new string[0];
+
+			return name.Split(new char[] { separator }, StringSplitOptions.None);
+		}
+
+		private static string ConvertNameToSearchCriteria(string name)
+		{
+			string[] nameComponents = GetNameComponents(name);
+			if (nameComponents.Length == 1)
+			{
+				//Open name search
+				return String.Format("*{0}*", nameComponents[0].Trim());
+			}
+			else if (nameComponents.Length > 1)
+			{
+				if (String.IsNullOrEmpty(nameComponents[0]))
+				{
+					//Open name search - should never get here
+					return String.Format("*{0}*", nameComponents[1].Trim());
+				}
+				else if (String.IsNullOrEmpty(nameComponents[1]))
+				{
+					//Pure Last Name search
+					return String.Format("{0}*", nameComponents[0].Trim());
+				}
+				else
+				{
+					//Last Name, First Name search
+					return String.Format("{0}*{1}*", nameComponents[0].Trim(), nameComponents[1].Trim());
+				}
+			}
+
+			return "";
 		}
 
 		private StudyItemList Query(QueryParameters queryParams, ICollection<KeyValuePair<string, Exception>> failedServerInfo)
@@ -705,7 +724,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			UpdateResultsTitle();
 		}
 
-		void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
+		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (CurrentSearchResult != null)
 				CurrentSearchResult.UpdateColumnVisibility();

@@ -57,7 +57,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             collection[DicomTags.PatientId].SetStringValue(queryParams["PatientId"]);
             collection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
             collection[DicomTags.PatientsName].SetStringValue(queryParams["PatientsName"]);
-            collection[DicomTags.StudyDate].SetStringValue(queryParams["StudyDate"]);
+			collection[DicomTags.ReferringPhysiciansName].SetStringValue(queryParams["ReferringPhysiciansName"]);
+			collection[DicomTags.StudyDate].SetStringValue(queryParams["StudyDate"]);
 			collection[DicomTags.StudyTime].SetStringValue("");
 			collection[DicomTags.StudyDescription].SetStringValue(queryParams["StudyDescription"]);
         	collection[DicomTags.PatientsBirthDate].SetStringValue("");
@@ -76,6 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.SpecificCharacterSet = result.SpecificCharacterSet;
 					item.PatientId = result[DicomTags.PatientId].ToString();
 					item.PatientsName = new PersonName(result[DicomTags.PatientsName].ToString());
+					item.ReferringPhysiciansName = new PersonName(result[DicomTags.ReferringPhysiciansName].GetString(0, ""));
 					item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].ToString();
 					item.StudyDate = result[DicomTags.StudyDate].ToString();
 					item.StudyTime = result[DicomTags.StudyTime].ToString();

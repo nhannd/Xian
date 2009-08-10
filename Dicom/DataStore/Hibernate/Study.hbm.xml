@@ -26,6 +26,11 @@
     <component name="PatientsName" class="ClearCanvas.Dicom.Iod.PersonName, ClearCanvas.Dicom"> <!-- class attribute optional -->
       <property name="InternalPersonName" column="PatientsName_" type="string" length="256" />
     </component>
+    <property name="ReferringPhysiciansNameRaw" column="ReferringPhysiciansNameRaw_" type="string" length="256"/>
+    <component name="ReferringPhysiciansName" class="ClearCanvas.Dicom.Iod.PersonName, ClearCanvas.Dicom">
+      <!-- class attribute optional -->
+      <property name="InternalPersonName" column="ReferringPhysiciansName_" type="string" length="256" />
+    </component>
     <property name="PatientId" column="PatientId_" type="string" length="64"/>
     <property name="PatientsSex" column="PatientsSex_" type="string" length="16" />
     <property name="PatientsBirthDateRaw" column="PatientsBirthDateRaw_" type="string" length="16" />

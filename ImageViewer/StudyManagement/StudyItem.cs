@@ -251,6 +251,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
+		/// Gets or sets the referring physician's name.
+		/// </summary>
+		public PersonName ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+			set { _referringPhysiciansName = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets the number of study related instances.
 		/// </summary>
 		public uint NumberOfStudyRelatedInstances
@@ -326,7 +335,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private object _server;
 		private string _instanceAvailability;
 		private PersonName _patientsName;
-        #endregion
+		private PersonName _referringPhysiciansName;
+		#endregion
 	}
 
 	/// <summary>

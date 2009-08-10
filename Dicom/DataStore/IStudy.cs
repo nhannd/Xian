@@ -56,6 +56,8 @@ namespace ClearCanvas.Dicom.DataStore
 
 		string AccessionNumber { get; }
 		string StudyDescription { get; }
+		PersonName ReferringPhysiciansName { get; }
+
 		ReadOnlyCollection<string> ModalitiesInStudy { get; }
 
 		string ProcedureCodeSequenceCodeValue { get; }
