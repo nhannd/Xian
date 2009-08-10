@@ -32,6 +32,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Principal;
+using System.Threading;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.ContextGroups;
@@ -57,6 +59,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		private DateTime _datetime;
 		private string _description;
 		private string _seriesDescription;
+		private string _author;
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
 		/// <summary>
@@ -69,6 +72,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		{
 			_framePresentationStates = new FramePresentationList();
 			_datetime = Platform.Time;
+			_author = GetUserName();
 		}
 
 		/// <summary>
@@ -96,6 +100,15 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		{
 			get { return _seriesDescription; }
 			set { _seriesDescription = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the KO document author.
+		/// </summary>
+		public string Author
+		{
+			get { return _author; }
+			set { _author = value; }
 		}
 
 		/// <summary>
@@ -134,10 +147,14 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 					DicomFile keyObjectDocument = new DicomFile();
 					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, keyObjectDocument.DataSet);
 
+					string seriesDescription = _seriesDescription;
+					if (!string.IsNullOrEmpty(_author))
+						seriesDescription = string.Format("{0} ({1})", seriesDescription, _author);
+
 					iod.KeyObjectDocumentSeries.InitializeAttributes();
 					iod.KeyObjectDocumentSeries.Modality = Modality.KO;
 					iod.KeyObjectDocumentSeries.SeriesDateTime = _datetime;
-					iod.KeyObjectDocumentSeries.SeriesDescription = _seriesDescription;
+					iod.KeyObjectDocumentSeries.SeriesDescription = seriesDescription;
 					iod.KeyObjectDocumentSeries.SeriesInstanceUid = DicomUid.GenerateUid().UID;
 					iod.KeyObjectDocumentSeries.SeriesNumber = CalculateSeriesNumber(frame);
 					iod.KeyObjectDocumentSeries.ReferencedPerformedProcedureStepSequence = null;
@@ -358,6 +375,14 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			iod.GeneralEquipment.Manufacturer = "";
 
 			return iod;
+		}
+
+		private static string GetUserName()
+		{
+			IPrincipal p = Thread.CurrentPrincipal;
+			if (p == null || p.Identity == null || string.IsNullOrEmpty(p.Identity.Name))
+				return Environment.UserName;
+			return p.Identity.Name;
 		}
 
 		#region FramePresentationList Class
