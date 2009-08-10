@@ -183,7 +183,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool MoveStudy(Study study, Device device, IList<Series> seriesList)
         {
-			DateTime scheduledTime = Platform.Time.AddSeconds(10);
+            /*
+            DateTime scheduledTime = Platform.Time.AddSeconds(10);
 			if (seriesList != null)
 			{
 				using (
@@ -223,22 +224,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					parameters.DeviceKey = device.Key;
 					broker.FindOne(parameters);
 
-                using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                {
                     StudyEditorHelper.MoveSeries(ctx, partition, study.StudyInstanceUid, seriesUids);
                     ctx.Commit();
                 }
             }
             else
-            {
-                WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                columns.ServerPartitionKey = study.ServerPartitionKey;
+			    {
+			        WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+			        WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+			        columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+			        columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+			        columns.ServerPartitionKey = study.ServerPartitionKey;
+			    }
+            */
+			    return true;
 
-        	return true;
-        }
+			}
 
         public void EditStudy(Study study, XmlDocument modifiedFields)
         {
