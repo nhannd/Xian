@@ -40,13 +40,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	public partial class DefineSlicePlaneTool : MouseImageViewerToolMaster<MprViewerTool>
 	{
 		private static readonly Color[,] _colors = {
-		                                           	{Color.Red, Color.Crimson},
-		                                           	{Color.Blue, Color.Navy},
-		                                           	{Color.Lime, Color.Green},
-		                                           	{Color.Yellow, Color.Olive},
-		                                           	{Color.Violet, Color.Purple},
+		                                           	{Color.Red, Color.Salmon},
+		                                           	{Color.DodgerBlue, Color.CornflowerBlue},
+		                                           	{Color.Lime, Color.GreenYellow},
+		                                           	{Color.Yellow, Color.Gold},
+		                                           	{Color.Magenta, Color.Violet},
 		                                           	{Color.Cyan, Color.Turquoise},
-		                                           	{Color.White, Color.WhiteSmoke}
+		                                           	{Color.White, Color.LightGray}
 		                                           };
 
 		protected override IEnumerable<MprViewerTool> CreateTools()

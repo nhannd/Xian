@@ -1,8 +1,39 @@
-using System.Collections.Generic;
+#region License
+
+// Copyright (c) 2009, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System.Drawing;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
@@ -37,25 +68,25 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				set { GetSliceLineControlGraphic((IControlGraphic) base.Graphics[0]).Text = value; }
 			}
 
-			/// <summary>
-			/// Moves the graphic from where ever it is to the target image.
-			/// </summary>
-			public static void TranslocateGraphic(SliceLineGraphic graphic, IPresentationImage targetImage)
+			public void SetLine(IPresentationImage referenceImage, IPresentationImage targetImage)
 			{
-				IPresentationImage oldImage = graphic.ParentPresentationImage;
-				if (oldImage != targetImage)
+				DicomImagePlane thisImagePlane = DicomImagePlane.FromImage(referenceImage);
+				DicomImagePlane imagePlane = DicomImagePlane.FromImage(targetImage);
+				Vector3D patientPt1, patientPt2;
+				if (thisImagePlane.GetIntersectionPoints(imagePlane, out patientPt1, out patientPt2))
 				{
-					RemoveSliceLineGraphic(graphic);
-					if (oldImage != null)
-						oldImage.Draw();
-					AddSliceLineGraphic(graphic, targetImage);
+					Vector3D imagePt1 = imagePlane.ConvertToImagePlane(patientPt1);
+					Vector3D imagePt2 = imagePlane.ConvertToImagePlane(patientPt2);
+
+					this.LineGraphic.Points.Clear();
+					this.LineGraphic.Points.Add(imagePlane.ConvertToImage(new PointF(imagePt1.X, imagePt1.Y)));
+					this.LineGraphic.Points.Add(imagePlane.ConvertToImage(new PointF(imagePt2.X, imagePt2.Y)));
 				}
 			}
 
 			public static SliceLineGraphic CreateSliceLineGraphic(MprViewerComponent mprViewer, IMprSliceSet sliceSet, Color hotColor, Color normalColor)
 			{
 				PolylineGraphic polylineGraphic = new PolylineGraphic();
-				// TODO JY - figure out what to initialize the ends points to based on sliceSet
 				MoveControlGraphic moveControlGraphic = new MoveControlGraphic(polylineGraphic);
 				VerticesControlGraphic verticesControlGraphic = new VerticesControlGraphic(moveControlGraphic);
 				verticesControlGraphic.CanAddRemoveVertices = false;
@@ -65,24 +96,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				statefulGraphic.FocusColor = statefulGraphic.FocusSelectedColor = hotColor;
 				statefulGraphic.State = statefulGraphic.CreateInactiveState();
 				return new SliceLineGraphic(statefulGraphic);
-			}
-
-			public static void AddSliceLineGraphic(SliceLineGraphic graphic, IPresentationImage image)
-			{
-				IApplicationGraphicsProvider applicationGraphicsProvider = image as IApplicationGraphicsProvider;
-				if (applicationGraphicsProvider != null)
-				{
-					applicationGraphicsProvider.ApplicationGraphics.Add(graphic);
-				}
-			}
-
-			public static void RemoveSliceLineGraphic(SliceLineGraphic graphic)
-			{
-				IApplicationGraphicsProvider applicationGraphicsProvider = graphic.ParentPresentationImage as IApplicationGraphicsProvider;
-				if (applicationGraphicsProvider != null)
-				{
-					applicationGraphicsProvider.ApplicationGraphics.Remove(graphic);
-				}
 			}
 
 			private class SliceLineControlGraphic : ControlGraphic

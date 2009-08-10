@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected virtual string SuggestTitle()
 		{
-			return StringUtilities.Combine(this.StudyTree, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; });
+			return string.Format(SR.FormatMprWorkspaceTitle, StringUtilities.Combine(this.StudyTree, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; }));
 		}
 
 		public override IActionSet ExportedActions
