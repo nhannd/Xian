@@ -12,11 +12,12 @@ namespace ClearCanvas.Dicom.DataStore.SetupApplication
 
 		public void RunApplication(string[] args)
 		{
-			const string scriptFile =
-				@"C:\Stewart\Xian\Trunk\Dicom\DataStore\AuxiliaryFiles\CreateTables.clearcanvas.dicom.datastore.ddl";
-			const string databaseDirectory = @"C:\Stewart\Xian\Trunk\Dicom\DataStore\AuxiliaryFiles";
-			const string databaseFileName = @"empty_viewer.sdf";
-			string databaseFile = Path.Combine(databaseDirectory, databaseFileName);
+			// example command line args: 
+			// ClearCanvas.Dicom.DataStore.SetupApplication.Application "<TrunkPath>\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" "<TrunkPath>\Dicom\DataStore\AuxiliaryFiles\CreateTables.clearcanvas.dicom.datastore.ddl"
+
+			string databaseFile = args[0];
+			string scriptFile = args[1];
+
 			File.Delete(databaseFile);
 
 			string connectionString = String.Format("Data Source=\"{0}\"", databaseFile);
