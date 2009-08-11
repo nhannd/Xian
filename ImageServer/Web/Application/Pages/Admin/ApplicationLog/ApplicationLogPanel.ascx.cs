@@ -54,11 +54,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
             {
                 string startTime = Request["From"];
                 string endTime = Request["To"];
+                string hostname = Request["HostName"];
 
                 if (startTime != null && endTime != null)
                 {
                     FromFilter.Text = startTime;
                     ToFilter.Text = endTime;
+                    HostFilter.Text = hostname;
                     ApplicationLogGridView.SetDataSource();
                     ApplicationLogGridView.Refresh();
                 }

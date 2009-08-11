@@ -257,6 +257,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
 
                         int timeRange = int.Parse(ConfigurationManager.AppSettings["AlertTimeRange"]);
+                        string hostname = GetHostName(alert.Source);
 
                             DateTime startTime = alert.InsertTime.AddSeconds(-timeRange/2);
                             DateTime endTime = alert.InsertTime.AddSeconds(timeRange / 2);
@@ -264,7 +265,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                                                      HttpUtility.UrlEncode(startTime.ToString("yyyy-MM-dd") + " " +
                                                                            startTime.ToString("HH:mm:ss")) + "&To=" +
                                                      HttpUtility.UrlEncode(endTime.ToString("yyyy-MM-dd") + " " +
-                                                                           endTime.ToString("HH:mm:ss"));
+                                                                           endTime.ToString("HH:mm:ss")) +
+                                                     "&HostName=" + hostname;
 
                     }
 
@@ -312,6 +314,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         protected bool HasContextData(AlertSummary item)
         {
             return item.ContextData != null;
+        }
+
+        private string GetHostName(string source)
+        {
+            source = source.Substring(source.IndexOf("Host=") + 5);
+            source = source.Substring(0, source.IndexOf("/"));
+            return source;
         }
     }
 
