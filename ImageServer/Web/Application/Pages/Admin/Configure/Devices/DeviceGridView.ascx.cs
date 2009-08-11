@@ -281,7 +281,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         {
             Device dev = e.Row.DataItem as Device;
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
-            lbl.Text = dev.Dhcp ? dev.IpAddress + " (DHCP)" : dev.IpAddress;
+            lbl.Text = dev.IpAddress;
             
         }
 
