@@ -17,14 +17,14 @@ function MultiSelect() {
 
         $("#<%=ModalityListBox.ClientID %>").multiSelect({
             noneSelected: '',
-            oneOrMoreSelected: '% Selected',
+            oneOrMoreSelected: '*',
             style: 'width: 120px;'
         });   
         
         $("#<%=StatusListBox.ClientID %>").multiSelect({
             noneSelected: '',
-            oneOrMoreSelected: '% Selected',
-            style: 'width: 120px;'
+            oneOrMoreSelected: '*',
+            style: 'width: 200px;'
         });   
 
 }
@@ -105,9 +105,9 @@ function CheckDateRange(fromDate, toDate, textBoxId, calendarExtenderId, message
                                                 <asp:Label ID="Label8" runat="server" Text="Status" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:ListBox runat="server" id="StatusListBox" SelectionMode="Multiple">
-                                                    <asp:ListItem Value="Online">Online</asp:ListItem>
-                                                    <asp:ListItem Value="OnlineLossless">Lossless</asp:ListItem>
-                                                    <asp:ListItem Value="OnlineLossy">Lossy</asp:ListItem>
+                                                    <asp:ListItem Value="Online">Online (Uncompressed)</asp:ListItem>
+                                                    <asp:ListItem Value="OnlineLossless">Online (Lossless)</asp:ListItem>
+                                                    <asp:ListItem Value="OnlineLossy">Online (Lossy)</asp:ListItem>
                                                     <asp:ListItem Value="Nearline">Nearline</asp:ListItem>                                                    
                                                 </asp:ListBox>
                                             </td>

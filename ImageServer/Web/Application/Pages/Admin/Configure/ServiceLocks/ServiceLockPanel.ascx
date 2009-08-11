@@ -17,7 +17,7 @@ function MultiSelect() {
         
         $("#<%=FileSystemFilter.ClientID %>").multiSelect({
             noneSelected: '',
-            oneOrMoreSelected: '% Selected',
+            oneOrMoreSelected: '*',
             style: 'width: 120px;'
         });   
 

@@ -14,12 +14,12 @@
         function MultiSelect(){
             $("#<%=TypeListBox.ClientID %>").multiSelect({
                 noneSelected: '',
-                oneOrMoreSelected: '% Selected',
+                oneOrMoreSelected: '*',
                 style: 'width: 260px'
             });
             $("#<%=StatusListBox.ClientID %>").multiSelect({
                 noneSelected: '',
-                oneOrMoreSelected: '% Selected',
+                oneOrMoreSelected: '*',
                 style: 'width: 130px;'
             });
         }
