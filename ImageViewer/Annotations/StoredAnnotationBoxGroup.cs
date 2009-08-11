@@ -31,11 +31,9 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	[Cloneable]
 	internal sealed class StoredAnnotationBoxGroup
 	{
 		private readonly string _identifier;
@@ -50,9 +48,14 @@ namespace ClearCanvas.ImageViewer.Annotations
 			_annotationBoxes = new AnnotationBoxList();
 		}
 
-		private StoredAnnotationBoxGroup(StoredAnnotationBoxGroup source, ICloningContext context)
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		private StoredAnnotationBoxGroup(StoredAnnotationBoxGroup source)
 		{
-			context.CloneFields(source, this);
+			this._identifier = source._identifier;
+			this._defaultBoxSettings = source._defaultBoxSettings.Clone();
+			this._annotationBoxes = source._annotationBoxes.Clone();
 		}
 
 		public string Identifier
@@ -72,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		public StoredAnnotationBoxGroup Clone()
 		{
-			return CloneBuilder.Clone(this) as StoredAnnotationBoxGroup;
+			return new StoredAnnotationBoxGroup(this);
 		}
 	}
 }

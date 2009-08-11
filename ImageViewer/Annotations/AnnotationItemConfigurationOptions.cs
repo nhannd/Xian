@@ -74,7 +74,10 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// </summary>
 		public AnnotationItemConfigurationOptions Clone()
 		{
-			return CloneBuilder.Clone(this) as AnnotationItemConfigurationOptions;
+			AnnotationItemConfigurationOptions clone = new AnnotationItemConfigurationOptions();
+			clone._showLabel = this._showLabel;
+			clone._showLabelIfValueEmpty = this._showLabelIfValueEmpty;
+			return clone;
 		}
 	}
 }

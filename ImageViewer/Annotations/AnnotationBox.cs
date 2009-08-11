@@ -392,7 +392,23 @@ namespace ClearCanvas.ImageViewer.Annotations
 		/// </summary>
 		public AnnotationBox Clone()
 		{
-			return CloneBuilder.Clone(this) as AnnotationBox;
+			AnnotationBox clone = new AnnotationBox();
+			clone._alwaysVisible = this._alwaysVisible; // bool
+			clone._annotationItem = this._annotationItem; // clone copy reference
+			if (this._annotationItemConfigurationOptions != null)
+				clone._annotationItemConfigurationOptions = this._annotationItemConfigurationOptions.Clone();
+			clone._bold = this._bold; // bool
+			clone._color = this._color; // string
+			clone._fitWidth = this._fitWidth; // bool
+			clone._font = this._font; // string
+			clone._italics = this._italics; // bool
+			clone._justification = this._justification; // enum
+			clone._normalizedRectangle = this._normalizedRectangle; // rect
+			clone._numberOfLines = this._numberOfLines; // byte
+			clone._truncation = this._truncation; //  enum
+			clone._verticalAlignment = this._verticalAlignment; // enum
+			clone._visible = this._visible; // bool
+			return clone;
 		}
 	}
 }

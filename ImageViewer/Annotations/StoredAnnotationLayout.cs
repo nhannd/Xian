@@ -31,15 +31,12 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	[Cloneable]
 	internal sealed class StoredAnnotationLayout : IAnnotationLayout
 	{
 		private readonly string _identifier;
-		[CloneIgnore]
 		private readonly List<StoredAnnotationBoxGroup> _annotationBoxGroups = new List<StoredAnnotationBoxGroup>();
 		private bool _visible = true;
 
@@ -49,11 +46,19 @@ namespace ClearCanvas.ImageViewer.Annotations
 			_identifier = identifier;
 		}
 
-		private StoredAnnotationLayout(StoredAnnotationLayout source, ICloningContext context)
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		private StoredAnnotationLayout(StoredAnnotationLayout source)
 		{
-			context.CloneFields(source, this);
-			foreach (StoredAnnotationBoxGroup group in source.AnnotationBoxGroups)
-				_annotationBoxGroups.Add(group.Clone());
+			this._identifier = source._identifier;
+			this._visible = source._visible;
+			foreach (StoredAnnotationBoxGroup group in source._annotationBoxGroups)
+			{
+				if (group == null)
+					continue;
+				this._annotationBoxGroups.Add(group.Clone());
+			}
 		}
 
 		public string Identifier
@@ -90,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 		public StoredAnnotationLayout Clone()
 		{
-			return CloneBuilder.Clone(this) as StoredAnnotationLayout;
+			return new StoredAnnotationLayout(this);
 		}
 	}
 }

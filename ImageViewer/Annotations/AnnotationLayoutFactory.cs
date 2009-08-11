@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			{
                 StoredAnnotationLayout storedLayout = GetStoredLayout(storedLayoutId);
 				if (storedLayout != null)
-					return new StoredAnnotationLayoutProxy(storedLayout);
+					return storedLayout.Clone();
 				
 				//just return an empty layout.
 				return new AnnotationLayout();

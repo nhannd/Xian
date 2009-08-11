@@ -49,5 +49,12 @@ namespace ClearCanvas.ImageViewer.Annotations
 			foreach (AnnotationBox box in source)
 				this.Add(box.Clone());
 		}
+
+		public AnnotationBoxList Clone()
+		{
+			AnnotationBoxList clone = new AnnotationBoxList();
+			clone.Initialize(this, null);
+			return clone;
+		}
 	}
 }
