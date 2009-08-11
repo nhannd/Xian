@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services
             private readonly Staff _currentUserStaff;
 
             public PatientAttachmentSynchronizeHelper(PatientAttachmentAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
-                :base(true, true)
+                : base(true, true)
             {
                 _assembler = assembler;
                 _context = context;
@@ -60,7 +60,9 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override void AddItem(PatientAttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)
             {
-                domainList.Add(_assembler.CreatePatientAttachment(sourceItem, _currentUserStaff, _context));
+                PatientAttachment attachment = _assembler.CreatePatientAttachment(sourceItem, _currentUserStaff, _context);
+                attachment.Document.Attach();
+                domainList.Add(attachment);
             }
 
             protected override void UpdateItem(PatientAttachment domainItem, PatientAttachmentSummary sourceItem, ICollection<PatientAttachment> domainList)

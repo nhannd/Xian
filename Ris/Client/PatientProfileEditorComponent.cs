@@ -83,6 +83,16 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructs an editor to edit a new profile with attachments
         /// </summary>
+        public PatientProfileEditorComponent(EntityRef profileRef, List<PatientAttachmentSummary> attachments)
+        {
+            _profileRef = profileRef;
+            _isNew = false;
+            _newAttachments = attachments;
+        }
+
+        /// <summary>
+        /// Constructs an editor to edit a new profile with attachments
+        /// </summary>
         public PatientProfileEditorComponent(List<PatientAttachmentSummary> attachments)
         {
             _isNew = true;
@@ -119,7 +129,6 @@ namespace ClearCanvas.Ris.Client
                         _profile.Religion = formData.ReligionChoices[0];
                         _profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
                         _profile.DateOfBirth = Platform.Time.Date;
-                        _profile.Attachments = _newAttachments;
                     }
                     else
                     {
@@ -133,11 +142,13 @@ namespace ClearCanvas.Ris.Client
                             string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
                     }
 
+					_profile.Attachments.AddRange(_newAttachments);
+
 					// if the user has permission to either a) create a new patient, or b) update the patient profile, then 
-					// these pages should be displayed
-					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)
-						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create))
-					{
+                    // these pages should be displayed
+                    if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)
+                        || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create))
+                    {
                         this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
@@ -145,10 +156,10 @@ namespace ClearCanvas.Ris.Client
                         this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Culture", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
 
-						_addressesSummary.SetModifiedOnListChange = true;
-						_phoneNumbersSummary.SetModifiedOnListChange = true;
-						_emailAddressesSummary.SetModifiedOnListChange = true;
-						_contactPersonsSummary.SetModifiedOnListChange = true;
+                        _addressesSummary.SetModifiedOnListChange = true;
+                        _phoneNumbersSummary.SetModifiedOnListChange = true;
+                        _emailAddressesSummary.SetModifiedOnListChange = true;
+                        _contactPersonsSummary.SetModifiedOnListChange = true;
 
                         _patientEditor.Subject = _profile;
                         _addressesSummary.Subject = _profile.Addresses;
@@ -158,14 +169,14 @@ namespace ClearCanvas.Ris.Client
                         _additionalPatientInfoSummary.Subject = _profile;
                     }
 
-					// if the user has permission to either a) create a new patient, or b) update a patient, then
-					// these pages should be displayed
-					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)
-						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
+                    // if the user has permission to either a) create a new patient, or b) update a patient, then
+                    // these pages should be displayed
+                    if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)
+                        || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
                     {
                         this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new AttachedDocumentPreviewComponent(true, true)));
-                        
+
                         _notesSummary.Subject = _profile.Notes;
                         _documentSummary.PatientAttachments = _profile.Attachments;
                     }
@@ -193,11 +204,11 @@ namespace ClearCanvas.Ris.Client
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow, 
+                    ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
                                             delegate
                                             {
                                                 this.ExitCode = ApplicationComponentExitCode.Error;
-                                                this.Host.Exit();                            
+                                                this.Host.Exit();
                                             });
                 }
             }
@@ -226,7 +237,7 @@ namespace ClearCanvas.Ris.Client
                     }
                 });
 
-            if(_documentSummary != null)
+            if (_documentSummary != null)
                 _documentSummary.SaveChanges();
         }
 

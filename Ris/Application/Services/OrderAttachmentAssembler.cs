@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services
             private readonly Staff _currentUserStaff;
 
             public OrderAttachmentSynchronizeHelper(OrderAttachmentAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
-                :base(true, true)
+                : base(true, true)
             {
                 _assembler = assembler;
                 _context = context;
@@ -60,7 +60,9 @@ namespace ClearCanvas.Ris.Application.Services
 
             protected override void AddItem(OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)
             {
-                domainList.Add(_assembler.CreateOrderAttachment(sourceItem, _currentUserStaff, _context));
+                OrderAttachment attachment = _assembler.CreateOrderAttachment(sourceItem, _currentUserStaff, _context);
+                attachment.Document.Attach();
+                domainList.Add(attachment);
             }
 
             protected override void UpdateItem(OrderAttachment domainItem, OrderAttachmentSummary sourceItem, ICollection<OrderAttachment> domainList)

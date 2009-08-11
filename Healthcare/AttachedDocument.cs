@@ -20,5 +20,10 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
+
+		public virtual void Attach()
+		{
+			return;
+		}
 	}
 }

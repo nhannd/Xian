@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         #region IPatientAdminService Members
 
         [ReadOperation]
-		public LoadPatientProfileEditorFormDataResponse LoadPatientProfileEditorFormData(LoadPatientProfileEditorFormDataRequest request)
+        public LoadPatientProfileEditorFormDataResponse LoadPatientProfileEditorFormData(LoadPatientProfileEditorFormDataRequest request)
         {
             // ignore request
 
@@ -63,12 +63,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 
             // Sort the category from High to Low, then sort by name
             IList<PatientNoteCategory> sortedCategoryList = CollectionUtils.Sort(
-				PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().FindAll(false),
+                PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().FindAll(false),
                 delegate(PatientNoteCategory x, PatientNoteCategory y)
                 {
                     return string.Compare(x.Name, y.Name);
                 });
-            
+
             response.NoteCategoryChoices = new List<PatientNoteCategorySummary>();
             PatientNoteCategoryAssembler categoryAssembler = new PatientNoteCategoryAssembler();
             response.NoteCategoryChoices = CollectionUtils.Map<PatientNoteCategory, PatientNoteCategorySummary, List<PatientNoteCategorySummary>>(
@@ -98,23 +98,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Update)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.PatientProfile.Update)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Update)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.PatientProfile.Update)]
         public UpdatePatientProfileResponse UpdatePatientProfile(UpdatePatientProfileRequest request)
         {
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
-        	bool updatePatient = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Update);
-			bool updateProfile = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientProfile.Update);
+            bool updatePatient = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Update);
+            bool updateProfile = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientProfile.Update);
 
             UpdateHelper(profile, request.PatientDetail, updatePatient, updateProfile);
+
+            this.PersistenceContext.SynchState();
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             return new UpdatePatientProfileResponse(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Create)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Patient.Create)]
         public AddPatientResponse AddPatient(AddPatientRequest request)
         {
             PatientProfile profile = new PatientProfile();
@@ -145,7 +147,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                 attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, this.CurrentUserStaff, PersistenceContext);
             }
 
-            if(updateProfile)
+            if (updateProfile)
             {
                 PatientProfileAssembler assembler = new PatientProfileAssembler();
                 assembler.UpdatePatientProfile(profile, detail, PersistenceContext);

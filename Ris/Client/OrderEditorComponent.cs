@@ -229,6 +229,7 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _changeCommitted;
 
         private readonly AttachedDocumentPreviewComponent _attachmentSummaryComponent;
+        private readonly List<OrderAttachmentSummary> _newAttachments = new List<OrderAttachmentSummary>();
         private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
         private TabComponentContainer _rightHandComponentContainer;
@@ -258,7 +259,16 @@ namespace ClearCanvas.Ris.Client
         public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, List<OrderAttachmentSummary> attachments)
             : this(patientRef, profileRef, null, Mode.NewOrder)
         {
-            _attachmentSummaryComponent.OrderAttachments = attachments;
+            _newAttachments = attachments;
+        }
+
+        /// <summary>
+        /// Constructor for adding attachments to an existing order.
+        /// </summary>
+        public OrderEditorComponent(EntityRef patientRef, EntityRef profileRef, EntityRef orderRef, List<OrderAttachmentSummary> attachments)
+            : this(patientRef, profileRef, orderRef, Mode.ModifyOrder)
+        {
+            _newAttachments = attachments;
         }
 
         /// <summary>
@@ -318,7 +328,7 @@ namespace ClearCanvas.Ris.Client
 
             // in "modify" mode, the Delete action is actually a Cancel action
             if (_mode == Mode.ModifyOrder)
-				_proceduresActionModel.Delete.Label = _proceduresActionModel.Delete.Tooltip = "Cancel";
+                _proceduresActionModel.Delete.Label = _proceduresActionModel.Delete.Tooltip = "Cancel";
 
 
             UpdateProcedureActionModel();
@@ -399,6 +409,7 @@ namespace ClearCanvas.Ris.Client
                 _orderingFacility = LoginSession.Current.WorkingFacility;
                 _schedulingRequestTime = Platform.Time;
                 _orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties;
+                _attachmentSummaryComponent.OrderAttachments = _newAttachments;
             }
             else
             {
@@ -415,11 +426,11 @@ namespace ClearCanvas.Ris.Client
                         UpdateFromRequisition(response.Requisition);
                     });
 
-				// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
-				if(_mode == Mode.ReplaceOrder)
-				{
-					UpdateDiagnosticService(_selectedDiagnosticService);
-				}
+                // bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
+                if (_mode == Mode.ReplaceOrder)
+                {
+                    UpdateDiagnosticService(_selectedDiagnosticService);
+                }
             }
 
             InitializeTabPages();
@@ -910,16 +921,16 @@ namespace ClearCanvas.Ris.Client
 
             if (_selectedProcedure.Status == null)
             {
-				// unsaved procedure
-				_proceduresTable.Items.Remove(_selectedProcedure);
-				_selectedProcedure = null;
-				NotifyPropertyChanged("SelectedProcedure");
+                // unsaved procedure
+                _proceduresTable.Items.Remove(_selectedProcedure);
+                _selectedProcedure = null;
+                NotifyPropertyChanged("SelectedProcedure");
             }
             else
             {
-				_selectedProcedure.Cancelled = true;
-				_proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
-			}
+                _selectedProcedure.Cancelled = true;
+                _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+            }
 
             this.Modified = true;
         }
@@ -1071,7 +1082,10 @@ namespace ClearCanvas.Ris.Client
             _proceduresTable.Items.Clear();
             _proceduresTable.Items.AddRange(existingOrder.Procedures);
 
-            _attachmentSummaryComponent.OrderAttachments = existingOrder.Attachments;
+            List<OrderAttachmentSummary> attachments = new List<OrderAttachmentSummary>(existingOrder.Attachments);
+            attachments.AddRange(_newAttachments);
+            _attachmentSummaryComponent.OrderAttachments = attachments;
+
             _noteSummaryComponent.Notes = existingOrder.Notes;
             _orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties = existingOrder.ExtendedProperties;
 
@@ -1155,8 +1169,8 @@ namespace ClearCanvas.Ris.Client
                         {
                             ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, true);
                             ReplaceOrderResponse response = service.ReplaceOrder(request);
-                            
-                            if (response.WarnUser &&this.Host.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel and replace this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+
+                            if (response.WarnUser && this.Host.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel and replace this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
                                 response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, false));
                             else
                                 return;
