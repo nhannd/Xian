@@ -38,20 +38,27 @@ if(jQuery) (function($){
 			if( o.noneSelected == undefined ) o.noneSelected = 'Select options';
 			if( o.oneOrMoreSelected == undefined ) o.oneOrMoreSelected = '% selected';
 			if( o.style == undefined ) o.style = '';
+			var width;
 			
 			// Initialize each multiSelect
 			$(this).each( function() {
 				var select = $(this);
 				var html = '<input type="text" readonly="readonly" class="multiSelect" value="" style="cursor: default;" />';
 				html += '<div class="multiSelectOptions" style="position: absolute; z-index: 99999; display: none;';
-				if(o.style) html += o.style;
+				if(o.style) {
+				    html += o.style;
+				    var width = o.style.substring(o.style.indexOf("width:")+6);
+				    width = width.substring(0, width.indexOf("px")) - 35; //remove 40pixels to account for the checkbox.
+				}   
 				html += '">';
 				if( o.selectAll ) html += '<label class="selectAll"><input type="checkbox" class="selectAll" />' + o.selectAllText + '</label>';
 				$(select).find('OPTION').each( function() {
 					if( $(this).val() != '' ) {
 						html += '<label><input type="checkbox" name="' + $(select).attr('name') + '" value="' + $(this).val() + '"';
 						if( $(this).attr('selected') ) html += ' checked="checked"';
-						html += ' />' + $(this).html() + '</label>';
+						var text = $(this).html();
+						if(width) text = fitStringToWidth(text, width, null);
+						html += ' />' + text + '</label>';
 					}
 				});
 				html += '</div>';
