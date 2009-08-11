@@ -714,12 +714,16 @@ namespace ClearCanvas.ImageViewer
 
 			ImageBoxMemento imageBoxMemento = (ImageBoxMemento)memento;
 
-			_rows = 0;
-			_columns = 0;
-			_normalizedRectangle = RectangleF.Empty;
+			if (imageBoxMemento.Rows != this.Rows || imageBoxMemento.Columns != this.Columns)
+			{
+				_rows = 0;
+				_columns = 0;
 
-			if (imageBoxMemento.Rows > 0 && imageBoxMemento.Columns > 0)
-				this.SetTileGrid(imageBoxMemento.Rows, imageBoxMemento.Columns);
+				if (imageBoxMemento.Rows > 0 && imageBoxMemento.Columns > 0)
+					this.SetTileGrid(imageBoxMemento.Rows, imageBoxMemento.Columns);
+			}
+
+			_normalizedRectangle = RectangleF.Empty;
 
 			this.DisplaySet = imageBoxMemento.DisplaySet;
 			if (this.DisplaySet != null)
