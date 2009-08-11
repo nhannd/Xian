@@ -74,7 +74,6 @@
     <Compile Include="Tests\SlicerTests.cs" />
     <Compile Include="Tools\DefineSlicePlaneLineGraphic.cs" />
     <Compile Include="Tools\DefineSlicePlaneMath.cs" />
-    <Compile Include="Tools\DefineSlicePlaneIdentifierGraphic.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
     <Compile Include="Utilities\MouseImageViewerToolMaster.cs" />
     <Compile Include="Tools\DefineSlicePlaneTool.cs">

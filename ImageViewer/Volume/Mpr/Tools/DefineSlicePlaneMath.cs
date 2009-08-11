@@ -38,9 +38,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
 	partial class DefineSlicePlaneTool
 	{
-		private static void SetSlicePlane(IPresentationImage image, IMprStandardSliceSet sliceSet, Vector3D startPoint, Vector3D endPoint)
+		/// <summary>
+		/// Sets the slicing plane for the specified slice set based on two points on the specified source image.
+		/// </summary>
+		private static void SetSlicePlane(IMprStandardSliceSet sliceSet, IPresentationImage sourceImage, Vector3D startPoint, Vector3D endPoint)
 		{
-			IImageSopProvider imageSopProvider = image as IImageSopProvider;
+			IImageSopProvider imageSopProvider = sourceImage as IImageSopProvider;
 			if (imageSopProvider == null)
 				return;
 
@@ -50,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			if (sliceSet != null && !sliceSet.IsReadOnly)
 			{
-				IImageBox imageBox = FindImageBox(sliceSet, image.ImageViewer as MprViewerComponent);
+				IImageBox imageBox = FindImageBox(sliceSet, sourceImage.ImageViewer as MprViewerComponent);
 				IDisplaySet displaySet = imageBox.DisplaySet;
 				imageBox.DisplaySet = null;
 
@@ -63,10 +66,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					imageBox.TopLeftPresentationImageIndex = imageBox.DisplaySet.PresentationImages.Count/2;
 				else
 					imageBox.TopLeftPresentationImage = closestImage;
-				imageBox.DisplaySet.Draw();
 			}
 		}
 
+		/// <summary>
+		/// Computes the closest image in a display set to the specified position in patient coordinates.
+		/// </summary>
 		private static IPresentationImage GetClosestSlice(Vector3D positionPatient, IDisplaySet displaySet)
 		{
 			float closestDistance = float.MaxValue;

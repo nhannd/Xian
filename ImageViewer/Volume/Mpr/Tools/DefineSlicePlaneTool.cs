@@ -32,6 +32,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
@@ -52,6 +54,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		protected override IEnumerable<MprViewerTool> CreateTools()
 		{
 			int index = 0;
+
+			if (this.ImageViewer == null)
+				yield break;
 
 			// create one instance of the slave tool for each mutable slice set
 			foreach (IMprVolume volume in this.ImageViewer.StudyTree)
@@ -77,6 +82,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			get { return base.ImageViewer as MprViewerComponent; }
 		}
 
+		/// <summary>
+		/// Finds the ImageBox displaying the specified slice set
+		/// </summary>
 		protected static IImageBox FindImageBox(IMprSliceSet sliceSet, MprViewerComponent viewer)
 		{
 			if (sliceSet == null || viewer == null)
@@ -88,6 +96,58 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					return imageBox;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Colourises the display set description annotation item in the specified image
+		/// </summary>
+		private static void ColorizeDisplaySetDescription(IPresentationImage image, Color color)
+		{
+			if (image is IAnnotationLayoutProvider)
+			{
+				IAnnotationLayoutProvider provider = (IAnnotationLayoutProvider) image;
+				foreach (AnnotationBox annotationBox in provider.AnnotationLayout.AnnotationBoxes)
+				{
+					if (annotationBox.AnnotationItem != null && annotationBox.AnnotationItem.GetIdentifier() == "Presentation.DisplaySetDescription")
+					{
+						annotationBox.Color = color.Name;
+						annotationBox.Bold = true;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Moves the graphic from where ever it is to the target image.
+		/// </summary>
+		private static void TranslocateGraphic(IGraphic graphic, IPresentationImage targetImage)
+		{
+			IPresentationImage oldImage = graphic.ParentPresentationImage;
+			if (oldImage != targetImage)
+			{
+				RemoveGraphic(graphic);
+				if (oldImage != null)
+					oldImage.Draw();
+				AddGraphic(graphic, targetImage);
+			}
+		}
+
+		private static void AddGraphic(IGraphic graphic, IPresentationImage image)
+		{
+			IApplicationGraphicsProvider applicationGraphicsProvider = image as IApplicationGraphicsProvider;
+			if (applicationGraphicsProvider != null)
+			{
+				applicationGraphicsProvider.ApplicationGraphics.Add(graphic);
+			}
+		}
+
+		private static void RemoveGraphic(IGraphic graphic)
+		{
+			IApplicationGraphicsProvider applicationGraphicsProvider = graphic.ParentPresentationImage as IApplicationGraphicsProvider;
+			if (applicationGraphicsProvider != null)
+			{
+				applicationGraphicsProvider.ApplicationGraphics.Remove(graphic);
+			}
 		}
 	}
 }

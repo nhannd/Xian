@@ -54,7 +54,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		private class DefineSlicePlaneSlaveTool : MprViewerTool
 		{
 			private SliceLineGraphic _lineGraphic;
-			private SliceIdentifierGraphic _identifierGraphic;
 			private InteractivePolylineGraphicBuilder _lineGraphicBuilder;
 
 			private Color _hotColor = Color.SkyBlue;
@@ -104,8 +103,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (_lineGraphic.ParentPresentationImage.ParentDisplaySet == this.SelectedPresentationImage.ParentDisplaySet)
 					TranslocateGraphic(_lineGraphic, this.SelectedPresentationImage);
 
-				if (_identifierGraphic.ParentPresentationImage.ParentDisplaySet == this.SelectedPresentationImage.ParentDisplaySet)
-					TranslocateGraphic(_identifierGraphic, this.SelectedPresentationImage);
+				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
 			}
 
 			#region Controlled SliceSet
@@ -177,11 +175,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 						_lineGraphic.SetLine(this.SliceImageBox.TopLeftPresentationImage, imageBox.TopLeftPresentationImage);
 						AddGraphic(_lineGraphic, imageBox.TopLeftPresentationImage);
 
-						_identifierGraphic = SliceIdentifierGraphic.CreateSliceIdentifierGraphic(this.SliceImageBox.DisplaySet.Description, this.NormalColor);
-						AddGraphic(_identifierGraphic, this.SliceImageBox.TopLeftPresentationImage);
 						break;
 					}
 				}
+				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
 			}
 
 			protected override void Dispose(bool disposing)
@@ -200,13 +197,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 						_lineGraphic.Drawing -= OnPolyLineDrawing;
 						_lineGraphic.Dispose();
 						_lineGraphic = null;
-					}
-
-					if (_identifierGraphic != null)
-					{
-						RemoveGraphic(_identifierGraphic);
-						_identifierGraphic.Dispose();
-						_identifierGraphic = null;
 					}
 				}
 
@@ -299,15 +289,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if ((_startPatient - _endPatient).Magnitude < 5*base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
 					return;
 
-				// the current existing presentation images will be disposed shortly! save our identifier graphic!
-				RemoveGraphic(_identifierGraphic);
-
 				// set the new slice plane, which will regenerate the corresponding display set
-				SetSlicePlane(this.SelectedPresentationImage, this.SliceSet, _startPatient, _endPatient);
+				SetSlicePlane(this.SliceSet, this.SelectedPresentationImage, _startPatient, _endPatient);
 
-				AddGraphic(_identifierGraphic, this.SliceImageBox.TopLeftPresentationImage);
+				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
 
-				_identifierGraphic.Draw();
+				this.SliceImageBox.TopLeftPresentationImage.Draw();
 			}
 
 			public override bool Track(IMouseInformation mouseInformation)
@@ -328,7 +315,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					return true;
 				}
 
-				//RemoveGraphic();
 				return false;
 			}
 
@@ -346,39 +332,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					return _lineGraphicBuilder.GetCursorToken(point);
 
 				return base.GetCursorToken(point);
-			}
-
-			/// <summary>
-			/// Moves the graphic from where ever it is to the target image.
-			/// </summary>
-			private static void TranslocateGraphic(IGraphic graphic, IPresentationImage targetImage)
-			{
-				IPresentationImage oldImage = graphic.ParentPresentationImage;
-				if (oldImage != targetImage)
-				{
-					RemoveGraphic(graphic);
-					if (oldImage != null)
-						oldImage.Draw();
-					AddGraphic(graphic, targetImage);
-				}
-			}
-
-			private static void AddGraphic(IGraphic graphic, IPresentationImage image)
-			{
-				IApplicationGraphicsProvider applicationGraphicsProvider = image as IApplicationGraphicsProvider;
-				if (applicationGraphicsProvider != null)
-				{
-					applicationGraphicsProvider.ApplicationGraphics.Add(graphic);
-				}
-			}
-
-			private static void RemoveGraphic(IGraphic graphic)
-			{
-				IApplicationGraphicsProvider applicationGraphicsProvider = graphic.ParentPresentationImage as IApplicationGraphicsProvider;
-				if (applicationGraphicsProvider != null)
-				{
-					applicationGraphicsProvider.ApplicationGraphics.Remove(graphic);
-				}
 			}
 		}
 	}
