@@ -53,11 +53,12 @@
     <folder-class class="RejectedProtocolFolder" />
     <folder-class class="ProtocollingSearchFolder" />
   </folder-system>
-  <folder-system id="ClearCanvas.Ris.Client.Fax.IncomingFaxWorkflowFolderSystem">
-    <folder-class class="IncomingPendingFolder"/>
-    <folder-class class="IncomingProcessedFolder" />
-    <folder-class class="IncomingDeletedFolder" />
-    <folder-class class="IncomingSpamFolder" />
+  <folder-system id="ClearCanvas.Ris.Client.Fax.ReceivedFaxWorkflowFolderSystem">
+    <folder-class class="InboxFolder"/>
+    <folder-class class="FaxMachineInboxFolder"/>
+    <folder-class class="ProcessedFolder" />
+    <folder-class class="DeletedFolder" />
+    <folder-class class="SpamFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.EmergencyWorkflowFolderSystem">
     <folder-class class="ScheduledFolder" />
