@@ -114,10 +114,6 @@ namespace ClearCanvas.Ris.Client.Workflow
                     }
                 }
 
-                bool shouldContinue = PromptWarningForIncompleteDocumentationOrProcedures(item);
-                if (!shouldContinue)
-                    return;
-
                 // open the report editor
                 ReportDocument doc = new ReportDocument(item, shouldOpenImages, this.Context);
                 doc.Open();
@@ -144,17 +140,5 @@ namespace ClearCanvas.Ris.Client.Workflow
             else
                 return null;
         }
-
-        private bool PromptWarningForIncompleteDocumentationOrProcedures(ReportingWorklistItem item)
-        {
-            bool shouldContinue = false;
-
-
-
-
-
-            return shouldContinue;
-        }
-
     }
 }
