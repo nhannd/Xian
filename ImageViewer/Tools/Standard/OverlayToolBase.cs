@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -38,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	public abstract class OverlayToolBase : Tool<IImageViewerToolContext>
 	{
+		private static readonly IList<OverlayToolBase> _toolRegistry = new List<OverlayToolBase>();
 		private event EventHandler _checkedChanged;
 		private bool _checked;
 
@@ -50,12 +52,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Initialize();
 
+			_toolRegistry.Add(this);
+
 			this.Context.Viewer.EventBroker.ImageDrawing += OnImageDrawing;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			this.Context.Viewer.EventBroker.ImageDrawing -= OnImageDrawing;
+
+			_toolRegistry.Remove(this);
 
 			base.Dispose(disposing);
 		}
@@ -95,6 +101,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
 		{
 			UpdateVisibility(e.PresentationImage, Checked);
+		}
+
+		public static IEnumerable<OverlayToolBase> EnumerateTools(IImageViewer imageViewer)
+		{
+			foreach (OverlayToolBase overlayTool in _toolRegistry)
+			{
+				if (overlayTool.Context != null && overlayTool.Context.Viewer == imageViewer)
+					yield return overlayTool;
+			}
 		}
 	}
 }
