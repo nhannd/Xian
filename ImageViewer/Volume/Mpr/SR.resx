@@ -209,4 +209,38 @@
   <data name="ToolbarMpr" xml:space="preserve">
     <value>MPR</value>
   </data>
+  <data name="MessageSourceDataSetNeedsThreeImagesForMpr" xml:space="preserve">
+    <value>Source dataset must contain at least three frames.</value>
+  </data>
+  <data name="MessageUnexpectedCreateVolumeException" xml:space="preserve">
+    <value>An unexpected exception was encountered while creating the volume.</value>
+  </data>
+  <data name="MessageUnsupportedDicomImageSop" xml:space="preserve">
+    <value>File is not a valid, supported DICOM image SOP instance. {0}</value>
+    <comment>0 - Filename</comment>
+  </data>
+  <data name="MessageSourceDataSetCanOnlyGantryTiltedInOneAxis" xml:space="preserve">
+    <value>Images are tilted along multiple axes. MPR currently only supports gantry tilts along a single axis.</value>
+  </data>
+  <data name="MessageSourceDataSetImagesMustBeEvenlySpacedForMpr" xml:space="preserve">
+    <value>Inconsistent spacing betweeen images. MPR currently requires evenly spaced images.</value>
+  </data>
+  <data name="MessageSourceDataSetImagesMustBeUniquelyLocatedForMpr" xml:space="preserve">
+    <value>Two images are at same patient location. MPR currently requires evenly spaced images.</value>
+  </data>
+  <data name="MessageSourceDataSetMustBeSameImageOrientationPatient" xml:space="preserve">
+    <value>Each frame in the source dataset must have the same image orientation (Patient).</value>
+  </data>
+  <data name="MessageSourceDataSetMustBeSingleFrameOfReference" xml:space="preserve">
+    <value>Each frame in the source dataset must have the same frame of reference.</value>
+  </data>
+  <data name="MessageSourceDataSetMustBeSingleSeries" xml:space="preserve">
+    <value>Each frame in the source dataset must be from the same series.</value>
+  </data>
+  <data name="MessageSourceDataSetMustBeSingleStudy" xml:space="preserve">
+    <value>Each frame in the source dataset must be from the same study.</value>
+  </data>
+  <data name="MessageSourceDataSetMustDefineImageOrientationPatient" xml:space="preserve">
+    <value>Each frame in the source dataset must have a defined image orientation (Patient).</value>
+  </data>
 </root>

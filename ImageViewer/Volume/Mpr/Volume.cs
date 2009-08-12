@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// patient orientation (i.e. axial, sagittal, coronal captured images are all normalized in volume space).
 	/// The patient orientation is derived from the DICOM image orientation.
 	///  </summary>
-	// TODO JY Some renaming to do here
 	public partial class Volume : IDisposable
 	{
 		#region Private fields

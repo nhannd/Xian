@@ -373,7 +373,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				// ensure we have at least 3 frames
 				if (_frames.Count < 3)
-					throw new CreateVolumeException("Source dataset must contain at least three frames.");
+					throw new CreateVolumeException(SR.MessageSourceDataSetNeedsThreeImagesForMpr);
 
 				// ensure all frames have are from the same series, and have the same frame of reference
 				string studyInstanceUid = _frames[0].Frame.StudyInstanceUID;
@@ -382,11 +382,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				foreach (IFrameReference frame in _frames)
 				{
 					if (frame.Frame.StudyInstanceUID != studyInstanceUid)
-						throw new CreateVolumeException("Each frame in the source dataset must be from the same study.");
+						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleStudy);
 					if (frame.Frame.SeriesInstanceUID != seriesInstanceUid)
-						throw new CreateVolumeException("Each frame in the source dataset must be from the same series.");
+						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleSeries);
 					if (frame.Frame.FrameOfReferenceUid != frameOfReferenceUid)
-						throw new CreateVolumeException("Each frame in the source dataset must have the same frame of reference.");
+						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleFrameOfReference);
 				}
 
 				// ensure all frames have the same orientation
@@ -394,9 +394,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				foreach (IFrameReference frame in _frames)
 				{
 					if (frame.Frame.ImageOrientationPatient.IsNull)
-						throw new CreateVolumeException("Each frame in the source dataset must have a defined image orientation (Patient).");
+						throw new CreateVolumeException(SR.MessageSourceDataSetMustDefineImageOrientationPatient);
 					if (!frame.Frame.ImageOrientationPatient.EqualsWithinTolerance(orient, .01f))
-						throw new CreateVolumeException("Each frame in the source dataset must have the same image orientation (Patient).");
+						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSameImageOrientationPatient);
 				}
 
 				// ensure all frames are sorted by slice location
@@ -409,16 +409,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					float currentSpacing = CalcSpaceBetweenPlanes(_frames[i].Frame, _frames[i - 1].Frame);
 					if (currentSpacing < 0.01f)
-						throw new CreateVolumeException("Two images are at same patient location, MPR requires evenly spaced images");
+						throw new CreateVolumeException(SR.MessageSourceDataSetImagesMustBeUniquelyLocatedForMpr);
 					if (!nominalSpacing.HasValue)
 						nominalSpacing = currentSpacing;
 					if (!FloatComparer.AreEqual(currentSpacing, nominalSpacing.Value))
-						throw new CreateVolumeException("Inconsistent spacing betweeen images, MPR requires evenly spaced images");
+						throw new CreateVolumeException(SR.MessageSourceDataSetImagesMustBeEvenlySpacedForMpr);
 				}
 
 				// ensure frames are not tilted about multiple axes (the gantry correction algorithm only supports rotations about one)
 				if (IsMultiAxialTilt(_frames[0].Frame.ImageOrientationPatient)) // suffices to check first one... they're all co-planar now!!
-					throw new CreateVolumeException("Images are tilted along multiple axes");
+					throw new CreateVolumeException(SR.MessageSourceDataSetCanOnlyGantryTiltedInOneAxis);
 			}
 
 			#endregion

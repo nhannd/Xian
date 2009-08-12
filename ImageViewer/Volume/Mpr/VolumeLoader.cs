@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	public sealed class CreateVolumeException : Exception
 	{
-		public CreateVolumeException() : base("An unexpected exception was encountered while creating the volume.") {}
+		public CreateVolumeException() : base(SR.MessageUnexpectedCreateVolumeException) { }
 		public CreateVolumeException(string message) : base(message) {}
 		public CreateVolumeException(string message, Exception innerException) : base(message, innerException) {}
 	}
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					}
 					catch (Exception ex)
 					{
-						throw new CreateVolumeException(string.Format("File is not a valid, supported DICOM image SOP instance. {0}", fileName), ex);
+						throw new CreateVolumeException(string.Format(SR.MessageUnsupportedDicomImageSop, fileName), ex);
 					}
 				}
 

@@ -101,18 +101,33 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 				IImageBox imageBox = this.SliceImageBox;
 
+				IDisplaySet selectedDisplaySet = null;
+				if (this.SelectedPresentationImage != null)
+					selectedDisplaySet = this.SelectedPresentationImage.ParentDisplaySet;
+
 				// only allow tool if we're in a MprViewerComponent, and we're not going to be operating on ourself!
 				base.Enabled = (this.ImageViewer != null) &&
-				               (imageBox != null && this.SelectedPresentationImage != null && this.SelectedPresentationImage.ParentDisplaySet != imageBox.DisplaySet);
+							   (imageBox != null && selectedDisplaySet != null && selectedDisplaySet != imageBox.DisplaySet);
 
-				// only translocate the graphic if the user is stacking through the display set
-				if (_resliceGraphic.ParentPresentationImage.ParentDisplaySet == this.SelectedPresentationImage.ParentDisplaySet)
+				if (selectedDisplaySet == _resliceGraphic.ParentPresentationImage.ParentDisplaySet)
 				{
+					// translocate the graphic if the user is stacking through the display set that the graphic sits in
 					// do not add this command to history - the stack command generates the actual action command
 					TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
 				}
+				else if (imageBox != null && selectedDisplaySet == imageBox.DisplaySet)
+				{
+					// we're stacking on the set we control, so make sure the colourised display set name is replicated
+					IPresentationImage firstReslicedImage = imageBox.TopLeftPresentationImage;
+					ColorizeDisplaySetDescription(firstReslicedImage, this.NormalColor);
 
-				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
+					// and realign the slice line with the stacked position
+					if (_resliceGraphic.ParentPresentationImage != null && _resliceGraphic.ParentPresentationImage != firstReslicedImage)
+					{
+						_resliceGraphic.SetLine(imageBox.TopLeftPresentationImage, _resliceGraphic.ParentPresentationImage);
+						_resliceGraphic.Draw();
+					}
+				}
 			}
 
 			#region Controlled SliceSet
@@ -277,21 +292,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 						compositeCommand = new DrawableUndoableCommand(new ResliceDrawable(_resliceGraphic, this.Reslice));
 					}
 
-					//// enqueue the begin state command
-					//MemorableUndoableCommand beginStateCommand = new MemorableUndoableCommand(_resliceGraphic);
-					//beginStateCommand.BeginState = _graphicBuilderMemento;
-					//beginStateCommand.EndState = null;
-					//compositeCommand.Enqueue(beginStateCommand);
-
 					// enqueue the translocate command
 					if (_graphicTranslocationCommand != null)
 						compositeCommand.Enqueue(_graphicTranslocationCommand);
 
-					// enqueue the end state command
-					MemorableUndoableCommand endStateCommand = new MemorableUndoableCommand(_resliceGraphic);
-					endStateCommand.BeginState = _graphicBuilderMemento;
-					endStateCommand.EndState = _resliceGraphic.CreateMemento();
-					compositeCommand.Enqueue(endStateCommand);
+					// enqueue the memento command
+					MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(_resliceGraphic);
+					memorableCommand.BeginState = _graphicBuilderMemento;
+					memorableCommand.EndState = _resliceGraphic.CreateMemento();
+					compositeCommand.Enqueue(memorableCommand);
 
 					base.ImageViewer.CommandHistory.AddCommand(compositeCommand);
 				}

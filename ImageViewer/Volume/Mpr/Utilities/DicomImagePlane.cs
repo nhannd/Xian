@@ -39,7 +39,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 {
-	using DicomImagePlaneDataCache = Dictionary<string, DicomImagePlane>;
+	using DicomImagePlaneDataCache = System.Collections.Generic.Dictionary<string, DicomImagePlane>;
 
 	/// <summary>
 	/// An adapter to unify the interface of dicom presentation images
@@ -66,9 +66,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		#endregion
 
-		private DicomImagePlane()
-		{
-		}
+		private DicomImagePlane() {}
 
 		public static void InitializeCache()
 		{
@@ -208,12 +206,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public SpatialTransform SourceImageTransform
 		{
-			get { return _sourceImageTransform; }	
+			get { return _sourceImageTransform; }
 		}
 
 		public string StudyInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.StudyInstanceUID; }	
+			get { return _sourceFrame.ParentImageSop.StudyInstanceUID; }
 		}
 
 		public string SeriesInstanceUid
@@ -223,19 +221,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public string SopInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.SopInstanceUID; }	
+			get { return _sourceFrame.ParentImageSop.SopInstanceUID; }
 		}
 
 		public int InstanceNumber
 		{
-			get { return _sourceFrame.ParentImageSop.InstanceNumber; }	
+			get { return _sourceFrame.ParentImageSop.InstanceNumber; }
 		}
 
 		public int FrameNumber
 		{
-			get { return _sourceFrame.FrameNumber; }	
+			get { return _sourceFrame.FrameNumber; }
 		}
-		
+
 		public string FrameOfReferenceUid
 		{
 			get { return _sourceFrame.FrameOfReferenceUid; }
@@ -243,12 +241,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public float Thickness
 		{
-			get { return (float)_sourceFrame.SliceThickness; }	
+			get { return (float) _sourceFrame.SliceThickness; }
 		}
 
 		public float Spacing
 		{
-			get { return (float)_sourceFrame.SpacingBetweenSlices; }
+			get { return (float) _sourceFrame.SpacingBetweenSlices; }
 		}
 
 		public Vector3D Normal
@@ -314,7 +312,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public PointF ConvertToImage(PointF positionMillimetres)
 		{
-			return (PointF)_sourceFrame.ImagePlaneHelper.ConvertToImage(positionMillimetres);
+			return (PointF) _sourceFrame.ImagePlaneHelper.ConvertToImage(positionMillimetres);
 		}
 
 		public bool IsInSameFrameOfReference(DicomImagePlane other)
@@ -349,10 +347,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			Vector3D[,] lineSegmentsImagePlaneBounds = new Vector3D[,]
 				{
 					// Bounding line segments of this (reference) image plane.
-					{ PositionPatientTopLeft, PositionPatientTopRight },
-					{ PositionPatientTopLeft, PositionPatientBottomLeft },
-					{ PositionPatientBottomRight, PositionPatientTopRight  },
-					{ PositionPatientBottomRight, PositionPatientBottomLeft}
+					{PositionPatientTopLeft, PositionPatientTopRight},
+					{PositionPatientTopLeft, PositionPatientBottomLeft},
+					{PositionPatientBottomRight, PositionPatientTopRight},
+					{PositionPatientBottomRight, PositionPatientBottomLeft}
 				};
 
 			List<Vector3D> planeIntersectionPoints = new List<Vector3D>();
@@ -361,8 +359,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			{
 				// Intersect the bounding line segments of the reference image with the plane of the target image.
 				Vector3D intersectionPoint = Vector3D.GetLinePlaneIntersection(other.Normal, other.PositionPatientCenterOfImage,
-																		lineSegmentsImagePlaneBounds[i, 0], 
-																		lineSegmentsImagePlaneBounds[i, 1], true);
+				                                                               lineSegmentsImagePlaneBounds[i, 0],
+				                                                               lineSegmentsImagePlaneBounds[i, 1], true);
 				if (intersectionPoint != null)
 					planeIntersectionPoints.Add(intersectionPoint);
 			}
@@ -371,11 +369,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 				return false;
 
 			intersectionPointPatient1 = planeIntersectionPoints[0];
-			intersectionPointPatient2 = CollectionUtils.SelectFirst(planeIntersectionPoints, 
-				delegate(Vector3D point)
-					{
-						return !planeIntersectionPoints[0].Equals(point);
-					});
+			intersectionPointPatient2 = CollectionUtils.SelectFirst(planeIntersectionPoints,
+			                                                        delegate(Vector3D point) { return !planeIntersectionPoints[0].Equals(point); });
 
 			return intersectionPointPatient1 != null && intersectionPointPatient2 != null;
 		}

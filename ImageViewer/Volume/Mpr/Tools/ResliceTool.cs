@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		private static readonly Color[,] _colors = {
 		                                           	{Color.Red, Color.Salmon},
 		                                           	{Color.DodgerBlue, Color.DeepSkyBlue},
-		                                           	{Color.Lime, Color.GreenYellow},
+		                                           	{Color.GreenYellow, Color.Lime},
 		                                           	{Color.Yellow, Color.Gold},
 		                                           	{Color.Magenta, Color.Violet},
 		                                           	{Color.Aqua, Color.Turquoise},

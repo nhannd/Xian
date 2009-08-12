@@ -241,6 +241,105 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Images are tilted along multiple axes. MPR currently only supports gantry tilts along a single axis..
+        /// </summary>
+        public static string MessageSourceDataSetCanOnlyGantryTiltedInOneAxis {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetCanOnlyGantryTiltedInOneAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inconsistent spacing betweeen images. MPR currently requires evenly spaced images..
+        /// </summary>
+        public static string MessageSourceDataSetImagesMustBeEvenlySpacedForMpr {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetImagesMustBeEvenlySpacedForMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Two images are at same patient location. MPR currently requires evenly spaced images..
+        /// </summary>
+        public static string MessageSourceDataSetImagesMustBeUniquelyLocatedForMpr {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetImagesMustBeUniquelyLocatedForMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each frame in the source dataset must have the same image orientation (Patient)..
+        /// </summary>
+        public static string MessageSourceDataSetMustBeSameImageOrientationPatient {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMustBeSameImageOrientationPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each frame in the source dataset must have the same frame of reference..
+        /// </summary>
+        public static string MessageSourceDataSetMustBeSingleFrameOfReference {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMustBeSingleFrameOfReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each frame in the source dataset must be from the same series..
+        /// </summary>
+        public static string MessageSourceDataSetMustBeSingleSeries {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMustBeSingleSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each frame in the source dataset must be from the same study..
+        /// </summary>
+        public static string MessageSourceDataSetMustBeSingleStudy {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMustBeSingleStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each frame in the source dataset must have a defined image orientation (Patient)..
+        /// </summary>
+        public static string MessageSourceDataSetMustDefineImageOrientationPatient {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetMustDefineImageOrientationPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source dataset must contain at least three frames..
+        /// </summary>
+        public static string MessageSourceDataSetNeedsThreeImagesForMpr {
+            get {
+                return ResourceManager.GetString("MessageSourceDataSetNeedsThreeImagesForMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected exception was encountered while creating the volume..
+        /// </summary>
+        public static string MessageUnexpectedCreateVolumeException {
+            get {
+                return ResourceManager.GetString("MessageUnexpectedCreateVolumeException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File is not a valid, supported DICOM image SOP instance. {0}.
+        /// </summary>
+        public static string MessageUnsupportedDicomImageSop {
+            get {
+                return ResourceManager.GetString("MessageUnsupportedDicomImageSop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 3 Plane.
         /// </summary>
         public static string ThreePlane {

@@ -46,15 +46,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	{
 		private class ResliceToolGraphic : CompositeGraphic, IPointsGraphic, IMemorable
 		{
-			private LineSegmentGraphicPointsAdapter _lineAdapter;
-			private ArrowGraphic _lineGraphic;
+			private LineGraphic _lineGraphic;
 			private SliceControlGraphic _sliceControlGraphic;
 			private StandardStatefulGraphic _stateControlGraphic;
 
 			public ResliceToolGraphic()
 			{
-				ArrowGraphic polylineGraphic = new ArrowGraphic();
-				MoveControlGraphic moveControlGraphic = new MoveControlGraphic(polylineGraphic);
+				LineGraphic lineGraphic = new LineGraphic();
+				MoveControlGraphic moveControlGraphic = new MoveControlGraphic(lineGraphic);
 				LineSegmentStretchControlGraphic lineControlGraphic = new LineSegmentStretchControlGraphic(moveControlGraphic);
 				SliceControlGraphic sliceControlGraphic = new SliceControlGraphic(lineControlGraphic, this);
 				StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(sliceControlGraphic);
@@ -63,18 +62,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 				_stateControlGraphic = statefulGraphic;
 				_sliceControlGraphic = sliceControlGraphic;
-				_lineGraphic = polylineGraphic;
-				_lineAdapter = new LineSegmentGraphicPointsAdapter(_lineGraphic);
+				_lineGraphic = lineGraphic;
 			}
 
 			protected override void Dispose(bool disposing)
 			{
-				if (_lineAdapter != null)
-				{
-					_lineAdapter.Dispose();
-					_lineAdapter = null;
-				}
-
 				if (_lineGraphic != null)
 				{
 					_lineGraphic = null;
@@ -95,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			public IPointsList Points
 			{
-				get { return _lineAdapter; }
+				get { return _lineGraphic.Points; }
 			}
 
 			public Color Color
@@ -169,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (memento == null)
 					return;
 
-				_lineAdapter.SuspendEvents();
+				_lineGraphic.Points.SuspendEvents();
 				_lineGraphic.CoordinateSystem = CoordinateSystem.Source;
 				try
 				{
@@ -179,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				finally
 				{
 					_lineGraphic.ResetCoordinateSystem();
-					_lineAdapter.ResumeEvents();
+					_lineGraphic.Points.ResumeEvents();
 				}
 			}
 
@@ -196,6 +188,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			}
 
 			#endregion
+
+			#region SliceControlGraphic
 
 			private class SliceControlGraphic : ControlGraphic
 			{
@@ -392,238 +386,284 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				}
 			}
 
-			#region LineSegment Adapter
+			#endregion
 
-			/// <summary>
-			/// Adapter class to map an <see cref="ILineSegmentGraphic"/> as the <see cref="IPointsList"/> exposed by an <see cref="IPointsGraphic"/>.
-			/// </summary>
-			private class LineSegmentGraphicPointsAdapter : IPointsList, IDisposable
+			#region Custom Line
+
+			private class LineGraphic : ArrowGraphic
 			{
-				public event EventHandler<IndexEventArgs> PointAdded;
-				public event EventHandler<IndexEventArgs> PointChanged;
-				public event EventHandler<IndexEventArgs> PointRemoved;
-				public event EventHandler PointsCleared;
+				private LineSegmentGraphicPointsAdapter _lineAdapter;
 
-				private ILineSegmentGraphic _lineGraphic;
-				private int _pointCount = 0;
-				private bool _enableInternalEvent = true;
-				private bool _eventsEnabled = true;
-
-				public LineSegmentGraphicPointsAdapter(ILineSegmentGraphic lineGraphic)
+				public LineGraphic()
 				{
-					_lineGraphic = lineGraphic;
-					_lineGraphic.Point1Changed += _lineGraphic_Point1Changed;
-					_lineGraphic.Point2Changed += _lineGraphic_Point2Changed;
+					_lineAdapter = new LineSegmentGraphicPointsAdapter(this);
 				}
 
-				public void Dispose()
+				protected override void Dispose(bool disposing)
 				{
-					if (_lineGraphic != null)
+					if (disposing && _lineAdapter != null)
 					{
-						_lineGraphic.Point1Changed -= _lineGraphic_Point1Changed;
-						_lineGraphic.Point2Changed -= _lineGraphic_Point2Changed;
-						_lineGraphic = null;
+						_lineAdapter.Dispose();
+						_lineAdapter = null;
+					}
+					base.Dispose(disposing);
+				}
+
+				public IPointsList Points
+				{
+					get { return _lineAdapter; }
+				}
+
+				public override void Move(SizeF delta)
+				{
+					_lineAdapter.SuspendEvents();
+					try
+					{
+						base.Move(delta);
+					}
+					finally
+					{
+						_lineAdapter.ResumeEvents();
+						_lineAdapter.FirePointsChanged();
 					}
 				}
 
-				private void _lineGraphic_Point2Changed(object sender, PointChangedEventArgs e)
+				/// <summary>
+				/// Adapter class to map an <see cref="ILineSegmentGraphic"/> as the <see cref="IPointsList"/> exposed by an <see cref="IPointsGraphic"/>.
+				/// </summary>
+				private class LineSegmentGraphicPointsAdapter : IPointsList, IDisposable
 				{
-					if (_enableInternalEvent && _pointCount > 1)
-						this.NotifyPointChanged(1);
-				}
+					public event EventHandler<IndexEventArgs> PointAdded;
+					public event EventHandler<IndexEventArgs> PointChanged;
+					public event EventHandler<IndexEventArgs> PointRemoved;
+					public event EventHandler PointsCleared;
 
-				private void _lineGraphic_Point1Changed(object sender, PointChangedEventArgs e)
-				{
-					if (_enableInternalEvent && _pointCount > 0)
+					private ILineSegmentGraphic _lineGraphic;
+					private int _pointCount = 0;
+					private bool _enableInternalEvent = true;
+					private bool _eventsEnabled = true;
+
+					public LineSegmentGraphicPointsAdapter(ILineSegmentGraphic lineGraphic)
+					{
+						_lineGraphic = lineGraphic;
+						_lineGraphic.Point1Changed += _lineGraphic_Point1Changed;
+						_lineGraphic.Point2Changed += _lineGraphic_Point2Changed;
+					}
+
+					public void Dispose()
+					{
+						if (_lineGraphic != null)
+						{
+							_lineGraphic.Point1Changed -= _lineGraphic_Point1Changed;
+							_lineGraphic.Point2Changed -= _lineGraphic_Point2Changed;
+							_lineGraphic = null;
+						}
+					}
+
+					private void _lineGraphic_Point2Changed(object sender, PointChangedEventArgs e)
+					{
+						if (_enableInternalEvent && _pointCount > 1)
+							this.NotifyPointChanged(1);
+					}
+
+					private void _lineGraphic_Point1Changed(object sender, PointChangedEventArgs e)
+					{
+						if (_enableInternalEvent && _pointCount > 0)
+							this.NotifyPointChanged(0);
+					}
+
+					private void NotifyPointChanged(int index)
+					{
+						if (_eventsEnabled)
+							EventsHelper.Fire(this.PointChanged, this, new IndexEventArgs(index));
+					}
+
+					private void NotifyPointAdded(int index)
+					{
+						if (_eventsEnabled)
+							EventsHelper.Fire(this.PointAdded, this, new IndexEventArgs(index));
+					}
+
+					private void NotifyPointRemoved(int index)
+					{
+						if (_eventsEnabled)
+							EventsHelper.Fire(this.PointRemoved, this, new IndexEventArgs(index));
+					}
+
+					private void NotifyPointsCleared()
+					{
+						if (_eventsEnabled)
+							EventsHelper.Fire(this.PointsCleared, this, EventArgs.Empty);
+					}
+
+					public void FirePointsChanged()
+					{
 						this.NotifyPointChanged(0);
-				}
+					}
 
-				private void NotifyPointChanged(int index)
-				{
-					if (_eventsEnabled)
-						EventsHelper.Fire(this.PointChanged, this, new IndexEventArgs(index));
-				}
+					#region IPointsList Members
 
-				private void NotifyPointAdded(int index)
-				{
-					if (_eventsEnabled)
-						EventsHelper.Fire(this.PointAdded, this, new IndexEventArgs(index));
-				}
-
-				private void NotifyPointRemoved(int index)
-				{
-					if (_eventsEnabled)
-						EventsHelper.Fire(this.PointRemoved, this, new IndexEventArgs(index));
-				}
-
-				private void NotifyPointsCleared()
-				{
-					if (_eventsEnabled)
-						EventsHelper.Fire(this.PointsCleared, this, EventArgs.Empty);
-				}
-
-				#region IPointsList Members
-
-				public bool IsClosed
-				{
-					get { return false; }
-				}
-
-				public void SuspendEvents()
-				{
-					_eventsEnabled = false;
-				}
-
-				public void ResumeEvents()
-				{
-					_eventsEnabled = true;
-				}
-
-				public int IndexOf(PointF item)
-				{
-					if (_pointCount > 0 && FloatComparer.AreEqual(item, _lineGraphic.Point1))
-						return 0;
-					else if (_pointCount > 1 && FloatComparer.AreEqual(item, _lineGraphic.Point2))
-						return 1;
-					return -1;
-				}
-
-				public void Insert(int index, PointF item)
-				{
-					_enableInternalEvent = false;
-					try
+					public bool IsClosed
 					{
-						if (index == 0)
+						get { return false; }
+					}
+
+					public void SuspendEvents()
+					{
+						_eventsEnabled = false;
+					}
+
+					public void ResumeEvents()
+					{
+						_eventsEnabled = true;
+					}
+
+					public int IndexOf(PointF item)
+					{
+						if (_pointCount > 0 && FloatComparer.AreEqual(item, _lineGraphic.Point1))
+							return 0;
+						else if (_pointCount > 1 && FloatComparer.AreEqual(item, _lineGraphic.Point2))
+							return 1;
+						return -1;
+					}
+
+					public void Insert(int index, PointF item)
+					{
+						_enableInternalEvent = false;
+						try
 						{
-							_lineGraphic.Point2 = _lineGraphic.Point1;
-							_lineGraphic.Point1 = item;
+							if (index == 0)
+							{
+								_lineGraphic.Point2 = _lineGraphic.Point1;
+								_lineGraphic.Point1 = item;
+							}
+							else if (index == 1)
+							{
+								_lineGraphic.Point2 = item;
+							}
+							++_pointCount;
+							this.NotifyPointAdded(index);
 						}
-						else if (index == 1)
+						finally
 						{
-							_lineGraphic.Point2 = item;
+							_enableInternalEvent = true;
 						}
-						++_pointCount;
-						this.NotifyPointAdded(index);
 					}
-					finally
+
+					public void RemoveAt(int index)
 					{
-						_enableInternalEvent = true;
+						_enableInternalEvent = false;
+						try
+						{
+							if (index == 0)
+								_lineGraphic.Point1 = _lineGraphic.Point2;
+							_pointCount--;
+							this.NotifyPointRemoved(index);
+						}
+						finally
+						{
+							_enableInternalEvent = true;
+						}
 					}
-				}
 
-				public void RemoveAt(int index)
-				{
-					_enableInternalEvent = false;
-					try
+					public PointF this[int index]
 					{
-						if (index == 0)
-							_lineGraphic.Point1 = _lineGraphic.Point2;
-						_pointCount--;
-						this.NotifyPointRemoved(index);
+						get
+						{
+							if (index >= _pointCount)
+								throw new IndexOutOfRangeException();
+							else if (index == 0)
+								return _lineGraphic.Point1;
+							else if (index == 1)
+								return _lineGraphic.Point2;
+							return PointF.Empty;
+						}
+						set
+						{
+							if (index >= _pointCount)
+								throw new IndexOutOfRangeException();
+							else if (index == 0)
+								_lineGraphic.Point1 = value;
+							else if (index == 1)
+								_lineGraphic.Point2 = value;
+							// no event needs to be explicitly fired here - our hooked event handlers will fire one for us
+						}
 					}
-					finally
+
+					public void Add(PointF item)
 					{
-						_enableInternalEvent = true;
+						_enableInternalEvent = false;
+						try
+						{
+							if (_pointCount == 0)
+								_lineGraphic.Point1 = item;
+							else if (_pointCount == 1)
+								_lineGraphic.Point2 = item;
+							++_pointCount;
+							this.NotifyPointAdded(_pointCount - 1);
+						}
+						finally
+						{
+							_enableInternalEvent = true;
+						}
 					}
-				}
 
-				public PointF this[int index]
-				{
-					get
+					public void Clear()
 					{
-						if (index >= _pointCount)
-							throw new IndexOutOfRangeException();
-						else if (index == 0)
-							return _lineGraphic.Point1;
-						else if (index == 1)
-							return _lineGraphic.Point2;
-						return PointF.Empty;
+						_pointCount = 0;
+						this.NotifyPointsCleared();
 					}
-					set
+
+					public bool Contains(PointF item)
 					{
-						if (index >= _pointCount)
-							throw new IndexOutOfRangeException();
-						else if (index == 0)
-							_lineGraphic.Point1 = value;
-						else if (index == 1)
-							_lineGraphic.Point2 = value;
-						// no event needs to be explicitly fired here - our hooked event handlers will fire one for us
+						return this.IndexOf(item) >= 0;
 					}
-				}
 
-				public void Add(PointF item)
-				{
-					_enableInternalEvent = false;
-					try
+					public void CopyTo(PointF[] array, int arrayIndex)
 					{
-						if (_pointCount == 0)
-							_lineGraphic.Point1 = item;
-						else if (_pointCount == 1)
-							_lineGraphic.Point2 = item;
-						++_pointCount;
-						this.NotifyPointAdded(_pointCount - 1);
+						if (_pointCount > 0)
+							array[arrayIndex++] = _lineGraphic.Point1;
+						if (_pointCount > 1)
+							array[arrayIndex++] = _lineGraphic.Point2;
+						for (int n = 2; n < _pointCount; n++)
+							array[arrayIndex++] = PointF.Empty;
 					}
-					finally
+
+					public int Count
 					{
-						_enableInternalEvent = true;
+						get { return _pointCount; }
 					}
-				}
 
-				public void Clear()
-				{
-					_pointCount = 0;
-					this.NotifyPointsCleared();
-				}
+					public bool IsReadOnly
+					{
+						get { return false; }
+					}
 
-				public bool Contains(PointF item)
-				{
-					return this.IndexOf(item) >= 0;
-				}
+					public bool Remove(PointF item)
+					{
+						int index = this.IndexOf(item);
+						if (index >= 0)
+							this.RemoveAt(index);
+						return index >= 0;
+					}
 
-				public void CopyTo(PointF[] array, int arrayIndex)
-				{
-					if (_pointCount > 0)
-						array[arrayIndex++] = _lineGraphic.Point1;
-					if (_pointCount > 1)
-						array[arrayIndex++] = _lineGraphic.Point2;
-					for (int n = 2; n < _pointCount; n++)
-						array[arrayIndex++] = PointF.Empty;
-				}
+					public IEnumerator<PointF> GetEnumerator()
+					{
+						if (_pointCount > 0)
+							yield return _lineGraphic.Point1;
+						if (_pointCount > 1)
+							yield return _lineGraphic.Point2;
+						for (int n = 2; n < _pointCount; n++)
+							yield return PointF.Empty;
+					}
 
-				public int Count
-				{
-					get { return _pointCount; }
-				}
+					IEnumerator IEnumerable.GetEnumerator()
+					{
+						return this.GetEnumerator();
+					}
 
-				public bool IsReadOnly
-				{
-					get { return false; }
+					#endregion
 				}
-
-				public bool Remove(PointF item)
-				{
-					int index = this.IndexOf(item);
-					if (index >= 0)
-						this.RemoveAt(index);
-					return index >= 0;
-				}
-
-				public IEnumerator<PointF> GetEnumerator()
-				{
-					if (_pointCount > 0)
-						yield return _lineGraphic.Point1;
-					if (_pointCount > 1)
-						yield return _lineGraphic.Point2;
-					for (int n = 2; n < _pointCount; n++)
-						yield return PointF.Empty;
-				}
-
-				IEnumerator IEnumerable.GetEnumerator()
-				{
-					return this.GetEnumerator();
-				}
-
-				#endregion
 			}
 
 			#endregion
