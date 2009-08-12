@@ -72,14 +72,13 @@
     <Compile Include="MprVolume.cs" />
     <Compile Include="ReadOnlyVolumeSlicerParams.cs" />
     <Compile Include="Tests\SlicerTests.cs" />
-    <Compile Include="Tools\DefineSlicePlaneLineGraphic.cs" />
-    <Compile Include="Tools\DefineSlicePlaneMath.cs" />
+    <Compile Include="Tools\ResliceToolGraphic.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
     <Compile Include="Utilities\MouseImageViewerToolMaster.cs" />
-    <Compile Include="Tools\DefineSlicePlaneTool.cs">
+    <Compile Include="Tools\ResliceTool.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tools\DefineSlicePlaneSlaveTool.cs">
+    <Compile Include="Tools\ResliceToolSlave.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\ObservableDisposableList.cs" />
@@ -87,19 +86,12 @@
     <Compile Include="VolumeReference.cs" />
     <Compile Include="VolumeSlicerParams.cs" />
     <Compile Include="MprSliceSet.cs" />
-    <Compile Include="Tools\MprRotateTool.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Tools\MprViewerTool.cs" />
     <Compile Include="LaunchMprTool.cs" />
-    <Compile Include="Tools\PinwheelGraphic.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Tools\RotateObliqueTool.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="VolumeBuilder.cs" />
     <Compile Include="Utilities\Math3D.cs" />
@@ -150,20 +142,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\RotateMprToolLarge.png" />
-    <EmbeddedResource Include="Icons\RotateMprToolMedium.png" />
-    <EmbeddedResource Include="Icons\RotateMprToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DefineObliqueToolLarge.png" />
-    <EmbeddedResource Include="Icons\DefineObliqueToolMedium.png" />
-    <EmbeddedResource Include="Icons\DefineObliqueToolSmall.png" />
-    <EmbeddedResource Include="Icons\OpenMprToolLarge.png" />
-    <EmbeddedResource Include="Icons\OpenMprToolMedium.png" />
-    <EmbeddedResource Include="Icons\OpenMprToolSmall.png" />
-    <EmbeddedResource Include="Icons\RotateObliqueToolLarge.png" />
-    <EmbeddedResource Include="Icons\RotateObliqueToolMedium.png" />
-    <EmbeddedResource Include="Icons\RotateObliqueToolSmall.png" />
+    <EmbeddedResource Include="Icons\ResliceToolLarge.png" />
+    <EmbeddedResource Include="Icons\ResliceToolMedium.png" />
+    <EmbeddedResource Include="Icons\ResliceToolSmall.png" />
+    <EmbeddedResource Include="Icons\LaunchMprToolLarge.png" />
+    <EmbeddedResource Include="Icons\LaunchMprToolMedium.png" />
+    <EmbeddedResource Include="Icons\LaunchMprToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />

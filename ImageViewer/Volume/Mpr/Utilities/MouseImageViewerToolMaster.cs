@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		private T _selectedTool;
 		private string _tooltip;
 		private event EventHandler _tooltipChanged;
+		private event EventHandler _selectedToolChanged;
 
 		protected MouseImageViewerToolMaster() {}
 
@@ -69,8 +70,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 						this.OnToolSelected(_selectedTool);
 
 					this.Active = (_selectedTool != null);
+					this.OnSelectedToolChanged();
 				}
 			}
+		}
+
+		protected virtual void OnSelectedToolChanged()
+		{
+			EventsHelper.Fire(_selectedToolChanged, this, EventArgs.Empty);
 		}
 
 		protected virtual void OnToolSelected(T tool)
@@ -86,8 +93,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		{
 			this.Behaviour = MouseButtonHandlerBehaviour.Default;
 			this.DefaultMouseButtonShortcut = new MouseButtonShortcut(XMouseButtons.None);
-			this.MouseButton = XMouseButtons.None;
+			// We should technically deassign MouseButton here, but it causes a logged
+			// error if the tool also happens to be active currently. There's no problem
+			// if we don't deassign it however, as you can't actually do anything with
+			// this tool until OnToolSelected gets called again, whereupon the correct
+			// MouseButton will be assigned.
 			this.MouseWheelShortcut = new MouseWheelShortcut();
+		}
+
+		public event  EventHandler SelectedToolChanged
+		{
+			add { _selectedToolChanged += value; }
+			remove { _selectedToolChanged -= value; }
 		}
 
 		#endregion
@@ -102,13 +119,34 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			{
 				if (_actionSet == null)
 				{
-					IActionSet actionSet = new ActionSet(base.Actions);
+					IActionSet actionSet = new ActionSet();
 					foreach (T tool in _toolSet.Tools)
 						actionSet = actionSet.Union(new ActionSet(CustomActionAttributeProcessor.Process(tool)));
 					_actionSet = actionSet;
 				}
-				return _actionSet;
+				return _actionSet.Union(base.Actions);
 			}
+		}
+
+		public IActionSet SlaveActions
+		{
+			get { return _actionSet; }
+		}
+
+		protected IList<T> SlaveTools
+		{
+			get
+			{
+				if (_toolSet == null)
+					return null;
+				return new List<T>(ConvertTools(_toolSet.Tools)).AsReadOnly();
+			}
+		}
+
+		private static IEnumerable<T> ConvertTools(IEnumerable<ITool> tools)
+		{
+			foreach (ITool tool in tools)
+				yield return (T) tool;
 		}
 
 		#endregion
@@ -137,28 +175,44 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		{
 			base.Initialize();
 
-			_toolSet = new ToolSet(this.CreateTools(), new ToolContext(this.ImageViewer));
-			foreach (T tool in _toolSet.Tools)
-				this.OnToolInitialized(tool);
+			InitializeSlaveTools();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				this._actionSet = null;
-				this.SelectedTool = null;
-
-				if (_toolSet != null)
-				{
-					foreach (T tool in _toolSet.Tools)
-						this.OnToolDisposing(tool);
-					_toolSet.Dispose();
-					_toolSet = null;
-				}
+				DisposeSlaveTools();
 			}
 
 			base.Dispose(disposing);
+		}
+
+		protected void ReinitializeTools()
+		{
+			this.DisposeSlaveTools();
+			this.InitializeSlaveTools();
+		}
+
+		private void InitializeSlaveTools()
+		{
+			_toolSet = new ToolSet(this.CreateTools(), new ToolContext(this.ImageViewer));
+			foreach (T tool in _toolSet.Tools)
+				this.OnToolInitialized(tool);
+		}
+
+		private void DisposeSlaveTools()
+		{
+			this._actionSet = null;
+			this.SelectedTool = null;
+
+			if (_toolSet != null)
+			{
+				foreach (T tool in _toolSet.Tools)
+					this.OnToolDisposing(tool);
+				_toolSet.Dispose();
+				_toolSet = null;
+			}
 		}
 
 		#endregion

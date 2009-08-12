@@ -34,32 +34,38 @@ using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 {
-	partial class DefineSlicePlaneTool
+	partial class ResliceTool
 	{
-		[MenuAction("activate", "imageviewer-contextmenu/MenuDefineSlicePlane", "Select", Flags = ClickActionFlags.CheckAction)]
-		[ButtonAction("activate", "global-toolbars/ToolbarsMpr/MenuDefineSlicePlane", "Select", Flags = ClickActionFlags.CheckAction)]
-		[IconSet("activate", IconScheme.Colour, "Icons.DefineObliqueToolLarge.png", "Icons.DefineObliqueToolMedium.png", "Icons.DefineObliqueToolSmall.png")]
+		[MenuAction("activate", "imageviewer-contextmenu/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
+		[MenuAction("activate", "global-menus/MenuTools/MenuMpr/MenuReslice", "Select", Flags = ClickActionFlags.CheckAction)]
+		[IconSet("activate", IconScheme.Colour, "Icons.ResliceToolLarge.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolSmall.png")]
 		[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 		[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 		[LabelValueObserver("activate", "Label", "SliceSetChanged")]
+		[GroupHint("activate", "Tools.Volume.MPR.Reslicing")]
 		[MouseToolButton(XMouseButtons.Left, false)]
-		private class DefineSlicePlaneSlaveTool : MprViewerTool
+		private class ResliceToolSlave : MprViewerTool
 		{
-			private SliceLineGraphic _lineGraphic;
+			private ResliceToolGraphic _resliceGraphic;
 			private InteractivePolylineGraphicBuilder _lineGraphicBuilder;
+
+			private object _graphicBuilderMemento;
+			private TranslocateGraphicUndoableCommand _graphicTranslocationCommand;
 
 			private Color _hotColor = Color.SkyBlue;
 			private Color _normalColor = Color.CornflowerBlue;
 
-			public DefineSlicePlaneSlaveTool()
+			public ResliceToolSlave()
 			{
 				base.Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 			}
@@ -71,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 					if (_sliceSet != null)
 					{
 						if (this.SliceImageBox != null)
-							return string.Format(SR.MenuDefineSlicePlaneFor, this.SliceImageBox.DisplaySet.Description);
+							return string.Format(SR.MenuResliceFor, this.SliceImageBox.DisplaySet.Description);
 					}
 					return string.Empty;
 				}
@@ -100,8 +106,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				               (imageBox != null && this.SelectedPresentationImage != null && this.SelectedPresentationImage.ParentDisplaySet != imageBox.DisplaySet);
 
 				// only translocate the graphic if the user is stacking through the display set
-				if (_lineGraphic.ParentPresentationImage.ParentDisplaySet == this.SelectedPresentationImage.ParentDisplaySet)
-					TranslocateGraphic(_lineGraphic, this.SelectedPresentationImage);
+				if (_resliceGraphic.ParentPresentationImage.ParentDisplaySet == this.SelectedPresentationImage.ParentDisplaySet)
+				{
+					// do not add this command to history - the stack command generates the actual action command
+					TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
+				}
 
 				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
 			}
@@ -126,6 +135,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				}
 			}
 
+			/// <summary>
+			/// Gets the <see cref="IImageBox"/> containing the slicing we control.
+			/// </summary>
 			public IImageBox SliceImageBox
 			{
 				get
@@ -151,7 +163,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (_lineGraphicBuilder != null)
 				{
 					_lineGraphicBuilder.GraphicComplete -= OnGraphicBuilderDone;
-					_lineGraphicBuilder.GraphicCancelled -= OnGraphicBuilderDone;
+					_lineGraphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
 					_lineGraphicBuilder = null;
 				}
 			}
@@ -163,17 +175,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (this.SliceImageBox == null)
 					throw new InvalidOperationException("Tool has nothing to control because the specified slice set is not visible.");
 
-				_lineGraphic = SliceLineGraphic.CreateSliceLineGraphic(this.ImageViewer, this.SliceSet, this.HotColor, this.NormalColor);
-				_lineGraphic.LineGraphic.Points.PointChanged += OnAnchorPointChanged;
-				_lineGraphic.Drawing += OnPolyLineDrawing;
-				_lineGraphic.Text = this.SliceImageBox.DisplaySet.Description;
+				_resliceGraphic = new ResliceToolGraphic();
+				_resliceGraphic.Color = this.NormalColor;
+				_resliceGraphic.HotColor = this.HotColor;
+				_resliceGraphic.Points.PointChanged += OnAnchorPointChanged;
+				_resliceGraphic.Text = this.SliceImageBox.DisplaySet.Description;
 
+				// draw the reslice graphic on the first imagebox that isn't showing the slicing this tool controls
 				foreach (IImageBox imageBox in this.ImageViewer.PhysicalWorkspace.ImageBoxes)
 				{
 					if (imageBox != this.SliceImageBox)
 					{
-						_lineGraphic.SetLine(this.SliceImageBox.TopLeftPresentationImage, imageBox.TopLeftPresentationImage);
-						AddGraphic(_lineGraphic, imageBox.TopLeftPresentationImage);
+						_resliceGraphic.SetLine(this.SliceImageBox.TopLeftPresentationImage, imageBox.TopLeftPresentationImage);
+						TranslocateGraphic(_resliceGraphic, imageBox.TopLeftPresentationImage);
 
 						break;
 					}
@@ -190,13 +204,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 						this.SliceSet = null;
 					}
 
-					if (_lineGraphic != null)
+					if (_resliceGraphic != null)
 					{
-						RemoveGraphic(_lineGraphic);
-						_lineGraphic.LineGraphic.Points.PointChanged -= OnAnchorPointChanged;
-						_lineGraphic.Drawing -= OnPolyLineDrawing;
-						_lineGraphic.Dispose();
-						_lineGraphic = null;
+						TranslocateGraphic(_resliceGraphic, null);
+						_resliceGraphic.Points.PointChanged -= OnAnchorPointChanged;
+						_resliceGraphic.Dispose();
+						_resliceGraphic = null;
 					}
 				}
 
@@ -220,15 +233,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				if (provider == null)
 					return false;
 
-				TranslocateGraphic(_lineGraphic, this.SelectedPresentationImage);
+				_graphicBuilderMemento = _resliceGraphic.CreateMemento();
+
+				// if we are reslicing on a different (i.e. not the one it previously existed on) display set, set this field variable
+				// which will be consumed when the graphic builder is completed or cancelled
+				_graphicTranslocationCommand = TranslocateGraphic(_resliceGraphic, this.SelectedPresentationImage);
 
 				// The interactive graphic builders typically operate on new, pristine graphics
 				// Since our graphic isn't new, clear the points from it! (Otherwise you'll end up with a polyline)
-				_lineGraphic.LineGraphic.Points.Clear();
+				_resliceGraphic.Points.Clear();
 
-				_lineGraphicBuilder = new InteractivePolylineGraphicBuilder(2, _lineGraphic.LineGraphic);
+				_lineGraphicBuilder = new InteractivePolylineGraphicBuilder(2, _resliceGraphic);
 				_lineGraphicBuilder.GraphicComplete += OnGraphicBuilderDone;
-				_lineGraphicBuilder.GraphicCancelled += OnGraphicBuilderDone;
+				_lineGraphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
 				if (_lineGraphicBuilder.Start(mouseInformation))
 				{
@@ -241,60 +258,153 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 
 			private void OnGraphicBuilderDone(object sender, GraphicEventArgs e)
 			{
+				if (base.ImageViewer.CommandHistory != null)
+				{
+					DrawableUndoableCommand compositeCommand;
+
+					// if we had to translocate the graphic to start the builder, we will need to draw both the old and new parent images
+					if (_graphicTranslocationCommand != null)
+					{
+						// disable automatic drawing by the translocation command
+						_graphicTranslocationCommand.DrawOnExecuteUnexecute = false;
+
+						// add the translocation command to the composite, and make that responsible for drawing
+						compositeCommand = new DrawableUndoableCommand(new ResliceDrawable(_graphicTranslocationCommand.Drawable, this.Reslice));
+					}
+					else
+					{
+						// otherwise, we can get away with just drawing the graphic
+						compositeCommand = new DrawableUndoableCommand(new ResliceDrawable(_resliceGraphic, this.Reslice));
+					}
+
+					//// enqueue the begin state command
+					//MemorableUndoableCommand beginStateCommand = new MemorableUndoableCommand(_resliceGraphic);
+					//beginStateCommand.BeginState = _graphicBuilderMemento;
+					//beginStateCommand.EndState = null;
+					//compositeCommand.Enqueue(beginStateCommand);
+
+					// enqueue the translocate command
+					if (_graphicTranslocationCommand != null)
+						compositeCommand.Enqueue(_graphicTranslocationCommand);
+
+					// enqueue the end state command
+					MemorableUndoableCommand endStateCommand = new MemorableUndoableCommand(_resliceGraphic);
+					endStateCommand.BeginState = _graphicBuilderMemento;
+					endStateCommand.EndState = _resliceGraphic.CreateMemento();
+					compositeCommand.Enqueue(endStateCommand);
+
+					base.ImageViewer.CommandHistory.AddCommand(compositeCommand);
+				}
+
+				_graphicBuilderMemento = null;
+				_graphicTranslocationCommand = null;
+
 				RemoveGraphicBuilder();
 			}
 
-			//TODO: Ideally handling this event wouldn't be necessary. Perhaps a Move event would solve the issue.
-			//	When the line is moved as a whole the OnAnchorPointChanged event is fired as the control points 
-			//	are offset individually. This results in endpoint wierdness that makes the oblique viewport behave erraticly. 
-			//	So here I grab the endpoints and use them in OnAnchorPointChanged.
-			private void OnPolyLineDrawing(object sender, EventArgs e)
+			private class ResliceDrawable : IDrawable
 			{
-#if true
-				// there must be two points already...
-				if (_lineGraphic.LineGraphic.Points.Count > 1 && base.SelectedImageSopProvider != null)
+				public delegate IDrawable ResliceCommandDelegate();
+
+				private readonly IDrawable _drawable;
+				private readonly ResliceCommandDelegate _resliceCommand;
+
+				public ResliceDrawable(IDrawable drawable1, ResliceCommandDelegate drawable2)
 				{
-					_lineGraphic.CoordinateSystem = CoordinateSystem.Destination;
-
-					PointF start = _lineGraphic.SpatialTransform.ConvertToSource(_lineGraphic.LineGraphic.Points[0]);
-					PointF end = _lineGraphic.SpatialTransform.ConvertToSource(_lineGraphic.LineGraphic.Points[1]);
-
-					_lineGraphic.ResetCoordinateSystem();
-
-					_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
-					_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+					_drawable = drawable1;
+					_resliceCommand = drawable2;
 				}
-#endif
+
+				public void Draw()
+				{
+					// reslicing takes the longest, so run it first
+					IDrawable drawable2 = _resliceCommand();
+					if (drawable2 != null)
+						drawable2.Draw();
+					if (_drawable != null)
+						_drawable.Draw();
+				}
+
+				public event EventHandler Drawing
+				{
+					add { }
+					remove { }
+				}
 			}
 
-			private Vector3D _startPatient;
-			private Vector3D _endPatient;
+			private void OnGraphicBuilderCancelled(object sender, GraphicEventArgs e)
+			{
+				IDrawable affectedDrawables;
+
+				// if we had to translocate the graphic to start the builder, undo that now
+				if (_graphicTranslocationCommand != null)
+				{
+					affectedDrawables = _graphicTranslocationCommand.Drawable;
+					_graphicTranslocationCommand.DrawOnExecuteUnexecute = false;
+					_graphicTranslocationCommand.Unexecute();
+					_graphicTranslocationCommand = null;
+				}
+				else
+				{
+					affectedDrawables = _resliceGraphic;
+				}
+
+				if (_graphicBuilderMemento != null)
+				{
+					_resliceGraphic.SetMemento(_graphicBuilderMemento);
+					_graphicBuilderMemento = null;
+					IDrawable resliceResult = this.Reslice();
+					if (resliceResult != null)
+						resliceResult.Draw();
+
+					affectedDrawables.Draw();
+				}
+
+
+				RemoveGraphicBuilder();
+			}
 
 			private void OnAnchorPointChanged(object sender, IndexEventArgs e)
 			{
-#if false // Code moved to OnPolyLineDrawing above, enable this to see the erratic behavior
-			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
+				IDrawable reslicedResult = this.Reslice();
 
-			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[0]);
-			PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[1]);
+				if (reslicedResult != null)
+					reslicedResult.Draw();
+			}
 
-			_polyLine.ResetCoordinateSystem();
+			private IDrawable Reslice()
+			{
+				Vector3D _startPatient = null;
+				Vector3D _endPatient = null;
 
-			_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
-			_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
-#endif
+				IImageSopProvider imageSopProvider = _resliceGraphic.ParentPresentationImage as IImageSopProvider;
+
+				// there must be two points already...
+				if (_resliceGraphic.Points.Count > 1 && imageSopProvider != null)
+				{
+					_resliceGraphic.CoordinateSystem = CoordinateSystem.Destination;
+
+					PointF start = _resliceGraphic.SpatialTransform.ConvertToSource(_resliceGraphic.Points[0]);
+					PointF end = _resliceGraphic.SpatialTransform.ConvertToSource(_resliceGraphic.Points[1]);
+
+					_resliceGraphic.ResetCoordinateSystem();
+
+					_startPatient = imageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
+					_endPatient = imageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+				}
+
 				if (_startPatient == null || _endPatient == null)
-					return;
+					return null;
 
-				if ((_startPatient - _endPatient).Magnitude < 5*base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
-					return;
+				if ((_startPatient - _endPatient).Magnitude < 5*imageSopProvider.Frame.NormalizedPixelSpacing.Row)
+					return null;
 
 				// set the new slice plane, which will regenerate the corresponding display set
-				SetSlicePlane(this.SliceSet, this.SelectedPresentationImage, _startPatient, _endPatient);
+				SetSlicePlane(this.SliceSet, _resliceGraphic.ParentPresentationImage, _startPatient, _endPatient);
 
 				ColorizeDisplaySetDescription(this.SliceImageBox.TopLeftPresentationImage, this.NormalColor);
 
-				this.SliceImageBox.TopLeftPresentationImage.Draw();
+				return this.SliceImageBox.TopLeftPresentationImage;
 			}
 
 			public override bool Track(IMouseInformation mouseInformation)

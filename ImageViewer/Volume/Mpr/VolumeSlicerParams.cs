@@ -41,8 +41,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// </summary>
 	public partial class VolumeSlicerParams : IVolumeSlicerParams
 	{
+		/// <summary>
+		/// Gets the identity slice plane orientation, which is (X=0, Y=0, Z=0).
+		/// </summary>
 		public static readonly IVolumeSlicerParams Identity = new VolumeSlicerParams().AsReadOnly();
+
+		/// <summary>
+		/// Gets an orthogonal slice plane orientation along the X axis in the original frame, which is (X=90, Y=0, Z=0).
+		/// </summary>
 		public static readonly IVolumeSlicerParams OrthogonalX = new VolumeSlicerParams(90, 0, 0, string.Format(SR.FormatSliceOrthogonalX, 90, 0, 0)).AsReadOnly();
+
+		/// <summary>
+		/// Gets an orthogonal slice plane orientation along the Y axis in the original frame, which is (X=90, Y=0, Z=90).
+		/// </summary>
 		public static readonly IVolumeSlicerParams OrthogonalY = new VolumeSlicerParams(90, 0, 90, string.Format(SR.FormatSliceOrthogonalY, 90, 0, 90)).AsReadOnly();
 
 		private const float _radiansPerDegree = (float) (Math.PI/180);

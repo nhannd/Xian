@@ -142,20 +142,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Define Slice Plane.
+        ///   Looks up a localized string similar to &amp;MPR.
         /// </summary>
-        public static string MenuDefineSlicePlane {
+        public static string MenuMpr {
             get {
-                return ResourceManager.GetString("MenuDefineSlicePlane", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Define Slice Plane for {0}.
-        /// </summary>
-        public static string MenuDefineSlicePlaneFor {
-            get {
-                return ResourceManager.GetString("MenuDefineSlicePlaneFor", resourceCulture);
+                return ResourceManager.GetString("MenuMpr", resourceCulture);
             }
         }
         
@@ -174,6 +165,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         public static string MenuOpenWithMpr {
             get {
                 return ResourceManager.GetString("MenuOpenWithMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reslice.
+        /// </summary>
+        public static string MenuReslice {
+            get {
+                return ResourceManager.GetString("MenuReslice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reslice {0}.
+        /// </summary>
+        public static string MenuResliceFor {
+            get {
+                return ResourceManager.GetString("MenuResliceFor", resourceCulture);
             }
         }
         
@@ -241,11 +250,38 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MPR.
+        /// </summary>
+        public static string ToolbarMpr {
+            get {
+                return ResourceManager.GetString("ToolbarMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open Selection with MPR.
         /// </summary>
         public static string ToolbarOpenSelectionWithMpr {
             get {
                 return ResourceManager.GetString("ToolbarOpenSelectionWithMpr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reslice.
+        /// </summary>
+        public static string ToolbarReslice {
+            get {
+                return ResourceManager.GetString("ToolbarReslice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reslice {0}.
+        /// </summary>
+        public static string ToolbarResliceFor {
+            get {
+                return ResourceManager.GetString("ToolbarResliceFor", resourceCulture);
             }
         }
         

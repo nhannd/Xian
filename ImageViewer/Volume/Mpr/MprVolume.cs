@@ -111,8 +111,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				yield return MprStaticSliceSet.CreateIdentitySliceSet(volume);
 				yield return new MprStandardSliceSet(volume, VolumeSlicerParams.OrthogonalX);
-				yield return new MprStandardSliceSet(volume, VolumeSlicerParams.OrthogonalY);
-				yield return new MprStandardSliceSet(volume, new VolumeSlicerParams(90, 0, 135));
+				yield return new MprStandardSliceSet(volume, new VolumeSlicerParams(90, 0, 270));
+				yield return new MprStandardSliceSet(volume, new VolumeSlicerParams(90, 0, 315));
 			}
 		}
 
