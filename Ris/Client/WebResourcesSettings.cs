@@ -131,6 +131,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("attached-document-preview.htm")]
+        public string AttachedDocumentPreviewUrl
+        {
+            get
+            {
+                return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["AttachedDocumentPreviewUrl"]));
+            }
+        }
+
 		#region Home Page Preview settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]

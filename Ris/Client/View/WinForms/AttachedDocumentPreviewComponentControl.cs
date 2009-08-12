@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -56,25 +55,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _attachments.ToolbarModel = _component.AttachmentActionModel;
             _attachments.DataBindings.Add("Selection", _component, "Selection", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            RefreshPreview();
-
-            _component.DataChanged += _component_DataChanged;
+            Control preview = (Control)_component.PreviewHost.ComponentView.GuiElement;
+            preview.Dock = DockStyle.Fill;
+            _splitContainer.Panel2.Controls.Add(preview);
         }
 
-        void _component_DataChanged(object sender, EventArgs e)
-        {
-            RefreshPreview();
-        }
-
-        void RefreshPreview()
-        {
-            if (String.IsNullOrEmpty(_component.TempFileName))
-            {
-                _browser.Url = new Uri("about:blank");
-                return;
-            }
-
-            _browser.Url = new Uri(_component.TempFileName);
-        }
     }
 }

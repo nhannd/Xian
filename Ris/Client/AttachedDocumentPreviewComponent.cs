@@ -91,13 +91,13 @@ namespace ClearCanvas.Ris.Client
 
             public event EventHandler SelectedDocumentChanged
             {
-                add { _component.DataChanged += value; }
-                remove { _component.DataChanged -= value; }
+                add { _component.SelectedDocumentChanged += value; }
+                remove { _component.SelectedDocumentChanged -= value; }
             }
 
             public EntityRef SelectedDocumentRef
             {
-                get { return _component.SelectedDocumentRef; }
+                get { return _component.SelectedDocument == null ? null : _component.SelectedDocument.DocumentRef; }
             }
 
             public void RemoveSelectedDocument()
@@ -119,6 +119,32 @@ namespace ClearCanvas.Ris.Client
             #endregion
         }
 
+        class AttachedDocumentDHtmlPreviewComponent : DHtmlComponent
+        {
+            private readonly AttachedDocumentPreviewComponent _component;
+
+            public AttachedDocumentDHtmlPreviewComponent(AttachedDocumentPreviewComponent component)
+            {
+                _component = component;
+                this.SetUrl(this.PreviewUrl);
+            }
+
+            protected override DataContractBase GetHealthcareContext()
+            {
+                return _component.SelectedDocument;
+            }
+
+            public string PreviewUrl
+            {
+                get { return WebResourcesSettings.Default.AttachedDocumentPreviewUrl; }
+            }
+
+            public void Refresh()
+            {
+                this.SetUrl(this.PreviewUrl);
+            }
+        }
+
         // Summary component members
         private readonly bool _showSummary;
         private readonly bool _showToolbar;
@@ -126,13 +152,13 @@ namespace ClearCanvas.Ris.Client
         private ITable _attachmentTable;
         private ISelection _selection;
         private event EventHandler _changeCommitted;
+        private event EventHandler _selectedDocumentChanged;
 
         private List<PatientAttachmentSummary> _patientAttachments;
         private List<OrderAttachmentSummary> _orderAttachments;
 
-        // Preview members
-        private string _tempFileName;
-        private event EventHandler _dataChanged;
+        private AttachedDocumentDHtmlPreviewComponent _previewComponent;
+        private ChildComponentHost _previewComponentHost;
 
         private ToolSet _toolSet;
 
@@ -187,16 +213,48 @@ namespace ClearCanvas.Ris.Client
         public override void Start()
         {
             _toolSet = new ToolSet(new AttachedDocumentToolExtensionPoint(), new AttachedDocumentToolContext(this));
+
+            _previewComponent = new AttachedDocumentDHtmlPreviewComponent(this);
+            _previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
+            _previewComponentHost.StartComponent();
+
             base.Start();
         }
 
         public override void Stop()
         {
+            if (_previewComponentHost != null)
+            {
+                _previewComponentHost.StopComponent();
+                _previewComponentHost = null;
+            }
+
             _toolSet.Dispose(); 
             base.Stop();
         }
 
-        #region Summary Methods
+        #region Events
+
+        public event EventHandler ChangeCommited
+        {
+            add { _changeCommitted += value; }
+            remove { _changeCommitted -= value; }
+        }
+
+        public event EventHandler SelectedDocumentChanged
+        {
+            add { _selectedDocumentChanged += value; }
+            remove { _selectedDocumentChanged -= value; }
+        }
+
+        #endregion
+
+        #region Presentation Models
+
+        public ApplicationComponentHost PreviewHost
+        {
+            get { return _previewComponentHost; }
+        }
 
         public bool ShowSummary
         {
@@ -257,33 +315,16 @@ namespace ClearCanvas.Ris.Client
                 if (_selection != value)
                 {
                     _selection = value;
+                    _previewComponent.Refresh();
 
-                    if (_selection == null)
-                        this.ClearPreviewData();
-                    else
-                    {
-                        if (_mode == AttachmentMode.Patient)
-                        {
-                            PatientAttachmentSummary item = _selection.Item as PatientAttachmentSummary;
-                            if (item == null)
-                                this.ClearPreviewData();
-                            else
-                                this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.DocumentRef);
-                        }
-                        else
-                        {
-                            OrderAttachmentSummary item = _selection.Item as OrderAttachmentSummary;
-                            if (item == null)
-                                this.ClearPreviewData();
-                            else
-                                this.SetPreviewData(item.Document.MimeType, item.Document.FileExtension, item.Document.DocumentRef);
-                        }
-                    }
+                    EventsHelper.Fire(_selectedDocumentChanged, this, EventArgs.Empty);
                 }
             }
         }
 
-        public EntityRef SelectedDocumentRef
+        #endregion
+
+        public AttachedDocumentSummary SelectedDocument
         {
             get
             {
@@ -293,20 +334,14 @@ namespace ClearCanvas.Ris.Client
                 if (_mode == AttachmentMode.Patient)
                 {
                     PatientAttachmentSummary item = _selection.Item as PatientAttachmentSummary;
-                    return item == null ? null : item.Document.DocumentRef;
+                    return item == null ? null : item.Document;
                 }
                 else
                 {
                     OrderAttachmentSummary item = _selection.Item as OrderAttachmentSummary;
-                    return item == null ? null : item.Document.DocumentRef;
+                    return item == null ? null : item.Document;
                 }
             }
-        }
-
-        public event EventHandler ChangeCommited
-        {
-            add { _changeCommitted += value; }
-            remove { _changeCommitted -= value; }
         }
 
         public void RemoveSelectedDocument()
@@ -324,55 +359,10 @@ namespace ClearCanvas.Ris.Client
             this.Modified = true;
         }
 
-        #endregion
-
-        #region Preview Methods
-
-        protected void ClearPreviewData()
-        {
-            _tempFileName = null;
-            EventsHelper.Fire(_dataChanged, this, EventArgs.Empty);
-        }
-
-		protected void SetPreviewData(string mimeType, string fileExtension, EntityRef documentRef)
-        {
-            if (documentRef != null)
-            {
-                try
-                {
-                    _tempFileName = AttachedDocument.DownloadToTempFile(documentRef, fileExtension);
-                }
-                catch (Exception e)
-                {
-                    _tempFileName = null;
-                    ExceptionHandler.Report(e, SR.ExceptionFailedToDisplayDocument, this.Host.DesktopWindow);
-                }
-            }
-            else
-            {
-                _tempFileName = null;
-            }
-
-            EventsHelper.Fire(_dataChanged, this, EventArgs.Empty);
-        }
-
-        public string TempFileName
-        {
-            get { return _tempFileName; }
-        }
-
-        public event EventHandler DataChanged
-        {
-            add { _dataChanged += value; }
-            remove { _dataChanged -= value; }
-        }
-
         public void SaveChanges()
         {
             EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
         }
-
-        #endregion
 
 	}
 }
