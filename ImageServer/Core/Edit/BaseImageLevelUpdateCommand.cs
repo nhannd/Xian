@@ -102,13 +102,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 	}
 
-	public abstract class BaseImageLevelUpdateCommand : ServerCommand
+	public abstract class BaseImageLevelUpdateCommand : ServerCommand, IUpdateImageTagCommand
 	{
 		private DicomFile _file;
 		private string _name;
+	    protected ImageLevelUpdateEntry _updateEntry = new ImageLevelUpdateEntry();
 
 
-		public BaseImageLevelUpdateCommand()
+	    public BaseImageLevelUpdateCommand()
 			: base("ImageLevelUpdateCommand", true)
 		{
 		}
@@ -116,10 +117,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		public BaseImageLevelUpdateCommand(string name)
 			: base("ImageLevelUpdateCommand", true)
 		{
-			_name = name;
+		    _name = name;
+		    Description = "Update Dicom Tag";
 		}
 
-		#region IActionItem<DicomFile> Members
+	    #region IActionItem<DicomFile> Members
 
 		public abstract bool Apply(DicomFile file);
 
@@ -140,8 +142,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			set { _file = value; }
 		}
 
+	    /// <summary>
+	    /// Gets or sets the <see cref="ImageLevelUpdateEntry"/> for this command.
+	    /// </summary>
+	    [XmlIgnore]
+	    public ImageLevelUpdateEntry UpdateEntry
+	    {
+	        get { return _updateEntry; }
+	        set { _updateEntry = value; }
+	    }
 
-		#endregion
+	    #endregion
 
 		protected override void OnExecute()
 		{

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -45,6 +46,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#region Private Fields
 		private List<BaseImageLevelUpdateCommand> _commands;
 		private EditType _editType;
+	    private string _userId;
+	    private DateTime? _timeStamp;
 		#endregion
 
 		#region Public Properties
@@ -76,6 +79,20 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 		}
 
-		#endregion
+        [XmlElement("UserId")]
+        public string UserId
+	    {
+	        get { return _userId; }
+	        set { _userId = value; }
+	    }
+
+        [XmlElement("TimeStamp")]
+        public DateTime? TimeStamp
+	    {
+	        get { return _timeStamp; }
+	        set { _timeStamp = value; }
+	    }
+
+	    #endregion
 	}
 }

@@ -69,6 +69,8 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 			_studyInfo = StudyInformation.CreateFrom(context.OriginalStudy);
 			_changeDesc = new WebEditStudyHistoryChangeDescription();
 			_changeDesc.UpdateCommands = context.EditCommands;
+		    _changeDesc.TimeStamp = Platform.Time;
+		    _changeDesc.UserId = context.UserId;
 
 		}
 

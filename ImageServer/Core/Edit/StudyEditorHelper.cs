@@ -98,6 +98,78 @@ namespace ClearCanvas.ImageServer.Core.Edit
         }
 
         /// <summary>
+        /// Inserts edit request(s) to update a study.
+        /// </summary>
+        /// <param name="context">The persistence context used for database connection.</param>
+        /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
+        /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
+        /// <exception cref="InvalidStudyStateOperationException"></exception>
+        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems)
+        {
+            // Find all location of the study in the system and insert series delete request
+            IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
+            IList<WorkQueue> entries = new List<WorkQueue>();
+
+            foreach (StudyStorageLocation location in storageLocations)
+            {
+                if (location.IsNearline)
+                {
+                    throw new InvalidStudyStateOperationException("Study Is Nearline. It must be restored first.");
+                }
+
+                if (location.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
+                {
+                    if (location.IsArchivedLossless)
+                    {
+                        throw new InvalidStudyStateOperationException("Study is lossy but was archived as lossless. It must be restored first.");
+                
+                    }
+                }
+
+                try
+                {
+                    string failureReason;
+                    if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.EditScheduled, out failureReason))
+                    {
+                        // insert an edit request
+                        WorkQueue request = InsertEditStudyRequest(context, location, updateItems);
+                        Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebEditStudy));
+                        entries.Add(request);
+                    }
+                    else
+                    {
+                        throw new ApplicationException(String.Format("Unable to lock storage location {0} for edit : {1}", location.Key, failureReason));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Errors occurred when trying to insert edit request");
+                    if (!ServerHelper.UnlockStudy(location.Key))
+                        throw new ApplicationException("Unable to unlock the study");
+                }
+            }
+
+            return entries;
+        }
+
+        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems)
+        {
+            // Create a work queue entry and append the series instance uid into the WorkQueueUid table
+
+            WorkQueue editEntry = null;
+            IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems);
+            editEntry = broker.FindOne(criteria);
+            if (editEntry == null)
+            {
+                throw new ApplicationException(
+                    String.Format("Unable to insert an Edit request for study {0}", location.StudyInstanceUid));
+            }
+            return editEntry;
+        }
+
+
+        /// <summary>
         /// Inserts a DeleteSeries work queue entry
         /// </summary>
         /// <param name="context"></param>
@@ -124,6 +196,26 @@ namespace ClearCanvas.ImageServer.Core.Edit
             }
 
             return deleteSeriesEntry;
+        }
+    }
+
+    internal class EditStudyWorkQueueParameters : InsertWorkQueueParameters
+    {
+        public EditStudyWorkQueueParameters(StudyStorageLocation location, List<UpdateItem> updateItems)
+        {
+            DateTime now = Platform.Time;
+            EditStudyWorkQueueData data = new EditStudyWorkQueueData();
+            data.EditRequest.TimeStamp = now;
+            data.EditRequest.UserId = ServerHelper.CurrentUserName;
+            data.EditRequest.UpdateEntries = updateItems;
+
+            WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
+            WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+            StudyStorageKey = location.Key;
+            ServerPartitionKey = location.ServerPartitionKey;
+            ScheduledTime = now;
+            ExpirationTime = now.AddMinutes(15);
+            WorkQueueData = XmlUtils.SerializeAsXmlDoc(data); 
         }
     }
 

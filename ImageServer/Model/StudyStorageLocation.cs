@@ -117,6 +117,7 @@ namespace ClearCanvas.ImageServer.Model
         private string _studyFolderRelativePath;
         private StudyStorage _studyStorage;
         private Patient _patient;
+
         #endregion
 
         #region Public Properties
@@ -372,6 +373,18 @@ namespace ClearCanvas.ImageServer.Model
         public bool IsNearline
         {
             get { return StudyStatusEnum.Equals(Model.StudyStatusEnum.Nearline); }
+        }
+
+        public bool IsArchivedLossless
+        {
+            get
+            {
+                ArchiveStudyStorage archive = GetArchiveLocation(Key);
+                if (archive == null)
+                    return false;
+                else
+                    return archive.ServerTransferSyntax.Lossless;
+            }
         }
 
 

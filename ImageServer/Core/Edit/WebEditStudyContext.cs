@@ -62,7 +62,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		private Patient _orginalPatient;
 		private List<BaseImageLevelUpdateCommand> _editCommandList;
 		private StudyStorageLocation _newLocation;
-		#endregion
+	    private string _userId;
+
+	    #endregion
 
 		#region Public Properties
 		/// <summary>
@@ -157,6 +159,15 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			set { _orginalPatient = value; }
 		}
 
-		#endregion
+        /// <summary>
+        /// Gets or sets the id of the user who requested the edit.
+        /// </summary>
+	    public string UserId
+	    {
+            get { return _userId; }
+	        set { _userId = value; }
+	    }
+
+	    #endregion
 	}
 }

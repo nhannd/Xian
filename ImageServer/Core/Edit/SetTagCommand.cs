@@ -45,12 +45,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	/// This class is serializable.
 	/// </remarks>
 	[XmlRoot("SetTag")]
-	public class SetTagCommand : BaseImageLevelUpdateCommand, IUpdateImageTagCommand
+	public class SetTagCommand : BaseImageLevelUpdateCommand
 	{
 	    
 	    #region Private Fields
-        private ImageLevelUpdateEntry _updateEntry = new ImageLevelUpdateEntry();
-		#endregion
+
+	    #endregion
 
 		#region Constructors
 		/// <summary>
@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		public SetTagCommand()
 			: base("SetTag")
 		{
-			Description = "Update Dicom Tag";
 		}
 
         /// <summary>
@@ -112,17 +111,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#endregion
 
 		#region Public Properties
-		/// <summary>
-		/// Gets or sets the <see cref="ImageLevelUpdateEntry"/> for this command.
-		/// </summary>
-		[XmlIgnore]
-		public ImageLevelUpdateEntry UpdateEntry
-		{
-			get { return _updateEntry; }
-			set { _updateEntry = value; }
-		}
 
-		/// <summary>
+	    /// <summary>
 		/// Gets the name of the Dicom tag affected by this command.
 		/// **** For XML serialization purpose. ****
 		/// </summary>

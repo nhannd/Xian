@@ -18,7 +18,7 @@
                         <tr>
                             <td class="HistoryDetailsHeading">
                                 <span style="margin-left:5px">
-                                    Action : <%= HtmlUtility.GetEnumInfo(EditHistory.EditType).LongDescription %> 
+                                    Action : <%= HtmlUtility.GetEnumInfo(EditHistory.EditType).LongDescription %> by <%= EditHistory.UserId ?? "Unknown" %>
                                 </span>
                             </td></tr>
                         <tr><td style="border:none">

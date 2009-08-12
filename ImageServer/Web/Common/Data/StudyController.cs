@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -241,39 +240,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			}
 
-        public void EditStudy(Study study, XmlDocument modifiedFields)
+        public void EditStudy(Study study, List<UpdateItem> updateItems)
         {
-            Platform.Log(LogLevel.Info, "editing study");
-				
+            Platform.Log(LogLevel.Info, String.Format("Editing study {0}", study.StudyInstanceUid));
+
+            ServerPartition partition = ServerPartition.Load(study.ServerPartitionKey);
+			    
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-                StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
-                LockStudyParameters lockParms = new LockStudyParameters();
-				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
-				lockParms.StudyStorageKey = storage.Key;
-			    ILockStudy broker = ctx.GetBroker<ILockStudy>();
-				bool retVal = broker.Execute(lockParms);
-                
-				if (!retVal || !lockParms.Successful)
-				{
-				    throw new ApplicationException(String.Format("Unable to lock the study: {0}", lockParms.FailureReason));
-				}
-
-				IInsertWorkQueue workQueueBroker = ctx.GetBroker<IInsertWorkQueue>();
-				InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
-				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
-				columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
-				columns.ServerPartitionKey = study.ServerPartitionKey;
-				columns.StudyStorageKey = storage.Key;
-				DateTime time = Platform.Time;
-				columns.ScheduledTime = time;
-				columns.ExpirationTime = time;
-				columns.WorkQueueData = modifiedFields;
-
-                if (workQueueBroker.FindOne(columns) == null)
-                    throw new ApplicationException("EditStudy failed");
-
-				ctx.Commit();
+                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, partition, study.StudyInstanceUid, updateItems);
+                if (entries!=null)
+			        ctx.Commit();
 			}
         }
 

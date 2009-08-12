@@ -222,15 +222,30 @@ namespace ClearCanvas.ImageServer.Core
 
 			LoadExtensions();
 
-			WebEditStudyCommandCompiler compiler = new WebEditStudyCommandCompiler();
+            EditStudyWorkQueueDataParser parser = new EditStudyWorkQueueDataParser();
+		    EditStudyWorkQueueData data = parser.Parse(actionXml);
 
-			using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
+		    using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
 			{
 				// Load the engine for editing rules.
 				ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopEdited, ServerPartition.Key);
 				engine.Load();
 
-				List<BaseImageLevelUpdateCommand> updateCommands = compiler.Compile(actionXml);
+				// Convert UpdateItem in the request into BaseImageLevelUpdateCommand
+                List<BaseImageLevelUpdateCommand> updateCommands = null;
+                if (data!=null)
+                {
+                	updateCommands= CollectionUtils.Map<UpdateItem, BaseImageLevelUpdateCommand>(
+					        data.EditRequest.UpdateEntries,
+					        delegate(UpdateItem item)
+					            {
+					                // Note: For edit, we assume each UpdateItem is equivalent to SetTagCommand
+					                return new SetTagCommand(item.DicomTag.TagValue, item.OriginalValue, item.Value);
+					            }
+					        );
+                }               
+                
+
 				UpdateStudyCommand updateStudyCommand =
 					new UpdateStudyCommand(ServerPartition, StorageLocation, updateCommands, engine);
 				processor.AddCommand(updateStudyCommand);
@@ -242,6 +257,7 @@ namespace ClearCanvas.ImageServer.Core
 				context.EditCommands = updateCommands;
 				context.OriginalStudy = _study;
 				context.OrginalPatient = _patient;
+			    context.UserId = data.EditRequest.UserId;
 
 				OnStudyUpdating(context);
 

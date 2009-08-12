@@ -30,12 +30,15 @@
 #endregion
 
 using System;
-using System.Xml;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -94,33 +97,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         }
 
-        private XmlNode createChildNode(XmlNode setNode, string tagName, string value)
+
+        private List<UpdateItem> GetChanges()
         {
-            XmlNode clone = setNode.CloneNode(true);
-            clone.Attributes.GetNamedItem("TagPath").InnerXml = tagName;
-            clone.Attributes.GetNamedItem("Value").InnerXml = value;
-            return clone;
-        }
-
-        private XmlDocument getChanges(out string description)
-        {
-        	description = string.Empty;
-            XmlDocument changes = new XmlDocument();
-
-            XmlElement rootNode = changes.CreateElement("editstudy");
-            XmlElement setNode = changes.CreateElement("SetTag");
-            setNode.SetAttribute("TagPath", "");
-            setNode.SetAttribute("Value","");
-
+            List<UpdateItem> changes = new List<UpdateItem>();
             PersonName oldPatientName = new PersonName(Study.PatientsName);
             PersonName newPatientName = PatientNamePanel.PersonName;
 
             if (!oldPatientName.AreSame(newPatientName, PersonNameComparisonOptions.CaseInsensitive))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsName, newPatientName.ToString()));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";", 
-											 DicomTagDictionary.GetDicomTag(DicomTags.PatientsName).Name, 
-											 newPatientName);
+                UpdateItem item = new UpdateItem(DicomTags.PatientsName, Study.PatientsName, PatientNamePanel.PersonName);
+                changes.Add(item);
             }
 
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
@@ -128,103 +115,79 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                         : "";
             if (!Study.PatientsBirthDate.Equals(dicomBirthDate))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsBirthDate, dicomBirthDate));
-				description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-											 DicomTagDictionary.GetDicomTag(DicomTags.PatientsBirthDate).Name,
-											 dicomBirthDate);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.PatientsBirthDate, Study.PatientsBirthDate, dicomBirthDate);
+                changes.Add(item);
+            }
 
-            if(Study.PatientsAge == null || !PatientAge.Text.Equals(Study.PatientsAge)) {
-                string patientAge = PatientAge.Text.PadLeft(3,'0');
-                patientAge += PatientAgePeriod.SelectedValue;
-
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsAge, patientAge));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.PatientsAge).Name,
-            	                             patientAge);
-
+            if (Study.PatientsAge == null || !PatientAge.Text.Equals(Study.PatientsAge))
+            {
+                string patientAge = String.IsNullOrEmpty(PatientAge.Text) ? String.Empty : String.Format("{0}{1}", PatientAge.Text.PadLeft(3, '0'), PatientAgePeriod.SelectedValue);
+                UpdateItem item = new UpdateItem(DicomTags.PatientsAge, Study.PatientsAge, patientAge);
+                changes.Add(item);
             }
 
             if (!Study.PatientsSex.Equals(PatientGender.Text))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsSex, PatientGender.Text));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.PatientsSex).Name,
-            	                             PatientGender.Text);
+                UpdateItem item = new UpdateItem(DicomTags.PatientsSex, Study.PatientsSex, PatientGender.Text);
+                changes.Add(item);
             }
 
             if (!Study.PatientId.Equals(PatientID.Text))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientID, PatientID.Text));
-				description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-									 DicomTagDictionary.GetDicomTag(DicomTags.PatientId).Name,
-									 PatientID.Text);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.PatientId, Study.PatientId, PatientID.Text);
+                changes.Add(item);
+            }
 
-            if(String.IsNullOrEmpty(Study.StudyDescription)
-				|| !Study.StudyDescription.Equals((StudyDescription.Text)))
+            if (String.IsNullOrEmpty(Study.StudyDescription)
+                || !Study.StudyDescription.Equals((StudyDescription.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDescription, StudyDescription.Text));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.StudyDescription).Name,
-            	                             StudyDescription.Text);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.StudyDescription, Study.StudyDescription, StudyDescription.Text);
+                changes.Add(item);
+            }
 
-			if (String.IsNullOrEmpty(Study.StudyId)
-				|| !Study.StudyId.Equals((StudyID.Text)))
+            if (String.IsNullOrEmpty(Study.StudyId)
+                || !Study.StudyId.Equals((StudyID.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyID, StudyID.Text));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.StudyId).Name,
-            	                             StudyID.Text);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.StudyId, Study.StudyId, StudyID.Text);
+                changes.Add(item);
+            }
 
-			if (String.IsNullOrEmpty(Study.AccessionNumber)
-				|| !Study.AccessionNumber.Equals((AccessionNumber.Text)))
+            if (String.IsNullOrEmpty(Study.AccessionNumber)
+                || !Study.AccessionNumber.Equals((AccessionNumber.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber).Name,
-            	                             AccessionNumber.Text);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.AccessionNumber, Study.AccessionNumber, AccessionNumber.Text);
+                changes.Add(item);
+            }
 
             PersonName oldPhysicianName = new PersonName(Study.ReferringPhysiciansName);
             PersonName newPhysicianName = ReferringPhysicianNamePanel.PersonName;
 
             if (!newPhysicianName.AreSame(oldPhysicianName, PersonNameComparisonOptions.CaseInsensitive))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.ReferringPhysician, newPhysicianName.ToString()));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.ReferringPhysiciansName).Name,
-            	                             newPhysicianName);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.ReferringPhysiciansName, Study.ReferringPhysiciansName, ReferringPhysicianNamePanel.PersonName.ToString());
+                changes.Add(item);
+            }
 
             String dicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
                                         ? DateTime.Parse(StudyDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
 
-            if(!Study.StudyDate.Equals(dicomStudyDate))
+            if (!Study.StudyDate.Equals(dicomStudyDate))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDate, dicomStudyDate));
-            	description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-            	                             DicomTagDictionary.GetDicomTag(DicomTags.StudyDate).Name,
-            	                             dicomStudyDate);
-			}
+                UpdateItem item = new UpdateItem(DicomTags.StudyDate, Study.StudyDate, dicomStudyDate);
+                changes.Add(item);
+            }
 
-            int hh = StudyTimeAmPm.SelectedValue=="AM"? int.Parse(StudyTimeHours.Text)%12: 12+(int.Parse(StudyTimeHours.Text)%12) ;
+            int hh = StudyTimeAmPm.SelectedValue == "AM" ? int.Parse(StudyTimeHours.Text) % 12 : 12 + (int.Parse(StudyTimeHours.Text) % 12);
             int mm = int.Parse(StudyTimeMinutes.Text);
             int ss = int.Parse(StudyTimeSeconds.Text);
             String dicomStudyTime = String.Format("{0:00}{1:00}{2:00}", hh, mm, ss);
-            
-            if(!Study.StudyTime.Equals(dicomStudyTime))
-            {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyTime, dicomStudyTime));
-				description += string.Format("Tag=\"{0}\" Value=\"{1}\";",
-											 DicomTagDictionary.GetDicomTag(DicomTags.StudyTime).Name,
-											 dicomStudyTime);
-			}
 
-            changes.AppendChild(rootNode);
+            if (!Study.StudyTime.Equals(dicomStudyTime))
+            {
+                UpdateItem item = new UpdateItem(DicomTags.StudyTime, Study.StudyTime, dicomStudyTime);
+                changes.Add(item);
+            }
 
             return changes;
         }
@@ -352,6 +315,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             DataBind();
         }
 
+
+
+        private static void AuditLog(Study study, List<UpdateItem> fields)
+        {
+            Platform.CheckForNullReference(study, "study");
+            Platform.CheckForNullReference(fields, "fields");
+
+            DicomInstancesAccessedAuditHelper helper =
+                new DicomInstancesAccessedAuditHelper(ServerPlatform.AuditSource,
+                                                      EventIdentificationTypeEventOutcomeIndicator.Success,
+                                                      EventIdentificationTypeEventActionCode.U);
+            helper.AddUser(new AuditPersonActiveParticipant(
+                               SessionManager.Current.Credentials.UserName,
+                               null,
+                               SessionManager.Current.Credentials.DisplayName));
+
+            AuditStudyParticipantObject participant = new AuditStudyParticipantObject(study.StudyInstanceUid, study.AccessionNumber);
+
+            string updateDescription = StringUtilities.Combine(
+                fields, ";",
+                delegate(UpdateItem item)
+                {
+                    return String.Format("Tag=\"{0}\" Value=\"{1}\";", item.DicomTag.Name, item.Value);
+                }
+                );
+
+            participant.ParticipantObjectDetail = updateDescription;
+            helper.AddStudyParticipantObject(participant);
+            ServerPlatform.LogAuditMessage(helper);
+        }
+
         #endregion
         #region Protected Methods
         
@@ -374,31 +368,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 if (StudyEdited != null)
                 {
-                	string description;
-                    XmlDocument modifiedFields = getChanges(out description);
-
-                    if (modifiedFields.HasChildNodes)
+                    List<UpdateItem> modifiedFields = GetChanges();
+                    if (modifiedFields!=null && modifiedFields.Count > 0)
                     {
                         StudyController studyController = new StudyController();
                         studyController.EditStudy(Study, modifiedFields);
-
-                    	DicomInstancesAccessedAuditHelper helper =
-                    		new DicomInstancesAccessedAuditHelper(ServerPlatform.AuditSource,
-                    		                                      EventIdentificationTypeEventOutcomeIndicator.Success,
-                    		                                      EventIdentificationTypeEventActionCode.U);
-						helper.AddUser(new AuditPersonActiveParticipant(
-									SessionManager.Current.Credentials.UserName,
-									null,
-									SessionManager.Current.Credentials.DisplayName));
-
-                    	AuditStudyParticipantObject participant =
-                    		new AuditStudyParticipantObject(Study.StudyInstanceUid, Study.AccessionNumber);
-                    	participant.ParticipantObjectDetail = description;
-						helper.AddStudyParticipantObject(participant);
-                    	ServerPlatform.LogAuditMessage(helper);
+                        AuditLog(Study, modifiedFields);
+                        StudyEdited();
                     }
-
-                    StudyEdited();
                 }
 
                 Close();
