@@ -28,11 +28,24 @@
                                 <pre  style="padding-left:10px">Study was not changed.</pre>
                             <%}
                               else
-                              {
-                                  foreach(BaseImageLevelUpdateCommand cmd in EditHistory.UpdateCommands)
-                                  { %>
-                                        <pre  style="padding-left:15px"><%= HtmlUtility.Encode(cmd.ToString()) %></pre>
-                                <%}%>
+                              {%>
+                                  <table width="100%">
+                                    <tr><td><b>Tag</b></td><td><b>Original Value</b></td><td><b>New Value</b></td></tr>
+                                  <%{
+                                        foreach(BaseImageLevelUpdateCommand cmd in EditHistory.UpdateCommands)
+                                        {
+                                              IUpdateImageTagCommand theCmd = cmd as IUpdateImageTagCommand;
+                                              if (theCmd != null)
+                                              { %><tr>
+                                                <td><pre><%= HtmlUtility.Encode(theCmd.UpdateEntry.TagPath.Tag) %></pre></td>
+                                                <td><pre><%= HtmlUtility.Encode(theCmd.UpdateEntry.OriginalValue) %></pre></td>
+                                                <td><pre><%= HtmlUtility.Encode(theCmd.UpdateEntry.Value!=null? theCmd.UpdateEntry.Value.ToString(): "") %></pre></td>
+                                                </tr>
+                                              <%} %>
+                                      <%}%>
+                                  <%}%>
+                                  </table>                                 
+                                  
                             <%}%>
                          </div>
                         </td></tr>

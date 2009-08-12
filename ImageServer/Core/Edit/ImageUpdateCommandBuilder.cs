@@ -93,12 +93,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// </code>
 		/// 
 		/// </remarks>
-		public IList<BaseImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorage storage)
+		public IList<BaseImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorage storage, IDicomAttributeProvider originalDicomAttributeProvider)
 		{
 			IList<StudyStorageLocation> storageLocationList = StudyStorageLocation.FindStorageLocations(storage);
 			Debug.Assert(storageLocationList != null && storageLocationList.Count > 0);
 			StudyStorageLocation storageLocation = storageLocationList[0];
-			return BuildCommands<TMappingObject>(storageLocation);
+            return BuildCommands<TMappingObject>(storageLocation, originalDicomAttributeProvider);
 		}
 
         public IList<BaseImageLevelUpdateCommand> BuildCommands<TTargetType>(IDicomAttributeProvider attributeProvider)
@@ -110,13 +110,13 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	            DicomAttribute attribute;
                 if (attributeProvider.TryGetAttribute(tag, out attribute))
                 {
-                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, attribute.ToString());
+                    SetTagCommand cmd = new SetTagCommand(attribute, attribute.ToString());
                     commandList.Add(cmd);
                 }
                 else
                 {
                     // tag doesn't exist, set to empty
-                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, string.Empty);
+                    SetTagCommand cmd = new SetTagCommand(attribute, string.Empty);
                     commandList.Add(cmd);
                 }
             }
@@ -124,8 +124,13 @@ namespace ClearCanvas.ImageServer.Core.Edit
             return commandList;
         }
 
+        public IList<BaseImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorageLocation storageLocation)
+        {
+            return BuildCommands<TMappingObject>(storageLocation, null);
+        }
 
-		public IList<BaseImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorageLocation storageLocation)
+
+        public IList<BaseImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorageLocation storageLocation, IDicomAttributeProvider originalDicomAttributeProvider)
 		{
 			StudyXml studyXml = GetStudyXml(storageLocation);
             List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
@@ -134,30 +139,53 @@ namespace ClearCanvas.ImageServer.Core.Edit
             {
                 // StudyXml is empty, resort to the db instead.
                 Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
-                commandList.AddRange(BuildCommandsFromEntity(study));
+                IList<BaseImageLevelUpdateCommand> cmds = BuildCommandsFromEntity(study, originalDicomAttributeProvider);
+
+                // find the original values from originalDicomAttributeProvider 
+                if (originalDicomAttributeProvider!=null)
+                {
+                    foreach (BaseImageLevelUpdateCommand cmd in cmds)
+                    {
+                        IUpdateImageTagCommand theCmd = cmd as IUpdateImageTagCommand;
+                        if (theCmd != null)
+                        {
+                            DicomAttribute attribute;
+                            if (originalDicomAttributeProvider.TryGetAttribute(theCmd.UpdateEntry.TagPath.Tag, out attribute))
+                            {
+                                theCmd.UpdateEntry.OriginalValue = attribute.ToString();
+                            }
+                        }
+                    }
+                }
+                
+                commandList.AddRange(cmds);
             }
 		    else
             {
-                commandList.AddRange(BuildCommandsFromStudyXml(typeof(TMappingObject), studyXml));
+                commandList.AddRange(BuildCommandsFromStudyXml(typeof(TMappingObject), studyXml, originalDicomAttributeProvider));
             }
 
 			return commandList;
 		}
 
-		private static IList<BaseImageLevelUpdateCommand> BuildCommandsFromStudyXml(Type type, StudyXml studyXml)
+        private static IList<BaseImageLevelUpdateCommand> BuildCommandsFromStudyXml(Type type, StudyXml studyXml, IDicomAttributeProvider originalDicomAttributeProvider)
 		{
 			List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
 			EntityDicomMap fieldMap = EntityDicomMapManager.Get(type);
 			XmlDocument studyXmlDoc = studyXml.GetMemento(new StudyXmlOutputSettings());
 			foreach (DicomTag tag in fieldMap.Keys)
 			{
-				SetTagCommand cmd = new SetTagCommand(tag.TagValue, FindAttributeValue(tag, studyXmlDoc));
+			    string originalValue = null;
+			    DicomAttribute attribute;
+                if (originalDicomAttributeProvider != null && originalDicomAttributeProvider.TryGetAttribute(tag, out attribute))
+                    originalValue = attribute.ToString();
+				SetTagCommand cmd = new SetTagCommand(tag.TagValue, originalValue, FindAttributeValue(tag, studyXmlDoc));
 				commandList.Add(cmd);
 			}
 			return commandList;
 		}
 
-        private static IList<BaseImageLevelUpdateCommand> BuildCommandsFromEntity(ServerEntity entity)
+        private static IList<BaseImageLevelUpdateCommand> BuildCommandsFromEntity(ServerEntity entity, IDicomAttributeProvider originalDicomAttributeProvider)
         {
             List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
             EntityDicomMap fieldMap = EntityDicomMapManager.Get(entity.GetType());
@@ -165,7 +193,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
             foreach (DicomTag tag in fieldMap.Keys)
             {
                 object value =fieldMap[tag].GetValue(entity, null);
-                SetTagCommand cmd = new SetTagCommand(tag.TagValue, value!=null? value.ToString():null);
+                string originalValue = null;
+                DicomAttribute attribute;
+                if (originalDicomAttributeProvider.TryGetAttribute(tag, out attribute))
+                    originalValue = attribute.ToString();
+                
+                SetTagCommand cmd = new SetTagCommand(tag.TagValue, originalValue, value != null ? value.ToString() : null);
                 commandList.Add(cmd);
             }
             return commandList;

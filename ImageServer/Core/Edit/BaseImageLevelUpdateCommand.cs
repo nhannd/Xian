@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#region Private members
 		private DicomTagPath _tagPath = new DicomTagPath();
 		private object _value;
+	    private string _originalValue;
 		#endregion
 
 		#region Public Properties
@@ -75,9 +76,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			set { _value = value; }
 		}
 
+	    /// <summary>
+		/// Gets or sets the original value in the tag to be updated.
+		/// </summary>
+		public string OriginalValue
+	    {
+	        get { return _originalValue; }
+	        set { _originalValue = value; }
+	    }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Gets the value of the tag as a string 
 		/// </summary>
 		/// <returns></returns>

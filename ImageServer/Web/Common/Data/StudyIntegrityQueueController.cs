@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	        command.UserName = SessionManager.Current.User.Identity.Name;
             command.ExistingStudy = record.ExistingStudyInfo;
             command.ImageSetData = record.ConflictingImageDescriptor;
-            command.Commands.Add(new SetTagCommand(DicomTags.StudyInstanceUid, DicomUid.GenerateUid().UID));
+            command.Commands.Add(new SetTagCommand(DicomTags.StudyInstanceUid, record.ExistingStudyInfo.StudyInstanceUid, DicomUid.GenerateUid().UID));
             String xml = XmlUtils.SerializeAsString(command);
             ReconcileStudy(xml, record.QueueItem);
 	    }
@@ -182,12 +182,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 if (record.ConflictingImageDetails!=null)
                 {
                     // The conflicting study data is stored in QueueData column
-                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
-                    command.Commands.Add(new SetTagCommand(DicomTags.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
-                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
-                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, record.ConflictingImageDetails.StudyInfo.PatientInfo.Sex));
-                    command.Commands.Add(new SetTagCommand(DicomTags.IssuerOfPatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.IssuerOfPatientId));
-                    command.Commands.Add(new SetTagCommand(DicomTags.AccessionNumber, record.ConflictingImageDetails.StudyInfo.AccessionNumber));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientId, record.ExistingStudyInfo.PatientInfo.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, record.ExistingStudyInfo.PatientInfo.PatientsBirthdate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, record.ExistingStudyInfo.PatientInfo.Sex, record.ConflictingImageDetails.StudyInfo.PatientInfo.Sex));
+                    command.Commands.Add(new SetTagCommand(DicomTags.IssuerOfPatientId, record.ExistingStudyInfo.PatientInfo.IssuerOfPatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.IssuerOfPatientId));
+                    command.Commands.Add(new SetTagCommand(DicomTags.AccessionNumber, record.ExistingStudyInfo.AccessionNumber, record.ConflictingImageDetails.StudyInfo.AccessionNumber));
     
                 }
                 else
@@ -197,37 +197,37 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                                              ? record.ConflictingImageDescriptor[DicomTags.PatientsName].Value
                                              : null;
                     if (patientName!=null)
-                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, patientName));
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, patientName));
 
                     String patientId = record.ConflictingImageDescriptor[DicomTags.PatientId] != null
                                              ? record.ConflictingImageDescriptor[DicomTags.PatientId].Value
                                              : null;
                     if (patientId != null)
-                        command.Commands.Add(new SetTagCommand(DicomTags.PatientId, patientId));
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientId,record.ExistingStudyInfo.PatientInfo.PatientId, patientId));
 
                     String patientsBirthDate = record.ConflictingImageDescriptor[DicomTags.PatientsBirthDate] != null
                                              ? record.ConflictingImageDescriptor[DicomTags.PatientsBirthDate].Value
                                              : null;
                     if (patientsBirthDate != null)
-                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, patientsBirthDate));
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, record.ExistingStudyInfo.PatientInfo.PatientsBirthdate, patientsBirthDate));
 
                     String patientsSex = record.ConflictingImageDescriptor[DicomTags.PatientsSex] != null
                                              ? record.ConflictingImageDescriptor[DicomTags.PatientsSex].Value
                                              : null;
                     if (patientsSex != null)
-                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, patientsSex));
+                        command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, record.ExistingStudyInfo.PatientInfo.Sex, patientsSex));
 
                     String issuerOfPatientId = record.ConflictingImageDescriptor[DicomTags.IssuerOfPatientId] != null
                                              ? record.ConflictingImageDescriptor[DicomTags.IssuerOfPatientId].Value
                                              : null;
                     if (issuerOfPatientId != null)
-                        command.Commands.Add(new SetTagCommand(DicomTags.IssuerOfPatientId, issuerOfPatientId));
+                        command.Commands.Add(new SetTagCommand(DicomTags.IssuerOfPatientId, record.ExistingStudyInfo.PatientInfo.IssuerOfPatientId, issuerOfPatientId));
 
                     String accessionNumber = record.ConflictingImageDescriptor[DicomTags.AccessionNumber] != null
                                              ? record.ConflictingImageDescriptor[DicomTags.AccessionNumber].Value
                                              : null;
                     if (accessionNumber != null)
-                        command.Commands.Add(new SetTagCommand(DicomTags.AccessionNumber, accessionNumber));
+                        command.Commands.Add(new SetTagCommand(DicomTags.AccessionNumber, record.ExistingStudyInfo.AccessionNumber, accessionNumber));
 
                 }
                 

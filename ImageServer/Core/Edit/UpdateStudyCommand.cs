@@ -500,7 +500,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 						foreach (BaseImageLevelUpdateCommand command in _commands)
 						{
 							command.File = file;
-							command.Execute();
+							command.Apply(file);
 						}
 
 						SaveFile(file);

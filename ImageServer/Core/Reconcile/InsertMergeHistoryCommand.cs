@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			if (!desc.ExistingStudy.PatientInfo.Name.Equals(newPatientName))
 			{
-				SetTagCommand cmd = new SetTagCommand(DicomTags.PatientsName,newPatientName);
+                SetTagCommand cmd = new SetTagCommand(DicomTags.PatientsName, desc.ExistingStudy.PatientInfo.Name, newPatientName);
 				desc.Commands = new List<BaseImageLevelUpdateCommand>();
 				desc.Commands.Add(cmd);
 			}

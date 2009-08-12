@@ -47,8 +47,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	[XmlRoot("SetTag")]
 	public class SetTagCommand : BaseImageLevelUpdateCommand, IUpdateImageTagCommand
 	{
-		#region Private Fields
-		private ImageLevelUpdateEntry _updateEntry = new ImageLevelUpdateEntry();
+	    
+	    #region Private Fields
+        private ImageLevelUpdateEntry _updateEntry = new ImageLevelUpdateEntry();
 		#endregion
 
 		#region Constructors
@@ -61,18 +62,35 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			Description = "Update Dicom Tag";
 		}
 
+        /// <summary>
+        /// Creates an instance of <see cref="SetTagCommand"/> that can be used to update the specified dicom tag with the specified value
+        /// </summary>
+        /// <remarks>
+        /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
+        /// </remarks>
+        public SetTagCommand(DicomAttribute attribute, string newValue)
+            : this()
+        {
+            UpdateEntry.TagPath = new DicomTagPath();
+            UpdateEntry.TagPath.Tag = attribute.Tag;
+            UpdateEntry.Value = newValue;
+            UpdateEntry.OriginalValue = attribute.ToString(); 
+        }
+
+
 		/// <summary>
 		/// Creates an instance of <see cref="SetTagCommand"/> that can be used to update the specified dicom tag with the specified value
 		/// </summary>
 		/// <remarks>
 		/// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
 		/// </remarks>
-		public SetTagCommand(uint tag, string value)
+		public SetTagCommand(uint tag, string originalValue, string value)
 			: this()
 		{
 			UpdateEntry.TagPath = new DicomTagPath();
 			UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(tag);
             UpdateEntry.Value = value;
+            UpdateEntry.OriginalValue = originalValue;
 		}
 
         /// <summary>
@@ -82,13 +100,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <remarks>
         /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
         /// </remarks>
-        public SetTagCommand(DicomFile file, uint tag, string value)
+        public SetTagCommand(DicomFile file, uint tag, string originalValue, string value)
             : this()
         {
             File = file;
             UpdateEntry.TagPath = new DicomTagPath();
             UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(tag);
             UpdateEntry.Value = value;
+            UpdateEntry.OriginalValue = originalValue;
         }
 		#endregion
 
@@ -117,6 +136,20 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 		}
 
+        /// <summary>
+        /// Gets/Sets the original value of the tag to be updated.
+        /// **** For XML serialization purpose. ****
+        /// </summary>
+        [XmlAttribute(AttributeName = "OriginalValue")]
+        public string OriginalValue
+	    {
+            get { return _updateEntry.OriginalValue; }
+            set
+            {
+                _updateEntry.OriginalValue = value;
+            }
+	    }
+
 		/// <summary>
 		/// Gets or sets the Dicom tag value to be used by this command when updating the dicom file.
 		/// </summary>
@@ -136,9 +169,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets 
-		/// </summary>
 		[XmlAttribute(AttributeName = "TagPath")]
 		public string TagPath
 		{
@@ -150,7 +180,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 		}
 
-		#endregion
+
+	    #endregion
 
 		#region IImageLevelCommand Members
 
@@ -160,7 +191,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			{
 				DicomAttribute attr = FindAttribute(file.DataSet, UpdateEntry);
 				if (attr != null)
-					attr.SetStringValue(UpdateEntry.GetStringValue());
+				{
+				    this._updateEntry.OriginalValue = attr.ToString();
+				    attr.SetStringValue(UpdateEntry.GetStringValue());
+				}
 			}
 
 			return true;
@@ -168,7 +202,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		public override string ToString()
 		{
-			return String.Format("Set {0}={1}", UpdateEntry.TagPath.Tag, UpdateEntry.Value);
+			return String.Format("Set {0}={1} [Original={2}]", UpdateEntry.TagPath.Tag, UpdateEntry.Value, UpdateEntry.OriginalValue?? "N/A or TBD");
 		}
 		#endregion
 
