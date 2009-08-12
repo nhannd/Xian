@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                             belongsToAnotherStudy = !dest.Equals(StorageLocation);
                             ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
-                            IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(destinationStudy);
+                            IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(dest);
 
 
                             preProcessingResult.Changes = CollectionUtils.Map<IUpdateImageTagCommand, UpdateItem>(
@@ -458,7 +458,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         {
                             using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Image According to History"))
                             {
-                                SetTagCommand command = new SetTagCommand(file, DicomTags.PatientsName, StorageLocation.Study.PatientsName);
+                                SetTagCommand command = new SetTagCommand(file, DicomTags.PatientsName, patientsNameInFile, StorageLocation.Study.PatientsName);
                                 processor.AddCommand(command);
                                 
                                 if (!processor.Execute())
