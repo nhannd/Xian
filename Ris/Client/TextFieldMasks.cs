@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
             get { return FormatSettings.Default.TelephoneNumberLocalMask; }
         }
 
-        public static string TelphoneNumberFullMask
+        public static string TelephoneNumberFullMask
         {
             get { return FormatSettings.Default.TelephoneNumberFullMask; }
         }

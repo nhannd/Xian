@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client
 
         public string PhoneNumberMask
         {
-            get { return TextFieldMasks.TelphoneNumberFullMask; }
+            get { return TextFieldMasks.TelephoneNumberFullMask; }
         }
 
         [ValidateNotNull]

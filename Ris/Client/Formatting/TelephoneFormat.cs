@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Formatting
@@ -78,5 +79,35 @@ namespace ClearCanvas.Ris.Client.Formatting
             return result.Trim();
         }
 
+		/// <summary>
+		/// Formats a string telephone number to the specified format string.
+		/// </summary>
+		/// <remarks>
+		/// The format should be specified similar to (000)000-0000 or 000-0000 where the '0's will be replaced by 
+		/// digits in the provided number.  If the length of the provided number is not the same as the number of 
+		/// '0's in the format string, the number will be returned unformatted.
+		/// </remarks>
+		/// <param name="number"></param>
+		/// <param name="format"></param>
+		/// <returns></returns>
+		public static string Format(string number, string format)
+		{
+			if(number.Length != CollectionUtils.Select(format, delegate(char c) { return c.Equals('0'); } ).Count )
+			{
+				return number;
+			}
+
+			char[] result = format.ToCharArray();
+			int j = 0;
+			for (int i = 0; i < result.Length; i++ )
+			{
+				if(result[i] != '0')
+					continue;
+
+				result[i] = number[j++];
+			}
+
+			return new string(result).Trim();
+		}
     }
 }
