@@ -85,6 +85,8 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public PatientProfileEditorComponent(EntityRef profileRef, List<PatientAttachmentSummary> attachments)
         {
+            Platform.CheckForNullReference(attachments, "attachments");
+
             _profileRef = profileRef;
             _isNew = false;
             _newAttachments = attachments;
@@ -95,6 +97,8 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public PatientProfileEditorComponent(List<PatientAttachmentSummary> attachments)
         {
+            Platform.CheckForNullReference(attachments, "attachments");
+
             _isNew = true;
             _newAttachments = attachments;
         }
@@ -142,9 +146,13 @@ namespace ClearCanvas.Ris.Client
                             string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
                     }
 
-					_profile.Attachments.AddRange(_newAttachments);
+                    if (_newAttachments.Count > 0)
+                    {
+                        _profile.Attachments.AddRange(_newAttachments);
+                        this.AcceptEnabled = true;
+                    }
 
-					// if the user has permission to either a) create a new patient, or b) update the patient profile, then 
+                    // if the user has permission to either a) create a new patient, or b) update the patient profile, then 
                     // these pages should be displayed
                     if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)
                         || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create))
