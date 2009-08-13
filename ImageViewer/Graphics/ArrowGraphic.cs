@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private bool _visible = true;
 		private bool _showArrowhead = true;
+		private bool _enablePointChangeEvents = true;
 
 		/// <summary>
 		/// Constructs an arrow graphic.
@@ -258,6 +259,35 @@ namespace ClearCanvas.ImageViewer.Graphics
 			remove { this.EndPointChanged -= value; }
 		}
 
+		public override void Move(SizeF delta)
+		{
+			_enablePointChangeEvents = false;
+			try
+			{
+				base.Move(delta);
+				
+				// force realignment the arrowhead
+				_arrowhead.Point = _shaft.Point2;
+				this.UpdateArrowheadAngle();
+			}
+			finally
+			{
+				_enablePointChangeEvents = true;
+			}
+
+			// trigger events
+			_shaft.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				this.OnShaftPoint1Changed(this, new PointChangedEventArgs(_shaft.Point1));
+				this.OnShaftPoint2Changed(this, new PointChangedEventArgs(_shaft.Point2));
+			}
+			finally
+			{
+				_shaft.ResetCoordinateSystem();
+			}
+		}
+
 		private void UpdateArrowheadAngle()
 		{
 			this.CoordinateSystem = CoordinateSystem.Source;
@@ -292,12 +322,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void OnShaftPoint1Changed(object sender, PointChangedEventArgs e)
 		{
-			EventsHelper.Fire(_startPointChanged, this, new PointChangedEventArgs(e.Point));
+			if (_enablePointChangeEvents)
+				EventsHelper.Fire(_startPointChanged, this, new PointChangedEventArgs(e.Point));
 		}
 
 		private void OnShaftPoint2Changed(object sender, PointChangedEventArgs e)
 		{
-			EventsHelper.Fire(_endPointChanged, this, new PointChangedEventArgs(e.Point));
+			if (_enablePointChangeEvents)
+				EventsHelper.Fire(_endPointChanged, this, new PointChangedEventArgs(e.Point));
 		}
 	}
 }
