@@ -154,8 +154,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
         private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems)
         {
-            // Create a work queue entry and append the series instance uid into the WorkQueueUid table
-
             WorkQueue editEntry = null;
             IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
             InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems);

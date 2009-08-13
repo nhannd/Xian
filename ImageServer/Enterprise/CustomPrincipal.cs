@@ -68,5 +68,10 @@ namespace ClearCanvas.ImageServer.Enterprise
         }
 
         #endregion
+
+        public string DisplayName
+        {
+            get { return _credentials.DisplayName; }
+        }
     }
 }

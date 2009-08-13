@@ -41,12 +41,19 @@
                         </tr>
                         <tr><td style="border:none">
                             <div style="margin-left:2px;">
-                                <%  if (ReconcileHistory.ImageSetData.Fields == null || ReconcileHistory.ImageSetData.Fields.Length == 0) { %>
+                                <%
+                                    if (ReconcileHistory.ImageSetData.Fields == null ||
+                                        ReconcileHistory.ImageSetData.Fields.Length == 0)
+                                    {%>
                                         N/A
-                                <%  }
-                                    else foreach (ImageSetField field in ReconcileHistory.ImageSetData.Fields) { %>
-                                        <pre  style="padding-left:10px"><%= HtmlUtility.Encode(field.DicomTag.Name)%> = <%= field.Value %></pre>
-                                <%  } %>
+                                <%
+                                    }
+                                    else
+                                        foreach (ImageSetField field in ReconcileHistory.ImageSetData.Fields)
+                                        {%>
+                                        <pre  style="padding-left:10px"><%=HtmlUtility.Encode(field.DicomTag.Name)%> = <%=field.Value%></pre>
+                                <%
+                                        }%>
                             </div>
                         </td></tr>
                     </table>
@@ -63,13 +70,21 @@
                                 Action (<%# ReconcileHistory.Automatic ? "Auto" : "<b>Manual</b>" %>):
                                 
                                 <%# HtmlUtility.GetEnumInfo(ReconcileHistory.Action).LongDescription%>
-                                <%  if (!String.IsNullOrEmpty(ReconcileHistory.Description))
+                                <%
+                                    if (!String.IsNullOrEmpty(ReconcileHistory.Description))
                                     {%>
                                         (<%# ReconcileHistory.Description %>)
-                                <%  }%>
+                                <%
+                                    }%>
                                 </span>
-                            </td></tr>
-                        <tr><td style="border:none">
+                            </td>
+                            <td class="HistoryDetailsHeading">
+                                <% if (String.IsNullOrEmpty(ReconcileHistory.UserName) == false) {%>
+                                        <span style="font-weight:normal">Performed by </span><%= ReconcileHistory.UserName %>
+                                <% } %>
+                            </td>
+                         </tr>
+                        <tr><td style="border:none" colspan="2">
                         <div style="margin-left:2px;">
                             <% if (ReconcileHistory.Commands == null || ReconcileHistory.Commands.Count == 0)
                                {%>

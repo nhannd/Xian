@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Enterprise;
@@ -43,7 +44,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -80,6 +80,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			XmlDocument changeDescription = new XmlDocument();
 			changeDescription.LoadXml(command);
 
+			// The Xml in the SIQ item was generated when the images were received and put into the SIQ.
+			// We now add the user info to it so that it will be logged in the history
+            ReconcileStudyWorkQueueData queueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+            queueData.TimeStamp = Platform.Time;
+            queueData.UserId = ServerHelper.CurrentUserName;
+
 			using (IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
                 
@@ -108,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				//Create WorkQueue Entry
 				WorkQueueAdaptor workQueueAdaptor = new WorkQueueAdaptor();
 				WorkQueueUpdateColumns row = new WorkQueueUpdateColumns();
-				row.Data = item.QueueData;
+				row.Data = XmlUtils.SerializeAsXmlDoc(queueData);
 				row.ServerPartitionKey = item.ServerPartitionKey;
 				row.StudyStorageKey = item.StudyStorageKey;
 				row.StudyHistoryKey = history.GetKey();
@@ -152,7 +158,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
             ReconcileCreateStudyDescriptor command = new ReconcileCreateStudyDescriptor();
             command.Automatic = false;
-	        command.UserName = SessionManager.Current.User.Identity.Name;
+            command.UserName = ServerHelper.CurrentUserName;
             command.ExistingStudy = record.ExistingStudyInfo;
             command.ImageSetData = record.ConflictingImageDescriptor;
             command.Commands.Add(new SetTagCommand(DicomTags.StudyInstanceUid, record.ExistingStudyInfo.StudyInstanceUid, DicomUid.GenerateUid().UID));
@@ -164,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
             ReconcileMergeToExistingStudyDescriptor command = new ReconcileMergeToExistingStudyDescriptor();
-            command.UserName = SessionManager.Current.User.Identity.Name;
+            command.UserName = ServerHelper.CurrentUserName;
             command.Automatic = false;
             command.ExistingStudy = record.ExistingStudyInfo;
             command.ImageSetData = record.ConflictingImageDescriptor;
@@ -240,13 +246,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             ReconcileDiscardImagesDescriptor command = new ReconcileDiscardImagesDescriptor();
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
-            command.UserName = SessionManager.Current.User.Identity.Name;
+            command.UserName = ServerHelper.CurrentUserName;
             
             command.Automatic = false;
             command.ExistingStudy = record.ExistingStudyInfo;
             command.ImageSetData = record.ConflictingImageDescriptor;
             String xml = XmlUtils.SerializeAsString(command);
-            ReconcileStudy(xml, record.QueueItem); 
+            ReconcileStudy(xml, record.QueueItem);
         }
 
 
@@ -254,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             ReconcileProcessAsIsDescriptor command = new ReconcileProcessAsIsDescriptor();
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(key));
-            command.UserName = SessionManager.Current.Credentials.UserName;
+            command.UserName = ServerHelper.CurrentUserName;
             command.Automatic = false;
             command.Description = "Ignore the differences";
             command.ExistingStudy = record.ExistingStudyInfo;

@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 fields, ";",
                 delegate(UpdateItem item)
                 {
-                    return String.Format("Tag=\"{0}\" Value=\"{1}\";", item.DicomTag.Name, item.Value);
+                    return String.Format("Tag=\"{0}\" Value=\"{1}\"", item.DicomTag.Name, item.Value);
                 }
                 );
 

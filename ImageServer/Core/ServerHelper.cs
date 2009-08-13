@@ -417,7 +417,10 @@ namespace ClearCanvas.ImageServer.Core
         {
             get
             {
-                return Thread.CurrentPrincipal.Identity.Name;
+                if (Thread.CurrentPrincipal is CustomPrincipal)
+                    return (Thread.CurrentPrincipal as CustomPrincipal).DisplayName;
+                else
+                    return Thread.CurrentPrincipal.Identity.Name;
             }
         }
     }

@@ -69,7 +69,9 @@ namespace ClearCanvas.ImageServer.Core.Data
         #region Private members
         private string _storagePath;
         private ImageSetDetails _details;
-        private List<SeriesMapping> _seriesMappings; 
+        private List<SeriesMapping> _seriesMappings;
+	    private string _userId;
+	    private DateTime? _timeStamp;
         #endregion
 
         #region Public Properties
@@ -88,13 +90,28 @@ namespace ClearCanvas.ImageServer.Core.Data
             set { _details = value; }
         }
 
+
+
         [XmlArray("SeriesMappings")]
         public List<SeriesMapping> SeriesMappings
         {
             get { return _seriesMappings; }
             set { _seriesMappings = value; }
-        } 
-        #endregion
+        }
+
+	    public string UserId
+	    {
+	        get { return _userId; }
+	        set { _userId = value; }
+	    }
+
+	    public DateTime? TimeStamp
+	    {
+	        get { return _timeStamp; }
+	        set { _timeStamp = value; }
+	    }
+
+	    #endregion
 	}
 
     /// <summary>
