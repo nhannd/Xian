@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                 foreach (ServerPartition partition in ServerPartitionMonitor.Instance)
                 {
                     DirectoryImporterParameters parms = new DirectoryImporterParameters();
-                    String incomingFolder = String.Format("{0}_{1}", partition.AeTitle, DIRECTORY_SUFFIX);
+                    String incomingFolder = String.Format("{0}_{1}", partition.PartitionFolder, DIRECTORY_SUFFIX);
 
                     parms.Directory = new DirectoryInfo(filesystem.Filesystem.GetAbsolutePath(incomingFolder));
                     parms.PartitionAE = partition.AeTitle;
