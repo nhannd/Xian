@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		public bool RestoreStudy(Study theStudy)
 		{
 		    RestoreQueue restore = ServerHelper.InsertRestoreRequest(theStudy.LoadStudyStorage(HttpContextData.Current.ReadContext));
-            if (restore!=null)
+            if (restore==null)
                 throw new ApplicationException("Unable to restore the study. See the log file for details.");
 
 			return true;

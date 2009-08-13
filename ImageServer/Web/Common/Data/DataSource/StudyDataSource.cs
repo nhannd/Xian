@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -301,11 +300,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return false;
 			}
 
+            if (this.StudyStatusEnum.Equals(ImageServer.Model.StudyStatusEnum.OnlineLossy) 
+                && IsArchivedLossless)
+            {
+                reason = "Study was archived as lossless. It must be restored before it can be edited.";
+                return false;
+            }
+
 			reason = String.Empty;
 			return true;
 		}
 
-		public bool CanScheduleMove(out string reason)
+	    public bool IsArchivedLossless
+	    {
+            get { return _theArchiveLocation != null && _theArchiveLocation.ServerTransferSyntax.Lossless; }
+	    }
+
+	    public bool CanScheduleMove(out string reason)
 		{
 			if (IsLocked)
 			{
@@ -688,7 +699,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			studySummary.IsLocked = studySummary.IsProcessing ||
 			                        (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
 
-			IList<StudyIntegrityQueue> integrityQueueItems =
+           IList<StudyIntegrityQueue> integrityQueueItems =
 				controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
 
 			if (integrityQueueItems != null && integrityQueueItems.Count > 0)
