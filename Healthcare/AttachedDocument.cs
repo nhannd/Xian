@@ -21,9 +21,20 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
+		/// <summary>
+		/// Marks this document as having been attached.
+		/// </summary>
 		public virtual void Attach()
 		{
 			return;
+		}
+
+		/// <summary>
+		/// Marks this document as being detached.
+		/// </summary>
+		public virtual void Detach()
+		{
+			
 		}
 	}
 }
