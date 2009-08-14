@@ -33,9 +33,9 @@ using System;
 
 namespace ClearCanvas.Dicom.Network
 {
-    public class NetworkException : DicomException
+    public class DicomNetworkException : DicomException
     {
-        public NetworkException(String desc)
+        public DicomNetworkException(String desc)
             : base(desc)
         {
         }

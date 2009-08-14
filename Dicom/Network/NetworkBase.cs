@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -753,7 +753,7 @@ namespace ClearCanvas.Dicom.Network
             {
                 Platform.Log(LogLevel.Error, "Error attempting to send association accept at invalid time in association.");
                 SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
-                throw new NetworkException(
+                throw new DicomNetworkException(
                     "Attempting to send association accept at invalid time in association, aborting");
             }
             AAssociateAC pdu = new AAssociateAC(_assoc);
@@ -779,7 +779,7 @@ namespace ClearCanvas.Dicom.Network
             {
                 Platform.Log(LogLevel.Error, "Error attempting to send association reject at invalid time in association.");
                 SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
-                throw new NetworkException(
+                throw new DicomNetworkException(
                     "Attempting to send association reject at invalid time in association, aborting");
             }
             AAssociateRJ pdu = new AAssociateRJ(result, source, reason);
@@ -1531,7 +1531,7 @@ namespace ClearCanvas.Dicom.Network
                             return false;
                         }
                     default:
-                        throw new NetworkException("Unknown PDU type");
+                        throw new DicomNetworkException("Unknown PDU type");
                 }
             }
             catch (Exception e)

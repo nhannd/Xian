@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -135,14 +135,14 @@ namespace ClearCanvas.Dicom.Network
             {
                 // NOTE, MUST CLOSE THE SOCKET
                 _socket.Close();
-                throw new NetworkException(String.Format("Timeout while attempting to connect to remote server {0}",ep));
+                throw new DicomNetworkException(String.Format("Timeout while attempting to connect to remote server {0}",ep));
             }
 
 			if (!_socket.Connected)
 			{
 				// NOTE, MUST CLOSE THE SOCKET
 				_socket.Close();
-				throw new NetworkException(String.Format("Connection failed to remote server {0}",ep));
+				throw new DicomNetworkException(String.Format("Connection failed to remote server {0}",ep));
 			}
 
 

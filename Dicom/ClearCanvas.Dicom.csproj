@@ -422,7 +422,7 @@
     <Compile Include="Utilities\Xml\Tests\StudyXmlTests.cs" />
     <Compile Include="Validation\DicomValidator.cs" />
     <Compile Include="IDicomCharacterSetParser.cs" />
-    <Compile Include="Network\NetworkException.cs" />
+    <Compile Include="Network\DicomNetworkException.cs" />
     <Compile Include="Network\AssociationParameters.cs" />
     <Compile Include="Network\DicomClient.cs" />
     <Compile Include="Network\DicomServer.cs" />

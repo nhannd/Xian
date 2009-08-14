@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -182,7 +182,7 @@ namespace ClearCanvas.Dicom.Network
             {
                 String msg = String.Format("{0} (offset={1}, bytes={2}, field=\"{3}\") Requested offset out of range!", ToString(),
                     _ms.Position , bytes, name);
-                throw new NetworkException(msg);
+                throw new DicomNetworkException(msg);
             }
         }
 

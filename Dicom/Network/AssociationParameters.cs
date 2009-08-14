@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -742,7 +742,7 @@ namespace ClearCanvas.Dicom.Network
 		public DicomPresContext GetPresentationContext(byte pcid) {
 			DicomPresContext ctx;
 			if (!_presContexts.TryGetValue(pcid, out ctx))
-				throw new NetworkException("Invalid Presentaion Context ID");
+				throw new DicomNetworkException("Invalid Presentaion Context ID");
 			return ctx;
 		}
 

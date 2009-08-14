@@ -548,7 +548,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 					client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, _moveOriginatorAe,
 					                         _moveOriginatorMessageId, msg);
 			}
-			catch(NetworkException)
+			catch(DicomNetworkException)
 			{
 				throw; //This is a DicomException-derived class that we want to throw.
 			}
