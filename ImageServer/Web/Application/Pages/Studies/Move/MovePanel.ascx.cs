@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
         private class MoveRequest
         {
             private IList<Study> _studies;
-            private Device _device;
+            private IList<Device> _devices;
 
             public IList<Study> Studies
             {
@@ -59,10 +59,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                 set { _studies = value; }
             }
 
-            public Device DestinationDevice
+            public IList<Device> DestinationDevices
             {
-                get { return _device; }
-                set { _device = value; }
+                get { return _devices; }
+                set { _devices = value; }
             }
         }
         private ServerPartition _partition;
@@ -114,6 +114,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             MoveConfirmation.Confirmed += delegate(object data)
                                               {
                     ScriptManager.RegisterStartupScript(Page, Page.GetType(), "alertScript", "self.close();", true);
+
+                    IList<Device> devices = data as IList<Device>;
+
+                    StudyController studyController = new StudyController();
+                    foreach (Study study in StudyGridView.StudyList)
+                    {
+                        foreach (Device device in devices)
+                            studyController.MoveStudy(study, device);
+                    }
+
+
                                               };
 
         }
@@ -227,23 +238,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
         {
             if (DeviceGridPanel.SelectedDevice != null)
             {
-                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.MoveStudyMessage, DeviceGridPanel.SelectedDevice.AeTitle));
+                string destinationDevices = string.Empty;
+                int i = 0;
+                foreach(Device device in DeviceGridPanel.SelectedDevices)
+                {
+                    if (i > 0) destinationDevices += ", ";
+                    destinationDevices += device.AeTitle;
+                    i++;
+                }
+                                       
+                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.MoveStudyMessage, destinationDevices));
                 
                 MoveConfirmation.Message += DialogHelper.createStudyTable(StudyGridView.StudyList);
                     
-                // Create the move request, although it really isn't needed.
-                MoveRequest data = new MoveRequest();
-                data.Studies = StudyGridView.StudyList;
-                data.DestinationDevice = DeviceGridPanel.SelectedDevice;
-                MoveConfirmation.Data = data;
-
-                StudyController studyController = new StudyController();
-                foreach (Study study in data.Studies)
-                {
-                    studyController.MoveStudy(study, data.DestinationDevice);
-                }
-
                 MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+
+                MoveConfirmation.Data = DeviceGridPanel.SelectedDevices;
                 MoveConfirmation.Show();
             }
         }

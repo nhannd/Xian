@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
 			int i = 0;
 			foreach (Study study in studies)
 			{
-				String text = String.Format("<tr class=\"ConfirmDialogItemText\"><td>{0}</td><td>&nbsp;</td><td>{1}</td><td>&nbsp;</td><td>{2}</td></tr>",
+				String text = String.Format("<tr class=\"ConfirmDialogItemText\"><td>{0}</td><td>&nbsp;</td><td>{1}&nbsp;</td><td>&nbsp;</td><td>{2}&nbsp;</td></tr>",
 								 study.PatientsName, study.AccessionNumber, study.StudyDescription);
 				message += text;
 

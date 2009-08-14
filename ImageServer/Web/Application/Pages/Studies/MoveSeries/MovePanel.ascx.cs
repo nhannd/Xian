@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
         private class MoveRequest
         {
             private Study _study;
-            private Device _device;
+            private IList<Device> _devices;
             private ServerPartition _partition;
             private IList<Series> _series;
 
@@ -62,10 +62,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                 set { _study = value; }
             }
 
-            public Device DestinationDevice
+            public IList<Device> DestinationDevices
             {
-                get { return _device; }
-                set { _device = value; }
+                get { return _devices; }
+                set { _devices = value; }
             }
 
             public ServerPartition Partition
@@ -139,7 +139,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                     MoveRequest moveData = MoveConfirmation.Data as MoveRequest;
 
                     StudyController studyController = new StudyController();
-                    studyController.MoveStudy(moveData.SelectedStudy, moveData.DestinationDevice, moveData.Series);
+
+                    foreach(Device device in moveData.DestinationDevices)
+                    {
+                        studyController.MoveStudy(moveData.SelectedStudy, device, moveData.Series);                        
+                    }
+
                                               };
 
         }
@@ -274,7 +279,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
         {
             if (DeviceGridPanel.SelectedDevice != null)
             {
-                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.MoveSeriesMessage, DeviceGridPanel.SelectedDevice.AeTitle));
+                string destinationDevices = string.Empty;
+                int i = 0;
+                foreach (Device device in DeviceGridPanel.SelectedDevices)
+                {
+                    if (i > 0) destinationDevices += ", ";
+                    destinationDevices += device.AeTitle;
+                    i++;
+                }
+
+                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.MoveSeriesMessage, destinationDevices));
                 
                 MoveConfirmation.Message += DialogHelper.createSeriesTable(SeriesGridView.SeriesList);
 
@@ -283,7 +297,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                 // Create the move request, although it really isn't needed.
                 MoveRequest moveData = new MoveRequest();
                 moveData.SelectedStudy = SeriesGridView.Study;
-                moveData.DestinationDevice = DeviceGridPanel.SelectedDevice;
+                moveData.DestinationDevices = DeviceGridPanel.SelectedDevices;
                 moveData.Series = SeriesGridView.SeriesList;
                 moveData.Partition = SeriesGridView.Partition;
                 MoveConfirmation.Data = moveData;

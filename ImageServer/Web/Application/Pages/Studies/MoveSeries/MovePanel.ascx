@@ -30,7 +30,7 @@
   
 <tr>
   <td class="SeriesDetailsContent">
-      <table width="100%" cellpadding="2" cellspacing="0" class="SeriesDetailsPanel">
+      <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
         <tr><td class="MainContentSubTitle">Study Summary</td></tr>
         <tr><td>
         <localAsp:StudySummaryPanel ID="StudySummary" runat="server" />

@@ -76,6 +76,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
         }
 
         /// <summary>
+        /// Gets/Sets the current selected device.
+        /// </summary>
+        public IList<Device> SelectedDevices
+        {
+            get
+            {
+                if (!GridView1.IsDataBound) this.DataBind();
+
+                if (Devices == null || Devices.Count == 0)
+                    return null;
+
+                int[] rows = GridView1.SelectedIndices;
+                if (rows == null || rows.Length == 0)
+                    return null;
+
+                IList<Model.Device> devices = new List<Model.Device>();
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    if (rows[i] < Devices.Count)
+                    {
+                        devices.Add(Devices[rows[i]]);
+                    }
+                }
+
+                return devices;
+
+            }
+        }
+
+        /// <summary>
         /// Gets/Sets the list of devices rendered on the screen.
         /// </summary>
         public IList<Device> Devices
