@@ -238,7 +238,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                         }
 
                                         if (instance.SendStatus.Status == DicomState.Failure)
+                                        {
                                             scu.FailureDescription = instance.SendStatus.Description;
+                                            if (false == String.IsNullOrEmpty(instance.ExtendedFailureDescription))
+                                            {
+                                                scu.FailureDescription = String.Format("{0} [{1}]", scu.FailureDescription, instance.ExtendedFailureDescription);
+                                            }
+                                        }
+                                            
 
                                         if (CancelPending && !(this is WebMoveStudyItemProcessor) && !scu.Canceled)
                                         {
@@ -248,31 +255,40 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                         }
                                     };
 
-            // Block until send is complete
-            scu.Send();
-
-            // Join for the thread to exit
-            scu.Join();
-
-            // Dispose to cleanup properly
-            scu.Dispose();
-
-            if (scu.FailureDescription.Length > 0)
+            try
             {
-                item.FailureDescription = scu.FailureDescription;
-                scu.Status = ScuOperationStatus.Failed;
+                // Block until send is complete
+                scu.Send();
+
+                // Join for the thread to exit
+                scu.Join();
+
+                // Dispose to cleanup properly
+                scu.Dispose();
             }
-
-            // Reset the WorkQueue entry status
-            if ( (instanceList.Count > 0 && sendCounter != instanceList.Count) // not all sop were sent
-                || scu.Status == ScuOperationStatus.Failed 
-                || scu.Status == ScuOperationStatus.ConnectFailed)
+            catch(Exception ex)
             {
-                PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred}
+                Platform.Log(LogLevel.Error, ex, "Error occurs while sending images to {0} : {1}", device.AeTitle, ex.Message);
             }
-            else
+            finally
             {
-                OnComplete();    
+                if (scu.FailureDescription.Length > 0)
+                {
+                    item.FailureDescription = scu.FailureDescription;
+                    scu.Status = ScuOperationStatus.Failed;
+                }
+
+                // Reset the WorkQueue entry status
+                if ((instanceList.Count > 0 && sendCounter != instanceList.Count) // not all sop were sent
+                    || scu.Status == ScuOperationStatus.Failed
+                    || scu.Status == ScuOperationStatus.ConnectFailed)
+                {
+                    PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred}
+                }
+                else
+                {
+                    OnComplete();
+                }
             }
             
         }

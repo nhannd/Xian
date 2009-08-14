@@ -193,8 +193,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 						if (Context.DestStorageLocation == null)
 						{
 							processor.AddCommand(new InitializeStorageCommand(Context, file));
-
-							processor.AddCommand(new CreateStudyFolderDirectory(Context, file));
 						}
                         
 						processor.AddCommand(new SaveFileCommand(Context, file));

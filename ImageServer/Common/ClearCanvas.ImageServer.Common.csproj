@@ -67,6 +67,7 @@
     <Compile Include="EnumInfoAttribute.cs" />
     <Compile Include="Exceptions\FilesystemNotWritableException.cs" />
     <Compile Include="Exceptions\InvalidStudyStateOperationException.cs" />
+    <Compile Include="Exceptions\NoWritableFilesystemException.cs" />
     <Compile Include="Exceptions\SopInstanceProcessingException.cs" />
     <Compile Include="Exceptions\StudyIsNearlineException.cs" />
     <Compile Include="FileSystemMonitor.cs" />

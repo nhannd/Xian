@@ -250,6 +250,12 @@ namespace ClearCanvas.ImageServer.Core
                         }
                     }
                 }
+                catch(NoWritableFilesystemException)
+                {
+                    String failureMessage = String.Format("Unable to process image, no writable filesystem found for Study UID {0}.", sopInstanceUid);
+                    commandProcessor.Rollback();
+                    result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                }
                 catch(StudyIsNearlineException e)
                 {
                     String failureMessage = e.RestoreRequested

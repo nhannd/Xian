@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -99,9 +100,7 @@ namespace ClearCanvas.ImageServer.Core
             ServerFilesystemInfo filesystem = selector.SelectFilesystem(message);
             if (filesystem == null)
             {
-                Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
-
-                return null;
+                throw new NoWritableFilesystemException();
             }
 
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
