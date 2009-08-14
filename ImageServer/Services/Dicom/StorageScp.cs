@@ -161,6 +161,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);
                 return true;
             }
+            catch(DicomDataException ex)
+            {
+                Platform.Log(LogLevel.Error, ex);
+                return false;  // caller will abort the association
+            }
             catch(Exception ex)
             {
                 Platform.Log(LogLevel.Error, ex);

@@ -42,6 +42,7 @@
     <Compile Include="Data\ReprocessStudyChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyQueueData.cs" />
     <Compile Include="DicomProcessingResult.cs" />
+    <Compile Include="DicomSopInstanceValidator.cs" />
     <Compile Include="Edit\BaseImageLevelUpdateCommand.cs" />
     <Compile Include="Edit\EditStudyWorkQueueData.cs" />
     <Compile Include="Edit\Extensions\LogHistory\LogHistory.cs" />

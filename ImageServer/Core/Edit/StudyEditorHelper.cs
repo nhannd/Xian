@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
                 if (location.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
                 {
-                    if (location.IsArchivedLossless)
+                    if (location.IsLatestArchiveLossless)
                     {
                         throw new InvalidStudyStateOperationException("Study is lossy but was archived as lossless. It must be restored first.");
                 

@@ -28,16 +28,24 @@
 // OF SUCH DAMAGE.
 
 #endregion
+
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
     /// <summary>
-    /// Represents an exception thrown when the study state is invalid for the operation.
+    /// Represents the exception thrown when the study is nearline.
     /// </summary>
-    public class InvalidStudyStateOperationException : System.Exception
+    public class StudyIsNearlineException : SopInstanceProcessingException
     {
-        public InvalidStudyStateOperationException(string message):base(message)
+        private readonly bool _restoreRequested;
+
+        public StudyIsNearlineException(bool restoreRequested) : base("Study is in Nearline state. Can't accept new images.")
         {
-            
+            _restoreRequested = restoreRequested;
+        }
+
+        public bool RestoreRequested
+        {
+            get { return _restoreRequested; }
         }
     }
 }

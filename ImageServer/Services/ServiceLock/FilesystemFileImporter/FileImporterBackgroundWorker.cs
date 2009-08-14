@@ -150,37 +150,46 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         {
                             InitializeImporter();
 
-                            DicomProcessingResult result = _importer.Import(file);
-                            if (result.Successful)
+                            try
                             {
-                                if (result.Duplicate)
+                                DicomProcessingResult result = _importer.Import(file);
+                                if (result.Successful)
                                 {
-                                    // was imported but is duplicate
+                                    if (result.Duplicate)
+                                    {
+                                        // was imported but is duplicate
+                                    }
+                                    else
+                                    {
+                                        importedSopCount = 1;
+                                        Platform.Log(LogLevel.Info, "Imported SOP {0} to {1}", result.SopInstanceUid, _parms.PartitionAE);
+                                        ProgressChangedEventArgs progress = new ProgressChangedEventArgs(100, result.SopInstanceUid);
+
+                                        // Fire the imported event.
+                                        SopImportedEventArgs args = new SopImportedEventArgs();
+                                        args.StudyInstanceUid = result.StudyInstanceUid;
+                                        args.SeriesInstanceUid = result.SeriesInstanceUid;
+                                        args.SopInstanceUid = result.SopInstanceUid;
+                                        EventsHelper.Fire(_sopImportedHandlers, this, args);
+
+                                        OnProgressChanged(progress);
+                                    }
                                 }
                                 else
                                 {
-                                    importedSopCount = 1;
-                                    Platform.Log(LogLevel.Info, "Imported SOP {0} to {1}", result.SopInstanceUid, _parms.PartitionAE);
-                                    ProgressChangedEventArgs progress = new ProgressChangedEventArgs(100, result.SopInstanceUid);
-
-									// Fire the imported event.
-									SopImportedEventArgs args = new SopImportedEventArgs();
-                                	args.StudyInstanceUid = result.StudyInstanceUid;
-                                	args.SeriesInstanceUid = result.SeriesInstanceUid;
-                                	args.SopInstanceUid = result.SopInstanceUid;
-                                	EventsHelper.Fire(_sopImportedHandlers, this, args);
-
-                                    OnProgressChanged(progress);
+                                    Platform.Log(LogLevel.Warn, "Failure importing sop {0}: {1}", filePath, result.ErrorMessage);
+                                    if (result.DicomStatus == DicomStatuses.StorageStorageOutOfResources)
+                                    {
+                                        _skippedStudies.Add(result.StudyInstanceUid);
+                                        skipped = true;
+                                    }
                                 }
                             }
-                            else
+                            catch (DicomDataException ex)
                             {
-                            	Platform.Log(LogLevel.Warn, "Failure importing sop: {0}", result.ErrorMessage);
-                                if (result.DicomStatus == DicomStatuses.StorageStorageOutOfResources)
-                                {
-                                    _skippedStudies.Add(result.StudyInstanceUid);
-                                    skipped = true;
-                                }
+                                // skip to next file, this file will be deleted
+                                Platform.Log(LogLevel.Warn, ex, "Failure importing sop {0}: {1}", filePath, ex.Message);
+                                skipped = true;
                             }
                         }
                     }

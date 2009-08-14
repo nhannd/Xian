@@ -117,6 +117,7 @@ namespace ClearCanvas.ImageServer.Model
         private string _studyFolderRelativePath;
         private StudyStorage _studyStorage;
         private Patient _patient;
+        private IList<ArchiveStudyStorage> _archives;
 
         #endregion
 
@@ -241,7 +242,6 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Public Properties
 
-
         public string StudyUidFolder
         {
             get
@@ -254,6 +254,9 @@ namespace ClearCanvas.ImageServer.Model
             set { _studyUidFolder = value; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="ServerPartition"/> of the study.
+        /// </summary>
         public ServerPartition ServerPartition
         {
             get
@@ -266,6 +269,24 @@ namespace ClearCanvas.ImageServer.Model
                     }
                 }
                 return _partition;
+            }
+        }
+
+        /// <summary>
+        /// Gets the related <see cref="ArchiveStudyStorage"/>.
+        /// </summary>
+        public IList<ArchiveStudyStorage> ArchiveLocations
+        {
+            get
+            {
+                if (_archives == null)
+                {
+                    lock (SyncRoot)
+                    {
+                        _archives = GetArchiveLocations(Key);
+                    }
+                }
+                return _archives;
             }
         }
 
@@ -375,15 +396,18 @@ namespace ClearCanvas.ImageServer.Model
             get { return StudyStatusEnum.Equals(Model.StudyStatusEnum.Nearline); }
         }
 
-        public bool IsArchivedLossless
+        /// <summary>
+        /// Returns a boolean indicating whether the study has been archived and the latest 
+        /// copy in the archive is lossless.
+        /// </summary>
+        public bool IsLatestArchiveLossless
         {
             get
             {
-                ArchiveStudyStorage archive = GetArchiveLocation(Key);
-                if (archive == null)
+                if (ArchiveLocations == null || ArchiveLocations.Count == 0)
                     return false;
                 else
-                    return archive.ServerTransferSyntax.Lossless;
+                    return ArchiveLocations[0].ServerTransferSyntax.Lossless;
             }
         }
 
@@ -532,27 +556,9 @@ namespace ClearCanvas.ImageServer.Model
             return path + ".dcm";
         }
 
-		/// <summary>
-		/// Query for the latest archival record for a study.
-		/// </summary>
-		/// <param name="studyStorageKey">The primary key of the StudyStorgae table.</param>
-		/// <returns>null if not found, else the value.</returns>
-        static public ArchiveStudyStorage GetArchiveLocation(ServerEntityKey studyStorageKey)
-        {
-			using (IReadContext readContext = _store.OpenReadContext())
-			{
-				ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
-				archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
-				archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
-
-				IArchiveStudyStorageEntityBroker broker = readContext.GetBroker<IArchiveStudyStorageEntityBroker>();
-
-				return broker.FindOne(archiveStudyStorageCriteria);
-			}
-        }
 
         /// <summary>
-		/// Query for the all archival records for a study.
+		/// Query for the all archival records for a study, sorted by archive time descendingly (latest first).
 		/// </summary>
 		/// <param name="studyStorageKey">The primary key of the StudyStorgae table.</param>
 		/// <returns>null if not found, else the value.</returns>

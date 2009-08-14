@@ -28,16 +28,17 @@
 // OF SUCH DAMAGE.
 
 #endregion
+
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
     /// <summary>
-    /// Represents an exception thrown when the study state is invalid for the operation.
+    /// Represents the exception thrown when the study is online but the filesystem is missing or not writable.
     /// </summary>
-    public class InvalidStudyStateOperationException : System.Exception
+    public class FilesystemNotWritableException : SopInstanceProcessingException
     {
-        public InvalidStudyStateOperationException(string message):base(message)
+        public FilesystemNotWritableException()
+            : base("Study is online but the filesystem is no longer writable.")
         {
-            
         }
     }
 }

@@ -28,16 +28,16 @@
 // OF SUCH DAMAGE.
 
 #endregion
+
+using System;
+
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
     /// <summary>
-    /// Represents an exception thrown when the study state is invalid for the operation.
+    /// Represents the exception thrown when a SOP Instance is processed.
     /// </summary>
-    public class InvalidStudyStateOperationException : System.Exception
+    public class SopInstanceProcessingException : Exception
     {
-        public InvalidStudyStateOperationException(string message):base(message)
-        {
-            
-        }
+        public SopInstanceProcessingException(string desc):base(desc){}
     }
 }
