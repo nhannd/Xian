@@ -8,96 +8,87 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries {
     
     
     /// <summary>
-    /// Default class.
+    /// StudySummaryPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class Default {
+    public partial class StudySummaryPanel {
         
         /// <summary>
-        /// Table1 control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table Table1;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// LinkButton1 control.
+        /// AccessionNumber control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
+        protected global::System.Web.UI.WebControls.Label AccessionNumber;
         
         /// <summary>
-        /// updatepanel control.
+        /// Label2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updatepanel;
+        protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// StudyDetailsPanel control.
+        /// StudyDescription control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanel StudyDetailsPanel;
+        protected global::System.Web.UI.WebControls.Label StudyDescription;
         
         /// <summary>
-        /// EditStudyDialog control.
+        /// Label3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditStudyDetailsDialog EditStudyDialog;
+        protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// MessageDialog control.
+        /// StudyDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageDialog;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.DALabel StudyDate;
         
         /// <summary>
-        /// ReprocessConfirmationDialog control.
+        /// Label4 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ReprocessConfirmationDialog;
+        protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// DeleteStudyConfirmDialog control.
+        /// ReferringPhysician control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialog DeleteStudyConfirmDialog;
-        
-        /// <summary>
-        /// DeleteSeriesConfirmDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteSeriesConfirmDialog DeleteSeriesConfirmDialog;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PersonNameLabel ReferringPhysician;
     }
 }

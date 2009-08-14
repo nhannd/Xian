@@ -3,6 +3,7 @@
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 <%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="localAsp" %>
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="localAsp" %>
+<%@ Register Src="StudySummaryPanel.ascx" TagName="StudySummaryPanel" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -14,17 +15,31 @@
     <table cellpadding="0" cellspacing="0" width="100%">
 
   <tr>
-  <td class="SeriesDetailsContent">
-    <table width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-            <td class="PatientInfo">
-                <localAsp:PatientSummaryPanel ID="PatientSummary" runat="server" />
-            </td>
-        </tr>
-    </table>
+    <td class="SeriesDetailsContent">
+        <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="PatientInfo">
+                    <localAsp:PatientSummaryPanel ID="PatientSummary" runat="server" />
+                </td>
+            </tr>
+        </table>
+    </td>
   </tr>
   
   <tr><td style="background-color: #3D98D1"><asp:Image ID="Image1" runat="server" SkinID="Spacer" Height="4" /></td></tr>
+  
+<tr>
+  <td class="SeriesDetailsContent">
+      <table width="100%" cellpadding="2" cellspacing="0" class="SeriesDetailsPanel">
+        <tr><td class="MainContentSubTitle">Study Summary</td></tr>
+        <tr><td>
+        <localAsp:StudySummaryPanel ID="StudySummary" runat="server" />
+        </td></tr>
+    </table>
+  </td>
+  </tr>
+  
+  <tr><td style="background-color: #3D98D1"><asp:Image ID="Image2" runat="server" SkinID="Spacer" Height="4" /></td></tr>  
   
   <tr>
   <td class="SeriesDetailsContent">

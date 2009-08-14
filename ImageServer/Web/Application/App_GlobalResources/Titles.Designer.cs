@@ -223,6 +223,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Series Confirmation.
+        /// </summary>
+        internal static string DeleteSeriesConfirmDialogTitle {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Confirmation.
         /// </summary>
         internal static string DeleteStudyConfirmation {

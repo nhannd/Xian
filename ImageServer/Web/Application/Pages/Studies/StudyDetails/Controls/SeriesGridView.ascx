@@ -17,16 +17,19 @@
                         GridLines="Horizontal" BackColor="White" >
                         <Columns>
                             <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
-                                <HeaderStyle Wrap="False" />    
+                                <HeaderStyle Wrap="False" HorizontalAlign="center"/>    
+                                <ItemStyle HorizontalAlign="center" />
                             </asp:BoundField>
                             <asp:BoundField DataField="Modality" HeaderText="Modality">
-                                <HeaderStyle Wrap="False" />    
+                                <HeaderStyle Wrap="False" HorizontalAlign="center"/>   
+                                <ItemStyle HorizontalAlign="center" /> 
                             </asp:BoundField>
                             <asp:BoundField DataField="SeriesDescription" HeaderText="Description">
                                 <HeaderStyle Wrap="False" />    
                             </asp:BoundField>
                             <asp:BoundField DataField="NumberOfSeriesRelatedInstances" HeaderText="Instances">
-                                <HeaderStyle Wrap="False" />    
+                                <HeaderStyle Wrap="False" HorizontalAlign="center" />    
+                                <ItemStyle HorizontalAlign="center" />
                             </asp:BoundField>
                             <asp:BoundField DataField="SeriesInstanceUid" HeaderText="Series Instance UID">
                                 <HeaderStyle Wrap="False" />  

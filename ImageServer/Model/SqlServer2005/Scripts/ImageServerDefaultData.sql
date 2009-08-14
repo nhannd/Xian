@@ -929,3 +929,9 @@ INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
 
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Invalid data', 'DeleteStudyReason', 'Study contains some invalid data.')
+     
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
+     VALUES(newid(), 'Corrupted series', 'DeleteSeriesReason', 'Series is corrupted.')
+     
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
+     VALUES(newid(), 'Invalid series data', 'DeleteSeriesReason', 'Series contains some invalid data.')          

@@ -61,6 +61,42 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Note: All series for this study have been selected, so the entire study will be deleted..
+        /// </summary>
+        internal static string DeleteSeriesConfirmDialog_DeleteEntireStudy {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmDialog_DeleteEntireStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following series will be deleted:.
+        /// </summary>
+        internal static string DeleteSeriesConfirmDialog_SeriesListingLabel {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmDialog_SeriesListingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason For Deletion:.
+        /// </summary>
+        internal static string DeleteSeriesConfirmReasonLabel {
+            get {
+                return ResourceManager.GetString("DeleteSeriesConfirmReasonLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detailed Description.
+        /// </summary>
+        internal static string DeleteSeriesReasonDetailedDescription {
+            get {
+                return ResourceManager.GetString("DeleteSeriesReasonDetailedDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The following study/studies will be deleted:.
         /// </summary>
         internal static string DeleteStudyConfirmDialog_StudyListingLabel {

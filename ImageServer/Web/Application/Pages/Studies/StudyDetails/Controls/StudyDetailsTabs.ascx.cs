@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using AjaxControlToolkit;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -48,8 +49,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     
     public partial class StudyDetailsTabs : ScriptUserControl
     {
+        private EventHandler<StudyDetailsTabsDeleteSeriesClickEventArgs> _deleteSeriesClickedHandler;
 
-
+        public class StudyDetailsTabsDeleteSeriesClickEventArgs : EventArgs
+        { }
 
         #region Private Members
 
@@ -90,6 +93,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         private ServerPartition _partition;
         
         #endregion Private Members
+
+        #region Events
+        public event EventHandler<StudyDetailsTabsDeleteSeriesClickEventArgs> DeleteSeriesClicked
+        {
+            add { _deleteSeriesClickedHandler += value; }
+            remove { _deleteSeriesClickedHandler -= value; }
+        }
+        #endregion
 
         #region Public Members
 
@@ -150,6 +161,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { _partition = value; }
         }
 
+        public IList<Series> SelectedSeries
+        {
+            get { return SeriesGridView.SelectedItems; }
+        }
+
         #endregion Public Members
 
         #region Protected Methods
@@ -181,8 +197,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             base.OnPreRender(e);
         }
 
+        
+
         protected void DeleteSeriesButton_Click(object sender, ImageClickEventArgs e)
         {
+            EventsHelper.Fire(_deleteSeriesClickedHandler, this, new StudyDetailsTabsDeleteSeriesClickEventArgs());
+/*
             DeleteConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.DeleteSeriesMessage));
 
             IList<Series> items = SeriesGridView.SelectedItems;
@@ -201,6 +221,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             DeleteConfirmation.Data = deleteData;
             
             DeleteConfirmation.Show();
+ */
         }
 
         #endregion Protected Methods

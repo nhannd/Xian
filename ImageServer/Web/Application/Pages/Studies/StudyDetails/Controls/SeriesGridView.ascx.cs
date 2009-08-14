@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             get
             {
-                if (!SeriesListControl.IsDataBound) SeriesListControl.DataBind();
+                if (!SeriesListControl.IsDataBound) this.DataBind();
 
                 if (Series == null || Series.Count == 0)
                     return null;

@@ -141,9 +141,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                     var selectedSeriesCount = rows.length; 
                     var canMoveCount=0;   
 		            var canDeleteCount=0;  
-		            
-		            debugger;               
-		            
+		            	            
 		            for(i=0; i<rows.length; i++)
                     {
                         if (this._canMoveSeries(rows[i]))
@@ -155,8 +153,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                             canDeleteCount++;
                         }
                     }
-                    
-
                 
                     this._enableDeleteButton(canDeleteCount==selectedSeriesCount);
                     this._enableMoveButton(canMoveCount==selectedSeriesCount);

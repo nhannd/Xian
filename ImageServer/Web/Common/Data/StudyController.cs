@@ -182,7 +182,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool MoveStudy(Study study, Device device, IList<Series> seriesList)
         {
-            /*
             DateTime scheduledTime = Platform.Time.AddSeconds(10);
 			if (seriesList != null)
 			{
@@ -209,36 +208,31 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			}
 			else
 			{
-				using (
-					IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-				{
-					IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-					InsertWorkQueueParameters parameters = new InsertWorkQueueParameters();
-					parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-					parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-					parameters.StudyStorageKey = study.StudyStorageKey;
-					parameters.ServerPartitionKey = study.ServerPartitionKey;
-					parameters.ScheduledTime = scheduledTime;
-					parameters.ExpirationTime = scheduledTime.AddMinutes(4);
-					parameters.DeviceKey = device.Key;
-					broker.FindOne(parameters);
+                WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                columns.ServerPartitionKey = study.ServerPartitionKey;
 
-                    StudyEditorHelper.MoveSeries(ctx, partition, study.StudyInstanceUid, seriesUids);
-                    ctx.Commit();
-                }
+                StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+                StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+
+                columns.StudyStorageKey = storage.Key;
+                DateTime time = Platform.Time;
+                columns.ScheduledTime = time;
+                columns.ExpirationTime = time.AddMinutes(4);
+                columns.FailureCount = 0;
+                columns.DeviceKey = device.Key;
+
+                workqueueAdaptor.Add(columns);
             }
-            else
-			    {
-			        WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-			        WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-			        columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-			        columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-			        columns.ServerPartitionKey = study.ServerPartitionKey;
-			    }
-            */
-			    return true;
-
-			}
+               
+            return true;
+	    }
 
         public void EditStudy(Study study, List<UpdateItem> updateItems)
         {

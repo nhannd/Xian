@@ -35,9 +35,9 @@
                             <tr>
                                 <td>
                                     <div style="padding-top: 5px; padding-left: 1px;" />
-                                        <ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewDetailsButton" />&nbsp;
-                                        <ccUI:ToolbarButton runat="server" ID="MoveSeriesButton" SkinID="MoveButton" />&nbsp;
-                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="DeleteButton" OnClick="DeleteSeriesButton_Click"/>
+                                        <ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewSeriesButton" />&nbsp;
+                                        <ccUI:ToolbarButton runat="server" ID="MoveSeriesButton" SkinID="MoveSeriesButton" />&nbsp;
+                                        <ccUI:ToolbarButton runat="server" ID="DeleteSeriesButton" SkinID="DeleteSeriesButton" OnClick="DeleteSeriesButton_Click"/>
                                     </div>
                                 </td>
                             </tr>

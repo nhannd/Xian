@@ -24,10 +24,15 @@
 
 <ccUI:ToolbarButton runat="server" SkinID="SearchIcon" EnabledImageUrl="images/Buttons/SearchIcon.png" HoverImageUrl="images/Buttons/SearchIconHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="images/Buttons/ViewDetailsDisabled.png" HoverImageURL="images/Buttons/ViewDetailsHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="ViewSeriesButton" EnabledImageURL="images/Buttons/ViewSeriesEnabled.png" DisabledImageURL="images/Buttons/ViewSeriesDisabled.png" HoverImageURL="images/Buttons/ViewSeriesHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="images/Buttons/MoveEnabled.png" DisabledImageURL="images/Buttons/MoveDisabled.png" HoverImageURL="images/Buttons/MoveHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="MoveSeriesButton" EnabledImageURL="images/Buttons/MoveSeriesEnabled.png" DisabledImageURL="images/Buttons/MoveSeriesDisabled.png" HoverImageURL="images/Buttons/MoveSeriesHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="images/Buttons/DeleteEnabled.png" DisabledImageURL="images/Buttons/DeleteDisabled.png" HoverImageURL="images/Buttons/DeleteHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="DeleteStudyButton" EnabledImageURL="images/Buttons/DeleteStudyEnabled.png" DisabledImageURL="images/Buttons/DeleteStudyDisabled.png" HoverImageURL="images/Buttons/DeleteStudyHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="DeleteSeriesButton" EnabledImageURL="images/Buttons/DeleteSeriesEnabled.png" DisabledImageURL="images/Buttons/DeleteSeriesDisabled.png" HoverImageURL="images/Buttons/DeleteSeriesHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="DeleteAllButton" EnabledImageURL="images/Buttons/DeleteAllEnabled.png" DisabledImageURL="images/Buttons/DeleteAllDisabled.png" HoverImageURL="images/Buttons/DeleteAllHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="images/Buttons/EditEnabled.png" DisabledImageURL="images/Buttons/EditDisabled.png" HoverImageURL="images/Buttons/EditHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="EditStudyButton" EnabledImageURL="images/Buttons/EditStudyEnabled.png" DisabledImageURL="images/Buttons/EditStudyDisabled.png" HoverImageURL="images/Buttons/EditStudyHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="images/Buttons/ResetEnabled.png" DisabledImageURL="images/Buttons/ResetDisabled.png" HoverImageURL="images/Buttons/ResetHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="images/Buttons/RescheduleDisabled.png" HoverImageURL="images/Buttons/RescheduleHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="AddButton" EnabledImageURL="images/Buttons/AddEnabled.png" DisabledImageURL="images/Buttons/AddDisabled.png" HoverImageURL="images/Buttons/AddHover.png"/>
@@ -41,10 +46,12 @@
 <ccUI:ToolbarButton runat="server" SkinID="UpdateButton" EnabledImageURL="images/Buttons/UpdateEnabled.png" DisabledImageURL="images/Buttons/UpdateDisabled.png" HoverImageURL="images/Buttons/UpdateHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="RestoreButton" EnabledImageURL="images/Buttons/RestoreEnabled.png" DisabledImageURL="images/Buttons/RestoreDisabled.png" HoverImageURL="images/Buttons/RestoreHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ReprocessButton" EnabledImageURL="images/Buttons/ReprocessEnabled.png" DisabledImageURL="images/Buttons/ReprocessDisabled.png" HoverImageURL="images/Buttons/ReprocessHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="ReprocessStudyButton" EnabledImageURL="images/Buttons/ReprocessStudyEnabled.png" DisabledImageURL="images/Buttons/ReprocessStudyDisabled.png" HoverImageURL="images/Buttons/ReprocessStudyHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ReconcileButton" EnabledImageURL="images/Buttons/ReconcileEnabled.png" DisabledImageURL="images/Buttons/ReconcileDisabled.png" HoverImageURL="images/Buttons/ReconcileHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="NewStudyButton" EnabledImageURL="images/Buttons/NewStudyEnabled.png" DisabledImageURL="images/Buttons/NewStudyDisabled.png" HoverImageURL="images/Buttons/NewStudyHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="DiscardButton" EnabledImageURL="images/Buttons/DiscardEnabled.png" DisabledImageURL="images/Buttons/DiscardDisabled.png" HoverImageURL="images/Buttons/DiscardHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ResetPasswordButton" EnabledImageURL="images/Buttons/ResetPasswordEnabled.png" DisabledImageURL="images/Buttons/ResetPasswordDisabled.png" HoverImageURL="images/Buttons/ResetPasswordHover.png"/>
+
 <asp:LinkButton runat="server" SkinId="CloseButton" Text="Close" CssClass="CloseButton" />
 
 <%-- Tables --%>

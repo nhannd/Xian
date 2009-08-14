@@ -195,6 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                     SelectedStudy = studyList[0];
                     SeriesGridView.Study = studyList[0];
                     PatientSummary.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(studyList[0]);
+                    StudySummary.Study = studyList[0];
                 }
             }
 

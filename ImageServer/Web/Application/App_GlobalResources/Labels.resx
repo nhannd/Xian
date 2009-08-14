@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DeleteSeriesConfirmDialog_DeleteEntireStudy" xml:space="preserve">
+    <value>Note: All series for this study have been selected, so the entire study will be deleted.</value>
+  </data>
+  <data name="DeleteSeriesConfirmDialog_SeriesListingLabel" xml:space="preserve">
+    <value>The following series will be deleted:</value>
+  </data>
+  <data name="DeleteSeriesConfirmReasonLabel" xml:space="preserve">
+    <value>Reason For Deletion:</value>
+  </data>
+  <data name="DeleteSeriesReasonDetailedDescription" xml:space="preserve">
+    <value>Detailed Description</value>
+  </data>
   <data name="DeleteStudyConfirmDialog_StudyListingLabel" xml:space="preserve">
     <value>The following study/studies will be deleted:</value>
   </data>

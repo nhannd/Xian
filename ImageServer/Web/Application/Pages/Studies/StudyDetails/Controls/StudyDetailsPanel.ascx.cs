@@ -90,6 +90,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             add { _reprocessStudyClickedHandler += value; }
             remove { _reprocessStudyClickedHandler -= value; }
         }
+
+        public StudyDetailsTabs StudyDetailsTabsControl
+        {
+            get { return StudyDetailsTabs; }
+        }
         #endregion
 
         #region Protected Methods
@@ -161,5 +166,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             EventsHelper.Fire(_reprocessStudyClickedHandler, this, new StudyDetailsPanelReprocessStudyClickEventArgs());
         }
+
     }
 }

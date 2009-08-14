@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         private string _serverae;
         private ServerPartition _partition;
         private StudySummary _study;
+        private IList<Series> _totalSeries;
         
         #endregion Private members
 
@@ -82,9 +83,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             StudyDetailsPanel.DeleteStudyClicked += StudyDetailsPanel_DeleteStudyClicked;
             StudyDetailsPanel.ReprocessStudyClicked += StudyDetailsPanel_ReprocessStudyClicked;
             EditStudyDialog.StudyEdited += EditStudyDialog_StudyEdited;
-            DeleteConfirmDialog.Confirmed += DeleteConfirmDialog_Confirmed;
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
             ReprocessConfirmationDialog.Confirmed += ReprocessConfirmationDialog_Confirmed;
+
+            StudyDetailsPanel.StudyDetailsTabsControl.DeleteSeriesClicked += StudyDetailsTabs_DeleteSeriesClicked;
+            DeleteSeriesConfirmDialog.SeriesDeleted += DeleteSeriesConfirmDialog_SeriesDeleted;
         }
 
         void ReprocessConfirmationDialog_Confirmed(object data)
@@ -104,12 +107,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             DeleteStudy();
         }
 
+        void StudyDetailsTabs_DeleteSeriesClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.StudyDetailsTabsDeleteSeriesClickEventArgs e)
+        {
+            DeleteSeries();
+        }
+
         void StudyDetailsPanel_EditStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelEditStudyClickEventArgs e)
         {
             EditStudy();
         }
 
         void DeleteStudyConfirmDialog_StudyDeleted(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialogStudyDeletedEventArgs e)
+        {
+            Refresh();
+        }
+
+        void DeleteSeriesConfirmDialog_SeriesDeleted(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteSeriesConfirmDialogSeriesDeletedEventArgs e)
         {
             Refresh();
         }
@@ -170,14 +183,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 			criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 			Study study = studyAdaptor.GetFirst(HttpContextData.Current.ReadContext, criteria);
 
-			if (study != null)
+            if (study != null)
+            {
                 _study = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study);
-			else
-			{
-				StudyNotFoundException exception =
-					new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");
-				ExceptionHandler.ThrowException(exception);
-			}
+                _totalSeries = study.Series;
+            }
+            else
+            {
+                StudyNotFoundException exception =
+                    new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");
+                ExceptionHandler.ThrowException(exception);
+            }
 			
         	StudyDetailsPanel.Study = _study;
             StudyDetailsPanel.DataBind();
@@ -278,28 +294,53 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
         }
 
+        public void DeleteSeries()
+        {
+            string reason;
+            if (!_study.CanScheduleEdit(out reason))
+            {
+                MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                MessageDialog.Message = reason;
+                MessageDialog.Show();
+            }
+            else
+            {
+                IList<Series> selectedSeries = StudyDetailsPanel.StudyDetailsTabsControl.SelectedSeries;
+
+                DeleteSeriesConfirmDialog.DeleteEntireStudy = _totalSeries.Count == selectedSeries.Count;
+
+                DeleteSeriesConfirmDialog.DeletingSeries = CollectionUtils.Map<Series, DeleteSeriesInfo>(
+                    selectedSeries,
+                    delegate(Series series)
+                    {
+                        DeleteSeriesInfo info = new DeleteSeriesInfo();
+                        info.StudyKey = _study.TheStudy.GetKey();
+                        info.Study = _study.TheStudy;
+                        info.Series = series;
+                        info.ServerPartitionAE = _study.ThePartition.AeTitle;
+                        info.Description = series.SeriesDescription;
+                        info.Modality = series.Modality;
+                        info.SeriesNumber = series.SeriesNumber;
+                        info.NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances;
+                        info.PerformedProcedureStepStartDate = series.PerformedProcedureStepStartDate;
+                        info.PerformedProcedureStepStartTime = series.PerformedProcedureStepStartTime;
+                        info.SeriesInstanceUid = series.SeriesInstanceUid;
+
+                        return info;
+                    }
+                );
+
+                DeleteSeriesConfirmDialog.Show();
+                updatepanel.Update();
+            }
+        }
+
         private void ReprocessStudy()
         {
             StudyController controller = new StudyController();
             controller.ReprocessStudy("Reprocess Study via GUI", _study.TheStudyStorage.GetKey());
             Refresh();
         }
-
-
-        void DeleteConfirmDialog_Confirmed(object data)
-        {
-            try
-            {
-                StudyController controller = new StudyController();
-                Study study = DeleteConfirmDialog.Data as Study;
-                controller.DeleteStudy(study.GetKey(), "hey");
-            }
-            finally
-            {
-                Refresh();
-            }
-        }
-
 
         void EditStudyDialog_StudyEdited()
         {

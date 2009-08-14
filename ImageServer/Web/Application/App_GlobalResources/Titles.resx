@@ -303,4 +303,7 @@
   <data name="DeleteManagement" xml:space="preserve">
     <value>Delete Management</value>
   </data>
+  <data name="DeleteSeriesConfirmDialogTitle" xml:space="preserve">
+    <value>Delete Series Confirmation</value>
+  </data>
 </root>

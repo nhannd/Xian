@@ -365,6 +365,20 @@
     <Compile Include="Pages\Studies\MoveSeries\SeriesGridView.ascx.designer.cs">
       <DependentUpon>SeriesGridView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.cs">
+      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.designer.cs">
+      <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\DeleteSeriesConfirmDialog.ascx.cs">
+      <DependentUpon>DeleteSeriesConfirmDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\DeleteSeriesConfirmDialog.ascx.designer.cs">
+      <DependentUpon>DeleteSeriesConfirmDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ProcessDuplicateChangeLogRendererFactory.cs" />
@@ -951,11 +965,11 @@
     <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.designer.cs">
       <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.cs">
+    <Compile Include="Pages\Studies\MoveSeries\StudySummaryPanel.ascx.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\MoveSeries\StudySummaryPanel.ascx.designer.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\PatientSummary.cs" />
@@ -1219,6 +1233,9 @@
     <Content Include="App_Themes\Default\images\Buttons\NewStudyDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NewStudyHover.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ReprocessStudyDisabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ReprocessStudyEnabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ReprocessStudyHover.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordHover.png" />
@@ -1394,6 +1411,8 @@
     <EmbeddedResource Include="Pages\Studies\MoveSeries\MovePanel.js" />
     <Content Include="Pages\Studies\MoveSeries\PatientSummaryPanel.ascx" />
     <Content Include="Pages\Studies\MoveSeries\SeriesGridView.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\DeleteSeriesConfirmDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
@@ -1527,7 +1546,7 @@
     <Content Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx" />
     <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx" />
     <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx" />
-    <Content Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="Pages\Studies\MoveSeries\StudySummaryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DeleteStudyConfirmDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
