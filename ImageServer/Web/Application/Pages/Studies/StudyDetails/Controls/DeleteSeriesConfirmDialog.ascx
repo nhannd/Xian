@@ -9,21 +9,21 @@
     <ContentTemplate>
     
         <script language="javascript" type="text/javascript">
-            Sys.Application.add_load(page_load);
-            function page_load()
+            Sys.Application.add_load(seriesPage_load);
+            function seriesPage_load()
             {            
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 if (document.all) //IE6
                 {
-                    listbox.attachEvent('onchange', reasonSelectionChanged);
+                    listbox.attachEvent('onchange', seriesReasonSelectionChanged);
                 }
                 else //Firefox
                 {
-                    listbox.addEventListener('onchange', reasonSelectionChanged, false);
+                    listbox.addEventListener('onchange', seriesReasonSelectionChanged, false);
                 }
             }
             
-            function reasonSelectionChanged()
+            function seriesReasonSelectionChanged()
             {
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 var textbox = $get('<%= Reason.ClientID %>');
@@ -155,7 +155,7 @@
                 <td>
                     <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
                         <ccUI:ToolbarButton ID="DeleteSeriesButton" runat="server" SkinID="OKButton" 
-                           OnClick="DeleteSeriesButton_Clicked"  />
+                           OnClick="DeleteSeriesButton_Clicked" ValidationGroup="SeriesGroup" />
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton"
                             OnClick="CancelButton_Clicked" />
                     </asp:Panel>
@@ -165,7 +165,7 @@
         </div>
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
                                                 ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
-                                                ValidationGroup="<%= ClientID %>"
+                                                ValidationGroup="SeriesGroup"
                                                 Text="You must specify the reason for deleting the studies for future auditing purpose." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
        
        <aspAjax:PopupControlExtender ID="PopEx" runat="server"

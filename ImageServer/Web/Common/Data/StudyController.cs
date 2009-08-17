@@ -265,8 +265,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool CanManipulateSeries(Study study)
         {
-            if(IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebDeleteStudy) ||
-               IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebMoveStudy))
+            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+            StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+            
+            if(!storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
             {
                 return false;
             }

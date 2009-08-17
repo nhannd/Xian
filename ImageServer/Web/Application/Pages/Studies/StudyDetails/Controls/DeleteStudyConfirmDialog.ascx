@@ -14,15 +14,15 @@
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 if (document.all) //IE6
                 {
-                    listbox.attachEvent('onchange', reasonSelectionChanged);
+                    listbox.attachEvent('onchange', studyReasonSelectionChanged);
                 }
                 else //Firefox
                 {
-                    listbox.addEventListener('onchange', reasonSelectionChanged, false);
+                    listbox.addEventListener('onchange', studyReasonSelectionChanged, false);
                 }
             }
             
-            function reasonSelectionChanged()
+            function studyReasonSelectionChanged()
             {
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 var textbox = $get('<%= Reason.ClientID %>');
@@ -112,7 +112,7 @@
                             <table cellpadding="0" cellspacing="0">
                                 <tr valign="top">
                                     <td>
-                                        <asp:TextBox  Width="400px" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>                                            
+                                        <asp:TextBox  Width="400px" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" style="font-family: Arial, Sans-Serif; font-size: 14px;" />                                            
                                     </td>
                                     <td>
                                         <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
@@ -150,7 +150,7 @@
                 <td>
                     <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
                         <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="OKButton" 
-                            OnClick="DeleteButton_Clicked" ValidationGroup="<%= ClientID %>"/>
+                            OnClick="DeleteButton_Clicked" ValidationGroup='StudyGroup'/>
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton"
                             OnClick="CancelButton_Clicked" />
                     </asp:Panel>
@@ -160,7 +160,7 @@
         </div>
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
                                                 ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
-                                                ValidationGroup="<%= ClientID %>"
+                                                ValidationGroup='StudyGroup'
                                                 Text="You must specify the reason for deleting the studies for future auditing purpose." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
        
        <aspAjax:PopupControlExtender ID="PopEx" runat="server"
