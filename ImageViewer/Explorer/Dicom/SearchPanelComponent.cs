@@ -342,15 +342,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		[ValidationMethodFor("PatientsName")]
 		private ValidationResult ValidatePatientsName()
 		{
-			if (String.IsNullOrEmpty(PatientsName))
+			return ValidateName(PatientsName);
+		}
+		
+		[ValidationMethodFor("ReferringPhysiciansName")]
+		private ValidationResult ValidateReferringPhysiciansName()
+		{
+			return ValidateName(ReferringPhysiciansName);
+		}
+
+		private ValidationResult ValidateName(string name)
+		{
+			if (String.IsNullOrEmpty(name))
 			{
 				return new ValidationResult(true, "");
 			}
-			else if (_openNameSearchRegex.IsMatch(PatientsName) || _lastNameFirstNameRegex.IsMatch(PatientsName))
+			else if (_openNameSearchRegex.IsMatch(name) || _lastNameFirstNameRegex.IsMatch(name))
 			{
 				return new ValidationResult(true, "");
 			}
-			else if (PatientsName.Contains(DicomExplorerConfigurationSettings.Default.NameSeparator.ToString()))
+			else if (name.Contains(DicomExplorerConfigurationSettings.Default.NameSeparator.ToString()))
 			{
 				return new ValidationResult(false, SR.ValidationInvalidLastNameSearch);
 			}

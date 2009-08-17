@@ -349,7 +349,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			QueryParameters queryParams = PrepareQueryParameters();
 
 			bool isOpenSearchQuery = (queryParams["PatientsName"].Length == 0
-			                          && queryParams["PatientId"].Length == 0
+									  && queryParams["ReferringPhysiciansName"].Length == 0
+									  && queryParams["PatientId"].Length == 0
 			                          && queryParams["AccessionNumber"].Length == 0
 			                          && queryParams["StudyDescription"].Length == 0
 			                          && queryParams["ModalitiesInStudy"].Length == 0
