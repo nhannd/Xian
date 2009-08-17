@@ -2,15 +2,18 @@ using System;
 using ClearCanvas.Common;
 using System.Threading;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
 	public sealed class MemoryManagementStrategyExtensionPoint : ExtensionPoint<IMemoryManagementStrategy>
 	{ }
 
-	public static class MemoryManager
+	public static partial class MemoryManager
 	{
 		public delegate void RetryableCommand();
+
+		#region Private Fields
 
 		private static readonly IMemoryManagementStrategy _strategy;
 		
@@ -18,10 +21,13 @@ namespace ClearCanvas.ImageViewer.Common
 		private static readonly List<ILargeObjectContainer> _containersToAdd = new List<ILargeObjectContainer>();
 		private static readonly List<ILargeObjectContainer> _containersToRemove = new List<ILargeObjectContainer>();
 
+		private static readonly LargeObjectContainerCache _containerCache = new LargeObjectContainerCache();
 		private static volatile Thread _collectionThread;
 		private static volatile bool _collecting = false;
 		private static int _waitingClients = 0;
 		private static event EventHandler<MemoryCollectedEventArgs> _memoryCollected;
+
+		#endregion
 
 		static MemoryManager()
 		{
@@ -29,6 +35,7 @@ namespace ClearCanvas.ImageViewer.Common
 			//return;
 			
 			IMemoryManagementStrategy strategy = null;
+
 			try
 			{
 				strategy = (IMemoryManagementStrategy)new MemoryManagementStrategyExtensionPoint().CreateExtension();
@@ -39,22 +46,59 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Warn, e, "Creation of memory management strategy failed; using default.");
+				Platform.Log(LogLevel.Debug, e, "Creation of memory management strategy failed; using default.");
 			}
 
 			_strategy = strategy ?? new DefaultMemoryManagementStrategy();
 			_strategy.MemoryCollected += OnMemoryCollected;
 		}
 
+		#region Properties
+
+		public static long LargeObjectBytesCount
+		{
+			get { return _containerCache.LastLargeObjectBytesCount; }	
+		}
+
+		public static long LargeObjectContainerCount
+		{
+			get { return _containerCache.LastLargeObjectContainerCount; }
+		}
+
+		public static long LargeObjectCount
+		{
+			get { return _containerCache.LastLargeObjectCount; }
+		}
+
+		#endregion
+
+		public static event EventHandler<MemoryCollectedEventArgs> MemoryCollected
+		{
+			add
+			{
+				lock (_syncLock)
+				{
+					_memoryCollected += value;
+				}
+			}
+			remove
+			{
+				lock (_syncLock)
+				{
+					_memoryCollected -= value;
+				}
+			}
+		}
+
 		#region Methods
 
-		static void OnMemoryCollected(object sender, MemoryCollectedEventArgs args)
+		private static void OnMemoryCollected(object sender, MemoryCollectedEventArgs args)
 		{
 			Delegate[] delegates;
 
 			lock (_syncLock)
 			{
-				if (args.IsComplete)
+				if (args.IsLast)
 					_collecting = false;
 
 				if (_memoryCollected != null)
@@ -71,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Common
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Debug, e, "Error encountered during memory collection notification.");
+					Platform.Log(LogLevel.Warn, e, "Unexpected error encountered during memory collection notification.");
 				}
 			}
 		}
@@ -82,6 +126,8 @@ namespace ClearCanvas.ImageViewer.Common
 			{
 				if (_collectionThread == null)
 				{
+					Platform.Log(LogLevel.Debug, "Starting memory collection thread.");
+
 					_collectionThread = new Thread(RunCollectionThread);
 					_collectionThread.Priority = ThreadPriority.BelowNormal;
 					_collectionThread.IsBackground = true;
@@ -92,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		private static void RunCollectionThread()
 		{
-			const int waitTimeMilliseconds = 5000;
+			const int waitTimeMilliseconds = 10000;
 
 			while (true)
 			{
@@ -103,33 +149,48 @@ namespace ClearCanvas.ImageViewer.Common
 						if (_waitingClients == 0)
 							Monitor.Wait(_syncLock, waitTimeMilliseconds);
 
-						foreach (ILargeObjectContainer container in _containersToAdd)
-							_strategy.Add(container);
+						if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+						{
+							Platform.Log(LogLevel.Debug, "Adding {0} containers and removing {1} from large object container cache.", 
+							_containersToAdd.Count, _containersToRemove.Count);
+						}
+
 						foreach (ILargeObjectContainer container in _containersToRemove)
-							_strategy.Remove(container);
+							_containerCache.Remove(container);
+						foreach (ILargeObjectContainer container in _containersToAdd)
+							_containerCache.Add(container);
 
 						_containersToRemove.Clear();
 						_containersToAdd.Clear();
 
-						if (_strategy.Count == 0)
+						if (_waitingClients == 0 && _containerCache.IsEmpty)
 						{
+							Platform.Log(LogLevel.Debug, "Exiting collection thread, container cache is empty.");
 							_collectionThread = null;
 							break;
 						}
 					}
 
-					_strategy.Collect();
+					CodeClock clock = new CodeClock();
+					clock.Start();
+
+					_containerCache.CleanupDeadItems(true);
+
+					clock.Stop();
+					PerformanceReportBroker.PublishReport("Memory", "CleanupDeadItems", clock.Seconds);
+
+					_strategy.Collect(new MemoryCollectionArgs(_containerCache));
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Debug, e, "Unexpected failure occurred while collecting large objects.");
+					Platform.Log(LogLevel.Warn, e, "Unexpected error occurred while collecting large objects.");
 				}
 				finally
 				{
 					if (_collecting)
 					{
-						Platform.Log(LogLevel.Debug, "Memory management strategy failed to fire 'complete' event; firing to avoid infinite loops.");
-						OnMemoryCollected(null, new MemoryCollectedEventArgs(0, 0, 0, TimeSpan.FromTicks(0), true));
+						Platform.Log(LogLevel.Debug, "Memory management strategy failed to fire 'complete' event; firing to avoid deadlocks.");
+						OnMemoryCollected(null, new MemoryCollectedEventArgs(0, 0, 0, TimeSpan.Zero, true));
 					}
 				}
 			}
@@ -152,12 +213,14 @@ namespace ClearCanvas.ImageViewer.Common
 		{
 			lock (_syncLock)
 			{
+				_containersToAdd.Remove(container);
+
 				if (!_containersToRemove.Contains(container))
 					_containersToRemove.Add(container);
-
-				_containersToAdd.Remove(container);
 			}
 		}
+
+		#region Collect
 
 		public static void Collect()
 		{
@@ -172,46 +235,31 @@ namespace ClearCanvas.ImageViewer.Common
 				Collect(0);
 		}
 
-		public static void Collect(TimeSpan waitTimeout)
+		public static void Collect(int waitTimeoutMilliseconds)
 		{
-			Collect((int)waitTimeout.TotalMilliseconds);
+			Collect(TimeSpan.FromMilliseconds(waitTimeoutMilliseconds));
 		}
 
-		public static void Collect(int waitTimeMilliseconds)
+		public static void Collect(TimeSpan waitTimeout)
 		{
-			object waitObject = new object();
+			CodeClock clock = new CodeClock();
+			clock.Start();
 
-			EventHandler<MemoryCollectedEventArgs> collected =
-				delegate(object sender, MemoryCollectedEventArgs args)
-					{
-						if (args.IsComplete)
-						{
-							lock (waitObject)
-							{
-								Monitor.Pulse(waitObject);
-							}
-						}
-					};
+			new MemoryCollector(waitTimeout).Collect();
 
-			lock (waitObject)
+			clock.Stop();
+			if (Platform.IsLogLevelEnabled(LogLevel.Debug)) 
 			{
-				lock (_syncLock)
-				{
-					++_waitingClients;
-					MemoryCollected += collected;
-					Monitor.Pulse(_syncLock);
-				}
-
-				Monitor.Wait(waitObject, waitTimeMilliseconds);
-
-				lock (_syncLock)
-				{
-					--_waitingClients;
-					MemoryCollected -= collected;
-				}
+				Platform.Log(LogLevel.Debug, 
+					"Waited a total of {0} for memory to be collected; max wait time was {1} seconds.", clock, waitTimeout.TotalSeconds);
 			}
 		}
 
+		#endregion
+
+		#region Execute
+
+		//TODO: unsure of how/where this method is being used - review.
 		public static void Execute(RetryableCommand retryableCommand, int maxWaitTimeMilliseconds)
 		{
 			Execute(retryableCommand, TimeSpan.FromMilliseconds(maxWaitTimeMilliseconds));
@@ -219,72 +267,22 @@ namespace ClearCanvas.ImageViewer.Common
 
 		public static void Execute(RetryableCommand retryableCommand, TimeSpan maxWaitTime)
 		{
-			Platform.CheckForNullReference(retryableCommand, "retryableCommand");
-			Platform.CheckNonNegative((int) maxWaitTime.TotalMilliseconds, "maxWaitTime");
-
-			try
-			{
-				retryableCommand();
-			}
-			catch (OutOfMemoryException)
-			{
-				object waitObject = new object();
-				EventHandler<MemoryCollectedEventArgs> collected = delegate
-						{
-							lock (waitObject)
-							{
-								Monitor.Pulse(waitObject);
-							}
-						};
-
-				long begin = Platform.Time.Ticks;
-				TimeSpan waitTimeRemaining = maxWaitTime;
-
-				lock (waitObject)
-				{
-					lock (_syncLock)
-					{
-						++_waitingClients;
-						MemoryCollected += collected;
-						Monitor.Pulse(_syncLock);
-					}
-
-					do
-					{
-						Monitor.Wait(waitObject, waitTimeRemaining);
-
-						try
-						{
-							retryableCommand();
-							break;
-						}
-						catch (OutOfMemoryException)
-						{
-							TimeSpan elapsed = TimeSpan.FromTicks(Platform.Time.Ticks - begin);
-							waitTimeRemaining = maxWaitTime - elapsed;
-							if (waitTimeRemaining.TotalMilliseconds <= 0)
-								throw;
-						}
-					} while (true);
-
-					lock (_syncLock)
-					{
-						--_waitingClients;
-						MemoryCollected -= collected;
-					}
-				}
-			}
+			new RetryableCommandExecutor(retryableCommand, maxWaitTime).Execute();
 		}
 
-		public static T[] Allocate<T>(int count)
+
+		#endregion
+
+		public static T[] Allocate<T>(int count, int maxWaitTimeMilliseconds)
 		{
-			return Allocate<T>(count, 0, 0);
+			return Allocate<T>(count, TimeSpan.FromMilliseconds(maxWaitTimeMilliseconds));
 		}
 
-		public static T[] Allocate<T>(int count, int maxRetries, int maxWaitTimeMilliseconds)
+		//TODO: unsure of how/where this method is being used - review.
+		public static T[] Allocate<T>(int count, TimeSpan maxWaitTime)
 		{
 			T[] returnValue = null;
-			Execute(delegate { returnValue = new T[count]; }, maxWaitTimeMilliseconds);
+			Execute(delegate { returnValue = new T[count]; }, maxWaitTime);
 
 			if (returnValue == null)
 				returnValue = new T[count];
@@ -293,23 +291,5 @@ namespace ClearCanvas.ImageViewer.Common
 		}
 
 		#endregion
-
-		public static event EventHandler<MemoryCollectedEventArgs> MemoryCollected
-		{
-			add
-			{
-				lock (_syncLock)
-				{
-					_memoryCollected += value;
-				}
-			}
-			remove
-			{
-				lock (_syncLock)
-				{
-					_memoryCollected -= value;
-				}
-			}
-		}
 	}
 }

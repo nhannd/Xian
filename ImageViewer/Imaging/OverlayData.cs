@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>The unpacked, 8-bit overlay pixel data buffer.</returns>
 		public byte[] Unpack()
 		{
-			byte[] unpackedPixelData = MemoryManager.Allocate<byte>(_rows * _columns);
+			byte[] unpackedPixelData = MemoryManager.Allocate<byte>(_rows * _columns, 1000);
 			Unpack(_rawOverlayData, unpackedPixelData, _offset, _bigEndianWords);
 			return unpackedPixelData;
 		}
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int inLen = pixelData.Length;
 			int outLen = inLen/(bitsAllocated/8);
 			int outPos = 0;
-			byte[] extractedPixels = MemoryManager.Allocate<byte>(outLen);
+			byte[] extractedPixels = MemoryManager.Allocate<byte>(outLen, 1000);
 
 			unsafe
 			{
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int minBytesNeeded = (int) Math.Ceiling(rows*columns/8d);
 			if (minBytesNeeded % 2 == 1)
 				minBytesNeeded++;
-			byte[] packedOverlayData = MemoryManager.Allocate<byte>(minBytesNeeded);
+			byte[] packedOverlayData = MemoryManager.Allocate<byte>(minBytesNeeded, 1000);
 
 			uint mask = (uint) ((1 << bitsStored) - 1) << (bitsAllocated - highBit - 1);
 			Pack(overlayPixelData, packedOverlayData, 0, mask, bigEndianWords);

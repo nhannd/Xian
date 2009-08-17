@@ -1,38 +1,45 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ClearCanvas.Common;
-using System.Threading;
 using ClearCanvas.Common.Utilities;
-using System.Collections;
 
 namespace ClearCanvas.ImageViewer.Common
 {
 	public class MemoryCollectedEventArgs : EventArgs
 	{
-		public MemoryCollectedEventArgs(int collectionNumber, int totalLargeObjectsCollected, long totalBytesCollected, TimeSpan elapsedTime, bool isComplete)
+		public MemoryCollectedEventArgs(int largeObjectContainersUnloadedCount,
+			int largeObjectsCollectedCount, long bytesCollectedCount, TimeSpan elapsedTime, bool isLast)
 		{
-			CollectionNumber = collectionNumber;
-			this.ElapsedTime = elapsedTime;
-			this.TotalLargeObjectsCollected = totalLargeObjectsCollected;
-			this.TotalBytesCollected = totalBytesCollected;
-			this.IsComplete = isComplete;
+			ElapsedTime = elapsedTime;
+			LargeObjectContainersUnloadedCount = largeObjectContainersUnloadedCount;
+			LargeObjectsCollectedCount = largeObjectsCollectedCount;
+			BytesCollectedCount = bytesCollectedCount;
+			IsLast = isLast;
 		}
 
-		public readonly int CollectionNumber;
 		public readonly TimeSpan ElapsedTime;
-		public readonly int TotalLargeObjectsCollected;
-		public readonly long TotalBytesCollected;
-		public readonly bool IsComplete;
+		public readonly int LargeObjectContainersUnloadedCount;
+		public readonly int LargeObjectsCollectedCount;
+		public readonly long BytesCollectedCount;
+		public readonly bool IsLast;
+
+		//TODO: guard against it being set back to false when already set to true?
+		public bool NeedMoreMemory = false;
+	}
+
+	public class MemoryCollectionArgs
+	{
+		internal MemoryCollectionArgs(IEnumerable<ILargeObjectContainer> largeObjectContainers)
+		{
+			LargeObjectContainers = largeObjectContainers;
+		}
+
+		public readonly IEnumerable<ILargeObjectContainer> LargeObjectContainers;
 	}
 
 	public interface IMemoryManagementStrategy
 	{
-		void Add(ILargeObjectContainer container);
-		void Remove(ILargeObjectContainer container);
-		int Count { get; }
-		
-		void Collect();
+		void Collect(MemoryCollectionArgs collectionArgs);
 		event EventHandler<MemoryCollectedEventArgs> MemoryCollected;
 	}
 
@@ -40,24 +47,14 @@ namespace ClearCanvas.ImageViewer.Common
 	{
 		#region IMemoryManagementStrategy Members
 
-		public void Add(ILargeObjectContainer container)
-		{
-		}
-
-		public void Remove(ILargeObjectContainer container)
-		{
-		}
-
-		public int Count { get { return 0; } }
-
-		public void Collect()
+		public void Collect(MemoryCollectionArgs collectionArgs)
 		{
 		}
 
 		public event EventHandler<MemoryCollectedEventArgs> MemoryCollected
 		{
-			add {}
-			remove {}
+			add { }
+			remove { }
 		}
 
 		#endregion
@@ -65,9 +62,9 @@ namespace ClearCanvas.ImageViewer.Common
 
 	public abstract class MemoryManagementStrategy : IMemoryManagementStrategy
 	{
-		private event EventHandler<MemoryCollectedEventArgs> _memoryCollected;
-
 		internal static readonly IMemoryManagementStrategy Null = new NullMemoryManagementStrategy();
+
+		private event EventHandler<MemoryCollectedEventArgs> _memoryCollected;
 		
 		protected MemoryManagementStrategy()
 		{
@@ -75,13 +72,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		#region IMemoryManagementStrategy Members
 
-		public abstract void Add(ILargeObjectContainer container);
-
-		public abstract void Remove(ILargeObjectContainer container);
-
-		public abstract int Count { get; }
-		
-		public abstract void Collect();
+		public abstract void Collect(MemoryCollectionArgs collectionArgs);
 
 		public event EventHandler<MemoryCollectedEventArgs> MemoryCollected
 		{
@@ -99,325 +90,7 @@ namespace ClearCanvas.ImageViewer.Common
 			}
 			catch(Exception e)
 			{
-				Platform.Log(LogLevel.Debug, e, "Memory management strategy failed to fire memory collected event.");
-			}
-		}
-	}
-
-	internal class DefaultMemoryManagementStrategy : MemoryManagementStrategy
-	{
-		private class Item
-		{
-			private WeakReference _reference;
-
-			public Item(ILargeObjectContainer container)
-			{
-				_reference = new WeakReference(container);
-			}
-
-			public ILargeObjectContainer LargeObjectContainer
-			{
-				get
-				{
-					try
-					{
-						ILargeObjectContainer container = null;
-						if (_reference != null)
-						{
-							container = _reference.Target as ILargeObjectContainer;
-							if (container == null)
-								_reference = null;
-						}
-
-						return container;
-					}
-					catch(InvalidOperationException)
-					{
-						_reference = null;
-						return null;
-					}
-				}
-			}
-		}
-
-		private readonly Dictionary<string, Item> _largeObjectContainers;
-
-		private IEnumerator<KeyValuePair<string, Item>> _largeObjectEnumerator;
-		private bool _enumerationComplete;
-
-		private DateTime _lastCollectionTime;
-		private Queue<Item> _collectionCandidates;
-
-		public DefaultMemoryManagementStrategy()
-		{
-			_largeObjectContainers = new Dictionary<string, Item>();
-			_lastCollectionTime = Platform.Time;
-		}
-
-		#region IMemoryManagementStrategy Members
-
-		public override void Add(ILargeObjectContainer container)
-		{
-			string identifier = container.Identifier;
-			Item item;
-			if (!_largeObjectContainers.TryGetValue(identifier, out item))
-			{
-				item = new Item(container);
-				_largeObjectEnumerator = null;
-				_largeObjectContainers.Add(identifier, item);
-			}
-			else
-			{
-				ILargeObjectContainer existing = item.LargeObjectContainer;
-				if (existing == null || !ReferenceEquals(container, existing))
-				{
-					_largeObjectEnumerator = null;
-					_largeObjectContainers[identifier] = new Item(container);
-				}
-			}
-		}
-
-		public override void Remove(ILargeObjectContainer container)
-		{
-			_largeObjectEnumerator = null;
-			_largeObjectContainers.Remove(container.Identifier);
-		}
-
-		public override int Count
-		{
-			get { return _largeObjectContainers.Count; }
-		}
-
-		public override void Collect()
-		{
-			try
-			{
-				DoCollect();
-				CleanupDeadItems();
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e, "Memory management strategy failed to collect.");
-			}
-		}
-
-		#endregion
-
-		private void AddCollectionCandidates(int numberToAdd)
-		{
-			if (_collectionCandidates == null)
-				_collectionCandidates = new Queue<Item>();
-
-			if (!_enumerationComplete)
-			{
-				int i = 0;
-				if (_largeObjectEnumerator == null)
-					_largeObjectEnumerator = _largeObjectContainers.GetEnumerator();
-
-				while (i++ < numberToAdd && !(_enumerationComplete = !_largeObjectEnumerator.MoveNext()))
-				{
-					Item item = _largeObjectEnumerator.Current.Value;
-					if (item != null)
-						_collectionCandidates.Enqueue(item);
-				}
-			}
-
-			if (_enumerationComplete)
-				_largeObjectEnumerator = null;
-		}
-
-		private void CleanupDeadItems()
-		{
-			List<string> keysToRemove = new List<string>();
-
-			foreach (KeyValuePair<string, Item> item in _largeObjectContainers)
-			{
-				if (item.Value.LargeObjectContainer == null)
-					keysToRemove.Add(item.Key);
-			}
-
-			foreach (string keyToRemove in keysToRemove)
-				_largeObjectContainers.Remove(keyToRemove);
-
-			_largeObjectEnumerator = null;
-		}
-
-		private long EstimateTotalLargeObjectBytes()
-		{
-			try
-			{
-				return Process.GetCurrentProcess().VirtualMemorySize64;
-			}
-			catch(PlatformNotSupportedException)
-			{
-			}
-
-			long largeObjectBytes = 0;
-			bool alreadyLogged = false;
-			foreach (KeyValuePair<string, Item> item in _largeObjectContainers)
-			{
-				ILargeObjectContainer container = item.Value.LargeObjectContainer;
-				if (container != null)
-				{
-					try
-					{
-						largeObjectBytes += container.TotalBytesHeld;
-					}
-					catch(Exception e)
-					{
-						if (!alreadyLogged)
-						{
-							alreadyLogged = true;
-							Platform.Log(LogLevel.Debug, e, "Unexpected error while estimating large object bytes.");
-						}
-					}
-				}
-			}
-
-			return largeObjectBytes;
-		}
-
-		private long GetMemoryHighWatermarkBytes()
-		{
-			const long OneGigabyte = 1000 * 1024 * 1024;
-
-			return OneGigabyte;
-		}
-
-		private long GetLowWatermarkBytes(long highWatermark)
-		{
-			return highWatermark/2;
-		}
-
-		private void DoCollect()
-		{
-			_enumerationComplete = false;
-
-			long estimatedLargeObjectBytes = EstimateTotalLargeObjectBytes();
-			long highWatermark = GetMemoryHighWatermarkBytes();
-			if (estimatedLargeObjectBytes < highWatermark)
-				return;
-
-			long lowWatermark = GetLowWatermarkBytes(highWatermark);
-			long bytesToCollect = highWatermark - lowWatermark;
-
-			long totalBytesCollected = 0;
-			int totalLargeObjectsCollected = 0;
-			RegenerationCost maxCost = RegenerationCost.Low;
-			long startTicks = Platform.Time.Ticks;
-
-			int i = 0;
-			while (maxCost <= RegenerationCost.High)
-			{
-				DateTime currentTime = Platform.Time;
-				DateTime lastCollectionTime = _lastCollectionTime;
-				TimeSpan timeSinceLastCollection = currentTime - lastCollectionTime;
-				TimeSpan maxTimeSinceLastCollection = TimeSpan.FromMilliseconds(timeSinceLastCollection.TotalMilliseconds / 3);
-
-				while (maxTimeSinceLastCollection < timeSinceLastCollection)
-				{
-					int batchSize = Math.Min(100, Count);
-
-					while (!_enumerationComplete)
-					{
-						CodeClock clock = new CodeClock();
-						clock.Start();
-
-						AddCollectionCandidates(batchSize);
-
-						long bytesCollected;
-						int largeObjectsCollected;
-						Collect(maxCost, maxTimeSinceLastCollection, out bytesCollected, out largeObjectsCollected);
-						totalBytesCollected += bytesCollected;
-						totalLargeObjectsCollected += largeObjectsCollected;
-
-						if (totalBytesCollected > 0)
-							GC.Collect();
-
-						clock.Stop();
-
-						TimeSpan elapsed = TimeSpan.FromTicks(Platform.Time.Ticks - startTicks);
-
-						MemoryCollectedEventArgs args = new MemoryCollectedEventArgs(i + 1,
-							largeObjectsCollected, bytesCollected, elapsed, false);
-
-						Platform.Log(LogLevel.Info, "Large object collection #{0}: freed {1} MB in {2}",
-							args.CollectionNumber, args.TotalBytesCollected / 1024F / 1024F, args.ElapsedTime);
-
-						base.OnMemoryCollected(args);
-
-						if (totalBytesCollected > bytesToCollect)
-							break;
-
-						++i;
-						batchSize *= 5;
-					}
-
-					if (totalBytesCollected > bytesToCollect)
-						break;
-
-					maxTimeSinceLastCollection = maxTimeSinceLastCollection + maxTimeSinceLastCollection;
-				}
-
-				if (totalBytesCollected > bytesToCollect)
-					break;
-
-				++maxCost;
-			}
-
-			GC.Collect();
-
-			TimeSpan totalElapsed = TimeSpan.FromTicks(Platform.Time.Ticks - startTicks);
-
-			MemoryCollectedEventArgs finalArgs = new MemoryCollectedEventArgs(i + 1,
-				totalLargeObjectsCollected, totalBytesCollected, totalElapsed, true);
-
-			Platform.Log(LogLevel.Info, "Large object collection summary: freed {0} MB in {1} in {2} iterations",
-				finalArgs.TotalBytesCollected / 1024F / 1024F, finalArgs.ElapsedTime, finalArgs.CollectionNumber);
-			
-			OnMemoryCollected(finalArgs);
-
-			_collectionCandidates = null;
-			_lastCollectionTime = Platform.Time;
-		}
-
-		private void Collect(RegenerationCost maxCost, TimeSpan maxTimeSinceLastAccess, out long bytesCollected, out int largeObjectsCollected)
-		{
-			bytesCollected = 0;
-			largeObjectsCollected = 0;
-
-			while(_collectionCandidates.Count > 0)
-			{
-				try
-				{
-					Item item = _collectionCandidates.Dequeue();
-					ILargeObjectContainer container = item.LargeObjectContainer;
-					if (container != null && !container.IsLocked)
-					{
-						if (container.RegenerationCost <= maxCost)
-						{
-							TimeSpan timeSinceLastAccess = Platform.Time - container.LastAccessTime;
-							if (timeSinceLastAccess > maxTimeSinceLastAccess)
-							{
-								long totalBytesHeldBefore = container.TotalBytesHeld;
-								int largeObjectsBefore = container.LargeObjectCount;
-
-								container.Unload();
-								
-								long totalBytesHeldAfter = container.TotalBytesHeld;
-								int largeObjectsAfter = container.LargeObjectCount;
-
-								largeObjectsCollected += (largeObjectsBefore - largeObjectsAfter);
-
-								bytesCollected += (totalBytesHeldBefore - totalBytesHeldAfter);
-							}
-						}
-					}
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Debug, e, "Failed to unload large object data.");
-				}
+				Platform.Log(LogLevel.Warn, e, "Unexpected failure while firing memory collected event.");
 			}
 		}
 	}

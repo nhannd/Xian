@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					MemoryManager.Execute(delegate
 					                      	{
 					                      		rawPixelData = pixelData.GetFrame(_frameIndex);
-					                      	}, 1500);
+					                      	}, 500);
 
 					ExtractOverlayFrames(rawPixelData, pixelData.BitsAllocated);
 
@@ -306,7 +306,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					MemoryManager.Execute(delegate
 					                      	{
 					                      		rawPixelData = pixelData.GetFrame(_frameIndex, out pi);
-											}, 1500);
+											}, 500);
 
 					photometricInterpretation = PhotometricInterpretation.FromCodeString(pi);
 				}
@@ -599,7 +599,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			int rows = dicomAttributeProvider[DicomTags.Rows].GetInt32(0, 0);
 			int columns = dicomAttributeProvider[DicomTags.Columns].GetInt32(0, 0);
 			int sizeInBytes = rows * columns * 4;
-			byte[] argbPixelData = MemoryManager.Allocate<byte>(sizeInBytes);
+			byte[] argbPixelData = MemoryManager.Allocate<byte>(sizeInBytes, 1000);
 
 			// Convert palette colour images to ARGB so we don't get interpolation artifacts
 			// when rendering.

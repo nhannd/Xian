@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
@@ -62,11 +63,11 @@ namespace ClearCanvas.ImageViewer.TestTools
 			_heldMemory = new List<byte[]>();
 		}
 
-		public string TotalLargeObjectMemoryBytes
+		public string TotalLargeObjectMemoryKB
 		{
 			get
 			{
-				return (Diagnostics.TotalLargeObjectBytes / 1024F).ToString("F2");
+				return (MemoryManager.LargeObjectBytesCount / 1024F).ToString("F2");
 			}	
 		}
 
@@ -157,7 +158,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 		public void Collect()
 		{
-			MemoryManager.Collect();
+			MemoryManager.Collect(true);
 		}
 
 		public override void Start()
@@ -183,7 +184,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			{
 				NotifyPropertyChanged("HeapMemoryKB");
 				NotifyPropertyChanged("MemoryDifferenceKB");
-				NotifyPropertyChanged("TotalLargeObjectMemoryBytes");
+				NotifyPropertyChanged("TotalLargeObjectMemoryKB");
 			}
 		}
 
@@ -214,7 +215,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 			}
 			NotifyPropertyChanged("HeapMemoryKB");
 			NotifyPropertyChanged("MemoryDifferenceKB");
-			NotifyPropertyChanged("TotalLargeObjectMemoryBytes");
+			NotifyPropertyChanged("TotalLargeObjectMemoryKB");
 		}
 	}
 }

@@ -35,6 +35,7 @@ using System.Drawing;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -252,7 +253,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Builds the volume array. Takes care of Gantry Tilt correction (pads rows at top/bottom accordingly)
 			private T[] BuildVolumeArray<T>(T pixelPadValue)
 			{
-				T[] volumeData = new T[this.VolumeSize.Volume];
+				T[] volumeData = MemoryManager.Allocate<T>(this.VolumeSize.Volume, TimeSpan.FromSeconds(10));
 
 				float lastFramePos = (float) _frames[_frames.Count - 1].Frame.ImagePositionPatient.Z;
 

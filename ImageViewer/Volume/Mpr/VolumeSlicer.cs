@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int[] sliceDimensions = sliceImageData.GetDimensions();
 			int sliceDataSize = sliceDimensions[0]*sliceDimensions[1];
 			IntPtr sliceDataPtr = sliceImageData.GetScalarPointer();
-			byte[] pixelData = MemoryManager.Allocate<byte>(sliceDataSize*sizeof (short));
+			byte[] pixelData = MemoryManager.Allocate<byte>(sliceDataSize*sizeof (short), 1000);
 
 			Marshal.Copy(sliceDataPtr, pixelData, 0, sliceDataSize*sizeof (short));
 			return pixelData;

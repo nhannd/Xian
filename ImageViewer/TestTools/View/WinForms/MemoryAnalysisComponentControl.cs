@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 			_memoryDifference.DataBindings.Add("Value", _component, "MemoryDifferenceKB", true,
 				DataSourceUpdateMode.OnPropertyChanged);
 
-			_largeObjectMemory.DataBindings.Add("Value", _component, "TotalLargeObjectMemoryBytes", true,
+			_largeObjectMemory.DataBindings.Add("Value", _component, "TotalLargeObjectMemoryKB", true,
 				DataSourceUpdateMode.OnPropertyChanged);
 		}
 

@@ -19,7 +19,6 @@ namespace ClearCanvas.ImageViewer.Common
 		private DateTime _lastAccessTime;
 		private volatile RegenerationCost _regenerationCost;
 
-
 		public LargeObjectContainerData(string identifier)
 		{
 			_identifier = identifier;
@@ -37,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Common
 			set { _largeObjectCount = value; }
 		}
 
-		public long TotalBytesHeld
+		public long BytesHeldCount
 		{
 			get { return _totalBytesHeld; }
 			set { _totalBytesHeld = value; }
@@ -97,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 		public abstract int LargeObjectCount { get;  }
 
-		public abstract long TotalBytesHeld { get;  }
+		public abstract long BytesHeldCount { get;  }
 
 		public abstract DateTime LastAccessTime { get;  }
 
@@ -119,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Common
 		string Identifier { get; }
 
 		int LargeObjectCount { get; }
-		long TotalBytesHeld { get; }
+		long BytesHeldCount { get; }
 
 		DateTime LastAccessTime { get; }
 		RegenerationCost RegenerationCost { get; }

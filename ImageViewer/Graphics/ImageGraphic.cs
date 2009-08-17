@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private static byte[] AllocatePixelData(int rows, int columns, int bitsPerPixel)
 		{
-			return MemoryManager.Allocate<byte>(rows*columns*bitsPerPixel/8);
+			return MemoryManager.Allocate<byte>(rows*columns*bitsPerPixel/8, 1000);
 		}
 
 		/// <summary>

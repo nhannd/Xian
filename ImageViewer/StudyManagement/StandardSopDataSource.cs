@@ -230,19 +230,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (_pixelData == null)
 				{
 					_largeObjectContainerData.LargeObjectCount = 0;
-					_largeObjectContainerData.TotalBytesHeld = 0;
+					_largeObjectContainerData.BytesHeldCount = 0;
 				}
 				else
 				{
 					_largeObjectContainerData.LargeObjectCount = 1;
-					_largeObjectContainerData.TotalBytesHeld = _pixelData.Length;
+					_largeObjectContainerData.BytesHeldCount = _pixelData.Length;
 				}
 
 				_largeObjectContainerData.LargeObjectCount += _overlayData.Count;
 				foreach (KeyValuePair<int, byte[]> pair in _overlayData)
 				{
 					if (pair.Value != null)
-						_largeObjectContainerData.TotalBytesHeld += (long)pair.Value.Length;
+						_largeObjectContainerData.BytesHeldCount += (long)pair.Value.Length;
 				}
 			}
 
@@ -312,6 +312,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				lock (this.SyncLock)
 				{
+					_largeObjectContainerData.LastAccessTime = Platform.Time;
+
 					ReportLargeObjectsUnloaded();
 
 					_pixelData = null;
@@ -376,9 +378,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				get { return _largeObjectContainerData.LargeObjectCount; }
 			}
 
-			long ILargeObjectContainer.TotalBytesHeld
+			long ILargeObjectContainer.BytesHeldCount
 			{
-				get { return _largeObjectContainerData.TotalBytesHeld; }
+				get { return _largeObjectContainerData.BytesHeldCount; }
 			}
 
 			DateTime ILargeObjectContainer.LastAccessTime

@@ -118,11 +118,21 @@
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="Common\DefaultMemoryManagementStrategy.cs" />
     <Compile Include="Common\Diagnostics.cs" />
-    <Compile Include="Common\ILargeObjectContainer.cs" />
+    <Compile Include="Common\LargeObjectContainer.cs" />
+    <Compile Include="Common\LargeObjectContainerCache.cs" />
+    <Compile Include="Common\MemoryCollector.cs" />
+    <Compile Include="Common\MemoryManagementSettings.cs" />
+    <Compile Include="Common\MemoryManagementSettings.Designer.cs">
+      <DependentUpon>MemoryManagementSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="Common\MemoryManagementStrategy.cs" />
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="Common\RetryableCommandExecutor.cs" />
     <Compile Include="DicomPresentationImageSettings.cs" />
     <Compile Include="DicomPresentationImageSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -649,6 +659,10 @@
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
     <None Include="ClassDiagrams\ViewerUndoSupport.cd" />
+    <None Include="Common\MemoryManagementSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>MemoryManagementSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="DicomPresentationImageSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomPresentationImageSettings.Designer.cs</LastGenOutput>
