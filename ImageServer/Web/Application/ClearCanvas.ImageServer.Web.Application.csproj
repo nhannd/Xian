@@ -191,6 +191,9 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="GlobalMasterPage.master.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1402,6 +1405,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Global.asax" />
     <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
