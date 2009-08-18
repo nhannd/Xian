@@ -6,7 +6,7 @@ using ClearCanvas.Ris.Application.Common.AttachedDocumentService;
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Provides methods for working with MIME documents stored on the RIS server.
+    /// Provides methods for working with attached documents stored on the RIS server.
     /// </summary>
     public static class AttachedDocument
     {
@@ -22,13 +22,14 @@ namespace ClearCanvas.Ris.Client
             Platform.CheckForNullReference(documentRef, "dataRef");
 
             // if already cached locally, return local file name
-            string tempFile = TempFileManager.Instance.GetTempFile(documentRef);
+            string tempFile = TempFileManager.Instance.GetFile(documentRef);
             if (!string.IsNullOrEmpty(tempFile))
                 return tempFile;
 
             // retrieve data and create new local file
             Byte[] data = RetrieveData(documentRef);
-            return TempFileManager.Instance.CreateTemporaryFile(documentRef, fileExtension, data);
+			return TempFileManager.Instance.CreateFile(documentRef, fileExtension, data,
+				TimeSpan.FromSeconds(AttachedDocumentSettings.Default.DownloadCacheTimeToLive));
         }
 
         private static byte[] RetrieveData(EntityRef dataRef)

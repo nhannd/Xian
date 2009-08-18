@@ -47,6 +47,12 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="AsyncLoader.cs" />
+    <Compile Include="AttachedDocumentSettings.cs" />
+    <Compile Include="AttachedDocumentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AttachedDocumentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
@@ -366,6 +372,10 @@
       <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="AttachedDocumentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AttachedDocumentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="DiagnosticServiceLookupSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticServiceLookupSettings.Designer.cs</LastGenOutput>
