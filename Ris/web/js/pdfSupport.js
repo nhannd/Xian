@@ -111,9 +111,9 @@ function PdfObject(id, fileUrl)
 			
 			var parentElement = document.getElementById(id);
 			var printButton = createButton("Print.png", "Print", function() { thisObject.printWithDialog(); });
-			var zoomInButton = createButton("ZoomIn.png", "Zoom In", function() { thisObject.zoomIn(); });
-			var zoomOutButton = createButton("ZoomOut.png", "Zoom Out", function() { thisObject.zoomOut(); });
-			var restoreButton = createButton("ZoomRestore.png", "Restore Zoom", function() { thisObject.setZoom(_defaultZoom); });
+			var zoomInButton = createButton("ZoomInToolSmall.png", "Zoom In", function() { thisObject.zoomIn(); });
+			var zoomOutButton = createButton("ZoomOutToolSmall.png", "Zoom Out", function() { thisObject.zoomOut(); });
+			var restoreButton = createButton("FitWidthToolSmall.png", "Restore Zoom", function() { thisObject.setZoom(_defaultZoom); });
 			parentElement.appendChild(printButton);
 			parentElement.appendChild(zoomInButton);
 			parentElement.appendChild(zoomOutButton);
