@@ -71,6 +71,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                             {
                                 _pd = DicomPixelData.CreateFrom(ImagePath);
                                 DicomPixelDataCache.Insert(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid, _pd);
+                                break;
                             }
                             catch(IOException)
                             {
