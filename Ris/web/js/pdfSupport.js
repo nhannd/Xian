@@ -125,6 +125,7 @@ function PdfObject(id, fileUrl)
 
 	this.setWidth("100%");
 	this.setHeight("100%");
+	this.setView("FitH"); // ticket #5095: Change the default page layout view of the fax so that it's "fit width"
 	this.setZoom(_defaultZoom);
 	this.setShowToolbar(false);
 
