@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -96,6 +97,50 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
             return entries;
         }
+
+        /// <summary>
+        /// Inserts a move request to move one or more series in a study.
+        /// </summary>
+        /// <param name="context">The persistence context used for database connection.</param>
+        /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
+        /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
+        /// <param name="deviceKey">The Key of the device to move the series to.</param> 
+        /// <param name="seriesInstanceUids">The Series Instance Uid of the series to be move.</param>
+        /// <returns>A MoveSeries <see cref="WorkQueue"/> entry inserted into the system.</returns>
+        /// <exception cref="InvalidStudyStateOperationException"></exception>
+        public static IList<WorkQueue> MoveSeries(IUpdateContext context, ServerPartition partition, string studyInstanceUid, ServerEntityKey deviceKey, List<string> seriesInstanceUids)
+        {
+            // Find all location of the study in the system and insert series delete request
+            IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
+            IList<WorkQueue> entries = new List<WorkQueue>();
+
+            foreach (StudyStorageLocation location in storageLocations)
+            {
+                if (location.IsNearline)
+                {
+                    throw new InvalidStudyStateOperationException("Study Is Nealine. It must be restored first.");
+                }
+
+                try
+                {
+                    string failureReason;
+
+                    // insert a move series request
+                    WorkQueue request = InsertMoveSeriesRequest(context, location, seriesInstanceUids, deviceKey);
+                    Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebMoveStudy));
+                    entries.Add(request);
+                }
+                catch (Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex, "Errors occurred when trying to insert move request");
+                    if (!ServerHelper.UnlockStudy(location.Key))
+                        throw new ApplicationException("Unable to unlock the study");
+                }
+            }
+
+            return entries;
+        }
+
 
         /// <summary>
         /// Inserts edit request(s) to update a study.
@@ -195,6 +240,31 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
             return deleteSeriesEntry;
         }
+
+        /// <summary>
+        /// Inserts a MoveStudy work queue entry
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="location"></param>
+        /// <param name="seriesInstanceUids"></param>
+        /// <param name="deviceKey"></param>
+        /// <exception cref="ApplicationException">If the "DeleteSeries" Work Queue entry cannot be inserted.</exception>
+        private static WorkQueue InsertMoveSeriesRequest(IUpdateContext context, StudyStorageLocation location, List<string> seriesInstanceUids, ServerEntityKey deviceKey)
+        {
+            // Create a work queue entry and append the series instance uid into the WorkQueueUid table
+
+            WorkQueue moveSeriesEntry = null;
+            IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+            InsertWorkQueueParameters criteria = new MoveSeriesWorkQueueParameters(location, seriesInstanceUids, deviceKey);
+            moveSeriesEntry = broker.FindOne(criteria);
+            if (moveSeriesEntry == null)
+            {
+               throw new ApplicationException(
+                   String.Format("Unable to insert a Move Series request for study {1}", location.StudyInstanceUid));
+            }
+ 
+   return moveSeriesEntry;
+        }
     }
 
     internal class EditStudyWorkQueueParameters : InsertWorkQueueParameters
@@ -235,6 +305,26 @@ namespace ClearCanvas.ImageServer.Core.Edit
             ExpirationTime = now.AddMinutes(15);
             SeriesInstanceUid = seriesInstanceUid;
             WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
+        }
+    }
+
+    class MoveSeriesWorkQueueParameters : InsertWorkQueueParameters
+    {
+        public MoveSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, List<string> seriesInstanceUids, ServerEntityKey deviceKey)
+        {
+            DateTime now = Platform.Time;
+            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
+            data.Timestamp = now;
+            data.UserId = ServerHelper.CurrentUserName;
+
+            this.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+            this.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+            this.StudyStorageKey = studyStorageLocation.Key;
+            this.ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
+            this.ScheduledTime = now;
+            this.ExpirationTime = now.AddMinutes(15);
+            this.WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
+            this.DeviceKey = deviceKey;
         }
     }
 }
