@@ -50,7 +50,7 @@ function PdfObject(id, fileUrl)
 	var thisObject = this;
 	var _activeXObject = document.getElementById(id);
 	var _preDefinedZoom = [ 12.5, 25, 33.3, 50, 75, 100, 125, 150, 200, 300, 400, 600, 800];
-	var _defaultZoom = 75;
+	var _defaultView = "FitH";
 	var _currentZoom;
 
 	// Set the width of the ActiveX control
@@ -113,7 +113,7 @@ function PdfObject(id, fileUrl)
 			var printButton = createButton("Print.png", "Print", function() { thisObject.printWithDialog(); });
 			var zoomInButton = createButton("ZoomInToolSmall.png", "Zoom In", function() { thisObject.zoomIn(); });
 			var zoomOutButton = createButton("ZoomOutToolSmall.png", "Zoom Out", function() { thisObject.zoomOut(); });
-			var restoreButton = createButton("FitWidthToolSmall.png", "Restore Zoom", function() { thisObject.setZoom(_defaultZoom); });
+			var restoreButton = createButton("FitWidthToolSmall.png", "Restore Zoom", function() { thisObject.setView(_defaultView); });
 			parentElement.appendChild(printButton);
 			parentElement.appendChild(zoomInButton);
 			parentElement.appendChild(zoomOutButton);
@@ -125,8 +125,7 @@ function PdfObject(id, fileUrl)
 
 	this.setWidth("100%");
 	this.setHeight("100%");
-	this.setView("FitH"); // ticket #5095: Change the default page layout view of the fax so that it's "fit width"
-	this.setZoom(_defaultZoom);
+	this.setView(_defaultView); // ticket #5095: Change the default page layout view of the fax so that it's "fit width"
 	this.setShowToolbar(false);
 
 	return this;
