@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[Tooltip("apply", "View Images")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
+    [ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
