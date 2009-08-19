@@ -33,12 +33,13 @@
                     </td>
                 </tr>
                 <tr><td colspan="2">
-                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" style="padding-top: 5px;">
-                            <tr><td>
+                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" >
+                            <tr><td style="padding-top: 5px; padding-left: 5px;">
                                     <ccUI:ToolbarButton ID="RescheduleToolbarButton" runat="server" SkinID="RescheduleButton" OnClick="Reschedule_Click"/>
                                     <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="ResetButton" OnClick="Reset_Click"/>
                                     <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="Delete_Click"/>
                                     <ccUI:ToolbarButton ID="ReprocessButton" runat="server" SkinID="ReprocessButton" OnClick="Reprocess_Click"/>
+                                    <ccUI:ToolbarButton ID="StudyDetailsButton" runat="server" SkinID="ViewStudyButton" />
                                     
                             </td></tr>
                             <tr><td><asp:PlaceHolder ID="WorkQueueDetailsViewPlaceHolder" runat="server"></asp:PlaceHolder></td></tr>

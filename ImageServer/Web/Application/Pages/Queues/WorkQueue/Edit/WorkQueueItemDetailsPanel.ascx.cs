@@ -31,11 +31,14 @@
 
 using System;
 using System.Web.UI;
+using AjaxControlToolkit;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -56,10 +59,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         }
     }
 
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js")]
+
     /// <summary>
     /// The <see cref="WorkQueue"/> details panel
     /// </summary>
-    public partial class WorkQueueItemDetailsPanel : UserControl
+    public partial class WorkQueueItemDetailsPanel : AJAXScriptControl
     {
         #region Private members
 
@@ -74,7 +79,51 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Public Properties
 
-		/// <summary>
+        public Study ItemStudy
+        {
+            get
+            {
+                WorkQueueController controller = new WorkQueueController();
+                return controller.GetWorkQueueItemStudy(_workQueue);
+            }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ViewStudiesButtonClientID")]
+        public string ViewStudiesButtonClientID
+        {
+            get { return StudyDetailsButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("OpenStudyPageUrl")]
+        public string OpenStudyPageUrl
+        {
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage); }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("StudyInstanceUid")]
+        public string StudyInstanceUid
+        {
+            get
+            {
+                return ItemStudy.StudyInstanceUid;
+            }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ServerAE")]
+        public string ServerAE
+        {
+            get 
+            {
+                ServerPartition partition = ServerPartition.Load(ItemStudy.ServerPartitionKey);
+                return partition.AeTitle; 
+            }
+        }
+
+        /// <summary>
 		/// Gets/Sets the <see cref="WorkQueue"/> item displayed in the panel
 		/// </summary>
 		/// <remarks>

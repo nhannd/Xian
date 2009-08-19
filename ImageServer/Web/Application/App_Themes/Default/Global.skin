@@ -25,6 +25,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="SearchIcon" EnabledImageUrl="images/Buttons/SearchIcon.png" HoverImageUrl="images/Buttons/SearchIconHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="images/Buttons/ViewDetailsDisabled.png" HoverImageURL="images/Buttons/ViewDetailsHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ViewSeriesButton" EnabledImageURL="images/Buttons/ViewSeriesEnabled.png" DisabledImageURL="images/Buttons/ViewSeriesDisabled.png" HoverImageURL="images/Buttons/ViewSeriesHover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="ViewStudyButton" EnabledImageURL="images/Buttons/ViewStudyEnabled.png" DisabledImageURL="images/Buttons/ViewStudyDisabled.png" HoverImageURL="images/Buttons/ViewStudyHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="images/Buttons/MoveEnabled.png" DisabledImageURL="images/Buttons/MoveDisabled.png" HoverImageURL="images/Buttons/MoveHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="MoveSeriesButton" EnabledImageURL="images/Buttons/MoveSeriesEnabled.png" DisabledImageURL="images/Buttons/MoveSeriesDisabled.png" HoverImageURL="images/Buttons/MoveSeriesHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="images/Buttons/DeleteEnabled.png" DisabledImageURL="images/Buttons/DeleteDisabled.png" HoverImageURL="images/Buttons/DeleteHover.png"/>

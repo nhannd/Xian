@@ -1409,6 +1409,7 @@
     <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
+    <EmbeddedResource Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.js" />
     <Content Include="Pages\Studies\MoveSeries\Default.aspx" />
     <Content Include="Pages\Studies\MoveSeries\DeviceGridView.ascx" />
     <Content Include="Pages\Studies\MoveSeries\MovePanel.ascx" />
