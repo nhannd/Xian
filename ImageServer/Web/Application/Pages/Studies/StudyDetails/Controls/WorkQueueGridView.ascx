@@ -6,6 +6,10 @@
 </asp:ScriptManagerProxy>
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+	Width="100%">
+	<asp:TableRow VerticalAlign="top">
+		<asp:TableCell VerticalAlign="top">   
         <ccUI:GridView ID="StudyWorkQueueGridView" runat="server" 
                        AutoGenerateColumns="False" CssClass="GlobalGridView" 
                        CellPadding="0" CaptionAlign="Top" Width="100%" 
@@ -59,5 +63,9 @@
                         <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
                         <SelectedRowStyle  CssClass="GlobalGridViewSelectedRow" />
                     </ccUI:GridView>   
+		</asp:TableCell>
+	</asp:TableRow>
+</asp:Table>
+                    
     </ContentTemplate>
 </asp:UpdatePanel>

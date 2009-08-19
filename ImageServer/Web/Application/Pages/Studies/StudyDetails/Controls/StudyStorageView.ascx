@@ -1,5 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyStorageView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyStorageView" %>
-
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+	Width="100%" style="border-left: solid 1px #3D98D1; border-right: solid 1px #3D98D1;">
+	<asp:TableRow VerticalAlign="top">
+		<asp:TableCell VerticalAlign="top">
 <asp:DetailsView ID="StudyStorageViewControl" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" OnDataBound="StudyStorageView_DataBound"
      CssClass="GlobalGridView" Width="100%">
     <Fields>
@@ -61,3 +64,6 @@
        </asp:Table>
     </EmptyDataTemplate>
 </asp:DetailsView>
+                    		</asp:TableCell>
+	</asp:TableRow>
+</asp:Table>

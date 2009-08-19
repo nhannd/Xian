@@ -1,5 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsView" %>
 
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+	Width="100%" style="border-left: solid 1px #3D98D1; border-right: solid 1px #3D98D1;">
+	<asp:TableRow VerticalAlign="top">
+		<asp:TableCell VerticalAlign="top">
 <asp:DetailsView ID="StudyDetailView" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" 
      CssClass="GlobalGridView" Width="100%">
     <Fields>
@@ -43,3 +47,6 @@
     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
     
 </asp:DetailsView>
+                    		</asp:TableCell>
+	</asp:TableRow>
+</asp:Table>

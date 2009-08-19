@@ -2,14 +2,18 @@
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.ArchivePanel" %>
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
 </asp:ScriptManagerProxy>
-<table border="0" cellspacing="5" width="100%">
+<table border="0" cellspacing="0" width="100%">
 	<tr>
 		<td>
 			<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
 				<ContentTemplate>
 					<div class="StudyDetailsSubTitle">
 						Archive Queue</div>
-                    <div style="border: solid 1px #3d98d1;">						
+<asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
+	Width="100%" style="border: solid 1px #3D98D1;">
+	<asp:TableRow VerticalAlign="top">
+		<asp:TableCell VerticalAlign="top">     
+
 					<ccUI:GridView ID="ArchiveQueueGridView" runat="server" AutoGenerateColumns="False"
 						CssClass="GlobalGridView" CellPadding="0" CaptionAlign="Top" Width="100%" OnPageIndexChanged="ArchiveQueueGridView_PageIndexChanged"
 						OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging" SelectionMode="Disabled"
@@ -47,7 +51,9 @@
 						<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 						<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
 					</ccUI:GridView>
-					</div>
+                    		</asp:TableCell>
+	</asp:TableRow>
+</asp:Table>
 				</ContentTemplate>
 			</asp:UpdatePanel>
 		</td>
@@ -56,7 +62,10 @@
 		<td>
 			<div class="StudyDetailsSubTitle" style="margin-top: 9px;">
 				Archive Study Storage</div>
-			<div style="border: solid 1px #3d98d1;">
+			<asp:Table runat="server" ID="Table2" Height="100%" CellPadding="0" CellSpacing="0"
+	Width="100%" style="border: solid 1px #3D98D1;">
+	<asp:TableRow VerticalAlign="top">
+		<asp:TableCell VerticalAlign="top">
 			<ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" AutoGenerateColumns="False"
 				CssClass="GlobalGridView" CellPadding="0" CaptionAlign="Top" Width="100%" SelectionMode="Disabled"
 				MouseHoverRowHighlightEnabled="false" GridLines="Horizontal" BackColor="White"
@@ -98,7 +107,9 @@
 				<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 				<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
 			</ccUI:GridView>
-			</div>
+                    		</asp:TableCell>
+	</asp:TableRow>
+</asp:Table>
 		</td>
 	</tr>
 </table>

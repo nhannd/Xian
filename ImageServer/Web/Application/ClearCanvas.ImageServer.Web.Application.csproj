@@ -1040,6 +1040,13 @@
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx.cs">
+      <DependentUpon>StudyIntegrityQueueGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx.designer.cs">
+      <DependentUpon>StudyIntegrityQueueGridView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx.cs">
       <DependentUpon>StudyReprocessChangeLog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1420,6 +1427,7 @@
     <Content Include="Pages\Studies\StudyDetails\Controls\DeleteSeriesConfirmDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\SeriesDeleteChangeLog.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\StudyIntegrityQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyReprocessChangeLog.ascx" />
     <Content Include="Pages\Test\TestSeriesDelete.aspx" />
     <Content Include="Scripts\jquery\jquery.scrollabletable.js" />

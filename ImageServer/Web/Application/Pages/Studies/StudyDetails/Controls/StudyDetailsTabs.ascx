@@ -8,6 +8,7 @@
 <%@ Register Src="StudyStorageView.ascx" TagName="StudyStorageView" TagPrefix="localAsp" %>
 <%@ Register Src="ArchivePanel.ascx" TagName="ArchivePanel" TagPrefix="localAsp" %>
 <%@ Register Src="HistoryPanel.ascx" TagName="HistoryPanel" TagPrefix="localAsp" %>
+<%@ Register Src="StudyIntegrityQueueGridView.ascx" TagName="StudyIntegrityQueueGridView" TagPrefix="localAsp" %>
 
 <aspAjax:TabContainer ID="StudyDetailsTabContainer" runat="server" ActiveTabIndex="0"
     CssClass="TabControl" Width="100%">
@@ -63,6 +64,17 @@
             </table>
         </ContentTemplate>
     </aspAjax:TabPanel>
+    <aspAjax:TabPanel ID="TabPanel4" HeaderText="<%$Resources: Titles, StudyIntegrityQueue %>" runat="server">
+        <ContentTemplate>
+            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+                <tr>
+                    <td>
+                        <div style="border: solid 1px #3d98d1;"><localAsp:StudyIntegrityQueueGridView ID="StudyIntegrityQueueGridView" runat="server" /></div>
+                    </td>
+                </tr>
+            </table>
+        </ContentTemplate>
+    </aspAjax:TabPanel>    
     <aspAjax:TabPanel ID="FileSystemQueueTab" HeaderText="<%$Resources: Titles, FileSystemQueue %>" runat="server">
         <ContentTemplate>
             <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">

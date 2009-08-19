@@ -246,6 +246,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyStorageView.Study = Study.TheStudy;
                 ArchivePanel.Study = Study.TheStudy;
                 HistoryPanel.TheStudySummary = Study;
+                StudyIntegrityQueueGridView.Study = Study;
             }
 
             base.DataBind();

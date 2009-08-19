@@ -12,30 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     
     
     /// <summary>
-    /// WorkQueueGridView class.
+    /// StudyIntegrityQueueGridView class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class WorkQueueGridView {
-        
-        /// <summary>
-        /// ScriptManagerProxy1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.ScriptManagerProxy ScriptManagerProxy1;
-        
-        /// <summary>
-        /// UpdatePanel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+    public partial class StudyIntegrityQueueGridView {
         
         /// <summary>
         /// ContainerTable control.
@@ -47,12 +29,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::System.Web.UI.WebControls.Table ContainerTable;
         
         /// <summary>
-        /// StudyWorkQueueGridView control.
+        /// StudyIntegrityQueueDataSourceObject control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView StudyWorkQueueGridView;
+        protected global::System.Web.UI.WebControls.ObjectDataSource StudyIntegrityQueueDataSourceObject;
+        
+        /// <summary>
+        /// StudyIntegrityQueueList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView StudyIntegrityQueueList;
     }
 }

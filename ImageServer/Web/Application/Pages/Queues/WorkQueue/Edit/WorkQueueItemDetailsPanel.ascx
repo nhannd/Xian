@@ -39,8 +39,7 @@
                                     <ccUI:ToolbarButton ID="ResetButton" runat="server" SkinID="ResetButton" OnClick="Reset_Click"/>
                                     <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="Delete_Click"/>
                                     <ccUI:ToolbarButton ID="ReprocessButton" runat="server" SkinID="ReprocessButton" OnClick="Reprocess_Click"/>
-                                    <ccUI:ToolbarButton ID="StudyDetailsButton" runat="server" SkinID="ViewStudyButton" />
-                                    
+                                    <ccUI:ToolbarButton ID="StudyDetailsButton" runat="server" SkinID="ViewStudyButton" />      
                             </td></tr>
                             <tr><td><asp:PlaceHolder ID="WorkQueueDetailsViewPlaceHolder" runat="server"></asp:PlaceHolder></td></tr>
                        </table>

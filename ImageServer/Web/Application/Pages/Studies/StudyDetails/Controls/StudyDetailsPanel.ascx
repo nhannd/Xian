@@ -38,7 +38,6 @@
                 </td>
             </tr>
             </table>
-    </div>                     
     </ContentTemplate>
 </asp:UpdatePanel>
 
