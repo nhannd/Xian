@@ -185,24 +185,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             DateTime scheduledTime = Platform.Time.AddSeconds(10);
 			if (seriesList != null)
 			{
-				using (
+                using (
 					IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
-					foreach (Series series in seriesList)
+                    ServerPartition partition = ServerPartition.Load(study.ServerPartitionKey);
+
+				    List<string> seriesUids = new List<string>();
+                    foreach (Series series in seriesList)
 					{
-						IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-						InsertWorkQueueParameters parameters = new InsertWorkQueueParameters();
-						parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-						parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-						parameters.StudyStorageKey = study.StudyStorageKey;
-						parameters.ServerPartitionKey = study.ServerPartitionKey;
-						parameters.ScheduledTime = scheduledTime;
-						parameters.ExpirationTime = scheduledTime.AddMinutes(4);
-						parameters.SeriesInstanceUid = series.SeriesInstanceUid;
-						parameters.DeviceKey = device.Key;
-						broker.FindOne(parameters);
+					    seriesUids.Add(series.SeriesInstanceUid);    
 					}
-					context.Commit();
+
+                    StudyEditorHelper.MoveSeries(context, partition, study.StudyInstanceUid, device.Key, seriesUids);
+
 					return true;
 				}
 			}
