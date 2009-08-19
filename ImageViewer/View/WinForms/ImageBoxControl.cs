@@ -33,8 +33,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using ClearCanvas.Desktop;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -55,6 +57,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.ParentRectangle = parentRectangle;
 
 			InitializeComponent();
+			InitializeImageScroller();
 
 			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -93,11 +96,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 		}
 
+    	private IEnumerable<TileControl> TileControls
+    	{
+    		get
+    		{
+    			foreach (Control control in this.Controls)
+    			{
+    				if (control is TileControl)
+    					yield return (TileControl) control;
+    			}
+    		}
+    	}
+
 		internal void Draw()
 		{
 			//Trace.Write("ImageBoxControl.Draw\n");
 
-			foreach (TileControl control in this.Controls)
+			foreach (TileControl control in this.TileControls)
 				control.Draw();
 			
 			Invalidate();
@@ -120,10 +135,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			this.SuspendLayout();
 
-			foreach (TileControl control in this.Controls)
-				control.SetParentImageBoxRectangle(this.ClientRectangle, ImageBox.InsetWidth);
+			foreach (TileControl control in this.TileControls)
+				control.SetParentImageBoxRectangle(this.AvailableClientRectangle, ImageBox.InsetWidth);
 
 			this.ResumeLayout(false);
+
+			if (_imageScroller != null && _imageScroller.Visible)
+			{
+				_imageScroller.Location = new Point(this.Width - _imageScroller.Width, 0);
+				_imageScroller.Size = new Size(_imageScroller.Width, this.Height);
+			}
 
 			Invalidate();
 		}
@@ -161,34 +182,26 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Draw();
 		}
 
-		private List<TileControl> GetTileControls()
-		{
-			List<TileControl> controls = new List<TileControl>();
-
-			foreach (TileControl control in this.Controls)
-				controls.Add(control);
-
-			return controls;
-		}
-
 		private void DisposeControls(IEnumerable<TileControl> controls)
 		{
 			foreach (TileControl control in controls)
 			{
 				this.Controls.Remove(control);
-				control.Tile.SelectionChanged -= new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
+				control.Tile.SelectionChanged -= OnTileSelectionChanged;
 				control.Dispose();
 			}
 		}
 
-		private void DisposeControls()
+		private void PerformDispose()
 		{
-			DisposeControls(GetTileControls());
+			TerminateImageScroller();
+
+			DisposeControls(new List<TileControl>(this.TileControls));
 		}
 
     	private void OnLayoutCompleted(object sender, EventArgs e)
 		{
-    		List<TileControl> oldControls = GetTileControls();
+			List<TileControl> oldControls = new List<TileControl>(this.TileControls);
 
 			this.SuspendLayout();
 
@@ -218,7 +231,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// Draw tile border, provided there's more than one tile
 			if (this.Controls.Count > 1)
 			{
-				foreach (TileControl control in this.Controls)
+				foreach (TileControl control in this.TileControls)
 				{
 					Rectangle rectangle = GetTileRectangle(control);
 
@@ -263,6 +276,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			foreach (Tile tile in imageBox.Tiles)
 				AddTileControl(tile);
 
+			// keep the image scroller at the forefront
+			_imageScroller.BringToFront();
+
 			this.ResumeLayout(false);
 		}
 
@@ -271,16 +287,192 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			TileView view = ViewFactory.CreateAssociatedView(typeof(Tile)) as TileView;
 
 			view.Tile = tile;
-			view.ParentRectangle = this.ClientRectangle;
+			view.ParentRectangle = this.AvailableClientRectangle;
 			view.ParentImageBoxInsetWidth = ImageBox.InsetWidth;
 
 			TileControl control = view.GuiElement as TileControl;
-			control.Tile.SelectionChanged += new EventHandler<ItemEventArgs<ITile>>(OnTileSelectionChanged);
+			control.Tile.SelectionChanged += OnTileSelectionChanged;
 
 			control.SuspendLayout();
 			this.Controls.Add(control);
 			control.ResumeLayout(false);
 		}
+
+		private void ImageScroller_VisibleChanged(object sender, EventArgs e)
+		{
+			foreach (TileControl control in this.TileControls)
+				control.SetParentImageBoxRectangle(this.AvailableClientRectangle, ImageBox.InsetWidth);
+		}
+
+		#endregion
+
+		#region ImageBoxControl Scroll-stacking Support
+
+		private static readonly Dictionary<IImageBox, ImageBoxControl> _imageBoxControlIndex = new Dictionary<IImageBox, ImageBoxControl>();
+    	private bool _isScrollToolInitiatedEvent = false;
+    	private bool _isScrollBarInitiatedEvent = false;
+
+		/// <summary>
+		/// Gets the <see cref="Control.ClientRectangle"/> of this control, less any area dedicated to the ImageBoxControl scrollbar.
+		/// </summary>
+    	private Rectangle AvailableClientRectangle
+    	{
+    		get
+    		{
+				Rectangle clientRectangle = this.ClientRectangle;
+				if (_imageScroller.Visible)
+					clientRectangle.Width -= _imageScroller.Width - ImageBox.InsetWidth;
+    			return clientRectangle;
+    		}
+    	}
+
+		/// <summary>
+		/// Initializes ImageBoxControl scroll-stacking support. Call on control construction.
+		/// </summary>
+    	private void InitializeImageScroller()
+    	{
+    		_imageBoxControlIndex.Add(this.ImageBox, this);
+
+    		this.ImageBox.DisplaySetChanged += ImageBox_DisplaySetChanged;
+    		this.ImageBox.LayoutCompleted += ImageBox_LayoutCompleted;
+
+			if (this.ImageBox.DisplaySet != null)
+				UpdateScrollerRange(this.ImageBox.DisplaySet);
+    	}
+
+		/// <summary>
+		/// Terminates ImageBoxControl scroll-stacking support. Call on control disposal.
+		/// </summary>
+    	private void TerminateImageScroller()
+    	{
+    		this.ImageBox.LayoutCompleted -= ImageBox_LayoutCompleted;
+    		this.ImageBox.DisplaySetChanged -= ImageBox_DisplaySetChanged;
+
+    		_imageBoxControlIndex.Remove(this.ImageBox);
+    	}
+
+    	private void ImageBox_LayoutCompleted(object sender, EventArgs e)
+    	{
+    		UpdateScrollerRange(this.ImageBox.DisplaySet);
+    	}
+
+    	private void ImageBox_DisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
+    	{
+			if (e.OldDisplaySet != null)
+			{
+				e.OldDisplaySet.PresentationImages.ItemAdded -= OnCurrentDisplaySetPresentationImagesChanged;
+				e.OldDisplaySet.PresentationImages.ItemChanged -= OnCurrentDisplaySetPresentationImagesChanged;
+				e.OldDisplaySet.PresentationImages.ItemRemoved -= OnCurrentDisplaySetPresentationImagesChanged;
+			}
+
+    		UpdateScrollerRange(e.NewDisplaySet);
+
+			if (e.NewDisplaySet != null)
+			{
+				e.NewDisplaySet.PresentationImages.ItemAdded += OnCurrentDisplaySetPresentationImagesChanged;
+				e.NewDisplaySet.PresentationImages.ItemChanged += OnCurrentDisplaySetPresentationImagesChanged;
+				e.NewDisplaySet.PresentationImages.ItemRemoved += OnCurrentDisplaySetPresentationImagesChanged;
+			}
+    	}
+
+    	private void OnCurrentDisplaySetPresentationImagesChanged(object sender, ListEventArgs<IPresentationImage> e)
+    	{
+    		UpdateScrollerRange(this.ImageBox.DisplaySet);
+    	}
+
+    	private void ImageScroller_ValueChanged(object sender, EventArgs e)
+    	{
+    		if (!_isScrollToolInitiatedEvent)
+    		{
+    			_isScrollBarInitiatedEvent = true;
+    			try
+    			{
+    				this.ImageBox.TopLeftPresentationImageIndex = _imageScroller.Value;
+
+					// make sure the scrollbar draws immediately!
+    				_imageScroller.Update();
+
+					// this ordering of draw makes it look smoother for some reason
+    				this.ImageBox.Draw();
+    			}
+    			finally
+    			{
+    				_isScrollBarInitiatedEvent = false;
+    			}
+    		}
+    	}
+
+		/// <summary>
+		/// Updates the display and range of the scrollbar
+		/// </summary>
+    	private void UpdateScrollerRange(IDisplaySet displaySet)
+    	{
+    		if (displaySet != null)
+    		{
+    			int maximum = Math.Max(0, displaySet.PresentationImages.Count - this.ImageBox.Tiles.Count);
+    			_imageScroller.Visible = maximum > 0;
+    			if (_imageScroller.Visible)
+    				_imageScroller.SetValueRange(this.ImageBox.TopLeftPresentationImageIndex, 0, maximum);
+    		}
+    	}
+
+		/// <summary>
+		/// Tool that monitors the other stacking tools and updates the scrollbar accordingly.
+		/// </summary>
+    	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+    	private class ImageBoxControlScrollTool : ImageViewerTool
+    	{
+			protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+			{
+				base.OnPresentationImageSelected(sender, e);
+
+				try
+				{
+					IImageBox imageBox = FindImageBox(e.SelectedPresentationImage.ParentDisplaySet, this.ImageViewer);
+					if (imageBox != null && _imageBoxControlIndex.ContainsKey(imageBox))
+					{
+						// get the control for the image
+						ImageBoxControl imageBoxControl = _imageBoxControlIndex[imageBox];
+
+						if (!imageBoxControl._isScrollBarInitiatedEvent)
+						{
+							imageBoxControl._isScrollToolInitiatedEvent = true;
+							try
+							{
+								imageBoxControl._imageScroller.Value = imageBox.TopLeftPresentationImageIndex;
+
+								// make sure the scrollbar draws immediately!
+								imageBoxControl._imageScroller.Update();
+							}
+							finally
+							{
+								imageBoxControl._isScrollToolInitiatedEvent = false;
+							}
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Warn, ex, "An unidentified exception has occured.");
+#if DEBUG
+					System.Diagnostics.Debug.Assert(false, ex.Message, ex.StackTrace);
+#endif
+				}
+			}
+
+			/// <summary>
+			/// Finds the <see cref="IImageBox"/> containing the specified <paramref name="displaySet"/> in the specified <paramref name="viewer"/>.
+			/// </summary>
+    		private static IImageBox FindImageBox(IDisplaySet displaySet, IImageViewer viewer)
+    		{
+    			foreach (IImageBox box in viewer.PhysicalWorkspace.ImageBoxes)
+    			{
+    				if (box.DisplaySet == displaySet)
+    					return box;
+    			}
+    			return null;
+    		}
+    	}
 
 		#endregion
 	}

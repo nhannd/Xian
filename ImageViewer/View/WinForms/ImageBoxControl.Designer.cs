@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
             if (disposing)
             {
-            	DisposeControls();
+            	PerformDispose();
 
 				if (components != null)
 					components.Dispose();
@@ -73,9 +73,34 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
+			this._imageScroller = new ClearCanvas.ImageViewer.View.WinForms.TrackSlider();
+			this.SuspendLayout();
+			// 
+			// _imageScroller
+			// 
+			this._imageScroller.AutoHide = true;
+			this._imageScroller.BackColor = System.Drawing.Color.Transparent;
+			this._imageScroller.Dock = System.Windows.Forms.DockStyle.Right;
+			this._imageScroller.Location = new System.Drawing.Point(118, 0);
+			this._imageScroller.MinimumAlpha = 128;
+			this._imageScroller.Name = "_imageScroller";
+			this._imageScroller.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
+			this._imageScroller.Size = new System.Drawing.Size(32, 150);
+			this._imageScroller.TabIndex = 0;
+			this._imageScroller.Visible = false;
+			this._imageScroller.VisibleChanged += new System.EventHandler(this.ImageScroller_VisibleChanged);
+			this._imageScroller.ValueChanged += new System.EventHandler(this.ImageScroller_ValueChanged);
+			// 
+			// ImageBoxControl
+			// 
+			this.Controls.Add(this._imageScroller);
+			this.Name = "ImageBoxControl";
+			this.ResumeLayout(false);
+
         }
 
         #endregion
+
+		private ClearCanvas.ImageViewer.View.WinForms.TrackSlider _imageScroller;
     }
 }

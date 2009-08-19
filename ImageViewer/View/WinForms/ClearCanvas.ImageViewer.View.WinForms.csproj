@@ -29,7 +29,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
@@ -51,7 +51,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
@@ -160,6 +160,16 @@
       <DependentUpon>TileControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TileView.cs" />
+    <Compile Include="TrackSlider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TrackSlider.Interactive.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TrackSlider.TrackBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TrackSlider.VisualStyle.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -167,6 +177,20 @@
   <ItemGroup>
     <None Include="ClassDiagrams\ModelView.cd" />
     <None Include="ClassDiagrams\Rendering.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ImageBoxControl.resx">
+      <DependentUpon>ImageBoxControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TrackSliderResources\ThumbHorizontal.png" />
+    <EmbeddedResource Include="TrackSliderResources\ThumbVertical.png" />
+    <EmbeddedResource Include="TrackSliderResources\TrackEndDown.png" />
+    <EmbeddedResource Include="TrackSliderResources\TrackEndLeft.png" />
+    <EmbeddedResource Include="TrackSliderResources\TrackEndRight.png" />
+    <EmbeddedResource Include="TrackSliderResources\TrackEndUp.png" />
+    <EmbeddedResource Include="TrackSliderResources\TrackHorizontal.png" />
+    <EmbeddedResource Include="TrackSliderResources\TrackVertical.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />
