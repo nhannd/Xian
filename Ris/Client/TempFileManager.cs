@@ -113,16 +113,22 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>The path of the file.</returns>
 		public string CreateFile(EntityRef key, string fileExtension, byte[] data, TimeSpan timeToLive)
 		{
-			// write data to a file on disk
-			string tempFileName = String.Format("{0}.{1}", System.IO.Path.GetTempFileName(), fileExtension);
-			File.WriteAllBytes(tempFileName, data);
+            // create a temp file on disk to store the data
+            // the OS always returns a file with the .tmp extension, so we rename it to the specified extension
+            string tmpFile = System.IO.Path.GetTempFileName();
+            string file = tmpFile.Replace(".tmp", "." + fileExtension);
+            File.Move(tmpFile, file);
+
+            // write data to the temp file
+            File.WriteAllBytes(file, data);
 
 			// lock while we update the map
 			lock (_syncObj)
 			{
 				// add entry for this file
-				_entryMap.Add(key, new Entry(tempFileName, timeToLive));
-				return tempFileName;
+                _entryMap.Add(key, new Entry(file, timeToLive));
+                Platform.Log(LogLevel.Debug, "TempFileManager: created file {0}", file);
+                return file;
 			}
 		}
 
@@ -204,6 +210,7 @@ namespace ClearCanvas.Ris.Client
 				try
 				{
 					File.Delete(kvp.Value.File);	// this is a nop if the file does not exist
+                    Platform.Log(LogLevel.Debug, "TempFileManager: deleted file {0}", kvp.Value.File);
 				}
 				catch (Exception e)
 				{
