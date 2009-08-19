@@ -380,6 +380,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			return false;
 		}
 
+        public Study GetWorkQueueItemStudy(WorkQueue item)
+        {
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            IReadContext ctx = store.OpenReadContext();
+            return item.LoadStudy(ctx);
+        }
+
     	#endregion
     }
 }
