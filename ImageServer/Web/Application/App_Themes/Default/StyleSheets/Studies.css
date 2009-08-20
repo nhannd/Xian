@@ -204,5 +204,7 @@ div.DeleteStudiesTableContainer {
 
 .ReconcileLink
 {
-	display: inline;
+    display: inline;
+	color: Blue;
+    text-decoration: underline;
 }

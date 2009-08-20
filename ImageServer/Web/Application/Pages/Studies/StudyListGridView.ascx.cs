@@ -211,17 +211,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                             row.Attributes.Add("canrestore", "true");
 
 
-                        ImageButton button = (ImageButton) row.FindControl("ReconcileLinkButton");
+                        LinkButton button = (LinkButton) row.FindControl("ReconcileLinkButton");
+                        Label label = (Label)row.FindControl("SeparatorLabel");
 
                         if (study.IsReconcileRequired)
                         {
                             button.PostBackUrl = ImageServerConstants.PageURLs.StudyIntegrityQueuePage +
                                                  "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
                             button.Visible = true;
+                            label.Visible = true;
                         }
                         else
                         {
                             button.Visible = false;
+                            label.Visible = false;
                         }
                     }
                 }

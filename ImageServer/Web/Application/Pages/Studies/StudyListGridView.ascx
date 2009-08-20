@@ -15,7 +15,6 @@
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
-                            <asp:ImageButton runat="server" ID="ReconcileLinkButton" SkinID="ReconcileLinkButton" />
                         </itemtemplate>
 						</asp:TemplateField>
 						<asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
@@ -35,8 +34,14 @@
 							ItemStyle-HorizontalAlign="Center" />
 						<asp:BoundField DataField="ModalitiesInStudy" HeaderText="Modality" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-						<asp:BoundField DataField="StudyStatusEnumString" HeaderText="Status" HeaderStyle-HorizontalAlign="Center"
-							ItemStyle-HorizontalAlign="Center" />
+						<asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+							<itemtemplate>
+                            <asp:Label ID="StudyStatusEnum" runat="server" Text='<%# Eval("StudyStatusEnum") %>' ></asp:Label>
+							<asp:Label ID="SeparatorLabel" runat="server" Text="- " />
+							<asp:LinkButton runat="server" ID="ReconcileLinkButton" Text="Reconcile" CssClass="ReconcileLink" />
+                        </itemtemplate>
+						</asp:TemplateField>							
+
 					</Columns>
 					<EmptyDataTemplate>				    
                         <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" />

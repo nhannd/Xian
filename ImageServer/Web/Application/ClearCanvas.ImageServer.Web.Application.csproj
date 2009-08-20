@@ -1255,7 +1255,6 @@
     <Content Include="App_Themes\Default\images\Buttons\NewStudyDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NewStudyHover.png" />
-    <Content Include="App_Themes\Default\images\Buttons\ReconcileLinkButton.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReprocessStudyDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReprocessStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReprocessStudyHover.png" />
