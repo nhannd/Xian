@@ -37,6 +37,8 @@
 						<asp:TemplateField HeaderText="Status" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
                             <asp:Label ID="StudyStatusEnum" runat="server" Text='<%# Eval("StudyStatusEnum") %>' ></asp:Label>
+							<asp:Label ID="QueueSeparatorLabel" runat="server" Text="- " />
+							<asp:LinkButton runat="server" ID="QueueLinkButton" CssClass="ReconcileLink" />							
 							<asp:Label ID="SeparatorLabel" runat="server" Text="- " />
 							<asp:LinkButton runat="server" ID="ReconcileLinkButton" Text="Reconcile" CssClass="ReconcileLink" />
                         </itemtemplate>

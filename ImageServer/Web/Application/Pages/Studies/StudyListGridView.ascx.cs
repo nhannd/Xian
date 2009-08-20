@@ -226,6 +226,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                             button.Visible = false;
                             label.Visible = false;
                         }
+
+                        button = (LinkButton) row.FindControl("QueueLinkButton");
+                        label = (Label) row.FindControl("QueueSeparatorLabel");
+
+                        if(study.IsLocked)
+                        {
+                            button.PostBackUrl = ImageServerConstants.PageURLs.WorkQueuePage +
+                                                 "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
+                            button.Visible = true;
+                            button.Text = study.QueueStudyStateEnum.Description;
+                            label.Visible = true;
+                        } else
+                        {
+                            button.Visible = false;
+                            label.Visible = false;
+                        }
                     }
                 }
             }

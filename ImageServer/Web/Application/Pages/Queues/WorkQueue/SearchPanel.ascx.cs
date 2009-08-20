@@ -38,6 +38,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
@@ -295,6 +296,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             RescheduleItemButton.Roles =
                 AuthorityTokens.WorkQueue.Reschedule;
 
+            if (!IsPostBack && !Page.IsAsync)
+            {
+                string patientID = Request["PatientID"];
+                string patientName = Request["PatientName"];
+                string partitionKey = Request["PartitionKey"];
+
+                if (patientID != null && patientName != null && partitionKey != null)
+                {
+                    ServerPartitionConfigController controller = new ServerPartitionConfigController();
+                    ServerPartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
+
+                    PatientId.Text = patientID;
+                    PatientName.Text = patientName;
+
+                    workQueueItemList.SetDataSource();
+                    workQueueItemList.Refresh();
+                }
+            }
         }
 
         public void Refresh()

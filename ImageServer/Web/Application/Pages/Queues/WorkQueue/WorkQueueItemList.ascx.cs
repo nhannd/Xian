@@ -294,5 +294,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 				return false;
 			}
 		}
+
+        public void SetDataSource()
+        {
+            WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
+        }
 	}
 }
