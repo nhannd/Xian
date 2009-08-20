@@ -409,10 +409,22 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     	{
     		if (displaySet != null)
     		{
-    			int maximum = Math.Max(0, displaySet.PresentationImages.Count - this.ImageBox.Tiles.Count);
-    			_imageScroller.Visible = maximum > 0;
-    			if (_imageScroller.Visible)
-    				_imageScroller.SetValueRange(this.ImageBox.TopLeftPresentationImageIndex, 0, maximum);
+    			int tileCount = this.ImageBox.Tiles.Count;
+				int maximum = Math.Max(0, displaySet.PresentationImages.Count - tileCount);
+				if (maximum > 0)
+				{
+					_imageScroller.SetValueRange(this.ImageBox.TopLeftPresentationImageIndex, 0, maximum);
+					_imageScroller.Increment = Math.Max(1, tileCount);
+					_imageScroller.Visible = true;
+				}
+				else
+				{
+					_imageScroller.Visible = false;
+				}
+    		}
+			else
+    		{
+    			_imageScroller.Visible = false;
     		}
     	}
 
