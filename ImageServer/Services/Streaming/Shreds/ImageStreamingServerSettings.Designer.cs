@@ -67,5 +67,41 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
                 return ((global::System.TimeSpan)(this["CacheRetentionWindow"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnablePrefetch {
+            get {
+                return ((bool)(this["EnablePrefetch"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int StackingPrefetchSize {
+            get {
+                return ((int)(this["StackingPrefetchSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int InitialPrefetchSize {
+            get {
+                return ((int)(this["InitialPrefetchSize"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int ClientPrefetchSize {
+            get {
+                return ((int)(this["ClientPrefetchSize"]));
+            }
+        }
     }
 }

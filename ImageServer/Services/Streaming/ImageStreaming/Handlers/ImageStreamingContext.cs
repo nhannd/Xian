@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
@@ -58,30 +59,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             {
                 if (_pd == null)
                 {
-                    object cached = DicomPixelDataCache.Find(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid);
-                    if (cached!=null)
-                    {
-                        _pd = cached as DicomPixelData;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < 5; i++ )
-                        {
-                            try
-                            {
-                                _pd = DicomPixelData.CreateFrom(ImagePath);
-                                DicomPixelDataCache.Insert(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid, _pd);
-                                break;
-                            }
-                            catch(IOException)
-                            {
-                                Random rand = new Random();
-                                Thread.Sleep(rand.Next(100, 500));
-                            }
-                        }
-                        
-                    }
-                    
+                    PixelDataManager manager = PixelDataManager.GetInstance(StorageLocation);
+                    _pd = manager.GetPixelData(SeriesInstanceUid, ObjectUid);
                 }
                 return _pd;
             }
