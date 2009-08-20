@@ -191,25 +191,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             foreach (GridViewRow row in StudyListControl.Rows)
             {
-                if (row.RowType==DataControlRowType.DataRow)
+                if (row.RowType == DataControlRowType.DataRow)
                 {
-					StudySummary study = Studies[row.RowIndex];
+                    StudySummary study = Studies[row.RowIndex];
 
-					if (study != null)
-					{
-						row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
-						row.Attributes.Add("serverae", study.ThePartition.AeTitle);
+                    if (study != null)
+                    {
+                        row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
+                        row.Attributes.Add("serverae", study.ThePartition.AeTitle);
 
-					    string reason;
-					    if (study.CanScheduleDelete(out reason))
-							row.Attributes.Add("candelete", "true");
+                        string reason;
+                        if (study.CanScheduleDelete(out reason))
+                            row.Attributes.Add("candelete", "true");
 
                         if (study.CanScheduleMove(out reason))
                             row.Attributes.Add("canmove", "true");
 
                         if (study.CanScheduleRestore(out reason))
                             row.Attributes.Add("canrestore", "true");
-					}
+
+
+                        ImageButton button = (ImageButton) row.FindControl("ReconcileLinkButton");
+
+                        if (study.IsReconcileRequired)
+                        {
+                            button.PostBackUrl = ImageServerConstants.PageURLs.StudyIntegrityQueuePage +
+                                                 "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
+                            button.Visible = true;
+                        }
+                        else
+                        {
+                            button.Visible = false;
+                        }
+                    }
                 }
             }
         }
@@ -230,8 +244,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                         message.Message = "No studies found matching the provided criteria.";
                     }
                 }
-                
-            }
+            } 
         }
 
 		protected void GetStudyDataSource(object sender, ObjectDataSourceEventArgs e)

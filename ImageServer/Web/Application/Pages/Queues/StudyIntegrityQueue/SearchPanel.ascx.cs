@@ -34,8 +34,10 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using ClearCanvas.Common.Utilities;
@@ -102,6 +104,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #endregion Public Methods
 
         #region Protected Methods
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack && !Page.IsAsync)
+            {
+                string patientID = Request["PatientID"];
+                string patientName = Request["PatientName"];
+                string partitionKey = Request["PartitionKey"];
+
+                if (patientID != null && patientName != null && partitionKey != null)
+                {
+                    ServerPartitionConfigController controller = new ServerPartitionConfigController();
+                    ServerPartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
+
+                    PatientId.Text = patientID;
+                    PatientName.Text = patientName;
+
+                    StudyIntegrityQueueItemList.SetDataSource();
+                    StudyIntegrityQueueItemList.Refresh();
+                }
+            }
+        }
 
         protected override void OnInit(EventArgs e)
         {

@@ -322,6 +322,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             
         }
 
+        public void SetDataSource()
+        {
+            StudyIntegrityQueueGridView.DataSource = StudyIntegrityQueueDataSourceObject;
+        }
+
         #endregion
     }
 

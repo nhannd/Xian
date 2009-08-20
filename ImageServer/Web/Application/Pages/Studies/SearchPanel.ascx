@@ -29,13 +29,7 @@ function MultiSelect() {
 
 }
 
-function CheckDateRange(fromDate, toDate, textBoxId, calendarExtenderId, message) {
-    if(new Date(fromDate) > new Date(toDate)) {
-        alert(message);
-        document.getElementById(textBoxId).value='';
-        $find(calendarExtenderId).set_selectedDate(null);
-    }
-}
+
 </script>
             <asp:Table runat="server">
                 <asp:TableRow>

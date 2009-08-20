@@ -15,6 +15,7 @@
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
                             <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
+                            <asp:ImageButton runat="server" ID="ReconcileLinkButton" SkinID="ReconcileLinkButton" />
                         </itemtemplate>
 						</asp:TemplateField>
 						<asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
