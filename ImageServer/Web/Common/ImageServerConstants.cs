@@ -74,7 +74,7 @@ public class ImageServerConstants
         public const string AuthorizationErrorPage = "~/Pages/Error/AuthorizationErrorPage.aspx";
         public const string LoginPage = "~/Pages/Login/Default.aspx";
         public const string ApplicationLog = "~/Pages/Admin/ApplicationLog/Default.aspx";
-        
+        public const string StudyIntegrityQueuePage = "~/Pages/Queues/StudyIntegrityQueue/Default.aspx";
 	}
 
     public class ImageURLs
