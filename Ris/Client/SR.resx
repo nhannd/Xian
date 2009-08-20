@@ -567,6 +567,9 @@
   <data name="MessageMergeIdenticalItems" xml:space="preserve">
     <value>You cannot merge two identical items.</value>
   </data>
+  <data name="MessageNameContainsInvalidChars" xml:space="preserve">
+    <value>The value contains invalid characters</value>
+  </data>
   <data name="MessageNoActiveProcedures" xml:space="preserve">
     <value>At least one active procedure is required.</value>
   </data>
