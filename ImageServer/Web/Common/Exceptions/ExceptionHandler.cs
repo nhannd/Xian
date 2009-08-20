@@ -51,16 +51,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
             context = HttpContext.Current;
         }
 
-        public static void ThrowException(Exception e)
-        {
-            context = HttpContext.Current;
-            Platform.Log(LogLevel.Error, e);
-            context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, e.Message);
-            context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, e.StackTrace);
-            context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);   
-        }
+		public static void ThrowException(Exception e)
+		{
+			context = HttpContext.Current;
+			Platform.Log(LogLevel.Error, e);
+			if (context.Items.Contains(ImageServerConstants.ContextKeys.ErrorMessage))
+				context.Items.Remove(ImageServerConstants.ContextKeys.ErrorMessage);
+			if (context.Items.Contains(ImageServerConstants.ContextKeys.StackTrace))
+				context.Items.Remove(ImageServerConstants.ContextKeys.StackTrace);
 
-        public static void ThrowException(BaseWebException e)
+			context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, e.Message);
+			context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, e.StackTrace);
+			context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);
+		}
+
+    	public static void ThrowException(BaseWebException e)
         {
             if (e != null)
             {                

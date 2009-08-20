@@ -61,4 +61,18 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopEdited);
 		}
     }
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class ScheduleAutoRouteSample : SampleRuleBase
+	{
+		public ScheduleAutoRouteSample()
+			: base("ScheduleAutoRoute",
+				   "Schedule AutoRoute",
+				   ServerRuleTypeEnum.AutoRoute,
+				   "Sample_AutoRouteSchedule.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopEdited);
+		}
+	}
 }

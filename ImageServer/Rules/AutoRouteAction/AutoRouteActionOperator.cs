@@ -29,6 +29,9 @@
 
 #endregion
 
+using System;
+using System.Globalization;
+using System.Threading;
 using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
@@ -54,6 +57,34 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
             string device = xmlNode.Attributes["device"].Value;
 
+			if ((xmlNode.Attributes["startTime"] != null) 
+				&& (xmlNode.Attributes["endTime"] != null))
+			{
+				DateTime startTime;
+				if (!DateTime.TryParseExact(xmlNode.Attributes["startTime"].Value, "HH:mm:ss",
+											CultureInfo.InvariantCulture, DateTimeStyles.None,
+											out startTime))
+				{
+					throw new XmlActionCompilerException("Incorrect format of startTime: " + xmlNode.Attributes["startTime"].Value);	
+				}
+
+				DateTime endTime;
+				if (!DateTime.TryParseExact(xmlNode.Attributes["endTime"].Value, "HH:mm:ss",
+											CultureInfo.InvariantCulture, DateTimeStyles.None,
+											out endTime))
+				{
+					throw new XmlActionCompilerException("Incorrect format of endTime: " + xmlNode.Attributes["endTime"].Value);
+				}
+
+				return new AutoRouteActionItem(device, startTime, endTime);
+			}
+			else if ((xmlNode.Attributes["startTime"] == null)
+				&& (xmlNode.Attributes["endTime"] != null))
+				throw new XmlActionCompilerException("Unexpected missing startTime attribute for auto-route action");
+			else if ((xmlNode.Attributes["startTime"] != null)
+		        && (xmlNode.Attributes["endTime"] == null))
+				throw new XmlActionCompilerException("Unexpected missing endTime attribute for auto-route action");
+         
             return new AutoRouteActionItem(device);
         }
 
@@ -70,6 +101,17 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
 
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "startTime";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "endTime";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
 
             XmlSchemaElement element = new XmlSchemaElement();
             element.Name = "auto-route";

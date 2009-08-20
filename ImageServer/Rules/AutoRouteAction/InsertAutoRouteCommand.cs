@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
     {
         private readonly ServerActionContext _context;
         private readonly string _deviceAe;
+    	private readonly DateTime? _scheduledTime;
 
         /// <summary>
         /// Constructor.
@@ -64,6 +65,22 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             _context = context;
             _deviceAe = device;
         }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="context">A contentxt in which to apply the AutoRoute request.</param>
+		/// <param name="device">The AE Title of the device to AutoRoute to.</param>
+		/// <param name="scheduledTime">The scheduled time for the AutoRoute.</param>
+		public InsertAutoRouteCommand(ServerActionContext context, string device, DateTime scheduledTime)
+			: base("Update/Insert an AutoRoute WorkQueue Entry", false)
+		{
+			Platform.CheckForNullReference(context, "ServerActionContext");
+
+			_context = context;
+			_deviceAe = device;
+			_scheduledTime = scheduledTime;
+		}
 
         /// <summary>
         /// Do the insertion of the AutoRoute.
@@ -104,9 +121,17 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
 			InsertWorkQueueParameters parms = new InsertWorkQueueParameters();
 			parms.WorkQueueTypeEnum = WorkQueueTypeEnum.AutoRoute;
-            parms.ScheduledTime = Platform.Time.AddSeconds(30);
-            parms.ExpirationTime = Platform.Time.AddMinutes(4);
-            parms.StudyStorageKey = _context.StudyLocationKey;
+			if (_scheduledTime.HasValue)
+			{
+				parms.ScheduledTime = _scheduledTime.Value;
+				parms.ExpirationTime = _scheduledTime.Value.AddMinutes(4);
+			}
+			else
+			{
+				parms.ScheduledTime = Platform.Time.AddSeconds(30);
+				parms.ExpirationTime = Platform.Time.AddMinutes(4);
+			}
+        	parms.StudyStorageKey = _context.StudyLocationKey;
             parms.ServerPartitionKey = _context.ServerPartitionKey;
             parms.DeviceKey = dev.GetKey();
             parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");

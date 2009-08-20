@@ -137,6 +137,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Tier1RetentionAction\Sample_StudyDateTier1Retention.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AutoRouteAction\Sample_AutoRouteSchedule.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
