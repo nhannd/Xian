@@ -65,3 +65,22 @@ function fitStringToWidth(str,width,className) {
   document.body.removeChild(span);
   return result;
 }
+
+/*
+ * CheckDateRange checks towo dates and ensures that the first is less than the second.
+ *
+ * fromDate the date that should be less than the second date
+ * toDate  the date that should be greater than the second date
+ * textBoxId  the id of the textbox where the date value being checked is from
+ * calendarExtenderId the calendar extender id where the date was selected from
+ * message an error message that is displayed if the range is invalid
+ *
+ */
+
+function CheckDateRange(fromDate, toDate, textBoxId, calendarExtenderId, message) {
+    if(new Date(fromDate) > new Date(toDate)) {
+        alert(message);
+        document.getElementById(textBoxId).value='';
+        $find(calendarExtenderId).set_selectedDate(null);
+    }
+}
