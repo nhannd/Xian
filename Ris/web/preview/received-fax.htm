@@ -35,6 +35,32 @@
 						// redirect all other documents
 						window.location = faxUrl;
 					}
+					
+					var previewInfo = 
+						'<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">'+
+						'	<tr>'+
+						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">From #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="fromNumber"/></td>'+
+						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">To #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="toNumber"/></td>'+
+						'   </tr>'+
+						'	<tr>'+
+						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Original Copy: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="original"/></td>'+
+						'	</tr>'+
+						'</table>';
+
+					$("faxPreviewInfo").innerHTML = previewInfo;
+					
+					if(faxboxItem != null)
+					{
+						Field.setValue($("fromNumber"), faxboxItem.SenderNumber);
+						Field.setValue($("toNumber"), faxboxItem.ReceivedAt.Number);
+						Field.setValue($("original"), "lol"); // TODO: Implement.
+					}
+					else
+					{
+						Field.setValue($("fromNumber"), "Not found.");
+						Field.setValue($("toNumber"), "Not found.");
+						Field.setValue($("original"), "lol");
+					}
 				}
 				catch(e)
 				{
@@ -43,11 +69,13 @@
 				}
 		}
 
+
 		</script>
 	</head>
 	<body onload="onBodyLoad()">
-	<div id="PdfButtons"></div>
-	<object id="PdfObject" type="application/pdf"></object>
-	<div id="errorMsg" />
+		<div id="faxPreviewInfo"></div>
+		<div id="PdfButtons"></div>
+		<object id="PdfObject" type="application/pdf"></object>
+		<div id="errorMsg" />
 	</body>
 </html>
