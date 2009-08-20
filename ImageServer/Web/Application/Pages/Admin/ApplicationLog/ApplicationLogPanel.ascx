@@ -11,28 +11,45 @@
 					    <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="false" Effects="false" MaskedInput="true" />
 		 
 						<script type="text/javascript">
-							jQuery(function($) {
-								$.mask.definitions[';'] = '[01]';
-								$("#<%=FromFilter.ClientID %>").mask("9999-99-99? 99:99:99.999");
-								$("#<%=ToFilter.ClientID %>").mask("9999-99-99? 99:99:99.999");
-							});</script>
+						    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(ApplyMask);
+						
+						    function ApplyMask() {
+							    jQuery(function($) {
+								    $.mask.definitions[';'] = '[01]';
+								    $("#<%=FromTimeFilter.ClientID %>").mask("99:99:99.999");
+								    $("#<%=ToTimeFilter.ClientID %>").mask("99:99:99.999");
+							    });
+							}</script>
 
-						<table width="100%" cellpadding="0" cellspacing="0">
+						<table cellpadding="0" cellspacing="0">
 							<tr>
 								<td>
 									<table cellpadding="0" cellspacing="0">
 										<tr>
-											<td align="left">
+											<td align="left" valign="bottom">
 												<asp:Label ID="Label2" runat="server" Text="Host" CssClass="SearchTextBoxLabel"></asp:Label><br />
 												<asp:TextBox ID="HostFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search for a hostname"></asp:TextBox></td>
-											<td align="left">
-												<asp:Label ID="Label4" runat="server" Text="From" CssClass="SearchTextBoxLabel"></asp:Label><br />
-												<asp:TextBox ID="FromFilter" runat="server" CssClass="SearchDateTimeTextBox" ToolTip="From Date/Time (YYYY-MM-DD HH:MM:SS.FFF)"></asp:TextBox></td>
-									
-											<td align="left">
-												<asp:Label ID="Label5" runat="server" Text="To" CssClass="SearchTextBoxLabel"></asp:Label><br />
-												<asp:TextBox ID="ToFilter" runat="server" CssClass="SearchDateTimeTextBox" ToolTip="To Date/Time (YYYY-MM-DD HH:MM:SS.FFF)"></asp:TextBox></td>
-											<td align="left">
+
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label7" runat="server" Text="From Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
+                                                <asp:LinkButton ID="ClearFromDateFilterButton" runat="server" Text="X" CssClass="SmallLink"/><br />
+                                                <ccUI:TextBox ID="FromDateFilter" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Log Date" />
+
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label5" runat="server" Text="From Time" CssClass="SearchTextBoxLabel" EnableViewState="false"/><br />
+												<asp:TextBox ID="FromTimeFilter" runat="server" CssClass="SearchTextBox" ToolTip="From Time (HH:MM:SS.FFF)"></asp:TextBox>
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label8" runat="server" Text="To Date" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
+                                                <asp:LinkButton ID="ClearToDateFilterButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 35px;"/><br />
+                                                <ccUI:TextBox ID="ToDateFilter" runat="server" CssClass="SearchDateBox" ReadOnly="true" ToolTip="Search the list by Log Date" />
+                                            </td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label4" runat="server" Text="To Time" CssClass="SearchTextBoxLabel" EnableViewState="false"/><br />
+												<asp:TextBox ID="ToTimeFilter" runat="server" CssClass="SearchTextBox" ToolTip="To Time (HH:MM:SS.FFF)"></asp:TextBox>
+                                            </td>                                            
+											<td align="left" valign="bottom">
 												<asp:Label ID="Label3" runat="server" Text="Thread" CssClass="SearchTextBoxLabel"></asp:Label><br />
 												<asp:TextBox ID="ThreadFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search for a thread"></asp:TextBox></td>
 											<td align="left">
@@ -95,5 +112,13 @@
 				</asp:TableCell>
 			</asp:TableRow>
 		</asp:Table>
+		
+        <ccUI:CalendarExtender ID="FromDateCalendarExtender" runat="server" TargetControlID="FromDateFilter"
+            CssClass="Calendar">
+        </ccUI:CalendarExtender>
+        <ccUI:CalendarExtender ID="ToDateCalendarExtender" runat="server" TargetControlID="ToDateFilter"
+            CssClass="Calendar">
+        </ccUI:CalendarExtender>
+		
 	</ContentTemplate>
 </asp:UpdatePanel>
