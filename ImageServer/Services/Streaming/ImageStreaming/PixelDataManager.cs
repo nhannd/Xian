@@ -296,7 +296,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                     }
                 }
 
-                _enqueueEvent.WaitOne(1000);
+                _enqueueEvent.WaitOne(1000, true);
 
             }
 
