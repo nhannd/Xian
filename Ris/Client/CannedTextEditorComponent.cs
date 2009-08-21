@@ -172,6 +172,18 @@ namespace ClearCanvas.Ris.Client
                     return new ValidationResult(ok, Desktop.SR.MessageValueRequired);
                 }));
 
+            if (CannedTextEditorComponentSettings.Default.EnableCannedTextNameValidation)
+            {
+                // add validation rule to ensure the name does not contain invalid characters
+                this.Validation.Add(new ValidationRule("Name",
+                    delegate
+                    {
+                        // only allow alphabets and space
+                        bool ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
+                        return new ValidationResult(ok, SR.MessageNameContainsInvalidChars);
+                    }));
+            }
+
             base.Start();
         }
 
@@ -233,7 +245,6 @@ namespace ClearCanvas.Ris.Client
         }
 
         [ValidateNotNull]
-        [ValidateRegex(@"^[A-Za-z\s]+$", Message = "MessageNameContainsInvalidChars")]
         public string Name
         {
             get { return _cannedTextDetail.Name; }
