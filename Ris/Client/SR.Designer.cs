@@ -1510,6 +1510,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There are other canned texts with the same name in the following groups you belonged to.  Do you want to continue?.
+        /// </summary>
+        internal static string MessageWarningDuplicateCannedTextName {
+            get {
+                return ResourceManager.GetString("MessageWarningDuplicateCannedTextName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Worklist must have a name..
         /// </summary>
         internal static string MessageWorklistMustHaveName {

@@ -600,6 +600,9 @@
   <data name="MessageUnknownErrorCommunicatingWithServer" xml:space="preserve">
     <value>An unknown error occured while attempting to communicate with the server.  See log for details.</value>
   </data>
+  <data name="MessageWarningDuplicateCannedTextName" xml:space="preserve">
+    <value>There are other canned texts with the same name in the following groups you belonged to.  Do you want to continue?</value>
+  </data>
   <data name="MessageWorklistMustHaveName" xml:space="preserve">
     <value>Worklist must have a name.</value>
   </data>

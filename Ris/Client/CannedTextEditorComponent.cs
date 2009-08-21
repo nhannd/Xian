@@ -33,14 +33,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.CannedTextService;
 using ClearCanvas.Ris.Application.Common;
-using System.Text.RegularExpressions;
+using ClearCanvas.Ris.Application.Common.CannedTextService;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -322,6 +323,46 @@ namespace ClearCanvas.Ris.Client
                 if (this.IsEditingPersonal)
                     _cannedTextDetail.StaffGroup = null;
 
+                // Find a list of canned texts that matches the name
+                List<CannedTextSummary> cannedTexts = null;
+                Platform.GetService<ICannedTextService>(
+                    delegate(ICannedTextService service)
+                    {
+                        ListCannedTextRequest request = new ListCannedTextRequest();
+                        request.Name = this.Name;
+
+                        ListCannedTextResponse response = service.ListCannedText(request);
+                        cannedTexts = response.CannedTexts;
+                    });
+
+                // If updating an existing canned text, remove the one being edited from the list
+                if (!_isNew)
+                {
+                    CollectionUtils.Remove(cannedTexts,
+                        delegate(CannedTextSummary c)
+                            {
+                                return c.CannedTextRef.Equals(_cannedTextRef, true);
+                            });
+                }
+
+                // Warn user if there are other cannedtext (for which the user has access to) with the same name
+                if (cannedTexts.Count > 0)
+                {
+                    StringBuilder messageBuilder = new StringBuilder();
+
+                    messageBuilder.AppendLine(SR.MessageWarningDuplicateCannedTextName);
+                    messageBuilder.AppendLine();
+                    CollectionUtils.ForEach(cannedTexts,
+                        delegate(CannedTextSummary c)
+                            {
+                                messageBuilder.AppendLine(c.IsPersonal ? SR.ColumnPersonal : c.StaffGroup.Name);
+                            });
+
+                    if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
+                        return;
+                }
+
+                // Commit the changes
                 Platform.GetService<ICannedTextService>(
                     delegate(ICannedTextService service)
                     {
