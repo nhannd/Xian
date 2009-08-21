@@ -31,9 +31,9 @@ namespace ClearCanvas.Ris.Client {
             "nly contain space and alphabets.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnableCannedTextNameValidation {
+        public bool RestrictCannedTextNameToAlphaChars {
             get {
-                return ((bool)(this["EnableCannedTextNameValidation"]));
+                return ((bool)(this["RestrictCannedTextNameToAlphaChars"]));
             }
         }
     }

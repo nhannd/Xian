@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="CannedTextEditorComponentSettings">
   <Profiles />
   <Settings>
-    <Setting Name="EnableCannedTextNameValidation" Description="Enable validation of characters in the canned text name.  If true, the name can only contain space and alphabets." Type="System.Boolean" Scope="Application">
+    <Setting Name="RestrictCannedTextNameToAlphaChars" Description="Enable validation of characters in the canned text name.  If true, the name can only contain space and alphabets." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
