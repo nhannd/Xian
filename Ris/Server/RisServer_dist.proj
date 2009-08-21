@@ -73,6 +73,7 @@
   <ItemGroup>
     <ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
     <ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
+  <ShredHostAppConfigSourceFiles Include="$(HealthcareDirectory)\Hibernate\app.config" />
   </ItemGroup>
 
   <ItemGroup>
