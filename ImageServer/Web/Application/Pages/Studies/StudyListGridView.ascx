@@ -10,7 +10,7 @@
 				OnObjectDisposing="DisposeDataSource"/>
 				<ccUI:GridView ID="StudyListControl" runat="server" 
 					OnRowDataBound="GridView_RowDataBound"
-					SelectionMode="Multiple" DataKeyNames="Key" SelectUsingDataKeys="true">
+					SelectionMode="Multiple" DataKeyNames="Key" SelectUsingDataKeys="true" >
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>

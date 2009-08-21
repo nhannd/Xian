@@ -6,10 +6,9 @@
     Width="100%">
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">   
-            <ccUI:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
-                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-                BorderWidth="0px" HorizontalAlign="left">
+            <ccUI:GridView ID="PartitionGridView" runat="server" 
+                OnRowDataBound="PartitionGridView_RowDataBound" 
+                PageSize="20">
                 <Columns>
                     <asp:BoundField DataField="AeTitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left"/>
                     <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left" />

@@ -237,7 +237,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
 			parameters.StartIndex = startRowIndex;
-			parameters.MaxRowCount = 25;
+			parameters.MaxRowCount = maximumRows;
 
 			if (Partition != null)
 				parameters.ServerPartitionKey = Partition.Key;

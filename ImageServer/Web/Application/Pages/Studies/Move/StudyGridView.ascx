@@ -1,10 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyGridView.ascx.cs" 
 Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.StudyGridView" %>
 
-            <asp:GridView ID="StudyListControl" runat="server" AutoGenerateColumns="False"
-                CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" 
-                PageSize="25" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-                BorderWidth="0px">
+            <asp:GridView ID="StudyListControl" runat="server">
                 <Columns>
                     <asp:TemplateField HeaderText="Patient Name">
                         <itemtemplate>

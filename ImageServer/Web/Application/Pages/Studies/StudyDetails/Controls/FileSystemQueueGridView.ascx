@@ -11,8 +11,6 @@
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">     
         <ccUI:GridView ID="FSQueueGridView" runat="server" 
-                       AutoGenerateColumns="False" CssClass="GlobalGridView" 
-                       CellPadding="0" CaptionAlign="Top" Width="100%"
                        OnPageIndexChanged="FSQueueGridView_PageIndexChanged" 
                        OnPageIndexChanging="FSQueueGridView_PageIndexChanging" SelectionMode="Disabled"
                        OnRowDataBound="FSQueueGridView_RowDataBound"

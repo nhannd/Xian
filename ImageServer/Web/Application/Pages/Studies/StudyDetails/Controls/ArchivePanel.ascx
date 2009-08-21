@@ -14,8 +14,8 @@
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">     
 
-					<ccUI:GridView ID="ArchiveQueueGridView" runat="server" AutoGenerateColumns="False"
-						CssClass="GlobalGridView" CellPadding="0" CaptionAlign="Top" Width="100%" OnPageIndexChanged="ArchiveQueueGridView_PageIndexChanged"
+					<ccUI:GridView ID="ArchiveQueueGridView" runat="server" 
+						OnPageIndexChanged="ArchiveQueueGridView_PageIndexChanged"
 						OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging" SelectionMode="Disabled"
 						MouseHoverRowHighlightEnabled="false" GridLines="Horizontal" BackColor="White">
 						<Columns>
@@ -66,8 +66,8 @@
 	Width="100%" style="border: solid 1px #3D98D1;">
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
-			<ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" AutoGenerateColumns="False"
-				CssClass="GlobalGridView" CellPadding="0" CaptionAlign="Top" Width="100%" SelectionMode="Disabled"
+			<ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" 
+				SelectionMode="Disabled"
 				MouseHoverRowHighlightEnabled="false" GridLines="Horizontal" BackColor="White"
 				OnRowDataBound="ArchiveStudyStorageGridView_RowDataBound">
 				<Columns>

@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Text;
 using System.Web.Script.Serialization;
@@ -457,6 +458,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 }
 
                 PagerSettings.Visible = false;
+            }
+
+            //1 is the smallest value the PageSize can be set to, and since, it's unlikely that we would want
+            //a page size of 1, it will indicate that we want to use the page size from the web.config.
+            //This allows individual gridviews to set custom page sizes, should it be necessary.
+            if(PageSize == 1)
+            {
+                PageSize = Int32.Parse(ConfigurationManager.AppSettings["PageSize"]);
             }
                     
         }

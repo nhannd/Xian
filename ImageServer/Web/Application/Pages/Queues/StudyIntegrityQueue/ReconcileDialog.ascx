@@ -64,10 +64,10 @@
                                     <table cellpadding="0" cellspacing="0" width="100%">
                                         <tr><td style="padding: 0px 12px 0px 4px;">
                                     <div class="ReconcileGridViewPanel">
-                                        <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="400px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
+                                        <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="440px" AutoGenerateColumns="false">
                                             <Columns>
 						                        <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
-						                        <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
+						                        <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />                    
 						                        <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 						                    </Columns>
 						                    <RowStyle CssClass="ReconcileSeriesGridViewRow" />
@@ -134,10 +134,10 @@
                                     <table cellpadding="0" cellspacing="0" width="100%">
                                         <tr><td style="padding: 0px 12px 0px 4px;">
                                     <div class="ReconcileGridViewPanel">
-                                        <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ConflictingPatientSeriesGridView" width="400px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
+                                        <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ConflictingPatientSeriesGridView" width="440px" AutoGenerateColumns="false">
                                             <Columns>
 						                        <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
-						                        <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
+						                        <asp:BoundField HeaderText="Modality" DataField="Modality" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" />                    
 						                        <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 						                    </Columns>
 						                    <RowStyle CssClass="ReconcileSeriesGridViewRow" />

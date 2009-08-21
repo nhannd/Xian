@@ -6,11 +6,9 @@
     Width="100%">
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">
-            <ccUI:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" OnRowDataBound="GridView1_RowDataBound" 
+            <ccUI:GridView ID="GridView1" runat="server" OnRowDataBound="GridView1_RowDataBound" 
                 EmptyDataText="No filesystems found (Please check the filters!)"
-                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-                BorderWidth="0px">
+                PageSize="20">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>
                     <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>

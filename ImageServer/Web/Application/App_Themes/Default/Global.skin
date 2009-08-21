@@ -73,9 +73,9 @@
 <asp:Image runat="server" SkinID="Spacer" ImageUrl="images/blank.gif" />
 
 <%-- GridView --%>
-<asp:GridView runat="server" SkinID="GlobalGridView" AutoGenerateColumns="False" CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" />
+<asp:GridView runat="server" SkinID="GlobalGridView" AutoGenerateColumns="False" CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" BackColor="White" BorderColor="Transparent" GridLines="Horizontal"/>
 
 <%-- Custom Controls --%>
 <ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />
-<ccUI:GridView runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#d6f2ce" GridLines="Horizontal" BackColor="White" AllowSorting="True" PageSize="25" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
+<ccUI:GridView runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#d6f2ce" GridLines="Horizontal" BackColor="White" AllowSorting="True" PageSize="1" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
 

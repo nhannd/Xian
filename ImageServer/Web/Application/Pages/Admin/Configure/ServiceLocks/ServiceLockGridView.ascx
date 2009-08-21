@@ -9,10 +9,10 @@
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">
         
-            <ccUI:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
-                EmptyDataText="" OnPageIndexChanging="GridView_PageIndexChanging" CellPadding="0" PagerSettings-Visible="false"
-                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
+            <ccUI:GridView ID="GridView" runat="server" 
+                OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
+                OnPageIndexChanging="GridView_PageIndexChanging"
+                PageSize="20">
                 <Columns>
                     <asp:TemplateField HeaderText="Type">
                         <ItemTemplate>

@@ -12,8 +12,6 @@
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top"> 
         <ccUI:GridView ID="StudyHistoryGridView" runat="server" 
-                       AutoGenerateColumns="false" CssClass="GlobalGridView" 
-                       CellPadding="0" CaptionAlign="Top" Width="100%"
                        OnRowDataBound="StudyHistoryGridView_RowDataBound"
                        OnPageIndexChanged="StudyHistoryGridView_PageIndexChanged" 
                        OnPageIndexChanging="StudyHistoryGridView_PageIndexChanging" 

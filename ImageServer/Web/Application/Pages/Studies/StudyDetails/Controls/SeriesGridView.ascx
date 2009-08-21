@@ -11,8 +11,6 @@
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">    
                     <ccUI:GridView ID="GridView1" runat="server" 
-                        AutoGenerateColumns="False" CssClass="GlobalGridView" 
-                        CellPadding="0" CaptionAlign="Top" Width="100%" 
                         OnPageIndexChanged="GridView1_PageIndexChanged" 
                         OnPageIndexChanging="GridView1_PageIndexChanging" 
                         MouseHoverRowHighlightEnabled = "true"

@@ -11,8 +11,6 @@
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">   
         <ccUI:GridView ID="StudyWorkQueueGridView" runat="server" 
-                       AutoGenerateColumns="False" CssClass="GlobalGridView" 
-                       CellPadding="0" CaptionAlign="Top" Width="100%" 
                        OnPageIndexChanged="StudyWorkQueueGridView_PageIndexChanged" 
                        OnPageIndexChanging="StudyWorkQueueGridView_PageIndexChanging" SelectionMode="Disabled"
                        MouseHoverRowHighlightEnabled="false"
