@@ -64,10 +64,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		internal ColumnInfo(Column column, Configuration config, Dialect dialect)
 		{
 			_name = column.Name;
-			_length = column.Length;
 			_nullable = column.IsNullable;
 			_sqlType = column.GetSqlType(dialect, new Mapping(config));
-		}
+
+            //as of NH2.0, the length column seems to be set at 255 for non-string-like columns, which makes no sense
+            //therefore ignore NH length for non-string like columns, and use -1 which corresponds to the pre-2.0 behaviour
+            _length = (this.SqlType.IndexOf("char", System.StringComparison.InvariantCultureIgnoreCase) > -1) ? column.Length : -1;
+        }
 
 		/// <summary>
 		/// Gets the column name.
@@ -117,7 +120,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		public bool Matches(ColumnInfo that)
 		{
 			return this.Name == that.Name
-				&& this.Length == that.Length
+                // for backwards compatability reasons with NH pre 2.0, treat (-1) as a wildcard (ie "no length" or "any length")
+				&& (this.Length == that.Length || this.Length == -1 || that.Length == -1)
 				&& this.Nullable == that.Nullable
 				&& this.SqlType == that.SqlType;
 		}

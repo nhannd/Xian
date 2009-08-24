@@ -59,7 +59,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			Table referencedTable = config.GetClassMapping(fk.ReferencedEntityName).Table;
 			_referencedTable = referencedTable.Name;
 			_referencedColumns = CollectionUtils.Map<Column, string>(
-				table.PrimaryKey.ColumnIterator,
+                referencedTable.PrimaryKey.ColumnIterator,
 				delegate(Column column) { return column.Name; });
 		}
 
