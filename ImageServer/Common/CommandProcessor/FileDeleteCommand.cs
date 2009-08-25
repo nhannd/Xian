@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_path = path;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
             if (RequiresRollback)
             {

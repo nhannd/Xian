@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             _dest = dest;
         }
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			if (RequiresRollback)
 			{

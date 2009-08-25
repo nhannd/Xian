@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			get { return _queueEntry; }
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			IInsertDuplicateSopReceivedQueue broker = updateContext.GetBroker<IInsertDuplicateSopReceivedQueue>();
 			InsertDuplicateSopReceivedQueueParameters parms = new InsertDuplicateSopReceivedQueueParameters();
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			_getDuplicateSopReceivedQueueDelegate = getDuplicateSopReceivedQueueDelegate;
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			DuplicateSopReceivedQueue queueEntry = _getDuplicateSopReceivedQueueDelegate();
 

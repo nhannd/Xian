@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageServer.Core
 			_engine = engine;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			// Run the rules engine against the object.
 			_engine.Execute(_context);

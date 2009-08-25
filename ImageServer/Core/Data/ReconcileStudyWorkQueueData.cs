@@ -46,8 +46,27 @@ namespace ClearCanvas.ImageServer.Core.Data
         private string _newSeriesUid; 
         #endregion
 
-        #region Public Properties
-        public string OriginalSeriesUid
+		#region Constructors
+		/// <summary>
+		/// Constructor.  For Serialization.
+		/// </summary>
+		public SeriesMapping()
+		{}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="originalUid"></param>
+		/// <param name="newUid"></param>
+		public SeriesMapping(string originalUid, string newUid)
+		{
+			_originalSeriesUid = originalUid;
+			_newSeriesUid = newUid;
+		}
+    	#endregion
+
+		#region Public Properties
+		public string OriginalSeriesUid
         {
             get { return _originalSeriesUid; }
             set { _originalSeriesUid = value; }

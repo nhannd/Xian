@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _moveSpeed; }
         }
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             if (!Directory.Exists(_src))
                 throw new DirectoryNotFoundException(string.Format("Source directory {0} does not exist", _src));

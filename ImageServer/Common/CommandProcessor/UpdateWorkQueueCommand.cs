@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _insertedWorkQueue; }
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IInsertWorkQueue insert = updateContext.GetBroker<IInsertWorkQueue>();
             InsertWorkQueueParameters parms = new InsertWorkQueueParameters();

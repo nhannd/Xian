@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -123,8 +122,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
                 try
                 {
-                    string failureReason;
-
                     // insert a move series request
                     WorkQueue request = InsertMoveSeriesRequest(context, location, seriesInstanceUids, deviceKey);
                     Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebMoveStudy));
@@ -149,6 +146,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
         /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
         /// <exception cref="InvalidStudyStateOperationException"></exception>
+        /// <param name="updateItems"></param>
         public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems)
         {
             // Find all location of the study in the system and insert series delete request
@@ -199,7 +197,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
         private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems)
         {
-            WorkQueue editEntry = null;
+            WorkQueue editEntry;
             IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
             InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems);
             editEntry = broker.FindOne(criteria);
@@ -255,15 +253,18 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
             WorkQueue moveSeriesEntry = null;
             IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new MoveSeriesWorkQueueParameters(location, seriesInstanceUids, deviceKey);
-            moveSeriesEntry = broker.FindOne(criteria);
-            if (moveSeriesEntry == null)
-            {
-               throw new ApplicationException(
-                   String.Format("Unable to insert a Move Series request for study {1}", location.StudyInstanceUid));
-            }
- 
-   return moveSeriesEntry;
+			foreach (string series in seriesInstanceUids)
+			{
+				InsertWorkQueueParameters criteria = new MoveSeriesWorkQueueParameters(location, series, deviceKey);
+				moveSeriesEntry = broker.FindOne(criteria);
+				if (moveSeriesEntry == null)
+				{
+					throw new ApplicationException(
+						String.Format("Unable to insert a Move Series request for study {0}", location.StudyInstanceUid));
+				}
+			}
+
+        	return moveSeriesEntry;
         }
     }
 
@@ -310,21 +311,22 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
     class MoveSeriesWorkQueueParameters : InsertWorkQueueParameters
     {
-        public MoveSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, List<string> seriesInstanceUids, ServerEntityKey deviceKey)
+        public MoveSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, ServerEntityKey deviceKey)
         {
             DateTime now = Platform.Time;
             WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
             data.Timestamp = now;
             data.UserId = ServerHelper.CurrentUserName;
 
-            this.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-            this.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
-            this.StudyStorageKey = studyStorageLocation.Key;
-            this.ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
-            this.ScheduledTime = now;
-            this.ExpirationTime = now.AddMinutes(15);
-            this.WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
-            this.DeviceKey = deviceKey;
+            WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+            WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+            StudyStorageKey = studyStorageLocation.Key;
+            ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
+            ScheduledTime = now;
+        	SeriesInstanceUid = seriesInstanceUid;
+            ExpirationTime = now.AddMinutes(15);
+            WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
+            DeviceKey = deviceKey;
         }
     }
 }

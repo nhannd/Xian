@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		#endregion
 
 
-		protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
 		{
 			ReconcileMergeToExistingStudyDescriptor desc = new ReconcileMergeToExistingStudyDescriptor();
 			desc.ExistingStudy = StudyInformation.CreateFrom(_context.CurrentStudy);

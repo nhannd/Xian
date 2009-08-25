@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -38,24 +39,23 @@ using ClearCanvas.ImageServer.Core.Reconcile;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-	class InstanceAlreadyExistsException: Exception
-	{
-        
-	}
-
 	/// <summary>
 	/// Save a dicom file
 	/// </summary>
-	class SaveFileCommand : ServerCommand<ReconcileStudyProcessorContext, DicomFile>
+	class SaveFileCommand : ServerCommand<ReconcileStudyProcessorContext, DicomFile>, IAggregateServerCommand
 	{
-		private ServerCommandProcessor _processor;
-
+		private readonly Stack<IServerCommand> _aggregateStack = new Stack<IServerCommand>();
 		public SaveFileCommand(ReconcileStudyProcessorContext context, DicomFile file)
 			: base("SaveFileCommand", true, context, file)
 		{
 		}
 
-		protected override void OnExecute()
+		public Stack<IServerCommand> AggregateCommands
+		{
+			get { return _aggregateStack; }
+		}
+
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context.DestStorageLocation, "Context.DestStorageLocation");
 			DicomFile file = Parameters;
@@ -68,32 +68,22 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			{
 				#region Duplicate SOP
 
-				throw new InstanceAlreadyExistsException();
+				throw new InstanceAlreadyExistsException(destPath);
 
 				#endregion
 			}
 
-			_processor = new ServerCommandProcessor("SaveFileCommand Processor");
 
-			_processor.AddCommand(new CreateDirectoryCommand(Context.DestStorageLocation.GetStudyPath()));
-			_processor.AddCommand(new CreateDirectoryCommand(Context.DestStorageLocation.GetSeriesPath(seriesInstanceUid)));
-
-			_processor.AddCommand(new SaveDicomFileCommand(destPath, file, true, true));
-
-			if (!_processor.Execute())
-			{
-				throw new ApplicationException(_processor.FailureReason);
-			}
-            
+			if (!theProcessor.ExecuteSubCommand(this, new CreateDirectoryCommand(Context.DestStorageLocation.GetStudyPath())))
+				throw new ApplicationException(theProcessor.FailureReason);
+			if (!theProcessor.ExecuteSubCommand(this, new CreateDirectoryCommand(Context.DestStorageLocation.GetSeriesPath(seriesInstanceUid))))
+				throw new ApplicationException(theProcessor.FailureReason);
+			if (!theProcessor.ExecuteSubCommand(this, new SaveDicomFileCommand(destPath, file, true, true)))
+				throw new ApplicationException(theProcessor.FailureReason);
 		}
 
 		protected override void OnUndo()
 		{
-			if (_processor!=null)
-			{
-				_processor.Rollback();
-				_processor = null;
-			}
 		}
 	}
 }

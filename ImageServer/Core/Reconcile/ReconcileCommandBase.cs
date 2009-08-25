@@ -31,7 +31,9 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -106,6 +108,28 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				uidUpdateBroker.Update(sop.GetKey(), columns);
 				updateContext.Commit();
 			}
+		}
+
+		protected static StudyXml LoadStudyXml(StudyStorageLocation location)
+		{
+			StudyXml theXml = new StudyXml(location.StudyInstanceUid);
+
+			String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
+			if (File.Exists(streamFile))
+			{
+				using (Stream fileStream = FileStreamOpener.OpenForRead(streamFile, FileMode.Open))
+				{
+					XmlDocument theDoc = new XmlDocument();
+
+					StudyXmlIo.Read(theDoc, fileStream);
+
+					theXml.SetMemento(theDoc);
+
+					fileStream.Close();
+				}
+			}
+
+			return theXml;
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			_context = context;
 		}
 
-		protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
 		{
 			Platform.CheckForNullReference(_context, "_context");
 			Platform.CheckForNullReference(_context.Partition, "_context.Partition");

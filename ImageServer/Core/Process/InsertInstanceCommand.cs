@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 			_storageLocation = location;
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Setup the insert parameters
 			InsertInstanceParameters parms = new InsertInstanceParameters();

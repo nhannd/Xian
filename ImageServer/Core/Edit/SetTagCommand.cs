@@ -170,6 +170,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 		}
 
+		[XmlIgnore]
+		public DicomTag Tag
+		{
+			get
+			{
+				return _updateEntry.TagPath.Tag;
+			}
+		}
 
 	    #endregion
 
@@ -196,13 +204,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		}
 		#endregion
 
-		#region IImageLevelCommand Members
-
-		#endregion
-
-
-
-		protected DicomAttribute FindAttribute(DicomAttributeCollection collection, ImageLevelUpdateEntry entry)
+		protected static DicomAttribute FindAttribute(DicomAttributeCollection collection, ImageLevelUpdateEntry entry)
 		{
 			if (collection == null)
 				return null;

@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             _studyInstanceUid = studyXml.StudyInstanceUid;
         }
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             // backup
             if (_studyXml.Contains(_seriesUid))

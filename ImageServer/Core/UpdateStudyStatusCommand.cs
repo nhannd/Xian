@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Core
 			_file = file;
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Check if the File is the same syntax as the 
 			TransferSyntax fileSyntax = _file.TransferSyntax;

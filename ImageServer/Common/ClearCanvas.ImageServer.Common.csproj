@@ -55,6 +55,7 @@
     <Compile Include="CommandProcessor\DeleteWorkQueueUidCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
     <Compile Include="CommandProcessor\ExecutionContext.cs" />
+    <Compile Include="CommandProcessor\IAggregateServerCommand.cs" />
     <Compile Include="CommandProcessor\LockStudyCommand.cs" />
     <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
     <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">

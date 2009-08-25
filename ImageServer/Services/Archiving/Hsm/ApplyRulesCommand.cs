@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// for the rules to the currently executing <see cref="ServerCommandProcessor"/>.  They will be
 		/// executed after all other rules have been executed.
 		/// </remarks>
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			string studyXmlFile = Path.Combine(_directory, String.Format("{0}.xml", _studyInstanceUid));
 			StudyXml theXml = new StudyXml(_studyInstanceUid);

@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             Backup();
 

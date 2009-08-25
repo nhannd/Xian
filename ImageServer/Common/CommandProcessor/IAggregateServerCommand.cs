@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,71 +29,30 @@
 
 #endregion
 
-using System;
-using System.IO;
-using ClearCanvas.ImageServer.Common.Utilities;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
-	/// Create a temporary directory.  Remove the directory and its contents when disposed.
+	/// Defines the interface of a command used by the <see cref="ServerCommandProcessor"/>
+	/// which includes several internal additional commands that must be rolled back.
 	/// </summary>
-	public class CreateTempDirectoryCommand : ServerCommand, IDisposable
+	/// <remarks>
+	/// <para>
+	/// When an <see cref="IServerCommand"/> also is defined as an IAggregateServerCommand,
+	/// it is assumed that the command will execute its sub-commands through the 
+	/// <see cref="ServerCommandProcessor.ExecuteSubCommand"/> method.  This method will 
+	/// automatically add the commands as they are executed to the <see cref="AggregateCommands"/>
+	/// property to ensure proper later rollback.
+	/// </para>
+	/// <para>
+	/// If an error occurs that causes a Rollback, the <see cref="ServerCommandProcessor"/> will 
+	/// automatically also rollback the commands associated with the IAggregateServerCommand
+	/// by looking at the <see cref="AggregateCommands"/> property.
+	/// </para>
+	/// </remarks>
+	public interface IAggregateServerCommand : IServerCommand
 	{
-		#region Private Members
-		private readonly string _directory;
-		private bool _created = false;
-		#endregion
-
-		public string TempDirectory
-		{
-			get { return _directory; }
-		}
-		public CreateTempDirectoryCommand()
-			: base("Create Temp Directory", true)
-		{
-		    _directory = Path.Combine(ServerPlatform.TempDirectory, "Archive");
-		}
-
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
-		{
-			if (Directory.Exists(_directory))
-			{
-				_created = false;
-				return;
-			}
-
-			try
-			{
-			    Directory.CreateDirectory(_directory);
-			}
-            catch(UnauthorizedAccessException)
-            {
-                //alert the system admin
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", AlertTypeCodes.NoPermission, null, TimeSpan.Zero,
-                                     "Unauthorized access to {0} from {1}", _directory, ServerPlatform.HostId);
-                throw;
-            }
-
-			_created = true;
-		}
-
-		protected override void OnUndo()
-		{
-			if (_created)
-			{
-				DirectoryUtility.DeleteIfExists(_directory);
-				_created = false;
-			}
-		}
-
-		public void Dispose()
-		{
-			if (_created)
-			{
-				DirectoryUtility.DeleteIfExists(_directory);
-				_created = false;
-			}
-		}
+		Stack<IServerCommand> AggregateCommands { get; }
 	}
 }

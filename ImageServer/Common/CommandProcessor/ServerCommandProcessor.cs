@@ -60,6 +60,15 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// non-database related commands being executed between database commands will cause a delay
 	/// in committing transactions, and could cause database deadlocks and problems.
 	/// </para>
+	/// <para>
+	/// The ServerCommandProcessor also supports executing commands that implement the 
+	/// <see cref="IAggregateServerCommand"/> interface.  It is assumed that these commands 
+	/// are an aggregate of several sub-commands.  When a <see cref="Rollback"/> occurs
+	/// for an <see cref="IAggregateServerCommand"/> command, the base command is first
+	/// rolled back, then the sub-commands for the <see cref="IAggregateServerCommand"/>
+	/// are rolled back.  Note that classes implementing <see cref="IAggregateServerCommand"/>
+	/// should use the <see cref="ExecuteSubCommand"/> method to execute sub-commands.
+	/// </para>
 	/// </remarks>
 	public class ServerCommandProcessor : IDisposable
 	{
@@ -102,9 +111,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 _ownsExecContext = false;
                 ExecutionContext = CommandProcessor.ExecutionContext.Current;
-
             }
-
         }
 
         /// <summary>
@@ -114,9 +121,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         /// <param name="description"></param>
         public ServerCommandProcessor(string description)
             :this(Guid.NewGuid().ToString(), description)
-        {
-            
-        }
+        { }
 
 	    #endregion
 
@@ -213,7 +218,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 					    dbCommand.UpdateContext = UpdateContext;
 					}
 
-					command.Execute();
+					command.Execute(this);
 				}
 				catch (Exception e)
 				{
@@ -246,6 +251,60 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			return true;
 		}
 
+		/// <summary>
+		/// Execute a Sub-Command of the current command being executed.
+		/// </summary>
+		/// <param name="baseCommand"></param>
+		/// <param name="subCommand"></param>
+		/// <returns></returns>
+		public bool ExecuteSubCommand(IAggregateServerCommand baseCommand, IServerCommand subCommand)
+		{
+			subCommand.ExecutionContext = ExecutionContext;
+			ServerDatabaseCommand dbCommand = subCommand as ServerDatabaseCommand;
+
+			baseCommand.AggregateCommands.Push(subCommand);
+			try
+			{
+				if (dbCommand != null)
+				{
+					if (UpdateContext == null)
+					{
+						if (ExecutionContext.PersistenceContext is IUpdateContext)
+						{
+							UpdateContext = ExecutionContext.PersistenceContext as IUpdateContext;
+							_ownsPersistenceContext = false;
+						}
+						else
+						{
+							UpdateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+							ExecutionContext.PersistenceContext = UpdateContext;
+
+							_ownsPersistenceContext = true;
+						}
+					}
+					dbCommand.UpdateContext = UpdateContext;
+				}
+
+				subCommand.Execute(this);
+			}
+			catch (Exception e)
+			{
+				if (subCommand.RequiresRollback || dbCommand != null)
+				{
+					_failureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
+					Platform.Log(LogLevel.Error, e, "Unexpected error when executing command: {0}", subCommand.Description);
+					FailureException = e;
+					return false;
+				}
+				else
+				{
+					Platform.Log(LogLevel.Warn, e,
+								 "Unexpected exception on command {0} that doesn't require rollback", subCommand.Description);
+					baseCommand.AggregateCommands.Pop(); // Pop it off the stack, since it failed.
+				}
+			}
+			return true;
+		}
 
 	    /// <summary>
 		/// Rollback the commands that have been executed already.
@@ -269,7 +328,13 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				catch (Exception e)
 				{
 					Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
-				}  
+				}
+
+				IAggregateServerCommand aggregateCommand = command as IAggregateServerCommand;
+				if (aggregateCommand != null)
+				{
+					RollbackAggregateCommand(aggregateCommand);
+				}
 			}
 		}
 		#endregion
@@ -292,21 +357,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 Platform.Log(LogLevel.Error, ex);
             }
 
-        
-            foreach (ServerCommand command in _list)
-            {
-                if (command is IDisposable)
-                {
-                    try
-                    {
-                        (command as IDisposable).Dispose();
-                    }
-                    catch(Exception ex)
-		            {
-        			    Platform.Log(LogLevel.Error, ex);
-		            }
-                }
-            }
+			DisposeCommandList(_list);
 
             if (_ownsExecContext && ExecutionContext!=null)
             {
@@ -314,6 +365,62 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
 		}
 
+		#endregion
+
+		#region Private Methods
+
+		/// <summary>
+		/// Static method for rolling back a command that implements <see cref="IAggregateServerCommand"/>
+		/// </summary>
+		/// <param name="command">The aggregate command to rollback sub-commands for.</param>
+		private static void RollbackAggregateCommand(IAggregateServerCommand command)
+		{
+			while (command.AggregateCommands.Count > 0)
+			{
+				IServerCommand subCommand = command.AggregateCommands.Pop();
+
+				try
+				{
+					subCommand.Undo();
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", subCommand.Description);
+				}
+
+				IAggregateServerCommand aggregateCommand = subCommand as IAggregateServerCommand;
+				if (aggregateCommand != null)
+				{
+					RollbackAggregateCommand(aggregateCommand);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Static method for disposing a list of commands.  Will recursively dispose <see cref="IAggregateServerCommand"/>s.
+		/// </summary>
+		/// <param name="commandList"></param>
+		private static void DisposeCommandList(IEnumerable<IServerCommand> commandList)
+		{
+			foreach (IServerCommand command in commandList)
+			{
+				if (command is IAggregateServerCommand)
+				{
+					DisposeCommandList((command as IAggregateServerCommand).AggregateCommands);
+				}
+				if (command is IDisposable)
+				{
+					try
+					{
+						(command as IDisposable).Dispose();
+					}
+					catch (Exception ex)
+					{
+						Platform.Log(LogLevel.Error, ex);
+					}
+				}
+			}
+		}
 		#endregion
 	}
 }

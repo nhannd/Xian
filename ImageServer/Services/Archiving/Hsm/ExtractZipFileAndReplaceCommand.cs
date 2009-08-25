@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			_sourceFile = sourceFile;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			_storageFile = Path.Combine(_destinationFolder, _sourceFile);
 			_backupFile = Path.Combine(ExecutionContext.TempDirectory, _sourceFile);

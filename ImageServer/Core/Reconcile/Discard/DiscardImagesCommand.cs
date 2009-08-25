@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 
 		#region Overidden Protected Methods
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 			Platform.CheckForNullReference(Context.ReconcileWorkQueueData, "Context.ReconcileWorkQueueData");

@@ -104,7 +104,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			set { _requiresRollback = value; }
 		}
 
-
         /// <summary>
         /// Gets or sets the execution context for the command.
         /// </summary>
@@ -118,7 +117,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             set { _executionContext = value; }
         }
 
-	    protected bool RollBackRequested
+		/// <summary>
+		/// Simple flag that tells if a rollback / Undo has been requested for the command.
+		/// </summary>
+		[XmlIgnore]
+		protected bool RollBackRequested
 	    {
 	        get { return _rollBackRequested; }
 	    }
@@ -140,13 +143,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <summary>
 		/// Execute the ServerCommand.
 		/// </summary>
-		public void Execute()
+		/// <param name="theProcessor">The <see cref="ServerCommandProcessor"/> executing the command.</param>
+		public void Execute(ServerCommandProcessor theProcessor)
 		{
 			try
 			{
 				_stats.Start();
                 EventsHelper.Fire(_executingEventHandlers, this, new EventArgs());
-				OnExecute();    
+				OnExecute(theProcessor);    
 			}
 			finally
 			{
@@ -169,7 +173,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 		#region Virtual methods
 
-		protected abstract void OnExecute();
+		protected abstract void OnExecute(ServerCommandProcessor theProcessor);
 		protected abstract void OnUndo();
 		#endregion
         
@@ -203,17 +207,16 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         }
         #endregion
 
-
-
-        /// <summary>
+		#region Protected Properties
+		/// <summary>
         /// Gets or sets the context of this command.
         /// </summary>
         protected TContext Context
         {
             get { return _context; }
-        }
-
-    }
+		}
+		#endregion
+	}
 
     /// <summary>
     /// Abstract class representing commands that tie to a specific context
@@ -246,14 +249,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         }
         #endregion
 
-        /// <summary>
+		#region Protected Properties
+		/// <summary>
         /// Gets or sets the paramater object used for constructing this command.
         /// </summary>
         protected TParameters Parameters
         {
             get { return _parms; }
-        }
-
-    }
-
+		}
+		#endregion
+	}
 }

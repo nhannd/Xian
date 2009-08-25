@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <summary>
 		/// Do the work.
 		/// </summary>
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			using (ZipFile zip = new ZipFile(_zipFile))
 			{

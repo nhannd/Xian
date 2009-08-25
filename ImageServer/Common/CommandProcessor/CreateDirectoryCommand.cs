@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             GetDirectoryDelegate = getDirectoryDelegate;
         }
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
             if (String.IsNullOrEmpty(_directory) && GetDirectoryDelegate!=null)
             {

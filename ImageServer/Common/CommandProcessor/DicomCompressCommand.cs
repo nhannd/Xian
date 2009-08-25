@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_parms = theCodecFactory.GetCodecParameters(parms);
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			// Check if its already in the right syntax.
 			if (_file.TransferSyntax.Equals(_syntax))

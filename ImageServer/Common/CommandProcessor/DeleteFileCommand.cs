@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #endregion
 
         #region Overriden Protected Methods
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             if (RequiresRollback)
             {

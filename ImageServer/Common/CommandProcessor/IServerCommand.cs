@@ -29,12 +29,10 @@
 
 #endregion
 
-using System;
-
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
     /// <summary>
-    /// Defines the interface of a command used by the <see cref="CommandProcessor"/>
+	/// Defines the interface of a command used by the <see cref="ServerCommandProcessor"/>
     /// </summary>
     public interface IServerCommand
     {
@@ -60,7 +58,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         /// <summary>
         /// Execute the ServerCommand.
         /// </summary>
-        void Execute();
+        void Execute(ServerCommandProcessor theProcessor);
 
         /// <summary>
         /// Undo the operation done by <see cref="Execute"/>.

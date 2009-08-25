@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Rules
         	_queueXml = queueXml;
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
 

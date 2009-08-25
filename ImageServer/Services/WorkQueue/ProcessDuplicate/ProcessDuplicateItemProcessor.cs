@@ -424,7 +424,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             _commands = commands;
         }
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             if (_commands!=null)
             {
@@ -457,7 +457,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             _file = file;
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             String seriesUid = _file.DataSet[DicomTags.SeriesInstanceUid].ToString();
             String instanceUid = _file.DataSet[DicomTags.SopInstanceUid].ToString();
@@ -489,7 +489,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             _studyXml = studyXml;
         }
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             _studyXml.RemoveFile(_file);
 
@@ -581,7 +581,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         }
 
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             String studyUid = _file.DataSet[DicomTags.StudyInstanceUid].ToString();
             
@@ -595,7 +595,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
                 string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
 
-                _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, true, _compare);
+                _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, true, _compare, null, null);
                 if (_result.Status == ProcessingStatus.Failed)
                 {
                     throw new ApplicationException("Unable to process file");
@@ -638,7 +638,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         }
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             // duplicate file is deleted
             String dupPath = GetDuplicateSopFile();

@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			Platform.CheckForNullReference(Context.DestStorageLocation, "Study Storage Location"); 
             

@@ -29,32 +29,50 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using System;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
+	/// Specific exception if a file exists when saving.
+	/// </summary>
+	public class InstanceAlreadyExistsException : Exception
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="message">Message describing the exception.</param>
+		public InstanceAlreadyExistsException(string message)
+			: base(message)
+		{}
+	}
+
+	/// <summary>
 	/// Class for saving a DicomFile instance in memory to disk.
 	/// </summary>
-	public class SaveDicomFileCommand : ServerCommand, IDisposable
+	public class SaveDicomFileCommand : ServerCommand, IDisposable, IAggregateServerCommand
 	{
         public delegate string GetFilePathDelegateMethod();
 
 		#region Private Members
-		private readonly string _path;
+		private string _path;
         private string _backupPath;
 		private readonly DicomFile _file;
 		private readonly bool _failOnExists;
 		private readonly bool _saveTemp;
 		private bool _fileCreated = false;
+		private readonly StudyStorageLocation _storageLocation = null;
 	    readonly RateStatistics _backupSpeed = new RateStatistics("BackupSpeed", RateType.BYTES);
 	    readonly RateStatistics _saveSpeed = new RateStatistics("SaveSpeed", RateType.BYTES);
-	    #endregion
+		private readonly Stack<IServerCommand> _aggregateStack = new Stack<IServerCommand>();
+		#endregion
 
 		/// <summary>
 		/// Constructor.
@@ -76,12 +94,36 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_saveTemp = saveTemp;
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="file">The file to save.</param>
+		/// <param name="failOnExists">If the file already exists, the file will save.</param>
+		/// <param name="saveTemp">Save the file to a temporary file first, then move to the final file.  This 
+		/// reduces the likelyhood of having partial files if a crash in the service occurs when the file is being written.</param>
+		/// <param name="location">The storage location for the file.</param>
+		public SaveDicomFileCommand(StudyStorageLocation location, DicomFile file, bool failOnExists, bool saveTemp)
+			: base("Save DICOM Message", true)
+		{
+			Platform.CheckForNullReference(file, "Dicom File object");
+			_storageLocation = location;
+			_path = null;
+			_file = file;
+			_failOnExists = failOnExists;
+			_saveTemp = saveTemp;
+		}
+
+		public Stack<IServerCommand> AggregateCommands
+		{
+			get { return _aggregateStack; }
+		}
+
 	    private void Backup()
 	    {
             if (File.Exists(_path))
             {
 				if (_failOnExists)
-					throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}",_path));
+					throw new InstanceAlreadyExistsException(String.Format("DICOM File unexpectedly already exists: {0}", _path));
 				try
 				{
 
@@ -102,7 +144,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
 			int count = 0;
 			string path;
-
+			
 			path = String.Format("{0}_tmp", _path);
 
 			while (File.Exists(path))
@@ -126,8 +168,22 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			return path;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
+			if (_path == null)
+			{
+				String seriesUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+				String sopUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+				_path = _storageLocation.GetSopInstancePath(seriesUid, sopUid);
+			}
+
+			// Make sure the directory exists where we're storing the file.
+			if (!Directory.Exists(Path.GetDirectoryName(_path)))
+			{
+				if (!theProcessor.ExecuteSubCommand(this, new CreateDirectoryCommand(Path.GetDirectoryName(_path))))
+					throw new ApplicationException(theProcessor.FailureReason);
+			}
+
             if (RequiresRollback)
                 Backup();
 

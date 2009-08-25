@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
 		#region Overridden Protected Methods
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			long fileSize = 0;
 			if (File.Exists(_file.Filename))

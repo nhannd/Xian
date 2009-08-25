@@ -39,8 +39,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile;
@@ -63,7 +61,7 @@ namespace ClearCanvas.ImageServer.Core
 		private ServerRulesEngine _sopProcessedRulesEngine;
 		private ServerRulesEngine _sopCompressionRulesEngine;
 		private IReadContext _readContext;
-
+		private List<BaseImageLevelUpdateCommand> _updateCommands;
 	    #endregion
 
 		#region Constructors
@@ -157,12 +155,12 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			get
 			{
-				if (_readContext == null)
+				lock (_syncLock)
 				{
-                    lock (_syncLock)
-                    {
-                        _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-                    }
+					if (_readContext == null)
+					{
+						_readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+					}
 				}
 				return _readContext;
 			}
@@ -180,6 +178,20 @@ namespace ClearCanvas.ImageServer.Core
 	        get { return _storageLocation; }
 	    }
 
+		public List<BaseImageLevelUpdateCommand> UpdateCommands
+		{
+			get
+			{
+				lock (_syncLock)
+				{
+					if (_updateCommands == null)
+					{
+						_updateCommands = new List<BaseImageLevelUpdateCommand>();
+					}
+					return _updateCommands;
+				}
+			}
+		}
 	    #endregion
 	}
 
@@ -230,7 +242,9 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="group"></param>
 		/// <param name="file"></param>
 		/// <param name="compare"></param>
-        public virtual ProcessingResult ProcessFile(String group, DicomFile file, StudyXml stream, bool duplicate, bool compare)
+		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success.</param>
+		/// <param name="deleteFile">An option file to delete as part of the process</param>
+        public virtual ProcessingResult ProcessFile(String group, DicomFile file, StudyXml stream, bool duplicate, bool compare, WorkQueueUid uid, string deleteFile)
 		{
             _instanceStats.ProcessTime.Start();
             ProcessingResult result = new ProcessingResult();
@@ -247,11 +261,10 @@ namespace ClearCanvas.ImageServer.Core
                 }
                 else
                 {
-                    InsertInstance(file, stream);
+                    InsertInstance(file, stream, uid, deleteFile);
                     result.Status = ProcessingStatus.Success;
                 }
-            }
-            
+            }            
 
 			_instanceStats.ProcessTime.End();
 
@@ -260,7 +273,6 @@ namespace ClearCanvas.ImageServer.Core
 
 			if (_context.SopProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
 				_instanceStats.SopEngineExecutionTime.Add(_context.SopProcessedRulesEngine.Statistics.ExecutionTime);
-
 
 			_context.SopProcessedRulesEngine.Statistics.Reset();
 
@@ -280,6 +292,7 @@ namespace ClearCanvas.ImageServer.Core
 		/// Returns a value indicating whether the Dicom image must be reconciled.
 		/// </summary>
 		/// <param name="message">The Dicom message</param>
+		/// <param name="context">The context for processing</param>
 		/// <returns></returns>
 		private bool ShouldReconcile(SopProcessingContext context, DicomMessageBase message)
 		{
@@ -329,7 +342,7 @@ namespace ClearCanvas.ImageServer.Core
 		}
 
        
-		private void InsertInstance(DicomFile file, StudyXml stream)
+		private void InsertInstance(DicomFile file, StudyXml stream, WorkQueueUid uid, string deleteFile)
 		{
 			//Platform.CheckForNullReference(_context, "_context");
 			//Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
@@ -342,6 +355,15 @@ namespace ClearCanvas.ImageServer.Core
 				String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
 				_modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
 
+				if (_context.UpdateCommands.Count > 0)
+				{
+					foreach (BaseImageLevelUpdateCommand command in _context.UpdateCommands)
+					{
+						command.File = file;
+						processor.AddCommand(command);
+					}
+				}
+
 				try
 				{
 					// Create a context for applying actions from the rules engine
@@ -353,8 +375,15 @@ namespace ClearCanvas.ImageServer.Core
                     String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
                     String sopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
                     String finalDest = _context.StorageLocation.GetSopInstancePath(seriesUid, sopUid);
-                    if (file.Filename != finalDest || processor.CommandCount > 0)
+
+					if (_context.UpdateCommands.Count > 0)
+					{
+						processor.AddCommand(new SaveDicomFileCommand(_context.StorageLocation, file, file.Filename != finalDest, true));
+					}
+					else if (file.Filename != finalDest || processor.CommandCount > 0)
                     {
+						// Have to be careful here about failure on exists vs. not failing on exists
+						// because of the different use cases of the importer.
                         // save the file in the study folder, or if its been compressed
 						processor.AddCommand(new SaveDicomFileCommand(finalDest, file, file.Filename != finalDest, true));
                     }
@@ -366,6 +395,10 @@ namespace ClearCanvas.ImageServer.Core
 					// Have the rules applied during the command processor, and add the objects.
 					processor.AddCommand(new ApplySopRulesCommand(context,_context.SopProcessedRulesEngine));
 
+					// If specified, delete the file
+					if (deleteFile != null)
+						processor.AddCommand(new FileDeleteCommand(deleteFile, true));
+
 					// Insert into the database, but only if its not a duplicate so the counts don't get off
 					insertInstanceCommand = new InsertInstanceCommand(file, _context.StorageLocation);
 					processor.AddCommand(insertInstanceCommand);
@@ -374,12 +407,15 @@ namespace ClearCanvas.ImageServer.Core
 					// should only occur if the object has been compressed in the previous steps.
 					processor.AddCommand(new UpdateStudyStatusCommand(_context.StorageLocation, file));
 
+					if (uid!=null)
+						processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
 					// Do the actual processing
 					if (!processor.Execute())
 					{
 						Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
 						Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
-						throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+						throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid, processor.FailureException);
 					}
 					else
 					{

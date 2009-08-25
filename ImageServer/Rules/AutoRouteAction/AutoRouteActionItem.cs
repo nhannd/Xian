@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             {
                 try
                 {
-                    command.Execute();
+                    command.Execute(context.CommandProcessor);
                 }
                 catch (Exception e)
                 {

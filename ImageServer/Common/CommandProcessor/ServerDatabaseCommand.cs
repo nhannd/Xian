@@ -65,18 +65,18 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <summary>
 		/// Execute the ServerDatabaseCommand with the specified <see cref="IUpdateContext"/>.
 		/// </summary>
-		protected abstract void OnExecute(IUpdateContext updateContext);
+		protected abstract void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext);
 
 		/// <summary>
 		/// Execute the <see cref="ServerCommand"/> 
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			if (UpdateContext != null)
 			{
-				OnExecute(UpdateContext);
+				OnExecute(theProcessor, UpdateContext);
 				UpdateContext = null;
 			}
 			else
@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 					IUpdateContext updateContext =
 						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
-					OnExecute(updateContext);
+					OnExecute(theProcessor, updateContext);
 					updateContext.Commit();
 				}
 			}

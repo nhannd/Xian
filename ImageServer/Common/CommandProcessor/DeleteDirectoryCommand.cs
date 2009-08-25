@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             try
             {
@@ -111,7 +111,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         }
 
         #endregion
-
 
         #region IDisposable Members
 

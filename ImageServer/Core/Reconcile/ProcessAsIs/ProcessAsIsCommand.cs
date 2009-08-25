@@ -32,12 +32,14 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 {
@@ -62,17 +64,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			_parameters = parms;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 			Platform.CheckForNullReference(_parameters, "_parameters");
-
-			string failureReason;
-			if (!ServerHelper.LockStudy(Context.WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled,
-								   out failureReason))
-			{
-				throw new ApplicationException(failureReason);
-			}
 
 			if (Context.DestStorageLocation==null)
 			{
@@ -101,7 +96,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			// undo is done  in SaveFile()
 		}
 
-		private void ProcessUidList()
+		private void ProcessUidListOld()
 		{
 			int counter = 0;
 			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
@@ -161,6 +156,56 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			}
 		}
 
+		private void ProcessUidList()
+		{
+			int counter = 0;
+			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
+
+			StudyProcessorContext context = new StudyProcessorContext(Context.DestStorageLocation);
+
+			// Load the rules engine
+			context.SopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Context.WorkQueueItem.ServerPartitionKey);
+			context.SopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
+			context.SopProcessedRulesEngine.Load();
+
+			// Load the Study XML File
+			StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
+
+			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
+			{
+				string imagePath = GetReconcileUidPath(uid);
+				DicomFile file = new DicomFile(imagePath);
+				file.Load();
+
+				try
+				{
+					Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+
+					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
+
+					SopInstanceProcessor sopProcessor;
+					sopProcessor = new SopInstanceProcessor(context);
+					ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, GetReconcileUidPath(uid));
+					if (result.Status != ProcessingStatus.Success)
+					{
+						throw new ApplicationException(String.Format("Unable to reconcile image {0}", file.Filename));
+					}
+
+					counter++;
+				}
+				catch (Exception e)
+				{
+					if (e is InstanceAlreadyExistsException
+						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException)
+					{
+						CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
+					}
+					else
+						FailUid(uid, true);
+				}
+			}
+		}
+
 		private void CreatDuplicateSIQEntry(DicomFile file, WorkQueue queue, WorkQueueUid uid)
 		{
 			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
@@ -177,6 +222,5 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 				commandProcessor.Execute();
 			}
 		}
-
 	}
 }

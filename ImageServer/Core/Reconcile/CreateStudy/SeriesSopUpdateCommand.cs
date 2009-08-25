@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,70 +30,58 @@
 #endregion
 
 using System;
-using System.IO;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 
-namespace ClearCanvas.ImageServer.Common.CommandProcessor
+namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
 	/// <summary>
-	/// Create a temporary directory.  Remove the directory and its contents when disposed.
+	/// Class for updating the Series and Sop Instance UIDs within a study.
 	/// </summary>
-	public class CreateTempDirectoryCommand : ServerCommand, IDisposable
+	public class SeriesSopUpdateCommand : BaseImageLevelUpdateCommand
 	{
-		#region Private Members
-		private readonly string _directory;
-		private bool _created = false;
+		private readonly UidMapper _uidMapper;
+
+		#region Constructors
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public SeriesSopUpdateCommand(UidMapper uidMapper)
+			: base("SeriesSopUpdateCommand")
+		{
+			_uidMapper = uidMapper;
+		}
 		#endregion
 
-		public string TempDirectory
+		public override bool Apply(DicomFile file)
 		{
-			get { return _directory; }
-		}
-		public CreateTempDirectoryCommand()
-			: base("Create Temp Directory", true)
-		{
-		    _directory = Path.Combine(ServerPlatform.TempDirectory, "Archive");
-		}
+			string oldSeriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+			string oldSopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
-		{
-			if (Directory.Exists(_directory))
+			string newSeriesUid;
+			if (_uidMapper.SeriesMap.ContainsKey(oldSeriesUid))
+				newSeriesUid = _uidMapper.SeriesMap[oldSeriesUid].NewSeriesUid;
+			else
 			{
-				_created = false;
-				return;
+				newSeriesUid = DicomUid.GenerateUid().UID;
+				_uidMapper.SeriesMap.Add(oldSeriesUid, new SeriesMapping(oldSeriesUid,newSeriesUid));
 			}
 
-			try
+			string newSopInstanceUid;
+			if (_uidMapper.SopMap.ContainsKey(oldSopUid))
+				newSopInstanceUid = _uidMapper.SopMap[oldSopUid];
+			else
 			{
-			    Directory.CreateDirectory(_directory);
+				newSopInstanceUid = DicomUid.GenerateUid().UID;
+				_uidMapper.SopMap.Add(oldSopUid, newSopInstanceUid);
 			}
-            catch(UnauthorizedAccessException)
-            {
-                //alert the system admin
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", AlertTypeCodes.NoPermission, null, TimeSpan.Zero,
-                                     "Unauthorized access to {0} from {1}", _directory, ServerPlatform.HostId);
-                throw;
-            }
 
-			_created = true;
-		}
+			file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(newSeriesUid);
+			file.DataSet[DicomTags.SopInstanceUid].SetStringValue(newSopInstanceUid);
+			file.MediaStorageSopInstanceUid = newSopInstanceUid;
 
-		protected override void OnUndo()
-		{
-			if (_created)
-			{
-				DirectoryUtility.DeleteIfExists(_directory);
-				_created = false;
-			}
-		}
-
-		public void Dispose()
-		{
-			if (_created)
-			{
-				DirectoryUtility.DeleteIfExists(_directory);
-				_created = false;
-			}
+			return true;
 		}
 	}
 }

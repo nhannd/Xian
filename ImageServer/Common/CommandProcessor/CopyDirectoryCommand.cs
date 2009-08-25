@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             if (!Directory.Exists(_src))
                 throw new DirectoryNotFoundException(string.Format("Source directory {0} does not exist", _src));
@@ -102,9 +102,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     {
                         DirectoryUtility.DeleteIfExists(_dest);
                     }
-                    catch (Exception)
+                    catch
                     {
-                        // ignore it, will overwrite anyway
+                    	// ignore it, will overwrite anyway
                     }
 
                     // restore
@@ -146,9 +146,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 DirectoryUtility.DeleteIfExists(_backupDestDir);
             }
-            catch(Exception)
+            catch
             {
-                //ignore
+            	//ignore
             }
         }
 

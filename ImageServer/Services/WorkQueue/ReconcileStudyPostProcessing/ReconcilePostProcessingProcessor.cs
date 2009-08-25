@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 			}
 
 		    string groupID = ServerHelper.GetUidGroup(file, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
-            processor.ProcessFile(groupID, file, stream, queueUid.Duplicate, false);
+            processor.ProcessFile(groupID, file, stream, queueUid.Duplicate, false, null, null);
 
 			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)

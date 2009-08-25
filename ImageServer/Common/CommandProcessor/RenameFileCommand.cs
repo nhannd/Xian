@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		    _failIfExists = failIfExists;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
             Platform.CheckTrue(File.Exists(_sourceFile), String.Format("Source file '{0}' doesn't exist", _sourceFile));
             

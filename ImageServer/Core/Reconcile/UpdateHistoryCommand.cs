@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
 			StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();

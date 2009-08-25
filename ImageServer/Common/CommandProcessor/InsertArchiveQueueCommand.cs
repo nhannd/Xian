@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Setup the insert parameters
 			InsertArchiveQueueParameters parms = new InsertArchiveQueueParameters();

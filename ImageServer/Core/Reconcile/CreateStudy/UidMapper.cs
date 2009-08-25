@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,71 +29,35 @@
 
 #endregion
 
-using System;
-using System.IO;
-using ClearCanvas.ImageServer.Common.Utilities;
+using System.Collections.Generic;
+using ClearCanvas.ImageServer.Core.Data;
 
-namespace ClearCanvas.ImageServer.Common.CommandProcessor
+namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
-	/// <summary>
-	/// Create a temporary directory.  Remove the directory and its contents when disposed.
-	/// </summary>
-	public class CreateTempDirectoryCommand : ServerCommand, IDisposable
+	public class UidMapper
 	{
-		#region Private Members
-		private readonly string _directory;
-		private bool _created = false;
-		#endregion
+		private readonly Dictionary<string, SeriesMapping> _seriesMap = new Dictionary<string, SeriesMapping>();
+		private readonly Dictionary<string, string> _sopMap = new Dictionary<string, string>();
 
-		public string TempDirectory
+		public UidMapper(IList<SeriesMapping> seriesList)
 		{
-			get { return _directory; }
-		}
-		public CreateTempDirectoryCommand()
-			: base("Create Temp Directory", true)
-		{
-		    _directory = Path.Combine(ServerPlatform.TempDirectory, "Archive");
+			foreach (SeriesMapping map in seriesList)
+				_seriesMap.Add(map.OriginalSeriesUid, map);
 		}
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor)
+		public UidMapper()
 		{
-			if (Directory.Exists(_directory))
-			{
-				_created = false;
-				return;
-			}
-
-			try
-			{
-			    Directory.CreateDirectory(_directory);
-			}
-            catch(UnauthorizedAccessException)
-            {
-                //alert the system admin
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", AlertTypeCodes.NoPermission, null, TimeSpan.Zero,
-                                     "Unauthorized access to {0} from {1}", _directory, ServerPlatform.HostId);
-                throw;
-            }
-
-			_created = true;
 		}
 
-		protected override void OnUndo()
+		public Dictionary<string, SeriesMapping> SeriesMap
 		{
-			if (_created)
-			{
-				DirectoryUtility.DeleteIfExists(_directory);
-				_created = false;
-			}
+			get { return _seriesMap; }
 		}
 
-		public void Dispose()
+		public Dictionary<string, string> SopMap
 		{
-			if (_created)
-			{
-				DirectoryUtility.DeleteIfExists(_directory);
-				_created = false;
-			}
+			get { return _sopMap; }
 		}
+
 	}
 }

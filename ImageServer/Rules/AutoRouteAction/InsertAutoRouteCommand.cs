@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         /// <summary>
         /// Do the insertion of the AutoRoute.
         /// </summary>
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             DeviceSelectCriteria deviceSelectCriteria = new DeviceSelectCriteria();
             deviceSelectCriteria.AeTitle.EqualTo(_deviceAe);

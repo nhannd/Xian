@@ -34,11 +34,13 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 {
@@ -76,17 +78,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		#endregion
 
 		#region Overriden Protected Methods
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
-
-			// No need to lock the study here, it was already locked.
-			//string failureReason;
-			//if (!ServerHelper.LockStudy(Context.WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled,
-			//							out failureReason))
-			//{
-			//	throw new ApplicationException(failureReason);
-			//}
 
 			DetermineDestination();
 
@@ -160,7 +154,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             
 		}
 
-		private void ProcessUidList()
+		private void ProcessUidListOld()
 		{
 			List<BaseImageLevelUpdateCommand> updateCommandList = BuildUpdateCommandList();
 			PrintUpdateCommands(updateCommandList);
@@ -224,6 +218,62 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			}
 		}
 
+		private void ProcessUidList()
+		{
+			int counter = 0;
+			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
+
+			StudyProcessorContext context = new StudyProcessorContext(Context.DestStorageLocation);
+
+			// Load the rules engine
+			context.SopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Context.WorkQueueItem.ServerPartitionKey);
+			context.SopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
+			context.SopProcessedRulesEngine.Load();
+
+			// Add the update commands to
+			context.UpdateCommands.AddRange(BuildUpdateCommandList());
+			PrintUpdateCommands(context.UpdateCommands);
+
+			// Load the Study XML File
+			StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
+			
+			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
+			{
+				// Load the file outside the try/catch block so it can be
+				// referenced in the c
+				string imagePath = GetReconcileUidPath(uid);
+				DicomFile file = new DicomFile(imagePath);
+				file.Load();
+
+				try
+				{
+					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
+
+					SopInstanceProcessor sopProcessor;
+					sopProcessor = new SopInstanceProcessor(context);
+					ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, GetReconcileUidPath(uid));
+					if (result.Status != ProcessingStatus.Success)
+					{
+						throw new ApplicationException(String.Format("Unable to reconcile image {0}", file.Filename));
+					}
+
+					counter++;
+					_processedUidList.Add(uid);
+					Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+				}
+				catch (Exception e)
+				{
+					if (e is InstanceAlreadyExistsException
+						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException)
+					{
+						CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);	
+					}
+					else
+						FailUid(uid, true);
+				}
+			}
+		}
+
 		private void CreatDuplicateSIQEntry(DicomFile file, WorkQueue queue, WorkQueueUid uid)
 		{
 			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
@@ -237,7 +287,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
 				commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
-				commandProcessor.Execute();
+				if (!commandProcessor.Execute())
+				{
+					Platform.Log(LogLevel.Error, "Unexpectedly not able to insert Duplicate SOP for {0}", uid.SopInstanceUid);
+				}
 			}
 		}
 

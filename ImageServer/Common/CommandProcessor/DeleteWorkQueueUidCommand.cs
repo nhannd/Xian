@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             _uid = uid;
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IWorkQueueUidEntityBroker delete = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
             delete.Delete(_uid.GetKey());

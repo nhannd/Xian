@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// Execute the insert.
 		/// </summary>
 		/// <param name="updateContext">The persistent store connection to use for the update.</param>
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
 			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();

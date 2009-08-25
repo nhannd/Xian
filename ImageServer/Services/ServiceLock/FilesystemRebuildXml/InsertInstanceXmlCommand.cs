@@ -46,14 +46,13 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		#region Private Members
 
 		private readonly StudyXml _stream;
-		private readonly StudyXmlOutputSettings _outputSettings;
 		private readonly string _path;
 		#endregion
 
 
 		#region Constructors
 
-		public InsertInstanceXmlCommand(StudyXml stream, string path, StudyXmlOutputSettings outputSettings)
+		public InsertInstanceXmlCommand(StudyXml stream, string path)
 			: base("Insert into Study XML", true)
 		{
 			Platform.CheckForNullReference(stream, "StudyStream object");
@@ -61,7 +60,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 
 			_stream = stream;
 			_path = path;
-			_outputSettings = outputSettings;
 		}
 
 		#endregion
@@ -69,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		
 		#region Overridden Protected Methods
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			long fileSize;
 			if (!File.Exists(_path))

@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			_context = context;
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			string reconcileImagePath =
 				Path.Combine(_context.StoragePath, _context.File.DataSet[DicomTags.SopInstanceUid] + ".dcm");
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		}
 
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(_context, "_context");
 			Platform.CheckForNullReference(_context.StoragePath, "_context.StoragePath");

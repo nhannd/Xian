@@ -485,7 +485,7 @@ namespace ClearCanvas.ImageServer.Core
             _path = path;
         }
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Random rand = new Random();
 

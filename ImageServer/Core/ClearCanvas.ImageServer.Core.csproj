@@ -61,6 +61,8 @@
     <Compile Include="Process\StudyReprocessor.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommandProcessor.cs" />
+    <Compile Include="Reconcile\CreateStudy\SeriesSopUpdateCommand.cs" />
+    <Compile Include="Reconcile\CreateStudy\UidMapper.cs" />
     <Compile Include="Reconcile\Discard\DiscardImageCommandProcessor.cs" />
     <Compile Include="Reconcile\Discard\DiscardImagesCommand.cs" />
     <Compile Include="Reconcile\InsertDuplicateQueueEntryCommand.cs" />

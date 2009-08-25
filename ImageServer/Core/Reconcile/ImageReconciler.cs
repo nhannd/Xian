@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             get { return _siqItem; }
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             string seriesUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             string sopUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);

@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 	    #endregion
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			if (_file != null)
 				Apply(_file);

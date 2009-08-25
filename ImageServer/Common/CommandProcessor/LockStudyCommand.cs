@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_lock = lockValue;
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
 			LockStudyParameters lockParms = new LockStudyParameters();

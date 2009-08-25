@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         }
 
 
-        protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
         {
             IDeleteSeries broker = updateContext.GetBroker<IDeleteSeries>();
             DeleteSeriesParameters criteria = new DeleteSeriesParameters();

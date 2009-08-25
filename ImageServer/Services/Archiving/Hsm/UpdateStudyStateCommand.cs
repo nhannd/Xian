@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			_newSyntax = newSyntax;
 		}
 
-		protected override void OnExecute(IUpdateContext updateContext)
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			// Update StudyStatusEnum in the StudyStorageTable
 			IStudyStorageEntityBroker studyStorageUpdate = updateContext.GetBroker<IStudyStorageEntityBroker>();

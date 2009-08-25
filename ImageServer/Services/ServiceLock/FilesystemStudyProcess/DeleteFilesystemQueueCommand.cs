@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 			_applyTime = applyTime;
 		}
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IFilesystemQueueEntityBroker filesystemQueueBroker= updateContext.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();

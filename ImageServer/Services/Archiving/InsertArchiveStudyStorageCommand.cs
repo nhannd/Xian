@@ -79,7 +79,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// Execute the command
 		/// </summary>
 		/// <param name="updateContext">Database update context.</param>
-		protected override void OnExecute(IUpdateContext updateContext)
+		/// <param name="theProcessor">The processor executing the command.</param>
+		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			ArchiveStudyStorageUpdateColumns columns = new ArchiveStudyStorageUpdateColumns();
 

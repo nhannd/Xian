@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				FileUtils.Delete(_backupExistingFileName); 
 		}
 
-		protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(DicomFile, "DicomFile");
 

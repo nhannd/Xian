@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             // update FilesystemStudyStorage
             if (Context != null)

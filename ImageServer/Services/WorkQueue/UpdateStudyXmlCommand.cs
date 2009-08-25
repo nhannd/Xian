@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         #endregion
 
-        protected override void OnExecute()
+		protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
             // Setup the insert parameters
         	string seriesInstanceUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
