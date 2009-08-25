@@ -176,6 +176,7 @@
       <DependentUpon>PublishReportComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="RelativeTime.cs" />
+    <Compile Include="SearchComponentBase.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />

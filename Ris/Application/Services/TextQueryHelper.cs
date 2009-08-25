@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             // define an identifier as anything containing at least 1 digit, and any other alpha-digit chars
             Regex termDefinition = new Regex(@"\b[A-Za-z\d]*\d[A-Za-z\d]*\b");
-			return ParseTerms(query, termDefinition);
+            return ParseTerms(query, termDefinition);
         }
 
         public static string[] ParseTerms(string query)
@@ -94,16 +94,16 @@ namespace ClearCanvas.Ris.Application.Services
         public delegate IList<TDomainItem> DoQueryDelegate(TSearchCriteria[] where, SearchResultPage page);
 
         private readonly Converter<TextQueryRequest, TSearchCriteria[]> _buildCriteriaCallback;
-		private readonly Converter<TDomainItem, TSummary> _summaryAssembler;
+        private readonly Converter<TDomainItem, TSummary> _summaryAssembler;
         private readonly DoQueryDelegate _queryCallback;
-		private readonly TestCriteriaSpecificityDelegate _specificityCallback;
+        private readonly TestCriteriaSpecificityDelegate _specificityCallback;
 
         /// <summary>
         /// Protected constructor for subclasses.
         /// </summary>
         protected TextQueryHelper()
         {
-            
+
         }
 
         /// <summary>
@@ -115,9 +115,9 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="queryCallback"></param>
         public TextQueryHelper(
             Converter<TextQueryRequest, TSearchCriteria[]> criteriaBuilder,
-			Converter<TDomainItem, TSummary> summaryAssembler,
-			TestCriteriaSpecificityDelegate countCallback,
-			DoQueryDelegate queryCallback)
+            Converter<TDomainItem, TSummary> summaryAssembler,
+            TestCriteriaSpecificityDelegate countCallback,
+            DoQueryDelegate queryCallback)
         {
             _buildCriteriaCallback = criteriaBuilder;
             _summaryAssembler = summaryAssembler;
@@ -135,15 +135,15 @@ namespace ClearCanvas.Ris.Application.Services
 
             TSearchCriteria[] where = BuildCriteria(request);
 
-			// augment criteria to exclude de-activated items if specified
-			if(!request.IncludeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)))
-			{
-				string propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)).PropertyName;
-				SearchCondition<bool> c = new SearchCondition<bool>(propertyName);
-				c.EqualTo(false);
+            // augment criteria to exclude de-activated items if specified
+            if (!request.IncludeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)))
+            {
+                string propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)).PropertyName;
+                SearchCondition<bool> c = new SearchCondition<bool>(propertyName);
+                c.EqualTo(false);
 
-				CollectionUtils.ForEach(where, delegate(TSearchCriteria w) { w.SubCriteria[propertyName] = c; });
-			}
+                CollectionUtils.ForEach(where, delegate(TSearchCriteria w) { w.SubCriteria[propertyName] = c; });
+            }
 
             // if a specificity threshold was specified, apply it now
             if (request.SpecificityThreshold > 0)
@@ -160,9 +160,9 @@ namespace ClearCanvas.Ris.Application.Services
                 CollectionUtils.Map<TDomainItem, TSummary>(
                     matches,
                     delegate(TDomainItem entity)
-                        {
-                            return AssembleSummary(entity);
-                        }));
+                    {
+                        return AssembleSummary(entity);
+                    }));
         }
 
         protected virtual bool ValidateRequest(TextQueryRequest request)
@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         protected virtual TSearchCriteria[] BuildCriteria(TextQueryRequest request)
         {
-            if(_buildCriteriaCallback == null)
+            if (_buildCriteriaCallback == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
             return _buildCriteriaCallback(request);
         }
@@ -194,11 +194,27 @@ namespace ClearCanvas.Ris.Application.Services
 
         protected virtual TSummary AssembleSummary(TDomainItem domainItem)
         {
-            if(_summaryAssembler == null)
+            if (_summaryAssembler == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
             return _summaryAssembler(domainItem);
         }
 
-        
+
+        /// <summary>
+        /// Applies specified string value to specified condition, if the value is non-empty.
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="value"></param>
+        protected static void ApplyStringValue(ISearchCondition<string> condition, string value)
+        {
+            if (value != null)
+            {
+                string trimmed = value.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                {
+                    condition.StartsWith(trimmed);
+                }
+            }
+        }
     }
 }

@@ -185,5 +185,18 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="params"></param>
 		void ExecuteSearch(SearchParams @params);
+
+		/// <summary>
+		/// Returns a <see cref="SearchParams"/> object appropriate to this folder system
+		/// </summary>
+		/// <param name="search"></param>
+		/// <returns></returns>
+		SearchParams CreateSearchParams(string search);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="window"></param>
+		void LaunchSearchComponent();
 	}
 }

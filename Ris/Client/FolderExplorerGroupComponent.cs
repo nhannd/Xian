@@ -377,6 +377,12 @@ namespace ClearCanvas.Ris.Client
 			get { return _selectedFolderExplorer == null ? null : this._selectedFolderExplorer.FolderSystem.SearchMessage; }
 		}
 
+		public void Search(string textSearch)
+		{
+			SearchParams searchParams = this.SelectedFolderExplorer.CreateSearchParams(textSearch);
+			Search(searchParams);
+		}
+
 		public void Search(SearchParams searchParams)
 		{
 			if (!searchParams.UseAdvancedSearch && string.IsNullOrEmpty(searchParams.TextSearch))
@@ -390,7 +396,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void AdvancedSearch()
 		{
-			SearchComponent.Launch(this.Host.DesktopWindow);
+			this.SelectedFolderExplorer.LaunchSearchComponent();
 		}
 
 		#endregion

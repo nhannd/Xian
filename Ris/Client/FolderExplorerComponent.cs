@@ -401,5 +401,14 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-	}
+    	public SearchParams CreateSearchParams(string textSearch)
+    	{
+    		return _folderSystem.CreateSearchParams(textSearch);
+    	}
+
+    	public void LaunchSearchComponent()
+    	{
+    		_folderSystem.LaunchSearchComponent();
+    	}
+    }
 }

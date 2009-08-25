@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 				get { return "ReportingProcedureStep and ProtocolAssignmentStep"; }
 			}
 
-			protected override TextQueryResponse<ReportingWorklistItem> DoQuery(SearchParams query, int specificityThreshold)
+			protected override TextQueryResponse<ReportingWorklistItem> DoQuery(WorklistSearchParams query, int specificityThreshold)
 			{
 				TextQueryResponse<ReportingWorklistItem> response;
 

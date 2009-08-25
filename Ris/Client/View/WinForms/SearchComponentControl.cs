@@ -35,11 +35,12 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class SearchComponentControl : CustomUserControl
+    public partial class SearchComponentControl : ApplicationComponentUserControl
     {
         private readonly SearchComponent _component;
 
         public SearchComponentControl(SearchComponent component)
+            : base(component)
         {
             InitializeComponent();
             _component = component;
@@ -63,11 +64,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _orderingPractitioner.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
 
-			_diagnosticService.DataBindings.Add("Value", _component, "DiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
-			_diagnosticService.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
-			
-			_procedureType.DataBindings.Add("Value", _component, "ProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diagnosticService.DataBindings.Add("Value", _component, "DiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diagnosticService.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
+
+            _procedureType.DataBindings.Add("Value", _component, "ProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
             _procedureType.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _procedureType.LookupHandler = _component.ProcedureTypeLookupHandler;
 
@@ -83,9 +84,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             }
         }
 
-		private void _clearButton_Click(object sender, EventArgs e)
-		{
-			_component.Clear();
-		}
+        private void _clearButton_Click(object sender, EventArgs e)
+        {
+            _component.Clear();
+        }
     }
 }

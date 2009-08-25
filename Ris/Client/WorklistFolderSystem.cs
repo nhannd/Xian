@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client
 	/// <typeparam name="TItemToolExtensionPoint"></typeparam>
 	/// <typeparam name="TWorklistService"></typeparam>
 	public abstract class WorklistFolderSystem<TItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, TWorklistService>
-		: WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint>, IWorklistFolderSystem
+		: WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint, WorklistSearchParams>, IWorklistFolderSystem
 		where TItem : DataContractBase
 		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
@@ -112,6 +112,25 @@ namespace ClearCanvas.Ris.Client
 		{
 			return AddWorklistFolderHelper(worklist);
 		}
+
+		public override SearchParams CreateSearchParams(string searchText)
+		{
+			return new WorklistSearchParams(searchText);
+		}
+
+		public override void LaunchSearchComponent()
+		{
+			SearchComponent.Launch(this.DesktopWindow);
+		}
+
+		//public override bool AdvancedSearchEnabled
+		//{
+		//    get
+		//    {
+		//        SearchComponent.EnsureCorrectSearchComponent();
+		//        return base.AdvancedSearchEnabled;
+		//    }
+		//}
 
 		#endregion
 

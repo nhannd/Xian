@@ -31,56 +31,25 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class SearchParams
+	public class WorklistSearchParams : SearchParams<WorklistItemTextQueryRequest.AdvancedSearchFields>
 	{
-		/// <summary>
-		/// Constructor for text-based search.
-		/// </summary>
-		public SearchParams(string textSearch)
+		public WorklistSearchParams(string textSearch)
+			: base(textSearch)
 		{
-			this.TextSearch = textSearch;
 		}
 
 		/// <summary>
 		/// Constructor for advance search
 		/// </summary>
-		public SearchParams(WorklistItemTextQueryRequest.AdvancedSearchFields searchFields)
+		public WorklistSearchParams(WorklistItemTextQueryRequest.AdvancedSearchFields searchFields)
+			: base(searchFields)
 		{
-			this.UseAdvancedSearch = true;
-			this.SearchFields = searchFields;
 		}
-
-		/// <summary>
-		/// Specifies the query text.
-		/// </summary>
-		public string TextSearch;
-
-		/// <summary>
-		/// Specifies that "advanced" mode should be used, in which case the text query is ignored
-		/// and the search is based on the content of the <see cref="SearchFields"/> member.
-		/// </summary>
-		public bool UseAdvancedSearch;
-
-		/// <summary>
-		/// Data used in the advanced search mode.
-		/// </summary>
-		public WorklistItemTextQueryRequest.AdvancedSearchFields SearchFields;
-	}
-
-	/// <summary>
-	/// Defines an interface for handling the Search Data
-	/// </summary>
-	public interface ISearchDataHandler
-	{
-		bool SearchEnabled { get; }
-		SearchParams SearchParams { set; }
-		event EventHandler SearchEnabledChanged;
 	}
 
 	[ExtensionPoint]
@@ -89,10 +58,8 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	[AssociateView(typeof(SearchComponentViewExtensionPoint))]
-	public class SearchComponent : ApplicationComponent
+	public class SearchComponent : SearchComponentBase
 	{
-		private readonly SearchParams _searchParams;
-
 		private DiagnosticServiceSummary _selectedDiagnosticService;
 		private DiagnosticServiceLookupHandler _diagnosticServiceLookupHandler;
 
@@ -101,63 +68,22 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerSummary _selectedOrderingPractitioner;
 		private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
 
-		private bool _keepOpen;
+		private static readonly SearchComponentManager<SearchComponent> _componentManager = new SearchComponentManager<SearchComponent>();
 
-		private static SearchComponent _instance;
-		private static Shelf _searchComponentShelf;
-		private static ISearchDataHandler _activeSearchHandler = GetActiveWorkspaceSearchHandler();
-
-		private SearchComponent()
+		public SearchComponent()
+			: base(new WorklistSearchParams(new WorklistItemTextQueryRequest.AdvancedSearchFields()))
 		{
-			_searchParams = new SearchParams(new WorklistItemTextQueryRequest.AdvancedSearchFields());
 		}
 
 		public static Shelf Launch(IDesktopWindow desktopWindow)
 		{
-			try
-			{
-				if (_searchComponentShelf != null)
-				{
-					_searchComponentShelf.Activate();
-				}
-				else
-				{
-					desktopWindow.Workspaces.ItemActivationChanged += Workspaces_ItemActivationChanged;
-
-					_searchComponentShelf = LaunchAsShelf(
-						desktopWindow,
-						Instance,
-						SR.TitleSearch,
-						ShelfDisplayHint.DockFloat);
-
-					_searchComponentShelf.Closed += delegate
-							{
-								desktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
-								_searchComponentShelf = null;
-							};
-
-					UpdateDisplay();
-				}
-			}
-			catch (Exception e)
-			{
-				// cannot start component
-				ExceptionHandler.Report(e, desktopWindow);
-			}
-
-			return _searchComponentShelf;
+			return _componentManager.Launch(desktopWindow);
 		}
 
-		public static SearchComponent Instance
-		{
-			get
-			{
-				if (_instance == null)
-					_instance = new SearchComponent();
-
-				return _instance;
-			}
-		}
+		//public static void EnsureCorrectSearchComponent()
+		//{
+		//    _componentManager.EnsureProperSearchComponent();
+		//}
 
 		public override void Start()
 		{
@@ -168,54 +94,59 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
+		protected override ISearchDataHandler ActiveSearchHandler
+		{
+			get { return _componentManager.ActiveSearchHandler; }
+		}
+
 		#region Public Member
 
 		public string AccessionNumber
 		{
-			get { return _searchParams.SearchFields.AccessionNumber; }
+			get { return this.SearchParams.SearchFields.AccessionNumber; }
 			set
 			{
-				_searchParams.SearchFields.AccessionNumber = value;
+				this.SearchParams.SearchFields.AccessionNumber = value;
 				NotifyPropertyChanged("AccessionNumber");
 			}
 		}
 
 		public string Mrn
 		{
-			get { return _searchParams.SearchFields.Mrn; }
+			get { return this.SearchParams.SearchFields.Mrn; }
 			set
 			{
-				_searchParams.SearchFields.Mrn = value;
+				this.SearchParams.SearchFields.Mrn = value;
 				NotifyPropertyChanged("Mrn");
 			}
 		}
 
 		public string HealthcardNumber
 		{
-			get { return _searchParams.SearchFields.HealthcardNumber; }
+			get { return this.SearchParams.SearchFields.HealthcardNumber; }
 			set
 			{
-				_searchParams.SearchFields.HealthcardNumber = value;
+				this.SearchParams.SearchFields.HealthcardNumber = value;
 				NotifyPropertyChanged("HealthcardNumber");
 			}
 		}
 
 		public string FamilyName
 		{
-			get { return _searchParams.SearchFields.FamilyName; }
+			get { return this.SearchParams.SearchFields.FamilyName; }
 			set
 			{
-				_searchParams.SearchFields.FamilyName = value;
+				this.SearchParams.SearchFields.FamilyName = value;
 				NotifyPropertyChanged("FamilyName");
 			}
 		}
 
 		public string GivenName
 		{
-			get { return _searchParams.SearchFields.GivenName; }
+			get { return this.SearchParams.SearchFields.GivenName; }
 			set
 			{
-				_searchParams.SearchFields.GivenName = value;
+				this.SearchParams.SearchFields.GivenName = value;
 				NotifyPropertyChanged("GivenName");
 			}
 		}
@@ -225,7 +156,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_selectedOrderingPractitioner = value;
-				_searchParams.SearchFields.OrderingPractitionerRef = value == null ? null : value.PractitionerRef;
+				this.SearchParams.SearchFields.OrderingPractitionerRef = value == null ? null : value.PractitionerRef;
 				NotifyPropertyChanged("OrderingPractitioner");
 			}
 		}
@@ -241,7 +172,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_selectedDiagnosticService = value;
-				_searchParams.SearchFields.DiagnosticServiceRef = value == null ? null : value.DiagnosticServiceRef;
+				this.SearchParams.SearchFields.DiagnosticServiceRef = value == null ? null : value.DiagnosticServiceRef;
 				NotifyPropertyChanged("DiagnosticService");
 			}
 		}
@@ -257,7 +188,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_selectedProcedureType = value;
-				_searchParams.SearchFields.ProcedureTypeRef = value == null ? null : value.ProcedureTypeRef;
+				this.SearchParams.SearchFields.ProcedureTypeRef = value == null ? null : value.ProcedureTypeRef;
 				NotifyPropertyChanged("ProcedureType");
 			}
 		}
@@ -269,74 +200,46 @@ namespace ClearCanvas.Ris.Client
 
 		public DateTime? FromDate
 		{
-			get { return _searchParams.SearchFields.FromDate; }
+			get { return this.SearchParams.SearchFields.FromDate; }
 			set
 			{
-				_searchParams.SearchFields.FromDate = value;
+				this.SearchParams.SearchFields.FromDate = value;
 				NotifyPropertyChanged("FromDate");
 			}
 		}
 
 		public DateTime? UntilDate
 		{
-			get { return _searchParams.SearchFields.UntilDate; }
+			get { return this.SearchParams.SearchFields.UntilDate; }
 			set
 			{
-				_searchParams.SearchFields.UntilDate = value;
+				this.SearchParams.SearchFields.UntilDate = value;
 				NotifyPropertyChanged("UntilDate");
 			}
 		}
 
-		public bool KeepOpen
-		{
-			get { return _keepOpen; }
-			set { _keepOpen = value; }
-		}
+		#endregion
 
-		public bool SearchEnabled
+		#region SearchComponentBase overrides
+
+		public override bool HasNonEmptyFields
 		{
 			get
 			{
-				return this.ComponentEnabled
-					&& (!string.IsNullOrEmpty(_searchParams.SearchFields.AccessionNumber)
-						|| !string.IsNullOrEmpty(_searchParams.SearchFields.Mrn)
-						|| !string.IsNullOrEmpty(_searchParams.SearchFields.HealthcardNumber)
-						|| !string.IsNullOrEmpty(_searchParams.SearchFields.FamilyName)
-						|| !string.IsNullOrEmpty(_searchParams.SearchFields.GivenName)
-						|| _searchParams.SearchFields.OrderingPractitionerRef != null
-						|| _searchParams.SearchFields.DiagnosticServiceRef != null
-						|| _searchParams.SearchFields.ProcedureTypeRef != null
-						|| _searchParams.SearchFields.FromDate != null
-						|| _searchParams.SearchFields.UntilDate != null);
+				return !string.IsNullOrEmpty(this.SearchParams.SearchFields.AccessionNumber)
+						|| !string.IsNullOrEmpty(this.SearchParams.SearchFields.Mrn)
+						|| !string.IsNullOrEmpty(this.SearchParams.SearchFields.HealthcardNumber)
+						|| !string.IsNullOrEmpty(this.SearchParams.SearchFields.FamilyName)
+						|| !string.IsNullOrEmpty(this.SearchParams.SearchFields.GivenName)
+						|| this.SearchParams.SearchFields.OrderingPractitionerRef != null
+						|| this.SearchParams.SearchFields.DiagnosticServiceRef != null
+						|| this.SearchParams.SearchFields.ProcedureTypeRef != null
+						|| this.SearchParams.SearchFields.FromDate != null
+						|| this.SearchParams.SearchFields.UntilDate != null;
 			}
 		}
 
-		public bool ComponentEnabled
-		{
-			get { return _activeSearchHandler == null ? false : _activeSearchHandler.SearchEnabled; }
-		}
-
-		public void Search()
-		{
-			if (this.HasValidationErrors)
-			{
-				this.ShowValidation(true);
-				return;
-			}
-
-			if (_activeSearchHandler != null)
-				_activeSearchHandler.SearchParams = _searchParams; ;
-
-			// always turn the validation errors off after a successful search
-			this.ShowValidation(false);
-
-			if (!_keepOpen)
-			{
-				this.Host.Exit();
-			}
-		}
-
-		public void Clear()
+		public override void Clear()
 		{
 			this.AccessionNumber = null;
 			this.Mrn = null;
@@ -352,40 +255,9 @@ namespace ClearCanvas.Ris.Client
 		
 		#endregion
 
-		private static void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
+		private WorklistSearchParams SearchParams
 		{
-			UpdateDisplay();
-		}
-
-		private static ISearchDataHandler GetActiveWorkspaceSearchHandler()
-		{
-			if (_searchComponentShelf == null)
-				return null;
-
-			Workspace activeWorkspace = _searchComponentShelf.DesktopWindow.ActiveWorkspace;
-			if (activeWorkspace != null && activeWorkspace.Component is ISearchDataHandler)
-				return (ISearchDataHandler)(activeWorkspace.Component);
-
-			return null;
-		}
-
-		private static void UpdateDisplay()
-		{
-			if (_activeSearchHandler != null)
-				_activeSearchHandler.SearchEnabledChanged -= OnSearchEnabledChanged;
-
-			_activeSearchHandler = GetActiveWorkspaceSearchHandler();
-			if (_activeSearchHandler != null)
-				_activeSearchHandler.SearchEnabledChanged += OnSearchEnabledChanged;
-
-			Instance.NotifyPropertyChanged("ComponentEnabled");
-			Instance.NotifyPropertyChanged("SearchEnabled");
-		}
-
-		private static void OnSearchEnabledChanged(object sender, EventArgs e)
-		{
-			Instance.NotifyPropertyChanged("ComponentEnabled");
-			Instance.NotifyPropertyChanged("SearchEnabled");
+			get { return (WorklistSearchParams) _searchParams; }
 		}
 	}
 }

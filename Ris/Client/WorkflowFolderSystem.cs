@@ -223,8 +223,6 @@ namespace ClearCanvas.Ris.Client
 		private readonly Dictionary<Type, List<object>> _mapFolderClassToDropHandlers = new Dictionary<Type, List<object>>();
 		private readonly List<DoubleClickHandlerRegistration> _doubleClickHandlers = new List<DoubleClickHandlerRegistration>();
 
-		private SearchResultsFolder _searchFolder;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -384,17 +382,12 @@ namespace ClearCanvas.Ris.Client
 		/// Performs a search, if supported.
 		/// </summary>
 		/// <param name="params"></param>
-		public void ExecuteSearch(SearchParams @params)
+		public virtual void ExecuteSearch(SearchParams @params)
 		{
-			if (this.SearchResultsFolder != null)
-			{
-				this.SearchResultsFolder.SearchParams = @params;
-
-				// ensure the results folder is selected, and force an immediate update
-				this.SelectedFolder = this.SearchResultsFolder;
-				this.SearchResultsFolder.Update();
-			}
 		}
+
+		public abstract SearchParams CreateSearchParams(string searchText);
+		public abstract void LaunchSearchComponent();
 
 		/// <summary>
 		/// Invalidates all folders.
@@ -568,22 +561,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets the search-results folder, or null if this system does not support searches.
-		/// </summary>
-		protected SearchResultsFolder SearchResultsFolder
-		{
-			get
-			{
-				if (_searchFolder == null)
-				{
-					_searchFolder = CreateSearchResultsFolder();
-					_workflowFolders.Add(_searchFolder);
-				}
-				return _searchFolder;
-			}
-		}
-
-		/// <summary>
 		/// Gets the set of registered workflow services.
 		/// </summary>
 		/// <returns></returns>
@@ -739,16 +716,65 @@ namespace ClearCanvas.Ris.Client
 
 	}
 
+	public abstract class WorkflowFolderSystem<TSearchParams> : WorkflowFolderSystem
+		where TSearchParams : SearchParams
+	{
+		private SearchResultsFolder<TSearchParams> _searchFolder;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="title"></param>
+		protected WorkflowFolderSystem(string title)
+			: base(title)
+		{
+		}
+
+		/// <summary>
+		/// Performs a search, if supported.
+		/// </summary>
+		/// <param name="params"></param>
+		public override void ExecuteSearch(SearchParams @params)
+		{
+			if (this.SearchResultsFolder != null)
+			{
+				this.SearchResultsFolder.SearchParams = @params as TSearchParams; 
+
+				// ensure the results folder is selected, and force an immediate update
+				this.SelectedFolder = this.SearchResultsFolder;
+				this.SearchResultsFolder.Update();
+			}
+		}
+
+		/// <summary>
+		/// Gets the search-results folder, or null if this system does not support searches.
+		/// </summary>
+		protected SearchResultsFolder<TSearchParams> SearchResultsFolder
+		{
+			get
+			{
+				if (_searchFolder == null)
+				{
+					_searchFolder = (SearchResultsFolder<TSearchParams>)CreateSearchResultsFolder();
+					this.Folders.Add(_searchFolder);
+				}
+				return _searchFolder;
+			}
+		}
+	}
+
 	/// <summary>
 	/// Abstract base class for workflow folder systems.
 	/// </summary>
 	/// <typeparam name="TItem">The class of item that the folders contain.</typeparam>
 	/// <typeparam name="TFolderToolExtensionPoint">Extension point that defines the set of folder tools for this folders system.</typeparam>
 	/// <typeparam name="TItemToolExtensionPoint">Extension point that defines the set of item tools for this folders system.</typeparam>
-	public abstract class WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint> : WorkflowFolderSystem
+	/// <typeparam name="TSearchParams"></typeparam>
+	public abstract class WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint, TSearchParams> : WorkflowFolderSystem<TSearchParams>
 		where TItem : DataContractBase
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
+		where TSearchParams : SearchParams
 	{
 		#region WorkflowItemToolContext class
 

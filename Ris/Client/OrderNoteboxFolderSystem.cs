@@ -75,7 +75,8 @@ namespace ClearCanvas.Ris.Client
 	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<
 		OrderNoteboxItemSummary,
 		OrderNoteboxFolderToolExtensionPoint,
-		OrderNoteboxItemToolExtensionPoint>
+		OrderNoteboxItemToolExtensionPoint,
+		SearchParams>
 	{
 		class OrderNoteboxItemToolContext : WorkflowItemToolContext, IOrderNoteboxItemToolContext
 		{
@@ -167,6 +168,18 @@ namespace ClearCanvas.Ris.Client
             // searching not currently supported
             return null;
         }
+
+		public override SearchParams CreateSearchParams(string searchText)
+		{
+			// searching not currently supported
+			return null;
+		}
+
+		public override void LaunchSearchComponent()
+		{
+			// searching not currently supported
+			return;
+		}
 
 		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
 		{

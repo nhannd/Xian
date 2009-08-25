@@ -42,25 +42,7 @@ namespace ClearCanvas.Ris.Client
 {
 	public abstract class SearchResultsFolder : WorkflowFolder
 	{
-		private SearchParams _searchParams;
-		private bool _isValid;
-
-		/// <summary>
-		/// Gets or sets the search arguments.  Setting this property will automatically
-		/// call <see cref="Folder.Invalidate"/> on this folder.
-		/// </summary>
-		public SearchParams SearchParams
-		{
-			get { return _searchParams; }
-			set
-			{
-				_searchParams = value;
-				this.Tooltip = _searchParams.ToString();
-
-				// invalidate the folder immediately
-				_isValid = false;
-			}
-		}
+		protected bool _isValid;
 
 		#region Folder overrides
 
@@ -109,13 +91,37 @@ namespace ClearCanvas.Ris.Client
 
 	}
 
+	public abstract class SearchResultsFolder<TSearchParams> : SearchResultsFolder
+		where TSearchParams : SearchParams
+	{
+		private TSearchParams _searchParams;
+
+		/// <summary>
+		/// Gets or sets the search arguments.  Setting this property will automatically
+		/// call <see cref="Folder.Invalidate"/> on this folder.
+		/// </summary>
+		public TSearchParams SearchParams
+		{
+			get { return _searchParams; }
+			set
+			{
+				_searchParams = value;
+				this.Tooltip = _searchParams.ToString();
+
+				// invalidate the folder immediately
+				_isValid = false;
+			}
+		}
+	}
 
 	/// <summary>
 	/// Base class for folders that display search results.
 	/// </summary>
 	/// <typeparam name="TItem"></typeparam>
-	public abstract class SearchResultsFolder<TItem> : SearchResultsFolder
+	/// <typeparam name="TSearchParams"></typeparam>
+	public abstract class SearchResultsFolder<TItem, TSearchParams> : SearchResultsFolder<TSearchParams>
 		where TItem : DataContractBase
+		where TSearchParams : SearchParams
 	{
 		private readonly Table<TItem> _itemsTable;
 		private BackgroundTask _queryItemsTask;
@@ -151,7 +157,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="query"></param>
 		/// <param name="specificityThreshold"></param>
 		/// <returns></returns>
-		protected abstract TextQueryResponse<TItem> DoQuery(SearchParams query, int specificityThreshold);
+		protected abstract TextQueryResponse<TItem> DoQuery(TSearchParams query, int specificityThreshold);
 
 		#endregion
 
@@ -222,7 +228,7 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 	}
 
-	public abstract class WorklistSearchResultsFolder<TItem, TWorklistService> : SearchResultsFolder<TItem>
+	public abstract class WorklistSearchResultsFolder<TItem, TWorklistService> : SearchResultsFolder<TItem, WorklistSearchParams>
 		where TItem : DataContractBase
 		where TWorklistService : IWorklistService<TItem>
 	{
@@ -231,7 +237,7 @@ namespace ClearCanvas.Ris.Client
 		{
 		}
 
-		protected override TextQueryResponse<TItem> DoQuery(SearchParams query, int specificityThreshold)
+		protected override TextQueryResponse<TItem> DoQuery(WorklistSearchParams query, int specificityThreshold)
 		{
 			WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder
 				| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
@@ -239,7 +245,7 @@ namespace ClearCanvas.Ris.Client
 			return DoQueryCore(query, specificityThreshold, options, this.ProcedureStepClassName);
 		}
 
-		protected static TextQueryResponse<TItem> DoQueryCore(SearchParams query, int specificityThreshold, WorklistItemTextQueryOptions options, string procedureStepClassName)
+		protected static TextQueryResponse<TItem> DoQueryCore(WorklistSearchParams query, int specificityThreshold, WorklistItemTextQueryOptions options, string procedureStepClassName)
 		{
 			TextQueryResponse<TItem> response = null;
 

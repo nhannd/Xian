@@ -42,11 +42,11 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Ris.Application.Services
 {
 
-    public class WorklistItemTextQueryHelper<TDomainItem, TSummary>
-        : TextQueryHelper<TDomainItem, WorklistItemSearchCriteria, TSummary>
-        where TDomainItem : WorklistItemBase
-        where TSummary : DataContractBase
-    {
+	public class WorklistItemTextQueryHelper<TDomainItem, TSummary>
+		: TextQueryHelper<TDomainItem, WorklistItemSearchCriteria, TSummary>
+		where TDomainItem : WorklistItemBase
+		where TSummary : DataContractBase
+	{
 		/// <summary>
 		/// This class is needed as a hacky way to get some boolean flags passed around,
 		/// without having to modify the <see cref="TextQueryHelper"/> super-class.
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services
 			private readonly bool _includeDegenerateProcedureItems;
 
 			public TextQueryCriteria(WorklistItemSearchCriteria that, bool includeDegeneratePatientItems, bool includeDegenerateProcedureItems)
-				:base(that)
+				: base(that)
 			{
 				_includeDegeneratePatientItems = includeDegeneratePatientItems;
 				_includeDegenerateProcedureItems = includeDegenerateProcedureItems;
@@ -75,10 +75,10 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 
-    	private readonly Type _procedureStepClass;
-    	private readonly IWorklistItemBroker<TDomainItem> _broker;
-    	private readonly WorklistItemTextQueryOptions _options;
-    	private readonly IPersistenceContext _context;
+		private readonly Type _procedureStepClass;
+		private readonly IWorklistItemBroker<TDomainItem> _broker;
+		private readonly WorklistItemTextQueryOptions _options;
+		private readonly IPersistenceContext _context;
 
 		/// <summary>
 		/// Constructor.
@@ -99,8 +99,8 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#region Overrides
 
-        protected override bool ValidateRequest(TextQueryRequest request)
-        {
+		protected override bool ValidateRequest(TextQueryRequest request)
+		{
 			// if the UseAdvancedSearch flag is set, check if the Search fields are empty
 			WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
 			if (req.UseAdvancedSearch)
@@ -110,21 +110,21 @@ namespace ClearCanvas.Ris.Application.Services
 
 			// otherwise, do base behaviour (check text query)
 			return base.ValidateRequest(request);
-        }
+		}
 
-        protected override WorklistItemSearchCriteria[] BuildCriteria(TextQueryRequest request)
-        {
-            WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
+		protected override WorklistItemSearchCriteria[] BuildCriteria(TextQueryRequest request)
+		{
+			WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
 			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
 
 			if ((_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder)
 			{
-                criteria.AddRange(BuildProcedureSearchCriteria(req));
+				criteria.AddRange(BuildProcedureSearchCriteria(req));
 			}
 
 			if ((_options & WorklistItemTextQueryOptions.ProcedureStepStaff) == WorklistItemTextQueryOptions.ProcedureStepStaff)
 			{
-                criteria.AddRange(BuildStaffSearchCriteria(req));
+				criteria.AddRange(BuildStaffSearchCriteria(req));
 			}
 
 			// add constraint for downtime vs live procedures
@@ -134,21 +134,21 @@ namespace ClearCanvas.Ris.Application.Services
 
 			// this is a silly hack to append additional information (degenerate flags) into the criteria so that we can
 			// pass them on to the TestSpecificity and DoQuery methods (didn't want to refactor the superclass)
-        	List<WorklistItemSearchCriteria> augmented = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
-        		criteria,
-        		delegate(WorklistItemSearchCriteria c)
-        		{
+			List<WorklistItemSearchCriteria> augmented = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
+				criteria,
+				delegate(WorklistItemSearchCriteria c)
+				{
 					return new TextQueryCriteria(c,
 						ShouldIncludeDegeneratePatientItems(req),
 						ShouldIncludeDegenerateProcedureItems(req));
-        		});
+				});
 
 			return augmented.ToArray();
 		}
 
 		protected override bool TestSpecificity(WorklistItemSearchCriteria[] where, int threshold)
 		{
-			TextQueryCriteria c = (TextQueryCriteria) CollectionUtils.FirstElement(where);
+			TextQueryCriteria c = (TextQueryCriteria)CollectionUtils.FirstElement(where);
 			WorklistItemSearchArgs searchArgs = new WorklistItemSearchArgs(
 				where,
 				c.IncludeDegeneratePatientItems,
@@ -175,8 +175,8 @@ namespace ClearCanvas.Ris.Application.Services
 		#region Patient Criteria builders
 
 		private List<WorklistItemSearchCriteria> BuildProcedureSearchCriteria(WorklistItemTextQueryRequest request)
-        {
-			if(request.UseAdvancedSearch)
+		{
+			if (request.UseAdvancedSearch)
 			{
 				return BuildAdvancedProcedureSearchCriteria(request);
 			}
@@ -184,8 +184,8 @@ namespace ClearCanvas.Ris.Application.Services
 			{
 				return BuildTextQueryProcedureSearchCriteria(request);
 			}
-        	
-        }
+
+		}
 
 		private List<WorklistItemSearchCriteria> BuildAdvancedProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
@@ -223,7 +223,7 @@ namespace ClearCanvas.Ris.Application.Services
 				criteria.Procedure.Type.EqualTo(pt);
 			}
 
-			if(searchParams.FromDate != null || searchParams.UntilDate != null)
+			if (searchParams.FromDate != null || searchParams.UntilDate != null)
 			{
 				// the goal here is to use the date-range in an approximate fashion, to search for procedures
 				// that were performed "around" that time-frame
@@ -260,9 +260,9 @@ namespace ClearCanvas.Ris.Application.Services
 			return wheres;
 		}
 
-        private List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
-            string query = request.TextQuery;
+			string query = request.TextQuery;
 
 			// this will hold all criteria
 			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
@@ -329,9 +329,9 @@ namespace ClearCanvas.Ris.Application.Services
 
 		private List<WorklistItemSearchCriteria> BuildTextQueryStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
-            string query = request.TextQuery;
+			string query = request.TextQuery;
 
-            // this will hold all criteria
+			// this will hold all criteria
 			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
 
 			// build criteria against names
@@ -405,25 +405,7 @@ namespace ClearCanvas.Ris.Application.Services
 			// 1) degen procedure items are being included, and
 			// 2) advanced search is not being used, or it is being used and all non-patient search criteria are empty
 			return ShouldIncludeDegenerateProcedureItems(request)
-			       && (!request.UseAdvancedSearch || request.SearchFields.IsNonPatientFieldsEmpty());
+				   && (!request.UseAdvancedSearch || request.SearchFields.IsNonPatientFieldsEmpty());
 		}
-
-		/// <summary>
-		/// Applies specified string value to specified condition, if the value is non-empty.
-		/// </summary>
-		/// <param name="condition"></param>
-		/// <param name="value"></param>
-		private static void ApplyStringValue(ISearchCondition<string> condition, string value)
-		{
-			if(value != null)
-			{
-				string trimmed = value.Trim();
-				if (!string.IsNullOrEmpty(trimmed))
-				{
-					condition.StartsWith(trimmed);
-				}
-			}
-		}
-
 	}
 }
