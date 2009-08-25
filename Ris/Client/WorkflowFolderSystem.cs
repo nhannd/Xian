@@ -388,6 +388,7 @@ namespace ClearCanvas.Ris.Client
 
 		public abstract SearchParams CreateSearchParams(string searchText);
 		public abstract void LaunchSearchComponent();
+		public abstract Type SearchComponentType { get; }
 
 		/// <summary>
 		/// Invalidates all folders.

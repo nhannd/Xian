@@ -30,17 +30,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -81,7 +78,7 @@ namespace ClearCanvas.Ris.Client
 		class OrderNoteboxItemToolContext : WorkflowItemToolContext, IOrderNoteboxItemToolContext
 		{
 			public OrderNoteboxItemToolContext(WorkflowFolderSystem owner)
-				:base(owner)
+				: base(owner)
 			{
 			}
 		}
@@ -91,7 +88,7 @@ namespace ClearCanvas.Ris.Client
 			private readonly OrderNoteboxFolderSystem _owner;
 
 			public OrderNoteboxFolderToolContext(OrderNoteboxFolderSystem owner)
-				:base(owner)
+				: base(owner)
 			{
 				_owner = owner;
 			}
@@ -106,7 +103,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly string _baseTitle;
 		private readonly PersonalInboxFolder _inboxFolder;
 
-        public OrderNoteboxFolderSystem()
+		public OrderNoteboxFolderSystem()
 			: base(SR.TitleOrderNoteboxFolderSystem)
 		{
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
@@ -164,10 +161,10 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		protected override SearchResultsFolder CreateSearchResultsFolder()
-        {
-            // searching not currently supported
-            return null;
-        }
+		{
+			// searching not currently supported
+			return null;
+		}
 
 		public override SearchParams CreateSearchParams(string searchText)
 		{
@@ -179,6 +176,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			// searching not currently supported
 			return;
+		}
+
+		public override Type SearchComponentType
+		{
+			get { return null; }
 		}
 
 		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
@@ -210,15 +212,15 @@ namespace ClearCanvas.Ris.Client
 				delegate(IOrderNoteService service)
 				{
 					//List<string> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupNames;
-                    groupsToShow = service.ListStaffGroups(new ListStaffGroupsRequest()).StaffGroups;
+					groupsToShow = service.ListStaffGroups(new ListStaffGroupsRequest()).StaffGroups;
 
 					// select those groups that are marked as visible
-                    //groupsToShow = CollectionUtils.Select(groupsToShow,
-                    //    delegate(StaffGroupSummary g)
-                    //    {
-                    //        return CollectionUtils.Contains(visibleGroups,
-                    //            delegate(string groupName) { return groupName == g.Name; });
-                    //    });
+					//groupsToShow = CollectionUtils.Select(groupsToShow,
+					//    delegate(StaffGroupSummary g)
+					//    {
+					//        return CollectionUtils.Contains(visibleGroups,
+					//            delegate(string groupName) { return groupName == g.Name; });
+					//    });
 				});
 
 			// sort groups alphabetically

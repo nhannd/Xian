@@ -80,11 +80,6 @@ namespace ClearCanvas.Ris.Client
 			return _componentManager.Launch(desktopWindow);
 		}
 
-		//public static void EnsureCorrectSearchComponent()
-		//{
-		//    _componentManager.EnsureProperSearchComponent();
-		//}
-
 		public override void Start()
 		{
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);

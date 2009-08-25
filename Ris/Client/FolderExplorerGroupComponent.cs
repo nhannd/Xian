@@ -409,6 +409,7 @@ namespace ClearCanvas.Ris.Client
 			if (_selectedFolderExplorer != explorer)
 			{
 				_selectedFolderExplorer = explorer;
+				SearchComponentManager.EnsureProperSearchComponent(_selectedFolderExplorer.FolderSystem);
 				NotifyPropertyChanged("SearchEnabled");
 				NotifyPropertyChanged("SearchMessage");
 				EventsHelper.Fire(_selectedFolderExplorerChanged, this, EventArgs.Empty);

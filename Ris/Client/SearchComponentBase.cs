@@ -1,4 +1,5 @@
 using System;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
@@ -55,10 +56,57 @@ namespace ClearCanvas.Ris.Client
 		event EventHandler SearchEnabledChanged;
 	}
 
+	public class SearchComponentManager
+	{
+		public class ActiveSearchComponentContext
+		{
+			public static ActiveSearchComponentContext None = new ActiveSearchComponentContext(null, null);
+
+			private readonly Shelf _shelf;
+			private readonly Type _type;
+
+			public ActiveSearchComponentContext(Shelf searchComponentShelf, Type searchComponentType)
+			{
+				_shelf = searchComponentShelf;
+				_type = searchComponentType;
+			}
+
+			public Type Type
+			{
+				get { return _type; }
+			}
+
+			public void Close()
+			{
+				_shelf.Close();
+			}
+		}
+
+		public static ActiveSearchComponentContext ActiveSearchComponent = ActiveSearchComponentContext.None;
+
+		public static void EnsureProperSearchComponent(IFolderSystem folderSystem)
+		{
+			Platform.CheckForNullReference(folderSystem, "folderSystem");
+
+			// do nothing if there is no search component open
+			if (ActiveSearchComponent == ActiveSearchComponentContext.None)
+				return;
+
+			// if the folder system does not support searching, do nothing (the search component shelf will be disabled)
+			if (!folderSystem.AdvancedSearchEnabled)
+				return;
+
+			// close the open shelf and open the folder system's search component
+			if (folderSystem.SearchComponentType != ActiveSearchComponent.Type)
+			{
+				ActiveSearchComponent.Close();
+				folderSystem.LaunchSearchComponent();
+			}
+		}
+	}
+
 	public abstract class SearchComponentBase : ApplicationComponent
 	{
-		private static Shelf _openShelf;
-
 		protected class SearchComponentManager<TSearchComponent>
 			where TSearchComponent : SearchComponentBase, new()
 		{
@@ -93,6 +141,7 @@ namespace ClearCanvas.Ris.Client
 						{
 							desktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
 							_searchComponentShelf = null;
+							SearchComponentManager.ActiveSearchComponent = SearchComponentManager.ActiveSearchComponentContext.None;
 						};
 
 						UpdateDisplay();
@@ -103,6 +152,8 @@ namespace ClearCanvas.Ris.Client
 					// cannot start component
 					ExceptionHandler.Report(e, desktopWindow);
 				}
+
+				SearchComponentManager.ActiveSearchComponent = new SearchComponentManager.ActiveSearchComponentContext(_searchComponentShelf, typeof(TSearchComponent));
 
 				return _searchComponentShelf;
 			}
@@ -117,22 +168,6 @@ namespace ClearCanvas.Ris.Client
 					return _instance;
 				}
 			}
-
-			//public void EnsureProperSearchComponent()
-			//{
-			//    // Nothing open
-			//    if (_searchComponentShelf == null && SearchComponentBase._openShelf == null)
-			//        return;
-
-			//    // Correct shelf is open
-			//    if (_searchComponentShelf == SearchComponentBase._openShelf)
-			//        return;
-
-			//    if (_searchComponentShelf != null && SearchComponentBase._openShelf != null && _searchComponentShelf != SearchComponent._openShelf)
-			//    {
-			//        SearchComponentBase._openShelf.Close();
-			//    }
-			//}
 
 			public ISearchDataHandler ActiveSearchHandler
 			{
@@ -225,5 +260,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public abstract void Clear();
+
 	}
 }

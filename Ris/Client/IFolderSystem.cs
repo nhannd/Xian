@@ -194,9 +194,13 @@ namespace ClearCanvas.Ris.Client
 		SearchParams CreateSearchParams(string search);
 
 		/// <summary>
-		/// 
+		/// Launches a <see cref="SearchComponentBase"/> appropriate to this folder system
 		/// </summary>
-		/// <param name="window"></param>
 		void LaunchSearchComponent();
+
+		/// <summary>
+		/// Indicates the type of <see cref="SearchComponentBase"/> appropriate to this folder system
+		/// </summary>
+		Type SearchComponentType { get; }
 	}
 }
