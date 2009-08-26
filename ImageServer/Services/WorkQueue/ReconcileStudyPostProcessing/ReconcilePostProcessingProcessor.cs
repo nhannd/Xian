@@ -40,6 +40,14 @@ using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessing
 {
+	/// <summary>
+	/// ReconcilePostProcessing processor
+	/// </summary>
+	/// <remarks>
+	/// This functionality was replaced in the 1.6 (Server - Performance milestone) release,
+	/// and will be removed in a future relase.
+	/// </remarks>
+	[Obsolete("This functionality is now integrated in with the Reconcile processor")]
     [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
     class ReconcilePostProcessingProcessor : StudyProcessItemProcessor
 	{

@@ -107,6 +107,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// </summary>
         /// <param name="source">The path to copy from.</param>
         /// <param name="destination">The path to copy to.</param>
+        /// <param name="overwrite">Overwrite an existing destination file.</param>
         static public void Copy(string source, string destination, bool overwrite)
         {
             Copy(source, destination, overwrite, RETRY_MAX_DELAY, null, RETRY_MIN_DELAY);
@@ -182,7 +183,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             {
                 int i = 0;
                 bool filenameAbtained = false;
-                while(!filenameAbtained)
+                while(true)
                 {
                     string backup;
 
@@ -200,9 +201,12 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 
                     try
                     {
-                        FileStream stream = FileStreamOpener.OpenForSoleUpdate(backup, FileMode.CreateNew, RETRY_MIN_DELAY);
-                        stream.Close();
-                        filenameAbtained = true;
+                    	using (FileStream stream =
+                    			FileStreamOpener.OpenForSoleUpdate(backup, FileMode.CreateNew, RETRY_MIN_DELAY))
+                    	{
+                    		stream.Close();
+							filenameAbtained = true;
+                    	}
                     }
                     catch(Exception)
                     {
@@ -213,7 +217,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
                     if (filenameAbtained)
                     {
-                        FileUtils.Copy(source, backup, true);
+                        Copy(source, backup, true);
                         return backup;
                     }
                 }

@@ -203,7 +203,7 @@ namespace ClearCanvas.Dicom.IO
                     if (Flags.IsSet(options, DicomWriteOptions.WriteFragmentOffsetTable) && fs.HasOffsetTable)
                     {
                         _writer.Write((uint)fs.OffsetTableBuffer.Length);
-                        fs.OffsetTableBuffer.CopyTo(_writer.BaseStream);
+                        fs.OffsetTableBuffer.CopyTo(_writer);
                     }
                     else
                     {
@@ -215,7 +215,7 @@ namespace ClearCanvas.Dicom.IO
                         _writer.Write((ushort)DicomTag.Item.Group);
                         _writer.Write((ushort)DicomTag.Item.Element);
                         _writer.Write((uint)bb.Length);
-                        bb.GetByteBuffer(_syntax).CopyTo(_writer.BaseStream);
+                        bb.GetByteBuffer(_syntax).CopyTo(_writer);
                     }
 
                     _writer.Write((ushort)DicomTag.SequenceDelimitationItem.Group);
@@ -224,7 +224,7 @@ namespace ClearCanvas.Dicom.IO
                 }
                 else
                 {
-                    DicomAttribute de = item as DicomAttribute;
+                    DicomAttribute de = item;
 
                     if (_syntax.ExplicitVr)
                     {
@@ -243,7 +243,7 @@ namespace ClearCanvas.Dicom.IO
                         _writer.Write((uint)de.StreamLength);
                     }
 
-                    de.GetByteBuffer(_syntax, dataset.SpecificCharacterSet).CopyTo(_writer.BaseStream);
+                    de.GetByteBuffer(_syntax, dataset.SpecificCharacterSet).CopyTo(_writer);
                 }
             }
 

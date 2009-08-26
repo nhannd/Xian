@@ -42,6 +42,7 @@
     <Compile Include="Broker.cs" />
     <Compile Include="ChangeSetRecorder.cs" />
     <Compile Include="EntityBroker.cs" />
+    <Compile Include="EntityMapDictionary.cs" />
     <Compile Include="EnumBroker.cs" />
     <Compile Include="IPersistentStoreVersionEntityBroker.cs" />
     <Compile Include="PersistentStore.cs" />

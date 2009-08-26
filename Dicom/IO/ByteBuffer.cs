@@ -232,7 +232,7 @@ namespace ClearCanvas.Dicom.IO
             return read;
         }
 
-        public void CopyTo(Stream s)
+        public void CopyTo(BinaryWriter s)
         {
 			int maxSize = 1024 * 1024 * 4;
 			
@@ -241,40 +241,51 @@ namespace ClearCanvas.Dicom.IO
 				// Discovered a bug when saving to a network drive, where 
 				// writing data in large chunks caused an IOException.  
 				// Limiting single writes to a smaller size seems to fix the issue.
-				if (_ms.Length > maxSize && s is FileStream)
+				if (_ms.Length > maxSize)
 				{
-					byte[] array = _ms.ToArray();
-					int bytesLeft = array.Length;
-					int offset = 0;
-					while (bytesLeft > 0)
+					if (s.BaseStream is FileStream)
 					{
-						int bytesToWrite = bytesLeft > maxSize ? maxSize : bytesLeft;
-						s.Write(array, offset, bytesToWrite);
-						bytesLeft -= bytesToWrite;
-						offset += bytesToWrite;
+						byte[] array = _ms.ToArray();
+						int bytesLeft = array.Length;
+						int offset = 0;
+						while (bytesLeft > 0)
+						{
+							int bytesToWrite = bytesLeft > maxSize ? maxSize : bytesLeft;
+							s.Write(array, offset, bytesToWrite);
+							bytesLeft -= bytesToWrite;
+							offset += bytesToWrite;
+						}
 					}
+					else
+						s.Write(_ms.ToArray());
 				}
 				else
 				{
-					_ms.WriteTo(s);
+					s.Write(_ms.ToArray());
 				}
             	return;
             }
+
             if (_data != null)
             {
-				if (s is FileStream)
+				if (_data.Length > maxSize)
 				{
-					int bytesLeft = _data.Length;
-					int offset = 0;
-					while (bytesLeft > 0)
+					if (s.BaseStream is FileStream)
 					{
-						int bytesToWrite = bytesLeft > maxSize ? maxSize : bytesLeft;
-						s.Write(_data, offset, bytesToWrite);
-						bytesLeft -= bytesToWrite;
-						offset += bytesToWrite;
+						int bytesLeft = _data.Length;
+						int offset = 0;
+						while (bytesLeft > 0)
+						{
+							int bytesToWrite = bytesLeft > maxSize ? maxSize : bytesLeft;
+							s.Write(_data, offset, bytesToWrite);
+							bytesLeft -= bytesToWrite;
+							offset += bytesToWrite;
+						}
 					}
+					else
+						s.Write(_data, 0, _data.Length);
 				}
-				else 
+				else
 					s.Write(_data, 0, _data.Length);
             }
         }

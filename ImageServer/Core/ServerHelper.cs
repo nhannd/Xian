@@ -96,22 +96,10 @@ namespace ClearCanvas.ImageServer.Core
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, "");
 
-            FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
-            ServerFilesystemInfo filesystem = selector.SelectFilesystem(message);
-            if (filesystem == null)
-            {
-                throw new NoWritableFilesystemException();
-            }
-
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-                locParms.StudyInstanceUid = studyInstanceUid;
-                locParms.ServerPartitionKey = partition.GetKey();
-                IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
-
-                if (studyLocationList.Count == 0)
+            	StudyStorageLocation location;
+				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(updateContext,partition.Key,studyInstanceUid, true, out location))
                 {
                     StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
                     if (storage != null)
@@ -119,6 +107,13 @@ namespace ClearCanvas.ImageServer.Core
                         Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
                         return null;
                     }
+
+					FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
+					ServerFilesystemInfo filesystem = selector.SelectFilesystem(message);
+					if (filesystem == null)
+					{
+						throw new NoWritableFilesystemException();
+					}
 
                     IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
                     InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
@@ -145,23 +140,14 @@ namespace ClearCanvas.ImageServer.Core
                         insertParms.StudyStatusEnum = StudyStatusEnum.Online;
                     }
 
-                    studyLocationList = locInsert.Find(insertParms);
+                    location = locInsert.FindOne(insertParms);
 
                     updateContext.Commit();
-                }
-                else
-                {
-                    if (!FilesystemMonitor.Instance.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
-                    {
-                        Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}",
-                                     studyInstanceUid, partition.Description);
-                        return null;
-                    }
                 }
 
                 //TODO:  Do we need to do something to identify a primary storage location?
                 // Also, should the above check for writeable location check the other availab
-                return studyLocationList[0];
+                return location;
             }
         }
 
@@ -234,20 +220,20 @@ namespace ClearCanvas.ImageServer.Core
         }
 
         /// <summary>
-        /// Finds a list of <see cref="WorkQueue"/> related to the specified <see cref="studyStorage"/>.
+        /// Finds a list of <see cref="WorkQueue"/> related to the specified <see cref="studyStorageKey"/>.
         /// </summary>
-        /// <param name="studyStorage"></param>
+		/// <param name="studyStorageKey"></param>
         /// <param name="filter">A delegate that will be used to filter the returned list. Pass in Null to get the entire list.</param>
         /// <returns>A list of  <see cref="WorkQueue"/></returns>
-        static public IList<WorkQueue> FindWorkQueueEntries(StudyStorage studyStorage, Predicate<WorkQueue> filter)
+        static public IList<WorkQueue> FindWorkQueueEntries(ServerEntityKey studyStorageKey, Predicate<WorkQueue> filter)
         {
-            Platform.CheckForNullReference(studyStorage, "studyStorage");
+			Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
 
             using (ExecutionContext scope = new ExecutionContext())
             {
                 IWorkQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IWorkQueueEntityBroker>();
                 WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
-                criteria.StudyStorageKey.EqualTo(studyStorage.Key);
+                criteria.StudyStorageKey.EqualTo(studyStorageKey);
                 criteria.InsertTime.SortDesc(0);
                 IList<WorkQueue> list = broker.Find(criteria);
                 if (filter != null)
@@ -264,6 +250,7 @@ namespace ClearCanvas.ImageServer.Core
         /// </summary>
         /// <param name="studyStorage"></param>
         /// <returns></returns>
+        /// <param name="types"></param>
         static public IList<StudyHistory> FindStudyHistories(StudyStorage studyStorage, IEnumerable<StudyHistoryTypeEnum> types)
         {
             // Use of ExecutionContext to re-use db connection if possible
@@ -295,6 +282,12 @@ namespace ClearCanvas.ImageServer.Core
             return FindStudyHistories(studyStorage, null);
         }
 
+		/// <summary>
+		/// Gets the storage location or requests a restore if the Study is nearline.
+		/// </summary>
+		/// <param name="studyStorage"></param>
+		/// <param name="restoreRequested"></param>
+		/// <returns></returns>
         static public StudyStorageLocation GetStudyOnlineStorageLocation(StudyStorage studyStorage, out bool restoreRequested)
         {
             restoreRequested = false;
@@ -305,14 +298,13 @@ namespace ClearCanvas.ImageServer.Core
             {
                 if (studyStorage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
                 {
-                    RestoreQueue restoreQueue = ServerHelper.InsertRestoreRequest(studyStorage);
+                    RestoreQueue restoreQueue = InsertRestoreRequest(studyStorage);
                     restoreRequested = restoreQueue != null;
                 }
                 return null;
             }
 
             return locations[0];
-
         }
 
         /// <summary>

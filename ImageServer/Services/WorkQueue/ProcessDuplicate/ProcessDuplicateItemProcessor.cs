@@ -585,7 +585,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         {
             String studyUid = _file.DataSet[DicomTags.StudyInstanceUid].ToString();
             
-            if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(updateContext, _partition.GetKey(), studyUid, out _storageLocation))
+            if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(updateContext, _partition.GetKey(), studyUid, true, out _storageLocation))
             {
                 throw new ApplicationException("No online storage found");
             }

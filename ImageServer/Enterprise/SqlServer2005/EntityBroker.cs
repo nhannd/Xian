@@ -933,7 +933,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         myReader.Read();
 
-						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TServerEntity));
+						Dictionary<string, PropertyInfo> propMap = EntityMapDictionary.GetEntityMap(typeof(TServerEntity));
 
                         row = new TServerEntity();
                         PopulateEntity(myReader, row, propMap);
@@ -1235,7 +1235,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     if (reader.HasRows)
                     {
-						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TServerEntity));
+						Dictionary<string, PropertyInfo> propMap = EntityMapDictionary.GetEntityMap(typeof(TServerEntity));
 
                         while (reader.Read())
                         {
@@ -1328,7 +1328,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     if (myReader.HasRows)
                     {
-						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TServerEntity));
+						Dictionary<string, PropertyInfo> propMap = EntityMapDictionary.GetEntityMap(typeof(TServerEntity));
 
                         while (myReader.Read())
                         {

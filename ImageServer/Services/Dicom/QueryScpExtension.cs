@@ -1105,7 +1105,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             string seriesInstanceUid = data[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
 
             StudyStorageLocation location;
-			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
+			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
             {
                 Platform.Log(LogLevel.Error, "Unable to load storage location for study: {0}", studyInstanceUid);
                 DicomMessage failureResponse = new DicomMessage();

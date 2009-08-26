@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     if (myReader.HasRows)
                     {
-						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TOutput));
+						Dictionary<string, PropertyInfo> propMap = EntityMapDictionary.GetEntityMap(typeof(TOutput));
 
                         while (myReader.Read())
                         {

@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 StudyStorageLocation location;
                 
-                if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, study.StudyInstanceUid, out location))
+                if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, study.StudyInstanceUid, true, out location))
                     return false;
 
                 StudyXml theStream = LoadStudyXml(location);
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 StudyStorageLocation location;
 
-				if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
+				if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
 				{
 					StudyStorage studyStorage;
 					if (!GetStudyStatus(studyInstanceUid, out studyStorage))
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
+			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
             {
 				StudyStorage studyStorage;
 				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
@@ -238,7 +238,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
+			if (false == FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(Partition.Key, studyInstanceUid, true, out location))
 			{
 				StudyStorage studyStorage;
 				if (!GetStudyStatus(studyInstanceUid, out studyStorage))

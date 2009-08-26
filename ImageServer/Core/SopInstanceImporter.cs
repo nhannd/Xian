@@ -339,7 +339,7 @@ namespace ClearCanvas.ImageServer.Core
             return studyLocation;
         }
 
-        private void HandleNonDuplicate(string seriesInstanceUid, string sopInstanceUid, StudyStorageLocation studyLocation, ServerCommandProcessor commandProcessor, DicomFile file, string path, bool dupImage, string extension)
+        private static void HandleNonDuplicate(string seriesInstanceUid, string sopInstanceUid, StudyStorageLocation studyLocation, ServerCommandProcessor commandProcessor, DicomFile file, string path, bool dupImage, string extension)
         {
             commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
@@ -429,7 +429,7 @@ namespace ClearCanvas.ImageServer.Core
         {
             string seriesUid = message.DataSet[DicomTags.SeriesInstanceUid].ToString();
             string sopUid = message.DataSet[DicomTags.SopInstanceUid].ToString();
-            IList<WorkQueue> workQueues = ServerHelper.FindWorkQueueEntries(storageLocation.StudyStorage, null);
+            IList<WorkQueue> workQueues = ServerHelper.FindWorkQueueEntries(storageLocation.Key, null);
             foreach (WorkQueue queue in workQueues)
             {
                 if (queue.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReconcileStudy))

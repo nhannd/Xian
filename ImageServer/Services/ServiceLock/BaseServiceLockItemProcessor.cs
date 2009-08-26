@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         protected static StudyStorageLocation LoadStorageLocation(ServerEntityKey serverPartitionKey, String studyInstanceUid)
         {
             StudyStorageLocation storageLocation;
-        	if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(serverPartitionKey, studyInstanceUid, out storageLocation))
+        	if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(serverPartitionKey, studyInstanceUid, false, out storageLocation))
             {
                 string error = String.Format("Unable to find storage location for study {0} on partition {1}",studyInstanceUid, serverPartitionKey);
                 Platform.Log(LogLevel.Error, error);

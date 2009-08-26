@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     if (myReader.HasRows)
                     {
                     	int resultCount = 0;
-                    	Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof (TOutput));
+						Dictionary<string, PropertyInfo> propMap = EntityMapDictionary.GetEntityMap(typeof(TOutput));
                         while (myReader.Read())
                         {
                             TOutput row = new TOutput();

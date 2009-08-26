@@ -311,24 +311,6 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 			return propMap;
 		}
 
-		protected static Dictionary<string,PropertyInfo> GetEntityMap(Type entityType)
-		{
-			ObjectWalker walker = new ObjectWalker();
-			Dictionary<string, PropertyInfo> propMap = new Dictionary<string, PropertyInfo>();
-
-			foreach (IObjectMemberContext member in walker.Walk(entityType))
-			{
-				EntityFieldDatabaseMappingAttribute map =
-					AttributeUtils.GetAttribute<EntityFieldDatabaseMappingAttribute>(member.Member);
-				if (map!=null)
-				{
-					propMap.Add(map.ColumnName, member.Member as PropertyInfo);
-				}
-			}
-
-			return propMap;
-		}
-
         protected static void PopulateEntity(SqlDataReader reader, ServerEntity entity, Dictionary<string, PropertyInfo> propMap)
         {
             for (int i = 0; i < reader.FieldCount; i++)

@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             StudyStorageLocation location;
             if (!CacheEnabled)
             {
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, false, out location))
 				{
 					CheckNearline(studyInstanceUid, partition);
 				    throw new StudyNotOnlineException();
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                     if (location == null)
                     {
                         _statistics.Misses++;
-                        if (FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+                        if (FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, false, out location))
                         {
                             cache.Insert(location, studyInstanceUid);
                             Platform.Log(LogLevel.Info, "Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",

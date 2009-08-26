@@ -93,6 +93,7 @@
     <Compile Include="CommandProcessor\ServerCommandProcessor.cs" />
     <Compile Include="CommandProcessor\ServerCommandStatistics.cs" />
     <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
+    <Compile Include="ServerCache.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
     <Compile Include="FileStreamOpener.cs" />
@@ -102,6 +103,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerPlatform.cs" />
+    <Compile Include="StorageLocationCache.cs" />
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\CustomXmlTextWriter.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />

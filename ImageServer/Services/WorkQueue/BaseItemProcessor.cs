@@ -1058,7 +1058,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         protected static IList<Model.WorkQueue> FindRelatedWorkQueueItems(Model.WorkQueue workQueueItem,
             IEnumerable<WorkQueueTypeEnum> types, IEnumerable<WorkQueueStatusEnum> status)
         {
-            IList<Model.WorkQueue> list = ServerHelper.FindWorkQueueEntries(workQueueItem.StudyStorage, null);
+            IList<Model.WorkQueue> list = ServerHelper.FindWorkQueueEntries(workQueueItem.StudyStorageKey, null);
 
             if (list==null)
                 return null;

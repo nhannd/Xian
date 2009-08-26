@@ -113,6 +113,7 @@ namespace ClearCanvas.ImageServer.Common
 		private Timer _dbTimer;
 		private Timer _fsTimer;
 		private EventHandler<FilesystemChangedEventArgs> _changedListener;
+		private StorageLocationCache _storageLocationCache = new StorageLocationCache();
 		#endregion
 
 		#region Private Constructors
@@ -338,10 +339,21 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="context">A database read context to use for search</param>
 		/// <param name="location">The output storage location</param>
 		/// <param name="partitionKey">The primark key of the ServerPartition table.</param>
-		/// <param name="studyInstanceUid">The Study Instance UID of th estudy</param>
+		/// <param name="studyInstanceUid">The Study Instance UID of the study</param>
+		/// <param name="cacheValue">Specify if the value will be cached for future retrieval.</param>
 		/// <returns></returns>
-		public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey partitionKey, string studyInstanceUid, bool cacheValue, out StudyStorageLocation location)
 		{
+			location = _storageLocationCache.GetCachedStudy(partitionKey, studyInstanceUid);
+			if (location != null)
+			{
+				if (CheckFilesystemOnline(location.FilesystemKey))
+					return true;
+
+				location = null;
+				return false;
+			}
+
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
 			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
 			parms.ServerPartitionKey = partitionKey;
@@ -353,6 +365,8 @@ namespace ClearCanvas.ImageServer.Common
 				if (CheckFilesystemOnline(studyLocation.FilesystemKey))
 				{
 					location = studyLocation;
+					if (cacheValue)
+						_storageLocationCache.AddCachedStudy(location);
 					return true;
 				}
 			}
@@ -368,12 +382,13 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="studyInstanceUid">The Study to check for.</param>
 		/// <param name="location">The returned storage location.</param>
 		/// <param name="partitionKey">The key for the server partition.</param>
+		/// <param name="cacheValue">Specify if the value will be cached for future retrieval.</param>
 		/// <returns>true if a location was found, false otherwise.</returns>
-		public bool GetOnlineStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		public bool GetOnlineStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, bool cacheValue, out StudyStorageLocation location)
 		{
 			using (IReadContext read = _store.OpenReadContext())
 			{
-				return GetOnlineStudyStorageLocation(read, partitionKey, studyInstanceUid, out location);
+				return GetOnlineStudyStorageLocation(read, partitionKey, studyInstanceUid, cacheValue, out location);
 			}
 		}
 
