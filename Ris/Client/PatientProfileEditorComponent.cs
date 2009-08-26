@@ -183,10 +183,18 @@ namespace ClearCanvas.Ris.Client
                         || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
                     {
                         this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
-                        this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new AttachedDocumentPreviewComponent(true, true)));
-
                         _notesSummary.Subject = _profile.Notes;
+
+                        NavigatorPage patientDocumentsPage = new NavigatorPage("Patient/Documents", 
+                            _documentSummary = new AttachedDocumentPreviewComponent(true, true));
+                        this.Pages.Add(patientDocumentsPage);
                         _documentSummary.PatientAttachments = _profile.Attachments;
+
+                        if (_newAttachments.Count > 0)
+                        {
+                            this.MoveTo(this.Pages.IndexOf(patientDocumentsPage));
+                            _documentSummary.SetInitialSelection(_newAttachments[0]);
+                        }
                     }
 
                     this.ValidationStrategy = new AllComponentsValidationStrategy();

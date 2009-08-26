@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._splitContainer);
 			this.Name = "AttachedDocumentPreviewComponentControl";
 			this.Size = new System.Drawing.Size(415, 440);
+			this.Load += new System.EventHandler(this.AttachedDocumentPreviewComponentControl_Load);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);
 			this.ResumeLayout(false);

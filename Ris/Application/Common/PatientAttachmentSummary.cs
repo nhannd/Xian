@@ -30,27 +30,15 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class PatientAttachmentSummary : DataContractBase
-    {
-        public PatientAttachmentSummary(EnumValueInfo category, StaffSummary attachedBy, AttachedDocumentSummary document)
-        {
-            this.Category = category;
-            this.AttachedBy = attachedBy;
-            this.Document = document;
-        }
-
-        [DataMember]
-        public EnumValueInfo Category;
-
-        [DataMember]
-        public StaffSummary AttachedBy;
-
-        [DataMember]
-        public AttachedDocumentSummary Document;
-    }
+	[DataContract]
+	public class PatientAttachmentSummary : AttachmentSummary
+	{
+		public PatientAttachmentSummary(EnumValueInfo category, StaffSummary attachedBy, AttachedDocumentSummary document)
+			: base(category, attachedBy, document)
+		{
+		}
+	}
 }

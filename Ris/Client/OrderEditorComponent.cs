@@ -1206,7 +1206,9 @@ namespace ClearCanvas.Ris.Client
             _rightHandComponentContainer = new TabComponentContainer();
             _rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 
-            _rightHandComponentContainer.Pages.Add(new TabPage("Documents", _attachmentSummaryComponent));
+
+            TabPage attachmentsTabPage = new TabPage("Documents", _attachmentSummaryComponent);
+            _rightHandComponentContainer.Pages.Add(attachmentsTabPage);
             _rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
 
             // instantiate all extension pages
@@ -1225,6 +1227,11 @@ namespace ClearCanvas.Ris.Client
 
             _rightHandComponentContainerHost.StartComponent();
 
+            if (_newAttachments.Count > 0)
+            {
+                _rightHandComponentContainer.CurrentPage = attachmentsTabPage;
+                _attachmentSummaryComponent.SetInitialSelection(_newAttachments[0]);
+            }
         }
 
         private void UpdateOrderingPractitionerContactPointChoices()

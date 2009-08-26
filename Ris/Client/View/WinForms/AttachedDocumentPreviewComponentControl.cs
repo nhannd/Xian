@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private readonly AttachedDocumentPreviewComponent _component;
 
         public AttachedDocumentPreviewComponentControl(AttachedDocumentPreviewComponent component)
-            :base(component)
+            : base(component)
         {
             InitializeComponent();
             _component = component;
@@ -58,6 +58,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             Control preview = (Control)_component.PreviewHost.ComponentView.GuiElement;
             preview.Dock = DockStyle.Fill;
             _splitContainer.Panel2.Controls.Add(preview);
+        }
+
+        private void AttachedDocumentPreviewComponentControl_Load(object sender, System.EventArgs e)
+        {
+            _component.OnControlLoad();
         }
 
     }

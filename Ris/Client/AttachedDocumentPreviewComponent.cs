@@ -151,6 +151,7 @@ namespace ClearCanvas.Ris.Client
         private AttachmentMode _mode;
         private ITable _attachmentTable;
         private ISelection _selection;
+        private ISelection _initialSelection;
         private event EventHandler _changeCommitted;
         private event EventHandler _selectedDocumentChanged;
 
@@ -229,7 +230,7 @@ namespace ClearCanvas.Ris.Client
                 _previewComponentHost = null;
             }
 
-            _toolSet.Dispose(); 
+            _toolSet.Dispose();
             base.Stop();
         }
 
@@ -278,7 +279,7 @@ namespace ClearCanvas.Ris.Client
                 _attachmentTable = table;
             }
         }
-            
+
         public List<OrderAttachmentSummary> OrderAttachments
         {
             get { return _mode != AttachmentMode.Order ? null : _orderAttachments; }
@@ -316,10 +317,21 @@ namespace ClearCanvas.Ris.Client
                 {
                     _selection = value;
                     _previewComponent.Refresh();
-
+                    NotifyPropertyChanged("Selection");
                     EventsHelper.Fire(_selectedDocumentChanged, this, EventArgs.Empty);
                 }
             }
+        }
+
+        public void OnControlLoad()
+        {
+            if (_initialSelection != null)
+                this.Selection = _initialSelection;
+        }
+
+        public void SetInitialSelection(AttachmentSummary attachmentSummary)
+        {
+            _initialSelection = new Selection(attachmentSummary);
         }
 
         #endregion
@@ -363,6 +375,5 @@ namespace ClearCanvas.Ris.Client
         {
             EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
         }
-
-	}
+    }
 }
