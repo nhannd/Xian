@@ -306,9 +306,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			List<BaseImageLevelUpdateCommand> updateCommandList = new List<BaseImageLevelUpdateCommand>();
             
 			ImageUpdateCommandBuilder builder = new ImageUpdateCommandBuilder();
-			updateCommandList.AddRange(builder.BuildCommands<DemographicInfo>(Context.DestStorageLocation));
-			updateCommandList.AddRange(builder.BuildCommands<StudyInfoMapping>(Context.DestStorageLocation));
-
+			updateCommandList.AddRange(builder.BuildCommands<StudyMatchingMap>(Context.DestStorageLocation));
             
 			return updateCommandList;
 		}

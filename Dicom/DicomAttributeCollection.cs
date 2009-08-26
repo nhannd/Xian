@@ -497,13 +497,14 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
-                    if (value.Tag.TagValue != tag.TagValue)
+                	uint tagValue = tag.TagValue;
+                    if (value.Tag.TagValue != tagValue)
                         throw new DicomException("Tag being set does not match tag in DicomAttribute");
 
-                    if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
+                    if ((tagValue < _startTag) || (tagValue > _endTag))
                         throw new DicomException("Tag is out of range for collection: " + tag);
 
-                    _attributeList[tag.TagValue] = value;
+                    _attributeList[tagValue] = value;
                     value.ParentCollection = this;
                 }
             }

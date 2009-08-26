@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessing
 {
+	[Obsolete("This class is obsolete as of the 1.6 release.")]
     [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
     class ReconcilePostProcessingProcessorFactoryExtension : IWorkQueueProcessorFactory
     {

@@ -48,7 +48,6 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {
@@ -58,7 +57,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	/// <remarks>
 	/// 
 	/// </remarks>
-	/// 
 	public class UpdateStudyCommand : ServerDatabaseCommand, IDisposable
 	{
 		#region Private Members
@@ -195,36 +193,32 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 			foreach (BaseImageLevelUpdateCommand command in _commands)
 			{
-				if (command is IUpdateImageTagCommand)
+				ImageLevelUpdateEntry imageLevelUpdate = command.UpdateEntry;
+				if (imageLevelUpdate != null)
 				{
-					ImageLevelUpdateEntry imageLevelUpdate = (command as IUpdateImageTagCommand).UpdateEntry;
-					if (imageLevelUpdate != null)
+					if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
 					{
-						if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
-						{
-							// Update the folder name if the system is not currently using receiving date as the study folder
-							if (!ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder)
-								_newStudyFolder = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
-						{
-							_newStudyInstanceUid = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
-						{
-							_newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
-						{
-							_newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
-						{
-							_newPatientInfo.Name = imageLevelUpdate.GetStringValue();
-						}
+						// Update the folder name if the system is not currently using receiving date as the study folder
+						if (!ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder)
+							_newStudyFolder = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
+					{
+						_newStudyInstanceUid = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
+					{
+						_newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
+					{
+						_newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
+					{
+						_newPatientInfo.Name = imageLevelUpdate.GetStringValue();
 					}
 				}
-
 			}
 
 
@@ -344,28 +338,22 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 			foreach (BaseImageLevelUpdateCommand command in _commands)
 			{
-				if (command is IUpdateImageTagCommand)
+				ImageLevelUpdateEntry entry = command.UpdateEntry;
+				if (entityMap.ContainsKey(entry.TagPath.Tag))
 				{
-					ImageLevelUpdateEntry entry = (command as IUpdateImageTagCommand).UpdateEntry;
-					if (entityMap.ContainsKey(entry.TagPath.Tag))
+					string value = entry.GetStringValue();
+					DicomTag tag = entry.TagPath.Tag;
+					if (tag.TagValue == DicomTags.PatientsSex)
 					{
-						string value = entry.GetStringValue();
-						DicomTag tag = entry.TagPath.Tag;
-						if (tag.TagValue == DicomTags.PatientsSex)
-						{
-							// Valid Patient's Sex value : "M", "F" or "O"
-							if (!String.IsNullOrEmpty(value) && !value.ToUpper().Equals("M") && !value.ToUpper().Equals("F"))
-								value = "O";
-						}
-                        
-						if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
-							throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
-                        
+						// Valid Patient's Sex value : "M", "F" or "O"
+						if (!String.IsNullOrEmpty(value) && !value.ToUpper().Equals("M") && !value.ToUpper().Equals("F"))
+							value = "O";
 					}
+
+					if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
+						throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
 				}
-
 			}
-
 		}        
 
 		private void LoadEntities()
@@ -441,9 +429,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			Platform.Log(LogLevel.Info, "Creating new patient {0}", patientInfo.PatientId);
 			ICreatePatientForStudy createStudyBroker = UpdateContext.GetBroker<ICreatePatientForStudy>();
 			CreatePatientForStudyParameters parms = new CreatePatientForStudyParameters();
-			parms.IssuerOfPatientId = _newPatientInfo.IssuerOfPatientId;
-			parms.PatientId = _newPatientInfo.PatientId;
-			parms.PatientsName = _newPatientInfo.Name;
+			parms.IssuerOfPatientId = patientInfo.IssuerOfPatientId;
+			parms.PatientId = patientInfo.PatientId;
+			parms.PatientsName = patientInfo.Name;
 			parms.SpecificCharacterSet = _curPatient.SpecificCharacterSet; // assume it's the same
 			parms.StudyKey = _study.GetKey();
 			Patient newPatient = createStudyBroker.FindOne(parms);

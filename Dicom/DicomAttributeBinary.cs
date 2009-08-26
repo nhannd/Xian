@@ -1714,6 +1714,10 @@ namespace ClearCanvas.Dicom
         {
         }
 
+		internal DicomAttributeOF(DicomTag tag, FileReference reference)
+            : base(tag, reference)
+        {
+        }
 
         #region Abstract Method Implementation
 

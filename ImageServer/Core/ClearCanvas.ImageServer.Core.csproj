@@ -88,7 +88,6 @@
     <Compile Include="Process\InstanceStatistics.cs" />
     <Compile Include="Reconcile\IReconcileProcessor.cs" />
     <Compile Include="Reconcile\IReconcileServerCommand.cs" />
-    <Compile Include="Reconcile\Mapping.cs" />
     <Compile Include="Reconcile\MergeStudy\MergeStudyCommand.cs" />
     <Compile Include="Reconcile\MergeStudy\MergeStudyCommandProcessor.cs" />
     <Compile Include="Reconcile\MoveReconcileImageCommand.cs" />
