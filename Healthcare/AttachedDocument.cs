@@ -36,5 +36,13 @@ namespace ClearCanvas.Healthcare {
 		{
 			
 		}
+
+		/// <summary>
+		/// Summary of derived-class specific details of the attached document
+		/// </summary>
+		public virtual string MetaDataSummary
+		{
+			get { return string.Empty; }
+		}
 	}
 }

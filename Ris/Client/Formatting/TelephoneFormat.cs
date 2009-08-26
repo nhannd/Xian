@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
 
@@ -42,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Formatting
         /// <summary>
         /// Formats the telephone number according to the default format as specified in <see cref="FormatSettings"/>
         /// </summary>
-        /// <param name="hc"></param>
+        /// <param name="tn"></param>
         /// <returns></returns>
         public static string Format(TelephoneDetail tn)
         {
@@ -60,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Formatting
         ///     %N - phone number in form XXX-XXXX 
         ///     %X - extension, preceded by x
         /// </remarks>
-        /// <param name="pn"></param>
+        /// <param name="tn"></param>
         /// <param name="format"></param>
         /// <returns></returns>
         public static string Format(TelephoneDetail tn, string format)
@@ -79,35 +76,37 @@ namespace ClearCanvas.Ris.Client.Formatting
             return result.Trim();
         }
 
-		/// <summary>
-		/// Formats a string telephone number to the specified format string.
-		/// </summary>
-		/// <remarks>
-		/// The format should be specified similar to (000)000-0000 or 000-0000 where the '0's will be replaced by 
-		/// digits in the provided number.  If the length of the provided number is not the same as the number of 
-		/// '0's in the format string, the number will be returned unformatted.
-		/// </remarks>
-		/// <param name="number"></param>
-		/// <param name="format"></param>
-		/// <returns></returns>
-		public static string Format(string number, string format)
-		{
-			if(number.Length != CollectionUtils.Select(format, delegate(char c) { return c.Equals('0'); } ).Count )
-			{
-				return number;
-			}
+        /// <summary>
+        /// Formats a string telephone number to the specified format string.
+        /// </summary>
+        /// <remarks>
+        /// The format should be specified similar to (000)000-0000 or 000-0000 where the '0's will be replaced by 
+        /// digits in the provided number.  If the length of the provided number is not the same as the number of 
+        /// '0's in the format string, the number will be returned unformatted.
+        /// </remarks>
+        /// <param name="number"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static string Format(string number, string format)
+        {
+            // do nothing if the number of digits in the number doesn't match the number of placeholders in the format string
+            if (number.Length != CollectionUtils.Select(format, delegate(char c) { return c.Equals('0'); }).Count)
+            {
+                return number;
+            }
 
-			char[] result = format.ToCharArray();
-			int j = 0;
-			for (int i = 0; i < result.Length; i++ )
-			{
-				if(result[i] != '0')
-					continue;
+            // replace placeholders with the actual digits one-by-one
+            char[] result = format.ToCharArray();
+            int j = 0;
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (result[i] != '0')
+                    continue;
 
-				result[i] = number[j++];
-			}
+                result[i] = number[j++];
+            }
 
-			return new string(result).Trim();
-		}
+            return new string(result).Trim();
+        }
     }
 }

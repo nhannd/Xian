@@ -234,6 +234,9 @@
   <data name="ColumnLocation" xml:space="preserve">
     <value>Location</value>
   </data>
+  <data name="ColumnMetaData" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="ColumnMiddleName" xml:space="preserve">
     <value>Middle Name</value>
   </data>

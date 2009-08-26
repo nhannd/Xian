@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.CreationTime = doc.CreationTime;
             summary.MimeType = doc.MimeType;
             summary.FileExtension = doc.FileExtension;
+        	summary.MetaDataSummary = doc.MetaDataSummary;
         }
     }
 }

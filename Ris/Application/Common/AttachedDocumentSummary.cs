@@ -50,6 +50,9 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string FileExtension;
 
+        [DataMember]
+        public string MetaDataSummary;
+
         public AttachedDocumentSummary As<T>()
             where T : AttachedDocumentSummary
         {
@@ -59,6 +62,7 @@ namespace ClearCanvas.Ris.Application.Common
             doc.CreationTime = this.CreationTime;
             doc.MimeType = this.MimeType;
             doc.FileExtension = this.FileExtension;
+            doc.MetaDataSummary = this.MetaDataSummary;
 
             return doc;
         }
