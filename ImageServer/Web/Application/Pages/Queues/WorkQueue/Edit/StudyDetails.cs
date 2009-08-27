@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
@@ -55,6 +56,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         private bool? _lock;
         private string _accessionNumber;
         private string _studyDescription;
+        private string _studyDate;
+        private string _studyTime;
+        private string _modalities;
 
         #endregion Private Members
 
@@ -94,6 +98,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             get { return _studyDescription; }
             set { _studyDescription = value; }
+        }
+
+        public string StudyDate
+        {
+            get { return _studyDate; }
+            set { _studyDate = value; }
+        }
+
+        public string StudyTime
+        {
+            get { return _studyTime; }
+            set { _studyTime = value; }
+        }
+
+        public string Modalities
+        {
+            get { return _modalities; }
+            set { _modalities = value; }
         }
 
         public bool? Lock

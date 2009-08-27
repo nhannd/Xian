@@ -48,6 +48,28 @@
         
         <asp:BoundField HeaderText="Processing Server" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="ServerDescription" /> 
         
+        <asp:TemplateField HeaderText="Accession Number">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                 <asp:Label runat="server" ID="AccessionNumber" Text='<%# Eval("Study.AccessionNumber") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        
+        <asp:TemplateField HeaderText="Study Date/Time: ">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                <ccUI:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("Study.StudyDate") %>' ></ccUI:DALabel>
+                <ccUI:TMLabel ID="StudyTime" runat="server"  Value='<%# Eval("Study.StudyTime") %>' ></ccUI:TMLabel>
+            </ItemTemplate>
+        </asp:TemplateField> 
+        
+        <asp:TemplateField HeaderText="Modalities">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                <asp:Label runat="server" ID="Modalities" Text='<%# Eval("Study.Modalities") %>' />
+            </ItemTemplate>
+        </asp:TemplateField>
+        
         <asp:TemplateField HeaderText="Patient Name">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>

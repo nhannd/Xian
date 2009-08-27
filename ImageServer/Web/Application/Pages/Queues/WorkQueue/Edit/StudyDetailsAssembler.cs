@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -53,9 +54,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             details.PatientName = study.PatientsName;
             details.AccessionNumber = study.AccessionNumber;
             details.PatientID = study.PatientId;
-
             details.StudyDescription = study.StudyDescription;
+            details.StudyDate = study.StudyDate;
+            details.StudyTime = study.StudyTime;
 
+            StudyController controller = new StudyController();
+            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                details.Modalities = controller.GetModalitiesInStudy(ctx, study);
+            }
 
             if (study.StudyInstanceUid != null)
             {
