@@ -372,7 +372,7 @@ namespace ClearCanvas.Ris.Client
             _noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
             _noteSummaryComponent.ModifiedChanged += delegate { this.Modified = true; };
 
-            _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(true, true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+            _attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Order);
             this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
             _orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
         }

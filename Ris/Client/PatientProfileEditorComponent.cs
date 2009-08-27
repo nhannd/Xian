@@ -185,8 +185,8 @@ namespace ClearCanvas.Ris.Client
                         this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
                         _notesSummary.Subject = _profile.Notes;
 
-                        NavigatorPage patientDocumentsPage = new NavigatorPage("Patient/Documents", 
-                            _documentSummary = new AttachedDocumentPreviewComponent(true, true));
+                        NavigatorPage patientDocumentsPage = new NavigatorPage("Patient/Documents",
+                            _documentSummary = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Patient));
                         this.Pages.Add(patientDocumentsPage);
                         _documentSummary.PatientAttachments = _profile.Attachments;
 

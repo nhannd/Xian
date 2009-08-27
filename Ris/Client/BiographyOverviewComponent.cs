@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client
 
             public PatientProfileDetail PatientProfile
             {
-                get { return _component._patientProfile;  }
+                get { return _component._patientProfile; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -108,9 +108,9 @@ namespace ClearCanvas.Ris.Client
         private ChildComponentHost _bannerComponentHost;
         private ChildComponentHost _contentComponentHost;
 
-		private EntityRef _selectedOrderRef;
-    	private TabComponentContainer _pagesContainer;
-		private BiographyOrderHistoryComponent _orderHistoryComponent;
+        private EntityRef _selectedOrderRef;
+        private TabComponentContainer _pagesContainer;
+        private BiographyOrderHistoryComponent _orderHistoryComponent;
 
         /// <summary>
         /// Constructor
@@ -153,20 +153,20 @@ namespace ClearCanvas.Ris.Client
             _orderHistoryComponent = new BiographyOrderHistoryComponent(_patientRef);
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_patientRef, _profileRef);
-            AttachedDocumentPreviewComponent documentComponent = new AttachedDocumentPreviewComponent();
-			BiographyVisitHistoryComponent visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
+            AttachedDocumentPreviewComponent documentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Patient);
+            BiographyVisitHistoryComponent visitHistoryComponent = new BiographyVisitHistoryComponent(_patientRef);
             documentComponent.PatientAttachments = _patientProfile.Attachments;
 
             // Create tab and tab groups
-			_pagesContainer = new TabComponentContainer();
-			_pagesContainer.Pages.Add(new TabPage(SR.TitleOrders, _orderHistoryComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, demographicComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, documentComponent));
-			_pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, noteComponent));
+            _pagesContainer = new TabComponentContainer();
+            _pagesContainer.Pages.Add(new TabPage(SR.TitleOrders, _orderHistoryComponent));
+            _pagesContainer.Pages.Add(new TabPage(SR.TitleVisits, visitHistoryComponent));
+            _pagesContainer.Pages.Add(new TabPage(SR.TitleDemographicProfiles, demographicComponent));
+            _pagesContainer.Pages.Add(new TabPage(SR.TitlePatientAttachments, documentComponent));
+            _pagesContainer.Pages.Add(new TabPage(SR.TitlePatientNotes, noteComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
-			tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
+            tabGroupContainer.AddTabGroup(new TabGroup(_pagesContainer, 1.0f));
 
             _contentComponentHost = new ChildComponentHost(this.Host, tabGroupContainer);
             _contentComponentHost.StartComponent();
@@ -221,39 +221,39 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-		// Bug 4786: TableView has trouble selecting items other than the first item
-		// This method is a work around for the above defect for the BiographyOrderHistoryComponent, where TableView automatically select 
-		// the first item and delay posting this selection event after the Start method, leading to the first item always being selected.
-		// The OnControlLoad is called by the control during its Load event, which happens after the delayed selection changed event
-		// and before the control is visible.  This work around has to be done for each components that wants to override the initial
-		// selected item.
-		public void OnControlLoad()
-		{
-			_orderHistoryComponent.SelectedOrderRef = _selectedOrderRef;
-		}
-		
-		public EntityRef SelectedOrderRef
-		{
-			get { return _selectedOrderRef; }
-			set
-			{
-				_selectedOrderRef = value;
-				if (_orderHistoryComponent != null)
-				{
-					SetOrderTabAsActiveTabPage();
-					_orderHistoryComponent.SelectedOrderRef = value;
-				}
-			}
-		}
+        // Bug 4786: TableView has trouble selecting items other than the first item
+        // This method is a work around for the above defect for the BiographyOrderHistoryComponent, where TableView automatically select 
+        // the first item and delay posting this selection event after the Start method, leading to the first item always being selected.
+        // The OnControlLoad is called by the control during its Load event, which happens after the delayed selection changed event
+        // and before the control is visible.  This work around has to be done for each components that wants to override the initial
+        // selected item.
+        public void OnControlLoad()
+        {
+            _orderHistoryComponent.SelectedOrderRef = _selectedOrderRef;
+        }
 
-		private void SetOrderTabAsActiveTabPage()
-		{
-			TabPage orderTabPage = CollectionUtils.SelectFirst(
-				_pagesContainer.Pages,
-				delegate(TabPage tabPage) { return tabPage.Component == _orderHistoryComponent; });
+        public EntityRef SelectedOrderRef
+        {
+            get { return _selectedOrderRef; }
+            set
+            {
+                _selectedOrderRef = value;
+                if (_orderHistoryComponent != null)
+                {
+                    SetOrderTabAsActiveTabPage();
+                    _orderHistoryComponent.SelectedOrderRef = value;
+                }
+            }
+        }
 
-			if (orderTabPage != null)
-				_pagesContainer.CurrentPage = orderTabPage;
-		}
+        private void SetOrderTabAsActiveTabPage()
+        {
+            TabPage orderTabPage = CollectionUtils.SelectFirst(
+                _pagesContainer.Pages,
+                delegate(TabPage tabPage) { return tabPage.Component == _orderHistoryComponent; });
+
+            if (orderTabPage != null)
+                _pagesContainer.CurrentPage = orderTabPage;
+        }
     }
 }

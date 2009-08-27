@@ -73,6 +73,7 @@ namespace ClearCanvas.Ris.Application.Services
             protected override void RemoveItem(OrderAttachment domainItem, ICollection<OrderAttachment> domainList)
             {
                 domainList.Remove(domainItem);
+				domainItem.Document.Detach();
             }
         }
 

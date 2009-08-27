@@ -47,8 +47,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _splitContainer.Panel1Collapsed = _component.ShowSummary == false;
-            _attachments.ShowToolbar = _component.ShowToolbar;
+            _attachments.ShowToolbar = !_component.Readonly;
 
             _attachments.Table = _component.Attachments;
             _attachments.MenuModel = _component.AttachmentActionModel;

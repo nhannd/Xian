@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderReportsComponent = new BiographyOrderReportsComponent();
-			_orderDocumentComponent = new AttachedDocumentPreviewComponent(true, true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+			_orderDocumentComponent = new AttachedDocumentPreviewComponent(true, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true);
 
 			_rightHandComponentContainer = new TabComponentContainer();

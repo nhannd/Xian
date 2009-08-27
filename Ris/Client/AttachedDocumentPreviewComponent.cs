@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Client
 
         void RemoveSelectedDocument();
         event EventHandler ChangeCommitted;
+        bool IsReadonly { get; }
 
         IDesktopWindow DesktopWindow { get; }
     }
@@ -116,6 +117,11 @@ namespace ClearCanvas.Ris.Client
                 get { return _component.Host.DesktopWindow; }
             }
 
+            public bool IsReadonly
+            {
+                get { return _component.Readonly; }
+            }
+
             #endregion
         }
 
@@ -146,8 +152,6 @@ namespace ClearCanvas.Ris.Client
         }
 
         // Summary component members
-        private readonly bool _showSummary;
-        private readonly bool _showToolbar;
         private AttachmentMode _mode;
         private ITable _attachmentTable;
         private ISelection _selection;
@@ -162,49 +166,16 @@ namespace ClearCanvas.Ris.Client
         private ChildComponentHost _previewComponentHost;
 
         private ToolSet _toolSet;
-
-        /// <summary>
-        /// Default Constructor to show summary but hide all tools
-        /// </summary>
-        public AttachedDocumentPreviewComponent()
-            : this(true, false, AttachmentMode.Patient)
-        {
-        }
+        private bool _readonly;
 
         /// <summary>
         /// Constructor to show/hide the summary section
         /// </summary>
-        /// <param name="showSummary">True to show the summary section, false to hide it</param>
-        public AttachedDocumentPreviewComponent(bool showSummary)
-            : this(showSummary, false, AttachmentMode.Patient)
-        {
-        }
-
-        /// <summary>
-        /// Constructor to show/hide the summary section
-        /// </summary>
-        /// <param name="showSummary">True to show the summary section, false to hide it</param>
-        /// <param name="showToolbar">True to show the summary toolbar, false to hide it</param>
-        public AttachedDocumentPreviewComponent(bool showSummary, bool showToolbar)
-            : this(showSummary, showToolbar, AttachmentMode.Patient)
-        {
-            _showSummary = showSummary;
-            _showToolbar = showToolbar;
-
-            _patientAttachments = new List<PatientAttachmentSummary>();
-            _orderAttachments = new List<OrderAttachmentSummary>();
-        }
-
-        /// <summary>
-        /// Constructor to show/hide the summary section
-        /// </summary>
-        /// <param name="showSummary">True to show the summary section, false to hide it</param>
-        /// <param name="showToolbar">True to show the summary toolbar, false to hide it</param>
+        /// <param name="readonly">True to show the summary toolbar, false to hide it</param>
         /// <param name="mode">Set the component attachment mode</param>
-        public AttachedDocumentPreviewComponent(bool showSummary, bool showToolbar, AttachmentMode mode)
+        public AttachedDocumentPreviewComponent(bool @readonly, AttachmentMode mode)
         {
-            _showSummary = showSummary;
-            _showToolbar = showToolbar;
+            _readonly = @readonly;
             _mode = mode;
 
             _patientAttachments = new List<PatientAttachmentSummary>();
@@ -257,14 +228,10 @@ namespace ClearCanvas.Ris.Client
             get { return _previewComponentHost; }
         }
 
-        public bool ShowSummary
+        public bool Readonly
         {
-            get { return _showSummary; }
-        }
-
-        public bool ShowToolbar
-        {
-            get { return _showToolbar; }
+            get { return _readonly; }
+            set { _readonly = value; }
         }
 
         public List<PatientAttachmentSummary> PatientAttachments
