@@ -43,6 +43,7 @@
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -60,6 +61,12 @@
     </Compile>
     <Compile Include="Service References\services.cs">
       <DependentUpon>services.map</DependentUpon>
+    </Compile>
+    <Compile Include="StreamingTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StreamingTest.Designer.cs">
+      <DependentUpon>StreamingTest.cs</DependentUpon>
     </Compile>
     <Compile Include="TestSendImagesForm.cs">
       <SubType>Form</SubType>
@@ -104,6 +111,10 @@
     <EmbeddedResource Include="ImageStreamingStressTest.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StreamingTest.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StreamingTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestSendImagesForm.resx">
       <SubType>Designer</SubType>

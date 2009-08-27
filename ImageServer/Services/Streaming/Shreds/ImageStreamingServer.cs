@@ -183,40 +183,31 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 			}
             catch (WADOException e)
             {
-                context.Response.StatusCode = e.GetHttpCode();
-                context.Response.StatusDescription = e.Message;
+                SetResponseError(context, e.GetHttpCode(), e.Message);
             }
             catch (HttpException e)
             {
-                context.Response.StatusCode = e.GetHttpCode();
-                context.Response.StatusDescription = e.Message;
+                SetResponseError(context, e.GetHttpCode(), e.Message);
             }
             catch (ServerTransientError e)
             {
-                context.Response.StatusCode = (int) HttpStatusCode.NoContent;
-                context.Response.StatusDescription = e.Message;
+                SetResponseError(context, (int)HttpStatusCode.NoContent, e.Message);
             }
             catch(StudyNotFoundException e)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.StatusDescription = e.Message;
+                SetResponseError(context, (int)HttpStatusCode.BadRequest, e.Message);
             }
             catch (Exception e)
 			{
-                context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-                
                 if (e.InnerException!=null)
-					context.Response.StatusDescription = HttpUtility.HtmlEncode(e.InnerException.Message);
+					SetResponseError(context, (int)HttpStatusCode.InternalServerError, e.InnerException.Message);
 				else
-					context.Response.StatusDescription = HttpUtility.HtmlEncode(e.Message);
-
-			    Platform.Log(LogLevel.Error, e);
-                
+                    SetResponseError(context, (int)HttpStatusCode.InternalServerError, e.Message);
 			}
             finally
 			{
                
-                    // note: the connection might have been aborted or lost, the following
+                    // note: the connection might have been aborted or lost too
                     try
                     {
                         context.Response.OutputStream.Flush();
@@ -230,7 +221,23 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 
 		}
 
-		#endregion
+        protected void SetResponseError(HttpListenerContext context, int code, string message)
+	    {
+            Platform.CheckForNullReference(context, "Context");
+	        try
+	        {
+                Platform.Log(LogLevel.Error, "Streaming Error: {0}  {1}", code, message);
+                context.Response.StatusCode = code;
+                context.Response.StatusDescription = HttpUtility.HtmlEncode(message);
+	        }
+            catch(Exception)
+            {
+                // probably caused by the control characters in the message. 
+                // just ignore it
+            }
+	    }
+
+	    #endregion
 
         #region Overridden Public Methods
 

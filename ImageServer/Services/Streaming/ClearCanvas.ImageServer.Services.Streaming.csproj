@@ -146,6 +146,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ImageStreaming\Test\TestSamples\compressed.dcm" />
     <None Include="app.config" />
     <None Include="HeaderStreaming\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -159,6 +160,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageStreamingServerSettings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="ImageStreaming\Test\TestSamples\uncompressed.dcm" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

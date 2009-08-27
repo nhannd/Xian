@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Net;
 using System.Web;
 using ClearCanvas.Common;
@@ -72,10 +71,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
             streamingContext.StorageLocation = storageLoader.Find(streamingContext.StudyInstanceUid, partition);
-
-            if (!File.Exists(streamingContext.ImagePath))
-                throw new WADOException(HttpStatusCode.NotFound, SR.FaultNotExists);
-
             
             // convert the dicom image into the appropriate mime type
             WADOResponse response = new WADOResponse();

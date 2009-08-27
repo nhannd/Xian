@@ -92,6 +92,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                         DicomPixelDataCache.Insert(_storage, _storage.StudyInstanceUid, seriesInstanceUid, sopInstanceUid, pd);
                         break;
                     }
+                    catch(FileNotFoundException )
+                    {
+                        throw;
+                    }
                     catch (IOException)
                     {
                         Random rand = new Random();
@@ -330,6 +334,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                         DicomPixelDataCache.Insert(_storage, _storage.StudyInstanceUid, item.SeriesInstanceUid,item.SopInstanceUid, pd);
                         Platform.Log(LogLevel.Info, "Prefetch Image #{0} : SOP {1}. Client's last known image (MAX): {2}",item.InstanceNumner, item.SopInstanceUid, _currentClientIndex);
                         break;
+                    }
+                    catch(FileNotFoundException)
+                    {
+                        throw;
                     }
                     catch (IOException)
                     {

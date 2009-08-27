@@ -82,5 +82,11 @@ namespace ClearCanvas.ImageServer.TestApp
             ImageStreamingStressTest test = new ImageStreamingStressTest();
             test.Show();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            StreamingTest test = new StreamingTest();
+            test.Show();
+        }
     }
 }

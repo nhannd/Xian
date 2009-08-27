@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.TestEditStudyButton = new System.Windows.Forms.Button();
             this.RandomImageSender = new System.Windows.Forms.Button();
             this.ExtremeStreaming = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -96,11 +97,22 @@ namespace ClearCanvas.ImageServer.TestApp
             this.ExtremeStreaming.UseVisualStyleBackColor = true;
             this.ExtremeStreaming.Click += new System.EventHandler(this.ExtremeStreaming_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(258, 312);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(183, 52);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Streaming";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(467, 399);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.ExtremeStreaming);
             this.Controls.Add(this.RandomImageSender);
             this.Controls.Add(this.TestEditStudyButton);
@@ -121,5 +133,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button TestEditStudyButton;
         private System.Windows.Forms.Button RandomImageSender;
         private System.Windows.Forms.Button ExtremeStreaming;
+        private System.Windows.Forms.Button button1;
     }
 }

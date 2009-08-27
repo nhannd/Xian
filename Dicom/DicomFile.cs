@@ -423,9 +423,6 @@ namespace ClearCanvas.Dicom
         /// <param name="options">The options to use when reading the file.</param>
 		public void Load(DicomTag stopTag, DicomReadOptions options)
         {
-        	if (!File.Exists(Filename))
-        		throw new FileNotFoundException(Filename);
-
         	using (FileStream fs = File.OpenRead(Filename))
         	{
         		Load(fs, stopTag, options);

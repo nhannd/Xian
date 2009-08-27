@@ -30,11 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
@@ -42,9 +39,46 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     public class ImageStreamingContext : StreamingContext
     {
         private DicomPixelData _pd;
-
         private string _serverAE;
 
+        #region PERFORMANCE TESTING STUFF
+        private readonly DicomPixelData _testCompressedImage;
+        private readonly DicomPixelData _testUncompressedImage;
+        #endregion
+
+        public ImageStreamingContext()
+        {
+            #region INIT STUFF FOR PERFORMANCE TESTING
+            #if DEBUG 
+            if (_testCompressedImage == null)
+            {
+                using (Stream stream = typeof(ImageStreamingContext).Assembly.GetManifestResourceStream("ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test.TestSamples.compressed.dcm"))
+                {
+                    DicomFile file = new DicomFile();
+                    file.Load(stream);
+
+                    _testCompressedImage = DicomPixelData.CreateFrom(file);
+                }
+                
+            }
+
+            if (_testUncompressedImage == null)
+            {
+                using (Stream stream = typeof(ImageStreamingContext).Assembly.GetManifestResourceStream("ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test.TestSamples.uncompressed.dcm"))
+                {
+                    DicomFile file = new DicomFile();
+                    file.Load(stream);
+
+                    _testUncompressedImage = DicomPixelData.CreateFrom(file);
+                }
+                
+            }
+            #endif
+
+            #endregion
+        }
+       
+        
         public string ImagePath
         {
             get
@@ -57,6 +91,20 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         {
             get
             {
+                #region PERFORMANCE TESTING CODE
+                #if DEBUG 
+                // If requested, the test images will be streamed directly from memory
+                if (Request.QueryString["testcompressed"] != null)
+                {
+                    return _testCompressedImage;
+                }
+                if (Request.QueryString["testuncompressed"] != null)
+                {
+                    return _testUncompressedImage;
+                } 
+                #endif
+                #endregion
+
                 if (_pd == null)
                 {
                     PixelDataManager manager = PixelDataManager.GetInstance(StorageLocation);
