@@ -90,6 +90,15 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             }
 
             /// <summary>
+            /// Tokens that allow access to Dashboard.
+            /// </summary>
+            public static class Dashboard
+            {
+                [AuthorityToken(Description = "Allow viewing of the Dashboard.")]
+                public const string View = "PACS/Dashboard/View";
+            }
+
+            /// <summary>
             /// Tokens that allow access to study deletion history.
             /// </summary>
             public static class StudyDeleteHistory

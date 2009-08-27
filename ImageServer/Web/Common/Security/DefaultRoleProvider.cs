@@ -63,6 +63,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     AuthorityTokens.Admin.StudyDeleteHistory.Delete,
                     AuthorityTokens.Admin.StudyDeleteHistory.Search,
                     AuthorityTokens.Admin.StudyDeleteHistory.View,
+                    AuthorityTokens.Admin.Dashboard.View,
                     AuthorityTokens.ArchiveQueue.Delete,
                     AuthorityTokens.ArchiveQueue.Search,
                     AuthorityTokens.RestoreQueue.Delete,

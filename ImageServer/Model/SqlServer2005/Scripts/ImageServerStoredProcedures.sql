@@ -3901,3 +3901,28 @@ END
 END
 GO
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueueProcessorIDs]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =================================================================
+-- Author:		Jonathan Bluks
+-- Create date: August 25, 2009
+-- Description:	Get a list of all the work queue processing servers
+-- =================================================================
+CREATE PROCEDURE [dbo].[WorkQueueProcessorIDs] 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	SELECT DISTINCT ProcessorID FROM WorkQueue WHERE ProcessorID != ''NULL''
+END
+'
+END
+GO
+

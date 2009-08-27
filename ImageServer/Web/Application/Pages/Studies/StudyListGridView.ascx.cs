@@ -160,6 +160,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             }
         }
 
+        public void SetDataSource()
+        {
+            StudyListControl.DataSource = StudyDataSourceObject;
+        }
+
+        public bool isDataSourceSet()
+        {
+            return StudyListControl.DataSource != null;
+        }
+
         #endregion
         
         #region protected methods

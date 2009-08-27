@@ -55,6 +55,7 @@
     <Compile Include="ArchiveStudyStorage.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
+    <Compile Include="Brokers\IWorkQueueProcessorIDs.cs" />
     <Compile Include="Brokers\ICreatePatientForStudy.cs" />
     <Compile Include="Brokers\IDeleteInstance.cs" />
     <Compile Include="Brokers\IDeleteSeries.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="InconsistentDataSIQEntry.cs" />
     <Compile Include="InstanceKeys.cs" />
+    <Compile Include="Parameters\WorkQueueProcessordIDsParameters.cs" />
     <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
     <Compile Include="Parameters\DeleteInstanceParameters.cs" />
     <Compile Include="Parameters\DeleteSeriesParameters.cs" />

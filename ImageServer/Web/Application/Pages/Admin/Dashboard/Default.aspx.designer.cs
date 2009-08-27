@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard {
     
     
     /// <summary>
@@ -29,39 +29,57 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         protected global::System.Web.UI.WebControls.Literal Literal1;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// StudiesSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.StudiesSummary StudiesSummary;
         
         /// <summary>
-        /// Panel1 control.
+        /// WorkQueueSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.WorkQueueSummary WorkQueueSummary;
         
         /// <summary>
-        /// FileSystemsPanel1 control.
+        /// StudyIntegrityQueueSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsPanel FileSystemsPanel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.StudyIntegrityQueueSummary StudyIntegrityQueueSummary;
         
         /// <summary>
-        /// AddEditFileSystemDialog1 control.
+        /// FileSystemsGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.AddFilesystemDialog AddEditFileSystemDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.FileSystemsGridView FileSystemsGridView;
+        
+        /// <summary>
+        /// ServerPartitionGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.ServerPartitionGridView ServerPartitionGridView;
+        
+        /// <summary>
+        /// AlertsGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard.AlertsGridView AlertsGridView;
     }
 }

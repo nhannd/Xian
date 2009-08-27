@@ -222,6 +222,55 @@
     <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.designer.cs">
       <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Dashboard\AlertsGridView.ascx.cs">
+      <DependentUpon>AlertsGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\AlertsGridView.ascx.designer.cs">
+      <DependentUpon>AlertsGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\StudiesSummary.ascx.cs">
+      <DependentUpon>StudiesSummary.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\StudiesSummary.ascx.designer.cs">
+      <DependentUpon>StudiesSummary.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\FileSystemsGridView.ascx.cs">
+      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\FileSystemsGridView.ascx.designer.cs">
+      <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\ServerPartitionGridView.ascx.cs">
+      <DependentUpon>ServerPartitionGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\ServerPartitionGridView.ascx.designer.cs">
+      <DependentUpon>ServerPartitionGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx.cs">
+      <DependentUpon>StudyIntegrityQueueSummary.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx.designer.cs">
+      <DependentUpon>StudyIntegrityQueueSummary.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx.cs">
+      <DependentUpon>WorkQueueSummary.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx.designer.cs">
+      <DependentUpon>WorkQueueSummary.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx.cs">
       <DependentUpon>AddEditUserGroupsDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1383,6 +1432,9 @@
     <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
+    <Content Include="App_Themes\Default\images\Pages\Dashboard\SidebarItemBackground.png" />
+    <Content Include="App_Themes\Default\images\Pages\Dashboard\StudiesSummaryTotalBackground.png" />
+    <Content Include="App_Themes\Default\images\Pages\Dashboard\UserOverviewBackground.png" />
     <Content Include="App_Themes\Default\StyleSheets\Admin.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\PartitionTabs.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
@@ -1433,6 +1485,13 @@
     <Content Include="Global.asax" />
     <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
+    <Content Include="Pages\Admin\Dashboard\AlertsGridView.ascx" />
+    <Content Include="Pages\Admin\Dashboard\StudiesSummary.ascx" />
+    <Content Include="Pages\Admin\Dashboard\Default.aspx" />
+    <Content Include="Pages\Admin\Dashboard\FileSystemsGridView.ascx" />
+    <Content Include="Pages\Admin\Dashboard\ServerPartitionGridView.ascx" />
+    <Content Include="Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx" />
+    <Content Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <EmbeddedResource Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.js" />
     <Content Include="Pages\Studies\MoveSeries\Default.aspx" />

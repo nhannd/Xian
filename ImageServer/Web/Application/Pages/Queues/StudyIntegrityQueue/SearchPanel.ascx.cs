@@ -112,6 +112,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 string patientID = Request["PatientID"];
                 string patientName = Request["PatientName"];
                 string partitionKey = Request["PartitionKey"];
+                string reason = Request["Reason"];
+                string databind = Request["Databind"];
 
                 if (patientID != null && patientName != null && partitionKey != null)
                 {
@@ -121,6 +123,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     PatientId.Text = patientID;
                     PatientName.Text = patientName;
 
+                    StudyIntegrityQueueItemList.SetDataSource();
+                    StudyIntegrityQueueItemList.Refresh();
+                }
+                if(reason != null)
+                {
+                    ReasonListBox.Items.FindByValue(reason).Selected = true;
+
+                    StudyIntegrityQueueItemList.SetDataSource();
+                    StudyIntegrityQueueItemList.Refresh();
+                }
+                if(databind != null)
+                {
                     StudyIntegrityQueueItemList.SetDataSource();
                     StudyIntegrityQueueItemList.Refresh();
                 }

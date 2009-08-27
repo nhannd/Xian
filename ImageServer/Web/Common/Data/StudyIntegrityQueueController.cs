@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adaptor.GetRange(criteria, startIndex, maxRows);
         }
 
-        public int GetReconicleQueueItemsCount(StudyIntegrityQueueSelectCriteria criteria)
+        public int GetReconcileQueueItemsCount(StudyIntegrityQueueSelectCriteria criteria)
         {
             return _adaptor.GetCount(criteria);
         }

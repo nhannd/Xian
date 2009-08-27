@@ -301,6 +301,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 string patientID = Request["PatientID"];
                 string patientName = Request["PatientName"];
                 string partitionKey = Request["PartitionKey"];
+                string processorID = Request["ProcessorID"];
 
                 if (patientID != null && patientName != null && partitionKey != null)
                 {
@@ -312,7 +313,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
                     workQueueItemList.SetDataSource();
                     workQueueItemList.Refresh();
+                } else if(processorID != null)
+                {
+                    ProcessingServer.Text = processorID;
+                    workQueueItemList.SetDataSource();
+                    workQueueItemList.Refresh();
                 }
+
+
             }
         }
 

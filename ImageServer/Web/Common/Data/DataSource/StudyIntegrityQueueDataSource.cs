@@ -500,7 +500,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			StudyIntegrityQueueSelectCriteria criteria = GetStudyIntegrityQueueCriteria();
 
-			ResultCount = _searchController.GetReconicleQueueItemsCount(criteria);
+			ResultCount = _searchController.GetReconcileQueueItemsCount(criteria);
 
 			return ResultCount;
 		}

@@ -306,4 +306,13 @@
   <data name="DeleteSeriesConfirmDialogTitle" xml:space="preserve">
     <value>Delete Series Confirmation</value>
   </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>ImageServer Dashboard</value>
+  </data>
+  <data name="DashboardTitle" xml:space="preserve">
+    <value>Dashboard | ClearCanvas ImageServer</value>
+  </data>
+  <data name="DashboardMenu" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
 </root>

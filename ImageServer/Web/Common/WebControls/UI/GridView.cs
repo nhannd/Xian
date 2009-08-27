@@ -126,14 +126,33 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         /// </remark>
         public bool MouseHoverRowHighlightEnabled
         {
+
+
             get
             {
-                if (ViewState["MouseHoverRowHighlightEnabled"] != null)
-                    return (bool)ViewState["MouseHoverRowHighlightEnabled"];
+                string newClientID = ClientID;
+                if (newClientID.LastIndexOf("_") != -1)
+                {
+                    newClientID = newClientID.Substring(newClientID.LastIndexOf("_")+1);
+                }
+                if (ViewState["MouseHoverRowHighlightEnabled_" + newClientID] != null)
+                    return (bool)ViewState["MouseHoverRowHighlightEnabled_" + newClientID];
                 else
                     return true;
             }
-            set { ViewState["MouseHoverRowHighlightEnabled"] = value; }
+            set
+            {
+                //For some reason, the gridview calls this property twice, once with the name of the gridview alone (E.G. AlertGridView), 
+                //and a second time with the entire client ID (e.g. ctl00_MainContentPlaceHolder_AlertGridView"). To get around this, 
+                //the name of the Gridview only is used and the value is set only the first time, which is the intended value.
+                string newClientID = ClientID;
+                if(newClientID.LastIndexOf("_") != -1)
+                {
+                    newClientID = newClientID.Substring(newClientID.LastIndexOf("_")+1);
+                }
+                if (ViewState["MouseHoverRowHighlightEnabled_" + newClientID] == null)
+                    ViewState["MouseHoverRowHighlightEnabled_" + newClientID] = value;
+            }
         }
 
         /// <summary>
@@ -496,10 +515,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             e.Row.Attributes["isdatarow"] = "true";
             e.Row.Attributes["rowIndex"] = (e.Row.RowIndex).ToString();
 
-            e.Row.Style["cursor"] = "hand";
-
             if (e.Row.RowType == DataControlRowType.DataRow && MouseHoverRowHighlightEnabled)
             {
+                e.Row.Style["cursor"] = "hand";
                 string onMouseOver = string.Format("this.style.cursor='pointer';this.originalstyle=this.style.backgroundColor;this.style.backgroundColor='{0}';", ColorTranslator.ToHtml(RowHighlightColor));
                 string onMouseOut = "this.style.backgroundColor=this.originalstyle;";
                 e.Row.Attributes.Add("onmouseover", onMouseOver);

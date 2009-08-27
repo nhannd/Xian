@@ -222,6 +222,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
         }
 
+        public void SetActivePartition(string aeTitle)
+        {
+            TabPanelCollection tabs = PartitionTabContainer.Tabs;
+
+            foreach(TabPanel tab in tabs)
+            {
+                if(tab.HeaderText == aeTitle)
+                {
+                    PartitionTabContainer.ActiveTab = tab;
+                }
+            }
+        }
+
         #endregion Public Methods
     }
 }

@@ -38,6 +38,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -199,6 +200,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 Platform.Log(LogLevel.Error, e, "Unable to retrieve work queue.");
             	return new List<WorkQueue>();
             }
+        }
+
+        public IList<WorkQueueInfo> GetWorkQueueOverview()
+        {            
+            IList<WorkQueueInfo> workQueueInfo = new List<WorkQueueInfo>();
+            
+            WorkQueueProcessorIDsParameters parameters = new WorkQueueProcessorIDsParameters();
+            IWorkQueueProcessorIDs broker = HttpContextData.Current.ReadContext.GetBroker<IWorkQueueProcessorIDs>();
+            IList<WorkQueue> processorIDList = broker.Find(parameters);
+
+            WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
+            WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+            int numItems = 0;
+            foreach(WorkQueue row in processorIDList)
+            {
+                criteria.ProcessorID.EqualTo(row.ProcessorID);
+                numItems = adaptor.GetCount(criteria);
+                workQueueInfo.Add(new WorkQueueInfo(row.ProcessorID, numItems));
+            }
+            return workQueueInfo;
         }
 
         /// <summary>

@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+using System.Configuration;
 using System.Security;
 using System.ServiceModel;
 using System.Web.Security;
@@ -49,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             bool ok = Membership.ValidateUser(request.UserName, request.Password);
             if (ok)
             {
-                SessionToken token = new SessionToken(request.UserName, Platform.Time.AddMinutes(1));
+                SessionToken token = new SessionToken(request.UserName, Platform.Time.AddMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"])));
                 string[] authority = Roles.GetRolesForUser(request.UserName);
                 string displayName = request.UserName;
                 InitiateSessionResponse rsp = new InitiateSessionResponse(token, authority, displayName);

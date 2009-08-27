@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -278,6 +279,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         public void Refresh()
         {
+            if(!StudyListGridView.isDataSourceSet()) StudyListGridView.SetDataSource();
             StudyListGridView.RefreshCurrentPage();
         }
 

@@ -152,3 +152,97 @@ div.DeleteAlertTableContainer {
     font-weight: bold;
     color: #336699;
 }
+
+
+/*=========================
+ * Dashboard
+ *=========================*/
+
+.UsersOverview
+{
+    background: #ffffff;
+    border: solid 2px #B8D9EE; 
+    text-align: center;
+    font-weight: bold;
+    color: #205F87;
+}
+
+.DashboardItemContainer
+{
+    margin: 10px 10px 10px 10px; 
+    background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x top;
+    padding: 3px;
+    border: solid 1px #3D98D1
+}
+
+.DashboardItemHeader
+{
+    font-weight: bold; 
+    font-size: 14px; 
+    color: #205F87; 
+    margin-left: 2px;
+    margin-bottom: 4px;
+}
+
+.DashboardItemHeader a:link
+{
+    color: #205F87;
+    text-decoration: none;
+}
+
+.DashboardItemHeader a:visited
+{
+    color: #205F87;
+    text-decoration: none;
+}
+
+.DashboardItemHeader a:hover
+{
+    color: #205F87;
+    text-decoration: underline;
+}
+
+.DashboardInfoContainer
+{
+    border: solid 1px #3D98D1;
+}
+
+.SidebarInfoContainer
+{
+    border: solid 1px #3D98D1;
+    background: #ffffff  url(../../../PersistantImage.ashx?key=SidebarItemBackground) repeat-x top;
+}
+
+.DashboardBody
+{
+    background: #fafafa;
+}
+
+.OverviewHeader
+{
+    background: #ffffff url(../../../PersistantImage.ashx?key=GridViewHeaderBackground) repeat-x;
+	height: 21px;
+	text-align: left;
+	padding-left: 8px;
+	color: #205F87;
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0px;
+}
+
+.TotalStudiesSummary
+{
+    color: #205F87;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 4px;
+    padding: 4px;
+    background: #ffffff url(../images/Pages/Dashboard/StudiesSummaryTotalBackground.png) repeat-x bottom;
+    font-size: 18px;
+    border-top: solid 1px #3D98D1;
+}
+
+.TotalStudiesCount
+{
+    color: #55be50;
+}

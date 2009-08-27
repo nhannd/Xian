@@ -38,16 +38,17 @@ using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
     //
     //  Used to display the list of Archive Queue Items.
     //
-    public partial class AlertsGridPanel : GridViewPanel
+    public partial class AlertsGridView : GridViewPanel
     {
         #region Delegates
         public delegate void AlertDataSourceCreated(AlertDataSource theSource);
@@ -105,12 +106,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             get
             {
-                if(!AlertGridView.IsDataBound) AlertGridView.DataBind();
+                if(!AlertGrid.IsDataBound) AlertGrid.DataBind();
                 
                 if (AlertItems == null || AlertItems.Count == 0)
                     return null;
 
-                int[] rows = AlertGridView.SelectedIndices;
+                int[] rows = AlertGrid.SelectedIndices;
                 if (rows == null || rows.Length == 0)
                     return null;
 
@@ -179,7 +180,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             set
             {
                 SelectedAlertKey = value.Key;
-                AlertGridView.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGridView);
+                AlertGrid.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGrid);
             }
         }
 
@@ -199,21 +200,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             }
         }
 
-
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            TheGrid = AlertGridView;
+            TheGrid = AlertGrid;
 
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-            AlertGridView.DataSource = AlertDataSourceObject;
-
-
+            AlertGrid.DataSource = AlertDataSourceObject;
+            AlertGrid.DataBind();
         }
 
         protected void AlertGridView_DataBound(object sender, EventArgs e)
@@ -221,7 +219,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             // reselect the row based on the new order
             if (SelectedAlertKey != null)
             {
-                AlertGridView.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGridView);
+                AlertGrid.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGrid);
             }
         }
 
@@ -229,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             GridViewRow row = e.Row;
 
-            if (AlertGridView.EditIndex != e.Row.RowIndex)
+            if (AlertGrid.EditIndex != e.Row.RowIndex)
             {
                 if (row.RowType == DataControlRowType.DataRow)
                 {                   
