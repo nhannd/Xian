@@ -55,6 +55,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         #region IReportingWorkflowService Members
 
         [ReadOperation]
+        public GetDocumentationStatusResponse GetDocumentationStatus(GetDocumentationStatusRequest request)
+        {
+            Procedure procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
+            return new GetDocumentationStatusResponse(procedure.IsNotReadyForReporting, procedure.NotReadyForReportingReason);
+        }
+
+        [ReadOperation]
         public TextQueryResponse<ReportingWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();

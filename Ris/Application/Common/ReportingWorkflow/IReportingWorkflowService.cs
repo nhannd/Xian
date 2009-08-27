@@ -41,6 +41,14 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
     {
         /// <summary>
+        /// Indicates if all documentation for the order containing the specified procedure is complete
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetDocumentationStatusResponse GetDocumentationStatus(GetDocumentationStatusRequest request);
+
+        /// <summary>
         /// Start an interpretation step
         /// </summary>
         /// <param name="request"><see cref="StartInterpretationRequest"/></param>

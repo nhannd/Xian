@@ -122,6 +122,10 @@ namespace ClearCanvas.Ris.Client.Workflow
                 // can re-insert items into the same folder.
                 Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
                 doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
+
+                Workspace w = DocumentManager.Get(DocumentManager.GenerateDocumentKey(doc, item.ProcedureStepRef));
+                if (((ReportingComponent)w.Component).UserCancelled)
+                    doc.Close();
             }
         }
 

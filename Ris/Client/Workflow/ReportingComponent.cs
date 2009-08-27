@@ -236,6 +236,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(ReportingComponentViewExtensionPoint))]
 	public class ReportingComponent : ApplicationComponent
 	{
+		private class UserSkippedItemWithIncompleteDocumentationException : Exception
+		{
+		}
 
 		#region ReportingContext
 
@@ -378,6 +381,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderAdditionalInfoComponent _additionalInfoComponent;
 
 		private List<IReportingPage> _extensionPages;
+		private bool _userCancelled = false;
 		private event EventHandler _worklistItemChanged;
 
 		/// <summary>
@@ -404,51 +408,59 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_rememberSupervisor = ReportingSettings.Default.ShouldApplyDefaultSupervisor;
 
-			StartReportingWorklistItem();
-
-			_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
-			_bannerHost.StartComponent();
-
-			_rightHandComponentContainer = new TabComponentContainer();
-			_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
-
-			_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
-			_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
-
-			_priorReportComponent = new PriorReportComponent(this.WorklistItem);
-			_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
-
-			_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
-			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
-			_additionalInfoComponent.HealthcareContext = this.WorklistItem;
-			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
-
-			// instantiate all extension pages
-			_extensionPages = new List<IReportingPage>();
-			foreach (IReportingPageProvider pageProvider in new ReportingPageProviderExtensionPoint().CreateExtensions())
+			try
 			{
-				_extensionPages.AddRange(pageProvider.GetPages(new ReportingContext(this)));
-			}
+				StartReportingWorklistItem();
 
-			// add extension pages to container and set initial context
-			// the container will start those components if the user goes to that page
-			foreach (IReportingPage page in _extensionPages)
+				_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
+				_bannerHost.StartComponent();
+
+				_rightHandComponentContainer = new TabComponentContainer();
+				_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
+
+				_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
+				_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
+
+				_priorReportComponent = new PriorReportComponent(this.WorklistItem);
+				_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
+
+				_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
+				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
+				_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
+
+				// instantiate all extension pages
+				_extensionPages = new List<IReportingPage>();
+				foreach (IReportingPageProvider pageProvider in new ReportingPageProviderExtensionPoint().CreateExtensions())
+				{
+					_extensionPages.AddRange(pageProvider.GetPages(new ReportingContext(this)));
+				}
+
+				// add extension pages to container and set initial context
+				// the container will start those components if the user goes to that page
+				foreach (IReportingPage page in _extensionPages)
+				{
+					_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+				}
+
+				_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+				_rightHandComponentContainerHost.StartComponent();
+
+				// check for a report editor provider.  If not found, use the default one
+				IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
+														new ReportEditorProviderExtensionPoint().CreateExtensions());
+
+				_reportEditor = provider == null ? new ReportEditorComponent(new ReportEditorContext(this)) : provider.GetEditor(new ReportEditorContext(this));
+				_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
+				_reportEditorHost.StartComponent();
+
+				OpenImages();
+
+			}
+			catch (UserSkippedItemWithIncompleteDocumentationException)
 			{
-				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+				_userCancelled = true;
 			}
-
-			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
-			_rightHandComponentContainerHost.StartComponent();
-
-			// check for a report editor provider.  If not found, use the default one
-			IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
-													new ReportEditorProviderExtensionPoint().CreateExtensions());
-
-			_reportEditor = provider == null ? new ReportEditorComponent(new ReportEditorContext(this)) : provider.GetEditor(new ReportEditorContext(this));
-			_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
-			_reportEditorHost.StartComponent();
-
-			OpenImages();
 
 			base.Start();
 		}
@@ -504,10 +516,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Presentation Model
 
-        public int BannerHeight
-        {
-            get { return BannerSettings.Default.BannerHeight; }
-        }
+		public int BannerHeight
+		{
+			get { return BannerSettings.Default.BannerHeight; }
+		}
 
 		public ApplicationComponentHost BannerHost
 		{
@@ -1010,6 +1022,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _canSaveReport; }
 		}
 
+		public bool UserCancelled
+		{
+			get { return _userCancelled; }
+		}
 
 		private bool SupervisorIsInvalid()
 		{
@@ -1067,6 +1083,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				catch (FaultException<ConcurrentModificationException>)
 				{
 					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Invalid);
+				}
+				catch (UserSkippedItemWithIncompleteDocumentationException)
+				{
+					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
 				}
 			}
 			else
@@ -1189,8 +1209,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (item.ProcedureStepName == StepType.Interpretation)
 			{
-				// if creating a new report, check for linked interpretations
+				if (ShouldSkipItemWithIncompleteDocumentation(item))
+					throw new UserSkippedItemWithIncompleteDocumentationException();
 
+				// if creating a new report, check for linked interpretations
 				List<ReportingWorklistItem> linkedInterpretations;
 				List<ReportingWorklistItem> candidateInterpretations;
 				PromptForLinkedInterpretations(item, out linkedInterpretations, out candidateInterpretations);
@@ -1230,6 +1252,35 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return true;
 		}
 
+		private bool ShouldSkipItemWithIncompleteDocumentation(ReportingWorklistItem item)
+		{
+			string message;
+			if (ItemHasIncompleteDocumentation(item, out message))
+			{
+				ResetChildComponents();
+				return this.Host.ShowMessageBox(message + "\r\n" + SR.MessageReportAnyways, MessageBoxActions.YesNo) == DialogBoxAction.No;
+			}
+			else
+				return false;
+		}
+
+		private bool ItemHasIncompleteDocumentation(ReportingWorklistItem item, out string message)
+		{
+			bool isIncomplete = true;
+			string localMessage = "";  // Cannot use 'out' parameter in anonymous method
+
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					GetDocumentationStatusRequest request = new GetDocumentationStatusRequest(item.ProcedureRef);
+					GetDocumentationStatusResponse response = service.GetDocumentationStatus(request);
+					isIncomplete = response.IsIncomplete;
+					localMessage = response.Reason;
+				});
+
+			message = localMessage;
+			return isIncomplete;
+		}
 
 		private bool PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
 		{

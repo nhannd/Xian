@@ -134,6 +134,8 @@
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetDocumentationStatusResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetDocumentationStatusRequest.cs" />
     <Compile Include="ReportingWorkflow\StartTranscriptionReviewRequest.cs" />
     <Compile Include="ReportingWorkflow\StartTranscriptionReviewResponse.cs" />
     <Compile Include="SupervisorValidationException.cs" />

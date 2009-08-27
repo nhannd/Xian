@@ -945,6 +945,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Would you like to report anyways?.
+        /// </summary>
+        internal static string MessageReportAnyways {
+            get {
+                return ResourceManager.GetString("MessageReportAnyways", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are currently editing {0}.  Do you want to close it and open the report for {1} instead?  The {0} will be saved to your DRAFT folder..
         /// </summary>
         internal static string MessageReportingComponentAlreadyOpened {
