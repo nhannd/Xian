@@ -66,9 +66,9 @@ namespace ClearCanvas.Dicom.Network
         {
 			lock (_syncLock)
 			{
-				if (_listeners.ContainsKey(parameters.LocalEndPoint))
+				Listener theListener;
+				if (_listeners.TryGetValue(parameters.LocalEndPoint, out theListener))
 				{
-					Listener theListener = _listeners[parameters.LocalEndPoint];
 
 					ListenerInfo info = new ListenerInfo();
 
@@ -88,7 +88,7 @@ namespace ClearCanvas.Dicom.Network
 				}
 				else
 				{
-					Listener theListener = new Listener(parameters, acceptor);
+					theListener = new Listener(parameters, acceptor);
 					if (!theListener.StartListening())
 					{
 						Platform.Log(LogLevel.Error, "Unexpected error starting to listen on {0}", parameters.LocalEndPoint.ToString());
@@ -129,10 +129,8 @@ namespace ClearCanvas.Dicom.Network
 			{
 				Listener theListener;
 
-				if (_listeners.ContainsKey(parameters.LocalEndPoint))
+				if (_listeners.TryGetValue(parameters.LocalEndPoint, out theListener))
 				{
-					theListener = _listeners[parameters.LocalEndPoint];
-
 					if (theListener._applications.ContainsKey(parameters.CalledAE))
 					{
 						theListener._applications.Remove(parameters.CalledAE);

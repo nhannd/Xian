@@ -39,42 +39,38 @@ namespace ClearCanvas.Dicom
     /// </summary>
     public class SpecificCharacterSetParser : IDicomCharacterSetParser
     {
-        public SpecificCharacterSetParser()
-        {
-        }
-
-        #region IDicomCharacterSetParser Members
+    	#region IDicomCharacterSetParser Members
 
         public byte[] Encode(string dataInUnicode, string specificCharacterSet)
         {
             byte[] rawBytes;
-            SpecificCharacterSetParser.Unparse(specificCharacterSet, dataInUnicode, out rawBytes);
+            Unparse(specificCharacterSet, dataInUnicode, out rawBytes);
             return rawBytes;
         }
 
         public string EncodeAsIsomorphicString(string dataInUnicode, string specificCharacterSet)
         {
-            return SpecificCharacterSetParser.Unparse(specificCharacterSet, dataInUnicode);
+            return Unparse(specificCharacterSet, dataInUnicode);
         }
 
         public string Decode(byte[] rawData, string specificCharacterSet)
         {
-            return SpecificCharacterSetParser.Parse(specificCharacterSet, rawData);
+            return Parse(specificCharacterSet, rawData);
         }
 
         public string DecodeFromIsomorphicString(string repertoireStringAsUnicode, string specificCharacterSet)
         {
-            return SpecificCharacterSetParser.Parse(specificCharacterSet, repertoireStringAsUnicode);
+            return Parse(specificCharacterSet, repertoireStringAsUnicode);
         }
 
         public string ConvertRawToIsomorphicString(byte[] value)
         {
-            return SpecificCharacterSetParser.GetIsomorphicString(value);
+            return GetIsomorphicString(value);
         }
 
         public bool IsVRRelevant(string vr)
         {
-            return SpecificCharacterSetParser.DoesSpecificCharacterSetApplyToThisVR(vr);
+            return DoesSpecificCharacterSetApplyToThisVR(vr);
         }
 
         #endregion
@@ -327,13 +323,11 @@ namespace ClearCanvas.Dicom
             // set the default repertoire from Value 1 
             if (specificCharacterSetValues.GetUpperBound(0) >= 0)
             {
-                if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(specificCharacterSetValues[0]))
-                    defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]];
-                else
+                if (!CharacterSetDatabase.TryGetValue(specificCharacterSetValues[0], out defaultRepertoire))
                     // we put in the default repertoire. Technically, it may
                     // not be ISO 2022 IR 6, but ISO_IR 6, but the information
                     // we want to use is the same
-                    defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"];
+                    defaultRepertoire = CharacterSetDatabase["ISO 2022 IR 6"];
             }
 
             // Here we are accounting for cases where the same character sets are repeated, so
@@ -351,7 +345,7 @@ namespace ClearCanvas.Dicom
             extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
             foreach (string value in uniqueExtensionRepertoireDefinedTerms)
             {
-                if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(value) && !extensionRepertoires.ContainsKey(value))
+                if (CharacterSetDatabase.ContainsKey(value) && !extensionRepertoires.ContainsKey(value))
                 {
                     // special robustness handling of GB18030 and UTF-8
                     if ("GB18030" == value || "ISO_IR 192" == value)
@@ -359,11 +353,11 @@ namespace ClearCanvas.Dicom
                         // these two character sets can't use code extensions, so there should really only be 1
                         // character set in the repertoire
                         extensionRepertoires.Clear();
-                        extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase[value]);
+                        extensionRepertoires.Add(value, CharacterSetDatabase[value]);
                         break;
                     }
 
-                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase[value]);
+                    extensionRepertoires.Add(value, CharacterSetDatabase[value]);
                 }
                 else if (!extensionRepertoires.ContainsKey("ISO 2022 IR 6"))
                 {

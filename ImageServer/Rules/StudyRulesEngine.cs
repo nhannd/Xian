@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Rules
 				DicomFile theFile = new DicomFile(seriesFilePath);
 				theFile.Load(DicomReadOptions.Default);
 				ServerActionContext context =
-					new ServerActionContext(theFile, _location.FilesystemKey, _location.ServerPartitionKey, _location.Key);
+					new ServerActionContext(theFile, _location.FilesystemKey, _partition, _location.Key);
 				context.CommandProcessor = theProcessor;
 				_studyRulesEngine.Execute(context);
 
@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageServer.Rules
 				_seriesRulesEngine.Statistics.ExecutionTime.Reset();
 			}
 
-			ServerActionContext context = new ServerActionContext(file, _location.FilesystemKey, _location.ServerPartitionKey, _location.Key);
+			ServerActionContext context = new ServerActionContext(file, _location.FilesystemKey, _partition, _location.Key);
 
 			context.CommandProcessor = processor;
 

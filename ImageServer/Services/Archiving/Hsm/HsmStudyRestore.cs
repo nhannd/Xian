@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 					// Apply the rules engine.
 					ServerActionContext context =
-						new ServerActionContext(null, fs.Filesystem.GetKey(), _hsmArchive.PartitionArchive.ServerPartitionKey,
+						new ServerActionContext(null, fs.Filesystem.GetKey(), _hsmArchive.ServerPartition,
 						                        queueItem.StudyStorageKey);
 					context.CommandProcessor = processor;
 					processor.AddCommand(

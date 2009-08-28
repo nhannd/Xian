@@ -102,10 +102,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <summary>
         /// Reprocess a specific study.
         /// </summary>
+        /// <param name="partition">The ServerPartition the study is on.</param>
         /// <param name="location">The storage location of the study to process.</param>
         /// <param name="engine">The rules engine to use when processing the study.</param>
         /// <param name="postArchivalEngine">The rules engine used for studies that have been archived.</param>
-        private void ProcessStudy(StudyStorageLocation location, ServerRulesEngine engine, ServerRulesEngine postArchivalEngine)
+        private void ProcessStudy(ServerPartition partition, StudyStorageLocation location, ServerRulesEngine engine, ServerRulesEngine postArchivalEngine)
         {
             if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle) || !location.AcquireLock())
             {
@@ -146,7 +147,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 						filesystemDeleteExists = filesystemQueueBroker.Count(filesystemQueueCriteria) > 0;
 					}
                     
-                    ServerActionContext context = new ServerActionContext(msg, location.FilesystemKey, location.ServerPartitionKey, location.GetKey());
+                    ServerActionContext context = new ServerActionContext(msg, location.FilesystemKey, partition, location.GetKey());
                     using (context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor"))
                     {
 						// Check if the Study has been archived 
@@ -271,7 +272,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 									continue;
 							}
 
-							ProcessStudy(location, engine, postArchivalEngine);
+							ProcessStudy(partition, location, engine, postArchivalEngine);
 							_stats.NumStudies++;
 
 							if (CancelPending) return;

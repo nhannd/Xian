@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         IDicomCodec codec = theCodecFactory.GetDicomCodec();
 
                         // Create a context for applying actions from the rules engine
-                        ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
+                        ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, ServerPartition, item.StudyStorageKey);
                         context.CommandProcessor = processor;
                         
                         DicomCodecParameters parms = theCodecFactory.GetCodecParameters(item.Data);

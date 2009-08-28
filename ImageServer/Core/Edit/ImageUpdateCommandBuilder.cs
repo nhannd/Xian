@@ -40,7 +40,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
@@ -146,7 +145,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                 {
                     foreach (BaseImageLevelUpdateCommand cmd in cmds)
                     {
-                        IUpdateImageTagCommand theCmd = cmd as IUpdateImageTagCommand;
+                        IUpdateImageTagCommand theCmd = cmd;
                         if (theCmd != null)
                         {
                             DicomAttribute attribute;
@@ -172,14 +171,32 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
 			EntityDicomMap fieldMap = EntityDicomMapManager.Get(type);
-			XmlDocument studyXmlDoc = studyXml.GetMemento(new StudyXmlOutputSettings());
-			foreach (DicomTag tag in fieldMap.Keys)
+			//XmlDocument studyXmlDoc = studyXml.GetMemento(new StudyXmlOutputSettings());
+
+			// Get the First InstanceXml of the first image
+        	IEnumerator<SeriesXml> seriesEnumerator = studyXml.GetEnumerator();
+        	seriesEnumerator.MoveNext();
+        	SeriesXml seriesXml = seriesEnumerator.Current;
+			IEnumerator<InstanceXml> instanceEnumerator = seriesXml.GetEnumerator();
+			instanceEnumerator.MoveNext();
+			InstanceXml instanceXml = instanceEnumerator.Current;
+
+        	foreach (DicomTag tag in fieldMap.Keys)
 			{
 			    string originalValue = null;
-			    DicomAttribute attribute;
-                if (originalDicomAttributeProvider != null && originalDicomAttributeProvider.TryGetAttribute(tag, out attribute))
+				string newValue = null;
+				DicomAttribute attribute;
+                
+				if (originalDicomAttributeProvider != null && originalDicomAttributeProvider.TryGetAttribute(tag, out attribute))
                     originalValue = attribute.ToString();
-				SetTagCommand cmd = new SetTagCommand(tag.TagValue, originalValue, FindAttributeValue(tag, studyXmlDoc));
+				
+				if (instanceXml != null)
+					attribute = instanceXml[tag];
+				else
+					attribute = null;
+				if (attribute != null)
+					newValue = attribute.ToString();
+				SetTagCommand cmd = new SetTagCommand(tag.TagValue, originalValue, newValue);
 				commandList.Add(cmd);
 			}
 			return commandList;
@@ -218,17 +235,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 			return studyXml;
 		}
-
-		private static String FindAttributeValue(DicomTag tag, XmlNode xnlRootNode)
-		{
-			String xpath = String.Format("//Attribute[@Tag='{0}']", tag.HexString);
-			XmlNode node = xnlRootNode.SelectSingleNode(xpath);
-			if (node == null)
-				return null;
-			else
-				return XmlUtils.DecodeValue(node.InnerText);
-		}
-
 	}
 
 	public class EntityDicomMap : Dictionary<DicomTag, PropertyInfo>
@@ -245,10 +251,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
             Platform.CheckForNullReference(target, "target");
             Platform.CheckForNullReference(tag, "tag");
 
-            if (!this.ContainsKey(tag))
+        	PropertyInfo prop;
+            if (!TryGetValue(tag, out prop))
                 return false;
 
-            PropertyInfo prop = this[tag];
             if (!prop.CanWrite)
             {
                 Platform.Log(LogLevel.Error, "Cannot set readonly property {0}.{1}.", target.GetType().Name, prop.Name);

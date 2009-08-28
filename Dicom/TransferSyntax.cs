@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -870,10 +870,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public static TransferSyntax GetTransferSyntax(String uid)
         {
-            if (!_transferSyntaxes.ContainsKey(uid))
+            TransferSyntax theSyntax;
+            if (!_transferSyntaxes.TryGetValue(uid, out theSyntax))
                 return null;
 
-            return _transferSyntaxes[uid];
+            return theSyntax;
         }
 
         static TransferSyntax()

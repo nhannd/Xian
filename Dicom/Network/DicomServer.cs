@@ -314,14 +314,13 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="association"></param>
         protected override void OnReceiveAssociateRequest(ServerAssociationParameters association)
         {
-            if (!_appList.ContainsKey(association.CalledAE))
+        	ListenerInfo info;
+            if (!_appList.TryGetValue(association.CalledAE, out info))
             {
 				Platform.Log(LogLevel.Error, "Rejecting association from {0}: Invalid Called AE Title ({1}).", association.CallingAE, association.CalledAE);
                 SendAssociateReject(DicomRejectResult.Permanent, DicomRejectSource.ServiceProviderACSE, DicomRejectReason.CalledAENotRecognized);
                 return;
             }
-
-            ListenerInfo info = _appList[association.CalledAE];
 
             // Populate the AssociationParameters properly
             association.ReadTimeout = info.Parameters.ReadTimeout;

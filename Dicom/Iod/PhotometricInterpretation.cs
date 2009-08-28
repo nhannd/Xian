@@ -113,10 +113,10 @@ namespace ClearCanvas.Dicom.Iod
 				
 		public static PhotometricInterpretation FromCodeString(string codeString)
 		{
-			if (_photometricInterpretations.ContainsKey(codeString ?? ""))
-				return _photometricInterpretations[codeString];
-
-			return Unknown;
+			PhotometricInterpretation theInterpretation;
+			if (!_photometricInterpretations.TryGetValue(codeString ?? string.Empty, out theInterpretation))
+				return Unknown;
+			return theInterpretation;
 		}
 	}
 }

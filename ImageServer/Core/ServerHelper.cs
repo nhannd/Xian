@@ -91,67 +91,70 @@ namespace ClearCanvas.ImageServer.Core
         /// <param name="message">The DICOM message to create the storage location for.</param>
         /// <param name="partition">The partition where the study is being sent to</param>
         /// <returns>A <see cref="StudyStorageLocation"/> instance.</returns>
-        static public StudyStorageLocation GetWritableStudyStorageLocation(DicomMessageBase message, ServerPartition partition)
+		static public StudyStorageLocation GetWritableStudyStorageLocation(DicomMessageBase message, ServerPartition partition)
         {
-            String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-            String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, "");
+        	String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
+        	String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, "");
 
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-            	StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(updateContext,partition.Key,studyInstanceUid, true, out location))
-                {
-                    StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
-                    if (storage != null)
-                    {
-                        Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
-                        return null;
-                    }
+        	StudyStorageLocation location;
+        	if (
+        		!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, true, out location))
+        	{
+        		using (
+        			IUpdateContext updateContext =
+        				PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+        		{
+        			StudyStorage storage = StudyStorage.Load(updateContext, partition.Key, studyInstanceUid);
+        			if (storage != null)
+        			{
+        				Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
+        				return null;
+        			}
 
-					FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
-					ServerFilesystemInfo filesystem = selector.SelectFilesystem(message);
-					if (filesystem == null)
-					{
-						throw new NoWritableFilesystemException();
-					}
+        			FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
+        			ServerFilesystemInfo filesystem = selector.SelectFilesystem(message);
+        			if (filesystem == null)
+        			{
+        				throw new NoWritableFilesystemException();
+        			}
 
-                    IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
-                    InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-                    insertParms.ServerPartitionKey = partition.GetKey();
-                    insertParms.StudyInstanceUid = studyInstanceUid;
-                    
-                    insertParms.Folder = ResolveStorageFolder(partition, studyInstanceUid, studyDate, updateContext, false /* set to false for optimization because we are sure it's not in the system */);
-                    insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
-                    insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+        			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
+        			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
+        			insertParms.ServerPartitionKey = partition.GetKey();
+        			insertParms.StudyInstanceUid = studyInstanceUid;
 
-                    if (message.TransferSyntax.LosslessCompressed)
-                    {
-                        insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
-                        insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-                    }
-                    else if (message.TransferSyntax.LossyCompressed)
-                    {
-                        insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
-                        insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-                    }
-                    else
-                    {
-                        insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-                        insertParms.StudyStatusEnum = StudyStatusEnum.Online;
-                    }
+        			insertParms.Folder =
+        				ResolveStorageFolder(partition, studyInstanceUid, studyDate, updateContext, false
+        					/* set to false for optimization because we are sure it's not in the system */);
+        			insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
+        			insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
-                    location = locInsert.FindOne(insertParms);
+        			if (message.TransferSyntax.LosslessCompressed)
+        			{
+        				insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
+        				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+        			}
+        			else if (message.TransferSyntax.LossyCompressed)
+        			{
+        				insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
+        				insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+        			}
+        			else
+        			{
+        				insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+        				insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+        			}
 
-                    updateContext.Commit();
-                }
+        			location = locInsert.FindOne(insertParms);
 
-                //TODO:  Do we need to do something to identify a primary storage location?
-                // Also, should the above check for writeable location check the other availab
-                return location;
-            }
+        			updateContext.Commit();
+        		}
+        	}
+
+        	return location;
         }
 
-        /// <summary>
+    	/// <summary>
         /// Insert a request to restore the specified <seealso cref="StudyStorage"/>
         /// </summary>
         /// <param name="storage"></param>

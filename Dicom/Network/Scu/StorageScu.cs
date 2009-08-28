@@ -639,10 +639,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 				// Now add the preferred syntaxes, if its been set.
 				if (_preferredSyntaxes != null)
 				{
-					if (_preferredSyntaxes.ContainsKey(sendStruct.SopClass.Uid))
+					TransferSyntax syntax;
+					if (_preferredSyntaxes.TryGetValue(sendStruct.SopClass.Uid, out syntax))
 					{
-						TransferSyntax syntax = _preferredSyntaxes[sendStruct.SopClass.Uid];
-
 						byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
 						                                                                            syntax);
 

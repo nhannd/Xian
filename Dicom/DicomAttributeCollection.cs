@@ -488,9 +488,9 @@ namespace ClearCanvas.Dicom
             {
                 if (value == null)
                 {
-                    if (_attributeList.ContainsKey(tag.TagValue))
+                	DicomAttribute attr;
+                    if (_attributeList.TryGetValue(tag.TagValue, out attr))
                     {
-                        DicomAttribute attr = _attributeList[tag.TagValue];
                         attr.ParentCollection = null;
                         _attributeList.Remove(tag.TagValue);
                     }
@@ -1030,11 +1030,12 @@ namespace ClearCanvas.Dicom
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
                         if ((dfa.Tag.TagValue >= StartTagValue) && (dfa.Tag.TagValue <= EndTagValue))
                         {
-                            if (Contains(dfa.Tag))
+							DicomAttribute elem;
+                            if (TryGetAttribute(dfa.Tag, out elem))
                             {
-                                DicomAttribute elem = this[dfa.Tag];
-                                if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) &&
-                                    dfa.DefaultValue == DicomFieldDefault.None)
+                                if (dfa.DefaultValue == DicomFieldDefault.None 
+									&& dfa.UseDefaultForZeroLength 
+									&& (elem.StreamLength == 0 ) )
                                 {
                                     // do nothing
                                 }
@@ -1062,10 +1063,12 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)property.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        if (Contains(dfa.Tag))
+                    	DicomAttribute elem;
+                        if (TryGetAttribute(dfa.Tag, out elem))
                         {
-                            DicomAttribute elem = this[dfa.Tag];
-                            if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) && dfa.DefaultValue == DicomFieldDefault.None)
+                            if (dfa.DefaultValue == DicomFieldDefault.None
+								&& dfa.UseDefaultForZeroLength 
+								&& (elem.StreamLength == 0) )
                             {
                                 // do nothing
                             }

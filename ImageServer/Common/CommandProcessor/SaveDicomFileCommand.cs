@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
                 _saveSpeed.Start();
 				_file.Save(stream, DicomWriteOptions.Default);
-				//TODO: We flush in most other places, should we do it here?
+				stream.Flush();
 				stream.Close();
                 _saveSpeed.End();
 

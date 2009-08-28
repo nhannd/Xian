@@ -91,7 +91,6 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Private Members
-        private readonly uint _tag;
         private readonly string _name;
         private readonly string _varName;
         private readonly DicomVr _vr;
@@ -123,7 +122,7 @@ namespace ClearCanvas.Dicom
         /// <param name="isRetired"></param>
         public DicomTag(uint tag, String name, String varName, DicomVr vr, bool isMultiVrTag, uint vmLow, uint vmHigh, bool isRetired)
         {
-            _tag = tag;
+            TagValue = tag;
             _name = name;
             _varName = varName;
             _vr = vr;
@@ -135,7 +134,7 @@ namespace ClearCanvas.Dicom
 
         private DicomTag(uint tag, String name)
         {
-            _tag = tag;
+			TagValue = tag;
             _name = name;
             _vr = DicomVr.UNvr;
             _multiVrTag = false;
@@ -152,7 +151,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort Group
         {
-            get { return ((ushort)((_tag & 0xffff0000) >> 16)); }
+			get { return ((ushort)((TagValue & 0xffff0000) >> 16)); }
         }
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public ushort Element
         {
-            get { return ((ushort)(_tag & 0x0000ffff)); }
+			get { return ((ushort)(TagValue & 0x0000ffff)); }
         }
 
         /// <summary>
@@ -234,13 +233,16 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        /// <summary>
-        /// Returns a uint DICOM Tag value for the object.
-        /// </summary>
-        public uint TagValue
-        {
-            get { return _tag; }
-        }
+    	/// <summary>
+    	/// Returns a uint DICOM Tag value for the object.
+    	/// </summary>
+    	/// <remarks>
+		/// This was explicitly changed to a readonly member variable
+		/// from a property as a performance improvement.  This value
+		/// is referenced frequently and the change results in a small
+		/// performance improvement.  
+		/// </remarks>
+    	public readonly uint TagValue;
 
         /// <summary>
         /// Returns a string with the tag value in Hex
@@ -249,7 +251,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                return _tag.ToString("X8");
+				return TagValue.ToString("X8");
             }
         }
 
@@ -270,7 +272,7 @@ namespace ClearCanvas.Dicom
         /// <returns>The Group and Element number as a 32-bit integer.</returns>
         public override int GetHashCode()
         {
-            return ((int)_tag);
+			return ((int)TagValue);
         }
 
         /// <summary>

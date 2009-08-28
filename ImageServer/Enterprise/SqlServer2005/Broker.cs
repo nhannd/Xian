@@ -331,10 +331,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (columnName.Equals(entity.Name) && columnName.Contains("Enum"))
                     columnName = "Enum";
 
-				if (!propMap.ContainsKey(columnName))
+            	PropertyInfo prop;
+				
+				if (!propMap.TryGetValue(columnName, out prop))
 					throw new EntityNotFoundException("Unable to match column to property: " + columnName, null);
-
-				PropertyInfo prop = propMap[columnName];
 
 				if (columnName.Contains("GUID"))
                     columnName = columnName.Replace("GUID", "Key");
@@ -345,23 +345,29 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     continue;
                 }
 
-                if (prop.PropertyType == typeof(String))
+            	Type propType = prop.PropertyType;
+				if (propType == typeof(String))
 					prop.SetValue(entity, reader.GetString(i), null);
-                else if (prop.PropertyType == typeof(Int32))
-					prop.SetValue(entity, reader.GetInt32(i), null);
-                else if (prop.PropertyType == typeof(Int16))
-					prop.SetValue(entity, reader.GetInt16(i), null);
-                else if (prop.PropertyType == typeof(double))
-					prop.SetValue(entity, reader.GetDouble(i), null);
-                else if (prop.PropertyType == typeof(Decimal))
-					prop.SetValue(entity, reader.GetDecimal(i), null);
-                else if (prop.PropertyType == typeof(float))
-					prop.SetValue(entity, reader.GetFloat(i), null);
-                else if (prop.PropertyType == typeof(DateTime))
+				else if (propType == typeof(ServerEntityKey))
+				{
+					Guid uid = reader.GetGuid(i);
+					prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", String.Empty), uid), null);
+				}
+				else if (propType == typeof(DateTime))
 					prop.SetValue(entity, reader.GetDateTime(i), null);
-                else if (prop.PropertyType == typeof(bool))
+				else if (propType == typeof(bool))
 					prop.SetValue(entity, reader.GetBoolean(i), null);
-                else if (prop.PropertyType == typeof(XmlDocument))
+				else if (propType == typeof(Int32))
+					prop.SetValue(entity, reader.GetInt32(i), null);
+				else if (propType == typeof(Int16))
+					prop.SetValue(entity, reader.GetInt16(i), null);
+				else if (propType == typeof(double))
+					prop.SetValue(entity, reader.GetDouble(i), null);
+				else if (propType == typeof(Decimal))
+					prop.SetValue(entity, reader.GetDecimal(i), null);
+				else if (propType == typeof(float))
+					prop.SetValue(entity, reader.GetFloat(i), null);
+				else if (propType == typeof(XmlDocument))
                 {
                     SqlXml xml = reader.GetSqlXml(i);
                     if (xml!=null && !xml.IsNull && !String.IsNullOrEmpty(xml.Value))
@@ -375,12 +381,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 						prop.SetValue(entity, null, null);
                     }
                 }
-                else if (prop.PropertyType == typeof(ServerEntityKey))
-                {
-                    Guid uid = reader.GetGuid(i);
-					prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid), null);
-                }
-                else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
+				else if (typeof(ServerEnum).IsAssignableFrom(propType))
                 {
                     short enumVal = reader.GetInt16(i);
                     ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
@@ -389,7 +390,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 					prop.SetValue(entity, val, null);
                 }
                 else
-                    throw new EntityNotFoundException("Unsupported property type: " + prop.PropertyType, null);
+					throw new EntityNotFoundException("Unsupported property type: " + propType, null);
             }
         }
     }

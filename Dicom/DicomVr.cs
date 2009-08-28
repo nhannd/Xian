@@ -43,16 +43,16 @@ namespace ClearCanvas.Dicom
         private delegate DicomAttribute CreateAttribute(DicomTag tag, ByteBuffer bb);
 
         #region Private Members
-        private String _name;
-        private bool _isText = false;
-        private bool _specificCharSet = false;
-        private bool _isMultiValue = false;
-        private uint _maxLength = 0;
-        private bool _is16BitLength = false;
-        private char _padChar = ' ';
-        private int _unitSize = 1;
-        private CreateAttribute _createDelegate;
-        private static IDictionary<String,DicomVr> _vrs = new Dictionary<String,DicomVr>();
+        private readonly String _name;
+        private readonly bool _isText = false;
+        private readonly bool _specificCharSet = false;
+        private readonly bool _isMultiValue = false;
+        private readonly uint _maxLength = 0;
+        private readonly bool _is16BitLength = false;
+        private readonly char _padChar = ' ';
+        private readonly int _unitSize = 1;
+        private readonly CreateAttribute _createDelegate;
+        private static readonly IDictionary<String,DicomVr> _vrs = new Dictionary<String,DicomVr>();
         #endregion
 
         #region Public Static Members
@@ -362,8 +362,7 @@ namespace ClearCanvas.Dicom
             });
 
         internal static readonly DicomVr NONE = new DicomVr("NONE", false, false, false, 1, false, '\0', 1,
-            delegate(DicomTag tag, ByteBuffer bb)
-            {
+            delegate {
                 return null;
             });
 
@@ -378,9 +377,10 @@ namespace ClearCanvas.Dicom
         /// <returns>A DicomVr instance for <paramref name="name"/>.</returns>
         public static DicomVr GetVR(String name)
         {
-            if (_vrs.ContainsKey(name))
-                return _vrs[name];
-            return UNvr;
+        	DicomVr theVr;
+            if (!_vrs.TryGetValue(name, out theVr))
+				return UNvr;
+        	return theVr;
         }
 
         public static IList<DicomVr> GetDicomVrList()

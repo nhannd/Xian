@@ -368,7 +368,7 @@ namespace ClearCanvas.ImageServer.Core
 				{
 					// Create a context for applying actions from the rules engine
 					ServerActionContext context =
-						new ServerActionContext(file, _context.StorageLocation.FilesystemKey, _context.Partition.Key, _context.StorageLocation.Key);
+						new ServerActionContext(file, _context.StorageLocation.FilesystemKey, _context.Partition, _context.StorageLocation.Key);
 					context.CommandProcessor = processor;
 
 					_context.SopCompressionRulesEngine.Execute(context);

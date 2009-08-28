@@ -225,25 +225,26 @@ namespace ClearCanvas.Dicom.IO
                 else
                 {
                     DicomAttribute de = item;
-
+                	ByteBuffer theData = de.GetByteBuffer(_syntax, dataset.SpecificCharacterSet);
                     if (_syntax.ExplicitVr)
                     {
                         if (de.Tag.VR.Is16BitLengthField)
                         {
-                            _writer.Write((ushort)de.StreamLength);
+							_writer.Write((ushort)theData.Length);
                         }
                         else
                         {
                             _writer.Write((ushort)0x0000);
-                            _writer.Write((uint)de.StreamLength);
+                            _writer.Write((uint)theData.Length);
                         }
                     }
                     else
                     {
-                        _writer.Write((uint)de.StreamLength);
+						_writer.Write((uint)theData.Length);
                     }
 
-                    de.GetByteBuffer(_syntax, dataset.SpecificCharacterSet).CopyTo(_writer);
+					if (theData.Length > 0)
+						theData.CopyTo(_writer);
                 }
             }
 

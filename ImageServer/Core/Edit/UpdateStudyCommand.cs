@@ -572,7 +572,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 				if (_rulesEngine != null)
 				{
-					ServerActionContext context = new ServerActionContext(file, _oldStudyLocation.FilesystemKey, _partition.Key, _oldStudyLocation.Key);
+					ServerActionContext context = new ServerActionContext(file, _oldStudyLocation.FilesystemKey, _partition, _oldStudyLocation.Key);
 					context.CommandProcessor = filesystemUpdateProcessor;
 					_rulesEngine.Execute(context);
 				}

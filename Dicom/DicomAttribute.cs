@@ -73,8 +73,8 @@ namespace ClearCanvas.Dicom
     public abstract class DicomAttribute
     {
         #region Private Members
-        private DicomTag _tag;
-        private long _valueCount = 0;
+
+    	private long _valueCount = 0;
         private uint _length = 0;
         private DicomAttributeCollection _parentCollection = null;
         #endregion
@@ -125,7 +125,7 @@ namespace ClearCanvas.Dicom
             {
                 length += 4; // length tag				
             }
-            length += (uint)StreamLength;
+            length += StreamLength;
             if ((length & 0x00000001) != 0)
                 length++;
 
@@ -373,10 +373,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual UInt16 GetUInt16(int i, UInt16 defaultVal)
         {
-            UInt16 value;
-            try
+        	try
             {
-                bool ok = TryGetUInt16(i, out value);
+            	UInt16 value;
+            	bool ok = TryGetUInt16(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -395,10 +395,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual UInt32 GetUInt32(int i, UInt32 defaultVal)
         {
-            UInt32 value;
-            try
+        	try
             {
-                bool ok = TryGetUInt32(i, out value);
+            	UInt32 value;
+            	bool ok = TryGetUInt32(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -417,10 +417,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual UInt64 GetUInt64(int i, UInt64 defaultVal)
         {
-            UInt64 value;
-            try
+        	try
             {
-                bool ok = TryGetUInt64(i, out value);
+            	UInt64 value;
+            	bool ok = TryGetUInt64(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -461,10 +461,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual Int32 GetInt32(int i, Int32 defaultVal)
         {
-            Int32 value;
-            try
+        	try
             {
-                bool ok = TryGetInt32(i, out value);
+            	Int32 value;
+            	bool ok = TryGetInt32(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -483,10 +483,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual Int64 GetInt64(int i, Int64 defaultVal)
         {
-            Int64 value;
-            try
+        	try
             {
-                bool ok = TryGetInt64(i, out value);
+            	Int64 value;
+            	bool ok = TryGetInt64(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -505,10 +505,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual float GetFloat32(int i, float defaultVal)
         {
-            float value;
-            try
+        	try
             {
-                bool ok = TryGetFloat32(i, out value);
+            	float value;
+            	bool ok = TryGetFloat32(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -541,10 +541,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual String GetString(int i, String defaultVal)
         {
-            String value;
-            try
+        	try
             {
-                bool ok = TryGetString(i, out value);
+            	String value;
+            	bool ok = TryGetString(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -563,10 +563,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual DateTime GetDateTime(int i, DateTime defaultVal)
         {
-            DateTime value;
-            try
+        	try
             {
-                bool ok = TryGetDateTime(i, out value);
+            	DateTime value;
+            	bool ok = TryGetDateTime(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -602,10 +602,10 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public virtual DicomUid GetUid(int i, DicomUid defaultVal)
         {
-            DicomUid value;
-            try
+        	try
             {
-                bool ok = TryGetUid(i, out value);
+            	DicomUid value;
+            	bool ok = TryGetUid(i, out value);
                 if (!ok)
                     return defaultVal;
                 return value;
@@ -678,7 +678,7 @@ namespace ClearCanvas.Dicom
         /// <param name="tag">The DICOM tag associated with the attribute being created.</param>
         internal DicomAttribute(DicomTag tag)
         {
-            _tag = tag;
+			Tag = tag;
         }
 
         /// <summary>
@@ -687,7 +687,7 @@ namespace ClearCanvas.Dicom
         /// <param name="tag">The DICOM tag associated with the attribute being created.</param>
         internal DicomAttribute(uint tag)
         {
-            _tag = DicomTagDictionary.GetDicomTag(tag);
+			Tag = DicomTagDictionary.GetDicomTag(tag);
         }
 
         /// <summary>
@@ -696,7 +696,7 @@ namespace ClearCanvas.Dicom
         /// <param name="attrib">The attribute that is being copied.</param>
         internal DicomAttribute(DicomAttribute attrib)
         {
-            _tag = attrib.Tag;
+            Tag = attrib.Tag;
             _valueCount = attrib.Count;
             _length = attrib.StreamLength;
         }
@@ -705,19 +705,22 @@ namespace ClearCanvas.Dicom
 
         #region Public Properties
 
-        /// <summary>
-        /// Retrieve <see cref="Tag"/> instance for the attribute.
-        /// </summary>
-        public DicomTag Tag
-        {
-            get { return _tag; }
-        }
+    	/// <summary>
+    	/// Retrieve <see cref="Tag"/> instance for the attribute.
+    	/// </summary>
+    	/// <remarks>
+    	/// This was explicitly changed to a readonly member variable
+    	/// from a property as a performance improvement.  This value
+		/// is referenced frequently and the change results in a small
+		/// performance improvement.  
+		/// </remarks>
+    	public readonly DicomTag Tag;
 
         public string DicomTagDescription
         {
             get
             {
-                DicomTag dicomTag = DicomTagDictionary.GetDicomTag(_tag);
+                DicomTag dicomTag = DicomTagDictionary.GetDicomTag(Tag);
                 if (dicomTag != null)
                     return dicomTag.Name;
                 else
@@ -784,7 +787,7 @@ namespace ClearCanvas.Dicom
             {
                 if (Tag.VR.IsTextVR)
                 {
-                    String value = null;
+                    String value;
                     if (Tag.VR == DicomVr.UIvr)
                     {
                         DicomAttributeUI ui = this as DicomAttributeUI;
@@ -805,7 +808,7 @@ namespace ClearCanvas.Dicom
                         }
                         else
                         {
-                            value = "[" + this.ToString() + "]";
+                            value = "[" + ToString() + "]";
                             if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
                             {
                                 if (value.Length > ValueWidth)
@@ -817,7 +820,7 @@ namespace ClearCanvas.Dicom
                     }
                     else
                     {
-                        value = "[" + this.ToString() + "]";
+                        value = "[" + ToString() + "]";
                         if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
                         {
                             if (value.Length > ValueWidth)
@@ -830,7 +833,7 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
-                    String value = this.ToString();
+                    String value = ToString();
                     if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
                     {
                         if (value.Length > ValueWidth)

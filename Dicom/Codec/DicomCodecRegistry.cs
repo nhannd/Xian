@@ -118,10 +118,9 @@ namespace ClearCanvas.Dicom.Codec
         /// <returns>null if a codec has not been registered, an <see cref="IDicomCodec"/> instance otherwise.</returns>
         public static IDicomCodec GetCodec(TransferSyntax syntax)
         {
-            if (!_dictionary.ContainsKey(syntax))
+			IDicomCodecFactory factory;
+            if (!_dictionary.TryGetValue(syntax, out factory))
                 return null;
-
-            IDicomCodecFactory factory = _dictionary[syntax];
 
             return factory.GetDicomCodec();
         }
@@ -134,10 +133,9 @@ namespace ClearCanvas.Dicom.Codec
         /// <returns>null if no codec is registered, the parameters otherwise.</returns>
         public static DicomCodecParameters GetCodecParameters(TransferSyntax syntax, DicomAttributeCollection collection)
         {
-            if (!_dictionary.ContainsKey(syntax))
-                return null;
-
-            IDicomCodecFactory factory = _dictionary[syntax];
+			IDicomCodecFactory factory;
+			if (!_dictionary.TryGetValue(syntax, out factory))
+				return null;
 
             return factory.GetCodecParameters(collection);
         }
