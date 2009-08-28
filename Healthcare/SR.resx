@@ -246,12 +246,6 @@
   <data name="Location" xml:space="preserve">
     <value>Location</value>
   </data>
-  <data name="MessageDocumentationIncomplete" xml:space="preserve">
-    <value>Documentation is not completed.</value>
-  </data>
-  <data name="MessageNotAllProceduresComplete" xml:space="preserve">
-    <value>Not all ordered procedures have been completed.</value>
-  </data>
   <data name="MiddleName" xml:space="preserve">
     <value>Middle Name</value>
   </data>

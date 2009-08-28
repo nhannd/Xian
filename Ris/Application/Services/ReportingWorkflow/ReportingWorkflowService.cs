@@ -58,7 +58,22 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public GetDocumentationStatusResponse GetDocumentationStatus(GetDocumentationStatusRequest request)
         {
             Procedure procedure = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
-            return new GetDocumentationStatusResponse(procedure.IsNotReadyForReporting, procedure.NotReadyForReportingReason);
+
+            string message = "";
+            bool isIncomplete = false;
+
+            if (!procedure.Order.AreAllProceduresPerformed)
+            {
+                isIncomplete = true;
+                message = SR.MessageNotAllProceduresComplete;
+            }
+            else if (!procedure.IsDocumented)
+            {
+                isIncomplete = true;
+                message = SR.MessageDocumentationIncomplete;
+            }
+
+            return new GetDocumentationStatusResponse(isIncomplete, message);
         }
 
         [ReadOperation]

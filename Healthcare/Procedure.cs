@@ -185,39 +185,11 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
-        /// Gets a value indicating if the order associated to this procedure is ready for reporting.
+        /// Gets a value indicating whethe the documentation step for this procedure is complete.
         /// </summary>
-        /// <remarks>
-        /// The order would be considered not ready if not all of the procedures are complete, or if the documentatin step is 
-        /// incomplete.
-        /// </remarks>
-        public virtual bool IsNotReadyForReporting
+        public virtual bool IsDocumented
         {
-            get { return this.NotReadyForReportingReason != string.Empty; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating why the order associated to this procedure is not ready for reporting.
-        /// </summary>
-        /// <remarks>
-        /// The order would be considered not ready if not all of the procedures are complete, or if the documentatin step is 
-        /// incomplete.
-        /// </remarks>
-        public virtual string NotReadyForReportingReason
-        {
-            get
-            {
-            	string message = string.Empty;
-                if (!CollectionUtils.TrueForAll(this.Order.Procedures, delegate(Procedure p) { return p.IsPerformed; }))
-                {
-                    message = SR.MessageNotAllProceduresComplete;
-                }
-                else if (this.DocumentationProcedureStep.State != ActivityStatus.CM)
-                {
-                    message = SR.MessageDocumentationIncomplete;
-                }
-                return message;
-            }
+            get { return this.DocumentationProcedureStep.State == ActivityStatus.CM; }
         }
 
         #endregion

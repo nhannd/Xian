@@ -210,4 +210,10 @@
   <data name="ExceptionUserNotAuthorized" xml:space="preserve">
     <value>User not authorized.</value>
   </data>
+  <data name="MessageDocumentationIncomplete" xml:space="preserve">
+    <value>Documentation is not completed.</value>
+  </data>
+  <data name="MessageNotAllProceduresComplete" xml:space="preserve">
+    <value>Not all ordered procedures have been completed.</value>
+  </data>
 </root>

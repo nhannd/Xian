@@ -448,24 +448,6 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Documentation is not completed..
-        /// </summary>
-        internal static string MessageDocumentationIncomplete {
-            get {
-                return ResourceManager.GetString("MessageDocumentationIncomplete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Not all ordered procedures have been completed..
-        /// </summary>
-        internal static string MessageNotAllProceduresComplete {
-            get {
-                return ResourceManager.GetString("MessageNotAllProceduresComplete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Middle Name.
         /// </summary>
         internal static string MiddleName {
