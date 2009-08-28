@@ -44,6 +44,7 @@
 						'   </tr>'+
 						'	<tr>'+
 						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Original Copy: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="original"/></td>'+
+						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Status: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="status"/></td>'+
 						'	</tr>'+
 						'</table>';
 
@@ -53,13 +54,15 @@
 					{
 						Field.setValue($("fromNumber"), faxboxItem.SenderNumber);
 						Field.setValue($("toNumber"), faxboxItem.ReceivedAt.Number);
-						Field.setValue($("original"), "lol"); // TODO: Implement.
+						Field.setValue($("original"), "Not implemented yet."); // TODO: Implement.	
+						Field.setValue($("status"), faxboxItem.Status.Value); // TODO: Implement.	
 					}
 					else
 					{
 						Field.setValue($("fromNumber"), "Not found.");
 						Field.setValue($("toNumber"), "Not found.");
-						Field.setValue($("original"), "lol");
+						Field.setValue($("original"), "Not implemented yet.");
+						Field.setValue($("status"), "Not found.");
 					}
 				}
 				catch(e)
@@ -68,7 +71,6 @@
 					Field.setValue($("errorMsg"), message);
 				}
 		}
-
 
 		</script>
 	</head>
