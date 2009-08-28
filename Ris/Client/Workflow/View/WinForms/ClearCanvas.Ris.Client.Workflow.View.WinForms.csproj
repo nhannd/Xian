@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CancelOrderComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CancelOrderComponentControl.Designer.cs">
       <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
@@ -87,7 +86,6 @@
     </Compile>
     <Compile Include="DowntimeReportEntryComponentView.cs" />
     <Compile Include="Folders\FolderOptionComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentControl.Designer.cs">
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
@@ -100,14 +98,12 @@
     </Compile>
     <Compile Include="LinkProceduresComponentView.cs" />
     <Compile Include="OrderEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="OrderEditorComponentControl.Designer.cs">
       <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderEditorComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PerformedProcedureComponentControl.Designer.cs">
       <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
@@ -127,7 +123,6 @@
     </Compile>
     <Compile Include="ProtocolEditorComponentView.cs" />
     <Compile Include="ProtocollingComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ProtocollingComponentControl.Designer.cs">
       <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
@@ -146,7 +141,6 @@
     </Compile>
     <Compile Include="ReassignComponentView.cs" />
     <Compile Include="ReconciliationComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReconciliationComponentControl.Designer.cs">
       <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
@@ -178,7 +172,6 @@
     </Compile>
     <Compile Include="PerformingDocumentationComponentView.cs" />
     <Compile Include="PerformingDocumentationOrderDetailsComponentControl.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PerformingDocumentationOrderDetailsComponentControl.Designer.cs">
       <DependentUpon>PerformingDocumentationOrderDetailsComponentControl.cs</DependentUpon>

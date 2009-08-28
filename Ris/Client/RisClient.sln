@@ -1,23 +1,16 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{79A9A70A-9B7A-4088-AC39-3D6658A3C1A9}"
+	ProjectSection(SolutionItems) = preProject
+		RisClient_dist.proj = RisClient_dist.proj
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop", "..\..\Desktop\ClearCanvas.Desktop.csproj", "{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executable", "..\..\Desktop\Executable\ClearCanvas.Desktop.Executable.csproj", "{9CA6A6B8-2E7A-4D2C-AC35-D369F6B15AC8}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F} = {F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}
 		{FFB85377-995C-47A6-BF22-26D264CA3225} = {FFB85377-995C-47A6-BF22-26D264CA3225}
@@ -39,109 +32,36 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser", "..\..\Desktop\ExtensionBrowser\ClearCanvas.Desktop.ExtensionBrowser.csproj", "{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser.View.WinForms", "..\..\Desktop\ExtensionBrowser\View\WinForms\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.csproj", "{BA5FDA96-AFD6-4546-A294-24D6BC77E808}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.View.WinForms", "..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj", "{BB434EC3-A580-4744-A635-A2B4029C66DE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Admin", "Admin\ClearCanvas.Ris.Client.Admin.csproj", "{7CC7F1B8-2253-4C0D-A369-EC54B6CE7C32}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Admin.View.WinForms", "Admin\View\WinForms\ClearCanvas.Ris.Client.Admin.View.WinForms.csproj", "{B15108DE-ED83-4385-9E79-01D3DC8B0AE6}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client", "ClearCanvas.Ris.Client.csproj", "{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.View.WinForms", "View\WinForms\ClearCanvas.Ris.Client.View.WinForms.csproj", "{7932D8CA-34CF-47E6-A425-9B8DA4F60341}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Common", "..\Application\Common\ClearCanvas.Ris.Application.Common.csproj", "{09F49217-CD98-4773-8CFB-594F189EEE3B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configuration", "..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj", "{223DFDC9-B1F5-441D-B659-33F9E55E74A5}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configuration.View.WinForms", "..\..\Desktop\Configuration\View\WinForms\ClearCanvas.Desktop.Configuration.View.WinForms.csproj", "{1AC0E6EC-4E65-4B90-936B-7174B870A30F}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{79A9A70A-9B7A-4088-AC39-3D6658A3C1A9}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(SolutionItems) = preProject
-		RisClient_dist.proj = RisClient_dist.proj
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Help", "..\..\Desktop\Help\ClearCanvas.Desktop.Help.csproj", "{AA917C1F-958A-4626-9A72-D41DFE07B816}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Workflow", "Workflow\ClearCanvas.Ris.Client.Workflow.csproj", "{FFB85377-995C-47A6-BF22-26D264CA3225}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Workflow.View.WinForms", "Workflow\View\WinForms\ClearCanvas.Ris.Client.Workflow.View.WinForms.csproj", "{125E2EC0-6D49-492D-BE66-4B75FE7A1590}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Desktop", "..\..\Enterprise\Desktop\ClearCanvas.Enterprise.Desktop.csproj", "{CBD5EBD0-7AE9-4824-AE8C-4888983E1B5B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Desktop.View.WinForms", "..\..\Enterprise\Desktop\View\WinForms\ClearCanvas.Enterprise.Desktop.View.WinForms.csproj", "{07EC98A9-D510-47DB-B0CE-63C05EB351E0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

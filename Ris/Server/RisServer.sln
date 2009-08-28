@@ -1,6 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE365C28-1573-42BB-866E-0CA92A3ACE93}"
+	ProjectSection(SolutionItems) = preProject
+		RisServer_dist.proj = RisServer_dist.proj
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare", "..\..\Healthcare\ClearCanvas.Healthcare.csproj", "{748C08F1-FD6E-49F6-90BB-90C3A323C714}"
@@ -54,11 +59,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Common", "..\Application\Common\ClearCanvas.Ris.Application.Common.csproj", "{09F49217-CD98-4773-8CFB-594F189EEE3B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Services", "..\Application\Services\ClearCanvas.Ris.Application.Services.csproj", "{11548867-F0DC-4142-82E8-59EBC36B8980}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE365C28-1573-42BB-866E-0CA92A3ACE93}"
-	ProjectSection(SolutionItems) = preProject
-		RisServer_dist.proj = RisServer_dist.proj
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
 EndProject
