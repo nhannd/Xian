@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -73,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Services
             protected override void RemoveItem(OrderAttachment domainItem, ICollection<OrderAttachment> domainList)
             {
                 domainList.Remove(domainItem);
-				domainItem.Document.Detach();
+                domainItem.Document.Detach();
             }
         }
 
@@ -91,6 +92,7 @@ namespace ClearCanvas.Ris.Application.Services
             return new OrderAttachmentSummary(
                 EnumUtils.GetEnumValueInfo(attachment.Category),
                 staffAssembler.CreateStaffSummary(attachment.AttachedBy, context),
+                attachment.AttachedTime,
                 attachedDocAssembler.CreateAttachedDocumentSummary(attachment.Document));
         }
 
@@ -99,6 +101,7 @@ namespace ClearCanvas.Ris.Application.Services
             return new OrderAttachment(
                 EnumUtils.GetEnumValue<OrderAttachmentCategoryEnum>(summary.Category, context),
                 summary.AttachedBy == null ? currentUserStaff : context.Load<Staff>(summary.AttachedBy.StaffRef),
+                Platform.Time,
                 context.Load<AttachedDocument>(summary.Document.DocumentRef));
         }
 

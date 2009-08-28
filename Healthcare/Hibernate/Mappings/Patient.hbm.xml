@@ -19,6 +19,7 @@
       <composite-element class="PatientAttachment">
         <many-to-one name="Category" column="Category_" class="PatientAttachmentCategoryEnum"/>
         <many-to-one name="AttachedBy" column="AttachedByStaffOID_" class="Staff" not-null="true" fetch="join"/>
+        <property name="AttachedTime" column="AttachedTime_" type="DateTime" not-null="true"/>
         <many-to-one name="Document" column="AttachedDocumentOID_" class="AttachedDocument" not-null="true" cascade="all" fetch="join"/>
       </composite-element>
     </idbag>

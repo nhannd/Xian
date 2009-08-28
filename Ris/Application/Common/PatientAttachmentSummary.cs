@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -36,8 +37,8 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class PatientAttachmentSummary : AttachmentSummary
 	{
-		public PatientAttachmentSummary(EnumValueInfo category, StaffSummary attachedBy, AttachedDocumentSummary document)
-			: base(category, attachedBy, document)
+		public PatientAttachmentSummary(EnumValueInfo category, StaffSummary attachedBy, DateTime attachedTime, AttachedDocumentSummary document)
+			: base(category, attachedBy, attachedTime, document)
 		{
 		}
 	}

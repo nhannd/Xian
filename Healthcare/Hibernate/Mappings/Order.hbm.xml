@@ -17,11 +17,11 @@
 
 		<!-- Time that the order was entered -->
 		<property name="EnteredTime" column="EnteredTime_" type="DateTime" not-null="true"/>
-    <many-to-one name="EnteredBy" class="Staff" column="EnteredByOID_"/>
-    <!-- If entered by HL7, this field could be using to capture the name of the person who ordered it -->
-    <property name="EnteredComment" column="EnteredComment_" type="String"/>
+		<many-to-one name="EnteredBy" class="Staff" column="EnteredByOID_"/>
+		<!-- If entered by HL7, this field could be using to capture the name of the person who ordered it -->
+		<property name="EnteredComment" column="EnteredComment_" type="String"/>
 
-    <!-- Time that the order should ideally be scheduled at -->
+		<!-- Time that the order should ideally be scheduled at -->
 		<property name="SchedulingRequestTime" column="SchedulingRequestTime_" type="DateTime" not-null="false"/>
 
 		<!-- Time the order is scheduled to start, if known -->
@@ -59,9 +59,10 @@
 			<key column="OrderOID_"/>
 			<composite-element class="OrderAttachment">
 				<many-to-one name="Category" column="Category_" class="OrderAttachmentCategoryEnum"/>
-        <many-to-one name="AttachedBy" column="AttachedByStaffOID_" class="Staff" not-null="true" fetch="join"/>
+				<many-to-one name="AttachedBy" column="AttachedByStaffOID_" class="Staff" not-null="true" fetch="join"/>
+				<property name="AttachedTime" column="AttachedTime_" type="DateTime" not-null="true"/>
 
-        <!-- this is supposed to be an one-to-one mapping with document, but unique="true is currently not supported with value member"  -->
+				<!-- this is supposed to be an one-to-one mapping with document, but unique="true is currently not supported with value member"  -->
 				<many-to-one name="Document" column="AttachedDocumentOID_" class="AttachedDocument" not-null="true" cascade="all" fetch="join"/>
 			</composite-element>
 		</idbag>
@@ -70,16 +71,16 @@
 		<property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="400"/>
 		<property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 		<property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
-    
-    <!-- Information about why the order was cancelled, populated if the order status is CA, DC, or RP -->
-    <component name="CancelInfo" class="OrderCancelInfo" access="nosetter.camelcase-underscore">
-      <many-to-one name="Reason" class="OrderCancelReasonEnum" column="CancelReason_"/>
-      <many-to-one name="CancelledBy" class="Staff" column="CancelledByOID_"/>
-      <!-- If cancelled by HL7, this field could be using to capture the name of the person who cancelled it -->
-      <property name="Comment" column="CancelComment_" type="String"/>
-      <!-- Link to the replacment order, if the order was replaced -->
-      <many-to-one name="ReplacementOrder" class="Order" column="ReplacementOrderOID_"/>
-    </component>
+
+		<!-- Information about why the order was cancelled, populated if the order status is CA, DC, or RP -->
+		<component name="CancelInfo" class="OrderCancelInfo" access="nosetter.camelcase-underscore">
+			<many-to-one name="Reason" class="OrderCancelReasonEnum" column="CancelReason_"/>
+			<many-to-one name="CancelledBy" class="Staff" column="CancelledByOID_"/>
+			<!-- If cancelled by HL7, this field could be using to capture the name of the person who cancelled it -->
+			<property name="Comment" column="CancelComment_" type="String"/>
+			<!-- Link to the replacment order, if the order was replaced -->
+			<many-to-one name="ReplacementOrder" class="Order" column="ReplacementOrderOID_"/>
+		</component>
 
 		<map name="ExtendedProperties" lazy="true" table="OrderExtendedProperty_">
 			<key column="OrderOID_"/>
