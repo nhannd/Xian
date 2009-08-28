@@ -31,7 +31,6 @@
 
 using System;
 using System.IO;
-using System.Threading;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
@@ -42,8 +41,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         private string _serverAE;
 
         #region PERFORMANCE TESTING STUFF
-        private readonly DicomPixelData _testCompressedImage;
-        private readonly DicomPixelData _testUncompressedImage;
+        private static DicomPixelData _testCompressedImage;
+        private static DicomPixelData _testUncompressedImage;
         #endregion
 
         public ImageStreamingContext()
