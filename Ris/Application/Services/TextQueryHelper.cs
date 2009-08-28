@@ -73,7 +73,17 @@ namespace ClearCanvas.Ris.Application.Services
             return ParseTerms(query, termDefinition);
         }
 
-        public static string[] ParseTerms(string query)
+		public static string[] ParsePhoneNumbers(string query)
+		{
+			// define a phone number as anything containing only one or more digits
+			Regex termDefinition = new Regex(@"\b\d+\b");
+
+			string queryWithTelephoneFormattersRemoved = query.Replace("(", "").Replace(")", "").Replace("-", "");
+
+			return ParseTerms(queryWithTelephoneFormattersRemoved, termDefinition);
+		}
+
+		public static string[] ParseTerms(string query)
         {
             Regex termDefinition = new Regex(@"\w+");
             return ParseTerms(query, termDefinition);

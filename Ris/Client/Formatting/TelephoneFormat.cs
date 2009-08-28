@@ -76,6 +76,15 @@ namespace ClearCanvas.Ris.Client.Formatting
             return result.Trim();
         }
 
+		/// <summary>
+		/// Formats a string telephone number to the default format string.
+		/// </summary>
+		public static string Format(string number)
+		{
+			return Format(number, TextFieldMasks.TelephoneNumberFullMask);
+		}
+
+
         /// <summary>
         /// Formats a string telephone number to the specified format string.
         /// </summary>
