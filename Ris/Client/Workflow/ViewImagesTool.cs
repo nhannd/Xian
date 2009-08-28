@@ -94,6 +94,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 					this.Enabled = DetermineEnablement();
 				};
 			}
+            else if (this.ContextBase is IPerformingWorkflowItemToolContext)
+            {
+                ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
+                {
+                    this.Enabled = DetermineEnablement();
+                };
+            }
 		}
 
 		public bool Visible
@@ -126,7 +133,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				return (((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems != null
 					&& ((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems.Count == 1);
-			}
+            }
+            else if (this.ContextBase is IPerformingWorkflowItemToolContext)
+            {
+                return (((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+                    && ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+            }
 			return false;
 		}
 
@@ -175,6 +187,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				IOrderNoteboxItemToolContext context = (IOrderNoteboxItemToolContext)this.ContextBase;
 				OpenViewer((OrderNoteboxItemSummary)context.Selection.Item, context.DesktopWindow);
+			}
+            else if (this.ContextBase is IPerformingWorkflowItemToolContext)
+			{
+                IPerformingWorkflowItemToolContext context = (IPerformingWorkflowItemToolContext)this.ContextBase;
+                OpenViewer((WorklistItemSummaryBase)context.Selection.Item, context.DesktopWindow);
 			}
 		}
 
