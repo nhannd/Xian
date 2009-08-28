@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="libijg8"
 	ProjectGUID="{A0385D99-56DF-45BB-9DB2-1E170B219F5E}"
 	RootNamespace="libijg8"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

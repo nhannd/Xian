@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2719FA07-F89A-4FE1-A497-5FA4CDD08956}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
@@ -10,6 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearCanvas.ImageServer.Web.Application</RootNamespace>
     <AssemblyName>ClearCanvas.ImageServer.Web.Application.Assembly</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -294,7 +299,6 @@
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.cs">
       <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.designer.cs">
       <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
@@ -322,7 +326,6 @@
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
@@ -396,7 +399,6 @@
     </Compile>
     <Compile Include="Pages\Studies\MoveSeries\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\MoveSeries\MovePanel.ascx.designer.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
@@ -491,7 +493,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.cs">
       <DependentUpon>AlertsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.designer.cs">
       <DependentUpon>AlertsPanel.ascx</DependentUpon>
@@ -533,7 +534,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.designer.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
@@ -638,7 +638,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx.cs">
       <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx.designer.cs">
       <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
@@ -673,7 +672,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\DevicePanel.ascx.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\Devices\DevicePanel.ascx.designer.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
@@ -701,7 +699,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx.designer.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
@@ -729,7 +726,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
@@ -757,7 +753,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx.designer.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
@@ -790,7 +785,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
@@ -853,7 +847,6 @@
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -889,7 +882,6 @@
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -910,7 +902,6 @@
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -966,7 +957,6 @@
     </Compile>
     <Compile Include="Pages\Studies\Move\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\Move\MovePanel.ascx.designer.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
@@ -980,7 +970,6 @@
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1191,7 +1180,6 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
@@ -1212,7 +1200,6 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1803,7 +1790,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v8.0\WebApplications\Microsoft.WebApplication.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -1821,6 +1808,10 @@
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>http://localhost/ClearCanvas.ImageServer.Web.Application</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
