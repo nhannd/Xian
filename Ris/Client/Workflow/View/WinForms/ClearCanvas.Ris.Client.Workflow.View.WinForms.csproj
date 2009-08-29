@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{125E2EC0-6D49-492D-BE66-4B75FE7A1590}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -56,60 +56,70 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CancelOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CancelOrderComponentControl.Designer.cs">
       <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CancelOrderComponentView.cs" />
     <Compile Include="CheckInOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CheckInOrderComponentControl.Designer.cs">
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckInOrderComponentView.cs" />
     <Compile Include="DicomSeriesEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomSeriesEditorComponentControl.Designer.cs">
       <DependentUpon>DicomSeriesEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomSeriesEditorComponentView.cs" />
     <Compile Include="DowntimePrintFormsComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DowntimePrintFormsComponentControl.Designer.cs">
       <DependentUpon>DowntimePrintFormsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DowntimePrintFormsComponentView.cs" />
     <Compile Include="DowntimeReportEntryComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DowntimeReportEntryComponentControl.Designer.cs">
       <DependentUpon>DowntimeReportEntryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DowntimeReportEntryComponentView.cs" />
     <Compile Include="Folders\FolderOptionComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentControl.Designer.cs">
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentView.cs" />
     <Compile Include="LinkProceduresComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LinkProceduresComponentControl.Designer.cs">
       <DependentUpon>LinkProceduresComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="LinkProceduresComponentView.cs" />
     <Compile Include="OrderEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="OrderEditorComponentControl.Designer.cs">
       <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderEditorComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PerformedProcedureComponentControl.Designer.cs">
       <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PerformedProcedureComponentView.cs" />
     <Compile Include="PriorReportComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PriorReportComponentControl.Designer.cs">
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
@@ -117,36 +127,42 @@
     <Compile Include="PriorReportComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ProtocolEditorComponentControl.Designer.cs">
       <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocolEditorComponentView.cs" />
     <Compile Include="ProtocollingComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ProtocollingComponentControl.Designer.cs">
       <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocollingComponentView.cs" />
     <Compile Include="ReasonSelectionComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReasonSelectionComponentControl.Designer.cs">
       <DependentUpon>ReasonSelectionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReasonSelectionComponentView.cs" />
     <Compile Include="ReassignComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReassignComponentControl.Designer.cs">
       <DependentUpon>ReassignComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReassignComponentView.cs" />
     <Compile Include="ReconciliationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReconciliationComponentControl.Designer.cs">
       <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReconciliationComponentView.cs" />
     <Compile Include="ReconciliationConfirmComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReconciliationConfirmComponentControl.Designer.cs">
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
@@ -155,6 +171,7 @@
     <Compile Include="ReportEditorComponentView.cs" />
     <Compile Include="ReportEditorComponentViewBase.cs" />
     <Compile Include="ReportingComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReportingComponentControl.Designer.cs">
       <DependentUpon>ReportingComponentControl.cs</DependentUpon>
@@ -166,48 +183,56 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="PerformingDocumentationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PerformingDocumentationComponentControl.Designer.cs">
       <DependentUpon>PerformingDocumentationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PerformingDocumentationComponentView.cs" />
     <Compile Include="PerformingDocumentationOrderDetailsComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PerformingDocumentationOrderDetailsComponentControl.Designer.cs">
       <DependentUpon>PerformingDocumentationOrderDetailsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PerformingDocumentationOrderDetailsComponentView.cs" />
     <Compile Include="StaffSelectionComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="StaffSelectionComponentControl.Designer.cs">
       <DependentUpon>StaffSelectionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffSelectionComponentView.cs" />
     <Compile Include="TranscriptionComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TranscriptionComponentControl.Designer.cs">
       <DependentUpon>TranscriptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TranscriptionComponentView.cs" />
     <Compile Include="RichTextReportEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="RichTextReportEditorComponentControl.Designer.cs">
       <DependentUpon>RichTextReportEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="TranscriptionEditorComponentView.cs" />
     <Compile Include="VisitDetailsEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="VisitDetailsEditorComponentControl.Designer.cs">
       <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="VisitDetailsEditorComponentView.cs" />
     <Compile Include="VisitLocationsSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="VisitLocationsSummaryComponentControl.Designer.cs">
       <DependentUpon>VisitLocationsSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="VisitLocationsSummaryComponentView.cs" />
     <Compile Include="VisitPractitionersSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="VisitPractitionersSummaryComponentControl.Designer.cs">
       <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
