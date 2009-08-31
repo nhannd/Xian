@@ -219,10 +219,22 @@ namespace ClearCanvas.Ris.Client
 			_searchParams = searchParams;
 		}
 
+        public override void Start()
+        {
+            _keepOpen = SearchComponentSettings.Default.KeepSearchComponentOpen;
+
+            base.Start();
+        }
+
 		public bool KeepOpen
 		{
 			get { return _keepOpen; }
-			set { _keepOpen = value; }
+			set
+			{
+			    _keepOpen = value;
+                SearchComponentSettings.Default.KeepSearchComponentOpen = _keepOpen;
+                SearchComponentSettings.Default.Save();
+			}
 		}
 
 		public bool SearchEnabled
