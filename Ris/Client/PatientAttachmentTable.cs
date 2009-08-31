@@ -45,8 +45,8 @@ namespace ClearCanvas.Ris.Client
                 delegate(PatientAttachmentSummary summary) { return summary.Category.Value; }, 0.2f));
             this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>(SR.ColumnAttachedBy,
                 delegate(PatientAttachmentSummary summary) { return summary.AttachedBy == null ? "me" : PersonNameFormat.Format(summary.AttachedBy.Name); }, 0.2f));
-            this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>(SR.ColumnMetaData,
-                delegate(PatientAttachmentSummary summary) { return summary.Document.MetaDataSummary; }, 0.2f));
+            this.Columns.Add(new TableColumn<PatientAttachmentSummary, string>(SR.ColumnAttachmentType,
+                delegate(PatientAttachmentSummary summary) { return summary.Document.DocumentTypeName; }, 0.2f));
             
             // Sort the table by descending date initially
             int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<PatientAttachmentSummary> column)

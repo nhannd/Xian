@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityGroupEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AuthorityGroupEditorComponentControl.Designer.cs">
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
@@ -72,18 +73,21 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="SummaryComponentBaseControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SummaryComponentBaseControl.Designer.cs">
       <DependentUpon>SummaryComponentBaseControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SummaryComponentBaseView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UserEditorComponentControl.Designer.cs">
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserEditorComponentView.cs" />
     <Compile Include="UserSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UserSummaryComponentControl.designer.cs">
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>

@@ -20,8 +20,16 @@
 						return;
 
 					var document = Ris.getHealthcareContext();
-
 					var faxUrl = document ? Ris.getAttachedDocumentUrl(document) : "about:blank";
+
+					if(document.DocumentTypeName == "Fax")
+					{
+						Field.show($("faxPreviewInfo"), true);
+						Field.setValue($("senderName"), document.DocumentHeaders.SenderName);
+						Field.setValue($("senderNumber"), Ris.formatStringTelephone(document.DocumentHeaders.SenderNumber));
+						Field.setValue($("receivedAt"), document.DocumentHeaders.ReceivedAtName);
+						Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(document.DocumentHeaders.ReceivedAtNumber));
+					}
 					
 					var urlExtension = faxUrl.substring(faxUrl.length - 3, faxUrl.length).toLowerCase();;
 					if (urlExtension == "pdf")
@@ -46,6 +54,18 @@
 		</script>
 	</head>
 	<body onload="onBodyLoad()">
+		<div id="faxPreviewInfo">
+			<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">
+				<tr>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Sender: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="senderName"/></td>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Sender Number: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="senderNumber"/></td>
+				</tr>
+				<tr>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Received At: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="receivedAt"/></td>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Received At Number: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="receivedAtNumber"/></td>
+				</tr>
+			</table>
+		</div>
 	<div id="PdfButtons"></div>
 	<object id="PdfObject" type="application/pdf"></object>
 	<div id="errorMsg" />

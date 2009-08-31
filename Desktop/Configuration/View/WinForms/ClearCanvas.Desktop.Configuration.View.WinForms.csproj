@@ -64,12 +64,14 @@
     <Compile Include="DateFormatApplicationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SettingEditorComponentControl.Designer.cs">
       <DependentUpon>SettingEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SettingEditorComponentView.cs" />
     <Compile Include="SettingsManagementComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SettingsManagementComponentControl.Designer.cs">
       <DependentUpon>SettingsManagementComponentControl.cs</DependentUpon>

@@ -181,6 +181,11 @@ if(window.external)
 			return telephone ? window.external.FormatTelephone(JSML.create(telephone, "Telephone")) : "";
 		},
 		
+		formatStringTelephone: function(telephone)
+		{
+			return telephone ? window.external.FormatStringTelephone(telephone.toString()) : "";
+		},
+		
 		// obtains base URL from RIS application settings
 		getBaseUrl: function()
 		{

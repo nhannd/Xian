@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -50,8 +51,11 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string FileExtension;
 
-        [DataMember]
-        public string MetaDataSummary;
+		[DataMember]
+		public Dictionary<string, string> DocumentHeaders;
+
+		[DataMember]
+		public string DocumentTypeName;
 
         public AttachedDocumentSummary As<T>()
             where T : AttachedDocumentSummary
@@ -62,7 +66,8 @@ namespace ClearCanvas.Ris.Application.Common
             doc.CreationTime = this.CreationTime;
             doc.MimeType = this.MimeType;
             doc.FileExtension = this.FileExtension;
-            doc.MetaDataSummary = this.MetaDataSummary;
+        	doc.DocumentHeaders = this.DocumentHeaders;
+        	doc.DocumentTypeName = this.DocumentTypeName;
 
             return doc;
         }

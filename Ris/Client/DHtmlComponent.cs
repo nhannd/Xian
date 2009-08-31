@@ -249,7 +249,12 @@ namespace ClearCanvas.Ris.Client
                 return detail == null ? "" : TelephoneFormat.Format(detail);
             }
 
-            public JsmlServiceProxy GetServiceProxy(string serviceContractName)
+			public string FormatStringTelephone(string telephone)
+			{
+				return TelephoneFormat.Format(telephone, TextFieldMasks.TelephoneNumberFullMask);
+			}
+
+			public JsmlServiceProxy GetServiceProxy(string serviceContractName)
             {
                 return new JsmlServiceProxy(serviceContractName, WebServicesSettings.Default.UseJsmlShimService);
             }

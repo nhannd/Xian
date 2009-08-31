@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 
@@ -51,7 +52,8 @@ namespace ClearCanvas.Ris.Application.Services
             summary.CreationTime = doc.CreationTime;
             summary.MimeType = doc.MimeType;
             summary.FileExtension = doc.FileExtension;
-        	summary.MetaDataSummary = doc.MetaDataSummary;
+        	summary.DocumentHeaders = new Dictionary<string, string>(doc.DocumentHeaders);
+        	summary.DocumentTypeName = doc.DocumentTypeName;
         }
     }
 }

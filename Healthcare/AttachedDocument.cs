@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
@@ -40,9 +41,14 @@ namespace ClearCanvas.Healthcare {
 		/// <summary>
 		/// Summary of derived-class specific details of the attached document
 		/// </summary>
-		public virtual string MetaDataSummary
-		{
-			get { return string.Empty; }
-		}
+		public virtual IDictionary<string, string> DocumentHeaders
+    	{
+    		get { return null; }
+    	}
+
+    	public virtual string DocumentTypeName
+    	{
+			get { return "Attached Document"; }
+    	}
 	}
 }
