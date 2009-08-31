@@ -159,6 +159,18 @@ namespace ClearCanvas.Dicom
             return CreateFrom(file);
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="DicomPixelData"/> from specified stream
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns>
+        /// </returns>
+        public static DicomPixelData CreateFrom(Stream stream)
+        {
+            DicomFile file = new DicomFile();
+            file.Load(stream);
+            return CreateFrom(file);
+        }
 
         /// <summary>
         /// Creates an instance of <see cref="DicomPixelData"/> from specified dicom message
