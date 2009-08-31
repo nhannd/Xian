@@ -1737,12 +1737,12 @@
     <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
@@ -1761,7 +1761,7 @@
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Model\ClearCanvas.ImageServer.Model.csproj">
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
@@ -1771,17 +1771,17 @@
     <ProjectReference Include="..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Rules\JpegCodec\ClearCanvas.ImageServer.Rules.JpegCodec.csproj">
       <Project>{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}</Project>
       <Name>ClearCanvas.ImageServer.Rules.JpegCodec</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Rules\RleCodec\ClearCanvas.ImageServer.Rules.RleCodec.csproj">
       <Project>{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}</Project>
       <Name>ClearCanvas.ImageServer.Rules.RleCodec</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\Archiving\ClearCanvas.ImageServer.Services.Archiving.csproj">
       <Project>{90C91F02-8AD3-43D1-B8C3-C0469213E3E5}</Project>
@@ -1790,12 +1790,12 @@
     <ProjectReference Include="..\..\Services\Archiving\Hsm\ClearCanvas.ImageServer.Services.Archiving.Hsm.csproj">
       <Project>{BE27922C-C8D7-4190-8F24-5D7C1623CAFA}</Project>
       <Name>ClearCanvas.ImageServer.Services.Archiving.Hsm</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj">
       <Project>{6863F5CE-F1D3-46A7-915C-DE02D1452EED}</Project>
       <Name>ClearCanvas.ImageServer.Services.Common</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\WorkQueue\ClearCanvas.ImageServer.Services.WorkQueue.csproj">
       <Project>{65B9B08C-EAE4-4EE2-B164-905B03134443}</Project>
@@ -1820,7 +1820,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>4254</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
