@@ -11,7 +11,7 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error {
     
     
-    public partial class JavascriptRequired {
+    public partial class CookiesRequired {
         
         /// <summary>
         /// Label1 control.

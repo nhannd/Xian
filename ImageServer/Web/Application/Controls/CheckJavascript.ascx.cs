@@ -60,20 +60,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             get { return Request.Url.ToString(); }
         }
 
-        public string NonJSTargetURL
+        protected string NonJSTargetURL
         {
-            get { return (ViewState["NONJSURL"] != null) ? ViewState["NONJSURL"].ToString() : string.Empty; }
-            set
-            {
-                try
-                {
-                    ViewState["NONJSURL"] = ResolveServerUrl(value, false);
-                }
-                catch
-                {
-                    throw new ApplicationException("Invalid URL. '" + value + "'");
-                }
-            }
+            get { return ResolveServerUrl(ImageServerConstants.PageURLs.JavascriptErrorPage, false); }
         }
 
         protected override void OnInit(EventArgs e)
@@ -92,9 +81,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         protected string GetAppendedUrl(string newParam, string newParamValue)
         {
             string targeturl = string.Empty;
-            Uri url = (string.IsNullOrEmpty(ResolveUrl(NonJSTargetURL)))
-                          ? new Uri(ResolveUrl(JSTargetURL))
-                          : new Uri(ResolveUrl(NonJSTargetURL));
+            Uri url = (string.IsNullOrEmpty(NonJSTargetURL))
+                          ? new Uri(JSTargetURL)
+                          : new Uri(NonJSTargetURL);
             if (url == null)
                 url = Request.Url;
 

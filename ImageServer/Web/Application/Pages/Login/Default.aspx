@@ -16,7 +16,7 @@
     
     <form runat="server">
 
-    <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/JavascriptRequired.aspx" />            
+    <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" />            
 
     <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true">
