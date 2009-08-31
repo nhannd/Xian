@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (!procedure.Order.AreAllProceduresPerformed)
             {
                 isIncomplete = true;
-                message = SR.MessageNotAllProceduresComplete;
+                message = SR.MessageNotAllProceduresPerformed;
             }
             else if (!procedure.IsDocumented)
             {

@@ -340,11 +340,11 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not all ordered procedures have been completed..
+        ///   Looks up a localized string similar to Not all ordered procedures have been performed..
         /// </summary>
-        internal static string MessageNotAllProceduresComplete {
+        internal static string MessageNotAllProceduresPerformed {
             get {
-                return ResourceManager.GetString("MessageNotAllProceduresComplete", resourceCulture);
+                return ResourceManager.GetString("MessageNotAllProceduresPerformed", resourceCulture);
             }
         }
         

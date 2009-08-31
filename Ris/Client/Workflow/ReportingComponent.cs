@@ -1258,7 +1258,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ItemHasIncompleteDocumentation(item, out message))
 			{
 				ResetChildComponents();
-				return this.Host.ShowMessageBox(message + "\r\n" + SR.MessageReportAnyways, MessageBoxActions.YesNo) == DialogBoxAction.No;
+				DialogBoxAction dialogBoxAction = this.Host.ShowMessageBox(
+					string.Format("{0} [{1}] {2}", message, AccessionFormat.Format(item.AccessionNumber), SR.MessageReportAnyways), 
+					MessageBoxActions.YesNo);
+				return dialogBoxAction == DialogBoxAction.No;
 			}
 			else
 				return false;
