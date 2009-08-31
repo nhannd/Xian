@@ -22,21 +22,22 @@
 					var document = Ris.getHealthcareContext();
 					var faxUrl = document ? Ris.getAttachedDocumentUrl(document) : "about:blank";
 
-					if(document.DocumentTypeName == "Fax")
-					{
-						Field.show($("faxPreviewInfo"), true);
-						Field.setValue($("senderName"), document.DocumentHeaders.SenderName);
-						Field.setValue($("senderNumber"), Ris.formatStringTelephone(document.DocumentHeaders.SenderNumber));
-						Field.setValue($("receivedAt"), document.DocumentHeaders.ReceivedAtName);
-						Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(document.DocumentHeaders.ReceivedAtNumber));
-					}
-					
 					var urlExtension = faxUrl.substring(faxUrl.length - 3, faxUrl.length).toLowerCase();;
 					if (urlExtension == "pdf")
 					{
 						// show PDF in the embedded object.  Use exposed methods to hide toolbar
 						var pdfObject = PdfObject("PdfObject", faxUrl);
 						pdfObject.createToolbar("PdfButtons");
+
+						if(document.DocumentTypeName == "Fax")
+						{
+							Field.show($("faxPreviewInfo"), true);
+							Field.setValue($("senderName"), document.DocumentHeaders.SenderName);
+							Field.setValue($("senderNumber"), Ris.formatStringTelephone(document.DocumentHeaders.SenderNumber));
+							Field.setValue($("receivedAt"), document.DocumentHeaders.ReceivedAtName);
+							Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(document.DocumentHeaders.ReceivedAtNumber));
+						}
+
 					}
 					else
 					{
@@ -66,8 +67,8 @@
 				</tr>
 			</table>
 		</div>
-	<div id="PdfButtons"></div>
-	<object id="PdfObject" type="application/pdf"></object>
-	<div id="errorMsg" />
+		<div id="PdfButtons"></div>
+		<object id="PdfObject" type="application/pdf"></object>
+		<div id="errorMsg" />
 	</body>
 </html>
