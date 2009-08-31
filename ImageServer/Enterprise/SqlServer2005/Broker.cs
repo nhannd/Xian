@@ -370,11 +370,17 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 				else if (propType == typeof(XmlDocument))
                 {
                     SqlXml xml = reader.GetSqlXml(i);
-                    if (xml!=null && !xml.IsNull && !String.IsNullOrEmpty(xml.Value))
+                    if (xml!=null && !xml.IsNull)
                     {
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(xml.Value);
-						prop.SetValue(entity, xmlDoc, null);    
+                    	XmlReader xmlReader = xml.CreateReader();
+						if (xmlReader != null)
+						{
+							XmlDocument xmlDoc = new XmlDocument();
+							xmlDoc.Load(xmlReader);
+							prop.SetValue(entity, xmlDoc, null);
+						}
+						else
+							prop.SetValue(entity, null, null);
                     }
                     else
                     {
