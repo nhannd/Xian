@@ -36,340 +36,363 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("launch", "global-menus/MenuTools/Canned Text", "Launch")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal)]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class CannedTextTool : Tool<IDesktopToolContext>
-	{
-		private IShelf _shelf;
+    [MenuAction("launch", "global-menus/MenuTools/Canned Text", "Launch")]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group)]
+    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+    public class CannedTextTool : Tool<IDesktopToolContext>
+    {
+        private IShelf _shelf;
 
-		public void Launch()
-		{
-			try
-			{
-				if (_shelf == null)
-				{
-					CannedTextSummaryComponent component = new CannedTextSummaryComponent();
+        public void Launch()
+        {
+            try
+            {
+                if (_shelf == null)
+                {
+                    CannedTextSummaryComponent component = new CannedTextSummaryComponent();
 
-					_shelf = ApplicationComponent.LaunchAsShelf(
-						this.Context.DesktopWindow,
-						component,
-						SR.TitleCannedText, ShelfDisplayHint.DockFloat);
+                    _shelf = ApplicationComponent.LaunchAsShelf(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleCannedText, ShelfDisplayHint.DockFloat);
 
-					_shelf.Closed += delegate { _shelf = null; };
-				}
-				else
-				{
-					_shelf.Activate();
-				}
-			}
-			catch (Exception e)
-			{
-				// could not launch component
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-			}
-		}
-	}
+                    _shelf.Closed += delegate { _shelf = null; };
+                }
+                else
+                {
+                    _shelf.Activate();
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch component
+                ExceptionHandler.Report(e, this.Context.DesktopWindow);
+            }
+        }
+    }
 
-	/// <summary>
-	/// Extension point for views onto <see cref="CannedTextSummaryComponent"/>
-	/// </summary>
-	[ExtensionPoint]
-	public class CannedTextSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{
-	}
+    /// <summary>
+    /// Extension point for views onto <see cref="CannedTextSummaryComponent"/>
+    /// </summary>
+    [ExtensionPoint]
+    public class CannedTextSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
 
-	/// <summary>
-	/// CannedTextSummaryComponent class
-	/// </summary>
-	[AssociateView(typeof(CannedTextSummaryComponentViewExtensionPoint))]
-	public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable, ListCannedTextRequest>
-	{
-		private CannedTextDetail _selectedCannedTextDetail;
-		private EventHandler _copyCannedTextRequested;
+    /// <summary>
+    /// CannedTextSummaryComponent class
+    /// </summary>
+    [AssociateView(typeof(CannedTextSummaryComponentViewExtensionPoint))]
+    public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable, ListCannedTextRequest>
+    {
+        private readonly string _initialFilterText;
 
-		private Action _duplicateCannedTextAction;
-		private Action _copyCannedTextToClipboardAction;
+        private CannedTextDetail _selectedCannedTextDetail;
+        private EventHandler _copyCannedTextRequested;
 
-		#region Presentation Model
+        private Action _duplicateCannedTextAction;
+        private Action _copyCannedTextToClipboardAction;
 
-		public string GetFullCannedText()
-		{
-			if (this.SelectedItems.Count != 1)
-				return string.Empty;
+        public CannedTextSummaryComponent()
+        {
+        }
 
-			// if the detail object is not null, it means the selection havn't changed
-			// no need to hit the server, return the text now
-			if (_selectedCannedTextDetail != null)
-				return _selectedCannedTextDetail.Text;
+        public CannedTextSummaryComponent(bool dialogMode, string initialFilterText)
+            : base(dialogMode)
+        {
+            _initialFilterText = initialFilterText;
+        }
 
-			CannedTextSummary summary = CollectionUtils.FirstElement(this.SelectedItems);
+        protected override void InitializeTable(CannedTextTable table)
+        {
+            base.InitializeTable(table);
 
-			try
-			{
-				Platform.GetService<ICannedTextService>(
-					delegate(ICannedTextService service)
-					{
-						LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(summary.CannedTextRef));
-						_selectedCannedTextDetail = response.CannedTextDetail;
-					});
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
+            if (!string.IsNullOrEmpty(_initialFilterText))
+            {
+                table.Filter(new TableFilterParams(null, _initialFilterText));
+            }
+        }
 
-			return _selectedCannedTextDetail.Text;
-		}
+        #region Presentation Model
 
-		public event EventHandler CopyCannedTextRequested
-		{
-			add { _copyCannedTextRequested += value; }
-			remove { _copyCannedTextRequested -= value; }
-		}
+        public string GetFullCannedText()
+        {
+            if (this.SelectedItems.Count != 1)
+                return string.Empty;
 
-		public void DuplicateAdd()
-		{
-			try
-			{
-				CannedTextSummary item = CollectionUtils.FirstElement(this.SelectedItems);
-				IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
-				CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef, true);
+            // if the detail object is not null, it means the selection havn't changed
+            // no need to hit the server, return the text now
+            if (_selectedCannedTextDetail != null)
+                return _selectedCannedTextDetail.Text;
 
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow, editor, SR.TitleDuplicateCannedText);
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					addedItems.Add(editor.UpdatedCannedTextSummary);
-					this.Table.Items.AddRange(addedItems);
-					this.SummarySelection = new Selection(addedItems);
-				}
-			}
-			catch (Exception e)
-			{
-				// failed to launch editor
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
+            CannedTextSummary summary = CollectionUtils.FirstElement(this.SelectedItems);
 
-		public void CopyCannedText()
-		{
-			EventsHelper.Fire(_copyCannedTextRequested, this, EventArgs.Empty);
-		}
+            try
+            {
+                Platform.GetService<ICannedTextService>(
+                    delegate(ICannedTextService service)
+                    {
+                        LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(summary.CannedTextRef));
+                        _selectedCannedTextDetail = response.CannedTextDetail;
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
 
-		#endregion
+            return _selectedCannedTextDetail.Text;
+        }
 
-		#region Overrides
+        public event EventHandler CopyCannedTextRequested
+        {
+            add { _copyCannedTextRequested += value; }
+            remove { _copyCannedTextRequested -= value; }
+        }
 
-		protected override bool SupportsEdit
-		{
-			get { return true; }
-		}
+        public void DuplicateAdd()
+        {
+            try
+            {
+                CannedTextSummary item = CollectionUtils.FirstElement(this.SelectedItems);
+                IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
+                CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef, true);
 
-		/// <summary>
-		/// Gets a value indicating whether this component supports deletion.  The default is false.
-		/// Override this method to support deletion.
-		/// </summary>
-		protected override bool SupportsDelete
-		{
-			get { return true; }
-		}
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleDuplicateCannedText);
+                if (exitCode == ApplicationComponentExitCode.Accepted)
+                {
+                    addedItems.Add(editor.UpdatedCannedTextSummary);
+                    this.Table.Items.AddRange(addedItems);
+                    this.SummarySelection = new Selection(addedItems);
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
 
-		/// <summary>
-		/// Gets a value indicating whether this component supports paging.  The default is true.
-		/// Override this method to change support for paging.
-		/// </summary>
-		protected override bool SupportsPaging
-		{
-			get { return false; }
-		}
+        public void CopyCannedText()
+        {
+            EventsHelper.Fire(_copyCannedTextRequested, this, EventArgs.Empty);
+        }
 
-		/// <summary>
-		/// Override this method to perform custom initialization of the action model,
-		/// such as adding permissions or adding custom actions.
-		/// </summary>
-		/// <param name="model"></param>
-		protected override void InitializeActionModel(AdminActionModel model)
-		{
-			base.InitializeActionModel(model);
+        #endregion
 
-			_duplicateCannedTextAction = model.AddAction("duplicateCannedText", SR.TitleDuplicate, "Icons.DuplicateSmall.png",
-				SR.TitleDuplicate, DuplicateAdd);
+        #region Overrides
 
-			_copyCannedTextToClipboardAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToClipboardToolSmall.png",
-				SR.MessageCopyToClipboard, CopyCannedText);
+        protected override bool SupportsEdit
+        {
+            get { return true; }
+        }
 
-			model.Edit.Enabled = false;
-			model.Delete.Enabled = false;
-			_duplicateCannedTextAction.Enabled = false;
-			_copyCannedTextToClipboardAction.Enabled = false;
+        /// <summary>
+        /// Gets a value indicating whether this component supports deletion.  The default is false.
+        /// Override this method to support deletion.
+        /// </summary>
+        protected override bool SupportsDelete
+        {
+            get { return true; }
+        }
 
-		}
+        /// <summary>
+        /// Gets a value indicating whether this component supports paging.  The default is true.
+        /// Override this method to change support for paging.
+        /// </summary>
+        protected override bool SupportsPaging
+        {
+            get { return false; }
+        }
 
-		/// <summary>
-		/// Gets the list of items to show in the table, according to the specifed first and max items.
-		/// </summary>
-		/// <returns></returns>
-		protected override IList<CannedTextSummary> ListItems(ListCannedTextRequest request)
-		{
-			ListCannedTextResponse listResponse = null;
-			Platform.GetService<ICannedTextService>(
-				delegate(ICannedTextService service)
-				{
-					listResponse = service.ListCannedText(request);
-				});
-			return listResponse.CannedTexts;
-		}
+        /// <summary>
+        /// Override this method to perform custom initialization of the action model,
+        /// such as adding permissions or adding custom actions.
+        /// </summary>
+        /// <param name="model"></param>
+        protected override void InitializeActionModel(AdminActionModel model)
+        {
+            base.InitializeActionModel(model);
 
-		/// <summary>
-		/// Called to handle the "add" action.
-		/// </summary>
-		/// <param name="addedItems"></param>
-		/// <returns>True if items were added, false otherwise.</returns>
-		protected override bool AddItems(out IList<CannedTextSummary> addedItems)
-		{
-			addedItems = new List<CannedTextSummary>();
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices());
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
-			if (exitCode == ApplicationComponentExitCode.Accepted)
-			{
-				addedItems.Add(editor.UpdatedCannedTextSummary);
-				return true;
-			}
-			return false;
-		}
+            _duplicateCannedTextAction = model.AddAction("duplicateCannedText", SR.TitleDuplicate, "Icons.DuplicateSmall.png",
+                SR.TitleDuplicate, DuplicateAdd);
 
-		/// <summary>
-		/// Called to handle the "edit" action.
-		/// </summary>
-		/// <param name="items">A list of items to edit.</param>
-		/// <param name="editedItems">The list of items that were edited.</param>
-		/// <returns>True if items were edited, false otherwise.</returns>
-		protected override bool EditItems(IList<CannedTextSummary> items, out IList<CannedTextSummary> editedItems)
-		{
-			editedItems = new List<CannedTextSummary>();
-			CannedTextSummary item = CollectionUtils.FirstElement(items);
+            _copyCannedTextToClipboardAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToClipboardToolSmall.png",
+                SR.MessageCopyToClipboard, CopyCannedText);
 
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
-			if (exitCode == ApplicationComponentExitCode.Accepted)
-			{
-				editedItems.Add(editor.UpdatedCannedTextSummary);
-				return true;
-			}
-			return false;
-		}
+            model.Edit.Enabled = false;
+            model.Delete.Enabled = false;
+            _duplicateCannedTextAction.Enabled = false;
+            _copyCannedTextToClipboardAction.Enabled = false;
 
-		/// <summary>
-		/// Called to handle the "delete" action, if supported.
-		/// </summary>
-		/// <param name="items"></param>
-		/// <param name="deletedItems">The list of items that were deleted.</param>
-		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
-		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<CannedTextSummary> items, out IList<CannedTextSummary> deletedItems, out string failureMessage)
-		{
-			failureMessage = null;
-			deletedItems = new List<CannedTextSummary>();
+        }
 
-			foreach (CannedTextSummary item in items)
-			{
-				try
-				{
-					Platform.GetService<ICannedTextService>(
-						delegate(ICannedTextService service)
-						{
-							service.DeleteCannedText(new DeleteCannedTextRequest(item.CannedTextRef));
-						});
+        /// <summary>
+        /// Gets the list of items to show in the table, according to the specifed first and max items.
+        /// </summary>
+        /// <returns></returns>
+        protected override IList<CannedTextSummary> ListItems(ListCannedTextRequest request)
+        {
+            ListCannedTextResponse listResponse = null;
+            Platform.GetService<ICannedTextService>(
+                delegate(ICannedTextService service)
+                {
+                    listResponse = service.ListCannedText(request);
+                });
+            return listResponse.CannedTexts;
+        }
 
-					deletedItems.Add(item);
-				}
-				catch (Exception e)
-				{
-					failureMessage = e.Message;
-				}
-			}
+        /// <summary>
+        /// Called to handle the "add" action.
+        /// </summary>
+        /// <param name="addedItems"></param>
+        /// <returns>True if items were added, false otherwise.</returns>
+        protected override bool AddItems(out IList<CannedTextSummary> addedItems)
+        {
+            addedItems = new List<CannedTextSummary>();
+            CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices());
+            ApplicationComponentExitCode exitCode = LaunchAsDialog(
+                this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
+            if (exitCode == ApplicationComponentExitCode.Accepted)
+            {
+                addedItems.Add(editor.UpdatedCannedTextSummary);
+                return true;
+            }
+            return false;
+        }
 
-			return deletedItems.Count > 0;
-		}
+        /// <summary>
+        /// Called to handle the "edit" action.
+        /// </summary>
+        /// <param name="items">A list of items to edit.</param>
+        /// <param name="editedItems">The list of items that were edited.</param>
+        /// <returns>True if items were edited, false otherwise.</returns>
+        protected override bool EditItems(IList<CannedTextSummary> items, out IList<CannedTextSummary> editedItems)
+        {
+            editedItems = new List<CannedTextSummary>();
+            CannedTextSummary item = CollectionUtils.FirstElement(items);
 
-		/// <summary>
-		/// Compares two items to see if they represent the same item.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		protected override bool IsSameItem(CannedTextSummary x, CannedTextSummary y)
-		{
-			return x.CannedTextRef.Equals(y.CannedTextRef, true);
-		}
+            CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef);
+            ApplicationComponentExitCode exitCode = LaunchAsDialog(
+                this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
+            if (exitCode == ApplicationComponentExitCode.Accepted)
+            {
+                editedItems.Add(editor.UpdatedCannedTextSummary);
+                return true;
+            }
+            return false;
+        }
 
-		/// <summary>
-		/// Called when the user changes the selected items in the table.
-		/// </summary>
-		protected override void OnSelectedItemsChanged()
-		{
-			base.OnSelectedItemsChanged();
+        /// <summary>
+        /// Called to handle the "delete" action, if supported.
+        /// </summary>
+        /// <param name="items"></param>
+        /// <param name="deletedItems">The list of items that were deleted.</param>
+        /// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
+        /// <returns>True if items were deleted, false otherwise.</returns>
+        protected override bool DeleteItems(IList<CannedTextSummary> items, out IList<CannedTextSummary> deletedItems, out string failureMessage)
+        {
+            failureMessage = null;
+            deletedItems = new List<CannedTextSummary>();
 
-			if (this.SelectedItems.Count == 1)
-			{
-				CannedTextSummary selectedItem = this.SelectedItems[0];
+            foreach (CannedTextSummary item in items)
+            {
+                try
+                {
+                    Platform.GetService<ICannedTextService>(
+                        delegate(ICannedTextService service)
+                        {
+                            service.DeleteCannedText(new DeleteCannedTextRequest(item.CannedTextRef));
+                        });
 
-				_copyCannedTextToClipboardAction.Enabled = true;
+                    deletedItems.Add(item);
+                }
+                catch (Exception e)
+                {
+                    failureMessage = e.Message;
+                }
+            }
 
-				this.ActionModel.Add.Enabled = HasPersonalAdminAuthority || HasGroupAdminAuthority;
-				this.ActionModel.Delete.Enabled =
-					_duplicateCannedTextAction.Enabled =
-						selectedItem.IsPersonal && HasPersonalAdminAuthority || 
-						selectedItem.IsGroup && HasGroupAdminAuthority;
-			}
-			else
-			{
-				_duplicateCannedTextAction.Enabled = false;
-				_copyCannedTextToClipboardAction.Enabled = false;
-			}
+            return deletedItems.Count > 0;
+        }
 
-			// The detail is only loaded whenever a copy/drag is performed
-			// Set this to null, so the view doesn't get wrong text data.
-			_selectedCannedTextDetail = null;
+        /// <summary>
+        /// Compares two items to see if they represent the same item.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        protected override bool IsSameItem(CannedTextSummary x, CannedTextSummary y)
+        {
+            return x.CannedTextRef.Equals(y.CannedTextRef, true);
+        }
 
-			NotifyAllPropertiesChanged();
-		}
+        /// <summary>
+        /// Called when the user changes the selected items in the table.
+        /// </summary>
+        protected override void OnSelectedItemsChanged()
+        {
+            base.OnSelectedItemsChanged();
 
-		#endregion
+            if (this.SelectedItems.Count == 1)
+            {
+                CannedTextSummary selectedItem = this.SelectedItems[0];
 
-		private static bool HasPersonalAdminAuthority
-		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
-		}
+                _copyCannedTextToClipboardAction.Enabled = true;
 
-		private static bool HasGroupAdminAuthority
-		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
-		}
+                this.ActionModel.Add.Enabled = HasPersonalAdminAuthority || HasGroupAdminAuthority;
+                this.ActionModel.Delete.Enabled =
+                    _duplicateCannedTextAction.Enabled =
+                        selectedItem.IsPersonal && HasPersonalAdminAuthority || 
+                        selectedItem.IsGroup && HasGroupAdminAuthority;
+            }
+            else
+            {
+                _duplicateCannedTextAction.Enabled = false;
+                _copyCannedTextToClipboardAction.Enabled = false;
+            }
 
-		private List<string> GetCategoryChoices()
-		{
-			List<string> categoryChoices = new List<string>();
-			CollectionUtils.ForEach<CannedTextSummary>(this.SummaryTable.Items,
-				delegate(CannedTextSummary c)
-				{
-					if (!categoryChoices.Contains(c.Category))
-						categoryChoices.Add(c.Category);
-				});
+            // The detail is only loaded whenever a copy/drag is performed
+            // Set this to null, so the view doesn't get wrong text data.
+            _selectedCannedTextDetail = null;
 
-			categoryChoices.Sort();
+            NotifyAllPropertiesChanged();
+        }
 
-			return categoryChoices;
-		}
-	}
+        #endregion
+
+        private static bool HasPersonalAdminAuthority
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
+        }
+
+        private static bool HasGroupAdminAuthority
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+        }
+
+        private List<string> GetCategoryChoices()
+        {
+            List<string> categoryChoices = new List<string>();
+            CollectionUtils.ForEach<CannedTextSummary>(this.SummaryTable.Items,
+                delegate(CannedTextSummary c)
+                {
+                    if (!categoryChoices.Contains(c.Category))
+                        categoryChoices.Add(c.Category);
+                });
+
+            categoryChoices.Sort();
+
+            return categoryChoices;
+        }
+    }
 }
