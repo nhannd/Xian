@@ -549,11 +549,8 @@ namespace ClearCanvas.ImageServer.Model
         /// <param name="sopInstanceUid"></param>
         public String GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
         {
-            String path = StringUtilities.Combine(new String[] {
-                                                          GetSeriesPath(seriesInstanceUid), sopInstanceUid
-                                                      }, Path.DirectorySeparatorChar.ToString());
-
-            return path + ".dcm";
+            String path = Path.Combine(GetSeriesPath(seriesInstanceUid), sopInstanceUid + ".dcm");
+            return path ;
         }
 
 

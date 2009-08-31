@@ -29,12 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
@@ -46,7 +41,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         private string _studyInstanceUid;
         private string _seriesInstanceUid;
         private string _objectUid;
+        private string _contentType;
         private StudyStorageLocation _studylocation;
+
+        private string[] _acceptTypes;
 
         public string StudyInstanceUid
         {
@@ -76,6 +74,21 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         {
             get { return _request; }
             set { _request = value; }
+        }
+
+        public string ContentType
+        {
+            get
+            {
+                return _contentType;
+            }
+            set { _contentType = value; }
+        }
+
+        public string[] AcceptTypes
+        {
+            get { return _acceptTypes; }
+            set { _acceptTypes = value; }
         }
 
         public HttpListenerResponse Response

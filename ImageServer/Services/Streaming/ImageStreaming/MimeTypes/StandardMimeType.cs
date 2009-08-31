@@ -47,39 +47,26 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
 
         public MimeTypeProcessorOutput Process(ImageStreamingContext context)
         {
-            
-            if (context.Request.QueryString["frameNumber"] != null)
+            MimeTypeProcessorOutput output = new MimeTypeProcessorOutput();
+            output.ContentType = OutputMimeType;
+            using (FileStream stream = FileStreamOpener.OpenForRead(context.ImagePath, FileMode.Open))
             {
-                // "Shall be ignored in the case of all objects other than multi-frame objects...
-                // shall not be present if content type is application/dicom"
-                throw new WADOException(HttpStatusCode.BadRequest,
-                                        "FrameNumber shall not be present when application/dicom mime type is used. Please use a different ContentType.");
-                
-            }
-            else
-            {
-
-                MimeTypeProcessorOutput output = new MimeTypeProcessorOutput();
                 output.ContentType = OutputMimeType;
-                using (FileStream stream = FileStreamOpener.OpenForRead(context.ImagePath, FileMode.Open))
+                byte[] buffer = new byte[stream.Length];
+                int offset = 0;
+                int readBytes = 0;
+                do
                 {
-                    output.ContentType = OutputMimeType;
-                    byte[] buffer = new byte[stream.Length];
-                    int offset = 0;
-                    int readBytes = 0;
-                    do
+                    readBytes = stream.Read(buffer, offset, buffer.Length - offset);
+                    if (readBytes > 0)
                     {
-                        readBytes = stream.Read(buffer, offset, buffer.Length - offset);
-                        if (readBytes > 0)
-                        {
-                            offset += readBytes;
-                        }
-                    } while (readBytes > 0);
-                    output.Output = buffer;
-					stream.Close();
-                }
-                return output;    
+                        offset += readBytes;
+                    }
+                } while (readBytes > 0);
+                output.Output = buffer;
+                stream.Close();
             }
+            return output; 
             
         }
     }

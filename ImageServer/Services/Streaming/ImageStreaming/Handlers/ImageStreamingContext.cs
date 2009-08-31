@@ -29,8 +29,9 @@
 
 #endregion
 
-using System;
+using System.Collections.Specialized;
 using System.IO;
+using System.Net;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
@@ -39,16 +40,34 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     {
         private DicomPixelData _pd;
         private string _serverAE;
+        private int _frameNumber;
+        private readonly string _nextSeriesUid;
+        private readonly string _nextSopUid;
 
         #region PERFORMANCE TESTING STUFF
         private static DicomPixelData _testCompressedImage;
         private static DicomPixelData _testUncompressedImage;
+        private readonly bool testCompressed;
+        private readonly bool testUncompressed;
         #endregion
 
-        public ImageStreamingContext()
+        public ImageStreamingContext(HttpListenerContext context)
         {
+            Request = context.Request;
+            Response = context.Response;
+            NameValueCollection query = Request.QueryString;
+
             #region INIT STUFF FOR PERFORMANCE TESTING
             #if DEBUG 
+
+            if (query["testcompressed"] != null)
+            {
+                testCompressed= true;
+            }
+            else if (query["testuncompressed"] != null)
+            {
+                testUncompressed = true;
+            }
             if (_testCompressedImage == null)
             {
                 using (Stream stream = typeof(ImageStreamingContext).Assembly.GetManifestResourceStream("ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test.TestSamples.compressed.dcm"))
@@ -75,6 +94,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             #endif
 
             #endregion
+
+            _frameNumber = 0;
+            if (query["FrameNumber"] != null)
+                int.TryParse(query["FrameNumber"], out _frameNumber);
+
+            _nextSeriesUid = query["nextSeriesUid"];
+            _nextSopUid = query["nextObjectUid"];
+
         }
        
         
@@ -93,11 +120,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 #region PERFORMANCE TESTING CODE
                 #if DEBUG 
                 // If requested, the test images will be streamed directly from memory
-                if (Request.QueryString["testcompressed"] != null)
+                if (testCompressed)
                 {
                     return _testCompressedImage;
                 }
-                if (Request.QueryString["testuncompressed"] != null)
+                else if (testUncompressed)
                 {
                     return _testUncompressedImage;
                 } 
@@ -107,7 +134,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 if (_pd == null)
                 {
                     PixelDataManager manager = PixelDataManager.GetInstance(StorageLocation);
-                    _pd = manager.GetPixelData(SeriesInstanceUid, ObjectUid);
+                    _pd = manager.GetPixelData(SeriesInstanceUid, ObjectUid, _nextSeriesUid, _nextSopUid);
                 }
                 return _pd;
             }
@@ -126,5 +153,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             get { return _serverAE; }
             set { _serverAE = value; }
         }
+
+        public int FrameNumber
+        {
+            get { return _frameNumber; }
+            set { _frameNumber = value; }
+        }
+
     }
 }

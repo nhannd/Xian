@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
 using System.Windows.Forms;
-using ClearCanvas.Dicom.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -25,7 +21,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-           LoadSops();
+            LoadSops();
             StartNormalStreaming(_series);
         }
 
@@ -33,15 +29,23 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             foreach (Series series in seriesList)
             {
-                
-                foreach(string sop in series.SopInstanceUids)
+                int NumSop = series.SopInstanceUids.Count;
+                for (int i = 0; i < NumSop; i++)
                 {
+                    
+                    string sopUid = series.SopInstanceUids[i];
                     StringBuilder url = new StringBuilder();
                     url.Append(WadoUrl.Text);
                     url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}",
-                        StudyUID.Text, series.SeriesInstanceUid, sop);
+                        StudyUID.Text, series.SeriesInstanceUid, sopUid);
                     url.AppendFormat("&frameNumber={0}", 0);
                     url.AppendFormat("&contentType={0}", HttpUtility.HtmlEncode("application/clearcanvas"));
+                    
+                    if (ServerPrefetch.Checked && i < NumSop - 1)
+                    {
+                        url.AppendFormat("&nextSeriesUid={0}", series.SeriesInstanceUid);
+                        url.AppendFormat("&nextObjectUid={0}", series.SopInstanceUids[i+1]);
+                    }
                     
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
                     request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
@@ -53,9 +57,9 @@ namespace ClearCanvas.ImageServer.TestApp
                     reader.Close();
                     responseStream.Close();
                     response.Close();
-                    
+
                 }
-                
+
             }
             
 
@@ -64,7 +68,6 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void StartQuickTestStreaming(List<Series> seriesList, bool compressed)
         {
-            List<HttpRequest> requests = new List<HttpRequest>();
             foreach (Series series in seriesList)
             {
 

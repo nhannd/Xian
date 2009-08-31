@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
@@ -39,7 +36,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
     class PixelDataLoader
     {
-        private ImageStreamingContext _context;
+        private readonly ImageStreamingContext _context;
 
         internal PixelDataLoader(ImageStreamingContext context)
         {

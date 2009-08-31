@@ -30,8 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
-using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -45,11 +46,17 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     /// </summary>
     internal class ImageStreamingHandler : IObjectStreamingHandler
     {
+    	// cache the extension for performance purpose
+        static readonly Dictionary<string, Type> _processorMap = new Dictionary<string, Type>();
+        
         public WADOResponse Process(WADORequestTypeHandlerContext context)
         {
             Platform.CheckForNullReference(context, "httpContext");
             Platform.CheckForNullReference(context.ServerAE, "context.ServerAE");
             Platform.CheckForNullReference(context.HttpContext, "context.HttpContext");
+
+            // Cache the query string for performance purpose. Every time Request.QueryString is called, .NET will rebuild the entire dictionary.
+            NameValueCollection query = context.HttpContext.Request.QueryString;
 
             ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(context.ServerAE);
             if (partition== null)
@@ -58,13 +65,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             if (!partition.Enabled)
                 throw new WADOException(HttpStatusCode.Forbidden, String.Format(SR.FaultPartitionDisabled, context.ServerAE));
             
-            ImageStreamingContext streamingContext = new ImageStreamingContext();
+            ImageStreamingContext streamingContext = new ImageStreamingContext(context.HttpContext);
             streamingContext.ServerAE = context.ServerAE;
-            streamingContext.Request = context.HttpContext.Request;
-            streamingContext.Response = context.HttpContext.Response;
-            streamingContext.StudyInstanceUid = context.HttpContext.Request.QueryString["studyuid"];
-            streamingContext.SeriesInstanceUid = context.HttpContext.Request.QueryString["seriesuid"];
-            streamingContext.ObjectUid = context.HttpContext.Request.QueryString["objectuid"];
+            streamingContext.ContentType = query["ContentType"];
+            streamingContext.AcceptTypes = context.HttpContext.Request.AcceptTypes;
+            streamingContext.StudyInstanceUid = query["studyuid"];
+            streamingContext.SeriesInstanceUid = query["seriesuid"];
+            streamingContext.ObjectUid = query["objectuid"];
 
             string sessionId = context.HttpContext.Request.RemoteEndPoint.Address.ToString();
             StudyStorageLoader storageLoader = new StudyStorageLoader(sessionId);
@@ -86,10 +93,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
         protected static bool ClientAcceptable(ImageStreamingContext context, string contentType)
         {
-            if (context.Request.AcceptTypes == null)
+            if (context.AcceptTypes == null)
                 return false;
             
-            foreach(string rawmime in context.Request.AcceptTypes)
+            foreach(string rawmime in context.AcceptTypes)
             {
                 string mime = rawmime;
                 if (rawmime.Contains(";"))
@@ -101,10 +108,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
             return false;
         }
-
         protected virtual IImageMimeTypeProcessor GetMimeTypeProcessor(ImageStreamingContext context)
         {
-            string responseContentType = HttpUtility.HtmlDecode(context.Request.QueryString["contentType"]);
+            string responseContentType = context.ContentType;
             if (String.IsNullOrEmpty(responseContentType))
             {
                 if (context.IsMultiFrame)
@@ -119,6 +125,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 }
             }
 
+            if (_processorMap.ContainsKey(context.ContentType))
+            {
+                return (IImageMimeTypeProcessor) Activator.CreateInstance(_processorMap[context.ContentType]);
+            }
+
             ImageMimeTypeProcessorExtensionPoint xp = new ImageMimeTypeProcessorExtensionPoint();
             object[] plugins = xp.CreateExtensions();
 
@@ -129,9 +140,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 if (mimeTypeConverter.OutputMimeType == responseContentType)
                 {
                     found = true;
+                    _processorMap.Add(context.ContentType, mimeTypeConverter.GetType());
 
                     if (ClientAcceptable(context, mimeTypeConverter.OutputMimeType))
+                    {
                         return mimeTypeConverter;
+                    }
                 }
             }
 

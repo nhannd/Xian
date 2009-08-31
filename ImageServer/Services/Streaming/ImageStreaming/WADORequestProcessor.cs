@@ -98,16 +98,20 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         {
             Platform.CheckForNullReference(context, "context");
 
-            StringBuilder info = new StringBuilder();
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+            {
+                StringBuilder info = new StringBuilder();
 
-            info.AppendFormat("\n\tAgents={0}", context.Request.UserAgent);
-            info.AppendFormat("\n\tRequestType={0}", context.Request.QueryString["RequestType"]);
-            info.AppendFormat("\n\tStudyUid={0}", context.Request.QueryString["StudyUid"]);
-            info.AppendFormat("\n\tSeriesUid={0}", context.Request.QueryString["SeriesUid"]);
-            info.AppendFormat("\n\tObjectUid={0}", context.Request.QueryString["ObjectUid"]);
-            info.AppendFormat("\n\tAccepts={0}", GetClientAcceptTypes(context));
+                info.AppendFormat("\n\tAgents={0}", context.Request.UserAgent);
+                info.AppendFormat("\n\tRequestType={0}", context.Request.QueryString["RequestType"]);
+                info.AppendFormat("\n\tStudyUid={0}", context.Request.QueryString["StudyUid"]);
+                info.AppendFormat("\n\tSeriesUid={0}", context.Request.QueryString["SeriesUid"]);
+                info.AppendFormat("\n\tObjectUid={0}", context.Request.QueryString["ObjectUid"]);
+                info.AppendFormat("\n\tAccepts={0}", GetClientAcceptTypes(context));
 
-            Platform.Log(LogLevel.Debug, info);
+                Platform.Log(LogLevel.Debug, info);
+            }
+            
 
         }
 

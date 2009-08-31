@@ -43,10 +43,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
     [ExtensionOf(typeof(ImageMimeTypeProcessorExtensionPoint))]
     class PixelDataMimeTypeProcessor : IImageMimeTypeProcessor
     {
-
         #region IImageMimeTypeProcessor Members
-
-
         public string OutputMimeType
         {
             get { return "application/clearcanvas"; }
@@ -57,48 +54,29 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
             Platform.CheckForNullReference(context, "context");
 
             DicomPixelData pd = context.PixelData;
-
             MimeTypeProcessorOutput output = new MimeTypeProcessorOutput();
+            int frame = context.FrameNumber;
 
-            if (context.Request.QueryString["frameNumber"] == null)
+            if (context.FrameNumber < 0)
             {
-                output.ContentType = OutputMimeType;
-
-                // TODO: we may want to re-use last loader (for multi-frame) or instantiate additional loaders
-                // in anticipation of subsequent image requests.
-                PixelDataLoader loader = new PixelDataLoader(context);
-                output.Output = loader.ReadFrame(0);
-                output.IsLast = (pd.NumberOfFrames == 1);
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} cannot be negative.", frame));
             }
-            else
+            else if (frame >= pd.NumberOfFrames)
             {
-                int frame = int.Parse(context.Request.QueryString["frameNumber"]);
-
-                if (frame < 0)
-                {
-                    throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} cannot be negative.", frame));
-                }
-                else if (frame >= context.PixelData.NumberOfFrames)
-                {
-                    throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} exceeds the number of frames in the image.", frame));
-                }
-
-                output.ContentType = OutputMimeType;
-
-                // TODO: we may want to re-use last loader (for multi-frame) or instantiate additional loaders
-                // in anticipation of subsequent image requests.
-                PixelDataLoader loader = new PixelDataLoader(context);
-                output.Output = loader.ReadFrame(frame);
-                output.IsLast = (pd.NumberOfFrames == frame + 1);
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} exceeds the number of frames in the image.", frame));
             }
 
+            output.ContentType = OutputMimeType;
+
+            PixelDataLoader loader = new PixelDataLoader(context);
+            output.Output = loader.ReadFrame(frame);
+            output.IsLast = (pd.NumberOfFrames == frame + 1);
 
             // note: the transfer syntax of the returned pixel data may not be the same as that in the original image.
             // In the future, the clients may specify different transfer syntaxes which may mean the compressed image must be decompressed or vice versa. 
-            TransferSyntax transferSyntax = context.PixelData.TransferSyntax;
+            TransferSyntax transferSyntax = pd.TransferSyntax;
             output.IsCompressed = transferSyntax.LosslessCompressed || transferSyntax.LossyCompressed;
-
-
+            
             #region Special Code
 
             // Note: this block of code inject special header fields to assist the clients handling the images
@@ -134,7 +112,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
 
             #endregion
 
-            Platform.Log(LogLevel.Debug, "Streaming {0} pixel data: {1} x {2} x {3} , {4} bits  [{5} KB] ({6})",
+            if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+            {
+                Platform.Log(LogLevel.Debug, "Streaming {0} pixel data: {1} x {2} x {3} , {4} bits  [{5} KB] ({6})",
                          output.IsCompressed ? "compressed" : "uncompressed",
                          pd.ImageHeight,
                          pd.ImageWidth,
@@ -142,6 +122,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
                          pd.BitsStored,
                          output.Output.Length/1024,
                          pd.TransferSyntax.Name);
+            }
 
 
             return output;

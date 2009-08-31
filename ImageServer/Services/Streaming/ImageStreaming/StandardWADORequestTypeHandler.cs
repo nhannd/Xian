@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         public WADOResponse Process(WADORequestTypeHandlerContext context)
         {
-            Validate(context.HttpContext.Request);
+            //Validate(context.HttpContext.Request);
 
             ObjectStreamingHandlerFactory factory = new ObjectStreamingHandlerFactory();
             IObjectStreamingHandler handler = factory.CreateHandler(context.HttpContext.Request);

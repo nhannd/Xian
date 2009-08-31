@@ -17,17 +17,5 @@
     <Setting Name="CacheRetentionWindow" Type="System.TimeSpan" Scope="Application">
       <Value Profile="(Default)">00:00:10</Value>
     </Setting>
-    <Setting Name="EnablePrefetch" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="StackingPrefetchSize" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">10</Value>
-    </Setting>
-    <Setting Name="InitialPrefetchSize" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">5</Value>
-    </Setting>
-    <Setting Name="ClientPrefetchSize" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">20</Value>
-    </Setting>
   </Settings>
 </SettingsFile>
