@@ -133,6 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 			return properties.ToArray();
 		}
 
+		//TODO: rethink this - I don't really like that the values are then looked up in resources.  Too limiting for those adding to the xml doc.
 		private static string LookupCategory(string category)
 		{
 			if (String.IsNullOrEmpty(category))
