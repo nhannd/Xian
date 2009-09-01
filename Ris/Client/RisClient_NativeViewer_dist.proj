@@ -47,6 +47,10 @@
     <ViewerIntegrationFiles Include="$(TrunkDirectory)\Ris\Client\ViewerIntegration\bin\$(Configuration)\ClearCanvas.Ris.Client.ViewerIntegration.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <HelpFiles Include="$(TrunkDirectory)\Docs\Workstation\UsersGuide\CCWorkstationUsersGuide.chm" />
+  </ItemGroup>
+
   <Target Name="Copy Files">
 
     <!-- Override the value of Options for this task. -->
@@ -72,6 +76,8 @@
     </RegexIsMatch>
 
     <Copy Condition="$(CopyDefaultAEServers) And !$(OtoBuild)"  SourceFiles="$(MSBuildProjectDirectory)\RisClient_NativeViewer_DicomAEServers.xml" DestinationFiles="$(DistributionDirectory)\DicomAEServers.xml" />
+
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
     <XmlReplaceValue Condition="$(RisClientBuild)" 
        NodeMustExist ="False"  
