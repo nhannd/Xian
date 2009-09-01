@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExplorerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ExplorerConfigurationComponentControl.Designer.cs">
       <DependentUpon>ExplorerConfigurationComponentControl.cs</DependentUpon>

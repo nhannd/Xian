@@ -60,35 +60,41 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomFileImportApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomFileImportApplicationComponentControl.Designer.cs">
       <DependentUpon>DicomFileImportApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomFileImportApplicationComponentView.cs" />
     <Compile Include="DicomServerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerConfigurationComponentControl.Designer.cs">
       <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerConfigurationComponentView.cs" />
     <Compile Include="DiskspaceManagerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DiskspaceManagerConfigurationComponentControl.Designer.cs">
       <DependentUpon>DiskspaceManagerConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DiskspaceManagerConfigurationComponentView.cs" />
     <Compile Include="ImportProgressControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ImportProgressControl.Designer.cs">
       <DependentUpon>ImportProgressControl.cs</DependentUpon>
     </Compile>
     <Compile Include="LocalDataStoreReindexApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LocalDataStoreReindexApplicationComponentControl.Designer.cs">
       <DependentUpon>LocalDataStoreReindexApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="LocalDataStoreReindexApplicationComponentView.cs" />
     <Compile Include="ReceiveQueueApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ReceiveQueueApplicationComponentControl.Designer.cs">
       <DependentUpon>ReceiveQueueApplicationComponentControl.cs</DependentUpon>
@@ -96,6 +102,7 @@
     <Compile Include="ReceiveQueueApplicationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendQueueApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SendQueueApplicationComponentControl.Designer.cs">
       <DependentUpon>SendQueueApplicationComponentControl.cs</DependentUpon>

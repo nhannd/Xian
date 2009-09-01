@@ -56,30 +56,35 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AviExportAdvancedComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AviExportAdvancedComponentControl.Designer.cs">
       <DependentUpon>AviExportAdvancedComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AviExportAdvancedComponentView.cs" />
     <Compile Include="AviExportComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AviExportComponentControl.Designer.cs">
       <DependentUpon>AviExportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AviExportComponentView.cs" />
     <Compile Include="ClipboardComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ClipboardComponentControl.Designer.cs">
       <DependentUpon>ClipboardComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ClipboardComponentView.cs" />
     <Compile Include="CopySubsetToClipboardComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CopySubsetToClipboardComponentControl.Designer.cs">
       <DependentUpon>CopySubsetToClipboardComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CopySubsetToClipboardComponentView.cs" />
     <Compile Include="ImageExportComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ImageExportComponentControl.Designer.cs">
       <DependentUpon>ImageExportComponentControl.cs</DependentUpon>

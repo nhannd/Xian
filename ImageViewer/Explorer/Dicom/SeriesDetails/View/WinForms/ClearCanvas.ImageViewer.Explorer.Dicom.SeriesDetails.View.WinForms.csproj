@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeriesDetailsComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SeriesDetailsComponentControl.Designer.cs">
       <DependentUpon>SeriesDetailsComponentControl.cs</DependentUpon>

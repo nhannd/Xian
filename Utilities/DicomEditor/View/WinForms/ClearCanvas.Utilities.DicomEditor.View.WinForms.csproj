@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymizeStudyComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="AnonymizeStudyComponentControl.Designer.cs">
       <DependentUpon>AnonymizeStudyComponentControl.cs</DependentUpon>
@@ -73,6 +74,7 @@
       <DependentUpon>DicomEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomEditorCreateToolComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomEditorCreateToolComponentControl.Designer.cs">
       <DependentUpon>DicomEditorCreateToolComponentControl.cs</DependentUpon>

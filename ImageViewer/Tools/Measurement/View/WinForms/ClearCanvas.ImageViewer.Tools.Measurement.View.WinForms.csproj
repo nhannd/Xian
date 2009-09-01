@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CalibrationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CalibrationComponentControl.Designer.cs">
       <DependentUpon>CalibrationComponentControl.cs</DependentUpon>

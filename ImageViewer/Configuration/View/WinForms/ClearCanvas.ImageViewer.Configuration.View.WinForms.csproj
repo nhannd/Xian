@@ -58,18 +58,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomServerEditComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerEditComponentView.cs" />
     <Compile Include="DicomServerGroupEditComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentControl.Designer.cs">
       <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="MonitorConfigurationApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MonitorConfigurationApplicationComponentControl.Designer.cs">
       <DependentUpon>MonitorConfigurationApplicationComponentControl.cs</DependentUpon>
@@ -84,6 +87,7 @@
     </Compile>
     <Compile Include="ServerTreeComponentView.cs" />
     <Compile Include="ServerTreeConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ServerTreeConfigurationComponentControl.Designer.cs">
       <DependentUpon>ServerTreeConfigurationComponentControl.cs</DependentUpon>
