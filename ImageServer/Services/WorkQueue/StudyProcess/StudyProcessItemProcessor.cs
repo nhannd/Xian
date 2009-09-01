@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             string group = queueUid.GroupID ?? ServerHelper.GetUidGroup(file, ServerPartition, WorkQueueItem.InsertTime);
 
-            ProcessingResult result = processor.ProcessFile(group, file, stream, queueUid.Duplicate, compare, null, null);
+            ProcessingResult result = processor.ProcessFile(group, file, stream, queueUid.Duplicate, compare, queueUid, null);
 
             if (result.Status == ProcessingStatus.Reconciled)
             {
@@ -346,8 +346,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     
                 }
                 
-                // Delete it out of the queue
-                DeleteWorkQueueUid(sop);
                 return true;
             }
             catch (Exception e)

@@ -90,8 +90,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			{
 				ProcessFile(item, sop, path, studyXml, theCodecFactory);
 
-				// Delete it out of the queue
-				DeleteWorkQueueUid(sop);
+				// WorkQueueUid has been deleted out by the processor
+				
 				return true;
 			}
 			catch (Exception e)
@@ -237,6 +237,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         // and after the compressed image has been successfully saved
                         UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
                         processor.AddCommand(insertStudyXmlCommand);
+
+						// Delete the WorkQueueUid item
+                    	processor.AddCommand(new DeleteWorkQueueUidCommand(sop));
 
                         // Do the actual processing
                         if (!processor.Execute())
