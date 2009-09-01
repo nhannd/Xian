@@ -141,7 +141,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <HelpFiles Include="$(TrunkDirectory)\Docs\ImageViewer\UsersGuide\CCWorkstationUsersGuide.chm" />
+    <HelpFiles Include="$(TrunkDirectory)\Docs\Workstation\UsersGuide\CCWorkstationUsersGuide.chm" />
   </ItemGroup>
 
   <ItemGroup>
