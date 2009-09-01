@@ -3921,7 +3921,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-	SELECT DISTINCT ProcessorID FROM WorkQueue WHERE ProcessorID != ''NULL''
+	SELECT DISTINCT ProcessorID FROM WorkQueue WHERE ProcessorID is not NULL
 END
 '
 END
