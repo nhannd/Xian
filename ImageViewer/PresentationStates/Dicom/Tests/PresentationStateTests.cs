@@ -58,10 +58,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.Tests
 					original.ImageHorizontalFlip = (flipH == 1) ? ImageHorizontalFlip.Y : ImageHorizontalFlip.N;
 					original.ImageRotation = rotation;
 
-					SpatialTransformModuleIod actual = ps.SerializeSpatialTransform(ps.DeserializeSpatialTransform(original));
-
+					TestPresentationImage image = ps.DeserializeSpatialTransform(original);
+					using (image)
+					{
+						SpatialTransformModuleIod actual = ps.SerializeSpatialTransform(image);
 					Assert.AreEqual(original.ImageHorizontalFlip, actual.ImageHorizontalFlip, string.Format("Roundtrip IOD->IMG->IOD FAILED: Rot={0}, fH={1}", rotation, flipH));
 					Assert.AreEqual(original.ImageRotation, actual.ImageRotation, string.Format("Roundtrip IOD->IMG->IOD FAILED: Rot={0}, fH={1}", rotation, flipH));
+					}
 				}
 			}
 		}

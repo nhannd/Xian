@@ -103,7 +103,7 @@ namespace ClearCanvas.Desktop.Help
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(287, 23);
 			this.label1.TabIndex = 3;
-			this.label1.Text = "Copyright 2008 ClearCanvas Inc. All rights reserved.";
+			this.label1.Text = "Copyright 2009 ClearCanvas Inc. All rights reserved.";
 			// 
 			// AboutForm
 			// 
