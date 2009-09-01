@@ -729,4 +729,7 @@ Please check the log for more details.</value>
   <data name="MessageUnableToLocateNonLocalImage" xml:space="preserve">
     <value>The selected image is not stored on your local file system.</value>
   </data>
+  <data name="MenuImageProperties" xml:space="preserve">
+    <value>Image Properties</value>
+  </data>
 </root>

@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Iod.ContextGroups
 {
@@ -110,6 +111,12 @@ namespace ClearCanvas.Dicom.Iod.ContextGroups
 		public override IEnumerator<KeyObjectSelectionDocumentTitle> GetEnumerator()
 		{
 			return _valueList.GetEnumerator();
+		}
+
+		public static KeyObjectSelectionDocumentTitle Lookup(string code)
+		{
+			return CollectionUtils.SelectFirst(_valueList,
+				delegate(KeyObjectSelectionDocumentTitle title) { return title.CodeValue == code; });
 		}
 
 		#endregion

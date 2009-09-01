@@ -109,6 +109,23 @@
     </Compile>
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
+    <Compile Include="ImageProperties\ImagePropertyProvider.cs" />
+    <Compile Include="ImageProperties\ImagePropertiesApplicationComponent.cs" />
+    <Compile Include="ImageProperties\ImagePropertiesSettings.cs" />
+    <Compile Include="ImageProperties\ImagePropertiesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ImagePropertiesSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ImageProperties\ImagePropertiesTool.cs" />
+    <Compile Include="ImageProperties\ImageProperty.cs" />
+    <Compile Include="ImageProperties\KeyObjectImagePropertyProvider.cs" />
+    <Compile Include="ImageProperties\SR.Designer.cs">
+      <DependentUpon>SR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="ImageProperties\StandardImagePropertyProvider.cs" />
     <Compile Include="InteractiveShutterGraphicBuilders.cs" />
     <Compile Include="InteractiveTextCalloutBuilder.cs" />
     <Compile Include="InteractiveTextAreaBuilder.cs" />
@@ -240,6 +257,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ImageProperties\ImagePropertiesSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImagePropertiesSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ToolSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ToolSettings.Designer.cs</LastGenOutput>
@@ -399,6 +420,14 @@
     <EmbeddedResource Include="Icons\DrawRectangularShutterToolLarge.png" />
     <EmbeddedResource Include="Icons\DrawRectangularShutterToolMedium.png" />
     <EmbeddedResource Include="Icons\DrawRectangularShutterToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ImageProperties\SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImageProperties\StandardImageProperties.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

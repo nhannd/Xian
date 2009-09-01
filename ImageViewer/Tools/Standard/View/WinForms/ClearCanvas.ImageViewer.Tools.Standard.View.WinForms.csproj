@@ -14,6 +14,7 @@
     <OldToolsVersion>2.0</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -49,6 +49,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -57,11 +61,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CineApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="CineApplicationComponentControl.Designer.cs">
       <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CineApplicationComponentView.cs" />
+    <Compile Include="ImagePropertiesApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImagePropertiesApplicationComponentControl.Designer.cs">
+      <DependentUpon>ImagePropertiesApplicationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ImagePropertiesApplicationComponentView.cs" />
     <Compile Include="MagnificationComponentView.cs" />
     <Compile Include="MagnificationForm.cs">
       <SubType>Form</SubType>
@@ -70,12 +82,14 @@
       <DependentUpon>MagnificationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerControl.Designer.cs">
       <DependentUpon>PresetVoiLutOperationComponentContainerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerView.cs" />
     <Compile Include="LinearPresetVoiLutOperationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LinearPresetVoiLutOperationComponentControl.Designer.cs">
       <DependentUpon>LinearPresetVoiLutOperationComponentControl.cs</DependentUpon>
@@ -83,6 +97,7 @@
     <Compile Include="LinearPresetVoiLutOperationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PresetVoiLutConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PresetVoiLutConfigurationComponentControl.Designer.cs">
       <DependentUpon>PresetVoiLutConfigurationComponentControl.cs</DependentUpon>
@@ -92,6 +107,17 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ImagePropertyDetailControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImagePropertyDetailControl.Designer.cs">
+      <DependentUpon>ImagePropertyDetailControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
@@ -130,6 +156,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ImagePropertiesApplicationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ImagePropertiesApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MagnificationForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MagnificationForm.cs</DependentUpon>
@@ -150,6 +180,14 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImagePropertyDetailControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ImagePropertyDetailControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

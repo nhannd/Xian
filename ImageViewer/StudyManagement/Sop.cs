@@ -203,6 +203,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
+		/// Gets the patient's birth time.
+		/// </summary>
+		public virtual string PatientsBirthTime
+		{
+			get
+			{
+				string patientsBirthTime;
+				patientsBirthTime = this[DicomTags.PatientsBirthTime].GetString(0, null);
+				return patientsBirthTime ?? "";
+			}
+		}
+
+		/// <summary>
 		/// Gets the patient's sex.
 		/// </summary>
 		public virtual string PatientsSex
@@ -289,6 +302,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				string studyDescription;
 				studyDescription = this[DicomTags.StudyDescription].GetString(0, null);
 				return studyDescription ?? "";
+			}
+		}
+
+		/// <summary>
+		/// Gets the study ID.
+		/// </summary>
+		public virtual string StudyId
+		{
+			get
+			{
+				string studyId;
+				studyId = this[DicomTags.StudyId].GetString(0, null);
+				return studyId ?? "";
 			}
 		}
 
