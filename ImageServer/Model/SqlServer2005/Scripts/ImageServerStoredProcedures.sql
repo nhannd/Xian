@@ -3891,8 +3891,9 @@ BEGIN
 					NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances-@InstanceCount
 			WHERE	GUID=@PatientGUID
 
-			DELETE Series WHERE GUID=@SeriesGUID
 			DELETE RequestAttributes WHERE SeriesGUID=@SeriesGUID
+			DELETE Series WHERE GUID=@SeriesGUID
+			
 
 		COMMIT TRANSACTION 
 	END
