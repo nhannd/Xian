@@ -98,14 +98,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		public static vtkShortArray ConvertToVtkShortArray(short[] shortArray)
 		{
 			vtkShortArray vtkShortArray = new vtkShortArray();
-			vtkShortArray.SetArray(shortArray, shortArray.Length, 1);
+			vtkShortArray.SetArray(shortArray, (VtkIdType)shortArray.Length, 1);
 			return vtkShortArray;
 		}
 
 		public static vtkUnsignedShortArray ConvertToVtkUnsignedShortArray(ushort[] ushortArray)
 		{
 			vtkUnsignedShortArray vtkUnsignedShortArray = new vtkUnsignedShortArray();
-			vtkUnsignedShortArray.SetArray(ushortArray, ushortArray.Length, 1);
+			vtkUnsignedShortArray.SetArray(ushortArray, (VtkIdType)ushortArray.Length, 1);
 			return vtkUnsignedShortArray;
 		}
 

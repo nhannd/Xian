@@ -145,7 +145,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Rle.dll" />
+    <!-- Note that the RLE codec is in C# and does not have platform-specific builds -->
+    <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll" />
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll" />
   </ItemGroup>
 
@@ -223,35 +224,36 @@
 
   <ItemGroup>
     <MprPluginFiles Include="$(TrunkDirectory)\ImageViewer\Volume\Mpr\bin\$(Configuration)\ClearCanvas.ImageViewer.Volume.Mpr.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtksys.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommon.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFiltering.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImaging.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
-    <!-- Slab dependencies. Note: I used DependencyWalker to chase down implicitly linked DLLs, 
-     unfortunately the VolumeRendering pulls in a bunch of stuff...
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkftgl.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkfreetype.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkverdict.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkGraphics.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtksys.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkCommon.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkFiltering.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkImaging.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkCommonDotNet.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkFilteringDotNet.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkImagingDotNet.dll" />
+    
+    <!-- Dependencies for Slabbing Support -->
+    <!-- (as indicated by DependencyWalker)
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkftgl.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkfreetype.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkverdict.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkGraphics.dll" />
    
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkDicomParser.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkNetCDF.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkMetaIO.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkPNG.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkZlib.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkJpeg.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkTiff.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkExpat.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkIO.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkDicomParser.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkNetCDF.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkMetaIO.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkPNG.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkZlib.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkJpeg.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkTiff.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkExpat.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkIO.dll" />
 
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRendering.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRendering.dll" />
-    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll" />
--->
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkRendering.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkRenderingDotNet.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkVolumeRendering.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\$(PlatformSubFolder)\vtkVolumeRenderingDotNet.dll" />
+    -->
   </ItemGroup>
   
   <ItemGroup Condition="$(DesktopBuild)">

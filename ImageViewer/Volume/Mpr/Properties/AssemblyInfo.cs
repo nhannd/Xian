@@ -33,15 +33,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-using ClearCanvas.Common;
-
-[assembly: ClearCanvas.Common.Plugin()]
-
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClearCanvas.ImageViewer.Volume.Reslicer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ClearCanvas.ImageViewer.Volume.Mpr")]
+[assembly: AssemblyDescription("Multi-Planar Reconstruction Components")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ClearCanvas Workstation")]
@@ -53,6 +49,8 @@ using ClearCanvas.Common;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+
+[assembly: ClearCanvas.Common.Plugin()]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("805fc8d7-eb5e-481d-abd1-5356c16e7ab9")]
