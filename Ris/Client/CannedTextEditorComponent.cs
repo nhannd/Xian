@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client
                     {
                         // only allow alphabets and space
                         bool ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
-                        return new ValidationResult(ok, SR.MessageNameContainsInvalidChars);
+                        return new ValidationResult(ok, SR.MessageNameCanOnlyContainAlphaChars);
                     }));
             }
 

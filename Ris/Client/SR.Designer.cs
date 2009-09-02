@@ -1420,11 +1420,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value contains invalid characters.
+        ///   Looks up a localized string similar to The value can only contain space and alphabet characters.
         /// </summary>
-        internal static string MessageNameContainsInvalidChars {
+        internal static string MessageNameCanOnlyContainAlphaChars {
             get {
-                return ResourceManager.GetString("MessageNameContainsInvalidChars", resourceCulture);
+                return ResourceManager.GetString("MessageNameCanOnlyContainAlphaChars", resourceCulture);
             }
         }
         
