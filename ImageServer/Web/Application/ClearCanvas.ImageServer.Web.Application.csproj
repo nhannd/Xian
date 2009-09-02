@@ -333,6 +333,13 @@
       <DependentUpon>UserPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Common\MasterProperties.cs" />
+    <Compile Include="Pages\Error\CookiesRequired.aspx.cs">
+      <DependentUpon>CookiesRequired.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\CookiesRequired.aspx.designer.cs">
+      <DependentUpon>CookiesRequired.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1497,6 +1504,7 @@
     <Content Include="Pages\Admin\Dashboard\ServerPartitionGridView.ascx" />
     <Content Include="Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx" />
     <Content Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
+    <Content Include="Pages\Error\CookiesRequired.aspx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <EmbeddedResource Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.js" />
     <Content Include="Pages\Studies\MoveSeries\Default.aspx" />
