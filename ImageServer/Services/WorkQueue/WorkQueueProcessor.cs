@@ -40,7 +40,6 @@ using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -245,7 +244,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			    String error = e.InnerException != null ? e.InnerException.Message : e.Message;
 
                 FailQueueItem(queueItem, error);
-			    RaiseAlert(processor, queueItem, error);
 			}
             finally
 			{
@@ -258,15 +256,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 		}
 
-		private static void RaiseAlert(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem, string error)
+		public static void RaiseAlert(Model.WorkQueue queueItem, AlertLevel level, string message)
 		{
-			ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
-			                     processor.Name, AlertTypeCodes.UnableToProcess,
-			                     GetWorkQueueContextData(queueItem), TimeSpan.Zero,
-			                     "Work Queue item failed: Type={0}, GUID={1}: {2}",
-			                     queueItem.WorkQueueTypeEnum,
-			                     queueItem.GetKey(), error);
-		}
+		    if (WorkQueueSettings.Instance.AlertFailedWorkQueue || level == AlertLevel.Critical)
+            {
+                ServerPlatform.Alert(AlertCategory.Application, level,
+		                             queueItem.WorkQueueTypeEnum.ToString(), AlertTypeCodes.UnableToProcess,
+		                             GetWorkQueueContextData(queueItem), TimeSpan.Zero,
+		                             "Work Queue item failed: Type={0}, GUID={1}: {2}",
+		                             queueItem.WorkQueueTypeEnum,
+                                     queueItem.GetKey(), message);
+		    }
+        }
 
     	private static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
         {
@@ -351,6 +352,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                             parms.ScheduledTime = Platform.Time;
                             parms.ExpirationTime = Platform.Time.AddDays(1);
+
+                            OnWorkQueueEntryFailed(item, failureDescription);
                         }
                         else
                         {
@@ -389,8 +392,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }                
             }
         }
-      
-		/// <summary>
+
+        private void OnWorkQueueEntryFailed(Model.WorkQueue item, string error)
+        {
+            RaiseAlert(item, AlertLevel.Error, error);
+        }
+
+        /// <summary>
 		/// Method for getting next <see cref="WorkQueue"/> entry.
 		/// </summary>
 		/// <param name="processorId">The Id of the processor.</param>

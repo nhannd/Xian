@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
         private ServerPartition _partition;
-        private Study _theStudy;
+        protected Study _theStudy;
     	private bool _cancelPending = false;
     	private readonly object _syncRoot = new object();
         private StudyIntegrityValidationModes _ValidationModes = StudyIntegrityValidationModes.None;
@@ -360,7 +360,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
             FileUtils.Delete(file);
-            RaiseAlert(WorkQueueItem, AlertLevel.Critical, "Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason);
+            WorkQueueProcessor.RaiseAlert(WorkQueueItem, AlertLevel.Critical, String.Format("Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason));
         }
 
         /// <summary>
@@ -674,10 +674,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now		
 
-                                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, Name, AlertTypeCodes.UnableToProcess,
-                                                GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero,
-                                               "Failing {0} WorkQueue entry ({1}), fatal error: {2}",
-                                               item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription);
+                                WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}), fatal error: {2}", item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription));
 							}
 							else if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
 							{
@@ -689,9 +686,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ExpirationTime = Platform.Time; // expire now
 
 
-                                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
-                                               GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero, "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
-							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, item.FailureDescription);
+                                WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}): {2}", item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription));
 							}
 							else
 							{
@@ -815,13 +810,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 parms.ScheduledTime = Platform.Time;
                                 parms.ExpirationTime = Platform.Time.AddDays(1);
 
-
-                                    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name,
-                                                         AlertTypeCodes.UnableToProcess,
-                                                         GetWorkQueueContextData(WorkQueueItem), TimeSpan.Zero,
-                                                         "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
-                                                         item.WorkQueueTypeEnum, item.GetKey(),
-                                                         item.FailureCount + 1, failureDescription);
+                                WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription));
                             }
                             else
                             {
@@ -1130,32 +1120,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
 
             return contextData;
-        }
-
-
-        protected static void RaiseAlert(Model.WorkQueue item, AlertLevel level, string message, params object[] arguments)
-        {
-            WorkQueueAlertContextData alertContextData = GetWorkQueueContextData(item);
-            StringBuilder alertMessage = new StringBuilder();
-            if (alertContextData.StudyInfo != null)
-            {
-                alertMessage.AppendLine(String.Format("Study: {0}", alertContextData.StudyInfo.StudyInstaneUid));
-                alertMessage.AppendLine(String.Format("A #: {0}", alertContextData.StudyInfo.AccessionNumber ?? "N/A"));
-                alertMessage.AppendLine(String.Format("Patient: {0} , ID: {1}", alertContextData.StudyInfo.PatientsName ?? "N/A", alertContextData.StudyInfo.PatientsId ?? "N/A"));
-
-            }
-            else
-            {
-                alertMessage.AppendLine("Study: Unknown");
-            }
-
-            alertMessage.AppendLine(String.Format(message, arguments));
-
-
-            ServerPlatform.Alert(AlertCategory.Application, level,
-                item != null ? item.WorkQueueTypeEnum.ToString() : "WorkQueue",
-                -1, alertContextData, TimeSpan.Zero, alertMessage.ToString());
-
         }
 
 

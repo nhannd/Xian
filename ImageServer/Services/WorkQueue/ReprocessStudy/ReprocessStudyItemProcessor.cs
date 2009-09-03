@@ -216,6 +216,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
     {
         #region Private Members
 
+        private bool _completed = false;
         private ReprocessStudyQueueData _queueData; 
         
         #endregion
@@ -232,8 +233,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
             bool successful = true;
             string failureDescription = null;
-            bool completed = false;
-
+            
             // The processor stores its state in the Data column
             LoadState(item);
             
@@ -375,11 +375,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                       FileUtils.Delete(path);
                                                       failureDescription = ex.Message;
 
-                                                      RaiseAlert(item, AlertLevel.Critical,
-                                                                 "File {0} is not readable and has been removed from study.",
-                                                                 path, StorageLocation.Study.AccessionNumber,
-                                                                 StorageLocation.Study.PatientsName,
-                                                                 StorageLocation.Study.PatientId);
+                                                      WorkQueueProcessor.RaiseAlert(item, AlertLevel.Critical,
+                                                                 String.Format("File {0} is not readable and has been removed from study.", path));
                                                   }
                                               }
                                               else if (!file.Extension.Equals(".xml") && !file.Extension.Equals(".gz"))
@@ -393,12 +390,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                               cancel = reprocessedCounter >= 500;
                                           }, true);
 
-                EnsureConsistentObjectCount(studyXml, seriesMap);
-                SaveStudyXml(studyXml);
+                if (studyXml != null)
+                {
+                    EnsureConsistentObjectCount(studyXml, seriesMap);
+                    SaveStudyXml(studyXml);
+                }
 
                 // Completed if either all files have been reprocessed 
                 // or no more dicom files left that can be reprocessed.
-                completed = reprocessedCounter == 0;
+                _completed = reprocessedCounter == 0;
                 successful = true;
             }
             catch (Exception e)
@@ -413,7 +413,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             {
                 // Update the state
                 _queueData.State.ExecuteAtLeastOnce = true;
-                _queueData.State.Completed = completed;
+                _queueData.State.Completed = _completed;
                 _queueData.State.CompleteAttemptCount++;
                 SaveState(item, _queueData);
                     
@@ -423,7 +423,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 }
                 else 
                 {
-                    if (!completed)
+                    if (!_completed)
                     {
                         // Put it back to Pending
                         PostProcessing(item, WorkQueueProcessorStatus.Pending, WorkQueueProcessorDatabaseUpdate.None);
@@ -480,6 +480,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 else
                     updateContext.Commit();
             }
+
+			// the record has been deleted. Reset to Null to prevent it from being used accidentally.
+            _theStudy = null;
         }
 
         private void LogHistory()
@@ -554,6 +557,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
         private void EnsureConsistentObjectCount(StudyXml studyXml, IDictionary<string, List<string>> processedSeriesMap)
         {
+            Platform.CheckForNullReference(studyXml, "studyXml");
+
             // We have to ensure that the counts in studyXml and what we have processed are consistent.
             // Files or folder may be reprocessed but then become missing when then entry is resumed.
             // We have to removed them from the studyXml before committing the it.
@@ -611,17 +616,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             Platform.CheckTrue(studyXml.NumberOfStudyRelatedInstances == filesProcessed, 
                 String.Format("Number of instances in the xml do not match number of reprocessed: {0} vs {1}",
                 studyXml.NumberOfStudyRelatedInstances, filesProcessed));
-           
-            // update the instance count in the db
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+
+            Platform.Log(LogLevel.Info, "Study xml has been verified.");
+
+            if (StorageLocation.Study != null)
             {
-                IStudyEntityBroker broker = updateContext.GetBroker<IStudyEntityBroker>();
-                StudyUpdateColumns columns = new StudyUpdateColumns();
-                columns.NumberOfStudyRelatedInstances = studyXml.NumberOfStudyRelatedInstances;
-                columns.NumberOfStudyRelatedSeries = studyXml.NumberOfStudyRelatedSeries;
-                broker.Update(StorageLocation.Study.GetKey(), columns);
-                updateContext.Commit();
+                // update the instance count in the db
+                using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                {
+                    IStudyEntityBroker broker = updateContext.GetBroker<IStudyEntityBroker>();
+                    StudyUpdateColumns columns = new StudyUpdateColumns();
+                    columns.NumberOfStudyRelatedInstances = studyXml.NumberOfStudyRelatedInstances;
+                    columns.NumberOfStudyRelatedSeries = studyXml.NumberOfStudyRelatedSeries;
+                    broker.Update(StorageLocation.Study.GetKey(), columns);
+                    updateContext.Commit();
+                }
             }
+            else
+            {
+                // alert orphaned StudyStorage entry
+                WorkQueueProcessor.RaiseAlert(WorkQueueItem, AlertLevel.Critical,
+                                              String.Format("Study {0} has been reprocessed but Study record was NOT created. Images reprocessed: {1}. Path={2}",
+                                              StorageLocation.StudyInstanceUid, filesProcessed,
+                                              StorageLocation.GetStudyPath()));
+            }
+            
         }
 
         #endregion

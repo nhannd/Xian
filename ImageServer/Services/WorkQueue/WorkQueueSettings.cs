@@ -60,10 +60,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
 	    public const bool DefaultEnableStudyIntegrityValidation = true;
         public const int DefaultTierMigrationProgressUpdateInSeconds = 30;
+        private const bool DefaultAlertFailedWorkQueue = true;
 
 		private static WorkQueueSettings _instance;
+	    
 
-		private WorkQueueSettings()
+	    private WorkQueueSettings()
 		{
 		}
 
@@ -233,6 +235,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
         }
 
 
+        /// <summary>
+        /// The number of seconds to update on the progress of tier migration work queue entries.
+        /// </summary>
+        [SettingsDescriptionAttribute("A boolean value indicating whether alerts should be generated when a Work Queue entry failed.")]
+        [ConfigurationProperty("AlertFailedWorkQueue", DefaultValue = DefaultAlertFailedWorkQueue)]
+        public bool AlertFailedWorkQueue
+        {
+            get { return ((bool)(this["AlertFailedWorkQueue"])); }
+            set { this["AlertFailedWorkQueue"] = value; }
+        }
+
+
 		#endregion
 
 		public override object Clone()
@@ -256,6 +270,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			clone.WorkQueueMinimumFreeMemoryMB = _instance.WorkQueueMinimumFreeMemoryMB;
 		    clone.EnableStudyIntegrityValidation = _instance.EnableStudyIntegrityValidation;
 		    clone.TierMigrationProgressUpdateInSeconds = _instance.TierMigrationProgressUpdateInSeconds;
+		    clone.AlertFailedWorkQueue = _instance.AlertFailedWorkQueue;
 			return clone;
 		}
 	}
