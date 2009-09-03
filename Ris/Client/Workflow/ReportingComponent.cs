@@ -453,6 +453,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_reportEditor = provider == null ? new ReportEditorComponent(new ReportEditorContext(this)) : provider.GetEditor(new ReportEditorContext(this));
 				_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
 				_reportEditorHost.StartComponent();
+			_reportEditorHost.Component.ModifiedChanged +=
+				delegate
+				{
+					this.Modified = this.Modified || _reportEditorHost.Component.Modified;
+				};
 
 				OpenImages();
 
@@ -505,6 +510,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_reportEditorHost.Component.ShowValidation(show);
 			base.ShowValidation(show);
+		}
+
+		public override bool PrepareExit()
+		{
+			bool exit = base.PrepareExit();
+			if(exit)
+			{
+				// same as cancel
+				DoCancelCleanUp();
+			}
+			return exit;
 		}
 
 		#endregion
@@ -966,16 +982,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				CloseImages();
-
-				if (_worklistItemManager.ShouldUnclaim)
-				{
-					Platform.GetService<IReportingWorkflowService>(
-						delegate(IReportingWorkflowService service)
-						{
-							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff));
-						});
-				}
+				DoCancelCleanUp();
 
 				this.Exit(ApplicationComponentExitCode.None);
 			}
@@ -1067,8 +1074,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		private void DoCancelCleanUp()
+		{
+			CloseImages();
+
+			if (_worklistItemManager.ShouldUnclaim)
+			{
+				Platform.GetService<IReportingWorkflowService>(
+					delegate(IReportingWorkflowService service)
+					{
+						service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff));
+					});
+			}
+		}
+
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
+			this.Modified = false;
+
 			if (this.WorklistItem != null)
 			{
 				try

@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public ReportEditorComponentBase(TReportEditorContext context)
+		protected ReportEditorComponentBase(TReportEditorContext context)
 		{
 			_context = context;
 			_previewComponent = new PreviewComponent(this);
@@ -129,6 +129,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void WorklistItemChangedEventHandler(object sender, EventArgs e)
 		{
+			this.Modified = false;	// clear modified flag
+
 			if (_context.WorklistItem != null)
 			{
 				LoadOrCreateReportContent();
