@@ -161,6 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public static DeletedStudyInfo CreateDeletedStudyInfo(StudyDeleteRecord record)
 		{
+		    StudyDeleteExtendedInfo extendedInfo = XmlUtils.Deserialize<StudyDeleteExtendedInfo>(record.ExtendedInfo);
 			DeletedStudyInfo info = new DeletedStudyInfo();
 			info.DeleteStudyRecord = record.GetKey();
 			info.RowKey = record.GetKey().Key;
@@ -174,6 +175,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			info.BackupFolderPath = _fsMonitor.GetFilesystemInfo(record.FilesystemKey).ResolveAbsolutePath(record.BackupPath);
 			info.ReasonForDeletion = record.Reason;
 			info.DeleteTime = record.Timestamp;
+		    info.UserName = extendedInfo.UserName;
+            info.UserId = extendedInfo.UserId;
 			if (record.ArchiveInfo!=null)
 				info.Archives = XmlUtils.Deserialize<DeletedStudyArchiveInfoCollection>(record.ArchiveInfo);
 

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -42,7 +43,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         private Study _study;
         private Model.WorkQueue _item;
         private ServerFilesystemInfo _filesystem;
-        
+        private string _userId;
+        private string _userName;
 
         public ServerPartition ServerPartition
         {
@@ -71,6 +73,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         {
             get { return _item; }
             set { _item = value; }
+        }
+
+        public string UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
         }
     }
 

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -91,14 +92,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 _extensions = CollectionUtils.Cast<IDeleteStudyProcessorExtension>(
                     new DeleteStudyProcessorExtensionPoint().CreateExtensions());
 
+                DeleteStudyContext context = CreatePluginProcessingContext();
                 foreach (IDeleteStudyProcessorExtension ext in _extensions)
                 {
-                    DeleteStudyContext context = new DeleteStudyContext();
-                    context.WorkQueueItem = WorkQueueItem;
-                    context.ServerPartition = ServerPartition;
-                    context.Study = Study;
-                    context.StorageLocation = StorageLocation;
-                    context.Filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
                     ext.Initialize(context);
                 }
             }
@@ -106,7 +102,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             return _extensions;
         }
 
-        
+        protected virtual DeleteStudyContext CreatePluginProcessingContext()
+        {
+            DeleteStudyContext context = new DeleteStudyContext();
+            context.WorkQueueItem = WorkQueueItem;
+            context.ServerPartition = ServerPartition;
+            context.Study = Study;
+            context.StorageLocation = StorageLocation;
+            context.Filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
+            return context;
+        }
+
         #endregion
 
         #region Overridden Protected Method

@@ -31,7 +31,6 @@
 
 
 using System.Collections.Generic;
-using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies

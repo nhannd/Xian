@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
 
         /// <summary>
-        /// Deserialize an xml node into an object of the specified type.
+        /// Deserialize a xml node into an object of the specified type.
         /// </summary>
         /// <typeparam name="T">Type of the object to deserialize into</typeparam>
         /// <param name="reader">The <see cref="XmlReader"/> to read the xml content</param>
@@ -99,6 +99,19 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             return (T)serializer.Deserialize(reader);
         }
 
+
+        /// <summary>
+        /// Deserialize a xml string into an object of the specified type.
+        /// </summary>
+        /// <typeparam name="T">Type of the object to deserialize into</typeparam>
+        /// <param name="xmlContent">The xml string</param>
+        /// <returns></returns>
+        public static T Deserialize<T>(string xmlContent) where T : class
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(xmlContent);
+            return Deserialize<T>(doc);
+        }
 
         /// <summary>
         /// Serializes an object into an XML format.

@@ -405,7 +405,7 @@ namespace ClearCanvas.ImageServer.Core
         }
 
         /// <summary>
-        /// Returns the current logged in user.
+        /// Returns the name of the current user.
         /// </summary>
         public static string CurrentUserName
         {
@@ -417,5 +417,20 @@ namespace ClearCanvas.ImageServer.Core
                     return Thread.CurrentPrincipal.Identity.Name;
             }
         }
+
+        //// <summary>
+        /// Returns the name of the current user.
+        /// </summary>
+        public static string CurrentUserId
+        {
+            get
+            {
+                if (Thread.CurrentPrincipal is CustomPrincipal)
+                    return (Thread.CurrentPrincipal as CustomPrincipal).Credentials.UserName;
+                else
+                    return Thread.CurrentPrincipal.Identity.Name;
+            }
+        }
+        
     }
 }

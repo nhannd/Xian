@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
         private DeletionLevel _level;
         private string _reason;
         private string _userId;
+        private string _userName;
         private DateTime _timestamp;
         
         #endregion
@@ -111,7 +112,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             get { return _timestamp; }
             set { _timestamp = value; }
-        } 
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
+        }
+
         #endregion
     }
 

@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
         private string _patientId;
         private string _accessionNumber;
         private string _studyDate;
-        private string _partitionAE;
+        private string _partitionAe;
         private string _studyDescription;
         private string _backupFolderPath;
         private string _reasonForDeletion;
@@ -58,6 +58,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
         private  DeletedStudyArchiveInfoCollection _archives;
 
         private bool _restoreScheduled;
+        private string _userName;
+        private string _userId;
+
         #endregion
 
         public string StudyInstanceUid
@@ -92,8 +95,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
 
         public string PartitionAE
         {
-            get { return _partitionAE; }
-            set { _partitionAE = value; }
+            get { return _partitionAe; }
+            set { _partitionAe = value; }
         }
 
         public string StudyDescription
@@ -142,6 +145,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
         {
             get { return _deleteStudyRecord; }
             set { _deleteStudyRecord = value; }
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
+        }
+
+        public string UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
         }
     }
 

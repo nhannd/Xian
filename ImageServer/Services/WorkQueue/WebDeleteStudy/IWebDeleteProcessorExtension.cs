@@ -41,14 +41,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         private readonly WebDeleteStudyItemProcessor _processor;
         private readonly DeletionLevel _level;
         private readonly string _reason;
+        private readonly string _userId;
         private readonly string _userName;
         private readonly StudyStorageLocation _storageLocation;
 
-        public WebDeleteProcessorContext(WebDeleteStudyItemProcessor processor, DeletionLevel level, StudyStorageLocation storageLocation, string reason, string userName)
+        public WebDeleteProcessorContext(WebDeleteStudyItemProcessor processor, DeletionLevel level, StudyStorageLocation storageLocation, string reason, string userId, string userName)
         {
             _processor = processor;
             _storageLocation = storageLocation;
             _userName = userName;
+            _userId = userId;
             _reason = reason;
             _level = level;
         }
@@ -76,6 +78,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         public StudyStorageLocation StorageLocation
         {
             get { return _storageLocation; }
+        }
+
+        public string UserId
+        {
+            get { return _userId; }
         }
     }
     public interface IWebDeleteProcessorExtension

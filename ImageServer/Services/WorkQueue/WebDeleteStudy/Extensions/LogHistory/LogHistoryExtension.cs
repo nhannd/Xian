@@ -53,8 +53,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy.Extensions.L
                     SeriesDeletionChangeLog changeLog =  new SeriesDeletionChangeLog();
                     changeLog.TimeStamp = now;
                     changeLog.Reason = context.Reason;
-                    changeLog.UserId = context.UserName;
-                    changeLog.Series = CollectionUtils.Map<Series, SeriesInformation>(series,
+                    changeLog.UserId = context.UserId;
+                    changeLog.UserName = context.UserName;
+                    changeLog.Series = CollectionUtils.Map(series,
                                       delegate(Series ser)
                                           {
                                               ServerEntityAttributeProvider seriesWrapper = new ServerEntityAttributeProvider(ser);
@@ -77,9 +78,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy.Extensions.L
     {
         private DateTime _timeStamp;
         private string _userId;
-        private string reason;
+        private string _userName;
+        private string _reason;
         private List<SeriesInformation> _seriesInfo;
-
+        
         public DateTime TimeStamp
         {
             get { return _timeStamp; }
@@ -94,14 +96,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy.Extensions.L
 
         public string Reason
         {
-            get { return reason; }
-            set { reason = value; }
+            get { return _reason; }
+            set { _reason = value; }
         }
         [XmlArray("DeletedSeries")]
         public List<SeriesInformation> Series
         {
             get { return _seriesInfo; }
             set { _seriesInfo = value; }
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
         }
     }
 }

@@ -8,14 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
-{
-    /// <summary>
-    /// DeletedStudyDetailsDialogGeneralPanel class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
+    
+    
     public partial class DeletedStudyDetailsDialogGeneralPanel {
         
         /// <summary>

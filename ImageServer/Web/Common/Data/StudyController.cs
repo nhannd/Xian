@@ -33,7 +33,9 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Enterprise;
@@ -134,6 +136,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			    WebDeleteStudyLevelQueueData extendedData = new WebDeleteStudyLevelQueueData();
 			    extendedData.Level = DeletionLevel.Study;
                 extendedData.Reason = reason;
+			    extendedData.UserId = ServerHelper.CurrentUserId;
+			    extendedData.UserName = ServerHelper.CurrentUserName;
                 insertParms.WorkQueueData = XmlUtils.SerializeAsXmlDoc(extendedData);
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
 				

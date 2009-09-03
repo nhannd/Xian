@@ -51,6 +51,15 @@
                                 <ccUI:DateTimeLabel ID="DeleteDate" runat="server" Value='<%# Eval("DeleteTime") %>'></ccUI:DateTimeLabel>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Deleted By: ">
+                            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+                            <ItemTemplate>
+                                <%# (Container.DataItem as DeletedStudyInfo).UserName ?? "Unknown" %> 
+                                <%# String.IsNullOrEmpty((Container.DataItem as DeletedStudyInfo).UserId) 
+                                        ? String.Empty 
+                                        : String.Format(" (ID={0})", (Container.DataItem as DeletedStudyInfo).UserId)%>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Fields>
                     <RowStyle CssClass="GlobalGridViewRow" />
                     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

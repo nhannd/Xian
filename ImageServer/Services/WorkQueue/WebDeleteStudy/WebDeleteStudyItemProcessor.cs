@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         private DeletionLevel _level;
         private string _reason;
         private string _userId;
+        private string _userName;
         private IList<IWebDeleteProcessorExtension> _extensions;
         private List<Series> _seriesToDelete;
 
@@ -59,15 +60,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             get { return _level; }
         }
 
-        public string Reason
-        {
-            get { return _reason; }
-        }
-
-        public string UserID
-        {
-            get { return _userId; }
-        }
 
         #region Overridden Protected Methods
 
@@ -79,6 +71,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             _level = data.Level;
             _reason = data.Reason;
             _userId = data.UserId;
+            _userName = data.UserName;
+        }
+
+        protected override DeleteStudyContext CreatePluginProcessingContext()
+        {
+            DeleteStudyContext context = base.CreatePluginProcessingContext();
+            context.UserId = _userId;
+            context.UserName = _userName;
+            return context;
         }
 
         protected override void ProcessItem(Model.WorkQueue item)
@@ -239,7 +240,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             {
                 try
                 {
-                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, Reason, UserID);
+                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, _reason, _userId, _userName );
                     extension.OnCompleted(context, _seriesToDelete);
                 }
                 catch (Exception ex)
@@ -263,7 +264,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             {
                 try
                 {
-                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, Reason, UserID);
+                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, _reason, _userId, _userName);
                     extension.OnSeriesDeleting(context, series);
                 }   
                 catch(Exception ex)
@@ -280,7 +281,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
             {
                 try
                 {
-                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, Reason, UserID);
+                    WebDeleteProcessorContext context = new WebDeleteProcessorContext(this, Level, StorageLocation, _reason, _userId, _userName);
                     extension.OnSeriesDeleted(context, seriesUid);
                 }
                 catch (Exception ex)

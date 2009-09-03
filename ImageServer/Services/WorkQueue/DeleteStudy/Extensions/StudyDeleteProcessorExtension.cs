@@ -223,6 +223,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 
                     StudyDeleteExtendedInfo extInfo = new StudyDeleteExtendedInfo();
                     extInfo.ServerInstanceId = ServerPlatform.ServerInstanceId;
+                    extInfo.UserId = _context.UserId;
+                    extInfo.UserName = _context.UserName;
                     parms.ExtendedInfo = XmlUtils.SerializeAsString(extInfo);
 
                     StudyDeleteRecord deleteRecord = broker.Insert(parms);
@@ -249,6 +251,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
     {
         #region Private Fields
         private string _serverInstanceId;
+        private string _userId;
+        private string _userName;
         #endregion
 
         #region Public Properties
@@ -262,6 +266,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             get { return _serverInstanceId; }
             set { _serverInstanceId = value; }
         }
+
+        public string UserId
+        {
+            get { return _userId; }
+            set { _userId = value; }
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
+        }
+
         #endregion
 
     }
