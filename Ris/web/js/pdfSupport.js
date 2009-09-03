@@ -50,6 +50,7 @@ function PdfObject(id, fileUrl)
 	var thisObject = this;
 	var _activeXObject = document.getElementById(id);
 	var _preDefinedZoom = [ 12.5, 25, 33.3, 50, 75, 100, 125, 150, 200, 300, 400, 600, 800];
+	var _defaultZoom = 100;
 	var _defaultView = "FitH";
 	var _currentZoom;
 
@@ -75,7 +76,11 @@ function PdfObject(id, fileUrl)
 
 	// Sets the view of a page according to the specified string.
 	this.setView = function(view)
-		{ _activeXObject.SetView(view); }
+		{ 
+			_activeXObject.SetView(view); 
+			if (view == _defaultView)
+				_currentZoom = _defaultZoom;
+		}
 
 	// Sets the magnification according to the specified value.
 	this.setZoom = function(percentage)
