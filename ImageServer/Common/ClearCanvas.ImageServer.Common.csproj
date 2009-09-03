@@ -82,7 +82,7 @@
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
-    <Compile Include="InProcessImageServerApplicationServiceProvider.cs" />
+    <Compile Include="InProcessImageServerServiceProvider.cs" />
     <Compile Include="ServiceModel\IFilesystemService.cs" />
     <Compile Include="ServiceMount.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
