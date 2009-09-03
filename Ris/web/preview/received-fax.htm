@@ -52,8 +52,8 @@
 					
 					if(faxboxItem != null)
 					{
-						Field.setValue($("fromNumber"), faxboxItem.SenderNumber);
-						Field.setValue($("toNumber"), faxboxItem.ReceivedAt.Number);
+						Field.setValue($("fromNumber"), Ris.formatStringTelephone(faxboxItem.SenderNumber));
+						Field.setValue($("toNumber"), Ris.formatStringTelephone(faxboxItem.ReceivedAt.Number));
 						Field.setValue($("original"), "Not implemented yet."); // TODO: Implement.	
 						Field.setValue($("status"), faxboxItem.Status.Value); // TODO: Implement.	
 					}
