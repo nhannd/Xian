@@ -29,42 +29,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Common.Authentication;
 
-namespace ClearCanvas.ImageServer.Common.Services.Login
+namespace ClearCanvas.ImageServer.Common.ServiceModel
 {
-    public interface ILoginService:IDisposable
+    /// <summary>
+    /// Defines the interface of an alert service
+    /// </summary>
+    [ImageServerService]
+    [Authentication(false)]
+    [ServiceContract]
+    public interface IAlertService
     {
         /// <summary>
-        /// Logs into the system using specified username and password.
+        /// Generates an alert record based on the specified <see cref="Alert"/>
         /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        SessionInfo Login(string userName, string password);
-
-        /// <summary>
-        /// Logs out of the system.
-        /// </summary>
-        /// <param name="session"></param>
-        void Logout(SessionInfo session);
-
-        /// <summary>
-        /// Change user's password.
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="oldPassword"></param>
-        /// <param name="newPassword"></param>
-        void ChangePassword(string userName, string oldPassword, string newPassword);
-
-        /// <summary>
-        /// Validate the specified session. Refresh the session data if needed.
-        /// </summary>
-        /// <param name="session"></param>
-        void Validate(SessionInfo session);
+        /// <param name="alert"></param>
+        [OperationContract]
+        void GenerateAlert(Alert alert);
     }
 }

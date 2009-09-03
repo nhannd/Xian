@@ -28,22 +28,30 @@
 // OF SUCH DAMAGE.
 
 #endregion
-
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageServer.Common.Services.Admin
+namespace ClearCanvas.ImageServer.Common
 {
-    public interface IUserAdminService:IDisposable
+    /// <summary>
+    /// Creates or stop web services.
+    /// </summary>
+    public class ServiceMount : ClearCanvas.Enterprise.Core.ServiceModel.ServiceMount
     {
-        LoginCredentials Credentials { set; }
-        List<UserSummary> ListUsers(ListUsersRequest filters);
-        UserDetail GetUserDetail(string username);
-        UserSummary UpdateUserDetail(UserDetail detail);
-        bool DeleteUser(string username);
-        UserSummary AddUser(UserDetail userdetail);
-        bool ResetPassword(string username);
-    }
+        public ServiceMount(Uri baseAddress, IServiceHostConfiguration configuration) 
+            : base(baseAddress, configuration)
+        {
+        }
 
+        public ServiceMount(Uri baseAddress, string serviceHostConfigurationClass) 
+            : base(baseAddress, serviceHostConfigurationClass)
+        {
+        }
+
+        protected override void ApplyInterceptors(IList<Castle.Core.Interceptor.IInterceptor> interceptors)
+        {
+            // NO-OP
+        }
+    }
 }

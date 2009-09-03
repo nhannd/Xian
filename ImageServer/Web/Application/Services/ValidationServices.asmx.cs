@@ -37,8 +37,12 @@ using System.ServiceModel;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.ServiceModel;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
@@ -74,13 +78,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
                 return result;
             }
 
-            FilesystemServiceProxy.FilesystemInfo fsInfo = null;
-            FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
+            FilesystemInfo fsInfo = null;
             result.Success = false;
             try
             {
-                fsInfo = client.GetFilesystemInfo(path);
-                if (fsInfo.Exists)
+                fsInfo = ServerUtility.GetFilesystemInfo(path);
+                if (fsInfo!=null && fsInfo.Exists)
                 {
                     result.Success = true;
                 }
@@ -96,11 +99,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
                 result.Success = false;
                 result.ErrorCode = 100;
                 result.ErrorText = String.Format("Cannot validate path {0}: {1}", path, e.Message);
-            }
-            finally
-            {
-                if (client.State == CommunicationState.Opened)
-                    client.Close();
             }
 
             return result;

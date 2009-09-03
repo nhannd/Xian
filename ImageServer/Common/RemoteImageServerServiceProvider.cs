@@ -30,23 +30,39 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageServer.Common.Services.Admin
+namespace ClearCanvas.ImageServer.Common
 {
-    public interface IAuthorityAdminService : IDisposable
+    /// <summary>
+    ///  Marks an interface as Image Server service interface (as opposed to an Enterpise service).
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+    public class ImageServerServiceAttribute : Attribute { }
+
+    /// <summary>
+    /// Provide access to the Image Server services hosted on another machine.
+    /// </summary>
+    [ExtensionOf(typeof(ServiceProviderExtensionPoint), Enabled = false)]
+    public class RemoteImageServerServiceProvider : RemoteServiceProviderBase<ImageServerServiceAttribute>
     {
-        LoginCredentials Credentials { set; }
-        IList<AuthorityGroupSummary> ListAllAuthorityGroups();
-        IList<AuthorityGroupSummary> ListAuthorityGroups(int pageIndex, int pageSize);
-        IList<AuthorityTokenSummary> ListAuthorityTokens();
-        AuthorityGroupSummary AddAuthorityGroup(string group, List<AuthorityTokenSummary> tokens);
-        AuthorityGroupSummary UpdateAuthorityGroup(AuthorityGroupDetail detail);
-        bool DeleteAuthorityGroup(AuthorityGroupSummary group);
-        AuthorityGroupDetail LoadAuthorityGroupDetail(AuthorityGroupSummary group);
-        bool ImportAuthorityGroups(List<AuthorityGroupDetail> groups);
-        bool ImportAuthorityTokens(List<AuthorityTokenSummary> tokens);
+        public RemoteImageServerServiceProvider()
+			: base(GetSettings())
+		{
+		}
+
+		private static RemoteServiceProviderArgs GetSettings()
+		{
+			return new RemoteServiceProviderArgs(
+                RemoteImageServerServiceSettings.Default.BaseUrl,
+                RemoteImageServerServiceSettings.Default.FailoverBaseUrl,
+                RemoteImageServerServiceSettings.Default.ConfigurationClass,
+                RemoteImageServerServiceSettings.Default.MaxReceivedMessageSize,
+                RemoteImageServerServiceSettings.Default.CertificateValidationMode,
+                RemoteImageServerServiceSettings.Default.RevocationMode,
+                RemoteImageServerServiceSettings.Default.UserCredentialsProviderClass
+				);
+		}
     }
 }

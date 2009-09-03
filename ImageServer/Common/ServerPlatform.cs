@@ -38,6 +38,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.ServiceModel;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -338,5 +339,7 @@ namespace ClearCanvas.ImageServer.Common
 			IStudyHistoryEntityBroker broker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
 			return broker.Insert(columns);
 		}
+
+        
     }
 }

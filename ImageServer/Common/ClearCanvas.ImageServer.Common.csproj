@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\NHibernate2.0\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip, Version=1.7.2.11, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\Ionic.Zip.dll</HintPath>
@@ -78,9 +82,12 @@
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
+    <Compile Include="InProcessImageServerApplicationServiceProvider.cs" />
+    <Compile Include="ServiceModel\IFilesystemService.cs" />
+    <Compile Include="ServiceMount.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
     <Compile Include="HttpServer.cs" />
-    <Compile Include="IAlertService.cs" />
+    <Compile Include="ServiceModel\IAlertService.cs" />
     <Compile Include="ICancelable.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
@@ -88,6 +95,13 @@
     <Compile Include="CommandProcessor\RenameFileCommand.cs" />
     <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
     <Compile Include="CommandProcessor\SaveXmlCommand.cs" />
+    <Compile Include="RemoteImageServerServiceProvider.cs" />
+    <Compile Include="RemoteImageServerServiceSettings.cs" />
+    <Compile Include="RemoteImageServerServiceSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>RemoteImageServerServiceSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ServerAddress.cs" />
     <Compile Include="CommandProcessor\ServerCommand.cs" />
     <Compile Include="CommandProcessor\ServerCommandProcessor.cs" />
@@ -113,6 +127,12 @@
     <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
+    <Compile Include="WSHttpConfiguration.cs" />
+    <Compile Include="WebServicesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WebServicesSettings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
@@ -150,9 +170,17 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="RemoteImageServerServiceSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>RemoteImageServerServiceSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WebServicesSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WebServicesSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

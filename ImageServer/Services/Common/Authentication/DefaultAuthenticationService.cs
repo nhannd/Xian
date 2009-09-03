@@ -37,10 +37,12 @@ using System.Web.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Services.Common.Authentication
 {
+    [ServiceImplementsContract(typeof(IAuthenticationService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class DefaultAuthenticationService : IApplicationServiceLayer, IAuthenticationService
     {

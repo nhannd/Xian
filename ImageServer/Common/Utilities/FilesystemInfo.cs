@@ -44,8 +44,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         #region Private members
         private string _path;
         private bool _exists;
-        private ulong _sizeInKB;
-        private ulong _freeSizeInKB;
+        private ulong _sizeInKb;
+        private ulong _freeSizeInKb;
 
         #endregion Private members
 
@@ -67,15 +67,15 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         [DataMember]
         public ulong SizeInKB
         {
-            get { return _sizeInKB; }
-            set { _sizeInKB = value; }
+            get { return _sizeInKb; }
+            set { _sizeInKb = value; }
         }
 
         [DataMember]
         public ulong FreeSizeInKB
         {
-            get { return _freeSizeInKB; }
-            set { _freeSizeInKB = value; }
+            get { return _freeSizeInKb; }
+            set { _freeSizeInKb = value; }
         }
 
         #endregion Public properties

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,17 +29,25 @@
 
 #endregion
 
-namespace ClearCanvas.ImageServer.Common
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.ServiceModel;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
+
+namespace ClearCanvas.ImageServer.Services.Common.Misc
 {
-    /// <summary>
-    /// Defines the interface of an alert service
-    /// </summary>
-    public interface IAlertService
+    [ServiceImplementsContract(typeof(IFilesystemService))]
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    public class FilesystemInfoService : IApplicationServiceLayer, IFilesystemService
     {
-        /// <summary>
-        /// Generates an alert record based on the specified <see cref="Alert"/>
-        /// </summary>
-        /// <param name="alert"></param>
-        void GenerateAlert(Alert alert);
+        #region IFilesystemService Members
+
+        public FilesystemInfo GetFilesystemInfo(string path)
+        {
+            return FilesystemUtils.GetDirectoryInfo(path);
+        }
+
+        #endregion
     }
 }

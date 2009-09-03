@@ -32,15 +32,16 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Enterprise
+namespace ClearCanvas.ImageServer.Common
 {
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    public class InProcessApplicationServiceProvider : IServiceProvider
+    public class InProcessImageServerServiceProvider : IServiceProvider
     {
         private readonly IServiceFactory _serviceFactory;
 
-        public InProcessApplicationServiceProvider()
+        public InProcessImageServerServiceProvider()
         {
             _serviceFactory = new ServiceFactory(new ApplicationServiceExtensionPoint());
         }
@@ -51,6 +52,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             if (_serviceFactory.HasService(serviceType))
             {
+                Platform.Log(LogLevel.Info, "Accessing {0} as a local service", serviceType);
                 return _serviceFactory.GetService(serviceType);
             }
             else

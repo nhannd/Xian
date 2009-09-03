@@ -28,29 +28,28 @@
 // OF SUCH DAMAGE.
 
 #endregion
-
-using System.Web.Script.Services;
-using System.Web.Services;
-using System.ComponentModel;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.ServiceModel;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Web.Application.Services
+namespace ClearCanvas.ImageServer.Web.Common.Utilities
 {
-    //// <summary>
-    /// Summary description for FilesystemInfoService
-    /// </summary>
-    [WebService(Namespace = "http://tempuri.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    [ToolboxItem(false)]
-    [ScriptService]
-    public class FilesystemInfoService : System.Web.Services.WebService
+    public static class ServerUtility
     {
-
-        [WebMethod]
-        public FilesystemInfo GetFilesystemInfo(string path)
+        /// <summary>
+        /// Retrieves the <see cref="FilesystemInfo"/> for a specified path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static FilesystemInfo GetFilesystemInfo(string path)
         {
-            return ServerUtility.GetFilesystemInfo(path);
+            FilesystemInfo fsInfo = null;
+            Platform.GetService(delegate(IFilesystemService service)
+            {
+                fsInfo = service.GetFilesystemInfo(path);
+            });
+
+            return fsInfo;
         }
     }
 }

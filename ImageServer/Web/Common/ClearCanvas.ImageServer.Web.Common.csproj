@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9A4EF57B-2702-4931-9E94-B194707E87FA}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -137,9 +137,6 @@
     <Compile Include="Security\DefaultRoleProvider.cs" />
     <Compile Include="Security\CustomFormAuthenticationModule.cs" />
     <Compile Include="Security\SessionManager.cs" />
-    <Compile Include="Service References\FilesystemServiceProxy.cs">
-      <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
-    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -149,6 +146,7 @@
     <Compile Include="UserProfile.cs" />
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
+    <Compile Include="Utilities\ServerUtility.cs" />
     <Compile Include="WebControls\UI\Timer.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -238,7 +236,6 @@
   <ItemGroup>
     <None Include="app.config">
     </None>
-    <None Include="Service References\FilesystemServiceProxy.map" />
     <None Include="UISettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>UISettings.Designer.cs</LastGenOutput>

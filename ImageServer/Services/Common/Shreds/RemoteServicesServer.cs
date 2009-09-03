@@ -31,59 +31,75 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.ServiceModel;
+using ClearCanvas.Common.Shreds;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageServer.Services.Common.Alert
+namespace ClearCanvas.ImageServer.Services.Common.Shreds
 {
     /// <summary>
-    /// Alert record service
+    /// Plugin to handle streaming request for the ImageServer.
     /// </summary>
-    [ServiceImplementsContract(typeof(IAlertService))]
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class AlertService : IApplicationServiceLayer, IAlertService
+    [ExtensionOf(typeof(ShredExtensionPoint))]
+    public class RemoteServicesServer : WcfShred
     {
+
         #region Private Members
-        private IAlertServiceExtension[] _extensions;
+
+        private readonly string _className;
+        private ServiceMount _serviceMount;
+
         #endregion
 
-        #region Private Methods
-        
-        private IAlertServiceExtension[] GetExtensions()
-        {
-            if (_extensions == null)
-            {
-                _extensions =
-                    CollectionUtils.ToArray<IAlertServiceExtension>(new AlertServiceExtensionPoint().CreateExtensions());
-            }
+        #region Constructors
 
-            return _extensions;
+        public RemoteServicesServer()
+        {
+            _className = GetType().ToString();
         }
 
         #endregion
 
-        #region IAlertService Members
+        #region IShred Implementation Shred Override
 
-        public void GenerateAlert(ImageServer.Common.Alert alert)
+        public override void Start()
         {
-            IAlertServiceExtension[] extensions = GetExtensions();
-            foreach(IAlertServiceExtension ext in extensions)
-            {
-                try
-                {
-                    ext.OnAlert(alert);    
-                }
-                catch(Exception e)
-                {
-                    Platform.Log(LogLevel.Error, e, "Error occurred when calling {0} OnAlert()", ext.GetType());
-                }
-            }
+            Platform.Log(LogLevel.Debug, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
+            try
+            {
+                MountWebServices();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Fatal, e, "Unexpected exception starting Web Services Server Shred");
+            }
         }
-       
+
+        private void MountWebServices()
+        {
+            _serviceMount = new ServiceMount(new Uri(WebServicesSettings.Default.BaseUri), typeof(ServerWsHttpConfiguration).AssemblyQualifiedName);
+            _serviceMount.AddServices(new ApplicationServiceExtensionPoint());
+            _serviceMount.OpenServices();
+        }
+
+        public override void Stop()
+        {
+            Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+            if (_serviceMount!=null)
+                _serviceMount.CloseServices();
+        }
+
+        public override string GetDisplayName()
+        {
+            return "Remote Services Server";
+        }
+
+        public override string GetDescription()
+        {
+            return "Provide remote services to clients.";
+        }
 
         #endregion
     }

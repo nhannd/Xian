@@ -35,6 +35,8 @@ using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.ServiceModel;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -165,11 +167,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             if (!isServiceAvailable())
                 return float.NaN;
 
-            FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
-
             try
             {
-                FilesystemServiceProxy.FilesystemInfo fsInfo = client.GetFilesystemInfo(fs.FilesystemPath);
+                FilesystemInfo fsInfo = null;
+                Platform.GetService(delegate(IFilesystemService service)
+                {
+                    fsInfo = service.GetFilesystemInfo(fs.FilesystemPath);
+                });
 
                 _serviceIsOffline = false;
                 _lastServiceAvailableTime = Platform.Time;
@@ -179,11 +183,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
             {
                 _serviceIsOffline = true;
                 _lastServiceAvailableTime = Platform.Time;
-            }
-            finally
-            {
-                if (client.State == CommunicationState.Opened)
-                    client.Close();
             }
 
             return float.NaN;

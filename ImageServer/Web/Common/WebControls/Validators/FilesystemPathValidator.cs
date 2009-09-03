@@ -31,6 +31,7 @@
 
 using System;
 using System.ServiceModel;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -94,15 +95,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
-            FilesystemServiceProxy.FilesystemServiceClient client = null;
+            
             try
             {
-                client = new FilesystemServiceProxy.FilesystemServiceClient();
-                FilesystemServiceProxy.FilesystemInfo fsInfo = client.GetFilesystemInfo(path);
+                var fsInfo = ServerUtility.GetFilesystemInfo(path);
 
-                client.Close();
-
-                return fsInfo.Exists;
+                return fsInfo!=null && fsInfo.Exists;
             }
             catch (EndpointNotFoundException e)
             {
@@ -113,11 +111,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             {
                 ErrorMessage = e.Message;
                 return false;
-            }
-            finally
-            {
-                if (client != null && client.State == CommunicationState.Opened)
-                    client.Close();
             }
         }
 
