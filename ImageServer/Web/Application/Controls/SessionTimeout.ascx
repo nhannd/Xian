@@ -49,7 +49,7 @@
     function GetSecondsLeft()
     {
         var expiryTime = GetExpiryTime();
-	    
+        	    
         if (expiryTime==null)
         {
             return 0;
@@ -62,10 +62,8 @@
         var utc = localTime + localOffset;
         var utcNow = new Date(utc);
         
-        var sessionExpiry = new Date(expiryTime);
-        timeLeft = Math.round( (sessionExpiry.getTime() - utcNow.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
-        sessionExpiry = new Date(sessionExpiry.getTime() - localOffset);
-        window.status  = " [ Session Expiry Time: " + sessionExpiry.toLocaleString() + " ]";
+        timeLeft = Math.round( (expiryTime.getTime() - utcNow.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
+        window.status  = " [ Session Expiry Time: " + expiryTime.toLocaleString() + " ]";
         return timeLeft;
     }
     
@@ -75,14 +73,38 @@
         var name = "ImageServer." + loginId + "=";
         var ca = document.cookie.split(';');
         
+        
         for(var i=0;i < ca.length;i++) {
 		    var c = ca[i];
 		    while (c.charAt(0)==' ') c = c.substring(1,c.length); // trim leading space
 		    if (c.indexOf(name) == 0) {
-		        return c.substring(name.length,c.length);
+		        return GetDateFromString(c.substring(name.length,c.length));
 		    }
 	    }   
 	    return null;    
+    }
+    
+    function GetDateFromString(value)
+    {
+        var dateTime = value.split(' ');
+        var date = dateTime[0];
+        var time = dateTime[1];
+        
+        date = date.split('-');
+        time = time.split(':');
+        
+        value = new Date();
+        
+        value.setDate(date[2]);
+        value.setMonth(date[1]-1);  //Months start at 0
+        value.setFullYear(date[0]);
+        value.setHours(time[0]);
+        value.setMinutes(time[1]);
+        value.setSeconds(time[2]);
+        
+        debugger;
+                               
+        return value;
     }
     
     function HideSessionWarning()

@@ -54,6 +54,7 @@ public class ImageServerConstants
     public const string Next = "next";
     public const string Prev = "prev";
     public const string PagerItemCount = "ItemCount";
+    public const string CookieDateTimeFormat = "yyyy-M-d H:m:s";
 
     public const string DefaultConfigurationXml = "<HsmArchive><RootDir>e:\\Archive</RootDir></HsmArchive>";
 

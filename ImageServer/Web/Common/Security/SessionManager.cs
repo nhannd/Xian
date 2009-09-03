@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
@@ -39,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
@@ -119,7 +121,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 //Create an unencrypted cookie that contains the userid and the expiry time so the browser
                 //can check for session timeout.
                 //HttpCookie loginIdCookie = new HttpCookie("loginid", loginId);
-                HttpCookie expiryCookie = new HttpCookie("ImageServer." + loginId, token.ExpiryTime.ToUniversalTime().ToString());
+                HttpCookie expiryCookie = new HttpCookie("ImageServer." + loginId, DateTimeFormatter.Format(token.ExpiryTime, ImageServerConstants.CookieDateTimeFormat));
                 
                 HttpContext.Current.Response.Cookies.Add(authCookie);
                 HttpContext.Current.Response.Cookies.Add(expiryCookie);
