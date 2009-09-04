@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cannedTexts.Location = new System.Drawing.Point(0, 0);
 			this._cannedTexts.Name = "_cannedTexts";
 			this._cannedTexts.ReadOnly = false;
-			this._cannedTexts.Size = new System.Drawing.Size(366, 242);
+			this._cannedTexts.Size = new System.Drawing.Size(785, 291);
 			this._cannedTexts.TabIndex = 0;
 			this._cannedTexts.TabStop = false;
 			this._cannedTexts.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._cannedTexts_ItemDrag);
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._cannedTexts);
 			this.Name = "CannedTextSummaryComponentControl";
-			this.Size = new System.Drawing.Size(366, 242);
+			this.Size = new System.Drawing.Size(785, 291);
 			this.ResumeLayout(false);
 
         }

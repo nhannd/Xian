@@ -135,6 +135,7 @@ namespace ClearCanvas.Ris.Client
 							desktopWindow,
 							this.Instance,
 							SR.TitleSearch,
+							SR.TitleSearch,
 							ShelfDisplayHint.DockFloat);
 
 						_searchComponentShelf.Closed += delegate

@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._editorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._editorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._editorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-			this._editorTableLayoutPanel.Size = new System.Drawing.Size(305, 353);
+			this._editorTableLayoutPanel.Size = new System.Drawing.Size(509, 365);
 			this._editorTableLayoutPanel.TabIndex = 0;
 			// 
 			// _text
@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._text.Margin = new System.Windows.Forms.Padding(2);
 			this._text.Name = "_text";
 			this._text.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this._text.Size = new System.Drawing.Size(286, 160);
+			this._text.Size = new System.Drawing.Size(490, 172);
 			this._text.TabIndex = 4;
 			this._text.Value = null;
 			// 
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(286, 41);
+			this._name.Size = new System.Drawing.Size(490, 41);
 			this._name.TabIndex = 2;
 			this._name.ToolTip = null;
 			this._name.Value = null;
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._typeGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._typeGroupBox.Location = new System.Drawing.Point(3, 3);
 			this._typeGroupBox.Name = "_typeGroupBox";
-			this._typeGroupBox.Size = new System.Drawing.Size(284, 47);
+			this._typeGroupBox.Size = new System.Drawing.Size(488, 47);
 			this._typeGroupBox.TabIndex = 0;
 			this._typeGroupBox.TabStop = false;
 			this._typeGroupBox.Text = "Type";
@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groups.Location = new System.Drawing.Point(2, 55);
 			this._groups.Margin = new System.Windows.Forms.Padding(2);
 			this._groups.Name = "_groups";
-			this._groups.Size = new System.Drawing.Size(286, 42);
+			this._groups.Size = new System.Drawing.Size(490, 42);
 			this._groups.TabIndex = 1;
 			this._groups.Value = null;
 			// 
@@ -151,14 +151,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._category.Location = new System.Drawing.Point(2, 146);
 			this._category.Margin = new System.Windows.Forms.Padding(2);
 			this._category.Name = "_category";
-			this._category.Size = new System.Drawing.Size(286, 41);
+			this._category.Size = new System.Drawing.Size(490, 41);
 			this._category.TabIndex = 3;
 			this._category.Value = null;
 			// 
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(212, 361);
+			this._cancelButton.Location = new System.Drawing.Point(416, 373);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -169,7 +169,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(131, 361);
+			this._acceptButton.Location = new System.Drawing.Point(335, 373);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 1;
@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._editorTableLayoutPanel);
 			this.Name = "CannedTextEditorComponentControl";
-			this.Size = new System.Drawing.Size(305, 392);
+			this.Size = new System.Drawing.Size(509, 404);
 			this._editorTableLayoutPanel.ResumeLayout(false);
 			this._typeGroupBox.ResumeLayout(false);
 			this._typeGroupBox.PerformLayout();

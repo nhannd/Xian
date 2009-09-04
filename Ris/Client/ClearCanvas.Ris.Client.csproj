@@ -81,11 +81,11 @@
     <Compile Include="BiographyVisitDetailViewComponent.cs" />
     <Compile Include="BiographyVisitHistoryComponent.cs" />
     <Compile Include="BiographyOrderDetailViewComponent.cs" />
-    <Compile Include="CannedTextEditorComponentSettings.cs" />
-    <Compile Include="CannedTextEditorComponentSettings.Designer.cs">
+    <Compile Include="CannedTextSettings.cs" />
+    <Compile Include="CannedTextSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>CannedTextEditorComponentSettings.settings</DependentUpon>
+      <DependentUpon>CannedTextSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="CannedTextLookupHandler.cs" />
     <Compile Include="CannedTextSummaryComponent.cs" />
@@ -409,9 +409,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>AttachedDocumentSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="CannedTextEditorComponentSettings.settings">
+    <None Include="CannedTextSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>CannedTextEditorComponentSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>CannedTextSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="DiagnosticServiceLookupSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

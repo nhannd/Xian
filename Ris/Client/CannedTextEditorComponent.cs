@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client
                     return new ValidationResult(ok, Desktop.SR.MessageValueRequired);
                 }));
 
-            if (CannedTextEditorComponentSettings.Default.RestrictCannedTextNameToAlphaChars)
+            if (CannedTextSettings.Default.RestrictCannedTextNameToAlphaChars)
             {
                 // add validation rule to ensure the name does not contain invalid characters
                 this.Validation.Add(new ValidationRule("Name",

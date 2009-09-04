@@ -41,54 +41,54 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Desktop
 {
-    [ExtensionPoint]
-    public class SummaryComponentBaseViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	[ExtensionPoint]
+	public class SummaryComponentBaseViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
 
-    /// <summary>
-    /// Abstract base class for admin summary components.
-    /// </summary>
-    [AssociateView(typeof(SummaryComponentBaseViewExtensionPoint))]
-    public abstract class SummaryComponentBase : ApplicationComponent
-    {
-        #region Presentation Model
+	/// <summary>
+	/// Abstract base class for admin summary components.
+	/// </summary>
+	[AssociateView(typeof(SummaryComponentBaseViewExtensionPoint))]
+	public abstract class SummaryComponentBase : ApplicationComponent
+	{
+		#region Presentation Model
 
-        /// <summary>
-        /// Gets the summary table action model.
-        /// </summary>
-        public abstract ActionModelNode SummaryTableActionModel { get; }
+		/// <summary>
+		/// Gets the summary table action model.
+		/// </summary>
+		public abstract ActionModelNode SummaryTableActionModel { get; }
 
-        /// <summary>
-        /// Gets the summary table <see cref="ITable"/>.
-        /// </summary>
+		/// <summary>
+		/// Gets the summary table <see cref="ITable"/>.
+		/// </summary>
 		public abstract ITable SummaryTable { get; }
 
-        /// <summary>
-        /// Gets the summary table selection as an <cref="ISelection"/>.
-        /// </summary>
-        public abstract ISelection SummarySelection { get; set; }
+		/// <summary>
+		/// Gets the summary table selection as an <cref="ISelection"/>.
+		/// </summary>
+		public abstract ISelection SummarySelection { get; set; }
 
 		/// <summary>
 		/// Handles the "search" action if supported.
 		/// </summary>
 		public abstract void Search();
 
-        /// <summary>
-        /// Handles the "add" action.
-        /// </summary>
-        public abstract void AddItems();
+		/// <summary>
+		/// Handles the "add" action.
+		/// </summary>
+		public abstract void AddItems();
 
-        /// <summary>
-        /// Handles the "edit" action.
-        /// </summary>
-        public abstract void EditSelectedItems();
+		/// <summary>
+		/// Handles the "edit" action.
+		/// </summary>
+		public abstract void EditSelectedItems();
 
-        /// <summary>
-        /// Handles the "delete" action.
-        /// </summary>
-        public abstract void DeleteSelectedItems();
+		/// <summary>
+		/// Handles the "delete" action.
+		/// </summary>
+		public abstract void DeleteSelectedItems();
 
 		/// <summary>
 		/// Handles the "toggle activation" action.
@@ -108,30 +108,30 @@ namespace ClearCanvas.Enterprise.Desktop
 		/// <summary>
 		/// Handles double-clicking on a list item.
 		/// </summary>
-    	public abstract void DoubleClickSelectedItem();
+		public abstract void DoubleClickSelectedItem();
 
 		/// <summary>
 		/// Handles the accept button.
 		/// </summary>
-    	public abstract void Accept();
+		public abstract void Accept();
 
 		/// <summary>
 		/// Handles the cancel button.
 		/// </summary>
-    	public abstract void Cancel();
+		public abstract void Cancel();
 
-        #endregion
-    }
+		#endregion
+	}
 
-    /// <summary>
-    /// Abstract base class for admin summary components.
-    /// </summary>
-    /// <typeparam name="TSummary"></typeparam>
-    /// <typeparam name="TTable"></typeparam>
-    public abstract class SummaryComponentBase<TSummary, TTable> : SummaryComponentBase
-        where TSummary : class
-        where TTable : Table<TSummary>, new()
-    {
+	/// <summary>
+	/// Abstract base class for admin summary components.
+	/// </summary>
+	/// <typeparam name="TSummary"></typeparam>
+	/// <typeparam name="TTable"></typeparam>
+	public abstract class SummaryComponentBase<TSummary, TTable> : SummaryComponentBase
+		where TSummary : class
+		where TTable : Table<TSummary>, new()
+	{
 		public class AdminActionModel : CrudActionModel
 		{
 			private static readonly object ToggleActivationKey = new object();
@@ -156,16 +156,16 @@ namespace ClearCanvas.Enterprise.Desktop
 
 
 
-        private IList<TSummary> _selectedItems;
-        private readonly TTable _summaryTable;
+		private IList<TSummary> _selectedItems;
+		private readonly TTable _summaryTable;
 
 		private AdminActionModel _actionModel;
-        private PagingController<TSummary> _pagingController;
+		private PagingController<TSummary> _pagingController;
 
-    	private readonly bool _dialogMode;
+		private readonly bool _dialogMode;
 		private bool _setModifiedOnListChange;
 
-    	private readonly bool _showActiveColumn;
+		private readonly bool _showActiveColumn;
 		private event EventHandler _summarySelectionChanged;
 
 		public SummaryComponentBase()
@@ -196,9 +196,9 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		#region ApplicationComponent overrides
 
-        public override void Start()
-        {
-            InitializeTable(_summaryTable);
+		public override void Start()
+		{
+			InitializeTable(_summaryTable);
 
 			// add the "Active" column if needed
 			if (_showActiveColumn && SupportsDeactivation)
@@ -212,16 +212,16 @@ namespace ClearCanvas.Enterprise.Desktop
 
 			// build the action model
 			_actionModel = new AdminActionModel(
-                this.SupportsAdd,
+				this.SupportsAdd,
 				this.SupportsEdit,
 				this.SupportsDelete,
 				this.SupportsDeactivation,
 				new ResourceResolver(this.GetType(), true));
 
-            if (SupportsAdd)
-                _actionModel.Add.SetClickHandler(AddItems);
+			if (SupportsAdd)
+				_actionModel.Add.SetClickHandler(AddItems);
 
-            if (SupportsEdit)
+			if (SupportsEdit)
 			{
 				_actionModel.Edit.SetClickHandler(EditSelectedItems);
 				_actionModel.Edit.Enabled = false;
@@ -260,50 +260,53 @@ namespace ClearCanvas.Enterprise.Desktop
 				_summaryTable.Items.AddRange(ListItems(0, -1));
 			}
 
-            base.Start();
-        }
+			// Apply existing sort parameters
+			_summaryTable.Sort(_summaryTable.SortParams);
 
-        #endregion
+			base.Start();
+		}
 
-        #region Presentation Model
+		#endregion
 
-        /// <summary>
-        /// Gets the summary table action model.
-        /// </summary>
-        public override ActionModelNode SummaryTableActionModel
-        {
-            get { return _actionModel; }
-        }
+		#region Presentation Model
 
-        /// <summary>
-        /// Gets the summary table <see cref="ITable"/>.
-        /// </summary>
-        public override ITable SummaryTable
-        {
-            get { return _summaryTable; }
-        }
+		/// <summary>
+		/// Gets the summary table action model.
+		/// </summary>
+		public override ActionModelNode SummaryTableActionModel
+		{
+			get { return _actionModel; }
+		}
 
-        /// <summary>
-        /// Gets the summary table selection as an <cref="ISelection"/>.
-        /// </summary>
-        public override ISelection SummarySelection
-        {
-            get
-            {
-                return new Selection(_selectedItems);
-            }
-            set
-            {
-                Selection previousSelection = new Selection(_selectedItems);
-                if (!previousSelection.Equals(value))
-                {
-                    _selectedItems = new TypeSafeListWrapper<TSummary>(value.Items);
-                    OnSelectedItemsChanged();
-                    NotifyPropertyChanged("SummarySelection");
+		/// <summary>
+		/// Gets the summary table <see cref="ITable"/>.
+		/// </summary>
+		public override ITable SummaryTable
+		{
+			get { return _summaryTable; }
+		}
+
+		/// <summary>
+		/// Gets the summary table selection as an <cref="ISelection"/>.
+		/// </summary>
+		public override ISelection SummarySelection
+		{
+			get
+			{
+				return new Selection(_selectedItems);
+			}
+			set
+			{
+				Selection previousSelection = new Selection(_selectedItems);
+				if (!previousSelection.Equals(value))
+				{
+					_selectedItems = new TypeSafeListWrapper<TSummary>(value.Items);
+					OnSelectedItemsChanged();
+					NotifyPropertyChanged("SummarySelection");
 					EventsHelper.Fire(_summarySelectionChanged, this, EventArgs.Empty);
-                }
-            }
-        }
+				}
+			}
+		}
 
 		public event EventHandler SummarySelectionChanged
 		{
@@ -325,79 +328,79 @@ namespace ClearCanvas.Enterprise.Desktop
 			}
 		}
 
-        /// <summary>
-        /// Handles the "add" action.
-        /// </summary>
-        public override void AddItems()
-        {
-            try
-            {
-                IList<TSummary> addedItems;
-                if(AddItems(out addedItems))
-                {
-                    _summaryTable.Items.AddRange(addedItems);
-                    this.SummarySelection = new Selection(addedItems);
-					if (_setModifiedOnListChange)
-						this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        /// <summary>
-        /// Handles the "edit" action.
-        /// </summary>
-        public override void EditSelectedItems()
-        {
-            try
-            {
-                if (_selectedItems.Count != 1) return;
-
-                IList<TSummary> editedItems;
-                if (EditItems(_selectedItems, out editedItems))
-                {
-                    foreach (TSummary item in editedItems)
-                    {
-                        _summaryTable.Items.Replace(
-                            delegate(TSummary x) { return IsSameItem(item, x); },
-                            item);
-                    }
-
-                    this.SummarySelection = new Selection(editedItems);
+		/// <summary>
+		/// Handles the "add" action.
+		/// </summary>
+		public override void AddItems()
+		{
+			try
+			{
+				IList<TSummary> addedItems;
+				if(AddItems(out addedItems))
+				{
+					_summaryTable.Items.AddRange(addedItems);
+					this.SummarySelection = new Selection(addedItems);
 					if (_setModifiedOnListChange)
 						this.Modified = true;
 				}
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			}
+			catch (Exception e)
+			{
+				// failed to launch editor
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-        /// <summary>
-        /// Handles the "delete" action.
-        /// </summary>
-        public override void DeleteSelectedItems()
-        {
-            try
-            {
-                if (_selectedItems.Count == 0) return;
+		/// <summary>
+		/// Handles the "edit" action.
+		/// </summary>
+		public override void EditSelectedItems()
+		{
+			try
+			{
+				if (_selectedItems.Count != 1) return;
 
-                DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedItems, MessageBoxActions.YesNo);
-                if (action == DialogBoxAction.Yes)
-                {
-                	string failureMessage;
+				IList<TSummary> editedItems;
+				if (EditItems(_selectedItems, out editedItems))
+				{
+					foreach (TSummary item in editedItems)
+					{
+						_summaryTable.Items.Replace(
+							delegate(TSummary x) { return IsSameItem(item, x); },
+							item);
+					}
+
+					this.SummarySelection = new Selection(editedItems);
+					if (_setModifiedOnListChange)
+						this.Modified = true;
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		/// <summary>
+		/// Handles the "delete" action.
+		/// </summary>
+		public override void DeleteSelectedItems()
+		{
+			try
+			{
+				if (_selectedItems.Count == 0) return;
+
+				DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedItems, MessageBoxActions.YesNo);
+				if (action == DialogBoxAction.Yes)
+				{
+					string failureMessage;
 					IList<TSummary> deletedItems;
 
 					if (DeleteItems(_selectedItems, out deletedItems, out failureMessage))
-                    {
+					{
 						List<TSummary> notDeletedItems = new List<TSummary>(_selectedItems);
 
-                        // remove from table
+						// remove from table
 						CollectionUtils.ForEach(deletedItems, 
 							delegate(TSummary item)
 								{
@@ -405,7 +408,7 @@ namespace ClearCanvas.Enterprise.Desktop
 									_summaryTable.Items.Remove(item);
 								});
 
-                        // clear selection
+						// clear selection
 						this.SummarySelection = new Selection(notDeletedItems);
 						if (_setModifiedOnListChange)
 							this.Modified = true;
@@ -413,39 +416,39 @@ namespace ClearCanvas.Enterprise.Desktop
 
 					if (!string.IsNullOrEmpty(failureMessage))
 						this.Host.ShowMessageBox(failureMessage, MessageBoxActions.Ok);
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
 		public override void ToggleSelectedItemsActivation()
 		{
-            try
-            {
-                if (_selectedItems.Count == 0) return;
+			try
+			{
+				if (_selectedItems.Count == 0) return;
 
-                IList<TSummary> editedItems;
-                if (UpdateItemsActivation(_selectedItems, out editedItems))
-                {
-                    foreach (TSummary item in editedItems)
-                    {
-                        _summaryTable.Items.Replace(
-                            delegate(TSummary x) { return IsSameItem(item, x); },
-                            item);
-                    }
+				IList<TSummary> editedItems;
+				if (UpdateItemsActivation(_selectedItems, out editedItems))
+				{
+					foreach (TSummary item in editedItems)
+					{
+						_summaryTable.Items.Replace(
+							delegate(TSummary x) { return IsSameItem(item, x); },
+							item);
+					}
 
-                    this.SummarySelection = new Selection(editedItems);
+					this.SummarySelection = new Selection(editedItems);
 					if (_setModifiedOnListChange)
 						this.Modified = true;
 				}
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 		}
 
 		public override bool ShowAcceptCancelButtons
@@ -477,32 +480,32 @@ namespace ClearCanvas.Enterprise.Desktop
 			this.Exit(ApplicationComponentExitCode.None);
 		}
 
-        #endregion
+		#endregion
 
-        #region Abstract/overridable members
+		#region Abstract/overridable members
 		
-        /// <summary>
-        /// Gets the list of items to show in the table, according to the specifed first and max items.
-        /// If <see cref="SupportsPaging"/> is false, then this method should ignore the first and max items
-        /// parameters and return all items.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract IList<TSummary> ListItems(int firstRow, int maxRows);
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// If <see cref="SupportsPaging"/> is false, then this method should ignore the first and max items
+		/// parameters and return all items.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract IList<TSummary> ListItems(int firstRow, int maxRows);
 
-        /// <summary>
-        /// Called to handle the "add" action.
-        /// </summary>
-        /// <param name="addedItems"></param>
-        /// <returns>True if items were added, false otherwise.</returns>
-        protected abstract bool AddItems(out IList<TSummary> addedItems);
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected abstract bool AddItems(out IList<TSummary> addedItems);
 
-        /// <summary>
-        /// Called to handle the "edit" action, if supported
-        /// </summary>
-        /// <param name="items">A list of items to edit.</param>
-        /// <param name="editedItems">The list of items that were edited.</param>
-        /// <returns>True if items were edited, false otherwise.</returns>
-        protected abstract bool EditItems(IList<TSummary> items, out IList<TSummary> editedItems);
+		/// <summary>
+		/// Called to handle the "edit" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected abstract bool EditItems(IList<TSummary> items, out IList<TSummary> editedItems);
 
 
 		/// <summary>
@@ -517,32 +520,32 @@ namespace ClearCanvas.Enterprise.Desktop
 			return false;
 		}
 
-        /// <summary>
-        /// Called to handle the "delete" action, if supported.
-        /// </summary>
-        /// <param name="items"></param>
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
 		/// <param name="deletedItems">The list of items that were deleted.</param>
 		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if any items were deleted, false otherwise.</returns>
 		protected abstract bool DeleteItems(IList<TSummary> items, out IList<TSummary> deletedItems, out string failureMessage);
 
-        /// <summary>
-        /// Compares two items to see if they represent the same item.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        protected abstract bool IsSameItem(TSummary x, TSummary y);
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected abstract bool IsSameItem(TSummary x, TSummary y);
 
-        /// <summary>
-        /// Override this method to perform custom initialization of the table,
-        /// such as adding columns or setting other properties that control the table behaviour.
-        /// </summary>
-        /// <param name="table"></param>
-        protected virtual void InitializeTable(TTable table)
-        {
+		/// <summary>
+		/// Override this method to perform custom initialization of the table,
+		/// such as adding columns or setting other properties that control the table behaviour.
+		/// </summary>
+		/// <param name="table"></param>
+		protected virtual void InitializeTable(TTable table)
+		{
 
-        }
+		}
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -553,29 +556,29 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 		}
 
-        /// <summary>
-        /// Called when the user changes the selected items in the table.
-        /// </summary>
-        protected virtual void OnSelectedItemsChanged()
-        {
+		/// <summary>
+		/// Called when the user changes the selected items in the table.
+		/// </summary>
+		protected virtual void OnSelectedItemsChanged()
+		{
 			if(SupportsEdit)
 				_actionModel.Edit.Enabled = _selectedItems.Count == 1;
 
-            if(SupportsDelete)
-                _actionModel.Delete.Enabled = _selectedItems.Count > 0;
+			if(SupportsDelete)
+				_actionModel.Delete.Enabled = _selectedItems.Count > 0;
 
 			if (SupportsDeactivation)
 				_actionModel.ToggleActivation.Enabled = _selectedItems.Count > 0;
-        }
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether this component supports add.  The default is true.
-        /// Override this method to change support for edit.
-        /// </summary>
-        protected virtual bool SupportsAdd
-        {
-            get { return true; }
-        }
+		/// <summary>
+		/// Gets a value indicating whether this component supports add.  The default is true.
+		/// Override this method to change support for edit.
+		/// </summary>
+		protected virtual bool SupportsAdd
+		{
+			get { return true; }
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this component supports edit.  The default is true.
@@ -586,23 +589,23 @@ namespace ClearCanvas.Enterprise.Desktop
 			get { return true; }
 		}
 
-        /// <summary>
-        /// Gets a value indicating whether this component supports deletion.  The default is false.
-        /// Override this method to change support for deletion.
-        /// </summary>
-        protected virtual bool SupportsDelete
-        {
-            get { return false; }
-        }
+		/// <summary>
+		/// Gets a value indicating whether this component supports deletion.  The default is false.
+		/// Override this method to change support for deletion.
+		/// </summary>
+		protected virtual bool SupportsDelete
+		{
+			get { return false; }
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether this component supports paging.  The default is true.
 		/// Override this method to change support for paging.
 		/// </summary>
 		protected virtual bool SupportsPaging
-    	{
+		{
 			get { return true; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether the items listed by this component support de-activation.
@@ -631,46 +634,46 @@ namespace ClearCanvas.Enterprise.Desktop
 		}
 
 		#endregion 
-        
-        /// <summary>
-        /// Gets the action model.
-        /// </summary>
-        protected AdminActionModel ActionModel
-        {
-            get { return _actionModel; }
-        }
+		
+		/// <summary>
+		/// Gets the action model.
+		/// </summary>
+		protected AdminActionModel ActionModel
+		{
+			get { return _actionModel; }
+		}
 
-        /// <summary>
-        /// Gets the table.
-        /// </summary>
-        protected TTable Table
-        {
-            get { return _summaryTable; }
-        }
+		/// <summary>
+		/// Gets the table.
+		/// </summary>
+		protected TTable Table
+		{
+			get { return _summaryTable; }
+		}
 
 		/// <summary>
 		/// Gets the paging controller.
 		/// </summary>
-    	protected IPagingController<TSummary> PagingController
-    	{
+		protected IPagingController<TSummary> PagingController
+		{
 			get { return _pagingController; }
-    	}
+		}
 
-        /// <summary>
-        /// Gets the selected items.
-        /// </summary>
-        protected IList<TSummary> SelectedItems
-        {
-            get { return _selectedItems; }
-        }
+		/// <summary>
+		/// Gets the selected items.
+		/// </summary>
+		protected IList<TSummary> SelectedItems
+		{
+			get { return _selectedItems; }
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether the component is running in dialog mode.
 		/// </summary>
-    	protected bool DialogMode
-    	{
+		protected bool DialogMode
+		{
 			get { return _dialogMode; }
-    	}
+		}
 
 		private static FieldInfo GetDeactivatedField()
 		{
