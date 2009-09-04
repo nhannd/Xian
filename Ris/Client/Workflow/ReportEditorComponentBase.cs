@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -134,13 +132,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (_context.WorklistItem != null)
 			{
 				LoadOrCreateReportContent();
-				_previewComponent.Refresh();
-				NotifyPropertyChanged("EditorText");
 			}
 			else
 			{
-				//TODO: should clear everything
+				_reportContent = null;
 			}
+			_previewComponent.Refresh();
+			NotifyPropertyChanged("EditorText");
 		}
 
 		protected virtual void LoadOrCreateReportContent()
@@ -157,7 +155,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// HACK: update the active ReportPart object with the structured report
 				// (this is solely for the benefit of the Preview component, it does not have any affect on what is ultimately saved)
-				ReportPartDetail activePart = _context.Report.GetPart(_context.ActiveReportPartIndex);
+				var activePart = _context.Report.GetPart(_context.ActiveReportPartIndex);
 				activePart.Content = _reportContent.ToJsml();
 			}
 		}
@@ -197,7 +195,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[ValidateNotNull]
 		public string EditorText
 		{
-			get { return _reportContent.ReportText; }
+			get { return _reportContent != null ? _reportContent.ReportText : ""; }
 			set
 			{
 				if (!Equals(value, _reportContent.ReportText))
