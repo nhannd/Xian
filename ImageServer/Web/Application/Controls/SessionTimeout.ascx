@@ -62,8 +62,6 @@
         var utc = localTime + localOffset;
         var utcNow = new Date(utc);
         
-        debugger;
-        
         test = new Date(expiryTime);
         test.setHours(test.getHours() - test.getTimezoneOffset()/60);
                
