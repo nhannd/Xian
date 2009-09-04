@@ -381,7 +381,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderAdditionalInfoComponent _additionalInfoComponent;
 
 		private List<IReportingPage> _extensionPages;
-		private bool _userCancelled = false;
+		private bool _userCancelled;
 		private event EventHandler _worklistItemChanged;
 
 		/// <summary>
@@ -400,10 +400,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
-			string[] staffTypes = string.IsNullOrEmpty(filters)
+			var filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
+			var staffTypes = string.IsNullOrEmpty(filters)
 				? new string[] { }
-				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+				: CollectionUtils.Map<string, string>(filters.Split(','), s => s.Trim()).ToArray();
 			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			_rememberSupervisor = ReportingSettings.Default.ShouldApplyDefaultSupervisor;
@@ -438,7 +438,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// add extension pages to container and set initial context
 				// the container will start those components if the user goes to that page
-				foreach (IReportingPage page in _extensionPages)
+				foreach (var page in _extensionPages)
 				{
 					_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
 				}
@@ -447,17 +447,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_rightHandComponentContainerHost.StartComponent();
 
 				// check for a report editor provider.  If not found, use the default one
-				IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
-														new ReportEditorProviderExtensionPoint().CreateExtensions());
+				var provider = CollectionUtils.FirstElement<IReportEditorProvider>(new ReportEditorProviderExtensionPoint().CreateExtensions());
 
 				_reportEditor = provider == null ? new ReportEditorComponent(new ReportEditorContext(this)) : provider.GetEditor(new ReportEditorContext(this));
 				_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
 				_reportEditorHost.StartComponent();
-			_reportEditorHost.Component.ModifiedChanged +=
-				delegate
-				{
-					this.Modified = this.Modified || _reportEditorHost.Component.Modified;
-				};
+				_reportEditorHost.Component.ModifiedChanged += ((sender, args) => this.Modified = this.Modified || _reportEditorHost.Component.Modified);
 
 				OpenImages();
 
@@ -514,8 +509,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override bool PrepareExit()
 		{
-			bool exit = base.PrepareExit();
-			if(exit)
+			var exit = base.PrepareExit();
+			if (exit)
 			{
 				// same as cancel
 				DoCancelCleanUp();
@@ -710,7 +705,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// check for a prelim diagnosis
 				if (PreliminaryDiagnosis.ShouldShowDialog(this.WorklistItem.OrderRef, this.WorklistItem.PatientClass.Code))
 				{
-					string title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
+					var title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
 						PersonNameFormat.Format(this.WorklistItem.PatientName),
 						MrnFormat.Format(this.WorklistItem.Mrn),
 						AccessionFormat.Format(this.WorklistItem.AccessionNumber));
@@ -727,23 +722,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (_canCompleteInterpretationAndVerify)
 				{
-					Platform.GetService<IReportingWorkflowService>(
-						delegate(IReportingWorkflowService service)
-						{
-							service.CompleteInterpretationAndVerify(
-								new CompleteInterpretationAndVerifyRequest(
+					Platform.GetService<IReportingWorkflowService>(service =>
+						service.CompleteInterpretationAndVerify(
+							new CompleteInterpretationAndVerifyRequest(
 								this.WorklistItem.ProcedureStepRef,
 								_reportPartExtendedProperties,
-								_supervisor == null ? null : _supervisor.StaffRef));
-						});
+								_supervisor == null ? null : _supervisor.StaffRef)));
 				}
 				else if (_canCompleteVerification)
 				{
-					Platform.GetService<IReportingWorkflowService>(
-						delegate(IReportingWorkflowService service)
-						{
-							service.CompleteVerification(new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties));
-						});
+					Platform.GetService<IReportingWorkflowService>(service =>
+						service.CompleteVerification(
+							new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties)));
 				}
 
 				// Source Folders
@@ -757,11 +747,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -797,15 +783,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (SupervisorIsInvalid())
 					return;
 
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						service.CompleteInterpretationForVerification(
-							new CompleteInterpretationForVerificationRequest(
-								_worklistItemManager.WorklistItem.ProcedureStepRef,
-								_reportPartExtendedProperties,
-								_supervisor == null ? null : _supervisor.StaffRef));
-					});
+				Platform.GetService<IReportingWorkflowService>(service =>
+					service.CompleteInterpretationForVerification(
+						new CompleteInterpretationForVerificationRequest(
+							_worklistItemManager.WorklistItem.ProcedureStepRef,
+							_reportPartExtendedProperties,
+							_supervisor == null ? null : _supervisor.StaffRef)));
 
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
@@ -817,11 +800,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -858,15 +837,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (SupervisorIsInvalid())
 					return;
 
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						service.CompleteInterpretationForTranscription(
-							new CompleteInterpretationForTranscriptionRequest(
+				Platform.GetService<IReportingWorkflowService>(service =>
+					service.CompleteInterpretationForTranscription(
+						new CompleteInterpretationForTranscriptionRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef));
-					});
+							_supervisor == null ? null : _supervisor.StaffRef)));
 
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
@@ -878,11 +854,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -909,15 +881,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
 					return;
 
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						service.SaveReport(
-							new SaveReportRequest(
+				Platform.GetService<IReportingWorkflowService>(service =>
+					service.SaveReport(
+						new SaveReportRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef));
-					});
+							_supervisor == null ? null : _supervisor.StaffRef)));
 
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
@@ -930,11 +899,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -955,11 +920,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (_worklistItemManager.ShouldUnclaim)
 				{
-					Platform.GetService<IReportingWorkflowService>(
-						delegate(IReportingWorkflowService service)
-						{
-							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff));
-						});
+					Platform.GetService<IReportingWorkflowService>(service =>
+						service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff)));
 				}
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
 			}
@@ -1036,7 +998,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool SupervisorIsInvalid()
 		{
-			bool invalid = !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
+			var invalid = !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
 						   && _supervisor == null;
 			if (invalid)
 			{
@@ -1078,13 +1040,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			CloseImages();
 
-			if (_worklistItemManager.ShouldUnclaim)
+			if (!_userCancelled && _worklistItemManager.ShouldUnclaim)
 			{
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff));
-					});
+				Platform.GetService<IReportingWorkflowService>(service =>
+					service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff)));
 			}
 		}
 
@@ -1120,59 +1079,61 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void StartReportingWorklistItem()
 		{
-			bool result = ClaimAndLinkWorklistItem(this.WorklistItem);
+			var result = ClaimAndLinkWorklistItem(this.WorklistItem);
 
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
+			Platform.GetService<IReportingWorkflowService>(service =>
+			{
+				var enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
+				_canCompleteInterpretationAndVerify =
+					enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
+				_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
+				_canCompleteInterpretationForVerification =
+					enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
+				_canCompleteInterpretationForTranscription =
+					enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+				_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveReport"];
+
+				var response = service.LoadReportForEdit(new LoadReportForEditRequest(this.WorklistItem.ProcedureStepRef));
+				_report = response.Report;
+				_activeReportPartIndex = response.ReportPartIndex;
+				_orderDetail = response.Order;
+
+				var sb = new StringBuilder();
+				foreach (var procedureDetail in _report.Procedures)
 				{
-					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
-					_canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
-					_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
-					_canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
-					_canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
-					_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveReport"];
+					sb.Append(ProcedureFormat.Format(procedureDetail) + ", ");
+				}
+				_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
 
-					LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(this.WorklistItem.ProcedureStepRef));
-					_report = response.Report;
-					_activeReportPartIndex = response.ReportPartIndex;
-					_orderDetail = response.Order;
-
-					StringBuilder sb = new StringBuilder();
-					foreach (ProcedureDetail detail in _report.Procedures)
+				var activePart = _report.GetPart(_activeReportPartIndex);
+				_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
+				if (activePart != null && activePart.Supervisor != null)
+				{
+					// active part already has a supervisor assigned
+					_supervisor = activePart.Supervisor;
+				}
+				else if (
+					Thread.CurrentPrincipal.IsInRole(
+						ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
+				{
+					// active part does not have a supervisor assigned
+					// if this user has a default supervisor, retrieve it, otherwise leave supervisor as null
+					if (_rememberSupervisor && !String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
 					{
-						sb.Append(ProcedureFormat.Format(detail) + ", ");
+						_supervisor = GetStaffByID(ReportingSettings.Default.SupervisorID);
 					}
-					_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
-
-					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
-					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
-					if (activePart != null && activePart.Supervisor != null)
-					{
-						// active part already has a supervisor assigned
-						_supervisor = activePart.Supervisor;
-					}
-					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
-					{
-						// active part does not have a supervisor assigned
-						// if this user has a default supervisor, retrieve it, otherwise leave supervisor as null
-						if (_rememberSupervisor && !String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
-						{
-							_supervisor = GetStaffByID(ReportingSettings.Default.SupervisorID);
-						}
-					}
-				});
+				}
+			});
 		}
 
-		private StaffSummary GetStaffByID(string id)
+		private static StaffSummary GetStaffByID(string id)
 		{
 			StaffSummary staff = null;
-			Platform.GetService<IStaffAdminService>(
-				delegate(IStaffAdminService service)
-				{
-					ListStaffResponse response = service.ListStaff(
-						new ListStaffRequest(id, null, null, null));
-					staff = CollectionUtils.FirstElement(response.Staffs);
-				});
+			Platform.GetService<IStaffAdminService>(service =>
+			{
+				var response = service.ListStaff(new ListStaffRequest(id, null, null, null));
+				staff = CollectionUtils.FirstElement(response.Staffs);
+			});
 			return staff;
 		}
 
@@ -1281,67 +1242,55 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ItemHasIncompleteDocumentation(item, out message))
 			{
 				ResetChildComponents();
-				DialogBoxAction dialogBoxAction = this.Host.ShowMessageBox(
-					string.Format("{0} [{1}] {2}", message, AccessionFormat.Format(item.AccessionNumber), SR.MessageReportAnyways), 
+				var dialogBoxAction = this.Host.ShowMessageBox(
+					string.Format("{0} [{1}] {2}", message, AccessionFormat.Format(item.AccessionNumber), SR.MessageReportAnyways),
 					MessageBoxActions.YesNo);
 				return dialogBoxAction == DialogBoxAction.No;
 			}
-			else
-				return false;
+			return false;
 		}
 
-		private bool ItemHasIncompleteDocumentation(ReportingWorklistItem item, out string message)
+		private static bool ItemHasIncompleteDocumentation(ReportingWorklistItem item, out string message)
 		{
-			bool isIncomplete = true;
-			string localMessage = "";  // Cannot use 'out' parameter in anonymous method
+			var isIncomplete = true;
+			var localMessage = "";  // Cannot use 'out' parameter in anonymous method
 
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					GetDocumentationStatusRequest request = new GetDocumentationStatusRequest(item.ProcedureRef);
-					GetDocumentationStatusResponse response = service.GetDocumentationStatus(request);
-					isIncomplete = response.IsIncomplete;
-					localMessage = response.Reason;
-				});
+			Platform.GetService<IReportingWorkflowService>(service =>
+			{
+				var response = service.GetDocumentationStatus(new GetDocumentationStatusRequest(item.ProcedureRef));
+				isIncomplete = response.IsIncomplete;
+				localMessage = response.Reason;
+			});
 
 			message = localMessage;
 			return isIncomplete;
 		}
 
-		private bool PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
+		private void PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
 		{
 			linkedItems = new List<ReportingWorklistItem>();
 			candidateItems = new List<ReportingWorklistItem>();
 
 			// query server for link candidates
-			List<ReportingWorklistItem> anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					GetLinkableInterpretationsRequest request = new GetLinkableInterpretationsRequest(item.ProcedureStepRef);
-					anonCandidates = service.GetLinkableInterpretations(request).IntepretationItems;
-				});
+			var anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
+			Platform.GetService<IReportingWorkflowService>(service =>
+			{
+				var response = service.GetLinkableInterpretations(new GetLinkableInterpretationsRequest(item.ProcedureStepRef));
+				anonCandidates = response.IntepretationItems;
+			});
 			candidateItems.AddRange(anonCandidates);
 
-			// if there are candidates, prompt user to select
-			if (candidateItems.Count > 0)
-			{
-				ResetChildComponents();
+			if (candidateItems.Count <= 0)
+				return;
 
-				LinkProceduresComponent component = new LinkProceduresComponent(item, candidateItems);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					linkedItems.AddRange(component.SelectedItems);
-					return true;
-				}
-				return false;
-			}
-			else
+			// if there are candidates, prompt user to select
+			ResetChildComponents();
+
+			var component = new LinkProceduresComponent(item, candidateItems);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				// no candidates
-				return true;
+				linkedItems.AddRange(component.SelectedItems);
 			}
 		}
 
@@ -1377,12 +1326,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private static EntityRef StartVerification(ReportingWorklistItem item)
 		{
 			EntityRef result = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
-					result = response.VerificationStepRef;
-				});
+			Platform.GetService<IReportingWorkflowService>(service =>
+			{
+				var response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
+				result = response.VerificationStepRef;
+			});
 
 			return result;
 		}
@@ -1390,18 +1338,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 		private static EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations, out EntityRef assignedStaffRef)
 		{
-			List<EntityRef> linkedInterpretationRefs = linkedInterpretations.ConvertAll<EntityRef>(
-				delegate(ReportingWorklistItem x) { return x.ProcedureStepRef; });
+			var linkedInterpretationRefs = linkedInterpretations.ConvertAll(x => x.ProcedureStepRef);
 
 			StartInterpretationResponse response = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					StartInterpretationRequest request = new StartInterpretationRequest(item.ProcedureStepRef, linkedInterpretationRefs);
-					response = service.StartInterpretation(request);
-				});
+			Platform.GetService<IReportingWorkflowService>(service =>
+			{
+				response = service.StartInterpretation(new StartInterpretationRequest(item.ProcedureStepRef, linkedInterpretationRefs));
+			});
 
-			EntityRef result = response.InterpretationStepRef;
+			var result = response.InterpretationStepRef;
 			assignedStaffRef = response.AssignedStaffRef;
 
 			return result;
@@ -1411,12 +1356,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private static EntityRef StartTranscriptionReview(ReportingWorklistItem item)
 		{
 			EntityRef result = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					StartTranscriptionReviewResponse response = service.StartTranscriptionReview(new StartTranscriptionReviewRequest(item.ProcedureStepRef));
-					result = response.TranscriptionReviewStepRef;
-				});
+			Platform.GetService<IReportingWorkflowService>(service =>
+			{
+				var response = service.StartTranscriptionReview(new StartTranscriptionReviewRequest(item.ProcedureStepRef));
+				result = response.TranscriptionReviewStepRef;
+			});
 
 			return result;
 		}

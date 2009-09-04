@@ -48,23 +48,24 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		public ReportingComponentControl(ReportingComponent component)
 			: base(component)
 		{
-			InitializeComponent();
 			_component = component;
 
 			if (_component.UserCancelled)
 				return;
 
-            _overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight; 
+			InitializeComponent();
 
-			Control banner = (Control)_component.BannerHost.ComponentView.GuiElement;
+			_overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight; 
+
+			var banner = (Control)_component.BannerHost.ComponentView.GuiElement;
 			banner.Dock = DockStyle.Fill;
 			_bannerPanel.Controls.Add(banner);
 
-			Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
+			var reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
 			reportEditor.Dock = DockStyle.Fill;
 			_reportEditorPanel.Controls.Add(reportEditor);
 
-			Control rightHandContent = (Control)_component.RightHandComponentContainerHost.ComponentView.GuiElement;
+			var rightHandContent = (Control)_component.RightHandComponentContainerHost.ComponentView.GuiElement;
 			rightHandContent.Dock = DockStyle.Fill;
 			_rightHandPanel.Controls.Add(rightHandContent);
 

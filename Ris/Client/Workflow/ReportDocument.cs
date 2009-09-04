@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -43,6 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
+		private ReportingComponent _component;
 
 		public ReportDocument(ReportingWorklistItem worklistItem, bool shouldOpenImages, IReportingWorkflowItemToolContext context)
 			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
@@ -70,7 +72,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override IApplicationComponent GetComponent()
 		{
-			return new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName, _shouldOpenImages);
+			_component = new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName, _shouldOpenImages);
+			return _component;
+		}
+
+		/// <summary>
+		/// Indicates if a user interaction cancelled the opening of the <see cref="ReportingComponent"/>
+		/// </summary>
+		/// <remarks>
+		/// Should only be called after <see mref="Open()"/>
+		/// </remarks>
+		public bool UserCancelled
+		{
+			get
+			{
+				Platform.CheckForNullReference(_component, "_component");
+				return _component.UserCancelled;
+			}
 		}
 
 		public static string GetTitle(ReportingWorklistItem item)

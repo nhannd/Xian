@@ -29,120 +29,122 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class StepType
-    {
-        public const string TranscriptionReview = "Transcription Review";
-        public const string Interpretation = "Interpretation";
-        public const string Transcription = "Transcription";
-        public const string Verification = "Verification";
-        public const string Publication = "Publication";
-    }
+	public class StepType
+	{
+		public const string TranscriptionReview = "Transcription Review";
+		public const string Interpretation = "Interpretation";
+		public const string Transcription = "Transcription";
+		public const string Verification = "Verification";
+		public const string Publication = "Publication";
+	}
 
-    public class StepState
-    {
-        public const string Scheduled = "SC";
-        public const string InProgress = "IP";
-        public const string Completed = "CM";
-    }
+	public class StepState
+	{
+		public const string Scheduled = "SC";
+		public const string InProgress = "IP";
+		public const string Completed = "CM";
+	}
 
-    public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
-    {
-        protected ReportingWorkflowItemTool(string operationName)
-            : base(operationName)
-        {
-        }
+	public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	{
+		protected ReportingWorkflowItemTool(string operationName)
+			: base(operationName)
+		{
+		}
 
-        public override void Initialize()
-        {
-            base.Initialize();
+		public override void Initialize()
+		{
+			base.Initialize();
 
-            this.Context.RegisterWorkflowService(typeof(IReportingWorkflowService));
-        }
+			this.Context.RegisterWorkflowService(typeof(IReportingWorkflowService));
+		}
 
-        protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
-        {
-            Workspace workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
-            if (workspace != null)
-            {
-                workspace.Activate();
-                return true;
-            }
-            return false;
-        }
+		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
+		{
+			var workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
+			if (workspace != null)
+			{
+				workspace.Activate();
+				return true;
+			}
+			return false;
+		}
 
-        protected void OpenReportEditor(ReportingWorklistItem item)
-        {
-            OpenReportEditor(item, true);
-        }
+		protected void OpenReportEditor(ReportingWorklistItem item)
+		{
+			OpenReportEditor(item, true);
+		}
 
-        protected void OpenReportEditor(ReportingWorklistItem item, bool shouldOpenImages)
-        {
-            if (!ActivateIfAlreadyOpen(item))
-            {
-                if (!ReportingSettings.Default.AllowMultipleReportingWorkspaces)
-                {
-                    List<Workspace> documents = DocumentManager.GetAll<ReportDocument>();
+		protected void OpenReportEditor(ReportingWorklistItem item, bool shouldOpenImages)
+		{
+			if (ActivateIfAlreadyOpen(item))
+				return;
 
-                    // Show warning message and ask if the existing document should be closed or not
-                    if (documents.Count > 0)
-                    {
-                        Workspace firstDocument = CollectionUtils.FirstElement(documents);
-                        firstDocument.Activate();
+			if (!ReportingSettings.Default.AllowMultipleReportingWorkspaces)
+			{
+				var documents = DocumentManager.GetAll<ReportDocument>();
 
-                        string message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
-                        if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
-                        {
-                            // Leave the existing document open
-                            return;
-                        }
-                        else
-                        {
-                            // close documents and continue
-                            CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
-                        }
-                    }
-                }
+				// Show warning message and ask if the existing document should be closed or not
+				if (documents.Count > 0)
+				{
+					if (UserElectsToLeaveExistingDocumentOpen(item, documents))
+						return;
 
-                // open the report editor
-                ReportDocument doc = new ReportDocument(item, shouldOpenImages, this.Context);
-                doc.Open();
+					// close documents and continue
+					CollectionUtils.ForEach(documents, document => document.Close());
+				}
+			}
 
-                // Need to re-invalidate folders that open a report document, since cancelling the report
-                // can re-insert items into the same folder.
-                Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
-                doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
+			// open the report editor
+			var doc = new ReportDocument(item, shouldOpenImages, this.Context);
+			doc.Open();
 
-                Workspace w = DocumentManager.Get(DocumentManager.GenerateDocumentKey(doc, item.ProcedureStepRef));
-                if (((ReportingComponent)w.Component).UserCancelled)
-                    doc.Close();
-            }
-        }
+			// Need to re-invalidate folders that open a report document, since cancelling the report
+			// can re-insert items into the same folder.
+			var selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
+			doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 
-        protected ReportingWorklistItem GetSelectedItem()
-        {
-            if (this.Context.SelectedItems.Count != 1)
-                return null;
-            return CollectionUtils.FirstElement(this.Context.SelectedItems);
-        }
+			if (doc.UserCancelled)
+				doc.Close();
+		}
 
-        protected EntityRef GetSupervisorRef()
-        {
-            ReportingSupervisorSelectionComponent component = new ReportingSupervisorSelectionComponent();
-            if (ApplicationComponentExitCode.Accepted == ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleSelectSupervisor))
-                return component.Staff != null ? component.Staff.StaffRef : null;
-            else
-                return null;
-        }
-    }
+		private bool UserElectsToLeaveExistingDocumentOpen(WorklistItemSummaryBase item, IEnumerable<Workspace> documents)
+		{
+			var firstDocument = CollectionUtils.FirstElement(documents);
+			firstDocument.Activate();
+
+			var message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
+			return DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
+		}
+
+		protected ReportingWorklistItem GetSelectedItem()
+		{
+			return this.Context.SelectedItems.Count != 1
+				? null
+				: CollectionUtils.FirstElement(this.Context.SelectedItems);
+		}
+
+		protected EntityRef GetSupervisorRef()
+		{
+			var supervisorSelectionComponent = new ReportingSupervisorSelectionComponent();
+			var supervisorSelected = ApplicationComponentExitCode.Accepted
+				== ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, supervisorSelectionComponent, SR.TitleSelectSupervisor);
+
+			if (!supervisorSelected)
+				return null;
+
+			return supervisorSelectionComponent.Staff != null ? supervisorSelectionComponent.Staff.StaffRef : null;
+		}
+	}
 }
