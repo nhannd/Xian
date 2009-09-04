@@ -46,463 +46,460 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    /// <summary>
-    /// Defines an interface for providing custom documentation pages to be displayed in the documentation workspace.
-    /// </summary>
-    public interface IPerformingDocumentationPageProvider : IExtensionPageProvider<IPerformingDocumentationPage, IPerformingDocumentationContext>
-    {
-    }
+	/// <summary>
+	/// Defines an interface for providing custom documentation pages to be displayed in the documentation workspace.
+	/// </summary>
+	public interface IPerformingDocumentationPageProvider : IExtensionPageProvider<IPerformingDocumentationPage, IPerformingDocumentationContext>
+	{
+	}
 
-    /// <summary>
-    /// Defines an extension point for adding custom documentation pages to the performing documentation workspace.
-    /// </summary>
-    [ExtensionPoint]
-    public class PerformingDocumentationPageProviderExtensionPoint : ExtensionPoint<IPerformingDocumentationPageProvider>
-    {
-    }
+	/// <summary>
+	/// Defines an extension point for adding custom documentation pages to the performing documentation workspace.
+	/// </summary>
+	[ExtensionPoint]
+	public class PerformingDocumentationPageProviderExtensionPoint : ExtensionPoint<IPerformingDocumentationPageProvider>
+	{
+	}
 
-    /// <summary>
-    /// Defines an interface for providing a custom documentation page with access to the documentation
-    /// context.
-    /// </summary>
-    public interface IPerformingDocumentationContext
-    {
-        /// <summary>
-        /// Exposes the order reference.
-        /// </summary>
-        EntityRef OrderRef { get; }
+	/// <summary>
+	/// Defines an interface for providing a custom documentation page with access to the documentation
+	/// context.
+	/// </summary>
+	public interface IPerformingDocumentationContext
+	{
+		/// <summary>
+		/// Exposes the order reference.
+		/// </summary>
+		EntityRef OrderRef { get; }
 
-        /// <summary>
-        /// Exposes the extended properties associated with the Order.  Modifications made to these
-        /// properties by the documentation page will be persisted whenever the documentation workspace is saved.
-        /// </summary>
-        IDictionary<string, string> OrderExtendedProperties { get; }
+		/// <summary>
+		/// Exposes the extended properties associated with the Order.  Modifications made to these
+		/// properties by the documentation page will be persisted whenever the documentation workspace is saved.
+		/// </summary>
+		IDictionary<string, string> OrderExtendedProperties { get; }
 
-        /// <summary>
-        /// Exposes the order notes associated with the order.  Modifications made to this
-        /// collection will be persisted when the documentation workspace is saved.
-        /// </summary>
-        List<OrderNoteDetail> OrderNotes { get; }
+		/// <summary>
+		/// Exposes the order notes associated with the order.  Modifications made to this
+		/// collection will be persisted when the documentation workspace is saved.
+		/// </summary>
+		List<OrderNoteDetail> OrderNotes { get; }
 
-        /// <summary>
-        /// Gets the <see cref="ProcedurePlanDetail"/> representing this order.
-        /// </summary>
-        ProcedurePlanDetail ProcedurePlan { get; }
+		/// <summary>
+		/// Gets the <see cref="ProcedurePlanDetail"/> representing this order.
+		/// </summary>
+		ProcedurePlanDetail ProcedurePlan { get; }
 
-        /// <summary>
-        /// Occurs when the value of the <see cref="ProcedurePlan"/> property changes.
-        /// </summary>
-        event EventHandler ProcedurePlanChanged;
-    }
-    
-    /// <summary>
-    /// Extension point for views onto <see cref="PerformingDocumentationComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class PerformingDocumentationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+		/// <summary>
+		/// Occurs when the value of the <see cref="ProcedurePlan"/> property changes.
+		/// </summary>
+		event EventHandler ProcedurePlanChanged;
+	}
 
-    /// <summary>
+	/// <summary>
+	/// Extension point for views onto <see cref="PerformingDocumentationComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class PerformingDocumentationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
+
+	/// <summary>
 	/// PerformingDocumentationComponent class
-    /// </summary>
-    [AssociateView(typeof(PerformingDocumentationComponentViewExtensionPoint))]
-    public class PerformingDocumentationComponent : ApplicationComponent
+	/// </summary>
+	[AssociateView(typeof(PerformingDocumentationComponentViewExtensionPoint))]
+	public class PerformingDocumentationComponent : ApplicationComponent
 	{
 		#region PerformingDocumentationContext class
 
 		class PerformingDocumentationContext : IPerformingDocumentationContext
-        {
-            private readonly PerformingDocumentationComponent _owner;
+		{
+			private readonly PerformingDocumentationComponent _owner;
 
-            public PerformingDocumentationContext(PerformingDocumentationComponent owner)
-            {
-                _owner = owner;
+			public PerformingDocumentationContext(PerformingDocumentationComponent owner)
+			{
+				_owner = owner;
 			}
 
 			#region IPerformingDocumentationContext Members
 
 			public EntityRef OrderRef
-            {
-                get { return _owner._procedurePlan.OrderRef; }
-            }
+			{
+				get { return _owner._procedurePlan.OrderRef; }
+			}
 
-            public IDictionary<string, string> OrderExtendedProperties
-            {
-                get { return _owner._orderExtendedProperties; }
-            }
+			public IDictionary<string, string> OrderExtendedProperties
+			{
+				get { return _owner._orderExtendedProperties; }
+			}
 
-            public List<OrderNoteDetail> OrderNotes
-            {
-                get { return _owner._orderNotes; }
-            }
+			public List<OrderNoteDetail> OrderNotes
+			{
+				get { return _owner._orderNotes; }
+			}
 
-            public ProcedurePlanDetail ProcedurePlan
-            {
-                get { return _owner._procedurePlan; }
-            }
+			public ProcedurePlanDetail ProcedurePlan
+			{
+				get { return _owner._procedurePlan; }
+			}
 
-            public event EventHandler ProcedurePlanChanged
-            {
-                add { _owner._procedurePlanChanged += value; }
-                remove { _owner._procedurePlanChanged -= value; }
-            }
+			public event EventHandler ProcedurePlanChanged
+			{
+				add { _owner._procedurePlanChanged += value; }
+				remove { _owner._procedurePlanChanged -= value; }
+			}
 
 
-            #endregion
-        }
+			#endregion
+		}
 
-        #endregion
+		#endregion
 
-        #region Private Members
+		#region Private Members
 
-        private readonly ModalityWorklistItem _worklistItem;
-        private Dictionary<string, string> _orderExtendedProperties;
-        private List<OrderNoteDetail> _orderNotes;
+		private readonly ModalityWorklistItem _worklistItem;
+		private Dictionary<string, string> _orderExtendedProperties;
+		private List<OrderNoteDetail> _orderNotes;
 
-        private ProcedurePlanDetail _procedurePlan;
-        private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
-        private event EventHandler _procedurePlanChanged;
+		private ProcedurePlanDetail _procedurePlan;
+		private ProcedurePlanSummaryTable _procedurePlanSummaryTable;
+		private event EventHandler _procedurePlanChanged;
 
-        private SimpleActionModel _procedurePlanActionHandler;
-        private ClickAction _startAction;
-        private ClickAction _discontinueAction;
+		private SimpleActionModel _procedurePlanActionHandler;
+		private ClickAction _startAction;
+		private ClickAction _discontinueAction;
 
-        private ChildComponentHost _bannerComponentHost;
-        private ChildComponentHost _documentationHost;
-        private TabComponentContainer _documentationTabContainer;
+		private ChildComponentHost _bannerComponentHost;
+		private ChildComponentHost _documentationHost;
+		private TabComponentContainer _documentationTabContainer;
 
-        private ILookupHandler _radiologistLookupHandler;
-        private StaffSummary _assignedRadiologist;
+		private ILookupHandler _radiologistLookupHandler;
+		private StaffSummary _assignedRadiologist;
 
-        private readonly List<IPerformingDocumentationPage> _extensionPages = new List<IPerformingDocumentationPage>();
+		private readonly List<IPerformingDocumentationPage> _extensionPages = new List<IPerformingDocumentationPage>();
 
-        private PerformedProcedureComponent _ppsComponent;
-        private PerformingDocumentationOrderDetailsComponent _orderDetailsComponent;
+		private PerformedProcedureComponent _ppsComponent;
+		private PerformingDocumentationOrderDetailsComponent _orderDetailsComponent;
 
-    	private bool _saveEnabled;
+		private bool _saveEnabled;
 		private bool _completeEnabled;
-        private bool _alreadyCompleted;
+		private bool _alreadyCompleted;
 
-        #endregion
+		#endregion
 
-        public PerformingDocumentationComponent(ModalityWorklistItem item)
-        {
-            _worklistItem = item;
-        	_saveEnabled = true;
-        }
+		public PerformingDocumentationComponent(ModalityWorklistItem item)
+		{
+			_worklistItem = item;
+			_saveEnabled = true;
+		}
 
-        #region ApplicationComponent overrides
+		#region ApplicationComponent overrides
 
-        public override void Start()
-        {
-            InitializeProcedurePlanSummary();
-            InitializeDocumentationTabPages();
+		public override void Start()
+		{
+			InitializeProcedurePlanSummary();
+			InitializeDocumentationTabPages();
 
-            // create staff lookup handler, using filters provided by application configuration
-			string filters = PerformingDocumentationComponentSettings.Default.RadiologistStaffTypeFilters;
-            string[] staffTypes = string.IsNullOrEmpty(filters) ? new string[] { } :
-                CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
- 
-            _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
+			// create staff lookup handler, using filters provided by application configuration
+			var filters = PerformingDocumentationComponentSettings.Default.RadiologistStaffTypeFilters;
+			var staffTypes = string.IsNullOrEmpty(filters)
+				? new string[] { }
+				: CollectionUtils.Map<string, string>(filters.Split(','), s => s.Trim()).ToArray();
 
-            base.Start();
-        }
+			_radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
-        public override void Stop()
-        {
-            if (_bannerComponentHost != null)
-            {
-                _bannerComponentHost.StopComponent();
-                _bannerComponentHost = null;
-            }
+			base.Start();
+		}
 
-            if (_documentationHost != null)
-            {
-                _documentationHost.StopComponent();
-                _documentationHost = null;
-            }
+		public override void Stop()
+		{
+			if (_bannerComponentHost != null)
+			{
+				_bannerComponentHost.StopComponent();
+				_bannerComponentHost = null;
+			}
 
-            base.Stop();
-        }
+			if (_documentationHost != null)
+			{
+				_documentationHost.StopComponent();
+				_documentationHost = null;
+			}
 
-        public override bool HasValidationErrors
-        {
-            get
-            {
-                return _documentationTabContainer.HasValidationErrors || base.HasValidationErrors;
-            }
-        }
+			base.Stop();
+		}
 
-        public override void ShowValidation(bool show)
-        {
-            _documentationTabContainer.ShowValidation(show);
-            base.ShowValidation(show);
-        }
+		public override bool HasValidationErrors
+		{
+			get
+			{
+				return _documentationTabContainer.HasValidationErrors || base.HasValidationErrors;
+			}
+		}
 
-        #endregion
+		public override void ShowValidation(bool show)
+		{
+			_documentationTabContainer.ShowValidation(show);
+			base.ShowValidation(show);
+		}
 
-        #region Presentation Model Methods
+		#endregion
 
-        public int BannerHeight
-        {
-            get { return BannerSettings.Default.BannerHeight; }
-        }
+		#region Presentation Model Methods
 
-        public ApplicationComponentHost BannerHost
-        {
-            get { return _bannerComponentHost; }
-        }
+		public int BannerHeight
+		{
+			get { return BannerSettings.Default.BannerHeight; }
+		}
 
-        public ApplicationComponentHost DocumentationHost
-        {
-            get { return _documentationHost; }
-        }
+		public ApplicationComponentHost BannerHost
+		{
+			get { return _bannerComponentHost; }
+		}
 
-        public ITable ProcedurePlanSummaryTable
-        {
-            get { return _procedurePlanSummaryTable; }
-        }
+		public ApplicationComponentHost DocumentationHost
+		{
+			get { return _documentationHost; }
+		}
 
-        public event EventHandler ProcedurePlanChanged
-        {
-            add { _procedurePlanChanged += value; }
-            remove { _procedurePlanChanged -= value; }
-        }
+		public ITable ProcedurePlanSummaryTable
+		{
+			get { return _procedurePlanSummaryTable; }
+		}
 
-        public ActionModelNode ProcedurePlanTreeActionModel
-        {
-            get { return _procedurePlanActionHandler; }
-        }
+		public event EventHandler ProcedurePlanChanged
+		{
+			add { _procedurePlanChanged += value; }
+			remove { _procedurePlanChanged -= value; }
+		}
 
-        public ILookupHandler RadiologistLookupHandler
-        {
-            get { return _radiologistLookupHandler; }
-        }
+		public ActionModelNode ProcedurePlanTreeActionModel
+		{
+			get { return _procedurePlanActionHandler; }
+		}
 
-        public StaffSummary AssignedRadiologist
-        {
-            get { return _assignedRadiologist; }
-            set
-            {
-                if(!Equals(value, _assignedRadiologist))
-                {
-                    _assignedRadiologist = value;
-                    NotifyPropertyChanged("AssignedRadiologist");
-                }
-            }
-        }
+		public ILookupHandler RadiologistLookupHandler
+		{
+			get { return _radiologistLookupHandler; }
+		}
 
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
-        public void SaveDocumentation()
-        {
-            try
-            {
-                if (Save(_alreadyCompleted))
-                {
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.InProgressFolder));
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.UndocumentedFolder));
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+		public StaffSummary AssignedRadiologist
+		{
+			get { return _assignedRadiologist; }
+			set
+			{
+				if (!Equals(value, _assignedRadiologist))
+				{
+					_assignedRadiologist = value;
+					NotifyPropertyChanged("AssignedRadiologist");
+				}
+			}
+		}
 
-        public string SaveText
-        {
-            get { return _alreadyCompleted ? SR.TextUpdate : SR.TextSave; }    
-        }
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
+		public void SaveDocumentation()
+		{
+			try
+			{
+				if (Save(_alreadyCompleted))
+				{
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.InProgressFolder));
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.UndocumentedFolder));
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
+					this.Exit(ApplicationComponentExitCode.Accepted);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-        public bool SaveEnabled
-        {
-            get { return _saveEnabled; }
-        }
+		public string SaveText
+		{
+			get { return _alreadyCompleted ? SR.TextUpdate : SR.TextSave; }
+		}
 
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept)]
-        public void CompleteDocumentation()
-        {
-            try
-            {
-                // validate first
-                if (Save(true))
-                {
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.PerformedFolder));
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+		public bool SaveEnabled
+		{
+			get { return _saveEnabled; }
+		}
 
-        public bool CompleteEnabled
-        {
-            get { return _completeEnabled; }
-        }
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept)]
+		public void CompleteDocumentation()
+		{
+			try
+			{
+				// validate first
+				if (Save(true))
+				{
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.PerformedFolder));
+					this.Exit(ApplicationComponentExitCode.Accepted);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-        public bool CompleteVisible
-        {
-            get
-            {
-                return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept);
-            }
-        }
+		public bool CompleteEnabled
+		{
+			get { return _completeEnabled; }
+		}
 
-        #endregion
+		public bool CompleteVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept);
+			}
+		}
 
-        #region Action Handler Methods
+		#endregion
 
-        private void StartModalityProcedureSteps()
-        {
-            try
-            {
-            	List<ProcedurePlanSummaryTableItem> checkedItems = ListCheckedSummmaryTableItems();
-            	ProcedurePlanSummaryTableItem firstItem = CollectionUtils.FirstElement(checkedItems);
+		#region Action Handler Methods
 
-				if (CollectionUtils.Contains(checkedItems,
-					delegate (ProcedurePlanSummaryTableItem item)
-					{
-						return item.ModalityProcedureStep.Modality.Id != firstItem.ModalityProcedureStep.Modality.Id;
-					}))
+		private void StartModalityProcedureSteps()
+		{
+			try
+			{
+				var checkedItems = ListCheckedSummmaryTableItems();
+				var firstItem = CollectionUtils.FirstElement(checkedItems);
+
+				if (CollectionUtils.Contains(
+					checkedItems,
+					item => item.ModalityProcedureStep.Modality.Id != firstItem.ModalityProcedureStep.Modality.Id))
 				{
 					this.Host.ShowMessageBox("Cannot start procedure steps of different modalities at the same time.",
-					                         MessageBoxActions.Ok);
+											 MessageBoxActions.Ok);
 					return;
 				}
 
-                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef>(
+				var checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef>(
 					checkedItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.ProcedureStepRef; });
+					item => item.ModalityProcedureStep.ProcedureStepRef);
 
-                if (checkedMpsRefs.Count > 0)
-                {
-                    DateTime? startTime = Platform.Time;
-                    if (DowntimeRecovery.InDowntimeRecoveryMode)
-                    {
-                        if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
-                            return;
-                    }
+				if (checkedMpsRefs.Count > 0)
+				{
+					DateTime? startTime = Platform.Time;
+					if (DowntimeRecovery.InDowntimeRecoveryMode)
+					{
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
+							return;
+					}
 
-                    Platform.GetService<IModalityWorkflowService>(
-                        delegate(IModalityWorkflowService service)
-                        {
-                            StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
-                            request.StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null;
-                            StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
+					Platform.GetService<IModalityWorkflowService>(service =>
+						{
+							var request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
+							request.StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null;
+							var response = service.StartModalityProcedureSteps(request);
 
-                            RefreshProcedurePlanSummary(response.ProcedurePlan);
-                            UpdateActionEnablement();
+							RefreshProcedurePlanSummary(response.ProcedurePlan);
+							UpdateActionEnablement();
 
-                            _ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+							_ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
+						});
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-        private void DiscontinueModalityProcedureSteps()
-        {
-            try
-            {
-                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
-                    ListCheckedSummmaryTableItems(),
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.ProcedureStepRef; });
+		private void DiscontinueModalityProcedureSteps()
+		{
+			try
+			{
+				var checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
+					ListCheckedSummmaryTableItems(),
+					item => item.ModalityProcedureStep.ProcedureStepRef);
 
-                if (checkedMpsRefs.Count > 0)
-                {
-                    if(this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
-                    {
-                        DateTime? discontinueTime = Platform.Time;
-                        if (DowntimeRecovery.InDowntimeRecoveryMode)
-                        {
-                            if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
-                                return;
-                        }
+				if (checkedMpsRefs.Count > 0)
+				{
+					if (this.Host.DesktopWindow.ShowMessageBox("Are you sure you want to discontinue the selected procedure(s)?", MessageBoxActions.YesNo) != DialogBoxAction.No)
+					{
+						DateTime? discontinueTime = Platform.Time;
+						if (DowntimeRecovery.InDowntimeRecoveryMode)
+						{
+							if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
+								return;
+						}
 
-                        Platform.GetService<IModalityWorkflowService>(
-                            delegate(IModalityWorkflowService service)
-                            {
-                                DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
-                                request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
-                                DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
+						Platform.GetService<IModalityWorkflowService>(service =>
+						{
+							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
+							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
+							var response = service.DiscontinueModalityProcedureSteps(request);
 
-                                RefreshProcedurePlanSummary(response.ProcedurePlan);
-                                UpdateActionEnablement();
-                            });
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+							RefreshProcedurePlanSummary(response.ProcedurePlan);
+							UpdateActionEnablement();
+						});
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region Private methods
+		#region Private methods
 
-        private bool Save(bool completeDocumentation)
-        {
-            // only do validation if they are completing the documentation, not if they are just saving a draft
-            if(completeDocumentation)
-            {
-                if (this.HasValidationErrors)
-                {
-                    ShowValidation(true);
-                    return false;
-                }
-            }
+		private bool Save(bool completeDocumentation)
+		{
+			// only do validation if they are completing the documentation, not if they are just saving a draft
+			if (completeDocumentation)
+			{
+				if (this.HasValidationErrors)
+				{
+					ShowValidation(true);
+					return false;
+				}
+			}
 
-            try
-            {
-                // allow extension pages to save data
-                bool veto = false;
-                foreach(IPerformingDocumentationPage page in _extensionPages)
-                {
-                    veto = veto || !page.Save(completeDocumentation);
-                }
-                if(veto)
-                    return false;
+			try
+			{
+				// allow extension pages to save data
+				var veto = false;
+				foreach (var page in _extensionPages)
+				{
+					veto = veto || !page.Save(completeDocumentation);
+				}
+				if (veto)
+					return false;
 
-                _orderDetailsComponent.SaveData();
-                _ppsComponent.SaveData();
-				Platform.GetService<IModalityWorkflowService>(
-					delegate(IModalityWorkflowService service)
-                        {
-							List<ModalityPerformedProcedureStepDetail> mppsList = new List<ModalityPerformedProcedureStepDetail>(_ppsComponent.PerformedProcedureSteps);
-                            SaveOrderDocumentationDataRequest saveRequest =
-                                new SaveOrderDocumentationDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, _orderNotes,
-										mppsList, _assignedRadiologist);
-							SaveOrderDocumentationDataResponse saveResponse = service.SaveOrderDocumentationData(saveRequest);
+				_orderDetailsComponent.SaveData();
+				_ppsComponent.SaveData();
+				Platform.GetService<IModalityWorkflowService>(service =>
+				{
+					var saveRequest = new SaveOrderDocumentationDataRequest(
+						_procedurePlan.OrderRef,
+						_orderExtendedProperties,
+						_orderNotes,
+						new List<ModalityPerformedProcedureStepDetail>(_ppsComponent.PerformedProcedureSteps),
+						_assignedRadiologist);
 
-                            if (completeDocumentation)
-                            {
-                                CompleteOrderDocumentationRequest completeRequest =
-                                    new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlan.OrderRef);
-                                CompleteOrderDocumentationResponse completeResponse =
-                                    service.CompleteOrderDocumentation(completeRequest);
+					var saveResponse = service.SaveOrderDocumentationData(saveRequest);
 
-                                RefreshProcedurePlanSummary(completeResponse.ProcedurePlan);
-                            }
-                            else
-                            {
-                                RefreshProcedurePlanSummary(saveResponse.ProcedurePlan);
-                            }
-                        });
+					if (completeDocumentation)
+					{
+						var completeRequest = new CompleteOrderDocumentationRequest(saveResponse.ProcedurePlan.OrderRef);
+						var completeResponse = service.CompleteOrderDocumentation(completeRequest);
 
-                return true;
-            }
-			catch(FaultException<ConcurrentModificationException> e)
+						RefreshProcedurePlanSummary(completeResponse.ProcedurePlan);
+					}
+					else
+					{
+						RefreshProcedurePlanSummary(saveResponse.ProcedurePlan);
+					}
+				});
+
+				return true;
+			}
+			catch (FaultException<ConcurrentModificationException>)
 			{
 				// bug #3469: we handle this exception explicitly, so we can instruct the user to close the workspace
 				this.Host.ShowMessageBox(SR.MessageConcurrentModificationCloseWorkspace, MessageBoxActions.Ok);
@@ -513,160 +510,155 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_completeEnabled = false;
 				NotifyPropertyChanged("CompleteEnabled");
 			}
-            catch(Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        private void InitializeProcedurePlanSummary()
-        {
-            _procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
-            _procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
-
-            Platform.GetService<IModalityWorkflowService>(
-                delegate(IModalityWorkflowService service)
-                {
-                    GetProcedurePlanRequest procedurePlanRequest = new GetProcedurePlanRequest(_worklistItem.OrderRef);
-                    GetProcedurePlanResponse procedurePlanResponse = service.GetProcedurePlan(procedurePlanRequest);
-                    _procedurePlan = procedurePlanResponse.ProcedurePlan;
-                });
-
-            RefreshProcedurePlanSummary(_procedurePlan);
+		private void InitializeProcedurePlanSummary()
+		{
+			_procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
+			_procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
 
 			Platform.GetService<IModalityWorkflowService>(
 				delegate(IModalityWorkflowService service)
-                {
-					LoadOrderDocumentationDataResponse response = service.LoadOrderDocumentationData(new LoadOrderDocumentationDataRequest(_worklistItem.OrderRef));
-                    _orderExtendedProperties = response.OrderExtendedProperties;
-                    _orderNotes = response.OrderNotes;
-                    this.AssignedRadiologist = response.AssignedInterpreter;
-                });
+				{
+					GetProcedurePlanRequest procedurePlanRequest = new GetProcedurePlanRequest(_worklistItem.OrderRef);
+					GetProcedurePlanResponse procedurePlanResponse = service.GetProcedurePlan(procedurePlanRequest);
+					_procedurePlan = procedurePlanResponse.ProcedurePlan;
+				});
 
-            InitializeProcedurePlanSummaryActionHandlers();
-        }
+			RefreshProcedurePlanSummary(_procedurePlan);
 
-        private void InitializeProcedurePlanSummaryActionHandlers()
-        {
-            _procedurePlanActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _startAction = _procedurePlanActionHandler.AddAction("start", SR.TitleStartMps, "Icons.StartToolSmall.png", SR.TitleStartMps, StartModalityProcedureSteps);
-            _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", SR.TitleDiscontinueMps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMps, DiscontinueModalityProcedureSteps);
-            UpdateActionEnablement();
-        }
+			Platform.GetService<IModalityWorkflowService>(service =>
+				{
+					var response = service.LoadOrderDocumentationData(new LoadOrderDocumentationDataRequest(_worklistItem.OrderRef));
+					_orderExtendedProperties = response.OrderExtendedProperties;
+					_orderNotes = response.OrderNotes;
+					this.AssignedRadiologist = response.AssignedInterpreter;
+				});
 
-        private void InitializeDocumentationTabPages()
-        {
-            PerformingDocumentationContext context = new PerformingDocumentationContext(this);
+			InitializeProcedurePlanSummaryActionHandlers();
+		}
 
-            _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
-            _bannerComponentHost.StartComponent();
+		private void InitializeProcedurePlanSummaryActionHandlers()
+		{
+			_procedurePlanActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+			_startAction = _procedurePlanActionHandler.AddAction("start", SR.TitleStartMps, "Icons.StartToolSmall.png", SR.TitleStartMps, StartModalityProcedureSteps);
+			_discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", SR.TitleDiscontinueMps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMps, DiscontinueModalityProcedureSteps);
+			UpdateActionEnablement();
+		}
 
-            _documentationTabContainer = new TabComponentContainer();
-            _documentationTabContainer.ValidationStrategy = new AllComponentsValidationStrategy();
+		private void InitializeDocumentationTabPages()
+		{
+			var context = new PerformingDocumentationContext(this);
 
-            _orderDetailsComponent = new PerformingDocumentationOrderDetailsComponent(context, _worklistItem);
-            _documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
+			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+			_bannerComponentHost.StartComponent();
 
-            _ppsComponent = new PerformedProcedureComponent(_worklistItem, this);
-            _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanDetail); };
-            _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
+			_documentationTabContainer = new TabComponentContainer { ValidationStrategy = new AllComponentsValidationStrategy() };
 
-            // create extension pages
-            foreach (IPerformingDocumentationPageProvider pageProvider in (new PerformingDocumentationPageProviderExtensionPoint()).CreateExtensions())
-            {
-                _extensionPages.AddRange(pageProvider.GetPages(context));
-            }
+			_orderDetailsComponent = new PerformingDocumentationOrderDetailsComponent(context, _worklistItem);
+			_documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
-            foreach (IPerformingDocumentationPage page in _extensionPages)
-            {
-                _documentationTabContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
-            }
+			_ppsComponent = new PerformedProcedureComponent(_worklistItem, this);
+			_ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanDetail); };
+			_documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
-            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
-            _documentationHost.StartComponent();
+			// create extension pages
+			foreach (IPerformingDocumentationPageProvider pageProvider in (new PerformingDocumentationPageProviderExtensionPoint()).CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetPages(context));
+			}
 
-            SetInitialDocumentationTabPage();
-        }
+			foreach (var page in _extensionPages)
+			{
+				_documentationTabContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+			}
 
-        private void SetInitialDocumentationTabPage()
-        {
+			_documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
+			_documentationHost.StartComponent();
+
+			SetInitialDocumentationTabPage();
+		}
+
+		private void SetInitialDocumentationTabPage()
+		{
 			string selectedTabName = PerformingDocumentationComponentSettings.Default.InitiallySelectedTabPageName;
-            if(string.IsNullOrEmpty(selectedTabName))
-                return;
+			if (string.IsNullOrEmpty(selectedTabName))
+				return;
 
-            TabPage requestedTabPage = CollectionUtils.SelectFirst(
-                _documentationTabContainer.Pages,
-                delegate(TabPage tabPage) { return tabPage.Name.Equals(selectedTabName, StringComparison.InvariantCultureIgnoreCase); });
+			var requestedTabPage = CollectionUtils.SelectFirst(
+				_documentationTabContainer.Pages,
+				tabPage => tabPage.Name.Equals(selectedTabName, StringComparison.InvariantCultureIgnoreCase));
 
-            if (requestedTabPage != null)
-                _documentationTabContainer.CurrentPage = requestedTabPage;
-        }
+			if (requestedTabPage != null)
+				_documentationTabContainer.CurrentPage = requestedTabPage;
+		}
 
-        private List<ProcedurePlanSummaryTableItem> ListCheckedSummmaryTableItems()
-        {
-            return CollectionUtils.Map<Checkable<ProcedurePlanSummaryTableItem>, ProcedurePlanSummaryTableItem>(
-                CollectionUtils.Select(
-                    _procedurePlanSummaryTable.Items,
-                    delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.IsChecked; }),
-                delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item; });
-        }
+		private List<ProcedurePlanSummaryTableItem> ListCheckedSummmaryTableItems()
+		{
+			return CollectionUtils.Map<Checkable<ProcedurePlanSummaryTableItem>, ProcedurePlanSummaryTableItem>(
+				CollectionUtils.Select(_procedurePlanSummaryTable.Items, checkable => checkable.IsChecked),
+				checkable => checkable.Item);
+		}
 
-        private void UpdateActionEnablement()
-        {
-            IList<ProcedurePlanSummaryTableItem> checkedSummaryTableItems = ListCheckedSummmaryTableItems();
-            if (checkedSummaryTableItems.Count == 0)
-            {
-                _startAction.Enabled = _discontinueAction.Enabled = false;
-            }
-            else
-            {
-                _startAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
+		private void UpdateActionEnablement()
+		{
+			IList<ProcedurePlanSummaryTableItem> checkedSummaryTableItems = ListCheckedSummmaryTableItems();
+			if (checkedSummaryTableItems.Count == 0)
+			{
+				_startAction.Enabled = _discontinueAction.Enabled = false;
+			}
+			else
+			{
+				_startAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
+					delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
 
-                _discontinueAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
-            }
-        }
+				_discontinueAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
+					delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
+			}
+		}
 
-        private void RefreshProcedurePlanSummary(ProcedurePlanDetail procedurePlanDetail)
-        {
-            _procedurePlan = procedurePlanDetail;
+		private void RefreshProcedurePlanSummary(ProcedurePlanDetail procedurePlanDetail)
+		{
+			_procedurePlan = procedurePlanDetail;
 
-            try
-            {
-				Platform.GetService<IModalityWorkflowService>(
-					delegate(IModalityWorkflowService service)
-                        {
-                            CanCompleteOrderDocumentationResponse response = 
-                                service.CanCompleteOrderDocumentation(new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));
+			try
+			{
+				Platform.GetService<IModalityWorkflowService>(service =>
+					{
+						var response = service.CanCompleteOrderDocumentation(
+								new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));
 
-                            _completeEnabled = response.CanComplete;
-                            _alreadyCompleted = response.AlreadyCompleted;
-                            this.NotifyPropertyChanged("CompleteEnabled");
-                        });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+						_completeEnabled = response.CanComplete;
+						_alreadyCompleted = response.AlreadyCompleted;
+						this.NotifyPropertyChanged("CompleteEnabled");
+					});
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 
-            _procedurePlanSummaryTable.Items.Clear();
-            foreach(ProcedureDetail rp in procedurePlanDetail.Procedures)
-            {
-                foreach(ProcedureStepDetail mps in rp.ProcedureSteps)
-                {
-                    _procedurePlanSummaryTable.Items.Add(
-                        new Checkable<ProcedurePlanSummaryTableItem>(
-                            new ProcedurePlanSummaryTableItem(rp, mps)));
-                }
-            }
-            _procedurePlanSummaryTable.Sort();
+			_procedurePlanSummaryTable.Items.Clear();
+			foreach (var rp in procedurePlanDetail.Procedures)
+			{
+				foreach (var mps in rp.ProcedureSteps)
+				{
+					_procedurePlanSummaryTable.Items.Add(
+						new Checkable<ProcedurePlanSummaryTableItem>(
+							new ProcedurePlanSummaryTableItem(rp, mps)));
+				}
+			}
+			_procedurePlanSummaryTable.Sort();
 
-            EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
-        }
+			EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
