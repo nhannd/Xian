@@ -389,16 +389,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 					}
 
 					Platform.GetService<IModalityWorkflowService>(service =>
+					{
+						var request = new StartModalityProcedureStepsRequest(checkedMpsRefs)
 						{
-							var request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
-							request.StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null;
-							var response = service.StartModalityProcedureSteps(request);
+							StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null
+						};
+						var response = service.StartModalityProcedureSteps(request);
 
-							RefreshProcedurePlanSummary(response.ProcedurePlan);
-							UpdateActionEnablement();
+						RefreshProcedurePlanSummary(response.ProcedurePlan);
+						UpdateActionEnablement();
 
-							_ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
-						});
+						_ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
+					});
 				}
 			}
 			catch (Exception e)
@@ -428,8 +430,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 						Platform.GetService<IModalityWorkflowService>(service =>
 						{
-							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
-							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
+							var request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs)
+							{
+								DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null
+							};
 							var response = service.DiscontinueModalityProcedureSteps(request);
 
 							RefreshProcedurePlanSummary(response.ProcedurePlan);
@@ -521,25 +525,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void InitializeProcedurePlanSummary()
 		{
 			_procedurePlanSummaryTable = new ProcedurePlanSummaryTable();
-			_procedurePlanSummaryTable.CheckedRowsChanged += delegate(object sender, EventArgs args) { UpdateActionEnablement(); };
+			_procedurePlanSummaryTable.CheckedRowsChanged += ((sender, args) => UpdateActionEnablement());
 
-			Platform.GetService<IModalityWorkflowService>(
-				delegate(IModalityWorkflowService service)
-				{
-					GetProcedurePlanRequest procedurePlanRequest = new GetProcedurePlanRequest(_worklistItem.OrderRef);
-					GetProcedurePlanResponse procedurePlanResponse = service.GetProcedurePlan(procedurePlanRequest);
-					_procedurePlan = procedurePlanResponse.ProcedurePlan;
-				});
+			Platform.GetService<IModalityWorkflowService>(service =>
+			{
+				var procedurePlanRequest = new GetProcedurePlanRequest(_worklistItem.OrderRef);
+				var procedurePlanResponse = service.GetProcedurePlan(procedurePlanRequest);
+				_procedurePlan = procedurePlanResponse.ProcedurePlan;
+			});
 
 			RefreshProcedurePlanSummary(_procedurePlan);
 
 			Platform.GetService<IModalityWorkflowService>(service =>
-				{
-					var response = service.LoadOrderDocumentationData(new LoadOrderDocumentationDataRequest(_worklistItem.OrderRef));
-					_orderExtendedProperties = response.OrderExtendedProperties;
-					_orderNotes = response.OrderNotes;
-					this.AssignedRadiologist = response.AssignedInterpreter;
-				});
+			{
+				var response = service.LoadOrderDocumentationData(new LoadOrderDocumentationDataRequest(_worklistItem.OrderRef));
+				_orderExtendedProperties = response.OrderExtendedProperties;
+				_orderNotes = response.OrderNotes;
+				this.AssignedRadiologist = response.AssignedInterpreter;
+			});
 
 			InitializeProcedurePlanSummaryActionHandlers();
 		}
@@ -565,7 +568,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
 			_ppsComponent = new PerformedProcedureComponent(_worklistItem, this);
-			_ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanDetail); };
+			_ppsComponent.ProcedurePlanChanged += ((sender, e) => RefreshProcedurePlanSummary(e.ProcedurePlanDetail));
 			_documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
 			// create extension pages
@@ -587,7 +590,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void SetInitialDocumentationTabPage()
 		{
-			string selectedTabName = PerformingDocumentationComponentSettings.Default.InitiallySelectedTabPageName;
+			var selectedTabName = PerformingDocumentationComponentSettings.Default.InitiallySelectedTabPageName;
 			if (string.IsNullOrEmpty(selectedTabName))
 				return;
 
@@ -608,18 +611,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void UpdateActionEnablement()
 		{
-			IList<ProcedurePlanSummaryTableItem> checkedSummaryTableItems = ListCheckedSummmaryTableItems();
+			var checkedSummaryTableItems = ListCheckedSummmaryTableItems();
 			if (checkedSummaryTableItems.Count == 0)
 			{
 				_startAction.Enabled = _discontinueAction.Enabled = false;
 			}
 			else
 			{
-				_startAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
-					delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
+				_startAction.Enabled = CollectionUtils.TrueForAll(
+					checkedSummaryTableItems,
+					item => item.ModalityProcedureStep.State.Code == "SC");
 
-				_discontinueAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
-					delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
+				_discontinueAction.Enabled = CollectionUtils.TrueForAll(
+					checkedSummaryTableItems,
+					item => item.ModalityProcedureStep.State.Code == "SC");
 			}
 		}
 
@@ -630,14 +635,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			try
 			{
 				Platform.GetService<IModalityWorkflowService>(service =>
-					{
-						var response = service.CanCompleteOrderDocumentation(
-								new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));
+				{
+					var response = service.CanCompleteOrderDocumentation(
+						new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));
 
-						_completeEnabled = response.CanComplete;
-						_alreadyCompleted = response.AlreadyCompleted;
-						this.NotifyPropertyChanged("CompleteEnabled");
-					});
+					_completeEnabled = response.CanComplete;
+					_alreadyCompleted = response.AlreadyCompleted;
+					this.NotifyPropertyChanged("CompleteEnabled");
+				});
 			}
 			catch (Exception e)
 			{
