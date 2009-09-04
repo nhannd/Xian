@@ -52,12 +52,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
+			var listPages = new List<IConfigurationPage>();
 
 			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View))
 				return listPages;
 
-			//listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
+			listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
 
 			return listPages.AsReadOnly();
 		}
@@ -86,13 +86,13 @@ namespace ClearCanvas.Ris.Client
 		private DraggableTreeNode _selectedFolderNode;
 		private SimpleActionModel _foldersActionModel;
 
-		private readonly string _moveFolderSystemUpKey = "MoveFolderSystemUp";
-		private readonly string _moveFolderSystemDownKey = "MoveFolderSystemDown";
-		private readonly string _addFolderKey = "AddFolder";
-		private readonly string _editFolderKey = "EditFolder";
-		private readonly string _deleteFolderKey = "DeleteFolder";
-		private readonly string _moveFolderUpKey = "MoveFolderUp";
-		private readonly string _moveFolderDownKey = "MoveFolderDown";
+		private const string _moveFolderSystemUpKey = "MoveFolderSystemUp";
+		private const string _moveFolderSystemDownKey = "MoveFolderSystemDown";
+		private const string _addFolderKey = "AddFolder";
+		private const string _editFolderKey = "EditFolder";
+		private const string _deleteFolderKey = "DeleteFolder";
+		private const string _moveFolderUpKey = "MoveFolderUp";
+		private const string _moveFolderDownKey = "MoveFolderDown";
 
 		private event EventHandler _onEditFolder;
 
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
 			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAddContainerFolder, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
-			ClickAction editFolderAction = _foldersActionModel.AddAction(_editFolderKey, SR.TitleRenameFolder, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
+			var editFolderAction = _foldersActionModel.AddAction(_editFolderKey, SR.TitleRenameFolder, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
 			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDeleteContainerFolder, "Icons.DeleteToolSmall.png", SR.TitleDeleteContainerFolder, DeleteFolder);
 			_foldersActionModel.AddAction(_moveFolderUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderUp);
 			_foldersActionModel.AddAction(_moveFolderDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderDown);
@@ -135,37 +135,36 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Save()
 		{
-            FolderExplorerComponentSettings.Default.BeginTransaction();
+			FolderExplorerComponentSettings.Default.BeginTransaction();
 
-            try
-            {
-                // Save the ordering of the folder systems
-                FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
-                    CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
-                        _folderSystems,
-                        delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
+			try
+			{
+				// Save the ordering of the folder systems
+				FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
+					CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
+						_folderSystems,
+						node => node.FolderSystem));
 
-                CollectionUtils.ForEach(_folderSystems,
-                    delegate(FolderSystemConfigurationNode node)
-                    {
-						if (node.Modified)
-						{
-							node.UpdateFolderPath();
-							FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(node.FolderSystem, node.Folders);
-						}
-                    });
+				CollectionUtils.ForEach(_folderSystems, node =>
+				{
+					if (!node.Modified) return;
 
-                // commit the changes
-                FolderExplorerComponentSettings.Default.CommitTransaction();
-            }
-            catch
-            {
-                // rollback changes
-                FolderExplorerComponentSettings.Default.RollbackTransaction();
-                throw;
-            }
+					node.UpdateFolderPath();
+					FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(
+						node.FolderSystem, node.Folders);
+				});
+
+				// commit the changes
+				FolderExplorerComponentSettings.Default.CommitTransaction();
+			}
+			catch
+			{
+				// rollback changes
+				FolderExplorerComponentSettings.Default.RollbackTransaction();
+				throw;
+			}
 		}
-		
+
 		#endregion
 
 		#region Folder Systems Presentation Model
@@ -177,8 +176,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatFolderSystem(object item)
 		{
-			FolderSystemConfigurationNode node = (FolderSystemConfigurationNode)item;
-			return node.Text;
+			return ((FolderSystemConfigurationNode)item).Text;
 		}
 
 		public int SelectedFolderSystemIndex
@@ -186,7 +184,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _selectedFolderSystemNode == null ? -1 : _folderSystems.IndexOf(_selectedFolderSystemNode); }
 			set
 			{
-				FolderSystemConfigurationNode previousSelection = _selectedFolderSystemNode;
+				var previousSelection = _selectedFolderSystemNode;
 				_selectedFolderSystemNode = value < 0 ? null : _folderSystems[value];
 
 				UpdateFolderSystemActionModel();
@@ -239,7 +237,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					MoveFolderSystemUp();
 					index--;
-				}				
+				}
 			}
 		}
 
@@ -271,7 +269,7 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedFolderNode); }
 			set
 			{
-				DraggableTreeNode node = (DraggableTreeNode)value.Item;
+				var node = (DraggableTreeNode)value.Item;
 
 				_selectedFolderNode = node;
 				UpdateFolderActionModel();
@@ -297,7 +295,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (droppedItem is DraggableTreeNode && kind == DragDropKind.Move)
 			{
-				DraggableTreeNode droppedNode = (DraggableTreeNode) droppedItem;
+				var droppedNode = (DraggableTreeNode)droppedItem;
 				this.SelectedFolderNode = new Selection(droppedNode);
 			}
 		}
@@ -309,21 +307,20 @@ namespace ClearCanvas.Ris.Client
 		private void LoadFolderSystems()
 		{
 			// Get a list of folder systems, initialize each of them so the folder list is populated
-			List<IFolderSystem> folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
+			var folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
 
 			List<IFolderSystem> remainder;
 			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
 			// add the remainder to the end of the ordered list
 			folderSystems.AddRange(remainder);
 
-			IList<FolderSystemConfigurationNode> fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode>(folderSystems,
-				delegate(IFolderSystem fs) { return new FolderSystemConfigurationNode(fs); });
+			var fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode>(
+				folderSystems,
+				fs => new FolderSystemConfigurationNode(fs));
 
-			CollectionUtils.ForEach(fsNodes,
-				delegate(FolderSystemConfigurationNode node)
-					{
-						node.ModifiedChanged += delegate { this.Modified = true; };
-					});
+			CollectionUtils.ForEach(
+				fsNodes, 
+				node => node.ModifiedChanged += ((sender, args) => this.Modified = true));
 
 			_folderSystems = new BindingList<FolderSystemConfigurationNode>(fsNodes);
 
@@ -337,14 +334,7 @@ namespace ClearCanvas.Ris.Client
 			if (!this.CanMoveFolderSystemUp)
 				return;
 
-			// We don't want to remove/insert the selected node, but rather the node before, so the folder tree does not flicker
-			int index = this.SelectedFolderSystemIndex;
-			FolderSystemConfigurationNode fs = _folderSystems[index - 1];
-			_folderSystems.Remove(fs);
-			_folderSystems.Insert(index, fs);
-
-			this.SelectedFolderSystemIndex = index - 1;
-			this.Modified = true;
+			NudgeSelectedFolderSystemUpOrDownOnePosition(false);
 		}
 
 		private void MoveFolderSystemDown()
@@ -352,13 +342,20 @@ namespace ClearCanvas.Ris.Client
 			if (!this.CanMoveFolderSystemDown)
 				return;
 
-			// We don't want to remove/insert the selected node, but rather the node after, so the folder tree does not flicker
-			int index = this.SelectedFolderSystemIndex;
-			FolderSystemConfigurationNode fs = _folderSystems[index + 1];
+			NudgeSelectedFolderSystemUpOrDownOnePosition(true);
+		}
+
+		private void NudgeSelectedFolderSystemUpOrDownOnePosition(bool up)
+		{
+			var offset = up ? +1 : -1;
+
+			// We don't want to remove/insert the selected node, but rather the node before, so the folder tree does not flicker
+			var index = this.SelectedFolderSystemIndex;
+			var fs = _folderSystems[index + offset];
 			_folderSystems.Remove(fs);
 			_folderSystems.Insert(index, fs);
 
-			this.SelectedFolderSystemIndex = index + 1;
+			this.SelectedFolderSystemIndex = index + offset;
 			this.Modified = true;
 		}
 
@@ -391,19 +388,14 @@ namespace ClearCanvas.Ris.Client
 			// add each ordered folder to the tree
 			folderSystemNode.ModifiedEnabled = false;
 			folderSystemNode.ClearSubTree();
-			CollectionUtils.ForEach(orderedFolders,
-				delegate(IFolder folder)
-					{
-						FolderConfigurationNode folderNode = new FolderConfigurationNode(folder);
-						folderSystemNode.InsertNode(folderNode, folder.FolderPath);
-					});
+			CollectionUtils.ForEach(orderedFolders, folder => folderSystemNode.InsertNode(new FolderConfigurationNode(folder), folder.FolderPath));
 
 			folderSystemNode.ModifiedEnabled = true;
 		}
 
 		private void AddFolder()
 		{
-			DraggableTreeNode.ContainerNode newFolderNode = new DraggableTreeNode.ContainerNode("New Folder");
+			var newFolderNode = new DraggableTreeNode.ContainerNode("New Folder");
 			_selectedFolderNode.AddChildNode(newFolderNode);
 			this.SelectedFolderNode = new Selection(newFolderNode);
 			EventsHelper.Fire(_onEditFolder, this, EventArgs.Empty);
@@ -416,8 +408,8 @@ namespace ClearCanvas.Ris.Client
 
 		private void DeleteFolder()
 		{
-			DraggableTreeNode parentNode = _selectedFolderNode.Parent;
-			DraggableTreeNode nextSelectedNode = parentNode.RemoveChildNode(_selectedFolderNode);
+			var parentNode = _selectedFolderNode.Parent;
+			var nextSelectedNode = parentNode.RemoveChildNode(_selectedFolderNode);
 			this.SelectedFolderNode = new Selection(nextSelectedNode);
 		}
 
@@ -436,7 +428,7 @@ namespace ClearCanvas.Ris.Client
 			// Must update action model because the node index may have changed after moving node.
 			UpdateFolderActionModel();
 		}
-		
+
 		private void UpdateFolderActionModel()
 		{
 			_foldersActionModel[_addFolderKey].Enabled = _selectedFolderNode != null;
