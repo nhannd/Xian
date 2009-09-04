@@ -84,6 +84,11 @@ namespace ClearCanvas.Dicom.Samples
 						}
 					}
 				}
+				else if (syntax.Encapsulated)
+				{
+					// Must decompress first.
+					_dicomFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
+				}
 
 				_dicomFile.ChangeTransferSyntax(syntax);
 			}

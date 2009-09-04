@@ -214,6 +214,83 @@ namespace ClearCanvas.Dicom.Tests
 
         }
 
+		public void SetupSecondaryCapture(DicomAttributeCollection theSet)
+		{
+			theSet[DicomTags.SpecificCharacterSet].SetStringValue("ISO_IR 100");
+			theSet[DicomTags.ImageType].SetStringValue("ORIGINAL\\PRIMARY\\OTHER\\");
+			theSet[DicomTags.InstanceCreationDate].SetStringValue("20070619");
+			theSet[DicomTags.InstanceCreationTime].SetStringValue("143600");
+			theSet[DicomTags.SopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);
+			theSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+			theSet[DicomTags.StudyDate].SetStringValue("20070618");
+			theSet[DicomTags.StudyTime].SetStringValue("133600");
+			theSet[DicomTags.SeriesDate].SetStringValue("20070618");
+			theSet[DicomTags.SeriesTime].SetStringValue("133700");
+			theSet[DicomTags.AccessionNumber].SetStringValue("A1234");
+			theSet[DicomTags.Modality].SetStringValue("MR");
+			theSet[DicomTags.Manufacturer].SetStringValue("ClearCanvas");
+			theSet[DicomTags.ManufacturersModelName].SetNullValue();
+			theSet[DicomTags.InstitutionName].SetStringValue("Toronto General Hospital");
+			theSet[DicomTags.ReferringPhysiciansName].SetStringValue("Last^First");
+			theSet[DicomTags.StudyDescription].SetStringValue("TEST");
+			theSet[DicomTags.SeriesDescription].SetStringValue("TEST");
+			theSet[DicomTags.PatientsName].SetStringValue("Patient^Test");
+			theSet[DicomTags.PatientId].SetStringValue("ID123-45-9999");
+			theSet[DicomTags.PatientsBirthDate].SetStringValue("19600102");
+			theSet[DicomTags.SequenceVariant].SetStringValue("OTHER");
+			theSet[DicomTags.DeviceSerialNumber].SetStringValue("1234");
+			theSet[DicomTags.SoftwareVersions].SetStringValue("V1.0");
+			theSet[DicomTags.PatientPosition].SetStringValue("HFS");
+			theSet[DicomTags.StudyInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+			theSet[DicomTags.SeriesInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+			theSet[DicomTags.StudyId].SetStringValue("1933");
+			theSet[DicomTags.SeriesNumber].SetStringValue("1");
+			theSet[DicomTags.InstanceNumber].SetStringValue("1");
+			theSet[DicomTags.ImageComments].SetStringValue("Test SC Image");
+			theSet[DicomTags.SamplesPerPixel].SetStringValue("1");
+			theSet[DicomTags.PhotometricInterpretation].SetStringValue("MONOCHROME2");
+			theSet[DicomTags.Rows].SetStringValue("256");
+			theSet[DicomTags.Columns].SetStringValue("256");
+			theSet[DicomTags.BitsAllocated].SetStringValue("16");
+			theSet[DicomTags.BitsStored].SetStringValue("12");
+			theSet[DicomTags.HighBit].SetStringValue("11");
+			theSet[DicomTags.PixelRepresentation].SetStringValue("0");
+
+			uint length = 256 * 256 * 2;
+
+			DicomAttributeOW pixels = new DicomAttributeOW(DicomTags.PixelData);
+
+			byte[] pixelArray = new byte[length];
+
+			for (uint i = 0; i < length; i += 2)
+				pixelArray[i] = (byte)(i % 255);
+
+			pixels.Values = pixelArray;
+
+			theSet[DicomTags.PixelData] = pixels;
+
+			DicomSequenceItem item = new DicomSequenceItem();
+			theSet[DicomTags.RequestAttributesSequence].AddSequenceItem(item);
+
+			item[DicomTags.RequestedProcedureId].SetStringValue("MRR1234");
+			item[DicomTags.ScheduledProcedureStepId].SetStringValue("MRS1234");
+
+			item = new DicomSequenceItem();
+			theSet[DicomTags.RequestAttributesSequence].AddSequenceItem(item);
+
+			item[DicomTags.RequestedProcedureId].SetStringValue("MR2R1234");
+			item[DicomTags.ScheduledProcedureStepId].SetStringValue("MR2S1234");
+
+			DicomSequenceItem studyItem = new DicomSequenceItem();
+
+			item[DicomTags.ReferencedStudySequence].AddSequenceItem(studyItem);
+
+			studyItem[DicomTags.ReferencedSopClassUid].SetStringValue(SopClass.SecondaryCaptureImageStorageUid);
+			studyItem[DicomTags.ReferencedSopInstanceUid].SetStringValue("1.2.3.4.5.6.7.8.9");
+
+		}
+
+
         public void SetupMultiframeXA(DicomAttributeCollection theSet, uint rows, uint columns, uint frames)
         {
             theSet[DicomTags.SpecificCharacterSet].SetStringValue("ISO_IR 100");

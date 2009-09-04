@@ -27,44 +27,32 @@
 
 #pragma once
 
+#if _DEBUG
 using namespace System;
-using namespace System::IO;
-using namespace System::Xml;
-
+using namespace NUnit::Framework;
 using namespace ClearCanvas::Dicom;
 using namespace ClearCanvas::Dicom::Codec;
-
-#include "DicomJpeg2000Codec.h"
+using namespace ClearCanvas::Dicom::Codec::Tests;
 
 namespace ClearCanvas {
 namespace Dicom {
 namespace Codec {
 namespace Jpeg2000 {
 
-[ClearCanvas::Common::ExtensionOf(DicomCodecFactoryExtensionPoint::typeid)]
-public ref class DicomJpeg2000LosslessCodecFactory : public IDicomCodecFactory {
+[NUnit::Framework::TestFixture]
+public ref class DicomJpeg2000CodecTest : AbstractCodecTest
+{
 public:
-    virtual property String^ Name { String^ get() ;}
-    virtual property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax {  ClearCanvas::Dicom::TransferSyntax^ get(); };
+	[NUnit::Framework::Test]
+	void DicomJpeg2000CodecTest::LossyCodecTest();
 
-    virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
-    virtual DicomCodecParameters^ GetCodecParameters(XmlDocument^ parms);
-	virtual IDicomCodec^ GetDicomCodec();
+	[NUnit::Framework::Test]
+	void DicomJpeg2000CodecTest::LosslessCodecTest();
 };
 
-[ClearCanvas::Common::ExtensionOf(DicomCodecFactoryExtensionPoint::typeid)]
-public ref class DicomJpeg2000LossyCodecFactory : public IDicomCodecFactory {
-public:
-    virtual property String^ Name { String^ get();}
-    virtual property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { ClearCanvas::Dicom::TransferSyntax^ get(); };
+}
+}
+}
+}
 
-    virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
-    virtual DicomCodecParameters^ GetCodecParameters(XmlDocument^ parms);
-	virtual IDicomCodec^ GetDicomCodec();
-};
-
-} // Jpeg2000
-} // Codec
-} // Dicom
-} // ClearCanvas
-
+#endif

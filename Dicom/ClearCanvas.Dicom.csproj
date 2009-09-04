@@ -204,6 +204,8 @@
     <Compile Include="Codec\DicomCodecRegistry.cs" />
     <Compile Include="Codec\DicomCodecUnsupportedSopException.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
+    <Compile Include="Codec\Tests\AbstractCodecTest.cs" />
+    <Compile Include="Codec\Tests\PluginsCodecTest.cs" />
     <Compile Include="ComparisonResultType.cs" />
     <Compile Include="DicomAttributeComparisonResult.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />

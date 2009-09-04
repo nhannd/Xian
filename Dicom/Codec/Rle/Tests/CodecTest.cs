@@ -30,16 +30,14 @@
 #endregion
 
 #if UNIT_TESTS
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Rle;
-using ClearCanvas.Dicom.Tests;
+using ClearCanvas.Dicom.Codec.Tests;
 using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Codec.Rle.Tests
 {
 	//TODO: this test won't work anymore because the codec registry uses extensions.
     [TestFixture]
-    public class CodecTest : AbstractTest
+    public class CodecTest : AbstractCodecTest
     {
         [Test]
         public void RleTest()
@@ -54,26 +52,26 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
 
             file = new DicomFile("MultiframeRleCodecTest.dcm");
 
-            this.SetupMultiframeXA(file.DataSet, 511, 511, 5);
+            SetupMultiframeXA(file.DataSet, 511, 511, 5);
 
             RleTest(file);
 
 
             file = new DicomFile("MultiframeRleCodecTest.dcm");
 
-            this.SetupMultiframeXA(file.DataSet, 63, 63, 1);
+            SetupMultiframeXA(file.DataSet, 63, 63, 1);
 
             RleTest(file);
 
             file = new DicomFile("MultiframeRleCodecTest.dcm");
 
-            this.SetupMultiframeXA(file.DataSet, 1024, 1024, 3);
+            SetupMultiframeXA(file.DataSet, 1024, 1024, 3);
 
             RleTest(file);
 
             file = new DicomFile("MultiframeRleCodecTest.dcm");
 
-            this.SetupMultiframeXA(file.DataSet, 512, 512, 2);
+            SetupMultiframeXA(file.DataSet, 512, 512, 2);
 
             RleTest(file);
         }
@@ -82,10 +80,9 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
         public void RleTest(DicomFile file)
         {
             // Make a copy of the source format
-            DicomFile originalFile;
-            DicomAttributeCollection originalDataSet = file.DataSet.Copy();
+        	DicomAttributeCollection originalDataSet = file.DataSet.Copy();
             DicomAttributeCollection originalMetaInfo = file.MetaInfo.Copy();
-            originalFile = new DicomFile("", originalMetaInfo, originalDataSet);
+            DicomFile originalFile = new DicomFile("", originalMetaInfo, originalDataSet);
 
             file.ChangeTransferSyntax(TransferSyntax.RleLossless);
 
@@ -108,7 +105,7 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
         {
             DicomFile file = new DicomFile("RlePartialFrameTest.dcm");
 
-            this.SetupMultiframeXA(file.DataSet, 511, 511, 7);
+            SetupMultiframeXA(file.DataSet, 511, 511, 7);
 
             file.ChangeTransferSyntax(TransferSyntax.RleLossless);
 
@@ -129,13 +126,38 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
 
             for (int i=0; i< pd.NumberOfFrames; i++)
             {
-                byte[] frame = pd.GetFrame(i);
-
+                pd.GetFrame(i);
             }
-
         }
 
+		[Test]
+		public void LosslessCodecTest()
+		{
+			DicomFile file = CreateFile(512, 512, "MONOCHROME1", 12, 16, false, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
 
+			file = CreateFile(512, 512, "MONOCHROME1", 12, 16, true, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(255, 255, "MONOCHROME1", 8, 8, true, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(256, 255, "MONOCHROME2", 16, 16, false, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(256, 255, "MONOCHROME2", 16, 16, true, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(256, 256, "MONOCHROME1", 12, 16, true, 5);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(255, 255, "MONOCHROME1", 8, 8, true, 5);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+		}
     }
 }
 

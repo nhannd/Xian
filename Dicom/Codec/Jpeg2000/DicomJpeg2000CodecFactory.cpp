@@ -38,12 +38,20 @@ namespace Jpeg2000 {
 	TransferSyntax^ DicomJpeg2000LossyCodecFactory::CodecTransferSyntax::get()  {
 		return TransferSyntax::Jpeg2000ImageCompression;
 	}
+
 	String^ DicomJpeg2000LossyCodecFactory::Name::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::Jpeg2000ImageCompression->Name;	
 	}
+
 	DicomCodecParameters^ DicomJpeg2000LossyCodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
-		return gcnew DicomJpeg2000Parameters();
+		DicomJpeg2000Parameters^ codecParms = gcnew DicomJpeg2000Parameters();
+
+		codecParms->Irreversible = true;
+		codecParms->UpdatePhotometricInterpretation = true;
+		codecParms->Rate = 5.0;
+		return codecParms;
 	}
+
 	DicomCodecParameters^ DicomJpeg2000LossyCodecFactory::GetCodecParameters(XmlDocument^ parms)
     {
 		DicomJpeg2000Parameters^ codecParms = gcnew DicomJpeg2000Parameters();
