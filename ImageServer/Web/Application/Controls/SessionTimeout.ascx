@@ -62,8 +62,13 @@
         var utc = localTime + localOffset;
         var utcNow = new Date(utc);
         
-        timeLeft = Math.round( (expiryTime.getTime() - utcNow.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
-        window.status  = " [ Session Expiry Time: " + expiryTime.toLocaleString() + " ]";
+        debugger;
+        
+        test = new Date(expiryTime);
+        test.setHours(test.getHours() - test.getTimezoneOffset()/60);
+               
+        timeLeft = Math.round( (expiryTime.getTime() - utcNow.getTime()) / 1000 ) + 1;// give 1 second to ensure when we redirect, the session is really expired
+        window.status  = " [ Session Expiry Time: " + test.toLocaleString() + " ]";
         return timeLeft;
     }
     
@@ -101,9 +106,7 @@
         value.setHours(time[0]);
         value.setMinutes(time[1]);
         value.setSeconds(time[2]);
-        
-        debugger;
-                               
+                                             
         return value;
     }
     
