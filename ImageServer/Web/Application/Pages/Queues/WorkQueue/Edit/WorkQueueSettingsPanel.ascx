@@ -18,8 +18,8 @@
             </td>
             <td valign="bottom" align="left">
                 <asp:Label ID="Label5" runat="server" Text="Time" CssClass="DialogTextBoxLabel"></asp:Label><br /><asp:TextBox ID="NewScheduleTime" runat="server" CssClass="DialogTextBox"  ValidationGroup="vg1"/>
-                <aspAjax:MaskedEditExtender runat="server" ID="NewScheduleTimeMaskedEditExtender" MaskType="Time" AcceptAMPM="true" TargetControlID="NewScheduleTime" Mask="99:99" MessageValidatorTip="false" OnInvalidCssClass="InvalidTextEntered" />
-                <aspAjax:MaskedEditValidator runat="server" ID="NewScheduleTimeMaskedEditValidator" ControlExtender="NewScheduleTimeMaskedEditExtender" ControlToValidate="NewScheduleTime" ValidationExpression="(0[1-9]|1[0-2]):[0-5][0-9] ([ap]m|[AP]M)" ValidationGroup="vg1"  />
+                <aspAjax:MaskedEditExtender runat="server" ID="NewScheduleTimeMaskedEditExtender" MaskType="Time" AcceptAMPM="false" TargetControlID="NewScheduleTime" Mask="99:99" MessageValidatorTip="false" OnInvalidCssClass="InvalidTextEntered" />
+                <aspAjax:MaskedEditValidator runat="server" ID="NewScheduleTimeMaskedEditValidator" ControlExtender="NewScheduleTimeMaskedEditExtender" ControlToValidate="NewScheduleTime" ValidationExpression="(0[1-9]|1[0-9]|2[0-3):[0-5][0-9])" ValidationGroup="vg1"  />
             </td>
             <td valign="bottom" nowrap="nowrap" style="padding-left: 10px; padding-right: 10px;">
                 <asp:Label ID="Label3" runat="server" Text="Schedule Now:" CssClass="DialogTextBoxLabel"></asp:Label>

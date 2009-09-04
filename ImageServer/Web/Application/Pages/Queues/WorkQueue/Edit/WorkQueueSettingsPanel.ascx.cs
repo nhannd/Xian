@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// <param name="time"></param>
         public void AddCustomTime(DateTime time)
         {
-            string timeValue = time.ToString("hh:mm tt");
+            string timeValue = time.ToString("HH:mm");
 
             NewScheduleTime.Text = timeValue;
         }
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 double scheduleTimeWindow = DEFAULT_TIME_GAP_MINS;
                 while (dt < tomorrow)
                 {
-                    _defaultTimeList.Add(dt.ToString("hh:mm tt"));
+                    _defaultTimeList.Add(dt.ToString("HH:mm"));
                     dt = dt.AddMinutes(scheduleTimeWindow);
                 }
 
@@ -213,7 +213,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     {
                         try
                         {
-                            time = DateTime.ParseExact(NewScheduleTime.Text, "hh:mm tt", null);
+                            time = DateTime.ParseExact(NewScheduleTime.Text, "HH:mm", null);
                         }
 						catch(Exception)
                         {
