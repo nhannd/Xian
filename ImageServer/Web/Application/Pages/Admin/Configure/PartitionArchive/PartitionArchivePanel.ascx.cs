@@ -69,13 +69,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         }
 
         [ExtenderControlProperty]
-        [ClientPropertyName("AddButtonClientID")]
-        public string AddButtonClientID
-        {
-            get { return AddPartitionButton.ClientID; }
-        }
-
-        [ExtenderControlProperty]
         [ClientPropertyName("EditButtonClientID")]
         public string RestoreButtonClientID
         {
