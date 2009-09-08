@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageServer.Core
 
                 if (compare && ShouldReconcile(processingContext, file))
                 {
-                    ScheduleReconcile(processingContext, file);
+                    ScheduleReconcile(processingContext, file, uid);
                     result.Status = ProcessingStatus.Reconciled;
                 }
                 else
@@ -335,10 +335,11 @@ namespace ClearCanvas.ImageServer.Core
 		/// </summary>
 		/// <param name="context"></param>
 		/// <param name="file"></param>
-		private static void ScheduleReconcile(SopProcessingContext context, DicomFile file)
+		/// <param name="uid"></param>
+		private static void ScheduleReconcile(SopProcessingContext context, DicomFile file, WorkQueueUid uid)
 		{
 			ImageReconciler reconciler = new ImageReconciler(context);
-			reconciler.ScheduleReconcile(file, StudyIntegrityReasonEnum.InconsistentData);
+			reconciler.ScheduleReconcile(file, StudyIntegrityReasonEnum.InconsistentData, uid);
 		}
 
        

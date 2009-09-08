@@ -145,11 +145,12 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         /// </summary>
         /// <param name="file">The DICOM file that needs to be reconciled.</param>
         /// <param name="reason">The type of <see cref="StudyIntegrityQueue"/> entry to be inserted.</param>
+        /// <param name="uid">A UID to delete on insert.</param>
         /// <remarks>
         /// A copy of the DICOM file will be stored in a special folder allocated for 
         /// reconciliation purpose. The caller is responsible for managing the original copy.
         /// </remarks>
-		public void ScheduleReconcile(DicomFile file, StudyIntegrityReasonEnum reason)
+		public void ScheduleReconcile(DicomFile file, StudyIntegrityReasonEnum reason, WorkQueueUid uid)
 		{
             Platform.CheckForNullReference(_context.StudyLocation, "_context.StudyLocation");
           
@@ -172,13 +173,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                 InsertSIQCommand updateStudyCommand = new InsertSIQCommand(_context.StudyLocation, reason, file, _context.UidGroup, reconcileStorage);
                 processor.AddCommand(updateStudyCommand);
 
+				if (uid != null)
+					processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
                 if (processor.Execute() == false)
                 {
                     throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason), processor.FailureException);
                 }
             }
-
-
 		}
 
 		#endregion
