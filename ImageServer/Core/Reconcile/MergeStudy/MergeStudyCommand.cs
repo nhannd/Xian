@@ -249,17 +249,25 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				{
 					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
 
-					SopInstanceProcessor sopProcessor;
-					sopProcessor = new SopInstanceProcessor(context);
-					ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, GetReconcileUidPath(uid));
+				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
+                    if (counter == 0)
+                    {
+                        // Update the history record so that it will show up in the study history
+                        sopProcessor.OnInsertingSop += delegate(object sender, SopInsertingEventArgs e)
+                                                     {
+                                                         e.Processor.AddCommand(new UpdateHistoryCommand(Context));
+                                                     };
+                    }
+                    ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, GetReconcileUidPath(uid));
 					if (result.Status != ProcessingStatus.Success)
 					{
 						throw new ApplicationException(String.Format("Unable to reconcile image {0}", file.Filename));
 					}
 
-					counter++;
+                    counter++;
 					_processedUidList.Add(uid);
-					Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+                    
+                    Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
 				}
 				catch (Exception e)
 				{
@@ -274,7 +282,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			}
 		}
 
-		private void CreatDuplicateSIQEntry(DicomFile file, WorkQueue queue, WorkQueueUid uid)
+        
+
+
+	    private void CreatDuplicateSIQEntry(DicomFile file, WorkQueue queue, WorkQueueUid uid)
 		{
 			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
 			String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();

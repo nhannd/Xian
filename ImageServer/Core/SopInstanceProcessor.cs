@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
@@ -195,14 +196,28 @@ namespace ClearCanvas.ImageServer.Core
 	    #endregion
 	}
 
+    /// <summary>
+    /// Represents an event that occurs when a sop instance is being inserted into the study by the <see cref="SopInstanceProcessor"/>
+    /// </summary>
+    public class SopInsertingEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The <see cref="ServerCommandProcessor"/> used by the <see cref="SopInstanceProcessor"/> to insert the sop instance into the study.
+        /// </summary>
+        public ServerCommandProcessor Processor { get; set; }
+    }
+
+	    
+
 	/// <summary>
 	/// Processor for Sop Instances being inserted into the database.
 	/// </summary>
 	public class SopInstanceProcessor
-	{
-		#region Private Members
+    {
+        
+        #region Private Members
 
-		private readonly StudyProcessorContext _context;
+        private readonly StudyProcessorContext _context;
 		private readonly InstanceStatistics _instanceStats = new InstanceStatistics();
 		private string _modality;
 
@@ -231,6 +246,14 @@ namespace ClearCanvas.ImageServer.Core
 		}
 
 		#endregion
+
+        #region Events
+        /// <summary>
+        /// Occurs when the SOP instance is about to be added to the study.
+        /// </summary>
+        public event EventHandler<SopInsertingEventArgs> OnInsertingSop;
+        #endregion
+
 
 		#region Public Methods
 
@@ -350,6 +373,8 @@ namespace ClearCanvas.ImageServer.Core
             
 			using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file"))
 			{
+			    EventsHelper.Fire(OnInsertingSop, this, new SopInsertingEventArgs() {Processor = processor });
+
 				InsertInstanceCommand insertInstanceCommand = null;
 				InsertStudyXmlCommand insertStudyXmlCommand = null;
 

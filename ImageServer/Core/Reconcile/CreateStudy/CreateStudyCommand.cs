@@ -261,8 +261,15 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				{
 					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
 
-					SopInstanceProcessor sopProcessor;
-					sopProcessor = new SopInstanceProcessor(context);
+				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
+                    if (counter == 0)
+                    {
+                        // Update the history record for auto-reconciliation
+                        sopProcessor.OnInsertingSop += delegate(object sender, SopInsertingEventArgs e)
+                        {
+                            e.Processor.AddCommand(new UpdateHistoryCommand(Context));
+                        };
+                    }
 					ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, imagePath);
 					if (result.Status != ProcessingStatus.Success)
 					{
