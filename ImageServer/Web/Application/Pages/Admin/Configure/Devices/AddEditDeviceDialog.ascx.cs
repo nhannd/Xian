@@ -217,6 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
             Device.AllowAutoRoute = AllowAutoRouteCheckBox.Checked;
             Device.ThrottleMaxConnections = ThrottleSettingsTab.MaxConnections;
+            Device.DeviceTypeEnum = DeviceTypeEnum.GetEnum(DeviceTypeDropDownList.SelectedItem.Value);
 
         }
 
@@ -235,6 +236,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                     );
             }
 
+            // update the dropdown list
+            DeviceTypeDropDownList.Items.Clear();
+            IList<DeviceTypeEnum> deviceTypes = DeviceTypeEnum.GetAll();
+            foreach (DeviceTypeEnum t in deviceTypes)
+            {
+                DeviceTypeDropDownList.Items.Add(
+                    new ListItem(t.Description, t.Lookup)
+                    );
+            }
+
             // Update the title and OK button text. Changing the image is the only way to do this, since the 
             // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
@@ -242,6 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 ModalDialog1.Title  = App_GlobalResources.SR.DialogEditDeviceTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                DeviceTypeDropDownList.Items.FindByValue(Device.DeviceTypeEnum.Lookup).Selected = true;
             }
             else
             {

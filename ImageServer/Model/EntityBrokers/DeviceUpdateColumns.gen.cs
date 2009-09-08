@@ -72,6 +72,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
+        public DeviceTypeEnum DeviceTypeEnum
+        {
+            set { SubParameters["DeviceTypeEnum"] = new EntityUpdateColumn<DeviceTypeEnum>("DeviceTypeEnum", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public Boolean Dhcp
         {

@@ -122,6 +122,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
+        public ISearchCondition<DeviceTypeEnum> DeviceTypeEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("DeviceTypeEnum"))
+              {
+                 SubCriteria["DeviceTypeEnum"] = new SearchCondition<DeviceTypeEnum>("DeviceTypeEnum");
+              }
+              return (ISearchCondition<DeviceTypeEnum>)SubCriteria["DeviceTypeEnum"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public ISearchCondition<Boolean> Dhcp
         {

@@ -83,6 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowStorage = dev.AllowStorage;
             param.AllowAutoRoute = dev.AllowAutoRoute;
             param.ThrottleMaxConnections = dev.ThrottleMaxConnections;
+            param.DeviceTypeEnum = dev.DeviceTypeEnum;
             Update(dev.Key, param);
 
             return ok;
@@ -133,6 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowStorage = newDev.AllowStorage;
             param.AllowAutoRoute = newDev.AllowAutoRoute;
             param.ThrottleMaxConnections = newDev.ThrottleMaxConnections;
+            param.DeviceTypeEnum = newDev.DeviceTypeEnum;
             return Add(param);
         }
     }

@@ -935,3 +935,25 @@ INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Invalid series data', 'DeleteSeriesReason', 'Series contains some invalid data.')          
+     
+-- Device Types     
+INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'Workstation','Workstation','Workstation')
+GO
+INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'Modality','Modality','Modality')
+GO
+INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'Server','Server','Server')
+GO
+INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),103,'Broker','Broker','Broker')
+GO

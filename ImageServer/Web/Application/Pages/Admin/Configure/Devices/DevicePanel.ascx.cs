@@ -129,7 +129,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.DHCP));
             DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.NoDHCP));
-
         }
 
         /// <summary>
@@ -157,6 +156,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             // the list may be out-dated if the add/update event is fired later
             // In those cases, the list must be refreshed again.
             LoadDevices();
+
+            IList<DeviceTypeEnum> deviceTypes = DeviceTypeEnum.GetAll();
+
+            if (DeviceTypeFilter.Items.Count == 0)
+            {
+                foreach (DeviceTypeEnum t in deviceTypes)
+                {
+                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                }
+            }
+            else
+            {
+                ListItem[] typeItems = new ListItem[DeviceTypeFilter.Items.Count];
+                DeviceTypeFilter.Items.CopyTo(typeItems, 0);
+                DeviceTypeFilter.Items.Clear();
+                int count = 0;
+                foreach (DeviceTypeEnum t in deviceTypes)
+                {
+                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items[count].Selected = typeItems[count].Selected;
+                    count++;
+                }
+            }
         }
 
         #endregion Protected methods
@@ -211,6 +233,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                     criteria.Dhcp.EqualTo(true);
                 else
                     criteria.Dhcp.EqualTo(false);
+            }
+
+            if (DeviceTypeFilter.SelectedIndex > -1)
+            {
+                List<DeviceTypeEnum> types = new List<DeviceTypeEnum>();
+                foreach (ListItem item in DeviceTypeFilter.Items)
+                {
+                    if (item.Selected)
+                    {
+                        types.Add(DeviceTypeEnum.GetEnum(item.Value));
+                    }
+                }
+                criteria.DeviceTypeEnum.In(types);
             }
 
             DeviceGridViewControl1.Devices = _theController.GetDevices(criteria);

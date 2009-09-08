@@ -14,6 +14,7 @@
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
+                    <asp:BoundField DataField="DeviceTypeEnum" HeaderText="Device Type" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:TemplateField HeaderText="IPAddress" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:Label ID="IpAddressLabel" runat="server" Text="Label"></asp:Label>

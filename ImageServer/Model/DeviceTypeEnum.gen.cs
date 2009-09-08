@@ -40,71 +40,63 @@ namespace ClearCanvas.ImageServer.Model
     using System.Reflection;
 
 [Serializable]
-public partial class FilesystemQueueTypeEnum : ServerEnum
+public partial class DeviceTypeEnum : ServerEnum
 {
       #region Private Static Members
-      private static readonly FilesystemQueueTypeEnum _DeleteStudy = GetEnum("DeleteStudy");
-      private static readonly FilesystemQueueTypeEnum _PurgeStudy = GetEnum("PurgeStudy");
-      private static readonly FilesystemQueueTypeEnum _TierMigrate = GetEnum("TierMigrate");
-      private static readonly FilesystemQueueTypeEnum _LosslessCompress = GetEnum("LosslessCompress");
-      private static readonly FilesystemQueueTypeEnum _LossyCompress = GetEnum("LossyCompress");
+      private static readonly DeviceTypeEnum _Workstation = GetEnum("Workstation");
+      private static readonly DeviceTypeEnum _Modality = GetEnum("Modality");
+      private static readonly DeviceTypeEnum _Server = GetEnum("Server");
+      private static readonly DeviceTypeEnum _Broker = GetEnum("Broker");
       #endregion
 
       #region Public Static Properties
       /// <summary>
-      /// A record telling when a study is eligible for deletion.  The study will be completely removed from the system.
+      /// Workstation
       /// </summary>
-      public static FilesystemQueueTypeEnum DeleteStudy
+      public static DeviceTypeEnum Workstation
       {
-          get { return _DeleteStudy; }
+          get { return _Workstation; }
       }
       /// <summary>
-      /// A record telling when a study can be purged from a filesystem.  Only archived studies can be purged.  The study will remain archived and can be restored.
+      /// Modality
       /// </summary>
-      public static FilesystemQueueTypeEnum PurgeStudy
+      public static DeviceTypeEnum Modality
       {
-          get { return _PurgeStudy; }
+          get { return _Modality; }
       }
       /// <summary>
-      /// A record telling when a study is eligible to be migrated to a lower tier filesystem.
+      /// Server
       /// </summary>
-      public static FilesystemQueueTypeEnum TierMigrate
+      public static DeviceTypeEnum Server
       {
-          get { return _TierMigrate; }
+          get { return _Server; }
       }
       /// <summary>
-      /// A record telling when a study is eligible for lossless compression and the type of compression to be performed on the study.
+      /// Broker
       /// </summary>
-      public static FilesystemQueueTypeEnum LosslessCompress
+      public static DeviceTypeEnum Broker
       {
-          get { return _LosslessCompress; }
-      }
-      /// <summary>
-      /// A record telling when a study is eligible for lossy compression and the type of compression to be performed.
-      /// </summary>
-      public static FilesystemQueueTypeEnum LossyCompress
-      {
-          get { return _LossyCompress; }
+          get { return _Broker; }
       }
 
       #endregion
 
       #region Constructors
-      public FilesystemQueueTypeEnum():base("FilesystemQueueTypeEnum")
+      public DeviceTypeEnum():base("DeviceTypeEnum")
       {}
       #endregion
       #region Public Members
       public override void SetEnum(short val)
       {
-          ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.SetEnum(this, val);
+          ServerEnumHelper<DeviceTypeEnum, IDeviceTypeEnumBroker>.SetEnum(this, val);
       }
-      static public List<FilesystemQueueTypeEnum> GetAll()
+      static public List<DeviceTypeEnum> GetAll()
       {
-          return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetAll();
+          return ServerEnumHelper<DeviceTypeEnum, IDeviceTypeEnumBroker>.GetAll();
       }
-      static public FilesystemQueueTypeEnum GetEnum(string lookup)
+      static public DeviceTypeEnum GetEnum(string lookup)
       {
-          return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetEnum(lookup);
+          return ServerEnumHelper<DeviceTypeEnum, IDeviceTypeEnumBroker>.GetEnum(lookup);
       }
       #endregion
 }

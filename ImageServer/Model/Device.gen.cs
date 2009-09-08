@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.Boolean _allowRetrieve_
             ,System.Boolean _allowStorage_
             ,System.String _description_
+            ,DeviceTypeEnum _deviceTypeEnum_
             ,System.Boolean _dhcp_
             ,System.Boolean _enabled_
             ,System.String _ipAddress_
@@ -67,6 +68,7 @@ namespace ClearCanvas.ImageServer.Model
             _allowRetrieve = _allowRetrieve_;
             _allowStorage = _allowStorage_;
             _description = _description_;
+            _deviceTypeEnum = _deviceTypeEnum_;
             _dhcp = _dhcp_;
             _enabled = _enabled_;
             _ipAddress = _ipAddress_;
@@ -84,6 +86,7 @@ namespace ClearCanvas.ImageServer.Model
         private Boolean _allowRetrieve;
         private Boolean _allowStorage;
         private String _description;
+        private DeviceTypeEnum _deviceTypeEnum;
         private Boolean _dhcp;
         private Boolean _enabled;
         private String _ipAddress;
@@ -129,6 +132,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _description; }
         set { _description = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
+        public DeviceTypeEnum DeviceTypeEnum
+        {
+        get { return _deviceTypeEnum; }
+        set { _deviceTypeEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public Boolean Dhcp
@@ -207,6 +216,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.AllowRetrieve = entity.AllowRetrieve;
             updateColumns.AllowStorage = entity.AllowStorage;
             updateColumns.Description = entity.Description;
+            updateColumns.DeviceTypeEnum = entity.DeviceTypeEnum;
             updateColumns.Dhcp = entity.Dhcp;
             updateColumns.Enabled = entity.Enabled;
             updateColumns.IpAddress = entity.IpAddress;

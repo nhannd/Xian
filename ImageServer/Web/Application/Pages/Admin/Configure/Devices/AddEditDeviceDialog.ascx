@@ -56,11 +56,11 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                         </table>
                                     </td>
                                     <td id="Td6" runat="server" align="left" valign="bottom">
-                                        <table width="100%">
+                                         <table width="100%">
                                             <tr align="left">
                                                 <td>
-                                                    <asp:Label ID="Label4" runat="server" Text="Partition" CssClass="DialogTextBoxLabel" /><br />
-                                                    <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList">
+                                                    <asp:Label ID="Label6" runat="server" Text="Device Type" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:DropDownList ID="DeviceTypeDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList">
                                                     </asp:DropDownList>
                                                 </td>
                                                 <td>
@@ -84,7 +84,23 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                         </table>
                                     </td>
                                     <td id="Td9" runat="server" valign="bottom">
-                                        <table width="100%">
+                                       <table width="100%">
+                                            <tr align="left">
+                                                <td>
+                                                    <asp:Label ID="Label4" runat="server" Text="Partition" CssClass="DialogTextBoxLabel" /><br />
+                                                    <asp:DropDownList ID="ServerPartitionDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList">
+                                                    </asp:DropDownList>
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td valign="bottom">
+                                                                            <table width="100%">
                                             <tr align="left">
                                                 <td>
                                                     <asp:CheckBox ID="ActiveCheckBox" runat="server" Checked="True" Text="Enabled" CssClass="DialogCheckBox" />
@@ -94,6 +110,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                             </tr>
                                         </table>
                                     </td>
+                                    
                                 </tr>
                             </table>
                             <ccValidator:RegularExpressionFieldValidator

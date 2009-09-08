@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -99,6 +99,7 @@
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
     <Compile Include="DevicePreferredTransferSyntax.gen.cs" />
+    <Compile Include="DeviceTypeEnum.gen.cs" />
     <Compile Include="DuplicateSopPolicyEnum.gen.cs" />
     <Compile Include="DuplicateSopQueueEntry.cs" />
     <Compile Include="EntityBrokers\AlertSelectCriteria.gen.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="EntityBrokers\IDatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDevicePreferredTransferSyntaxEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IDeviceTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDuplicateSopEntryEntityBroker.cs" />
     <Compile Include="EntityBrokers\IDuplicateSopPolicyEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemEntityBroker.gen.cs" />
