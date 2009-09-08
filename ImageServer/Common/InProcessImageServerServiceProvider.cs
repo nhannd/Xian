@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageServer.Common
         {
             if (_serviceFactory.HasService(serviceType))
             {
-                Platform.Log(LogLevel.Info, "Accessing {0} as a local service", serviceType);
                 return _serviceFactory.GetService(serviceType);
             }
             else
