@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move {
     
     
-    /// <summary>
-    /// StudyGridView class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class StudyGridView {
         
         /// <summary>

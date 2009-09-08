@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyGridView.ascx.cs" 
 Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.StudyGridView" %>
 
-            <asp:GridView ID="StudyListControl" runat="server">
+            <asp:GridView ID="StudyListControl" runat="server" skinid="GlobalGridView">
                 <Columns>
                     <asp:TemplateField HeaderText="Patient Name">
                         <itemtemplate>

@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries {
     
     
-    /// <summary>
-    /// SeriesGridView class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class SeriesGridView {
         
         /// <summary>

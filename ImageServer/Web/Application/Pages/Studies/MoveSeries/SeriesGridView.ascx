@@ -3,7 +3,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesGridView.ascx.cs" 
 Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.SeriesGridView" %>
 
-            <asp:GridView ID="SeriesListControl" runat="server">
+            <asp:GridView ID="SeriesListControl" runat="server" SkinID="GlobalGridView">
                 <Columns>
                             <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
                                 <HeaderStyle Wrap="False" />    
