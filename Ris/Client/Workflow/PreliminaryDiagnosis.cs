@@ -48,18 +48,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <returns></returns>
         public static bool ShouldShowDialog(EntityRef orderRef, string patientClassCode)
         {
-            bool show = false;
-            List<string> filters = new List<string>(new string[] { OrderNoteCategory.PreliminaryDiagnosis.Key });
+            var show = false;
+            var filters = new List<string>(new [] { OrderNoteCategory.PreliminaryDiagnosis.Key });
             Platform.GetService<IOrderNoteService>(
-                delegate(IOrderNoteService service)
-                {
-					show = service.GetConversation(new GetConversationRequest(orderRef, filters, true)).NoteCount > 0;
-                });
+            	service => show = service.GetConversation(new GetConversationRequest(orderRef, filters, true)).NoteCount > 0);
 
-			string patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
-			List<string> patientClassCodesForReview = string.IsNullOrEmpty(patientClassFilters)
+			var patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
+			var patientClassCodesForReview = string.IsNullOrEmpty(patientClassFilters)
 				? new List<string>()
-				: CollectionUtils.Map<string, string>(patientClassFilters.Split(','), delegate(string s) { return s.Trim(); });
+				: CollectionUtils.Map(patientClassFilters.Split(','), (string s) => s.Trim());
 
 			if (patientClassCodesForReview.Contains(patientClassCode))
 				show = true;
@@ -77,9 +74,9 @@ namespace ClearCanvas.Ris.Client.Workflow
         /// <returns></returns>
         public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title, IDesktopWindow desktopWindow, string initialNoteText)
         {
-            OrderNoteConversationComponent component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key);
-            component.Body = initialNoteText;
-            return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
+            var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key)
+                            	{Body = initialNoteText};
+        	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
         }
     }
 }

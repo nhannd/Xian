@@ -40,7 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     [DataContract]
     public class GetConversationEditorFormDataRequest : DataContractBase
     {
-        [DataMember]
+    	public GetConversationEditorFormDataRequest(List<string> recipientStaffIDs, List<string> recipientStaffGroupNames)
+    	{
+    		RecipientStaffIDs = recipientStaffIDs;
+    		RecipientStaffGroupNames = recipientStaffGroupNames;
+    	}
+
+    	[DataMember]
         public List<string> RecipientStaffIDs;
 
         [DataMember]
