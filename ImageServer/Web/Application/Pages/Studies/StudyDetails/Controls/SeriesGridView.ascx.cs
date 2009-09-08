@@ -168,6 +168,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             base.OnPreRender(e);
 
+			// Get a count of the number of SIQ entries for the StudyStorageLocation.  If there's
+			// any, we don't enable the Delete button.
+			StudyIntegrityQueueController siqController = new StudyIntegrityQueueController();
+			StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
+			criteria.StudyStorageKey.EqualTo(Study.TheStudyStorage.Key);
+        	int siqCount = siqController.GetReconcileQueueItemsCount(criteria);
+
             foreach(GridViewRow row in GridView1.Rows)
             {
                 if (row.RowType == DataControlRowType.DataRow)
@@ -182,7 +189,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     StudyController controller = new StudyController();
                     if (controller.CanManipulateSeries(Study.TheStudy))
                     {
-                        row.Attributes.Add("candelete", "true");
+						if (siqCount==0)
+							row.Attributes.Add("candelete", "true");
+
                         row.Attributes.Add("canmove", "true");
                     }
                 }
