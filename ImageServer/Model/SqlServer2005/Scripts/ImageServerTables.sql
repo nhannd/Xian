@@ -706,6 +706,7 @@ CREATE TABLE [dbo].[Device](
 	[AllowAutoRoute] [bit] NOT NULL CONSTRAINT [DF_Device_AllowAutoRoute]  DEFAULT ((1)),
 	[ThrottleMaxConnections] [smallint] NOT NULL CONSTRAINT [DF_Device_MaxConnections]  DEFAULT ((-1)),
     [LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_Device_LastAccessedTime]  DEFAULT (getdate()),
+	[DeviceTypeEnum] [smallint] NOT NULL,
 CONSTRAINT [PK_Device] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -1604,6 +1605,13 @@ ALTER TABLE [dbo].[Device]  WITH CHECK ADD  CONSTRAINT [FK_Device_ServerPartitio
 REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 ALTER TABLE [dbo].[Device] CHECK CONSTRAINT [FK_Device_ServerPartition]
+GO
+/****** Object:  ForeignKey [FK_Device_DeviceTypeEnum]    Script Date: 09/08/2009 11:45:26 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Device_DeviceTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Device]'))
+ALTER TABLE [dbo].[Device]  WITH CHECK ADD  CONSTRAINT [FK_Device_DeviceTypeEnum] FOREIGN KEY([DeviceTypeEnum])
+REFERENCES [dbo].[DeviceTypeEnum] ([Enum])
+GO
+ALTER TABLE [dbo].[Device] CHECK CONSTRAINT [FK_Device_DeviceTypeEnum]
 GO
 /****** Object:  ForeignKey [FK_DevicePreferredTransferSyntax_Device]    Script Date: 07/17/2008 00:49:25 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_DevicePreferredTransferSyntax_Device]') AND parent_object_id = OBJECT_ID(N'[dbo].[DevicePreferredTransferSyntax]'))
