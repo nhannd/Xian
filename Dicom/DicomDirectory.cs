@@ -36,8 +36,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
-	//TODO: Move to Utilities?  Should it just be DicomDirectory with both add/remove functionality (and both Load/Save methods).
-
     /// <summary>
     /// This class reads and/or writes a Dicom Directory file.  
     /// </summary>
@@ -54,13 +52,6 @@ namespace ClearCanvas.Dicom
     /// </example>
     public class DicomDirectory : IDisposable
     {
-        #region Internal Constants
-        internal const string DirectoryRecordTypePatient = "PATIENT";
-        internal const string DirectoryRecordTypeStudy = "STUDY";
-        internal const string DirectoryRecordTypeSeries = "SERIES";
-        internal const string DirectoryRecordTypeImage = "IMAGE";
-        #endregion
-
         #region Private Variables
         /// <summary>Contains all the Dicom Image files to be added to the directory</summary>
         private readonly Dictionary<DicomFile, string> _dicomFiles = new Dictionary<DicomFile, string>();
@@ -78,13 +69,11 @@ namespace ClearCanvas.Dicom
         private uint _fileOffset;
 
         /// <summary>Contains the first directory record of in the root of the DICOMDIR.</summary>
-        private DirectoryRecordSequenceItem _rootRecord = null;
-
+        private DirectoryRecordSequenceItem _rootRecord;
         #endregion
 
         #region Constructors
-
-    	/// <summary>
+        /// <summary>
         /// Initializes a new instance of the DicomDirectory class.
         /// </summary>
         /// <remarks>Sets most default values which can be changed via </remarks>
@@ -95,7 +84,7 @@ namespace ClearCanvas.Dicom
             {
                 _dicomDirFile = new DicomFile();
 
-                _dicomDirFile.MetaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[2] { 0x00, 0x01 };
+                _dicomDirFile.MetaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 };
                 _dicomDirFile.MediaStorageSopClassUid = DicomUids.MediaStorageDirectoryStorage.UID;
                 _dicomDirFile.SourceApplicationEntityTitle = aeTitle;
                 _dicomDirFile.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
@@ -345,8 +334,7 @@ namespace ClearCanvas.Dicom
 			}
 
 			// Get the root Directory Record.
-			uint offset;
-			offset = _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].GetUInt32(0, 0);
+			uint offset = _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].GetUInt32(0, 0);
 			lookup.TryGetValue(offset, out _rootRecord);
 
 			// Now traverse through the remainder of the directory records, and match up the offsets with the directory
@@ -509,23 +497,23 @@ namespace ClearCanvas.Dicom
         /// <param name="file"></param>
         /// <param name="optionalDicomDirFileLocation"></param>
         /// <returns></returns>
-        private DirectoryRecordSequenceItem GetExistingOrCreateNewImage(DirectoryRecordSequenceItem images, DicomFile file, string optionalDicomDirFileLocation)
+        private void GetExistingOrCreateNewImage(DirectoryRecordSequenceItem images, DicomFile file, string optionalDicomDirFileLocation)
         {
             DirectoryRecordSequenceItem currentImage = images;
             while (currentImage != null)
             {
                 if (currentImage[DicomTags.ReferencedSopInstanceUidInFile].Equals(file.DataSet[DicomTags.SopInstanceUid]))
                 {
-                    return currentImage;
+                	return;
                 }
-                if (currentImage.NextRecord == null)
+            	if (currentImage.NextRecord == null)
                 {
                     currentImage.NextRecord = CreateImageItem(file, optionalDicomDirFileLocation);
-                    return currentImage.NextRecord;
+                	return;
                 }
                 currentImage = currentImage.NextRecord;
             }
-            return null;
+        	return;
         }
 
         /// <summary>
@@ -540,16 +528,30 @@ namespace ClearCanvas.Dicom
                 optionalDicomDirFileLocation = EvaluateRelativePath(_saveFileName, dicomFile.Filename);
             }
 
-            //TODO: Deal w/ Non-Image directory record types here
+        	DirectoryRecordType type;
+			if (DirectoryRecordDictionary.TryGetDirectoryRecordType(dicomFile.SopClass.Uid, out type))
+			{
+				string name;
+				DirectoryRecordTypeDictionary.TryGetName(type, out name);
 
-            IDictionary<uint, object> dicomTags = new Dictionary<uint, object>();
-            dicomTags.Add(DicomTags.ReferencedFileId, optionalDicomDirFileLocation);
-            dicomTags.Add(DicomTags.ReferencedSopClassUidInFile, dicomFile.SopClass.Uid);
-            dicomTags.Add(DicomTags.ReferencedSopInstanceUidInFile, dicomFile.MediaStorageSopInstanceUid); // DataSet[DicomTags.SopInstanceUid].GetUid(0, new DicomUid()));
-            dicomTags.Add(DicomTags.ReferencedTransferSyntaxUidInFile, dicomFile.TransferSyntaxUid);
-            dicomTags.Add(DicomTags.InstanceNumber, null);
+				IDictionary<uint, object> dicomTags = new Dictionary<uint, object>();
+				dicomTags.Add(DicomTags.ReferencedFileId, optionalDicomDirFileLocation);
+				dicomTags.Add(DicomTags.ReferencedSopClassUidInFile, dicomFile.SopClass.Uid);
+				dicomTags.Add(DicomTags.ReferencedSopInstanceUidInFile, dicomFile.MediaStorageSopInstanceUid);
+				dicomTags.Add(DicomTags.ReferencedTransferSyntaxUidInFile, dicomFile.TransferSyntaxUid);
 
-            return AddSequenceItem(DirectoryRecordTypeImage, dicomFile.DataSet, dicomTags);
+				// NOTE:  This is a bit problematic, but sufficient for now. We should take into account
+				// which tags are type 2 and which are type 1 and which are conditional when setting them 
+				// in AddSequenceItem
+				List<uint> tagList;
+				if (DirectoryRecordDictionary.TryGetDirectoryRecordTagList(type, out tagList))
+					foreach (uint tag in tagList)
+						dicomTags.Add(tag, null);
+
+				return AddSequenceItem(type, dicomFile.DataSet, dicomTags);
+			}
+
+        	return null;
         }
         #endregion
 
@@ -661,13 +663,21 @@ namespace ClearCanvas.Dicom
         /// <param name="tags">The tags.</param>
         /// <returns>The newly created DirectoryRecord</returns>
         /// <remarks>Tags are a dictionary of tags and optional values - if the value is null, then it will get the value from the specified dataset</remarks>
-        private static DirectoryRecordSequenceItem AddSequenceItem(string recordType, DicomAttributeCollection dataSet, IDictionary<uint, object> tags)
+        private static DirectoryRecordSequenceItem AddSequenceItem(DirectoryRecordType recordType, IDicomAttributeProvider dataSet, IDictionary<uint, object> tags)
         {
             DirectoryRecordSequenceItem dicomSequenceItem = new DirectoryRecordSequenceItem();
             dicomSequenceItem[DicomTags.OffsetOfTheNextDirectoryRecord].Values = 0;
             dicomSequenceItem[DicomTags.RecordInUseFlag].Values = 0xFFFF;
             dicomSequenceItem[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].Values = 0;
-            dicomSequenceItem[DicomTags.DirectoryRecordType].Values = recordType;
+
+        	string recordName;
+        	DirectoryRecordTypeDictionary.TryGetName(recordType, out recordName);
+            dicomSequenceItem[DicomTags.DirectoryRecordType].Values = recordName;
+
+        	DicomAttribute charSetAttrib;
+			if (dataSet.TryGetAttribute(DicomTags.SpecificCharacterSet, out charSetAttrib))
+				dicomSequenceItem[DicomTags.SpecificCharacterSet] = charSetAttrib.Copy();
+
             foreach (uint dicomTag in tags.Keys)
             {
                 try
@@ -700,8 +710,8 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Create a Patient Directory Record
         /// </summary>
-        /// <param name="dicomFile">The dicom file.</param>
-        private static DirectoryRecordSequenceItem CreatePatientItem(DicomFile dicomFile)
+        /// <param name="dicomFile">The dicom file or message.</param>
+        private static DirectoryRecordSequenceItem CreatePatientItem(DicomMessageBase dicomFile)
         {
             if (dicomFile == null)
                 throw new ArgumentNullException("dicomFile");
@@ -712,14 +722,14 @@ namespace ClearCanvas.Dicom
             dicomTags.Add(DicomTags.PatientsBirthDate, null);
             dicomTags.Add(DicomTags.PatientsSex, null);
 
-            return AddSequenceItem(DirectoryRecordTypePatient, dicomFile.DataSet, dicomTags);
+            return AddSequenceItem(DirectoryRecordType.PATIENT, dicomFile.DataSet, dicomTags);
         }
 
         /// <summary>
         /// Create a Study Directory Record
         /// </summary>
         /// <param name="dicomFile">The dicom file.</param>
-        private static DirectoryRecordSequenceItem CreateStudyItem(DicomFile dicomFile)
+        private static DirectoryRecordSequenceItem CreateStudyItem(DicomMessageBase dicomFile)
         {
             IDictionary<uint, object> dicomTags = new Dictionary<uint, object>();
             dicomTags.Add(DicomTags.StudyInstanceUid, null);
@@ -729,14 +739,14 @@ namespace ClearCanvas.Dicom
             dicomTags.Add(DicomTags.AccessionNumber, null);
             dicomTags.Add(DicomTags.StudyDescription, null);
 
-            return AddSequenceItem(DirectoryRecordTypeStudy, dicomFile.DataSet, dicomTags);
+            return AddSequenceItem(DirectoryRecordType.STUDY, dicomFile.DataSet, dicomTags);
         }
 
         /// <summary>
         /// Create a Series Directory Record
         /// </summary>
         /// <param name="dicomFile">The dicom file.</param>
-        private static DirectoryRecordSequenceItem CreateSeriesItem(DicomFile dicomFile)
+        private static DirectoryRecordSequenceItem CreateSeriesItem(DicomMessageBase dicomFile)
         {
             IDictionary<uint, object> dicomTags = new Dictionary<uint, object>();
             dicomTags.Add(DicomTags.SeriesInstanceUid, null);
@@ -747,8 +757,9 @@ namespace ClearCanvas.Dicom
             dicomTags.Add(DicomTags.SeriesDescription, null);
             //dicomTags.Add(DicomTags.SeriesDescription, dicomFile.DataSet[DicomTags.SeriesDescription].GetString(0, String.Empty));
 
-            return AddSequenceItem(DirectoryRecordTypeSeries, dicomFile.DataSet, dicomTags);
+            return AddSequenceItem(DirectoryRecordType.SERIES, dicomFile.DataSet, dicomTags);
         }
+
         /// <summary>
         /// Evaluates the relative path to <paramref name="absoluteFilePath"/> from <paramref name="mainDirPath"/>.
         /// </summary>
@@ -803,90 +814,35 @@ namespace ClearCanvas.Dicom
 
         #region IDisposable Members
 
-        private bool m_Disposed;
+        private bool _disposed;
         public void Dispose()
         {
-            if (!m_Disposed)
+			if (!_disposed)
             {
                 if (_dicomDirFile != null)
                     _dicomDirFile = null;
 
-                m_Disposed = true;
+				_disposed = true;
             }
         }
 
         #endregion
     }
 
-	public class DirectoryRecordTypeAttribute: Attribute
-	{
-		private string _name;
-		public string Name
-		{
-			get { return _name;}
-			set { _name = value;}
-		}
-		public DirectoryRecordTypeAttribute(string name)
-		{
-			_name = name;
-		}
-	}
-
-	public enum  DirectoryRecordType
-	{
-		[DirectoryRecordType("PATIENT")]
-		PATIENT,
-		[DirectoryRecordType("STUDY")]
-		STUDY,
-		[DirectoryRecordType("SERIES")]
-		SERIES,
-		[DirectoryRecordType("IMAGE")]
-		IMAGE,
-		[DirectoryRecordType("RT DOSE")]
-		RT_DOSE,
-		[DirectoryRecordType("RT STRUCTURE SET")]
-		RT_STRUCTURE_SET,
-		[DirectoryRecordType("RT PLAN")]
-		RT_PLAN,
-		[DirectoryRecordType("RT TREAT RECORD")]
-		RT_TREAT_RECORD,
-		[DirectoryRecordType("PRESENTATION")]
-		PRESENTATION,
-		[DirectoryRecordType("WAVEFORM")]
-		WAVEFORM,
-		[DirectoryRecordType("SR DOCUMENT")]
-		SR_DOCUMENT,
-		[DirectoryRecordType("KEY OBJECT DOC")]
-		KEY_OBJECT_DOC,
-		[DirectoryRecordType("SPECTROSCOPY")]
-		SPECTROSCOPY,
-		[DirectoryRecordType("RAW DATA")]
-		RAW_DATA,
-		[DirectoryRecordType("REGISTRATION")]
-		REGISTRATION,
-		[DirectoryRecordType("FIDUCIAL")]
-		FIDUCIAL,
-		[DirectoryRecordType("HANGING PROTOCOL")]
-		HANGING_PROTOCOL,
-		[DirectoryRecordType("ENCAP DOC")]
-		ENCAP_DOC,
-		[DirectoryRecordType("HL7 STRUC DOC")]
-		HL7_STRUC_DOC,
-		[DirectoryRecordType("VALUE MAP")]
-		VALUE_MAP,
-		[DirectoryRecordType("STEREOMETRIC")]
-		STEREOMETRIC,
-		[DirectoryRecordType("PRIVATE")]
-		PRIVATE,
-	}
-
+	
+	/// <summary>
+	/// Dictionary of the directory records required for specific SopClasses.
+	/// </summary>
 	internal static class DirectoryRecordDictionary
 	{
+		#region Private Members
 		private static Dictionary<string, DirectoryRecordType> _sopClassLookup = new Dictionary<string, DirectoryRecordType>();
+		private static Dictionary<DirectoryRecordType, List<uint>> _tagLookupList = new Dictionary<DirectoryRecordType, List<uint>>();
+		#endregion
+
+		#region Constructors
 		static DirectoryRecordDictionary()
 		{
-
-			_sopClassLookup.Add(SopClass.RtBeamsTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
 			_sopClassLookup.Add(SopClass.AmbulatoryEcgWaveformStorageUid, DirectoryRecordType.WAVEFORM);
 			_sopClassLookup.Add(SopClass.BasicTextSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
 			_sopClassLookup.Add(SopClass.BasicVoiceAudioWaveformStorageUid, DirectoryRecordType.WAVEFORM);
@@ -919,7 +875,6 @@ namespace ClearCanvas.Dicom
 			_sopClassLookup.Add(SopClass.MrImageStorageUid, DirectoryRecordType.IMAGE);
 			_sopClassLookup.Add(SopClass.MrSpectroscopyStorageUid, DirectoryRecordType.SPECTROSCOPY);
 			_sopClassLookup.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
             _sopClassLookup.Add(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
             _sopClassLookup.Add(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
             _sopClassLookup.Add(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
@@ -965,7 +920,218 @@ namespace ClearCanvas.Dicom
             _sopClassLookup.Add(SopClass.XRayRadiationDoseSrStorageUid, DirectoryRecordType.IMAGE);
             _sopClassLookup.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, DirectoryRecordType.IMAGE);
 
+			List<uint> tagList;
+			//RT DOSE
+			tagList = new List<uint>();
+			tagList.Add(DicomTags.InstanceNumber);
+			tagList.Add(DicomTags.DoseSummationType);
+			_tagLookupList.Add(DirectoryRecordType.RT_DOSE, tagList);
+
+			//RT STRUCTURE SET
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.InstanceNumber,
+			          		DicomTags.StructureSetLabel,
+			          		DicomTags.StructureSetDate,
+			          		DicomTags.StructureSetTime
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.RT_STRUCTURE_SET, tagList);
+
+			//RT PLAN
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.InstanceNumber,
+			          		DicomTags.RtPlanLabel,
+			          		DicomTags.RtPlanDate,
+			          		DicomTags.RtPlanTime
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.RT_PLAN, tagList);
+
+			//RT TREAT RECORD
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.InstanceNumber,
+			          		//TODO Some of the 0x3008 group tags are not in the dictionary, see ticket #5162
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.RT_TREAT_RECORD, tagList);
+
+			//PRESENTATION
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.PresentationCreationDate,
+							DicomTags.PresentationCreationTime,
+							DicomTags.ReferencedSeriesSequence,
+							DicomTags.BlendingSequence
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.PRESENTATION, tagList);
+
+			//WAVEFORM
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.InstanceNumber,
+							DicomTags.ContentDate,
+							DicomTags.ContentTime
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.WAVEFORM, tagList);
+
+			//SR DOCUMENT
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.InstanceNumber,
+							DicomTags.CompletionFlag,
+							DicomTags.VerificationFlag,
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.VerificationDateTime,
+							DicomTags.ConceptNameCodeSequence
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.SR_DOCUMENT, tagList);
+
+			//KEY OBJECT DOC
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.InstanceNumber,
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.ConceptNameCodeSequence
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.KEY_OBJECT_DOC, tagList);
+
+			//SPECTROSCOPY
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.ImageType,
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.InstanceNumber,
+							DicomTags.NumberOfFrames,
+							DicomTags.Rows,
+							DicomTags.Columns,
+							DicomTags.DataPointRows,
+							DicomTags.DataPointColumns
+
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.SPECTROSCOPY, tagList);
+
+			//RAW DATA
+			tagList = new List<uint>
+			          	{
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.InstanceNumber
+
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.RAW_DATA, tagList);
+
+			//REGISTRATION
+			tagList = new List<uint>
+			          	{
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.InstanceNumber,
+							DicomTags.ContentLabel,
+							DicomTags.ContentDescription,
+							DicomTags.ContentCreatorsName,
+							DicomTags.PersonIdentificationCodeSequence
+
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.REGISTRATION, tagList);
+
+			//FUDICIAL
+			tagList = new List<uint>
+			          	{
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.InstanceNumber,
+							DicomTags.ContentLabel,
+							DicomTags.ContentDescription,
+							DicomTags.ContentCreatorsName,
+							DicomTags.PersonIdentificationCodeSequence
+
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.FIDUCIAL, tagList);
+
+			//HANGING PROTOCOL
+			tagList = new List<uint>
+			          	{
+							DicomTags.HangingProtocolName,
+							DicomTags.HangingProtocolDescription,
+							DicomTags.HangingProtocolLevel,
+							DicomTags.HangingProtocolCreator,
+							DicomTags.HangingProtocolCreationDatetime,
+							DicomTags.HangingProtocolDefinitionSequence,
+							DicomTags.NumberOfPriorsReferenced,
+							DicomTags.HangingProtocolUserIdentificationCodeSequence
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.HANGING_PROTOCOL, tagList);
+
+			//ENCAP DOC
+			tagList = new List<uint>
+			          	{
+							DicomTags.ContentDate,
+							DicomTags.ContentTime,
+							DicomTags.InstanceNumber,
+							DicomTags.DocumentTitle,
+							DicomTags.MimeTypeOfEncapsulatedDocument
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.ENCAP_DOC, tagList);
+
+
+			//HL7 STRUC DOC
+			tagList = new List<uint>
+			          	{
+							DicomTags.Hl7InstanceIdentifier,
+							DicomTags.Hl7DocumentEffectiveTime
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.HL7_STRUC_DOC, tagList);
+
+			//VALUE MAP
+			tagList = new List<uint>
+			          	{
+			          		DicomTags.ContentDate,
+			          		DicomTags.ContentTime,
+			          		DicomTags.InstanceNumber,
+			          		DicomTags.ContentLabel,
+			          		DicomTags.ContentDescription,
+			          		DicomTags.ContentCreatorsName,
+			          		DicomTags.PersonIdentificationCodeSequence
+			          	};
+			_tagLookupList.Add(DirectoryRecordType.VALUE_MAP, tagList);
+
+			//STEREOMETRIC
+			tagList = new List<uint>();
+			_tagLookupList.Add(DirectoryRecordType.STEREOMETRIC, tagList);
+
+			//PRIVATE
+			tagList = new List<uint>();
+			_tagLookupList.Add(DirectoryRecordType.PRIVATE, tagList);
 
 		}
+		#endregion
+
+		#region Methods
+		/// <summary>
+		/// Get the <see cref="DirectoryRecordType"/> for a given SopClass UID.
+		/// </summary>
+		/// <param name="uid">The SOP Class UID string.</param>
+		/// <param name="type">The output directory record type.</param>
+		/// <returns>Returns true if the directory record type is found, or else false.</returns>
+		internal static bool TryGetDirectoryRecordType(string uid, out DirectoryRecordType type)
+		{
+			return _sopClassLookup.TryGetValue(uid, out type);
+		}
+
+		/// <summary>
+		/// Get a list of tags to be populated into a <see cref="DirectoryRecordSequenceItem"/> for the 
+		/// specified <see cref="DirectoryRecordType"/>.
+		/// </summary>
+		/// <param name="type">The directory record type to get the tag list for.</param>
+		/// <param name="tagList">The list of tags to be included.</param>
+		/// <returns></returns>
+		internal static bool TryGetDirectoryRecordTagList(DirectoryRecordType type, out List<uint> tagList)
+		{
+			return _tagLookupList.TryGetValue(type, out tagList);
+		}
+		#endregion
 	}
 }
