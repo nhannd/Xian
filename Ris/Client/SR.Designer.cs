@@ -1447,15 +1447,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are still notes addressed to you or to your group(s) that have not been acknowledged. Are you sure you want to proceed?.
-        /// </summary>
-        internal static string MessageProceedWithUnacknowledgedNotes {
-            get {
-                return ResourceManager.GetString("MessageProceedWithUnacknowledgedNotes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to No results were found using the specified criteria..
         /// </summary>
         internal static string MessageResultsNotFound {

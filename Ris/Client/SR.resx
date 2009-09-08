@@ -579,9 +579,6 @@
   <data name="MessageNoRecipientsSelected" xml:space="preserve">
     <value>At least one recipient must be selected in order to post a note.</value>
   </data>
-  <data name="MessageProceedWithUnacknowledgedNotes" xml:space="preserve">
-    <value>There are still notes addressed to you or to your group(s) that have not been acknowledged. Are you sure you want to proceed?</value>
-  </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
   </data>

@@ -532,6 +532,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public bool CompleteEnabled
+		{
+			get { return !_orderNoteViewComponent.HasUnacknowledgedNotes; }
+		}
+
 		public void OnComplete()
 		{
 			if (this.HasValidationErrors)
@@ -542,12 +547,6 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				if (_orderNoteViewComponent.HasUnacknowledgedNotes)
-				{
-					if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageProceedWithUnacknowledgedNotes, MessageBoxActions.YesNo))
-						return;
-				}
-
 				SaveChanges();
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
