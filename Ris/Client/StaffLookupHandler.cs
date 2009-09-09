@@ -65,10 +65,7 @@ namespace ClearCanvas.Ris.Client
 
 			TextQueryResponse<StaffSummary> response = null;
 			Platform.GetService<IStaffAdminService>(
-				delegate(IStaffAdminService service)
-				{
-					response = service.TextQuery(request);
-				});
+				service => response = service.TextQuery(request));
 			return response;
 		}
 
@@ -85,17 +82,17 @@ namespace ClearCanvas.Ris.Client
 		{
 			result = null;
 
-			StaffSummaryComponent staffComponent = new StaffSummaryComponent(true, _staffTypesFilter);
+			var staffComponent = new StaffSummaryComponent(true, _staffTypesFilter);
 			if (!string.IsNullOrEmpty(query))
 			{
-				string[] names = query.Split(',');
+				var names = query.Split(',');
 				if (names.Length > 0)
 					staffComponent.LastName = names[0].Trim();
 				if (names.Length > 1)
 					staffComponent.FirstName = names[1].Trim();
 			}
 
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			var exitCode = ApplicationComponent.LaunchAsDialog(
 				_desktopWindow, staffComponent, SR.TitleStaff);
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -109,7 +106,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override string FormatItem(StaffSummary item)
 		{
-			return PersonNameFormat.Format(item.Name);
+			return StaffNameAndRoleFormat.Format(item);
 		}
 	}
 }

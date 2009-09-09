@@ -52,8 +52,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			result = null;
 
-			StaffGroupSummaryComponent staffComponent = new StaffGroupSummaryComponent(true, query, _electiveGroupsOnly);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			var staffComponent = new StaffGroupSummaryComponent(true, query, _electiveGroupsOnly);
+			var exitCode = ApplicationComponent.LaunchAsDialog(
 				_desktopWindow, staffComponent, SR.TitleStaffGroups);
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -75,10 +75,7 @@ namespace ClearCanvas.Ris.Client
 
 			TextQueryResponse<StaffGroupSummary> response = null;
 			Platform.GetService<IStaffGroupAdminService>(
-				delegate(IStaffGroupAdminService service)
-					{
-						response = service.TextQuery(request);
-					});
+				service => response = service.TextQuery(request));
 			return response;
 		}
 	}

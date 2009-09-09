@@ -74,13 +74,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_recipients.MenuModel = _component.RecipientsActionModel;
 			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_staffRecipientLookup.LookupHandler = _component.StaffRecipientLookupHandler;
-			_staffRecipientLookup.DataBindings.Add("Value", _component, "SelectedStaffRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
-			_staffRecipientAddButton.DataBindings.Add("Enabled", _component, "AddStaffRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_groupRecipientLookup.LookupHandler = _component.GroupRecipientLookupHandler;
-			_groupRecipientLookup.DataBindings.Add("Value", _component, "SelectedGroupRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
-			_groupRecipientAddButton.DataBindings.Add("Enabled", _component, "AddGroupRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_recipientLookup.LookupHandler = _component.RecipientLookupHandler;
+			_recipientLookup.DataBindings.Add("Value", _component, "RecipientLookupSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+			_recipientAddButton.DataBindings.Add("Enabled", _component, "AddRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_completeButton.DataBindings.Add("Text", _component, "CompleteButtonLabel", true, DataSourceUpdateMode.OnPropertyChanged);
 			_completeButton.DataBindings.Add("Enabled", _component, "CompleteButtonEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -92,24 +88,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _component_propertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if(e.PropertyName == "Recipients")
-			{
-//				_recipients.Table = _component.Recipients;
-			}
-			else if (e.PropertyName == "CompleteButtonLabel")
+			if (e.PropertyName == "CompleteButtonLabel")
 			{
 				_completeButton.Text = _component.CompleteButtonLabel;
 			}
 		}
 
-		private void _staffRecipientAddButton_Click(object sender, System.EventArgs e)
+		private void _recipientAddButton_Click(object sender, System.EventArgs e)
 		{
-			_component.AddStaffRecipient();
-		}
-
-		private void _groupRecipientAddButton_Click(object sender, System.EventArgs e)
-		{
-			_component.AddGroupRecipient();
+			_component.AddRecipient();
 		}
 
 		private void _completeButton_Click(object sender, System.EventArgs e)

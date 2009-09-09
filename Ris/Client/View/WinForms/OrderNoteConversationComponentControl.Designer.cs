@@ -75,11 +75,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._urgent = new System.Windows.Forms.CheckBox();
 			this._notifyToGroupBox = new System.Windows.Forms.GroupBox();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
-			this._groupRecipientAddButton = new System.Windows.Forms.Button();
-			this._staffRecipientAddButton = new System.Windows.Forms.Button();
+			this._recipientAddButton = new System.Windows.Forms.Button();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._staffRecipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._groupRecipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._recipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._componentSplitContainer.Panel1.SuspendLayout();
@@ -300,10 +298,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.ColumnCount = 2;
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._recipientsTableLayout.Controls.Add(this._staffRecipientLookup, 0, 1);
-			this._recipientsTableLayout.Controls.Add(this._groupRecipientLookup, 0, 0);
-			this._recipientsTableLayout.Controls.Add(this._groupRecipientAddButton, 1, 0);
-			this._recipientsTableLayout.Controls.Add(this._staffRecipientAddButton, 1, 1);
+			this._recipientsTableLayout.Controls.Add(this._recipientLookup, 0, 1);
+			this._recipientsTableLayout.Controls.Add(this._recipientAddButton, 1, 1);
 			this._recipientsTableLayout.Controls.Add(this._recipients, 0, 2);
 			this._recipientsTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._recipientsTableLayout.Location = new System.Drawing.Point(3, 16);
@@ -316,31 +312,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.Size = new System.Drawing.Size(306, 277);
 			this._recipientsTableLayout.TabIndex = 1;
 			// 
-			// _groupRecipientAddButton
+			// _recipientAddButton
 			// 
-			this._groupRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._groupRecipientAddButton.AutoSize = true;
-			this._groupRecipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._groupRecipientAddButton.Location = new System.Drawing.Point(267, 17);
-			this._groupRecipientAddButton.Name = "_groupRecipientAddButton";
-			this._groupRecipientAddButton.Size = new System.Drawing.Size(36, 23);
-			this._groupRecipientAddButton.TabIndex = 1;
-			this._groupRecipientAddButton.Text = "Add";
-			this._groupRecipientAddButton.UseVisualStyleBackColor = true;
-			this._groupRecipientAddButton.Click += new System.EventHandler(this._groupRecipientAddButton_Click);
-			// 
-			// _staffRecipientAddButton
-			// 
-			this._staffRecipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._staffRecipientAddButton.AutoSize = true;
-			this._staffRecipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._staffRecipientAddButton.Location = new System.Drawing.Point(267, 60);
-			this._staffRecipientAddButton.Name = "_staffRecipientAddButton";
-			this._staffRecipientAddButton.Size = new System.Drawing.Size(36, 23);
-			this._staffRecipientAddButton.TabIndex = 3;
-			this._staffRecipientAddButton.Text = "Add";
-			this._staffRecipientAddButton.UseVisualStyleBackColor = true;
-			this._staffRecipientAddButton.Click += new System.EventHandler(this._staffRecipientAddButton_Click);
+			this._recipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._recipientAddButton.AutoSize = true;
+			this._recipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientAddButton.Location = new System.Drawing.Point(267, 17);
+			this._recipientAddButton.Name = "_recipientAddButton";
+			this._recipientAddButton.Size = new System.Drawing.Size(36, 23);
+			this._recipientAddButton.TabIndex = 3;
+			this._recipientAddButton.Text = "Add";
+			this._recipientAddButton.UseVisualStyleBackColor = true;
+			this._recipientAddButton.Click += new System.EventHandler(this._recipientAddButton_Click);
 			// 
 			// _recipients
 			// 
@@ -350,39 +333,26 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.AutoSize = true;
 			this._recipients.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._recipientsTableLayout.SetColumnSpan(this._recipients, 2);
-			this._recipients.Location = new System.Drawing.Point(3, 89);
+			this._recipients.Location = new System.Drawing.Point(3, 46);
 			this._recipients.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
 			this._recipients.ShowToolbar = false;
-			this._recipients.Size = new System.Drawing.Size(288, 185);
+			this._recipients.Size = new System.Drawing.Size(288, 228);
 			this._recipients.TabIndex = 4;
 			// 
-			// _staffRecipientLookup
+			// _recipientLookup
 			// 
-			this._staffRecipientLookup.AutoSize = true;
-			this._staffRecipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._staffRecipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._staffRecipientLookup.LabelText = "Staff to Notify";
-			this._staffRecipientLookup.Location = new System.Drawing.Point(0, 43);
-			this._staffRecipientLookup.Margin = new System.Windows.Forms.Padding(0);
-			this._staffRecipientLookup.Name = "_staffRecipientLookup";
-			this._staffRecipientLookup.Size = new System.Drawing.Size(264, 43);
-			this._staffRecipientLookup.TabIndex = 2;
-			this._staffRecipientLookup.Value = null;
-			// 
-			// _groupRecipientLookup
-			// 
-			this._groupRecipientLookup.AutoSize = true;
-			this._groupRecipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._groupRecipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._groupRecipientLookup.LabelText = "Group to Notify";
-			this._groupRecipientLookup.Location = new System.Drawing.Point(0, 0);
-			this._groupRecipientLookup.Margin = new System.Windows.Forms.Padding(0);
-			this._groupRecipientLookup.Name = "_groupRecipientLookup";
-			this._groupRecipientLookup.Size = new System.Drawing.Size(264, 43);
-			this._groupRecipientLookup.TabIndex = 0;
-			this._groupRecipientLookup.Value = null;
+			this._recipientLookup.AutoSize = true;
+			this._recipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recipientLookup.LabelText = "Staff or Staff Group to Notify";
+			this._recipientLookup.Location = new System.Drawing.Point(0, 0);
+			this._recipientLookup.Margin = new System.Windows.Forms.Padding(0);
+			this._recipientLookup.Name = "_recipientLookup";
+			this._recipientLookup.Size = new System.Drawing.Size(264, 43);
+			this._recipientLookup.TabIndex = 2;
+			this._recipientLookup.Value = null;
 			// 
 			// OrderNoteConversationComponentControl
 			// 
@@ -430,10 +400,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.GroupBox _notifyToGroupBox;
 		private System.Windows.Forms.TableLayoutPanel _recipientsTableLayout;
 		private ClearCanvas.Desktop.View.WinForms.TableView _recipients;
-		private LookupField _staffRecipientLookup;
-		private LookupField _groupRecipientLookup;
-		private System.Windows.Forms.Button _groupRecipientAddButton;
-		private System.Windows.Forms.Button _staffRecipientAddButton;
+		private LookupField _recipientLookup;
+		private System.Windows.Forms.Button _recipientAddButton;
 		private System.Windows.Forms.CheckBox _urgent;
 		private System.Windows.Forms.Panel panel1;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _onBehalf;

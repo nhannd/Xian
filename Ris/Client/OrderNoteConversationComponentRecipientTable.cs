@@ -106,6 +106,38 @@ namespace ClearCanvas.Ris.Client
 					2.0f));
 			}
 
+			public List<StaffSummary> SelectedStaff
+			{
+				get
+				{
+					return CollectionUtils.Map(
+						CollectionUtils.Select(
+							this.Items,
+							item => item.IsChecked && item.Item.IsStaffRecipient),
+						(Checkable<RecipientTableItem> item) => item.Item.StaffSummary);
+				}
+			}
+
+			public List<StaffGroupSummary> SelectedStaffGroups
+			{
+				get
+				{
+					return CollectionUtils.Map(
+						CollectionUtils.Select(
+							this.Items,
+							item => item.IsChecked && item.Item.IsGroupRecipient),
+						(Checkable<RecipientTableItem> item) => item.Item.StaffGroupSummary);
+				}
+			}
+
+			public void Add(object staffOrGroup, bool selected)
+			{
+				if(staffOrGroup is StaffGroupSummary)
+					Add((StaffGroupSummary)staffOrGroup, selected);
+				else if(staffOrGroup is StaffSummary)
+					Add((StaffSummary)staffOrGroup, selected);
+			}
+
 			public void Add(StaffSummary staff, bool selected)
 			{
 				if (staff == null) return;
@@ -121,18 +153,6 @@ namespace ClearCanvas.Ris.Client
 				else
 				{
 					foundItem.IsChecked |= selected;
-				}
-			}
-
-			public List<StaffSummary> SelectedStaff
-			{
-				get
-				{
-					return CollectionUtils.Map(
-						CollectionUtils.Select(
-							this.Items,
-							item => item.IsChecked && item.Item.IsStaffRecipient),
-						(Checkable<RecipientTableItem> item) => item.Item.StaffSummary);
 				}
 			}
 
@@ -154,17 +174,6 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
-			public List<StaffGroupSummary> SelectedStaffGroups
-			{
-				get
-				{
-					return CollectionUtils.Map(
-						CollectionUtils.Select(
-							this.Items,
-							item => item.IsChecked && item.Item.IsGroupRecipient),
-						(Checkable<RecipientTableItem> item) => item.Item.StaffGroupSummary);
-				}
-			}
 		}
 	}
 }

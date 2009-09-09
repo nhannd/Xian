@@ -1,52 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// An implementation of <see cref="ILookupHandler"/> that aggregates a set of child lookup handlers,
+	/// allowing different types of objects to be found in a single lookup.
+	/// </summary>
 	public abstract class LookupHandlerAggregator : ILookupHandler
 	{
 		#region SuggestionProviderAggregator class
 
+		/// <summary>
+		/// Aggregates suggestions from different providers.
+		/// </summary>
 		class SuggestionProviderAggregator : ISuggestionProvider
 		{
 			private readonly LookupHandlerAggregator _owner;
 			private event EventHandler<SuggestionsProvidedEventArgs> _suggestionsProvided;
+			private readonly Dictionary<ISuggestionProvider, ILookupHandler> _lookupHandlers;
 
-			public SuggestionProviderAggregator(LookupHandlerAggregator owner)
+			internal SuggestionProviderAggregator(LookupHandlerAggregator owner)
 			{
 				_owner = owner;
+				_lookupHandlers = new Dictionary<ISuggestionProvider, ILookupHandler>();
 				foreach (var handler in _owner.ChildHandlers)
 				{
-					handler.SuggestionProvider.SuggestionsProvided += SuggestionsProvidedEventHandler;
+					var suggestionProvider = handler.SuggestionProvider;
+
+					// cache ref from suggest provider back to lookup handler, so we have an easy back pointer
+					_lookupHandlers[suggestionProvider] = handler;
+
+					// subscribe to changes from each suggestion provider
+					suggestionProvider.SuggestionsProvided += SuggestionsProvidedEventHandler;
 				}
 			}
 
+			/// <summary>
+			/// Notifies the user-interfaces that an updated list of suggestions is available.
+			/// </summary>
 			public event EventHandler<SuggestionsProvidedEventArgs> SuggestionsProvided
 			{
 				add { _suggestionsProvided += value; }
 				remove { _suggestionsProvided -= value; }
 			}
 
+			/// <summary>
+			/// Called by the user-inteface to inform this object of changes in the user query text.
+			/// </summary>
 			public void SetQuery(string query)
 			{
-				foreach (var handler in _owner.ChildHandlers)
+				// update query in each suggestion provider
+				foreach (var sp in _lookupHandlers.Keys)
 				{
-					handler.SuggestionProvider.SetQuery(query);
+					sp.SetQuery(query);
 				}
 			}
 
 			private void SuggestionsProvidedEventHandler(object sender, SuggestionsProvidedEventArgs e)
 			{
-				var child = (ILookupHandler)sender;
-				var items = _owner.SuggestedItems[child];
+				var childLookup = _lookupHandlers[(ISuggestionProvider)sender];
+
+				// update the cached list of suggested items for the child lookup handler
+				var items = _owner.SuggestedItemsCache[childLookup];
 				items.Clear();
 				items.AddRange(new TypeSafeEnumerableWrapper<object>(e.Items));
 
 				// provide aggregate list of items
-				var aggregate = CollectionUtils.Concat(new List<List<object>>(_owner.SuggestedItems.Values));
+				var aggregate = CollectionUtils.Concat(new List<List<object>>(_owner.SuggestedItemsCache.Values));
+
+				// sort the aggregate list according to the formatting of each item
+				aggregate.Sort((x, y) => _owner.FormatItem(x).CompareTo(_owner.FormatItem(y)));
 				EventsHelper.Fire(_suggestionsProvided, this, new SuggestionsProvidedEventArgs(aggregate));
 			}
 		}
@@ -64,10 +90,10 @@ namespace ClearCanvas.Ris.Client
 			this.ChildHandlers = childHandlers;
 
 			// initialize the dictionary with an empty list for each handler
-			this.SuggestedItems = new Dictionary<ILookupHandler, List<object>>();
+			this.SuggestedItemsCache = new Dictionary<ILookupHandler, List<object>>();
 			foreach (var handler in childHandlers)
 			{
-				this.SuggestedItems.Add(handler, new List<object>());
+				this.SuggestedItemsCache.Add(handler, new List<object>());
 			}
 			_suggestionProvider = new SuggestionProviderAggregator(this);
 		}
@@ -85,7 +111,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if(interactive)
 			{
-				ResolveNameInteractive(query, out result);	
+				return ResolveNameInteractive(query, out result);
 			}
 
 			// otherwise give each child a chance to resolve it without interaction
@@ -105,12 +131,15 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Formats an item for display in the user-interface.
 		/// </summary>
+		/// <remarks>
+		/// Override this method to intercept formatting for customization.
+		/// </remarks>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		public string FormatItem(object item)
+		public virtual string FormatItem(object item)
 		{
 			// determine which handler should format the item
-			foreach (var kvp in SuggestedItems)
+			foreach (var kvp in SuggestedItemsCache)
 			{
 				if (kvp.Value.Contains(item))
 					return kvp.Key.FormatItem(item);
@@ -134,8 +163,15 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected abstract bool ResolveNameInteractive(string query, out object result);
 
+		/// <summary>
+		/// Set of child lookup handlers that are aggregated by this instance.
+		/// </summary>
 		private ILookupHandler[] ChildHandlers { get; set; }
-		private Dictionary<ILookupHandler, List<object>> SuggestedItems { get; set; }
+
+		/// <summary>
+		/// Cache of the current list of suggestions for each child lookup handler.
+		/// </summary>
+		private Dictionary<ILookupHandler, List<object>> SuggestedItemsCache { get; set; }
 
 	}
 }

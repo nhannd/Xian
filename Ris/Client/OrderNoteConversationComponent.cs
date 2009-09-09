@@ -57,6 +57,32 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(OrderNoteConversationComponentViewExtensionPoint))]
 	public partial class OrderNoteConversationComponent : ApplicationComponent
 	{
+		#region StaffAndGroupLookupHandler class
+
+		class StaffAndGroupLookupHandler : LookupHandlerAggregator
+		{
+			internal StaffAndGroupLookupHandler(DesktopWindow desktopWindow)
+				: base(new ILookupHandler[] { new StaffLookupHandler(desktopWindow), new StaffGroupLookupHandler(desktopWindow, false) })
+			{
+
+			}
+
+			protected override bool ResolveNameInteractive(string query, out object result)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override string FormatItem(object item)
+			{
+				var s = base.FormatItem(item);
+				if (item is StaffGroupSummary)
+					s += " (Staff Group)";
+				return s;
+			}
+		}
+
+		#endregion
+
 		#region Private Fields
 
 		private EntityRef _orderRef;
@@ -74,11 +100,8 @@ namespace ClearCanvas.Ris.Client
 		private CrudActionModel _recipientsActionModel;
 		private Checkable<RecipientTableItem> _selectedRecipient;
 
-		private ILookupHandler _staffLookupHandler;
-		private StaffSummary _selectedStaff;
-
-		private ILookupHandler _staffGroupLookupHandler;
-		private StaffGroupSummary _selectedStaffGroup;
+		private ILookupHandler _recipientLookupHandler;
+		private object _recipientLookupSelection;
 
 		private ICannedTextLookupHandler _cannedTextLookupHandler;
 
@@ -183,9 +206,8 @@ namespace ClearCanvas.Ris.Client
 			_orderNotesComponentHost.StartComponent();
 
 			// init lookup handlers
-			_staffLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
-			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow, false);
 			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
+			_recipientLookupHandler = new StaffAndGroupLookupHandler(this.Host.DesktopWindow);
 
 			base.Start();
 		}
@@ -285,64 +307,27 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		#region Staff Recipients
-
-		public ILookupHandler StaffRecipientLookupHandler
+		public ILookupHandler RecipientLookupHandler
 		{
-			get { return _staffLookupHandler; }
+			get { return _recipientLookupHandler; }
 		}
 
-		public object SelectedStaffRecipient
+		public object RecipientLookupSelection
 		{
-			get { return _selectedStaff; }
-			set { _selectedStaff = (StaffSummary)value; }
+			get { return _recipientLookupSelection; }
+			set { _recipientLookupSelection = value; }
 		}
 
-		public bool AddStaffRecipientEnabled
+		public bool AddRecipientEnabled
 		{
-			get { return _selectedStaff != null; }
+			get { return _recipientLookupSelection != null; }
 		}
 
-		public void AddStaffRecipient()
+		public void AddRecipient()
 		{
-			if (_selectedStaff == null) return;
+			if (_recipientLookupSelection == null) return;
 
-			_recipients.Add(_selectedStaff, true);
-		}
-
-		#endregion
-
-		#region Group Recipients
-
-		public ILookupHandler GroupRecipientLookupHandler
-		{
-			get { return _staffGroupLookupHandler; }
-		}
-
-		public object SelectedGroupRecipient
-		{
-			get { return _selectedStaffGroup; }
-			set { _selectedStaffGroup = (StaffGroupSummary)value; }
-		}
-
-		public bool AddGroupRecipientEnabled
-		{
-			get { return _selectedStaffGroup != null; }
-		}
-
-		public void AddGroupRecipient()
-		{
-			if (_selectedStaffGroup == null) return;
-
-			_recipients.Add(_selectedStaffGroup, true);
-			NotifyPropertyChanged("Recipients");
-		}
-
-		#endregion
-
-		public bool HasExistingNotes
-		{
-			get { return _orderNoteViewComponent.HasExistingNotes; }
+			_recipients.Add(_recipientLookupSelection, true);
 		}
 
 		public string OrderNotesLabel
