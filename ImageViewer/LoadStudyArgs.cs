@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		internal LoadStudyArgs(StudyItem studyItem)
-		: this(studyItem.StudyInstanceUID, studyItem.Server, studyItem.StudyLoaderName)
+		: this(studyItem.StudyInstanceUid, studyItem.Server, studyItem.StudyLoaderName)
 		{
 		}
 

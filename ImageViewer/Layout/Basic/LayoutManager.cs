@@ -30,68 +30,180 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [ExtensionOf(typeof(LayoutManagerExtensionPoint))]
+	[ExtensionOf(typeof(LayoutManagerExtensionPoint))]
 	public class LayoutManager : ClearCanvas.ImageViewer.LayoutManager
 	{
-		private bool _physicalWorkspaceLayoutSet = false;
-		private readonly DefaultPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+		readonly List<StoredDisplaySetCreationOptions> _options = DisplaySetCreationSettings.Default.GetStoredOptions();
+
+		private readonly MixedMultiFrameDisplaySetFactory _mixedMultiFrameFactory = new MixedMultiFrameDisplaySetFactory();
+		private readonly MREchoDisplaySetFactory _echoFactory = new MREchoDisplaySetFactory();
+		private readonly BasicDisplaySetFactory _basicFactory = new BasicDisplaySetFactory();
+
+		private readonly DefaultPatientReconciliationStrategy _reconciliationStrategy = new DefaultPatientReconciliationStrategy();
 
 		public LayoutManager()
-		{	
-		}
-
-		protected override IImageSet CreateImageSet(Study study)
 		{
-			PatientInformation info = new PatientInformation(study.ParentPatient);
-			PatientInformation reconciled = reconciliationStrategy.ReconcilePatientInformation(info);
+			List<string> singleImageModalities = CollectionUtils.Map(_options,
+				delegate(StoredDisplaySetCreationOptions options)
+				{
+					if (options.CreateSingleImageDisplaySets)
+						return options.Modality;
 
-			ImageSet imageSet = (ImageSet)base.CreateImageSet(study);
-			imageSet.PatientInfo = String.Format("{0} · {1}",
-				study.ParentPatient.PatientsName.FormattedName, reconciled.PatientId);
+					return "";
+				});
 
-			return imageSet;
+			singleImageModalities = CollectionUtils.Select(singleImageModalities,
+				delegate(string modality) { return !String.IsNullOrEmpty(modality); });
+
+			_basicFactory.SingleImageModalities.AddRange(singleImageModalities);
 		}
+
+		public override void SetImageViewer(IImageViewer imageViewer)
+		{
+			base.SetImageViewer(imageViewer);
+
+			StudyTree studyTree = null;
+			if (imageViewer != null)
+				studyTree = imageViewer.StudyTree;
+
+			_echoFactory.SetStudyTree(studyTree);
+			_mixedMultiFrameFactory.SetStudyTree(studyTree);
+			_basicFactory.SetStudyTree(studyTree);
+		}
+
+		#region Logical Workspace building 
+
+		private bool SplitMixedMultiframeSeries(string modality)
+		{
+			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
+					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == modality; });
+
+			if (options != null)
+				return options.SplitMixedMultiframesEnabled && options.SplitMixedMultiframes;
+			else
+				return true;
+		}
+
+		private bool ShowOriginalMixedMultiframeSeries(string modality)
+		{
+			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
+					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == modality; });
+
+			if (options != null)
+				return options.ShowOriginalMixedMultiframeSeries;
+			else
+				return true;
+		}
+
+		private bool SplitMultiEchoSeries(string modality)
+		{
+			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
+					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == modality; });
+
+			if (options != null)
+				return options.SplitMultiEchoSeries && options.SplitMultiEchoSeriesEnabled;
+			else
+				return true;
+		}
+
+		private bool ShowOriginalMREchoSeries()
+		{
+			StoredDisplaySetCreationOptions options = CollectionUtils.SelectFirst(_options,
+					delegate(StoredDisplaySetCreationOptions opt) { return opt.Modality == "MR"; });
+
+			if (options != null)
+				return options.ShowOriginalMultiEchoSeries;
+			else
+				return true;
+		}
+
+		protected override IImageSet CreateImageSet(IStudyRootData studyRootData)
+		{
+			PatientInformation info = new PatientInformation();
+			info.PatientId = studyRootData.PatientId;
+			PatientInformation reconciled = _reconciliationStrategy.ReconcilePatientInformation(info);
+
+			StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier(studyRootData);
+			identifier.PatientId = reconciled.PatientId;
+
+			return base.CreateImageSet(identifier);
+		}
+
+		protected override void UpdateImageSet(IImageSet imageSet, Series series)
+		{
+			List<IDisplaySet> displaySets = new List<IDisplaySet>();
+
+			bool showOriginal = true;
+
+			if (SplitMultiEchoSeries(series.Modality))
+			{
+				List<IDisplaySet> echoDisplaySets = _echoFactory.CreateDisplaySets(series);
+				if (echoDisplaySets.Count > 0 && !ShowOriginalMREchoSeries())
+					showOriginal = false;
+
+				displaySets.AddRange(echoDisplaySets);
+			}
+
+			if (SplitMixedMultiframeSeries(series.Modality))
+			{
+				List<IDisplaySet> multiFrameDisplaySets = _mixedMultiFrameFactory.CreateDisplaySets(series);
+				if (multiFrameDisplaySets.Count > 0 && showOriginal && !ShowOriginalMixedMultiframeSeries(series.Modality))
+					showOriginal = false;
+
+				displaySets.AddRange(multiFrameDisplaySets);
+			}
+
+			if (showOriginal)
+			{
+				foreach(IDisplaySet displaySet in _basicFactory.CreateDisplaySets(series))
+					displaySets.Add(displaySet);
+			}
+
+			foreach (IDisplaySet displaySet in displaySets)
+				imageSet.DisplaySets.Add(displaySet);
+		}
+
+		#endregion
 
 		protected override void LayoutPhysicalWorkspace()
 		{
-			if (_physicalWorkspaceLayoutSet)
-				return;
-
-			_physicalWorkspaceLayoutSet = true;
-
-			StoredLayoutConfiguration configuration = null;
+			StoredLayout layout = null;
 
 			//take the first opened study, enumerate the modalities and compute the union of the layout configuration (in case there are multiple modalities in the study).
 			if (LogicalWorkspace.ImageSets.Count > 0)
 			{
 				IImageSet firstImageSet = LogicalWorkspace.ImageSets[0];
-				foreach(IDisplaySet displaySet in firstImageSet.DisplaySets)
+				foreach (IDisplaySet displaySet in firstImageSet.DisplaySets)
 				{
 					if (displaySet.PresentationImages.Count <= 0)
 						continue;
 
-					if (configuration == null)
-						configuration = LayoutConfigurationSettings.GetMinimumConfiguration();
+					if (layout == null)
+						layout = LayoutSettings.GetMinimumLayout();
 
-					StoredLayoutConfiguration storedConfiguration = LayoutConfigurationSettings.Default.GetLayoutConfiguration(displaySet.PresentationImages[0] as IImageSopProvider);
-					configuration.ImageBoxRows = Math.Max(configuration.ImageBoxRows, storedConfiguration.ImageBoxRows);
-					configuration.ImageBoxColumns = Math.Max(configuration.ImageBoxColumns, storedConfiguration.ImageBoxColumns);
-					configuration.TileRows = Math.Max(configuration.TileRows, storedConfiguration.TileRows);
-					configuration.TileColumns = Math.Max(configuration.TileColumns, storedConfiguration.TileColumns);
+					StoredLayout storedLayout = LayoutSettings.Default.GetLayout(displaySet.PresentationImages[0] as IImageSopProvider);
+					layout.ImageBoxRows = Math.Max(layout.ImageBoxRows, storedLayout.ImageBoxRows);
+					layout.ImageBoxColumns = Math.Max(layout.ImageBoxColumns, storedLayout.ImageBoxColumns);
+					layout.TileRows = Math.Max(layout.TileRows, storedLayout.TileRows);
+					layout.TileColumns = Math.Max(layout.TileColumns, storedLayout.TileColumns);
 				}
 			}
 
-			if (configuration == null)
-				configuration = LayoutConfigurationSettings.Default.DefaultConfiguration;
+			if (layout == null)
+				layout = LayoutSettings.Default.DefaultLayout;
 
-			PhysicalWorkspace.SetImageBoxGrid(configuration.ImageBoxRows, configuration.ImageBoxColumns);
+			PhysicalWorkspace.SetImageBoxGrid(layout.ImageBoxRows, layout.ImageBoxColumns);
 			for (int i = 0; i < PhysicalWorkspace.ImageBoxes.Count; ++i)
-				PhysicalWorkspace.ImageBoxes[i].SetTileGrid(configuration.TileRows, configuration.TileColumns);
+				PhysicalWorkspace.ImageBoxes[i].SetTileGrid(layout.TileRows, layout.TileColumns);
 		}
 	}
 }

@@ -30,22 +30,15 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface ISeries
+    public interface ISeries : ISeriesData
     {
 		IStudy GetParentStudy();
 		IEnumerable<ISopInstance> GetSopInstances();
 
 		string SpecificCharacterSet { get; }
-
-		string SeriesInstanceUid { get; }
-
-		string Modality { get; }
-		int SeriesNumber { get; }
-		int NumberOfSeriesRelatedInstances { get; }
-
-		string SeriesDescription { get; }
 	}
 }

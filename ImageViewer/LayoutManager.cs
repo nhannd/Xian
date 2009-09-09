@@ -33,23 +33,20 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// Abstract base class for <see cref="ILayoutManager"/>s.
+	/// A base implementation of <see cref="ILayoutManager"/>.
 	/// </summary>
 	public class LayoutManager : ILayoutManager
 	{
 		private IImageViewer _imageViewer;
-		private PresentationImageFactory _presentationImageFactory;
 		private bool _layoutCompleted;
+		private bool _addSopWarningLogged = false;
 
 		/// <summary>
 		/// Constructor.
@@ -68,12 +65,29 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageViewer; }
 		}
 
+		protected StudyTree StudyTree
+		{
+			get 
+			{
+				if (_imageViewer != null)
+					return _imageViewer.StudyTree;
+				else
+					return null;
+			}	
+		}
+
 		/// <summary>
 		/// Convenience property for retrieving the owner <see cref="IImageViewer.PhysicalWorkspace"/> property.
 		/// </summary>
 		protected IPhysicalWorkspace PhysicalWorkspace
 		{
-			get { return _imageViewer.PhysicalWorkspace; }	
+			get
+			{
+				if (_imageViewer != null)
+					return _imageViewer.PhysicalWorkspace;
+				else
+					return null;
+			}	
 		}
 
 		/// <summary>
@@ -81,23 +95,13 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected ILogicalWorkspace LogicalWorkspace
 		{
-			get { return _imageViewer.LogicalWorkspace; }
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="PresentationImageFactory"/> that is used to create
-		/// <see cref="IPresentationImage"/>s.
-		/// </summary>
-		protected PresentationImageFactory PresentationImageFactory
-		{
 			get
 			{
-				if (_presentationImageFactory == null)
-					_presentationImageFactory = new PresentationImageFactory(ImageViewer.StudyTree);
-
-				return _presentationImageFactory;
+				if (_imageViewer != null)
+					return _imageViewer.LogicalWorkspace;
+				else
+					return null;
 			}
-			set { _presentationImageFactory = value; }
 		}
 
 		#endregion
@@ -150,6 +154,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			_layoutCompleted = true;
 			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
+			//NOTE: this event doesn't actually get fired right now, but we're doing this for completeness.
+			ImageViewer.EventBroker.ImageLoaded += OnImageLoaded;
 		}
 
 		#endregion
@@ -182,6 +188,53 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Adds new <see cref="IDisplaySet"/>s as prior studies are loaded.
+		/// </summary>
+		/// <remarks>After the initial layout has taken place, the <see cref="LayoutManager"/> observes
+		/// the <see cref="EventBroker.StudyLoaded"/> event and continually adds new <see cref="IDisplaySet"/>s
+		/// and <see cref="IImageSet"/>s as prior studies are loaded.
+		/// </remarks>
+		protected virtual void OnPriorStudyLoaded(Study study)
+		{
+			BuildFromStudy(study);
+		}
+
+		protected virtual void OnImageLoaded(Sop sop)
+		{
+			IImageSet imageSet = GetImageSet(sop.StudyInstanceUid);
+			if (imageSet == null)
+			{
+				imageSet = CreateImageSet(sop.ParentSeries.ParentStudy);
+				if (imageSet != null)
+					AddImageSet(imageSet);
+			}
+			else
+			{
+				UpdateImageSet(imageSet, sop);
+			}
+		}
+
+		protected virtual IImageSet CreateImageSet(IStudyRootData studyData)
+		{
+			return ImageSetFactory.CreateImageSet<ImageSet>(studyData);
+		}
+
+		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
+		{
+			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
+				imageSet.DisplaySets.Add(displaySet);
+		}
+
+		protected virtual void UpdateImageSet(IImageSet imageSet, Sop sop)
+		{
+			if (!_addSopWarningLogged)
+			{
+				_addSopWarningLogged = true;
+				Platform.Log(LogLevel.Warn, "Dynamically updating an image set with individual sops is not supported by default.");
+			}
+		}
+
+		/// <summary>
 		/// Validates the <see cref="ILogicalWorkspace"/>.
 		/// </summary>
 		/// <remarks>
@@ -200,81 +253,6 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
-		}
-
-		/// <summary>
-		/// Creates an <see cref="IImageSet"/> from the given <see cref="Study"/>, setting
-		/// the <see cref="IImageSet.Uid"/>, <see cref="IImageSet.Name"/> and <see cref="IImageSet.PatientInfo"/> properties.
-		/// </summary>
-		/// <remarks>
-		/// If you wish to override either the type of <see cref="IImageSet"/> created or any of it's properties,
-		/// you may override this method.  The following formatting is used to determine the property values:
-		/// <para>
-		/// The format of the <see cref="IImageSet.PatientInfo"/> property is 
-		/// <b>PatientsName(from <see cref="PersonName.FormattedName"/>) · PatientId</b>; for example <b>Doe, John 123</b>.
-		/// </para>
-		/// <para>
-		/// The format of the <see cref="IImageSet.Name"/> property is 
-		/// <b>StudyDate StudyTime [ModalitiesInStudy (comma separated)] StudyDescription</b>.
-		/// </para>
-		/// <para>
-		/// The <see cref="IImageSet.Uid"/> property is set to <see cref="Study.StudyInstanceUID"/>.
-		/// </para>
-		/// </remarks>
-		protected virtual IImageSet CreateImageSet(Study study)
-		{
-			ImageSet imageSet = new ImageSet();
-
-			DateTime studyDate;
-			DateParser.Parse(study.StudyDate, out studyDate);
-			DateTime studyTime;
-			TimeParser.Parse(study.StudyTime, out studyTime);
-
-			string modalitiesInStudy = StringUtilities.Combine(GetModalitiesInStudy(study), ", ");
-
-			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
-				studyDate.ToString(Format.DateFormat),
-				studyTime.ToString(Format.TimeFormat),
-				modalitiesInStudy ?? "",
-				study.StudyDescription);
-
-			imageSet.PatientInfo = String.Format("{0} · {1}",
-				study.ParentPatient.PatientsName.FormattedName,
-				study.ParentPatient.PatientId);
-
-			imageSet.Uid = study.StudyInstanceUID;
-			return imageSet;
-		}
-
-		/// <summary>
-		/// Creates an <see cref="IDisplaySet"/> from the given <see cref="Series"/>, setting
-		/// the <see cref="IDisplaySet.Name"/>, <see cref="IDisplaySet.Description"/>, <see cref="IDisplaySet.Number"/>
-		/// and <see cref="IDisplaySet.Uid"/> properties.
-		/// </summary>
-		/// <remarks>
-		/// If you wish to override either the type of <see cref="IDisplaySet"/> created or any of it's properties,
-		/// you may override this method.  The following formatting is used to determine the property values:
-		/// <para>
-		/// The format of the <see cref="IDisplaySet.Name"/> property is 
-		/// <b><see cref="Series.SeriesNumber"/>: <see cref="Series.SeriesDescription"/></b>.
-		/// </para>
-		/// <para>
-		/// The format of the <see cref="IDisplaySet.Description"/> property is <b><see cref="Series.SeriesDescription"/></b> .
-		/// </para>
-		/// <para>
-		/// The <see cref="IDisplaySet.Number"/> property is set to <see cref="Series.SeriesNumber"/>.
-		/// </para>
-		/// <para>
-		/// The <see cref="IDisplaySet.Uid"/> property is set to <see cref="Series.SeriesInstanceUID"/>.
-		/// </para>
-		/// </remarks>
-		protected virtual IDisplaySet CreateDisplaySet(Series series)
-		{
-			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
-			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID);
-			displaySet.Number = series.SeriesNumber;
-			displaySet.Description = series.SeriesDescription;
-			return displaySet;
 		}
 
 		/// <summary>
@@ -308,7 +286,6 @@ namespace ClearCanvas.ImageViewer
 
 			foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 				imageBox.SetTileGrid(1, 1);
-
 		}
 
 		/// <summary>
@@ -368,20 +345,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Adds new <see cref="IDisplaySet"/>s as prior studies are loaded.
-		/// </summary>
-		/// <remarks>After the initial layout has taken place, the <see cref="LayoutManager"/> observes
-		/// the <see cref="EventBroker.StudyLoaded"/> event and continually adds new <see cref="IDisplaySet"/>s
-		/// and <see cref="IImageSet"/>s as prior studies are loaded.
-		/// </remarks>
-		protected virtual void OnPriorStudyLoaded(Study study)
-		{
-			BuildFromStudy(study);
-		}
-
-		#endregion
-
-		/// <summary>
 		/// Called to sort the image sets.
 		/// </summary>
 		/// <remarks>
@@ -394,6 +357,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Sorts the given <see cref="DisplaySetCollection"/>.
@@ -479,55 +444,32 @@ namespace ClearCanvas.ImageViewer
 
 		private void BuildFromStudy(Study study)
 		{
-			Platform.CheckForNullReference(study, "study");
-
-			IImageSet imageSet = GetImageSet(study.StudyInstanceUID);
+			IImageSet imageSet = GetImageSet(study.StudyInstanceUid);
 
 			// Abort if image set has already been added
 			if (imageSet != null)
 				return;
 
-			AddImageSet(study);
-		}
+			imageSet = CreateImageSet(study);
 
-		private void AddImageSet(Study study)
-		{
-			IImageSet imageSet = null;
-			foreach (Series series in study.Series)
-			{
-				IDisplaySet displaySet = null;
-				foreach (Sop sop in series.Sops)
-				{
-					List<IPresentationImage> images = PresentationImageFactory.CreateImages(sop);
-					if (images.Count > 0)
-					{
-						if (imageSet == null)
-						{
-							imageSet = CreateImageSet(study);
-						}
-
-						if (displaySet == null)
-						{
-							displaySet = CreateDisplaySet(series);
-							imageSet.DisplaySets.Add(displaySet);
-						}
-
-						foreach (IPresentationImage image in images)
-						{
-							image.Uid = sop.SopInstanceUID;
-							displaySet.PresentationImages.Add(image);
-						}
-					}
-				}
-			}
-
-			//We used to create the imageset and add it, then add a display set,
-			//then the images, etc, so that the 'added' event could be observed for
-			//everything.  No point, really - it's no different than just observing
-			//the image set being added and then iterating through it's members on first add.
-			//Then you could observe new additions after that point.
 			if (imageSet != null)
 				AddImageSet(imageSet);
+		}
+
+		private IImageSet CreateImageSet(Study study)
+		{
+			IImageSet imageSet = CreateImageSet(study.GetStudyItem());
+
+			foreach (Series series in study.Series)
+				UpdateImageSet(imageSet, series);
+
+			if (imageSet.DisplaySets.Count == 0)
+			{
+				imageSet.Dispose();
+				imageSet = null;
+			}
+
+			return imageSet;
 		}
 
 		private void AddImageSet(IImageSet imageSet)
@@ -572,24 +514,16 @@ namespace ClearCanvas.ImageViewer
 			return count;
 		}
 
-		private static List<string> GetModalitiesInStudy(Study study)
-		{
-			List<string> modalities = new List<string>();
-			foreach (Series series in study.Series)
-			{
-				string modality = series.Modality;
-				if (!modalities.Contains(modality))
-					modalities.Add(modality);
-			}
-
-			return modalities;
-		}
-
 		#endregion
 
 		private void OnPriorStudyLoaded(object sender, StudyLoadedEventArgs args)
 		{
 			OnPriorStudyLoaded(args.Study);
+		}
+
+		private void OnImageLoaded(object sender, ClearCanvas.Common.Utilities.ItemEventArgs<Sop> e)
+		{
+			OnImageLoaded(e.Item);
 		}
 
 		#region Disposal
@@ -601,6 +535,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing && _imageViewer != null)
 			{
+				_imageViewer.EventBroker.ImageLoaded -= OnImageLoaded;
 				_imageViewer.EventBroker.StudyLoaded -= OnPriorStudyLoaded;
 				_imageViewer = null;
 			}

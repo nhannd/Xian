@@ -58,9 +58,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 			if (presentationStateSop != null)
 			{
-				if (presentationStateSop.SopClassUID == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid)
+				if (presentationStateSop.SopClassUid == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid)
 					GrayscalePresentationStateIod = new GrayscaleSoftcopyPresentationStateIod(presentationStateSop.DataSource);
-				else if (presentationStateSop.SopClassUID == SopClass.ColorSoftcopyPresentationStateStorageSopClassUid)
+				else if (presentationStateSop.SopClassUid == SopClass.ColorSoftcopyPresentationStateStorageSopClassUid)
 					ColorPresentationStateIod = new ColorSoftcopyPresentationStateIod(presentationStateSop.DataSource);
 			}
 		}

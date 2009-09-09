@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 				string message = String.Format("Changing transfer syntax to: {0}", _syntax);
 				context.ReportProgress(new BackgroundTaskProgress(0, message));
 
-				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUID, null));
+				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUid, null));
 				if (numberOfSops <= 0)
 					return;
 

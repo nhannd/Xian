@@ -157,7 +157,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomPresentationImageSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DisplaySetFactories.cs" />
+    <Compile Include="DisplaySetFactory.cs" />
     <Compile Include="Graphics\IGraphicVoiLutStrategy.cs" />
+    <Compile Include="ImageSetFactory.cs" />
     <Compile Include="Imaging\IdentityVoiLinearLut.cs" />
     <Compile Include="Imaging\ColorVoiLutManager.cs" />
     <Compile Include="Rendering\Tests\ImageRendererVoiLutTests.cs" />

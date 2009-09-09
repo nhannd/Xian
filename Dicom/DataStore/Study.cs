@@ -126,6 +126,11 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _patientsName, value); }
     	}
 
+		string IPatientData.PatientsName
+		{
+			get { return _patientsName; }	
+		}
+
     	public virtual string PatientsNameRaw
     	{
     		get { return _patientsNameRaw; }
@@ -139,6 +144,20 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _patientsSex, value); }
     	}
 
+		#region IPatientData Members
+
+		string IPatientData.PatientsBirthDate
+		{
+			get { return _patientsBirthDateRaw; }
+		}
+
+		//TODO: add this to the database!!!
+		public string PatientsBirthTime
+		{
+			get { return String.Empty; }
+		}
+
+		#endregion
 		[QueryableProperty(DicomTags.PatientsBirthDate, PostFilterOnly = true)]
 		public virtual string PatientsBirthDateRaw
     	{
@@ -172,6 +191,11 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 			get { return _referringPhysiciansName; }
 			set { SetClassMember(ref _referringPhysiciansName, value); }
+		}
+
+		string IStudyData.ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
 		}
 
 		public virtual string ReferringPhysiciansNameRaw
@@ -221,11 +245,21 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetValueTypeMember(ref _numberOfStudyRelatedSeries, value); }
 		}
 
+		int? IStudyData.NumberOfStudyRelatedSeries
+		{
+			get { return NumberOfStudyRelatedSeries; }	
+		}
+
 		[QueryableProperty(DicomTags.NumberOfStudyRelatedInstances)]
 		public virtual int NumberOfStudyRelatedInstances
 		{
 			get { return _numberOfStudyRelatedInstances; }
 			set { SetValueTypeMember(ref _numberOfStudyRelatedInstances, value);}
+		}
+
+		int? IStudyData.NumberOfStudyRelatedInstances
+		{
+			get { return NumberOfStudyRelatedInstances; }
 		}
 
 		[QueryableProperty(DicomTags.ProcedureCodeSequence, DicomTags.CodeValue)]
@@ -323,24 +357,24 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region IStudy Members
 
-		string IStudy.StudyDate
+		string IStudyData.StudyDate
 		{
 			get { return _studyDateRaw; }
 		}
 
-		string IStudy.StudyTime
+		string IStudyData.StudyTime
 		{
 			get { return _studyTimeRaw; }
 		}
 
-		ReadOnlyCollection<string> IStudy.ModalitiesInStudy
+		string[] IStudyData.ModalitiesInStudy
 		{
 			get
 			{
-				if (_modalitiesInStudy == null)
-					_modalitiesInStudy = new ReadOnlyCollection<string>(new string[]{});
-
-				return _modalitiesInStudy;
+				if (_modalitiesInStudy != null)
+					return CollectionUtils.ToArray(_modalitiesInStudy);
+				else
+					return new string[0];
 			}	
 		}
 

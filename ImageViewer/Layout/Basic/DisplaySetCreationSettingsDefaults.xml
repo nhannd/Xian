@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<display-set-creation-settings>
+  <display-set-creation-options modality="CR">
+    <display-set-creation-option identifier="CreateSingleImageDisplaySets" value="True" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="CT">
+    <display-set-creation-option identifier="SplitMixedMultiframes" value="True" show-original="False" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="DX">
+    <display-set-creation-option identifier="CreateSingleImageDisplaySets" value="True" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="MG">
+    <display-set-creation-option identifier="CreateSingleImageDisplaySets" value="True" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="MR">
+    <display-set-creation-option identifier="SplitEchos" value="True" show-original="False" />
+    <display-set-creation-option identifier="SplitMixedMultiframes" value="True" show-original="False" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="NM">
+    <display-set-creation-option identifier="SplitMixedMultiframes" value="True" show-original="False" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="RF">
+    <display-set-creation-option identifier="SplitMixedMultiframes" value="True" show-original="False" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="SC">
+    <display-set-creation-option identifier="SplitMixedMultiframes" value="True" show-original="False" />
+  </display-set-creation-options>
+  <display-set-creation-options modality="XA">
+    <display-set-creation-option identifier="SplitMixedMultiframes" value="True" show-original="False" />
+  </display-set-creation-options>
+</display-set-creation-settings>

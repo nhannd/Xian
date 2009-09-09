@@ -323,7 +323,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			{
 				IImageSopProvider sopProv = image as IImageSopProvider;
 				if (sopProv != null)
-					exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUID, this.FilePath);
+					exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUid, this.FilePath);
 			}
 
 			try

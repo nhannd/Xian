@@ -35,11 +35,11 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	//TODO: get rid of this or incorporate into Dicom somehow.
-	//NOTE: Leave this until we do ServerTree refactoring.
 
 	/// <summary>
 	/// Represents a remote dicom server.
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A study item.
 	/// </summary>
-	public class StudyItem
+	public class StudyItem : IStudyRootStudyIdentifier
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyItem"/>.
@@ -160,24 +160,125 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Initializes a new instance of <see cref="StudyItem"/>.
 		/// </summary>
 		public StudyItem(string studyInstanceUid, object server, string studyLoaderName)
+			: this(server, studyLoaderName)
 		{
 			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
 			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
 
-			_studyInstanceUID = studyInstanceUid;
+			_studyInstanceUid = studyInstanceUid;
+		}
+
+		public StudyItem(IStudyRootData other, object server, string studyLoaderName)
+			: this(other, other, server, studyLoaderName)
+		{
+		}
+
+		public StudyItem(IPatientData patient, IStudyData study, object server, string studyLoaderName)
+			: this(server, studyLoaderName)
+		{
+			Platform.CheckForNullReference(patient, "patient");
+			Platform.CheckForNullReference(study, "study");
+
+			Platform.CheckForEmptyString(study.StudyInstanceUid, "study.StudyInstanceUid");
+			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
+
+			CopyFrom(patient);
+			CopyFrom(study);
+		}
+
+		private StudyItem(object server, string studyLoaderName)
+		{
 			_server = server;
 			_studyLoaderName = studyLoaderName;
+		}
+
+		private void CopyFrom(IStudyData other)
+		{
+			this.ReferringPhysiciansName = new PersonName(other.ReferringPhysiciansName);
+			AccessionNumber = other.AccessionNumber;
+			StudyDescription = other.StudyDescription;
+			StudyId = other.StudyId;
+			StudyDate = other.StudyDate;
+			StudyTime = other.StudyTime;
+			ModalitiesInStudy = other.ModalitiesInStudy;
+			StudyInstanceUid = other.StudyInstanceUid;
+			NumberOfStudyRelatedSeries = other.NumberOfStudyRelatedSeries;
+			NumberOfStudyRelatedInstances = other.NumberOfStudyRelatedInstances;
+		}
+
+		private void CopyFrom(IPatientData other)
+		{
+			PatientId = other.PatientId;
+			PatientsName = new PersonName(other.PatientsName);
+			PatientsBirthDate = other.PatientsBirthDate;
+			PatientsBirthTime = other.PatientsBirthTime;
+			PatientsSex = other.PatientsSex;
+		}
+
+		#region IPatientData Members
+
+		/// <summary>
+		/// Gets or sets the patient ID.
+		/// </summary>
+		public string PatientId
+		{
+			get { return _patientId; }
+			set { _patientId = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the patient's name.
+		/// </summary>
+		public PersonName PatientsName
+		{
+			get { return _patientsName; }
+			set { _patientsName = value; }
+		}
+
+		string IPatientData.PatientsName
+		{
+			get { return (_patientsName ?? ""); }
 		}
 
 		/// <summary>
 		/// Gets or sets the patient's birthdate.
 		/// </summary>
 		public string PatientsBirthDate
-        {
-            get { return _patientsBirthDate; }
-            set { _patientsBirthDate = value; }
-        }
+		{
+			get { return _patientsBirthDate; }
+			set { _patientsBirthDate = value; }
+		}
 
+		public string PatientsBirthTime
+		{
+			get { return _patientsBirthTime; }
+			set { _patientsBirthTime = value; }
+		}
+
+		public string PatientsSex
+		{
+			get { return _patientsSex; }
+			set { _patientsSex = value; }
+		}
+
+		#endregion
+
+		#region IStudyData Members
+
+		/// <summary>
+		/// Gets or sets the referring physician's name.
+		/// </summary>
+		public PersonName ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+			set { _referringPhysiciansName = value; }
+		}
+
+		string IStudyData.ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+		}
+		
 		/// <summary>
 		/// Gets or sets the patient's accession number.
 		/// </summary>
@@ -196,6 +297,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             set { _studyDescription = value; }
         }
 
+		public string StudyId
+		{
+			get { return _studyId; }
+			set { _studyId = value; }
+		}
+
 		/// <summary>
 		/// Gets or sets the study date.
 		/// </summary>
@@ -213,60 +320,40 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _studyTime; }
 			set { _studyTime = value; }
 		}
-	
-		/// <summary>
-		/// Gets or sets the patient ID.
-		/// </summary>
-		public string PatientId
+
+		public string[] ModalitiesInStudy
 		{
-			get { return _patientID; }
-			set { _patientID = value; }
+			get { return _modalitiesInStudy ?? new string[0]; }
+			set { _modalitiesInStudy = value ?? new string[0]; }
 		}
-
-		/// <summary>
-		/// Gets or sets the patient's name.
-		/// </summary>
-		public PersonName PatientsName
-        {
-            get { return _patientsName; }
-            set { _patientsName = value; }
-        }
-
-		/// <summary>
-		/// Gets or sets the modalities in the study.
-		/// </summary>
-		public string ModalitiesInStudy
-        {
-            get { return _modalitiesInStudy; }
-            set { _modalitiesInStudy = value; }
-        }
 
 		/// <summary>
 		/// Gets or sets the Study Instance UID.
 		/// </summary>
-		public string StudyInstanceUID
+		public string StudyInstanceUid
 		{
-			get { return _studyInstanceUID; }
-			set { _studyInstanceUID = value; }
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
 		}
 
-		/// <summary>
-		/// Gets or sets the referring physician's name.
-		/// </summary>
-		public PersonName ReferringPhysiciansName
+		public int? NumberOfStudyRelatedSeries
 		{
-			get { return _referringPhysiciansName; }
-			set { _referringPhysiciansName = value; }
+			get { return _numberOfStudyRelatedSeries; }
+			set { _numberOfStudyRelatedSeries = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the number of study related instances.
 		/// </summary>
-		public uint NumberOfStudyRelatedInstances
+		public int? NumberOfStudyRelatedInstances
         {
             get { return _numberOfStudyRelatedInstances; }
             set { _numberOfStudyRelatedInstances = value; }
         }
+
+		#endregion
+
+		#region IIdentifier Members
 
 		/// <summary>
 		/// Gets or sets the specific character set.
@@ -278,6 +365,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         }
 
 		/// <summary>
+		/// Gets or sets the Instance Availability of the study.
+		/// </summary>
+		public string InstanceAvailability
+		{
+			get { return _instanceAvailability; }
+			set { _instanceAvailability = value; }
+		}
+
+		string IIdentifier.RetrieveAeTitle
+		{
+			get
+			{
+				if (_server != null && _server is ApplicationEntity)
+					return ((ApplicationEntity)_server).AETitle;
+				else
+					return "";
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Gets or sets the server.
+		/// </summary>
+		public object Server
+		{
+			get { return _server; }
+			set { _server = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets the study loader name.
 		/// </summary>
 		public string StudyLoaderName
@@ -286,22 +404,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			set { _studyLoaderName = value; }
 		}
 
-		/// <summary>
-		/// Gets or sets the Instance Availability of the study.
-		/// </summary>
-		public string InstanceAvailability
+		public StudyRootStudyIdentifier ToStudyRootIdentifier()
 		{
-			get { return _instanceAvailability; }
-			set { _instanceAvailability = value; }
+			return new StudyRootStudyIdentifier(this);
 		}
-	
-		/// <summary>
-		/// Gets or sets the server.
-		/// </summary>
-		public object Server
+
+		public static explicit operator StudyRootStudyIdentifier(StudyItem item)
 		{
-			get { return _server; }
-			set { _server = value; }
+			return item.ToStudyRootIdentifier();
 		}
 
 		/// <summary>
@@ -321,20 +431,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
         #region Private Members
-        private string _patientID;
+        private string _patientId;
         private string _patientsBirthDate;
         private string _accessionNumber;
         private string _studyDescription;
-        private string _studyDate;
+		private string _studyId;
+		private string _studyDate;
 		private string _studyTime;
-        private string _studyInstanceUID;
+        private string _studyInstanceUid;
         private string _studyLoaderName;
-        private string _modalitiesInStudy;
-        private uint _numberOfStudyRelatedInstances;
-        private string _specificCharacterSet;
+        private string[] _modalitiesInStudy;
+        private int? _numberOfStudyRelatedInstances;
+		private int? _numberOfStudyRelatedSeries;
+		private string _specificCharacterSet;
 		private object _server;
 		private string _instanceAvailability;
 		private PersonName _patientsName;
+		private string _patientsBirthTime;
+		private string _patientsSex;
 		private PersonName _referringPhysiciansName;
 		#endregion
 	}

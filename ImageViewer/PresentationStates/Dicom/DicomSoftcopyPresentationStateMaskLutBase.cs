@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			foreach (SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem lutSequence in lutSequences)
 			{
 				ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(lutSequence.ReferencedImageSequence, true);
-				if (dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
+				if (dictionary.ReferencesFrame(image.ImageSop.SopInstanceUid, image.Frame.FrameNumber))
 				{
 					if (lutSequence.CountWindows > 0)
 					{

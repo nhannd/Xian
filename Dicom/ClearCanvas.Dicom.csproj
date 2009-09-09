@@ -377,7 +377,11 @@
     <Compile Include="ServiceModel\Query\DicomStudyRootQuery.cs" />
     <Compile Include="ServiceModel\Query\FaultContracts.cs" />
     <Compile Include="ServiceModel\Query\ImageIdentifier.cs" />
+    <Compile Include="Iod\IPatientData.cs" />
     <Compile Include="ServiceModel\Query\IPatientRootQuery.cs" />
+    <Compile Include="Iod\IStudyData.cs" />
+    <Compile Include="Iod\ISeriesData.cs" />
+    <Compile Include="Iod\ISopInstanceData.cs" />
     <Compile Include="ServiceModel\Query\IStudyRootQuery.cs" />
     <Compile Include="ServiceModel\Query\IStudyRootQueryBridge.cs" />
     <Compile Include="ServiceModel\Query\PatientRootPatientIdentifier.cs" />

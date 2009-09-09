@@ -30,14 +30,21 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	public interface ISeriesIdentifier : ISeriesData, IIdentifier
+	{
+		[DicomField(DicomTags.SeriesNumber)]
+		new int? SeriesNumber { get; }
+	}
+
 	/// <summary>
 	/// Query identifier for a series.
 	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
-	public class SeriesIdentifier : Identifier
+	public class SeriesIdentifier : Identifier, ISeriesIdentifier
 	{
 		#region Private Fields
 
@@ -45,7 +52,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		private string _seriesInstanceUid;
 		private string _modality;
 		private string _seriesDescription;
-		private string _seriesNumber;
+		private int? _seriesNumber;
 		private int? _numberOfSeriesRelatedInstances;
 
 		#endregion
@@ -57,6 +64,28 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		/// </summary>
 		public SeriesIdentifier()
 		{
+		}
+
+		public SeriesIdentifier(ISeriesIdentifier other)
+			: base(other)
+		{
+			CopyFrom(other);
+			SeriesNumber = other.SeriesNumber;
+		}
+
+		public SeriesIdentifier(ISeriesData other)
+		{
+			CopyFrom(other);
+		}
+
+		private void CopyFrom(ISeriesData other)
+		{
+			StudyInstanceUid = other.StudyInstanceUid;
+			SeriesInstanceUid = other.SeriesInstanceUid;
+			Modality = other.Modality;
+			SeriesDescription = other.SeriesDescription;
+			SeriesNumber = other.SeriesNumber;
+			NumberOfSeriesRelatedInstances = other.NumberOfSeriesRelatedInstances;
 		}
 
 		/// <summary>
@@ -128,10 +157,15 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		/// </summary>
 		[DicomField(DicomTags.SeriesNumber, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
-		public string SeriesNumber
+		public int? SeriesNumber
 		{
 			get { return _seriesNumber; }
 			set { _seriesNumber = value; }
+		}
+
+		int ISeriesData.SeriesNumber
+		{
+			get { return _seriesNumber ?? 0; }
 		}
 
 		/// <summary>

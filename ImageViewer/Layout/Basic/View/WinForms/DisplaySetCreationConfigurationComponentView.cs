@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -32,36 +32,47 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Desktop.Configuration;
+
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Common;
-using AuthorityTokens=ClearCanvas.Desktop.Configuration.AuthorityTokens;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Layout.Basic
+namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 {
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class LayoutConfigurationPageProvider : IConfigurationPageProvider
-	{
-		public LayoutConfigurationPageProvider()
-		{
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="DisplaySetOptionsApplicationComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(DisplaySetCreationConfigurationComponentViewExtensionPoint))]
+    public class DisplaySetCreationConfigurationComponentView : WinFormsView, IApplicationComponentView
+    {
+        private DisplaySetCreationConfigurationComponent _component;
+        private DisplaySetCreationConfigurationComponentControl _control;
 
-		}
+        #region IApplicationComponentView Members
 
-		public static string BasicLayoutConfigurationPath
-		{
-			get { return SR.TitleLayoutConfiguration; }
-		}
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (DisplaySetCreationConfigurationComponent)component;
+        }
 
-		#region IConfigurationPageProvider Members
+        #endregion
 
-		public IEnumerable<IConfigurationPage> GetPages()
-		{
-			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
-			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
-				listPages.Add(new ConfigurationPage<LayoutConfigurationApplicationComponent>(BasicLayoutConfigurationPath));
-			return listPages.AsReadOnly();
-		}
-
-		#endregion
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new DisplaySetCreationConfigurationComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

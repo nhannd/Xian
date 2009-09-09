@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 {
-    partial class LayoutConfigurationApplicationComponentControl
+    partial class LayoutConfigurationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -59,45 +59,25 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._comboBoxModality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._imageBoxColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this._imageBoxLabelRows = new System.Windows.Forms.Label();
 			this._imageBoxRows = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this._imageBoxLabelColumns = new System.Windows.Forms.Label();
+			this._imageBoxColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this._tileLabelRows = new System.Windows.Forms.Label();
 			this._tileRows = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this._tileLabelColumns = new System.Windows.Forms.Label();
 			this._tileColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
-			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).BeginInit();
+			this._modality = new System.Windows.Forms.ComboBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).BeginInit();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._tileRows)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._tileColumns)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// _comboBoxModality
-			// 
-			this._comboBoxModality.AutoSize = true;
-			this._comboBoxModality.DataSource = null;
-			this._comboBoxModality.DisplayMember = "";
-			this._comboBoxModality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._comboBoxModality.LabelText = "Modality";
-			this._comboBoxModality.Location = new System.Drawing.Point(15, 11);
-			this._comboBoxModality.Margin = new System.Windows.Forms.Padding(2);
-			this._comboBoxModality.Name = "_comboBoxModality";
-			this._comboBoxModality.Size = new System.Drawing.Size(81, 41);
-			this._comboBoxModality.TabIndex = 0;
-			this._comboBoxModality.Value = null;
-			// 
-			// _imageBoxColumns
-			// 
-			this._imageBoxColumns.Location = new System.Drawing.Point(113, 40);
-			this._imageBoxColumns.Name = "_imageBoxColumns";
-			this._imageBoxColumns.Size = new System.Drawing.Size(60, 20);
-			this._imageBoxColumns.TabIndex = 5;
 			// 
 			// groupBox1
 			// 
@@ -105,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this.groupBox1.Controls.Add(this._imageBoxRows);
 			this.groupBox1.Controls.Add(this._imageBoxLabelColumns);
 			this.groupBox1.Controls.Add(this._imageBoxColumns);
-			this.groupBox1.Location = new System.Drawing.Point(18, 63);
+			this.groupBox1.Location = new System.Drawing.Point(15, 61);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(189, 77);
 			this.groupBox1.TabIndex = 1;
@@ -137,13 +117,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._imageBoxLabelColumns.TabIndex = 4;
 			this._imageBoxLabelColumns.Text = "Columns";
 			// 
+			// _imageBoxColumns
+			// 
+			this._imageBoxColumns.Location = new System.Drawing.Point(113, 40);
+			this._imageBoxColumns.Name = "_imageBoxColumns";
+			this._imageBoxColumns.Size = new System.Drawing.Size(60, 20);
+			this._imageBoxColumns.TabIndex = 5;
+			// 
 			// groupBox2
 			// 
 			this.groupBox2.Controls.Add(this._tileLabelRows);
 			this.groupBox2.Controls.Add(this._tileRows);
 			this.groupBox2.Controls.Add(this._tileLabelColumns);
 			this.groupBox2.Controls.Add(this._tileColumns);
-			this.groupBox2.Location = new System.Drawing.Point(18, 156);
+			this.groupBox2.Location = new System.Drawing.Point(15, 154);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(189, 77);
 			this.groupBox2.TabIndex = 6;
@@ -186,19 +173,39 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._tileColumns.Size = new System.Drawing.Size(60, 20);
 			this._tileColumns.TabIndex = 10;
 			// 
-			// LayoutConfigurationApplicationComponentControl
+			// _modality
+			// 
+			this._modality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._modality.FormattingEnabled = true;
+			this._modality.Location = new System.Drawing.Point(15, 25);
+			this._modality.MaxDropDownItems = 25;
+			this._modality.Name = "_modality";
+			this._modality.Size = new System.Drawing.Size(86, 21);
+			this._modality.TabIndex = 11;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(12, 10);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(46, 13);
+			this.label1.TabIndex = 12;
+			this.label1.Text = "Modality";
+			// 
+			// LayoutConfigurationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._modality);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.groupBox2);
-			this.Controls.Add(this._comboBoxModality);
 			this.Controls.Add(this.groupBox1);
-			this.Name = "LayoutConfigurationApplicationComponentControl";
-			this.Size = new System.Drawing.Size(227, 251);
-			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).EndInit();
+			this.Name = "LayoutConfigurationComponentControl";
+			this.Size = new System.Drawing.Size(224, 254);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).EndInit();
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._tileRows)).EndInit();
@@ -210,7 +217,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 
         #endregion
 
-		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _comboBoxModality;
 		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageBoxColumns;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label _imageBoxLabelColumns;
@@ -221,5 +227,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _tileRows;
 		private System.Windows.Forms.Label _tileLabelColumns;
 		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _tileColumns;
+		private System.Windows.Forms.ComboBox _modality;
+		private System.Windows.Forms.Label label1;
     }
 }

@@ -84,25 +84,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the Study Instance UID.
 		/// </summary>
-		public string StudyInstanceUID
+		public string StudyInstanceUid
 		{
-			get { return ParentImageSop.StudyInstanceUID;  }
+			get { return ParentImageSop.StudyInstanceUid;  }
 		}
 
 		/// <summary>
 		/// Gets the Series Instance UID.
 		/// </summary>
-		public string SeriesInstanceUID
+		public string SeriesInstanceUid
 		{
-			get { return ParentImageSop.SeriesInstanceUID; }
+			get { return ParentImageSop.SeriesInstanceUid; }
 		}
 
 		/// <summary>
 		/// Gets the SOP Instance UID.
 		/// </summary>
-		public string SopInstanceUID
+		public string SopInstanceUid
 		{
-			get { return ParentImageSop.SopInstanceUID; }
+			get { return ParentImageSop.SopInstanceUid; }
 		}
 		
 		/// <summary>

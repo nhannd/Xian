@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_images = new List<T>(images);
 
 			if (_images.Count > 0)
-				_studyUid = _images[0].ImageSop.StudyInstanceUID;
+				_studyUid = _images[0].ImageSop.StudyInstanceUid;
 		}
 
 		private Dictionary<string, List<T>> Dictionary
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					_dictionary = new Dictionary<string, List<T>>();
 					foreach (T image in _images)
 					{
-						string seriesUid = image.ImageSop.SeriesInstanceUID;
+						string seriesUid = image.ImageSop.SeriesInstanceUid;
 						if (!_dictionary.ContainsKey(seriesUid))
 							_dictionary.Add(seriesUid, new List<T>());
 						_dictionary[seriesUid].Add(image);
@@ -77,10 +77,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		{
 			if (_dictionary != null)
 				throw new InvalidOperationException();
-			if (_studyUid != null && _studyUid != image.ImageSop.StudyInstanceUID)
+			if (_studyUid != null && _studyUid != image.ImageSop.StudyInstanceUid)
 				throw new ArgumentException();
 			else if (_studyUid == null)
-				_studyUid = image.ImageSop.StudyInstanceUID;
+				_studyUid = image.ImageSop.StudyInstanceUid;
 
 			_images.Add(image);
 		}

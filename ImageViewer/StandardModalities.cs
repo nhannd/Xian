@@ -45,9 +45,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Gets a list of standard modalities.
 		/// </summary>
-		public static ICollection<string> Modalities
+		public static List<string> Modalities
 		{
-			get { return StandardModalitySettings.Default.ModalitiesAsArray; }
+			get { return StandardModalitySettings.Default.GetModalities(); }
 		}
 	}
 }

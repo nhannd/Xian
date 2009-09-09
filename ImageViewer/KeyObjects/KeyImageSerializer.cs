@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			Dictionary<string, KeyObjectSelectionDocumentIod> koDocumentsByStudy = new Dictionary<string, KeyObjectSelectionDocumentIod>();
 			foreach (Frame frame in (IEnumerable<Frame>)_framePresentationStates)
 			{
-				string studyInstanceUid = frame.StudyInstanceUID;
+				string studyInstanceUid = frame.StudyInstanceUid;
 				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid))
 				{
 					DicomFile keyObjectDocument = new DicomFile();
@@ -208,8 +208,8 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 						IImageReferenceMacro imageReferenceMacro = content.InitializeImageReferenceAttributes();
 						imageReferenceMacro.ReferencedSopSequence.InitializeAttributes();
-						imageReferenceMacro.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUID;
-						imageReferenceMacro.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUID;
+						imageReferenceMacro.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUid;
+						imageReferenceMacro.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUid;
 						if (sop.NumberOfFrames > 1)
 							imageReferenceMacro.ReferencedSopSequence.ReferencedFrameNumber = frame.FrameNumber.ToString();
 						else
@@ -489,14 +489,14 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 			public void Add(Sop sop)
 			{
-				bool result = base.TryAddReference(sop.StudyInstanceUID, sop.SeriesInstanceUID, sop.SopClassUID, sop.SopInstanceUID);
-				if (result && !_seriesInfo.ContainsKey(sop.SeriesInstanceUID))
+				bool result = base.TryAddReference(sop.StudyInstanceUid, sop.SeriesInstanceUid, sop.SopClassUid, sop.SopInstanceUid);
+				if (result && !_seriesInfo.ContainsKey(sop.SeriesInstanceUid))
 				{
 					SeriesInfo seriesInfo = new SeriesInfo();
 					seriesInfo.RetrieveAeTitle = sop[DicomTags.RetrieveAeTitle].ToString();
 					seriesInfo.StorageMediaFileSetId = sop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
 					seriesInfo.StorageMediaFileSetUid = sop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
-					_seriesInfo.Add(sop.SeriesInstanceUID, seriesInfo);
+					_seriesInfo.Add(sop.SeriesInstanceUid, seriesInfo);
 				}
 			}
 

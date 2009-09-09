@@ -100,12 +100,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				if (Context.SelectedServerGroup.IsLocalDatastore)
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
-						helper.AddStudy(study.StudyInstanceUID, study.Server, "DICOM_LOCAL");
+						helper.AddStudy(study.StudyInstanceUid, study.Server, "DICOM_LOCAL");
 				}
 				else
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
-						helper.AddStudy(study.StudyInstanceUID, study.Server, "CC_STREAMING");
+						helper.AddStudy(study.StudyInstanceUid, study.Server, "CC_STREAMING");
 				}
 
 				helper.OpenStudies();

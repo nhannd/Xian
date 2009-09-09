@@ -132,17 +132,24 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DefaultPatientReconciliationSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DisplaySetCreationSettings.cs" />
+    <Compile Include="DisplaySetCreationSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DisplaySetCreationSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="DisplaySetCreationConfigurationComponent.cs" />
     <Compile Include="ExplodeTileTool.cs" />
     <Compile Include="LayoutChangerAction.cs" />
     <Compile Include="LayoutComponent.cs" />
-    <Compile Include="LayoutConfigurationPageProvider.cs" />
-    <Compile Include="LayoutConfigurationSettings.cs" />
-    <Compile Include="LayoutConfigurationSettings.Designer.cs">
-      <DependentUpon>LayoutConfigurationSettings.settings</DependentUpon>
+    <Compile Include="ConfigurationPageProvider.cs" />
+    <Compile Include="LayoutSettings.cs" />
+    <Compile Include="LayoutSettings.Designer.cs">
+      <DependentUpon>LayoutSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="LayoutConfigurationApplicationComponent.cs" />
+    <Compile Include="LayoutConfigurationComponent.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LayoutTool.cs" />
     <EmbeddedResource Include="SR.resx">
@@ -157,7 +164,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StoredLayoutConfiguration.cs" />
+    <Compile Include="StoredLayout.cs" />
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
@@ -176,13 +183,17 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DefaultPatientReconciliationSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="LayoutConfigurationSettings.settings">
+    <None Include="DisplaySetCreationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>LayoutConfigurationSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>DisplaySetCreationSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="LayoutSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>LayoutSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LayoutConfigurationSettingsDefaults.xml" />
+    <EmbeddedResource Include="LayoutDefaults.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutToolSmall.png" />
@@ -240,6 +251,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DisplaySetCreationSettingsDefaults.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />

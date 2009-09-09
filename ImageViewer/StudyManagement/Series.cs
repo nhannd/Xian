@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A DICOM series.
 	/// </summary>
-	public class Series
+	public class Series : ISeriesData
 	{
 		private Sop _sop;
 		private readonly Study _parentStudy;
@@ -71,142 +71,44 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		#region General Series Module
+		#region ISeriesData Members
 
-		/// <summary>
-		/// Gets the modality.
-		/// </summary>
-		public string Modality 
-		{ 
-			get { return _sop.Modality; } 
+		public string StudyInstanceUid
+		{
+			get { return _sop.StudyInstanceUid; }
 		}
 
-		/// <summary>
-		/// Gets the Series Instance UID.
-		/// </summary>
-		public string SeriesInstanceUID 
-		{ 
-			get { return _sop.SeriesInstanceUID; } 
+		public string SeriesInstanceUid
+		{
+			get { return _sop.SeriesInstanceUid; }
 		}
 
-		/// <summary>
-		/// Gets the series number.
-		/// </summary>
-		public int SeriesNumber 
-		{ 
-			get { return _sop.SeriesNumber; } 
+		public string Modality
+		{
+			get { return _sop.Modality; }
 		}
 
-		/// <summary>
-		/// Gets the series description.
-		/// </summary>
-		public string SeriesDescription 
-		{ 
-			get { return _sop.SeriesDescription; } 
+		public string SeriesDescription
+		{
+			get { return _sop.SeriesDescription; }
 		}
 
-		/// <summary>
-		/// Gets the laterality.
-		/// </summary>
-		public string Laterality 
-		{ 
-			get { return _sop.Laterality; } 
+		public int SeriesNumber
+		{
+			get { return _sop.SeriesNumber; }
 		}
 
-		/// <summary>
-		/// Gets the series date.
-		/// </summary>
-		public string SeriesDate 
-		{ 
-			get { return _sop.SeriesDate; } 
+		public int NumberOfSeriesRelatedInstances
+		{
+			get { return Sops.Count; }
 		}
 
-		/// <summary>
-		/// Gets the series time.
-		/// </summary>
-		public string SeriesTime 
-		{ 
-			get { return _sop.SeriesTime; } 
-		}
-
-		/// <summary>
-		/// Gets the names of performing physicians.
-		/// </summary>
-		public PersonName[] PerformingPhysiciansName 
-		{ 
-			get { return _sop.PerformingPhysiciansName; } 
-		}
-
-		/// <summary>
-		/// Gets the names of operators.
-		/// </summary>
-		public PersonName[] OperatorsName 
-		{ 
-			get { return _sop.OperatorsName; } 
-		}
-
-		/// <summary>
-		/// Gets the body part examined.
-		/// </summary>
-		public string BodyPartExamined 
-		{ 
-			get { return _sop.BodyPartExamined; } 
-		}
-
-		/// <summary>
-		/// Gets the patient position.
-		/// </summary>
-		public string PatientPosition 
-		{ 
-			get { return _sop.PatientPosition; } 
+		int? ISeriesData.NumberOfSeriesRelatedInstances
+		{
+			get { return NumberOfSeriesRelatedInstances; }	
 		}
 
 		#endregion
-
-		#region General Equipment Module
-
-		/// <summary>
-		/// Gets the manufacturer.
-		/// </summary>
-		public string Manufacturer 
-		{ 
-			get { return _sop.Manufacturer; } 
-		}
-
-		/// <summary>
-		/// Gets the institution name.
-		/// </summary>
-		public string InstitutionName 
-		{ 
-			get { return _sop.InstitutionName; } 
-		}
-
-		/// <summary>
-		/// Gets the station name.
-		/// </summary>
-		public string StationName 
-		{ 
-			get { return _sop.StationName; } 
-		}
-
-		/// <summary>
-		/// Gets the institutional department name.
-		/// </summary>
-		public string InstitutionalDepartmentName 
-		{ 
-			get { return _sop.InstitutionalDepartmentName; } 
-		}
-
-		/// <summary>
-		/// Gets the manufacturer's model name.
-		/// </summary>
-		public string ManufacturersModelName 
-		{ 
-			get { return _sop.ManufacturersModelName; }
-		} 
-
-		#endregion
-
 
 		internal void SetSop(Sop sop)
 		{
@@ -220,7 +122,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			string str = String.Format("{0} | {1}", this.SeriesDescription, this.SeriesInstanceUID);
+			string str = String.Format("{0} | {1}", this.SeriesDescription, this.SeriesInstanceUid);
 			return str;
 		}
 	}

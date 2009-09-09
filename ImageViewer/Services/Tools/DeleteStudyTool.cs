@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			List<string> deleteStudies = CollectionUtils.Map<StudyItem, string>(this.Context.SelectedStudies,
                                                     delegate(StudyItem study)
                                                     	{
-                                                    		return study.StudyInstanceUID;
+                                                    		return study.StudyInstanceUid;
                                                     	});
 
 			DeleteInstancesRequest request = new DeleteInstancesRequest();
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			Dictionary<string, string> setStudyUidsInUse = new Dictionary<string, string>();
 			foreach (StudyItem item in studiesInUse)
-				setStudyUidsInUse[item.StudyInstanceUID] = item.StudyInstanceUID;
+				setStudyUidsInUse[item.StudyInstanceUid] = item.StudyInstanceUid;
 
 			// No studies in use.  Just return.
 			if (setStudyUidsInUse.Count == 0)
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				foreach (IImageViewer imageViewer in imageViewers)
 				{
-					if (imageViewer.StudyTree.GetStudy(study.StudyInstanceUID) != null)
+					if (imageViewer.StudyTree.GetStudy(study.StudyInstanceUid) != null)
 						studiesInUse.Add(study);
 				}
 			}

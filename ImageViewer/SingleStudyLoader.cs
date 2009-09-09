@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageViewer
 					if (_args != null)
 						return _args.StudyInstanceUid;
 					else
-						return _studyItem.StudyInstanceUID;
+						return _studyItem.StudyInstanceUid;
 				}
 			}
 

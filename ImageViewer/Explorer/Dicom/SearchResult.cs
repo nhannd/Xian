@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			foreach (StudyItem study in allStudies)
 			{
 				StudyItem existing;
-				if (uniqueStudies.TryGetValue(study.StudyInstanceUID, out existing))
+				if (uniqueStudies.TryGetValue(study.StudyInstanceUid, out existing))
 				{
 					ApplicationEntity server = study.Server as ApplicationEntity;
 					//we will only replace an existing entry if this study's server is streaming.
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						if (server == null || !server.IsStreaming)
 						{
 							removed.Add(existing);
-							uniqueStudies[study.StudyInstanceUID] = study;
+							uniqueStudies[study.StudyInstanceUid] = study;
 							continue;
 						}
 					}
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 				else
 				{
-					uniqueStudies[study.StudyInstanceUID] = study;
+					uniqueStudies[study.StudyInstanceUid] = study;
 				}
 			}
 
@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingModality,
-				delegate(StudyItem item) { return item.ModalitiesInStudy; },
+				delegate(StudyItem item) { return DicomStringHelper.GetDicomStringArray(item.ModalitiesInStudy); },
 				0.25f);
 
 			_studyTable.Columns.Add(column);
@@ -268,10 +268,34 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingNumberOfInstances,
-				delegate(StudyItem item) { return (item.NumberOfStudyRelatedInstances == 0) ? "" : item.NumberOfStudyRelatedInstances.ToString(); },
+				delegate(StudyItem item)
+					{
+						if (item.NumberOfStudyRelatedInstances.HasValue)
+							return item.NumberOfStudyRelatedInstances.ToString();
+						else
+							return "";
+					},
 				null,
 				0.3f,
-				delegate(StudyItem itemA, StudyItem itemB) { return itemA.NumberOfStudyRelatedInstances.CompareTo(itemB.NumberOfStudyRelatedInstances); });
+					delegate(StudyItem study1, StudyItem study2)
+				                      	         	{
+				                      	         		int? instances1 = study1.NumberOfStudyRelatedInstances;
+														int? instances2 = study2.NumberOfStudyRelatedInstances;
+
+														if (instances1 == null)
+				                      	         		{
+															if (instances2 == null)
+																return 0;
+															else
+																return 1;
+				                      	         		}
+														else if (instances2 == null)
+				                      	         		{
+				                      	         			return -1;
+				                      	         		}
+
+				                      	         		return -instances1.Value.CompareTo(instances2.Value);
+													});
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 

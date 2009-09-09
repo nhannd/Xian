@@ -30,14 +30,18 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	public interface IStudyIdentifier : IStudyData, IIdentifier
+	{ }
+
 	/// <summary>
 	/// Query identifier for a study.
 	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
-	public class StudyIdentifier : Identifier
+	public class StudyIdentifier : Identifier, IStudyIdentifier
 	{
 		#region Private Fields
 
@@ -48,6 +52,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		private string _studyDate;
 		private string _studyTime;
 		private string _accessionNumber;
+		private string _referringPhysiciansName;
 		private int? _numberOfStudyRelatedSeries;
 		private int? _numberOfStudyRelatedInstances;
 
@@ -62,6 +67,17 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 		}
 
+		public StudyIdentifier(IStudyIdentifier other)
+			: base(other)
+		{
+			CopyFrom(other);
+		}
+
+		public StudyIdentifier(IStudyData other)
+		{
+			CopyFrom(other);
+		}
+
 		/// <summary>
 		/// Creates an instance of <see cref="StudyIdentifier"/> from a <see cref="DicomAttributeCollection"/>.
 		/// </summary>
@@ -71,6 +87,20 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		}
 
 		#endregion
+
+		private void CopyFrom(IStudyData other)
+		{
+			ReferringPhysiciansName = other.ReferringPhysiciansName;
+			AccessionNumber = other.AccessionNumber;
+			StudyDescription = other.StudyDescription;
+			StudyId = other.StudyId;
+			StudyDate = other.StudyDate;
+			StudyTime = other.StudyTime;
+			ModalitiesInStudy = other.ModalitiesInStudy;
+			StudyInstanceUid = other.StudyInstanceUid;
+			NumberOfStudyRelatedSeries = other.NumberOfStudyRelatedSeries;
+			NumberOfStudyRelatedInstances = other.NumberOfStudyRelatedInstances;
+		}
 
 		#region Public Properties
 
@@ -157,6 +187,14 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 			get { return _accessionNumber; }
 			set { _accessionNumber = value; }
+		}
+
+		[DicomField(DicomTags.ReferringPhysiciansName, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
+		[DataMember(IsRequired = false)]
+		public string ReferringPhysiciansName
+		{
+			get { return _referringPhysiciansName; }
+			set { _referringPhysiciansName = value; }
 		}
 
 		/// <summary>

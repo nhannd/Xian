@@ -162,11 +162,11 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				_remotePublishingInfo.Add(publishServer, new List<DicomFile>());
 
 			List<DicomFile> publishDocuments = _remotePublishingInfo[publishServer];
-			DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUID, publishDocuments);
+			DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUid, publishDocuments);
 
 			if (existingDocument == null)
 			{
-				DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUID, _keyObjectDocuments);
+				DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUid, _keyObjectDocuments);
 				publishDocuments.Add(document);
 			}
 
@@ -206,10 +206,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					}
 					else if (dataSource.StudyLoaderName == "DICOM_LOCAL")
 					{
-						DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUID, _localPublishingInfo);
+						DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUid, _localPublishingInfo);
 						if (existingDocument == null)
 						{
-							DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUID, _keyObjectDocuments);
+							DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUid, _keyObjectDocuments);
 							_localPublishingInfo.Add(document);
 						}
 

@@ -222,14 +222,14 @@ namespace ClearCanvas.ImageViewer
 					catch(LoadStudyException e)
 					{
 						Platform.Log(LogLevel.Error, e, "Failed to load prior study '{0}' from study loader '{1}'.",
-									 result.StudyInstanceUID, result.StudyLoaderName);
+									 result.StudyInstanceUid, result.StudyLoaderName);
 
 						OnLoadPriorStudyFailed(result, e);
 					}
 					catch (StudyLoaderNotFoundException e)
 					{
 						string message = String.Format("Failed to load prior study '{0}' from study loader '{1}';" +
-						                               " study loader is unavailable or does not exist.", result.StudyInstanceUID, result.StudyLoaderName);
+						                               " study loader is unavailable or does not exist.", result.StudyInstanceUid, result.StudyLoaderName);
 						Platform.Log(LogLevel.Warn, message);
 						OnLoadPriorStudyFailed(result, e);
 					}
@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageViewer
 				if (!_stop)
 				{
 					//don't re-report for an existing study.
-					if (null == _imageViewer.StudyTree.GetStudy(args.Study.StudyInstanceUID))
+					if (null == _imageViewer.StudyTree.GetStudy(args.Study.StudyInstanceUid))
 					{
 						++_actualPriorCount;
 						_loadStudyExceptions.Add(args.Error);

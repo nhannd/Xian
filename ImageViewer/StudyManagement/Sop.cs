@@ -53,7 +53,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// see <see cref="ISopReference"/>.
 	/// </para>
 	/// </remarks>
-	public partial class Sop : IDisposable
+	
+	public partial class Sop : IDisposable, ISopInstanceData
 	{
 		private volatile Series _parentSeries;
 		private volatile ISopDataCacheItemReference _dataSourceReference;
@@ -84,6 +85,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return DataSource.IsStored; }	
 		}
 
+		public bool IsImage
+		{
+			get { return DataSource.IsImage; }	
+		}
+
 		/// <summary>
 		/// Gets the parent <see cref="Series"/>.
 		/// </summary>
@@ -103,7 +109,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the Transfer Syntax UID.
 		/// </summary>
-		public virtual string TransferSyntaxUID
+		public virtual string TransferSyntaxUid
 		{
 			get { return DataSource.TransferSyntaxUid; }
 		}
@@ -115,7 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the SOP Instance UID.
 		/// </summary>
-		public virtual string SopInstanceUID
+		public virtual string SopInstanceUid
 		{
 			get { return DataSource.SopInstanceUid; }
 		}
@@ -123,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the SOP Class UID.
 		/// </summary>
-		public virtual string SopClassUID
+		public virtual string SopClassUid
 		{
 			get { return DataSource.SopClassUid; }
 			
@@ -235,7 +241,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the Study Instance UID.
 		/// </summary>
-		public virtual string StudyInstanceUID
+		public virtual string StudyInstanceUid
 		{
 			get { return DataSource.StudyInstanceUid; }
 		}
@@ -460,10 +466,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		/// <summary>
-		/// Gets the Series Instance UID.
-		/// </summary>
-		public virtual string SeriesInstanceUID
+		public virtual string SeriesInstanceUid
 		{
 			get { return DataSource.SeriesInstanceUid; }
 		}
@@ -1017,9 +1020,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (ValidationSettings.Default.DisableSopValidation)
 				return;
 
-			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUID);
-			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUID);
-			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUID);
+			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUid);
+			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUid);
+			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUid);
 
 			ValidatePatientId();
 		}
@@ -1052,7 +1055,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return this.SopInstanceUID;
+			return this.SopInstanceUid;
 		}
 	}
 }

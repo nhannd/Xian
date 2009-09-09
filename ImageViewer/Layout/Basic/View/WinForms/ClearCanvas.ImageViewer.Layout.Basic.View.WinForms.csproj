@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{152F7337-3DA3-4047-9E59-01989EEB7030}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -47,6 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DisplaySetCreationConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DisplaySetCreationConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DisplaySetCreationConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DisplaySetCreationConfigurationComponentView.cs" />
     <Compile Include="LayoutChangerActionView.cs" />
     <Compile Include="LayoutChangerToolStripItem.cs">
       <SubType>Component</SubType>
@@ -55,13 +62,13 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="LayoutComponentView.cs" />
-    <Compile Include="LayoutConfigurationApplicationComponentControl.cs">
+    <Compile Include="LayoutConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LayoutConfigurationApplicationComponentControl.Designer.cs">
-      <DependentUpon>LayoutConfigurationApplicationComponentControl.cs</DependentUpon>
+    <Compile Include="LayoutConfigurationComponentControl.Designer.cs">
+      <DependentUpon>LayoutConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="LayoutConfigurationApplicationComponentView.cs" />
+    <Compile Include="LayoutConfigurationComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -96,9 +103,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LayoutConfigurationApplicationComponentControl.resx">
+    <EmbeddedResource Include="DisplaySetCreationConfigurationComponentControl.resx">
+      <DependentUpon>DisplaySetCreationConfigurationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LayoutConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>LayoutConfigurationApplicationComponentControl.cs</DependentUpon>
+      <DependentUpon>LayoutConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LayoutControl.resx">
       <DependentUpon>LayoutControl.cs</DependentUpon>

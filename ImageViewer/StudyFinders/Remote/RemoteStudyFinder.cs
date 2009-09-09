@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -87,8 +88,11 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				item.PatientId = result[DicomTags.PatientId].GetString(0, "");
 				item.PatientsName = new PersonName(result[DicomTags.PatientsName].GetString(0, ""));
 				item.ReferringPhysiciansName = new PersonName(result[DicomTags.ReferringPhysiciansName].GetString(0, ""));
-				item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
-				item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
+				item.ModalitiesInStudy = DicomStringHelper.GetStringArray(result[DicomTags.ModalitiesInStudy].ToString());
+				DicomAttribute attribute = result[DicomTags.NumberOfStudyRelatedInstances];
+				if (!attribute.IsEmpty && !attribute.IsNull)
+					item.NumberOfStudyRelatedInstances = attribute.GetInt32(0, 0);
+
 				item.SpecificCharacterSet = result.SpecificCharacterSet;
 				item.InstanceAvailability = result[DicomTags.InstanceAvailability].GetString(0, "");
 				if (String.IsNullOrEmpty(item.InstanceAvailability))

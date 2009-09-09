@@ -483,4 +483,16 @@ Please check the log for more details.</value>
   <data name="StringNoValue" xml:space="preserve">
     <value>---</value>
   </data>
+  <data name="SuffixFormatMREchoDisplaySet" xml:space="preserve">
+    <value>Echo #{0}</value>
+  </data>
+  <data name="SuffixFormatMultiframeDisplaySet" xml:space="preserve">
+    <value>Multiframe #{0}</value>
+  </data>
+  <data name="SuffixFormatSingleImageDisplaySet" xml:space="preserve">
+    <value>Image #{0}</value>
+  </data>
+  <data name="SuffixSingleFramesDisplaySet" xml:space="preserve">
+    <value>Single frames</value>
+  </data>
 </root>

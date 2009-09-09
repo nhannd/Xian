@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
@@ -82,9 +83,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.StudyDate = result[DicomTags.StudyDate].ToString();
 					item.StudyTime = result[DicomTags.StudyTime].ToString();
 					item.StudyDescription = result[DicomTags.StudyDescription].ToString();
-					item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
+					item.ModalitiesInStudy = DicomStringHelper.GetStringArray(result[DicomTags.ModalitiesInStudy].ToString());
 					item.AccessionNumber = result[DicomTags.AccessionNumber].ToString();
-					item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
+					item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetInt32(0, 0);
 					item.InstanceAvailability = result[DicomTags.InstanceAvailability].GetString(0, "");
 					if (String.IsNullOrEmpty(item.InstanceAvailability))
 						item.InstanceAvailability = "ONLINE";

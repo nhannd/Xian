@@ -30,15 +30,26 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
 	//NOTE: internal for now because we don't actually implement IPatientRootQuery anywhere.
-	
+
 	[DataContract(Namespace = QueryNamespace.Value)]
 	internal class PatientRootStudyIdentifier : StudyIdentifier
 	{
 		public PatientRootStudyIdentifier()
+		{
+		}
+
+		public PatientRootStudyIdentifier(IStudyIdentifier other)
+			: base(other)
+		{
+		}
+
+		public PatientRootStudyIdentifier(IStudyData other)
+			: base(other)
 		{
 		}
 

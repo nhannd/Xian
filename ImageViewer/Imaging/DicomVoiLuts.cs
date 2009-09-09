@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public string ImageSopInstanceUid
 		{
-			get { return _image.ImageSop.SopInstanceUID; }
+			get { return _image.ImageSop.SopInstanceUid; }
 		}
 
 		public int ImageSopFrameNumber

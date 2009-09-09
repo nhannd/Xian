@@ -29,19 +29,16 @@
 
 #endregion
 
+using ClearCanvas.Dicom.Iod;
+
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface ISopInstance
+    public interface ISopInstance : ISopInstanceData
     {
 		ISeries GetParentSeries();
 		DicomUri GetLocationUri();
 
 		string SpecificCharacterSet { get; }
-
-		string SopInstanceUid { get; }
-		string SopClassUid { get; }
-		int InstanceNumber { get; }
-
 		string TransferSyntaxUid { get; }
 
     	bool IsStoredTag(uint tag);

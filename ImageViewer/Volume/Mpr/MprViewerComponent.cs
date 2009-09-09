@@ -198,16 +198,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				get { return (MprViewerComponent) base.ImageViewer; }
 			}
 
-			protected override sealed IDisplaySet CreateDisplaySet(Series series)
-			{
-				throw new NotSupportedException();
-			}
-
-			protected override sealed IImageSet CreateImageSet(Study study)
-			{
-				throw new NotSupportedException();
-			}
-
 			protected virtual IDisplaySet CreateDisplaySet(int number, IMprSliceSet sliceSet)
 			{
 				string name;

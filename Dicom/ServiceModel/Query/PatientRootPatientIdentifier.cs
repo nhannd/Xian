@@ -30,13 +30,17 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
 	//NOTE: internal for now because we don't actually implement IPatientRootQuery anywhere.
 
+	internal interface IPatientRootPatientIdentifier : IPatientRootData, IIdentifier
+	{ }
+
 	[DataContract(Namespace = QueryNamespace.Value)]
-	internal class PatientRootPatientIdentifier : Identifier
+	internal class PatientRootPatientIdentifier : Identifier, IPatientRootData
 	{
 		#region Private Fields
 
@@ -55,6 +59,29 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		public PatientRootPatientIdentifier()
 		{
+		}
+
+		public PatientRootPatientIdentifier(IPatientRootPatientIdentifier other)
+			: base(other)
+		{
+			CopyFrom(other);
+		}
+
+		public PatientRootPatientIdentifier(IPatientRootData other)
+		{
+			CopyFrom(other);
+		}
+
+		private void CopyFrom(IPatientRootData other)
+		{
+			PatientId = other.PatientId;
+			PatientsName = other.PatientsName;
+			PatientsBirthDate = other.PatientsBirthDate;
+			PatientsBirthTime = other.PatientsBirthTime;
+			PatientsSex = other.PatientsSex;
+			NumberOfPatientRelatedStudies = other.NumberOfPatientRelatedStudies;
+			NumberOfPatientRelatedSeries = other.NumberOfPatientRelatedSeries;
+			NumberOfPatientRelatedInstances = other.NumberOfPatientRelatedInstances;
 		}
 
 		public PatientRootPatientIdentifier(DicomAttributeCollection attributes)

@@ -31,12 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface IStudy
+    public interface IStudy : IStudyRootData
     {
 		IEnumerable<ISeries> GetSeries();
 		IEnumerable<ISopInstance> GetSopInstances();
@@ -44,26 +43,13 @@ namespace ClearCanvas.Dicom.DataStore
 
 		string SpecificCharacterSet { get; }
 
-		string PatientId { get; }
-		PersonName PatientsName { get; }
-		string PatientsSex { get; }
-
-		string StudyInstanceUid { get; }
-
-		string StudyId { get; }
-		string StudyDate { get; }
-		string StudyTime { get; }
-
-		string AccessionNumber { get; }
-		string StudyDescription { get; }
-		PersonName ReferringPhysiciansName { get; }
-
-		ReadOnlyCollection<string> ModalitiesInStudy { get; }
+		new PersonName PatientsName { get; }
+		new PersonName ReferringPhysiciansName { get; }
 
 		string ProcedureCodeSequenceCodeValue { get; }
 		string ProcedureCodeSequenceCodingSchemeDesignator { get; }
 
-		int NumberOfStudyRelatedSeries { get; }
-		int NumberOfStudyRelatedInstances { get; }
+		new int NumberOfStudyRelatedSeries { get; }
+		new int NumberOfStudyRelatedInstances { get; }
     }
 }

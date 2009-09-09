@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.TestTools
 					{
 						foreach (Sop sop in series.Sops)
 						{
-							if (sop is ImageSop)
+							if (sop.IsImage)
 							{
 								foreach (Frame frame in ((ImageSop)sop).Frames)
 								{

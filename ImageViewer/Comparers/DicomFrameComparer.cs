@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		private static IEnumerable<IComparable> GetCompareValues(IImageSopProvider provider)
 		{
-			yield return provider.ImageSop.StudyInstanceUID;
-			yield return provider.ImageSop.SeriesInstanceUID;
+			yield return provider.ImageSop.StudyInstanceUid;
+			yield return provider.ImageSop.SeriesInstanceUid;
 		}
 
 		#region IComparer<IPresentationImage> Members

@@ -377,14 +377,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					throw new CreateVolumeException(SR.MessageSourceDataSetNeedsThreeImagesForMpr);
 
 				// ensure all frames have are from the same series, and have the same frame of reference
-				string studyInstanceUid = _frames[0].Frame.StudyInstanceUID;
-				string seriesInstanceUid = _frames[0].Frame.SeriesInstanceUID;
+				string studyInstanceUid = _frames[0].Frame.StudyInstanceUid;
+				string seriesInstanceUid = _frames[0].Frame.SeriesInstanceUid;
 				string frameOfReferenceUid = _frames[0].Frame.FrameOfReferenceUid;
 				foreach (IFrameReference frame in _frames)
 				{
-					if (frame.Frame.StudyInstanceUID != studyInstanceUid)
+					if (frame.Frame.StudyInstanceUid != studyInstanceUid)
 						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleStudy);
-					if (frame.Frame.SeriesInstanceUID != seriesInstanceUid)
+					if (frame.Frame.SeriesInstanceUid != seriesInstanceUid)
 						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleSeries);
 					if (frame.Frame.FrameOfReferenceUid != frameOfReferenceUid)
 						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSingleFrameOfReference);

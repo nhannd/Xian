@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -38,7 +37,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A DICOM patient.
 	/// </summary>
-	public class Patient
+	public class Patient : IPatientData
 	{
 		private Sop _sop;
 		private StudyCollection _studies;
@@ -79,12 +78,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _sop.PatientsName; }
 		}
 
+		string IPatientData.PatientsName
+		{
+			get { return _sop.PatientsName; }
+		}
+
 		/// <summary>
 		/// Gets the patient's birthdate.
 		/// </summary>
 		public string PatientsBirthDate
 		{
 			get { return _sop.PatientsBirthDate; }
+		}
+
+		/// <summary>
+		/// Gets the patient's birthdate.
+		/// </summary>
+		public string PatientsBirthTime
+		{
+			get { return _sop.PatientsBirthTime; }
 		}
 
 		/// <summary>

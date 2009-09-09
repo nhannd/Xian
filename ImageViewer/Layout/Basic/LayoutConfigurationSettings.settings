@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Layout.Basic" GeneratedClassName="LayoutConfigurationSettings">
-  <Profiles />
-  <Settings>
-    <Setting Name="LayoutConfigurationSettingsXml" Type="System.String" Scope="User">
-      <Value Profile="(Default)">LayoutConfigurationSettingsDefaults.xml</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>

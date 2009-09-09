@@ -280,13 +280,13 @@ namespace ClearCanvas.ImageViewer.TestTools
 
 			List<IFrameReference> frames = new List<IFrameReference>();
 
-			loader.Start(new StudyLoaderArgs(study.StudyInstanceUID, study.Server));
+			loader.Start(new StudyLoaderArgs(study.StudyInstanceUid, study.Server));
 			Sop sop;
 			while ((sop = loader.LoadNextSop()) != null)
 			{
 				using (sop)
 				{
-					if (sop is ImageSop)
+					if (sop.IsImage)
 					{
 						foreach (Frame frame in ((ImageSop)sop).Frames)
 							frames.Add(frame.CreateTransientReference());

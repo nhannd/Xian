@@ -606,7 +606,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return StudyTable.Items.FindIndex(
 				delegate(StudyItem test)
 				{
-					return test.StudyInstanceUID == studyInstanceUid;
+					return test.StudyInstanceUid == studyInstanceUid;
 				});
 		}
 
@@ -641,13 +641,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						foreach (StudyItem item in list)
 						{
 							//don't need to check this again, it's just paranoia
-							if (!StudyExists(item.StudyInstanceUID))
+							if (!StudyExists(item.StudyInstanceUid))
 							{
 								studyTable.Items.Add(item);
 							}
 							else
 							{
-								int index = GetStudyIndex(item.StudyInstanceUID);
+								int index = GetStudyIndex(item.StudyInstanceUid);
 								//just update this since the rest won't change.
 								UpdateItem(studyTable.Items[index], item);
 								studyTable.Items.NotifyItemUpdated(index);
@@ -671,7 +671,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				int foundIndex = studyTable.Items.FindIndex(
 				delegate(StudyItem test)
 				{
-					return test.StudyInstanceUID == deleteStudyUid;
+					return test.StudyInstanceUid == deleteStudyUid;
 				});
 
 				if (foundIndex >= 0)

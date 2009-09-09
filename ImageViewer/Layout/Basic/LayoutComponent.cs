@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumImageBoxRows
 		{
-			get { return LayoutConfigurationSettings.MaximumImageBoxRows; }
+			get { return LayoutSettings.MaximumImageBoxRows; }
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumImageBoxColumns
 		{
-			get { return LayoutConfigurationSettings.MaximumImageBoxColumns; }
+			get { return LayoutSettings.MaximumImageBoxColumns; }
 		}
 
 		/// <summary>
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumTileRows
 		{
-			get { return LayoutConfigurationSettings.MaximumTileRows; }
+			get { return LayoutSettings.MaximumTileRows; }
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumTileColumns
 		{
-			get { return LayoutConfigurationSettings.MaximumTileColumns; }
+			get { return LayoutSettings.MaximumTileColumns; }
 		}
 
 		/// <summary>
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public void Configure()
 		{
-			LayoutConfigurationApplicationComponent.Configure(this.Host.DesktopWindow);
+			LayoutConfigurationComponent.Configure(this.Host.DesktopWindow);
 		}
 
 		/// <summary>
@@ -432,8 +432,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public static void SetImageBoxLayout(IImageViewer imageViewer, int rows, int columns)
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
-			Platform.CheckArgumentRange(rows, 1, LayoutConfigurationSettings.MaximumImageBoxRows, "rows");
-			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumImageBoxColumns, "columns");
+			Platform.CheckArgumentRange(rows, 1, LayoutSettings.MaximumImageBoxRows, "rows");
+			Platform.CheckArgumentRange(columns, 1, LayoutSettings.MaximumImageBoxColumns, "columns");
 
 			IPhysicalWorkspace physicalWorkspace = imageViewer.PhysicalWorkspace;
 			if (physicalWorkspace.Locked)
@@ -466,8 +466,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public static void SetTileLayout(IImageViewer imageViewer, int rows, int columns)
 		{
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
-			Platform.CheckArgumentRange(rows, 1, LayoutConfigurationSettings.MaximumTileRows, "rows");
-			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumTileColumns, "columns");
+			Platform.CheckArgumentRange(rows, 1, LayoutSettings.MaximumTileRows, "rows");
+			Platform.CheckArgumentRange(columns, 1, LayoutSettings.MaximumTileColumns, "columns");
 
 			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
 			if (imageBox.ParentPhysicalWorkspace.Locked)

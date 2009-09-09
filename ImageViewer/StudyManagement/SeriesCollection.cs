@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				return CollectionUtils.SelectFirst(this, delegate(Series series) { return series.SeriesInstanceUID == seriesInstanceUid; });
+				return CollectionUtils.SelectFirst(this, delegate(Series series) { return series.SeriesInstanceUid == seriesInstanceUid; });
 			}
 		}
 	}

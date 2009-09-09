@@ -446,7 +446,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				if (clipboardItem.Item is IPresentationImage && clipboardItem.Item is IImageSopProvider)
 				{
 					IImageSopProvider sopProv = (IImageSopProvider) clipboardItem.Item;
-					exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUID, exportFilePath);
+					exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUid, exportFilePath);
 				}
 				else if (clipboardItem.Item is IDisplaySet)
 				{
@@ -454,7 +454,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 					{
 						IImageSopProvider sopProv = image as IImageSopProvider;
 						if (sopProv != null)
-							exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUID, exportFilePath);
+							exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUid, exportFilePath);
 					}
 				}
 			}

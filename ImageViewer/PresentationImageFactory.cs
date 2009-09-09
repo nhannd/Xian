@@ -42,42 +42,72 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	public interface IPresentationImageFactory
+	{
+		void SetStudyTree(StudyTree studyTree);
+
+		List<IPresentationImage> CreateImages(Sop sop);
+
+		IPresentationImage CreateImage(Frame frame);
+	}
+
 	/// <summary>
 	/// A factory class which creates <see cref="IPresentationImage"/>s.
 	/// </summary>
-	public class PresentationImageFactory
+	public class PresentationImageFactory : IPresentationImageFactory
 	{
-		private readonly StudyTree _studyTree;
+		private StudyTree _studyTree;
 
-		/// <summary>
-		/// Constructs a new <see cref="PresentationImageFactory"/>.
-		/// </summary>
-		/// <param name="studyTree">The study tree for which images are to be built.</param>
-		public PresentationImageFactory(StudyTree studyTree)
+		public PresentationImageFactory()
+		{
+		}
+
+		#region IPresentationImageFactory Members
+
+		void IPresentationImageFactory.SetStudyTree(StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 		}
 
-		/// <summary>
-		/// Gets the study tree for which images are to be built.
-		/// </summary>
-		public StudyTree StudyTree
+		List<IPresentationImage> IPresentationImageFactory.CreateImages(Sop sop)
 		{
-			get { return _studyTree; }
+			return CreateImages(sop);
+		}
+
+		IPresentationImage IPresentationImageFactory.CreateImage(Frame frame)
+		{
+			return Create(frame);
+		}
+
+		#endregion
+
+		protected StudyTree StudyTree
+		{
+			get { return _studyTree; }	
+		}
+
+		protected virtual IPresentationImage CreateImage(Frame frame)
+		{
+			return Create(frame);
 		}
 
 		/// <summary>
-		/// Creates the presentation images for a given SOP instance.
+		/// Creates the presentation images for a given image SOP.
 		/// </summary>
-		/// <param name="sop">The SOP instance for which presentation images are to be created.</param>
+		/// <param name="imageSop">The image SOP from which presentation images are to be created.</param>
 		/// <returns>A list of created presentation images.</returns>
+		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)
+		{
+			return Create(imageSop);
+		}
+
 		public virtual List<IPresentationImage> CreateImages(Sop sop)
 		{
 			if (sop is ImageSop)
 			{
-				return CreateImages((ImageSop) sop);
+				return CreateImages((ImageSop)sop);
 			}
-			else if (sop.SopClassUID == SopClass.KeyObjectSelectionDocumentStorageUid)
+			else if (sop.SopClassUid == SopClass.KeyObjectSelectionDocumentStorageUid)
 			{
 				return CreateImages(new KeyObjectSelectionDocumentIod(sop.DataSource));
 			}
@@ -93,45 +123,41 @@ namespace ClearCanvas.ImageViewer
 		protected virtual List<IPresentationImage> CreateImages(KeyObjectSelectionDocumentIod keyObjectDocument)
 		{
 			List<IPresentationImage> images = new List<IPresentationImage>();
-			IList<KeyObjectContentItem> content = new KeyImageDeserializer(keyObjectDocument, _studyTree).Deserialize();
-			foreach (KeyObjectContentItem item in content)
+			if (_studyTree == null)
 			{
-				IPresentationImage image = Create(item.Frame);
-				if (item.PresentationStateSop != null && image is IDicomSoftcopyPresentationStateProvider)
+				Platform.Log(LogLevel.Warn, "Key object document cannot be used to create images because there is no study tree to build from.");
+			}
+			else
+			{
+				IList<KeyObjectContentItem> content = new KeyImageDeserializer(keyObjectDocument, _studyTree).Deserialize();
+				foreach (KeyObjectContentItem item in content)
 				{
-					try
+					IPresentationImage image = Create(item.Frame);
+					if (item.PresentationStateSop != null && image is IDicomSoftcopyPresentationStateProvider)
 					{
-						IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider) image;
-						presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(item.PresentationStateSop.DataSource);
+						try
+						{
+							IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider)image;
+							presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(item.PresentationStateSop.DataSource);
+						}
+						catch (Exception ex)
+						{
+							Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateReadFailure);
+						}
 					}
-					catch (Exception ex)
-					{
-						Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateReadFailure);
-					}
+
+					images.Add(image);
 				}
-				images.Add(image);
 			}
 			return images;
 		}
-
-		/// <summary>
-		/// Creates the presentation images for a given image SOP.
-		/// </summary>
-		/// <param name="imageSop">The image SOP from which presentation images are to be created.</param>
-		/// <returns>A list of created presentation images.</returns>
-		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)
-		{
-			return Create(imageSop);
-		}
-
 		/// <summary>
 		/// Creates an appropriate subclass of <see cref="BasicPresentationImage"/>
 		/// for each <see cref="Frame"/> in the input <see cref="ImageSop"/>.
 		/// </summary>
 		public static List<IPresentationImage> Create(ImageSop imageSop)
 		{
-			return CollectionUtils.Map<Frame, IPresentationImage>(imageSop.Frames,
-			                                                      delegate(Frame frame) { return Create(frame); });
+			return CollectionUtils.Map(imageSop.Frames, delegate(Frame frame) { return Create(frame); });
 		}
 
 		/// <summary>

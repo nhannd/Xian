@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				return CollectionUtils.SelectFirst(this, delegate(Sop sop) { return sop.SopInstanceUID == sopInstanceUid; });
+				return CollectionUtils.SelectFirst(this, delegate(Sop sop) { return sop.SopInstanceUid == sopInstanceUid; });
 			}
 		}
 	}

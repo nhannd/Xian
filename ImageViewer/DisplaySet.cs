@@ -211,6 +211,7 @@ namespace ClearCanvas.ImageViewer
 		public string Name
 		{
 			get { return _name; }
+			set { _name = value; }
 		}
 
 		/// <summary>
@@ -299,6 +300,7 @@ namespace ClearCanvas.ImageViewer
 		public string Uid
 		{
 			get { return _uid; }
+			set { _uid = value; }
 		}
 
 		#endregion

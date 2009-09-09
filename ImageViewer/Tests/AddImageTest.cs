@@ -125,25 +125,25 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops.Count == 2);
 			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid5].Sops.Count == 1);
 
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops[imageUid1].SopInstanceUID == image1.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops[imageUid2].SopInstanceUID == image2.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops[imageUid3].SopInstanceUID == image3.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops[imageUid4].SopInstanceUID == image4.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops[imageUid5].SopInstanceUID == image5.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops[imageUid6].SopInstanceUID == image6.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops[imageUid7].SopInstanceUID == image7.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops[imageUid8].SopInstanceUID == image8.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid5].Sops[imageUid9].SopInstanceUID == image9.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops[imageUid1].SopInstanceUid == image1.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops[imageUid2].SopInstanceUid == image2.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops[imageUid3].SopInstanceUid == image3.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops[imageUid4].SopInstanceUid == image4.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops[imageUid5].SopInstanceUid == image5.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops[imageUid6].SopInstanceUid == image6.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops[imageUid7].SopInstanceUid == image7.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops[imageUid8].SopInstanceUid == image8.SopInstanceUid);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid5].Sops[imageUid9].SopInstanceUid == image9.SopInstanceUid);
 
-			Assert.IsTrue(studyTree.GetSop(imageUid1).SopInstanceUID == image1.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid2).SopInstanceUID == image2.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid3).SopInstanceUID == image3.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid4).SopInstanceUID == image4.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid5).SopInstanceUID == image5.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid6).SopInstanceUID == image6.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid7).SopInstanceUID == image7.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid8).SopInstanceUID == image8.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop(imageUid9).SopInstanceUID == image9.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid1).SopInstanceUid == image1.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid2).SopInstanceUid == image2.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid3).SopInstanceUid == image3.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid4).SopInstanceUid == image4.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid5).SopInstanceUid == image5.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid6).SopInstanceUid == image6.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid7).SopInstanceUid == image7.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid8).SopInstanceUid == image8.SopInstanceUid);
+			Assert.IsTrue(studyTree.GetSop(imageUid9).SopInstanceUid == image9.SopInstanceUid);
 
 			viewer.Dispose();
 

@@ -336,8 +336,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		protected static ImageSopInstanceReferenceMacro CreateImageSopInstanceReference(ImageSop sop)
 		{
 			ImageSopInstanceReferenceMacro imageReference = new ImageSopInstanceReferenceMacro();
-			imageReference.ReferencedSopClassUid = sop.SopClassUID;
-			imageReference.ReferencedSopInstanceUid = sop.SopInstanceUID;
+			imageReference.ReferencedSopClassUid = sop.SopClassUid;
+			imageReference.ReferencedSopInstanceUid = sop.SopInstanceUid;
 			return imageReference;
 		}
 
@@ -349,8 +349,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		protected static ImageSopInstanceReferenceMacro CreateImageSopInstanceReference(Frame frame)
 		{
 			ImageSopInstanceReferenceMacro imageReference = new ImageSopInstanceReferenceMacro();
-			imageReference.ReferencedSopClassUid = frame.ParentImageSop.SopClassUID;
-			imageReference.ReferencedSopInstanceUid = frame.SopInstanceUID;
+			imageReference.ReferencedSopClassUid = frame.ParentImageSop.SopClassUid;
+			imageReference.ReferencedSopInstanceUid = frame.SopInstanceUid;
 			imageReference.ReferencedFrameNumber.SetInt32(0, frame.FrameNumber);
 			return imageReference;
 		}

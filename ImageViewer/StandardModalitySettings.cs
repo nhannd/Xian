@@ -46,13 +46,10 @@ namespace ClearCanvas.ImageViewer
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
-		public ICollection<string> ModalitiesAsArray
+		public List<string> GetModalities()
 		{ 
-			get
-			{
-				return CollectionUtils.Map<string, string>(this.Modalities.Split(','),
-				   delegate(string s) { return s.Trim(); });
-			}
+			return CollectionUtils.Map(Modalities.Split(','),
+			   delegate(string s) { return s.Trim(); });
 		}
 	}
 }

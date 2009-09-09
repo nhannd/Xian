@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			{
 				foreach (Study study in patient.Studies)
 				{
-					return study.StudyInstanceUID;
+					return study.StudyInstanceUid;
 				}
 			}
 

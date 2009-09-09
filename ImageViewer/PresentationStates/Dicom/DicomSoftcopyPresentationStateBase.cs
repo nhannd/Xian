@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					if (image is T)
 					{
 						T tImage = (T) image;
-						if (dictionary.ReferencesFrame(tImage.ImageSop.SeriesInstanceUID, tImage.ImageSop.SopInstanceUID, tImage.Frame.FrameNumber))
+						if (dictionary.ReferencesFrame(tImage.ImageSop.SeriesInstanceUid, tImage.ImageSop.SopInstanceUid, tImage.Frame.FrameNumber))
 							imageCollection.Add(tImage);
 					}
 				}
@@ -690,7 +690,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			ISpatialTransform spatialTransform = image.SpatialTransform;
 			foreach (DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem item in dispAreaMod.DisplayedAreaSelectionSequence)
 			{
-				if (item.ReferencedImageSequence[0].ReferencedSopInstanceUid == image.ImageSop.SopInstanceUID)
+				if (item.ReferencedImageSequence[0].ReferencedSopInstanceUid == image.ImageSop.SopInstanceUid)
 				{
 					RectangleF displayRect = new RectangleF(item.DisplayedAreaTopLeftHandCorner, new Size(item.DisplayedAreaBottomRightHandCorner - new Size(item.DisplayedAreaTopLeftHandCorner)));
 					displayRect = RectangleUtilities.ConvertToPositiveRectangle(displayRect);

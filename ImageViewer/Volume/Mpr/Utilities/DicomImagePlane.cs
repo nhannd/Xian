@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 			if (transform == null || frame == null)
 				return null;
 
-			if (String.IsNullOrEmpty(frame.FrameOfReferenceUid) || String.IsNullOrEmpty(frame.ParentImageSop.StudyInstanceUID))
+			if (String.IsNullOrEmpty(frame.FrameOfReferenceUid) || String.IsNullOrEmpty(frame.ParentImageSop.StudyInstanceUid))
 				return null;
 
 			DicomImagePlane plane;
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		private static DicomImagePlane CreateFromCache(Frame frame)
 		{
-			string key = String.Format("{0}:{1}", frame.ParentImageSop.SopInstanceUID, frame.FrameNumber);
+			string key = String.Format("{0}:{1}", frame.ParentImageSop.SopInstanceUid, frame.FrameNumber);
 
 			DicomImagePlane cachedData;
 			if (_imagePlaneDataCache.ContainsKey(key))
@@ -211,17 +211,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		public string StudyInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.StudyInstanceUID; }
+			get { return _sourceFrame.ParentImageSop.StudyInstanceUid; }
 		}
 
 		public string SeriesInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.SeriesInstanceUID; }
+			get { return _sourceFrame.ParentImageSop.SeriesInstanceUid; }
 		}
 
 		public string SopInstanceUid
 		{
-			get { return _sourceFrame.ParentImageSop.SopInstanceUID; }
+			get { return _sourceFrame.ParentImageSop.SopInstanceUid; }
 		}
 
 		public int InstanceNumber
@@ -319,7 +319,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		{
 			Frame otherFrame = other._sourceFrame;
 
-			if (_sourceFrame.ParentImageSop.StudyInstanceUID != otherFrame.ParentImageSop.StudyInstanceUID)
+			if (_sourceFrame.ParentImageSop.StudyInstanceUid != otherFrame.ParentImageSop.StudyInstanceUid)
 				return false;
 
 			return this._sourceFrame.FrameOfReferenceUid == otherFrame.FrameOfReferenceUid;

@@ -44,19 +44,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	/// Extension point for views onto <see cref="LayoutSettingsApplicationComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public sealed class LayoutConfigurationApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class LayoutConfigurationnComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
 	/// LayoutSettingsApplicationComponent class
 	/// </summary>
-	[AssociateView(typeof(LayoutConfigurationApplicationComponentViewExtensionPoint))]
-	public class LayoutConfigurationApplicationComponent : ConfigurationApplicationComponent
+	[AssociateView(typeof(LayoutConfigurationnComponentViewExtensionPoint))]
+	public class LayoutConfigurationComponent : ConfigurationApplicationComponent
 	{
-		private List<StoredLayoutConfiguration> _layoutConfigurations;
+		private List<StoredLayout> _layouts;
 
-		public LayoutConfigurationApplicationComponent()
+		public LayoutConfigurationComponent()
 		{
 		}
 
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumImageBoxRows
 		{
-			get { return LayoutConfigurationSettings.MaximumImageBoxRows; }
+			get { return LayoutSettings.MaximumImageBoxRows; }
 		}
 
 		/// <summary>
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumImageBoxColumns
 		{
-			get { return LayoutConfigurationSettings.MaximumImageBoxColumns; }
+			get { return LayoutSettings.MaximumImageBoxColumns; }
 		}
 
 		/// <summary>
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumTileRows
 		{
-			get { return LayoutConfigurationSettings.MaximumTileRows; }
+			get { return LayoutSettings.MaximumTileRows; }
 		}
 
 		/// <summary>
@@ -89,64 +89,44 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public int MaximumTileColumns
 		{
-			get { return LayoutConfigurationSettings.MaximumTileColumns; }
+			get { return LayoutSettings.MaximumTileColumns; }
 		}
 		
-		public IList<StoredLayoutConfiguration> LayoutConfigurations
+		public IList<StoredLayout> Layouts
 		{
 			get
 			{
-				if (_layoutConfigurations == null)
+				if (_layouts == null)
 				{
-					_layoutConfigurations = new List<StoredLayoutConfiguration>(LayoutConfigurationSettings.Default.LayoutConfigurations);
+					_layouts = new List<StoredLayout>(LayoutSettings.Default.Layouts);
 
-					StoredLayoutConfiguration defaultConfiguration = _layoutConfigurations.Find(delegate(StoredLayoutConfiguration configuration) { return configuration.IsDefault; });
+					StoredLayout defaultLayout = _layouts.Find(delegate(StoredLayout layout) { return layout.IsDefault; });
 
 					//make sure there is one for each available modality, don't worry about the default - there will always be one provided by the settings class.
 					foreach (string modality in StandardModalities.Modalities)
 					{
-						if (!_layoutConfigurations.Exists(delegate(StoredLayoutConfiguration configuration) { return configuration.Modality == modality; }))
-							_layoutConfigurations.Add(new StoredLayoutConfiguration(modality, defaultConfiguration.ImageBoxRows, defaultConfiguration.ImageBoxColumns, defaultConfiguration.TileRows, defaultConfiguration.TileColumns));
+						if (!_layouts.Exists(delegate(StoredLayout layout) { return layout.Modality == modality; }))
+							_layouts.Add(new StoredLayout(modality, defaultLayout.ImageBoxRows, defaultLayout.ImageBoxColumns, defaultLayout.TileRows, defaultLayout.TileColumns));
 					}
 
 
-					_layoutConfigurations.Sort(new StoredLayoutConfigurationSortByModality());
-					_layoutConfigurations.ForEach
-						(
-							delegate(StoredLayoutConfiguration configuration)
-							{
-								configuration.PropertyChanged +=
-									delegate(object sender, PropertyChangedEventArgs e)
-									{
-										this.Modified = true;
-									};
-							}
-						);
-				
+					_layouts.Sort(new StoredLayoutSortByModality());
+					foreach(StoredLayout layout in _layouts)
+						layout.PropertyChanged += delegate { Modified = true; };
 				}
 
-				return _layoutConfigurations;
+				return _layouts;
 			}
 		}
 
 		public static void Configure(IDesktopWindow desktopWindow)
 		{
-			ConfigurationDialog.Show(desktopWindow, LayoutConfigurationPageProvider.BasicLayoutConfigurationPath);
-		}
-
-		public override void Start()
-		{
-			base.Start();
-		}
-
-		public override void Stop()
-		{
-			base.Stop();
+			ConfigurationDialog.Show(desktopWindow, ConfigurationPageProvider.BasicLayoutConfigurationPath);
 		}
 
 		public override void Save()
 		{
-			LayoutConfigurationSettings.Default.LayoutConfigurations = _layoutConfigurations;
+			LayoutSettings.Default.Layouts = _layouts;
 		}
 	}
 }

@@ -383,8 +383,8 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 						acqDate = DateTimeParser.Parse(dicomImage.ImageSop.Frames[1].AcquisitionDateTime);
 
 					string line = string.Format("StudyUID: {0}, Series: {1}, Acq.Date/Time: {2}, Instance: {3}, Frame: {4}",
-												dicomImage.ImageSop.StudyInstanceUID,
-												dicomImage.ImageSop.SeriesInstanceUID,
+												dicomImage.ImageSop.StudyInstanceUid,
+												dicomImage.ImageSop.SeriesInstanceUid,
 												acqDate.Value.ToString(DateTimeParser.DicomFullDateTimeFormat),
 												dicomImage.ImageSop.InstanceNumber,
 												dicomImage.Frame.FrameNumber);
@@ -413,8 +413,8 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 					double zImagePlane = Math.Round(positionImagePlane.Z, 3, MidpointRounding.AwayFromZero);
 
 					string line = string.Format("StudyUID: {0}, Series: {1}, Normal: {2}, zPosition: {3}, Instance: {4}, Frame: {5}", 
-						dicomImage.ImageSop.StudyInstanceUID,
-						dicomImage.ImageSop.SeriesInstanceUID,
+						dicomImage.ImageSop.StudyInstanceUid,
+						dicomImage.ImageSop.SeriesInstanceUid,
 						normal,
 						zImagePlane,
 						dicomImage.ImageSop.InstanceNumber,
@@ -549,8 +549,8 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				if (image is DicomGrayscalePresentationImage)
 				{
 					DicomGrayscalePresentationImage dicomImage = (DicomGrayscalePresentationImage)image;
-					string line = string.Format("StudyUID: {0}, Series: {1}, Instance: {2}, Frame: {3}", dicomImage.ImageSop.StudyInstanceUID,
-																			dicomImage.ImageSop.SeriesInstanceUID,
+					string line = string.Format("StudyUID: {0}, Series: {1}, Instance: {2}, Frame: {3}", dicomImage.ImageSop.StudyInstanceUid,
+																			dicomImage.ImageSop.SeriesInstanceUid,
 																			dicomImage.ImageSop.InstanceNumber, 
 																			dicomImage.Frame.FrameNumber);
 					Debug.WriteLine(line);
@@ -588,8 +588,8 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				DicomGrayscalePresentationImage dicomOrdered = orderedImage as DicomGrayscalePresentationImage;
 				DicomGrayscalePresentationImage dicomNonOrdered = nonOrderedImage as DicomGrayscalePresentationImage;
 
-				if (dicomOrdered.ImageSop.StudyInstanceUID != dicomNonOrdered.ImageSop.StudyInstanceUID ||
-				    dicomOrdered.ImageSop.SeriesInstanceUID != dicomNonOrdered.ImageSop.SeriesInstanceUID ||
+				if (dicomOrdered.ImageSop.StudyInstanceUid != dicomNonOrdered.ImageSop.StudyInstanceUid ||
+				    dicomOrdered.ImageSop.SeriesInstanceUid != dicomNonOrdered.ImageSop.SeriesInstanceUid ||
 				    dicomOrdered.ImageSop.InstanceNumber != dicomNonOrdered.ImageSop.InstanceNumber)
 					return false;
 

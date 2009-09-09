@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 						if (keyObjectSeries != null && keyObjectSeries.Sops.Count > 0)
 						{
 							Sop keyObjectSop = keyObjectSeries.Sops[0];
-							if (keyObjectSop.SopClassUID == SopClass.KeyObjectSelectionDocumentStorageUid)
+							if (keyObjectSop.SopClassUid == SopClass.KeyObjectSelectionDocumentStorageUid)
 							{
 								ISopDataSource dataSource = keyObjectSop.DataSource;
 								KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(dataSource);

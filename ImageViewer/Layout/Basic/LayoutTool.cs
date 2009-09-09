@@ -97,15 +97,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 					ActionPath pathBoxes = new ActionPath("root/ToolbarLayoutBoxesChooser", resolver);
 					LayoutChangerAction actionBoxes = new LayoutChangerAction("chooseBoxLayout",
-					                                                          LayoutConfigurationSettings.MaximumImageBoxRows,
-					                                                          LayoutConfigurationSettings.MaximumImageBoxColumns,
+					                                                          LayoutSettings.MaximumImageBoxRows,
+					                                                          LayoutSettings.MaximumImageBoxColumns,
 					                                                          this.SetImageBoxLayout, pathBoxes, resolver);
 					root.InsertAction(actionBoxes);
 
 					ActionPath pathTiles = new ActionPath("root/ToolbarLayoutTilesChooser", resolver);
 					LayoutChangerAction actionTiles = new LayoutChangerAction("chooseTileLayout",
-					                                                          LayoutConfigurationSettings.MaximumTileRows,
-					                                                          LayoutConfigurationSettings.MaximumTileColumns,
+					                                                          LayoutSettings.MaximumTileRows,
+					                                                          LayoutSettings.MaximumTileColumns,
 					                                                          this.SetTileLayout, pathTiles, resolver);
 					root.InsertAction(actionTiles);
 

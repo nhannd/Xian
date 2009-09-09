@@ -109,8 +109,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			List<string> studyUids = new List<string>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
-				studyUids.Add(item.StudyInstanceUID);
-				sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUID);
+				studyUids.Add(item.StudyInstanceUid);
+				sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUid);
 			}
 
 			DicomSendServiceClient client = new DicomSendServiceClient();

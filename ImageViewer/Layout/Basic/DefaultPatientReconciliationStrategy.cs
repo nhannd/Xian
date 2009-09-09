@@ -51,13 +51,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 		}
 
-		internal PatientInformation(Patient patient)
-		{
-			_patientId = patient.PatientId;
-			//_patientsName = patient.PatientsName;
-			//_patientsSex = patient.PatientsSex;
-		}
-
 		public string PatientId
 		{
 			get { return _patientId; }

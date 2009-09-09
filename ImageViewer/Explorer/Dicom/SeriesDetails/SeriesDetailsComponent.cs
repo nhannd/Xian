@@ -138,35 +138,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			ITableColumn column = new TableColumn<SeriesIdentifier, string>(
 				SR.TitleSeriesNumber, delegate(SeriesIdentifier identifier)
 				                      	{
-				                      		return identifier.SeriesNumber;
-										}, 
-										null, .2F,
-										delegate(SeriesIdentifier series1, SeriesIdentifier series2)
-				                      	         	{
-				                      	         		string seriesNumber1 = series1.SeriesNumber;
-														string seriesNumber2 = series2.SeriesNumber;
+				                      		return identifier.SeriesNumber.HasValue ? identifier.SeriesNumber.ToString() : "";
+										},
+										null, .2F, delegate(SeriesIdentifier series1, SeriesIdentifier series2)
+										{
+											int? seriesNumber1 = series1.SeriesNumber;
+											int? seriesNumber2 = series2.SeriesNumber;
 
-														if (String.IsNullOrEmpty(seriesNumber1))
-				                      	         		{
-															if (String.IsNullOrEmpty(seriesNumber2))
-																return 0;
-															else
-																return 1;
-				                      	         		}
-														else if (string.IsNullOrEmpty(seriesNumber2))
-				                      	         		{
-				                      	         			return -1;
-				                      	         		}
+											if (seriesNumber1 == null)
+											{
+												if (seriesNumber2 == null)
+													return 0;
+												else
+													return 1;
+											}
+											else if (seriesNumber2 == null)
+											{
+												return -1;
+											}
 
-				                      	         		int n1, n2;
-														if (!int.TryParse(seriesNumber1, out n1))
-				                      	         			n1 = 0;
-
-														if (!int.TryParse(seriesNumber2, out n2))
-															n2 = 0;
-
-				                      	         		return -n1.CompareTo(n2);
-													});
+											return -seriesNumber1.Value.CompareTo(seriesNumber2.Value);
+										});
 			
 			_seriesTable.Columns.Add(column);
 
@@ -249,7 +241,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.SeriesDetails
 			try
 			{
 				SeriesIdentifier identifier = new SeriesIdentifier();
-				identifier.StudyInstanceUid = _studyItem.StudyInstanceUID;
+				identifier.StudyInstanceUid = _studyItem.StudyInstanceUid;
 				IList<SeriesIdentifier> results = query.SeriesQuery(identifier);
 				_seriesTable.Items.AddRange(results);
 			}

@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
@@ -139,6 +140,11 @@ namespace ClearCanvas.Dicom.DataStore
 		public int NumberOfSeriesRelatedInstances
 		{
 			get { return SopInstances.Count; }
+		}
+
+		int? ISeriesData.NumberOfSeriesRelatedInstances
+		{
+			get { return NumberOfSeriesRelatedInstances; }
 		}
 
     	public IEnumerable<ISopInstance> GetSopInstances()

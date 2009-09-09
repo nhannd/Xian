@@ -141,6 +141,9 @@
   <data name="InUse" xml:space="preserve">
     <value>in use</value>
   </data>
+  <data name="LabelCreateSingleImageDisplaySets" xml:space="preserve">
+    <value>Create single image display sets</value>
+  </data>
   <data name="LabelDefault" xml:space="preserve">
     <value>(Default)</value>
   </data>
@@ -149,6 +152,12 @@
   </data>
   <data name="LabelLoadingPriors" xml:space="preserve">
     <value>Loading Priors ...</value>
+  </data>
+  <data name="LabelSplitEchos" xml:space="preserve">
+    <value>Split multi-echo series</value>
+  </data>
+  <data name="LabelSplitMultiframes" xml:space="preserve">
+    <value>Split mixed mult-frame series</value>
   </data>
   <data name="LabelStudyCouldNotBeLoaded" xml:space="preserve">
     <value>The study could not be loaded.</value>
@@ -194,6 +203,9 @@
   </data>
   <data name="Offline" xml:space="preserve">
     <value>offline</value>
+  </data>
+  <data name="TitleDisplaySetCreationConfiguration" xml:space="preserve">
+    <value>Display Sets</value>
   </data>
   <data name="TitleLayoutConfiguration" xml:space="preserve">
     <value>Layout</value>

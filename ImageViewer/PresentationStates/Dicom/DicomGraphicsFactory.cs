@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
 				{
 					ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence, true);
-					if (dictionary.ReferencesFrame(frame.ParentImageSop.SopInstanceUID, frame.FrameNumber))
+					if (dictionary.ReferencesFrame(frame.ParentImageSop.SopInstanceUid, frame.FrameNumber))
 					{
 						list.Add(new DicomGraphicAnnotation(sequenceItem, displayedArea));
 					}

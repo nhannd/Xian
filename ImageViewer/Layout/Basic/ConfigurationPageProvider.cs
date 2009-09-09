@@ -29,41 +29,47 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Common;
 
-namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="LayoutSettingsApplicationComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(LayoutConfigurationApplicationComponentViewExtensionPoint))]
-    public class LayoutConfigurationApplicationComponentView : WinFormsView, IApplicationComponentView
-    {
-        private LayoutConfigurationApplicationComponent _component;
-        private LayoutConfigurationApplicationComponentControl _control;
+	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	public class ConfigurationPageProvider : IConfigurationPageProvider
+	{
+		public ConfigurationPageProvider()
+		{
 
+		}
 
-        #region IApplicationComponentView Members
+		public static string BasicLayoutConfigurationPath
+		{
+			get { return SR.TitleLayoutConfiguration; }
+		}
 
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (LayoutConfigurationApplicationComponent)component;
-        }
+		public static string DisplaySetCreationConfigurationPath
+		{
+			get { return String.Format("{0}/{1}", BasicLayoutConfigurationPath, SR.TitleDisplaySetCreationConfiguration); }
+		}
 
-        #endregion
+		#region IConfigurationPageProvider Members
 
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new LayoutConfigurationApplicationComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+		public IEnumerable<IConfigurationPage> GetPages()
+		{
+			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
+			
+			if (PermissionsHelper.IsInRole(AuthorityTokens.ViewerVisible))
+			{
+				listPages.Add(new ConfigurationPage<LayoutConfigurationComponent>(BasicLayoutConfigurationPath));
+				listPages.Add(new ConfigurationPage<DisplaySetCreationConfigurationComponent>(DisplaySetCreationConfigurationPath));
+			}
+
+			return listPages.AsReadOnly();
+		}
+
+		#endregion
+	}
 }

@@ -33,13 +33,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -119,7 +116,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				if (_cancel)
 					break;
 
-				PatientInformation info = new PatientInformation(patient);
+				PatientInformation info = new PatientInformation();
+				info.PatientId = patient.PatientId;
 				PatientInformation reconciled = reconciliationStrategy.ReconcileSearchCriteria(info);
 				if (!patientIds.Contains(reconciled.PatientId))
 					patientIds.Add(reconciled.PatientId);
@@ -183,19 +181,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				return null;
 			}
 
-			StudyItem item = new StudyItem(study.StudyInstanceUid, applicationEntity, studyLoaderName);
-			item.AccessionNumber = study.AccessionNumber;
-			item.ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(study.ModalitiesInStudy ?? new string[0]);
-			item.NumberOfStudyRelatedInstances = (uint)(study.NumberOfStudyRelatedInstances ?? 0);
-			item.PatientId = study.PatientId;
-			item.PatientsBirthDate = study.PatientsBirthDate;
-			item.PatientsName = new PersonName(study.PatientsName);
-			item.SpecificCharacterSet = study.SpecificCharacterSet;
-			item.StudyDate = study.StudyDate;
-			item.StudyTime = study.StudyTime;
-			item.StudyDescription = study.StudyDescription;
-			
-			item.InstanceAvailability = study.InstanceAvailability;
+			StudyItem item = new StudyItem(study, applicationEntity, studyLoaderName);
 			if (String.IsNullOrEmpty(item.InstanceAvailability))
 				item.InstanceAvailability = "ONLINE";
 

@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				DateParser.Parse(item.StudyDate, out studyDate);
 				studyInformation.StudyDate = studyDate;
 				studyInformation.StudyDescription = item.StudyDescription;
-				studyInformation.StudyInstanceUid = item.StudyInstanceUID;
+				studyInformation.StudyInstanceUid = item.StudyInstanceUid;
 
 				retrieveInformation[applicationEntity].Add(studyInformation);
 			}

@@ -401,7 +401,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				foreach (Study study in patient.Studies)
 				{
-					return study.StudyInstanceUID;
+					return study.StudyInstanceUid;
 				}
 			}
 
@@ -416,7 +416,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				foreach (Study study in patient.Studies)
 				{
-					studyInstanceUids.Add(study.StudyInstanceUID);
+					studyInstanceUids.Add(study.StudyInstanceUid);
 				}
 			}
 

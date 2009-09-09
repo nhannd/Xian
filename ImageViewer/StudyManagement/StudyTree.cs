@@ -129,22 +129,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Adds a <see cref="Sop"/> to the <see cref="StudyTree"/>.
 		/// </summary>
-		public void AddSop(Sop sop)
+		public bool AddSop(Sop sop)
 		{
 			Platform.CheckForNullReference(sop, "sop");
 
 			sop.Validate();
 
-			if (_sops.ContainsKey(sop.SopInstanceUID))
+			if (_sops.ContainsKey(sop.SopInstanceUid))
 			{
 				sop.Dispose();
-				return;
+				return false;
 			}
 
 			AddPatient(sop);
 			AddStudy(sop);
 			AddSeries(sop);
-			_sops[sop.SopInstanceUID] = sop;
+			_sops[sop.SopInstanceUid] = sop;
+		
+			return true;
 		}
 
 		#region Private Methods
@@ -162,7 +164,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void AddStudy(Sop sop)
 		{
-			if (_studies.ContainsKey(sop.StudyInstanceUID))
+			if (_studies.ContainsKey(sop.StudyInstanceUid))
 				return;
 
 			Patient patient = _patients[sop.PatientId];
@@ -170,24 +172,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			study.SetSop(sop);
 			patient.Studies.Add(study);
 
-			_studies[study.StudyInstanceUID] = study;
+			_studies[study.StudyInstanceUid] = study;
 		}
 
 		private void AddSeries(Sop sop)
 		{
 			Series series;
-			if (_series.ContainsKey(sop.SeriesInstanceUID))
+			if (_series.ContainsKey(sop.SeriesInstanceUid))
 			{
-				series = _series[sop.SeriesInstanceUID];
+				series = _series[sop.SeriesInstanceUid];
 			}
 			else
 			{
-				Study study = _studies[sop.StudyInstanceUID];
+				Study study = _studies[sop.StudyInstanceUid];
 				series = new Series(study);
 				series.SetSop(sop);
 				study.Series.Add(series);
 
-				_series[series.SeriesInstanceUID] = series;
+				_series[series.SeriesInstanceUid] = series;
 			}
 
 			sop.ParentSeries = series;

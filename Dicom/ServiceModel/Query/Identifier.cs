@@ -30,15 +30,26 @@
 #endregion
 
 using System.Runtime.Serialization;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	public interface IIdentifier
+	{
+		[DicomField(DicomTags.SpecificCharacterSet)]
+		string SpecificCharacterSet { get; }
+
+		[DicomField(DicomTags.RetrieveAeTitle)]
+		string RetrieveAeTitle { get; }
+
+		[DicomField(DicomTags.InstanceAvailability)]
+		string InstanceAvailability { get; }
+	}
+
 	/// <summary>
 	/// Base class for Dicom query Identifiers.
 	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
-	public abstract class Identifier
+	public abstract class Identifier : IIdentifier
 	{
 		#region Private Fields
 
@@ -52,6 +63,13 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		internal Identifier()
 		{
+		}
+
+		internal Identifier(IIdentifier other)
+		{
+			SpecificCharacterSet = other.SpecificCharacterSet;
+			InstanceAvailability = other.InstanceAvailability;
+			RetrieveAeTitle = other.RetrieveAeTitle;
 		}
 
 		internal Identifier(DicomAttributeCollection attributes)

@@ -31,15 +31,21 @@
 
 
 using System.Runtime.Serialization;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	public interface IImageIdentifier : ISopInstanceData, IIdentifier
+	{
+		[DicomField(DicomTags.InstanceNumber)]
+		new int? InstanceNumber { get; }
+	}
+
 	/// <summary>
 	/// Query identifier for a composite object instance.
 	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
-	public class ImageIdentifier : Identifier
+	public class ImageIdentifier : Identifier, IImageIdentifier
 	{
 		#region Private Fields
 
@@ -60,6 +66,18 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 		}
 
+		public ImageIdentifier(IImageIdentifier other)
+			: base(other)
+		{
+			CopyFrom(other);
+			InstanceNumber = other.InstanceNumber;
+		}
+
+		public ImageIdentifier(ISopInstanceData other)
+		{
+			CopyFrom(other);
+		}
+
 		/// <summary>
 		/// Creates an instance of <see cref="ImageIdentifier"/> from a <see cref="DicomAttributeCollection"/>.
 		/// </summary>
@@ -69,6 +87,15 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		}
 
 		#endregion
+
+		private void CopyFrom(ISopInstanceData other)
+		{
+ 			StudyInstanceUid = other.StudyInstanceUid;
+			SeriesInstanceUid = other.SeriesInstanceUid;
+			SopInstanceUid = other.SopInstanceUid;
+			SopClassUid = other.SopClassUid;
+			InstanceNumber = other.InstanceNumber;
+		}
 
 		#region Public Properties
 
@@ -133,6 +160,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 			get { return _instanceNumber; }
 			set { _instanceNumber = value; }
+		}
+
+		int ISopInstanceData.InstanceNumber
+		{
+		    get { return _instanceNumber ?? 0; }
 		}
 
 		#endregion

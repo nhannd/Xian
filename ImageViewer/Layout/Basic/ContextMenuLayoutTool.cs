@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
 			{
 				if (null == CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
-					delegate(IImageSet imageSet) { return imageSet.Uid == e.Study.StudyInstanceUID; }))
+					delegate(IImageSet imageSet) { return imageSet.Uid == e.Study.StudyInstanceUid; }))
 				{
 					PatientInformation info = new PatientInformation();
 					info.PatientId = e.Study.PatientId;
@@ -271,7 +271,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			DateTime studyTime;
 			TimeParser.Parse(study.StudyTime, out studyTime);
 
-			string modalitiesInStudy = (study.ModalitiesInStudy ?? "").Replace("\\", ",");
+			string modalitiesInStudy = StringUtilities.Combine(study.ModalitiesInStudy, ",");
 
 			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
 				studyDate.ToString(Format.DateFormat),
@@ -283,7 +283,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				study.PatientsName.FormattedName,
 				study.PatientId);
 
-			imageSet.Uid = study.StudyInstanceUID;
+			imageSet.Uid = study.StudyInstanceUid;
 			return imageSet;
 		}
 

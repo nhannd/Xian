@@ -30,14 +30,18 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
+using System.Collections.ObjectModel;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
 	/// A DICOM study.
 	/// </summary>
-	public class Study
+	public class Study : IStudyData
 	{
 		private Sop _sop;
 		private readonly Patient _parentPatient;
@@ -71,93 +75,94 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		#region General Study Module
+		#region IStudyData Members
 
-		/// <summary>
-		/// Gets the Study Instance UID.
-		/// </summary>
-		public string StudyInstanceUID
+		public string StudyInstanceUid
 		{
-			get { return _sop.StudyInstanceUID; }
+			get { return _sop.StudyInstanceUid; }
 		}
 
-		/// <summary>
-		/// Gets the study date.
-		/// </summary>
-		public string StudyDate 
+		public string[] ModalitiesInStudy
+		{
+			get
+			{
+				List<string> modalities = new List<string>();
+				foreach(Series series in this.Series)
+				{
+					if (!modalities.Contains(series.Modality))
+						modalities.Add(series.Modality);
+				}
+				return modalities.ToArray();
+			}	
+		}
+
+		public string StudyDescription
+		{
+			get { return _sop.StudyDescription; }
+		}
+
+		public string StudyId
+		{
+			get { return _sop.StudyId; }
+		}
+
+		public string StudyDate
 		{
 			get { return _sop.StudyDate; }
 		}
 
-		/// <summary>
-		/// Gets the study time.
-		/// </summary>
-		public string StudyTime 
+		public string StudyTime
 		{
 			get { return _sop.StudyTime; }
 		}
 
-		/// <summary>
-		/// Gets the referring physician's name.
-		/// </summary>
-		public PersonName ReferringPhysiciansName 
+		public string AccessionNumber
 		{
-			get { return _sop.ReferringPhysiciansName; } 
+			get { return _sop.AccessionNumber; }
 		}
 
-		/// <summary>
-		/// Gets the accession number.
-		/// </summary>
-		public string AccessionNumber 
+		public PersonName ReferringPhysiciansName
 		{
-			get { return _sop.AccessionNumber; } 
+			get { return _sop.ReferringPhysiciansName; }
 		}
 
-		/// <summary>
-		/// Gets the study description.
-		/// </summary>
-		public string StudyDescription 
+		string IStudyData.ReferringPhysiciansName
 		{
-			get { return _sop.StudyDescription; } 
+			get { return _sop.ReferringPhysiciansName; }
 		}
 
-		/// <summary>
-		/// Gets the names of physicians reading the study.
-		/// </summary>
-		public PersonName[] NameOfPhysiciansReadingStudy 
+		public int NumberOfStudyRelatedSeries
 		{
-			get { return _sop.NameOfPhysiciansReadingStudy; }
+			get { return Series.Count; }
 		}
 
-		#endregion
-
-		#region Patient Study Module
-
-		/// <summary>
-		/// Gets the admitting diagnoses descriptions.
-		/// </summary>
-		public string[] AdmittingDiagnosesDescription 
+		int? IStudyData.NumberOfStudyRelatedSeries
 		{
-			get { return _sop.AdmittingDiagnosesDescription; }
+			get { return NumberOfStudyRelatedSeries; }
 		}
 
-		/// <summary>
-		/// Gets the patient's age.
-		/// </summary>
-		public string PatientsAge 
+		public int NumberOfStudyRelatedInstances
 		{
-			get { return _sop.PatientsAge; }
+			get
+			{
+				int count = 0;
+				foreach (Series series in Series)
+					count += series.NumberOfSeriesRelatedInstances;
+				return count;
+			}
 		}
 
-		/// <summary>
-		/// Gets the additional patient's history.
-		/// </summary>
-		public string AdditionalPatientsHistory 
+		int? IStudyData.NumberOfStudyRelatedInstances
 		{
-			get { return _sop.AdditionalPatientsHistory; }
+			get { return NumberOfStudyRelatedInstances; }	
 		}
 
 		#endregion
+
+		public StudyItem GetStudyItem()
+		{
+			return new StudyItem(_parentPatient, this, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);	
+		}
 
 		/// <summary>
 		/// Returns the study description and study instance UID associated with
@@ -166,7 +171,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			string str = String.Format("{0} | {1}", this.StudyDescription, this.StudyInstanceUID);
+			string str = String.Format("{0} | {1}", this.StudyDescription, this.StudyInstanceUid);
 			return str;
 		}
 

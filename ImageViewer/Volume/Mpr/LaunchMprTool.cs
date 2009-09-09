@@ -119,8 +119,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (currentImage is IImageSopProvider)
 			{
 				Frame currentFrame = ((IImageSopProvider) currentImage).Frame;
-				string studyInstanceUid = currentFrame.StudyInstanceUID;
-				string seriesInstanceUid = currentFrame.SeriesInstanceUID;
+				string studyInstanceUid = currentFrame.StudyInstanceUid;
+				string seriesInstanceUid = currentFrame.SeriesInstanceUid;
 				string frameOfReferenceUid = currentFrame.FrameOfReferenceUid;
 				ImageOrientationPatient imageOrientationPatient = currentFrame.ImageOrientationPatient;
 
@@ -134,8 +134,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					else if (image is IImageSopProvider)
 					{
 						Frame frame = ((IImageSopProvider) image).Frame;
-						if (frame.StudyInstanceUID == studyInstanceUid
-						    && frame.SeriesInstanceUID == seriesInstanceUid
+						if (frame.StudyInstanceUid == studyInstanceUid
+						    && frame.SeriesInstanceUid == seriesInstanceUid
 						    && frame.FrameOfReferenceUid == frameOfReferenceUid
 						    && !frame.ImageOrientationPatient.IsNull
 						    && frame.ImageOrientationPatient.EqualsWithinTolerance(imageOrientationPatient, .01f))

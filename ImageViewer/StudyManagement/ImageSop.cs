@@ -554,12 +554,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			// If it isn't one of the regular uncompressed transfer syntaxes, or if a codec does not
 			// exist to decompress one of the compressed syntaxes, then fail.
-			if (TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID) != TransferSyntax.ImplicitVrLittleEndian &&
-				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID) != TransferSyntax.ExplicitVrLittleEndian &&
-				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID) != TransferSyntax.ExplicitVrBigEndian &&
-				DicomCodecRegistry.GetCodec(TransferSyntax.GetTransferSyntax(this.TransferSyntaxUID)) == null)
+			if (TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid) != TransferSyntax.ImplicitVrLittleEndian &&
+				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid) != TransferSyntax.ExplicitVrLittleEndian &&
+				TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid) != TransferSyntax.ExplicitVrBigEndian &&
+				DicomCodecRegistry.GetCodec(TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid)) == null)
 			{
-				throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUID));
+				throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUid));
 			}
 		}
 	}

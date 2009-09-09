@@ -30,14 +30,18 @@
 #endregion
 
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	public interface IStudyRootStudyIdentifier : IStudyRootData, IIdentifier
+	{ }
+
 	/// <summary>
 	/// Study Root Query identifier for a study.
 	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
-	public class StudyRootStudyIdentifier : StudyIdentifier
+	public class StudyRootStudyIdentifier : StudyIdentifier, IStudyRootStudyIdentifier
 	{
 		#region Private Fields
 
@@ -58,6 +62,18 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 		}
 
+		public StudyRootStudyIdentifier(IStudyRootStudyIdentifier other)
+			: base(other)
+		{
+			CopyFrom(other);
+		}
+
+		public StudyRootStudyIdentifier(IStudyRootData other)
+			: base(other)
+		{
+			CopyFrom(other);
+		}
+
 		/// <summary>
 		/// Creates an instance of <see cref="StudyRootStudyIdentifier"/> from a <see cref="DicomAttributeCollection"/>.
 		/// </summary>
@@ -67,6 +83,15 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		}
 
 		#endregion
+
+		private void CopyFrom(IPatientData other)
+		{
+			PatientId = other.PatientId;
+			PatientsName = other.PatientsName;
+			PatientsBirthDate = other.PatientsBirthDate;
+			PatientsBirthTime = other.PatientsBirthTime;
+			PatientsSex = other.PatientsSex;
+		}
 
 		#region Public Properties
 
