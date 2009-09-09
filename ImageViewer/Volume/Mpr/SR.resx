@@ -243,4 +243,7 @@
   <data name="MessageSourceDataSetMustDefineImageOrientationPatient" xml:space="preserve">
     <value>Each frame in the source dataset must have a defined image orientation (Patient).</value>
   </data>
+  <data name="Mpr" xml:space="preserve">
+    <value>MPR</value>
+  </data>
 </root>
