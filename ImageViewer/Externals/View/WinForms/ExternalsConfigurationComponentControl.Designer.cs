@@ -57,6 +57,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 			this._listExternals.FullRowSelect = true;
 			this._listExternals.GridLines = true;
 			this._listExternals.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+			this._listExternals.HideSelection = false;
 			this._listExternals.LabelEdit = true;
 			this._listExternals.Location = new System.Drawing.Point(0, 0);
 			this._listExternals.MultiSelect = false;
