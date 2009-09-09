@@ -45,13 +45,22 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     		OnBehalfOfGroupChoices = onBehalfOfGroupChoices;
     	}
 
+		/// <summary>
+		/// The on-behalf-of group choices for the current user.
+		/// </summary>
     	[DataMember]
     	public List<StaffGroupSummary> OnBehalfOfGroupChoices;
 
+		/// <summary>
+		/// Staff summaries for recipient staff, specified in the request.
+		/// </summary>
         [DataMember]
         public List<StaffSummary> RecipientStaffs;
 
-        [DataMember]
+		/// <summary>
+		/// Group summaries for recipient groups, specified in the request.
+		/// </summary>
+		[DataMember]
         public List<StaffGroupSummary> RecipientStaffGroups;
     }
 }

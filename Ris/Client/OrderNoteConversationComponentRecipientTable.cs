@@ -112,8 +112,7 @@ namespace ClearCanvas.Ris.Client
 
 				var foundItem = CollectionUtils.SelectFirst(
 						this.Items,
-						existingRecipient => existingRecipient.Item.IsStaffRecipient
-						                     && string.Equals(existingRecipient.Item.StaffSummary.StaffId, staff.StaffId));
+						r => r.Item.IsStaffRecipient && string.Equals(r.Item.StaffSummary.StaffId, staff.StaffId));
 
 				if (foundItem == null)
 				{
@@ -143,8 +142,7 @@ namespace ClearCanvas.Ris.Client
 
 				var foundItem = CollectionUtils.SelectFirst(
 						this.Items,
-						existingRecipient => existingRecipient.Item.IsGroupRecipient
-						                     && string.Equals(existingRecipient.Item.StaffGroupSummary.Name, group.Name));
+						r => r.Item.IsGroupRecipient && string.Equals(r.Item.StaffGroupSummary.Name, group.Name));
 
 				if (foundItem == null)
 				{

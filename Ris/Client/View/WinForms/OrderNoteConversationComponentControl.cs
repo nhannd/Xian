@@ -67,6 +67,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_onBehalf.DataSource = _component.OnBehalfOfGroupChoices;
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
+			_onBehalf.Format += (
+				(source, e) => e.Value = _component.FormatOnBehalfOf(e.ListItem));
 
 			_recipients.Table = _component.Recipients;
 			_recipients.MenuModel = _component.RecipientsActionModel;
@@ -80,21 +82,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_groupRecipientLookup.DataBindings.Add("Value", _component, "SelectedGroupRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 			_groupRecipientAddButton.DataBindings.Add("Enabled", _component, "AddGroupRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_completeButton.DataBindings.Add("Text", _component, "CompleteLabel", true, DataSourceUpdateMode.OnPropertyChanged);
-			_completeButton.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_replyCheckBox.Visible = !_component.IsCreatingNewNote;
-			_replyCheckBox.DataBindings.Add("Checked", _component, "Reply", true, DataSourceUpdateMode.OnPropertyChanged);
+			_completeButton.DataBindings.Add("Text", _component, "CompleteButtonLabel", true, DataSourceUpdateMode.OnPropertyChanged);
+			_completeButton.DataBindings.Add("Enabled", _component, "CompleteButtonEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_notesGroupBox.Text = _component.OrderNotesLabel;
-
-			int reducedHeight = this.Height - _componentSplitContainer.Panel1.Height;
-
-			_componentSplitContainer.Panel1Collapsed = !_component.HasExistingNotes;
-			_componentSplitContainer.DataBindings.Add("Panel2Collapsed", _component, "HideReply", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			if (_componentSplitContainer.Panel1Collapsed)
-				this.Size = new Size(this.Size.Width, reducedHeight);
 
 			_component.PropertyChanged += _component_propertyChanged;
 		}
@@ -103,41 +94,35 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			if(e.PropertyName == "Recipients")
 			{
-				_recipients.Table = _component.Recipients;
+//				_recipients.Table = _component.Recipients;
 			}
-			else if (e.PropertyName == "CompleteLabel")
+			else if (e.PropertyName == "CompleteButtonLabel")
 			{
-				_completeButton.Text = _component.CompleteLabel;
+				_completeButton.Text = _component.CompleteButtonLabel;
 			}
 		}
 
 		private void _staffRecipientAddButton_Click(object sender, System.EventArgs e)
 		{
-			using(new CursorManager(Cursors.WaitCursor))
-			{
-				_component.AddStaffRecipient();
-			}
+			_component.AddStaffRecipient();
 		}
 
 		private void _groupRecipientAddButton_Click(object sender, System.EventArgs e)
 		{
-			using (new CursorManager(Cursors.WaitCursor))
-			{
-				_component.AddGroupRecipient();
-			}
+			_component.AddGroupRecipient();
 		}
 
 		private void _completeButton_Click(object sender, System.EventArgs e)
 		{
 			using (new CursorManager(Cursors.WaitCursor))
 			{
-				_component.OnComplete();
+				_component.AcknowledgeAndPost();
 			}
 		}
 
 		private void _cancelButton_Click(object sender, System.EventArgs e)
 		{
-			_component.OnCancel();
+			_component.Cancel();
 		}
 	}
 }

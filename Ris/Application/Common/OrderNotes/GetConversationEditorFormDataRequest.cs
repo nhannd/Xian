@@ -46,10 +46,16 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     		RecipientStaffGroupNames = recipientStaffGroupNames;
     	}
 
+		/// <summary>
+		/// List of staff IDs for which to staff summary information should be obtained.
+		/// </summary>
     	[DataMember]
         public List<string> RecipientStaffIDs;
 
-        [DataMember]
+		/// <summary>
+		/// List of groups for which to summary information should be obtained.
+		/// </summary>
+		[DataMember]
         public List<string> RecipientStaffGroupNames;
     }
 }

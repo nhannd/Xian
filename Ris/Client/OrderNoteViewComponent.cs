@@ -44,28 +44,24 @@ namespace ClearCanvas.Ris.Client
 		[DataContract]
 		public class OrderNoteContext : DataContractBase
 		{
+			[DataContract]
+			public class Foo
+			{
+				[DataMember]
+				public OrderNoteDetail NoteDetail;
+
+				[DataMember]
+				public bool WillAcknowledge;
+			}
+
 			public OrderNoteContext(List<OrderNoteDetail> orderNotes)
 			{
-				this.OrderNotes = orderNotes;
-				this.NotesAcknowledged = CollectionUtils.Map<OrderNoteDetail, bool>(
-					orderNotes,
-					delegate(OrderNoteDetail note)
-						{
-							return !note.CanAcknowledge;
-						});
+				this.OrderNotes = CollectionUtils.Map(orderNotes,
+					(OrderNoteDetail note) => new Foo { NoteDetail = note });
 			}
 
 			[DataMember]
-			public List<OrderNoteDetail> OrderNotes;
-
-			[DataMember]
-			public List<bool> NotesAcknowledged;
-
-			public bool IsNoteAcknowledged(OrderNoteDetail note)
-			{
-				int index = this.OrderNotes.IndexOf(note);
-				return this.NotesAcknowledged[index];
-			}
+			public List<Foo> OrderNotes;
 		}
 
 		private event EventHandler _checkedItemsChanged;
@@ -93,51 +89,53 @@ namespace ClearCanvas.Ris.Client
 			get { return _context.OrderNotes.Count > 0; }
 		}
 
-		public bool HasNotesToBeAcknowledged
+		/// <summary>
+		/// Gets a value indicating whether there are any notes that can be ack'd by the current user.
+		/// </summary>
+		public bool HasAcknowledgeableNotes
 		{
 			get
 			{
-				return CollectionUtils.Contains(_context.OrderNotes,
-							delegate(OrderNoteDetail note)
-							{
-								return note.CanAcknowledge;
-							});
+				return CollectionUtils.Contains(_context.OrderNotes, note => note.NoteDetail.CanAcknowledge);
 			}
 		}
 
-		public bool HasUnacknowledgedNotes
+		/// <summary>
+		/// Gets the set of notes that can be ack'ed by the current user.
+		/// </summary>
+		public List<OrderNoteDetail> AcknowledgeableNotes
 		{
 			get
 			{
-				return CollectionUtils.Contains(_context.NotesAcknowledged,
-							delegate(bool noteAcknowledged)
-							{
-								return !noteAcknowledged;
-							});
+				return CollectionUtils.Map(
+					CollectionUtils.Select(_context.OrderNotes, note => note.NoteDetail.CanAcknowledge),
+					(OrderNoteContext.Foo f) => f.NoteDetail);
 			}
 		}
 
-		public List<OrderNoteDetail> NotesToBeAcknowledged
+		/// <summary>
+		/// Gets the set of notes that are currently checked off to be acknowledged.
+		/// </summary>
+		public List<OrderNoteDetail> CheckedNotes
 		{
 			get
 			{
-				return CollectionUtils.Select(_context.OrderNotes,
-					delegate(OrderNoteDetail note)
-					{
-						return note.CanAcknowledge;
-					});
+				return CollectionUtils.Map(
+					CollectionUtils.Select(_context.OrderNotes, f => f.NoteDetail.CanAcknowledge && f.WillAcknowledge),
+					(OrderNoteContext.Foo f) => f.NoteDetail);
 			}
 		}
 
-		public List<OrderNoteDetail> NotesJustAcknowledged
+		/// <summary>
+		/// Gets a value indicating whether the user has checked all acknowledgeable notes.
+		/// </summary>
+		public bool AllAcknowledgeableNotesAreChecked
 		{
 			get
 			{
-				return CollectionUtils.Select(_context.OrderNotes,
-					delegate(OrderNoteDetail note)
-					{
-						return note.CanAcknowledge && _context.IsNoteAcknowledged(note);
-					});
+				// all acknowledgeable notes will be acknowledged
+				return CollectionUtils.TrueForAll(_context.OrderNotes,
+					f => !f.NoteDetail.CanAcknowledge || f.WillAcknowledge);
 			}
 		}
 
@@ -155,7 +153,11 @@ namespace ClearCanvas.Ris.Client
 		protected override void SetTag(string tag, string data)
 		{
 			// the page uses SetTag to indicate that the check state has changed
-			_context.NotesAcknowledged = JsmlSerializer.Deserialize<List<bool>>(data);
+			var checkStates = JsmlSerializer.Deserialize<List<bool>>(data);
+			for (var i = 0; i < _context.OrderNotes.Count; i++)
+			{
+				_context.OrderNotes[i].WillAcknowledge = checkStates[i];
+			}
 			EventsHelper.Fire(_checkedItemsChanged, this, EventArgs.Empty);
 		}
 

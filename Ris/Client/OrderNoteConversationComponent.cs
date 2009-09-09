@@ -39,7 +39,6 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
-using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
@@ -67,7 +66,6 @@ namespace ClearCanvas.Ris.Client
 		private string _body;
 
 		private bool _urgent;
-		private bool _reply;
 
 		private IList<StaffGroupSummary> _onBehalfOfChoices;
 		private StaffGroupSummary _onBehalfOf;
@@ -84,10 +82,10 @@ namespace ClearCanvas.Ris.Client
 
 		private ICannedTextLookupHandler _cannedTextLookupHandler;
 
-		private bool _usingDefaultRecipients;
-
 		private OrderNoteViewComponent _orderNoteViewComponent;
 		private ChildComponentHost _orderNotesComponentHost;
+
+		private readonly StaffGroupSummary _emptyStaffGroup = new StaffGroupSummary();
 
 		#endregion
 
@@ -103,6 +101,15 @@ namespace ClearCanvas.Ris.Client
 			_orderRef = orderRef;
 			_orderNoteCategories = orderNoteCategories != null ? new List<string>(orderNoteCategories) : new List<string>();
 			_recipients = new RecipientTable(this);
+
+			this.Validation.Add(new ValidationRule("SelectedRecipient",
+				delegate
+				{
+					// if body is non-empty (a new note is being posted), must have at least 1 recip
+					var atLeastOneRecipient = CollectionUtils.Contains(_recipients.Items, r => r.IsChecked);
+					return new ValidationResult(atLeastOneRecipient || IsBodyEmpty, SR.MessageNoRecipientsSelected);
+				}));
+
 		}
 
 		#endregion
@@ -114,75 +121,71 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public override void Start()
 		{
-			_staffLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
-			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow, false);
-			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
-
-			var defaultRecipients = new List<Checkable<RecipientTableItem>>();
+			// load the existing conversation, plus editor form data
+			var templateRecipients = new List<Checkable<RecipientTableItem>>();
 			var orderNotes = new List<OrderNoteDetail>();
-
+			GetConversationEditorFormDataResponse formDataResponse = null;
 			Platform.GetService<IOrderNoteService>(
 				service =>
 				{
 					var formDataRequest =
-						new GetConversationEditorFormDataRequest(OrderNoteConversationRecipientsSettingsHelper.Instance.StaffIDs,
-						                                         OrderNoteConversationRecipientsSettingsHelper.Instance.StaffGroupNames);
-					var formDataResponse = service.GetConversationEditorFormData(formDataRequest);
-					_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
-
-					if (formDataResponse.RecipientStaffs != null && formDataResponse.RecipientStaffs.Count > 0)
-					{
-						defaultRecipients.AddRange(
-							CollectionUtils.Map(formDataResponse.RecipientStaffs,
-							                    (StaffSummary s) => new Checkable<RecipientTableItem>(
-							                                        	new RecipientTableItem(s),
-							                                        	OrderNoteConversationRecipientsSettingsHelper
-							                                        		.Instance.GetCheckState(s))));
-					}
-
-					if (formDataResponse.RecipientStaffGroups != null && formDataResponse.RecipientStaffGroups.Count > 0)
-					{
-						defaultRecipients.AddRange(
-							CollectionUtils.Map(formDataResponse.RecipientStaffGroups,
-							                    (StaffGroupSummary sg) => new Checkable<RecipientTableItem>(
-							                                              	new RecipientTableItem(sg),
-							                                              	OrderNoteConversationRecipientsSettingsHelper
-							                                              		.Instance.GetCheckState(sg))));
-					}
-
-					this.OnBehalfOf = OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
+						new GetConversationEditorFormDataRequest(new List<string>(), new List<string>());
+					formDataResponse = service.GetConversationEditorFormData(formDataRequest);
 
 					var request = new GetConversationRequest(_orderRef, _orderNoteCategories, false);
 					var response = service.GetConversation(request);
 
 					_orderRef = response.OrderRef;
-
 					orderNotes = response.OrderNotes;
 				});
 
-			this.Validation.Add(new ValidationRule("SelectedRecipient",
-				delegate
+
+			// init on-behalf of choices
+			_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
+			_onBehalfOfChoices.Insert(0, _emptyStaffGroup);
+			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices,
+				group => group.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
+
+			// Set default recipients list, either based on the existing conversation, or from template if new conversation
+			if(orderNotes.Count > 0)
+			{
+				InitializeRecipients(orderNotes);
+			}
+			else
+			{
+				if (formDataResponse.RecipientStaffs != null && formDataResponse.RecipientStaffs.Count > 0)
 				{
-					var atLeastOneRecipient = CollectionUtils.Contains(_recipients.Items, checkable => checkable.IsChecked);
+					templateRecipients.AddRange(
+						CollectionUtils.Map(formDataResponse.RecipientStaffs,
+											(StaffSummary s) => new Checkable<RecipientTableItem>(
+																	new RecipientTableItem(s),
+																	true)));
+				}
 
-					var notPosting = string.IsNullOrEmpty(_body);
-
-					return new ValidationResult(atLeastOneRecipient || notPosting, SR.MessageNoRecipientsSelected);
-				}));
-
-			// Set default recipients list
-			InitializeRecipients(orderNotes, defaultRecipients);
+				if (formDataResponse.RecipientStaffGroups != null && formDataResponse.RecipientStaffGroups.Count > 0)
+				{
+					templateRecipients.AddRange(
+						CollectionUtils.Map(formDataResponse.RecipientStaffGroups,
+											(StaffGroupSummary sg) => new Checkable<RecipientTableItem>(
+																		new RecipientTableItem(sg),
+																		true)));
+				}
+			}
 
 			// build the action model
 			_recipientsActionModel = new CrudActionModel(false, false, true, new ResourceResolver(this.GetType(), true));
 			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
+			// init conversation view component
 			_orderNoteViewComponent = new OrderNoteViewComponent(orderNotes);
-			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteLabel"); };
+			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteButtonLabel"); };
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteViewComponent);
 			_orderNotesComponentHost.StartComponent();
 
-			_reply = this.IsCreatingNewNote || !string.IsNullOrEmpty(_body);
+			// init lookup handlers
+			_staffLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow);
+			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow, false);
+			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
 
 			base.Start();
 		}
@@ -222,45 +225,39 @@ namespace ClearCanvas.Ris.Client
 			set { _urgent = value; }
 		}
 
-		public bool Reply
-		{
-			get { return _reply; }
-			set { _reply = value; }
-		}
-
-		public bool HideReply
-		{
-			get { return !_reply; }
-		}
-
 		public ICannedTextLookupHandler CannedTextLookupHandler
 		{
 			get { return _cannedTextLookupHandler; }
 		}
 
-		public IList<string> OnBehalfOfGroupChoices
+		public IList<StaffGroupSummary> OnBehalfOfGroupChoices
 		{
 			get
 			{
-				var choices = CollectionUtils.Map(_onBehalfOfChoices, (StaffGroupSummary summary) => summary.Name);
-				choices.Insert(0, string.Empty);
-				return choices;
-			}
+				return _onBehalfOfChoices;
+            }
 		}
 
-		public string OnBehalfOf
+		public string FormatOnBehalfOf(object item)
+		{
+			var s = item == null ? null : ((StaffGroupSummary) item).Name;
+			return s ?? "";
+		}
+
+		public StaffGroupSummary OnBehalfOf
 		{
 			get
 			{
-				return _onBehalfOf != null ? _onBehalfOf.Name : string.Empty;
+				return _onBehalfOf;
 			}
 			set
 			{
-				_onBehalfOf = CollectionUtils.SelectFirst(
-					_onBehalfOfChoices,
-					summary => string.Equals(summary.Name, value));
-
-				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = _onBehalfOf != null ? _onBehalfOf.Name : string.Empty;
+				if(!Equals(value, _onBehalfOf))
+				{
+					_onBehalfOf = value;
+					NotifyPropertyChanged("OnBehalfOf");
+					OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = _onBehalfOf != null ? _onBehalfOf.Name : string.Empty;
+				}
 			}
 		}
 
@@ -311,7 +308,6 @@ namespace ClearCanvas.Ris.Client
 			if (_selectedStaff == null) return;
 
 			_recipients.Add(_selectedStaff, true);
-			NotifyPropertyChanged("Recipients");
 		}
 
 		#endregion
@@ -349,36 +345,36 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderNoteViewComponent.HasExistingNotes; }
 		}
 
-		public bool IsCreatingNewNote
-		{
-			get { return !this.HasExistingNotes || !_orderNoteViewComponent.HasNotesToBeAcknowledged; }
-		}
-
 		public string OrderNotesLabel
 		{
 			get
 			{
-				return _orderNoteViewComponent.HasNotesToBeAcknowledged
+				return _orderNoteViewComponent.HasAcknowledgeableNotes
 					? SR.TitleConversationHistoryWithCheckBoxes
 					: SR.TitleConversationHistory;
 			}
 		}
 
-		public string CompleteLabel
+		public string CompleteButtonLabel
 		{
-			get {
-				return _orderNoteViewComponent.NotesJustAcknowledged.Count > 0
-				       	? (string.IsNullOrEmpty(_body) ? SR.TitleAcknowledge : SR.TitleAcknowledgeAndPost)
-				       	: (string.IsNullOrEmpty(_body) ? SR.TitleDone : SR.TitlePost);
+			get
+			{
+				return _orderNoteViewComponent.CheckedNotes.Count > 0
+						? (IsBodyEmpty ? SR.TitleAcknowledge : SR.TitleAcknowledgeAndPost)
+						: SR.TitlePost;
 			}
 		}
 
-		public bool CompleteEnabled
+		public bool CompleteButtonEnabled
 		{
-			get { return !_orderNoteViewComponent.HasUnacknowledgedNotes; }
+			get
+			{
+				return (_orderNoteViewComponent.CheckedNotes.Count != 0 || !IsBodyEmpty)
+					&& _orderNoteViewComponent.AllAcknowledgeableNotesAreChecked;
+			}
 		}
 
-		public void OnComplete()
+		public void AcknowledgeAndPost()
 		{
 			if (this.HasValidationErrors)
 			{
@@ -390,31 +386,37 @@ namespace ClearCanvas.Ris.Client
 			{
 				SaveChanges();
 
-				this.Exit(ApplicationComponentExitCode.Accepted);
+				Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
-					delegate
-					{
-						this.ExitCode = ApplicationComponentExitCode.Error;
-						this.Host.Exit();
-					});
+				                        () => Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
-		public void OnCancel()
+		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			Host.Exit();
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
 		#endregion
 
 		#region Private Methods
 
-		private void InitializeRecipients(IEnumerable<OrderNoteDetail> notes, IEnumerable<Checkable<RecipientTableItem>> defaultRecipients)
+		private bool IsBodyEmpty
 		{
+			get { return string.IsNullOrEmpty(_body); }
+		}
+
+		private void InitializeRecipients(IEnumerable<OrderNoteDetail> notes)
+		{
+			// rules:
+			// 1. if note was sent on behalf of a group, the note should be posted back to that group by default
+			// 2. if note was not send on behalf of a group, it should be posted back to it's author by default
+			// 3. the note should be posted back to all group recipients, and all staff recipients excluding the
+			// current user (effectively "reply all")
+
 			foreach (var note in notes)
 			{
 				if(note.OnBehalfOfGroup != null)
@@ -439,61 +441,36 @@ namespace ClearCanvas.Ris.Client
 					_recipients.Add(groupRecipient.Group, false);
 				}
 			}
-
-			// Load Default recipients
-			if (_recipients.Items.Count == 0)
-			{
-				_recipients.Items.AddRange(defaultRecipients);
-				_usingDefaultRecipients = true;
-			}
 		}
 
 		private static bool IsStaffCurrentUser(StaffSummary staff)
 		{
-			return string.Equals(PersonNameFormat.Format(staff.Name), PersonNameFormat.Format(LoginSession.Current.FullName));
+			return string.Equals(staff.StaffId, LoginSession.Current.Staff.StaffId);
 		}
 
 		private void SaveChanges()
 		{
 			var orderNoteRefsToBeAcknowledged = CollectionUtils.Map(
-				_orderNoteViewComponent.NotesJustAcknowledged, (OrderNoteDetail note) => note.OrderNoteRef);
+				_orderNoteViewComponent.CheckedNotes, (OrderNoteDetail note) => note.OrderNoteRef);
 
 			Platform.GetService<IOrderNoteService>(
 				service => service.AcknowledgeAndPost(new AcknowledgeAndPostRequest(_orderRef, orderNoteRefsToBeAcknowledged, GetReply())));
-
-			if (_usingDefaultRecipients)
-			{
-				OrderNoteConversationRecipientsSettingsHelper.Instance.DefaultRecipients = 
-					CollectionUtils.Map(_recipients.Items,
-					                    (Checkable<RecipientTableItem> item) =>
-					                    {
-					                    	var setting = new RecipientSettings {Checked = item.IsChecked};
-					                    	if (item.Item.IsStaffRecipient)
-					                    		setting.StaffId = item.Item.StaffSummary.StaffId;
-					                    	else
-					                    		setting.StaffGroupName = item.Item.StaffGroupSummary.Name;
-
-					                    	return setting;
-					                    });
-
-				OrderNoteConversationRecipientsSettingsHelper.Instance.Save();
-			}
 		}
 
 		private OrderNoteDetail GetReply()
 		{
 			// if Reply is unchecked or the body is empty, there is no reply to send.
-			if (!_reply || string.IsNullOrEmpty(_body)) return null;
-
-			var reply = new OrderNoteDetail(
-				OrderNoteCategory.PreliminaryDiagnosis.Key, 
-				_body, 
-				_onBehalfOf,
-				_urgent,
-				_recipients.SelectedStaff, 
-				_recipients.SelectedStaffGroups);
-
-			return reply;
+			if (!IsBodyEmpty)
+			{
+				return new OrderNoteDetail(
+					OrderNoteCategory.PreliminaryDiagnosis.Key,
+					_body,
+					_onBehalfOf == _emptyStaffGroup ? null : _onBehalfOf,
+					_urgent,
+					_recipients.SelectedStaff,
+					_recipients.SelectedStaffGroups);
+			}
+			return null;
 		}
 
 		private void DeleteRecipient()
