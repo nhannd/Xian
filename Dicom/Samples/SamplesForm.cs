@@ -48,15 +48,15 @@ namespace ClearCanvas.Dicom.Samples
         private const string STR_Verify = "Verify";
         #endregion
 
-		private StorageScu _storageScu = new StorageScu();
-        private VerificationScu _verificationScu = new VerificationScu();
+		private readonly StorageScu _storageScu = new StorageScu();
+        private readonly VerificationScu _verificationScu = new VerificationScu();
 
         public SamplesForm()
         {
 			InitializeComponent();
             _buttonStorageScuVerify.Text = STR_Verify;
 
-            Logger.RegisterLogHandler(this.OutputTextBox);
+            Logger.RegisterLogHandler(OutputTextBox);
 
             if (String.IsNullOrEmpty(Properties.Settings.Default.ScpStorageFolder))
             {
@@ -75,22 +75,23 @@ namespace ClearCanvas.Dicom.Samples
         private void buttonStorageScuSelectFiles_Click(object sender, EventArgs e)
         {
 			openFileDialogStorageScu.Multiselect = true;
-			
-            this.openFileDialogStorageScu.ShowDialog();
 
-            foreach (String file in this.openFileDialogStorageScu.FileNames)
-            {
-                if (file != null)
-                    try
-                    {
-                        _storageScu.AddFileToSend(file);
-                    }
-                    catch (FileNotFoundException ex)
-                    {
-                        Logger.LogErrorException(ex, "Unexpectedly cannot find file: {0}", file);
-                    }
-            }
-            
+			openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
+			if (DialogResult.OK == openFileDialogStorageScu.ShowDialog())
+			{
+				foreach (String file in openFileDialogStorageScu.FileNames)
+				{
+					if (file != null)
+						try
+						{
+							_storageScu.AddFileToSend(file);
+						}
+						catch (FileNotFoundException ex)
+						{
+							Logger.LogErrorException(ex, "Unexpectedly cannot find file: {0}", file);
+						}
+				}
+			}
         }
 
         private void buttonStorageScuConnect_Click(object sender, EventArgs e)
@@ -126,11 +127,13 @@ namespace ClearCanvas.Dicom.Samples
 
         private void buttonStorageScuSelectDirectory_Click(object sender, EventArgs e)
         {
-            folderBrowserDialogStorageScu.ShowDialog();
-            if (folderBrowserDialogStorageScu.SelectedPath == null)
-                return;
+			if (DialogResult.OK == folderBrowserDialogStorageScu.ShowDialog())
+			{
+				if (folderBrowserDialogStorageScu.SelectedPath == null)
+					return;
 
-            _storageScu.AddDirectoryToSend(folderBrowserDialogStorageScu.SelectedPath);
+				_storageScu.AddDirectoryToSend(folderBrowserDialogStorageScu.SelectedPath);
+			}
         }
 
         private void _buttonStorageScuSelectStorageLocation_Click(object sender, EventArgs e)
@@ -167,32 +170,27 @@ namespace ClearCanvas.Dicom.Samples
                 Logger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
                 return;
             }
-            IAsyncResult o_AsyncResult = _verificationScu.BeginVerify(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port, new AsyncCallback(VerifyComplete), null);
+            _verificationScu.BeginVerify(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port, new AsyncCallback(VerifyComplete), null);
             SetVerifyButton(true);
-
-			//QueryScu.Find(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port);
         }
 
         private void VerifyComplete(IAsyncResult ar)
         {
             VerificationResult verificationResult = _verificationScu.EndVerify(ar);
-            Logger.LogInfo("Verify result: " + verificationResult.ToString());
+            Logger.LogInfo("Verify result: " + verificationResult);
             SetVerifyButton(false);
         }
 
 
         private void SetVerifyButton(bool running)
         {
-            if (!this.InvokeRequired)
+            if (!InvokeRequired)
             {
-                if (running)
-                    _buttonStorageScuVerify.Text = STR_Cancel;
-                else
-                    _buttonStorageScuVerify.Text = STR_Verify;
+                _buttonStorageScuVerify.Text = running ? STR_Cancel : STR_Verify;
             }
             else
             {
-                this.BeginInvoke(new Action<bool>(SetVerifyButton), new object[] { running });
+                BeginInvoke(new Action<bool>(SetVerifyButton), new object[] { running });
             }
         }
 
@@ -206,6 +204,7 @@ namespace ClearCanvas.Dicom.Samples
 		private void _openFileButton_Click(object sender, EventArgs e)
 		{
 			openFileDialogStorageScu.Multiselect = false;
+			openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
 			if (DialogResult.OK == openFileDialogStorageScu.ShowDialog())
 			{
 				_sourcePathTextBox.Text = openFileDialogStorageScu.FileName;
@@ -269,8 +268,11 @@ namespace ClearCanvas.Dicom.Samples
 			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
 			{
 				Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "StudyRootStudy.xml");
-				doc.Load(stream);
-				stream.Close();
+				if (stream != null)
+				{
+					doc.Load(stream);
+					stream.Close();
+				}
 				comboBoxQueryScuQueryLevel.Items.Clear();
 				comboBoxQueryScuQueryLevel.Items.Add("STUDY");
 				comboBoxQueryScuQueryLevel.Items.Add("SERIES");
@@ -279,8 +281,11 @@ namespace ClearCanvas.Dicom.Samples
 			else
 			{
 				Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "PatientRootPatient.xml");
-				doc.Load(stream);
-				stream.Close();
+				if (stream != null)
+				{
+					doc.Load(stream);
+					stream.Close();
+				}
 				comboBoxQueryScuQueryLevel.Items.Clear();
 				comboBoxQueryScuQueryLevel.Items.Add("PATIENT");
 				comboBoxQueryScuQueryLevel.Items.Add("STUDY");
@@ -300,12 +305,12 @@ namespace ClearCanvas.Dicom.Samples
 			xmlSettings.IndentChars = "  ";
 
 			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
-
-			doc.WriteTo(tw);
-
-			tw.Close();
-
-			this.textBoxQueryMessage.Text = sw.ToString();
+			if (tw != null)
+			{
+				doc.WriteTo(tw);
+				tw.Close();
+			}
+			textBoxQueryMessage.Text = sw.ToString();
 		}
 
 		private void buttonQueryScuSearch_Click(object sender, EventArgs e)
@@ -388,8 +393,12 @@ namespace ClearCanvas.Dicom.Samples
 			}
 
 			Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), xmlFile);
-			doc.Load(stream);
-			stream.Close();
+			if (stream != null)
+			{
+				doc.Load(stream);
+				stream.Close();
+			}
+
 			StringWriter sw = new StringWriter();
 
 			XmlWriterSettings xmlSettings = new XmlWriterSettings();
@@ -403,11 +412,32 @@ namespace ClearCanvas.Dicom.Samples
 
 			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
 
-			doc.WriteTo(tw);
+			if (tw != null)
+			{
+				doc.WriteTo(tw); 
+				tw.Close();
+			}
 
-			tw.Close();
+			textBoxQueryMessage.Text = sw.ToString();
+		}
 
-			this.textBoxQueryMessage.Text = sw.ToString();
+		private void _buttonOpenDicomdir_Click(object sender, EventArgs e)
+		{
+			openFileDialogStorageScu.Filter = "DICOMDIR|*.*|DICOM files|*.dcm";
+			openFileDialogStorageScu.FileName = String.Empty;
+			openFileDialogStorageScu.Multiselect = false;
+			if (DialogResult.OK == openFileDialogStorageScu.ShowDialog())
+			{
+				_textBoxDicomdir.Text = openFileDialogStorageScu.FileName;
+
+				DicomdirReader reader = new DicomdirReader();
+				DicomDirectory dir = reader.Read(openFileDialogStorageScu.FileName);
+
+				DicomdirDisplay display = new DicomdirDisplay();
+				display.Add(dir);
+
+				display.Show(this);
+			}
 		}
     }
 }

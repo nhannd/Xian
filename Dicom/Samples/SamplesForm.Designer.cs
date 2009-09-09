@@ -119,6 +119,10 @@ namespace ClearCanvas.Dicom.Samples
 			this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
 			this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this._textBoxDicomdir = new System.Windows.Forms.TextBox();
+			this.label19 = new System.Windows.Forms.Label();
+			this._buttonOpenDicomdir = new System.Windows.Forms.Button();
 			this.SamplesSplitContainer.Panel1.SuspendLayout();
 			this.SamplesSplitContainer.Panel2.SuspendLayout();
 			this.SamplesSplitContainer.SuspendLayout();
@@ -127,6 +131,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.StorageScpTab.SuspendLayout();
 			this.CompressionTab.SuspendLayout();
 			this.queryScuTab.SuspendLayout();
+			this.tabPage1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// SamplesSplitContainer
@@ -159,6 +164,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.SamplesTabs.Controls.Add(this.StorageScpTab);
 			this.SamplesTabs.Controls.Add(this.CompressionTab);
 			this.SamplesTabs.Controls.Add(this.queryScuTab);
+			this.SamplesTabs.Controls.Add(this.tabPage1);
 			this.SamplesTabs.Location = new System.Drawing.Point(3, 0);
 			this.SamplesTabs.Name = "SamplesTabs";
 			this.SamplesTabs.SelectedIndex = 0;
@@ -489,6 +495,7 @@ namespace ClearCanvas.Dicom.Samples
 			// 
 			this._destinationPathTextBox.Location = new System.Drawing.Point(9, 75);
 			this._destinationPathTextBox.Name = "_destinationPathTextBox";
+			this._destinationPathTextBox.ReadOnly = true;
 			this._destinationPathTextBox.Size = new System.Drawing.Size(358, 20);
 			this._destinationPathTextBox.TabIndex = 3;
 			// 
@@ -496,6 +503,7 @@ namespace ClearCanvas.Dicom.Samples
 			// 
 			this._sourcePathTextBox.Location = new System.Drawing.Point(9, 30);
 			this._sourcePathTextBox.Name = "_sourcePathTextBox";
+			this._sourcePathTextBox.ReadOnly = true;
 			this._sourcePathTextBox.Size = new System.Drawing.Size(358, 20);
 			this._sourcePathTextBox.TabIndex = 2;
 			// 
@@ -734,6 +742,46 @@ namespace ClearCanvas.Dicom.Samples
 			this.saveFileDialog.DefaultExt = "dcm";
 			this.saveFileDialog.Title = "Save DICOM File";
 			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this._buttonOpenDicomdir);
+			this.tabPage1.Controls.Add(this.label19);
+			this.tabPage1.Controls.Add(this._textBoxDicomdir);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(910, 126);
+			this.tabPage1.TabIndex = 4;
+			this.tabPage1.Text = "DICOMDIR Reader";
+			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// _textBoxDicomdir
+			// 
+			this._textBoxDicomdir.Location = new System.Drawing.Point(9, 23);
+			this._textBoxDicomdir.Name = "_textBoxDicomdir";
+			this._textBoxDicomdir.ReadOnly = true;
+			this._textBoxDicomdir.Size = new System.Drawing.Size(509, 20);
+			this._textBoxDicomdir.TabIndex = 0;
+			// 
+			// label19
+			// 
+			this.label19.AutoSize = true;
+			this.label19.Location = new System.Drawing.Point(9, 7);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(80, 13);
+			this.label19.TabIndex = 1;
+			this.label19.Text = "DICOMDIR File";
+			// 
+			// _buttonOpenDicomdir
+			// 
+			this._buttonOpenDicomdir.Location = new System.Drawing.Point(524, 23);
+			this._buttonOpenDicomdir.Name = "_buttonOpenDicomdir";
+			this._buttonOpenDicomdir.Size = new System.Drawing.Size(123, 23);
+			this._buttonOpenDicomdir.TabIndex = 2;
+			this._buttonOpenDicomdir.Text = "Open DICOMDIR";
+			this._buttonOpenDicomdir.UseVisualStyleBackColor = true;
+			this._buttonOpenDicomdir.Click += new System.EventHandler(this._buttonOpenDicomdir_Click);
+			// 
 			// SamplesForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -755,6 +803,8 @@ namespace ClearCanvas.Dicom.Samples
 			this.CompressionTab.PerformLayout();
 			this.queryScuTab.ResumeLayout(false);
 			this.queryScuTab.PerformLayout();
+			this.tabPage1.ResumeLayout(false);
+			this.tabPage1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -821,6 +871,10 @@ namespace ClearCanvas.Dicom.Samples
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.ComboBox comboBoxQueryScuQueryLevel;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.TextBox _textBoxDicomdir;
+		private System.Windows.Forms.Button _buttonOpenDicomdir;
     }
 }
 

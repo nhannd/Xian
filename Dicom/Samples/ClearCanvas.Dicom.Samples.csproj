@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -42,6 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compression.cs" />
+    <Compile Include="DicomdirDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DicomdirDisplay.Designer.cs">
+      <DependentUpon>DicomdirDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomdirReader.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="SamplesForm.cs">
       <SubType>Form</SubType>
@@ -108,6 +115,9 @@
     <EmbeddedResource Include="PatientRootPatient.xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DicomdirDisplay.resx">
+      <DependentUpon>DicomdirDisplay.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PatientRootImage.xml" />
     <EmbeddedResource Include="PatientRootSeries.xml" />
     <EmbeddedResource Include="PatientRootStudy.xml" />

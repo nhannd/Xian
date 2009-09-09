@@ -113,6 +113,14 @@ namespace ClearCanvas.Dicom
 
         #region Public Properties
 
+		public DirectoryRecordCollection RootDirectoryRecordCollection
+		{
+			get
+			{
+				return new DirectoryRecordCollection(RootDirectoryRecord);
+			}
+		}
+
 		/// <summary>
 		/// Gets the root directory record.  May be set to null if no directory records exist.
 		/// </summary>
@@ -281,7 +289,7 @@ namespace ClearCanvas.Dicom
                 _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].Values = _rootRecord.Offset;
 
                 DirectoryRecordSequenceItem lastRoot = _rootRecord;
-                while (lastRoot.NextRecord != null) lastRoot = lastRoot.NextRecord;
+                while (lastRoot.NextDirectoryRecord != null) lastRoot = lastRoot.NextDirectoryRecord;
 
                 _dicomDirFile.DataSet[DicomTags.OffsetOfTheLastDirectoryRecordOfTheRootDirectoryEntity].Values =
                     lastRoot.Offset;
@@ -345,16 +353,16 @@ namespace ClearCanvas.Dicom
 
 				DirectoryRecordSequenceItem foundItem;
 				if (lookup.TryGetValue(offset, out foundItem))
-					sqItem.NextRecord = foundItem;
+					sqItem.NextDirectoryRecord = foundItem;
 				else
-					sqItem.NextRecord = null;
+					sqItem.NextDirectoryRecord = null;
 
 				offset = sqItem[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].GetUInt32(0, 0);
 
 				if (lookup.TryGetValue(offset, out foundItem))
-					sqItem.LowerLevelRecord = foundItem;
+					sqItem.LowerLevelDirectoryRecord = foundItem;
 				else
-					sqItem.LowerLevelRecord = null;
+					sqItem.LowerLevelDirectoryRecord = null;
 			}
 		}
 
@@ -425,20 +433,20 @@ namespace ClearCanvas.Dicom
 				else
 					patientRecord = GetExistingOrCreateNewPatient(_rootRecord, dicomFile);
 
-				if (patientRecord.LowerLevelRecord == null)
-					patientRecord.LowerLevelRecord = studyRecord = CreateStudyItem(dicomFile);
+				if (patientRecord.LowerLevelDirectoryRecord == null)
+					patientRecord.LowerLevelDirectoryRecord = studyRecord = CreateStudyItem(dicomFile);
 				else
-					studyRecord = GetExistingOrCreateNewStudy(patientRecord.LowerLevelRecord, dicomFile);
+					studyRecord = GetExistingOrCreateNewStudy(patientRecord.LowerLevelDirectoryRecord, dicomFile);
 
-				if (studyRecord.LowerLevelRecord == null)
-					studyRecord.LowerLevelRecord = seriesRecord = CreateSeriesItem(dicomFile);
+				if (studyRecord.LowerLevelDirectoryRecord == null)
+					studyRecord.LowerLevelDirectoryRecord = seriesRecord = CreateSeriesItem(dicomFile);
 				else
-					seriesRecord = GetExistingOrCreateNewSeries(studyRecord.LowerLevelRecord, dicomFile);
+					seriesRecord = GetExistingOrCreateNewSeries(studyRecord.LowerLevelDirectoryRecord, dicomFile);
 
-				if (seriesRecord.LowerLevelRecord == null)
-					seriesRecord.LowerLevelRecord = CreateImageItem(dicomFile, optionalRelativeRootPath);
+				if (seriesRecord.LowerLevelDirectoryRecord == null)
+					seriesRecord.LowerLevelDirectoryRecord = CreateImageItem(dicomFile, optionalRelativeRootPath);
 				else
-					GetExistingOrCreateNewImage(seriesRecord.LowerLevelRecord, dicomFile, optionalRelativeRootPath);
+					GetExistingOrCreateNewImage(seriesRecord.LowerLevelDirectoryRecord, dicomFile, optionalRelativeRootPath);
 			}
 			catch (Exception ex)
 			{
@@ -457,11 +465,11 @@ namespace ClearCanvas.Dicom
 
             _directoryRecordSequence.AddSequenceItem(root);
 
-            if (root.LowerLevelRecord != null)
-                AddDirectoryRecordsToSequenceItem(root.LowerLevelRecord);
+            if (root.LowerLevelDirectoryRecord != null)
+                AddDirectoryRecordsToSequenceItem(root.LowerLevelDirectoryRecord);
 
-            if (root.NextRecord != null)
-                AddDirectoryRecordsToSequenceItem(root.NextRecord);
+            if (root.NextDirectoryRecord != null)
+                AddDirectoryRecordsToSequenceItem(root.NextDirectoryRecord);
         }
 
         /// <summary>
@@ -506,12 +514,12 @@ namespace ClearCanvas.Dicom
                 {
                 	return;
                 }
-            	if (currentImage.NextRecord == null)
+            	if (currentImage.NextDirectoryRecord == null)
                 {
-                    currentImage.NextRecord = CreateImageItem(file, optionalDicomDirFileLocation);
+                    currentImage.NextDirectoryRecord = CreateImageItem(file, optionalDicomDirFileLocation);
                 	return;
                 }
-                currentImage = currentImage.NextRecord;
+                currentImage = currentImage.NextDirectoryRecord;
             }
         	return;
         }
@@ -562,18 +570,18 @@ namespace ClearCanvas.Dicom
         /// </summary>
         private static void SetOffsets(DirectoryRecordSequenceItem root)
         {
-            if (root.NextRecord != null)
+            if (root.NextDirectoryRecord != null)
             {
-                root[DicomTags.OffsetOfTheNextDirectoryRecord].Values = root.NextRecord.Offset;
-                SetOffsets(root.NextRecord);
+                root[DicomTags.OffsetOfTheNextDirectoryRecord].Values = root.NextDirectoryRecord.Offset;
+                SetOffsets(root.NextDirectoryRecord);
             }
             else
                 root[DicomTags.OffsetOfTheNextDirectoryRecord].Values = 0;
 
-            if (root.LowerLevelRecord != null)
+            if (root.LowerLevelDirectoryRecord != null)
             {
-                root[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].Values = root.LowerLevelRecord.Offset;
-                SetOffsets(root.LowerLevelRecord);
+                root[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].Values = root.LowerLevelDirectoryRecord.Offset;
+                SetOffsets(root.LowerLevelDirectoryRecord);
             }
             else
                 root[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].Values = 0;
@@ -595,12 +603,12 @@ namespace ClearCanvas.Dicom
                 {
                     return currentPatient;
                 }
-                if (currentPatient.NextRecord == null)
+                if (currentPatient.NextDirectoryRecord == null)
                 {
-                    currentPatient.NextRecord = CreatePatientItem(file);
-                    return currentPatient.NextRecord;
+                    currentPatient.NextDirectoryRecord = CreatePatientItem(file);
+                    return currentPatient.NextDirectoryRecord;
                 }
-                currentPatient = currentPatient.NextRecord;
+                currentPatient = currentPatient.NextDirectoryRecord;
             }
             return null;
         }
@@ -620,12 +628,12 @@ namespace ClearCanvas.Dicom
                 {
                     return currentStudy;
                 }
-                if (currentStudy.NextRecord == null)
+                if (currentStudy.NextDirectoryRecord == null)
                 {
-                    currentStudy.NextRecord = CreateStudyItem(file);
-                    return currentStudy.NextRecord;
+                    currentStudy.NextDirectoryRecord = CreateStudyItem(file);
+                    return currentStudy.NextDirectoryRecord;
                 }
-                currentStudy = currentStudy.NextRecord;
+                currentStudy = currentStudy.NextDirectoryRecord;
             }
             return null;
         }
@@ -645,12 +653,12 @@ namespace ClearCanvas.Dicom
                 {
                     return currentSeries;
                 }
-                if (currentSeries.NextRecord == null)
+                if (currentSeries.NextDirectoryRecord == null)
                 {
-                    currentSeries.NextRecord = CreateSeriesItem(file);
-                    return currentSeries.NextRecord;
+                    currentSeries.NextDirectoryRecord = CreateSeriesItem(file);
+                    return currentSeries.NextDirectoryRecord;
                 }
-                currentSeries = currentSeries.NextRecord;
+                currentSeries = currentSeries.NextDirectoryRecord;
             }
             return null;
         }
@@ -722,7 +730,7 @@ namespace ClearCanvas.Dicom
             dicomTags.Add(DicomTags.PatientsBirthDate, null);
             dicomTags.Add(DicomTags.PatientsSex, null);
 
-            return AddSequenceItem(DirectoryRecordType.PATIENT, dicomFile.DataSet, dicomTags);
+            return AddSequenceItem(DirectoryRecordType.Patient, dicomFile.DataSet, dicomTags);
         }
 
         /// <summary>
@@ -739,7 +747,7 @@ namespace ClearCanvas.Dicom
             dicomTags.Add(DicomTags.AccessionNumber, null);
             dicomTags.Add(DicomTags.StudyDescription, null);
 
-            return AddSequenceItem(DirectoryRecordType.STUDY, dicomFile.DataSet, dicomTags);
+            return AddSequenceItem(DirectoryRecordType.Study, dicomFile.DataSet, dicomTags);
         }
 
         /// <summary>
@@ -757,7 +765,7 @@ namespace ClearCanvas.Dicom
             dicomTags.Add(DicomTags.SeriesDescription, null);
             //dicomTags.Add(DicomTags.SeriesDescription, dicomFile.DataSet[DicomTags.SeriesDescription].GetString(0, String.Empty));
 
-            return AddSequenceItem(DirectoryRecordType.SERIES, dicomFile.DataSet, dicomTags);
+            return AddSequenceItem(DirectoryRecordType.Series, dicomFile.DataSet, dicomTags);
         }
 
         /// <summary>
@@ -827,6 +835,7 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+
     }
 
 	
@@ -843,89 +852,89 @@ namespace ClearCanvas.Dicom
 		#region Constructors
 		static DirectoryRecordDictionary()
 		{
-			_sopClassLookup.Add(SopClass.AmbulatoryEcgWaveformStorageUid, DirectoryRecordType.WAVEFORM);
-			_sopClassLookup.Add(SopClass.BasicTextSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
-			_sopClassLookup.Add(SopClass.BasicVoiceAudioWaveformStorageUid, DirectoryRecordType.WAVEFORM);
-			_sopClassLookup.Add(SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
-			_sopClassLookup.Add(SopClass.CardiacElectrophysiologyWaveformStorageUid, DirectoryRecordType.WAVEFORM);
-			_sopClassLookup.Add(SopClass.ChestCadSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
-			_sopClassLookup.Add(SopClass.ColorSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
-			_sopClassLookup.Add(SopClass.ComprehensiveSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
-			_sopClassLookup.Add(SopClass.ComputedRadiographyImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.CtImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.DeformableSpatialRegistrationStorageUid, DirectoryRecordType.REGISTRATION);
-			_sopClassLookup.Add(SopClass.DigitalIntraOralXRayImageStorageForPresentationUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.DigitalIntraOralXRayImageStorageForProcessingUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.DigitalMammographyXRayImageStorageForPresentationUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.DigitalMammographyXRayImageStorageForProcessingUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.DigitalXRayImageStorageForPresentationUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.EncapsulatedCdaStorageUid, DirectoryRecordType.HL7_STRUC_DOC);
-			_sopClassLookup.Add(SopClass.EncapsulatedPdfStorageUid, DirectoryRecordType.ENCAP_DOC);
-			_sopClassLookup.Add(SopClass.EnhancedCtImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.EnhancedMrImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.EnhancedSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
-			_sopClassLookup.Add(SopClass.EnhancedXaImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.EnhancedXrfImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.GeneralEcgWaveformStorageUid, DirectoryRecordType.WAVEFORM);
-			_sopClassLookup.Add(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
-			_sopClassLookup.Add(SopClass.HangingProtocolStorageUid, DirectoryRecordType.HANGING_PROTOCOL);
-			_sopClassLookup.Add(SopClass.HemodynamicWaveformStorageUid, DirectoryRecordType.WAVEFORM);
-			_sopClassLookup.Add(SopClass.KeyObjectSelectionDocumentStorageUid, DirectoryRecordType.KEY_OBJECT_DOC);
-			_sopClassLookup.Add(SopClass.MammographyCadSrStorageUid, DirectoryRecordType.SR_DOCUMENT);
-			_sopClassLookup.Add(SopClass.MrImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.MrSpectroscopyStorageUid, DirectoryRecordType.SPECTROSCOPY);
-			_sopClassLookup.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.NuclearMedicineImageStorageRetiredUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.NuclearMedicineImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.OphthalmicPhotography16BitImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.OphthalmicPhotography8BitImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.OphthalmicTomographyImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.PositronEmissionTomographyImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.PRESENTATION);
-            _sopClassLookup.Add(SopClass.RawDataStorageUid, DirectoryRecordType.RAW_DATA);
-            _sopClassLookup.Add(SopClass.RealWorldValueMappingStorageUid, DirectoryRecordType.VALUE_MAP);
-            _sopClassLookup.Add(SopClass.RtBeamsTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
-            _sopClassLookup.Add(SopClass.RtBrachyTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
-            _sopClassLookup.Add(SopClass.RtDoseStorageUid, DirectoryRecordType.RT_DOSE);
-            _sopClassLookup.Add(SopClass.RtImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.RtIonBeamsTreatmentRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
-            _sopClassLookup.Add(SopClass.RtIonPlanStorageUid, DirectoryRecordType.RT_PLAN);
-            _sopClassLookup.Add(SopClass.RtPlanStorageUid, DirectoryRecordType.RT_PLAN);
-            _sopClassLookup.Add(SopClass.RtStructureSetStorageUid, DirectoryRecordType.RT_STRUCTURE_SET);
-            _sopClassLookup.Add(SopClass.RtTreatmentSummaryRecordStorageUid, DirectoryRecordType.RT_TREAT_RECORD);
-            _sopClassLookup.Add(SopClass.SecondaryCaptureImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.SegmentationStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.SpatialFiducialsStorageUid, DirectoryRecordType.FIDUCIAL);
-            _sopClassLookup.Add(SopClass.SpatialRegistrationStorageUid, DirectoryRecordType.REGISTRATION);
-            _sopClassLookup.Add(SopClass.StereometricRelationshipStorageUid, DirectoryRecordType.STEREOMETRIC);
-            _sopClassLookup.Add(SopClass.SubstanceAdministrationLoggingSopClassUid, DirectoryRecordType.SR_DOCUMENT);
-            _sopClassLookup.Add(SopClass.UltrasoundImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.UltrasoundImageStorageRetiredUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.UltrasoundMultiFrameImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.UltrasoundMultiFrameImageStorageRetiredUid,DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.VideoEndoscopicImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.VideoMicroscopicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.VideoPhotographicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.VlEndoscopicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.VlMicroscopicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.VlPhotographicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.VlSlideCoordinatesMicroscopicImageStorageUid, DirectoryRecordType.IMAGE);
-			_sopClassLookup.Add(SopClass.XRay3dAngiographicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.XRay3dCraniofacialImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.XRayAngiographicImageStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.XRayRadiationDoseSrStorageUid, DirectoryRecordType.IMAGE);
-            _sopClassLookup.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, DirectoryRecordType.IMAGE);
+			_sopClassLookup.Add(SopClass.AmbulatoryEcgWaveformStorageUid, DirectoryRecordType.Waveform);
+			_sopClassLookup.Add(SopClass.BasicTextSrStorageUid, DirectoryRecordType.SrDocument);
+			_sopClassLookup.Add(SopClass.BasicVoiceAudioWaveformStorageUid, DirectoryRecordType.Waveform);
+			_sopClassLookup.Add(SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.Presentation);
+			_sopClassLookup.Add(SopClass.CardiacElectrophysiologyWaveformStorageUid, DirectoryRecordType.Waveform);
+			_sopClassLookup.Add(SopClass.ChestCadSrStorageUid, DirectoryRecordType.SrDocument);
+			_sopClassLookup.Add(SopClass.ColorSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.Presentation);
+			_sopClassLookup.Add(SopClass.ComprehensiveSrStorageUid, DirectoryRecordType.SrDocument);
+			_sopClassLookup.Add(SopClass.ComputedRadiographyImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.CtImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.DeformableSpatialRegistrationStorageUid, DirectoryRecordType.Registration);
+			_sopClassLookup.Add(SopClass.DigitalIntraOralXRayImageStorageForPresentationUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.DigitalIntraOralXRayImageStorageForProcessingUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.DigitalMammographyXRayImageStorageForPresentationUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.DigitalMammographyXRayImageStorageForProcessingUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.DigitalXRayImageStorageForPresentationUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.EncapsulatedCdaStorageUid, DirectoryRecordType.Hl7StrucDoc);
+			_sopClassLookup.Add(SopClass.EncapsulatedPdfStorageUid, DirectoryRecordType.EncapDoc);
+			_sopClassLookup.Add(SopClass.EnhancedCtImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.EnhancedMrImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.EnhancedSrStorageUid, DirectoryRecordType.SrDocument);
+			_sopClassLookup.Add(SopClass.EnhancedXaImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.EnhancedXrfImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.GeneralEcgWaveformStorageUid, DirectoryRecordType.Waveform);
+			_sopClassLookup.Add(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.Presentation);
+			_sopClassLookup.Add(SopClass.HangingProtocolStorageUid, DirectoryRecordType.HangingProtocol);
+			_sopClassLookup.Add(SopClass.HemodynamicWaveformStorageUid, DirectoryRecordType.Waveform);
+			_sopClassLookup.Add(SopClass.KeyObjectSelectionDocumentStorageUid, DirectoryRecordType.KeyObjectDoc);
+			_sopClassLookup.Add(SopClass.MammographyCadSrStorageUid, DirectoryRecordType.SrDocument);
+			_sopClassLookup.Add(SopClass.MrImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.MrSpectroscopyStorageUid, DirectoryRecordType.Spectroscopy);
+			_sopClassLookup.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.NuclearMedicineImageStorageRetiredUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.NuclearMedicineImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.OphthalmicPhotography16BitImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.OphthalmicPhotography8BitImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.OphthalmicTomographyImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.PositronEmissionTomographyImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid, DirectoryRecordType.Presentation);
+            _sopClassLookup.Add(SopClass.RawDataStorageUid, DirectoryRecordType.RawData);
+            _sopClassLookup.Add(SopClass.RealWorldValueMappingStorageUid, DirectoryRecordType.ValueMap);
+            _sopClassLookup.Add(SopClass.RtBeamsTreatmentRecordStorageUid, DirectoryRecordType.RtTreatRecord);
+            _sopClassLookup.Add(SopClass.RtBrachyTreatmentRecordStorageUid, DirectoryRecordType.RtTreatRecord);
+            _sopClassLookup.Add(SopClass.RtDoseStorageUid, DirectoryRecordType.RtDose);
+            _sopClassLookup.Add(SopClass.RtImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.RtIonBeamsTreatmentRecordStorageUid, DirectoryRecordType.RtTreatRecord);
+            _sopClassLookup.Add(SopClass.RtIonPlanStorageUid, DirectoryRecordType.RtPlan);
+            _sopClassLookup.Add(SopClass.RtPlanStorageUid, DirectoryRecordType.RtPlan);
+            _sopClassLookup.Add(SopClass.RtStructureSetStorageUid, DirectoryRecordType.RtStructureSet);
+            _sopClassLookup.Add(SopClass.RtTreatmentSummaryRecordStorageUid, DirectoryRecordType.RtTreatRecord);
+            _sopClassLookup.Add(SopClass.SecondaryCaptureImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.SegmentationStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.SpatialFiducialsStorageUid, DirectoryRecordType.Fiducial);
+            _sopClassLookup.Add(SopClass.SpatialRegistrationStorageUid, DirectoryRecordType.Registration);
+            _sopClassLookup.Add(SopClass.StereometricRelationshipStorageUid, DirectoryRecordType.Stereometric);
+            _sopClassLookup.Add(SopClass.SubstanceAdministrationLoggingSopClassUid, DirectoryRecordType.SrDocument);
+            _sopClassLookup.Add(SopClass.UltrasoundImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.UltrasoundImageStorageRetiredUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.UltrasoundMultiFrameImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.UltrasoundMultiFrameImageStorageRetiredUid,DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.VideoEndoscopicImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.VideoMicroscopicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.VideoPhotographicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.VlEndoscopicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.VlMicroscopicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.VlPhotographicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.VlSlideCoordinatesMicroscopicImageStorageUid, DirectoryRecordType.Image);
+			_sopClassLookup.Add(SopClass.XRay3dAngiographicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.XRay3dCraniofacialImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.XRayAngiographicImageStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.XRayRadiationDoseSrStorageUid, DirectoryRecordType.Image);
+            _sopClassLookup.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, DirectoryRecordType.Image);
 
 			List<uint> tagList;
 			//RT DOSE
 			tagList = new List<uint>();
 			tagList.Add(DicomTags.InstanceNumber);
 			tagList.Add(DicomTags.DoseSummationType);
-			_tagLookupList.Add(DirectoryRecordType.RT_DOSE, tagList);
+			_tagLookupList.Add(DirectoryRecordType.RtDose, tagList);
 
 			//RT STRUCTURE SET
 			tagList = new List<uint>
@@ -935,7 +944,7 @@ namespace ClearCanvas.Dicom
 			          		DicomTags.StructureSetDate,
 			          		DicomTags.StructureSetTime
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.RT_STRUCTURE_SET, tagList);
+			_tagLookupList.Add(DirectoryRecordType.RtStructureSet, tagList);
 
 			//RT PLAN
 			tagList = new List<uint>
@@ -945,7 +954,7 @@ namespace ClearCanvas.Dicom
 			          		DicomTags.RtPlanDate,
 			          		DicomTags.RtPlanTime
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.RT_PLAN, tagList);
+			_tagLookupList.Add(DirectoryRecordType.RtPlan, tagList);
 
 			//RT TREAT RECORD
 			tagList = new List<uint>
@@ -953,7 +962,7 @@ namespace ClearCanvas.Dicom
 			          		DicomTags.InstanceNumber,
 			          		//TODO Some of the 0x3008 group tags are not in the dictionary, see ticket #5162
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.RT_TREAT_RECORD, tagList);
+			_tagLookupList.Add(DirectoryRecordType.RtTreatRecord, tagList);
 
 			//PRESENTATION
 			tagList = new List<uint>
@@ -963,7 +972,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.ReferencedSeriesSequence,
 							DicomTags.BlendingSequence
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.PRESENTATION, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Presentation, tagList);
 
 			//WAVEFORM
 			tagList = new List<uint>
@@ -972,7 +981,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.ContentDate,
 							DicomTags.ContentTime
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.WAVEFORM, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Waveform, tagList);
 
 			//SR DOCUMENT
 			tagList = new List<uint>
@@ -985,7 +994,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.VerificationDateTime,
 							DicomTags.ConceptNameCodeSequence
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.SR_DOCUMENT, tagList);
+			_tagLookupList.Add(DirectoryRecordType.SrDocument, tagList);
 
 			//KEY OBJECT DOC
 			tagList = new List<uint>
@@ -995,7 +1004,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.ContentTime,
 							DicomTags.ConceptNameCodeSequence
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.KEY_OBJECT_DOC, tagList);
+			_tagLookupList.Add(DirectoryRecordType.KeyObjectDoc, tagList);
 
 			//SPECTROSCOPY
 			tagList = new List<uint>
@@ -1011,7 +1020,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.DataPointColumns
 
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.SPECTROSCOPY, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Spectroscopy, tagList);
 
 			//RAW DATA
 			tagList = new List<uint>
@@ -1021,7 +1030,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.InstanceNumber
 
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.RAW_DATA, tagList);
+			_tagLookupList.Add(DirectoryRecordType.RawData, tagList);
 
 			//REGISTRATION
 			tagList = new List<uint>
@@ -1035,7 +1044,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.PersonIdentificationCodeSequence
 
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.REGISTRATION, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Registration, tagList);
 
 			//FUDICIAL
 			tagList = new List<uint>
@@ -1049,7 +1058,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.PersonIdentificationCodeSequence
 
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.FIDUCIAL, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Fiducial, tagList);
 
 			//HANGING PROTOCOL
 			tagList = new List<uint>
@@ -1063,7 +1072,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.NumberOfPriorsReferenced,
 							DicomTags.HangingProtocolUserIdentificationCodeSequence
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.HANGING_PROTOCOL, tagList);
+			_tagLookupList.Add(DirectoryRecordType.HangingProtocol, tagList);
 
 			//ENCAP DOC
 			tagList = new List<uint>
@@ -1074,7 +1083,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.DocumentTitle,
 							DicomTags.MimeTypeOfEncapsulatedDocument
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.ENCAP_DOC, tagList);
+			_tagLookupList.Add(DirectoryRecordType.EncapDoc, tagList);
 
 
 			//HL7 STRUC DOC
@@ -1083,7 +1092,7 @@ namespace ClearCanvas.Dicom
 							DicomTags.Hl7InstanceIdentifier,
 							DicomTags.Hl7DocumentEffectiveTime
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.HL7_STRUC_DOC, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Hl7StrucDoc, tagList);
 
 			//VALUE MAP
 			tagList = new List<uint>
@@ -1096,15 +1105,15 @@ namespace ClearCanvas.Dicom
 			          		DicomTags.ContentCreatorsName,
 			          		DicomTags.PersonIdentificationCodeSequence
 			          	};
-			_tagLookupList.Add(DirectoryRecordType.VALUE_MAP, tagList);
+			_tagLookupList.Add(DirectoryRecordType.ValueMap, tagList);
 
 			//STEREOMETRIC
 			tagList = new List<uint>();
-			_tagLookupList.Add(DirectoryRecordType.STEREOMETRIC, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Stereometric, tagList);
 
 			//PRIVATE
 			tagList = new List<uint>();
-			_tagLookupList.Add(DirectoryRecordType.PRIVATE, tagList);
+			_tagLookupList.Add(DirectoryRecordType.Private, tagList);
 
 		}
 		#endregion

@@ -59,49 +59,49 @@ namespace ClearCanvas.Dicom
 	public enum DirectoryRecordType
 	{
 		[DirectoryRecordType("PATIENT")]
-		PATIENT,
+		Patient,
 		[DirectoryRecordType("STUDY")]
-		STUDY,
+		Study,
 		[DirectoryRecordType("SERIES")]
-		SERIES,
+		Series,
 		[DirectoryRecordType("IMAGE")]
-		IMAGE,
+		Image,
 		[DirectoryRecordType("RT DOSE")]
-		RT_DOSE,
+		RtDose,
 		[DirectoryRecordType("RT STRUCTURE SET")]
-		RT_STRUCTURE_SET,
+		RtStructureSet,
 		[DirectoryRecordType("RT PLAN")]
-		RT_PLAN,
+		RtPlan,
 		[DirectoryRecordType("RT TREAT RECORD")]
-		RT_TREAT_RECORD,
+		RtTreatRecord,
 		[DirectoryRecordType("PRESENTATION")]
-		PRESENTATION,
+		Presentation,
 		[DirectoryRecordType("WAVEFORM")]
-		WAVEFORM,
+		Waveform,
 		[DirectoryRecordType("SR DOCUMENT")]
-		SR_DOCUMENT,
+		SrDocument,
 		[DirectoryRecordType("KEY OBJECT DOC")]
-		KEY_OBJECT_DOC,
+		KeyObjectDoc,
 		[DirectoryRecordType("SPECTROSCOPY")]
-		SPECTROSCOPY,
+		Spectroscopy,
 		[DirectoryRecordType("RAW DATA")]
-		RAW_DATA,
+		RawData,
 		[DirectoryRecordType("REGISTRATION")]
-		REGISTRATION,
+		Registration,
 		[DirectoryRecordType("FIDUCIAL")]
-		FIDUCIAL,
+		Fiducial,
 		[DirectoryRecordType("HANGING PROTOCOL")]
-		HANGING_PROTOCOL,
+		HangingProtocol,
 		[DirectoryRecordType("ENCAP DOC")]
-		ENCAP_DOC,
+		EncapDoc,
 		[DirectoryRecordType("HL7 STRUC DOC")]
-		HL7_STRUC_DOC,
+		Hl7StrucDoc,
 		[DirectoryRecordType("VALUE MAP")]
-		VALUE_MAP,
+		ValueMap,
 		[DirectoryRecordType("STEREOMETRIC")]
-		STEREOMETRIC,
+		Stereometric,
 		[DirectoryRecordType("PRIVATE")]
-		PRIVATE,
+		Private,
 	}
 
 	/// <summary>
@@ -157,27 +157,31 @@ namespace ClearCanvas.Dicom
 	public class DirectoryRecordSequenceItem : DicomSequenceItem
 	{
 		#region Private Members
-		private DirectoryRecordSequenceItem _lowerLevelRecord;
-		private DirectoryRecordSequenceItem _nextRecord;
+		private DirectoryRecordSequenceItem _lowerLevelDirectoryDirectoryRecord;
+		private DirectoryRecordSequenceItem _nextDirectoryRecord;
 		private uint _offset;
 		#endregion
 
+		public DirectoryRecordCollection LowerLevelDirectoryRecordCollection
+		{
+			get { return new DirectoryRecordCollection(LowerLevelDirectoryRecord); }
+		}
 		/// <summary>
 		/// The first directory record in the level below the current record.
 		/// </summary>
-		public DirectoryRecordSequenceItem LowerLevelRecord
+		public DirectoryRecordSequenceItem LowerLevelDirectoryRecord
 		{
-			get { return _lowerLevelRecord; }
-			set { _lowerLevelRecord = value; }
+			get { return _lowerLevelDirectoryDirectoryRecord; }
+			set { _lowerLevelDirectoryDirectoryRecord = value; }
 		}
 
 		/// <summary>
 		/// The next directory record at the current level.
 		/// </summary>
-		public DirectoryRecordSequenceItem NextRecord
+		public DirectoryRecordSequenceItem NextDirectoryRecord
 		{
-			get { return _nextRecord; }
-			set { _nextRecord = value; }
+			get { return _nextDirectoryRecord; }
+			set { _nextDirectoryRecord = value; }
 		}
 
 		/// <summary>
@@ -205,7 +209,7 @@ namespace ClearCanvas.Dicom
 				if (DirectoryRecordTypeDictionary.TryGetType(recordType, out type))
 					return type;
 
-				return DirectoryRecordType.PRIVATE;
+				return DirectoryRecordType.Private;
 			}
 		}
 
@@ -216,11 +220,11 @@ namespace ClearCanvas.Dicom
 		public override string ToString()
 		{
 			string toString;
-			if (DirectoryRecordType == DirectoryRecordType.SERIES)
+			if (DirectoryRecordType == DirectoryRecordType.Series)
 				toString = base[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
-			else if (DirectoryRecordType == DirectoryRecordType.STUDY)
+			else if (DirectoryRecordType == DirectoryRecordType.Study)
 				toString = base[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
-			else if (DirectoryRecordType == DirectoryRecordType.PATIENT)
+			else if (DirectoryRecordType == DirectoryRecordType.Patient)
 				toString = base[DicomTags.PatientId] + " " + base[DicomTags.PatientsName];
 			else
 				toString = base[DicomTags.ReferencedSopInstanceUidInFile].GetString(0, string.Empty);

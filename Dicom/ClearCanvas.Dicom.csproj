@@ -219,6 +219,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DirectoryRecordCollection.cs" />
     <Compile Include="DirectoryRecordSequenceItem.cs" />
     <Compile Include="IDicomAttributeProvider.cs" />
     <Compile Include="Iod\DataLut.cs" />
