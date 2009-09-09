@@ -1052,6 +1052,23 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
+		/// Concatenates all target collections into a single collection.  The items are added
+		/// in order.
+		/// </summary>
+		/// <typeparam name="TItem"></typeparam>
+		/// <param name="targets"></param>
+		/// <returns></returns>
+		public static List<TItem> Concat<TItem>(List<List<TItem>> targets)
+		{
+			List<TItem> result = new List<TItem>();
+			foreach (List<TItem> target in targets)
+			{
+				result.AddRange(target);
+			}
+			return result;
+		}
+
+		/// <summary>
 		/// Partitions elements of the target collection into sub-groups based on the specified key generating function,
 		/// and returns a dictionary of the generated keys, where each value is a list of the items that produced that key.
 		/// Items appear in the sub-lists in the order in which they were enumerated from the target.
