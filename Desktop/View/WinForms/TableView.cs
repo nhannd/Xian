@@ -120,6 +120,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _dataGridView.MultiSelect = value; }
         }
 
+		[DefaultValue(DataGridViewAutoSizeColumnsMode.Fill)]
+		public DataGridViewAutoSizeColumnsMode AutoSizeColumnsMode
+    	{
+			get { return _dataGridView.AutoSizeColumnsMode; }
+			set { _dataGridView.AutoSizeColumnsMode = value; }
+    	}
+
         [DefaultValue(false)]
         [Description("Enables or disables multi-line rows.  If enabled, text longer than the column width is wrapped and the row is auto-sized. If disabled, a single line of truncated text is followed by an ellipsis")]
         public bool MultiLine
