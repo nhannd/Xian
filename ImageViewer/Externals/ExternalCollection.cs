@@ -150,6 +150,8 @@ namespace ClearCanvas.ImageViewer.Externals
 			{
 				ExternalsConfigurationSettings settings = ExternalsConfigurationSettings.Default;
 				_savedExternals = Deserialize(settings.Externals);
+				if (_savedExternals == null)
+					_savedExternals = new ExternalCollection();
 			}
 			catch (Exception)
 			{
