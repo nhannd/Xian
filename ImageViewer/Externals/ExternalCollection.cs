@@ -123,22 +123,40 @@ namespace ClearCanvas.ImageViewer.Externals
 			return DeserializeXml(data, typeof (ExternalCollection)) as ExternalCollection;
 		}
 
-		private static ExternalCollection _savedExternals = new ExternalCollection();
+		private static ExternalCollection _savedExternals = null;
 
-		static ExternalCollection()
+		public static ExternalCollection SavedExternals
 		{
-			ReloadSavedExternals();
-		}
-
-		public static ExternalCollection StoredExternals
-		{
-			get { return _savedExternals; }
+			get
+			{
+				if (_savedExternals == null)
+				{
+					try
+					{
+						ReloadSavedExternals();
+					}
+					catch(Exception ex)
+					{
+						Platform.Log(LogLevel.Error, ex, "Error encountered while deserializing External Application definitions. The XML may be corrupt.");
+					}
+				}
+				return _savedExternals;
+			}
 		}
 
 		public static void ReloadSavedExternals()
 		{
-			ExternalsConfigurationSettings settings = ExternalsConfigurationSettings.Default;
-			_savedExternals = Deserialize(settings.Externals);
+			try
+			{
+				ExternalsConfigurationSettings settings = ExternalsConfigurationSettings.Default;
+				_savedExternals = Deserialize(settings.Externals);
+			}
+			catch (Exception)
+			{
+				// make sure that the SavedExternals property is never simply null
+				_savedExternals = new ExternalCollection();
+				throw;
+			}
 		}
 
 		#region IXmlSerializable Members
