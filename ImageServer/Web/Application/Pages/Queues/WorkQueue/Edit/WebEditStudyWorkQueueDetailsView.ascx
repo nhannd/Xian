@@ -54,7 +54,7 @@
             </ItemTemplate>
         </asp:TemplateField>
         
-        <asp:TemplateField HeaderText="Study Date/Time: ">
+        <asp:TemplateField HeaderText="Study Date/Time">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>
                 <ccUI:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("Study.StudyDate") %>' ></ccUI:DALabel>
