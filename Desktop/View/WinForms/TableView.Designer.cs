@@ -131,21 +131,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _sortAscendingButton
 			// 
 			this._sortAscendingButton.Name = "_sortAscendingButton";
-			this._sortAscendingButton.Size = new System.Drawing.Size(152, 22);
+			this._sortAscendingButton.Size = new System.Drawing.Size(163, 22);
 			this._sortAscendingButton.Text = "Sort Ascending";
 			this._sortAscendingButton.Click += new System.EventHandler(this.sortAscendingButton_Click);
 			// 
 			// _sortDescendingButton
 			// 
 			this._sortDescendingButton.Name = "_sortDescendingButton";
-			this._sortDescendingButton.Size = new System.Drawing.Size(152, 22);
+			this._sortDescendingButton.Size = new System.Drawing.Size(163, 22);
 			this._sortDescendingButton.Text = "Sort Descending";
 			this._sortDescendingButton.Click += new System.EventHandler(this.sortDescendingButton_Click);
 			// 
 			// _sortSeparator
 			// 
 			this._sortSeparator.Name = "_sortSeparator";
-			this._sortSeparator.Size = new System.Drawing.Size(149, 6);
+			this._sortSeparator.Size = new System.Drawing.Size(160, 6);
 			// 
 			// _filterTextBox
 			// 
@@ -214,9 +214,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._dataGridView.TabIndex = 2;
 			this._dataGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellDoubleClick);
 			this._dataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this._dataGridView_CellFormatting);
-			this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
-			this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
 			this._dataGridView.CellToolTipTextNeeded += new System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler(this._dataGridView_CellToolTipTextNeeded);
+			this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
+			this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
 			this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);
 			this._dataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._dataGridView_CellContentClick);
 			// 

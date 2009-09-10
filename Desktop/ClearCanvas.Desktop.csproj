@@ -152,9 +152,12 @@
     <Compile Include="StackTabPage.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="SuggestionProviderBase.cs" />
+    <Compile Include="Tables\TableCellEditor.cs" />
     <Compile Include="Tables\DateTableColumn.cs" />
     <Compile Include="Tables\DateTimeTableColumn.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
+    <Compile Include="Tables\ITableCellEditor.cs" />
+    <Compile Include="Tables\ITableCellEditorView.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="Tests\FormatTests.cs" />
     <Compile Include="Tests\TableTest.cs" />
@@ -377,9 +380,6 @@
     <EmbeddedResource Include="Icons\PreviousPageToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Tools\Tests\" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework Client Profile</ProductName>
@@ -405,6 +405,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tools\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

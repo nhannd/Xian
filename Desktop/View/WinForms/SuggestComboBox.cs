@@ -34,8 +34,6 @@ using System.Collections;
 using System.Windows.Forms;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using System.Reflection;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -48,6 +46,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ISuggestionProvider _suggestionProvider;
 
         private event EventHandler _valueChanged;
+
         #region Public properties
 
         /// <summary>
@@ -92,8 +91,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // in order to set the value, the Items collection must contain the value
                     // but if the value is null, can just use an empty list
                     // (also need to check for DBNull, for some stupid reason)
-                    ArrayList items = new ArrayList();
-                    if(value != null && value != System.DBNull.Value)
+                    var items = new ArrayList();
+                    if(value != null && value != DBNull.Value)
                     {
                         items.Add(value);
                     }
@@ -152,14 +151,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             try
             {
                 // do a case-insensitive search
-                int itemIndex = this.FindStringExact(this.Text);
+                var itemIndex = this.FindStringExact(this.Text);
                 if (itemIndex > -1)
                 {
                     // update the selected index
                     this.SelectedIndex = itemIndex;
 
                     // also update the visible text, because the upper/lower-casing may not match
-                    object item = this.Items[itemIndex];
+                    var item = this.Items[itemIndex];
                     this.Text = GetItemText(item);
                 }
                 else
@@ -219,8 +218,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             // Remember the current text and selection start,
             // as they exists prior to modifying the items collection
-            string curText = this.Text;
-            int cursorPosition = this.SelectionStart;
+            var curText = this.Text;
+            var cursorPosition = this.SelectionStart;
 
             if (e.Items.Count == 0)
             {
@@ -256,12 +255,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private void UpdateListItems(IList items)
+        private void UpdateListItems(ICollection items)
         {
 			this.Items.Clear();
 			if (items.Count > 0)
 			{
-				object[] array = new object[items.Count];
+				var array = new object[items.Count];
 				items.CopyTo(array, 0);
 				this.Items.AddRange(array);
 			}
@@ -269,25 +268,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-		private void InitializeComponent()
-		{
-			this.SuspendLayout();
-			// 
-			// SuggestComboBox
-			// 
-			this.CursorChanged += new System.EventHandler(this.SuggestComboBox_CursorChanged);
-			this.ResumeLayout(false);
-		}
 
-		private void CursorReset()
+		private static void CursorReset()
 		{
 			Cursor.Current = Cursors.Default;
 			Cursor.Show();
 		}
 
-		private void SuggestComboBox_CursorChanged(object sender, EventArgs e)
-		{
-			CursorReset();
-		}
     }
 }

@@ -128,5 +128,11 @@ namespace ClearCanvas.Desktop.Tables
         /// Gets the cell row for which this column will be displayed in.
         /// </summary>
         int CellRow { get; }
+
+		/// <summary>
+		/// Gets the editor that allows cells in this column to be edited, or null if no custom editor is provided.
+		/// </summary>
+		/// <returns></returns>
+    	ITableCellEditor GetCellEditor();
     }
 }

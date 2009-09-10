@@ -103,7 +103,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         public int FilterTextBoxWidth
         {
             get { return _filterTextBox.Width; }
-            set { _filterTextBox.Size = new Size(value, _filterTextBox.Height); ; }
+            set { _filterTextBox.Size = new Size(value, _filterTextBox.Height); }
         }
 
         [DefaultValue(true)]
@@ -137,13 +137,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _multiLine = value;
                 if (_multiLine)
                 {
-                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+                    this._dataGridView.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                    this._dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 }
                 else
                 {
-                    this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-                    this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
+                    this._dataGridView.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                    this._dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
                 }
             }
         }
@@ -153,7 +153,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
             get { return ToolStripItemDisplayStyle.Image; }
-            set { }
+            set
+            {
+            	// this is not a settable property anymore, but this is here for backward compile-time compatability
+            }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -211,8 +214,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         public RightToLeft ToolStripRightToLeft
         {
             get { return RightToLeft.No; }
-            set { }
-        }
+			set
+			{
+				// this is not a settable property anymore, but this is here for backward compile-time compatability
+			}
+		}
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool SuppressSelectionChangedEvent
@@ -280,13 +286,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     // Set a cell padding to provide space for the top of the focus 
                     // rectangle and for the content that spans multiple columns. 
-                    Padding newPadding = new Padding(0, 1, 0,
-                        CELL_SUBROW_HEIGHT * ((int)_table.CellRowCount - 1));
+                    var newPadding = new Padding(0, 1, 0,
+                        CELL_SUBROW_HEIGHT * (_table.CellRowCount - 1));
                     this.DataGridView.RowTemplate.DefaultCellStyle.Padding = newPadding;
 
                     // Set the row height to accommodate the content that 
                     // spans multiple columns.
-                    this.DataGridView.RowTemplate.Height = _rowHeight + CELL_SUBROW_HEIGHT * ((int)_table.CellRowCount - 1);
+                    this.DataGridView.RowTemplate.Height = _rowHeight + CELL_SUBROW_HEIGHT * (_table.CellRowCount - 1);
 
                     // DataSource must be set after RowTemplate in order for changes to take effect
                     _dataGridView.DataSource = new TableAdapter(_table);
@@ -314,10 +320,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 // if someone tries to assign null, just convert it to an empty selection - this makes everything easier
-                ISelection newSelection = value ?? new Selection();
+                var newSelection = value ?? new Selection();
 
                 // get the existing selection
-                ISelection existingSelection = GetSelectionHelper();
+                var existingSelection = GetSelectionHelper();
 
                 if (!existingSelection.Equals(newSelection))
                 {
@@ -325,17 +331,17 @@ namespace ClearCanvas.Desktop.View.WinForms
                     foreach (DataGridViewRow row in _dataGridView.SelectedRows)
                     {
                         if (!CollectionUtils.Contains(newSelection.Items,
-                            delegate(object item) { return Equals(item, row.DataBoundItem); }))
+							item => Equals(item, row.DataBoundItem)))
                         {
                             row.Selected = false;
                         }
                     }
 
                     // select any rows that should be selected
-                    foreach (object item in newSelection.Items)
+                    foreach (var item in newSelection.Items)
                     {
-                        DataGridViewRow row = CollectionUtils.SelectFirst<DataGridViewRow>(_dataGridView.Rows,
-                                delegate(DataGridViewRow r) { return Equals(item, r.DataBoundItem); });
+                        var row = CollectionUtils.SelectFirst(_dataGridView.Rows,
+							(DataGridViewRow r) => Equals(item, r.DataBoundItem));
                         if (row != null)
                             row.Selected = true;
                     }
@@ -355,16 +361,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void ForceSelectionDisplay()
         {
             // check if ALL the selected entries are not visible to the user
-            if (CollectionUtils.TrueForAll<DataGridViewRow>(_dataGridView.SelectedRows,
-                    delegate(DataGridViewRow row)
-                    {
-                        return !row.Displayed;
-                    }) && _table.Items.Count != 0)
+            if (CollectionUtils.TrueForAll(_dataGridView.SelectedRows, (DataGridViewRow row) => !row.Displayed)
+				&& _table.Items.Count != 0)
             {
                 // create an array to capture the indicies of the selection collection (lol)
                 // indicies needed for index position calculation of viewable index
-                int[] selectedRows = new int[_dataGridView.SelectedRows.Count];
-                int i = 0;
+                var selectedRows = new int[_dataGridView.SelectedRows.Count];
+                var i = 0;
                 foreach (DataGridViewRow row in _dataGridView.SelectedRows)
                 {
                     selectedRows[i] = row.Index;
@@ -374,9 +377,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 // create variables for the index of the last row and the number of rows displayable
                 // by the control without scrolling
                 // row differential then becomes the index in which the all the last displayable rows starts at
-                int lastRow = _dataGridView.Rows.GetLastRow(new DataGridViewElementStates());
-                int displayedRows = _dataGridView.DisplayedRowCount(false) - 1;
-                int rowDifferential = lastRow - displayedRows; // calculate the differential 
+                var lastRow = _dataGridView.Rows.GetLastRow(new DataGridViewElementStates());
+                var displayedRows = _dataGridView.DisplayedRowCount(false) - 1;
+                var rowDifferential = lastRow - displayedRows; // calculate the differential 
 
                 // pre-existing tables
                 if (selectedRows.Length != 0)
@@ -448,8 +451,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private Selection GetSelectionHelper()
         {
             return new Selection(
-                CollectionUtils.Map<DataGridViewRow, object>(_dataGridView.SelectedRows,
-                    delegate(DataGridViewRow row) { return row.DataBoundItem; }));
+                CollectionUtils.Map(_dataGridView.SelectedRows,
+                                    (DataGridViewRow row) => row.DataBoundItem));
         }
 
         private void InitColumns()
@@ -459,7 +462,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (_table != null)
             {
-                float fontSize = this.Font.SizeInPoints;
+                var fontSize = this.Font.SizeInPoints;
                 foreach (ITableColumn col in _table.Columns)
                 {
                     // this is ugly but somebody's gotta do it
@@ -479,7 +482,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     else if (col.HasClickableLink)
                     {
                         dgcol = new DataGridViewLinkColumn();
-                        DataGridViewLinkColumn linkColumn = (DataGridViewLinkColumn)dgcol;
+                        var linkColumn = (DataGridViewLinkColumn)dgcol;
                         linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
                         linkColumn.TrackVisitedState = false;
                         linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
@@ -487,7 +490,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                     else
                     {
                         // assume any other type of column will be displayed as text
-                        dgcol = new DataGridViewTextBoxColumn();
+						// if it provides a custom editor, then we need to use a sub-class of the text box column
+                        dgcol = (col.GetCellEditor() != null) ? 
+							(DataGridViewColumn) new CustomEditableTableViewColumn(_table, col) : new DataGridViewTextBoxColumn();
                     }
 
                     // initialize the necessary properties
@@ -536,8 +541,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             // DataGridViewColumn, but unsubscribing from ITableColumn.VisiblityChanged
             // was problematic.  This is the next best thing if we want
             // easy unsubscription.
-            ITableColumn column = (ITableColumn)sender;  //Invalid cast is a programming error, so let exception be thrown
-            DataGridViewColumn dgcolumn = FindDataGridViewColumn(column);
+            var column = (ITableColumn)sender;  //Invalid cast is a programming error, so let exception be thrown
+            var dgcolumn = FindDataGridViewColumn(column);
 
             if (dgcolumn != null)
                 dgcolumn.Visible = column.Visible;
@@ -566,11 +571,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (_table != null)
             {
-                Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
+                var rowBounds = GetAdjustedRowBounds(e.RowBounds);
 
                 // Color.FromName("Empty") does not return Color.Empty, so need to manually check for Empty
-                string colorName = _table.GetItemBackgroundColor(_table.Items[e.RowIndex]);
-                Color backgroundColor = string.IsNullOrEmpty(colorName) || colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
+                var colorName = _table.GetItemBackgroundColor(_table.Items[e.RowIndex]);
+                var backgroundColor = string.IsNullOrEmpty(colorName) || colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
 
                 if (backgroundColor.Equals(Color.Empty))
                 {
@@ -590,21 +595,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         // Paints the custom outline for each row
         private void OutlineCell(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
+            var rowBounds = GetAdjustedRowBounds(e.RowBounds);
 
             if (_table != null)
             {
-                int penWidth = 2;
-                Rectangle outline = new Rectangle(
+                const int penWidth = 2;
+                var outline = new Rectangle(
                     rowBounds.Left + penWidth / 2,
                     rowBounds.Top + penWidth / 2 + 1,
                     rowBounds.Width - penWidth,
                     rowBounds.Height - penWidth - 2);
 
-                string colorName = _table.GetItemOutlineColor(_table.Items[e.RowIndex]);
-                Color outlineColor = string.IsNullOrEmpty(colorName) || colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
-                using (Pen outlinePen =
-                    new Pen(outlineColor, penWidth))
+                var colorName = _table.GetItemOutlineColor(_table.Items[e.RowIndex]);
+                var outlineColor = string.IsNullOrEmpty(colorName) || colorName.Equals("Empty") ? Color.Empty : Color.FromName(colorName);
+                using (var outlinePen = new Pen(outlineColor, penWidth))
                 {
                     e.Graphics.DrawRectangle(outlinePen, outline);
                 }
@@ -614,7 +618,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         // Paints the content that spans multiple columns and the focus rectangle.
         private void DisplayCellSubRows(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            Rectangle rowBounds = GetAdjustedRowBounds(e.RowBounds);
+            var rowBounds = GetAdjustedRowBounds(e.RowBounds);
 
             SolidBrush forebrush = null;
             try
@@ -631,19 +635,19 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
 
                 // Store text for each subrow
-                StringBuilder[] sb = new StringBuilder[_table.CellRowCount];
-                for (int i = 0; i < _table.CellRowCount; i++)
+                var sb = new StringBuilder[_table.CellRowCount];
+                for (var i = 0; i < _table.CellRowCount; i++)
                 {
                     sb[i] = new StringBuilder();
                 }
 
-                for (int i = 0; i < _table.Columns.Count; i++)
+                for (var i = 0; i < _table.Columns.Count; i++)
                 {
-                    ITableColumn col = _table.Columns[i] as ITableColumn;
+                    var col = _table.Columns[i] as ITableColumn;
                     if (col != null && col.CellRow > 0)
                     {
-                        DataGridViewRow row = this.DataGridView.Rows[e.RowIndex];
-                        object recipe = row.Index != -1 ? row.Cells[i].Value : null;
+                        var row = this.DataGridView.Rows[e.RowIndex];
+                        var recipe = row.Index != -1 ? row.Cells[i].Value : null;
 
                         if (recipe != null)
                         {
@@ -654,9 +658,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
 
                 // Draw text for each sub row (Rows 1 and higher in the Table)
-                for (int i = 1; i < _table.CellRowCount; i++)
+                for (var i = 1; i < _table.CellRowCount; i++)
                 {
-                    string text = sb[i].ToString().Trim();
+                    var text = sb[i].ToString().Trim();
 
                     if (string.IsNullOrEmpty(text) == false)
                     {
@@ -664,7 +668,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                         // columns, adjusting for the horizontal scrolling position 
                         // and the current row height, and displaying only whole
                         // lines of text.
-                        Rectangle textArea = rowBounds;
+                        var textArea = rowBounds;
                         textArea.X -= this.DataGridView.HorizontalScrollingOffset;
                         textArea.Width += this.DataGridView.HorizontalScrollingOffset;
                         textArea.Y += _rowHeight + (i - 1) * CELL_SUBROW_HEIGHT;
@@ -672,21 +676,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                         // Calculate the portion of the text area that needs painting.
                         RectangleF clip = textArea;
-                        int startX = this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0;
+                        var startX = this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0;
                         clip.Width -= startX + 1 - clip.X;
                         clip.X = startX + 1;
-                        RectangleF oldClip = e.Graphics.ClipBounds;
+                        var oldClip = e.Graphics.ClipBounds;
                         e.Graphics.SetClip(clip);
 
                         // Use a different font for subrows
                         // TODO: Make this a parameter of the Table
                         //Font subRowFont = new Font(e.InheritedRowStyle.Font, FontStyle.Italic);
 
-                        StringFormat format = new StringFormat();
-                        format.FormatFlags = StringFormatFlags.NoWrap;
-                        format.Trimming = StringTrimming.EllipsisWord;
+                        var format = new StringFormat
+                                     	{
+                                     		FormatFlags = StringFormatFlags.NoWrap,
+                                     		Trimming = StringTrimming.EllipsisWord
+                                     	};
 
-                        // Draw the content that spans multiple columns.
+                    	// Draw the content that spans multiple columns.
                         e.Graphics.DrawString(text, e.InheritedRowStyle.Font, forebrush, textArea, format);
 
                         e.Graphics.SetClip(oldClip);
@@ -703,12 +709,12 @@ namespace ClearCanvas.Desktop.View.WinForms
         // Make all the link column the same color as the fore color
         private void SetLinkColor(object sender, DataGridViewRowPostPaintEventArgs e)
         {
-            DataGridViewRow row = _dataGridView.Rows[e.RowIndex];
+            var row = _dataGridView.Rows[e.RowIndex];
             foreach (DataGridViewCell cell in row.Cells)
             {
                 if (cell is DataGridViewLinkCell)
                 {
-                    DataGridViewLinkCell linkCell = (DataGridViewLinkCell)cell;
+                    var linkCell = (DataGridViewLinkCell)cell;
                     linkCell.ActiveLinkColor = linkCell.LinkColor = linkCell.VisitedLinkColor
                         = row.Selected ? cell.InheritedStyle.SelectionForeColor : cell.InheritedStyle.ForeColor;
                 }
@@ -739,8 +745,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             FlushPendingSelectionChangeNotification();
 
             // Find the row we're on
-            Point pt = _dataGridView.PointToClient(DataGridView.MousePosition);
-            DataGridView.HitTestInfo info = _dataGridView.HitTest(pt.X, pt.Y);
+            var pt = _dataGridView.PointToClient(MousePosition);
+            var info = _dataGridView.HitTest(pt.X, pt.Y);
 
 
             try
@@ -838,7 +844,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // proceeding (bug 386)
             FlushPendingSelectionChangeNotification();
 
-            ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
+            var args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
             EventsHelper.Fire(_itemDrag, this, args);
         }
 
@@ -861,7 +867,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         private void FlushPendingSelectionChangeNotification()
         {
-            bool pending = _selectionChangeTimer.Enabled;
+            var pending = _selectionChangeTimer.Enabled;
             _selectionChangeTimer.Stop();   // stop the timer before firing event, in case event handler runs long duration
 
             // if there was a "pending" notification, send it now
@@ -923,13 +929,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _sortButton.DropDownItems.Add(_sortDescendingButton);
                 _sortButton.DropDownItems.Add(_sortSeparator);
 
-                CollectionUtils.ForEach<ITableColumn>(_table.Columns,
-                    delegate(ITableColumn column)
-                    {
-                        ToolStripItem item = new ToolStripMenuItem(column.Name, null, _sortButtonDropDownItem_Click, column.Name);
-                        if (_sortButton.DropDownItems.ContainsKey(column.Name) == false)
-                            _sortButton.DropDownItems.Add(item);
-                    });
+				foreach (ITableColumn column in _table.Columns)
+            	{
+					ToolStripItem item = new ToolStripMenuItem(column.Name, null, _sortButtonDropDownItem_Click, column.Name);
+					if (_sortButton.DropDownItems.ContainsKey(column.Name) == false)
+						_sortButton.DropDownItems.Add(item);
+				}
 
                 ResetSortButtonState();
             }
@@ -940,28 +945,27 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (_table == null || _table.SortParams == null)
                 return;
 
-            CollectionUtils.ForEach<ToolStripItem>(_sortButton.DropDownItems,
-                delegate(ToolStripItem item)
-                {
-                    if (item == _sortAscendingButton)
-                        this.SortAscendingButtonCheck = _table.SortParams.Ascending;
-                    else if (item == _sortDescendingButton)
-                        this.SortDescendingButtonCheck = _table.SortParams.Ascending == false;
-                    else if (item == _sortSeparator)
-                        return;
-                    else
-                    {
-                        if (item.Name.Equals(_table.SortParams.Column.Name))
-                        {
-                            item.Image = SR.CheckSmall;
-                            _sortButton.ToolTipText = String.Format(SR.MessageSortBy, item.Name);
-                        }
-                        else
-                        {
-                            item.Image = null;
-                        }
-                    }
-                });
+			foreach (ToolStripItem item in _sortButton.DropDownItems)
+        	{
+				if (item == _sortAscendingButton)
+					this.SortAscendingButtonCheck = _table.SortParams.Ascending;
+				else if (item == _sortDescendingButton)
+					this.SortDescendingButtonCheck = _table.SortParams.Ascending == false;
+				else if (item == _sortSeparator)
+					return;
+				else
+				{
+					if (item.Name.Equals(_table.SortParams.Column.Name))
+					{
+						item.Image = SR.CheckSmall;
+						_sortButton.ToolTipText = String.Format(SR.MessageSortBy, item.Name);
+					}
+					else
+					{
+						item.Image = null;
+					}
+				}
+			}
         }
 
         private bool SortAscendingButtonCheck
@@ -1014,17 +1018,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _sortButtonDropDownItem_Click(object sender, EventArgs e)
         {
-            ToolStripItem item = sender as ToolStripItem;
-
-            ITableColumn sortColumn = CollectionUtils.SelectFirst<ITableColumn>(_table.Columns,
-                delegate(ITableColumn column)
-                {
-                    return column.Name.Equals(item.Name);
-                });
+            var item = sender as ToolStripItem;
+            var sortColumn = CollectionUtils.SelectFirst(_table.Columns, (ITableColumn column) => column.Name.Equals(item.Name));
 
             if (sortColumn != null)
             {
-                TableSortParams sortParams = new TableSortParams(sortColumn, false);
+                var sortParams = new TableSortParams(sortColumn, false);
                 _table.Sort(sortParams);
             }
         }
@@ -1062,7 +1061,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _filterTextBox.ToolTipText = String.Format(SR.MessageFilterBy, _filterTextBox.Text);
                 _clearFilterButton.Enabled = true;
-                TableFilterParams filterParams = new TableFilterParams(null, _filterTextBox.Text);
+                var filterParams = new TableFilterParams(null, _filterTextBox.Text);
                 _table.Filter(filterParams);
             }
 
@@ -1076,10 +1075,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (e.RowIndex == -1)
                 return;
 
-            DataGridViewColumn dgCol = _dataGridView.Columns[e.ColumnIndex];
+            var dgCol = _dataGridView.Columns[e.ColumnIndex];
             if (dgCol is DataGridViewLinkColumn)
             {
-                ITableColumn col = (ITableColumn)dgCol.Tag;
+                var col = (ITableColumn)dgCol.Tag;
                 col.ClickLink(_table.Items[e.RowIndex]);
             }
             else if (dgCol is DataGridViewButtonColumn)
@@ -1094,13 +1093,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (e.RowIndex == -1)
                 return;
 
-			ITableColumn column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
+			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
 			e.ToolTipText = column.GetTooltipText(_table.Items[e.RowIndex]);
 		}
 
 		private void _dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			ITableColumn column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
+			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
 
 			// Unless we know the type of e.Value can be handled by the DataGridView, we do not want to set e.FormattingApplied to true. Doing so will 
 			// prevent the cell from formatting e.Value into type it can handle (eg. string), result in FormatException for value type like int, float, etc.			
@@ -1109,7 +1108,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				try
 				{
 					// try to create the icon
-					IconSet iconSet = (IconSet)e.Value;
+					var iconSet = (IconSet)e.Value;
 					if (iconSet != null)
 						e.Value = IconFactory.CreateIcon(iconSet.SmallIcon, column.ResourceResolver);
 				}

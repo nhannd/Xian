@@ -49,8 +49,8 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         private class SortComparer : IComparer
         {
-            private int _direction;
-            private Comparison<TItem> _comp;
+            private readonly int _direction;
+            private readonly Comparison<TItem> _comp;
 
             public SortComparer(Comparison<TItem> comparison, bool ascending)
             {
@@ -65,16 +65,18 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         private Table<TItem> _table;
-        private string _name;
+        private readonly string _name;
 		private bool _visible = true;
-        private Type _columnType;
+        private readonly Type _columnType;
         private float _widthFactor;
-        private int _cellRow;
+        private readonly int _cellRow;
 
         private Comparison<TItem> _comparison;
 		private event EventHandler _visibilityChangedEvent;
 
         private IResourceResolver _resolver;
+
+		private ITableCellEditor _cellEditor;
 
         /// <summary>
         /// Constructor.
@@ -142,6 +144,19 @@ namespace ClearCanvas.Desktop.Tables
             get { return _comparison; }
             set { _comparison = value; }
         }
+
+		/// <summary>
+		/// Gets or sets a custom cell editor for this column.
+		/// </summary>
+    	public ITableCellEditor CellEditor
+    	{
+			get { return _cellEditor; }
+			set
+			{
+				_cellEditor = value;
+				_cellEditor.SetColumn(this);
+			}
+    	}
 
         /// <summary>
         /// Used by the framework to associate this column with a parent <see cref="Table"/>.
@@ -291,7 +306,16 @@ namespace ClearCanvas.Desktop.Tables
             get { return _cellRow; }
         }
 
-        #endregion
+    	/// <summary>
+    	/// Gets the editor that allows cells in this column to be edited, or null if no custom editor is provided.
+    	/// </summary>
+    	/// <returns></returns>
+    	public ITableCellEditor GetCellEditor()
+    	{
+    		return _cellEditor;
+    	}
+
+    	#endregion
 
         /// <summary>
         /// Default comparison used when TColumn is IComparable.
@@ -301,16 +325,13 @@ namespace ClearCanvas.Desktop.Tables
         /// <returns></returns>
         private int ValueComparsion(TItem x, TItem y)
         {
-            object valueX = GetValue(x);
-            object valueY = GetValue(y);
+            var valueX = GetValue(x);
+            var valueY = GetValue(y);
             if (valueX == null)
             {
-                if (valueY == null)
-                    return 0;
-                else
-                    return -1;
+            	return valueY == null ? 0 : -1;
             }
-            else if (valueY == null)
+            if (valueY == null)
             {
                 return 1;
             }
@@ -321,7 +342,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <summary>
         /// Default comparison used when TColumn is not IComparable (in which case, sorting is not possible).
         /// </summary>
-        private int NopComparison(TItem x, TItem y)
+        private static int NopComparison(TItem x, TItem y)
         {
             return 0;
         }
