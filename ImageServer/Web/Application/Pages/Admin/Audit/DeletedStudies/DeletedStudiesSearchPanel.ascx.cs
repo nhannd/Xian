@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
                 dataSource.PatientsName = PatientName.Text;
                 dataSource.PatientId = PatientId.Text;
                 dataSource.StudyDescription = StudyDescription.Text;
-
+                dataSource.DeletedBy = DeletedBy.Text;
                 if (!String.IsNullOrEmpty(StudyDate.Text))
                 {
                     DateTime value;

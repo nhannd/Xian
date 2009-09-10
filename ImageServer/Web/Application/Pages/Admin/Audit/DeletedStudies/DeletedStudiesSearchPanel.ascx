@@ -43,6 +43,11 @@
                                                 <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
+                                            </td>   
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label6" runat="server" Text="Deleted By" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="DeletedBy" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by the person who deleted the study" />
                                             </td>                                            
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>

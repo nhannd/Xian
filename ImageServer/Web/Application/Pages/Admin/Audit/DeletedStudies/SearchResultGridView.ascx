@@ -35,7 +35,11 @@
 							ItemStyle-HorizontalAlign="Center" />
 				        <asp:BoundField DataField="PartitionAE" HeaderText="Partition" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
-					    
+					    <asp:TemplateField HeaderText="Deleted By" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+							<itemtemplate>
+                                <%# Eval("UserName")%>
+                            </itemtemplate>
+						</asp:TemplateField>
 					</Columns>
 					<EmptyDataTemplate>				    
 					<ccAsp:EmptySearchResultsMessage runat="server" ID="NoResultFoundMessage" Message="No studies found using the provided criteria.">

@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
     
     
-    /// <summary>
-    /// SearchResultGridView class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class SearchResultGridView {
         
         /// <summary>

@@ -51,8 +51,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private DateTime? _studyDate;
 		private string _studyDescription;
 		private IList<DeletedStudyInfo> _studies;
+	    private string _deletedBy;
 
-		public string AccessionNumber
+	    public string AccessionNumber
 		{
 			get { return _accessionNumber; }
 			set { _accessionNumber  = value; }
@@ -78,6 +79,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _studyDate; }
 			set { _studyDate = value; }
 		}
+
+	    public string DeletedBy
+	    {
+            get { return _deletedBy; }
+            set { _deletedBy = value; }
+	    }
 
 		public string PatientsName
 		{
@@ -136,11 +143,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			criteria.Timestamp.SortDesc(0);
 			IList<StudyDeleteRecord> list = broker.Find(criteria, startRowIndex, maxRows);
 
-			_studies = CollectionUtils.Map<StudyDeleteRecord, DeletedStudyInfo>(
+			_studies = CollectionUtils.Map(
 				list, delegate(StudyDeleteRecord record)
 				      	{
 				      		return DeletedStudyInfoAssembler.CreateDeletedStudyInfo(record);
 				      	});
+
+			// Additional filter: DeletedBy
+            if (String.IsNullOrEmpty(DeletedBy)==false)
+            {
+                _studies = CollectionUtils.Select(_studies, delegate(DeletedStudyInfo record)
+                                       {
+                                           if (String.IsNullOrEmpty(record.UserId) && String.IsNullOrEmpty(record.UserName))
+                                               return false;
+
+                                           // either the id or user matches
+                                           return record.UserId.ToUpper().IndexOf(DeletedBy.ToUpper()) >= 0 ||
+                                                  record.UserName.ToUpper().IndexOf(DeletedBy.ToUpper()) >= 0;
+                                       });
+            }
 
 			return _studies;
 		
