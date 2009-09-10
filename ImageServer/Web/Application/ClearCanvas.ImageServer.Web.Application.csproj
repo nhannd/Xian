@@ -229,6 +229,13 @@
     <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.designer.cs">
       <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Dashboard\AlertHoverPopupDetails.ascx.cs">
+      <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\AlertHoverPopupDetails.ascx.designer.cs">
+      <DependentUpon>AlertHoverPopupDetails.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Dashboard\AlertsGridView.ascx.cs">
       <DependentUpon>AlertsGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -270,6 +277,13 @@
     </Compile>
     <Compile Include="Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx.designer.cs">
       <DependentUpon>StudyIntegrityQueueSummary.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\WorkQueueAlertContextDataView.ascx.cs">
+      <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Dashboard\WorkQueueAlertContextDataView.ascx.designer.cs">
+      <DependentUpon>WorkQueueAlertContextDataView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx.cs">
       <DependentUpon>WorkQueueSummary.ascx</DependentUpon>
@@ -1496,12 +1510,14 @@
     <Content Include="Global.asax" />
     <Content Include="Pages\Admin\Alerts\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Alerts\WorkQueueAlertContextDataView.ascx" />
+    <Content Include="Pages\Admin\Dashboard\AlertHoverPopupDetails.ascx" />
     <Content Include="Pages\Admin\Dashboard\AlertsGridView.ascx" />
     <Content Include="Pages\Admin\Dashboard\StudiesSummary.ascx" />
     <Content Include="Pages\Admin\Dashboard\Default.aspx" />
     <Content Include="Pages\Admin\Dashboard\FileSystemsGridView.ascx" />
     <Content Include="Pages\Admin\Dashboard\ServerPartitionGridView.ascx" />
     <Content Include="Pages\Admin\Dashboard\StudyIntegrityQueueSummary.ascx" />
+    <Content Include="Pages\Admin\Dashboard\WorkQueueAlertContextDataView.ascx" />
     <Content Include="Pages\Admin\Dashboard\WorkQueueSummary.ascx" />
     <Content Include="Pages\Error\CookiesRequired.aspx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
