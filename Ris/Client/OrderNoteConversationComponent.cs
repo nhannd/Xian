@@ -100,15 +100,14 @@ namespace ClearCanvas.Ris.Client
 		private CrudActionModel _recipientsActionModel;
 		private Checkable<RecipientTableItem> _selectedRecipient;
 
-		private ILookupHandler _recipientLookupHandler;
-		private object _recipientLookupSelection;
-
 		private ICannedTextLookupHandler _cannedTextLookupHandler;
 
 		private OrderNoteViewComponent _orderNoteViewComponent;
 		private ChildComponentHost _orderNotesComponentHost;
 
 		private readonly StaffGroupSummary _emptyStaffGroup = new StaffGroupSummary();
+
+		private event EventHandler _newRecipientAdded;
 
 		#endregion
 
@@ -145,7 +144,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			// init lookup handlers
 			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
-			_recipientLookupHandler = new StaffAndGroupLookupHandler(this.Host.DesktopWindow);
 
 			// init recip table here, and not in constructor, because it relies on Host being set
 			_recipients = new RecipientTable(this);
@@ -202,7 +200,8 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			// build the action model
-			_recipientsActionModel = new CrudActionModel(false, false, true, new ResourceResolver(this.GetType(), true));
+			_recipientsActionModel = new CrudActionModel(true, false, true, new ResourceResolver(this.GetType(), true));
+			_recipientsActionModel.Add.SetClickHandler(AddRecipient);
 			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
 			// init conversation view component
@@ -309,27 +308,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public ILookupHandler RecipientLookupHandler
+		public event EventHandler NewRecipientAdded
 		{
-			get { return _recipientLookupHandler; }
-		}
-
-		public object RecipientLookupSelection
-		{
-			get { return _recipientLookupSelection; }
-			set { _recipientLookupSelection = value; }
-		}
-
-		public bool AddRecipientEnabled
-		{
-			get { return _recipientLookupSelection != null; }
+			add { _newRecipientAdded += value; }
+			remove { _newRecipientAdded -= value; }
 		}
 
 		public void AddRecipient()
 		{
-			if (_recipientLookupSelection == null) return;
-
-			_recipients.Add(_recipientLookupSelection, true);
+			_selectedRecipient = _recipients.AddNew(true);
+			OnSelectedRecipientChanged();
+			EventsHelper.Fire(_newRecipientAdded, this, EventArgs.Empty);
 		}
 
 		public string OrderNotesLabel
@@ -472,6 +461,7 @@ namespace ClearCanvas.Ris.Client
 		private void OnSelectedRecipientChanged()
 		{
 			_recipientsActionModel.Delete.Enabled = _selectedRecipient != null;
+			NotifyPropertyChanged("SelectedRecipient");
 		}
 
 		#endregion

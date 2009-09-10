@@ -75,8 +75,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._urgent = new System.Windows.Forms.CheckBox();
 			this._notifyToGroupBox = new System.Windows.Forms.GroupBox();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
-			this._recipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._recipientAddButton = new System.Windows.Forms.Button();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -289,7 +287,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notifyToGroupBox.Size = new System.Drawing.Size(312, 296);
 			this._notifyToGroupBox.TabIndex = 0;
 			this._notifyToGroupBox.TabStop = false;
-			this._notifyToGroupBox.Text = "Parties to Notify";
+			this._notifyToGroupBox.Text = "Recipients (Staff or Staff Groups)";
 			// 
 			// _recipientsTableLayout
 			// 
@@ -298,8 +296,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.ColumnCount = 2;
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._recipientsTableLayout.Controls.Add(this._recipientLookup, 0, 1);
-			this._recipientsTableLayout.Controls.Add(this._recipientAddButton, 1, 1);
 			this._recipientsTableLayout.Controls.Add(this._recipients, 0, 2);
 			this._recipientsTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._recipientsTableLayout.Location = new System.Drawing.Point(3, 16);
@@ -312,32 +308,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.Size = new System.Drawing.Size(306, 277);
 			this._recipientsTableLayout.TabIndex = 1;
 			// 
-			// _recipientLookup
-			// 
-			this._recipientLookup.AutoSize = true;
-			this._recipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._recipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recipientLookup.LabelText = "Staff or Staff Group to Notify";
-			this._recipientLookup.Location = new System.Drawing.Point(0, 0);
-			this._recipientLookup.Margin = new System.Windows.Forms.Padding(0);
-			this._recipientLookup.Name = "_recipientLookup";
-			this._recipientLookup.Size = new System.Drawing.Size(264, 43);
-			this._recipientLookup.TabIndex = 2;
-			this._recipientLookup.Value = null;
-			// 
-			// _recipientAddButton
-			// 
-			this._recipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._recipientAddButton.AutoSize = true;
-			this._recipientAddButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._recipientAddButton.Location = new System.Drawing.Point(267, 17);
-			this._recipientAddButton.Name = "_recipientAddButton";
-			this._recipientAddButton.Size = new System.Drawing.Size(36, 23);
-			this._recipientAddButton.TabIndex = 3;
-			this._recipientAddButton.Text = "Add";
-			this._recipientAddButton.UseVisualStyleBackColor = true;
-			this._recipientAddButton.Click += new System.EventHandler(this._recipientAddButton_Click);
-			// 
 			// _recipients
 			// 
 			this._recipients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -346,12 +316,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.AutoSize = true;
 			this._recipients.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._recipientsTableLayout.SetColumnSpan(this._recipients, 2);
-			this._recipients.Location = new System.Drawing.Point(3, 46);
+			this._recipients.Location = new System.Drawing.Point(3, 3);
 			this._recipients.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
-			this._recipients.ShowToolbar = false;
-			this._recipients.Size = new System.Drawing.Size(288, 228);
+			this._recipients.Size = new System.Drawing.Size(288, 271);
 			this._recipients.TabIndex = 4;
 			// 
 			// OrderNoteConversationComponentControl
@@ -400,8 +369,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.GroupBox _notifyToGroupBox;
 		private System.Windows.Forms.TableLayoutPanel _recipientsTableLayout;
 		private ClearCanvas.Desktop.View.WinForms.TableView _recipients;
-		private LookupField _recipientLookup;
-		private System.Windows.Forms.Button _recipientAddButton;
 		private System.Windows.Forms.CheckBox _urgent;
 		private System.Windows.Forms.Panel panel1;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _onBehalf;

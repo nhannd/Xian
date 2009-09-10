@@ -72,11 +72,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_recipients.Table = _component.Recipients;
 			_recipients.MenuModel = _component.RecipientsActionModel;
+			_recipients.ToolbarModel = _component.RecipientsActionModel;
 			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_recipientLookup.LookupHandler = _component.RecipientLookupHandler;
-			_recipientLookup.DataBindings.Add("Value", _component, "RecipientLookupSelection", true, DataSourceUpdateMode.OnPropertyChanged);
-			_recipientAddButton.DataBindings.Add("Enabled", _component, "AddRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_completeButton.DataBindings.Add("Text", _component, "CompleteButtonLabel", true, DataSourceUpdateMode.OnPropertyChanged);
 			_completeButton.DataBindings.Add("Enabled", _component, "CompleteButtonEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -84,6 +81,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_notesGroupBox.Text = _component.OrderNotesLabel;
 
 			_component.PropertyChanged += _component_propertyChanged;
+
+			_component.NewRecipientAdded += _component_NewRecipientAdded;
+		}
+
+		private void _component_NewRecipientAdded(object sender, EventArgs e)
+		{
+			_recipients.BeginEdit(false);
 		}
 
 		private void _component_propertyChanged(object sender, PropertyChangedEventArgs e)
@@ -92,11 +96,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			{
 				_completeButton.Text = _component.CompleteButtonLabel;
 			}
-		}
-
-		private void _recipientAddButton_Click(object sender, System.EventArgs e)
-		{
-			_component.AddRecipient();
 		}
 
 		private void _completeButton_Click(object sender, System.EventArgs e)

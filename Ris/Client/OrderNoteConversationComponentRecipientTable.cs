@@ -47,6 +47,11 @@ namespace ClearCanvas.Ris.Client
 
 		private class RecipientTableItem
 		{
+			public RecipientTableItem()
+			{
+					
+			}
+
 			public RecipientTableItem(object staffOrGroupSummary)
 			{
 				this.Recipient = staffOrGroupSummary;
@@ -153,6 +158,13 @@ namespace ClearCanvas.Ris.Client
 			public void Add(object staffOrGroup, bool selected)
 			{
 				this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup), selected));
+			}
+
+			public Checkable<RecipientTableItem> AddNew(bool selected)
+			{
+				var recip = new Checkable<RecipientTableItem>(new RecipientTableItem(), selected);
+				this.Items.Add(recip);
+				return recip;
 			}
 		}
 	}
