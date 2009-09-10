@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 
 namespace ClearCanvas.Dicom.Utilities
 {
@@ -85,5 +86,16 @@ namespace ClearCanvas.Dicom.Utilities
 			time = new DateTime(time.TimeOfDay.Ticks);
 			return true;
 		}
+
+		/// <summary>
+		/// Convert a DateTime object into a TM string
+		/// </summary>
+		/// <param name="datetime"></param>
+		/// <returns>The DICOM formatted string</returns>
+		public static string ToDicomString(DateTime datetime)
+		{
+			return datetime.ToString(DicomFullTimeFormat, CultureInfo.InvariantCulture);
+		}
+
 	}
 }
