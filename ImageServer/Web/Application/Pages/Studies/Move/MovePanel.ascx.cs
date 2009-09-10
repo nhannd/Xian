@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -113,7 +114,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 
             MoveConfirmation.Confirmed += delegate(object data)
                                               {
-                    ScriptManager.RegisterStartupScript(Page, Page.GetType(), "alertScript", "self.close();", true);
 
                     IList<Device> devices = data as IList<Device>;
 
@@ -175,7 +175,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 
             StudyGridPanel.StudyList = _studies;
 
-            LoadDevices();            
+            LoadDevices();
+
+            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.DHCP));
+            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.NoDHCP));
+
+            IList<DeviceTypeEnum> deviceTypes = DeviceTypeEnum.GetAll();
+
+            if (DeviceTypeFilter.Items.Count == 0)
+            {
+                foreach (DeviceTypeEnum t in deviceTypes)
+                {
+                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                }
+            }
+            else
+            {
+                ListItem[] typeItems = new ListItem[DeviceTypeFilter.Items.Count];
+                DeviceTypeFilter.Items.CopyTo(typeItems, 0);
+                DeviceTypeFilter.Items.Clear();
+                int count = 0;
+                foreach (DeviceTypeEnum t in deviceTypes)
+                {
+                    DeviceTypeFilter.Items.Add(new ListItem(t.Description, t.Lookup));
+                    DeviceTypeFilter.Items[count].Selected = typeItems[count].Selected;
+                    count++;
+                }
+            }
         }
 
         protected Study LoadStudy(string studyInstanceUID)
@@ -219,6 +246,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                 key = key.Replace("*", "%");
                 key = key.Replace("?", "_");
                 criteria.AeTitle.Like(key);
+            }
+
+            if (!String.IsNullOrEmpty(IPAddressFilter.Text))
+            {
+                string key = IPAddressFilter.Text + "%";
+                key = key.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.IpAddress.Like(key);
+            }
+
+            if (DHCPFilter.SelectedIndex != 0)
+            {
+                if (DHCPFilter.SelectedIndex == 1)
+                    criteria.Dhcp.EqualTo(true);
+                else
+                    criteria.Dhcp.EqualTo(false);
+            }
+
+            if (DeviceTypeFilter.SelectedIndex > -1)
+            {
+                List<DeviceTypeEnum> types = new List<DeviceTypeEnum>();
+                foreach (ListItem item in DeviceTypeFilter.Items)
+                {
+                    if (item.Selected)
+                    {
+                        types.Add(DeviceTypeEnum.GetEnum(item.Value));
+                    }
+                }
+                criteria.DeviceTypeEnum.In(types);
             }
 
             // only enabled devices and devices that allow retrieves.
