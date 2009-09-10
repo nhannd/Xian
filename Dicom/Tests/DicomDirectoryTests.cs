@@ -247,6 +247,30 @@ namespace ClearCanvas.Dicom.Tests
 			string failureReason;
 			Assert.IsTrue(Compare(writer.RootDirectoryRecord, reader.RootDirectoryRecord, out failureReason), failureReason);
 
+			// Test Append
+			// Add a few more files to the file read in, then rewrite and read and compare
+			seriesList = SetupMRSeries(4, 4, DicomUid.GenerateUid().UID);
+			foreach (DicomAttributeCollection collection in seriesList)
+			{
+				file = new DicomFile("test.dcm", new DicomAttributeCollection(), collection);
+				SetupMetaInfo(file);
+				reader.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
+
+				file = new DicomFile("test2.dcm");
+				SetupKoForImage(file.DataSet, collection);
+				SetupMetaInfo(file);
+				reader.AddFile(file, String.Format("DICOM\\FILE{0}", fileCount++));
+			}
+
+			reader.FileSetId = "TestDicomdir";
+			reader.Save("DICOMDIR");
+
+
+			DicomDirectory reader2 = new DicomDirectory("DICOMDIR");
+			reader2.Load("DICOMDIR");
+
+
+			Assert.IsTrue(Compare(reader.RootDirectoryRecord, reader2.RootDirectoryRecord, out failureReason), failureReason);
 		}
 	}
 }

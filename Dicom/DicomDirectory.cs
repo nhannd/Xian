@@ -48,14 +48,40 @@ namespace ClearCanvas.Dicom
     ///     dicomDirectory.AddFile("C:\DicomImages\AnotherFile.dcm", "DIR002\\IMAGE002.DCM");
     ///     dicomDirectory.AddFile("C:\DicomImages\AnotherFile3.dcm", null);
     ///     dicomDirectory.Save("C:\\Temp\\DICOMDIR");
-    ///  }
+    /// }
     /// </example>
-    public class DicomDirectory : IDisposable
+	/// <example>
+	/// using (DicomDirectory dicomDirectory = new DicomDirectory())
+	/// {
+	///     dicomDirectory.Load("C:\\Temp\\DICOMDIR");
+	/// 
+	///		int patientRecords = 0;
+	///		int studyRecords = 0;
+	///		int seriesRecords = 0;
+	///		int instanceRecords = 0;
+	///
+	///		// Show a simple traversal, counting the records at each level
+	///		foreach (DirectoryRecordSequenceItem patientRecord in reader.RootDirectoryRecordCollection)
+	///		{
+	///			patientRecords++;
+	///			foreach (DirectoryRecordSequenceItem studyRecord in patientRecord.LowerLevelDirectoryRecordCollection)
+	///			{
+	///				studyRecords++;
+	///				foreach (DirectoryRecordSequenceItem seriesRecord in studyRecord.LowerLevelDirectoryRecordCollection)
+	///				{
+	///					seriesRecords++;
+	///					foreach (DirectoryRecordSequenceItem instanceRecord in seriesRecord.LowerLevelDirectoryRecordCollection)
+	///					{
+	///						instanceRecords++;
+	///					}
+	///				}
+	///			}
+	///		}
+	/// }
+	/// </example>
+	public class DicomDirectory : IDisposable
     {
         #region Private Variables
-        /// <summary>Contains all the Dicom Image files to be added to the directory</summary>
-        private readonly Dictionary<DicomFile, string> _dicomFiles = new Dictionary<DicomFile, string>();
-
         /// <summary>The directory record sequence item that all the directory record items gets added to.</summary>
         private readonly DicomAttributeSQ _directoryRecordSequence;
 
@@ -113,6 +139,9 @@ namespace ClearCanvas.Dicom
 
         #region Public Properties
 
+		/// <summary>
+		/// An enumerable collection for traversing the <see cref="DirectoryRecordSequenceItem"/> records in the root of the DICOMDIR.
+		/// </summary>
 		public DirectoryRecordCollection RootDirectoryRecordCollection
 		{
 			get
@@ -239,21 +268,18 @@ namespace ClearCanvas.Dicom
         {
             DicomWriteOptions options = DicomWriteOptions.None;
 
-            if (_dicomFiles.Count == 0 && _directoryRecordSequence.Count == 0)
+            if (_rootRecord == null)
                 throw new InvalidOperationException("No Dicom Files added, cannot save dicom directory");
 
             _saveFileName = fileName;
 
-            foreach (DicomFile dicomFile in _dicomFiles.Keys)
-            {
-                string optionalRelativeRootPath = _dicomFiles[dicomFile];
-				InsertFile(dicomFile,optionalRelativeRootPath);
-            }
-
-			// Clear out the DICOMDIR after adding
-			_dicomFiles.Clear();
-
+			// Clear so that the calculations work properly on the length.
+			// We wouldn't have to do this, if CalculateWriteLength had a Start/Stop tag
             _directoryRecordSequence.ClearSequenceItems();
+			
+			//Remove SopClassUid, so it doesn't messup offsets, add it back in later.
+			if (_dicomDirFile.DataSet.Contains(DicomTags.SopClassUid))
+				_dicomDirFile.DataSet.RemoveAttribute(DicomTags.SopClassUid);
 
             //Set initial offset of where the directory record sequence tag starts
             // based on the 128 byte preamble, the DICM characters and the tags themselves.
@@ -272,8 +298,7 @@ namespace ClearCanvas.Dicom
                 _fileOffset += 4; // length
             }
 
-            // go through every _tempSequenceRecordDictionary and add it to _directoryRecordSequence (which is the
-            // DirectoryRecordSequence connected to _dicomDirFile.DataSet. While it does this it determines the correct offsets.
+            // go through the tree of records and add them back into the dataset.
             AddDirectoryRecordsToSequenceItem(_rootRecord);
 
             // Double check to make sure at least one file was added.
@@ -343,7 +368,8 @@ namespace ClearCanvas.Dicom
 
 			// Get the root Directory Record.
 			uint offset = _dicomDirFile.DataSet[DicomTags.OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity].GetUInt32(0, 0);
-			lookup.TryGetValue(offset, out _rootRecord);
+			if (!lookup.TryGetValue(offset, out _rootRecord) && offset != 0)
+				throw new DicomDataException("Unable to find root directory record in File");
 
 			// Now traverse through the remainder of the directory records, and match up the offsets with the directory
 			// records so we can build up the tree structure.
@@ -359,11 +385,8 @@ namespace ClearCanvas.Dicom
 
 				offset = sqItem[DicomTags.OffsetOfReferencedLowerLevelDirectoryEntity].GetUInt32(0, 0);
 
-				if (lookup.TryGetValue(offset, out foundItem))
-					sqItem.LowerLevelDirectoryRecord = foundItem;
-				else
-					sqItem.LowerLevelDirectoryRecord = null;
-			}
+				sqItem.LowerLevelDirectoryRecord = lookup.TryGetValue(offset, out foundItem) ? foundItem : null;
+			}			
 		}
 
         /// <summary>
@@ -377,7 +400,7 @@ namespace ClearCanvas.Dicom
             if (dicomFile == null)
                 throw new ArgumentNullException("dicomFile");
 
-            _dicomFiles.Add(dicomFile, optionalDicomDirFileLocation);
+			InsertFile(dicomFile, optionalDicomDirFileLocation);
         }
 
         /// <summary>
@@ -391,11 +414,13 @@ namespace ClearCanvas.Dicom
             if (String.IsNullOrEmpty(dicomFileName))
                 throw new ArgumentNullException("dicomFileName");
 
-            if (File.Exists(dicomFileName))
-                _dicomFiles.Add(new DicomFile(dicomFileName), optionalDicomDirFileLocation);
-            else
-                throw new FileNotFoundException("cannot add DicomFile, does not exist", dicomFileName);
-
+			if (File.Exists(dicomFileName))
+			{
+				DicomFile dicomFile = new DicomFile(dicomFileName);
+				InsertFile(dicomFile, optionalDicomDirFileLocation);
+			}
+			else
+				throw new FileNotFoundException("cannot add DicomFile, does not exist", dicomFileName);
         }
 
         /// <summary>
@@ -422,7 +447,7 @@ namespace ClearCanvas.Dicom
 			try
 			{
 				if (dicomFile.DataSet.Count == 0)
-					dicomFile.Load(DicomReadOptions.Default);
+					dicomFile.Load(DicomReadOptions.StorePixelDataReferences);
 
 				DirectoryRecordSequenceItem patientRecord;
 				DirectoryRecordSequenceItem studyRecord;
@@ -593,7 +618,7 @@ namespace ClearCanvas.Dicom
         /// <param name="patients"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        private static DirectoryRecordSequenceItem GetExistingOrCreateNewPatient(DirectoryRecordSequenceItem patients, DicomFile file)
+        private static DirectoryRecordSequenceItem GetExistingOrCreateNewPatient(DirectoryRecordSequenceItem patients, DicomMessageBase file)
         {
             DirectoryRecordSequenceItem currentPatient = patients;
             while (currentPatient != null)
@@ -619,7 +644,7 @@ namespace ClearCanvas.Dicom
         /// <param name="studies"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        private static DirectoryRecordSequenceItem GetExistingOrCreateNewStudy(DirectoryRecordSequenceItem studies, DicomFile file)
+        private static DirectoryRecordSequenceItem GetExistingOrCreateNewStudy(DirectoryRecordSequenceItem studies, DicomMessageBase file)
         {
             DirectoryRecordSequenceItem currentStudy = studies;
             while (currentStudy != null)
@@ -644,7 +669,7 @@ namespace ClearCanvas.Dicom
         /// <param name="series"></param>
         /// <param name="file"></param>
         /// <returns></returns>
-        private static DirectoryRecordSequenceItem GetExistingOrCreateNewSeries(DirectoryRecordSequenceItem series, DicomFile file)
+        private static DirectoryRecordSequenceItem GetExistingOrCreateNewSeries(DirectoryRecordSequenceItem series, DicomMessageBase file)
         {
             DirectoryRecordSequenceItem currentSeries = series;
             while (currentSeries != null)
@@ -835,7 +860,6 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
-
     }
 
 	
@@ -929,9 +953,12 @@ namespace ClearCanvas.Dicom
             _sopClassLookup.Add(SopClass.XRayRadiationDoseSrStorageUid, DirectoryRecordType.Image);
             _sopClassLookup.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, DirectoryRecordType.Image);
 
-			List<uint> tagList;
+			// At some point this will need to be improved to make the 
+			// the DICOMDIRs compliant.  IE, we're not looking at Type2 and conditional tags
+			// properly and inserting them.
+
 			//RT DOSE
-			tagList = new List<uint>();
+			List<uint> tagList = new List<uint>();
 			tagList.Add(DicomTags.InstanceNumber);
 			tagList.Add(DicomTags.DoseSummationType);
 			_tagLookupList.Add(DirectoryRecordType.RtDose, tagList);
