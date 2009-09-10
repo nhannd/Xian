@@ -417,6 +417,26 @@ namespace ClearCanvas.Desktop.View.WinForms
             remove { _dataGridView.KeyDown -= value; }
         }
 
+		/// <summary>
+		/// Begins editing.
+		/// </summary>
+		/// <param name="selectAll"></param>
+		public bool BeginEdit(bool selectAll)
+		{
+			var firstSelRow = (DataGridViewRow)CollectionUtils.FirstElement(_dataGridView.SelectedRows);
+			var col = CollectionUtils.SelectFirst(_table.Columns, (ITableColumn c) => c.GetCellEditor() != null);
+			if (firstSelRow != null && col != null)
+			{
+				var rowIndex = firstSelRow.Index;
+				var colIndex = _table.Columns.IndexOf(col);
+
+				_dataGridView.CurrentCell = _dataGridView[colIndex, rowIndex];
+
+				return _dataGridView.BeginEdit(selectAll);
+			}
+			return false;
+		}
+
 
         #endregion
 
