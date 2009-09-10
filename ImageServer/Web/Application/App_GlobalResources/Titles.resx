@@ -315,4 +315,7 @@
   <data name="DashboardMenu" xml:space="preserve">
     <value>Dashboard</value>
   </data>
+  <data name="CookiesRequiredPageTitle" xml:space="preserve">
+    <value>Cookies Required</value>
+  </data>
 </root>

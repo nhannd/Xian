@@ -196,6 +196,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cookies Required.
+        /// </summary>
+        internal static string CookiesRequiredPageTitle {
+            get {
+                return ResourceManager.GetString("CookiesRequiredPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ImageServer Dashboard.
         /// </summary>
         internal static string Dashboard {
