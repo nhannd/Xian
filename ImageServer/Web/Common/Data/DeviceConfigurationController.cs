@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns><b>true</b> if the record is updated successfully. <b>false</b> otherwise.</returns>
         public bool UpdateDevice(Device device)
         {
-            Platform.Log(LogLevel.Info, "Updating device Key={1} : AETitle={0}", device.Key, device.AeTitle);
+            Platform.Log(LogLevel.Info, "Updating device Key={0} : AETitle={1}", device.Key, device.AeTitle);
             bool ok = _adapter.Update(device);
             Platform.Log(LogLevel.Info, "Device Key={0} {1}", device.Key, ok ? "updated" : " failed to update");
 

@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Web.Application
                 {
                     userName = SessionManager.Current.User.Credentials.UserName;
                 }
-                Platform.Log(LogLevel.Info,
+                Platform.Log(LogLevel.Debug,
                              string.Format("USER: {0} URL: {1} PROCESSING TIME: {2}", userName,
                                            this.Request.Url.AbsoluteUri, processingTime));
             }
