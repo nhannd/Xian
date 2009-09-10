@@ -51,8 +51,26 @@
 					Field.setValue($("errorMsg"), message);
 				}
 		}
-
 		</script>
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			#faxPreviewInfo {
+				height: 5em;
+			}
+			#PdfButtons {
+				height:32px; 
+				margin: 2px;
+			}
+			#PdfObject {
+				border: 1px solid #BBBBBB; 
+				height:80%; 
+				width:99%;
+			}
+		</style>
 	</head>
 	<body onload="onBodyLoad()">
 		<div id="faxPreviewInfo">

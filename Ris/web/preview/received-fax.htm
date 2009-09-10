@@ -35,32 +35,18 @@
 						// redirect all other documents
 						window.location = faxUrl;
 					}
-					
-					var previewInfo = 
-						'<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">'+
-						'	<tr>'+
-						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">From #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="fromNumber"/></td>'+
-						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">To #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="toNumber"/></td>'+
-						'   </tr>'+
-						'	<tr>'+
-						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Original Copy: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="original"/></td>'+
-						'		<td valign="top" class="DemographicsLabel" nowrap="nowrap">Status: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="status"/></td>'+
-						'	</tr>'+
-						'</table>';
 
-					$("faxPreviewInfo").innerHTML = previewInfo;
-					
 					if(faxboxItem != null)
 					{
-						Field.setValue($("fromNumber"), Ris.formatStringTelephone(faxboxItem.SenderNumber));
-						Field.setValue($("toNumber"), Ris.formatStringTelephone(faxboxItem.ReceivedAt.Number));
+						Field.setValue($("senderNumber"), Ris.formatStringTelephone(faxboxItem.SenderNumber));
+						Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(faxboxItem.ReceivedAt.Number));
 						Field.setValue($("original"), "Not implemented yet."); // TODO: Implement.	
 						Field.setValue($("status"), faxboxItem.Status.Value); // TODO: Implement.	
 					}
 					else
 					{
-						Field.setValue($("fromNumber"), "Not found.");
-						Field.setValue($("toNumber"), "Not found.");
+						Field.setValue($("senderNumber"), "Not found.");
+						Field.setValue($("receivedAtNumber"), "Not found.");
 						Field.setValue($("original"), "Not implemented yet.");
 						Field.setValue($("status"), "Not found.");
 					}
@@ -73,9 +59,39 @@
 		}
 
 		</script>
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			#faxPreviewInfo {
+				height: 5em;
+			}
+			#PdfButtons {
+				height:32px; 
+				margin: 2px;
+			}
+			#PdfObject {
+				border: 1px solid #BBBBBB; 
+				height:88%; 
+				width:99%;
+			}
+		</style>
 	</head>
 	<body onload="onBodyLoad()">
-		<div id="faxPreviewInfo"></div>
+		<div id="faxPreviewInfo">
+			<table border="0" cellspacing="0" cellpadding="0" class="PatientDemographicsTable">
+				<tr>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">From #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="senderNumber"/></td>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">To #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="receivedAtNumber"/></td>
+				</tr>
+				<tr>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Original Copy: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="original"/></td>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Status: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="status"/></td>
+				</tr>
+			</table>
+		</div>
 		<div id="PdfButtons"></div>
 		<object id="PdfObject" type="application/pdf"></object>
 		<div id="errorMsg" />
