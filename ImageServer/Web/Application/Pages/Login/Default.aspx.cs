@@ -31,6 +31,7 @@
 
 using System;
 using System.ServiceModel;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
@@ -48,6 +49,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             DataBind();
 
+        }
+
+        protected bool EnterpriseMode
+        {
+            get
+            {
+            	// There's no simple way to determine what mode the Web GUI is running.
+            	// Here we assume it's stand-alone if the DefaultAuthenticationService plugin is enabled.
+                // This is not perfect but at least it works.                
+            	XmlDocument doc = new XmlDocument();
+                doc.Load(Server.MapPath("~/Web.Config"));
+                XmlNode node = doc.SelectSingleNode("//extensions/extension[@class='ClearCanvas.ImageServer.Services.Common.Authentication.DefaultAuthenticationService, ClearCanvas.ImageServer.Services.Common']");
+                if (node != null)
+                    return bool.Parse(node.Attributes["enabled"].Value) == false;
+                else
+                    return false;
+            }
         }
 
         protected void LoginClicked(object sender, EventArgs e)

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Common
@@ -115,7 +116,8 @@ namespace ClearCanvas.ImageServer.Common
     /// <summary>
     /// Represents the source of an <see cref="Alert"/>
     /// </summary>
-    public struct AlertSource : IEquatable<AlertSource>
+    [DataContract]
+    public class AlertSource : IEquatable<AlertSource>
     {
         #region Private Members
         private string _name;
@@ -123,6 +125,12 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Constructors
+
+        public AlertSource()
+        {
+        }
+
+
         /// <summary>
         /// Creates an instance of <see cref="Alert"/> for the specified source.
         /// </summary>
@@ -134,6 +142,8 @@ namespace ClearCanvas.ImageServer.Common
         }
 
         #endregion
+
+        [DataMember]
         /// <summary>
         /// Name of the source.
         /// </summary>
@@ -146,6 +156,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Gets a string that represents the host machine of the source
         /// </summary>
+        [DataMember]
         public string Host
         {
             get { return _host; }
@@ -165,20 +176,20 @@ namespace ClearCanvas.ImageServer.Common
     /// <summary>
     /// Represents an alert.
     /// </summary>
-    public struct Alert : IEquatable<Alert>
+    [DataContract]
+    public class Alert : IEquatable<Alert>
     {
         #region Public Static Properties
         /// <summary>
         /// 'Null' alert.
         /// </summary>
-        public static Alert Null = new Alert();
         #endregion
 
         #region Private Members
         private AlertSource _source;
         private AlertCategory _category;
         private AlertLevel _level;
-        private readonly DateTime _timeStamp;
+        private DateTime _timeStamp;
         private DateTime _expirationTime;
         private int _code;
         private String _message;
@@ -187,6 +198,10 @@ namespace ClearCanvas.ImageServer.Common
         #endregion
 
         #region Constructors
+
+        public Alert()
+        {
+        }
 
         /// <summary>
         /// Creates an instance of <see cref="Alert"/> of specified category and level for the specified source.
@@ -211,6 +226,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Sets or gets the source of the alert.
         /// </summary>
+        [DataMember]
         public AlertSource Source
         {
             get { return _source; }
@@ -220,9 +236,11 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Gets the timestamp when the alert was created
         /// </summary>
+        [DataMember]
         public DateTime TimeStamp
         {
             get { return _timeStamp; }
+            set { _timeStamp = value; }
         }
 
 
@@ -230,6 +248,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Gets or sets the data associated with the alert
         /// </summary>
+        [DataMember]
         public object ContextData
         {
             get { return _data; }
@@ -239,6 +258,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Gets or sets the alert category
         /// </summary>
+        [DataMember]
         public AlertCategory Category
         {
             get { return _category; }
@@ -248,6 +268,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Gets or sets the alert level
         /// </summary>
+        [DataMember]
         public AlertLevel Level
         {
             get { return _level; }
@@ -260,6 +281,7 @@ namespace ClearCanvas.ImageServer.Common
         /// <remarks>
         /// <seealso cref="AlertTypeCodes"/> for predefined codes
         /// </remarks>
+        [DataMember]
         public int Code
         {
             get { return _code; }
@@ -269,12 +291,14 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Gets or sets the expiration time of the alert.
         /// </summary>
+        [DataMember]
         public DateTime ExpirationTime
         {
             get { return _expirationTime; }
             set { _expirationTime = value; }
         }
 
+        [DataMember]
         public string Message
         {
             get { return _message; }
@@ -299,6 +323,4 @@ namespace ClearCanvas.ImageServer.Common
 
         #endregion
     }
-
-
 }

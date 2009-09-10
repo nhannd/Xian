@@ -214,6 +214,8 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         #region Private Methods
         static private string ResolveKey(ImageServer.Common.Alert alert)
         {
+            Platform.CheckForNullReference(alert, "alert");
+            Platform.CheckForNullReference(alert.Source, "alert.Source");
             string key = String.Format("{0}/{1}/{2}/{3}",
                                        alert.Source.Host, alert.Source.Name, alert.Code, alert.ContextData);
 

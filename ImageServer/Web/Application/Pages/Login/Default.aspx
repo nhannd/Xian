@@ -24,6 +24,7 @@
         
     <div align="right" id="VersionInfoPanel">
             Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
+            <br /><%= EnterpriseMode ? "(Enterprise)" : "(Stand-alone)"%>
     </div>
         
     <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server">

@@ -131,6 +131,7 @@
     <Compile Include="KeyedCollectionBase.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
+    <Compile Include="Modules\ApplicationModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\WebAppUserCredentialProvider.cs" />
     <Compile Include="Security\XmlMembershipProvider.cs" />
