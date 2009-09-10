@@ -75,9 +75,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._urgent = new System.Windows.Forms.CheckBox();
 			this._notifyToGroupBox = new System.Windows.Forms.GroupBox();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
+			this._recipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._recipientAddButton = new System.Windows.Forms.Button();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._recipientLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._componentSplitContainer.Panel1.SuspendLayout();
@@ -312,6 +312,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.Size = new System.Drawing.Size(306, 277);
 			this._recipientsTableLayout.TabIndex = 1;
 			// 
+			// _recipientLookup
+			// 
+			this._recipientLookup.AutoSize = true;
+			this._recipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._recipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._recipientLookup.LabelText = "Staff or Staff Group to Notify";
+			this._recipientLookup.Location = new System.Drawing.Point(0, 0);
+			this._recipientLookup.Margin = new System.Windows.Forms.Padding(0);
+			this._recipientLookup.Name = "_recipientLookup";
+			this._recipientLookup.Size = new System.Drawing.Size(264, 43);
+			this._recipientLookup.TabIndex = 2;
+			this._recipientLookup.Value = null;
+			// 
 			// _recipientAddButton
 			// 
 			this._recipientAddButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -340,19 +353,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.ShowToolbar = false;
 			this._recipients.Size = new System.Drawing.Size(288, 228);
 			this._recipients.TabIndex = 4;
-			// 
-			// _recipientLookup
-			// 
-			this._recipientLookup.AutoSize = true;
-			this._recipientLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._recipientLookup.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._recipientLookup.LabelText = "Staff or Staff Group to Notify";
-			this._recipientLookup.Location = new System.Drawing.Point(0, 0);
-			this._recipientLookup.Margin = new System.Windows.Forms.Padding(0);
-			this._recipientLookup.Name = "_recipientLookup";
-			this._recipientLookup.Size = new System.Drawing.Size(264, 43);
-			this._recipientLookup.TabIndex = 2;
-			this._recipientLookup.Value = null;
 			// 
 			// OrderNoteConversationComponentControl
 			// 

@@ -93,6 +93,7 @@
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CheckInSettings.cs" />
     <Compile Include="LookupHandlerAggregator.cs" />
+    <Compile Include="LookupHandlerCellEditor.cs" />
     <Compile Include="OrderNoteConversationComponentRecipientTable.cs" />
     <Compile Include="DateTimeEntryComponent.cs" />
     <Compile Include="DiagnosticServiceEditorComponent.cs" />

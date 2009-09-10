@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
 		private IList<StaffGroupSummary> _onBehalfOfChoices;
 		private StaffGroupSummary _onBehalfOf;
 
-		private readonly RecipientTable _recipients;
+		private RecipientTable _recipients;
 		private CrudActionModel _recipientsActionModel;
 		private Checkable<RecipientTableItem> _selectedRecipient;
 
@@ -123,7 +123,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			_orderRef = orderRef;
 			_orderNoteCategories = orderNoteCategories != null ? new List<string>(orderNoteCategories) : new List<string>();
-			_recipients = new RecipientTable(this);
 
 			this.Validation.Add(new ValidationRule("SelectedRecipient",
 				delegate
@@ -144,6 +143,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public override void Start()
 		{
+			// init lookup handlers
+			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
+			_recipientLookupHandler = new StaffAndGroupLookupHandler(this.Host.DesktopWindow);
+
+			// init recip table here, and not in constructor, because it relies on Host being set
+			_recipients = new RecipientTable(this);
+
 			// load the existing conversation, plus editor form data
 			var templateRecipients = new List<Checkable<RecipientTableItem>>();
 			var orderNotes = new List<OrderNoteDetail>();
@@ -204,10 +210,6 @@ namespace ClearCanvas.Ris.Client
 			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteButtonLabel"); };
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteViewComponent);
 			_orderNotesComponentHost.StartComponent();
-
-			// init lookup handlers
-			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
-			_recipientLookupHandler = new StaffAndGroupLookupHandler(this.Host.DesktopWindow);
 
 			base.Start();
 		}

@@ -47,38 +47,54 @@ namespace ClearCanvas.Ris.Client
 
 		private class RecipientTableItem
 		{
-			public RecipientTableItem(StaffSummary staffSummary)
+			public RecipientTableItem(object staffOrGroupSummary)
 			{
-				this.StaffSummary = staffSummary;
+				this.Recipient = staffOrGroupSummary;
 			}
 
-			public RecipientTableItem(StaffGroupSummary staffGroupSummary)
+			/// <summary>
+			/// Gets or sets the recipient, which must be an instance of a <see cref="StaffGroupSummary"/> or <see cref="StaffSummary"/>.
+			/// </summary>
+			public object Recipient
 			{
-				this.StaffGroupSummary = staffGroupSummary;
+				get { return IsStaffRecipient ? (object) this.StaffSummary : this.StaffGroupSummary; }
+				set
+				{
+					// clear both, in case value is changing from one type to the other
+					this.StaffSummary = null;
+					this.StaffGroupSummary = null;
+
+					if (value is StaffGroupSummary)
+						this.StaffGroupSummary = (StaffGroupSummary) value;
+					else if (value is StaffSummary)
+						this.StaffSummary = (StaffSummary) value;
+				}
 			}
 
-			public bool IsStaffRecipient { get { return StaffSummary != null; } }
+			public bool IsStaffRecipient
+			{
+				get { return StaffSummary != null; }
+			}
 
 			public StaffSummary StaffSummary { get; private set; }
 
-			public bool IsGroupRecipient { get { return StaffGroupSummary != null; } }
+			public bool IsGroupRecipient
+			{
+				get { return StaffGroupSummary != null; }
+			}
 
 			public StaffGroupSummary StaffGroupSummary { get; private set; }
 
-			public string Name
+			public static string Format(object staffOrGroup)
 			{
-				get
-				{
-					return IsStaffRecipient
-							? PersonNameFormat.Format(StaffSummary.Name)
-							: (IsGroupRecipient ? StaffGroupSummary.Name : string.Empty);
-				}
+				return (staffOrGroup is StaffSummary)
+					? StaffNameAndRoleFormat.Format(((StaffSummary)staffOrGroup))
+					: (staffOrGroup is StaffGroupSummary) ? ((StaffGroupSummary)staffOrGroup).Name : string.Empty;
 			}
 
 		}
 
 		#endregion
-
 
 		private class RecipientTable : Table<Checkable<RecipientTableItem>>
 		{
@@ -100,10 +116,14 @@ namespace ClearCanvas.Ris.Client
 					},
 					0.4f));
 
-				this.Columns.Add(new TableColumn<Checkable<RecipientTableItem>, string>(
+				var nameColumn = new TableColumn<Checkable<RecipientTableItem>, object>(
 					"Name",
-					item => item.Item.Name,
-					2.0f));
+					item => item.Item.Recipient,
+					(x, value) => x.Item.Recipient = value,
+					2.0f);
+				nameColumn.ValueFormatter = RecipientTableItem.Format;
+				nameColumn.CellEditor = new LookupHandlerCellEditor(new StaffAndGroupLookupHandler(owner.Host.DesktopWindow));
+				this.Columns.Add(nameColumn);
 			}
 
 			public List<StaffSummary> SelectedStaff
@@ -132,48 +152,8 @@ namespace ClearCanvas.Ris.Client
 
 			public void Add(object staffOrGroup, bool selected)
 			{
-				if(staffOrGroup is StaffGroupSummary)
-					Add((StaffGroupSummary)staffOrGroup, selected);
-				else if(staffOrGroup is StaffSummary)
-					Add((StaffSummary)staffOrGroup, selected);
+				this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup), selected));
 			}
-
-			public void Add(StaffSummary staff, bool selected)
-			{
-				if (staff == null) return;
-
-				var foundItem = CollectionUtils.SelectFirst(
-						this.Items,
-						r => r.Item.IsStaffRecipient && string.Equals(r.Item.StaffSummary.StaffId, staff.StaffId));
-
-				if (foundItem == null)
-				{
-					this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staff), selected));
-				}
-				else
-				{
-					foundItem.IsChecked |= selected;
-				}
-			}
-
-			public void Add(StaffGroupSummary group, bool selected)
-			{
-				if (group == null) return;
-
-				var foundItem = CollectionUtils.SelectFirst(
-						this.Items,
-						r => r.Item.IsGroupRecipient && string.Equals(r.Item.StaffGroupSummary.Name, group.Name));
-
-				if (foundItem == null)
-				{
-					this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(group), selected));
-				}
-				else
-				{
-					foundItem.IsChecked |= selected;
-				}
-			}
-
 		}
 	}
 }
