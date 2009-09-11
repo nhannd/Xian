@@ -89,6 +89,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     					updateColumns.AllowRetrieve = true;
     					updateColumns.AllowStorage = true;
     					updateColumns.ThrottleMaxConnections = ImageServerCommonConfiguration.Device.MaxConnections;
+    				    updateColumns.DeviceTypeEnum = DeviceTypeEnum.Workstation;
     					IDeviceEntityBroker insert = updateContext.GetBroker<IDeviceEntityBroker>();
 
     					device = insert.Insert(updateColumns);
