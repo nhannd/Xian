@@ -514,7 +514,8 @@ namespace ClearCanvas.Dicom.Tests
 			                                		NumberOfFrames = numberOfFrames
 			                                	};
 
-			if (photometricInterpretation.Equals("RGB"))
+			if (photometricInterpretation.Equals("RGB")
+			 || photometricInterpretation.Equals("YBR_FULL"))
 			{
 				pd.SamplesPerPixel = 3;
 				pd.PlanarConfiguration = 1;

@@ -161,20 +161,27 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
 		[Test]
 		public void LosslessColorCodecTest()
 		{
+			TransferSyntax syntax = TransferSyntax.RleLossless;
 			DicomFile file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
-			LosslessImageTest(TransferSyntax.RleLossless, file);
+			LosslessImageTest(syntax, file);
 
 			file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
-			LosslessImageTest(TransferSyntax.RleLossless, file);
+			LosslessImageTest(syntax, file);
 
 			file = CreateFile(256, 255, "RGB", 8, 8, false, 1);
-			LosslessImageTest(TransferSyntax.RleLossless, file);
+			LosslessImageTest(syntax, file);
 
 			file = CreateFile(256, 256, "RGB", 8, 8, false, 5);
-			LosslessImageTest(TransferSyntax.RleLossless, file);
+			LosslessImageTest(syntax, file);
 
 			file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
-			LosslessImageTest(TransferSyntax.RleLossless, file);
+			LosslessImageTest(syntax, file);
+
+			file = CreateFile(512, 512, "YBR_FULL", 8, 8, false, 1);
+			LosslessImageTest(syntax, file);
+
+			file = CreateFile(255, 255, "YBR_FULL", 8, 8, false, 5);
+			LosslessImageTest(syntax, file);
 
 		}
 	}

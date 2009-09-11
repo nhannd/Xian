@@ -55,7 +55,12 @@ namespace ClearCanvas.Dicom.Codec.Tests
 
 			file = CreateFile(256, 256, "RGB", 8, 8, false, 1);
             file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-			file.Filename = "ColorTestPattern.dcm";
+			file.Filename = "RgbColorTestPattern.dcm";
+			file.Save();
+
+			file = CreateFile(256, 256, "YBR_FULL", 8, 8, false, 1);
+			file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+			file.Filename = "YbrColorTestPattern.dcm";
 			file.Save();
 
 		}
@@ -90,7 +95,7 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			Assert.IsTrue(result,sb.ToString());
 		}
 
-		public static void LossyImageTest(TransferSyntax syntax, DicomFile theFile)
+		public static void LosslessImageTestWithConversion(TransferSyntax syntax, DicomFile theFile)
 		{
 			if (File.Exists(theFile.Filename))
 				File.Delete(theFile.Filename);
@@ -110,6 +115,54 @@ namespace ClearCanvas.Dicom.Codec.Tests
 			Assert.IsFalse(newFile.DataSet.Equals(saveCopy.DataSet));
 		}
 
+		public static void LossyImageTest(TransferSyntax syntax, DicomFile theFile)
+		{
+			if (File.Exists(theFile.Filename))
+				File.Delete(theFile.Filename);
 
+			DicomFile saveCopy = new DicomFile(theFile.Filename, theFile.MetaInfo.Copy(), theFile.DataSet.Copy());
+
+			theFile.ChangeTransferSyntax(syntax);
+
+			theFile.Save(DicomWriteOptions.ExplicitLengthSequence);
+
+			DicomFile newFile = new DicomFile(theFile.Filename);
+
+			newFile.Load(DicomReadOptions.Default);
+
+			newFile.ChangeTransferSyntax(saveCopy.TransferSyntax);
+
+			Assert.IsFalse(newFile.DataSet.Equals(saveCopy.DataSet));
+
+			Assert.IsTrue(newFile.DataSet.Contains(DicomTags.DerivationDescription));
+			Assert.IsTrue(newFile.DataSet.Contains(DicomTags.LossyImageCompression));
+			Assert.IsTrue(newFile.DataSet.Contains(DicomTags.LossyImageCompressionMethod));
+			Assert.IsTrue(newFile.DataSet.Contains(DicomTags.LossyImageCompressionRatio));
+
+			Assert.IsFalse(newFile.DataSet[DicomTags.DerivationDescription].IsEmpty);
+			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompression].IsEmpty);
+			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompressionMethod].IsEmpty);
+			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompressionRatio].IsEmpty);
+
+			Assert.IsFalse(newFile.DataSet[DicomTags.DerivationDescription].IsNull);
+			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompression].IsNull);
+			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompressionMethod].IsNull);
+			Assert.IsFalse(newFile.DataSet[DicomTags.LossyImageCompressionRatio].IsNull);
+
+		}
+
+		public static void ExpectedFailureTest(TransferSyntax syntax, DicomFile theFile)
+		{
+			try
+			{
+				theFile.ChangeTransferSyntax(syntax);
+			}
+			catch (DicomCodecUnsupportedSopException)
+			{
+				return;
+			}
+
+			Assert.IsTrue(false, "Unexpected successfull compression of object.");
+		}
 	}
 }

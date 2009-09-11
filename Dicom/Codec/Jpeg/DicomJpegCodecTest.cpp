@@ -67,6 +67,15 @@ void DicomJpegCodecTest::DicomJpegProcess1CodecTest()
 
 	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
 	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "YBR_FULL", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "YBR_FULL", 8, 8, false, 2);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 12, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
 }
 
 void DicomJpegCodecTest::DicomJpegProcess24CodecTest()
@@ -108,6 +117,33 @@ void DicomJpegCodecTest::DicomJpegProcess24CodecTest()
 	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
 	LossyImageTest(syntax, file);
 
+	file = CreateFile(512, 512, "YBR_FULL", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "YBR_FULL", 8, 8, false, 5);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 16, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 15, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 14, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 13, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 11, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 10, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
+	file = CreateFile(255, 255, "MONOCHROME2", 9, 16, false, 1);
+	ExpectedFailureTest(syntax, file);
+
 }
 
 void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
@@ -118,22 +154,43 @@ void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
 
 	// Lossy test for signed, becaue it converts
 	file = CreateFile(512, 512, "MONOCHROME1", 12, 16, true, 1);
-	LossyImageTest(syntax, file);
+	LosslessImageTestWithConversion(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 1);
 	LosslessImageTest(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, true, 1);
-	LossyImageTest(syntax, file);
+	LosslessImageTestWithConversion(syntax, file);
 
 	file = CreateFile(256, 255, "MONOCHROME2", 16, 16, false, 1);
 	LosslessImageTest(syntax, file);
 
 	file = CreateFile(256, 255, "MONOCHROME2", 16, 16, true, 1);
-	LossyImageTest(syntax, file);
+	LosslessImageTestWithConversion(syntax, file);
 
-	file = CreateFile(256, 256, "MONOCHROME1", 12, 16, false, 5);
+	file = CreateFile(256, 255, "MONOCHROME2", 15, 16, false, 1);
 	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 255, "MONOCHROME2", 14, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 255, "MONOCHROME2", 13, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 12, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 11, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 10, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 9, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
+	LosslessImageTestWithConversion(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
@@ -148,6 +205,12 @@ void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
 	LosslessImageTest(syntax, file);
 
 	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "YBR_FULL", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "YBR_FULL", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
 
 }
@@ -158,23 +221,45 @@ void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
 	DicomFile^ file = CreateFile(512, 512, "MONOCHROME1", 12, 16, false, 1);
 	LosslessImageTest(syntax, file);
 
+	// Lossy test for signed, becaue it converts
 	file = CreateFile(512, 512, "MONOCHROME1", 12, 16, true, 1);
-	LossyImageTest(syntax, file);
+	LosslessImageTestWithConversion(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 1);
 	LosslessImageTest(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, true, 1);
-	LossyImageTest(syntax, file);
+	LosslessImageTestWithConversion(syntax, file);
 
 	file = CreateFile(256, 255, "MONOCHROME2", 16, 16, false, 1);
 	LosslessImageTest(syntax, file);
 
 	file = CreateFile(256, 255, "MONOCHROME2", 16, 16, true, 1);
-	LossyImageTest(syntax, file);
+	LosslessImageTestWithConversion(syntax, file);
 
-	file = CreateFile(256, 256, "MONOCHROME1", 12, 16, false, 5);
+	file = CreateFile(256, 255, "MONOCHROME2", 15, 16, false, 1);
 	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 255, "MONOCHROME2", 14, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 255, "MONOCHROME2", 13, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 12, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 11, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 10, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 9, 16, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(256, 256, "MONOCHROME1", 8, 16, false, 1);
+	LosslessImageTestWithConversion(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
@@ -191,6 +276,11 @@ void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
 	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
 
+	file = CreateFile(512, 512, "YBR_FULL", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "YBR_FULL", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
 }
 
 
