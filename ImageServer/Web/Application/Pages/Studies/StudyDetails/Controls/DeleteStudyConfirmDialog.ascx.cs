@@ -36,6 +36,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Audit;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -181,6 +182,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if(!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
+            {
+                ReasonSavePanel.Visible = false;    
+            }
         }
 
         private void ClearInputs()

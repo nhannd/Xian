@@ -65,7 +65,6 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
                 [AuthorityToken(Description = "Allow configuration of partition archives.")]
                 public const string PartitionArchive = "PACS/Configure/PartitionArchive";
-
             }
 
             /// <summary>
@@ -140,6 +139,10 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
             [AuthorityToken(Description = "Allow reprocessing studies.")]
             public const string Reprocess = "PACS/Study/Reprocess";
+
+            [AuthorityToken(Description = "Allow saving of reasons for study edit/delete.")]
+            public const string SaveReason = "PACS/Study/SaveReason";
+
         }
 
         /// <summary>

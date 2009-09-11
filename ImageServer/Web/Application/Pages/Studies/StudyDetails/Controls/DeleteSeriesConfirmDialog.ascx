@@ -50,7 +50,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <div class="DeleteStudiesTableContainer">
+                                    <div class="DeleteStudiesTableContainer" style="background: white">
                                     <asp:Repeater runat="server" ID="SeriesListing">
                                         <HeaderTemplate>
                                             <table  cellspacing="0" width="100%" class="DeleteStudiesConfirmTable">
@@ -109,8 +109,16 @@
                     
                     <tr valign="top">
                         <td>
+                            <asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel" Text="Reason:"></asp:Label>                            
+                        </td>
+                        <td>
+                            <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>                                        
+                        </td>
+                   </tr>
+                   <tr>
+                        <td valign="top">
                             <asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel" 
-                                            Text='<%$ Resources:Labels, DeleteSeriesConfirmReasonLabel %>'></asp:Label> 
+                                            Text='Comment:'></asp:Label> 
                              
                         </td>
                         <td>
@@ -122,24 +130,17 @@
                                     <td>
                                         <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
                                     </td>
-                                    <td>
-                                        <asp:Button runat="server" ID="PredefinedReasonButton" OnClientClick="return false;" Text="..." ></asp:Button>
-                                        <asp:Panel runat="server" ID="ReasonForDeletionDropDownPanel" CssClass="ReasonForDeletionDropDownPanel">
-                                        <asp:Label ID="Label2" runat="server" ForeColor="#16425D" style="font-family: Arial, Sans-Serif; font-size: 14px;"
-                                                Text="Pre-defined Reasons:"></asp:Label><br />                            
-                                        <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>                                        
-                                        </asp:Panel>                                        
-                                    </td>
+
                                 </tr>
                             </table>
                             
                             
                         </td>
                     </tr>
-                    <tr id="ReasonSavePanel">
+                    <tr id="ReasonSavePanel" runat="server">
                         <td>
                             <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" 
-                                                Text="Save this reason as"></asp:Label> 
+                                                Text="Save reason as:"></asp:Label> 
                                  
                         </td>
                         <td>
@@ -167,11 +168,6 @@
                                                 ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup="SeriesGroup"
                                                 Text="You must specify the reason for deleting the studies for future auditing purpose." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
-       
-       <aspAjax:PopupControlExtender ID="PopEx" runat="server"
-                        TargetControlID="PredefinedReasonButton"
-                        PopupControlID="ReasonForDeletionDropDownPanel"
-                        Position="Right"  />
-    
+           
     </ContentTemplate>
 </ccAsp:ModalDialog>

@@ -212,6 +212,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (DeleteEntireStudy) DeleteEntireStudyLabel.Visible = true;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
+            {
+                ReasonSavePanel.Visible = false;
+            }
+        }
+
         private void ClearInputs()
         {
             Reason.Text = "";
