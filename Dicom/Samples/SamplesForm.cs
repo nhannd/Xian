@@ -50,6 +50,7 @@ namespace ClearCanvas.Dicom.Samples
 
 		private readonly StorageScu _storageScu = new StorageScu();
         private readonly VerificationScu _verificationScu = new VerificationScu();
+		private DicomdirReader _reader = new DicomdirReader("DICOMDIR_READER");
 
         public SamplesForm()
         {
@@ -430,14 +431,22 @@ namespace ClearCanvas.Dicom.Samples
 			{
 				_textBoxDicomdir.Text = openFileDialogStorageScu.FileName;
 
-				DicomdirReader reader = new DicomdirReader();
-				DicomDirectory dir = reader.Read(openFileDialogStorageScu.FileName);
+				_reader = new DicomdirReader("DICOMDIR_READER");
+				DicomDirectory dir = _reader.Load(openFileDialogStorageScu.FileName);
 
 				DicomdirDisplay display = new DicomdirDisplay();
 				display.Add(dir);
 
 				display.Show(this);
+				
 			}
+		}
+
+		private void buttonSendDicomdir_Click(object sender, EventArgs e)
+		{
+			string rootDirectory = Path.GetDirectoryName(_textBoxDicomdir.Text);
+
+			_reader.Send(rootDirectory, _textBoxDicomdirRemoteAe.Text, _textBoxDicomdirRemoteHost.Text, int.Parse(_textBoxDicomdirRemotePort.Text));
 		}
     }
 }

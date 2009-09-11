@@ -9,7 +9,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ScuRemoteAETitle" Type="System.String" Scope="User">
-      <Value Profile="(Default)">QuerySCP</Value>
+      <Value Profile="(Default)">StorageSCP</Value>
     </Setting>
     <Setting Name="ScuRemoteHost" Type="System.String" Scope="User">
       <Value Profile="(Default)">localhost</Value>

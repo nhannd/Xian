@@ -30,52 +30,131 @@
 #endregion
 
 using System;
+using System.IO;
 
 namespace ClearCanvas.Dicom.Samples
 {
-	class DicomdirReader
+	/// <summary>
+	/// Simple class for reading DICOMDIR files and sending the images they reference to a remote AE.
+	/// </summary>
+	public class DicomdirReader
 	{
-		public DicomDirectory Read(string filename)
+		private readonly string _aeTitle;
+		private DicomDirectory _dir;
+		private int _patientRecords = 0;
+		private int _studyRecords = 0;
+		private int _seriesRecords = 0;
+		private int _instanceRecords = 0;
+
+		public DicomdirReader(string aeTitle)
+		{
+			_aeTitle = aeTitle;
+		}
+
+		public DicomDirectory Dicomdir
+		{
+			get { return _dir;}
+		}
+
+		public int PatientRecords
+		{
+			get { return _patientRecords; }
+			set { _patientRecords = value; }
+		}
+
+		public int StudyRecords
+		{
+			get { return _studyRecords; }
+			set { _studyRecords = value; }
+		}
+
+		public int SeriesRecords
+		{
+			get { return _seriesRecords; }
+			set { _seriesRecords = value; }
+		}
+
+		public int InstanceRecords
+		{
+			get { return _instanceRecords; }
+			set { _instanceRecords = value; }
+		}
+
+		/// <summary>
+		/// Load a DICOMDIR
+		/// </summary>
+		/// <param name="filename"></param>
+		public void Load(string filename)
 		{
 			try
 			{
-				DicomDirectory reader = new DicomDirectory("TESTAE");
+				_dir = new DicomDirectory(_aeTitle);
 
-				reader.Load(filename);
+				_dir.Load(filename);
 
-				int patientRecords = 0;
-				int studyRecords = 0;
-				int seriesRecords = 0;
-				int instanceRecords = 0;
 
 				// Show a simple traversal
-				foreach (DirectoryRecordSequenceItem patientRecord in reader.RootDirectoryRecordCollection)
+				foreach (DirectoryRecordSequenceItem patientRecord in _dir.RootDirectoryRecordCollection)
 				{
-					patientRecords++;
+					PatientRecords++;
 					foreach (DirectoryRecordSequenceItem studyRecord in patientRecord.LowerLevelDirectoryRecordCollection)
 					{
-						studyRecords++;
+						StudyRecords++;
 						foreach (DirectoryRecordSequenceItem seriesRecord in studyRecord.LowerLevelDirectoryRecordCollection)
 						{
-							seriesRecords++;
+							SeriesRecords++;
 							foreach (DirectoryRecordSequenceItem instanceRecord in seriesRecord.LowerLevelDirectoryRecordCollection)
 							{
-								instanceRecords++;
+								InstanceRecords++;
 							}
 						}
 					}
 				}
 
 				Logger.LogInfo("Loaded DICOMDIR with {0} Patient Records, {1} Study Records, {2} Series Records, and {3} Image Records",
-					patientRecords,studyRecords,seriesRecords,instanceRecords);
-				return reader;
+					PatientRecords,StudyRecords,SeriesRecords,InstanceRecords);
 
 			}
 			catch (Exception e)
 			{
 				Logger.LogErrorException(e, "Unexpected exception reading DICOMDIR: {0}", filename);
-				return null;
 			}
+		}
+
+		/// <summary>
+		/// Send the images of a loaded DICOMDIR to a remote AE.
+		/// </summary>
+		/// <param name="rootPath"></param>
+		/// <param name="aeTitle"></param>
+		/// <param name="host"></param>
+		/// <param name="port"></param>
+		public void Send(string rootPath, string aeTitle, string host, int port)
+		{
+			if (_dir == null) return;
+
+			StorageScu scu = new StorageScu();
+
+			foreach (DirectoryRecordSequenceItem patientRecord in _dir.RootDirectoryRecordCollection)
+			{
+				foreach (DirectoryRecordSequenceItem studyRecord in patientRecord.LowerLevelDirectoryRecordCollection)
+				{
+					foreach (DirectoryRecordSequenceItem seriesRecord in studyRecord.LowerLevelDirectoryRecordCollection)
+					{
+						foreach (DirectoryRecordSequenceItem instanceRecord in seriesRecord.LowerLevelDirectoryRecordCollection)
+						{
+							string path = rootPath;
+
+							foreach (string subpath in instanceRecord[DicomTags.ReferencedFileId].Values as string[])
+								path = Path.Combine(path, subpath);
+
+							scu.AddFileToSend(path);
+						}
+					}
+				}
+			}
+
+			// Do the send
+			scu.Send("DICOMDIR", aeTitle, host, port);
 
 		}
 	}

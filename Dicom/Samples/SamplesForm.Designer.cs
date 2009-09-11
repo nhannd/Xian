@@ -113,16 +113,23 @@ namespace ClearCanvas.Dicom.Samples
 			this.label15 = new System.Windows.Forms.Label();
 			this.textBoxQueryMessage = new System.Windows.Forms.TextBox();
 			this.buttonQueryScuSearch = new System.Windows.Forms.Button();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.buttonSendDicomdir = new System.Windows.Forms.Button();
+			this._textBoxDicomdirRemotePort = new System.Windows.Forms.TextBox();
+			this.label20 = new System.Windows.Forms.Label();
+			this._textBoxDicomdirRemoteHost = new System.Windows.Forms.TextBox();
+			this.label21 = new System.Windows.Forms.Label();
+			this._textBoxDicomdirRemoteAe = new System.Windows.Forms.TextBox();
+			this.label22 = new System.Windows.Forms.Label();
+			this._buttonOpenDicomdir = new System.Windows.Forms.Button();
+			this.label19 = new System.Windows.Forms.Label();
+			this._textBoxDicomdir = new System.Windows.Forms.TextBox();
 			this._buttonOutputClearLog = new System.Windows.Forms.Button();
 			this.OutputTextBox = new System.Windows.Forms.TextBox();
 			this.openFileDialogStorageScu = new System.Windows.Forms.OpenFileDialog();
 			this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
 			this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this._textBoxDicomdir = new System.Windows.Forms.TextBox();
-			this.label19 = new System.Windows.Forms.Label();
-			this._buttonOpenDicomdir = new System.Windows.Forms.Button();
 			this.SamplesSplitContainer.Panel1.SuspendLayout();
 			this.SamplesSplitContainer.Panel2.SuspendLayout();
 			this.SamplesSplitContainer.SuspendLayout();
@@ -706,6 +713,117 @@ namespace ClearCanvas.Dicom.Samples
 			this.buttonQueryScuSearch.UseVisualStyleBackColor = true;
 			this.buttonQueryScuSearch.Click += new System.EventHandler(this.buttonQueryScuSearch_Click);
 			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.buttonSendDicomdir);
+			this.tabPage1.Controls.Add(this._textBoxDicomdirRemotePort);
+			this.tabPage1.Controls.Add(this.label20);
+			this.tabPage1.Controls.Add(this._textBoxDicomdirRemoteHost);
+			this.tabPage1.Controls.Add(this.label21);
+			this.tabPage1.Controls.Add(this._textBoxDicomdirRemoteAe);
+			this.tabPage1.Controls.Add(this.label22);
+			this.tabPage1.Controls.Add(this._buttonOpenDicomdir);
+			this.tabPage1.Controls.Add(this.label19);
+			this.tabPage1.Controls.Add(this._textBoxDicomdir);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(910, 126);
+			this.tabPage1.TabIndex = 4;
+			this.tabPage1.Text = "DICOMDIR Reader";
+			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// buttonSendDicomdir
+			// 
+			this.buttonSendDicomdir.Location = new System.Drawing.Point(426, 77);
+			this.buttonSendDicomdir.Name = "buttonSendDicomdir";
+			this.buttonSendDicomdir.Size = new System.Drawing.Size(150, 23);
+			this.buttonSendDicomdir.TabIndex = 12;
+			this.buttonSendDicomdir.Text = "Send DICOMDIR Files";
+			this.buttonSendDicomdir.UseVisualStyleBackColor = true;
+			this.buttonSendDicomdir.Click += new System.EventHandler(this.buttonSendDicomdir_Click);
+			// 
+			// _textBoxDicomdirRemotePort
+			// 
+			this._textBoxDicomdirRemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this._textBoxDicomdirRemotePort.Location = new System.Drawing.Point(282, 80);
+			this._textBoxDicomdirRemotePort.Name = "_textBoxDicomdirRemotePort";
+			this._textBoxDicomdirRemotePort.Size = new System.Drawing.Size(100, 20);
+			this._textBoxDicomdirRemotePort.TabIndex = 11;
+			this._textBoxDicomdirRemotePort.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemotePort;
+			// 
+			// label20
+			// 
+			this.label20.AutoSize = true;
+			this.label20.Location = new System.Drawing.Point(279, 63);
+			this.label20.Name = "label20";
+			this.label20.Size = new System.Drawing.Size(66, 13);
+			this.label20.TabIndex = 10;
+			this.label20.Text = "Remote Port";
+			// 
+			// _textBoxDicomdirRemoteHost
+			// 
+			this._textBoxDicomdirRemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this._textBoxDicomdirRemoteHost.Location = new System.Drawing.Point(143, 80);
+			this._textBoxDicomdirRemoteHost.Name = "_textBoxDicomdirRemoteHost";
+			this._textBoxDicomdirRemoteHost.Size = new System.Drawing.Size(100, 20);
+			this._textBoxDicomdirRemoteHost.TabIndex = 9;
+			this._textBoxDicomdirRemoteHost.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteHost;
+			// 
+			// label21
+			// 
+			this.label21.AutoSize = true;
+			this.label21.Location = new System.Drawing.Point(140, 63);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(69, 13);
+			this.label21.TabIndex = 8;
+			this.label21.Text = "Remote Host";
+			// 
+			// _textBoxDicomdirRemoteAe
+			// 
+			this._textBoxDicomdirRemoteAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this._textBoxDicomdirRemoteAe.Location = new System.Drawing.Point(9, 80);
+			this._textBoxDicomdirRemoteAe.Name = "_textBoxDicomdirRemoteAe";
+			this._textBoxDicomdirRemoteAe.Size = new System.Drawing.Size(100, 20);
+			this._textBoxDicomdirRemoteAe.TabIndex = 7;
+			this._textBoxDicomdirRemoteAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteAETitle;
+			// 
+			// label22
+			// 
+			this.label22.AutoSize = true;
+			this.label22.Location = new System.Drawing.Point(6, 63);
+			this.label22.Name = "label22";
+			this.label22.Size = new System.Drawing.Size(61, 13);
+			this.label22.TabIndex = 6;
+			this.label22.Text = "Remote AE";
+			// 
+			// _buttonOpenDicomdir
+			// 
+			this._buttonOpenDicomdir.Location = new System.Drawing.Point(524, 23);
+			this._buttonOpenDicomdir.Name = "_buttonOpenDicomdir";
+			this._buttonOpenDicomdir.Size = new System.Drawing.Size(123, 23);
+			this._buttonOpenDicomdir.TabIndex = 2;
+			this._buttonOpenDicomdir.Text = "Open DICOMDIR";
+			this._buttonOpenDicomdir.UseVisualStyleBackColor = true;
+			this._buttonOpenDicomdir.Click += new System.EventHandler(this._buttonOpenDicomdir_Click);
+			// 
+			// label19
+			// 
+			this.label19.AutoSize = true;
+			this.label19.Location = new System.Drawing.Point(9, 7);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(80, 13);
+			this.label19.TabIndex = 1;
+			this.label19.Text = "DICOMDIR File";
+			// 
+			// _textBoxDicomdir
+			// 
+			this._textBoxDicomdir.Location = new System.Drawing.Point(9, 23);
+			this._textBoxDicomdir.Name = "_textBoxDicomdir";
+			this._textBoxDicomdir.ReadOnly = true;
+			this._textBoxDicomdir.Size = new System.Drawing.Size(509, 20);
+			this._textBoxDicomdir.TabIndex = 0;
+			// 
 			// _buttonOutputClearLog
 			// 
 			this._buttonOutputClearLog.Location = new System.Drawing.Point(16, 3);
@@ -741,46 +859,6 @@ namespace ClearCanvas.Dicom.Samples
 			// 
 			this.saveFileDialog.DefaultExt = "dcm";
 			this.saveFileDialog.Title = "Save DICOM File";
-			// 
-			// tabPage1
-			// 
-			this.tabPage1.Controls.Add(this._buttonOpenDicomdir);
-			this.tabPage1.Controls.Add(this.label19);
-			this.tabPage1.Controls.Add(this._textBoxDicomdir);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(910, 126);
-			this.tabPage1.TabIndex = 4;
-			this.tabPage1.Text = "DICOMDIR Reader";
-			this.tabPage1.UseVisualStyleBackColor = true;
-			// 
-			// _textBoxDicomdir
-			// 
-			this._textBoxDicomdir.Location = new System.Drawing.Point(9, 23);
-			this._textBoxDicomdir.Name = "_textBoxDicomdir";
-			this._textBoxDicomdir.ReadOnly = true;
-			this._textBoxDicomdir.Size = new System.Drawing.Size(509, 20);
-			this._textBoxDicomdir.TabIndex = 0;
-			// 
-			// label19
-			// 
-			this.label19.AutoSize = true;
-			this.label19.Location = new System.Drawing.Point(9, 7);
-			this.label19.Name = "label19";
-			this.label19.Size = new System.Drawing.Size(80, 13);
-			this.label19.TabIndex = 1;
-			this.label19.Text = "DICOMDIR File";
-			// 
-			// _buttonOpenDicomdir
-			// 
-			this._buttonOpenDicomdir.Location = new System.Drawing.Point(524, 23);
-			this._buttonOpenDicomdir.Name = "_buttonOpenDicomdir";
-			this._buttonOpenDicomdir.Size = new System.Drawing.Size(123, 23);
-			this._buttonOpenDicomdir.TabIndex = 2;
-			this._buttonOpenDicomdir.Text = "Open DICOMDIR";
-			this._buttonOpenDicomdir.UseVisualStyleBackColor = true;
-			this._buttonOpenDicomdir.Click += new System.EventHandler(this._buttonOpenDicomdir_Click);
 			// 
 			// SamplesForm
 			// 
@@ -875,6 +953,13 @@ namespace ClearCanvas.Dicom.Samples
 		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.TextBox _textBoxDicomdir;
 		private System.Windows.Forms.Button _buttonOpenDicomdir;
+		private System.Windows.Forms.Button buttonSendDicomdir;
+		private System.Windows.Forms.TextBox _textBoxDicomdirRemotePort;
+		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.TextBox _textBoxDicomdirRemoteHost;
+		private System.Windows.Forms.Label label21;
+		private System.Windows.Forms.TextBox _textBoxDicomdirRemoteAe;
+		private System.Windows.Forms.Label label22;
     }
 }
 
