@@ -171,9 +171,13 @@ namespace ClearCanvas.Common
             Assembly[] assemblies = LoadFoundPlugins(pluginFiles);
             _plugins = ProcessAssemblies(assemblies);
 
-            // If no plugins could be loaded, throw a fatal exception
-            if (_plugins.Count == 0)
-                throw new PluginException(SR.ExceptionUnableToLoadPlugins);
+            // If no plugins could be loaded, just setup empty lists
+			if (_plugins.Count == 0)
+			{
+				_extensions = new List<ExtensionInfo>();
+				_extensionPoints = new List<ExtensionPointInfo>();
+				return;
+			}
 
             // scan plugins for extensions
             List<ExtensionInfo> extList = new List<ExtensionInfo>();
@@ -183,7 +187,7 @@ namespace ClearCanvas.Common
             }
 
             // hack: add extensions from ClearCanvas.Common, which isn't technically a plugin
-            extList.AddRange(PluginInfo.DiscoverExtensions(this.GetType().Assembly));
+            extList.AddRange(PluginInfo.DiscoverExtensions(GetType().Assembly));
 
             // #742: order the extensions according to the XML configuration
             List<ExtensionInfo> ordered, remainder;
@@ -199,11 +203,11 @@ namespace ClearCanvas.Common
                 epList.AddRange(plugin.ExtensionPoints);
             }
             // hack: add extension points from ClearCanvas.Common, which isn't technically a plugin
-            epList.AddRange(PluginInfo.DiscoverExtensionPoints(this.GetType().Assembly));
+            epList.AddRange(PluginInfo.DiscoverExtensionPoints(GetType().Assembly));
             _extensionPoints = epList;
         }
 
-        private List<PluginInfo> ProcessAssemblies(Assembly[] assemblies)
+        private static List<PluginInfo> ProcessAssemblies(Assembly[] assemblies)
         {
             List<PluginInfo> plugins = new List<PluginInfo>();
             for(int i = 0; i < assemblies.Length; i++)
@@ -317,7 +321,7 @@ namespace ClearCanvas.Common
 				if (domain != null)
 					AppDomain.Unload(domain);
 
-                if (pluginFiles == null || pluginFiles.Length == 0)
+                if (pluginFiles == null)
 					throw new PluginException(SR.ExceptionNoPluginsFound);
 			}
             return pluginFiles;
