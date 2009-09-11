@@ -68,6 +68,17 @@ void DicomJpeg2000CodecTest::LosslessCodecTest()
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, true, 5);
 	LosslessImageTest(syntax, file);
 
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
 }
 
 void DicomJpeg2000CodecTest::LossyCodecTest()
@@ -96,6 +107,18 @@ void DicomJpeg2000CodecTest::LossyCodecTest()
 	LossyImageTest(syntax, file);
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, true, 5);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
 	LossyImageTest(syntax, file);
 }
 

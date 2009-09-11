@@ -503,23 +503,32 @@ namespace ClearCanvas.Dicom.Tests
 			dataSet[DicomTags.PixelData] = null;
 
 			DicomUncompressedPixelData pd = new DicomUncompressedPixelData(dataSet)
-			{
-				ImageWidth = columns,
-				ImageHeight = rows,
-				PhotometricInterpretation = photometricInterpretation,
-				BitsAllocated = bitsAllocated,
-				BitsStored = bitsStored,
-				HighBit = (ushort)(bitsStored - 1),
-				PixelRepresentation = (ushort)(isSigned ? 1 : 0),
-				NumberOfFrames = numberOfFrames
-			};
+			                                	{
+			                                		ImageWidth = columns,
+			                                		ImageHeight = rows,
+			                                		PhotometricInterpretation = photometricInterpretation,
+			                                		BitsAllocated = bitsAllocated,
+			                                		BitsStored = bitsStored,
+			                                		HighBit = (ushort) (bitsStored - 1),
+			                                		PixelRepresentation = (ushort) (isSigned ? 1 : 0),
+			                                		NumberOfFrames = numberOfFrames
+			                                	};
 
 			if (photometricInterpretation.Equals("RGB"))
 			{
-
+				pd.SamplesPerPixel = 3;
+				pd.PlanarConfiguration = 1;
+				CreateColorPixelData(pd);
+			}
+			else if (photometricInterpretation.Equals("MONOCHROME1")
+				  || photometricInterpretation.Equals("MONOCHROME2"))
+			{
+				CreateMonochromePixelData(pd);
 			}
 			else
-				CreateMonochromePixelData(pd);
+			{
+				throw new DicomException("Unsupported Photometric Interpretation in CreateFile");
+			}
 
 			pd.UpdateAttributeCollection(dataSet);
 
@@ -666,5 +675,99 @@ namespace ClearCanvas.Dicom.Tests
     			pd.AppendFrame(frameData);
     		}
     	}
+
+		protected static void CreateColorPixelData(DicomUncompressedPixelData pd)
+		{
+			int rows = pd.ImageHeight;
+			int cols = pd.ImageWidth;
+
+			int minValue = 0;
+			int maxValue = (1 << pd.BitsStored) + minValue - 1;
+
+			// Create a small block of pixels in the test pattern in an integer,
+			// then copy/tile into the full size frame data
+
+			int smallRows = (rows * 3) / 8;
+			int smallColumns = rows / 4;
+			int stripSize = rows / 16;
+
+			int[] smallPixels = new int[smallRows * smallColumns * 3];
+
+			float slope = (float)(maxValue - minValue) / smallColumns;
+
+			int pixelOffset = 0;
+			for (int i = 0; i < smallRows; i++)
+			{
+				if (i < stripSize)
+				{
+					for (int j = 0; j < smallColumns; j++)
+					{
+						smallPixels[pixelOffset] = (int)((j * slope) + minValue);
+						pixelOffset++;
+						smallPixels[pixelOffset] = 0;
+						pixelOffset++;
+						smallPixels[pixelOffset] = 0;
+						pixelOffset++;
+					}
+				}
+				else if (i > (smallRows - stripSize))
+				{
+					for (int j = 0; j < smallColumns; j++)
+					{
+						smallPixels[pixelOffset] = 0;
+						pixelOffset++;
+						smallPixels[pixelOffset] = (int)(maxValue - (j * slope));
+						pixelOffset++;
+						smallPixels[pixelOffset] = 0;
+						pixelOffset++;
+					}
+				}
+				else
+				{
+					int pixel = minValue + (int)((i - stripSize) * slope);
+					if (pixel < minValue) pixel = minValue + 1;
+					if (pixel > maxValue) pixel = maxValue - 1;
+
+					int start = (smallColumns / 2) - (i - stripSize) / 2;
+					int end = (smallColumns / 2) + (i - stripSize) / 2;
+
+					for (int j = 0; j < smallColumns; j++)
+					{
+						smallPixels[pixelOffset] = 0;
+						pixelOffset++;
+						smallPixels[pixelOffset] = 0;
+						pixelOffset++;
+						if (j < start)
+							smallPixels[pixelOffset] = minValue;
+						else if (j > end)
+							smallPixels[pixelOffset] = maxValue;
+						else
+							smallPixels[pixelOffset] = pixel;
+
+						pixelOffset++;
+					}
+				}
+			}
+			// Now create the actual frame
+			for (int frame = 0; frame < pd.NumberOfFrames; frame++)
+			{
+				// Odd length frames are automatically dealt with by DicomUncompressedPixelData
+				byte[] frameData = new byte[pd.UncompressedFrameSize];
+				pixelOffset = 0;
+
+				for (int i = 0; i < rows; i++)
+				{
+					int smallOffset = (i%smallRows)*smallColumns*3;
+
+					for (int j = 0; j < cols*3; j++)
+					{
+						frameData[pixelOffset] = (byte) smallPixels[smallOffset + j%(smallColumns*3)];
+						pixelOffset++;
+					}
+				}
+
+				pd.AppendFrame(frameData);
+			}
+		}
     }
 }

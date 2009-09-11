@@ -131,7 +131,7 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
         }
 
 		[Test]
-		public void LosslessCodecTest()
+		public void LosslessMonochromeCodecTest()
 		{
 			DicomFile file = CreateFile(512, 512, "MONOCHROME1", 12, 16, false, 1);
 			LosslessImageTest(TransferSyntax.RleLossless, file);
@@ -158,7 +158,26 @@ namespace ClearCanvas.Dicom.Codec.Rle.Tests
 			LosslessImageTest(TransferSyntax.RleLossless, file);
 
 		}
-    }
+		[Test]
+		public void LosslessColorCodecTest()
+		{
+			DicomFile file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(256, 255, "RGB", 8, 8, false, 1);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(256, 256, "RGB", 8, 8, false, 5);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+			file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+			LosslessImageTest(TransferSyntax.RleLossless, file);
+
+		}
+	}
 }
 
 #endif

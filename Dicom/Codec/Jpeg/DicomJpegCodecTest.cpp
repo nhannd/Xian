@@ -55,6 +55,18 @@ void DicomJpegCodecTest::DicomJpegProcess1CodecTest()
 
 	file = CreateFile(255, 255, "MONOCHROME2", 8, 8, false, 5);
 	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
+	LossyImageTest(syntax, file);
 }
 
 void DicomJpegCodecTest::DicomJpegProcess24CodecTest()
@@ -83,6 +95,19 @@ void DicomJpegCodecTest::DicomJpegProcess24CodecTest()
 
 	file = CreateFile(255, 255, "MONOCHROME1", 12, 16, true, 3);
 	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+	LossyImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
+	LossyImageTest(syntax, file);
+
 }
 
 void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
@@ -112,6 +137,19 @@ void DicomJpegCodecTest::DicomJpegLossless14CodecTest()
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
+
 }
 
 void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
@@ -140,6 +178,19 @@ void DicomJpegCodecTest::DicomJpegLossless14SV1CodecTest()
 
 	file = CreateFile(255, 255, "MONOCHROME1", 8, 8, false, 5);
 	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(255, 255, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 1);
+	LosslessImageTest(syntax, file);
+
+	file = CreateFile(512, 512, "RGB", 8, 8, false, 5);
+	LosslessImageTest(syntax, file);
+
 }
 
 

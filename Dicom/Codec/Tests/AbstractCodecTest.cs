@@ -43,12 +43,21 @@ namespace ClearCanvas.Dicom.Codec.Tests
 		[Test]
 		public void Test()
 		{
-			DicomFile file = CreateFile(256, 256, "MONOCHROME1", 16, 12, true, 1);
-
-			// Little Endian Tests
+			DicomFile file = CreateFile(256, 256, "MONOCHROME1", 12, 16, true, 1);
+			file.Filename = "Monochrome1TestPattern.dcm";
 			file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+            file.Save();
 
+			file = CreateFile(256, 256, "MONOCHROME2", 14, 16, true, 1);
+			file.Filename = "Monochrome2TestPattern.dcm";
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+            file.Save();
+
+			file = CreateFile(256, 256, "RGB", 8, 8, false, 1);
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+			file.Filename = "ColorTestPattern.dcm";
 			file.Save();
+
 		}
 	}
 	public class AbstractCodecTest : AbstractTest
