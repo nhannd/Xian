@@ -235,8 +235,10 @@ Preview.ProceduresTableHelper = function () {
 			parentElement.appendChild(heading);
 		},
 			
-		addTable: function(parentElement)
+		addTable: function(parentElement, id, noTableHeading)
 		{
+			noTableHeading = !!noTableHeading;
+
 			var htmlTableContainer = document.createElement("DIV");
 			htmlTableContainer.className = "ProceduresTableContainer";
 			var htmlTable = document.createElement("TABLE");
@@ -244,6 +246,13 @@ Preview.ProceduresTableHelper = function () {
 			parentElement.appendChild(htmlTableContainer);
 			var body = document.createElement("TBODY");
 			htmlTable.appendChild(body);
+
+			if(noTableHeading)
+			{
+				var headingRow = document.createElement("TR");
+				body.appendChild(headingRow);
+			}
+
 			return htmlTable;
 		}
 	};
@@ -889,7 +898,7 @@ Preview.OrderNotesTable = function () {
 
 		var canAcknowledge = checkBoxesProperties && checkBoxesProperties.onItemChecked && filteredNotes.find(function(note) { return note.CanAcknowledge; });
 
-		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "NoteEntryTable");
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "NoteEntryTable", noColumnHeadings=true);
 		htmlTable = Table.createTable(htmlTable, { checkBoxes: canAcknowledge, checkBoxesProperties: checkBoxesProperties, editInPlace: false, flow: false, addColumnHeadings: false },
 		[
 			{   label: "Order Note",
@@ -911,7 +920,9 @@ Preview.OrderNotesTable = function () {
 			htmlTable.renderRow = function(sender, args)
 			{
 				if(args.item.CanAcknowledge)
-					args.htmlRow.className = "attention";
+				{
+					args.htmlRow.className = "attention" + (args.rowIndex % 2);
+				}
 			};
 		}
 
@@ -1526,25 +1537,25 @@ Preview.OrderNoteSection = function() {
 			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 
 			var html = "";
-			html += '<table width="100%" style="{margin:0px}" border="0">';
+			html += '<table style="{width:98%; margin:0px;}" border="0">';
 			html += '	<tr>';
 			html += '		<td>From:</td>';
-			html += '		<td width="100%">' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
+			html += '		<td>' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
 			html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
-			html += '		<td NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDescriptiveDateTime(note.PostTime) + '</td>';
+			html += '		<td style="{width:10em;}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
 			{
 				html += '	<tr id="acknowledgedRow">';
-				html += '		<td NOWRAP valign="top">Acknowledged By:</td>';
-				html += '		<td width="100%" colspan="3">' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+				html += '		<td style="{width:10em;}" NOWRAP valign="top">Acknowledged By:</td>';
+				html += '		<td colspan="3">' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
 				html += '	</tr>';
 			}
 			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0)
 			{
 				html += '	<tr id="notAcknowledgedRow">';
-				html += '		<td class="propertyname" valign="top">Waiting For Acknowledgement:</td>';
-				html += '		<td width="100%" colspan="3"><B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
+				html += '		<td style="{width:10em;}" class="propertyname" valign="top">Waiting For Acknowledgement:</td>';
+				html += '		<td colspan="3"><B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
 				html += '	</tr>';
 			}
 			html += '	<tr>';

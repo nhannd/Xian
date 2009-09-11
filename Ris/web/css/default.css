@@ -212,6 +212,14 @@ tr.attention {
 	background-color: #ffffb0;
 }
 
+tr.attention0 {
+	background-color: #ffffe0;
+}
+
+tr.attention1 {
+	background-color: #ffffb0;
+}
+
 tr.mouseover {
 	background-color: #3d98d1;
 	color: #FFFFFF;
