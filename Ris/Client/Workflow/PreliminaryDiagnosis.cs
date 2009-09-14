@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         /// <returns></returns>
         public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title, IDesktopWindow desktopWindow, string initialNoteText)
         {
-            var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key)
+            var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key, null)
                             	{Body = initialNoteText};
         	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
         }

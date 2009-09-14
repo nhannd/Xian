@@ -5,8 +5,8 @@
     <Setting Name="PreferredOnBehalfOfGroupName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="DefaultRecipients" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="TemplatesXml" Description="XML document specifying templates for component initialization." Type="System.String" Scope="Application">
+      <Value Profile="(Default)">OrderNoteConversationComponentSettingsTemplates.xml</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				OrderNoteConversationComponent component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories);
+				OrderNoteConversationComponent component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories, null);
 				component.Body = this.InitialNoteText;
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
 					component,

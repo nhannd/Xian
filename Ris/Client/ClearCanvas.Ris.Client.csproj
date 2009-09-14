@@ -119,7 +119,7 @@
     <Compile Include="HomepageConfigurationComponent.cs" />
     <Compile Include="IExtensionPageProvider.cs" />
     <Compile Include="AttachedDocument.cs" />
-    <Compile Include="OrderNoteConversationRecipientsSettingsHelper.cs" />
+    <Compile Include="OrderNoteConversationComponentTemplates.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderEditorComponent.cs" />
@@ -651,7 +651,7 @@
     <EmbeddedResource Include="Icons\FolderOpenErrorSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="OrderNoteConversationRecipientsSettings.xml" />
+    <EmbeddedResource Include="OrderNoteConversationComponentSettingsTemplates.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\UpToolSmall.png" />

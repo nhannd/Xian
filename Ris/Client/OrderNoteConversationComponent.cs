@@ -40,6 +40,8 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Desktop.Validation;
+using System.IO;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -86,6 +88,7 @@ namespace ClearCanvas.Ris.Client
 		#region Private Fields
 
 		private EntityRef _orderRef;
+		private string _templateId;
 
 		private readonly List<string> _orderNoteCategories;
 
@@ -113,15 +116,16 @@ namespace ClearCanvas.Ris.Client
 
 		#region Constructors
 
-		public OrderNoteConversationComponent(EntityRef orderRef, string orderNoteCategory)
-			: this(orderRef, new [] { orderNoteCategory })
+		public OrderNoteConversationComponent(EntityRef orderRef, string orderNoteCategory, string templateId)
+			: this(orderRef, new[] { orderNoteCategory }, templateId)
 		{
 		}
 
-		public OrderNoteConversationComponent(EntityRef orderRef, IEnumerable<string> orderNoteCategories)
+		public OrderNoteConversationComponent(EntityRef orderRef, IEnumerable<string> orderNoteCategories, string templateId)
 		{
 			_orderRef = orderRef;
 			_orderNoteCategories = orderNoteCategories != null ? new List<string>(orderNoteCategories) : new List<string>();
+			_templateId = templateId;
 
 			this.Validation.Add(new ValidationRule("SelectedRecipient",
 				delegate
@@ -148,15 +152,19 @@ namespace ClearCanvas.Ris.Client
 			// init recip table here, and not in constructor, because it relies on Host being set
 			_recipients = new RecipientTable(this);
 
+			// load template if specified
+			_templateId = "Example";
+			var template = _templateId == null ? null : LoadTemplate(_templateId);
+
 			// load the existing conversation, plus editor form data
-			var templateRecipients = new List<Checkable<RecipientTableItem>>();
 			var orderNotes = new List<OrderNoteDetail>();
 			GetConversationEditorFormDataResponse formDataResponse = null;
 			Platform.GetService<IOrderNoteService>(
 				service =>
 				{
-					var formDataRequest =
-						new GetConversationEditorFormDataRequest(new List<string>(), new List<string>());
+					var formDataRequest = new GetConversationEditorFormDataRequest(
+						template != null ? template.GetStaffRecipients() : new List<string>(),
+						template != null ? template.GetGroupRecipients() : new List<string>());
 					formDataResponse = service.GetConversationEditorFormData(formDataRequest);
 
 					var request = new GetConversationRequest(_orderRef, _orderNoteCategories, false);
@@ -170,34 +178,12 @@ namespace ClearCanvas.Ris.Client
 			// init on-behalf of choices
 			_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
 			_onBehalfOfChoices.Insert(0, _emptyStaffGroup);
-			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices,
-				group => group.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
 
 			// Set default recipients list, either based on the existing conversation, or from template if new conversation
-			if(orderNotes.Count > 0)
-			{
-				InitializeRecipients(orderNotes);
-			}
-			else
-			{
-				if (formDataResponse.RecipientStaffs != null && formDataResponse.RecipientStaffs.Count > 0)
-				{
-					templateRecipients.AddRange(
-						CollectionUtils.Map(formDataResponse.RecipientStaffs,
-											(StaffSummary s) => new Checkable<RecipientTableItem>(
-																	new RecipientTableItem(s),
-																	true)));
-				}
+			InitializeRecipients(orderNotes, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups);
 
-				if (formDataResponse.RecipientStaffGroups != null && formDataResponse.RecipientStaffGroups.Count > 0)
-				{
-					templateRecipients.AddRange(
-						CollectionUtils.Map(formDataResponse.RecipientStaffGroups,
-											(StaffGroupSummary sg) => new Checkable<RecipientTableItem>(
-																		new RecipientTableItem(sg),
-																		true)));
-				}
-			}
+			// Set default on-behalf of
+			InitializeOnBehalfOf(template, orderNotes);
 
 			// build the action model
 			_recipientsActionModel = new CrudActionModel(true, false, true, new ResourceResolver(this.GetType(), true));
@@ -385,36 +371,69 @@ namespace ClearCanvas.Ris.Client
 			get { return string.IsNullOrEmpty(_body); }
 		}
 
-		private void InitializeRecipients(IEnumerable<OrderNoteDetail> notes)
+		private void InitializeOnBehalfOf(TemplateData template, List<OrderNoteDetail> orderNotes)
 		{
-			// rules:
-			// 1. if note was sent on behalf of a group, the note should be posted back to that group by default
-			// 2. if note was not send on behalf of a group, it should be posted back to it's author by default
-			// 3. the note should be posted back to all group recipients, and all staff recipients excluding the
-			// current user (effectively "reply all")
+			// if this is a new note, and we have a template, use the template,
+			// otherwise use the saved setting
+			var groupName = (orderNotes.Count == 0 && template != null) ?
+				template.OnBehalfOfGroup :
+				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
 
-			foreach (var note in notes)
+			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
+		}
+
+		private void InitializeRecipients(List<OrderNoteDetail> orderNotes, List<StaffSummary> staffs, List<StaffGroupSummary> groups)
+		{
+			// if there are existing notes, use some rules to initialize recipients
+			if(orderNotes.Count > 0)
 			{
-				if(note.OnBehalfOfGroup != null)
-				{
-					_recipients.Add(note.OnBehalfOfGroup, note.CanAcknowledge);
-					_recipients.Add(note.Author, false);
-				}
-				else
-				{
-					_recipients.Add(note.Author, note.CanAcknowledge);
-				}
+				// rules:
+				// 1. if note was sent on behalf of a group, the note should be posted back to that group by default
+				// 2. if note was not send on behalf of a group, it should be posted back to it's author by default
+				// 3. the note should be posted back to all group recipients, and all staff recipients excluding the
+				// current user (effectively "reply all")
 
-				foreach (var staffRecipient in note.StaffRecipients)
+				foreach (var note in orderNotes)
 				{
-					if (!IsStaffCurrentUser(staffRecipient.Staff))
+					if (note.OnBehalfOfGroup != null)
 					{
-						_recipients.Add(staffRecipient.Staff, false);
+						_recipients.Add(note.OnBehalfOfGroup, note.CanAcknowledge);
+						_recipients.Add(note.Author, false);
+					}
+					else
+					{
+						_recipients.Add(note.Author, note.CanAcknowledge);
+					}
+
+					foreach (var staffRecipient in note.StaffRecipients)
+					{
+						if (!IsStaffCurrentUser(staffRecipient.Staff))
+						{
+							_recipients.Add(staffRecipient.Staff, false);
+						}
+					}
+					foreach (var groupRecipient in note.GroupRecipients)
+					{
+						_recipients.Add(groupRecipient.Group, false);
 					}
 				}
-				foreach (var groupRecipient in note.GroupRecipients)
+			}
+			else
+			{
+				// otherwise, this is a new note, so initialize recipients from template data
+				if (staffs != null)
 				{
-					_recipients.Add(groupRecipient.Group, false);
+					foreach (var item in staffs)
+					{
+						_recipients.Add(item, true);
+					}
+				}
+				if (groups != null)
+				{
+					foreach (var item in groups)
+					{
+						_recipients.Add(item, true);
+					}
 				}
 			}
 		}

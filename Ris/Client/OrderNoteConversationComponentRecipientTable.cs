@@ -155,14 +155,20 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
-			public void Add(object staffOrGroup, bool selected)
+			public void Add(object staffOrGroup, bool @checked)
 			{
-				this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup), selected));
+				var exists = CollectionUtils.Contains(this.Items,
+				                            item => Equals(item.Item.Recipient, staffOrGroup));
+
+				if(!exists)
+				{
+					this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup), @checked));
+				}
 			}
 
-			public Checkable<RecipientTableItem> AddNew(bool selected)
+			public Checkable<RecipientTableItem> AddNew(bool @checked)
 			{
-				var recip = new Checkable<RecipientTableItem>(new RecipientTableItem(), selected);
+				var recip = new Checkable<RecipientTableItem>(new RecipientTableItem(), @checked);
 				this.Items.Add(recip);
 				return recip;
 			}
