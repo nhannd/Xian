@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				IWorkflowItemToolContext<TSummaryItem> context = (IWorkflowItemToolContext<TSummaryItem>)this.ContextBase;
+				var context = (IWorkflowItemToolContext<TSummaryItem>)this.ContextBase;
 				return CollectionUtils.FirstElement(context.SelectedItems);
 			}
 		}
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				ICollection<TSummaryItem> items = ((IWorkflowItemToolContext<TSummaryItem>) this.ContextBase).SelectedItems;
+				var items = ((IWorkflowItemToolContext<TSummaryItem>) this.ContextBase).SelectedItems;
 				return items != null && items.Count == 1;
 			}
 		}
@@ -104,9 +104,8 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				OrderNoteConversationComponent component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories, null);
-				component.Body = this.InitialNoteText;
-				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
+				var component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories, this.TemplateId);
+				var exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
 					component,
 					GetTitle());
 				OnDialogClosed(exitCode);
@@ -121,23 +120,22 @@ namespace ClearCanvas.Ris.Client
 		{
 		}
 
-		protected virtual string InitialNoteText
+		protected virtual string TemplateId
 		{
 			get { return ""; }
 		}
 
 		private string GetTitle()
 		{
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 
 			sb.Append(
-				CollectionUtils.Reduce<string, string>(
+				CollectionUtils.Reduce(
 					this.OrderNoteCategories, 
-					"", 
+					"",
 					delegate(string categoryKey, string memo)
 					{
-						OrderNoteCategory category;
-						category = OrderNoteCategory.FromKey(categoryKey);
+						var category = OrderNoteCategory.FromKey(categoryKey);
 						return memo + (category != null ? category.DisplayValue : "");
 					}));
 			sb.Append(this.TitleContextDescription);
@@ -162,8 +160,7 @@ namespace ClearCanvas.Ris.Client
             base.Initialize();
 
 			this.Context.RegisterDoubleClickHandler(
-                (IClickAction) CollectionUtils.SelectFirst(this.Actions, 
-                    delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("pd"); }));
+                (IClickAction) CollectionUtils.SelectFirst(this.Actions, a => a is IClickAction && a.ActionID.EndsWith("pd")));
         }
 
 		protected override EntityRef OrderRef
@@ -184,7 +181,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected override IEnumerable<string> OrderNoteCategories
 		{
-			get { return new string[] { this.SummaryItem.Category }; }
+			get { return new [] { this.SummaryItem.Category }; }
 		}
 
 		protected override void OnDialogClosed(ApplicationComponentExitCode exitCode)

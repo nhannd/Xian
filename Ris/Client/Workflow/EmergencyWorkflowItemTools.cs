@@ -44,15 +44,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 
 			this.Context.RegisterDoubleClickHandler(
-				(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("pd"); }));
+				(IClickAction)CollectionUtils.SelectFirst(this.Actions, a => a is IClickAction && a.ActionID.EndsWith("pd")));
 		}
 
-		protected override string InitialNoteText
+		protected override string TemplateId
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.DefaultDiagnosisText;
+				return PreliminaryDiagnosisSettings.Default.EmergencyDiagnosisTemplateId;
 			}
 		}
 	}

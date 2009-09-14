@@ -70,12 +70,13 @@ namespace ClearCanvas.Ris.Client.Workflow
         /// <param name="orderRef"></param>
         /// <param name="title"></param>
         /// <param name="desktopWindow"></param>
-        /// <param name="initialNoteText"></param>
+        /// <param name="templateId"></param>
         /// <returns></returns>
-        public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title, IDesktopWindow desktopWindow, string initialNoteText)
+        public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title,
+			IDesktopWindow desktopWindow, string templateId)
         {
-            var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key, null)
-                            	{Body = initialNoteText};
+        	var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
+        	                                                   templateId);
         	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
         }
     }

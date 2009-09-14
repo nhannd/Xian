@@ -1,17 +1,34 @@
 ﻿<TemplateDefinitions hash="true">
   <Templates array="true">
     <item hash="true">
-      <TemplateId>Example</TemplateId>
-      <DisplayName>Example</DisplayName>
-      <OnBehalfOfGroup>Radiology Department</OnBehalfOfGroup>
+      <TemplateId>PrelimDiagnosisEmergencyDiagnosis</TemplateId>
+      <DisplayName></DisplayName>
+      <OnBehalfOfGroup>ER Physician</OnBehalfOfGroup>
       <Recipients array="true">
         <item hash="true">
           <Type>Group</Type>
           <Id>Radiology Department</Id>
         </item>
+      </Recipients>
+      <SoftKeys>
         <item hash="true">
-          <Type>Staff</Type>
-          <Id>1110010</Id>
+          <ButtonName>Review</ButtonName>
+          <InsertText>Review is required.</InsertText>
+        </item>
+        <item hash="true">
+          <ButtonName>No Review</ButtonName>
+          <InsertText>No review is required.</InsertText>
+        </item>
+      </SoftKeys>
+    </item>
+    <item hash="true">
+      <TemplateId>PrelimDiagnosisRadiologyReview</TemplateId>
+      <DisplayName></DisplayName>
+      <OnBehalfOfGroup>Radiology Department</OnBehalfOfGroup>
+      <Recipients array="true">
+        <item hash="true">
+          <Type>Group</Type>
+          <Id>ER Physician</Id>
         </item>
       </Recipients>
       <SoftKeys>

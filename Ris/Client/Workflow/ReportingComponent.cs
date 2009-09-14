@@ -714,7 +714,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 							this.WorklistItem.OrderRef,
 							title,
 							this.Host.DesktopWindow,
-							PreliminaryDiagnosisSettings.Default.DefaultReviewText))
+							PreliminaryDiagnosisSettings.Default.RadiologyReviewTemplateId))
 					{
 						return; // user cancelled out
 					}

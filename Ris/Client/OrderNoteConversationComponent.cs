@@ -153,7 +153,6 @@ namespace ClearCanvas.Ris.Client
 			_recipients = new RecipientTable(this);
 
 			// load template if specified
-			_templateId = "Example";
 			var template = _templateId == null ? null : LoadTemplate(_templateId);
 
 			// load the existing conversation, plus editor form data
