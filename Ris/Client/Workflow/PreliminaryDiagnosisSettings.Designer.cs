@@ -25,16 +25,16 @@ namespace ClearCanvas.Ris.Client.Workflow {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PrelimDiagnosisRadiologyReview")]
-        public string RadiologyReviewTemplateId {
+        [global::System.Configuration.DefaultSettingValueAttribute("PrelimDiagnosisFromRadiology")]
+        public string RadiologyDiagnosisTemplateId {
             get {
-                return ((string)(this["RadiologyReviewTemplateId"]));
+                return ((string)(this["RadiologyDiagnosisTemplateId"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PrelimDiagnosisEmergencyDiagnosis")]
+        [global::System.Configuration.DefaultSettingValueAttribute("PrelimDiagnosisFromEmergency")]
         public string EmergencyDiagnosisTemplateId {
             get {
                 return ((string)(this["EmergencyDiagnosisTemplateId"]));

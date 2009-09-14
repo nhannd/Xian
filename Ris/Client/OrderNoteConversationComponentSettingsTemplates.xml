@@ -1,7 +1,7 @@
 ﻿<TemplateDefinitions hash="true">
   <Templates array="true">
     <item hash="true">
-      <TemplateId>PrelimDiagnosisEmergencyDiagnosis</TemplateId>
+      <TemplateId>PrelimDiagnosisFromEmergency</TemplateId>
       <DisplayName></DisplayName>
       <OnBehalfOfGroup>ER Physician</OnBehalfOfGroup>
       <Recipients array="true">
@@ -22,7 +22,7 @@
       </SoftKeys>
     </item>
     <item hash="true">
-      <TemplateId>PrelimDiagnosisRadiologyReview</TemplateId>
+      <TemplateId>PrelimDiagnosisFromRadiology</TemplateId>
       <DisplayName></DisplayName>
       <OnBehalfOfGroup>Radiology Department</OnBehalfOfGroup>
       <Recipients array="true">

@@ -2,11 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Workflow" GeneratedClassName="PreliminaryDiagnosisSettings">
   <Profiles />
   <Settings>
-    <Setting Name="RadiologyReviewTemplateId" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">PrelimDiagnosisRadiologyReview</Value>
+    <Setting Name="RadiologyDiagnosisTemplateId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PrelimDiagnosisFromRadiology</Value>
     </Setting>
     <Setting Name="EmergencyDiagnosisTemplateId" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">PrelimDiagnosisEmergencyDiagnosis</Value>
+      <Value Profile="(Default)">PrelimDiagnosisFromEmergency</Value>
     </Setting>
   </Settings>
 </SettingsFile>

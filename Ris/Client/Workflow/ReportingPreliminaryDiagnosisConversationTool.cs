@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.RadiologyReviewTemplateId;
+				return PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplateId;
 			}
 		}
 	}
