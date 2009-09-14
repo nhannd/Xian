@@ -867,4 +867,7 @@
   <data name="TitleVisits" xml:space="preserve">
     <value>Visits</value>
   </data>
+  <data name="ColumnReceivedDate" xml:space="preserve">
+    <value>Received Date</value>
+  </data>
 </root>

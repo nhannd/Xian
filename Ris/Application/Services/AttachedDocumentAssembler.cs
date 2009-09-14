@@ -35,25 +35,26 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class AttachedDocumentAssembler
-    {
-        public AttachedDocumentSummary CreateAttachedDocumentSummary(AttachedDocument doc)
-        {
-            AttachedDocumentSummary summary = new AttachedDocumentSummary();
-            
-            UpdateAttachedDocumentSummary(doc, summary);
+	public class AttachedDocumentAssembler
+	{
+		public AttachedDocumentSummary CreateAttachedDocumentSummary(AttachedDocument doc)
+		{
+			var summary = new AttachedDocumentSummary();
 
-            return summary;
-        }
+			UpdateAttachedDocumentSummary(doc, summary);
 
-        public void UpdateAttachedDocumentSummary(AttachedDocument doc, AttachedDocumentSummary summary)
-        {
-            summary.DocumentRef = doc.GetRef();
-            summary.CreationTime = doc.CreationTime;
-            summary.MimeType = doc.MimeType;
-            summary.FileExtension = doc.FileExtension;
-        	summary.DocumentHeaders = new Dictionary<string, string>(doc.DocumentHeaders);
-        	summary.DocumentTypeName = doc.DocumentTypeName;
-        }
-    }
+			return summary;
+		}
+
+		public void UpdateAttachedDocumentSummary(AttachedDocument doc, AttachedDocumentSummary summary)
+		{
+			summary.DocumentRef = doc.GetRef();
+			summary.CreationTime = doc.CreationTime;
+			summary.ReceivedTime = doc.ReceivedTime;
+			summary.MimeType = doc.MimeType;
+			summary.FileExtension = doc.FileExtension;
+			summary.DocumentHeaders = new Dictionary<string, string>(doc.DocumentHeaders);
+			summary.DocumentTypeName = doc.DocumentTypeName;
+		}
+	}
 }

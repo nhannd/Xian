@@ -36,20 +36,23 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class AttachedDocumentSummary : DataContractBase
-    {
-        [DataMember]
-        public EntityRef DocumentRef;
+	[DataContract]
+	public class AttachedDocumentSummary : DataContractBase
+	{
+		[DataMember]
+		public EntityRef DocumentRef;
 
-        [DataMember]
-        public DateTime? CreationTime;
+		[DataMember]
+		public DateTime? CreationTime;
 
-        [DataMember]
-        public string MimeType;
+		[DataMember]
+		public DateTime? ReceivedTime;
 
-        [DataMember]
-        public string FileExtension;
+		[DataMember]
+		public string MimeType;
+
+		[DataMember]
+		public string FileExtension;
 
 		[DataMember]
 		public Dictionary<string, string> DocumentHeaders;
@@ -57,19 +60,19 @@ namespace ClearCanvas.Ris.Application.Common
 		[DataMember]
 		public string DocumentTypeName;
 
-        public AttachedDocumentSummary As<T>()
-            where T : AttachedDocumentSummary
-        {
-            AttachedDocumentSummary doc = new AttachedDocumentSummary();
-
-            doc.DocumentRef = this.DocumentRef;
-            doc.CreationTime = this.CreationTime;
-            doc.MimeType = this.MimeType;
-            doc.FileExtension = this.FileExtension;
-        	doc.DocumentHeaders = this.DocumentHeaders;
-        	doc.DocumentTypeName = this.DocumentTypeName;
-
-            return doc;
-        }
-    }
+		public AttachedDocumentSummary As<T>()
+			where T : AttachedDocumentSummary
+		{
+			return new AttachedDocumentSummary
+			{
+				DocumentRef = this.DocumentRef,
+				CreationTime = this.CreationTime,
+				ReceivedTime = this.ReceivedTime,
+				MimeType = this.MimeType,
+				FileExtension = this.FileExtension,
+				DocumentHeaders = this.DocumentHeaders,
+				DocumentTypeName = this.DocumentTypeName
+			};
+		}
+	}
 }

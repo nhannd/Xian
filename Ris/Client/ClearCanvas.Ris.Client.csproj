@@ -73,6 +73,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AttachedDocumentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="AttachmentSummaryTableBase.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />

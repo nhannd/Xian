@@ -30,22 +30,22 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace ClearCanvas.Healthcare.Tests
 {
-    internal static class TestAttachedDocumentFactory
-    {
-        internal static AttachedDocument CreateAttachedDocument()
-        {
-            string testString = "Test Mime Document";
+	internal static class TestAttachedDocumentFactory
+	{
+		internal static AttachedDocument CreateAttachedDocument()
+		{
+			const string testString = "Test Mime Document";
 
-            return new AttachedDocument(
-                "txt", 
-                "txt", 
-                DateTime.Now,
-                new AttachedDocumentData(Encoding.ASCII.GetBytes(testString)));
-        }
-    }
+			return new AttachedDocument(
+				"txt",
+				"txt",
+				DateTime.Now,
+				DateTime.Now,
+				new AttachedDocumentData(Encoding.ASCII.GetBytes(testString)));
+		}
+	}
 }

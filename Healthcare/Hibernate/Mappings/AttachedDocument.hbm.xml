@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <class name="AttachedDocument" proxy="AttachedDocument" table="AttachedDocument_">
-    <id name="OID" column="OID_" type="Guid">
-      <generator class="guid.comb"/>
-    </id>
-    <version name="Version" column="Version_"/>
+	<class name="AttachedDocument" proxy="AttachedDocument" table="AttachedDocument_">
+		<id name="OID" column="OID_" type="Guid">
+			<generator class="guid.comb"/>
+		</id>
+		<version name="Version" column="Version_"/>
 
-    <property name="MimeType" column="MimeType_" type="string" length="32" not-null="true"/>
-    <property name="FileExtension" column="FileExtension_" type="string" length="16" not-null="true"/>
+		<property name="MimeType" column="MimeType_" type="string" length="32" not-null="true"/>
+		<property name="FileExtension" column="FileExtension_" type="string" length="16" not-null="true"/>
 
-    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+		<property name="ReceivedTime" column="ReceivedTime_" type="DateTime" not-null="true"/>
 
-    <many-to-one name="Data" column="AttachedDocumentDataOID_" class="AttachedDocumentData" not-null="true" cascade="all" unique="true"/>
+		<many-to-one name="Data" column="AttachedDocumentDataOID_" class="AttachedDocumentData" not-null="true" cascade="all" unique="true"/>
 
-  </class>
+	</class>
 </hibernate-mapping>

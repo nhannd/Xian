@@ -628,6 +628,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Received Date.
+        /// </summary>
+        internal static string ColumnReceivedDate {
+            get {
+                return ResourceManager.GetString("ColumnReceivedDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Role.
         /// </summary>
         internal static string ColumnRole {
