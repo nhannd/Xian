@@ -306,7 +306,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_orderDetailComponent.Context = new OrderDetailViewComponent.OrderContext(_selectedOrder.OrderRef);
 				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedOrder.VisitRef);
-				_orderReportsComponent.Context = new BiographyOrderReportsComponent.ReportsContext(_selectedOrder.OrderRef, _orderDetail.PatientRef);
+				_orderReportsComponent.Context = new BiographyOrderReportsComponent.ReportsContext(_selectedOrder.OrderRef, _orderDetail.PatientRef, _orderDetail.AccessionNumber);
 				_orderDocumentComponent.OrderAttachments = _orderDetail == null ? new List<OrderAttachmentSummary>() : _orderDetail.Attachments;
 				_orderAdditionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
 				_orderAdditionalInfoComponent.HealthcareContext = _selectedOrder;

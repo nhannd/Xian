@@ -66,6 +66,7 @@ namespace ClearCanvas.Ris.Client
 		EntityRef ProcedureRef { get; }
 		EntityRef ReportRef { get; }
 		EnumValueInfo ReportStatus { get; }
+		string AccessionNumber { get; }
 		IDesktopWindow DesktopWindow { get; }
 		event EventHandler ContextChanged;
 	}
@@ -115,6 +116,11 @@ namespace ClearCanvas.Ris.Client
 			public EnumValueInfo ReportStatus
 			{
 				get { return _component.ReportStatus; }
+			}
+
+			public string AccessionNumber
+			{
+				get { return _component.AccessionNumber; }
 			}
 
 			public IDesktopWindow DesktopWindow
@@ -182,14 +188,16 @@ namespace ClearCanvas.Ris.Client
 
 		public class ReportsContext
 		{
-			public ReportsContext(EntityRef orderRef, EntityRef patientRef)
+			public ReportsContext(EntityRef orderRef, EntityRef patientRef, string accessionNumber)
 			{
 				OrderRef = orderRef;
 				PatientRef = patientRef;
+				AccessionNumber = accessionNumber;
 			}
 
 			public EntityRef OrderRef;
 			public EntityRef PatientRef;
+			public string AccessionNumber;
 		}
 
 		/// <summary>
@@ -395,6 +403,11 @@ namespace ClearCanvas.Ris.Client
 		public EnumValueInfo ReportStatus
 		{
 			get { return this._selectedReport != null ? this._selectedReport.ReportStatus : null; }
+		}
+
+		public string AccessionNumber
+		{
+			get { return this.Context != null ? this.Context.AccessionNumber : null; }
 		}
 
 		private void RefreshComponent()
