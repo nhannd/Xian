@@ -432,10 +432,10 @@ namespace ClearCanvas.Dicom.Samples
 				_textBoxDicomdir.Text = openFileDialogStorageScu.FileName;
 
 				_reader = new DicomdirReader("DICOMDIR_READER");
-				DicomDirectory dir = _reader.Load(openFileDialogStorageScu.FileName);
+				_reader.Load(openFileDialogStorageScu.FileName);
 
 				DicomdirDisplay display = new DicomdirDisplay();
-				display.Add(dir);
+				display.Add(_reader.Dicomdir);
 
 				display.Show(this);
 				
