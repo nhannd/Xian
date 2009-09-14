@@ -31,15 +31,19 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
@@ -48,6 +52,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 {
     public partial class EditStudyDetailsDialog : System.Web.UI.UserControl
     {
+        private const string REASON_CANNEDTEXT_CATEGORY = "EditStudyReason";
+
 
         #region Public Properties
 
@@ -315,7 +321,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             DataBind();
         }
 
+        private void EnsurePredefinedReasonsLoaded()
+        {
+            if (ReasonListBox.Items.Count == 0)
+            {
+                IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
 
+                ICannedTextEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
+                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+                IList<CannedText> list = broker.Find(criteria);
+
+                ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
+                foreach (CannedText text in list)
+                {
+                    ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
+                }
+
+            }
+        }
 
         private static void AuditLog(Study study, List<UpdateItem> fields)
         {
@@ -346,6 +370,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             ServerPlatform.LogAuditMessage(helper);
         }
 
+        private void SaveCustomReason()
+        {
+            if (ReasonListBox.Items.FindByText(SaveReasonAsName.Text) != null)
+            {
+                // update
+                StudyEditReasonAdaptor adaptor = new StudyEditReasonAdaptor();
+                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                criteria.Label.EqualTo(SaveReasonAsName.Text);
+                criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+                IList<CannedText> reasons = adaptor.Get(criteria);
+                foreach (CannedText reason in reasons)
+                {
+                    CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
+                    rowColumns.Text = Reason.Text;
+                    adaptor.Update(reason.Key, rowColumns);
+                }
+
+            }
+            else
+            {
+                // add 
+                StudyDeleteReasonAdaptor adaptor = new StudyDeleteReasonAdaptor();
+                CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
+                rowColumns.Category = REASON_CANNEDTEXT_CATEGORY;
+                rowColumns.Label = SaveReasonAsName.Text;
+                rowColumns.Text = Reason.Text;
+                adaptor.Add(rowColumns);
+            }
+
+        }
+
         #endregion
         #region Protected Methods
         
@@ -354,8 +409,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             SetupJavascript();
             EditStudyDetailsValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditStudyValidationError;
             CalendarLink.ImageUrl = ImageServerConstants.ImageURLs.CalendarIcon;
-        }
+            EnsurePredefinedReasonsLoaded();
 
+            if (!SessionManager.Current.User.IsInRole(Enterprise.Authentication.AuthorityTokens.Study.SaveReason))
+            {
+                ReasonSavePanel.Visible = false;
+            }
+        }
 
         /// <summary>
         /// Handles event when user clicks on "OK" button.
@@ -366,13 +426,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (Page.IsValid)
             {
+                if (!String.IsNullOrEmpty(SaveReasonAsName.Text))
+                {
+                    SaveCustomReason();
+                }
+                
                 if (StudyEdited != null)
                 {
                     List<UpdateItem> modifiedFields = GetChanges();
                     if (modifiedFields!=null && modifiedFields.Count > 0)
                     {
                         StudyController studyController = new StudyController();
-                        studyController.EditStudy(Study, modifiedFields);
+                        studyController.EditStudy(Study, modifiedFields, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
                         AuditLog(Study, modifiedFields);
                         StudyEdited();
                     }

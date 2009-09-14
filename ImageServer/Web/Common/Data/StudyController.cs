@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return true;
 	    }
 
-        public void EditStudy(Study study, List<UpdateItem> updateItems)
+        public void EditStudy(Study study, List<UpdateItem> updateItems, string reason)
         {
             Platform.Log(LogLevel.Info, String.Format("Editing study {0}", study.StudyInstanceUid));
 
@@ -242,7 +242,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			    
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, partition, study.StudyInstanceUid, updateItems);
+                IList<WorkQueue> entries = StudyEditorHelper.EditStudy(ctx, partition, study.StudyInstanceUid, updateItems, reason);
                 if (entries!=null)
 			        ctx.Commit();
 			}

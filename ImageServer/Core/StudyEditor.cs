@@ -258,6 +258,7 @@ namespace ClearCanvas.ImageServer.Core
 				context.OriginalStudy = _study;
 				context.OrginalPatient = _patient;
 			    context.UserId = data.EditRequest.UserId;
+			    context.Reason = data.EditRequest.Reason;
 
 				OnStudyUpdating(context);
 

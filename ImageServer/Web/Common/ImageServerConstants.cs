@@ -56,6 +56,8 @@ public class ImageServerConstants
     public const string PagerItemCount = "ItemCount";
     public const string CookieDateTimeFormat = "yyyy-M-d H:m:s";
 
+    public static string[] ReasonCommentSeparator = { "::" };
+
     public const string DefaultConfigurationXml = "<HsmArchive><RootDir>e:\\Archive</RootDir></HsmArchive>";
 
     public class PageURLs

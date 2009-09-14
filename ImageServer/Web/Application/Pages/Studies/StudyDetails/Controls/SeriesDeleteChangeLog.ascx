@@ -1,78 +1,90 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesDeleteChangeLog.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.SeriesDeleteChangeLog" %>
-
-<%@ Import namespace="ClearCanvas.ImageServer.Core.Edit"%>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SeriesDeleteChangeLog.ascx.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.SeriesDeleteChangeLog" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Core.Edit" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
+<ccAsp:JQuery ID="JQuery1" runat="server" />
 
-<asp:Panel runat="server" ID="SummaryPanel">
-    <asp:Label runat="server" ID="Label1">
-    </asp:Label>
-</asp:Panel>
-<asp:Panel runat="server" ID="DetailsPanel" CssClass="HistoryDetailContainer">
-    <asp:Table ID="Table1" runat="server" BorderColor="gray" BorderWidth="0px" CellPadding="0"
-        CellSpacing="0" CssClass="HistoryDetailTable">
-        <asp:TableRow BorderWidth="0px">
-            <asp:TableCell BorderWidth="0px" VerticalAlign="top">
-                <div class="HistoryDetailsSectionPanel">
-                    <table border="0" width="100%">
-                        <tr>
-                            <td class="HistoryDetailsHeading">
-                                <span style="margin-left:5px">
-                                   Reason:
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding-left:10px; padding-right:10px;">
-                                <%# ChangeLog.Reason %>
-                            </td>
-                        </tr>
-                    </table>  
-                    <table border="0" width="100%">
-                        <tr>
-                            <td class="HistoryDetailsHeading">
-                                <span style="margin-left:5px">
-                                   User:
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding-left:10px; padding-right:10px;">
-                                <%# ChangeLog.UserId %>
-                            </td>
-                        </tr>
-                    </table>  
-                    <table border="0" width="100%">
-                        <tr>
-                            <td class="HistoryDetailsHeading">
-                                <span style="margin-left:5px">
-                                    Deleted Series
-                                </span>
-                            </td>
-                        </tr>
-                        <tr><td style="border:none">
-                        <div style="margin-left:2px;">
-                             <table width="100%" class="DuplicateDialogSeriesTable">
-                                <tr class="DuplicateDialogSeriesTableHeader"><td>Description</td><td>Modality</td><td>Instances</td></tr>
-                                <% foreach (SeriesInformation series in ChangeLog.Series) {%>
-                                        <tr>
-                                            <td><%= series.SeriesDescription %></td>
-                                            <td><%= series.Modality %></td>
-                                            <td><%= series.NumberOfInstances %></td>
-                                        </tr>
-                                <% }%>
-                            </table>
-                         </div>
-                        </td></tr>
-                    </table>              
-                </div>
-            </asp:TableCell>
-        </asp:TableRow>
-    </asp:Table>
-</asp:Panel>
-<aspAjax:CollapsiblePanelExtender ID="cpe" runat="Server" TargetControlID="DetailsPanel"
-    AutoExpand="false" CollapseControlID="SummaryPanel" ExpandControlID="SummaryPanel"
-    Collapsed="true" CollapsedText='<%# string.Format("{0} series {1} deleted. Reason: {2}", ChangeLog.Series.Count, ChangeLog.Series.Count>1? "were":"was", ChangeLog.Reason) %>'
-    ExpandedText=" " TextLabelID="Label1">
-</aspAjax:CollapsiblePanelExtender>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#<%=HistoryDetailsPanel.ClientID%>").hide();
+        $("#<%=ShowHideDetails.ClientID%>").click(function() {
+            if ($("#<%=ShowHideDetails.ClientID%>").text() == "[Show Details]") {
+                $("#<%=HistoryDetailsPanel.ClientID%>").show();
+                $("#<%=ShowHideDetails.ClientID%>").text("[Hide Details]");
+                $("#<%=SummaryPanel.ClientID %>").css("font-weight", "bold");
+                $("#<%=SummaryPanel.ClientID %>").css("margin-top", "5px");
+                $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");
+            } else {
+                $("#<%=HistoryDetailsPanel.ClientID%>").hide();
+                $("#<%=ShowHideDetails.ClientID%>").text("[Show Details]");
+                $("#<%=SummaryPanel.ClientID %>").css("font-weight", "normal");
+                $("#<%=SummaryPanel.ClientID %>").css("margin-top", "0px");
+                $("#<%=ShowHideDetails.ClientID%>").css("font-weight", "normal");
+            }
+            return false;
+        });
+    });
+
+</script>
+
+<div runat="server" id="SummaryPanel">
+    <%# string.Format("{0} series {1} deleted by {2}", ChangeLog.Series.Count, ChangeLog.Series.Count>1? "were":"was", ChangeLog.UserId ?? "Unknown") %>
+    <a href="#" id="ShowHideDetails" style="margin-left: 5px;" runat="server">[Show Details]</a>
+</div>
+<div id="HistoryDetailsPanel" runat="server" class="HistoryDetailsPanel">
+    <table class="ReasonSummary" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="HistoryDetailsLabel">
+                Reason:
+            </td>
+            <td align="left">
+                <%= GetReason(ChangeLog.Reason) %>
+            </td>
+        </tr>
+        <tr>
+            <td class="HistoryDetailsLabel">
+                Comment:
+            </td>
+            <td align="left">
+                <%= GetComment(ChangeLog.Reason) %>
+            </td>
+        </tr>
+        <tr>
+            <td class="HistoryDetailsLabel" colspan="2" nowrap="nowrap">
+                Deleted&nbsp;Series:
+            </td>
+        </tr>
+    </table>
+    <div style="border-bottom: dashed 1px #999999; margin-top: 3px;">
+    </div>
+    <table width="100%" cellspacing="0">
+        <tr style="color: #205F87; background: #eeeeee; padding-top: 2px;">
+            <td>
+                <b>Description</b>
+            </td>
+            <td>
+                <b>Modality</b>
+            </td>
+            <td>
+                <b>Instances</b>
+            </td>
+        </tr>
+        <% foreach (SeriesInformation series in ChangeLog.Series)
+           {%>
+        <tr style="background: #fefefe">
+            <td style="border-bottom: solid 1px #dddddd">
+                <%= series.SeriesDescription %>
+            </td>
+            <td style="border-bottom: solid 1px #dddddd">
+                <%= series.Modality %>
+            </td>
+            <td style="border-bottom: solid 1px #dddddd">
+                <%= series.NumberOfInstances %>
+            </td>
+        </tr>
+        <% }%>
+    </table>
+</div>

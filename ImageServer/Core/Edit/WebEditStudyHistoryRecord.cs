@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		private EditType _editType;
 	    private string _userId;
 	    private DateTime? _timeStamp;
+	    private string _reason;
 		#endregion
 
 		#region Public Properties
@@ -61,6 +62,16 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			get { return _editType; }
 			set { _editType = value; }
 		}
+
+        /// <summary>
+        /// Reason that the study is being editted
+        /// </summary>
+        [XmlElement("Reason")]
+        public string Reason
+        {
+            get { return _reason; }
+            set { _reason = value; }
+        }
 
 
 		/// <summary>

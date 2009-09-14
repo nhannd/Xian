@@ -87,6 +87,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
         private List<UpdateItem> _updateEntries;
         private string _userId;
         private DateTime? _timeStamp;
+        private string _reason;
 
         public List<UpdateItem> UpdateEntries
         {
@@ -98,6 +99,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             get { return _userId; }
             set { _userId = value; }
+        }
+
+        public string Reason
+        {
+            get { return _reason; }
+            set { _reason = value; }
         }
 
         public DateTime? TimeStamp

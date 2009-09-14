@@ -63,6 +63,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		private List<BaseImageLevelUpdateCommand> _editCommandList;
 		private StudyStorageLocation _newLocation;
 	    private string _userId;
+	    private string _reason;
 
 	    #endregion
 
@@ -167,6 +168,15 @@ namespace ClearCanvas.ImageServer.Core.Edit
             get { return _userId; }
 	        set { _userId = value; }
 	    }
+
+        /// <summary>
+        /// Gets or sets the reason that the study is being editted.
+        /// </summary>
+        public string Reason
+        {
+            get { return _reason; }
+            set { _reason = value; }
+        }
 
 	    #endregion
 	}

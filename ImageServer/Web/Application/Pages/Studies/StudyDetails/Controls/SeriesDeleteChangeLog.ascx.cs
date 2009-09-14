@@ -22,9 +22,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { _changeLog = value; }
         }
 
-        protected void Page_Load(object sender, EventArgs e)
+        public string GetReason(string reasonString)
         {
+            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
+            string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
+            return reason[0];
+        }
 
+        public string GetComment(string reasonString)
+        {
+            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
+            string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
+            if (reason.Length == 1) return "None Specified";
+            return reason[1];
         }
     }
 }

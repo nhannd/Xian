@@ -30,52 +30,14 @@
 #endregion
 
 using System;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Edit;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public partial class EditHistoryDetailsColumn : System.Web.UI.UserControl
+    public class StudyEditReasonAdaptor : BaseAdaptor<CannedText, ICannedTextEntityBroker, CannedTextSelectCriteria, CannedTextUpdateColumns>
     {
-        private StudyHistory _historyRecord;
-        private WebEditStudyHistoryChangeDescription _description;
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        public StudyHistory HistoryRecord
-        {
-            set { _historyRecord = value; }
-        }
-
-        public WebEditStudyHistoryChangeDescription EditHistory
-        {
-            get
-            {
-                if (_description == null && _historyRecord != null)
-                {
-                    _description = XmlUtils.Deserialize<WebEditStudyHistoryChangeDescription>(_historyRecord.ChangeDescription.DocumentElement);
-                }
-                return _description;
-            }
-        }
-
-        public string GetReason(string reasonString)
-        {
-            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
-            string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
-            return reason[0];
-        }
-
-        public string GetComment(string reasonString)
-        {
-            if (string.IsNullOrEmpty(reasonString)) return "None Specified";
-            string[] reason = reasonString.Split(ImageServerConstants.ReasonCommentSeparator, StringSplitOptions.None);
-            return reason[1];
-        }
     }
 }

@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         {
                             Study study = DeletingSeries[0].Study;
 
-                            controller.DeleteStudy(DeletingSeries[0].StudyKey, Reason.Text);
+                            controller.DeleteStudy(DeletingSeries[0].StudyKey, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
 
                             // Audit log
                             DicomStudyDeletedAuditHelper helper =

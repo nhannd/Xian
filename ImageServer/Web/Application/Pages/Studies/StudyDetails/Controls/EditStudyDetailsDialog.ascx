@@ -2,11 +2,36 @@
 
 <ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px" Title='<%$ Resources:Titles, EditStudyDialog %>'>
 <ContentTemplate>
+
+        <script language="javascript" type="text/javascript">
+            Sys.Application.add_load(seriesPage_load);
+            function seriesPage_load()
+            {            
+                var listbox = $get('<%= ReasonListBox.ClientID %>');
+                if (document.all) //IE6
+                {
+                    listbox.attachEvent('onchange', editReasonSelectionChanged);
+                }
+                else //Firefox
+                {
+                    listbox.addEventListener('onchange', editReasonSelectionChanged, false);
+                }
+            }
+            
+            function editReasonSelectionChanged()
+            {
+                var listbox = $get('<%= ReasonListBox.ClientID %>');
+                var textbox = $get('<%= Reason.ClientID %>');
+                textbox.value = listbox.options[listbox.selectedIndex].value;
+                
+            }
+        </script>
+
 <asp:ValidationSummary ID="EditStudyDetailsValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
 EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
-            <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl" ForeColor="red">
-                <aspAjax:TabPanel ID="PatientTabPanel" runat="server" HeaderText="PatientTabPanel" CssClass="DialogTabControl">
+            <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="EditStudyDialogTabControl" ForeColor="red">
+                <aspAjax:TabPanel ID="PatientTabPanel" runat="server" HeaderText="PatientTabPanel" CssClass="EdityStudyDialogTabControl">
                     <ContentTemplate>
                         <table cellpadding="2" cellspacing="5" width="100%" style="background-color: #eeeeee; border: solid 1px #cccccc;">
                             
@@ -197,6 +222,53 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>
+            
+            <div id="ReasonPanel" class="EditStudyReasonPanel">
+                <table border="0">
+                    
+                    <tr valign="top">
+                        <td>
+                            <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" Text="Reason:"></asp:Label>                            
+                        </td>
+                        <td>
+                            <asp:DropDownList runat="server" ID="ReasonListBox" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>                                        
+                        </td>
+                   </tr>
+                   <tr>
+                        <td valign="top">
+                            <asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel" 
+                                            Text='Comment:'></asp:Label> 
+                             
+                        </td>
+                        <td>
+                            <table cellpadding="0" cellspacing="0">
+                                <tr valign="top">
+                                    <td>
+                                        <asp:TextBox  Width="400px" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" style="font-family: Arial, Sans-Serif; font-size: 14px;" />                                            
+                                    </td>
+                                    <td>
+                                        <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
+                                    </td>
+
+                                </tr>
+                            </table>
+                            
+                            
+                        </td>
+                    </tr>
+                    <tr id="ReasonSavePanel" runat="server">
+                        <td>
+                            <asp:Label ID="Label7" runat="server" CssClass="DialogTextBoxLabel" 
+                                                Text="Save reason as:"></asp:Label> 
+                                 
+                        </td>
+                        <td>
+                            <asp:TextBox runat="server" ID="SaveReasonAsName" style="font-family: Arial, Sans-Serif; font-size: 14px;"/>
+                        </td>
+                </tr>
+                </table>
+            </div>                
+        </div>
         </asp:Panel>
             <table cellpadding="0" cellspacing="0" width="100%">
                 <tr align="right">

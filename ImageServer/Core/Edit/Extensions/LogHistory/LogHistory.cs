@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 			_changeDesc.UpdateCommands = context.EditCommands;
 		    _changeDesc.TimeStamp = Platform.Time;
 		    _changeDesc.UserId = context.UserId;
-
+		    _changeDesc.Reason = context.Reason;
 		}
 
         

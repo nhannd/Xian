@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     {
                         try
                         {
-                            controller.DeleteStudy(study.StudyKey, Reason.Text);
+                            controller.DeleteStudy(study.StudyKey, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
 
 							// Audit log
                         	DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(

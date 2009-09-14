@@ -21,13 +21,16 @@
     <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true">
     </asp:ScriptManager>    
-        
-    <div align="right" id="VersionInfoPanel">
-            Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
-            <br /><%= EnterpriseMode ? "(Enterprise)" : "(Stand-alone)"%>
-    </div>
-        
+                
     <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server">
+
+        <div align="right" id="VersionInfoPanel">
+            <table cellpadding="1">
+            <tr><td>Version:</td><td align="left"><%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%></td></tr>
+            <tr><td>Mode:</td><td><%= EnterpriseMode ? "Enterprise" : "Stand-alone"%></td></tr>
+            </table>
+        </div>
+    
         <div id="LoginCredentials">
         
         <table>      

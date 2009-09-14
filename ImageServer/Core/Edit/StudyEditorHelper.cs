@@ -145,9 +145,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <param name="context">The persistence context used for database connection.</param>
         /// <param name="partition">The <see cref="ServerPartition"/> where the study resides</param>
         /// <param name="studyInstanceUid">The Study Instance Uid of the study</param>
+        /// <param name="reason">The reason the study is being editted</param>/// 
         /// <exception cref="InvalidStudyStateOperationException"></exception>
         /// <param name="updateItems"></param>
-        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems)
+        public static IList<WorkQueue> EditStudy(IUpdateContext context, ServerPartition partition, string studyInstanceUid, List<UpdateItem> updateItems, string reason)
         {
             // Find all location of the study in the system and insert series delete request
             IList<StudyStorageLocation> storageLocations = ServerHelper.FindStudyStorages(partition, studyInstanceUid);
@@ -175,7 +176,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                     if (ServerHelper.LockStudy(location.Key, QueueStudyStateEnum.EditScheduled, out failureReason))
                     {
                         // insert an edit request
-                        WorkQueue request = InsertEditStudyRequest(context, location, updateItems);
+                        WorkQueue request = InsertEditStudyRequest(context, location, updateItems, reason);
                         Debug.Assert(request.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebEditStudy));
                         entries.Add(request);
                     }
@@ -195,11 +196,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
             return entries;
         }
 
-        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems)
+        private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems, string reason)
         {
             WorkQueue editEntry;
             IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
-            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems);
+            InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems, reason);
             editEntry = broker.FindOne(criteria);
             if (editEntry == null)
             {
@@ -270,13 +271,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
     internal class EditStudyWorkQueueParameters : InsertWorkQueueParameters
     {
-        public EditStudyWorkQueueParameters(StudyStorageLocation location, List<UpdateItem> updateItems)
+        public EditStudyWorkQueueParameters(StudyStorageLocation location, List<UpdateItem> updateItems, string reason)
         {
             DateTime now = Platform.Time;
             EditStudyWorkQueueData data = new EditStudyWorkQueueData();
             data.EditRequest.TimeStamp = now;
             data.EditRequest.UserId = ServerHelper.CurrentUserName;
             data.EditRequest.UpdateEntries = updateItems;
+            data.EditRequest.Reason = reason;
 
             WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
             WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
