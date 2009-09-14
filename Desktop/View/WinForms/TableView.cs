@@ -418,13 +418,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		/// <summary>
-		/// Begins editing.
+		/// Begins editing on the first editable cell in the first selected row.
 		/// </summary>
 		/// <param name="selectAll"></param>
 		public bool BeginEdit(bool selectAll)
 		{
 			var firstSelRow = (DataGridViewRow)CollectionUtils.FirstElement(_dataGridView.SelectedRows);
-			var col = CollectionUtils.SelectFirst(_table.Columns, (ITableColumn c) => c.GetCellEditor() != null);
+			var col = CollectionUtils.SelectFirst(_table.Columns, (ITableColumn c) => !c.ReadOnly);
 			if (firstSelRow != null && col != null)
 			{
 				var rowIndex = firstSelRow.Index;
