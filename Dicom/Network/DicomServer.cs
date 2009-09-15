@@ -160,17 +160,24 @@ namespace ClearCanvas.Dicom.Network
             foreach (DicomPresContext clientContext in cp.GetPresentationContexts())
             {
                 TransferSyntax selectedSyntax = null;
-                foreach (TransferSyntax ts in clientContext.GetTransfers())
-                {
-                        byte pcid = sp.FindAbstractSyntaxWithTransferSyntax(clientContext.AbstractSyntax, ts);
-                        if (pcid != 0)
-                        {
-                            // TODO Role negotiation here, need to check if roles set, and if so, if they match
-                            selectedSyntax = ts;
-                            break;
-                        
-                    }
-                }
+				foreach (DicomPresContext serverContext in sp.GetPresentationContexts())
+				{
+					if (clientContext.AbstractSyntax.Uid.Equals(serverContext.AbstractSyntax.Uid))
+					{
+						foreach (TransferSyntax ts in serverContext.GetTransfers())
+						{
+							if (clientContext.HasTransfer(ts))
+							{
+								selectedSyntax = ts;
+								break;
+							}
+						}						
+					}
+
+					if (selectedSyntax != null)
+						break;
+				}
+
                 if (selectedSyntax != null)
                 {
                     clientContext.ClearTransfers();

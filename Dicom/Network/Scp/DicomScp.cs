@@ -172,35 +172,76 @@ namespace ClearCanvas.Dicom.Network.Scp
         /// The method loads the DICOM Scp plugins, and then queries them
         /// to construct a list of presentation contexts that are supported.
         /// </remarks>
-        private void CreatePresentationContexts()
+		private void CreatePresentationContexts()
         {
-            DicomScpExtensionPoint<TContext> ep = new DicomScpExtensionPoint<TContext>();
-            object[] scps = ep.CreateExtensions();
-            foreach (object obj in scps)
-            {
-                IDicomScp<TContext> scp = obj as IDicomScp<TContext>;
-                scp.SetContext(_context);
+        	DicomScpExtensionPoint<TContext> ep = new DicomScpExtensionPoint<TContext>();
+        	object[] scps = ep.CreateExtensions();
+        	foreach (object obj in scps)
+        	{
+        		IDicomScp<TContext> scp = obj as IDicomScp<TContext>;
+        		scp.SetContext(_context);
 
-                IList<SupportedSop> sops = scp.GetSupportedSopClasses();
-                foreach (SupportedSop sop in sops)
-                {
-                    byte pcid = _assocParameters.FindAbstractSyntax(sop.SopClass);
-                    if (pcid == 0)
-                        pcid = _assocParameters.AddPresentationContext(sop.SopClass);
+        		IList<SupportedSop> sops = scp.GetSupportedSopClasses();
+        		foreach (SupportedSop sop in sops)
+        		{
+        			byte pcid = _assocParameters.FindAbstractSyntax(sop.SopClass);
+        			if (pcid == 0)
+        				pcid = _assocParameters.AddPresentationContext(sop.SopClass);
 
-                    // Now add all the transfer syntaxes, if necessary
-                    foreach (TransferSyntax syntax in sop.SyntaxList)
-                    {
-                        // Check if the syntax is registered already
-                        if (0 == _assocParameters.FindAbstractSyntaxWithTransferSyntax(sop.SopClass, syntax))
-                        {
-                            _assocParameters.AddTransferSyntax(pcid, syntax);
-                        }
-                    }
-                }
-            }
+        			// Now add all the transfer syntaxes, if necessary
+        			foreach (TransferSyntax syntax in sop.SyntaxList)
+        			{
+        				// Check if the syntax is registered already
+        				if (0 == _assocParameters.FindAbstractSyntaxWithTransferSyntax(sop.SopClass, syntax))
+        				{
+        					_assocParameters.AddTransferSyntax(pcid, syntax);
+        				}
+        			}
+        		}
+        	}
+
+			// Sort the presentation contexts, and put them in the order that we prefer them.
+			// Favor Explicit over Implicit transfer syntaxes, lossless compression over lossy
+			// compression, and lossless compressed over uncompressed.
+        	foreach (DicomPresContext serverContext in _assocParameters.GetPresentationContexts())
+        	{
+				serverContext.SortTransfers(delegate(TransferSyntax s1, TransferSyntax s2)
+				                            	{
+													if (s1.Equals(s2))
+														return 0;
+													if (s1.ExplicitVr && !s2.ExplicitVr)
+														return -1;
+													if (!s1.ExplicitVr && s2.ExplicitVr)
+														return 1;
+													if (s1.Encapsulated && s2.Encapsulated)
+													{
+														if (s1.LosslessCompressed == s2.LosslessCompressed)
+															return 0;
+														if (s1.LosslessCompressed && s2.LossyCompressed)
+															return -1;
+														return 1;
+													}
+													if (s1.Encapsulated)
+													{
+														if (s1.LossyCompressed)
+															return 1;
+														return -1;
+													}
+
+													if (s2.Encapsulated)
+													{
+														if (s2.LossyCompressed)
+															return -1;
+														return 1;
+
+													}
+				                            		return 0;
+				                            	}
+					);
+        	}
         }
-        #endregion
+
+    	#endregion
 
         #region Public Methods
         /// <summary>

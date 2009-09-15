@@ -143,7 +143,7 @@ namespace ClearCanvas.Dicom.Network
 
 		public TransferSyntax AcceptedTransferSyntax {
 			get {
-                if (this.Result != DicomPresContextResult.Accept)
+                if (Result != DicomPresContextResult.Accept)
                     return null;
 				if (_transfers.Count > 0)
 					return _transfers[0];
@@ -182,14 +182,19 @@ namespace ClearCanvas.Dicom.Network
 			return _transfers.AsReadOnly();
 		}
 
-		public bool HasTransfer(TransferSyntax ts) {
-            if (_result == DicomPresContextResult.Accept || _result == DicomPresContextResult.Proposed)
-                return _transfers.Contains(ts);
-            else
-                return false;
+		public void SortTransfers(Comparison<TransferSyntax> comparison)
+		{
+			_transfers.Sort(comparison);
 		}
 
-		public string GetResultDescription() {
+		public bool HasTransfer(TransferSyntax ts)
+		{
+			if (_result == DicomPresContextResult.Accept || _result == DicomPresContextResult.Proposed)
+                return _transfers.Contains(ts);
+			return false;
+		}
+
+    	public string GetResultDescription() {
 			switch (_result) {
 			case DicomPresContextResult.Accept:
 				return "Accept";
@@ -226,8 +231,8 @@ namespace ClearCanvas.Dicom.Network
         // For instance (1460 * 80) - 6 = 116,794 bytes
         private uint _localMaxPduLength = NetworkSettings.Default.LocalMaxPduLength;
         private uint _remoteMaxPduLength = NetworkSettings.Default.RemoteMaxPduLength;
-        private String _calledAE;
-        private String _callingAE;
+        private String _calledAe;
+        private String _callingAe;
         private DicomUid _appCtxNm;
         private DicomUid _implClass;
         private string _implVersion;
@@ -263,8 +268,8 @@ namespace ClearCanvas.Dicom.Network
 			_implVersion = DicomImplementation.Version;
 			_presContexts = new SortedList<byte, DicomPresContext>();
 
-            _calledAE = calledAE;
-            _callingAE = callingAE;
+            _calledAe = calledAE;
+            _callingAe = callingAE;
 
             _localEndPoint = localEndPoint;
             _remoteEndPoint = remoteEndPoint;
@@ -276,8 +281,8 @@ namespace ClearCanvas.Dicom.Network
         protected AssociationParameters(AssociationParameters parameters)
         {
             _appCtxNm = parameters._appCtxNm;
-            _calledAE = parameters._calledAE;
-            _callingAE = parameters._callingAE;
+            _calledAe = parameters._calledAe;
+            _callingAe = parameters._callingAe;
             _implClass = parameters._implClass;
             _implVersion = parameters._implVersion;
             _localEndPoint = parameters._localEndPoint;
@@ -417,8 +422,8 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         public String CalledAE
         {
-            get { return _calledAE; }
-            set { _calledAE = value; }
+            get { return _calledAe; }
+            set { _calledAe = value; }
         }
 
         /// <summary>
@@ -426,8 +431,8 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         public String CallingAE
         {
-            get { return _callingAE; }
-            set { _callingAE = value; }
+            get { return _callingAe; }
+            set { _callingAe = value; }
         }
 
 		/// <summary>
@@ -764,9 +769,9 @@ namespace ClearCanvas.Dicom.Network
             sb.AppendLine();
             sb.AppendFormat("Remote Maximum PDU Size: {0}", _remoteMaxPduLength);
             sb.AppendLine();
-            sb.AppendFormat("Called AE Title:         {0}", _calledAE);
+            sb.AppendFormat("Called AE Title:         {0}", _calledAe);
             sb.AppendLine(); 
-            sb.AppendFormat("Calling AE Title:        {0}", _callingAE);
+            sb.AppendFormat("Calling AE Title:        {0}", _callingAe);
             sb.AppendLine(); 
             sb.AppendFormat("Presentation Contexts:   {0}", _presContexts.Count);
             sb.AppendLine(); 
@@ -803,8 +808,8 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
     public class ClientAssociationParameters : AssociationParameters
     {
-        public ClientAssociationParameters(String callingAE, String calledAE, string hostname, int port)
-               : base(callingAE, calledAE, null, null)
+        public ClientAssociationParameters(String callingAe, String calledAe, string hostname, int port)
+               : base(callingAe, calledAe, null, null)
         {
             IPAddress addr;
 
@@ -845,8 +850,8 @@ namespace ClearCanvas.Dicom.Network
         {
         }
 
-        public ServerAssociationParameters(String CalledAE, IPEndPoint localEndPoint )
-            : base(null,CalledAE,localEndPoint,null)
+        public ServerAssociationParameters(String calledAe, IPEndPoint localEndPoint )
+			: base(null, calledAe, localEndPoint, null)
         {
         }
 
