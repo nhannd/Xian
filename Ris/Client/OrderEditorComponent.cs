@@ -296,35 +296,27 @@ namespace ClearCanvas.Ris.Client
 			_orderRef = orderRef;
 
 			_proceduresTable = new Table<ProcedureRequisition>();
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Name",
-									  delegate(ProcedureRequisition item) { return item.ProcedureType.Name; }));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility",
-									  delegate(ProcedureRequisition item)
-									  {
-										  return item.PerformingFacility == null ? "" : item.PerformingFacility.Code;
-									  }));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Lat.",
-									  delegate(ProcedureRequisition item)
-									  {
-										  return (item.Laterality == null || item.Laterality.Code == "N")
-											  ? "" : item.Laterality.Value;
-									  }));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, bool>("Port.",
-									  delegate(ProcedureRequisition item) { return item.PortableModality; }));
-			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time",
-									  delegate(ProcedureRequisition item)
-									  {
-										  // if new or scheduled
-										  if (item.Status == null || item.Status.Code == "SC")
-										  {
-											  if (item.Cancelled)
-												  return "Cancel Pending";
-											  else
-												  return Format.DateTime(item.ScheduledTime);
-										  }
-										  else
-											  return item.Status.Value;
-									  }));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Name", item => item.ProcedureType.Name));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Facility", item =>
+				item.PerformingFacility == null
+				? ""
+				: item.PerformingFacility.Code));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Lat.", item =>
+				(item.Laterality == null || item.Laterality.Code == "N")
+				? ""
+				: item.Laterality.Value));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, bool>("Port.", item => item.PortableModality));
+			_proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, string>("Scheduled Time", item =>
+				{
+					// if new or scheduled
+					if (item.Status != null && item.Status.Code != "SC")
+						return item.Status.Value;
+
+					if (item.Cancelled)
+						return "Cancel Pending";
+
+					return Format.DateTime(item.ScheduledTime);
+				}));
 
 			_proceduresActionModel = new CrudActionModel();
 			_proceduresActionModel.Add.SetClickHandler(AddProcedure);
@@ -340,9 +332,9 @@ namespace ClearCanvas.Ris.Client
 
 			_recipientsTable = new Table<ResultRecipientDetail>();
 			_recipientsTable.Columns.Add(new TableColumn<ResultRecipientDetail, string>("Practitioner",
-									  delegate(ResultRecipientDetail item) { return PersonNameFormat.Format(item.Practitioner.Name); }));
+				item => PersonNameFormat.Format(item.Practitioner.Name)));
 			_recipientsTable.Columns.Add(new TableColumn<ResultRecipientDetail, string>("Contact Point",
-									  delegate(ResultRecipientDetail item) { return item.ContactPoint.Name; }));
+				item => item.ContactPoint.Name));
 
 			_recipientsActionModel = new CrudActionModel(true, false, true);
 			_recipientsActionModel.Add.SetClickHandler(AddRecipient);
@@ -351,34 +343,21 @@ namespace ClearCanvas.Ris.Client
 			UpdateRecipientsActionModel();
 
 			this.Validation.Add(new ValidationRule("SelectedCancelReason",
-				delegate
-				{
-					// if replacing the order, ensure cancel reason selected
-					return new ValidationResult(!(_mode == Mode.ReplaceOrder && _selectedCancelReason == null),
-						SR.MessageCancellationReasonRequired);
-				}));
+				component => new ValidationResult(!(_mode == Mode.ReplaceOrder && _selectedCancelReason == null), SR.MessageCancellationReasonRequired)));
 			this.Validation.Add(new ValidationRule("DowntimeAccessionNumber",
-				delegate
-				{
+				component => new ValidationResult(
+					!(this.IsDowntimeAccessionNumberVisible && string.IsNullOrEmpty(_downtimeAccessionNumber)),
+					SR.MessageDowntimeAccessionNumberRequired)));
 
-					return new ValidationResult(!(this.IsDowntimeAccessionNumberVisible && string.IsNullOrEmpty(_downtimeAccessionNumber)),
-						SR.MessageDowntimeAccessionNumberRequired);
-				}));
 			// add validation rule to ensure the table has at least non-cancelled procedure
 			this.Validation.Add(new ValidationRule("SelectedProcedure",
-				delegate
-				{
-					bool ok = CollectionUtils.Contains(_proceduresTable.Items,
-								delegate(ProcedureRequisition p) { return !p.Cancelled; });
-
-					return new ValidationResult(ok, SR.MessageNoActiveProcedures);
-				}));
+				component => new ValidationResult(CollectionUtils.Contains(_proceduresTable.Items, p => !p.Cancelled), SR.MessageNoActiveProcedures)));
 
 			_noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
-			_noteSummaryComponent.ModifiedChanged += delegate { this.Modified = true; };
+			_noteSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 
 			_attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Order);
-			this.ChangeCommitted += delegate { _attachmentSummaryComponent.SaveChanges(); };
+			this.ChangeCommitted += ((sender, args) => _attachmentSummaryComponent.SaveChanges());
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
 		}
 
@@ -397,19 +376,17 @@ namespace ClearCanvas.Ris.Client
 			_diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 
-			Platform.GetService<IOrderEntryService>(
-				delegate(IOrderEntryService service)
-				{
-					_activeVisits = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)).Visits;
+			Platform.GetService<IOrderEntryService>(service =>
+			{
+				_activeVisits = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)).Visits;
 
-					GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
-					_facilityChoices = formChoicesResponse.FacilityChoices;
-					_priorityChoices = formChoicesResponse.OrderPriorityChoices;
-					_cancelReasonChoices = formChoicesResponse.CancelReasonChoices;
-					_selectedCancelReason = _cancelReasonChoices.Count > 0 ? _cancelReasonChoices[0] : null;
-					_lateralityChoices = formChoicesResponse.LateralityChoices;
-
-				});
+				var formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
+				_facilityChoices = formChoicesResponse.FacilityChoices;
+				_priorityChoices = formChoicesResponse.OrderPriorityChoices;
+				_cancelReasonChoices = formChoicesResponse.CancelReasonChoices;
+				_selectedCancelReason = _cancelReasonChoices.Count > 0 ? _cancelReasonChoices[0] : null;
+				_lateralityChoices = formChoicesResponse.LateralityChoices;
+			});
 
 			if (_mode == Mode.NewOrder)
 			{
@@ -423,17 +400,16 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				// Pre-populate the order entry page with details
-				Platform.GetService<IOrderEntryService>(
-					delegate(IOrderEntryService service)
-					{
-						GetOrderRequisitionForEditResponse response = service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef));
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.GetOrderRequisitionForEdit(new GetOrderRequisitionForEditRequest(_orderRef));
 
-						// update order ref so we have the latest version
-						_orderRef = response.OrderRef;
+					// update order ref so we have the latest version
+					_orderRef = response.OrderRef;
 
-						// update form
-						UpdateFromRequisition(response.Requisition);
-					});
+					// update form
+					UpdateFromRequisition(response.Requisition);
+				});
 
 				// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
 				if (_mode == Mode.ReplaceOrder)
@@ -558,78 +534,67 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatVisit(object visit)
 		{
-			VisitSummary v = (VisitSummary)visit;
-			StringBuilder visitIdentity = new StringBuilder();
-			if (v.Facility != null)
+			var visitSummary = (VisitSummary)visit;
+			var visitIdentity = new StringBuilder();
+			if (visitSummary.Facility != null)
 			{
-				visitIdentity.Append(v.Facility.Code);
+				visitIdentity.Append(visitSummary.Facility.Code);
 				visitIdentity.Append(" ");
 			}
-			visitIdentity.Append(v.VisitNumber.Id);
+			visitIdentity.Append(visitSummary.VisitNumber.Id);
 
-			if (v.CurrentLocation != null)
+			if (visitSummary.CurrentLocation != null)
 			{
 				visitIdentity.Append(", ");
-				visitIdentity.Append(v.CurrentLocation.Name);
+				visitIdentity.Append(visitSummary.CurrentLocation.Name);
 				visitIdentity.Append(",");
 			}
 
-			StringBuilder visitType = new StringBuilder();
-			visitType.Append(v.PatientClass.Value);
-			if (v.Status != null)
+			var visitType = new StringBuilder();
+			visitType.Append(visitSummary.PatientClass.Value);
+			if (visitSummary.Status != null)
 			{
 				visitType.Append(" - ");
-				visitType.Append(v.Status.Value);
+				visitType.Append(visitSummary.Status.Value);
 			}
 
 			return string.Format("{0} {1} {2}",
 				visitIdentity,
 				visitType,
-				Format.DateTime(v.AdmitTime)
-				);
+				Format.DateTime(visitSummary.AdmitTime));
 		}
 
 		public void ShowVisitSummary()
 		{
 			try
 			{
-				VisitSummaryComponent component = new VisitSummaryComponent(_patientRef, true);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow,
-					component,
-					SR.TitlePatientVisits);
-
+				var visitSummaryComponent = new VisitSummaryComponent(_patientRef, true);
+				var exitCode = LaunchAsDialog(this.Host.DesktopWindow, visitSummaryComponent, SR.TitlePatientVisits);
 
 				// remember the previous selection before updating the list
-				EntityRef selectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
+				var selectedVisitRef = _selectedVisit == null ? null : _selectedVisit.VisitRef;
 
 				// if the user made a selection and accepted, then override the previous selection
 				if (ApplicationComponentExitCode.Accepted == exitCode)
 				{
-					VisitSummary selectedVisit = (VisitSummary)component.SummarySelection.Item;
+					var selectedVisit = (VisitSummary)visitSummaryComponent.SummarySelection.Item;
 					selectedVisitRef = selectedVisit == null ? null : selectedVisit.VisitRef;
 				}
 
 				// regardless of whether the user pressed OK or cancel, we should still update the list of active visits
 				// because they could have added a new visit prior to cancelling out of the dialog
-				Platform.GetService<IOrderEntryService>(
-					delegate(IOrderEntryService service)
-					{
-						ListVisitsForPatientResponse response =
-							service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
-						_activeVisits = response.Visits;
-					});
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
+					_activeVisits = response.Visits;
+				});
 
 				NotifyPropertyChanged("ActiveVisits");
 				EventsHelper.Fire(_activeVisitsChanged, this, EventArgs.Empty);
 
 				if (selectedVisitRef != null)
 				{
-					this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits,
-						delegate(VisitSummary visit)
-						{
-							return visit.VisitRef.Equals(selectedVisitRef, true);
-						});
+					this.SelectedVisit = CollectionUtils.SelectFirst(_activeVisits, visit => visit.VisitRef.Equals(selectedVisitRef, true));
 				}
 			}
 			catch (Exception e)
@@ -779,7 +744,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatContactPoint(object cp)
 		{
-			ExternalPractitionerContactPointDetail detail = (ExternalPractitionerContactPointDetail)cp;
+			var detail = (ExternalPractitionerContactPointDetail)cp;
 			return ExternalPractitionerContactPointFormat.Format(detail);
 		}
 
@@ -876,23 +841,22 @@ namespace ClearCanvas.Ris.Client
 			try
 			{
 				List<ProcedureTypeSummary> orderableProcedureTypes = null;
-				Platform.GetService<IOrderEntryService>(
-					delegate(IOrderEntryService service)
+				Platform.GetService<IOrderEntryService>(service =>
 					{
-						ListOrderableProcedureTypesRequest request = new ListOrderableProcedureTypesRequest(
-							CollectionUtils.Map<ProcedureRequisition, EntityRef>(_proceduresTable.Items,
-								delegate(ProcedureRequisition req) { return req.ProcedureType.ProcedureTypeRef; }));
+						var request = new ListOrderableProcedureTypesRequest(
+							CollectionUtils.Map<ProcedureRequisition, EntityRef>(
+								_proceduresTable.Items,
+								req => req.ProcedureType.ProcedureTypeRef));
 
 						orderableProcedureTypes = service.ListOrderableProcedureTypes(request).OrderableProcedureTypes;
-
 					});
 
-				ProcedureRequisition procReq = new ProcedureRequisition(null, _orderingFacility);
-				ProcedureEditorComponent procedureEditor = new ProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
+				var procedureRequisition = new ProcedureRequisition(null, _orderingFacility);
+				var procedureEditor = new ProcedureEditorComponent(procedureRequisition, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
 				if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
 					== ApplicationComponentExitCode.Accepted)
 				{
-					_proceduresTable.Items.Add(procReq);
+					_proceduresTable.Items.Add(procedureRequisition);
 
 					this.Modified = true;
 				}
@@ -910,7 +874,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				ProcedureEditorComponent procedureEditor = new ProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
+				var procedureEditor = new ProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
 				if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
 					== ApplicationComponentExitCode.Accepted)
 				{
@@ -1017,19 +981,14 @@ namespace ClearCanvas.Ris.Client
 			_proceduresTable.Items.Clear();
 			if (_selectedDiagnosticService != null)
 			{
-				Platform.GetService<IOrderEntryService>(
-					delegate(IOrderEntryService service)
-					{
-						LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(
-							new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
-						_proceduresTable.Items.AddRange(
-						   CollectionUtils.Map<ProcedureTypeSummary, ProcedureRequisition>(
-							   response.DiagnosticServiceDetail.ProcedureTypes,
-							   delegate(ProcedureTypeSummary rpt)
-							   {
-								   return new ProcedureRequisition(rpt, _orderingFacility);
-							   }));
-					});
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(summary.DiagnosticServiceRef));
+					_proceduresTable.Items.AddRange(
+						CollectionUtils.Map<ProcedureTypeSummary, ProcedureRequisition>(
+							response.DiagnosticServiceDetail.ProcedureTypes,
+							rpt => new ProcedureRequisition(rpt, _orderingFacility)));
+				});
 			}
 
 			UpdateProcedureActionModel();
@@ -1039,20 +998,22 @@ namespace ClearCanvas.Ris.Client
 
 		private OrderRequisition BuildOrderRequisition()
 		{
-			OrderRequisition requisition = new OrderRequisition();
-			requisition.Patient = _selectedVisit.PatientRef;
-			requisition.Visit = _selectedVisit;
-			requisition.DiagnosticService = _selectedDiagnosticService;
-			requisition.ReasonForStudy = _indication;
-			requisition.Priority = _selectedPriority;
-			requisition.OrderingFacility = _orderingFacility;
-			requisition.SchedulingRequestTime = _schedulingRequestTime;
-			requisition.OrderingPractitioner = _selectedOrderingPractitioner;
-			requisition.Procedures = new List<ProcedureRequisition>(_proceduresTable.Items);
-			requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments);
-			requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
-			requisition.ExtendedProperties = _extendedProperties;
-			requisition.ResultRecipients = new List<ResultRecipientDetail>(_recipientsTable.Items);
+			var requisition = new OrderRequisition
+			{
+				Patient = _selectedVisit.PatientRef,
+				Visit = _selectedVisit,
+				DiagnosticService = _selectedDiagnosticService,
+				ReasonForStudy = _indication,
+				Priority = _selectedPriority,
+				OrderingFacility = _orderingFacility,
+				SchedulingRequestTime = _schedulingRequestTime,
+				OrderingPractitioner = _selectedOrderingPractitioner,
+				Procedures = new List<ProcedureRequisition>(_proceduresTable.Items),
+				Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments),
+				Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes),
+				ExtendedProperties = _extendedProperties,
+				ResultRecipients = new List<ResultRecipientDetail>(_recipientsTable.Items)
+			};
 
 			// only send the downtime number if a new downtime order is being entered
 			if (this.IsDowntimeAccessionNumberVisible)
@@ -1069,12 +1030,11 @@ namespace ClearCanvas.Ris.Client
 			if (_selectedOrderingPractitionerContactPoint != null)
 			{
 				// add the ordering practitioner as a result recipient
-				requisition.ResultRecipients.Add(
-					new ResultRecipientDetail(_selectedOrderingPractitioner,
-											   _selectedOrderingPractitionerContactPoint,
-											   new EnumValueInfo("ANY", null)));
+				requisition.ResultRecipients.Add(new ResultRecipientDetail(
+					_selectedOrderingPractitioner,
+					_selectedOrderingPractitionerContactPoint,
+					new EnumValueInfo("ANY", null)));
 			}
-
 
 			return requisition;
 		}
@@ -1093,7 +1053,7 @@ namespace ClearCanvas.Ris.Client
 			_proceduresTable.Items.Clear();
 			_proceduresTable.Items.AddRange(existingOrder.Procedures);
 
-			List<OrderAttachmentSummary> attachments = new List<OrderAttachmentSummary>(existingOrder.Attachments);
+			var attachments = new List<OrderAttachmentSummary>(existingOrder.Attachments);
 			attachments.AddRange(_newAttachments);
 			_attachmentSummaryComponent.OrderAttachments = attachments;
 
@@ -1107,37 +1067,30 @@ namespace ClearCanvas.Ris.Client
 			// recipients table, since he already appears on the main part of the screen
 
 			// select the recipient representing the ordering practitioner at the default contact point
-			ResultRecipientDetail orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
-				delegate(ResultRecipientDetail r)
-				{
-					return r.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef
-						&& r.ContactPoint.IsDefaultContactPoint;
-				});
+			var orderingRecipient = CollectionUtils.SelectFirst(
+				existingOrder.ResultRecipients,
+				recipient => recipient.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef 
+					&& recipient.ContactPoint.IsDefaultContactPoint);
 
 			// if not found, then select the first recipient representing the ordering practitioner
 			if (orderingRecipient == null)
 			{
-				orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
-					delegate(ResultRecipientDetail r)
-					{
-						return r.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef;
-					});
+				orderingRecipient = CollectionUtils.SelectFirst(
+					existingOrder.ResultRecipients,
+					recipient => recipient.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef);
 			}
 
 			// if the recipient object exists for the ordering practitioner (and this *should* always be the case)
 			if (orderingRecipient != null)
 			{
 				// initialize the ordering practitioner contact point
-				_selectedOrderingPractitionerContactPoint = CollectionUtils.SelectFirst(_orderingPractitionerContactPointChoices,
-					delegate(ExternalPractitionerContactPointDetail d)
-					{
-						return d.ContactPointRef == orderingRecipient.ContactPoint.ContactPointRef;
-					});
+				_selectedOrderingPractitionerContactPoint = CollectionUtils.SelectFirst(
+					_orderingPractitionerContactPointChoices,
+					contactPoint => contactPoint.ContactPointRef == orderingRecipient.ContactPoint.ContactPointRef);
 
 				// populate the recipients table, excuding the orderingRecipient 
 				_recipientsTable.Items.Clear();
-				_recipientsTable.Items.AddRange(CollectionUtils.Reject(existingOrder.ResultRecipients,
-					delegate(ResultRecipientDetail r) { return r == orderingRecipient; }));
+				_recipientsTable.Items.AddRange(CollectionUtils.Reject(existingOrder.ResultRecipients, r => r == orderingRecipient));
 			}
 			else
 			{
@@ -1153,60 +1106,82 @@ namespace ClearCanvas.Ris.Client
 			_orderAdditionalInfoComponent.SaveData();
 
 			// give extension pages a chance to save data prior to commit
-			_extensionPages.ForEach(delegate(IOrderEditorPage page) { page.Save(); });
+			_extensionPages.ForEach(page => page.Save());
 
-			OrderRequisition requisition = BuildOrderRequisition();
+			var requisition = BuildOrderRequisition();
 
 			try
 			{
-				Platform.GetService<IOrderEntryService>(
-					delegate(IOrderEntryService service)
-					{
-						if (_mode == Mode.NewOrder)
-						{
-							PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
-							_orderRef = response.Order.OrderRef;
-
-							this.Host.ShowMessageBox(
-								string.Format("Order {0} placed successfully.",
-											  AccessionFormat.Format(response.Order.AccessionNumber)), MessageBoxActions.Ok);
-						}
-						else if (_mode == Mode.ModifyOrder)
-						{
-							ModifyOrderResponse response = service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
-							_orderRef = response.Order.OrderRef;
-						}
-						else if (_mode == Mode.ReplaceOrder)
-						{
-							ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, true);
-							ReplaceOrderResponse response = service.ReplaceOrder(request);
-
-							if (response.WarnUser && this.Host.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel and replace this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
-								response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, false));
-							else
-								return;
-
-							_orderRef = response.Order.OrderRef;
-
-							this.Host.ShowMessageBox(
-								string.Format("Order successfully replaced with new order {0}.",
-											  AccessionFormat.Format(response.Order.AccessionNumber)), MessageBoxActions.Ok);
-						}
-					});
+				switch (_mode)
+				{
+					case Mode.NewOrder:
+						SubmitNewOrder(requisition);
+						break;
+					case Mode.ModifyOrder:
+						SubmitModifyOrder(requisition);
+						break;
+					case Mode.ReplaceOrder:
+						SubmitReplaceOrder(requisition);
+						break;
+				}
 
 				EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
-
 				return true;
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, "", this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(e, "", this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 				return false;
 			}
+		}
+
+		private void SubmitNewOrder(OrderRequisition requisition)
+		{
+			Platform.GetService<IOrderEntryService>(service =>
+			{
+				var response = service.PlaceOrder(new PlaceOrderRequest(requisition));
+				_orderRef = response.Order.OrderRef;
+
+				this.Host.ShowMessageBox(
+					string.Format(
+						"Order {0} placed successfully.",
+						AccessionFormat.Format(response.Order.AccessionNumber)),
+					MessageBoxActions.Ok);
+			});
+		}
+
+		private void SubmitModifyOrder(OrderRequisition requisition)
+		{
+			Platform.GetService<IOrderEntryService>(service =>
+			{
+				var response = service.ModifyOrder(new ModifyOrderRequest(_orderRef, requisition));
+				_orderRef = response.Order.OrderRef;
+			});
+		}
+
+		private void SubmitReplaceOrder(OrderRequisition requisition)
+		{
+			Platform.GetService<IOrderEntryService>(service =>
+			{
+				var request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, true);
+				var response = service.ReplaceOrder(request);
+
+				if (response.WarnUser &&
+					DialogBoxAction.Yes == this.Host.DesktopWindow.ShowMessageBox(
+											response.Warning + "\n\nAre you sure you want to cancel and replace this order?",
+											MessageBoxActions.YesNo))
+				{
+					response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, false));
+				}
+				else
+					return;
+
+				_orderRef = response.Order.OrderRef;
+
+				this.Host.ShowMessageBox(
+					string.Format("Order successfully replaced with new order {0}.", AccessionFormat.Format(response.Order.AccessionNumber)),
+					MessageBoxActions.Ok);
+			});
 		}
 
 		private void InitializeTabPages()
@@ -1218,7 +1193,7 @@ namespace ClearCanvas.Ris.Client
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 
 
-			TabPage attachmentsTabPage = new TabPage("Documents", _attachmentSummaryComponent);
+			var attachmentsTabPage = new TabPage("Documents", _attachmentSummaryComponent);
 			_rightHandComponentContainer.Pages.Add(attachmentsTabPage);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
 
@@ -1231,7 +1206,7 @@ namespace ClearCanvas.Ris.Client
 
 			// add extension pages to navigator
 			// the navigator will start those components if the user goes to that page
-			foreach (IOrderEditorPage page in _extensionPages)
+			foreach (var page in _extensionPages)
 			{
 				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
 			}
@@ -1257,16 +1232,14 @@ namespace ClearCanvas.Ris.Client
 
 		private List<ExternalPractitionerContactPointDetail> GetPractitionerContactPoints(ExternalPractitionerSummary prac)
 		{
-			List<ExternalPractitionerContactPointDetail> choices = new List<ExternalPractitionerContactPointDetail>();
+			var choices = new List<ExternalPractitionerContactPointDetail>();
 			if (prac != null)
 			{
-				Platform.GetService<IOrderEntryService>(
-					delegate(IOrderEntryService service)
-					{
-						GetExternalPractitionerContactPointsResponse response = service.GetExternalPractitionerContactPoints(
-							new GetExternalPractitionerContactPointsRequest(prac.PractitionerRef));
-						choices = response.ContactPoints;
-					});
+				Platform.GetService<IOrderEntryService>(service =>
+				{
+					var response = service.GetExternalPractitionerContactPoints(new GetExternalPractitionerContactPointsRequest(prac.PractitionerRef));
+					choices = response.ContactPoints;
+				});
 			}
 			return choices;
 		}
