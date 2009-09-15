@@ -106,10 +106,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.Protocol, this.SaveEnabled));
 			_orderNotesComponentHost.StartComponent();
 			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
+			_orderNotesComponentHost.Component.ModifiedChanged += ((sender, args) =>
+				this.Modified = this.Modified || _orderNotesComponentHost.Component.Modified);
 
 			_protocolEditorComponentHost = new ChildComponentHost(this.Host, new ProtocolEditorComponent(this.WorklistItem));
 			_protocolEditorComponentHost.StartComponent();
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
+			_protocolEditorComponentHost.Component.ModifiedChanged += ((sender, args) =>
+				this.Modified = this.Modified || _protocolEditorComponentHost.Component.Modified);
 
 			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(this.WorklistItem));
 			_priorReportsComponentHost.StartComponent();
@@ -155,29 +159,40 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Stop();
 		}
 
-        public override bool HasValidationErrors
-        {
-            get
-            {
-                return _protocolEditorComponentHost.Component.HasValidationErrors || base.HasValidationErrors;
-            }
-        }
+		public override bool HasValidationErrors
+		{
+			get
+			{
+				return _protocolEditorComponentHost.Component.HasValidationErrors || base.HasValidationErrors;
+			}
+		}
 
-        public override void ShowValidation(bool show)
-        {
-            if (_protocolEditorComponentHost != null)
-            {
-                _protocolEditorComponentHost.Component.ShowValidation(show);
-            }
-            base.ShowValidation(show);
-        }
+		public override void ShowValidation(bool show)
+		{
+			if (_protocolEditorComponentHost != null)
+			{
+				_protocolEditorComponentHost.Component.ShowValidation(show);
+			}
+			base.ShowValidation(show);
+		}
+
+		public override bool PrepareExit()
+		{
+			var exit = base.PrepareExit();
+			if (exit)
+			{
+				// same as cancel
+				DoCancelCleanUp();
+			}
+			return exit;
+		}
 
 		#endregion
 
-        public int BannerHeight
-        {
-            get { return BannerSettings.Default.BannerHeight; }
-        }
+		public int BannerHeight
+		{
+			get { return BannerSettings.Default.BannerHeight; }
+		}
 
 		private ReportingWorklistItem WorklistItem
 		{
@@ -254,11 +269,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			try
 			{
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.AcceptProtocol(new AcceptProtocolRequest(_protocolAssignmentStepRef, this.ProtocolDetail, _notes));
-					});
+				Platform.GetService<IProtocollingWorkflowService>(service =>
+					service.AcceptProtocol(new AcceptProtocolRequest(_protocolAssignmentStepRef, this.ProtocolDetail, _notes)));
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.CompletedProtocolFolder));
 
@@ -302,15 +314,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			try
 			{
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.SubmitProtocolForApproval(
-							new SubmitProtocolForApprovalRequest(
-								_protocolAssignmentStepRef,
-								this.ProtocolDetail,
-								_notes));
-					});
+				Platform.GetService<IProtocollingWorkflowService>(service =>
+					service.SubmitProtocolForApproval(new SubmitProtocolForApprovalRequest(_protocolAssignmentStepRef, this.ProtocolDetail, _notes)));
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.AwaitingApprovalProtocolFolder));
 
@@ -347,21 +352,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 				EnumValueInfo reason;
 				string additionalComments;
 
-				bool result = GetSuspendReason("Reject Reason", out reason, out additionalComments);
+				var result = GetSuspendReason("Reject Reason", out reason, out additionalComments);
 
 				if (!result || reason == null)
 					return;
 
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.RejectProtocol(new RejectProtocolRequest(
-							_protocolAssignmentStepRef,
-							this.ProtocolDetail,
-							_notes,
-							reason,
-							CreateAdditionalCommentsNote(additionalComments)));
-					});
+				Platform.GetService<IProtocollingWorkflowService>(service =>
+					service.RejectProtocol(new RejectProtocolRequest(
+						_protocolAssignmentStepRef,
+						this.ProtocolDetail,
+						_notes,
+						reason,
+						CreateAdditionalCommentsNote(additionalComments))));
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.RejectedProtocolFolder));
 
@@ -387,11 +389,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.SaveProtocol(new SaveProtocolRequest(_protocolAssignmentStepRef, this.ProtocolDetail, _notes));
-					});
+				Platform.GetService<IProtocollingWorkflowService>(service =>
+					service.SaveProtocol(new SaveProtocolRequest(_protocolAssignmentStepRef, this.ProtocolDetail, _notes)));
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftProtocolFolder));
@@ -419,11 +418,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				if (_worklistItemManager.ShouldUnclaim)
 				{
-					Platform.GetService<IProtocollingWorkflowService>(
-						delegate(IProtocollingWorkflowService service)
-						{
-							service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _assignedStaffRef));
-						});
+					Platform.GetService<IProtocollingWorkflowService>(service =>
+						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _assignedStaffRef)));
 				}
 
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
@@ -447,18 +443,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (_worklistItemManager.ShouldUnclaim)
-				{
-					Platform.GetService<IProtocollingWorkflowService>(
-						delegate(IProtocollingWorkflowService service)
-						{
-							service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _assignedStaffRef));
-						});
-				}
-
-				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
-				// discontinued with a new scheduled one replacing it
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+				DoCancelCleanUp();
 
 				this.Exit(ApplicationComponentExitCode.None);
 			}
@@ -474,9 +459,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Private methods
 
+		private void DoCancelCleanUp()
+		{
+			if (_worklistItemManager.ShouldUnclaim)
+			{
+				Platform.GetService<IProtocollingWorkflowService>(service =>
+					service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _assignedStaffRef)));
+			}
+
+			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+			// discontinued with a new scheduled one replacing it
+			DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+		}
 
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
+			this.Modified = false;
+
 			if (this.WorklistItem != null)
 			{
 				try
@@ -500,81 +499,72 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// begin with validation turned off
 			ShowValidation(false);
 
-			Platform.GetService<IProtocollingWorkflowService>(
-				delegate(IProtocollingWorkflowService service)
+			Platform.GetService<IProtocollingWorkflowService>(service =>
+			{
+				List<ReportingWorklistItem> linkedProtocols;
+				List<ReportingWorklistItem> candidateProtocols;
+				PromptForLinkedInterpretations(this.WorklistItem, out linkedProtocols, out candidateProtocols);
+
+				var linkedProtocolRefs = linkedProtocols.ConvertAll(x => x.ProcedureStepRef);
+
+				var shouldClaim = _worklistItemManager.ShouldUnclaim;
+
+				var response = service.StartProtocol(
+					new StartProtocolRequest(this.WorklistItem.ProcedureStepRef, linkedProtocolRefs, shouldClaim, OrderNoteCategory.Protocol.Key));
+				_protocolAssignmentStepRef = response.ProtocolAssignmentStepRef;
+				_assignedStaffRef = response.AssignedStaffRef;
+
+				_notes = response.ProtocolNotes;
+
+				if (response.ProtocolClaimed == shouldClaim)
 				{
-					List<ReportingWorklistItem> linkedProtocols;
-					List<ReportingWorklistItem> candidateProtocols;
-					PromptForLinkedInterpretations(this.WorklistItem, out linkedProtocols, out candidateProtocols);
+					var enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
 
-					List<EntityRef> linkedProtocolRefs = linkedProtocols.ConvertAll<EntityRef>(
-						delegate(ReportingWorklistItem x) { return x.ProcedureStepRef; });
-
-					bool shouldClaim = _worklistItemManager.ShouldUnclaim;
-
-					StartProtocolResponse response = service.StartProtocol(new StartProtocolRequest(this.WorklistItem.ProcedureStepRef, linkedProtocolRefs, shouldClaim, OrderNoteCategory.Protocol.Key));
-					_protocolAssignmentStepRef = response.ProtocolAssignmentStepRef;
-					_assignedStaffRef = response.AssignedStaffRef;
-
-					_notes = response.ProtocolNotes;
-
-					if (response.ProtocolClaimed == shouldClaim)
+					_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptProtocol"];
+					_rejectEnabled = enablementResponse.OperationEnablementDictionary["RejectProtocol"];
+					_submitForApprovalEnabled = enablementResponse.OperationEnablementDictionary["SubmitProtocolForApproval"];
+					_saveEnabled = enablementResponse.OperationEnablementDictionary["SaveProtocol"];
+				}
+				else
+				{
+					// If start interpretation failed and there were candidates for linking, let the user know and move to next item.
+					if (candidateProtocols.Count > 0 && this.IsStarted)
 					{
-						GetOperationEnablementResponse enablementResponse =
-							service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
-
-						_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptProtocol"];
-						_rejectEnabled = enablementResponse.OperationEnablementDictionary["RejectProtocol"];
-						_submitForApprovalEnabled = enablementResponse.OperationEnablementDictionary["SubmitProtocolForApproval"];
-						_saveEnabled = enablementResponse.OperationEnablementDictionary["SaveProtocol"];
+						this.Host.ShowMessageBox(SR.ExceptionCannotStartLinkedProcedures, MessageBoxActions.Ok);
+						_worklistItemManager.IgnoreWorklistItems(candidateProtocols);
 					}
-					else
-					{
-						// If start interpretation failed and there were candidates for linking, let the user know and move to next item.
-						if (candidateProtocols.Count > 0 && this.IsStarted)
-						{
-							this.Host.ShowMessageBox(SR.ExceptionCannotStartLinkedProcedures, MessageBoxActions.Ok);
-							_worklistItemManager.IgnoreWorklistItems(candidateProtocols);
-						}
-						throw new Exception();
-					}
-				});
+					throw new Exception();
+				}
+			});
 		}
 
-		private bool PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
+		private void PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
 		{
 			linkedItems = new List<ReportingWorklistItem>();
 			candidateItems = new List<ReportingWorklistItem>();
 
 			// query server for link candidates
-			List<ReportingWorklistItem> anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
-			Platform.GetService<IProtocollingWorkflowService>(
-				delegate(IProtocollingWorkflowService service)
+			var anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
+			Platform.GetService<IProtocollingWorkflowService>(service =>
 				{
-					GetLinkableProtocolsRequest request = new GetLinkableProtocolsRequest(item.ProcedureStepRef);
-					anonCandidates = service.GetLinkableProtocols(request).ProtocolItems;
+					var linkableProtocolsResponse = service.GetLinkableProtocols(new GetLinkableProtocolsRequest(item.ProcedureStepRef));
+					anonCandidates = linkableProtocolsResponse.ProtocolItems;
 				});
 			candidateItems.AddRange(anonCandidates);
 
-			// if there are candidates, prompt user to select
-			if (candidateItems.Count > 0)
-			{
-				ResetChildComponents();
+			// if there are no candidates just return
+			if (candidateItems.Count <= 0)
+				return;
 
-				LinkProceduresComponent component = new LinkProceduresComponent(item, candidateItems, SR.TextLinkProtocolInstructions, SR.TextLinkProtocolHeading);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
-					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					linkedItems.AddRange(component.SelectedItems);
-					return true;
-				}
-				return false;
-			}
-			else
+			// otherwise, prompt the user to select
+			ResetChildComponents();
+
+			var linkProceduresComponent = new LinkProceduresComponent(
+				item, candidateItems, SR.TextLinkProtocolInstructions, SR.TextLinkProtocolHeading);
+			if (LaunchAsDialog(this.Host.DesktopWindow, linkProceduresComponent, SR.TitleLinkProcedures) ==
+				ApplicationComponentExitCode.Accepted)
 			{
-				// no candidates
-				return true;
+				linkedItems.AddRange(linkProceduresComponent.SelectedItems);
 			}
 		}
 
@@ -612,22 +602,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool GetSuspendReason(string title, out EnumValueInfo reason, out string additionalComments)
 		{
-			ProtocolReasonComponent component = new ProtocolReasonComponent();
+			var protocolReasonComponent = new ProtocolReasonComponent();
 
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, component, title);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, protocolReasonComponent, title);
 
-			reason = component.Reason;
-			additionalComments = component.OtherReason;
+			reason = protocolReasonComponent.Reason;
+			additionalComments = protocolReasonComponent.OtherReason;
 
 			return exitCode == ApplicationComponentExitCode.Accepted;
 		}
 
 		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
 		{
-			if (!string.IsNullOrEmpty(additionalComments))
-				return new OrderNoteDetail(OrderNoteCategory.Protocol.Key, additionalComments, null, false, null, null);
-			else
-				return null;
+			return !string.IsNullOrEmpty(additionalComments) 
+				? new OrderNoteDetail(OrderNoteCategory.Protocol.Key, additionalComments, null, false, null, null) 
+				: null;
 		}
 
 		private ProtocolDetail ProtocolDetail
