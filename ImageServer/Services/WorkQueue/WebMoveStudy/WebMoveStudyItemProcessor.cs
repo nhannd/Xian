@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
                                           return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
                                       });
 
-                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
+                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
                 if (newScheduledTime < Platform.Time.AddMinutes(1))
                     newScheduledTime = Platform.Time.AddMinutes(1);
 

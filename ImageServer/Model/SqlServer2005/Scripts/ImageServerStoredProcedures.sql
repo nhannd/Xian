@@ -128,17 +128,14 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryRestoreQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[WebQueryRestoreQueue]
 GO
-
 /****** Object:  StoredProcedure [dbo].[InsertStudyIntegrityQueue]    Script Date: 09/17/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertStudyIntegrityQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 GO
-
 /****** Object:  StoredProcedure [dbo].[AttachStudyToPatient]    Script Date: 10/09/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AttachStudyToPatient]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[AttachStudyToPatient]
 GO
-
 /****** Object:  StoredProcedure [dbo].[CreatePatientForStudy]    Script Date: 10/09/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CreatePatientForStudy]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[CreatePatientForStudy]
@@ -149,12 +146,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LockS
 DROP PROCEDURE [dbo].[LockStudy]
 GO
 
-
 /****** Object:  StoredProcedure [dbo].[InsertDuplicateSopReceivedQueue]    Script Date: 05/01/2009 15:53:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertDuplicateSopReceivedQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue]
 GO
-
 
 /****** Object:  StoredProcedure [dbo].[DeleteInstance]    Script Date: 06/29/2009 15:53:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteInstance]') AND type in (N'P', N'PC'))
@@ -170,7 +165,6 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetStudyRelatedInstanceCount]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[SetStudyRelatedInstanceCount]
 GO
-
 
 /****** Object:  StoredProcedure [dbo].[SetSeriesRelatedInstanceCount]    Script Date: 06/29/2009 15:53:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[SetSeriesRelatedInstanceCount]') AND type in (N'P', N'PC'))
@@ -724,6 +718,9 @@ BEGIN
 	declare @PendingStatusEnum as smallint
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 
+	declare @WorkQueuePriorityEnum as smallint
+	select @WorkQueuePriorityEnum = WorkQueuePriorityEnum from WorkQueueTypeProperties where WorkQueueTypeEnum = @WorkQueueTypeEnum
+
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
@@ -734,8 +731,8 @@ BEGIN
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, Data)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime, @Data)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, Data, WorkQueuePriorityEnum)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime, @Data, @WorkQueuePriorityEnum)
 		IF @DeleteFilesystemQueue = 1
 		BEGIN
 			DELETE FROM FilesystemQueue
@@ -931,7 +928,6 @@ CREATE PROCEDURE [dbo].[InsertWorkQueue]
 	@StudyStorageGUID uniqueidentifier, 
 	@ServerPartitionGUID uniqueidentifier,
 	@WorkQueueTypeEnum smallint,
-	@WorkQueuePriorityEnum smallint,
 	@ScheduledTime datetime, 
 	@ExpirationTime datetime,
 	@DeviceGUID uniqueidentifier = null,
@@ -952,8 +948,11 @@ BEGIN
 
 	declare @WorkQueueGUID as uniqueidentifier
 
-	declare @PendingStatusEnum as int
+	declare @PendingStatusEnum as smallint
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+
+	declare @WorkQueuePriorityEnum as smallint
+	select @WorkQueuePriorityEnum = WorkQueuePriorityEnum from WorkQueueTypeProperties where WorkQueueTypeEnum = @WorkQueueTypeEnum
 
 	BEGIN TRANSACTION
 
@@ -1034,7 +1033,7 @@ BEGIN
 	
 	if (@ProcessorID is NULL)
 	begin
-		RAISERROR (N''Calling [dbo.ResetWorkQueueItems] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RAISERROR (N''Calling [dbo.ResetWorkQueue] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
 		RETURN 50000
 	end
 
@@ -1146,9 +1145,8 @@ EXEC dbo.sp_executesql @statement = N'
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	@ProcessorID varchar(256),
-	@WorkQueueTypeEnumList varchar(300) = null,
-	@WorkQueuePriorityEnum smallint = null
-
+	@WorkQueuePriorityEnum smallint = null,
+	@MemoryLimited bit = null
 AS
 BEGIN
 
@@ -1180,7 +1178,7 @@ BEGIN
 
 	BEGIN TRANSACTION
 	
-    IF @WorkQueueTypeEnumList is null
+    IF @MemoryLimited is null
 	BEGIN
 		if @WorkQueuePriorityEnum is null
 		BEGIN
@@ -1208,31 +1206,6 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		-- Use a temp table, and join on it for retrieving multiple types
-		DECLARE @TempList table
-		(
-			Enum smallint
-		)
-
-		DECLARE @Enum varchar(10), @Pos int
-
-		SET @WorkQueueTypeEnumList = LTRIM(RTRIM(@WorkQueueTypeEnumList))+ '',''
-		SET @Pos = CHARINDEX('','', @WorkQueueTypeEnumList, 1)
-
-		IF REPLACE(@WorkQueueTypeEnumList, '','', '''') <> ''''
-		BEGIN
-			WHILE @Pos > 0
-			BEGIN
-				SET @Enum = LTRIM(RTRIM(LEFT(@WorkQueueTypeEnumList, @Pos - 1)))
-				IF @Enum <> ''''
-				BEGIN
-					INSERT INTO @TempList (Enum) VALUES (CAST(@Enum AS smallint)) --Use Appropriate conversion
-				END
-				SET @WorkQueueTypeEnumList = RIGHT(@WorkQueueTypeEnumList, LEN(@WorkQueueTypeEnumList) - @Pos)
-				SET @Pos = CHARINDEX('','', @WorkQueueTypeEnumList, 1)
-			END
-		END	
-
 		if @WorkQueuePriorityEnum is null
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
@@ -1244,7 +1217,7 @@ BEGIN
 				ScheduledTime < getdate() 
 				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
-				AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
+				AND WorkQueue.WorkQueueTypeEnum in (select WorkQueueTypeEnum from WorkQueueTypeProperties WHERE MemoryLimited=@MemoryLimited)
 			ORDER BY WorkQueue.ScheduledTime
 		END
 		ELSE
@@ -1258,7 +1231,7 @@ BEGIN
 				ScheduledTime < getdate() 
 				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
-				AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
+				AND WorkQueue.WorkQueueTypeEnum in (select WorkQueueTypeEnum from WorkQueueTypeProperties WHERE MemoryLimited=@MemoryLimited)
 				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
 			ORDER BY WorkQueue.ScheduledTime
 		END		

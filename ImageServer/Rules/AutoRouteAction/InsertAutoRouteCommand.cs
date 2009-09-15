@@ -136,7 +136,6 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             parms.DeviceKey = dev.GetKey();
             parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
             parms.SopInstanceUid = _context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-        	parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
 			IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
 
             if (broker.FindOne(parms)==null)

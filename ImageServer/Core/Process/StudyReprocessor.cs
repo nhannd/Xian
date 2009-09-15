@@ -93,7 +93,6 @@ namespace ClearCanvas.ImageServer.Core.Process
 			columns.ScheduledTime = scheduleTime;
 			columns.ServerPartitionKey = location.ServerPartitionKey;
 			columns.StudyStorageKey = location.Key;
-			columns.WorkQueuePriorityEnum = priority;
 			columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
 			columns.ExpirationTime = scheduleTime.Add(TimeSpan.FromMinutes(5));
 

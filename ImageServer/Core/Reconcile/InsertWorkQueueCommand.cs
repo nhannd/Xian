@@ -77,7 +77,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			parms.Duplicate = Parameters.IsDuplicate; 
 			parms.ScheduledTime = Platform.Time;
 			parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-			parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 			parms.Extension = Parameters.Extension;
 			if (insert.FindOne(parms) == null)
 				throw new ApplicationException("UpdateWorkQueueCommand failed");

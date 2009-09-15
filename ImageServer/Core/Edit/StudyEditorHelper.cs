@@ -281,7 +281,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
             data.EditRequest.Reason = reason;
 
             WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
-            WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
             StudyStorageKey = location.Key;
             ServerPartitionKey = location.ServerPartitionKey;
             ScheduledTime = now;
@@ -301,7 +300,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
             data.UserId = ServerHelper.CurrentUserName;
             
             WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
-            WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
             StudyStorageKey = studyStorageLocation.Key;
             ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             ScheduledTime = now;
@@ -321,7 +319,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
             data.UserId = ServerHelper.CurrentUserName;
 
             WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-            WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
             StudyStorageKey = studyStorageLocation.Key;
             ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             ScheduledTime = now;

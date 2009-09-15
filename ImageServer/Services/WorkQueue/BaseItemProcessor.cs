@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading;
 using System.IO;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -137,15 +136,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         protected Study _theStudy;
     	private bool _cancelPending = false;
     	private readonly object _syncRoot = new object();
-        private StudyIntegrityValidationModes _ValidationModes = StudyIntegrityValidationModes.None;
-        
+        private StudyIntegrityValidationModes _validationModes = StudyIntegrityValidationModes.None;
+    	private WorkQueueTypeProperties _workQueueProperties;
         #endregion
 
         #region Constructors
-        public BaseItemProcessor()
+
+    	protected BaseItemProcessor()
         {
-            _ValidationModes = GetValidationTypes();
+            _validationModes = GetValidationTypes();
         }
+
         #endregion
 
         #region Protected Properties
@@ -222,6 +223,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get { return _workQueueItem; }
         }
 
+    	protected WorkQueueTypeProperties WorkQueueProperties
+    	{
+    		get
+    		{
+    			if (_workQueueProperties == null)
+    			{
+    				IWorkQueueTypePropertiesEntityBroker broker = ReadContext.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
+					WorkQueueTypePropertiesSelectCriteria  criteria = new WorkQueueTypePropertiesSelectCriteria();
+    				criteria.WorkQueueTypeEnum.EqualTo(WorkQueueItem.WorkQueueTypeEnum);
+    				_workQueueProperties = broker.FindOne(criteria);
+    			}
+    			return _workQueueProperties;
+    		}
+    	}
         protected ServerPartition ServerPartition
         {
             get
@@ -231,7 +246,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (_partition==null)
                 {
-                    _partition = ServerPartitionMonitor.Instance.FindPartition(_workQueueItem.ServerPartitionKey); ;
+                    _partition = ServerPartitionMonitor.Instance.FindPartition(_workQueueItem.ServerPartitionKey);
                 }
 
                 return _partition;
@@ -260,8 +275,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         protected StudyIntegrityValidationModes ValidationModes
         {
-            get { return _ValidationModes; }
-            set { _ValidationModes = value; }
+            get { return _validationModes; }
+            set { _validationModes = value; }
         }
 
         #endregion
@@ -360,7 +375,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             Platform.Log(LogLevel.Error, "Deleting unreadable dicom file: {0}. Reason={1}", file, reason);
             FileUtils.Delete(file);
-            WorkQueueProcessor.RaiseAlert(WorkQueueItem, AlertLevel.Critical, String.Format("Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason));
+            RaiseAlert(WorkQueueItem, AlertLevel.Critical, String.Format("Dicom file {0} is unreadable: {1}. It has been removed from the study.", file, reason));
         }
 
         /// <summary>
@@ -369,30 +384,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
         /// <returns>The maximum batch size for the <see cref="WorkQueue"/> item</returns>
         /// <param name="listCount">The number of available list items.</param>
-        protected static int GetMaxBatchSize(Model.WorkQueue item, int listCount)
+        protected int GetMaxBatchSize(Model.WorkQueue item, int listCount)
         {
-            int maxSize;
-
-            WorkQueueSettings settings = WorkQueueSettings.Instance;
-
-            if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Low)
-            {
-                maxSize = settings.LowPriorityMaxBatchSize;
-            }
-            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Medium)
-            {
-                maxSize = settings.MedPriorityMaxBatchSize;
-            }
-            else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.High)
-            {
-                maxSize = listCount;
-            }
-            else
-            {
-                maxSize = settings.MedPriorityMaxBatchSize;
-            }
-
-            return maxSize;
+        	return WorkQueueProperties.MaxBatchSize == -1
+        	       	? listCount : WorkQueueProperties.MaxBatchSize;
         }
 
         /// <summary>
@@ -401,7 +396,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
         /// <param name="list">The list of <see cref="WorkQueueUid"/> to be truncated, if needed</param>
         /// <return>A truncated list of <see cref="WorkQueueUid"/></return>
-        protected static IList<WorkQueueUid> TruncateList(Model.WorkQueue item, IList<WorkQueueUid> list)
+        protected IList<WorkQueueUid> TruncateList(Model.WorkQueue item, IList<WorkQueueUid> list)
         {
 			if (item != null && list != null)
 			{
@@ -541,18 +536,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (item.FailureDescription != null)
 							parms.FailureDescription = item.FailureDescription;
 
-						if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Low)
-						{
-							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayLowPrioritySeconds);
-						}
-						else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.High)
-						{
-							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayHighPrioritySeconds);
-						}
-						else
-						{
-							scheduledTime = Platform.Time.AddSeconds(settings.WorkQueueProcessDelayMedPrioritySeconds);
-						}
+							scheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
 
 
 						if (scheduledTime > item.ExpirationTime)
@@ -563,7 +547,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Idle;
                             parms.FailureCount = item.FailureCount;
                             parms.FailureDescription = "";
-                            parms.ScheduledTime = parms.ExpirationTime = Platform.Time.AddSeconds(settings.CompletedWorkQueueDelayDeleteSeconds);
+                            parms.ScheduledTime = parms.ExpirationTime = Platform.Time.AddSeconds(WorkQueueProperties.DeleteDelaySeconds);
                             if (resetQueueStudyState == WorkQueueProcessorDatabaseUpdate.ResetQueueState)
                                 parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
                         }
@@ -591,7 +575,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
 
-							parms.ExpirationTime = scheduledTime.AddSeconds(settings.WorkQueueExpireDelaySeconds);
+							parms.ExpirationTime = scheduledTime.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
 							parms.ScheduledTime = scheduledTime;
 							parms.FailureCount = item.FailureCount;
 						}
@@ -616,10 +600,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <returns></returns>
         protected virtual QueueStudyStateEnum GetQueryStudyState(WorkQueueStatusEnum workQueueStatus)
         {
-            if (workQueueStatus == WorkQueueStatusEnum.Completed)
+        	if (workQueueStatus == WorkQueueStatusEnum.Completed)
                 return QueueStudyStateEnum.Idle;
-            else
-                return null;
+        	return null;
         }
 
     	/// <summary>
@@ -674,9 +657,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now		
 
-                                WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}), fatal error: {2}", item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription));
+                                RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}), fatal error: {2}", item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription));
 							}
-							else if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+							else if ((item.FailureCount + 1) > WorkQueueProperties.MaxFailureCount)
 							{
 								Platform.Log(LogLevel.Error,
                                              "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
@@ -686,7 +669,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ExpirationTime = Platform.Time; // expire now
 
 
-                                WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}): {2}", item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription));
+                                RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}): {2}", item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription));
 							}
 							else
 							{
@@ -694,10 +677,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                              "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}.",
 								             item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-								parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+								parms.ScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.FailureDelaySeconds);
 								parms.ExpirationTime =
-                                       Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
-									                         settings.WorkQueueFailureDelayMinutes);
+									   Platform.Time.AddSeconds((WorkQueueProperties.MaxFailureCount - item.FailureCount) *
+									                        WorkQueueProperties.FailureDelaySeconds);
 							}
 
 
@@ -800,7 +783,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             parms.FailureDescription = failureDescription;
 
                             WorkQueueSettings settings = WorkQueueSettings.Instance;
-                            if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                            if ((item.FailureCount + 1) > WorkQueueProperties.MaxFailureCount)
                             {
                                 Platform.Log(LogLevel.Error,
                                              "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
@@ -810,7 +793,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 parms.ScheduledTime = Platform.Time;
                                 parms.ExpirationTime = Platform.Time.AddDays(1);
 
-                                WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
+                                RaiseAlert(item, AlertLevel.Error, String.Format("Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
                                                          item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1, failureDescription));
                             }
                             else
@@ -822,9 +805,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                     parms.ScheduledTime =
                                         Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
                                 parms.ExpirationTime =
-                                        Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount -
+                                        Platform.Time.AddSeconds((WorkQueueProperties.MaxFailureCount -
                                                                   item.FailureCount) *
-                                                             settings.WorkQueueFailureDelayMinutes);
+															 WorkQueueProperties.FailureDelaySeconds);
                             }
 
                             if (false == update.Execute(parms))
@@ -1000,8 +983,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		protected virtual void PostponeItem(Model.WorkQueue item)
 		{
 			WorkQueueSettings settings = WorkQueueSettings.Instance;
-			DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
-			DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds));
+			DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
+			DateTime expireTime = newScheduledTime.Add(TimeSpan.FromMinutes(2));
 			PostponeItem(item, newScheduledTime, expireTime);
 		}
 
@@ -1116,7 +1099,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         contextData.StudyInfo.StudyDate = location.Study.StudyDate;
                     }
                 }
-
             }
 
             return contextData;
@@ -1133,7 +1115,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             Platform.CheckTrue(storageLocations.Count >= 1, "storageLocations.Count>=1");
 
             StudyStorageLocation storageLocation = storageLocations[0];
-            Model.Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
+            Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
 
             Platform.Log(LogLevel.Info, "{4} failed. Reason:{5}. Attempting to perform auto-recovery for Study:{0}, A#:{1}, Patient:{2}, ID:{3}",
                          study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId, item.WorkQueueTypeEnum.ToString(), reason);
@@ -1161,82 +1143,75 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 return true; // 
             }
-            else
-            {
-                Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
-                // update the counts in db to match the study xml
-                // Update count for each series 
-                IList<Series> seriesList = storageLocation.Study.Series;
+        	Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
+        	// update the counts in db to match the study xml
+        	// Update count for each series 
+        	IList<Series> seriesList = storageLocation.Study.Series;
 
 
-                foreach (Series series in seriesList)
-                {
-                    SeriesXml seriesXml = studyXml[series.SeriesInstanceUid];
-                    if (seriesXml != null)
-                    {
-                        int numInstancesInSeriesXml = seriesXml.NumberOfSeriesRelatedInstances;
-                        if (numInstancesInSeriesXml != series.NumberOfSeriesRelatedInstances)
-                        {
-                            // Update the count in the series table. Assuming the stored procedure
-                            // will also update the count in the Study/Patient tables based on 
-                            // the new value.
-                            Log(LogLevel.Info, "AUTO-RECOVERY", "Update series in the db. UID:{0}, #Instance:{1}==>{2}", series.SeriesInstanceUid, series.NumberOfSeriesRelatedInstances, numInstancesInSeriesXml);
-                            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                            {
-                                ISetSeriesRelatedInstanceCount broker = updateContext.GetBroker<ISetSeriesRelatedInstanceCount>();
-                                SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(storageLocation.GetKey(), series.SeriesInstanceUid);
-                                criteria.SeriesRelatedInstanceCount = numInstancesInSeriesXml;
-                                if (!broker.Execute(criteria))
-                                {
-                                    throw new ApplicationException("Unable to update series related instance count in db");
-                                }
-                                else
-                                {
-                                    updateContext.Commit();
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // TODO: series in the db doesn't exist in the xml... the series was deleted from the study?
-                        // For now we just reprocess the study. Can we delete the series? If so, we need to take care of the counts.
-                        Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
-                        StudyReprocessor reprocessor = new StudyReprocessor();
-                        String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                        reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+        	foreach (Series series in seriesList)
+        	{
+        		SeriesXml seriesXml = studyXml[series.SeriesInstanceUid];
+        		if (seriesXml != null)
+        		{
+        			int numInstancesInSeriesXml = seriesXml.NumberOfSeriesRelatedInstances;
+        			if (numInstancesInSeriesXml != series.NumberOfSeriesRelatedInstances)
+        			{
+        				// Update the count in the series table. Assuming the stored procedure
+        				// will also update the count in the Study/Patient tables based on 
+        				// the new value.
+        				Log(LogLevel.Info, "AUTO-RECOVERY", "Update series in the db. UID:{0}, #Instance:{1}==>{2}", series.SeriesInstanceUid, series.NumberOfSeriesRelatedInstances, numInstancesInSeriesXml);
+        				using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+        				{
+        					ISetSeriesRelatedInstanceCount broker = updateContext.GetBroker<ISetSeriesRelatedInstanceCount>();
+        					SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(storageLocation.GetKey(), series.SeriesInstanceUid);
+        					criteria.SeriesRelatedInstanceCount = numInstancesInSeriesXml;
+        					if (!broker.Execute(criteria))
+        					{
+        						throw new ApplicationException("Unable to update series related instance count in db");
+        					}
+        					updateContext.Commit();
+        				}
+        			}
+        		}
+        		else
+        		{
+        			// TODO: series in the db doesn't exist in the xml... the series was deleted from the study?
+        			// For now we just reprocess the study. Can we delete the series? If so, we need to take care of the counts.
+        			Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
+        			StudyReprocessor reprocessor = new StudyReprocessor();
+        			String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
+        			reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
 
-                    }
-                }
+        		}
+        	}
 
-                if (numStudyRelatedSeriesInXml != storageLocation.Study.NumberOfStudyRelatedSeries ||
-                    numStudyRelatedInstancesInXml != storageLocation.Study.NumberOfStudyRelatedInstances)
-                {
-                    Log(LogLevel.Info, "AUTO-RECOVERY", "Updating study related series and instance counts in the db. #Series: {0} ==> {1}.  #Instances: {2}==>{3}",
-                                    storageLocation.Study.NumberOfStudyRelatedSeries, numStudyRelatedSeriesInXml,
-                                    storageLocation.Study.NumberOfStudyRelatedInstances, numStudyRelatedInstancesInXml);
+        	if (numStudyRelatedSeriesInXml != storageLocation.Study.NumberOfStudyRelatedSeries ||
+        	    numStudyRelatedInstancesInXml != storageLocation.Study.NumberOfStudyRelatedInstances)
+        	{
+        		Log(LogLevel.Info, "AUTO-RECOVERY", "Updating study related series and instance counts in the db. #Series: {0} ==> {1}.  #Instances: {2}==>{3}",
+        		    storageLocation.Study.NumberOfStudyRelatedSeries, numStudyRelatedSeriesInXml,
+        		    storageLocation.Study.NumberOfStudyRelatedInstances, numStudyRelatedInstancesInXml);
 
-                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-                    {
-                        ISetStudyRelatedInstanceCount broker = updateContext.GetBroker<ISetStudyRelatedInstanceCount>();
-                        SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(storageLocation.GetKey());
-                        criteria.StudyRelatedSeriesCount = numStudyRelatedSeriesInXml;
-                        criteria.StudyRelatedInstanceCount = numStudyRelatedInstancesInXml;
-                        if (!broker.Execute(criteria))
-                        {
-                            throw new ApplicationException("Unable to update study related instance count in db");
-                        }
-                        else
-                        {
-                            updateContext.Commit();
-                        }
-                    }
-                }
+        		using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+        		{
+        			ISetStudyRelatedInstanceCount broker = updateContext.GetBroker<ISetStudyRelatedInstanceCount>();
+        			SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(storageLocation.GetKey());
+        			criteria.StudyRelatedSeriesCount = numStudyRelatedSeriesInXml;
+        			criteria.StudyRelatedInstanceCount = numStudyRelatedInstancesInXml;
+        			if (!broker.Execute(criteria))
+        			{
+        				throw new ApplicationException("Unable to update study related instance count in db");
+        			}
+        			else
+        			{
+        				updateContext.Commit();
+        			}
+        		}
+        	}
 
-                Log(LogLevel.Info, "AUTO-RECOVERY", "Object count in the db have been corrected.");
-                return true;
-            }
-
+        	Log(LogLevel.Info, "AUTO-RECOVERY", "Object count in the db have been corrected.");
+        	return true;
         }
 
         
@@ -1278,6 +1253,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         protected abstract void ProcessItem(Model.WorkQueue item);
 
+		public void RaiseAlert(Model.WorkQueue queueItem, AlertLevel level, string message)
+		{
+			if (WorkQueueProperties.AlertFailedWorkQueue || level == AlertLevel.Critical)
+			{
+				ServerPlatform.Alert(AlertCategory.Application, level,
+									 queueItem.WorkQueueTypeEnum.ToString(), AlertTypeCodes.UnableToProcess,
+									 GetWorkQueueContextData(queueItem), TimeSpan.Zero,
+									 "Work Queue item failed: Type={0}, GUID={1}: {2}",
+									 queueItem.WorkQueueTypeEnum,
+									 queueItem.GetKey(), message);
+			}
+		}
+
         #endregion
 
 		public void Cancel()
@@ -1313,7 +1301,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             		Platform.Log(LogLevel.Warn,
             		             "Unable to find readable StorageLocation when processing {0} WorkQueue item, rescheduling",
             		             item.WorkQueueTypeEnum.Description);
-					PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+					PostponeItem(item);
 					return;
             	}
 
@@ -1321,7 +1309,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     Platform.Log(LogLevel.Info,
                                  "Study is being reprocessed. Postponing {0} entry", item.WorkQueueTypeEnum.Description);
-                    PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+                    PostponeItem(item);
                     return;
                 }
 
@@ -1379,7 +1367,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         private StudyIntegrityValidationModes GetValidationTypes()
         {
-            if (!_processorsValidationSettings.TryGetValue(GetType(), out _ValidationModes))
+            if (!_processorsValidationSettings.TryGetValue(GetType(), out _validationModes))
             {
                 object[] attributes = GetType().GetCustomAttributes(typeof(StudyIntegrityValidationAttribute), true);
                 if (attributes != null && attributes.Length > 0)
@@ -1390,7 +1378,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
             }
 
-            return _ValidationModes;
+            return _validationModes;
         }
 
         private void VerifyStudy(StudyStorageLocation studyStorage)

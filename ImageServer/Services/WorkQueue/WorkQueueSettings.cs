@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Configuration;
 using ClearCanvas.Server.ShredHost;
 
@@ -44,23 +43,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 	internal sealed class WorkQueueSettings : ShredConfigSection
 	{
 		public const int DefaultWorkQueueQueryDelay = 10000;
-		public const int DefaultWorkQueueMaxFailureCount = 3;
-		public const int DefaultWorkQueueFailureDelayMinutes = 3;
-		public const int DefaultWorkQueueProcessDelayMedPrioritySeconds = 15;
-		public const int DefaultWorkQueueExpireDelaySeconds = 90;
-		public const int DefaultWorkQueueProcessDelayLowPrioritySeconds = 45;
-		public const int DefaultWorkQueueProcessDelayHighPrioritySeconds = 1;
-        public const int DefaultCompletedWorkQueueDelayDeleteSeconds = 60;
-        public const int DefaultLowPriorityMaxBatchSize = 100;
-		public const int DefaultMedPriorityMaxBatchSize = 250;
 		public const int DefaultWorkQueueThreadCount = 10;
 		public const int DefaultPriorityWorkQueueThreadCount = 2;
 		public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
 		public const int DefaultWorkQueueMinimumFreeMemoryMB = 256;
-		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
 	    public const bool DefaultEnableStudyIntegrityValidation = true;
         public const int DefaultTierMigrationProgressUpdateInSeconds = 30;
-        private const bool DefaultAlertFailedWorkQueue = true;
 
 		private static WorkQueueSettings _instance;
 	    
@@ -106,20 +94,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			set { this["WorkQueueQueryDelay"] = value; }
 		}
 
-		[ConfigurationProperty("WorkQueueMaxFailureCount", DefaultValue = DefaultWorkQueueMaxFailureCount)]
-		public int WorkQueueMaxFailureCount
-		{
-			get { return ((int)(this["WorkQueueMaxFailureCount"])); }
-			set { this["WorkQueueMaxFailureCount"] = value; }
-		}
-
-		[ConfigurationProperty("WorkQueueFailureDelayMinutes", DefaultValue = DefaultWorkQueueFailureDelayMinutes)]
-		public int WorkQueueFailureDelayMinutes
-		{
-			get { return ((int)(this["WorkQueueFailureDelayMinutes"])); }
-			set { this["WorkQueueFailureDelayMinutes"] = value; }
-		}
-
 		/// <summary>
 		/// Enable/disable study integrity validation during work queue processing
 		/// </summary>
@@ -129,52 +103,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		{
             get { return ((bool)(this["EnableStudyIntegrityValidation"])); }
             set { this["EnableStudyIntegrityValidation"] = value; }
-		}
-
-		/// <summary>
-		/// The number of seconds to delay after processing until the queue entry is deleted.
-		/// </summary>
-		[SettingsDescriptionAttribute("The number of seconds to delay after processing until the queue entry is deleted.")]
-		[ConfigurationProperty("WorkQueueExpireDelaySeconds", DefaultValue = DefaultWorkQueueExpireDelaySeconds)]
-		public int WorkQueueExpireDelaySeconds
-		{
-			get { return ((int)(this["WorkQueueExpireDelaySeconds"])); }
-			set { this["WorkQueueExpireDelaySeconds"] = value; }
-		}
-
-		[ConfigurationProperty("WorkQueueProcessDelayLowPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayLowPrioritySeconds)]
-		public int WorkQueueProcessDelayLowPrioritySeconds
-		{
-			get { return ((int)(this["WorkQueueProcessDelayLowPrioritySeconds"])); }
-			set { this["WorkQueueProcessDelayLowPrioritySeconds"] = value; }
-		}
-
-		[ConfigurationProperty("WorkQueueProcessDelayHighPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayHighPrioritySeconds)]
-		public int WorkQueueProcessDelayHighPrioritySeconds
-		{
-			get { return ((int)(this["WorkQueueProcessDelayHighPrioritySeconds"])); }
-			set { this["WorkQueueProcessDelayHighPrioritySeconds"] = value; }
-		}
-
-        [ConfigurationProperty("CompletedWorkQueueDelayDeleteSeconds", DefaultValue = DefaultCompletedWorkQueueDelayDeleteSeconds)]
-        public int CompletedWorkQueueDelayDeleteSeconds
-        {
-            get { return ((int)(this["CompletedWorkQueueDelayDeleteSeconds"])); }
-            set { this["CompletedWorkQueueDelayDeleteSeconds"] = value; }
-        }
-
-		[ConfigurationProperty("LowPriorityMaxBatchSize", DefaultValue = DefaultLowPriorityMaxBatchSize)]
-		public int LowPriorityMaxBatchSize
-		{
-			get { return ((int)(this["LowPriorityMaxBatchSize"])); }
-			set { this["LowPriorityMaxBatchSize"] = value; }
-		}
-
-		[ConfigurationProperty("MedPriorityMaxBatchSize", DefaultValue = DefaultMedPriorityMaxBatchSize)]
-		public int MedPriorityMaxBatchSize
-		{
-			get { return ((int)(this["MedPriorityMaxBatchSize"])); }
-			set { this["MedPriorityMaxBatchSize"] = value; }
 		}
 
 		[ConfigurationProperty("WorkQueueThreadCount", DefaultValue = DefaultWorkQueueThreadCount)]
@@ -196,14 +124,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			get { return ((int)(this["MemoryLimitedWorkQueueThreadCount"])); }
 			set { this["MemoryLimitedWorkQueueThreadCount"] = value; }
 		}
-
-		[ConfigurationProperty("NonMemoryLimitedWorkQueueTypes", DefaultValue = DefaultNonMemoryLimitedWorkQueueTypes)]
-		public string NonMemoryLimitedWorkQueueTypes
-		{
-			get { return ((string)(this["NonMemoryLimitedWorkQueueTypes"])); }
-			set { this["NonMemoryLimitedWorkQueueTypes"] = value; }
-		}
-
 		
 		[ConfigurationProperty("WorkQueueMinimumFreeMemoryMB", DefaultValue = DefaultWorkQueueMinimumFreeMemoryMB)]
 		public int WorkQueueMinimumFreeMemoryMB
@@ -211,17 +131,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			get { return ((int)(this["WorkQueueMinimumFreeMemoryMB"])); }
 			set { this["WorkQueueMinimumFreeMemoryMB"] = value; }
 		}
-
-        /// <summary>
-        /// The number of seconds delay between attempting to process a queue entry.
-        /// </summary>
-        [SettingsDescriptionAttribute("The number of seconds delay between attempting to process a queue entry.")]
-        [ConfigurationProperty("WorkQueueProcessDelayMedPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayMedPrioritySeconds)]
-        public int WorkQueueProcessDelayMedPrioritySeconds
-        {
-            get { return ((int)(this["WorkQueueProcessDelayMedPrioritySeconds"])); }
-            set { this["WorkQueueProcessDelayMedPrioritySeconds"] = value; }
-        }
 
         /// <summary>
         /// The number of seconds to update on the progress of tier migration work queue entries.
@@ -235,16 +144,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
         }
 
 
-        /// <summary>
-        /// The number of seconds to update on the progress of tier migration work queue entries.
-        /// </summary>
-        [SettingsDescriptionAttribute("A boolean value indicating whether alerts should be generated when a Work Queue entry failed.")]
-        [ConfigurationProperty("AlertFailedWorkQueue", DefaultValue = DefaultAlertFailedWorkQueue)]
-        public bool AlertFailedWorkQueue
-        {
-            get { return ((bool)(this["AlertFailedWorkQueue"])); }
-            set { this["AlertFailedWorkQueue"] = value; }
-        }
 
 
 		#endregion
@@ -254,23 +153,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			WorkQueueSettings clone = new WorkQueueSettings();
 
 			clone.WorkQueueQueryDelay = _instance.WorkQueueQueryDelay;
-			clone.WorkQueueMaxFailureCount = _instance.WorkQueueMaxFailureCount;
-			clone.WorkQueueFailureDelayMinutes = _instance.WorkQueueFailureDelayMinutes;
-			clone.WorkQueueProcessDelayMedPrioritySeconds = _instance.WorkQueueProcessDelayMedPrioritySeconds;
-			clone.WorkQueueExpireDelaySeconds = _instance.WorkQueueExpireDelaySeconds;
-			clone.WorkQueueProcessDelayLowPrioritySeconds = _instance.WorkQueueProcessDelayLowPrioritySeconds;
-			clone.WorkQueueProcessDelayHighPrioritySeconds = _instance.WorkQueueProcessDelayHighPrioritySeconds;
-			clone.LowPriorityMaxBatchSize = _instance.LowPriorityMaxBatchSize;
-			clone.MedPriorityMaxBatchSize = _instance.MedPriorityMaxBatchSize;
 			clone.WorkQueueThreadCount = _instance.WorkQueueThreadCount;
 			clone.PriorityWorkQueueThreadCount = _instance.PriorityWorkQueueThreadCount;
 			clone.MemoryLimitedWorkQueueThreadCount = _instance.MemoryLimitedWorkQueueThreadCount;
-			clone.NonMemoryLimitedWorkQueueTypes = _instance.NonMemoryLimitedWorkQueueTypes;
-		    clone.CompletedWorkQueueDelayDeleteSeconds = _instance.CompletedWorkQueueDelayDeleteSeconds;
 			clone.WorkQueueMinimumFreeMemoryMB = _instance.WorkQueueMinimumFreeMemoryMB;
 		    clone.EnableStudyIntegrityValidation = _instance.EnableStudyIntegrityValidation;
 		    clone.TierMigrationProgressUpdateInSeconds = _instance.TierMigrationProgressUpdateInSeconds;
-		    clone.AlertFailedWorkQueue = _instance.AlertFailedWorkQueue;
 			return clone;
 		}
 	}

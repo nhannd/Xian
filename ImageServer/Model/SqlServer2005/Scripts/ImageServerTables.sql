@@ -1555,6 +1555,48 @@ SET ANSI_PADDING OFF
 GO
 
 
+/****** Object:  Table [dbo].[WorkQueueTypeProperties]    Script Date: 09/14/2009 21:30:31 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[WorkQueueTypeProperties](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL,
+	[WorkQueueTypeEnum] [smallint] NOT NULL,
+	[WorkQueuePriorityEnum] [smallint] NOT NULL,
+	[MemoryLimited] [bit] NOT NULL,
+	[AlertFailedWorkQueue] [bit] NOT NULL,
+	[MaxFailureCount] [int] NOT NULL,
+	[ProcessDelaySeconds] [int] NOT NULL,
+	[FailureDelaySeconds] [int] NOT NULL,
+	[DeleteDelaySeconds] [int] NOT NULL,
+	[PostponeDelaySeconds] [int] NOT NULL,
+	[MaxBatchSize] [int] NOT NULL,
+ CONSTRAINT [PK_WorkQueueTypeProperties] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]') AND name = N'IX_WorkQueueTypeProperties')
+CREATE UNIQUE NONCLUSTERED INDEX [IX_WorkQueueTypeProperties] ON [dbo].[WorkQueueTypeProperties] 
+(
+	[WorkQueueTypeEnum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+GO
+/****** Object:  Default [DF_WorkQueueTypeProperties_GUID]    Script Date: 09/14/2009 21:30:31 ******/
+IF Not EXISTS (SELECT * FROM sys.default_constraints WHERE object_id = OBJECT_ID(N'[dbo].[DF_WorkQueueTypeProperties_GUID]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
+Begin
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_WorkQueueTypeProperties_GUID]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[WorkQueueTypeProperties] ADD  CONSTRAINT [DF_WorkQueueTypeProperties_GUID]  DEFAULT (newid()) FOR [GUID]
+END
+End
+GO
+
 
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
@@ -1927,13 +1969,11 @@ ALTER TABLE [dbo].[Alert]  WITH CHECK ADD  CONSTRAINT [FK_Alert_AlertLevelEnum] 
 REFERENCES [dbo].[AlertLevelEnum] ([Enum])
 GO
 
-
 /****** Object:  ForeignKey [FK_StudyIntegrityQueue_ServerPartition]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyIntegrityQueue_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyIntegrityQueue]'))
 ALTER TABLE [dbo].[StudyIntegrityQueue]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueue_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
 REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
-
 
 /****** Object:  ForeignKey [FK_StudyIntegrityQueue_StudyIntegrityReasonEnum]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyIntegrityQueue_StudyIntegrityReasonEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyIntegrityQueue]'))
@@ -1945,7 +1985,6 @@ GO
 ALTER TABLE [dbo].[StudyIntegrityQueue]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueue_StudyStorage] FOREIGN KEY([StudyStorageGUID])
 REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
-
 
 /****** Object:  ForeignKey [FK_StudyIntegrityQueueUid_StudyIntegrityQueue]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyIntegrityQueueUid_StudyIntegrityQueue]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyIntegrityQueueUid]'))
@@ -1959,13 +1998,11 @@ ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_St
 REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
 
-
 /****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_DestStudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
 ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_DestStudyStorage] FOREIGN KEY([DestStudyStorageGUID])
 REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
-
 
 /****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistoryTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
@@ -1973,10 +2010,25 @@ ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_St
 REFERENCES [dbo].[StudyHistoryTypeEnum] ([Enum])
 GO
 
-
 /****** Object:  ForeignKey [FK_StudyDeleteRecord_Filesystem]    Script Date: 11/30/2008 16:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_Filesystem]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
 ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_Filesystem] FOREIGN KEY([FilesystemGUID])
 REFERENCES [dbo].[Filesystem] ([GUID])
 GO
 
+/****** Object:  ForeignKey [FK_WorkQueueTypeProperties_WorkQueuePriorityEnum]    Script Date: 09/14/2009 21:30:31 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeProperties_WorkQueuePriorityEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
+ALTER TABLE [dbo].[WorkQueueTypeProperties]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeProperties_WorkQueuePriorityEnum] FOREIGN KEY([WorkQueuePriorityEnum])
+REFERENCES [dbo].[WorkQueuePriorityEnum] ([Enum])
+GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeProperties_WorkQueuePriorityEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
+ALTER TABLE [dbo].[WorkQueueTypeProperties] CHECK CONSTRAINT [FK_WorkQueueTypeProperties_WorkQueuePriorityEnum]
+GO
+/****** Object:  ForeignKey [FK_WorkQueueTypeProperties_WorkQueueTypeEnum]    Script Date: 09/14/2009 21:30:31 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeProperties_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
+ALTER TABLE [dbo].[WorkQueueTypeProperties]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeProperties_WorkQueueTypeEnum] FOREIGN KEY([WorkQueueTypeEnum])
+REFERENCES [dbo].[WorkQueueTypeEnum] ([Enum])
+GO
+IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeProperties_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
+ALTER TABLE [dbo].[WorkQueueTypeProperties] CHECK CONSTRAINT [FK_WorkQueueTypeProperties_WorkQueueTypeEnum]
+GO

@@ -182,6 +182,7 @@
     <Compile Include="EntityBrokers\IWorkQueuePriorityEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueTypeEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IWorkQueueTypePropertiesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueUidEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PartitionArchiveSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PartitionArchiveUpdateColumns.gen.cs" />
@@ -227,6 +228,8 @@
     <Compile Include="EntityBrokers\WorkQueueProcessDuplicateSopUpdateColumns.cs" />
     <Compile Include="EntityBrokers\WorkQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\WorkQueueSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueTypePropertiesSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueTypePropertiesUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUpdateColumns.gen.cs" />
@@ -341,6 +344,7 @@
     <Compile Include="Parameters\WorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\InsertWorkQueueParameters.cs" />
     <Compile Include="WorkQueueTypeEnum.gen.cs" />
+    <Compile Include="WorkQueueTypeProperties.gen.cs" />
     <Compile Include="WorkQueueUid.gen.cs" />
   </ItemGroup>
   <ItemGroup>

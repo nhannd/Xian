@@ -151,12 +151,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         {
             get
             {
-                if (_sopInstances.ContainsKey(sopUid))
+            	if (_sopInstances.ContainsKey(sopUid))
                     return _sopInstances[sopUid];
-                else
-                    return null;
+            	return null;
             }
-            set
+        	set
             {
                 if (_sopInstances.ContainsKey(sopUid))
                     _sopInstances[sopUid] = value;
@@ -340,8 +339,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                       else
                                                       {
                                                           Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessing SOP {0} for study {1}",instanceUid, StorageLocation.StudyInstanceUid);
-                                                          string groupID = ServerHelper.GetUidGroup(dicomFile, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
-                                                          ProcessingResult result = processor.ProcessFile(groupID, dicomFile, studyXml, false, true, null, null);
+                                                          string groupId = ServerHelper.GetUidGroup(dicomFile, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
+                                                          ProcessingResult result = processor.ProcessFile(groupId, dicomFile, studyXml, false, true, null, null);
                                                           switch (result.Status)
                                                           {
                                                               case ProcessingStatus.Success:
@@ -375,7 +374,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                       FileUtils.Delete(path);
                                                       failureDescription = ex.Message;
 
-                                                      WorkQueueProcessor.RaiseAlert(item, AlertLevel.Critical,
+                                                      RaiseAlert(item, AlertLevel.Critical,
                                                                  String.Format("File {0} is not readable and has been removed from study.", path));
                                                   }
                                               }
@@ -399,7 +398,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 // Completed if either all files have been reprocessed 
                 // or no more dicom files left that can be reprocessed.
                 _completed = reprocessedCounter == 0;
-                successful = true;
             }
             catch (Exception e)
             {
@@ -442,9 +440,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                         PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 
                         Platform.Log(LogLevel.Info, "Completed reprocessing of study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Description);
-                        
-                    }
-                
+                    }                
                 }
             }
         }
@@ -477,8 +473,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                 {
                     throw new ApplicationException("Could not reset study storage");
                 }
-                else
-                    updateContext.Commit();
+            	updateContext.Commit();
             }
 
 			// the record has been deleted. Reset to Null to prevent it from being used accidentally.
@@ -635,10 +630,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             else
             {
                 // alert orphaned StudyStorage entry
-                WorkQueueProcessor.RaiseAlert(WorkQueueItem, AlertLevel.Critical,
-                                              String.Format("Study {0} has been reprocessed but Study record was NOT created. Images reprocessed: {1}. Path={2}",
-                                              StorageLocation.StudyInstanceUid, filesProcessed,
-                                              StorageLocation.GetStudyPath()));
+                RaiseAlert(WorkQueueItem, AlertLevel.Critical,
+                           String.Format("Study {0} has been reprocessed but Study record was NOT created. Images reprocessed: {1}. Path={2}",
+                           StorageLocation.StudyInstanceUid, filesProcessed,
+                           StorageLocation.GetStudyPath()));
             }
             
         }

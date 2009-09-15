@@ -127,7 +127,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 				InsertWorkQueueParameters insertParms = new InsertWorkQueueParameters();
 				insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
-				insertParms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
 			    insertParms.ServerPartitionKey = study.ThePartition.Key;
 				insertParms.StudyStorageKey = study.TheStudyStorage.Key;
                 insertParms.ScheduledTime = Platform.Time; // spread by 15 seconds

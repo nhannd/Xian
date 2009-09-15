@@ -191,7 +191,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 			return fileList;
 		}
 
-        private void ReinventoryFilesystem(Filesystem filesystem, WorkQueuePriorityEnum priority)
+        private void ReinventoryFilesystem(Filesystem filesystem)
         {
             ServerPartition partition;
 
@@ -376,7 +376,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 							queueInsertParms.SopInstanceUid = sopInstanceUid;
 							queueInsertParms.ScheduledTime = Platform.Time;
 							queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-							queueInsertParms.WorkQueuePriorityEnum = priority;
 
 							if (workQueueInsert.FindOne(queueInsertParms) == null)
 								Platform.Log(LogLevel.Error,
@@ -423,17 +422,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #region Public Methods
         protected override void OnProcess(Model.ServiceLock item)
         {
-        	WorkQueuePriorityEnum priority;
-
-			try
-			{
-				priority = WorkQueuePriorityEnum.GetEnum(ServiceLockSettings.Default.ReinventoryWorkQueuePriority);
-			}
-			catch
-			{
-				priority = WorkQueuePriorityEnum.Medium;
-			}
-
             _store = PersistentStoreRegistry.GetDefaultStore();
 
             IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
@@ -446,7 +434,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
 
-            ReinventoryFilesystem(info.Filesystem, priority);
+            ReinventoryFilesystem(info.Filesystem);
 
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
 

@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		private int _memoryLimitedCount = 0;
 		private int _highPriorityCount = 0;
 		private int _totalThreadCount = 0;
-		private readonly Dictionary<WorkQueueTypeEnum,WorkQueueTypeEnum> _nonMemoryLimitedList = new Dictionary<WorkQueueTypeEnum, WorkQueueTypeEnum>();
+		private readonly IDictionary<WorkQueueTypeEnum, WorkQueueTypeProperties> _workQueuePropList;
 		private readonly List<WorkQueueThreadParameter> _queuedItems;
 		#endregion
 
@@ -144,14 +144,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// <param name="totalThreadCount">Total threads to be put in the thread pool.</param>
 		/// <param name="highPriorityCount">Maximum high priority threads.</param>
 		/// <param name="memoryLimitedThreadLimit">Maximum memory limited threads.</param>
-		/// <param name="nonMemoryLimitedList">List of WorkQueue types that are non-memory limited.</param>
-		public WorkQueueThreadPool(int totalThreadCount, int highPriorityCount, int memoryLimitedThreadLimit, IList<WorkQueueTypeEnum> nonMemoryLimitedList )
+		/// <param name="propList">List of WorkQueue type properties.</param>
+		public WorkQueueThreadPool(int totalThreadCount, int highPriorityCount, int memoryLimitedThreadLimit, IDictionary<WorkQueueTypeEnum, WorkQueueTypeProperties> propList )
 			: base(totalThreadCount)
 		{
 			_highPriorityThreadLimit = highPriorityCount;
 			_memoryLimitedThreadLimit = memoryLimitedThreadLimit;
-			foreach (WorkQueueTypeEnum type in nonMemoryLimitedList)
-				_nonMemoryLimitedList.Add(type, type);
+			_workQueuePropList = propList;
 			_queuedItems = new List<WorkQueueThreadParameter>(totalThreadCount + 1);
 		}
 		#endregion
@@ -211,7 +210,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				if (queueItem.WorkQueuePriorityEnum.Equals(WorkQueuePriorityEnum.Stat))
 					_highPriorityCount--;
 
-				if (!_nonMemoryLimitedList.ContainsKey(queueItem.WorkQueueTypeEnum))
+				WorkQueueTypeProperties prop = _workQueuePropList[queueItem.WorkQueueTypeEnum];
+				if (prop.MemoryLimited)
 					_memoryLimitedCount--;
 
 				_totalThreadCount--;
@@ -243,7 +243,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					_highPriorityCount++;
 				if (item.WorkQueuePriorityEnum.Equals(WorkQueuePriorityEnum.Stat))
 					_highPriorityCount++;
-				if (!_nonMemoryLimitedList.ContainsKey(item.WorkQueueTypeEnum))
+
+				WorkQueueTypeProperties prop = _workQueuePropList[item.WorkQueueTypeEnum];
+				if (prop.MemoryLimited)
 					_memoryLimitedCount++;
 
 				_totalThreadCount++;

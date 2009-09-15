@@ -39,6 +39,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
@@ -55,8 +56,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		private readonly WorkQueueThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
         private readonly ManualResetEvent _terminateEvent;
-        private bool _stop = false;
-    	private readonly List<WorkQueueTypeEnum> _nonMemoryLimitedList = new List<WorkQueueTypeEnum>();
+        private bool _stop;
+		private readonly Dictionary<WorkQueueTypeEnum, WorkQueueTypeProperties> _propertiesDictionary = new Dictionary<WorkQueueTypeEnum,WorkQueueTypeProperties>();
 
         #endregion
 
@@ -66,30 +67,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             _terminateEvent = terminateEvent;
             _threadStop = new ManualResetEvent(false);
 
-        	string memoryLimitedTypes = WorkQueueSettings.Instance.NonMemoryLimitedWorkQueueTypes;
-			if (memoryLimitedTypes.Length > 0)
+			using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 			{
-				string[] typeArray = memoryLimitedTypes.Split(',');
-				foreach (string type in typeArray)
-				{
-					WorkQueueTypeEnum val = WorkQueueTypeEnum.GetEnum(type);
-					if (val != null)
-					{
-                        if (!_nonMemoryLimitedList.Contains(val))
-                            _nonMemoryLimitedList.Add(val);
-					}							
-				}
+				IWorkQueueTypePropertiesEntityBroker broker = ctx.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
+				WorkQueueTypePropertiesSelectCriteria criteria = new WorkQueueTypePropertiesSelectCriteria();
+
+				IList<WorkQueueTypeProperties> propertiesList = broker.Find(criteria);
+				foreach (WorkQueueTypeProperties prop in propertiesList)
+					_propertiesDictionary.Add(prop.WorkQueueTypeEnum, prop);
 			}
+
 
 			_threadPool =
 				new WorkQueueThreadPool(numberThreads,
 				                        WorkQueueSettings.Instance.PriorityWorkQueueThreadCount,
 				                        WorkQueueSettings.Instance.MemoryLimitedWorkQueueThreadCount,
-				                        _nonMemoryLimitedList);
-			_threadPool.ThreadPoolName = name + " Pool";
+				                        _propertiesDictionary) {ThreadPoolName = name + " Pool"};
 
 
-            WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
+			WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
 
             if (factories == null || factories.Length == 0)
@@ -166,11 +162,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							_terminateEvent.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
 							continue;
 						}
-						else if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
+
+						if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
 						{
 							Platform.Log(LogLevel.Error,
-										 "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
-										 queueListItem.WorkQueueTypeEnum);
+							             "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
+							             queueListItem.WorkQueueTypeEnum);
 
 							//Just fail the WorkQueue item, not much else we can do
 							FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum);
@@ -256,68 +253,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 		}
 
-		public static void RaiseAlert(Model.WorkQueue queueItem, AlertLevel level, string message)
-		{
-		    if (WorkQueueSettings.Instance.AlertFailedWorkQueue || level == AlertLevel.Critical)
-            {
-                ServerPlatform.Alert(AlertCategory.Application, level,
-		                             queueItem.WorkQueueTypeEnum.ToString(), AlertTypeCodes.UnableToProcess,
-		                             GetWorkQueueContextData(queueItem), TimeSpan.Zero,
-		                             "Work Queue item failed: Type={0}, GUID={1}: {2}",
-		                             queueItem.WorkQueueTypeEnum,
-                                     queueItem.GetKey(), message);
-		    }
-        }
-
-    	private static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
-        {
-            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-    	    contextData.WorkQueueItemKey = item.Key.ToString();
-
-            using(IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IList<StudyStorageLocation> storages = item.LoadStudyLocations(readContext);
-                if (storages != null && storages.Count > 0)
-                {
-                    StudyStorageLocation location = storages[0];
-                    if (location.Study != null)
-                    {
-                        contextData.StudyInfo = new StudyInfo();
-                        contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
-                        contextData.StudyInfo.PatientsId = location.Study.PatientId;
-                        contextData.StudyInfo.PatientsName = location.Study.PatientsName;
-                        contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
-                        contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
-                        contextData.StudyInfo.StudyDate = location.Study.StudyDate;
-                    }
-                }
-
-            }
-            
-            return contextData;
-            
-        }
-
-        /// <summary>
-		/// Get array of enumerated values to query on.
-		/// </summary>
-		/// <returns></returns>
-		private string GetNonMemoryLimitedTypeString()
-		{
-			string typeString = String.Empty;
-			if (_nonMemoryLimitedList.Count > 0)
-			{
-				foreach (WorkQueueTypeEnum type in _nonMemoryLimitedList)
-				{
-					if (typeString.Length > 0)
-						typeString += "," + type.Enum;
-					else
-						typeString = type.Enum.ToString();
-				}
-			}
-			return typeString;
-		}
-
     	/// <summary>
         /// Simple routine for failing a work queue item.
         /// </summary>
@@ -332,6 +267,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 try
                 {
+                	WorkQueueTypeProperties prop = _propertiesDictionary[item.WorkQueueTypeEnum];
                     using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
@@ -344,7 +280,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         parms.FailureDescription = failureDescription;
 
                         WorkQueueSettings settings = WorkQueueSettings.Instance;
-                        if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                        if ((item.FailureCount + 1) > prop.MaxFailureCount)
                         {
                             Platform.Log(LogLevel.Error,
                                          "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}. Failure Reason: {3}",
@@ -363,8 +299,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
                             parms.ScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
                             parms.ExpirationTime =
-                                Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
-                                                         settings.WorkQueueFailureDelayMinutes);
+                                Platform.Time.AddSeconds((prop.MaxFailureCount - item.FailureCount) *
+                                                         prop.FailureDelaySeconds);
                         }
 
                         if (false == update.Execute(parms))
@@ -397,6 +333,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             RaiseAlert(item, AlertLevel.Error, error);
         }
+
+		public void RaiseAlert(Model.WorkQueue queueItem, AlertLevel level, string message)
+		{
+			WorkQueueTypeProperties prop = _propertiesDictionary[queueItem.WorkQueueTypeEnum];
+			if (prop.AlertFailedWorkQueue || level == AlertLevel.Critical)
+			{
+				ServerPlatform.Alert(AlertCategory.Application, level,
+									 queueItem.WorkQueueTypeEnum.ToString(), AlertTypeCodes.UnableToProcess,
+									 GetWorkQueueContextData(queueItem), TimeSpan.Zero,
+									 "Work Queue item failed: Type={0}, GUID={1}: {2}",
+									 queueItem.WorkQueueTypeEnum,
+									 queueItem.GetKey(), message);
+			}
+		}
 
         /// <summary>
 		/// Method for getting next <see cref="WorkQueue"/> entry.
@@ -478,7 +428,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
 					parms.ProcessorID = processorId;
 					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat;
-					parms.WorkQueueTypeEnumList = GetNonMemoryLimitedTypeString();
+					parms.MemoryLimited = true;
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -496,7 +446,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
 					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
 					parms.ProcessorID = processorId;
-					parms.WorkQueueTypeEnumList = GetNonMemoryLimitedTypeString();
+					parms.MemoryLimited = true;
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -504,8 +454,40 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				}
 			}
 
-
 			return queueListItem;
+		}
+
+		private static WorkQueueAlertContextData GetWorkQueueContextData(Model.WorkQueue item)
+		{
+			Platform.CheckForNullReference(item, "item");
+
+			WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
+			contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+
+			StudyStorage storage = StudyStorage.Load(item.StudyStorageKey);
+			IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
+
+			if (locations != null && locations.Count > 0)
+			{
+				StudyStorageLocation location = locations[0];
+				if (location != null)
+				{
+					contextData.StudyInfo = new StudyInfo();
+					contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+
+					// study info is not always available (eg, when all images failed to process)
+					if (location.Study != null)
+					{
+						contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
+						contextData.StudyInfo.PatientsId = location.Study.PatientId;
+						contextData.StudyInfo.PatientsName = location.Study.PatientsName;
+						contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
+						contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+					}
+				}
+			}
+
+			return contextData;
 		}
 
     	#endregion
