@@ -214,6 +214,7 @@
     <Compile Include="StaffGroupEditorComponent.cs" />
     <Compile Include="StaffGroupLookupHandler.cs" />
     <Compile Include="StaffGroupSummaryComponent.cs" />
+    <Compile Include="StaffOrStaffGroupSummaryComponent.cs" />
     <Compile Include="StaffSelectorEditorComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="UserLookupHandler.cs" />

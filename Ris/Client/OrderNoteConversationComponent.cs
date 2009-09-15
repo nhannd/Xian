@@ -61,15 +61,31 @@ namespace ClearCanvas.Ris.Client
 
 		class StaffAndGroupLookupHandler : LookupHandlerAggregator
 		{
+			private DesktopWindow _desktopWindow;
+
 			internal StaffAndGroupLookupHandler(DesktopWindow desktopWindow)
 				: base(new ILookupHandler[] { new StaffLookupHandler(desktopWindow), new StaffGroupLookupHandler(desktopWindow, false) })
 			{
-
+				_desktopWindow = desktopWindow;
 			}
 
 			protected override bool ResolveNameInteractive(string query, out object result)
 			{
-				throw new NotImplementedException();
+				result = null;
+				var component = new StaffOrStaffGroupSummaryComponent();
+
+				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+					_desktopWindow, component, SR.TitleStaffOrStaffGroups);
+
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					if (component.IsSelectingStaff)
+						result = component.SelectedStaff;
+					else
+						result = component.SelectedStaffGroup;
+				}
+
+				return (result != null);
 			}
 
 			public override string FormatItem(object item)

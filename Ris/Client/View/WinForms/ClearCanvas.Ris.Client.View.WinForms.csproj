@@ -399,6 +399,13 @@
       <DependentUpon>StaffGroupDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffGroupDetailsEditorComponentView.cs" />
+    <Compile Include="StaffOrStaffGroupSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffOrStaffGroupSummaryComponentControl.Designer.cs">
+      <DependentUpon>StaffOrStaffGroupSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffOrStaffGroupSummaryComponentView.cs" />
     <Compile Include="StaffStaffGroupEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -716,6 +723,9 @@
     <EmbeddedResource Include="StaffGroupDetailsEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StaffGroupDetailsEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffOrStaffGroupSummaryComponentControl.resx">
+      <DependentUpon>StaffOrStaffGroupSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkflowHistoryComponentControl.resx">
       <SubType>Designer</SubType>

@@ -163,10 +163,12 @@ namespace ClearCanvas.Enterprise.Desktop
 		private PagingController<TSummary> _pagingController;
 
 		private readonly bool _dialogMode;
+		private bool _hostedMode;
 		private bool _setModifiedOnListChange;
 
 		private readonly bool _showActiveColumn;
 		private event EventHandler _summarySelectionChanged;
+		private event EventHandler _itemDoubleClicked;
 
 		public SummaryComponentBase()
 			: this(false)
@@ -192,6 +194,17 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			get { return _setModifiedOnListChange; }
 			set { _setModifiedOnListChange = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets whether the component is being hosted by another component.  Hosted mode overrides dialog mode.
+		/// When being hosted, the Accept/Cancel and double click actions are disabled.  It is up to the hosting component
+		/// to decide what to do.
+		/// </summary>
+		public bool HostedMode
+		{
+			get { return _hostedMode; }
+			set { _hostedMode = value; }
 		}
 
 		#region ApplicationComponent overrides
@@ -312,6 +325,12 @@ namespace ClearCanvas.Enterprise.Desktop
 		{
 			add { _summarySelectionChanged += value; }
 			remove { _summarySelectionChanged -= value; }
+		}
+
+		public event EventHandler ItemDoubleClicked
+		{
+			add { _itemDoubleClicked += value; }
+			remove { _itemDoubleClicked -= value; }
 		}
 
 		public override void Search()
@@ -453,7 +472,7 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		public override bool ShowAcceptCancelButtons
 		{
-			get { return _dialogMode; }
+			get { return _hostedMode ? false : _dialogMode; }
 		}
 
 		public override bool AcceptEnabled
@@ -463,21 +482,28 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		public override void DoubleClickSelectedItem()
 		{
-			// double-click behaviour is different depending on whether we're running as a dialog box or not
-			if (_dialogMode)
-				Accept();
-			else if (SupportsEdit)
-				EditSelectedItems();
+			if (!_hostedMode)
+			{
+				// double-click behaviour is different depending on whether we're running as a dialog box or not
+				if (_dialogMode)
+					Accept();
+				else if (SupportsEdit)
+					EditSelectedItems();
+			}
+
+			EventsHelper.Fire(_itemDoubleClicked, this, EventArgs.Empty);
 		}
 
 		public override void Accept()
 		{
-			this.Exit(ApplicationComponentExitCode.Accepted);
+			if (!_hostedMode)
+				this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 
 		public override void Cancel()
 		{
-			this.Exit(ApplicationComponentExitCode.None);
+			if (!_hostedMode)
+				this.Exit(ApplicationComponentExitCode.None);
 		}
 
 		#endregion

@@ -870,4 +870,7 @@
   <data name="ColumnReceivedDate" xml:space="preserve">
     <value>Received Date</value>
   </data>
+  <data name="TitleStaffOrStaffGroups" xml:space="preserve">
+    <value>Choose a staff or staff group</value>
+  </data>
 </root>
