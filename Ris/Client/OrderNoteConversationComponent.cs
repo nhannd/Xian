@@ -420,20 +420,39 @@ namespace ClearCanvas.Ris.Client
 		{
 			// if this is a new note, and we have a template, use the template,
 			// otherwise use the saved setting
-			string groupName;
 			if (orderNotes.Count == 0 && template != null)
 			{
 				// take from template, and update the user prefs
-				groupName = template.OnBehalfOfGroup;
+				var groupName = template.OnBehalfOfGroup;
 				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = groupName;
 				OrderNoteConversationComponentSettings.Default.Save();
+
+				_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
 			}
 			else
 			{
-				groupName = OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
-			}
+				// attempt to deduce the value based on the existing notes
 
-			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
+				// find all staff groups with acknowledgements pending
+				var groupsPendingAck = CollectionUtils.Map(
+											CollectionUtils.Select(
+												CollectionUtils.Concat(
+													CollectionUtils.Map(orderNotes, (OrderNoteDetail n) => n.GroupRecipients)),
+												gr => !gr.IsAcknowledged),
+											(OrderNoteDetail.GroupRecipientDetail gr) => gr.Group);
+
+				// intersect that with the groups that the current user belongs to
+				var myGroupsPendingAck = CollectionUtils.Select(groupsPendingAck, g => _onBehalfOfChoices.Contains(g));
+
+				// get the saved 'preferred' group
+				var preferredGroup = CollectionUtils.SelectFirst(_onBehalfOfChoices,
+					g => g.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
+
+				// use preferred group if a) it is one of those pending ack, or b) there are no pending acks,
+				// otherwise just take the 1st group pending ack
+				_onBehalfOf = (preferredGroup != null && myGroupsPendingAck.Contains(preferredGroup) || myGroupsPendingAck.Count == 0) ?
+										preferredGroup : CollectionUtils.FirstElement(myGroupsPendingAck);
+			}
 		}
 
 		private void InitializeRecipients(List<OrderNoteDetail> orderNotes, List<StaffSummary> staffs, List<StaffGroupSummary> groups)
