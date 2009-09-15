@@ -170,7 +170,8 @@ namespace ClearCanvas.Ris.Client
 
 			// load template if specified
 			var template = _templateId == null ? null : LoadTemplate(_templateId);
-			_softKeys.AddRange(template.SoftKeys);
+			if(template != null) 
+				_softKeys.AddRange(template.SoftKeys);
 
 			// load the existing conversation, plus editor form data
 			var orderNotes = new List<OrderNoteDetail>();

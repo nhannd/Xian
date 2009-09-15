@@ -953,8 +953,9 @@ Preview.OrderNotesTable = function () {
 			{
 				_createSubsection(parentElement, notes);
 			}
-			
-			Preview.SectionContainer.create(parentElement, "Order Notes");
+
+			if(!hideHeading)
+				Preview.SectionContainer.create(parentElement, "Order Notes");
 		},
 		
 		defaultSubsections:
