@@ -153,12 +153,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Transcription is saved and submitted for review.
 		/// </summary>
-		SubmitForReview, 
+		SubmitForReview,
 
 		/// <summary>
 		/// Transcription is saved, completed and sent to rad.
 		/// </summary>
-		Complete, 
+		Complete,
 
 		/// <summary>
 		/// Transcription is saved, completed and sent to rad with the indication that it requires corrections.
@@ -200,7 +200,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			private readonly TranscriptionComponent _owner;
 
-			public TranscriptionContext(TranscriptionComponent owner)
+			protected TranscriptionContext(TranscriptionComponent owner)
 			{
 				_owner = owner;
 			}
@@ -332,16 +332,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
 		}
 
+		#region ApplicationComponent overrides
+
 		/// <summary>
 		/// Called by the host to initialize the application component.
 		/// </summary>
 		public override void Start()
 		{
 			//// create supervisor lookup handler, using filters supplied in application settings
-			string filters = TranscriptionSettings.Default.SupervisorStaffTypeFilters;
-			string[] staffTypes = string.IsNullOrEmpty(filters)
+			var filters = TranscriptionSettings.Default.SupervisorStaffTypeFilters;
+			var staffTypes = string.IsNullOrEmpty(filters)
 				? new string[] { }
-				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+				: CollectionUtils.Map<string, string>(filters.Split(','), s => s.Trim()).ToArray();
 			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			StartTranscribingWorklistItem();
@@ -349,8 +351,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 			_bannerHost.StartComponent();
 
-			_rightHandComponentContainer = new TabComponentContainer();
-			_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
+			_rightHandComponentContainer = new TabComponentContainer
+			{
+				ValidationStrategy = new AllComponentsValidationStrategy()
+			};
 
 			_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
@@ -359,27 +363,73 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_rightHandComponentContainerHost.StartComponent();
 
 			// check for a report editor provider.  If not found, use the default one
-			ITranscriptionEditorProvider provider = CollectionUtils.FirstElement<ITranscriptionEditorProvider>(
+			var transcriptionEditorProvider = CollectionUtils.FirstElement<ITranscriptionEditorProvider>(
 													new TranscriptionEditorProviderExtensionPoint().CreateExtensions());
 
-			_transcriptionEditor = provider == null 
+			_transcriptionEditor = transcriptionEditorProvider == null
 				? new TranscriptionEditorComponent(new TranscriptionEditorContext(this))
-				: provider.GetEditor(new TranscriptionEditorContext(this));
+				: transcriptionEditorProvider.GetEditor(new TranscriptionEditorContext(this));
 			_transcriptionEditorHost = new ChildComponentHost(this.Host, _transcriptionEditor.GetComponent());
 			_transcriptionEditorHost.StartComponent();
+			_transcriptionEditorHost.Component.ModifiedChanged += ((sender, args) => this.Modified = this.Modified || _transcriptionEditorHost.Component.Modified);
 
 			base.Start();
 		}
 
-		/// <summary>
-		/// Called by the host when the application component is being terminated.
-		/// </summary>
 		public override void Stop()
 		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
+			if (_bannerHost != null)
+			{
+				_bannerHost.StopComponent();
+				_bannerHost = null;
+			}
+
+			if (_rightHandComponentContainerHost != null)
+			{
+				_rightHandComponentContainerHost.StopComponent();
+				_rightHandComponentContainerHost = null;
+			}
+
+			if (_transcriptionEditorHost != null)
+			{
+				_transcriptionEditorHost.StopComponent();
+
+				if (_transcriptionEditorHost is IDisposable)
+				{
+					((IDisposable)_transcriptionEditorHost).Dispose();
+					_transcriptionEditor = null;
+				}
+			}
+
 			base.Stop();
 		}
+
+		public override bool HasValidationErrors
+		{
+			get
+			{
+				return _transcriptionEditorHost.Component.HasValidationErrors || base.HasValidationErrors;
+			}
+		}
+
+		public override void ShowValidation(bool show)
+		{
+			_transcriptionEditorHost.Component.ShowValidation(show);
+			base.ShowValidation(show);
+		}
+
+		public override bool PrepareExit()
+		{
+			var exit = base.PrepareExit();
+			if (exit)
+			{
+				// same as cancel
+				DoCancelCleanUp();
+			}
+			return exit;
+		}
+
+		#endregion
 
 		private ReportingWorklistItem WorklistItem
 		{
@@ -388,10 +438,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Presentation Model
 
-        public int BannerHeight
-        {
-            get { return BannerSettings.Default.BannerHeight; }
-        }
+		public int BannerHeight
+		{
+			get { return BannerSettings.Default.BannerHeight; }
+		}
 
 		public ApplicationComponentHost BannerHost
 		{
@@ -472,14 +522,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.Complete))
 					return;
 
-				Platform.GetService<ITranscriptionWorkflowService>(
-					delegate(ITranscriptionWorkflowService service)
-					{
-						service.CompleteTranscription(
-							new CompleteTranscriptionRequest(
-							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties));
-					});
+				Platform.GetService<ITranscriptionWorkflowService>(service =>
+					service.CompleteTranscription(new CompleteTranscriptionRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties)));
 
 				// Source Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Transcription.DraftFolder));
@@ -490,11 +534,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -520,24 +560,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.Complete))
 					return;
 
-				EnumValueInfo reason;
+				EnumValueInfo rejectReason;
 				string additionalComments;
 
-				bool result = GetRejectReason("Reject Reason", out reason, out additionalComments);
+				var rejectReasonSelected = GetRejectReason("Reject Reason", out rejectReason, out additionalComments);
 
-				if (!result || reason == null)
+				if (!rejectReasonSelected || rejectReason == null)
 					return;
 
-				Platform.GetService<ITranscriptionWorkflowService>(
-					delegate(ITranscriptionWorkflowService service)
-					{
-						service.RejectTranscription(
-							new RejectTranscriptionRequest(
-							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties, 
-							reason,
-							CreateAdditionalCommentsNote(additionalComments)));
-					});
+				Platform.GetService<ITranscriptionWorkflowService>(service =>
+					service.RejectTranscription(new RejectTranscriptionRequest(
+						this.WorklistItem.ProcedureStepRef,
+						_reportPartExtendedProperties,
+						rejectReason,
+						CreateAdditionalCommentsNote(additionalComments))));
 
 				// Source Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Transcription.DraftFolder));
@@ -548,11 +584,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -575,15 +607,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (SupervisorIsInvalid())
 					return;
 
-				Platform.GetService<ITranscriptionWorkflowService>(
-					delegate(ITranscriptionWorkflowService service)
-					{
-						service.SubmitTranscriptionForReview(
-							new SubmitTranscriptionForReviewRequest(
-							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties,
-							_supervisor.StaffRef));
-					});
+				Platform.GetService<ITranscriptionWorkflowService>(service =>
+					service.SubmitTranscriptionForReview(new SubmitTranscriptionForReviewRequest(
+						this.WorklistItem.ProcedureStepRef,
+						_reportPartExtendedProperties,
+						_supervisor.StaffRef)));
 
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Transcription.AwaitingReviewFolder));
@@ -592,11 +620,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -621,15 +645,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.SaveDraft))
 					return;
 
-				Platform.GetService<ITranscriptionWorkflowService>(
-					delegate(ITranscriptionWorkflowService service)
-					{
-						service.SaveTranscription(
-							new SaveTranscriptionRequest(
-							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef));
-					});
+				Platform.GetService<ITranscriptionWorkflowService>(service => 
+					service.SaveTranscription(new SaveTranscriptionRequest(
+						this.WorklistItem.ProcedureStepRef,
+						_reportPartExtendedProperties,
+						_supervisor == null ? null : _supervisor.StaffRef)));
 
 				// Source Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Transcription.CompletedFolder));
@@ -640,11 +660,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception ex)
 			{
-				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow, () => this.Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -663,11 +679,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				if (_worklistItemManager.ShouldUnclaim)
 				{
-					Platform.GetService<ITranscriptionWorkflowService>(
-						delegate(ITranscriptionWorkflowService service)
-						{
-							service.DiscardTranscription(new DiscardTranscriptionRequest(this.WorklistItem.ProcedureStepRef));
-						});
+					Platform.GetService<ITranscriptionWorkflowService>(service => 
+						service.DiscardTranscription(new DiscardTranscriptionRequest(this.WorklistItem.ProcedureStepRef)));
 				}
 
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
@@ -691,15 +704,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (_worklistItemManager.ShouldUnclaim)
-				{
-					Platform.GetService<ITranscriptionWorkflowService>(
-						delegate(ITranscriptionWorkflowService service)
-						{
-							service.DiscardTranscription(new DiscardTranscriptionRequest(this.WorklistItem.ProcedureStepRef));
-						});
-				}
-
+				DoCancelCleanUp();
 				this.Exit(ApplicationComponentExitCode.None);
 			}
 			catch (Exception e)
@@ -738,6 +743,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		#endregion
+
+		#region Private methods
 
 		private bool CanComplete
 		{
@@ -781,8 +788,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		private void DoCancelCleanUp()
+		{
+			if (_worklistItemManager.ShouldUnclaim)
+			{
+				Platform.GetService<ITranscriptionWorkflowService>(
+					service => service.DiscardTranscription(new DiscardTranscriptionRequest(this.WorklistItem.ProcedureStepRef)));
+			}
+		}
+
 		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
+			this.Modified = false;
+
 			if (this.WorklistItem != null)
 			{
 				try
@@ -807,60 +825,57 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			ClaimWorklistItem(this.WorklistItem);
 
-			Platform.GetService<ITranscriptionWorkflowService>(
-				delegate(ITranscriptionWorkflowService service)
+			Platform.GetService<ITranscriptionWorkflowService>(service =>
+			{
+				var enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
+				_canComplete = enablementResponse.OperationEnablementDictionary["CompleteTranscription"];
+				_canReject = enablementResponse.OperationEnablementDictionary["RejectTranscription"];
+				_canSubmitForReview = enablementResponse.OperationEnablementDictionary["SubmitTranscriptionForReview"];
+				_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveTranscription"];
+
+				var loadTranscriptionForEditResponse = service.LoadTranscriptionForEdit(new LoadTranscriptionForEditRequest(this.WorklistItem.ProcedureStepRef));
+				_report = loadTranscriptionForEditResponse.Report;
+				_activeReportPartIndex = loadTranscriptionForEditResponse.ReportPartIndex;
+				_orderDetail = loadTranscriptionForEditResponse.Order;
+
+				var activePart = _report.GetPart(_activeReportPartIndex);
+				_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
+
+				if (activePart != null && activePart.TranscriptionSupervisor != null)
 				{
-					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
-					_canComplete = enablementResponse.OperationEnablementDictionary["CompleteTranscription"];
-					_canReject = enablementResponse.OperationEnablementDictionary["RejectTranscription"];
-					_canSubmitForReview = enablementResponse.OperationEnablementDictionary["SubmitTranscriptionForReview"];
-					_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveTranscription"];
-
-					LoadTranscriptionForEditResponse response = service.LoadTranscriptionForEdit(
-						new LoadTranscriptionForEditRequest(this.WorklistItem.ProcedureStepRef));
-					_report = response.Report;
-					_activeReportPartIndex = response.ReportPartIndex;
-					_orderDetail = response.Order;
-
-					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
-					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
-
-					if (activePart != null && activePart.TranscriptionSupervisor != null)
+					// active part already has a supervisor assigned
+					_supervisor = activePart.TranscriptionSupervisor;
+				}
+				else if (
+					Thread.CurrentPrincipal.IsInRole(
+						ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview))
+				{
+					// active part does not have a supervisor assigned
+					// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
+					if (!String.IsNullOrEmpty(TranscriptionSettings.Default.SupervisorID))
 					{
-						// active part already has a supervisor assigned
-						_supervisor = activePart.TranscriptionSupervisor;
-					}
-					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview))
-					{
-						// active part does not have a supervisor assigned
-						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-						if (!String.IsNullOrEmpty(TranscriptionSettings.Default.SupervisorID))
+						object supervisor;
+						if (_supervisorLookupHandler.Resolve(TranscriptionSettings.Default.SupervisorID, false, out supervisor))
 						{
-							object supervisor;
-							if (_supervisorLookupHandler.Resolve(TranscriptionSettings.Default.SupervisorID, false, out supervisor))
-							{
-								_supervisor = (StaffSummary)supervisor;
-							}
+							_supervisor = (StaffSummary) supervisor;
 						}
 					}
-				});
+				}
+			});
 		}
 
 		private void ClaimWorklistItem(ReportingWorklistItem item)
 		{
-			if (item.ActivityStatus.Code == StepState.Scheduled)
-			{
-				// start the interpretation step
-				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-				StartTranscriptionResponse response = null;
-				Platform.GetService<ITranscriptionWorkflowService>(
-					delegate(ITranscriptionWorkflowService service)
-					{
-						response = service.StartTranscription(new StartTranscriptionRequest(item.ProcedureStepRef));
-					});
+			if (item.ActivityStatus.Code != StepState.Scheduled) 
+				return;
+			
+			// start the interpretation step
+			// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+			StartTranscriptionResponse response = null;
+			Platform.GetService<ITranscriptionWorkflowService>(
+				service => response = service.StartTranscription(new StartTranscriptionRequest(item.ProcedureStepRef)));
 
-				item.ProcedureStepRef = response.TranscriptionStepRef;
-			}
+			item.ProcedureStepRef = response.TranscriptionStepRef;
 		}
 		private void UpdateChildComponents()
 		{
@@ -891,23 +906,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool GetRejectReason(string title, out EnumValueInfo reason, out string additionalComments)
 		{
-			TranscriptionRejectReasonComponent component = new TranscriptionRejectReasonComponent();
+			var rejectReasonComponent = new TranscriptionRejectReasonComponent();
 
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, component, title);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, rejectReasonComponent, title);
 
-			reason = component.Reason;
-			additionalComments = component.OtherReason;
+			reason = rejectReasonComponent.Reason;
+			additionalComments = rejectReasonComponent.OtherReason;
 
 			return exitCode == ApplicationComponentExitCode.Accepted;
 		}
 
 		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
 		{
-			if (!string.IsNullOrEmpty(additionalComments))
-				return new OrderNoteDetail(OrderNoteCategory.General.Key, additionalComments, null, false, null, null);
-			else
-				return null;
+			return !string.IsNullOrEmpty(additionalComments) 
+				? new OrderNoteDetail(OrderNoteCategory.General.Key, additionalComments, null, false, null, null) 
+				: null;
 		}
 
+		#endregion
 	}
 }
