@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Ris.Client;
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -83,6 +84,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component.PropertyChanged += _component_propertyChanged;
 
 			_component.NewRecipientAdded += _component_NewRecipientAdded;
+
+			InitialiseSoftKeys();
+		}
+
+		private void InitialiseSoftKeys()
+		{
+			_softKeyFlowPanel.Visible = _component.SoftKeysVisible;
+
+			CollectionUtils.ForEach(_component.SoftKeyNames, 
+				delegate(string name)
+					{
+						var softKeyButton = new Button {Text = name, AutoEllipsis = true};
+						softKeyButton.Click += softKeyButton_Click;
+						_softKeyFlowPanel.Controls.Add(softKeyButton);
+					});
+		}
+
+		private void softKeyButton_Click(object sender, EventArgs e)
+		{
+			var softKeyButton = (Button)sender;
+			_component.ApplySoftKey(softKeyButton.Text);
 		}
 
 		private void _component_NewRecipientAdded(object sender, EventArgs e)

@@ -73,6 +73,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.panel1 = new System.Windows.Forms.Panel();
 			this._onBehalf = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._urgent = new System.Windows.Forms.CheckBox();
+			this._softKeyFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._notifyToGroupBox = new System.Windows.Forms.GroupBox();
 			this._recipientsTableLayout = new System.Windows.Forms.TableLayoutPanel();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -128,7 +129,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(759, 3);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 2;
+			this._cancelButton.TabIndex = 1;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -139,7 +140,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._completeButton.Location = new System.Drawing.Point(671, 3);
 			this._completeButton.Name = "_completeButton";
 			this._completeButton.Size = new System.Drawing.Size(82, 23);
-			this._completeButton.TabIndex = 1;
+			this._completeButton.TabIndex = 0;
 			this._completeButton.Text = "Acknowledge";
 			this._completeButton.UseVisualStyleBackColor = true;
 			this._completeButton.Click += new System.EventHandler(this._completeButton_Click);
@@ -219,13 +220,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyTableLayout.ColumnCount = 2;
 			this._replyTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._replyTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._replyTableLayout.Controls.Add(this._replyBody, 0, 1);
+			this._replyTableLayout.Controls.Add(this._replyBody, 0, 2);
 			this._replyTableLayout.Controls.Add(this.panel1, 0, 0);
+			this._replyTableLayout.Controls.Add(this._softKeyFlowPanel, 0, 1);
 			this._replyTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._replyTableLayout.Location = new System.Drawing.Point(3, 16);
 			this._replyTableLayout.Margin = new System.Windows.Forms.Padding(0);
 			this._replyTableLayout.Name = "_replyTableLayout";
-			this._replyTableLayout.RowCount = 2;
+			this._replyTableLayout.RowCount = 3;
+			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._replyTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._replyTableLayout.Size = new System.Drawing.Size(507, 277);
@@ -236,10 +239,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._replyBody.AutoWordSelection = true;
 			this._replyBody.DetectUrls = false;
 			this._replyBody.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._replyBody.Location = new System.Drawing.Point(3, 59);
+			this._replyBody.Location = new System.Drawing.Point(3, 96);
 			this._replyBody.Name = "_replyBody";
-			this._replyBody.Size = new System.Drawing.Size(501, 215);
-			this._replyBody.TabIndex = 1;
+			this._replyBody.Size = new System.Drawing.Size(501, 178);
+			this._replyBody.TabIndex = 2;
 			this._replyBody.Text = "";
 			// 
 			// panel1
@@ -278,6 +281,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._urgent.Text = "Urgent";
 			this._urgent.UseVisualStyleBackColor = true;
 			// 
+			// _softKeyFlowPanel
+			// 
+			this._softKeyFlowPanel.AutoScroll = true;
+			this._softKeyFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._softKeyFlowPanel.Location = new System.Drawing.Point(3, 59);
+			this._softKeyFlowPanel.Name = "_softKeyFlowPanel";
+			this._softKeyFlowPanel.Size = new System.Drawing.Size(501, 31);
+			this._softKeyFlowPanel.TabIndex = 1;
+			// 
 			// _notifyToGroupBox
 			// 
 			this._notifyToGroupBox.Controls.Add(this._recipientsTableLayout);
@@ -285,7 +297,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._notifyToGroupBox.Location = new System.Drawing.Point(522, 3);
 			this._notifyToGroupBox.Name = "_notifyToGroupBox";
 			this._notifyToGroupBox.Size = new System.Drawing.Size(312, 296);
-			this._notifyToGroupBox.TabIndex = 0;
+			this._notifyToGroupBox.TabIndex = 1;
 			this._notifyToGroupBox.TabStop = false;
 			this._notifyToGroupBox.Text = "Recipients (Staff or Staff Groups)";
 			// 
@@ -306,7 +318,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._recipientsTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._recipientsTableLayout.Size = new System.Drawing.Size(306, 277);
-			this._recipientsTableLayout.TabIndex = 1;
+			this._recipientsTableLayout.TabIndex = 0;
 			// 
 			// _recipients
 			// 
@@ -321,7 +333,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
 			this._recipients.Size = new System.Drawing.Size(288, 271);
-			this._recipients.TabIndex = 4;
+			this._recipients.TabIndex = 0;
 			// 
 			// OrderNoteConversationComponentControl
 			// 
@@ -375,5 +387,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.SplitContainer _componentSplitContainer;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.Panel _orderNotesPanel;
+		private System.Windows.Forms.FlowLayoutPanel _softKeyFlowPanel;
     }
 }

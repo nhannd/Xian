@@ -40,8 +40,6 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Desktop.Validation;
-using System.IO;
-using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -90,6 +88,7 @@ namespace ClearCanvas.Ris.Client
 		private EntityRef _orderRef;
 		private string _templateId;
 
+		private readonly List<SoftKeyData> _softKeys;
 		private readonly List<string> _orderNoteCategories;
 
 		private string _body;
@@ -124,6 +123,7 @@ namespace ClearCanvas.Ris.Client
 		public OrderNoteConversationComponent(EntityRef orderRef, IEnumerable<string> orderNoteCategories, string templateId)
 		{
 			_orderRef = orderRef;
+			_softKeys = new List<SoftKeyData>();
 			_orderNoteCategories = orderNoteCategories != null ? new List<string>(orderNoteCategories) : new List<string>();
 			_templateId = templateId;
 
@@ -154,6 +154,7 @@ namespace ClearCanvas.Ris.Client
 
 			// load template if specified
 			var template = _templateId == null ? null : LoadTemplate(_templateId);
+			_softKeys.AddRange(template.SoftKeys);
 
 			// load the existing conversation, plus editor form data
 			var orderNotes = new List<OrderNoteDetail>();
@@ -224,6 +225,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_body = value;
+				NotifyPropertyChanged("Body");
 			}
 		}
 
@@ -243,7 +245,7 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				return _onBehalfOfChoices;
-            }
+			}
 		}
 
 		public string FormatOnBehalfOf(object item)
@@ -304,6 +306,22 @@ namespace ClearCanvas.Ris.Client
 			_selectedRecipient = _recipients.AddNew(true);
 			OnSelectedRecipientChanged();
 			EventsHelper.Fire(_newRecipientAdded, this, EventArgs.Empty);
+		}
+
+		public bool SoftKeysVisible
+		{
+			get { return _softKeys.Count > 0; }
+		}
+
+		public IList<string> SoftKeyNames
+		{
+			get { return CollectionUtils.Map<SoftKeyData, string>(_softKeys, key => key.ButtonName); }
+		}
+
+		public void ApplySoftKey(string softKeyName)
+		{
+			var softKey = CollectionUtils.SelectFirst(_softKeys, key => Equals(key.ButtonName, softKeyName));
+			this.Body = softKey.InsertText;
 		}
 
 		public string OrderNotesLabel
