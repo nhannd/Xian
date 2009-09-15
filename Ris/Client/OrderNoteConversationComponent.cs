@@ -196,11 +196,11 @@ namespace ClearCanvas.Ris.Client
 			_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
 			_onBehalfOfChoices.Insert(0, _emptyStaffGroup);
 
-			// Set default recipients list, either based on the existing conversation, or from template if new conversation
-			InitializeRecipients(orderNotes, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups);
-
 			// Set default on-behalf of
-			InitializeOnBehalfOf(template, orderNotes);
+			_onBehalfOf = ComputeOnBehalfOf(template, orderNotes);
+
+			// Set default recipients list, either based on the existing conversation, or from template if new conversation
+			InitializeRecipients(orderNotes, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups, _onBehalfOf);
 
 			// build the action model
 			_recipientsActionModel = new CrudActionModel(true, false, true, new ResourceResolver(this.GetType(), true));
@@ -416,7 +416,7 @@ namespace ClearCanvas.Ris.Client
 			get { return string.IsNullOrEmpty(_body); }
 		}
 
-		private void InitializeOnBehalfOf(TemplateData template, List<OrderNoteDetail> orderNotes)
+		private StaffGroupSummary ComputeOnBehalfOf(TemplateData template, List<OrderNoteDetail> orderNotes)
 		{
 			// if this is a new note, and we have a template, use the template,
 			// otherwise use the saved setting
@@ -427,22 +427,18 @@ namespace ClearCanvas.Ris.Client
 				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = groupName;
 				OrderNoteConversationComponentSettings.Default.Save();
 
-				_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
+				return CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
 			}
 			else
 			{
 				// attempt to deduce the value based on the existing notes
 
-				// find all staff groups with acknowledgements pending
-				var groupsPendingAck = CollectionUtils.Map(
-											CollectionUtils.Select(
-												CollectionUtils.Concat(
-													CollectionUtils.Map(orderNotes, (OrderNoteDetail n) => n.GroupRecipients)),
-												gr => !gr.IsAcknowledged),
-											(OrderNoteDetail.GroupRecipientDetail gr) => gr.Group);
-
-				// intersect that with the groups that the current user belongs to
-				var myGroupsPendingAck = CollectionUtils.Select(groupsPendingAck, g => _onBehalfOfChoices.Contains(g));
+				// find all staff groups with acknowledgements pending, which the current user belongs to
+				var myGroupsPendingAck = AggregateRecipients(orderNotes,
+											n => n.GroupRecipients,
+											gr => !gr.IsAcknowledged,
+											gr => gr.Group,
+											g => _onBehalfOfChoices.Contains(g));
 
 				// get the saved 'preferred' group
 				var preferredGroup = CollectionUtils.SelectFirst(_onBehalfOfChoices,
@@ -450,65 +446,52 @@ namespace ClearCanvas.Ris.Client
 
 				// use preferred group if a) it is one of those pending ack, or b) there are no pending acks,
 				// otherwise just take the 1st group pending ack
-				_onBehalfOf = (preferredGroup != null && myGroupsPendingAck.Contains(preferredGroup) || myGroupsPendingAck.Count == 0) ?
+				return (preferredGroup != null && myGroupsPendingAck.Contains(preferredGroup) || myGroupsPendingAck.Count == 0) ?
 										preferredGroup : CollectionUtils.FirstElement(myGroupsPendingAck);
 			}
 		}
 
-		private void InitializeRecipients(List<OrderNoteDetail> orderNotes, List<StaffSummary> staffs, List<StaffGroupSummary> groups)
+		private void InitializeRecipients(
+			List<OrderNoteDetail> orderNotes,
+			List<StaffSummary> templateStaffs,
+			List<StaffGroupSummary> templateGroups,
+			StaffGroupSummary onBehalfOf)
 		{
-			// if there are existing notes, use some rules to initialize recipients
-			if(orderNotes.Count > 0)
+			// if this is a new note, initialize from template
+			if(orderNotes.Count == 0)
 			{
-				// rules:
-				// 1. if note was sent on behalf of a group, the note should be posted back to that group by default
-				// 2. if note was not send on behalf of a group, it should be posted back to it's author by default
-				// 3. the note should be posted back to all group recipients, and all staff recipients excluding the
-				// current user (effectively "reply all")
-
-				foreach (var note in orderNotes)
-				{
-					if (note.OnBehalfOfGroup != null)
-					{
-						_recipients.Add(note.OnBehalfOfGroup, note.CanAcknowledge);
-						_recipients.Add(note.Author, false);
-					}
-					else
-					{
-						_recipients.Add(note.Author, note.CanAcknowledge);
-					}
-
-					foreach (var staffRecipient in note.StaffRecipients)
-					{
-						if (!IsStaffCurrentUser(staffRecipient.Staff))
-						{
-							_recipients.Add(staffRecipient.Staff, false);
-						}
-					}
-					foreach (var groupRecipient in note.GroupRecipients)
-					{
-						_recipients.Add(groupRecipient.Group, false);
-					}
-				}
+				_recipients.AddRange(templateStaffs, true);
+				_recipients.AddRange(templateGroups, true);
+				return;
 			}
-			else
-			{
-				// otherwise, this is a new note, so initialize recipients from template data
-				if (staffs != null)
-				{
-					foreach (var item in staffs)
-					{
-						_recipients.Add(item, true);
-					}
-				}
-				if (groups != null)
-				{
-					foreach (var item in groups)
-					{
-						_recipients.Add(item, true);
-					}
-				}
-			}
+
+			// otherwise it is a reply, so compute the recipients based on the following rules
+			var ackableNotes = CollectionUtils.Select(orderNotes, n => n.CanAcknowledge);
+			var sendersPendingAck = CollectionUtils.Map<OrderNoteDetail, object>(ackableNotes, n => n.OnBehalfOfGroup ?? (object) n.Author);
+
+			// 1. add any senders (staff or groups) of notes that current user can ack
+			// these recips are checked by default
+			_recipients.AddRange(sendersPendingAck, true);
+
+
+			// 2. add all other groups that were party to the conversation, excluding any covered by rule 1, and the OnBehalfOf group
+			// these recips are not checked by default
+			var otherGroups = AggregateRecipients(orderNotes,
+										n => n.GroupRecipients,
+										gr => true,
+										gr => gr.Group,
+										g => !Equals(g, onBehalfOf) && !sendersPendingAck.Contains(g));
+			_recipients.AddRange(otherGroups, false);
+
+
+			// 3. add all other staff that were party to the conversation, excluding any covered by rule 1, and the current user
+			// these recips are not checked by default
+			var otherStaff = AggregateRecipients(orderNotes,
+										n => n.StaffRecipients,
+										sr => true,
+										sr => sr.Staff,
+										s => !IsStaffCurrentUser(s) && !sendersPendingAck.Contains(s));
+			_recipients.AddRange(otherStaff, false);
 		}
 
 		private static bool IsStaffCurrentUser(StaffSummary staff)
@@ -554,6 +537,35 @@ namespace ClearCanvas.Ris.Client
 		{
 			_recipientsActionModel.Delete.Enabled = _selectedRecipient != null;
 			NotifyPropertyChanged("SelectedRecipient");
+		}
+
+		/// <summary>
+		/// Aggregrates the set of recipients that are part of a conversation, performing some useful transformations along the way.
+		/// </summary>
+		/// <typeparam name="TRecip"></typeparam>
+		/// <typeparam name="TOutput"></typeparam>
+		/// <param name="orderNotes"></param>
+		/// <param name="mapNoteToRecipList"></param>
+		/// <param name="filterRecipList"></param>
+		/// <param name="mapRecipToOutputType"></param>
+		/// <param name="filterOutput"></param>
+		/// <returns></returns>
+		private static List<TOutput> AggregateRecipients<TRecip, TOutput>(
+			List<OrderNoteDetail> orderNotes,
+			Converter<OrderNoteDetail, List<TRecip>> mapNoteToRecipList,
+			Predicate<TRecip> filterRecipList,
+			Converter<TRecip, TOutput> mapRecipToOutputType,
+			Predicate<TOutput> filterOutput)
+			where TRecip : OrderNoteDetail.RecipientDetail
+		{
+			var recipList = CollectionUtils.Select(
+								CollectionUtils.Concat(
+									CollectionUtils.Map(orderNotes, mapNoteToRecipList)),
+									filterRecipList);
+			return CollectionUtils.Unique(
+					CollectionUtils.Select(
+						CollectionUtils.Map(recipList, mapRecipToOutputType),
+						filterOutput));
 		}
 
 		#endregion

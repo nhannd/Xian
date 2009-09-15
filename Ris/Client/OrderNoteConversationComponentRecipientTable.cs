@@ -35,6 +35,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -163,6 +164,14 @@ namespace ClearCanvas.Ris.Client
 				if(!exists)
 				{
 					this.Items.Add(new Checkable<RecipientTableItem>(new RecipientTableItem(staffOrGroup), @checked));
+				}
+			}
+
+			public void AddRange(IEnumerable staffOrGroups, bool @checked)
+			{
+				foreach (var item in staffOrGroups)
+				{
+					Add(item, @checked);
 				}
 			}
 
