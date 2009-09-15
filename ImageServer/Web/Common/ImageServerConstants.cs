@@ -105,6 +105,7 @@ public class ImageServerConstants
         public static readonly string Checked = string.Format("~/App_Themes/{0}/images/Indicators/checked.png", Theme);
         public static readonly string QueryFeature = string.Format("~/App_Themes/{0}/images/Indicators/QueryFeature.png", Theme);
         public static readonly string RetrieveFeature = string.Format("~/App_Themes/{0}/images/Indicators/RetrieveFeature.png", Theme);
+        public static readonly string AcceptKOPRFeature = string.Format("~/App_Themes/{0}/images/Indicators/AcceptKOPRFeature.png", Theme);
         public static readonly string StoreFeature = string.Format("~/App_Themes/{0}/images/Indicators/StoreFeature.png", Theme);
         public static readonly string Unchecked = string.Format("~/App_Themes/{0}/images/Indicators/unchecked.png", Theme);
         public static readonly string UsageBar = string.Format("~/App_Themes/{0}/images/Indicators/usage.png", Theme);

@@ -79,6 +79,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.IpAddress = dev.IpAddress;
             param.Port = dev.Port;
             param.AllowQuery = dev.AllowQuery;
+            param.AcceptKOPR = dev.AcceptKOPR;
             param.AllowRetrieve = dev.AllowRetrieve;
             param.AllowStorage = dev.AllowStorage;
             param.AllowAutoRoute = dev.AllowAutoRoute;
@@ -130,6 +131,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.Enabled = newDev.Enabled;
             param.Dhcp = newDev.Dhcp;
             param.AllowQuery = newDev.AllowQuery;
+            param.AcceptKOPR = newDev.AcceptKOPR;
             param.AllowRetrieve = newDev.AllowRetrieve;
             param.AllowStorage = newDev.AllowStorage;
             param.AllowAutoRoute = newDev.AllowAutoRoute;

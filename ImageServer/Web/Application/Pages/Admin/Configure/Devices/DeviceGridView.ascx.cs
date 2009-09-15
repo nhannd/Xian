@@ -203,7 +203,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         private void AddAllowStorageImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
         {
             Image img = new Image();
-            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
+            if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AcceptKOPR")))
+            {
+                img.ImageUrl = ImageServerConstants.ImageURLs.AcceptKOPRFeature;
+                img.AlternateText = "Accept Key/Object Presentation States only";
+            }
+            else if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
                 img.ImageUrl = ImageServerConstants.ImageURLs.StoreFeature;
                 img.AlternateText = "Store";

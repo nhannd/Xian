@@ -701,6 +701,7 @@ CREATE TABLE [dbo].[Device](
 	[Dhcp] [bit] NOT NULL,
 	[Enabled] [bit] NOT NULL,
 	[AllowStorage] [bit] NOT NULL CONSTRAINT [DF_Device_StorageFlag]  DEFAULT ((0)),
+	[AcceptKOPR] [bit] NOT NULL CONSTRAINT [DF_Device_AcceptKOPRFlag]  DEFAULT ((0)),
 	[AllowRetrieve] [bit] NOT NULL CONSTRAINT [DF_Device_AllowRetrieve]  DEFAULT ((0)),
 	[AllowQuery] [bit] NOT NULL CONSTRAINT [DF_Device_AllowQuery]  DEFAULT ((0)),
 	[AllowAutoRoute] [bit] NOT NULL CONSTRAINT [DF_Device_AllowAutoRoute]  DEFAULT ((1)),

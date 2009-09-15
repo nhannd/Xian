@@ -159,6 +159,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 if (ViewState[ "EditedDevice"] != null)
                     _device = ViewState[ "EditedDevice"] as Device;
             }
+
+            AllowStorageCheckBox.Attributes.Add("onclick", "AllowStorage_Changed()");
         }
 
 
@@ -216,10 +218,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             Device.AllowQuery = AllowQueryCheckBox.Checked;
             Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
             Device.AllowAutoRoute = AllowAutoRouteCheckBox.Checked;
+
+            if (AllowStorageCheckBox.Checked)
+            {
+                Device.AcceptKOPR = AcceptKOPR.Checked;
+            } else
+            {
+                Device.AcceptKOPR = false;
+            }
+
             Device.ThrottleMaxConnections = ThrottleSettingsTab.MaxConnections;
             Device.DeviceTypeEnum = DeviceTypeEnum.GetEnum(DeviceTypeDropDownList.SelectedItem.Value);
+            
 
         }
+
 
         #endregion Protected methods
 
@@ -286,7 +299,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 DHCPCheckBox.Checked = Device.Dhcp;
                 DescriptionTextBox.Text = Device.Description;
                 PortTextBox.Text = Device.Port.ToString();
-
+                AcceptKOPR.Checked = Device.AcceptKOPR;
                 AllowStorageCheckBox.Checked = Device.AllowStorage;
                 AllowQueryCheckBox.Checked = Device.AllowQuery;
                 AllowRetrieveCheckBox.Checked = Device.AllowRetrieve;

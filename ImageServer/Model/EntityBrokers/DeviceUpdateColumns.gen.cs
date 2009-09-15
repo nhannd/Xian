@@ -42,6 +42,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public DeviceUpdateColumns()
        : base("Device")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
+        public Boolean AcceptKOPR
+        {
+            set { SubParameters["AcceptKOPR"] = new EntityUpdateColumn<Boolean>("AcceptKOPR", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
         public String AeTitle
         {

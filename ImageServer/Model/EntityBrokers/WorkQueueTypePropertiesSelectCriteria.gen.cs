@@ -50,42 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new WorkQueueTypePropertiesSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueueTypeEnum")]
-        public ISearchCondition<WorkQueueTypeEnum> WorkQueueTypeEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("WorkQueueTypeEnum"))
-              {
-                 SubCriteria["WorkQueueTypeEnum"] = new SearchCondition<WorkQueueTypeEnum>("WorkQueueTypeEnum");
-              }
-              return (ISearchCondition<WorkQueueTypeEnum>)SubCriteria["WorkQueueTypeEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
-        public ISearchCondition<WorkQueuePriorityEnum> WorkQueuePriorityEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("WorkQueuePriorityEnum"))
-              {
-                 SubCriteria["WorkQueuePriorityEnum"] = new SearchCondition<WorkQueuePriorityEnum>("WorkQueuePriorityEnum");
-              }
-              return (ISearchCondition<WorkQueuePriorityEnum>)SubCriteria["WorkQueuePriorityEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MemoryLimited")]
-        public ISearchCondition<Boolean> MemoryLimited
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("MemoryLimited"))
-              {
-                 SubCriteria["MemoryLimited"] = new SearchCondition<Boolean>("MemoryLimited");
-              }
-              return (ISearchCondition<Boolean>)SubCriteria["MemoryLimited"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="AlertFailedWorkQueue")]
         public ISearchCondition<Boolean> AlertFailedWorkQueue
         {
@@ -96,42 +60,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["AlertFailedWorkQueue"] = new SearchCondition<Boolean>("AlertFailedWorkQueue");
               }
               return (ISearchCondition<Boolean>)SubCriteria["AlertFailedWorkQueue"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxFailureCount")]
-        public ISearchCondition<Int32> MaxFailureCount
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("MaxFailureCount"))
-              {
-                 SubCriteria["MaxFailureCount"] = new SearchCondition<Int32>("MaxFailureCount");
-              }
-              return (ISearchCondition<Int32>)SubCriteria["MaxFailureCount"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ProcessDelaySeconds")]
-        public ISearchCondition<Int32> ProcessDelaySeconds
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ProcessDelaySeconds"))
-              {
-                 SubCriteria["ProcessDelaySeconds"] = new SearchCondition<Int32>("ProcessDelaySeconds");
-              }
-              return (ISearchCondition<Int32>)SubCriteria["ProcessDelaySeconds"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="FailureDelaySeconds")]
-        public ISearchCondition<Int32> FailureDelaySeconds
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("FailureDelaySeconds"))
-              {
-                 SubCriteria["FailureDelaySeconds"] = new SearchCondition<Int32>("FailureDelaySeconds");
-              }
-              return (ISearchCondition<Int32>)SubCriteria["FailureDelaySeconds"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="DeleteDelaySeconds")]
@@ -146,16 +74,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Int32>)SubCriteria["DeleteDelaySeconds"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="PostponeDelaySeconds")]
-        public ISearchCondition<Int32> PostponeDelaySeconds
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="FailureDelaySeconds")]
+        public ISearchCondition<Int32> FailureDelaySeconds
         {
             get
             {
-              if (!SubCriteria.ContainsKey("PostponeDelaySeconds"))
+              if (!SubCriteria.ContainsKey("FailureDelaySeconds"))
               {
-                 SubCriteria["PostponeDelaySeconds"] = new SearchCondition<Int32>("PostponeDelaySeconds");
+                 SubCriteria["FailureDelaySeconds"] = new SearchCondition<Int32>("FailureDelaySeconds");
               }
-              return (ISearchCondition<Int32>)SubCriteria["PostponeDelaySeconds"];
+              return (ISearchCondition<Int32>)SubCriteria["FailureDelaySeconds"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxBatchSize")]
@@ -168,6 +96,78 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["MaxBatchSize"] = new SearchCondition<Int32>("MaxBatchSize");
               }
               return (ISearchCondition<Int32>)SubCriteria["MaxBatchSize"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxFailureCount")]
+        public ISearchCondition<Int32> MaxFailureCount
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MaxFailureCount"))
+              {
+                 SubCriteria["MaxFailureCount"] = new SearchCondition<Int32>("MaxFailureCount");
+              }
+              return (ISearchCondition<Int32>)SubCriteria["MaxFailureCount"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MemoryLimited")]
+        public ISearchCondition<Boolean> MemoryLimited
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MemoryLimited"))
+              {
+                 SubCriteria["MemoryLimited"] = new SearchCondition<Boolean>("MemoryLimited");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["MemoryLimited"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="PostponeDelaySeconds")]
+        public ISearchCondition<Int32> PostponeDelaySeconds
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("PostponeDelaySeconds"))
+              {
+                 SubCriteria["PostponeDelaySeconds"] = new SearchCondition<Int32>("PostponeDelaySeconds");
+              }
+              return (ISearchCondition<Int32>)SubCriteria["PostponeDelaySeconds"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ProcessDelaySeconds")]
+        public ISearchCondition<Int32> ProcessDelaySeconds
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ProcessDelaySeconds"))
+              {
+                 SubCriteria["ProcessDelaySeconds"] = new SearchCondition<Int32>("ProcessDelaySeconds");
+              }
+              return (ISearchCondition<Int32>)SubCriteria["ProcessDelaySeconds"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
+        public ISearchCondition<WorkQueuePriorityEnum> WorkQueuePriorityEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("WorkQueuePriorityEnum"))
+              {
+                 SubCriteria["WorkQueuePriorityEnum"] = new SearchCondition<WorkQueuePriorityEnum>("WorkQueuePriorityEnum");
+              }
+              return (ISearchCondition<WorkQueuePriorityEnum>)SubCriteria["WorkQueuePriorityEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueueTypeEnum")]
+        public ISearchCondition<WorkQueueTypeEnum> WorkQueueTypeEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("WorkQueueTypeEnum"))
+              {
+                 SubCriteria["WorkQueueTypeEnum"] = new SearchCondition<WorkQueueTypeEnum>("WorkQueueTypeEnum");
+              }
+              return (ISearchCondition<WorkQueueTypeEnum>)SubCriteria["WorkQueueTypeEnum"];
             } 
         }
     }

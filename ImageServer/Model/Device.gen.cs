@@ -46,7 +46,8 @@ namespace ClearCanvas.ImageServer.Model
         public Device():base("Device")
         {}
         public Device(
-             System.String _aeTitle_
+             System.Boolean _acceptKOPR_
+            ,System.String _aeTitle_
             ,System.Boolean _allowAutoRoute_
             ,System.Boolean _allowQuery_
             ,System.Boolean _allowRetrieve_
@@ -62,6 +63,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.Int16 _throttleMaxConnections_
             ):base("Device")
         {
+            _acceptKOPR = _acceptKOPR_;
             _aeTitle = _aeTitle_;
             _allowAutoRoute = _allowAutoRoute_;
             _allowQuery = _allowQuery_;
@@ -80,6 +82,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
+        private Boolean _acceptKOPR;
         private String _aeTitle;
         private Boolean _allowAutoRoute;
         private Boolean _allowQuery;
@@ -97,6 +100,12 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
+        public Boolean AcceptKOPR
+        {
+        get { return _acceptKOPR; }
+        set { _acceptKOPR = value; }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
         public String AeTitle
         {
@@ -210,6 +219,7 @@ namespace ClearCanvas.ImageServer.Model
         {
             IDeviceEntityBroker broker = update.GetBroker<IDeviceEntityBroker>();
             DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+            updateColumns.AcceptKOPR = entity.AcceptKOPR;
             updateColumns.AeTitle = entity.AeTitle;
             updateColumns.AllowAutoRoute = entity.AllowAutoRoute;
             updateColumns.AllowQuery = entity.AllowQuery;

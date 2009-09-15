@@ -5,6 +5,24 @@
 
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>
+
+<ccAsp:Jquery runat="server" />
+    
+<script type="text/javascript">
+
+    function AllowStorage_Changed() {
+        if ($("#<%=AllowStorageCheckBox.ClientID %>").attr('checked') == false) {
+            $("#<%=AcceptKOPR.ClientID %>").attr('disabled', 'true');
+            $("#<%=AcceptKeyObjectStatesLabel.ClientID %>").css("color", "#bbbbbb");            
+        } else {
+            $("#<%=AcceptKOPR.ClientID %>").removeAttr('disabled');
+            $("#<%=AcceptKeyObjectStatesLabel.ClientID %>").css("color", "#16425D");                        
+        }
+    }
+
+
+</script>    
+    
 <asp:ValidationSummary ID="EditDeviceValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
 EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogValidationErrorMessage" />            
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
@@ -136,7 +154,11 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                     <td>
                                     </td>
                                     <td>
-                                        <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="Storage" ToolTip="Accept or reject C-STORE from this device" CssClass="DialogCheckBox"/></td>
+                                        <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="Storage" ToolTip="Accept or reject C-STORE from this device" CssClass="DialogCheckBox" />
+                                        <div style="padding-left: 18px; padding-top: 3px; padding-bottom: 2px;">
+                                            <asp:CheckBox ID="AcceptKOPR" runat="server" Checked="False" Text="" CssClass="DialogCheckBox" /><asp:Label ID="AcceptKeyObjectStatesLabel" runat="server" Text="Only Accept Key/Object Presentation States" CssClass="DialogCheckBox" />
+                                        </div>
+                                    </td>
                                     <td>
                                     </td>
                                 </tr>
@@ -187,9 +209,5 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                         </td>
                     </tr>
                 </table>
-
-                                             
-    
-
     </ContentTemplate>
 </ccAsp:ModalDialog>

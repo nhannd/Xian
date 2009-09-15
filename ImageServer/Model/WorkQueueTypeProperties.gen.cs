@@ -46,86 +46,50 @@ namespace ClearCanvas.ImageServer.Model
         public WorkQueueTypeProperties():base("WorkQueueTypeProperties")
         {}
         public WorkQueueTypeProperties(
-             WorkQueueTypeEnum _workQueueTypeEnum_
-            ,WorkQueuePriorityEnum _workQueuePriorityEnum_
-            ,System.Boolean _memoryLimited_
-            ,System.Boolean _alertFailedWorkQueue_
-            ,System.Int32 _maxFailureCount_
-            ,System.Int32 _processDelaySeconds_
-            ,System.Int32 _failureDelaySeconds_
+             System.Boolean _alertFailedWorkQueue_
             ,System.Int32 _deleteDelaySeconds_
-            ,System.Int32 _postponeDelaySeconds_
+            ,System.Int32 _failureDelaySeconds_
             ,System.Int32 _maxBatchSize_
+            ,System.Int32 _maxFailureCount_
+            ,System.Boolean _memoryLimited_
+            ,System.Int32 _postponeDelaySeconds_
+            ,System.Int32 _processDelaySeconds_
+            ,WorkQueuePriorityEnum _workQueuePriorityEnum_
+            ,WorkQueueTypeEnum _workQueueTypeEnum_
             ):base("WorkQueueTypeProperties")
         {
-            _workQueueTypeEnum = _workQueueTypeEnum_;
-            _workQueuePriorityEnum = _workQueuePriorityEnum_;
-            _memoryLimited = _memoryLimited_;
             _alertFailedWorkQueue = _alertFailedWorkQueue_;
-            _maxFailureCount = _maxFailureCount_;
-            _processDelaySeconds = _processDelaySeconds_;
-            _failureDelaySeconds = _failureDelaySeconds_;
             _deleteDelaySeconds = _deleteDelaySeconds_;
-            _postponeDelaySeconds = _postponeDelaySeconds_;
+            _failureDelaySeconds = _failureDelaySeconds_;
             _maxBatchSize = _maxBatchSize_;
+            _maxFailureCount = _maxFailureCount_;
+            _memoryLimited = _memoryLimited_;
+            _postponeDelaySeconds = _postponeDelaySeconds_;
+            _processDelaySeconds = _processDelaySeconds_;
+            _workQueuePriorityEnum = _workQueuePriorityEnum_;
+            _workQueueTypeEnum = _workQueueTypeEnum_;
         }
         #endregion
 
         #region Private Members
-        private WorkQueueTypeEnum _workQueueTypeEnum;
-        private WorkQueuePriorityEnum _workQueuePriorityEnum;
-        private Boolean _memoryLimited;
         private Boolean _alertFailedWorkQueue;
-        private Int32 _maxFailureCount;
-        private Int32 _processDelaySeconds;
-        private Int32 _failureDelaySeconds;
         private Int32 _deleteDelaySeconds;
-        private Int32 _postponeDelaySeconds;
+        private Int32 _failureDelaySeconds;
         private Int32 _maxBatchSize;
+        private Int32 _maxFailureCount;
+        private Boolean _memoryLimited;
+        private Int32 _postponeDelaySeconds;
+        private Int32 _processDelaySeconds;
+        private WorkQueuePriorityEnum _workQueuePriorityEnum;
+        private WorkQueueTypeEnum _workQueueTypeEnum;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueueTypeEnum")]
-        public WorkQueueTypeEnum WorkQueueTypeEnum
-        {
-        get { return _workQueueTypeEnum; }
-        set { _workQueueTypeEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
-        public WorkQueuePriorityEnum WorkQueuePriorityEnum
-        {
-        get { return _workQueuePriorityEnum; }
-        set { _workQueuePriorityEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MemoryLimited")]
-        public Boolean MemoryLimited
-        {
-        get { return _memoryLimited; }
-        set { _memoryLimited = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="AlertFailedWorkQueue")]
         public Boolean AlertFailedWorkQueue
         {
         get { return _alertFailedWorkQueue; }
         set { _alertFailedWorkQueue = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxFailureCount")]
-        public Int32 MaxFailureCount
-        {
-        get { return _maxFailureCount; }
-        set { _maxFailureCount = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ProcessDelaySeconds")]
-        public Int32 ProcessDelaySeconds
-        {
-        get { return _processDelaySeconds; }
-        set { _processDelaySeconds = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="FailureDelaySeconds")]
-        public Int32 FailureDelaySeconds
-        {
-        get { return _failureDelaySeconds; }
-        set { _failureDelaySeconds = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="DeleteDelaySeconds")]
         public Int32 DeleteDelaySeconds
@@ -133,17 +97,53 @@ namespace ClearCanvas.ImageServer.Model
         get { return _deleteDelaySeconds; }
         set { _deleteDelaySeconds = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="PostponeDelaySeconds")]
-        public Int32 PostponeDelaySeconds
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="FailureDelaySeconds")]
+        public Int32 FailureDelaySeconds
         {
-        get { return _postponeDelaySeconds; }
-        set { _postponeDelaySeconds = value; }
+        get { return _failureDelaySeconds; }
+        set { _failureDelaySeconds = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxBatchSize")]
         public Int32 MaxBatchSize
         {
         get { return _maxBatchSize; }
         set { _maxBatchSize = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxFailureCount")]
+        public Int32 MaxFailureCount
+        {
+        get { return _maxFailureCount; }
+        set { _maxFailureCount = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MemoryLimited")]
+        public Boolean MemoryLimited
+        {
+        get { return _memoryLimited; }
+        set { _memoryLimited = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="PostponeDelaySeconds")]
+        public Int32 PostponeDelaySeconds
+        {
+        get { return _postponeDelaySeconds; }
+        set { _postponeDelaySeconds = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ProcessDelaySeconds")]
+        public Int32 ProcessDelaySeconds
+        {
+        get { return _processDelaySeconds; }
+        set { _processDelaySeconds = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+        {
+        get { return _workQueuePriorityEnum; }
+        set { _workQueuePriorityEnum = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueueTypeEnum")]
+        public WorkQueueTypeEnum WorkQueueTypeEnum
+        {
+        get { return _workQueueTypeEnum; }
+        set { _workQueueTypeEnum = value; }
         }
         #endregion
 
@@ -174,16 +174,16 @@ namespace ClearCanvas.ImageServer.Model
         {
             IWorkQueueTypePropertiesEntityBroker broker = update.GetBroker<IWorkQueueTypePropertiesEntityBroker>();
             WorkQueueTypePropertiesUpdateColumns updateColumns = new WorkQueueTypePropertiesUpdateColumns();
-            updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;
-            updateColumns.WorkQueuePriorityEnum = entity.WorkQueuePriorityEnum;
-            updateColumns.MemoryLimited = entity.MemoryLimited;
             updateColumns.AlertFailedWorkQueue = entity.AlertFailedWorkQueue;
-            updateColumns.MaxFailureCount = entity.MaxFailureCount;
-            updateColumns.ProcessDelaySeconds = entity.ProcessDelaySeconds;
-            updateColumns.FailureDelaySeconds = entity.FailureDelaySeconds;
             updateColumns.DeleteDelaySeconds = entity.DeleteDelaySeconds;
-            updateColumns.PostponeDelaySeconds = entity.PostponeDelaySeconds;
+            updateColumns.FailureDelaySeconds = entity.FailureDelaySeconds;
             updateColumns.MaxBatchSize = entity.MaxBatchSize;
+            updateColumns.MaxFailureCount = entity.MaxFailureCount;
+            updateColumns.MemoryLimited = entity.MemoryLimited;
+            updateColumns.PostponeDelaySeconds = entity.PostponeDelaySeconds;
+            updateColumns.ProcessDelaySeconds = entity.ProcessDelaySeconds;
+            updateColumns.WorkQueuePriorityEnum = entity.WorkQueuePriorityEnum;
+            updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;
             WorkQueueTypeProperties newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

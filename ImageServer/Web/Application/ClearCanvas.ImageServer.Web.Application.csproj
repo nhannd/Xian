@@ -1417,6 +1417,7 @@
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
+    <Content Include="App_Themes\Default\images\Indicators\AcceptKOPRFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\ajax-loader-blue.gif" />
     <Content Include="App_Themes\Default\images\Indicators\ajax-loader-green.gif" />
     <Content Include="App_Themes\Default\images\Indicators\ajax-loader.gif" />

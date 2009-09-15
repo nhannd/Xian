@@ -50,6 +50,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new DeviceSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
+        public ISearchCondition<Boolean> AcceptKOPR
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("AcceptKOPR"))
+              {
+                 SubCriteria["AcceptKOPR"] = new SearchCondition<Boolean>("AcceptKOPR");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["AcceptKOPR"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
         public ISearchCondition<String> AeTitle
         {
