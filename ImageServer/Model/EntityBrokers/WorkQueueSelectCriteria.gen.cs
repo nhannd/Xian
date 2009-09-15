@@ -134,6 +134,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
+        public ISearchCondition<DateTime> LastUpdatedTime
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("LastUpdatedTime"))
+              {
+                 SubCriteria["LastUpdatedTime"] = new SearchCondition<DateTime>("LastUpdatedTime");
+              }
+              return (ISearchCondition<DateTime>)SubCriteria["LastUpdatedTime"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
         public ISearchCondition<String> ProcessorID
         {

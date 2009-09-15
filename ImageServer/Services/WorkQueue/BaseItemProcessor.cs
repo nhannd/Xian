@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         if (PerformAutoRecovery(item, reason))
                         {
                             Platform.Log(LogLevel.Info, "Auto-recovery was successful (some operations may still be pending). Current {0} entry will resume later.", item.WorkQueueTypeEnum);
-                            PostponeItem(item);
+                            PostponeItem(item, "Auto-recovery was triggered.");
                         }
                         else
                         {
@@ -754,6 +754,89 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
+
+        /// <summary>
+        /// Simple routine for abort (fail) a work queue item immediately.
+        /// </summary>
+        /// <param name="item">The item to fail.</param>
+        /// <param name="failureDescription">The reason for the failure.</param>
+        protected virtual void AbortQueueItem(Model.WorkQueue item, string failureDescription, bool generateAlert)
+        {
+            int retryCount = 0;
+            while (true)
+            {
+                try
+                {
+                    DBUpdateTime.Add(
+                        delegate
+                        {
+                            #region Fail the WorkQueue entry
+                            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                            {
+                                if (retryCount>0)
+                                    Platform.Log(LogLevel.Error, "Abort {0} WorkQueue entry ({1}). Retry # {2}. Reason: {3}", item.WorkQueueTypeEnum, item.GetKey(), retryCount, failureDescription);
+                                else
+                                    Platform.Log(LogLevel.Error, "Abort {0} WorkQueue entry ({1}). Reason: {2}", item.WorkQueueTypeEnum, item.GetKey(), failureDescription);
+                                IUpdateWorkQueue broker = updateContext.GetBroker<IUpdateWorkQueue>();
+                                UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
+                                parms.ProcessorID = ServerPlatform.ProcessorId;
+                                parms.WorkQueueKey = item.GetKey();
+                                parms.StudyStorageKey = item.StudyStorageKey;
+                                parms.FailureCount = item.FailureCount + 1;
+                                parms.FailureDescription = failureDescription;
+
+                                parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
+                                parms.ScheduledTime = Platform.Time;
+                                parms.ExpirationTime = Platform.Time.AddDays(1);
+
+                                if (false == broker.Execute(parms))
+                                {
+                                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
+                                }
+                                else
+                                {
+                                    updateContext.Commit();
+
+                                    if (generateAlert)
+                                    {
+                                        //WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error,
+                                        //                              String.Format("Aborted {0} WorkQueue entry ({1}). Reason: {2}",item.WorkQueueTypeEnum, item.GetKey(), failureDescription));
+                                    }
+                                }
+                            }
+                            #endregion
+                        });
+                    break; // done
+                }
+                catch (Exception ex)
+                {
+
+                    if (ex is PersistenceException || ex is SqlException)
+                    {
+                        if (retryCount > MAX_DB_RETRY)
+                        {
+                            Platform.Log(LogLevel.Error, ex, "Error occurred when calling AbortQueueItem. Max db retry count has been reached.");
+                            throw;
+                        }
+
+                        Platform.Log(LogLevel.Error, ex, "Error occurred when calling AbortQueueItem. Retry later. GUID={0}", item.Key);
+                        SleepForRetry();
+
+                        // Service is stoping
+                        if (CancelPending)
+                        {
+                            Platform.Log(LogLevel.Warn, "Stop is requested. Attempt to abort WorkQueue entry is now terminated.");
+                            break;
+                        }
+                        retryCount++;
+                    }
+                    else
+                        throw;
+                }
+            }
+
+        }
+
         
         /// <summary>
         /// Simple routine for failing a work queue item.
@@ -980,44 +1063,87 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            return theXml;
         }
 
-		protected virtual void PostponeItem(Model.WorkQueue item)
+		protected virtual void PostponeItem(Model.WorkQueue item, string reasonText)
 		{
 			WorkQueueSettings settings = WorkQueueSettings.Instance;
 			DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
 			DateTime expireTime = newScheduledTime.Add(TimeSpan.FromMinutes(2));
-			PostponeItem(item, newScheduledTime, expireTime);
+            PostponeItem(item, newScheduledTime, expireTime, reasonText );
 		}
 
-        protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime)
+        private bool AppearsStuck(Model.WorkQueue item, out string reason)
+        {
+            IList<Model.WorkQueue> allItems = ServerHelper.FindWorkQueueEntries(item.StudyStorageKey, null);
+
+            if (allItems.Count == 1 /* this is the only entry*/)
+            {
+                reason = String.Format("This entry has not been updated for since {0}", item.LastUpdatedTime);
+                return item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime;
+            }
+            else
+            {
+                foreach (Model.WorkQueue anotherItem in allItems)
+                {
+                    if (anotherItem.Key.Equals(item.Key)) continue;
+
+                    if (ServerPlatform.IsActiveWorkQueue(anotherItem))
+                    {
+                        reason = "Another work queue entry exists for the same study and appears stuck.";
+                        return false;
+                    }
+                }
+
+                // none of the other entries are active. Either they are all stuck or failed.
+                // This entry is considered stuck if it hasn't been updated in the last 30 min
+                reason = String.Format("This entry has not been updated for since {0}", item.LastUpdatedTime);
+                return item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime;
+            }
+        }
+
+        protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText)
         {
             DBUpdateTime.Add(
                delegate
                {
-                   Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}. [GUID={2}]", item.WorkQueueTypeEnum, newScheduledTime, item.GetKey());
-                
-                   using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                   string stuckReason;
+
+                   if (item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime/* has not been updated for a while */ 
+                       && AppearsStuck(item, out stuckReason))
                    {
-                       IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                       UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                       parms.WorkQueueKey = item.GetKey();
-                       parms.StudyStorageKey = item.StudyStorageKey;
-                       parms.ProcessorID = ServerPlatform.ProcessorId;
-                       parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                       parms.ScheduledTime = newScheduledTime;
-                       parms.ExpirationTime = expireTime;
-                       parms.FailureCount = item.FailureCount;
-                       
-                       if (false == update.Execute(parms))
-                       {
-                           Platform.Log(LogLevel.Error, "Unable to reschedule {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
-                       }
-                       else
-                       {
-                           updateContext.Commit();
-                       }
+                       AbortQueueItem(item, String.Format("Aborted because {0} and {1}.", reasonText, stuckReason), true);
+                   }
+                   else
+                   {
+                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, reasonText);
                    }
                }
                );
+        }
+
+        private void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText)
+        {
+            Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}: {2}. [GUID={3}]", item.WorkQueueTypeEnum, newScheduledTime, reasonText, item.GetKey());
+
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IPostponeWorkQueue broker = updateContext.GetBroker<IPostponeWorkQueue>();
+
+
+                PostponeWorkQueueParameters parameters = new PostponeWorkQueueParameters();
+                parameters.WorkQueueKey = item.Key;
+                parameters.Reason = reasonText;
+                parameters.ScheduledTime = newScheduledTime;
+                parameters.ExpirationTime = expireTime;
+
+                if (broker.Execute(parameters) == false)
+                {
+                    Platform.Log(LogLevel.Error, "Unable to reschedule {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
+                }
+                else
+                {
+                    updateContext.Commit();
+                }
+            }
         }
 
         /// <summary>
@@ -1139,9 +1265,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears incorrect. Study needs to be reprocessed.", numStudyRelatedInstancesInXml);
                 StudyReprocessor reprocessor = new StudyReprocessor();
                 String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
 
-                return true; // 
+                return reprocessEntry!=null;
             }
         	Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
         	// update the counts in db to match the study xml
@@ -1298,18 +1424,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (!LoadStorageLocation(item))
             	{
-            		Platform.Log(LogLevel.Warn,
-            		             "Unable to find readable StorageLocation when processing {0} WorkQueue item, rescheduling",
-            		             item.WorkQueueTypeEnum.Description);
-					PostponeItem(item);
+            		PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Unable to find readable StorageLocation.");
+
 					return;
             	}
 
                 if (StorageLocation.QueueStudyStateEnum == QueueStudyStateEnum.ReprocessScheduled && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReprocessStudy))
                 {
-                    Platform.Log(LogLevel.Info,
-                                 "Study is being reprocessed. Postponing {0} entry", item.WorkQueueTypeEnum.Description);
-                    PostponeItem(item);
+                    //TODO: Should we check if the state is correct (ie, there's actually a ReprocessStudy work queue entry)?
+                    PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Study is scheduled for reprocess.");
                     return;
                 }
 

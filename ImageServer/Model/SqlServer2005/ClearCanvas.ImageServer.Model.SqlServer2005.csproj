@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\PostponeWorkQueue.cs" />
     <Compile Include="Brokers\WorkQueueProcessorIDs.cs" />
     <Compile Include="Brokers\CreatePatientForStudy.cs" />
     <Compile Include="Brokers\AttachStudyToPatient.cs" />

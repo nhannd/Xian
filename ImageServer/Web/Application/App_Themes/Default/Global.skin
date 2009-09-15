@@ -71,6 +71,8 @@
 <asp:Image runat="server" SkinID="RefreshEnabled" ImageUrl="images/Indicators/RefreshEnabled.gif" style="margin-right: 7px;" />
 <asp:Image runat="server" SkinID="RefreshEnabledWhite" ImageUrl="images/Indicators/RefreshEnabledWhite.gif" />
 <asp:Image runat="server" SkinID="Spacer" ImageUrl="images/blank.gif" />
+<asp:Image runat="server" SkinID="Warning" ImageUrl="images/Indicators/Warning.png" />
+<asp:Image runat="server" SkinID="WarningSmall" ImageUrl="images/Indicators/WarningSmall.png" />
 
 <%-- GridView --%>
 <asp:GridView runat="server" SkinID="GlobalGridView" AutoGenerateColumns="False" CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" BackColor="White" BorderColor="Transparent" GridLines="Horizontal"/>

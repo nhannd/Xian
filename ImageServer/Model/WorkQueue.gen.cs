@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.String _failureDescription_
             ,System.String _groupID_
             ,System.DateTime _insertTime_
+            ,System.DateTime _lastUpdatedTime_
             ,System.String _processorID_
             ,System.DateTime _scheduledTime_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
@@ -70,6 +71,7 @@ namespace ClearCanvas.ImageServer.Model
             _failureDescription = _failureDescription_;
             _groupID = _groupID_;
             _insertTime = _insertTime_;
+            _lastUpdatedTime = _lastUpdatedTime_;
             _processorID = _processorID_;
             _scheduledTime = _scheduledTime_;
             _serverPartitionKey = _serverPartitionKey_;
@@ -89,6 +91,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _failureDescription;
         private String _groupID;
         private DateTime _insertTime;
+        private DateTime _lastUpdatedTime;
         private String _processorID;
         private DateTime _scheduledTime;
         private ServerEntityKey _serverPartitionKey;
@@ -141,6 +144,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _insertTime; }
         set { _insertTime = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
+        public DateTime LastUpdatedTime
+        {
+        get { return _lastUpdatedTime; }
+        set { _lastUpdatedTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
         public String ProcessorID
@@ -226,6 +235,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.FailureDescription = entity.FailureDescription;
             updateColumns.GroupID = entity.GroupID;
             updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.LastUpdatedTime = entity.LastUpdatedTime;
             updateColumns.ProcessorID = entity.ProcessorID;
             updateColumns.ScheduledTime = entity.ScheduledTime;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;

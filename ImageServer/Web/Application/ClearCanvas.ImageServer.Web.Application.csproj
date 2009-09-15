@@ -1432,6 +1432,8 @@
     <Content Include="App_Themes\Default\images\Indicators\Searching.gif" />
     <Content Include="App_Themes\Default\images\Indicators\StoreFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\usage.png" />
+    <Content Include="App_Themes\Default\images\Indicators\Warning.png" />
+    <Content Include="App_Themes\Default\images\Indicators\WarningSmall.png" />
     <Content Include="App_Themes\Default\images\LoginSplash.png" />
     <Content Include="App_Themes\Default\images\MainContent\dropdown.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.gif" />

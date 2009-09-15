@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -49,12 +50,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	{
 		#region Private members
 
-		private string _patientID;
+	    private string _patientID;
 		private string _patientName;
 		private string _notes;
 		private ServerPartition _thePartition;
 		private WorkQueue _theWorkQueueItem;
-		#endregion Private members
+        private bool _requiresAttention;
+        #endregion Private members
 
 		#region Public Properties
 
@@ -115,7 +117,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _thePartition; }
 			set { _thePartition = value; }
 		}
-		#endregion Public Properties
+
+        public bool RequiresAttention
+	    {
+            get { return _requiresAttention; }
+            set { _requiresAttention = value; }
+	    }
+
+	    #endregion Public Properties
 	}
 
 	/// <summary>
@@ -422,6 +431,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 					summary.Notes = item.FailureDescription;
 			}
 
+            summary.RequiresAttention = item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) || !ServerPlatform.IsActiveWorkQueue(item);
 			return summary;
 		}
 		#endregion

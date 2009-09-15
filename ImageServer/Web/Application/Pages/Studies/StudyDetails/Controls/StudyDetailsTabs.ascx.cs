@@ -166,6 +166,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             get { return SeriesGridView.SelectedItems; }
         }
 
+
         #endregion Public Members
 
         #region Protected Methods

@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
                 if (newScheduledTime < Platform.Time.AddMinutes(1))
                     newScheduledTime = Platform.Time.AddMinutes(1);
 
-                PostponeItem(WorkQueueItem, newScheduledTime, newScheduledTime.AddDays(1));
+                PostponeItem(WorkQueueItem, newScheduledTime, newScheduledTime.AddDays(1), "Study is being reconciled.");
                 Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", WorkQueueItem.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
             }
 

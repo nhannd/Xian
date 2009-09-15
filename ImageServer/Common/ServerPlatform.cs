@@ -340,6 +340,21 @@ namespace ClearCanvas.ImageServer.Common
 			return broker.Insert(columns);
 		}
 
+        /// <summary>
+        /// Returns a boolean indicating whether the entry is still "active".
+        /// A WorkQueue entry is inactive if it is in Failed state or was updated the more than X minutes ago (X is InactiveWorkQueueMinTime in the app settings)
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        static public bool IsActiveWorkQueue(WorkQueue item)
+        {
+            if (item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) ||   
+                (item.LastUpdatedTime > DateTime.MinValue && item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime))
+                return false;
+            else
+                return true;
+        }
+
         
     }
 }

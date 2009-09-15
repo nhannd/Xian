@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
     
     
-    /// <summary>
-    /// WorkQueueItemList class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class WorkQueueItemList {
         
         /// <summary>

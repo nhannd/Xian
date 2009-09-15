@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _studyTime;
 		private string _studyId;
 	    private bool _hasPendingWorkQueueItems;
+	    private bool? _requiresWorkQueueAttention;
 
 	    #endregion Private members
 
@@ -251,6 +252,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	    #endregion Public Properties
 
 
+        public bool RequiresWorkQueueAttention
+        {
+            get
+            {
+                if (_requiresWorkQueueAttention==null)
+                {
+                    _requiresWorkQueueAttention = false;
+                    StudyController controller = new StudyController();
+                    IList<WorkQueue> workqueueItems = controller.GetWorkQueueItems(_theStudy);
+                    foreach (WorkQueue item in workqueueItems)
+                    {
+                        if (!ServerPlatform.IsActiveWorkQueue(item))
+                        {
+                            _requiresWorkQueueAttention = true;
+                            break;
+                        }
+                    }
+                }
+
+
+                return _requiresWorkQueueAttention.Value;
+            }
+        } 
 
 		public bool CanScheduleDelete(out string reason)
 		{

@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
-				PostponeItem(WorkQueueItem);
+				PostponeItem(WorkQueueItem, "Study is being processed or reconciled.");
             	return false;
             }
         	return true;

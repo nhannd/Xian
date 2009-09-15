@@ -176,6 +176,12 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Delet
 DROP PROCEDURE [dbo].[DeleteSeries]
 GO
 
+/****** Object:  StoredProcedure [dbo].[PostponeWorkQueue]    Script Date: 09/11/2009 11:21:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PostponeWorkQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[PostponeWorkQueue]
+GO
+
+
 
 
 
@@ -773,6 +779,7 @@ EXEC dbo.sp_executesql @statement = N'
 --  May 03, 2009, Fixed bug when completing and deleting the work queue while more work queue uids are being 
 --                by another process. When this happens, the entry is now left in Pending status.
 --  May 28, 2009, May 03 rev had bug where a Lock was not released in StudyStorage when condition was met.
+--  Sep 11, 2009, Added LastUpdateTime
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -839,7 +846,7 @@ BEGIN
 		BEGIN
 		    -- Current process thought it had completed the entry but 
 		    -- another process may have had inserted more uid. We need to leave the entry in Pending.
-			UPDATE WorkQueue SET [WorkQueueStatusEnum]=@PendingStatusEnum 
+			UPDATE WorkQueue SET [WorkQueueStatusEnum]=@PendingStatusEnum,  LastUpdatedTime=getdate()
 			WHERE GUID = @WorkQueueGUID
 
 			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
@@ -854,7 +861,7 @@ BEGIN
 			UPDATE WorkQueue
 			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
 				FailureCount = @FailureCount,
-				ProcessorID = @ProcessorID
+				ProcessorID = @ProcessorID, LastUpdatedTime=getdate()
 			WHERE GUID = @WorkQueueGUID
 		END
 		ELSE
@@ -863,7 +870,8 @@ BEGIN
 			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
 				FailureCount = @FailureCount,
 				ProcessorID = @ProcessorID,
-				FailureDescription = @FailureDescription
+				FailureDescription = @FailureDescription,
+				LastUpdatedTime=getdate()
 			WHERE GUID = @WorkQueueGUID
 		END
 		
@@ -877,14 +885,15 @@ BEGIN
 		BEGIN
 			UPDATE WorkQueue
 			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-				FailureCount = @FailureCount, ProcessorID = @ProcessorID
+				FailureCount = @FailureCount, ProcessorID = @ProcessorID, LastUpdatedTime=getdate()
 			WHERE GUID = @WorkQueueGUID
 		END
 		ELSE
 		BEGIN
 			UPDATE WorkQueue
 			SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-				FailureCount = @FailureCount, ProcessorID = @ProcessorID, FailureDescription = @FailureDescription
+				FailureCount = @FailureCount, ProcessorID = @ProcessorID, FailureDescription = @FailureDescription,
+				LastUpdatedTime=getdate()
 			WHERE GUID = @WorkQueueGUID
 		END
 		
@@ -896,7 +905,7 @@ BEGIN
 		-- Idle
 		UPDATE WorkQueue
 		SET WorkQueueStatusEnum = @WorkQueueStatusEnum, ExpirationTime = @ExpirationTime, ScheduledTime = @ScheduledTime,
-			FailureCount = @FailureCount, ProcessorID = @ProcessorID
+			FailureCount = @FailureCount, ProcessorID = @ProcessorID, LastUpdatedTime=getdate()
 		WHERE GUID = @WorkQueueGUID
 		
 		if @WorkQueueStatusEnum = @IdleStatusEnum
@@ -1019,6 +1028,8 @@ EXEC dbo.sp_executesql @statement = N'
 -- Create date: Oct 29, 2007
 -- Description:	Cleanup work queue. 
 --				Reset all "in progress" items to "Pending" or "Failed" depending on their retry counts
+-- History:
+-- Sep 11, 2009: Added LastUpdatedTime
 --
 -- =============================================
 CREATE PROCEDURE [dbo].[ResetWorkQueue]
@@ -1087,7 +1098,8 @@ BEGIN
 		UPDATE dbo.WorkQueue
 		SET WorkQueueStatusEnum = @FailedStatusEnum,	/* Status=FAILED */
 			FailureCount = FailureCount+1,
-			ExpirationTime = @FailedExpirationTime
+			ExpirationTime = @FailedExpirationTime,
+			LastUpdatedTime = getdate()
 		WHERE	GUID IN (SELECT WorkQueueGuid FROM #FailedList)
 
 		/* unlock all studies in the "retry" list */
@@ -1102,7 +1114,8 @@ BEGIN
 			FailureCount = FailureCount+1,		/* has failed once. This is needed to prevent endless reset later on*/
 			ScheduledTime = @RescheduleTime,
 			ExpirationTime = @RetryExpirationTime,
-			FailureDescription = ''''
+			FailureDescription = '''',
+			LastUpdatedTime = getdate()
 		WHERE	GUID IN (SELECT WorkQueueGuid FROM #RetryList)
 
 
@@ -3900,3 +3913,50 @@ END
 END
 GO
 
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PostponeWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =================================================================
+-- Author:		Thanh Huynh
+-- Create date: September 11, 2009
+-- Description:	Postpone (reschedule) a work queue entry
+-- =================================================================
+CREATE PROCEDURE [dbo].[PostponeWorkQueue]  
+	-- Add the parameters for the stored procedure here
+	@WorkQueueGUID uniqueidentifier, 
+	@ScheduledTime datetime = null,
+	@ExpirationTime datetime = null,
+	@Reason nvarchar(512) = null
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @StudyStorageGUID uniqueidentifier
+	declare @PendingStatusEnum as smallint
+
+	SELECT @StudyStorageGUID=StudyStorageGUID FROM WorkQueue WHERE GUID=@WorkQueueGUID
+	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = ''Pending''
+	
+	BEGIN TRANSACTION
+
+		UPDATE WorkQueue
+		SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,
+			WorkQueueStatusEnum=@PendingStatusEnum
+		WHERE GUID=@WorkQueueGUID
+
+		-- Unlock the study
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1	
+
+	COMMIT TRANSACTION
+END
+'
+END
+GO

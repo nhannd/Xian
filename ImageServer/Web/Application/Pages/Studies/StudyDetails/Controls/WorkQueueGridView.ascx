@@ -1,5 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueGridView.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.WorkQueueGridView" %>
+<%@ Import Namespace="ClearCanvas.ImageServer.Common"%>
+<%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Data"%>
 <%@ Import Namespace="ClearCanvas.ImageServer.Model" %>
     
 <asp:ScriptManagerProxy ID="ScriptManagerProxy1" runat="server">
@@ -28,9 +30,13 @@
                             <asp:BoundField DataField="WorkQueuePriorityEnum" HeaderText="Priority">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="WorkQueueStatusEnum" HeaderText="Status">
+                            <asp:TemplateField HeaderText="Status">
                                 <HeaderStyle wrap="False" />    
-                            </asp:BoundField>
+                                <ItemTemplate>
+                                    <%# Eval("WorkQueueStatusEnum")  %>                                                                   
+                                </ItemTemplate>
+                            </asp:TemplateField>
+                                
                             <asp:BoundField DataField="ProcessorID" HeaderText="Processing Server">
                                 <HeaderStyle wrap="False" />  
                             </asp:BoundField>

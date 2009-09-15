@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -123,13 +124,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 /* failed item */
                 item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
                 /* nobody claimed it */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress && String.IsNullOrEmpty(item.ProcessorID))
+                ||
+                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress && String.IsNullOrEmpty(item.ProcessorID))
                 /* somebody claimed it but hasn't updated it for quite a while */
                 || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
                     !String.IsNullOrEmpty(item.ProcessorID) &&
-                    item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)));
+                    item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)))
+
+                || !ServerPlatform.IsActiveWorkQueue(item);
 
         }
+
 
         /// <summary>
         /// Returns a value indicating whether the specified <see cref="WorkQueue"/> can be manually deleted from the queue.
@@ -167,7 +172,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                  item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
                 ||
                 (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
-                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy);
+                 item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy)
+
+                || !ServerPlatform.IsActiveWorkQueue(item);
 		}
 
 
@@ -302,6 +309,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             updatedColumns.WorkQueuePriorityEnum = priority;
             updatedColumns.ScheduledTime = newScheduledTime;
             updatedColumns.ExpirationTime = expirationTime;
+            updatedColumns.FailureCount = 0;
+            updatedColumns.FailureDescription = String.Empty;
+            updatedColumns.LastUpdatedTime = Platform.Time;
 
             bool result = false;
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
@@ -343,6 +353,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             columns.FailureDescription = String.Empty;
             columns.ScheduledTime = newScheduledTime;
             columns.ExpirationTime = expirationTime;
+            columns.LastUpdatedTime = Platform.Time;
 
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))

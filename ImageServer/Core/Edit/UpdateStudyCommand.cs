@@ -48,6 +48,7 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
+using Settings=ClearCanvas.ImageServer.Common.Diagnostics.Settings;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {

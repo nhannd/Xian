@@ -433,6 +433,7 @@ CREATE TABLE [dbo].[WorkQueue](
 	[ExpirationTime] [datetime] NULL,
 	[ScheduledTime] [datetime] NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_WorkQueue_InsertTime]  DEFAULT (getdate()),
+	[LastUpdatedTime] [datetime] NULL,
 	[FailureCount] [int] NOT NULL CONSTRAINT [DF_WorkQueue_FailureCount]  DEFAULT ((0)),
 	[FailureDescription] [nvarchar](512) NULL,
 	[Data] [xml] NULL,

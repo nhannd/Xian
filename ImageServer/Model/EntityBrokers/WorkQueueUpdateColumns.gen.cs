@@ -77,6 +77,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
+        public DateTime LastUpdatedTime
+        {
+            set { SubParameters["LastUpdatedTime"] = new EntityUpdateColumn<DateTime>("LastUpdatedTime", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
         public String ProcessorID
         {

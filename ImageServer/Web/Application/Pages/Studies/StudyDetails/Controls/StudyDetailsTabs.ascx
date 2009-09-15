@@ -54,6 +54,10 @@
         </ContentTemplate>
     </aspAjax:TabPanel>
     <aspAjax:TabPanel ID="WorkQueueTab" HeaderText="<%$Resources: Titles, WorkQueue %>" runat="server">
+        <HeaderTemplate>
+            <asp:Label ID="WorkQueueTabTitle" runat="server" Text="<%$Resources: Titles, WorkQueue %>"></asp:Label>
+            <asp:Image runat="server" Visible='<%# Study.RequiresWorkQueueAttention %>'  ImageAlign="AbsBottom" ID="StuckIcon" SkinID="WarningSmall" />
+        </HeaderTemplate>
         <ContentTemplate>
             <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
                 <tr>

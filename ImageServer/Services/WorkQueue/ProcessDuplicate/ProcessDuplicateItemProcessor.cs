@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                     Platform.Log(LogLevel.Debug,
                                  "ProcessDuplicate cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
                                  failureReason);
-                    PostponeItem(WorkQueueItem);
+                    PostponeItem(WorkQueueItem, "Study is being locked by another processor");
                     return false;
                 }
             }
