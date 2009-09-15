@@ -1,9 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Tables;
+using System.Drawing;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+	/*
+	 * All code in this file was adapted from the following MSDN article:
+	 * http://msdn.microsoft.com/en-us/library/aa730881%28VS.80%29.aspx
+	 * 
+	 */
+
+
+
 	/// <summary>
 	/// Defines a column that allows for an arbitrary custom editing control to be displayed.
 	/// </summary>
@@ -188,7 +197,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (_editorView == null)
 			{
 				_editorView = (ITableCellEditorView)ViewFactory.CreateAssociatedView(_editor.GetType());
-				this.Controls.Add((Control)_editorView.GuiElement);
+				var control = (Control) _editorView.GuiElement;
+				control.Dock = DockStyle.Fill;
+				this.Controls.Add(control);
 			}
 			// associate view with current editor
 			_editorView.SetEditor(_editor);
