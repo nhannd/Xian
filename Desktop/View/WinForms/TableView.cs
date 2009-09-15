@@ -418,23 +418,38 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		/// <summary>
-		/// Begins editing on the first editable cell in the first selected row.
+		/// Begins editing the specified column in the first selected row.
 		/// </summary>
+		/// <param name="column">Zero-based column index of column to edit.</param>
 		/// <param name="selectAll"></param>
-		public bool BeginEdit(bool selectAll)
+		public bool BeginEdit(int column, bool selectAll)
 		{
 			var firstSelRow = (DataGridViewRow)CollectionUtils.FirstElement(_dataGridView.SelectedRows);
-			var col = CollectionUtils.SelectFirst(_table.Columns, (ITableColumn c) => !c.ReadOnly);
-			if (firstSelRow != null && col != null)
+			if (firstSelRow != null)
 			{
 				var rowIndex = firstSelRow.Index;
-				var colIndex = _table.Columns.IndexOf(col);
 
-				_dataGridView.CurrentCell = _dataGridView[colIndex, rowIndex];
+				_dataGridView.CurrentCell = _dataGridView[column, rowIndex];
 
 				return _dataGridView.BeginEdit(selectAll);
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Begins editing the specified column in the first selected row.
+		/// </summary>
+		/// <param name="column"></param>
+		/// <param name="selectAll"></param>
+		/// <returns></returns>
+		public bool BeginEdit(ITableColumn column, bool selectAll)
+		{
+			Platform.CheckForNullReference(column, "column");
+			var colIndex = _table.Columns.IndexOf(column);
+			if(colIndex < 0)
+				throw new ArgumentException("Specified column does not exist in this table.");
+
+			return BeginEdit(colIndex, selectAll);
 		}
 
 

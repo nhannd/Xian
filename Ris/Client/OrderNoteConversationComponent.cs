@@ -303,8 +303,19 @@ namespace ClearCanvas.Ris.Client
 
 		public void AddRecipient()
 		{
-			_selectedRecipient = _recipients.AddNew(true);
+			// try to select an existing blank cell
+			_selectedRecipient = CollectionUtils.SelectFirst(_recipients.Items, i => i.Item.Recipient == null);
+
+			// if none, then add one
+			if(_selectedRecipient == null)
+			{
+				_selectedRecipient = _recipients.AddNew(true);
+			}
+
+			// inform view to select the cell
 			OnSelectedRecipientChanged();
+
+			// inform view to begin editing the cell
 			EventsHelper.Fire(_newRecipientAdded, this, EventArgs.Empty);
 		}
 
@@ -392,9 +403,18 @@ namespace ClearCanvas.Ris.Client
 		{
 			// if this is a new note, and we have a template, use the template,
 			// otherwise use the saved setting
-			var groupName = (orderNotes.Count == 0 && template != null) ?
-				template.OnBehalfOfGroup :
-				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
+			string groupName;
+			if (orderNotes.Count == 0 && template != null)
+			{
+				// take from template, and update the user prefs
+				groupName = template.OnBehalfOfGroup;
+				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = groupName;
+				OrderNoteConversationComponentSettings.Default.Save();
+			}
+			else
+			{
+				groupName = OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
+			}
 
 			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
 		}
@@ -479,8 +499,8 @@ namespace ClearCanvas.Ris.Client
 					_body,
 					_onBehalfOf == _emptyStaffGroup ? null : _onBehalfOf,
 					_urgent,
-					_recipients.SelectedStaff,
-					_recipients.SelectedStaffGroups);
+					_recipients.CheckStaff,
+					_recipients.CheckedStaffGroups);
 			}
 			return null;
 		}

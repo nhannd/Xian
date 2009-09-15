@@ -109,7 +109,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _component_NewRecipientAdded(object sender, EventArgs e)
 		{
-			_recipients.BeginEdit(false);
+			// TODO: shouldn't hardcode the column index here
+			_recipients.BeginEdit(1, false);
 		}
 
 		private void _component_propertyChanged(object sender, PropertyChangedEventArgs e)

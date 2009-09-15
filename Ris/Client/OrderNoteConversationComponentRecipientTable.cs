@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client
 				this.Columns.Add(nameColumn);
 			}
 
-			public List<StaffSummary> SelectedStaff
+			public List<StaffSummary> CheckStaff
 			{
 				get
 				{
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
-			public List<StaffGroupSummary> SelectedStaffGroups
+			public List<StaffGroupSummary> CheckedStaffGroups
 			{
 				get
 				{
