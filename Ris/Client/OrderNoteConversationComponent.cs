@@ -64,7 +64,11 @@ namespace ClearCanvas.Ris.Client
 			private DesktopWindow _desktopWindow;
 
 			internal StaffAndGroupLookupHandler(DesktopWindow desktopWindow)
-				: base(new ILookupHandler[] { new StaffLookupHandler(desktopWindow), new StaffGroupLookupHandler(desktopWindow, false) })
+				: base(new Dictionary<ILookupHandler, Type>
+							{
+								{new StaffLookupHandler(desktopWindow), typeof (StaffSummary)},
+								{new StaffGroupLookupHandler(desktopWindow, false), typeof (StaffGroupSummary)}
+							})
 			{
 				_desktopWindow = desktopWindow;
 			}
@@ -91,8 +95,12 @@ namespace ClearCanvas.Ris.Client
 			public override string FormatItem(object item)
 			{
 				var s = base.FormatItem(item);
-				if (item is StaffGroupSummary)
+
+				// if the staff group summary is formatted properly, add a (Staff Group) to help
+				// identify it as a group, rather than a staff
+				if (!string.IsNullOrEmpty(s) && item is StaffGroupSummary)
 					s += " (Staff Group)";
+
 				return s;
 			}
 		}

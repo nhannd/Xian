@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_owner = owner;
 				_lookupHandlers = new Dictionary<ISuggestionProvider, ILookupHandler>();
-				foreach (var handler in _owner.ChildHandlers)
+				foreach (var handler in _owner.ChildHandlers.Keys)
 				{
 					var suggestionProvider = handler.SuggestionProvider;
 
@@ -85,13 +85,13 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor.
 		/// </summary>
 		/// <param name="childHandlers"></param>
-		protected LookupHandlerAggregator(ILookupHandler[] childHandlers)
+		protected LookupHandlerAggregator(Dictionary<ILookupHandler, Type> childHandlers)
 		{
 			this.ChildHandlers = childHandlers;
 
 			// initialize the dictionary with an empty list for each handler
 			this.SuggestedItemsCache = new Dictionary<ILookupHandler, List<object>>();
-			foreach (var handler in childHandlers)
+			foreach (var handler in childHandlers.Keys)
 			{
 				this.SuggestedItemsCache.Add(handler, new List<object>());
 			}
@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client
 
 			// otherwise give each child a chance to resolve it without interaction
 			var results = new List<object>();
-			foreach (var handler in ChildHandlers)
+			foreach (var handler in ChildHandlers.Keys)
 			{
 				object temp;
 				if (handler.Resolve(query, false, out temp))
@@ -144,6 +144,13 @@ namespace ClearCanvas.Ris.Client
 				if (kvp.Value.Contains(item))
 					return kvp.Key.FormatItem(item);
 			}
+
+			foreach (var kvp in ChildHandlers)
+			{
+				if (item.GetType() == kvp.Value)
+					return kvp.Key.FormatItem(item);
+			}
+
 			return null;
 		}
 
@@ -164,9 +171,9 @@ namespace ClearCanvas.Ris.Client
 		protected abstract bool ResolveNameInteractive(string query, out object result);
 
 		/// <summary>
-		/// Set of child lookup handlers that are aggregated by this instance.
+		/// Set of child lookup handlers that are aggregated by this instance and the type of item each handler can lookup.
 		/// </summary>
-		private ILookupHandler[] ChildHandlers { get; set; }
+		private Dictionary<ILookupHandler, Type> ChildHandlers { get; set; }
 
 		/// <summary>
 		/// Cache of the current list of suggestions for each child lookup handler.
