@@ -1157,5 +1157,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 				e.Value = column.FormatValue(e.Value);
 			}
 		}
-    }
+
+		private void _dataGridView_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
+		{
+			// if we do custom editing, the dgv sometimes tries to pass a string back and expects
+			// the cell to "parse" it to obtain the actual value
+			// therefore, we subscribe to this event so that we can retrieve the value from the 
+			// underlying ITable
+			var column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
+
+			// if no custom editor, then nothing needs to be done here
+			if (column.GetCellEditor() == null)
+				return;
+
+			// retrieve value from table, and inform dgv that we have parsed the string successfully
+			e.Value = column.GetValue(_table.Items[e.RowIndex]);
+			e.ParsingApplied = true;
+		}
+	}
 }
