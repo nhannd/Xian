@@ -29,38 +29,38 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
 {
-    [DataContract]
-    public class GetConversationEditorFormDataResponse : DataContractBase
-    {
-    	public GetConversationEditorFormDataResponse(List<StaffGroupSummary> onBehalfOfGroupChoices)
-    	{
-    		OnBehalfOfGroupChoices = onBehalfOfGroupChoices;
-    	}
+	[DataContract]
+	public class GetConversationEditorFormDataResponse : DataContractBase
+	{
+		public GetConversationEditorFormDataResponse(List<StaffGroupSummary> onBehalfOfGroupChoices)
+		{
+			OnBehalfOfGroupChoices = onBehalfOfGroupChoices;
+			RecipientStaffs = new List<StaffSummary>();
+			RecipientStaffGroups = new List<StaffGroupSummary>();
+		}
 
 		/// <summary>
 		/// The on-behalf-of group choices for the current user.
 		/// </summary>
-    	[DataMember]
-    	public List<StaffGroupSummary> OnBehalfOfGroupChoices;
+		[DataMember]
+		public List<StaffGroupSummary> OnBehalfOfGroupChoices;
 
 		/// <summary>
 		/// Staff summaries for recipient staff, specified in the request.
 		/// </summary>
-        [DataMember]
-        public List<StaffSummary> RecipientStaffs;
+		[DataMember]
+		public List<StaffSummary> RecipientStaffs;
 
 		/// <summary>
 		/// Group summaries for recipient groups, specified in the request.
 		/// </summary>
 		[DataMember]
-        public List<StaffGroupSummary> RecipientStaffGroups;
-    }
+		public List<StaffGroupSummary> RecipientStaffGroups;
+	}
 }

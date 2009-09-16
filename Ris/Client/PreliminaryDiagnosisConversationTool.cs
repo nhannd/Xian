@@ -82,5 +82,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return new string[] { OrderNoteCategory.PreliminaryDiagnosis.Key }; }
 		}
+
+		protected override void OnDialogClosed(ApplicationComponentExitCode exitCode)
+		{
+			this.Context.InvalidateFolders(this.Context.SelectedFolder.GetType());
+
+			base.OnDialogClosed(exitCode);
+		}
 	}
 }
