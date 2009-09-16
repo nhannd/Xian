@@ -26,7 +26,13 @@
 					Field.setValue($("myForm"), "");
 					return;
 				}
+				
+				var orderNotes = context.OrderNotes.map(function(n) { return n.NoteDetail; });
+				// initialize an array of boolean check states to false
+				var checkStates = orderNotes.map(function(n) { return false; });
 
+				Field.show($("noNotesSection"), !orderNotes || orderNotes.length == 0);
+				
 				var orderNotesSubsections = 
 					[
 						{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"}
@@ -36,14 +42,14 @@
 					{
 	 					onItemChecked: function(item, checked) 
 							{
-								var originalIndex = context.OrderNotes.indexOf(item);
-								context.NotesAcknowledged[originalIndex] = checked;
-								Ris.setTag("NotesAcknowledged", JSML.create(context.NotesAcknowledged, "NotesAcknowledged")); 
+								var index = orderNotes.indexOf(item);
+								checkStates[index] = checked;
+								Ris.setTag("NotesAcknowledged", JSML.create(checkStates, "checkStates")); 
 							},
 						showItemCheckBox: function(item) { return item.CanAcknowledge; }
 					};
 
-				Preview.OrderNotesTable.create($("orderNoteSection"), context.OrderNotes, orderNotesSubsections, true, checkBoxesProperties);
+				Preview.OrderNotesTable.create($("orderNoteSection"), orderNotes, orderNotesSubsections, true, checkBoxesProperties);
 			}
 			catch(e)
 			{
@@ -52,10 +58,32 @@
 			}
 		}
 	</script>
+	<style>
+		body {
+			margin:0 0.5em 0 0.5em;
+			padding:0;
+		}
+		tr input {
+			position:relative;
+			top: 2.5em;
+		}
+		td {
+			position:relative;
+		}
+		#noNotesSection {
+			font-family: Tahoma, Geneva, Arial;
+			font-size: 150%;
+			font-weight: bold;
+			color: #CCCCCC;
+			text-align:center;
+			margin-top:1em;
+		}
+	</style>
 </head>
 <body onload="javascript: onBodyLoad()">
 	<form id="myForm">
 
+	<div id="noNotesSection">No Notes</div>
 	<div id="orderNoteSection"></div>
 
 	</form>
