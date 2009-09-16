@@ -936,9 +936,6 @@ Preview.OrderNotesTable = function () {
 			if(notes.length == 0)
 				return;
 
-//			if (!hideHeading)
-//				Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
-
 			if(subsections)
 			{
 				for(var i = 0; i < subsections.length; i++)
@@ -1463,65 +1460,53 @@ Preview.BannerSection = function() {
 Preview.OrderNoteSection = function() {
 	var _formatStaffNameAndRoleAndOnBehalf = function(author, onBehalfOfGroup)
 		{
-			var from = Ris.formatStaffNameAndRole(author);
-			
-			if(onBehalfOfGroup != null)
-				from = from + " on behalf of " + onBehalfOfGroup.Name;
-
-			return from;
+			return Ris.formatStaffNameAndRole(author) + ((onBehalfOfGroup != null) ? (" on behalf of " + onBehalfOfGroup.Name) : "");
 		};
 
 	var _formatAcknowledgedTime = function(acknowledgedTime)
 		{
-			if (!acknowledgedTime)
-				return "";
-				
-			return " at " + Ris.formatDateTime(acknowledgedTime);
+			return acknowledgedTime ? (" at " + Ris.formatDateTime(acknowledgedTime)) : "";
 		};
 		
 	var _formatAcknowledged = function(groups, staffs)
 		{
 			var recipientSeparator = "<br>";
-			var formats = [];
-			var alreadyAcknowledgedStaffId = [];
 
-			formats.add(String.combine(
-				groups.map(function(recipient) 
+			// create string of group acknowledgements
+			var formattedGroups = String.combine(
+				groups.map(function(r) 
 					{
-						var staffIdAlreadyExist = alreadyAcknowledgedStaffId.find(function(id) { return id == recipient.AcknowledgedByStaff.Id; });
-						if (!staffIdAlreadyExist)
-							alreadyAcknowledgedStaffId.add(recipient.AcknowledgedByStaff.StaffId);
-							
-						return _formatStaffNameAndRoleAndOnBehalf(recipient.AcknowledgedByStaff, recipient.Group) + _formatAcknowledgedTime(recipient.AcknowledgedTime); 
+						return _formatStaffNameAndRoleAndOnBehalf(r.AcknowledgedByStaff, r.Group) + _formatAcknowledgedTime(r.AcknowledgedTime); 
 					}), 
-				recipientSeparator));
+				recipientSeparator);
 
+			// create string of staff acknowledgements
 			// if staff already acknowledged for a group, no need to list it the second time in the staff recipients
-			formats.add(String.combine(
-				staffs.map(function(recipient) 
+			var groupAckStaffIds = groups.map(function(r) { return r.AcknowledgedByStaff.StaffId; }).unique();
+			var formattedStaff = String.combine(
+				staffs.map(function(r) 
 					{ 
-						var staffIdAlreadyExist = alreadyAcknowledgedStaffId.find(function(id) { return id == recipient.Staff.StaffId; });
-						return staffIdAlreadyExist ? "" : Ris.formatStaffNameAndRole(recipient.Staff) + _formatAcknowledgedTime(recipient.AcknowledgedTime); 
+						var staffIdAlreadyExist = groupAckStaffIds.find(function(id) { return id == r.Staff.StaffId; });
+						return staffIdAlreadyExist ? "" : Ris.formatStaffNameAndRole(r.Staff) + _formatAcknowledgedTime(r.AcknowledgedTime); 
 					}), 
-				recipientSeparator));
+				recipientSeparator);
 
-			return String.combine(formats, recipientSeparator);
+			return String.combine([formattedGroups, formattedStaff], recipientSeparator);
 		};
 	
 	var _formatNotAcknowledged = function(groups, staffs)
 		{
 			var recipientSeparator = "; ";
-			var formats = [];
 
-			formats.add(String.combine(
-				groups.map(function(recipient) { return recipient.Group.Name; }), 
-				recipientSeparator));
+			var formattedGroups = String.combine(
+				groups.map(function(r) { return r.Group.Name; }), 
+				recipientSeparator);
 
-			formats.add(String.combine(
-				staffs.map(function(recipient) { return Ris.formatStaffNameAndRole(recipient.Staff); }), 
-				recipientSeparator));
+			var formattedStaff = String.combine(
+				staffs.map(function(r) { return Ris.formatStaffNameAndRole(r.Staff); }), 
+				recipientSeparator);
 
-			return String.combine(formats, recipientSeparator);
+			return String.combine([formattedGroups, formattedStaff], recipientSeparator);
 		};
 	
 	return {
@@ -1543,7 +1528,7 @@ Preview.OrderNoteSection = function() {
 			html += '		<td>From:</td>';
 			html += '		<td>' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
 			html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
-			html += '		<td style="{width:10em;}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
+			html += '		<td style="{width:10em;text-align:right}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
 			{
