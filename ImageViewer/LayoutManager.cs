@@ -207,39 +207,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Adds new <see cref="IDisplaySet"/>s as prior studies are loaded.
-		/// </summary>
-		/// <remarks>After the initial layout has taken place, the <see cref="LayoutManager"/> observes
-		/// the <see cref="EventBroker.StudyLoaded"/> event and continually adds new <see cref="IDisplaySet"/>s
-		/// and <see cref="IImageSet"/>s as prior studies are loaded.
-		/// </remarks>
-		protected virtual void OnPriorStudyLoaded(Study study)
-		{
-			BuildFromStudy(study);
-		}
-
-		protected virtual void OnNewSopLoaded(Sop sop)
-		{
-			ImageSet imageSet = GetImageSet(sop.StudyInstanceUid);
-			if (imageSet == null)
-			{
-				imageSet = CreateImageSet(sop.ParentSeries.ParentStudy);
-				if (imageSet != null)
-					AddImageSet(imageSet);
-			}
-			else
-			{
-				//Update the originals.
-				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-					UpdateDisplaySet(displaySet, sop);
-
-				//Update the copies.
-				foreach (IDisplaySet displaySet in imageSet.GetCopies())
-					UpdateDisplaySet(displaySet, sop);
-			}
-		}
-
-		/// <summary>
 		/// Validates the <see cref="ILogicalWorkspace"/>.
 		/// </summary>
 		/// <remarks>
@@ -527,9 +494,35 @@ namespace ClearCanvas.ImageViewer
 			OnPriorStudyLoaded(args.Study);
 		}
 
+		private void OnPriorStudyLoaded(Study study)
+		{
+			BuildFromStudy(study);
+		}
+
 		private void OnImageLoaded(object sender, ClearCanvas.Common.Utilities.ItemEventArgs<Sop> e)
 		{
 			OnNewSopLoaded(e.Item);
+		}
+
+		private void OnNewSopLoaded(Sop sop)
+		{
+			ImageSet imageSet = GetImageSet(sop.StudyInstanceUid);
+			if (imageSet == null)
+			{
+				imageSet = CreateImageSet(sop.ParentSeries.ParentStudy);
+				if (imageSet != null)
+					AddImageSet(imageSet);
+			}
+			else
+			{
+				//Update the originals.
+				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+					UpdateDisplaySet(displaySet, sop);
+
+				//Update the copies.
+				foreach (IDisplaySet displaySet in imageSet.GetCopies())
+					UpdateDisplaySet(displaySet, sop);
+			}
 		}
 
 		#region Disposal

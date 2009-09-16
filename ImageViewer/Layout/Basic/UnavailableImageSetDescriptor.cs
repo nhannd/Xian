@@ -9,17 +9,25 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			: base(studyItem)
 		{
 			LoadStudyError = loadStudyError;
-
-			string serverName;
-			if (studyItem.Server == null)
-				serverName = SR.LabelUnknownServer;
-			else
-				serverName = studyItem.Server.ToString();
-
-			base.Name = String.Format("({0}) {1}", serverName, base.Name);
 		}
 
 		public readonly Exception LoadStudyError;
+
+		public new StudyItem SourceStudy
+		{
+			get { return (StudyItem)base.SourceStudy; }
+		}
+
+		protected override string GetName()
+		{
+			string serverName;
+			if (SourceStudy.Server == null)
+				serverName = SR.LabelUnknownServer;
+			else
+				serverName = SourceStudy.Server.ToString();
+
+			return String.Format("({0}) {1}", serverName, base.GetName());
+		}
 
 		public bool IsOffline
 		{

@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CR,DX,MG")]
+        [global::System.Configuration.DefaultSettingValueAttribute("CR,DX,MG,KO")]
         public string SingleImageModalities {
             get {
                 return ((string)(this["SingleImageModalities"]));

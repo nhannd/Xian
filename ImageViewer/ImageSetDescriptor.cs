@@ -10,26 +10,26 @@ namespace ClearCanvas.ImageViewer
 {
 	public interface IDicomImageSetDescriptor : IImageSetDescriptor
 	{
-		IStudyRootStudyIdentifier Identifier { get; }
+		IStudyRootStudyIdentifier SourceStudy { get; }
 	}
 
 	public class DicomImageSetDescriptor : ImageSetDescriptor, IDicomImageSetDescriptor
 	{
-		private readonly IStudyRootStudyIdentifier _identifier;
+		private readonly IStudyRootStudyIdentifier _sourceStudy;
 
 		private string _name;
 		private string _patientInfo;
 		private string _uid;
 
-		public DicomImageSetDescriptor(IStudyRootStudyIdentifier identifier)
+		public DicomImageSetDescriptor(IStudyRootStudyIdentifier sourceStudy)
 		{
-			Platform.CheckForNullReference(identifier, "identifier");
-			_identifier = identifier;
+			Platform.CheckForNullReference(sourceStudy, "sourceStudy");
+			_sourceStudy = sourceStudy;
 		}
 
-		public IStudyRootStudyIdentifier Identifier
+		public IStudyRootStudyIdentifier SourceStudy
 		{
-			get { return _identifier; }
+			get { return _sourceStudy; }
 		}
 
 		public override string Name
@@ -68,27 +68,27 @@ namespace ClearCanvas.ImageViewer
 		protected virtual string GetName()
 		{
 			DateTime studyDate;
-			DateParser.Parse(_identifier.StudyDate, out studyDate);
+			DateParser.Parse(_sourceStudy.StudyDate, out studyDate);
 			DateTime studyTime;
-			TimeParser.Parse(_identifier.StudyTime, out studyTime);
+			TimeParser.Parse(_sourceStudy.StudyTime, out studyTime);
 
-			string modalitiesInStudy = StringUtilities.Combine(_identifier.ModalitiesInStudy, ", ");
+			string modalitiesInStudy = StringUtilities.Combine(_sourceStudy.ModalitiesInStudy, ", ");
 
 			return String.Format("{0} {1} [{2}] {3}",
 										  studyDate.ToString(Format.DateFormat),
 										  studyTime.ToString(Format.TimeFormat),
 										  modalitiesInStudy ?? "",
-										  _identifier.StudyDescription);
+										  _sourceStudy.StudyDescription);
 		}
 
 		protected virtual string GetPatientInfo()
 		{
-			return String.Format("{0} · {1}", new PersonName(_identifier.PatientsName).FormattedName, _identifier.PatientId);
+			return String.Format("{0} · {1}", new PersonName(_sourceStudy.PatientsName).FormattedName, _sourceStudy.PatientId);
 		}
 
 		protected virtual string GetUid()
 		{
-			return _identifier.StudyInstanceUid;
+			return _sourceStudy.StudyInstanceUid;
 		}
 	}
 

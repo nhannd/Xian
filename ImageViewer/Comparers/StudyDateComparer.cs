@@ -91,8 +91,8 @@ namespace ClearCanvas.ImageViewer.Comparers
 			}
 			else
 			{
-				studyDate = DateParser.Parse(descriptor.Identifier.StudyDate);
-				studyTime = TimeParser.Parse(descriptor.Identifier.StudyTime);
+				studyDate = DateParser.Parse(descriptor.SourceStudy.StudyDate);
+				studyTime = TimeParser.Parse(descriptor.SourceStudy.StudyTime);
 			}
 
 			yield return studyDate;

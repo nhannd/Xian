@@ -9,6 +9,9 @@
   <display-set-creation-options modality="DX">
     <display-set-creation-option identifier="CreateSingleImageDisplaySets" value="True" />
   </display-set-creation-options>
+  <display-set-creation-options modality="KO">
+    <display-set-creation-option identifier="CreateSingleImageDisplaySets" value="True" />
+  </display-set-creation-options>
   <display-set-creation-options modality="MG">
     <display-set-creation-option identifier="CreateSingleImageDisplaySets" value="True" />
   </display-set-creation-options>

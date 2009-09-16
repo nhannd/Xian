@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		public sealed override string Name
+		public override string Name
 		{
 			get
 			{
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Name property cannot be set publicly."); }
 		}
 
-		public sealed override string Description
+		public override string Description
 		{
 			get
 			{
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Description property cannot be set publicly."); }
 		}
 
-		public sealed override string Uid
+		public override string Uid
 		{
 			get
 			{
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer
 			set { throw new InvalidOperationException("The Uid property cannot be set publicly."); }
 		}
 
-		public sealed override int Number
+		public override int Number
 		{
 			get
 			{

@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer
 
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
-			if (_singleImageModalities.Contains(series.Modality) && series.NumberOfSeriesRelatedInstances > 1)
+			if (_singleImageModalities.Contains(series.Modality))
 			{
 				return CreateSingleImageDisplaySets(series);
 			}
@@ -188,14 +188,32 @@ namespace ClearCanvas.ImageViewer
 			foreach (Sop sop in series.Sops)
 			{
 				List<IPresentationImage> images = PresentationImageFactory.CreateImages(sop);
-				if (images.Count > 0)
-				{
-					if (sop.IsImage)
-					{
-						DisplaySet displaySet = new DisplaySet(new SingleImageDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber));
-						foreach (IPresentationImage image in images)
-							displaySet.PresentationImages.Add(image);
+				if (images.Count == 0)
+					continue;
 
+				if (sop.IsImage)
+				{
+					ImageSop imageSop = (ImageSop)sop;
+					DisplaySetDescriptor descriptor;
+
+					if (imageSop.NumberOfFrames == 1)
+						descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber);
+					else
+						descriptor = new MultiframeDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber);
+
+					DisplaySet displaySet = new DisplaySet(descriptor);
+					foreach (IPresentationImage image in images)
+						displaySet.PresentationImages.Add(image);
+
+					displaySets.Add(displaySet);
+				}
+				else
+				{
+					if (series.Sops.Count == 1 && images.Count == 1)
+					{
+						//The sop is actually a container for other referenced sops, like key images, but there's only one image to show, so it's a complete series.
+						DisplaySet displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
+						displaySet.PresentationImages.Add(images[0]);
 						displaySets.Add(displaySet);
 					}
 					else
@@ -473,27 +491,39 @@ namespace ClearCanvas.ImageViewer
 
 			if (multiFrames.Count > 1 || (singleFrames.Count > 0 && multiFrames.Count > 0))
 			{
-				List<IPresentationImage> singleFrameImages = new List<IPresentationImage>();
-				foreach (ImageSop singleFrame in singleFrames)
-					singleFrameImages.AddRange(PresentationImageFactory.CreateImages(singleFrame));
-
-				if (singleFrameImages.Count > 0)
+				if (singleFrames.Count > 0)
 				{
-					SingleImagesDisplaySetDescriptor descriptor = 
-						new SingleImagesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory);
-					DisplaySet singleImagesDisplaySet = new DisplaySet(descriptor);
+					List<IPresentationImage> singleFrameImages = new List<IPresentationImage>();
+					foreach (ImageSop singleFrame in singleFrames)
+						singleFrameImages.AddRange(PresentationImageFactory.CreateImages(singleFrame));
 
-					foreach (IPresentationImage singleFrameImage in singleFrameImages)
-						singleImagesDisplaySet.PresentationImages.Add(singleFrameImage);
+					if (singleFrameImages.Count > 0)
+					{
+						SingleImagesDisplaySetDescriptor descriptor =
+							new SingleImagesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory);
+						DisplaySet singleImagesDisplaySet = new DisplaySet(descriptor);
 
-					displaySets.Add(singleImagesDisplaySet);
+						foreach (IPresentationImage singleFrameImage in singleFrameImages)
+							singleImagesDisplaySet.PresentationImages.Add(singleFrameImage);
+
+						displaySets.Add(singleImagesDisplaySet);
+					}
 				}
 
 				foreach (ImageSop multiFrame in multiFrames)
 				{
-					MultiframeDisplaySetDescriptor descriptor =
-						new MultiframeDisplaySetDescriptor(multiFrame.ParentSeries.GetIdentifier(), multiFrame.SopInstanceUid, multiFrame.InstanceNumber);
-					displaySets.Add(new DisplaySet(descriptor));
+					List<IPresentationImage> multiFrameImages = PresentationImageFactory.CreateImages(multiFrame);
+					if (multiFrameImages.Count > 0)
+					{
+						MultiframeDisplaySetDescriptor descriptor =
+							new MultiframeDisplaySetDescriptor(multiFrame.ParentSeries.GetIdentifier(), multiFrame.SopInstanceUid, multiFrame.InstanceNumber);
+						DisplaySet displaySet = new DisplaySet(descriptor);
+
+						foreach (IPresentationImage multiFrameImage in multiFrameImages)
+							displaySet.PresentationImages.Add(multiFrameImage);
+
+						displaySets.Add(displaySet);
+					}
 				}
 			}
 
