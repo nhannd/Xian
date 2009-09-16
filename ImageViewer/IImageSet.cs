@@ -67,6 +67,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		IEnumerable<IDisplaySet> LinkedDisplaySets { get; }
 
+		IImageSetDescriptor Descriptor { get; }
+
 		/// <summary>
 		/// Gets the name of the image set.
 		/// </summary>

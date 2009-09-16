@@ -492,7 +492,10 @@ Please check the log for more details.</value>
   <data name="SuffixFormatSingleImageDisplaySet" xml:space="preserve">
     <value>Image #{0}</value>
   </data>
-  <data name="SuffixSingleFramesDisplaySet" xml:space="preserve">
-    <value>Single frames</value>
+  <data name="SuffixSingleImagesDisplaySet" xml:space="preserve">
+    <value>Single images</value>
+  </data>
+  <data name="SuffixFormatSingleFrameDisplaySet" xml:space="preserve">
+    <value>Image #{0}, Frame #{1}</value>
   </data>
 </root>

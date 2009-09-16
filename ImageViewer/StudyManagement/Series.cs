@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -109,6 +110,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
+		public ISeriesIdentifier GetIdentifier()
+		{
+			StudyItem studyIdentifier = new StudyItem(StudyInstanceUid, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);
+			studyIdentifier.InstanceAvailability = "ONLINE";
+			return new SeriesIdentifier(this, studyIdentifier);
+		}
 
 		internal void SetSop(Sop sop)
 		{

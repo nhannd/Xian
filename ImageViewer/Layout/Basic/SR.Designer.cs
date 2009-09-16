@@ -196,6 +196,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string LabelUnknownServer {
+            get {
+                return ResourceManager.GetString("LabelUnknownServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Survey/Explode.
         /// </summary>
         public static string MenuExplodeImageBox {

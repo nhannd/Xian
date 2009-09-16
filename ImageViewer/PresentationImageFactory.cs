@@ -62,6 +62,11 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
+		protected StudyTree StudyTree
+		{
+			get { return _studyTree; }
+		}
+
 		#region IPresentationImageFactory Members
 
 		void IPresentationImageFactory.SetStudyTree(StudyTree studyTree)
@@ -80,11 +85,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
-
-		protected StudyTree StudyTree
-		{
-			get { return _studyTree; }	
-		}
 
 		protected virtual IPresentationImage CreateImage(Frame frame)
 		{

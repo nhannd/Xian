@@ -1,12 +1,133 @@
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer
 {
 	#region Default
+
+	[Cloneable(false)]
+	internal class SeriesDisplaySetDescriptor : DicomDisplaySetDescriptor
+	{
+		public SeriesDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
+			: base(sourceSeries, presentationImageFactory)
+		{
+			Platform.CheckForNullReference(presentationImageFactory, "presentationImageFactory");
+		}
+
+		protected SeriesDisplaySetDescriptor(SeriesDisplaySetDescriptor source, ICloningContext context)
+			: base(source, context)
+		{
+		}
+
+		protected override string GetName()
+		{
+			return String.Format("{0}: {1}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription);
+		}
+
+		protected override string GetDescription()
+		{
+			return SourceSeries.SeriesDescription;
+		}
+
+		protected override string GetUid()
+		{
+			return SourceSeries.SeriesInstanceUid;
+		}
+
+		protected override bool ShouldAddSop(Sop sop)
+		{
+			return (sop.SeriesInstanceUid == SourceSeries.SeriesInstanceUid && sop.IsImage);
+		}
+	}
+
+	[Cloneable(false)]
+	internal class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
+	{
+		private readonly string _suffix;
+		private readonly string _sopInstanceUid;
+		private readonly int _frameNumber;
+
+		public SingleFrameDisplaySetDescriptor(ISeriesIdentifier sourceSeries, string sopInstanceUid, int instanceNumber, int frameNumber)
+			: base(sourceSeries)
+		{
+			_sopInstanceUid = sopInstanceUid;
+			_frameNumber = frameNumber;
+			_suffix = String.Format(SR.SuffixFormatSingleFrameDisplaySet, instanceNumber, _frameNumber);
+		}
+
+		protected SingleFrameDisplaySetDescriptor(SingleFrameDisplaySetDescriptor source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected override string GetName()
+		{
+			if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
+				return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
+			else
+				return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+		}
+
+		protected override string GetDescription()
+		{
+			if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
+				return _suffix;
+			else
+				return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+		}
+
+		protected override string GetUid()
+		{
+			return String.Format("{0}:{1}:{2}", SourceSeries.SeriesInstanceUid, _sopInstanceUid, _frameNumber);
+		}
+	}
+
+	[Cloneable(false)]
+	internal class SingleImageDisplaySetDescriptor : DicomDisplaySetDescriptor
+	{
+		private readonly string _suffix;
+		private readonly string _sopInstanceUid;
+
+		public SingleImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, string sopInstanceUid, int instanceNumber)
+			: base(sourceSeries)
+		{
+			_sopInstanceUid = sopInstanceUid;
+			_suffix = String.Format(SR.SuffixFormatSingleImageDisplaySet, instanceNumber);
+		}
+
+		protected SingleImageDisplaySetDescriptor(SingleImageDisplaySetDescriptor source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected override string GetName()
+		{
+			if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
+				return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
+			else
+				return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+		}
+
+		protected override string GetDescription()
+		{
+			if (String.IsNullOrEmpty(SourceSeries.SeriesDescription))
+				return _suffix;
+			else
+				return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+		}
+
+		protected override string GetUid()
+		{
+			return String.Format("{0}:{1}", SourceSeries.SeriesInstanceUid, _sopInstanceUid);
+		}
+	}
 
 	public class BasicDisplaySetFactory : DisplaySetFactory
 	{
@@ -26,9 +147,9 @@ namespace ClearCanvas.ImageViewer
 			get { return _singleImageModalities; }
 		}
 
+
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
-			//TODO: make this work with Key Images.
 			if (_singleImageModalities.Contains(series.Modality) && series.NumberOfSeriesRelatedInstances > 1)
 			{
 				return CreateSingleImageDisplaySets(series);
@@ -43,7 +164,64 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		internal static List<IDisplaySet> CreateSeriesDisplaySets(Series series, StudyTree studyTree)
+		private IDisplaySet CreateSeriesDisplaySet(Series series)
+		{
+			IDisplaySet displaySet = null;
+			List<IPresentationImage> images = new List<IPresentationImage>();
+			foreach (Sop sop in series.Sops)
+				images.AddRange(PresentationImageFactory.CreateImages(sop));
+
+			if (images.Count > 0)
+			{
+				displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
+				foreach (IPresentationImage image in images)
+					displaySet.PresentationImages.Add(image);
+			}
+
+			return displaySet;
+		}
+
+		private List<IDisplaySet> CreateSingleImageDisplaySets(Series series)
+		{
+			List<IDisplaySet> displaySets = new List<IDisplaySet>();
+
+			foreach (Sop sop in series.Sops)
+			{
+				List<IPresentationImage> images = PresentationImageFactory.CreateImages(sop);
+				if (images.Count > 0)
+				{
+					if (sop.IsImage)
+					{
+						DisplaySet displaySet = new DisplaySet(new SingleImageDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber));
+						foreach (IPresentationImage image in images)
+							displaySet.PresentationImages.Add(image);
+
+						displaySets.Add(displaySet);
+					}
+					else
+					{
+						//The sop is actually a container for other referenced sops, like key images.
+						foreach (IPresentationImage image in images)
+						{
+							IImageSopProvider provider = (IImageSopProvider)image;
+							DisplaySetDescriptor descriptor;
+							if (provider.ImageSop.NumberOfFrames == 1)
+								descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber);
+							else
+								descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber, provider.Frame.FrameNumber);
+
+							DisplaySet displaySet = new DisplaySet(descriptor);
+							displaySet.PresentationImages.Add(image);
+							displaySets.Add(displaySet);
+						}
+					}
+				}
+			}
+
+			return displaySets;
+		}
+
+		internal static IEnumerable<IDisplaySet> CreateSeriesDisplaySets(Series series, StudyTree studyTree)
 		{
 			BasicDisplaySetFactory factory = new BasicDisplaySetFactory();
 			factory.SetStudyTree(studyTree);
@@ -54,6 +232,64 @@ namespace ClearCanvas.ImageViewer
 	#endregion
 
 	#region MR Echo
+
+	[Cloneable(false)]
+	internal class MREchoDisplaySetDescriptor : DicomDisplaySetDescriptor
+	{
+		private readonly int _echoNumber;
+		private readonly string _suffix;
+
+		public MREchoDisplaySetDescriptor(ISeriesIdentifier sourceSeries, int echoNumber, IPresentationImageFactory presentationImageFactory)
+			: base(sourceSeries, presentationImageFactory)
+		{
+			Platform.CheckForNullReference(presentationImageFactory, "presentationImageFactory");
+			_echoNumber = echoNumber;
+			_suffix = String.Format(SR.SuffixFormatMREchoDisplaySet, echoNumber);
+		}
+
+		protected MREchoDisplaySetDescriptor(MREchoDisplaySetDescriptor source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected override string GetName()
+		{
+			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
+				return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
+			else
+				return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+		
+		}
+
+		protected override string GetDescription()
+		{
+			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
+				return _suffix;
+			else
+				return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+		}
+
+		protected override string GetUid()
+		{
+			return String.Format("{0}:Echo{1}", SourceSeries.SeriesInstanceUid, _echoNumber);
+		}
+
+		protected override bool ShouldAddSop(Sop sop)
+		{
+			if (sop.IsImage)
+			{
+				DicomAttribute echoAttribute = sop.DataSource[DicomTags.EchoNumbers];
+				if (!echoAttribute.IsEmpty)
+				{
+					int echoNumber = echoAttribute.GetInt32(0, 0);
+					return echoNumber == _echoNumber;
+				}
+			}
+
+			return false;
+		}
+	}
 
 	public class MREchoDisplaySetFactory : DisplaySetFactory
 	{
@@ -81,7 +317,7 @@ namespace ClearCanvas.ImageViewer
 
 						if (images.Count > 0)
 						{
-							IDisplaySet displaySet = CreateDisplaySet(echoImages.Key, series);
+							IDisplaySet displaySet = new DisplaySet(new MREchoDisplaySetDescriptor(series.GetIdentifier(), echoImages.Key, PresentationImageFactory));
 							foreach (IPresentationImage image in images)
 								displaySet.PresentationImages.Add(image);
 
@@ -92,27 +328,6 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			return displaySets;
-		}
-
-		private static IDisplaySet CreateDisplaySet(int echoNumber, ISeriesData series)
-		{
-			DisplaySet displaySet = CreateSeriesDisplaySet<DisplaySet>(series);
-			displaySet.Uid += String.Format(":MREcho{0}", echoNumber);
-
-			String suffix = String.Format(SR.SuffixFormatMREchoDisplaySet, echoNumber);
-
-			//NOTE: purposely use description here b/c the name is never empty
-			if (String.IsNullOrEmpty(displaySet.Description))
-				displaySet.Name += suffix;
-			else
-				displaySet.Name += " - " + suffix;
-
-			if (String.IsNullOrEmpty(displaySet.Description))
-				displaySet.Description += suffix;
-			else
-				displaySet.Description += " - " + suffix;
-
-			return displaySet;
 		}
 
 		private static SortedDictionary<int, List<Sop>> SplitMREchos(IEnumerable<Sop> sops)
@@ -142,6 +357,91 @@ namespace ClearCanvas.ImageViewer
 	#endregion
 
 	#region Mixed Multi-frame
+
+	[Cloneable(false)]
+	internal class MultiframeDisplaySetDescriptor : DicomDisplaySetDescriptor
+	{
+		private readonly string _sopInstanceUid;
+		private readonly string _suffix;
+
+		public MultiframeDisplaySetDescriptor(ISeriesIdentifier sourceSeries, string sopInstanceUid, int instanceNumber)
+			: base(sourceSeries)
+		{
+			_sopInstanceUid = sopInstanceUid;
+			_suffix = String.Format(SR.SuffixFormatMultiframeDisplaySet, instanceNumber);
+		}
+
+		protected MultiframeDisplaySetDescriptor(MultiframeDisplaySetDescriptor source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected override string GetName()
+		{
+			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
+				return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
+			else
+				return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+		}
+		
+		protected override string GetDescription()
+		{
+			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
+				return _suffix;
+			else
+				return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+		}
+		
+		protected override string GetUid()
+		{
+			return _sopInstanceUid;
+		}
+	}
+
+	[Cloneable(false)]
+	internal class SingleImagesDisplaySetDescriptor : DicomDisplaySetDescriptor
+	{
+		private readonly string _suffix;
+
+		public SingleImagesDisplaySetDescriptor(ISeriesIdentifier sourceSeries, IPresentationImageFactory presentationImageFactory)
+			: base(sourceSeries, presentationImageFactory)
+		{
+			_suffix = SR.SuffixSingleImagesDisplaySet;
+		}
+
+		protected SingleImagesDisplaySetDescriptor(SingleImagesDisplaySetDescriptor source, ICloningContext context)
+			: base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected override string GetName()
+		{
+			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
+				return String.Format("{0}: {1}", SourceSeries.SeriesNumber, _suffix);
+			else
+				return String.Format("{0}: {1} - {2}", SourceSeries.SeriesNumber, SourceSeries.SeriesDescription, _suffix);
+		}
+	
+		protected override string GetDescription()
+		{
+			if (String.IsNullOrEmpty(base.SourceSeries.SeriesDescription))
+				return _suffix;
+			else
+				return String.Format("{0} - {1}", SourceSeries.SeriesDescription, _suffix);
+		}
+
+		protected override string GetUid()
+		{
+			return String.Format("{0}:SingleImages", SourceSeries.SeriesInstanceUid);
+		}
+
+		protected override bool ShouldAddSop(Sop sop)
+		{
+			return sop.SeriesInstanceUid == SourceSeries.SeriesInstanceUid && sop.IsImage && ((ImageSop)sop).NumberOfFrames == 1;
+		}
+	}
 
 	public class MixedMultiFrameDisplaySetFactory : DisplaySetFactory
 	{
@@ -173,80 +473,31 @@ namespace ClearCanvas.ImageViewer
 
 			if (multiFrames.Count > 1 || (singleFrames.Count > 0 && multiFrames.Count > 0))
 			{
-				IDisplaySet singleFrameDisplaySet = CreateSingleFramesDisplaySet(singleFrames);
-				if (singleFrameDisplaySet != null)
-					displaySets.Add(singleFrameDisplaySet);
+				List<IPresentationImage> singleFrameImages = new List<IPresentationImage>();
+				foreach (ImageSop singleFrame in singleFrames)
+					singleFrameImages.AddRange(PresentationImageFactory.CreateImages(singleFrame));
 
-				foreach (ImageSop imageSop in multiFrames)
+				if (singleFrameImages.Count > 0)
 				{
-					IDisplaySet multiFrameDisplaySet = CreateMultiFrameDisplaySet(imageSop);
-					if (multiFrameDisplaySet != null)
-						displaySets.Add(multiFrameDisplaySet);
+					SingleImagesDisplaySetDescriptor descriptor = 
+						new SingleImagesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory);
+					DisplaySet singleImagesDisplaySet = new DisplaySet(descriptor);
+
+					foreach (IPresentationImage singleFrameImage in singleFrameImages)
+						singleImagesDisplaySet.PresentationImages.Add(singleFrameImage);
+
+					displaySets.Add(singleImagesDisplaySet);
+				}
+
+				foreach (ImageSop multiFrame in multiFrames)
+				{
+					MultiframeDisplaySetDescriptor descriptor =
+						new MultiframeDisplaySetDescriptor(multiFrame.ParentSeries.GetIdentifier(), multiFrame.SopInstanceUid, multiFrame.InstanceNumber);
+					displaySets.Add(new DisplaySet(descriptor));
 				}
 			}
 
 			return displaySets;
-		}
-
-		private IDisplaySet CreateMultiFrameDisplaySet(ImageSop multiFrame)
-		{
-			DisplaySet displaySet = null;
-			List<IPresentationImage> images = PresentationImageFactory.CreateImages(multiFrame);
-
-			if (images.Count > 0)
-			{
-				displaySet = base.CreateDisplaySet(multiFrame.ParentSeries);
-				displaySet.Uid = multiFrame.SopInstanceUid;
-
-				string suffix = String.Format(SR.SuffixFormatMultiframeDisplaySet, multiFrame.InstanceNumber);
-
-				//NOTE: purposely use description here b/c the name is never empty
-				if (String.IsNullOrEmpty(displaySet.Description))
-					displaySet.Name += suffix;
-				else
-					displaySet.Name += " - " + suffix;
-
-				if (String.IsNullOrEmpty(displaySet.Description))
-					displaySet.Description += suffix;
-				else
-					displaySet.Description += " - " + suffix;
-
-				foreach (IPresentationImage image in images)
-					displaySet.PresentationImages.Add(image);
-			}
-
-			return displaySet;
-		}
-
-		private IDisplaySet CreateSingleFramesDisplaySet(List<ImageSop> singleFrames)
-		{
-			DisplaySet displaySet = null;
-
-			List<IPresentationImage> images = new List<IPresentationImage>();
-			foreach (ImageSop singleFrame in singleFrames)
-				images.AddRange(PresentationImageFactory.CreateImages(singleFrame));
-
-			if (images.Count > 0)
-			{
-				displaySet = base.CreateDisplaySet(singleFrames[0].ParentSeries);
-				displaySet.Uid += ":SingleFrames";
-
-				//NOTE: purposely use description here b/c the name is never empty
-				if (String.IsNullOrEmpty(displaySet.Description))
-					displaySet.Name += SR.SuffixSingleFramesDisplaySet;
-				else
-					displaySet.Name += " - " + SR.SuffixSingleFramesDisplaySet;
-
-				if (String.IsNullOrEmpty(displaySet.Description))
-					displaySet.Description += SR.SuffixSingleFramesDisplaySet;
-				else
-					displaySet.Description += " - " + SR.SuffixSingleFramesDisplaySet;
-
-				foreach (IPresentationImage image in images)
-					displaySet.PresentationImages.Add(image);
-			}
-
-			return displaySet;
 		}
 	}
 	

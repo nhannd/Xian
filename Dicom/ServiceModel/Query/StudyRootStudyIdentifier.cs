@@ -68,6 +68,12 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			CopyFrom(other);
 		}
 
+		public StudyRootStudyIdentifier(IStudyRootData other, IIdentifier identifier)
+			: base(other, identifier)
+		{
+			CopyFrom(other);
+		}
+
 		public StudyRootStudyIdentifier(IStudyRootData other)
 			: base(other)
 		{

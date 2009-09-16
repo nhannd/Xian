@@ -33,9 +33,9 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -46,7 +46,6 @@ namespace ClearCanvas.ImageViewer
 	{
 		private IImageViewer _imageViewer;
 		private bool _layoutCompleted;
-		private bool _addSopWarningLogged = false;
 
 		/// <summary>
 		/// Constructor.
@@ -187,6 +186,26 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyData)
+		{
+			return new DicomImageSetDescriptor(studyData);
+		}
+
+		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
+		{
+			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
+				imageSet.DisplaySets.Add(displaySet);
+		}
+
+		protected virtual void UpdateDisplaySet(IDisplaySet displaySet, Sop sop)
+		{
+			if (displaySet.Descriptor is IDicomDisplaySetDescriptor)
+			{
+				if (((IDicomDisplaySetDescriptor)displaySet.Descriptor).Update(sop))
+					displaySet.Draw();
+			}
+		}
+
 		/// <summary>
 		/// Adds new <see cref="IDisplaySet"/>s as prior studies are loaded.
 		/// </summary>
@@ -199,9 +218,9 @@ namespace ClearCanvas.ImageViewer
 			BuildFromStudy(study);
 		}
 
-		protected virtual void OnImageLoaded(Sop sop)
+		protected virtual void OnNewSopLoaded(Sop sop)
 		{
-			IImageSet imageSet = GetImageSet(sop.StudyInstanceUid);
+			ImageSet imageSet = GetImageSet(sop.StudyInstanceUid);
 			if (imageSet == null)
 			{
 				imageSet = CreateImageSet(sop.ParentSeries.ParentStudy);
@@ -210,27 +229,13 @@ namespace ClearCanvas.ImageViewer
 			}
 			else
 			{
-				UpdateImageSet(imageSet, sop);
-			}
-		}
+				//Update the originals.
+				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+					UpdateDisplaySet(displaySet, sop);
 
-		protected virtual IImageSet CreateImageSet(IStudyRootData studyData)
-		{
-			return ImageSetFactory.CreateImageSet<ImageSet>(studyData);
-		}
-
-		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
-		{
-			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
-				imageSet.DisplaySets.Add(displaySet);
-		}
-
-		protected virtual void UpdateImageSet(IImageSet imageSet, Sop sop)
-		{
-			if (!_addSopWarningLogged)
-			{
-				_addSopWarningLogged = true;
-				Platform.Log(LogLevel.Warn, "Dynamically updating an image set with individual sops is not supported by default.");
+				//Update the copies.
+				foreach (IDisplaySet displaySet in imageSet.GetCopies())
+					UpdateDisplaySet(displaySet, sop);
 			}
 		}
 
@@ -444,7 +449,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void BuildFromStudy(Study study)
 		{
-			IImageSet imageSet = GetImageSet(study.StudyInstanceUid);
+			ImageSet imageSet = GetImageSet(study.StudyInstanceUid);
 
 			// Abort if image set has already been added
 			if (imageSet != null)
@@ -456,9 +461,10 @@ namespace ClearCanvas.ImageViewer
 				AddImageSet(imageSet);
 		}
 
-		private IImageSet CreateImageSet(Study study)
+		private ImageSet CreateImageSet(Study study)
 		{
-			IImageSet imageSet = CreateImageSet(study.GetStudyItem());
+			ImageSetDescriptor descriptor = CreateImageSetDescriptor(study.GetIdentifier());
+			ImageSet imageSet = new ImageSet(descriptor);
 
 			foreach (Series series in study.Series)
 				UpdateImageSet(imageSet, series);
@@ -493,9 +499,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region Helper Methods
 
-		private IImageSet GetImageSet(string studyInstanceUID)
+		private ImageSet GetImageSet(string studyInstanceUID)
 		{
-			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
+			foreach (ImageSet imageSet in LogicalWorkspace.ImageSets)
 			{
 				if (imageSet.Uid == studyInstanceUID)
 					return imageSet;
@@ -523,7 +529,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnImageLoaded(object sender, ClearCanvas.Common.Utilities.ItemEventArgs<Sop> e)
 		{
-			OnImageLoaded(e.Item);
+			OnNewSopLoaded(e.Item);
 		}
 
 		#region Disposal

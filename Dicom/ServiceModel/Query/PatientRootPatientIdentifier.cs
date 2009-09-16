@@ -67,6 +67,12 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			CopyFrom(other);
 		}
 
+		public PatientRootPatientIdentifier(IPatientRootData other, IIdentifier identifier)
+			: base(identifier)
+		{
+			CopyFrom(other);
+		}
+
 		public PatientRootPatientIdentifier(IPatientRootData other)
 		{
 			CopyFrom(other);

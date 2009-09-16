@@ -1169,6 +1169,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image #{0}, Frame #{1}.
+        /// </summary>
+        public static string SuffixFormatSingleFrameDisplaySet {
+            get {
+                return ResourceManager.GetString("SuffixFormatSingleFrameDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image #{0}.
         /// </summary>
         public static string SuffixFormatSingleImageDisplaySet {
@@ -1178,11 +1187,11 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single frames.
+        ///   Looks up a localized string similar to Single images.
         /// </summary>
-        public static string SuffixSingleFramesDisplaySet {
+        public static string SuffixSingleImagesDisplaySet {
             get {
-                return ResourceManager.GetString("SuffixSingleFramesDisplaySet", resourceCulture);
+                return ResourceManager.GetString("SuffixSingleImagesDisplaySet", resourceCulture);
             }
         }
     }

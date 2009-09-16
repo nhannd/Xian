@@ -168,6 +168,8 @@
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
+    <Compile Include="DefaultContextMenuActionFactory.cs" />
+    <Compile Include="UnavailableImageSetDescriptor.cs" />
     <Compile Include="XmlActionsApplicator.cs" />
   </ItemGroup>
   <ItemGroup>

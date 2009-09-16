@@ -240,18 +240,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				if (_series != null)
 				{
+					foreach (Series series in _series.Values)
+						series.SetSop(null);
+
 					_series.Clear();
 					_series = null;
 				}
 
 				if (_studies != null)
 				{
+					foreach (Study study in _studies.Values)
+						study.SetSop(null);
+
 					_studies.Clear();
 					_studies = null;
 				}
 
 				if (_patients != null)
 				{
+					foreach (Patient patient in _patients)
+						patient.SetSop(null);
+
 					_patients.Clear();
 					_patients = null;
 				}

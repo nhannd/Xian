@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 	/// <summary>
 	/// Compares two <see cref="ImageSop"/>s based on study date.
 	/// </summary>
-	public class StudyDateComparer : DicomStudyComparer
+	public class StudyDateComparer : ImageSetComparer
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyDateComparer"/>.
@@ -62,25 +63,46 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 		}
 
-		private IEnumerable<IComparable> GetCompareValues(ImageSop sop)
+		private IEnumerable<IComparable> GetCompareValues(IImageSet imageSet)
 		{
-			yield return DateParser.Parse(sop.StudyDate);
-			yield return TimeParser.Parse(sop.StudyTime);
+			DateTime? studyDate = null;
+			DateTime? studyTime = null;
+
+			IDicomImageSetDescriptor descriptor = imageSet.Descriptor as IDicomImageSetDescriptor;
+			if (descriptor == null)
+			{
+				if (imageSet.DisplaySets.Count == 0)
+				{
+					Debug.Assert(false, "All image sets being sorted must have at least one display set with at least one image in order for them to be sorted properly.");
+				}
+				else if (imageSet.DisplaySets[0].PresentationImages.Count == 0)
+				{
+					Debug.Assert(false, "All image sets being sorted must have at least one display set with at least one image in order for them to be sorted properly.");
+				}
+				else 
+				{
+					ISopProvider provider = imageSet.DisplaySets[0].PresentationImages[0] as ISopProvider;
+					if (provider != null)
+					{
+						studyDate = DateParser.Parse(provider.Sop.StudyDate);
+						studyTime = TimeParser.Parse(provider.Sop.StudyTime);
+					}
+				}
+			}
+			else
+			{
+				studyDate = DateParser.Parse(descriptor.Identifier.StudyDate);
+				studyTime = TimeParser.Parse(descriptor.Identifier.StudyTime);
+			}
+
+			yield return studyDate;
+			yield return studyTime;
+			yield return imageSet.Name;
 		}
 
-		#region IComparer<IDisplaySet> Members
-
-		/// <summary>
-		/// Compares two <see cref="ImageSop"/>s based on study date.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		protected override int Compare(ImageSop x, ImageSop y)
+		public override int Compare(IImageSet x, IImageSet y)
 		{
 			return Compare(GetCompareValues(x), GetCompareValues(y));
 		}
-
-		#endregion
 	}
 }

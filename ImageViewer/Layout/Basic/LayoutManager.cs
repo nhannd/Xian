@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				return true;
 		}
 
-		protected override IImageSet CreateImageSet(IStudyRootData studyRootData)
+		protected override DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyRootData)
 		{
 			PatientInformation info = new PatientInformation();
 			info.PatientId = studyRootData.PatientId;
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier(studyRootData);
 			identifier.PatientId = reconciled.PatientId;
 
-			return base.CreateImageSet(identifier);
+			return base.CreateImageSetDescriptor(identifier);
 		}
 
 		protected override void UpdateImageSet(IImageSet imageSet, Series series)

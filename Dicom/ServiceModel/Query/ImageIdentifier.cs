@@ -73,6 +73,12 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			InstanceNumber = other.InstanceNumber;
 		}
 
+		public ImageIdentifier(ISopInstanceData other, IIdentifier identifier)
+			: base(identifier)
+		{
+			CopyFrom(other);
+		}
+
 		public ImageIdentifier(ISopInstanceData other)
 		{
 			CopyFrom(other);

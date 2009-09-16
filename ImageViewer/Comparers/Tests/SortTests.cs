@@ -50,6 +50,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Comparers.Tests
 {
@@ -118,18 +119,30 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 		}
 
 		[Test]
+		public void TestSortingImageSetsByStudyDateOld()
+		{
+			TestSortingImageSetsByStudyDate(false, true);
+		}
+
+		[Test]
+		public void TestSortingImageSetsByStudyDateReverseOld()
+		{
+			TestSortingImageSetsByStudyDate(true, true);
+		}
+
+		[Test]
 		public void TestSortingImageSetsByStudyDate()
 		{
-			TestSortingImageSetsByStudyDate(false);
+			TestSortingImageSetsByStudyDate(false, true);
 		}
 
 		[Test]
 		public void TestSortingImageSetsByStudyDateReverse()
 		{
-			TestSortingImageSetsByStudyDate(true);
+			TestSortingImageSetsByStudyDate(true, true);
 		}
 
-		private void TestSortingImageSetsByStudyDate(bool reverse)
+		private void TestSortingImageSetsByStudyDate(bool reverse, bool useSops)
 		{
 			ImageSetCollection orderedCollection = new ImageSetCollection();
 			ImageSetCollection nonOrderedCollection = new ImageSetCollection();
@@ -140,21 +153,34 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				ImageSet imageSet = new ImageSet();
 				imageSet.Name = id;
 
-				DisplaySet displaySet = new DisplaySet(id, id);
-				ImageSop sop = NewImageSop(id, id, i);
-				IPresentationImage image = new DicomGrayscalePresentationImage(sop.Frames[1]);
-				sop.Dispose();
-				IImageSopProvider sopProvider = (IImageSopProvider)image;
 				string studyDate;
 				if (i == 0)
 					studyDate = "";
-				else	
+				else
 					studyDate = String.Format("200801{0}", i.ToString("00"));
 
-				DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sopProvider.ImageSop.DataSource);
-				dataSource.SourceMessage.DataSet[DicomTags.StudyDate].SetString(0, studyDate);
-				imageSet.DisplaySets.Add(displaySet);
-				displaySet.PresentationImages.Add(image);
+				if (useSops)
+				{
+					DisplaySet displaySet = new DisplaySet(id, id);
+					ImageSop sop = NewImageSop(id, id, i);
+					IPresentationImage image = new DicomGrayscalePresentationImage(sop.Frames[1]);
+					sop.Dispose();
+					IImageSopProvider sopProvider = (IImageSopProvider)image;
+
+					DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sopProvider.ImageSop.DataSource);
+					dataSource.SourceMessage.DataSet[DicomTags.StudyDate].SetString(0, studyDate);
+					imageSet.DisplaySets.Add(displaySet);
+					displaySet.PresentationImages.Add(image);
+				}
+				else
+				{
+					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
+					identifier.StudyDate = studyDate;
+					identifier.StudyInstanceUid = id;
+					ImageSetDescriptor descriptor = new DicomImageSetDescriptor(identifier);
+					imageSet.Descriptor = descriptor;
+				}
+
 				orderedCollection.Add(imageSet);
 			}
 
@@ -176,8 +202,10 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 																	((IImageSopProvider)(imageSet.DisplaySets[0].PresentationImages[0])).ImageSop.StudyDate));
 															});
 
-			if (reverse)nonOrderedCollection.RemoveAt(20);
-			else nonOrderedCollection.RemoveAt(0);
+			if (reverse)
+				nonOrderedCollection.RemoveAt(20);
+			else 
+				nonOrderedCollection.RemoveAt(0);
 
 			int j = reverse ? 20 : 1;
 			foreach (IImageSet set in nonOrderedCollection)

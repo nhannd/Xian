@@ -159,9 +159,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		public StudyItem GetStudyItem()
+		public IStudyRootStudyIdentifier GetIdentifier()
 		{
-			return new StudyItem(_parentPatient, this, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);	
+			StudyItem identifier = new StudyItem(_parentPatient, this, _sop.DataSource.Server, _sop.DataSource.StudyLoaderName);
+			identifier.InstanceAvailability = "ONLINE";
+			return identifier;
 		}
 
 		/// <summary>

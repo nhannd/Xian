@@ -100,10 +100,8 @@ namespace ClearCanvas.ImageViewer
 		private bool _selected = false;
 		[CloneIgnore]
 		private bool _linked = false;
-		private string _name;
-		private string _description;
-		private int _number;
-		private string _uid;
+
+		private DisplaySetDescriptor _descriptor;
 		private event EventHandler _drawing;
 		private PresentationImageCollection _presentationImages;
 		
@@ -121,9 +119,16 @@ namespace ClearCanvas.ImageViewer
 		/// the specified parameters.
 		/// </summary>
 		public DisplaySet(string name, string uid)
+			: this(new BasicDisplaySetDescriptor())
 		{
-			_name = name ?? "";
-			_uid = uid ?? "";
+			Name = name;
+			Uid = uid;
+		}
+
+		public DisplaySet(DisplaySetDescriptor descriptor)
+		{
+			Platform.CheckForNullReference(descriptor, "descriptor");
+			Descriptor = descriptor;
 		}
 
 		#region Properties
@@ -140,6 +145,9 @@ namespace ClearCanvas.ImageViewer
 				{
 					_presentationImages = new PresentationImageCollection();
 					_presentationImages.ItemAdded += OnPresentationImageAdded;
+					_presentationImages.ItemRemoved += OnPresentationImageRemoved;
+					_presentationImages.ItemChanging += OnPresentationImageChanging;
+					_presentationImages.ItemChanged += OnPresentationImageChanged;
 				}
 
 				return _presentationImages; 
@@ -205,13 +213,32 @@ namespace ClearCanvas.ImageViewer
 			internal set { _imageBox = value as ImageBox; }
 		}
 
+		public DisplaySetDescriptor Descriptor
+		{
+			get { return _descriptor; }
+			set
+			{
+				Platform.CheckForNullReference(value, "Descriptor");
+				if (_descriptor != null)
+					_descriptor.DisplaySet = null;
+
+				_descriptor = value;
+				_descriptor.DisplaySet = this;
+			}
+		}
+
+		IDisplaySetDescriptor IDisplaySet.Descriptor
+		{
+			get { return _descriptor; }
+		}
+
 		/// <summary>
 		/// Gets the name of the display set.
 		/// </summary>
 		public string Name
 		{
-			get { return _name; }
-			set { _name = value; }
+			get { return _descriptor.Name; }
+			set { _descriptor.Name = value; }
 		}
 
 		/// <summary>
@@ -222,8 +249,8 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public int Number
 		{
-			get { return _number; }
-			set { _number = value; }
+			get { return _descriptor.Number; }
+			set { _descriptor.Number = value; }
 		}
 
 		/// <summary>
@@ -234,8 +261,8 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public string Description
 		{
-			get { return _description; }
-			set { _description = value; }
+			get { return _descriptor.Description; }
+			set { _descriptor.Description = value; }
 		}
 
 		/// <summary>
@@ -299,8 +326,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public string Uid
 		{
-			get { return _uid; }
-			set { _uid = value; }
+			get { return _descriptor.Uid; }
+			set { _descriptor.Uid = value; }
 		}
 
 		#endregion
@@ -343,13 +370,17 @@ namespace ClearCanvas.ImageViewer
 
 		private void DisposePresentationImages()
 		{
-			if (this.PresentationImages == null)
+			if (_presentationImages == null)
 				return;
 
-			foreach (PresentationImage image in this.PresentationImages)
+			foreach (PresentationImage image in _presentationImages)
 				image.Dispose();
 
 			_presentationImages.ItemAdded -= OnPresentationImageAdded;
+			_presentationImages.ItemRemoved -= OnPresentationImageRemoved;
+			_presentationImages.ItemChanging -= OnPresentationImageChanging;
+			_presentationImages.ItemChanged -= OnPresentationImageChanged;
+
 			_presentationImages = null;
 		}
 
@@ -362,10 +393,8 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IDisplaySet CreateFreshCopy()
 		{
-			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid);
+			DisplaySet displaySet = new DisplaySet(_descriptor.Clone());
 			displaySet.ParentImageSet = this.ParentImageSet;
-			displaySet.Number = Number;
-			displaySet.Description = Description;
 
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.CreateFreshCopy());
@@ -412,7 +441,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return this.Name;
+			return Descriptor.ToString();
 		}
 
 		/// <summary>
@@ -441,9 +470,34 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnPresentationImageAdded(object sender, ListEventArgs<IPresentationImage> e)
 		{
-			PresentationImage image = (PresentationImage) e.Item;
+			OnPresentationImageAdded((PresentationImage)e.Item);
+		}
+
+		private void OnPresentationImageChanged(object sender, ListEventArgs<IPresentationImage> e)
+		{
+			OnPresentationImageAdded((PresentationImage)e.Item);
+		}
+
+		private void OnPresentationImageChanging(object sender, ListEventArgs<IPresentationImage> e)
+		{
+			OnPresentationImageRemoved((PresentationImage)e.Item);
+		}
+
+		private void OnPresentationImageRemoved(object sender, ListEventArgs<IPresentationImage> e)
+		{
+			OnPresentationImageRemoved((PresentationImage)e.Item);
+		}
+
+		private void OnPresentationImageAdded(PresentationImage image)
+		{
 			image.ParentDisplaySet = this;
 			image.ImageViewer = this.ImageViewer;
+		}
+
+		private void OnPresentationImageRemoved(PresentationImage image)
+		{
+			image.ParentDisplaySet = null;
+			image.ImageViewer = null;
 		}
 
 		/// <summary>

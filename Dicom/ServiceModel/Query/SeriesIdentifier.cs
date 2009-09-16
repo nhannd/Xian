@@ -73,6 +73,12 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			SeriesNumber = other.SeriesNumber;
 		}
 
+		public SeriesIdentifier(ISeriesData other, IIdentifier identifier)
+			: base(identifier)
+		{
+			CopyFrom(other);
+		}
+
 		public SeriesIdentifier(ISeriesData other)
 		{
 			CopyFrom(other);

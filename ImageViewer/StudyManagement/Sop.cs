@@ -36,6 +36,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -97,6 +98,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get { return _parentSeries; }
 			internal set { _parentSeries = value; }
+		}
+
+		public IImageIdentifier GetIdentifier()
+		{
+			StudyItem studyIdentifier = new StudyItem(StudyInstanceUid, DataSource.Server, DataSource.StudyLoaderName);
+			studyIdentifier.InstanceAvailability = "ONLINE";
+			return new ImageIdentifier(this, studyIdentifier);
 		}
 
 		internal IList<VoiDataLut> GetVoiDataLuts()
@@ -1055,7 +1063,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return this.SopInstanceUid;
+			return String.Format("{0} | {1}", this.InstanceNumber, this.SopInstanceUid);
 		}
 	}
 }

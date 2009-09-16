@@ -162,6 +162,9 @@
   <data name="LabelStudyCouldNotBeLoaded" xml:space="preserve">
     <value>The study could not be loaded.</value>
   </data>
+  <data name="LabelUnknownServer" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
   <data name="MenuExplodeImageBox" xml:space="preserve">
     <value>Survey/Explode</value>
   </data>

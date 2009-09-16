@@ -112,6 +112,8 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		bool Linked { get; set; }
 
+		IDisplaySetDescriptor Descriptor { get; }
+
 		/// <summary>
 		/// Gets or sets the name of the display set.
 		/// </summary>

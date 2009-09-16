@@ -46,9 +46,7 @@ namespace ClearCanvas.ImageViewer
 		private DisplaySetCollection _displaySets = new DisplaySetCollection();
 		private LogicalWorkspace _parentLogicalWorkspace;
 		private IImageViewer _imageViewer;
-		private string _name;
-		private string _patientInfo;
-		private string _uid;
+		private ImageSetDescriptor _descriptor;
 		private event EventHandler _drawing;
 		private List<IDisplaySet> _displaySetCopies;
 
@@ -58,10 +56,20 @@ namespace ClearCanvas.ImageViewer
 		/// Initializes a new instance of <see cref="ImageSet"/>.
 		/// </summary>
 		public ImageSet()
+			: this(new BasicImageSetDescriptor())
+		{
+		}
+
+		public ImageSet(ImageSetDescriptor descriptor)
 		{
 			_displaySetCopies = new List<IDisplaySet>();
 
 			_displaySets.ItemAdded += OnDisplaySetAdded;
+			_displaySets.ItemChanging += OnDisplaySetChanging;
+			_displaySets.ItemRemoved += OnDisplaySetRemoved;
+			_displaySets.ItemChanged += OnDisplaySetChanged;
+
+			Descriptor = descriptor;
 		}
 
 		internal void AddCopy(IDisplaySet copy)
@@ -73,6 +81,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (_displaySetCopies != null)
 				_displaySetCopies.Remove(copy);
+		}
+
+		internal IEnumerable<IDisplaySet> GetCopies()
+		{
+			foreach (IDisplaySet copy in _displaySetCopies)
+				yield return copy;
 		}
 
 		#region IImageSet Members
@@ -143,13 +157,33 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		IImageSetDescriptor IImageSet.Descriptor
+		{
+			get { return _descriptor; }
+		}
+
+		public ImageSetDescriptor Descriptor
+		{
+			get { return _descriptor; }
+			set
+			{
+				Platform.CheckForNullReference(value, "Descriptor");
+
+				if (_descriptor != null)
+					_descriptor.ImageSet = null;
+
+				_descriptor = value;
+				_descriptor.ImageSet = this;
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the name of the image set.
 		/// </summary>
 		public string Name
 		{
-			get { return _name; }
-			set { _name = value; }
+			get { return _descriptor.Name; }
+			set { _descriptor.Name = value; }
 		}
 
 		/// <summary>
@@ -157,8 +191,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public string PatientInfo
 		{
-			get { return _patientInfo; }
-			set { _patientInfo = value; }
+			get { return _descriptor.PatientInfo; }
+			set { _descriptor.PatientInfo = value; }
 		}
 
 
@@ -167,8 +201,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public string Uid
 		{
-			get { return _uid; }
-			set { _uid = value; }
+			get { return _descriptor.Uid; }
+			set { _descriptor.Uid = value; }
 		}
 
 		/// <summary>
@@ -201,7 +235,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return this.Name;
+			return _descriptor.ToString();
 		}
 
 		#region Disposal
@@ -254,6 +288,10 @@ namespace ClearCanvas.ImageViewer
 				displaySet.Dispose();
 
 			_displaySets.ItemAdded -= OnDisplaySetAdded;
+			_displaySets.ItemChanging -= OnDisplaySetChanging;
+			_displaySets.ItemRemoved -= OnDisplaySetRemoved;
+			_displaySets.ItemChanged -= OnDisplaySetChanged;
+
 			_displaySets = null;
 		}
 
@@ -261,10 +299,35 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnDisplaySetAdded(object sender, ListEventArgs<IDisplaySet> e)
 		{
-			DisplaySet displaySet = (DisplaySet)e.Item;
+			OnDisplaySetAdded((DisplaySet)e.Item);
+		}
 
+
+		void OnDisplaySetChanged(object sender, ListEventArgs<IDisplaySet> e)
+		{
+			OnDisplaySetAdded((DisplaySet)e.Item);
+		}
+
+		void OnDisplaySetChanging(object sender, ListEventArgs<IDisplaySet> e)
+		{
+			OnDisplaySetRemoved((DisplaySet)e.Item);
+		}
+
+		void OnDisplaySetRemoved(object sender, ListEventArgs<IDisplaySet> e)
+		{
+			OnDisplaySetRemoved((DisplaySet)e.Item);
+		}
+
+		private void OnDisplaySetAdded(DisplaySet displaySet)
+		{
 			displaySet.ParentImageSet = this;
 			displaySet.ImageViewer = this.ImageViewer;
+		}
+
+		private void OnDisplaySetRemoved(DisplaySet displaySet)
+		{
+			displaySet.ParentImageSet = null;
+			displaySet.ImageViewer = null;
 		}
 
 		private void OnDrawing()

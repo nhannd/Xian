@@ -33,10 +33,8 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -44,162 +42,87 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	internal class UnavailableImageSet : ImageSet
+	public class ContextMenuActionFactoryArgs
 	{
-		public UnavailableImageSet(StudyItem studyItem, Exception error)
+		private int _nextActionNumber;
+
+		internal ContextMenuActionFactoryArgs()
 		{
-			StudyItem = studyItem;
-			Error = error;
 		}
 
-		public readonly Exception Error;
-		public readonly StudyItem StudyItem;
+		public IDesktopWindow DesktopWindow { get; internal set; }
+		public IImageViewer ImageViewer { get; internal set; }
 
-		internal string GetActionMessage()
+		public string Namespace { get; internal set; }
+		public string BasePath { get; internal set; }
+	
+		public IImageSet ImageSet { get; internal set; }
+
+		public string GetNextActionId()
 		{
-			if (Error is OfflineLoadStudyException)
-			{
-				return SR.MessageActionStudyOffline;
-			}
-			else if (Error is NearlineLoadStudyException)
-			{
-				return SR.MessageActionStudyNearline;
-			}
-			else if (Error is InUseLoadStudyException)
-			{
-				return SR.MessageActionStudyInUse;
-			}
-			else if (Error is StudyLoaderNotFoundException)
-			{
-				return SR.MessageActionNoStudyLoader;
-			}
-			else
-			{
-				return SR.MessageActionStudyCouldNotBeLoaded;
-			}
+			return String.Format("imageSetAction{0}", ++_nextActionNumber);
 		}
 
-		internal string GetNamePrefix()
+		public string GetFullyQualifiedActionId(string actionId)
 		{
-			string serverName = "Unknown";
-			if (StudyItem.Server != null)
-				serverName = StudyItem.Server.ToString();
-
-			return serverName;
-		}
-
-		internal string GetActionLabel()
-		{
-			if (Error is OfflineLoadStudyException)
-			{
-				return String.Format(SR.LabelFormatStudyUnavailable, SR.Offline);
-			}
-			else if (Error is NearlineLoadStudyException)
-			{
-				return String.Format(SR.LabelFormatStudyUnavailable, SR.Nearline);
-			}
-			else if (Error is InUseLoadStudyException)
-			{
-				return String.Format(SR.LabelFormatStudyUnavailable, SR.InUse);
-			}
-			else if (Error is StudyLoaderNotFoundException)
-			{
-				return String.Format(SR.LabelFormatStudyUnavailable, SR.Unavailable);
-			}
-			else
-			{
-				return SR.LabelStudyCouldNotBeLoaded;
-			}
+			return String.Format("{0}:{1}", Namespace, actionId);
 		}
 	}
 
-	internal class StudyDateComparer : ImageSetComparer
+	public class ContextMenuActionFactoryExtensionPoint : ExtensionPoint<IContextMenuActionFactory>
 	{
-		public StudyDateComparer()
-			: base(true)
-		{
-		}
-
-		private static DateTime? GetStudyDate(IImageSet imageSet)
-		{
-			if (imageSet is UnavailableImageSet)
-			{
-				return DateParser.Parse(((UnavailableImageSet) imageSet).StudyItem.StudyDate);
-			}
-			else
-			{
-				if (imageSet.DisplaySets.Count > 0)
-				{
-					IDisplaySet displaySet = imageSet.DisplaySets[0];
-					if (displaySet.PresentationImages.Count > 0)
-					{
-						IPresentationImage image = displaySet.PresentationImages[0];
-						if (image is IImageSopProvider)
-							return DateParser.Parse(((IImageSopProvider) image).ImageSop.StudyDate);
-					}
-				}
-			}
-
-			return null;
-		}
-
-		private static DateTime? GetStudyTime(IImageSet imageSet)
-		{
-			if (imageSet is UnavailableImageSet)
-			{
-				return TimeParser.Parse(((UnavailableImageSet)imageSet).StudyItem.StudyTime);
-			}
-			else
-			{
-				if (imageSet.DisplaySets.Count > 0)
-				{
-					IDisplaySet displaySet = imageSet.DisplaySets[0];
-					if (displaySet.PresentationImages.Count > 0)
-					{
-						IPresentationImage image = displaySet.PresentationImages[0];
-						if (image is IImageSopProvider)
-							return TimeParser.Parse(((IImageSopProvider)image).ImageSop.StudyTime);
-					}
-				}
-			}
-
-			return null;
-		}
-
-		private static IEnumerable<IComparable> GetCompareValues(IImageSet imageSet)
-		{
-			yield return GetStudyDate(imageSet);
-			yield return GetStudyTime(imageSet);
-		}
-
-		public override int Compare(IImageSet x, IImageSet y)
-		{
-			return base.Compare(GetCompareValues(x), GetCompareValues(y));
-		}
 	}
 
-    /// <summary>
+	public interface IContextMenuActionFactory
+	{
+		IAction[] CreateActions(ContextMenuActionFactoryArgs args);
+	}
+
+	/// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ContextMenuLayoutTool : ImageViewerTool
 	{
-    	private ImageSetGroups _imageSetGroups;
-    	private static readonly string _rootPath = "imageviewer-contextmenu";
-    	private List<string> _currentPathElements;
-		private int _actionNumber = 0;
-    	private bool _showImageSetNames = false;
-    	private bool _anyUnavailable = false;
+    	private const string _rootPath = "imageviewer-contextmenu";
+		private static readonly List<IContextMenuActionFactory> _actionFactories = CreateActionFactories();
+
+		private List<string> _currentPathElements;
+
+		private ImageSetGroups _imageSetGroups;
+		private readonly Dictionary<string, IImageSet> _unavailableImageSets;
 		private readonly IComparer<IImageSet> _comparer = new StudyDateComparer();
+
 		private readonly DefaultPatientReconciliationStrategy _patientReconciliationStrategy = new DefaultPatientReconciliationStrategy();
 
-		/// <summary>
-        /// Constructor
-        /// </summary>
 		public ContextMenuLayoutTool()
 		{
-        }
+			_unavailableImageSets = new Dictionary<string, IImageSet>();
+		}
+
+		private static List<IContextMenuActionFactory> CreateActionFactories()
+		{
+			List<IContextMenuActionFactory> factories = new List<IContextMenuActionFactory>();
+
+			factories.Add(new DefaultContextMenuActionFactory());
+
+			try
+			{
+				foreach (IContextMenuActionFactory factory in new ContextMenuActionFactoryExtensionPoint().CreateExtensions())
+					factories.Add(factory);
+			}
+			catch (NotSupportedException)
+			{
+				throw;
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Debug, e, "Exception encountered while trying to create context menu action factories.");
+			}
+
+			return factories;
+		}
 
 		public override IActionSet Actions
 		{
@@ -212,21 +135,39 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
-			base.ImageViewer.EventBroker.StudyLoadFailed += OnLoadPriorStudyFailed;
+
 			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
+
+			base.ImageViewer.EventBroker.StudyLoaded += OnStudyLoaded;
+			base.ImageViewer.EventBroker.StudyLoadFailed += OnLoadPriorStudyFailed;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			base.ImageViewer.EventBroker.StudyLoadFailed -= OnLoadPriorStudyFailed;
+			base.ImageViewer.EventBroker.StudyLoaded -= OnStudyLoaded;
+
 			_imageSetGroups.Dispose();
+
+			foreach (IImageSet imageSet in _unavailableImageSets.Values)
+				imageSet.Dispose();
+
 			base.Dispose(disposing);
+		}
+
+		private void OnStudyLoaded(object sender, StudyLoadedEventArgs e)
+		{
+			IImageSet unavailableImageSet;
+			string studyInstanceUid = e.Study.StudyInstanceUid;
+			if (_unavailableImageSets.TryGetValue(studyInstanceUid, out unavailableImageSet))
+			{
+				_imageSetGroups.Root.Remove(unavailableImageSet);
+				_unavailableImageSets.Remove(studyInstanceUid);
+			}
 		}
 
 		private void OnLoadPriorStudyFailed(object sender, StudyLoadFailedEventArgs e)
 		{
-			_anyUnavailable = true;
-
 			bool notFoundError = e.Error is NotFoundLoadStudyException;
 			if (!notFoundError && (e.Error is LoadSopsException || e.Error is StudyLoaderNotFoundException))
 			{
@@ -237,54 +178,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					info.PatientId = e.Study.PatientId;
 					PatientInformation reconciled = _patientReconciliationStrategy.ReconcilePatientInformation(info);
 
-					UnavailableImageSet imageSet = CreateUnavailableImageSet(e.Study, e.Error);
-					imageSet.PatientInfo = String.Format("{0} · {1}",
-						e.Study.PatientsName.FormattedName,
-						reconciled.PatientId);
+					StudyItem studyItem = new StudyItem(e.Study);
+					studyItem.PatientId = reconciled.PatientId;
 
-					_imageSetGroups.Root.Add(imageSet);
+					if (!_unavailableImageSets.ContainsKey(studyItem.StudyInstanceUid))
+					{
+						ImageSetDescriptor descriptor = new UnavailableImageSetDescriptor(studyItem, e.Error);
+						ImageSet unavailableImageSet = new ImageSet(descriptor);
+
+						_imageSetGroups.Root.Add(unavailableImageSet);
+						_unavailableImageSets[studyItem.StudyInstanceUid] = unavailableImageSet;
+					}
 				}
 			}
-		}
-
-		private static UnavailableImageSet CreateUnavailableImageSet(StudyItem study, Exception error)
-		{
-			//TODO: none of this is ideal because this code is duplicated from the layout manager,
-			//but unfortunately it's necessary right now.  I think the problem is 3-fold:
-			// 1. We are showing the values from IImageSet.Name; the context menu tool is the 
-			//    presenter and should be formatting the info itself.
-			// 2. There is no unified concept of a 'study' in the viewer.  In fact, there are
-			//    several study objects, all of which serve a similar purpose.
-			// 3. ImageSets are not directly tied to studies; this is less of an issue because
-			//    we know that the layout manager sets the Uid to the study uid and we can
-			//    safely make that assumption.
-			// The ideal solution would be to create a ContextMenuGroups class, similar to
-			// the ImageSetGroups, which keeps track of Studies (both available and unavailable)
-			// using some unified Study class/interface as it's data source.  The context
-			// menu actions would then be constructed from that information, not relying on
-			// image set names.
-
-			UnavailableImageSet imageSet = new UnavailableImageSet(study, error);
-
-			DateTime studyDate;
-			DateParser.Parse(study.StudyDate, out studyDate);
-			DateTime studyTime;
-			TimeParser.Parse(study.StudyTime, out studyTime);
-
-			string modalitiesInStudy = StringUtilities.Combine(study.ModalitiesInStudy, ",");
-
-			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
-				studyDate.ToString(Format.DateFormat),
-				studyTime.ToString(Format.TimeFormat),
-				modalitiesInStudy ?? "",
-				study.StudyDescription);
-
-			imageSet.PatientInfo = String.Format("{0} · {1}",
-				study.PatientsName.FormattedName,
-				study.PatientId);
-
-			imageSet.Uid = study.StudyInstanceUid;
-			return imageSet;
 		}
 
     	/// <summary>
@@ -297,15 +203,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 #if TRACEGROUPS
 			TraceGroups();
 #endif
-			_actionNumber = 1;
 			_currentPathElements = new List<string>();
 			List<IAction> actions = new List<IAction>();
 
-			FilteredGroup<IImageSet> rootGroup = GetRootGroup();
+			FilteredGroup<IImageSet> rootGroup = GetRootGroup(_imageSetGroups.Root);
 			if (rootGroup != null)
 			{
-				_showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _anyUnavailable;
-				
+				ContextMenuActionFactoryArgs args = new ContextMenuActionFactoryArgs
+				{
+					DesktopWindow = Context.DesktopWindow,
+					ImageViewer = Context.Viewer,
+					Namespace = GetType().FullName
+				};
+
+				bool showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _unavailableImageSets.Count > 0;
+
 				foreach (FilteredGroup<IImageSet> group in TraverseImageSetGroups(rootGroup))
 				{
 					string basePath = StringUtilities.Combine(_currentPathElements, "/");
@@ -317,45 +229,28 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					foreach (IImageSet imageSet in orderedItems)
 					{
 						string imageSetPath;
-						if (_showImageSetNames)
-						{
-							if (imageSet is UnavailableImageSet)
-							{
-								UnavailableImageSet unavailable = (UnavailableImageSet) imageSet;
-								imageSetPath = String.Format("{0}/({1}) {2}", basePath,
-									unavailable.GetNamePrefix(), imageSet.Name.Replace("/", "-"));
-							}
-							else
-							{
-								imageSetPath = String.Format("{0}/{1}", basePath, imageSet.Name.Replace("/", "-"));
-							}
-						}
+						if (showImageSetNames)
+							imageSetPath = String.Format("{0}/{1}", basePath, imageSet.Name.Replace("/", "-"));
 						else
 							imageSetPath = basePath;
 
-						if (imageSet is UnavailableImageSet)
+						foreach (IContextMenuActionFactory factory in _actionFactories)
 						{
-							actions.Add(CreateUnavailableStudyAction(imageSetPath, (UnavailableImageSet)imageSet));
-							++_actionNumber;
-						}
-						else
-						{
-							foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-							{
-								actions.Add(CreateDisplaySetAction(imageSetPath, displaySet));
-								++_actionNumber;
-							}
+							args.BasePath = imageSetPath;
+							args.ImageSet = imageSet;
+							actions.AddRange(factory.CreateActions(args));
 						}
 					}
 
 					if (group.Items.Count > 0 && base.ImageViewer.PriorStudyLoader.IsActive)
-					{
 						actions.Add(CreateLoadingPriorsAction(basePath));
-						++_actionNumber;
-					}
 				}
 			}
-			
+
+			//do this so they all get grouped together.
+    		foreach (IAction action in actions)
+				action.GroupHint = new GroupHint("DisplaySets");
+
 			return new ActionSet(actions);
 		}
 
@@ -380,11 +275,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			if (allItems.Count != 0)
 				_currentPathElements.RemoveAt(_currentPathElements.Count - 1);
-		}
-
-		private FilteredGroup<IImageSet> GetRootGroup()
-		{
-			return GetRootGroup(_imageSetGroups.Root);
 		}
 
 		private FilteredGroup<IImageSet> GetRootGroup(FilteredGroup<IImageSet> group)
@@ -415,77 +305,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private IClickAction CreateLoadingPriorsAction(string basePath)
 		{
-			string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
+			string pathString = String.Format("{0}/loadingPriors", basePath);
 			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.None, null);
-			action.GroupHint = new GroupHint("DisplaySets");
+			MenuAction action = new MenuAction(string.Format("{0}:loadingPriors", this.GetType().FullName), path, ClickActionFlags.None, null);
 			action.Label = SR.LabelLoadingPriors;
 			action.SetClickHandler(delegate { });
 			return action;
-		}
-
-		private IClickAction CreateUnavailableStudyAction(string basePath, UnavailableImageSet imageSet)
-		{
-			string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
-			//Trace.WriteLine(String.Format("Path: {0}", pathString));
-
-			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.CheckParents, null);
-			action.GroupHint = new GroupHint("DisplaySets");
-			action.Label = imageSet.GetActionLabel();
-			action.SetClickHandler(delegate
-			                       	{
-			                       		this.Context.DesktopWindow.ShowMessageBox(imageSet.GetActionMessage(),
-			                       		                                          MessageBoxActions.Ok);
-			                       	});
-
-			return action;
-		}
-    	/// <summary>
-		/// Creates an <see cref="IClickAction"/> that displays the specified display set when clicked.  The index
-		/// parameter is used to generate a label for the action.
-		/// </summary>
-		/// <param name="displaySet"></param>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		private IClickAction CreateDisplaySetAction(string basePath, IDisplaySet displaySet)
-		{
-    		string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
-			//Trace.WriteLine(String.Format("Path: {0}", pathString));
-
-			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.CheckParents, null);
-			action.GroupHint = new GroupHint("DisplaySets");
-			action.Label = displaySet.Name;
-			action.SetClickHandler(delegate { AssignDisplaySetToImageBox(displaySet); });
-
-			action.Checked = this.ImageViewer.SelectedImageBox != null &&
-				this.ImageViewer.SelectedImageBox.DisplaySet != null && 
-				this.ImageViewer.SelectedImageBox.DisplaySet.Uid == displaySet.Uid;
-
-			return action;
-		}
-
-		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)
-		{
-			IImageBox imageBox = this.ImageViewer.SelectedImageBox;
-			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(imageBox);
-			memorableCommand.BeginState = imageBox.CreateMemento();
-
-			// always create a 'fresh copy' to show in the image box.  We never want to show
-			// the 'originals' (e.g. the ones in IImageSet.DisplaySets) because we want them 
-			// to remain clean and unaltered - consider them to be templates for what actually
-			// gets shown.
-			imageBox.DisplaySet = displaySet.CreateFreshCopy();
-
-			imageBox.Draw();
-			//this.ImageViewer.SelectedImageBox[0, 0].Select();
-
-			memorableCommand.EndState = imageBox.CreateMemento();
-
-			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(imageBox);
-			historyCommand.Enqueue(memorableCommand);
-			this.ImageViewer.CommandHistory.AddCommand(historyCommand);
 		}
 
 #if TRACEGROUPS

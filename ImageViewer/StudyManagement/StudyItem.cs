@@ -156,6 +156,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 		}
 
+		public StudyItem(StudyItem other)
+			: this(other, other.Server, other.StudyLoaderName)
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyItem"/>.
 		/// </summary>
@@ -163,7 +168,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			: this(server, studyLoaderName)
 		{
 			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
-			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
 
 			_studyInstanceUid = studyInstanceUid;
 		}
@@ -180,7 +184,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			Platform.CheckForNullReference(study, "study");
 
 			Platform.CheckForEmptyString(study.StudyInstanceUid, "study.StudyInstanceUid");
-			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
 
 			CopyFrom(patient);
 			CopyFrom(study);

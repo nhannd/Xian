@@ -53,6 +53,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 		}
 
+		public PatientRootStudyIdentifier(IStudyData other, IIdentifier identifier)
+			: base(other, identifier)
+		{
+		}
+
 		public PatientRootStudyIdentifier(DicomAttributeCollection attributes)
 			: base(attributes)
 		{

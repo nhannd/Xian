@@ -1,22 +1,20 @@
-using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer
 {
-	public interface IImageSetFactory
+	//NOTE: keep this internal for now, as I'm not too sure of their usefulness right now.
+
+	internal interface IImageSetFactory
 	{
 		void SetStudyTree(StudyTree studyTree);
 
 		IImageSet CreateImageSet(Study study);
 	}
 
-	public abstract class ImageSetFactory : IImageSetFactory
+	internal abstract class ImageSetFactory : IImageSetFactory
 	{
 		private StudyTree _studyTree;
 		private readonly IDisplaySetFactory _displaySetFactory;
@@ -51,13 +49,13 @@ namespace ClearCanvas.ImageViewer
 
 		protected virtual IImageSet CreateImageSet(Study study)
 		{
-			IImageSet imageSet = null;
+			ImageSet imageSet = null;
 			List<IDisplaySet> displaySets = CreateDisplaySets(study);
 
 			if (displaySets.Count > 0)
 			{
-				imageSet = CreateImageSet(study.GetStudyItem());
-
+				imageSet = new ImageSet(CreateImageSetDescriptor(study.GetIdentifier()));
+				
 				foreach (IDisplaySet displaySet in displaySets)
 					imageSet.DisplaySets.Add(displaySet);
 			}
@@ -75,35 +73,9 @@ namespace ClearCanvas.ImageViewer
 			return displaySets;
 		}
 
-		protected virtual ImageSet CreateImageSet(IStudyRootData study)
+		protected virtual DicomImageSetDescriptor CreateImageSetDescriptor(IStudyRootStudyIdentifier studyIdentifier)
 		{
-			return CreateImageSet<ImageSet>(study);
-		}
-
-		public static ImageSet CreateImageSet<T>(IStudyRootData study) where T : ImageSet, new()
-		{
-			ImageSet imageSet = new T();
-
-			DateTime studyDate;
-			DateParser.Parse(study.StudyDate, out studyDate);
-			DateTime studyTime;
-			TimeParser.Parse(study.StudyTime, out studyTime);
-
-			string modalitiesInStudy = StringUtilities.Combine(study.ModalitiesInStudy, ", ");
-
-			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
-			                              studyDate.ToString(Format.DateFormat),
-			                              studyTime.ToString(Format.TimeFormat),
-			                              modalitiesInStudy ?? "",
-			                              study.StudyDescription);
-
-			imageSet.PatientInfo = String.Format("{0} · {1}",
-			                                     new PersonName(study.PatientsName).FormattedName,
-			                                     study.PatientId);
-
-			imageSet.Uid = study.StudyInstanceUid;
-
-			return imageSet;
+			return new DicomImageSetDescriptor(studyIdentifier);
 		}
 	}
 }
