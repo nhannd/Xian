@@ -944,8 +944,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when loading entity: {0}",
-                             _entityName);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when loading entity: {0}", _entityName);
 
                 throw new PersistenceException(
                     String.Format("Unexpected problem when loading entity: {0}: {1}", _entityName,

@@ -1,6 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueItemDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel" %>
 
+<%@ Register Src="~/Pages/Queues/WorkQueue/WorkQueueAlertPanel.ascx" TagName="WorkQueueAlertPanel" TagPrefix="localAsp" %>
+
+
 <script type="text/javascript">
     Sys.Application.add_load(function(){
         var prm = Sys.WebForms.PageRequestManager.getInstance();
@@ -31,6 +34,8 @@
                         <asp:Image ID="AutoRefreshIndicator" runat="server" SkinID="RefreshEnabled" />
                             
                     </td>
+                </tr>
+                <tr runat="server" id="WorkQueueAlertPanelRow"><td colspan="2"><localAsp:WorkQueueAlertPanel runat="server" ID="WorkQueueAlertPanel" /></td>
                 </tr>
                 <tr><td colspan="2">
                         <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" >

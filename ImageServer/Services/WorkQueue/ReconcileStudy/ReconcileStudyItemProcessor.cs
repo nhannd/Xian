@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                                               null);
             if (!( items==null || items.Count == 0))
             {
-				PostponeItem(WorkQueueItem, "Study is scheduled for reprocess.");
+				PostponeItem(WorkQueueItem, "Study is scheduled for reprocess");
             	return false;
             }
         	return true;

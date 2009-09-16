@@ -103,11 +103,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 // it's pending
                 item.WorkQueueStatusEnum == WorkQueueStatusEnum.Pending
                 // it's idle
-                || item.WorkQueueStatusEnum == WorkQueueStatusEnum.Idle
-                /* somebody claimed it but hasn't updated it for quite a while */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
-                    !String.IsNullOrEmpty(item.ProcessorID) &&
-                    item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)));
+                || item.WorkQueueStatusEnum == WorkQueueStatusEnum.Idle;
+                
         }
 
         /// <summary>
@@ -124,14 +121,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 /* failed item */
                 item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
                 /* nobody claimed it */
-                ||
-                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress && String.IsNullOrEmpty(item.ProcessorID))
-                /* somebody claimed it but hasn't updated it for quite a while */
-                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
-                    !String.IsNullOrEmpty(item.ProcessorID) &&
-                    item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)))
-
-                || !ServerPlatform.IsActiveWorkQueue(item);
+                || (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress && String.IsNullOrEmpty(item.ProcessorID))
+                /* allow reset "stuck" items (except items that are InProgress)*/
+                || (!item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.InProgress) && !ServerPlatform.IsActiveWorkQueue(item));
 
         }
 
@@ -155,11 +147,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 ||
                 (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
                  String.IsNullOrEmpty(item.ProcessorID))
-                /* somebody claimed it but hasn't updated it for quite a while */
-                ||
-                (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress &&
-                 !String.IsNullOrEmpty(item.ProcessorID) &&
-                 item.ScheduledTime < Platform.Time.Subtract(TimeSpan.FromHours(12)))
                 // allow deletes of some pending entries
                 ||
                 (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
@@ -174,7 +161,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
                  item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy)
 
-                || !ServerPlatform.IsActiveWorkQueue(item);
+				/* allow deletes of "stuck" items (except items that are InProgress)*/
+                || (!item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.InProgress) && !ServerPlatform.IsActiveWorkQueue(item));
 		}
 
 

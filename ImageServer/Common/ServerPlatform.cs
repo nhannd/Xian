@@ -341,18 +341,52 @@ namespace ClearCanvas.ImageServer.Common
 		}
 
         /// <summary>
-        /// Returns a boolean indicating whether the entry is still "active".
-        /// A WorkQueue entry is inactive if it is in Failed state or was updated the more than X minutes ago (X is InactiveWorkQueueMinTime in the app settings)
+        /// Returns a boolean indicating whether the entry is still "active"
         /// </summary>
         /// <remarks>
         /// </remarks>
         static public bool IsActiveWorkQueue(WorkQueue item)
         {
-            if (item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) ||   
-                (item.LastUpdatedTime > DateTime.MinValue && item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime))
+        	// The following code assumes InactiveWorkQueueMinTime is set appropirately
+        	
+            if (item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed))
                 return false;
-            else
-                return true;
+
+            if (item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Pending) || 
+                item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Idle))
+            {
+                // Assuming that if the entry is picked up and rescheduled recently (the ScheduledTime would have been updated), 
+                // the item is inactive if its ScheduledTime still indicated it was scheduled long time ago.
+                // Note: this logic still works if the entry has never been processed (new). It will be
+                // considered as "inactive" if it was scheduled long time ago and had never been updated.
+
+                DateTime time = item.LastUpdatedTime!=DateTime.MinValue? item.LastUpdatedTime:item.ScheduledTime;
+                if (time < Platform.Time - Settings.Default.InactiveWorkQueueMinTime)
+                    return false;
+            }
+            else if (item.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.InProgress))
+            {
+                if (String.IsNullOrEmpty(item.ProcessorID))
+                {
+                    // This is a special case, the item is not assigned but is set to InProgress. 
+                    // It's definitely stuck cause it won't be picked up by any servers.
+                    return false; 
+                }
+                else
+                {
+                    // TODO: Need more elaborate logic to detect if it's stuck when the status is InProgress.
+                    // Ideally, we can assume item is stuck if it has not been updated for a while. 
+                    // Howerver, some operations were designed to process everything in a single run 
+                    // instead of batches.One example is the StudyProcess, research studies may take days to process 
+                    // and the item stays in "InProgress" for the entire period without any update 
+                    // (eventhough the WorkQueueUid records are removed)
+                    // For now, we assume it's stucked if it is not updated for long time.
+                    if (item.ScheduledTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         

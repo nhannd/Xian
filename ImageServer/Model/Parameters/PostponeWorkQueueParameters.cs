@@ -24,6 +24,12 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
         }
 
+        public bool UpdateWorkQueue
+        {
+            set { SubCriteria["UpdateWorkQueue"] = new ProcedureParameter<bool>("UpdateWorkQueue", value); }
+            
+        }
+
 
         public string Reason
         {

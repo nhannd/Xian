@@ -290,7 +290,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Description:	Query WorkQueue entries based on criteria
 --				
 -- History:
---		07/29/09 - Added ProcessorID parameter. (Jon Bluks)
+--	July 29, 2009 - Added ProcessorID parameter. (Jon Bluks)
+--	Sept 16, 2009 - Added LastUpdatedTime in the result
 -- =============================================
 CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
@@ -389,7 +390,7 @@ BEGIN
 		SET @stmt = @stmt + '' WHERE '' + @where
 
 	--PRINT @stmt
-	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data FROM ('' + @stmt
+	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data, W.LastUpdatedTime FROM ('' + @stmt
 	SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
@@ -3925,13 +3926,17 @@ EXEC dbo.sp_executesql @statement = N'
 -- Author:		Thanh Huynh
 -- Create date: September 11, 2009
 -- Description:	Postpone (reschedule) a work queue entry
+-- History:
+--	Sept 16, 2009 :  Added "UpdateWorkQueue" parameter
+--
 -- =================================================================
 CREATE PROCEDURE [dbo].[PostponeWorkQueue]  
 	-- Add the parameters for the stored procedure here
 	@WorkQueueGUID uniqueidentifier, 
 	@ScheduledTime datetime = null,
 	@ExpirationTime datetime = null,
-	@Reason nvarchar(512) = null
+	@Reason nvarchar(512) = null,
+	@UpdateWorkQueue bit = 0
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -3942,14 +3947,23 @@ BEGIN
 	declare @PendingStatusEnum as smallint
 
 	SELECT @StudyStorageGUID=StudyStorageGUID FROM WorkQueue WHERE GUID=@WorkQueueGUID
-	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = ''Pending''
+	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = 'Pending'
 	
 	BEGIN TRANSACTION
 
-		UPDATE WorkQueue
-		SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,
-			WorkQueueStatusEnum=@PendingStatusEnum
-		WHERE GUID=@WorkQueueGUID
+		IF @UpdateWorkQueue=0
+		BEGIN
+			UPDATE WorkQueue
+			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum
+			WHERE GUID=@WorkQueueGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE WorkQueue
+			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate()
+			WHERE GUID=@WorkQueueGUID
+		END
+
 
 		-- Unlock the study
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 

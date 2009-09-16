@@ -34,6 +34,7 @@ using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -304,6 +305,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 {
                     _detailsView = LoadControl("GeneralWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                }
+
+                // If the entry isn't failed but hasn't been updated for some time, display the alert message
+                WorkQueueAlertPanelRow.Visible = false;
+                if (!WorkQueue.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) && 
+                    !ServerPlatform.IsActiveWorkQueue(WorkQueue))
+                {
+                    WorkQueueAlertPanelRow.Visible = true;
+                    WorkQueueAlertPanel.Text =
+                        WorkQueue.LastUpdatedTime > DateTime.MinValue
+                            ? String.Format("There seems to be no activity for this item since {0}. The server may be down or there is a problem with this entry.",WorkQueue.LastUpdatedTime)
+                            : "There seems to be no activity for this item. The server may be down or there is a problem with this entry.";
                 }
             }
             if (_detailsView != null)

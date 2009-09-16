@@ -33,7 +33,13 @@
                             <asp:TemplateField HeaderText="Status">
                                 <HeaderStyle wrap="False" />    
                                 <ItemTemplate>
-                                    <%# Eval("WorkQueueStatusEnum")  %>                                                                   
+                                    <table>
+                                    <tr>
+                                    <td style="border-bottom:none"><%# Eval("WorkQueueStatusEnum")  %></td>
+                                    <td style="border-bottom:none"><asp:Image runat="server" Visible='<%# !(Container.DataItem as WorkQueue).WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) && !ServerPlatform.IsActiveWorkQueue(Container.DataItem as WorkQueue) %>'  ImageAlign="AbsBottom" ID="StuckIcon" SkinID="WarningSmall" 
+                                        ToolTip="There seems to be no activity for this item. The server may be down or there is a problem with this entry"/></td>
+                                    </tr>
+                                    </table>
                                 </ItemTemplate>
                             </asp:TemplateField>
                                 

@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("00:30:00")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2.00:00:00")]
         public global::System.TimeSpan InactiveWorkQueueMinTime {
             get {
                 return ((global::System.TimeSpan)(this["InactiveWorkQueueMinTime"]));

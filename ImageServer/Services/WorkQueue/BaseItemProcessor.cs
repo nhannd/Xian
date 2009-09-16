@@ -1074,11 +1074,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private bool AppearsStuck(Model.WorkQueue item, out string reason)
         {
             IList<Model.WorkQueue> allItems = ServerHelper.FindWorkQueueEntries(item.StudyStorageKey, null);
+            bool updatedBefore = item.LastUpdatedTime > DateTime.MinValue;
+            reason = null;
 
             if (allItems.Count == 1 /* this is the only entry*/)
             {
-                reason = String.Format("This entry has not been updated for since {0}", item.LastUpdatedTime);
-                return item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime;
+                if (updatedBefore)
+                {
+                    if (item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime)
+                    {
+                        reason = String.Format("This entry has not been updated since {0}", item.LastUpdatedTime);
+                        return true;
+                    }
+                }
             }
             else
             {
@@ -1086,41 +1094,49 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     if (anotherItem.Key.Equals(item.Key)) continue;
 
-                    if (ServerPlatform.IsActiveWorkQueue(anotherItem))
+                    if (!ServerPlatform.IsActiveWorkQueue(anotherItem))
                     {
-                        reason = "Another work queue entry exists for the same study and appears stuck.";
-                        return false;
+                        reason = "Another work queue entry for the same study appears stuck.";
+                        return true;
                     }
                 }
 
                 // none of the other entries are active. Either they are all stuck or failed.
-                // This entry is considered stuck if it hasn't been updated in the last 30 min
-                reason = String.Format("This entry has not been updated for since {0}", item.LastUpdatedTime);
-                return item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime;
+                // This entry is considered stuck if it hasn't been updated for long time.
+                if (updatedBefore && item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime)
+                {
+                    reason = String.Format("This entry has not been updated for since {0}", item.LastUpdatedTime);
+                    return true;
+                }
             }
+
+            return false;
         }
 
-        protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText)
+        protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string postponeReason)
         {
             DBUpdateTime.Add(
                delegate
                {
                    string stuckReason;
+                   bool updatedBefore = item.LastUpdatedTime > DateTime.MinValue;
 
-                   if (item.LastUpdatedTime < Platform.Time - Settings.Default.InactiveWorkQueueMinTime/* has not been updated for a while */ 
-                       && AppearsStuck(item, out stuckReason))
+                   if (updatedBefore && AppearsStuck(item, out stuckReason))
                    {
-                       AbortQueueItem(item, String.Format("Aborted because {0} and {1}.", reasonText, stuckReason), true);
+                       string reason = String.IsNullOrEmpty(stuckReason)
+                                          ? String.Format("Aborted because {0}", postponeReason)
+                                          : String.Format("Aborted because {0} and {1}", postponeReason, stuckReason);
+                       AbortQueueItem(item, reason, true);
                    }
                    else
                    {
-                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, reasonText);
+                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, postponeReason, !updatedBefore);
                    }
                }
                );
         }
 
-        private void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText)
+        private void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText, bool updateWorkQueueEntry)
         {
             Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}: {2}. [GUID={3}]", item.WorkQueueTypeEnum, newScheduledTime, reasonText, item.GetKey());
 
@@ -1134,6 +1150,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 parameters.Reason = reasonText;
                 parameters.ScheduledTime = newScheduledTime;
                 parameters.ExpirationTime = expireTime;
+                parameters.UpdateWorkQueue = updateWorkQueueEntry;
 
                 if (broker.Execute(parameters) == false)
                 {
@@ -1432,7 +1449,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 if (StorageLocation.QueueStudyStateEnum == QueueStudyStateEnum.ReprocessScheduled && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReprocessStudy))
                 {
                     //TODO: Should we check if the state is correct (ie, there's actually a ReprocessStudy work queue entry)?
-                    PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Study is scheduled for reprocess.");
+                    PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Study is scheduled for reprocess");
                     return;
                 }
 
