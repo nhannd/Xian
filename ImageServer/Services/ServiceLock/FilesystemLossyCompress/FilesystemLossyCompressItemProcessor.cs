@@ -97,7 +97,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 					insertParms.ServerPartitionKey = location.ServerPartitionKey;
 					DateTime expirationTime = scheduledTime;
 					insertParms.ScheduledTime = expirationTime;
-					insertParms.ExpirationTime = expirationTime;
 					insertParms.DeleteFilesystemQueue = true;
 					insertParms.Data = queueItem.QueueXml;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
@@ -105,7 +104,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 					
 					try
 					{
-						Model.WorkQueue entry = workQueueInsert.FindOne(insertParms);
+						WorkQueue entry = workQueueInsert.FindOne(insertParms);
 
 						InsertWorkQueueUidFromStudyXml(studyXml,update,entry.GetKey());
 

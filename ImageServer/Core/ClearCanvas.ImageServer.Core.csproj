@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{64DD80D0-2B72-46C0-8F6E-382CA1EAFF9D}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -64,6 +64,8 @@
     <Compile Include="Edit\WebEditStudyContext.cs" />
     <Compile Include="Edit\WebEditStudyHistoryRecord.cs" />
     <Compile Include="Process\StudyReprocessor.cs" />
+    <Compile Include="Rebuild\RebuildStudyXmlCommand.cs" />
+    <Compile Include="Rebuild\StudyXmlRebuilder.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommandProcessor.cs" />
     <Compile Include="Reconcile\CreateStudy\SeriesSopUpdateCommand.cs" />

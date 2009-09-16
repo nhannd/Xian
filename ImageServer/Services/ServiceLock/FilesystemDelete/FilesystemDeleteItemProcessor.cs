@@ -303,12 +303,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     insertParms.StudyStorageKey = location.GetKey();
                     insertParms.ServerPartitionKey = location.ServerPartitionKey;
 					insertParms.ScheduledTime = _scheduledTime;
-					insertParms.ExpirationTime = _scheduledTime;
                     insertParms.DeleteFilesystemQueue = true;
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
 				
-                    Model.WorkQueue insertItem = insertBroker.FindOne(insertParms);
+                    WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
                     {
                         Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
@@ -385,12 +384,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					insertParms.StudyStorageKey = location.GetKey();
 					insertParms.ServerPartitionKey = location.ServerPartitionKey;
 					insertParms.ScheduledTime = _scheduledTime;
-					insertParms.ExpirationTime = _scheduledTime;
 					insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
 					
-                    Model.WorkQueue insertItem = insertBroker.FindOne(insertParms);
+                    WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
 					{
 						Platform.Log(LogLevel.Error, "Unexpected problem inserting 'PurgeStudy' record into WorkQueue for Study {0}",
@@ -472,14 +470,13 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         			insertParms.StudyStorageKey = location.GetKey();
         			insertParms.ServerPartitionKey = location.ServerPartitionKey;
         			insertParms.ScheduledTime = _scheduledTime;
-        			insertParms.ExpirationTime = _scheduledTime.AddMinutes(1);
         			insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.MigrateStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
         			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledTime);
-        			Model.WorkQueue insertItem = broker.FindOne(insertParms);
+        			WorkQueue insertItem = broker.FindOne(insertParms);
 					if (insertItem == null)
         			{
         				Platform.Log(LogLevel.Error,
@@ -618,11 +615,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
             WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
 
-			criteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.MigrateStudy, WorkQueueTypeEnum.PurgeStudy });
+			criteria.WorkQueueTypeEnum.In(new[] { WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.MigrateStudy, WorkQueueTypeEnum.PurgeStudy });
 
             // Do Pending status, in case there's a Failure status entry, we don't want to 
             // block on that.
-			criteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress });
+			criteria.WorkQueueStatusEnum.In(new[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress });
 
             FilesystemStudyStorageSelectCriteria filesystemCriteria = new FilesystemStudyStorageSelectCriteria();
 

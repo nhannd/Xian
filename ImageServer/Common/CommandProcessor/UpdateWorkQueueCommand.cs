@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private readonly bool _duplicate;
         private readonly string _extension;
         private readonly string _uidRelativePath;
-        private string _uidGroupId;
+        private readonly string _uidGroupId;
 
         #endregion
 
@@ -85,6 +85,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _insertedWorkQueue; }
         }
 
+
         protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IInsertWorkQueue insert = updateContext.GetBroker<IInsertWorkQueue>();
@@ -94,8 +95,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
             parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-            parms.ScheduledTime = Platform.Time;
-            parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+			parms.ScheduledTime = Platform.Time;
             parms.WorkQueueGroupID = _uidGroupId;
 
             if (_duplicate)

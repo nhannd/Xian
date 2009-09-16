@@ -34,9 +34,8 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 
-namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
 	/// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
@@ -86,9 +85,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			if (false == _stream.AddFile(dicomFile, fileSize))
 			{
 				Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
-							 _path);
+				             _path);
 				throw new ApplicationException("Unexpected error adding SOP to XML Study Descriptor for SOP: " +
-											   dicomFile.MediaStorageSopInstanceUid);
+				                               dicomFile.MediaStorageSopInstanceUid);
 			}
 		}
 

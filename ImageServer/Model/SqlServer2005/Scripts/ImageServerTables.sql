@@ -1575,6 +1575,7 @@ CREATE TABLE [dbo].[WorkQueueTypeProperties](
 	[FailureDelaySeconds] [int] NOT NULL,
 	[DeleteDelaySeconds] [int] NOT NULL,
 	[PostponeDelaySeconds] [int] NOT NULL,
+	[ExpireDelaySeconds] [int] NOT NULL,
 	[MaxBatchSize] [int] NOT NULL,
  CONSTRAINT [PK_WorkQueueTypeProperties] PRIMARY KEY CLUSTERED 
 (

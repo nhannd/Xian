@@ -708,7 +708,6 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueFromFilesystemQueue]
 	-- Add the parameters for the stored procedure here
 	@StudyStorageGUID uniqueidentifier, 
 	@ServerPartitionGUID uniqueidentifier,
-	@ExpirationTime datetime,
 	@ScheduledTime datetime,
 	@DeleteFilesystemQueue bit, 
 	@WorkQueueTypeEnum smallint,
@@ -726,8 +725,12 @@ BEGIN
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 
 	declare @WorkQueuePriorityEnum as smallint
-	select @WorkQueuePriorityEnum = WorkQueuePriorityEnum from WorkQueueTypeProperties where WorkQueueTypeEnum = @WorkQueueTypeEnum
-
+	declare @DelaySeconds as int
+	declare @ExpirationTime as DateTime
+	select @WorkQueuePriorityEnum = WorkQueuePriorityEnum, @DelaySeconds=ExpireDelaySeconds from WorkQueueTypeProperties where WorkQueueTypeEnum = @WorkQueueTypeEnum
+	
+	set @ExpirationTime = DATEADD(second, @DelaySeconds, @ScheduledTime)
+	
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
@@ -939,7 +942,6 @@ CREATE PROCEDURE [dbo].[InsertWorkQueue]
 	@ServerPartitionGUID uniqueidentifier,
 	@WorkQueueTypeEnum smallint,
 	@ScheduledTime datetime, 
-	@ExpirationTime datetime,
 	@DeviceGUID uniqueidentifier = null,
 	@StudyHistoryGUID uniqueidentifier = null,
 	@Data xml = null,
@@ -962,7 +964,11 @@ BEGIN
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 
 	declare @WorkQueuePriorityEnum as smallint
-	select @WorkQueuePriorityEnum = WorkQueuePriorityEnum from WorkQueueTypeProperties where WorkQueueTypeEnum = @WorkQueueTypeEnum
+	declare @DelaySeconds as int
+	declare @ExpirationTime as DateTime
+	select @WorkQueuePriorityEnum = WorkQueuePriorityEnum, @DelaySeconds=ExpireDelaySeconds from WorkQueueTypeProperties where WorkQueueTypeEnum = @WorkQueueTypeEnum
+	
+	set @ExpirationTime = DATEADD(second, @DelaySeconds, @ScheduledTime)
 
 	BEGIN TRANSACTION
 
@@ -3953,9 +3959,9 @@ BEGIN
 
 		IF @UpdateWorkQueue=0
 		BEGIN
-			UPDATE WorkQueue
+		UPDATE WorkQueue
 			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum
-			WHERE GUID=@WorkQueueGUID
+		WHERE GUID=@WorkQueueGUID
 		END
 		ELSE
 		BEGIN

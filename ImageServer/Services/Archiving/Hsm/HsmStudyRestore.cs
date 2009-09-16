@@ -37,6 +37,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Rebuild;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -201,6 +202,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
 					processor.AddCommand(new ExtractZipCommand(zipFile, destinationFolder));
 
+					// We rebuild the StudyXml, in case any settings or issues have happened since archival
+					processor.AddCommand(new RebuildStudyXmlCommand(_studyStorage.StudyInstanceUid, destinationFolder));
 
 					// Apply the rules engine.
 					ServerActionContext context =
@@ -211,11 +214,13 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						new ApplyRulesCommand(destinationFolder, _studyStorage.StudyInstanceUid, context));
 
 					// Do the actual insert into the DB
-					processor.AddCommand(
-						new InsertFilesystemStudyStorageCommand(_hsmArchive.PartitionArchive.ServerPartitionKey,
-						                                        _studyStorage.StudyInstanceUid,
-						                                        studyFolder,
-						                                        fs.Filesystem.GetKey(), _syntax));
+					InsertFilesystemStudyStorageCommand insertStorageCommand = new InsertFilesystemStudyStorageCommand(
+													_hsmArchive.PartitionArchive.ServerPartitionKey,
+						                            _studyStorage.StudyInstanceUid,
+						                            studyFolder,
+						                            fs.Filesystem.GetKey(), _syntax);
+					processor.AddCommand(insertStorageCommand);
+
 					if (!processor.Execute())
 					{
 						Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
@@ -243,8 +248,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 								Platform.Log(LogLevel.Info, message);
 								throw new ApplicationException(message);
 							}
-							else
-								update.Commit();
+							update.Commit();
 
 							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
 										 _hsmArchive.PartitionArchive.Description);
@@ -273,6 +277,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							processor.AddCommand(new ExtractZipFileAndReplaceCommand(zipFile, file, destinationFolder));
 						}
 					}
+
+					// We rebuild the StudyXml, in case any settings or issues have happened since archival
+					processor.AddCommand(new RebuildStudyXmlCommand(_studyStorage.StudyInstanceUid, destinationFolder));
+
 					StudyStatusEnum status;
 
 					if (_syntax.Encapsulated && _syntax.LosslessCompressed)

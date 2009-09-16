@@ -375,7 +375,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 							queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
 							queueInsertParms.SopInstanceUid = sopInstanceUid;
 							queueInsertParms.ScheduledTime = Platform.Time;
-							queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
 
 							if (workQueueInsert.FindOne(queueInsertParms) == null)
 								Platform.Log(LogLevel.Error,

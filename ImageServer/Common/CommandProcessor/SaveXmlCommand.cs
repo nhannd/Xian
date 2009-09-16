@@ -73,6 +73,19 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             _xmlPath = Path.Combine(storageLocation.GetStudyPath(), storageLocation.StudyInstanceUid + ".xml");
             _gzPath = _xmlPath + ".gz";
         }
+
+		public SaveXmlCommand(StudyXml stream, string rootStudyPath, string studyInstanceUid)
+			: base("Insert into Study XML", true)
+		{
+			Platform.CheckForNullReference(stream, "StudyStream object");
+			Platform.CheckForNullReference(rootStudyPath, "Study folder path");
+			Platform.CheckForNullReference(studyInstanceUid, "Study Instance Uid");
+
+			_stream = stream;
+			_xmlPath = Path.Combine(rootStudyPath, studyInstanceUid + ".xml");
+			_gzPath = _xmlPath + ".gz";
+		}
+
         #endregion
 
         #region Private Methods

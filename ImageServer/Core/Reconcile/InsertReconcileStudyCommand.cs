@@ -92,7 +92,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			DateTime now = Platform.Time;
 			parameters.ScheduledTime = now;
-			parameters.ExpirationTime = now.AddSeconds(_context.ExpirationTime);
 
 			_workqueue = broker.FindOne(parameters);
 			if (_workqueue== null)

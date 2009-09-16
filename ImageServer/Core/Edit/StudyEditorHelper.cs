@@ -284,7 +284,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
             StudyStorageKey = location.Key;
             ServerPartitionKey = location.ServerPartitionKey;
             ScheduledTime = now;
-            ExpirationTime = now.AddMinutes(15);
             WorkQueueData = XmlUtils.SerializeAsXmlDoc(data); 
         }
     }
@@ -303,7 +302,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
             StudyStorageKey = studyStorageLocation.Key;
             ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             ScheduledTime = now;
-            ExpirationTime = now.AddMinutes(15);
             SeriesInstanceUid = seriesInstanceUid;
             WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
         }
@@ -323,7 +321,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
             ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             ScheduledTime = now;
         	SeriesInstanceUid = seriesInstanceUid;
-            ExpirationTime = now.AddMinutes(15);
             WorkQueueData = XmlUtils.SerializeAsXmlDoc(data);
             DeviceKey = deviceKey;
         }

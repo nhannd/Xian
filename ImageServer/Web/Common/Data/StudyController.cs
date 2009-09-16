@@ -130,7 +130,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			    insertParms.ServerPartitionKey = study.ThePartition.Key;
 				insertParms.StudyStorageKey = study.TheStudyStorage.Key;
                 insertParms.ScheduledTime = Platform.Time; // spread by 15 seconds
-                insertParms.ExpirationTime = Platform.Time.AddMinutes(1);
 
 			    WebDeleteStudyLevelQueueData extendedData = new WebDeleteStudyLevelQueueData();
 			    extendedData.Level = DeletionLevel.Study;
@@ -470,7 +469,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             StudyStorage storage = adaptor.Get(key);
             StudyStorageLocation storageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
             StudyReprocessor reprocessor = new StudyReprocessor();
-            reprocessor.ReprocessStudy(reason, storageLocation, Platform.Time, WorkQueuePriorityEnum.Medium);
+            reprocessor.ReprocessStudy(reason, storageLocation, Platform.Time);
         }
 
         #endregion

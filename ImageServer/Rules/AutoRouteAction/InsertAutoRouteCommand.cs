@@ -124,12 +124,10 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 			if (_scheduledTime.HasValue)
 			{
 				parms.ScheduledTime = _scheduledTime.Value;
-				parms.ExpirationTime = _scheduledTime.Value.AddMinutes(4);
 			}
 			else
 			{
 				parms.ScheduledTime = Platform.Time.AddSeconds(30);
-				parms.ExpirationTime = Platform.Time.AddMinutes(4);
 			}
         	parms.StudyStorageKey = _context.StudyLocationKey;
             parms.ServerPartitionKey = _context.ServerPartitionKey;

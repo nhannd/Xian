@@ -51,11 +51,6 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
 
-        public DateTime ExpirationTime
-        {
-            set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
-
         public DateTime ScheduledTime
         {
             set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }

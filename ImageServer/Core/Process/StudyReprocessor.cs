@@ -50,9 +50,8 @@ namespace ClearCanvas.ImageServer.Core.Process
         /// <param name="reason"></param>
         /// <param name="location"></param>
         /// <param name="scheduleTime"></param>
-        /// <param name="priority"></param>
         /// <returns></returns>
-		public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
+		public WorkQueue ReprocessStudy(String reason, StudyStorageLocation location, DateTime scheduleTime)
         {
         	Platform.CheckForNullReference(location, "location");
 
@@ -60,7 +59,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
         	using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
         	{
-				WorkQueue reprocessEntry = ReprocessStudy(ctx, reason, location, scheduleTime, priority);
+				WorkQueue reprocessEntry = ReprocessStudy(ctx, reason, location, scheduleTime);
         		if (reprocessEntry != null)
         		{
         			ctx.Commit();
@@ -70,7 +69,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         	}
         }
 
-		public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, DateTime scheduleTime, WorkQueuePriorityEnum priority)
+		public WorkQueue ReprocessStudy(IUpdateContext ctx, String reason, StudyStorageLocation location, DateTime scheduleTime)
 		{
 			Platform.CheckForNullReference(location, "location");
 
@@ -94,7 +93,6 @@ namespace ClearCanvas.ImageServer.Core.Process
 			columns.ServerPartitionKey = location.ServerPartitionKey;
 			columns.StudyStorageKey = location.Key;
 			columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-			columns.ExpirationTime = scheduleTime.Add(TimeSpan.FromMinutes(5));
 
 			ReprocessStudyQueueData queueData = new ReprocessStudyQueueData();
 			queueData.State = new ReprocessStudyState();

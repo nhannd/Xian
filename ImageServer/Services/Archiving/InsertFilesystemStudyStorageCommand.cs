@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		private readonly string _folder;
 		private readonly ServerEntityKey _filesystemKey;
 		private readonly TransferSyntax _transfersyntax;
+		private StudyStorageLocation _location;
 
 		/// <summary>
 		/// Constructor.
@@ -71,6 +72,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 			_folder = folder;
 			_filesystemKey = filesystemKey;
 			_transfersyntax = transferSyntax;
+		}
+
+		/// <summary>
+		/// The <see cref="StudyStorageLocation"/> inserted.
+		/// </summary>
+		public StudyStorageLocation Location
+		{
+			get { return _location; }
 		}
 
 		/// <summary>
@@ -104,7 +113,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 			}
 
 			// Find one so we don't uselessly process all the results.
-			locInsert.FindOne(insertParms);
+			_location = locInsert.FindOne(insertParms);
 		}
 	}
 }

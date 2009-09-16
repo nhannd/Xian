@@ -237,6 +237,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     			return _workQueueProperties;
     		}
     	}
+
         protected ServerPartition ServerPartition
         {
             get
@@ -531,12 +532,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						WorkQueueSettings settings = WorkQueueSettings.Instance;
 
 
-						DateTime scheduledTime;
+						DateTime now = Platform.Time;
 
 						if (item.FailureDescription != null)
 							parms.FailureDescription = item.FailureDescription;
 
-							scheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
+						DateTime scheduledTime = now.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
 
 
 						if (scheduledTime > item.ExpirationTime)
@@ -566,6 +567,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						else if (status == WorkQueueProcessorStatus.Idle
 						      || status == WorkQueueProcessorStatus.IdleNoDelete)
 						{
+							scheduledTime = now.AddSeconds(WorkQueueProperties.DeleteDelaySeconds);
+							if (scheduledTime > item.ExpirationTime)
+								scheduledTime = item.ExpirationTime;
+
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Idle;
 							parms.ScheduledTime = scheduledTime;
 							parms.ExpirationTime = item.ExpirationTime; // keep the same
@@ -575,7 +580,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
 
-							parms.ExpirationTime = scheduledTime.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
+							parms.ExpirationTime = scheduledTime.AddSeconds(WorkQueueProperties.ExpireDelaySeconds);
 							parms.ScheduledTime = scheduledTime;
 							parms.FailureCount = item.FailureCount;
 						}
@@ -760,6 +765,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         /// <param name="item">The item to fail.</param>
         /// <param name="failureDescription">The reason for the failure.</param>
+        /// <param name="generateAlert"></param>
         protected virtual void AbortQueueItem(Model.WorkQueue item, string failureDescription, bool generateAlert)
         {
             int retryCount = 0;
@@ -1282,7 +1288,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears incorrect. Study needs to be reprocessed.", numStudyRelatedInstancesInXml);
                 StudyReprocessor reprocessor = new StudyReprocessor();
                 String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time);
 
                 return reprocessEntry!=null;
             }
@@ -1324,7 +1330,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         			Log(LogLevel.Info, "AUTO-RECOVERY", "Found series in the db which does not exist in the study xml. Force to reprocess the study.");
         			StudyReprocessor reprocessor = new StudyReprocessor();
         			String reprocessReason = String.Format("Auto-recovery from {0}. {1}", item.WorkQueueTypeEnum, reason);
-        			reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time, WorkQueuePriorityEnum.High);
+        			reprocessor.ReprocessStudy(reprocessReason, storageLocation, Platform.Time);
 
         		}
         	}

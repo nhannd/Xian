@@ -33,12 +33,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Process;
+using ClearCanvas.ImageServer.Core.Rebuild;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -124,7 +122,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 									continue;
 								}
 
-								RebuildStudyXml(location);
+								StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
+								rebuilder.RebuildXml();
 
 								location.ReleaseLock();
 							}
@@ -153,7 +152,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 						continue;
 					}
 
-					RebuildStudyXml(location);
+					StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
+					rebuilder.RebuildXml();
 
 					location.ReleaseLock();
 				}
@@ -164,57 +164,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 				}
 			}
 		}
-
-		/// <summary>
-		/// Rebuild a specific study's XML file.
-		/// </summary>
-		/// <param name="location"></param>
-		private void RebuildStudyXml(StudyStorageLocation location)
-		{
-			string rootStudyPath = location.GetStudyPath();
-
-			try
-			{
-				using (ServerCommandProcessor processor = new ServerCommandProcessor("Rebuild XML"))
-				{
-					StudyXml currentXml = LoadStudyXml(location);
-
-					StudyXml newXml = new StudyXml(location.StudyInstanceUid);
-					foreach (SeriesXml series in currentXml)
-					{
-						string seriesPath = Path.Combine(rootStudyPath, series.SeriesInstanceUid);
-						foreach (InstanceXml instance in series)
-						{
-							string instancePath = Path.Combine(seriesPath, instance.SopInstanceUid + ".dcm");
-
-							processor.AddCommand(new InsertInstanceXmlCommand(newXml, instancePath));
-						}
-					}
-
-					processor.AddCommand(new SaveXmlCommand(newXml, location));
-
-					if (!processor.Execute())
-					{
-						throw new ApplicationException(processor.FailureReason);
-					}
-
-					Platform.Log(LogLevel.Info, "Completed reprocessing Study XML file for study {0}", location.StudyInstanceUid);
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected error when rebuilding study XML for directory: {0}", location.FilesystemPath);
-                StudyReprocessor reprocessor = new StudyReprocessor();
-                Model.WorkQueue reprocessEntry = reprocessor.ReprocessStudy("Rebuild StudyXml", location, Platform.Time, WorkQueuePriorityEnum.Low);
-				if (reprocessEntry!=null)
-				{
-					Platform.Log(LogLevel.Error, "Failure attempting to reprocess study: {0}", location.StudyInstanceUid);
-				}
-				else
-					Platform.Log(LogLevel.Error, "Inserted reprocess request for study: {0}", location.StudyInstanceUid);
-			}
-		}
-
 
 		/// <summary>
 		/// Get the server partition
@@ -248,7 +197,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		{
 			IStudyStorageEntityBroker broker = ReadContext.GetBroker<IStudyStorageEntityBroker>();
 			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-			criteria.ServerPartitionKey.EqualTo(partition.GetKey());
+			criteria.ServerPartitionKey.EqualTo(partition.Key);
 			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
 			storage = broker.FindOne(criteria);
 
