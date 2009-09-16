@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected override void OnDialogClosed(ApplicationComponentExitCode exitCode)
 		{
-			this.Context.InvalidateFolders(this.Context.SelectedFolder.GetType());
+			this.Context.InvalidateSelectedFolder();
 
 			base.OnDialogClosed(exitCode);
 		}
