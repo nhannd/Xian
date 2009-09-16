@@ -3953,7 +3953,7 @@ BEGIN
 	declare @PendingStatusEnum as smallint
 
 	SELECT @StudyStorageGUID=StudyStorageGUID FROM WorkQueue WHERE GUID=@WorkQueueGUID
-	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = 'Pending'
+	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = ''Pending''
 	
 	BEGIN TRANSACTION
 
