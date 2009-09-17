@@ -54,7 +54,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Helpers
         {
             return
                 "CheckDateRange(document.getElementById('" + fromDateTextBoxID + "').value, document.getElementById('" +
-                toDateTextBoxID + "').value, '" + textBoxID + "' , '" + calendarExtenderID + "' , '" + message + "'); return false;";
+                toDateTextBoxID + "').value, '" + textBoxID + "' , '" + calendarExtenderID + "' , '" + message + "');";
         }
+
+        public static string PopulateDefaultFromTime(string fromTimeTextBoxID)
+        {
+            return "if(document.getElementById('" + fromTimeTextBoxID + "').value == '') { document.getElementById('" + fromTimeTextBoxID + "').value = '00:00:00.000'; }";
+        }
+
+        public static string PopulateDefaultToTime(string toTimeTextBoxID)
+        {
+            return "if(document.getElementById('" + toTimeTextBoxID + "').value == '') { document.getElementById('" + toTimeTextBoxID + "').value = '23:59:59.999'; }";
+        }
+
     }
 }

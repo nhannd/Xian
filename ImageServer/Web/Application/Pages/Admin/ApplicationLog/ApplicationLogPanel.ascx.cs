@@ -81,8 +81,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 
             ClearToDateFilterButton.Attributes["onclick"] = ScriptHelper.ClearDate(ToDateFilter.ClientID, ToDateCalendarExtender.ClientID);
             ClearFromDateFilterButton.Attributes["onclick"] = ScriptHelper.ClearDate(FromDateFilter.ClientID, FromDateCalendarExtender.ClientID);
-            ToDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, ToDateFilter.ClientID, ToDateCalendarExtender.ClientID, "To Date must be greater than From Date");
-            FromDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, FromDateFilter.ClientID, FromDateCalendarExtender.ClientID, "From Date must be less than To Date");
+            ToDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, ToDateFilter.ClientID, ToDateCalendarExtender.ClientID, "To Date must be greater than From Date") + " " + ScriptHelper.PopulateDefaultToTime(ToTimeFilter.ClientID) + " return false;";
+            FromDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, FromDateFilter.ClientID, FromDateCalendarExtender.ClientID, "From Date must be less than To Date") + " " + ScriptHelper.PopulateDefaultFromTime(FromTimeFilter.ClientID) + " return false;";
 
 			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
 		    ApplicationLogGridView.Pager = GridPagerTop;

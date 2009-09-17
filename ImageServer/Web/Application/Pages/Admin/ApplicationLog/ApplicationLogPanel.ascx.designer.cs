@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog {
     
     
-    /// <summary>
-    /// ApplicationLogSearchPanel class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class ApplicationLogSearchPanel {
         
         /// <summary>

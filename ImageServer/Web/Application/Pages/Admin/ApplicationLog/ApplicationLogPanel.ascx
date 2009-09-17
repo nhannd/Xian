@@ -19,7 +19,9 @@
 								    $("#<%=FromTimeFilter.ClientID %>").mask("99:99:99.999");
 								    $("#<%=ToTimeFilter.ClientID %>").mask("99:99:99.999");
 							    });
-							}</script>
+							}
+							
+							</script>
 
 						<table cellpadding="0" cellspacing="0">
 							<tr>

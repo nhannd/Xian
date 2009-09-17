@@ -67,7 +67,7 @@ function fitStringToWidth(str,width,className) {
 }
 
 /*
- * CheckDateRange checks towo dates and ensures that the first is less than the second.
+ * CheckDateRange checks two dates and ensures that the first is less than the second.
  *
  * fromDate the date that should be less than the second date
  * toDate  the date that should be greater than the second date
