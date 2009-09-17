@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                         LinkButton button = (LinkButton) row.FindControl("ReconcileLinkButton");
                         Label label = (Label)row.FindControl("SeparatorLabel");
 
-                        if (study.IsReconcileRequired)
+                        if (study.IsReconcileRequired && Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.StudyIntegrityQueue.Search))
                         {
                             button.PostBackUrl = ImageServerConstants.PageURLs.StudyIntegrityQueuePage +
                                                  "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
@@ -240,7 +240,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                         button = (LinkButton) row.FindControl("QueueLinkButton");
                         label = (Label) row.FindControl("QueueSeparatorLabel");
 
-                        if(study.IsLocked)
+                        if(study.IsLocked && Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.WorkQueue.Search))
                         {
                             button.PostBackUrl = ImageServerConstants.PageURLs.WorkQueuePage +
                                                  "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
