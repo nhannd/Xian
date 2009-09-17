@@ -191,7 +191,14 @@ namespace ClearCanvas.ImageViewer
 				if (images.Count == 0)
 					continue;
 
-				if (sop.IsImage)
+				if (series.Sops.Count == 1 && images.Count == 1)
+				{
+					//The sop is actually a container for other referenced sops, like key images, but there's only one image to show, so it's a complete series.
+					DisplaySet displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
+					displaySet.PresentationImages.Add(images[0]);
+					displaySets.Add(displaySet);
+				}
+				else if (sop.IsImage)
 				{
 					ImageSop imageSop = (ImageSop)sop;
 					DisplaySetDescriptor descriptor;
@@ -209,29 +216,19 @@ namespace ClearCanvas.ImageViewer
 				}
 				else
 				{
-					if (series.Sops.Count == 1 && images.Count == 1)
+					//The sop is actually a container for other referenced sops, like key images.
+					foreach (IPresentationImage image in images)
 					{
-						//The sop is actually a container for other referenced sops, like key images, but there's only one image to show, so it's a complete series.
-						DisplaySet displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
-						displaySet.PresentationImages.Add(images[0]);
-						displaySets.Add(displaySet);
-					}
-					else
-					{
-						//The sop is actually a container for other referenced sops, like key images.
-						foreach (IPresentationImage image in images)
-						{
-							IImageSopProvider provider = (IImageSopProvider)image;
-							DisplaySetDescriptor descriptor;
-							if (provider.ImageSop.NumberOfFrames == 1)
-								descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber);
-							else
-								descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber, provider.Frame.FrameNumber);
+						IImageSopProvider provider = (IImageSopProvider)image;
+						DisplaySetDescriptor descriptor;
+						if (provider.ImageSop.NumberOfFrames == 1)
+							descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber);
+						else
+							descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber, provider.Frame.FrameNumber);
 
-							DisplaySet displaySet = new DisplaySet(descriptor);
-							displaySet.PresentationImages.Add(image);
-							displaySets.Add(displaySet);
-						}
+						DisplaySet displaySet = new DisplaySet(descriptor);
+						displaySet.PresentationImages.Add(image);
+						displaySets.Add(displaySet);
 					}
 				}
 			}

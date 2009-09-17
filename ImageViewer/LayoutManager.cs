@@ -131,15 +131,9 @@ namespace ClearCanvas.ImageViewer
 			BuildLogicalWorkspace();
 			ValidateLogicalWorkspace();
 			LayoutPhysicalWorkspace();
-			
-			// Sort the display sets before filling the physical workspace, so that
-			// the order in which the display sets are laid out matches the order
-			// of the studies in the study tree.
-
-			SortDisplaySets();
 			FillPhysicalWorkspace();
 			
-			// Now, sort the image sets according to study date.
+			// Now, only after showing the "primary study", sort the image sets according to study date.
 			SortImageSets();
 
 			ImageViewer.PhysicalWorkspace.Draw();
@@ -300,20 +294,27 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		/// <summary>
-		/// Called to sort the display sets.
-		/// </summary>
-		/// <remarks>
-		/// <para>The base implmentation of this method sorts the display sets by the <see cref="IComparer{T}"/> supplied by <see cref="GetDisplaySetComparer"/>,
-		/// and sorts each display set internally by the <see cref="IComparer{T}"/> supplied by <see cref="GetPresentationImageComparer"/>.</para>
-		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>s, or to override this method entirely.</para>
-		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
-		/// </remarks>
-		/// <seealso cref="Layout"/>
-		protected virtual void SortDisplaySets()
+		protected virtual void SortSops(SopCollection sops)
 		{
-			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
-				SortDisplaySets(imageSet.DisplaySets);
+			sops.Sort(GetSopComparer());
+		}
+
+		protected virtual IComparer<Sop> GetSopComparer()
+		{
+			return new InstanceNumberComparer();
+		}
+
+		protected virtual void SortSeries(SeriesCollection series)
+		{
+			foreach (Series singleSeries in series)
+				SortSops(singleSeries.Sops);
+
+			series.Sort(GetSeriesComparer());
+		}
+
+		protected virtual IComparer<Series> GetSeriesComparer()
+		{
+			return new SeriesNumberComparer();
 		}
 
 		/// <summary>
@@ -330,86 +331,13 @@ namespace ClearCanvas.ImageViewer
 			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
 		}
 
-		#endregion
-
-		/// <summary>
-		/// Sorts the given <see cref="DisplaySetCollection"/>.
-		/// </summary>
-		/// <remarks>
-		/// <para>By default, sorts the <see cref="IDisplaySet"/>s and their <see cref="IPresentationImage"/>s using
-		/// the <see cref="IComparer{T}"/>s from <see cref="GetDisplaySetComparer"/> and <see cref="GetPresentationImageComparer"/>.</para>
-		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>, or to override this method entirely.</para>
-		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
-		/// </remarks>
-		protected void SortDisplaySets(DisplaySetCollection displaySets)
-		{
-			displaySets.Sort(GetDisplaySetComparer());
-
-			foreach (IDisplaySet displaySet in displaySets)
-				SortImages(displaySet.PresentationImages);
-		}
-
-		/// <summary>
-		/// Sorts the given <see cref="PresentationImageCollection"/>.
-		/// </summary>
-		/// <remarks>
-		/// <para>By default, sorts the <see cref="IPresentationImage"/>s using the <see cref="IComparer{T}"/> from <see cref="GetPresentationImageComparer"/>.</para>
-		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>, or to override this method entirely.</para>
-		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
-		/// </remarks>
-		protected void SortImages(PresentationImageCollection images)
-		{
-			images.Sort(GetPresentationImageComparer());
-		}
-
-		#region Comparer Factory Methods
-
-		/// <summary>
-		/// Gets an <see cref="IComparer{T}"/> with which to sort <see cref="IDisplaySet"/>s.
-		/// </summary>
-		/// <remarks>
-		/// <para>The base implementation of this method returns an ascending <see cref="SeriesNumberComparer"/>.</para>
-		/// <para>Subclasses may choose to override this method to provide any <see cref="IComparer{T}"/> of <see cref="IDisplaySet"/>s.</para>
-		/// <para>This method is called by the base implementation of <see cref="SortDisplaySets()"/>.</para>
-		/// </remarks>
-		/// <returns>The <see cref="IComparer{T}"/> with which to sort <see cref="IDisplaySet"/>s.</returns>
-		/// <seealso cref="SortDisplaySets()"/>
-		protected virtual IComparer<IDisplaySet> GetDisplaySetComparer()
-		{
-			return DisplaySetCollection.GetDefaultComparer();
-		}
-
-		/// <summary>
-		/// Gets an <see cref="IComparer{T}"/> with which to sort <see cref="IPresentationImage"/>s.
-		/// </summary>
-		/// <remarks>
-		/// <para>The base implementation of this method returns an ascending <see cref="InstanceAndFrameNumberComparer"/>.</para>
-		/// <para>Subclasses may choose to override this method to provide any <see cref="IComparer{T}"/> of <see cref="IPresentationImage"/>s.</para>
-		/// <para>This method is called by the base implementation of <see cref="SortDisplaySets()"/>.</para>
-		/// </remarks>
-		/// <returns>The <see cref="IComparer{T}"/> with which to sort <see cref="IPresentationImage"/>s.</returns>
-		/// <seealso cref="SortDisplaySets()"/>
-		protected virtual IComparer<IPresentationImage> GetPresentationImageComparer()
-		{
-			return PresentationImageCollection.GetDefaultComparer();
-		}
-
-		/// <summary>
-		/// Gets an <see cref="IComparer{T}"/> with which to sort <see cref="IImageSet"/>s.
-		/// </summary>
-		/// <remarks>
-		/// <para>The base implementation of this method returns an asecending <see cref="StudyDateComparer"/>.</para>
-		/// <para>Subclasses may choose to override this method to provide any <see cref="IComparer{T}"/> of <see cref="IImageSet"/>s.</para>
-		/// <para>This method is called by the base implementation of <see cref="SortImageSets"/>.</para>
-		/// </remarks>
-		/// <returns>The <see cref="IComparer{T}"/> with which to sort <see cref="IImageSet"/>s.</returns>
-		/// <seealso cref="SortImageSets"/>
 		protected virtual IComparer<IImageSet> GetImageSetComparer()
 		{
 			return ImageSetCollection.GetDefaultComparer();
 		}
 
 		#endregion
+
 		#endregion
 
 		#region Logical Workspace Building Methods
@@ -432,6 +360,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			ImageSetDescriptor descriptor = CreateImageSetDescriptor(study.GetIdentifier());
 			ImageSet imageSet = new ImageSet(descriptor);
+
+			SortSeries(study.Series);
 
 			foreach (Series series in study.Series)
 				UpdateImageSet(imageSet, series);
@@ -456,8 +386,6 @@ namespace ClearCanvas.ImageViewer
 				sorted.Sort(LogicalWorkspace.ImageSets.Comparer);
 				insertIndex = sorted.IndexOf(imageSet);
 			}
-
-			SortDisplaySets(imageSet.DisplaySets);
 
 			LogicalWorkspace.ImageSets.Insert(insertIndex, imageSet);
 		}

@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		protected override int Compare(ImageSop x, ImageSop y)
+		public override int Compare(Sop x, Sop y)
 		{
 			int seriesNumber1 = x.SeriesNumber;
 			int seriesNumber2 = y.SeriesNumber;

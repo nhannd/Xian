@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 	/// Base class for comparers that compare some aspect of
 	/// DICOM studies.
 	/// </summary>
-	public abstract class DicomStudyComparer : ImageSetComparer
+	public abstract class DicomStudyComparer : ImageSetComparer, IComparer<Study>, IComparer<Sop>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomStudyComparer"/>.
@@ -80,8 +81,8 @@ namespace ClearCanvas.ImageViewer.Comparers
 				return 0;
 			}
 
-			IImageSopProvider provider1 = displaySet1.PresentationImages[0] as IImageSopProvider;
-			IImageSopProvider provider2 = displaySet2.PresentationImages[0] as IImageSopProvider;
+			ISopProvider provider1 = displaySet1.PresentationImages[0] as ISopProvider;
+			ISopProvider provider2 = displaySet2.PresentationImages[0] as ISopProvider;
 
 			if (provider1 == null)
 			{
@@ -96,10 +97,21 @@ namespace ClearCanvas.ImageViewer.Comparers
 					return this.ReturnValue; // x < y (because we want it at the end for non-reverse sorting)
 			}
 
-			return Compare(provider1.ImageSop, provider2.ImageSop);
+			return Compare(provider1.Sop, provider2.Sop);
 		}
 
 		#endregion
+
+		public int Compare(Study x, Study y)
+		{
+			if (x.Series.Count == 0 || y.Series.Count == 0)
+				return 0;
+
+			if (x.Series[0].Sops.Count == 0 || y.Series[0].Sops.Count == 0)
+				return 0;
+
+			return Compare(x.Series[0].Sops[0], y.Series[0].Sops[0]);
+		}
 
 		/// <summary>
 		/// Compares two <see cref="ImageSop"/>s.
@@ -108,9 +120,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <param name="y"></param>
 		/// <returns></returns>
 		/// <remarks>
-		/// The relevant DICOM series property to be compared
+		/// The relevant DICOM study property to be compared
 		/// is taken from the <see cref="ImageSop"/>.
 		/// </remarks>
-		protected abstract int Compare(ImageSop x, ImageSop y);
+		public abstract int Compare(Sop x, Sop y);
 	}
 }

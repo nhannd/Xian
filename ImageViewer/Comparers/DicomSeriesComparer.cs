@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 	/// Base class for comparers that compare some aspect of
 	/// DICOM series.
 	/// </summary>
-	public abstract class DicomSeriesComparer : DisplaySetComparer
+	public abstract class DicomSeriesComparer : DisplaySetComparer, IComparer<Series>, IComparer<Sop>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomSeriesComparer"/>.
@@ -64,8 +65,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <returns></returns>
 		public override int Compare(IDisplaySet x, IDisplaySet y)
 		{
-			if (x.PresentationImages.Count == 0 ||
-				y.PresentationImages.Count == 0)
+			if (x.PresentationImages.Count == 0 || y.PresentationImages.Count == 0)
 				return 0;
 
 			IImageSopProvider provider1 = x.PresentationImages[0] as IImageSopProvider;
@@ -89,6 +89,14 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#endregion
 
+		public int Compare(Series x, Series y)
+		{
+			if (x.Sops.Count == 0 || y.Sops.Count == 0)
+				return 0;
+
+			return Compare(x.Sops[0], y.Sops[0]);
+		}
+
 		/// <summary>
 		/// Compares two <see cref="ImageSop"/>s.
 		/// </summary>
@@ -99,6 +107,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// The relevant DICOM series property to be compared
 		/// is taken from the <see cref="ImageSop"/>.
 		/// </remarks>
-		protected abstract int Compare(ImageSop x, ImageSop y);
+		public abstract int Compare(Sop x, Sop y);
 	}
 }

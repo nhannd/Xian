@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <returns></returns>
 		public override string ToString()
 		{
-			string str = String.Format("{0} | {1}", this.SeriesDescription, this.SeriesInstanceUid);
+			string str = String.Format("{0} | {1} | {2}", this.SeriesNumber, this.SeriesDescription, this.SeriesInstanceUid);
 			return str;
 		}
 	}

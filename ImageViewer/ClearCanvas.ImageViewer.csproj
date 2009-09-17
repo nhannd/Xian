@@ -151,6 +151,8 @@
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
     <Compile Include="Common\RetryableCommandExecutor.cs" />
+    <Compile Include="Comparers\DicomSopComparer.cs" />
+    <Compile Include="Comparers\InstanceNumberComparer.cs" />
     <Compile Include="DicomPresentationImageSettings.cs" />
     <Compile Include="DicomPresentationImageSettings.Designer.cs">
       <AutoGen>True</AutoGen>

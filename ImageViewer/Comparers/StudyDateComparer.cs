@@ -34,13 +34,14 @@ using System.Diagnostics;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
 	/// <summary>
 	/// Compares two <see cref="ImageSop"/>s based on study date.
 	/// </summary>
-	public class StudyDateComparer : ImageSetComparer
+	public class StudyDateComparer : DicomStudyComparer, IComparer<IStudyData>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyDateComparer"/>.
@@ -100,9 +101,37 @@ namespace ClearCanvas.ImageViewer.Comparers
 			yield return imageSet.Name;
 		}
 
+		private IEnumerable<IComparable> GetCompareValues(IStudyData studyData)
+		{
+			yield return DateParser.Parse(studyData.StudyDate);
+			yield return TimeParser.Parse(studyData.StudyTime);
+			yield return studyData.StudyDescription;
+		}
+
+		private IEnumerable<IComparable> GetCompareValues(Sop sop)
+		{
+			yield return DateParser.Parse(sop.StudyDate);
+			yield return TimeParser.Parse(sop.StudyTime);
+			yield return sop.StudyDescription;
+		}
+
 		public override int Compare(IImageSet x, IImageSet y)
 		{
 			return Compare(GetCompareValues(x), GetCompareValues(y));
 		}
+
+		public override int Compare(Sop x, Sop y)
+		{
+			return Compare(GetCompareValues(x), GetCompareValues(y));
+		}
+
+		#region IComparer<IStudyData> Members
+
+		public int Compare(IStudyData x, IStudyData y)
+		{
+			return base.Compare(GetCompareValues(x), GetCompareValues(y));
+		}
+
+		#endregion
 	}
 }
