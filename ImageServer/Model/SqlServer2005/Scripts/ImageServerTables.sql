@@ -548,6 +548,7 @@ CREATE TABLE [dbo].[Study](
 	[ReferringPhysiciansName] [nvarchar](64) NULL,
 	[NumberOfStudyRelatedSeries] [int] NOT NULL,
 	[NumberOfStudyRelatedInstances] [int] NOT NULL,
+	[StudySizeInKB] [decimal](18, 0) NULL,
  CONSTRAINT [PK_Study] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

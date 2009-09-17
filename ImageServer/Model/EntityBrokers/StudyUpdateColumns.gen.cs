@@ -143,6 +143,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<String>("StudyInstanceUid", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
+        public Decimal StudySizeInKB
+        {
+            set { SubParameters["StudySizeInKB"] = new EntityUpdateColumn<Decimal>("StudySizeInKB", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
         {

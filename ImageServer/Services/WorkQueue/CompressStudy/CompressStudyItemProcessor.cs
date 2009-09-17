@@ -364,8 +364,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		protected override void OnProcessItemEnd(Model.WorkQueue item)
 		{
 			Platform.CheckForNullReference(item, "item");
-
-			_studyStats.UidsLoadTime.Add(UidsLoadTime);
+            base.OnProcessItemEnd(item);
+            
+            _studyStats.UidsLoadTime.Add(UidsLoadTime);
 			_studyStats.StorageLocationLoadTime.Add(StorageLocationLoadTime);
 			_studyStats.StudyXmlLoadTime.Add(StudyXmlLoadTime);
 			_studyStats.DBUpdateTime.Add(DBUpdateTime);

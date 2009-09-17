@@ -31,6 +31,7 @@
 
 using System;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -114,6 +115,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 				{
 					tier.Text = ssl.FilesystemTierEnum.Description;
 				}
+
+                Label studySize = StudyStorageViewControl.FindControl("StudySize") as Label;
+                if (studySize!=null)
+                {
+                    ulong sizeInBytes = (ulong) (ssl.Study.StudySizeInKB*1024);
+                    studySize.Text = ByteCountFormatter.Format(sizeInBytes);
+                }
 			}
         }
 

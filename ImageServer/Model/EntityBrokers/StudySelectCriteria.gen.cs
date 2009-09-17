@@ -254,6 +254,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["StudyInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
+        public ISearchCondition<Decimal> StudySizeInKB
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudySizeInKB"))
+              {
+                 SubCriteria["StudySizeInKB"] = new SearchCondition<Decimal>("StudySizeInKB");
+              }
+              return (ISearchCondition<Decimal>)SubCriteria["StudySizeInKB"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
         public ISearchCondition<ServerEntityKey> StudyStorageKey
         {

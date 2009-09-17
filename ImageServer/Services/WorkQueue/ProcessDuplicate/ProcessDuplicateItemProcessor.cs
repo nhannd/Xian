@@ -626,8 +626,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private String GetDuplicateSopFile()
         {
-            _item.LoadStudy(ExecutionContext.ReadContext);
-
             string baseDir = Path.Combine(_locations[0].FilesystemPath, _locations[0].PartitionFolder);
             baseDir = Path.Combine(baseDir, "Reconcile");
             baseDir = Path.Combine(baseDir, _item.GroupID);

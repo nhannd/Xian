@@ -42,60 +42,60 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public WorkQueueTypePropertiesUpdateColumns()
        : base("WorkQueueTypeProperties")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueueTypeEnum")]
-        public WorkQueueTypeEnum WorkQueueTypeEnum
-        {
-            set { SubParameters["WorkQueueTypeEnum"] = new EntityUpdateColumn<WorkQueueTypeEnum>("WorkQueueTypeEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
-        public WorkQueuePriorityEnum WorkQueuePriorityEnum
-        {
-            set { SubParameters["WorkQueuePriorityEnum"] = new EntityUpdateColumn<WorkQueuePriorityEnum>("WorkQueuePriorityEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MemoryLimited")]
-        public Boolean MemoryLimited
-        {
-            set { SubParameters["MemoryLimited"] = new EntityUpdateColumn<Boolean>("MemoryLimited", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="AlertFailedWorkQueue")]
         public Boolean AlertFailedWorkQueue
         {
             set { SubParameters["AlertFailedWorkQueue"] = new EntityUpdateColumn<Boolean>("AlertFailedWorkQueue", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxFailureCount")]
-        public Int32 MaxFailureCount
-        {
-            set { SubParameters["MaxFailureCount"] = new EntityUpdateColumn<Int32>("MaxFailureCount", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ProcessDelaySeconds")]
-        public Int32 ProcessDelaySeconds
-        {
-            set { SubParameters["ProcessDelaySeconds"] = new EntityUpdateColumn<Int32>("ProcessDelaySeconds", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="FailureDelaySeconds")]
-        public Int32 FailureDelaySeconds
-        {
-            set { SubParameters["FailureDelaySeconds"] = new EntityUpdateColumn<Int32>("FailureDelaySeconds", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="DeleteDelaySeconds")]
         public Int32 DeleteDelaySeconds
         {
             set { SubParameters["DeleteDelaySeconds"] = new EntityUpdateColumn<Int32>("DeleteDelaySeconds", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="PostponeDelaySeconds")]
-        public Int32 PostponeDelaySeconds
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ExpireDelaySeconds")]
+        public Int32 ExpireDelaySeconds
         {
-            set { SubParameters["PostponeDelaySeconds"] = new EntityUpdateColumn<Int32>("PostponeDelaySeconds", value); }
+            set { SubParameters["ExpireDelaySeconds"] = new EntityUpdateColumn<Int32>("ExpireDelaySeconds", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="FailureDelaySeconds")]
+        public Int32 FailureDelaySeconds
+        {
+            set { SubParameters["FailureDelaySeconds"] = new EntityUpdateColumn<Int32>("FailureDelaySeconds", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxBatchSize")]
         public Int32 MaxBatchSize
         {
             set { SubParameters["MaxBatchSize"] = new EntityUpdateColumn<Int32>("MaxBatchSize", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ExpireDelaySeconds")]
-        public Int32 ExpireDelaySeconds
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxFailureCount")]
+        public Int32 MaxFailureCount
         {
-            set { SubParameters["ExpireDelaySeconds"] = new EntityUpdateColumn<Int32>("ExpireDelaySeconds", value); }
+            set { SubParameters["MaxFailureCount"] = new EntityUpdateColumn<Int32>("MaxFailureCount", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MemoryLimited")]
+        public Boolean MemoryLimited
+        {
+            set { SubParameters["MemoryLimited"] = new EntityUpdateColumn<Boolean>("MemoryLimited", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="PostponeDelaySeconds")]
+        public Int32 PostponeDelaySeconds
+        {
+            set { SubParameters["PostponeDelaySeconds"] = new EntityUpdateColumn<Int32>("PostponeDelaySeconds", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ProcessDelaySeconds")]
+        public Int32 ProcessDelaySeconds
+        {
+            set { SubParameters["ProcessDelaySeconds"] = new EntityUpdateColumn<Int32>("ProcessDelaySeconds", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+        {
+            set { SubParameters["WorkQueuePriorityEnum"] = new EntityUpdateColumn<WorkQueuePriorityEnum>("WorkQueuePriorityEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueueTypeEnum")]
+        public WorkQueueTypeEnum WorkQueueTypeEnum
+        {
+            set { SubParameters["WorkQueueTypeEnum"] = new EntityUpdateColumn<WorkQueueTypeEnum>("WorkQueueTypeEnum", value); }
         }
     }
 }

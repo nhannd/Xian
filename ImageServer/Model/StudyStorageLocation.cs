@@ -610,28 +610,56 @@ namespace ClearCanvas.ImageServer.Model
             // Can't do it until we break the dependency of ImageServer.Common on Model
             if (_studyXml==null)
             {
-                try
+                lock(SyncRoot)
                 {
-                    Stream xmlStream = Open(GetStudyXmlPath());
-                    if (xmlStream != null)
+                    try
                     {
-                        XmlDocument xml = new XmlDocument();
-                        using (xmlStream)
+                        Stream xmlStream = Open(GetStudyXmlPath());
+                        if (xmlStream != null)
                         {
-                            StudyXmlIo.Read(xml, xmlStream);
-                            xmlStream.Close();
+                            XmlDocument xml = new XmlDocument();
+                            using (xmlStream)
+                            {
+                                StudyXmlIo.Read(xml, xmlStream);
+                                xmlStream.Close();
+                            }
+
+                            _studyXml = new StudyXml();
+                            _studyXml.SetMemento(xml);
+
                         }
-
-                        _studyXml = new StudyXml();
-                        _studyXml.SetMemento(xml);
-
                     }
+                    catch (Exception)
+                    { }
                 }
-                catch(Exception)
-                {}
+                
             }
             
 
+            return _studyXml;
+        }
+
+        public StudyXml LoadStudyXml(bool refresh)
+        {
+            lock(SyncRoot)
+            {
+                Stream xmlStream = Open(GetStudyXmlPath());
+                if (xmlStream != null)
+                {
+                    XmlDocument xml = new XmlDocument();
+                    using (xmlStream)
+                    {
+                        StudyXmlIo.Read(xml, xmlStream);
+                        xmlStream.Close();
+                    }
+
+                    _studyXml = new StudyXml();
+                    _studyXml.SetMemento(xml);
+
+                }
+
+            }
+            
             return _studyXml;
         }
         

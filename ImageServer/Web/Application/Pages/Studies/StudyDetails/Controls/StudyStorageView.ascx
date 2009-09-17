@@ -51,6 +51,12 @@
                 <asp:Label ID="StudyFolder" runat="server" />
             </ItemTemplate>
         </asp:TemplateField>
+        <asp:TemplateField HeaderText="Study Size: ">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                <asp:Label ID="StudySize" runat="server" /> 
+            </ItemTemplate>
+        </asp:TemplateField>
     </Fields>
     <RowStyle CssClass="GlobalGridViewRow"/>
     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

@@ -122,6 +122,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         #region Private Fields
         private const int MAX_DB_RETRY = 5;
+        private const float KB = 1024;
         private string _name = "Work Queue";
         private IReadContext _readContext;
         private TimeSpanStatistics _storageLocationLoadTime = new TimeSpanStatistics();
@@ -138,6 +139,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     	private readonly object _syncRoot = new object();
         private StudyIntegrityValidationModes _validationModes = StudyIntegrityValidationModes.None;
     	private WorkQueueTypeProperties _workQueueProperties;
+        
         #endregion
 
         #region Constructors
@@ -265,10 +267,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 lock(_syncRoot)
                 {
-                    if (_theStudy==null)
-                    {
-                        _theStudy = WorkQueueItem.LoadStudy(ReadContext);
-                    }
+                    _theStudy = WorkQueueItem.Study;
                 }
                 return _theStudy;
             }
@@ -502,9 +501,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// <param name="resetQueueStudyState">Reset the queue study state back to Idle</param>
 		protected virtual void PostProcessing(Model.WorkQueue item, WorkQueueProcessorStatus status, WorkQueueProcessorDatabaseUpdate resetQueueStudyState)
 		{
-		    bool completed = status == WorkQueueProcessorStatus.Complete
+		    Completed = status == WorkQueueProcessorStatus.Complete
 		                     || (status == WorkQueueProcessorStatus.Idle && item.ExpirationTime < Platform.Time);
-            if (completed)
+            if (Completed)
             {
                 if (WorkQueueSettings.Instance.EnableStudyIntegrityValidation)
                 {
@@ -562,7 +561,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 							parms.ExpirationTime = item.ExpirationTime; // Keep the same
-						    completed = true;
+						    Completed = true;
 						}
 						else if (status == WorkQueueProcessorStatus.Idle
 						      || status == WorkQueueProcessorStatus.IdleNoDelete)
@@ -597,6 +596,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				);
 
 		}
+
+        /// <summary>
+        /// Gets or sets a boolean value indicating whether the Work Queue Item is completed.
+        /// </summary>
+        protected bool Completed
+        {
+            get; set;
+        }
 
         /// <summary>
         /// Gets the <see cref="QueueStudyStateEnum"/> value to be used for the specified work queue item status
@@ -1397,7 +1404,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The work queue item which has been processed.</param>
         protected virtual void OnProcessItemEnd(Model.WorkQueue item)
         {
-            // NOOP
+            // Update the study size
+            
+            if (Completed)
+            {
+                Study theStudy = Study ?? Study.Find(ExecutionContext.Current.ReadContext, item.StudyStorageKey);
+                if (theStudy!=null)
+                {
+                    StudyXml studyXml = StorageLocation.LoadStudyXml(true /* reload, in case it's changed */);
+                    decimal size = (decimal)(studyXml.GetStudySize()/KB);
+                    
+                    // only update if it's out-of-date
+                    if (theStudy.StudySizeInKB!=size)
+                    {
+                        using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                        {
+                            IStudyEntityBroker broker = ctx.GetBroker<IStudyEntityBroker>();
+                            StudyUpdateColumns parameters = new StudyUpdateColumns();
+                            parameters.StudySizeInKB = size;
+                            if (broker.Update(theStudy.Key, parameters))
+                                ctx.Commit();
+                        }    
+    
+                    }
+                }
+                
+            }
+            
         }
 
         protected abstract void ProcessItem(Model.WorkQueue item);

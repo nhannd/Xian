@@ -84,8 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             get
             {
-                WorkQueueController controller = new WorkQueueController();
-                return controller.GetWorkQueueItemStudy(_workQueue);
+                return _workQueue.Study;
             }
         }
 

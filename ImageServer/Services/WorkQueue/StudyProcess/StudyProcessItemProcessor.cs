@@ -452,6 +452,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     	protected override void OnProcessItemEnd(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
+            base.OnProcessItemEnd(item);
 
             _statistics.UidsLoadTime.Add(UidsLoadTime);
             _statistics.StorageLocationLoadTime.Add(StorageLocationLoadTime);

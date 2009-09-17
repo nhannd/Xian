@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.String _studyDescription_
             ,System.String _studyId_
             ,System.String _studyInstanceUid_
+            ,System.Decimal _studySizeInKB_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
             ,System.String _studyTime_
             ):base("Study")
@@ -85,6 +86,7 @@ namespace ClearCanvas.ImageServer.Model
             _studyDescription = _studyDescription_;
             _studyId = _studyId_;
             _studyInstanceUid = _studyInstanceUid_;
+            _studySizeInKB = _studySizeInKB_;
             _studyStorageKey = _studyStorageKey_;
             _studyTime = _studyTime_;
         }
@@ -108,6 +110,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _studyDescription;
         private String _studyId;
         private String _studyInstanceUid;
+        private Decimal _studySizeInKB;
         private ServerEntityKey _studyStorageKey;
         private String _studyTime;
         #endregion
@@ -230,6 +233,12 @@ namespace ClearCanvas.ImageServer.Model
         get { return _studyInstanceUid; }
         set { _studyInstanceUid = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
+        public Decimal StudySizeInKB
+        {
+        get { return _studySizeInKB; }
+        set { _studySizeInKB = value; }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
         {
@@ -289,6 +298,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.StudyDescription = entity.StudyDescription;
             updateColumns.StudyId = entity.StudyId;
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.StudySizeInKB = entity.StudySizeInKB;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.StudyTime = entity.StudyTime;
             Study newEntity = broker.Insert(updateColumns);

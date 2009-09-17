@@ -41,8 +41,30 @@ namespace ClearCanvas.ImageServer.Model
     {
         #region Private Members
         protected StudyStorage _studyStorage;
-        protected Study _study;
+        private Study _study;
         #endregion
+
+        
+
+        private void LoadRelatedEntities()
+        {
+            if (_study==null || _studyStorage==null)
+            {
+                using (IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                {
+                    lock (SyncRoot)
+                    {
+                        if (_study == null)
+                            _study = LoadStudy(context);
+
+                        if (_studyStorage == null)
+                            _studyStorage = LoadStudyStorage(context);
+                    }
+
+                }    
+            }
+            
+        }
 
 
         /// <summary>
@@ -66,15 +88,13 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Study LoadStudy(IPersistenceContext context)
+        private Study LoadStudy(IPersistenceContext context)
         {
-            StudyStorage storage = LoadStudyStorage(context);
-
             if (_study == null)
             {
                 lock (SyncRoot)
                 {
-                    _study = storage.LoadStudy(context);
+                    _study = Study.Find(context, StudyStorageKey);
                 }
             }
             return _study;
@@ -107,12 +127,19 @@ namespace ClearCanvas.ImageServer.Model
         {
             get
             {
-                if (_studyStorage==null)
-                {
-                    _studyStorage = Model.StudyStorage.Load(this.StudyStorageKey);
-                }
+                LoadRelatedEntities();
                 return _studyStorage;
             }
+        }
+
+        public Study Study
+        {
+            get
+            {
+                LoadRelatedEntities();
+                return _study;
+            }
+            set { _study = value; }
         }
     }
 }

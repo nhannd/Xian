@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Model
@@ -131,6 +132,14 @@ namespace ClearCanvas.ImageServer.Model
         public StudyStorage LoadStudyStorage(IPersistenceContext context)
         {
             return StudyStorage.Load(this.StudyStorageKey);
+        }
+
+        static public Study Find(IPersistenceContext context, ServerEntityKey studyStorageKey)
+        {
+            IStudyEntityBroker broker = context.GetBroker<IStudyEntityBroker>();
+            StudySelectCriteria criteria = new StudySelectCriteria();
+            criteria.StudyStorageKey.EqualTo( studyStorageKey);
+            return broker.FindOne(criteria);
         }
     }
 }
