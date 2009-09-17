@@ -8,7 +8,7 @@
 <ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>
             <asp:ValidationSummary ID="EditPartitionValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
-                EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />   			
+                EnableClientScript="true" runat="server" ValidationGroup="AddEditServerPartitionValidationGroup" CssClass="EditStudyDialogErrorMessage" />   			
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
                 <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">
@@ -20,21 +20,21 @@
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label4" runat="server" Text="AE Title" CssClass="DialogTextBoxLabel" /><br />
-                                                    <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1" CssClass="DialogTextBox"
+                                                    <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="AddEditServerPartitionValidationGroup" CssClass="DialogTextBox"
                                                         ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" Text="AE Title is required"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp" />
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup" InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
                                                         runat="server" ControlToValidate="AETitleTextBox" Display="None" Text="The AE Title is not valid."
-                                                        InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="vg1"
+                                                        InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:ServerPartitionValidator ID="ServerPartitionValidator" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
-                                                        Text="The AE Title is not valid." InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        Text="The AE Title is not valid." InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                 </td>
                                             </tr>
@@ -63,7 +63,7 @@
                                                     <asp:Label ID="Label2" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup" MinValue="1" MaxValue="65535"
                                                         Text="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
                                                 </td>
                                                 <td valign="bottom">
@@ -77,11 +77,11 @@
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="DialogTextBoxLabel" /><br />
-                                                    <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="vg1"
+                                                    <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"/>
                                                     <ccValidator:ServerPartitionFolderValidator ID="PartitionFolderValidator"
                                                         runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="false"
-                                                        Text="Folder Name is not valid" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        Text="Folder Name is not valid" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="FolderHelp"/>
                                                 </td>
                                                 <td valign="bottom">
@@ -163,7 +163,7 @@
                                                     <td valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
-                                                            ControlToValidate="DefaultRemotePortTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                            ControlToValidate="DefaultRemotePortTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                             MinValue="1" MaxValue="65535" Text="Remote device default port must be between 1 and 65535"
                                                             Display="None" InvalidInputIndicatorID="DefaultPortHelp" />
                                                     </td>
@@ -231,7 +231,7 @@
                 <tr align="right">
                     <td>
                         <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="AddEditServerPartitionValidationGroup" />
                             <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                         </asp:Panel>
                     </td>

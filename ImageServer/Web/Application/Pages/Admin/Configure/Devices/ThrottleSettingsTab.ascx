@@ -46,7 +46,7 @@ Specify the maximum number of simultaneous connections Image Server can initiate
                     <td>
                         <table>
                             <tr>
-                                <td><asp:TextBox runat="server" Width="20" ID="MaxConnectionTextBox" CssClass="DialogTextBox" ValidationGroup="vg1"></asp:TextBox></td>
+                                <td><asp:TextBox runat="server" Width="20" ID="MaxConnectionTextBox" CssClass="DialogTextBox" ValidationGroup="ThrottleSettingsValidationGroup"></asp:TextBox></td>
                                 <td>
                                 <ccAsp:InvalidInputIndicator ID="InvalidRangeIndicator" runat="server" SkinID="InvalidInputIndicator" /></td>
                             </tr>
@@ -64,7 +64,7 @@ Specify the maximum number of simultaneous connections Image Server can initiate
     ID="MaxConnectionTextBoxValidator" runat="server"
     ConditionalCheckBoxID="LimitedCheckBox"
     ControlToValidate="MaxConnectionTextBox" InvalidInputIndicatorID="InvalidRangeIndicator" 
-    ValidationGroup="vg1" Display="None" InvalidInputColor="#FAFFB5"
+    ValidationGroup="ThrottleSettingsValidationGroup" Display="None" InvalidInputColor="#FAFFB5"
     MinValue="1" MaxValue="100"
     Text="The value must be between 1 and 100"
     ></ccValidator:RangeValidator>

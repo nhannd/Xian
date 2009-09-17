@@ -108,10 +108,10 @@
                                             <td class="DialogLabelBackground"><asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel">Patient Sex</asp:Label></td>
                                             <td>
                                                 <table cellpadding="0" cellspacing="0">
-                                                    <tr><td><asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="vg1" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Sex)?"Not Specified":ReconcileDetails.ConflictingStudyInfo.Patient.Sex %>'></asp:textbox></td>
+                                                    <tr><td><asp:textbox ID="ConflictingPatientSex" runat="server" CssClass="StudyInfoField" BorderWidth="0" ReadOnly="true" Width="95" ValidationGroup="ReconcileValidationGroup" BorderStyle="None" BackColor="Transparent" Font-Size="14px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Sex)?"Not Specified":ReconcileDetails.ConflictingStudyInfo.Patient.Sex %>'></asp:textbox></td>
                                                     <td><ccAsp:InvalidInputIndicator ID="UnknownSex" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RegularExpressionFieldValidator ID="PatientSexValidator" runat="server" 
-                                                            ControlToValidate="ConflictingPatientSex" ValidationGroup="vg1" InvalidInputIndicatorID="UnknownSex"
+                                                            ControlToValidate="ConflictingPatientSex" ValidationGroup="ReconcileValidationGroup" InvalidInputIndicatorID="UnknownSex"
                                                             ValidationExpression="M$|m$|F$|f$|O$" Text="The value used for Merge Study<br/>will be Other (O)." Display="None">
                                                         </ccValidator:RegularExpressionFieldValidator>
                                                     </td>

@@ -24,7 +24,7 @@
 </script>    
     
 <asp:ValidationSummary ID="EditDeviceValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
-EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogValidationErrorMessage" />            
+EnableClientScript="true" runat="server" ValidationGroup="AddEditDeviceValidationGroup" CssClass="DialogValidationErrorMessage" />            
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
                 <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="DialogTabControl">
                     <ContentTemplate>
@@ -35,7 +35,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="DialogTextBoxLabel" /><br />
-                                                    <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" CssClass="DialogTextBox"></asp:TextBox>
+                                                    <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="AddEditDeviceValidationGroup" MaxLength="16" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
@@ -63,7 +63,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                                 <td>
                                                     <asp:Label ID="Label3" runat="server" Text="IP Address" CssClass="DialogTextBoxLabel" />
                                                     <asp:CheckBox ID="DHCPCheckBox" runat="server" Text="DHCP" CssClass="DialogCheckBox"/><br />
-                                                    <asp:TextBox ID="IPAddressTextBox" runat="server" ValidationGroup="vg1" CssClass="DialogTextBox">
+                                                    <asp:TextBox ID="IPAddressTextBox" runat="server" ValidationGroup="AddEditDeviceValidationGroup" CssClass="DialogTextBox">
                                                     </asp:TextBox>
                                                 </td>
                                                 <td align="left" valign="bottom">
@@ -133,15 +133,15 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                             </table>
                             <ccValidator:RegularExpressionFieldValidator
                                     ID="AETitleTextBoxValidator" runat="server" ControlToValidate="AETitleTextBox"
-                                    InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"
+                                    InvalidInputColor="#FAFFB5" ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"
                                     ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
                             <ccValidator:ConditionalRequiredFieldValidator ID="IPAddressValidator"
                                     runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
                                     ConditionalCheckBoxID="DHCPCheckBox" ValidateWhenUnchecked="true"
-                                    ValidationGroup="vg1" Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
+                                    ValidationGroup="AddEditDeviceValidationGroup" Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
                                     Display="None"></ccValidator:ConditionalRequiredFieldValidator>
                             <ccValidator:RangeValidator ID="PortValidator" runat="server" ControlToValidate="PortTextBox"
-                                    InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
+                                    InvalidInputColor="#FAFFB5" ValidationGroup="AddEditDeviceValidationGroup" MinValue="1" MaxValue="65535"
                                     Text="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
                                     Display="None"></ccValidator:RangeValidator>            
                     </ContentTemplate>
@@ -203,7 +203,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                     <tr>
                         <td align="right">
                             <asp:Panel runat="server" CssClass="DefaultModalDialogButtonPanel">
-                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="AddEditDeviceValidationGroup" />
                                 <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                             </asp:Panel>
                         </td>

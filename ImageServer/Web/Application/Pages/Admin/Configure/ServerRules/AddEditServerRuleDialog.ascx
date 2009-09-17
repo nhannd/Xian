@@ -9,7 +9,7 @@
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="800px">
 	<ContentTemplate>
             <asp:ValidationSummary ID="EditServerRuleValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
-                EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogValidationErrorMessage" />   			
+                EnableClientScript="true" runat="server" ValidationGroup="AddEditServerRuleValidationGroup" CssClass="DialogValidationErrorMessage" />   			
 			<aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
 				CssClass="DialogTabControl">
 				<aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel"
@@ -22,12 +22,12 @@
 											<tr>
 												<td>
 													<asp:Label ID="RuleNameLabel" runat="server" Text="Name" CssClass="DialogTextBoxLabel"></asp:Label><br />
-													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="285" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
+													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="285" ValidationGroup="AddEditServerRuleValidationGroup" CssClass="DialogTextBox"></asp:TextBox>
 												</td>
 												<td valign="bottom" align="center">
 													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" SkinID="InvalidInputIndicator"/>
 													<ccValidator:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
-														ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+														ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerRuleValidationGroup"
 														Text="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"/>
 												</td>
 											</tr>
@@ -100,7 +100,7 @@
 											InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
 											ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
 											ParamsFunction="ValidationServerRuleParams" Text="Invalid Server Rule"
-											Display="None" ValidationGroup="vg1" />
+											Display="None" ValidationGroup="AddEditServerRuleValidationGroup" />
 									</td>
 								</tr>
 							</table>
@@ -114,7 +114,7 @@
                 <tr align="right">
                     <td>
                             <asp:Panel ID="Panel3" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="AddEditServerRuleValidationGroup" />
                                 <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                             </asp:Panel>
                     </td>

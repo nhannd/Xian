@@ -28,7 +28,7 @@
         </script>
 
 <asp:ValidationSummary ID="EditStudyDetailsValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
-EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />
+EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGroup" CssClass="EditStudyDialogErrorMessage" />
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="EditStudyDialogTabControl" ForeColor="red">
                 <aspAjax:TabPanel ID="PatientTabPanel" runat="server" HeaderText="PatientTabPanel" CssClass="EdityStudyDialogTabControl">
@@ -43,13 +43,13 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                 <table cellpadding="0" cellspacing="0">
-                                        <tr><td><asp:TextBox ID="PatientID" runat="server" CssClass="DialogTextBox" MaxLength="64" CausesValidation="true" ValidationGroup="vg1"></asp:TextBox>
+                                        <tr><td><asp:TextBox ID="PatientID" runat="server" CssClass="DialogTextBox" MaxLength="64" CausesValidation="true" ValidationGroup="EditStudyValidationGroup"></asp:TextBox>
                                     </td>
                                     <td valign="bottom">
                                         <ccAsp:InvalidInputIndicator ID="PatientIDHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator14" runat="server" ControlToValidate="PatientID"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientIDHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientIDHelp"
                                                         ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient ID" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
@@ -59,7 +59,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                            <asp:DropDownList ID="PatientGender" runat="server" CssClass="DialogDropDownList" CausesValidation="true" ValidationGroup="vg1"  >
+                                            <asp:DropDownList ID="PatientGender" runat="server" CssClass="DialogDropDownList" CausesValidation="true" ValidationGroup="EditStudyValidationGroup"  >
                                                 <asp:ListItem Selected="True" Text=" " Value=" " />
                                                 <asp:ListItem Text="Male" Value="M" />
                                                 <asp:ListItem Text="Female" Value="F" />
@@ -70,7 +70,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                             <ccAsp:InvalidInputIndicator ID="PatientGenderHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator15" runat="server" ControlToValidate="PatientGender"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientGenderHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientGenderHelp"
                                                         ValidationExpression="M|F|O" Text="Patient Gender is a required field" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td>
@@ -83,12 +83,12 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" Text="20010101" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:DateValidator
                                                         ID="DateValidator19" runat="server" ControlToValidate="PatientBirthDate"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientBirthDateHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientBirthDateHelp"
                                                         Text="The Patient Birth Date cannot be in the future." Display="None">
                                             </ccValidator:DateValidator>
                                             <aspAjax:MaskedEditExtender runat="server" ID="PatientBirthDateMaskExtender" MaskType="Date" Mask="99/99/9999" TargetControlID="PatientBirthDate"></aspAjax:MaskedEditExtender>
@@ -101,7 +101,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" MaxLength="3"></ccUI:TextBox>
+                                        <ccUI:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" MaxLength="3"></ccUI:TextBox>
                                         <asp:DropDownList ID="PatientAgePeriod" runat="server" CssClass="DialogDropDownList">
                                             <asp:ListItem Value="Y">Years</asp:ListItem>
                                             <asp:ListItem Value="M">Months</asp:ListItem>
@@ -112,7 +112,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                             <ccAsp:InvalidInputIndicator ID="PatientAgeHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientAgeHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="PatientAgeHelp"
                                                         ValidationExpression="^[^-][0-9]*$" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
@@ -138,13 +138,13 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td class="DialogLabelBackground"><asp:Label ID="Label14" runat="server" Text="Study Description" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
-                                        <tr><td><asp:TextBox ID="StudyDescription" runat="server" CausesValidation="true" MaxLength="64" ValidationGroup="vg1" CssClass="DialogTextBox" />
+                                        <tr><td><asp:TextBox ID="StudyDescription" runat="server" CausesValidation="true" MaxLength="64" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" />
                                     </td>
                                     <td valign="bottom">
                                         <ccAsp:InvalidInputIndicator ID="StudyDescriptionHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator1" runat="server" ControlToValidate="StudyDescription"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDescriptionHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDescriptionHelp"
                                                         ValidationExpression="^([^\\]){0,64}$" Text="Invalid Study Description" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
@@ -153,11 +153,11 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="Label12" runat="server" Text="Accession #" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
-                                    <table cellpadding="0" cellspacing="0"><tr><td><asp:TextBox ID="AccessionNumber" runat="server" MaxLength="16" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" /></td>
+                                    <table cellpadding="0" cellspacing="0"><tr><td><asp:TextBox ID="AccessionNumber" runat="server" MaxLength="16" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" CssClass="DialogTextBox" /></td>
                                     <td valign="bottom"><ccAsp:InvalidInputIndicator ID="AccessionNumberHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AccessionNumber"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AccessionNumberHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="AccessionNumberHelp"
                                                         ValidationExpression="^([^\\]){0,16}$" Text="Invalid Accession Number" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator></td></tr></table>
                                 </td>
@@ -172,25 +172,25 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                         </td>
                                         <td>
                                         <ccAsp:InvalidInputIndicator ID="StudyDateHelp" runat="server" SkinID="InvalidInputIndicator" />
-                                        <ccValidator:ConditionalRequiredFieldValidator runat="server" ControlToValidate="StudyDate" Text="Study Date is required" Display="none" InvalidInputIndicatorID="StudyDateHelp" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" RequiredWhenChecked="False"/>
+                                        <ccValidator:ConditionalRequiredFieldValidator runat="server" ControlToValidate="StudyDate" Text="Study Date is required" Display="none" InvalidInputIndicatorID="StudyDateHelp" InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" RequiredWhenChecked="False"/>
                                         <ccValidator:DateValidator
                                                         ID="DateValidator1" runat="server" ControlToValidate="StudyDate"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp"
                                                         Text="The Study Date cannot be in the future." Display="None">
                                         </ccValidator:DateValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator16" runat="server" ControlToValidate="StudyTimeHours"
-                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
+                                            InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp"
                                             ValidationExpression="^(0*[1-9]|1[0-2])$" IgnoreEmptyValue="true" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator17" runat="server" ControlToValidate="StudyTimeMinutes"
-                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
+                                            InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp"
                                             ValidationExpression="^([0-5][0-9])*$" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator18" runat="server" ControlToValidate="StudyTimeSeconds"
-                                            InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
+                                            InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyDateHelp"
                                             ValidationExpression="^([0-5][0-9])*$" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         </td>
@@ -201,12 +201,12 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td class="DialogLabelBackground"><asp:Label ID="Label13" runat="server" Text="Study ID" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
-                                    <tr><td><asp:TextBox ID="StudyID" runat="server" CausesValidation="true" ValidationGroup="vg1" MaxLength="16" CssClass="DialogTextBox" /></td>
+                                    <tr><td><asp:TextBox ID="StudyID" runat="server" CausesValidation="true" ValidationGroup="EditStudyValidationGroup" MaxLength="16" CssClass="DialogTextBox" /></td>
                                     <td valign="bottom">
                                        <ccAsp:InvalidInputIndicator ID="StudyIDHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator3" runat="server" ControlToValidate="StudyID"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyIDHelp"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="EditStudyValidationGroup" InvalidInputIndicatorID="StudyIDHelp"
                                                         ValidationExpression="^([^\\]){0,16}$" Text="Invalid Study ID" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
@@ -274,7 +274,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                 <tr align="right">
                     <td>
                         <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="UpdateButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="UpdateButton" OnClick="OKButton_Click" ValidationGroup="EditStudyValidationGroup" />
                             <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                         </asp:Panel>
 

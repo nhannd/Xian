@@ -27,11 +27,11 @@ function ValidationUserGroupNameParams()
                 <td width="100%">
                     <ccAsp:InvalidInputIndicator ID="GroupNameHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserGroupsValidationGroup"
                                                         InvalidInputIndicatorID="GroupNameHelpId" Text="Group name is required" Display="None"
                                                         RequiredWhenChecked="False"/>
                     <ccValidator:DuplicateUsergroupValidator ID="DuplicateUsergroupValidator" runat="server"
-                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserGroupsValidationGroup"
                                                         InvalidInputIndicatorID="GroupNameHelpId" Text="User Group already exists." Display="None"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUserGroupName"
                                                         ParamsFunction="ValidationUserGroupNameParams"/>                                                        
@@ -60,7 +60,7 @@ function ValidationUserGroupNameParams()
             <tr>
                 <td align="right">
                     <asp:Panel runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" ValidationGroup="vg1" OnClick="OKButton_Click"/>
+                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" ValidationGroup="AddEditUserGroupsValidationGroup" OnClick="OKButton_Click"/>
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click"/>
                     </asp:Panel>
                 </td>

@@ -52,9 +52,9 @@
                         <ccUI:CalendarExtender ID="CalendarExtender" runat="server" 
                                     TargetControlID="ScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar" >
                         </ccUI:CalendarExtender>&nbsp;
-                        <asp:TextBox ID="ScheduleTime" runat="server" CssClass="DialogTextBox"  ValidationGroup="vg1"/>
+                        <asp:TextBox ID="ScheduleTime" runat="server" CssClass="DialogTextBox"  ValidationGroup="AddEditServiceLockValidationGroup"/>
                         <aspAjax:MaskedEditExtender runat="server" ID="ScheduleTimeMaskedEditExtender" MaskType="Time" AcceptAMPM="true" TargetControlID="ScheduleTime" Mask="99:99" MessageValidatorTip="false" OnInvalidCssClass="InvalidTextEntered"/>
-                        <aspAjax:MaskedEditValidator runat="server" ID="ScheduleTimeMaskedEditValidator" ControlExtender="ScheduleTimeMaskedEditExtender" ControlToValidate="ScheduleTime" ValidationExpression="(0[1-9]|1[0-2]):[0-5][0-9] ([ap]m|[AP]M)" ValidationGroup="vg1"  />
+                        <aspAjax:MaskedEditValidator runat="server" ID="ScheduleTimeMaskedEditValidator" ControlExtender="ScheduleTimeMaskedEditExtender" ControlToValidate="ScheduleTime" ValidationExpression="(0[1-9]|1[0-2]):[0-5][0-9] ([ap]m|[AP]M)" ValidationGroup="AddEditServiceLockValidationGroup"  />
                     </asp:TableCell>
                 </asp:TableRow>
                 
@@ -65,7 +65,7 @@
                     <tr>
                         <td align="right">
                             <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="ApplyButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="ApplyButton" OnClick="OKButton_Click" ValidationGroup="AddEditServiceLockValidationGroup" />
                                 <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                             </asp:Panel>
                         </td>

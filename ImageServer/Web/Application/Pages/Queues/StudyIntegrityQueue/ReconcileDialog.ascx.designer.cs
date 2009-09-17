@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue {
     
     
-    /// <summary>
-    /// ReconcileDialog class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class ReconcileDialog {
         
         /// <summary>

@@ -15,7 +15,7 @@
                 <tr align="right">
                     <td>
                         <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                            <ccUI:ToolbarButton ID="CloseButton" runat="server" SkinID="OKButton" ValidationGroup="vg1" OnClick="CloseClicked" /> 
+                            <ccUI:ToolbarButton ID="CloseButton" runat="server" SkinID="OKButton" ValidationGroup="DeleteStudyDialogValidationGroup" OnClick="CloseClicked" /> 
                         </asp:Panel>
 
                     </td>

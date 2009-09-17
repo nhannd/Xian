@@ -14,7 +14,7 @@
     </script>
     
             <asp:ValidationSummary ID="EditFileSystemValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
-                EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogValidationErrorMessage" />   			
+                EnableClientScript="true" runat="server" ValidationGroup="AddEditFileSystemValidationGroup" CssClass="DialogValidationErrorMessage" />   			
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
                 <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="TabPanel1" CssClass="DialogTabControl">
                     <ContentTemplate>
@@ -27,13 +27,13 @@
                                                 <td>
                                                     <asp:Label ID="Label1" runat="server" Text="Description" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
-                                                        BorderWidth="1px" MaxLength="128" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
+                                                        BorderWidth="1px" MaxLength="128" ValidationGroup="AddEditFileSystemValidationGroup" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="DescriptionTextBox" InvalidInputColor="#FAFFB5"
-                                                        ValidationGroup="vg1" Text="Description is required!!" Display="None"
+                                                        ValidationGroup="AddEditFileSystemValidationGroup" Text="Description is required!!" Display="None"
                                                         InvalidInputIndicatorID="InvalidDescriptionHint" RequiredWhenChecked="False">
                                                     </ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
@@ -58,14 +58,14 @@
                                                 <td>
                                                     <asp:Label ID="Label2" runat="server" Text="Path" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
-                                                        BorderWidth="1px" ValidationGroup="vg1" MaxLength="256" CssClass="DialogTextBox"></asp:TextBox>
+                                                        BorderWidth="1px" ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="256" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="InvalidPathHint" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
                                                         InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateFilesystemPath"
-                                                        ParamsFunction="ValidationFilesystemPathParams" Display="None" ValidationGroup="vg1" />
+                                                        ParamsFunction="ValidationFilesystemPathParams" Display="None" ValidationGroup="AddEditFileSystemValidationGroup" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -148,7 +148,7 @@
                                                     <td width="120px" align="left" valign="bottom">
                                                         <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="DialogTextBoxLabel" /><br />
                                                         <asp:TextBox ID="HighWatermarkTextBox" runat="server" CssClass="DialogTextBox"
-                                                            ValidationGroup="vg1" MaxLength="8" />%
+                                                            ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="8" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <asp:TextBox runat="server" ID="HighWatermarkSize" CssClass="DialogTextBox"
@@ -159,7 +159,7 @@
                                                         </ccAsp:InvalidInputIndicator>
                                                         <ccValidator:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
                                                             ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
-                                                            GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
+                                                            GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
                                                             MaxValue="99" InputName="High watermark" CompareToInputName="Low watermark" Display="None"
                                                             InvalidInputIndicatorID="HighWatermarkHelp" />
                                                     </td>
@@ -176,7 +176,7 @@
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
                                                         <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="DialogTextBoxLabel" /><br />
-                                                        <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="vg1" MaxLength="8" />%
+                                                        <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="AddEditFileSystemValidationGroup" MaxLength="8" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <asp:TextBox runat="server" ID="LowWaterMarkSize" CssClass="DialogTextBox"
@@ -187,7 +187,7 @@
                                                         </ccAsp:InvalidInputIndicator>
                                                         <ccValidator:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
                                                             runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
-                                                            GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1"
+                                                            GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
                                                             MaxValue="99" InputName="Low watermark" CompareToInputName="High watermark" Display="None"
                                                             InvalidInputIndicatorID="LowWatermarkHelp" />
                                                     </td>
@@ -208,7 +208,7 @@
                 <tr align="right">
                     <td>
                             <asp:Panel ID="Panel2" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
+                                <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="AddEditFileSystemValidationGroup" />
                                 <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                             </asp:Panel>
                     </td>

@@ -27,11 +27,11 @@ function ValidationUsernameParams()
                 <asp:TableCell runat="server" HorizontalAlign="left" width="100%">
                     <ccAsp:InvalidInputIndicator ID="UserLoginHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="UserNameRequiredFieldValidator" runat="server"
-                                                        ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserValidationGroup"
                                                         InvalidInputIndicatorID="UserLoginHelpId" Text="User ID is required" Display="None"
                                                         RequiredWhenChecked="False"/>
                     <ccValidator:DuplicateUsernameValidator ID="DuplicateUserNameValidator" runat="server"
-                                                        ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserValidationGroup"
                                                         InvalidInputIndicatorID="UserLoginHelpId" Text="User ID already exists." Display="None"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUsername"
                                                         ParamsFunction="ValidationUsernameParams"/>                                                        
@@ -43,7 +43,7 @@ function ValidationUsernameParams()
                 <asp:TableCell HorizontalAlign="left" width="100%">
                     <ccAsp:InvalidInputIndicator ID="UserDisplayNameHelp" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1" runat="server"
-                                                        ControlToValidate="DisplayName" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        ControlToValidate="DisplayName" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserValidationGroup"
                                                         InvalidInputIndicatorID="UserDisplayNameHelp" Text="User name is required" Display="None"
                                                         RequiredWhenChecked="False"/>
                 </asp:TableCell>
@@ -65,7 +65,7 @@ function ValidationUsernameParams()
             <tr>
                 <td align="right">
                     <asp:Panel runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" ValidationGroup="vg1" OnClick="OKButton_Click" />
+                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" ValidationGroup="AddEditUserValidationGroup" OnClick="OKButton_Click" />
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                     </asp:Panel>
                 </td>
