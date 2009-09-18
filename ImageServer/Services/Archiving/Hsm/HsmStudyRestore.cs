@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         parms.StudyStorageKey = queueItem.StudyStorageKey;
                         IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
                         _location = broker.FindOne(parms);
-                        if (_location == null)
+                        if (_location != null)
                         {
                             _studyStorage = StudyStorage.Load(readContext, queueItem.StudyStorageKey);
                         }
