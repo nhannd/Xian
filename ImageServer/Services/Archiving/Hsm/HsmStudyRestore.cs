@@ -58,7 +58,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private TransferSyntax _syntax;
 		private ServerTransferSyntax _serverSyntax;
 		private StudyStorage _studyStorage;
-		#endregion
+
+        #endregion
 
 		#region Constructors
 		/// <summary>
@@ -93,7 +94,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
                         _location = broker.FindOne(parms);
                         if (_location == null)
-                            _studyStorage = StudyStorage.Load(queueItem.StudyStorageKey);
+                        {
+                            _studyStorage = StudyStorage.Load(readContext, queueItem.StudyStorageKey);
+                        }
                     }
 
                     if (_studyStorage == null)
@@ -205,7 +208,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					// We rebuild the StudyXml, in case any settings or issues have happened since archival
 					processor.AddCommand(new RebuildStudyXmlCommand(_studyStorage.StudyInstanceUid, destinationFolder));
 
-					// Apply the rules engine.
+                    // Apply the rules engine.
 					ServerActionContext context =
 						new ServerActionContext(null, fs.Filesystem.GetKey(), _hsmArchive.ServerPartition,
 						                        queueItem.StudyStorageKey);
@@ -252,6 +255,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
 										 _hsmArchive.PartitionArchive.Description);
+
+                            OnStudyRestored(insertStorageCommand.Location);
 						}
 					}
 				}
@@ -264,7 +269,19 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			}
 		}
 
-		private void RestoreOnlineStudy(RestoreQueue queueItem, string zipFile, string destinationFolder)
+        private void OnStudyRestored(StudyStorageLocation location)
+        {
+            using(ServerCommandProcessor processor = new ServerCommandProcessor("Update Study Size In DB"))
+            {
+                processor.AddCommand(new UpdateStudySizeInDBCommand(location));
+                if (!processor.Execute())
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected error when trying to update the study size in DB:", processor.FailureReason);
+                }
+            }
+        }
+
+        private void RestoreOnlineStudy(RestoreQueue queueItem, string zipFile, string destinationFolder)
 		{
 			try
 			{
@@ -320,6 +337,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _location.StudyInstanceUid,
 										 _hsmArchive.PartitionArchive.Description);
+
+                            OnStudyRestored(_location);
 						}
 					}
 				}
