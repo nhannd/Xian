@@ -707,7 +707,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetDateTime(int i, out DateTime value)
         {
-            if (i<0 || i>this.Count)
+			if (_values == null || _values.Length <= i || i<0)
             {
                 value = new DateTime();
                 return false;
@@ -715,8 +715,8 @@ namespace ClearCanvas.Dicom
 
             if (!DateParser.Parse(_values[i], out value))
                 return false;
-            else
-                return true;
+            
+            return true;
         }
         
         /// <summary>
@@ -1477,16 +1477,16 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetDateTime(int i, out DateTime value)
         {
-            if (i < 0 || i > this.Count)
-            {
+			if (_values == null || _values.Length <= i || i < 0)
+			{
                 value = new DateTime();
                 return false;
             }
 
             if (!DateTimeParser.Parse(_values[i], out value))
                 return false;
-            else
-                return true;
+            
+            return true;
         }
         /// <summary>
         /// Set DT value from a datetime object
@@ -2247,15 +2247,14 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetDateTime(int i, out DateTime value)
         {
-            if (i < 0 || i > this.Count)
-            {
+			if (_values == null || _values.Length <= i || i < 0)
+			{
                 value = new DateTime();
                 return false;
             }
             if (!TimeParser.Parse(_values[i], out value))
                 return false;
-            else
-                return true;
+            return true;
 
         }
 

@@ -1250,6 +1250,25 @@ namespace ClearCanvas.Dicom.Tests
                 Assert.AreEqual("20001012", attrib.GetDateTime(0, dt).ToString("yyyyMMdd"));
                 Assert.AreEqual("20190502", attrib.GetDateTime(1, dt).ToString("yyyyMMdd"));
 
+				// special case: get empty, no values
+            	string stringVal;
+				DateTime dateTimeValue;
+				attrib = CreateAttribute();
+				Assert.AreEqual(0, attrib.Count);
+				Assert.IsTrue(attrib.TryGetString(1, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(1, out dateTimeValue) == false);
+				Assert.AreEqual(dateTimeValue, attrib.GetDateTime(1, dateTimeValue));
+
+				// special case: get empty, null value
+				attrib = CreateAttribute();
+				attrib.SetNullValue();
+				Assert.AreEqual(1, attrib.Count);
+				Assert.IsTrue(attrib.TryGetString(1, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetString(0, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(1, out dateTimeValue) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(0, out dateTimeValue) == false);
+				Assert.AreEqual(dateTimeValue, attrib.GetDateTime(1, dateTimeValue));
+				Assert.AreEqual(dateTimeValue, attrib.GetDateTime(0, dateTimeValue));
 
                 #endregion
             }
@@ -1509,8 +1528,6 @@ namespace ClearCanvas.Dicom.Tests
                 Assert.AreEqual("", stringVal);
                 Assert.AreEqual("", attrib.GetString(1, ""));
 
-               
-               
                 #endregion
 
                 #region Get datetime
@@ -1541,7 +1558,27 @@ namespace ClearCanvas.Dicom.Tests
                 dtVal = new DateTime();
                 Assert.AreEqual(dtVal, attrib.GetDateTime(1, dtVal));
 
-                
+
+				// special case: get empty, no values
+				DateTime dateTimeValue;
+				attrib = CreateAttribute();
+				Assert.AreEqual(0, attrib.Count);
+				Assert.IsTrue(attrib.TryGetString(1, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(1, out dateTimeValue) == false);
+				Assert.AreEqual(dateTimeValue, attrib.GetDateTime(1, dateTimeValue));
+
+				// special case: get empty, null value
+				attrib = CreateAttribute();
+            	attrib.SetNullValue();
+				Assert.AreEqual(1, attrib.Count);
+				Assert.IsTrue(attrib.TryGetString(1, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetString(0, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(1, out dateTimeValue) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(0, out dateTimeValue) == false);
+				Assert.AreEqual(dateTimeValue, attrib.GetDateTime(1, dateTimeValue));
+				Assert.AreEqual(dateTimeValue, attrib.GetDateTime(0, dateTimeValue));
+
+
                 #endregion
 
             }
@@ -2193,7 +2230,7 @@ namespace ClearCanvas.Dicom.Tests
         }
         #endregion
 
-        #region DicomAttributeDS Test
+        #region DicomAttributeIS Test
         [Test]
         public void AttributeISTest()
         {
@@ -5178,7 +5215,23 @@ namespace ClearCanvas.Dicom.Tests
                 Assert.IsTrue(attrib.TryGetDateTime(1, out dtVal));
                 Assert.AreEqual("125000.000000", attrib.GetDateTime(1, dtVal).ToString("hhmmss.ffffff"));
 
+				// special case: get empty, no values
+				attrib = CreateAttribute();
+				Assert.AreEqual(0, attrib.Count);
+				Assert.IsTrue(attrib.TryGetString(1, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(1, out dtVal) == false);
+				Assert.AreEqual(dtVal, attrib.GetDateTime(1, dtVal));
 
+				// special case: get empty, null value
+				attrib = CreateAttribute();
+				attrib.SetNullValue();
+				Assert.AreEqual(1, attrib.Count);
+				Assert.IsTrue(attrib.TryGetString(1, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetString(0, out stringVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(1, out dtVal) == false);
+				Assert.IsTrue(attrib.TryGetDateTime(0, out dtVal) == false);
+				Assert.AreEqual(dtVal, attrib.GetDateTime(1, dtVal));
+				Assert.AreEqual(dtVal, attrib.GetDateTime(0, dtVal));
 
                 #endregion
 
