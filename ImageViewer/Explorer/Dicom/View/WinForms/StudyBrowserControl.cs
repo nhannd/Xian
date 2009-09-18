@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			ClearCanvasStyle.SetTitleBarStyle(_resultsTitleBar);
 
 			_studyBrowserComponent = component;
-			_studyBrowserComponent.StudyTableChanged += delegate { _studyTableView.Table = _studyBrowserComponent.StudyTable; };
+			_studyBrowserComponent.StudyTableChanged += OnStudyBrowserComponentOnStudyTableChanged;
 
 			_studyTableView.Table = _studyBrowserComponent.StudyTable;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
@@ -63,6 +63,44 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_bindingSource.DataSource = _studyBrowserComponent;
 
 			_resultsTitleBar.DataBindings.Add("Text", _studyBrowserComponent, "ResultsTitle", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			this.AutoResizeColumns();
+		}
+
+		protected override void OnResize(EventArgs e)
+		{
+			base.OnResize(e);
+			this.AutoResizeColumns();
+		}
+
+		protected override void OnSizeChanged(EventArgs e)
+		{
+			base.OnSizeChanged(e);
+			this.AutoResizeColumns();
+		}
+
+		private void AutoResizeColumns()
+		{
+			_studyTableView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			_studyTableView.PerformLayout();
+			_studyTableView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+		}
+
+		private void OnStudyBrowserComponentOnStudyTableChanged(object sender, EventArgs e)
+		{
+			_studyTableView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			try
+			{
+				_studyTableView.Table = _studyBrowserComponent.StudyTable;
+			}
+			finally
+			{
+				_studyTableView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+			}
 		}
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)

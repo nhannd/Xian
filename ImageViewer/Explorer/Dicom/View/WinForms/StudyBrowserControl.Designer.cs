@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _studyTableView
 			// 
+			this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
 			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._studyTableView.Location = new System.Drawing.Point(0, 30);
 			this._studyTableView.Name = "_studyTableView";
