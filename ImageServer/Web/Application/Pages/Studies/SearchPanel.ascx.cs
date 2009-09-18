@@ -38,6 +38,7 @@ using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
@@ -153,7 +154,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
             StudyListGridView.Pager = GridPagerTop;
-            
+
+            ConfirmStudySearchMessageBox.Confirmed += delegate(object data) { StudyListGridView.Refresh(); };
+
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Study>)
@@ -284,8 +287,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
-        {
-            StudyListGridView.Refresh();
+        {   
+            if(String.IsNullOrEmpty(PatientId.Text) && 
+               String.IsNullOrEmpty(PatientName.Text) &&
+               String.IsNullOrEmpty(AccessionNumber.Text) &&
+               String.IsNullOrEmpty(ToStudyDate.Text) &&
+               String.IsNullOrEmpty(FromStudyDate.Text) &&
+               String.IsNullOrEmpty(StudyDescription.Text) &&
+               ModalityListBox.SelectedIndex < 0 &&
+               StatusListBox.SelectedIndex < 0) {
+                ConfirmStudySearchMessageBox.Message = "With no filters specified, this search may return a large number of studies. Are you sure you want to continue?";
+                ConfirmStudySearchMessageBox.Show();
+            } else
+            {
+                StudyListGridView.Refresh();    
+            }            
         }
         
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)

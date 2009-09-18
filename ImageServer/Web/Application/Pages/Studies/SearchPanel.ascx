@@ -168,4 +168,5 @@ function MultiSelect() {
 
 <ccAsp:MessageBox ID="MessageBox" runat="server" />
 <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
+<ccAsp:MessageBox ID="ConfirmStudySearchMessageBox" runat="server" MessageType="YESNO" />
 

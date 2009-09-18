@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
     
     
-    /// <summary>
-    /// SearchPanel class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class SearchPanel {
         
         /// <summary>
@@ -342,5 +336,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox RestoreMessageBox;
+        
+        /// <summary>
+        /// ConfirmStudySearchMessageBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ConfirmStudySearchMessageBox;
     }
 }
