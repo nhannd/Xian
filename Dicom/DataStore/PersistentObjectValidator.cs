@@ -89,9 +89,9 @@ namespace ClearCanvas.Dicom.DataStore
 			PersistentClass pclass = _configuration.GetClassMapping(obj.GetType());
 			IDictionary<string, PropertyInfo> pclassProperties = GetPropertyInfo(obj.GetType());
 
-			foreach (Property property in pclass.PropertyClosureCollection)
+			foreach (Property property in pclass.PropertyClosureIterator)
 			{
-				ICollection columns = property.ColumnCollection;
+				IEnumerable columns = property.ColumnIterator;
 
 				if (property.Type.IsComponentType)
 				{

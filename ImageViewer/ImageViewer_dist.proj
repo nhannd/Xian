@@ -110,8 +110,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll" />
-    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Nhibernate.dll" />
+    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Iesi.Collections.dll" />
+    <HibernateFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Nhibernate.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -209,8 +209,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EnterpriseCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
-    <EnterpriseCommonFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <EnterpriseCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.Core.dll "/>
+    <EnterpriseCommonFiles  Include="$(TrunkDirectory)\ReferencedAssemblies\NHibernate2.0\Castle.DynamicProxy2.dll" />
+    <EnterpriseCommonFiles  Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
   </ItemGroup>
   
   <ItemGroup>

@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using NHibernate;
-using NHibernate.Expression;
+using NHibernate.Criterion;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -78,7 +78,7 @@ namespace ClearCanvas.Dicom.DataStore
 					SessionManager.BeginReadTransaction();
 
 					IList listOfStudies = Session.CreateCriteria(typeof(Study))
-						.Add(Expression.Eq("StudyInstanceUid", studyInstanceUid))
+						.Add(NHibernate.Criterion.Expression.Eq("StudyInstanceUid", studyInstanceUid))
 						.List();
 
 					if (null != listOfStudies && listOfStudies.Count > 0)
