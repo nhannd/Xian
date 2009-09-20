@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="LayoutSettingsApplicationComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(LayoutConfigurationnComponentViewExtensionPoint))]
+    [ExtensionOf(typeof(LayoutConfigurationComponentViewExtensionPoint))]
     public class LayoutConfigurationComponentView : WinFormsView, IApplicationComponentView
     {
         private LayoutConfigurationComponent _component;

@@ -125,6 +125,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ContextMenuActionFactory.cs" />
     <Compile Include="ContextMenuLayoutTool.cs" />
     <Compile Include="DefaultPatientReconciliationSettings.cs" />
     <Compile Include="DefaultPatientReconciliationSettings.Designer.cs">
@@ -132,6 +133,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DefaultPatientReconciliationSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DisplaySetContextMenuActionFactory.cs" />
     <Compile Include="DisplaySetCreationSettings.cs" />
     <Compile Include="DisplaySetCreationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -168,7 +170,6 @@
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
-    <Compile Include="DefaultContextMenuActionFactory.cs" />
     <Compile Include="UnavailableImageSetDescriptor.cs" />
     <Compile Include="XmlActionsApplicator.cs" />
   </ItemGroup>

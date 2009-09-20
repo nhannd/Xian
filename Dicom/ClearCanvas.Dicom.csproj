@@ -227,6 +227,7 @@
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />
     <Compile Include="Iod\ContinuityOfContent.cs" />
     <Compile Include="Iod\HierarchicalSopInstanceReferenceDictionary.cs" />
+    <Compile Include="Iod\IApplicationEntity.cs" />
     <Compile Include="Iod\ImageSopInstanceReferenceDictionary.cs" />
     <Compile Include="Iod\IodBase.cs" />
     <Compile Include="Iod\Iods\ColorSoftcopyPresentationStateIod.cs" />
@@ -374,6 +375,9 @@
     <Compile Include="Network\Scu\StorageScu.cs" />
     <Compile Include="Network\Scu\VerificationScu.cs" />
     <Compile Include="Network\SupportedSop.cs" />
+    <Compile Include="ServiceModel\DicomServerApplicationEntity.cs" />
+    <Compile Include="ServiceModel\ApplicationEntity.cs" />
+    <Compile Include="ServiceModel\FaultContracts.cs" />
     <Compile Include="ServiceModel\Query\Comparers.cs" />
     <Compile Include="ServiceModel\Query\DicomStudyRootQuery.cs" />
     <Compile Include="ServiceModel\Query\FaultContracts.cs" />
@@ -394,6 +398,7 @@
     <Compile Include="ServiceModel\Query\StudyRootQueryServiceClient.cs" />
     <Compile Include="ServiceModel\Query\StudyRootStudyIdentifier.cs" />
     <Compile Include="ServiceModel\Query\Tests\SortStudyTests.cs" />
+    <Compile Include="ServiceModel\StreamingServerApplicationEntity.cs" />
     <Compile Include="ServiceModel\Streaming\HeaderStreamingParameters.cs" />
     <Compile Include="ServiceModel\Streaming\IHeaderStreamingService.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingClient.cs" />

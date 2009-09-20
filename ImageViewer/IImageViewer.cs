@@ -126,7 +126,10 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		/// <exception cref="LoadSopsException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
+		[Obsolete("This method has been deprecated and will be removed in the future. Use the LoadStudy(LoadStudyArgs) overload instead.")]
 		void LoadStudy(string studyInstanceUID, string source);
+
+		void LoadStudy(LoadStudyArgs loadStudyArgs);
 
 		/// <summary>
 		/// Loads images with the specified file paths.

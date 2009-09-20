@@ -137,6 +137,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 			string[] mainConfigurationElements = new string[]
 				{
 					"configSections",
+					"connectionStrings",
 					"applicationSettings",
 					"userSettings",
 					"system.serviceModel"
@@ -218,6 +219,29 @@ namespace ClearCanvas.Utilities.BuildTasks
 								UpdateNode(newTypeElement, settingElement, xPath);
 							}
 						}
+					}
+				}
+
+				elementPath = "connectionStrings";
+				XmlElement connectionStringsElement = configurationElement.SelectSingleNode(elementPath) as XmlElement;
+				if (connectionStringsElement != null)
+				{
+					if (connectionStringsElement.FirstChild == null)
+					{
+						XmlElement clearElement = document.CreateElement("clear");
+						connectionStringsElement.AppendChild(clearElement);
+					}
+					else if (connectionStringsElement.FirstChild.Name != "clear")
+					{
+						XmlElement clearElement = document.CreateElement("clear");
+						connectionStringsElement.InsertBefore(clearElement, connectionStringsElement.FirstChild);
+					}
+
+					XmlElement newConfigurationStrings = CreateElement(newConfigurationElement, elementPath, null, null);
+					foreach (XmlElement connectionStringElement in connectionStringsElement)
+					{
+						xPath = string.Format("service[@name='{0}']", connectionStringElement.GetAttribute("name"));
+						UpdateNode(newConfigurationStrings, connectionStringElement, xPath);
 					}
 				}
 

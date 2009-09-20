@@ -38,7 +38,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     [ExtensionOf(typeof(ImageViewerComponentViewExtensionPoint))]
     public class ImageViewerComponentView : WinFormsView, IApplicationComponentView
     {
-
         private ImageViewerControl _control;
         private ImageViewerComponent _component;
 

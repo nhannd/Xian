@@ -44,14 +44,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	/// Extension point for views onto <see cref="LayoutSettingsApplicationComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public sealed class LayoutConfigurationnComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class LayoutConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
 	/// LayoutSettingsApplicationComponent class
 	/// </summary>
-	[AssociateView(typeof(LayoutConfigurationnComponentViewExtensionPoint))]
+	[AssociateView(typeof(LayoutConfigurationComponentViewExtensionPoint))]
 	public class LayoutConfigurationComponent : ConfigurationApplicationComponent
 	{
 		private List<StoredLayout> _layouts;

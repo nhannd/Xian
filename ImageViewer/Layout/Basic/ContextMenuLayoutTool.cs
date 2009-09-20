@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		}
 	}
 
+	[ExtensionPoint]
 	public class ContextMenuActionFactoryExtensionPoint : ExtensionPoint<IContextMenuActionFactory>
 	{
 	}
@@ -105,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			List<IContextMenuActionFactory> factories = new List<IContextMenuActionFactory>();
 
-			factories.Add(new DefaultContextMenuActionFactory());
+			factories.Add(new DisplaySetContextMenuActionFactory());
 
 			try
 			{
