@@ -52,6 +52,11 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			base.Channel.RetrieveStudies(sourceAEInformation, studiesToRetrieve);
 		}
 
+		public void RetrieveSeries(AEInformation sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+		{
+			base.Channel.RetrieveSeries(sourceAEInformation, studyInformation, seriesInstanceUids);
+		}
+
 		public DicomServerConfiguration GetServerConfiguration()
 		{
 			return base.Channel.GetServerConfiguration();

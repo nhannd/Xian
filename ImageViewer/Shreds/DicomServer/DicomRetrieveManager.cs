@@ -56,10 +56,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public readonly IEnumerable<StudyInformation> StudiesToRetrieve;
 	}
 
+	internal class RetrieveSeriesRequest
+	{
+		public RetrieveSeriesRequest(AEInformation remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+		{
+			this.RemoteAEInfo = remoteAEInfo;
+			StudyInformation = studyInformation;
+			this.SeriesInstanceUids = seriesInstanceUids;
+		}
+
+		public readonly AEInformation RemoteAEInfo;
+		public readonly StudyInformation StudyInformation;
+		public readonly IEnumerable<string> SeriesInstanceUids;
+	}
+
 	//TODO: later, remove IDicomServerService, extend this to support series and image retrievals, and add a callback interface.
 	internal interface IRetrieveService
 	{
 		void RetrieveStudies(RetrieveStudiesRequest request);
+
+		void RetrieveSeries(RetrieveSeriesRequest request);
 	}
 
 	#endregion
@@ -89,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			private readonly Thread _thread;
 			private readonly IEnumerable<StudyInformation> _studiesToRetrieve;
+			private readonly IEnumerable<string> _seriesInstanceUids;
 
 			#endregion
 
@@ -105,6 +122,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				_thread = new Thread(RetrieveInternal);
 				_thread.Name = String.Format("Retrieve from {0}/{1}:{2}", 
 					remoteAEInfo.HostName, remoteAEInfo.AETitle, remoteAEInfo.Port);
+			}
+
+			public RetrieveScu(string localAETitle, AEInformation remoteAEInfo, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+				: this(localAETitle, remoteAEInfo, Enumerate(studyInformation))
+			{
+				_seriesInstanceUids = seriesInstanceUids;
+				_thread = new Thread(RetrieveInternal);
+				_thread.Name = String.Format("Retrieve from {0}/{1}:{2}",
+					remoteAEInfo.HostName, remoteAEInfo.AETitle, remoteAEInfo.Port);
+			}
+
+			private static IEnumerable<T> Enumerate<T>(T item)
+			{
+				yield return item;
 			}
 
 			public override void OnReceiveResponseMessage(ClearCanvas.Dicom.Network.DicomClient client, ClearCanvas.Dicom.Network.ClientAssociationParameters association, byte presentationID, ClearCanvas.Dicom.DicomMessage message)
@@ -202,26 +233,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			private void OnBeginRetrieve()
 			{
-				foreach (StudyInformation info in _studiesToRetrieve)
-				{
-					RetrieveStudyInformation retrieveInfo = new RetrieveStudyInformation();
-					retrieveInfo.FromAETitle = base.RemoteAE;
-					retrieveInfo.StudyInformation = info;
-					LocalDataStoreEventPublisher.Instance.RetrieveStarted(retrieveInfo);
+					foreach (StudyInformation info in _studiesToRetrieve)
+					{
+						RetrieveStudyInformation retrieveInfo = new RetrieveStudyInformation();
+						retrieveInfo.FromAETitle = base.RemoteAE;
+						retrieveInfo.StudyInformation = info;
+						LocalDataStoreEventPublisher.Instance.RetrieveStarted(retrieveInfo);
+					}
 				}
-			}
 
 			private void OnRetrieveError(string message)
 			{
-				foreach (StudyInformation info in _studiesToRetrieve)
-				{
-					ReceiveErrorInformation receiveError = new ReceiveErrorInformation();
-					receiveError.FromAETitle = base.RemoteAE;
-					receiveError.StudyInformation = info;
-					receiveError.ErrorMessage = message;
-					LocalDataStoreEventPublisher.Instance.ReceiveError(receiveError);
+					foreach (StudyInformation info in _studiesToRetrieve)
+					{
+						ReceiveErrorInformation receiveError = new ReceiveErrorInformation();
+						receiveError.FromAETitle = base.RemoteAE;
+						receiveError.StudyInformation = info;
+						receiveError.ErrorMessage = message;
+						LocalDataStoreEventPublisher.Instance.ReceiveError(receiveError);
+					}
 				}
-			}
 
 			#endregion
 
@@ -240,6 +271,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				foreach (StudyInformation info in _studiesToRetrieve)
 					AddStudyInstanceUid(info.StudyInstanceUid);
+
+				if (_seriesInstanceUids != null)
+				{
+					foreach (string seriesInstanceUid in _seriesInstanceUids)
+						AddSeriesInstanceUid(seriesInstanceUid);
+				}
 
 				//do this rather than use BeginSend b/c it uses thread pool threads which can be exhausted.
 				_thread.Start();
@@ -310,6 +347,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					//don't block the calling thread to do this.
 					ThreadPool.QueueUserWorkItem(delegate(object theScu) { ((RetrieveScu)theScu).Retrieve(); }, scu);
 				}
+			}
+		}
+
+		public void RetrieveSeries(RetrieveSeriesRequest request)
+		{
+			lock (_syncLock)
+			{
+				if (!_active)
+					throw new InvalidOperationException("The Retrieve service is not running.");
+
+				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
+				RetrieveScu scu = new RetrieveScu(configuration.AETitle, request.RemoteAEInfo, request.StudyInformation, request.SeriesInstanceUids);
+
+				_scus.Add(scu);
+				//don't block the calling thread to do this.
+				ThreadPool.QueueUserWorkItem(delegate(object theScu) { ((RetrieveScu)theScu).Retrieve(); }, scu);
 			}
 		}
 

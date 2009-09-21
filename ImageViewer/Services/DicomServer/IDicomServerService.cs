@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids);
 
 		/// <summary>
-		/// Performs a study level retrieve from another Dicom Server.  Series and Image level retrieves will not
+		/// Performs a study level retrieve from another Dicom Server.  Image level retrieves will not
 		/// work using this method and are currently unsupported.
 		/// </summary>
 		/// <param name="sourceAEInformation">The Dicom server to retrieve from</param>
@@ -58,6 +58,17 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		/// object passed in must have the <see cref="StudyInformation.StudyInstanceUid"/> field populated.</param>
 		[OperationContract(IsOneWay = true)]
 		void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve);
+
+		/// <summary>
+		/// Performs a series level retrieve from another Dicom Server.  Image level retrieves will not
+		/// work using this method and are currently unsupported.
+		/// </summary>
+		/// <param name="sourceAEInformation">The Dicom server to retrieve from</param>
+		/// <param name="seriesToRetrieve">The series to retrieve.  At an absolute minimum, each <see cref="SeriesInformation"/>
+		/// object passed in must have the <see cref="SeriesInformation.StudyInstanceUid"/> and <see cref="SeriesInformation.SeriesInstanceUid"/> 
+		/// fields populated.</param>
+		[OperationContract(IsOneWay = true)]
+		void RetrieveSeries(AEInformation sourceAEInformation, StudyInformation studyInformation,  IEnumerable<string> seriesInstanceUids);
 
 		/// <summary>
 		/// Retrieve the local Dicom Server configuration.

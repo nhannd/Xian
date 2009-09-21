@@ -98,7 +98,25 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				string message = SR.ExceptionFailedToInitiateRetrieve;
 				message += "\nDetail: " + e.Message;
 				throw new DicomServerException(message);
-			} 
+			}
+		}
+
+		public void RetrieveSeries(AEInformation sourceAEInformation, StudyInformation studyInformation, IEnumerable<string> seriesInstanceUids)
+		{
+			try
+			{
+				RetrieveSeriesRequest request = new RetrieveSeriesRequest(sourceAEInformation, studyInformation, seriesInstanceUids);
+				DicomRetrieveManager.Instance.RetrieveSeries(request);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToInitiateRetrieve;
+				message += "\nDetail: " + e.Message;
+				throw new DicomServerException(message);
+			}
 		}
 
 		public DicomServerConfiguration GetServerConfiguration()

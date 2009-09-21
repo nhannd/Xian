@@ -89,6 +89,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 
         #endregion
 
+    	protected DicomAttributeCollection DicomAttributeCollection
+    	{
+			get { return _dicomAttributeCollection; }	
+    	}
+
         #region Public Properties
         /// <summary>
         /// The number of tranferred SOP Instances which had a warning status.
@@ -141,7 +146,13 @@ namespace ClearCanvas.Dicom.Network.Scu
         	set { _destinationAe = value; }
         }
 
-
+    	public QueryRetrieveLevel CurrentLevel
+    	{
+    		get
+    		{
+				return IodBase.ParseEnum(_dicomAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
+    		}
+    	}
 
 
         /// <summary>
@@ -217,9 +228,9 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// </summary>
         /// <param name="studyInstanceUid">The study instance uid.</param>
         /// <exception cref="InvalidOperationException">If adding an instance of a different Query Level</exception>
-        public void AddStudyInstanceUid(string studyInstanceUid)
+		public virtual void AddStudyInstanceUid(string studyInstanceUid)
         {
-            CheckForOtherLevel(QueryRetrieveLevel.Study);
+			CheckForOtherLevel(QueryRetrieveLevel.Study);
             _dicomAttributeCollection[DicomTags.StudyInstanceUid].AppendString(studyInstanceUid);
         }
 
@@ -228,11 +239,10 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// </summary>
         /// <param name="patientId">The patient id.</param>
         /// <exception cref="InvalidOperationException">If adding an instance of a different Query Level</exception>
-        public void AddPatientId(string patientId)
+        public virtual void AddPatientId(string patientId)
         {
             CheckForOtherLevel(QueryRetrieveLevel.Patient);
             _dicomAttributeCollection[DicomTags.PatientId].AppendString(patientId);
-
         }
 
         /// <summary>
@@ -240,9 +250,12 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// </summary>
         /// <param name="seriesInstanceUid">The series instance uid.</param>
         /// <exception cref="InvalidOperationException">If adding an instance of a different Query Level</exception>
-        public void AddSeriesInstanceUid(string seriesInstanceUid)
+        public virtual void AddSeriesInstanceUid(string seriesInstanceUid)
         {
-            CheckForOtherLevel(QueryRetrieveLevel.Series);
+            if (_dicomAttributeCollection[DicomTags.StudyInstanceUid].Count != 1)
+				throw new InvalidOperationException("Exactly one study uid must be specified.");
+
+			CheckForOtherLevel(QueryRetrieveLevel.Series);
             _dicomAttributeCollection[DicomTags.SeriesInstanceUid].AppendString(seriesInstanceUid);
         }
 
@@ -251,8 +264,14 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// </summary>
         /// <param name="sopInstanceUid">The sop instance uid.</param>
         /// <exception cref="InvalidOperationException">If adding an instance of a different Query Level</exception>
-        public void AddSopInstanceUid(string sopInstanceUid)
+        public virtual void AddSopInstanceUid(string sopInstanceUid)
         {
+			if (_dicomAttributeCollection[DicomTags.StudyInstanceUid].Count != 1)
+				throw new InvalidOperationException("Exactly one study uid must be specified.");
+
+			if (_dicomAttributeCollection[DicomTags.SeriesInstanceUid].Count != 1)
+				throw new InvalidOperationException("Exactly one series uid must be specified.");
+
             CheckForOtherLevel(QueryRetrieveLevel.Image);
             _dicomAttributeCollection[DicomTags.SopInstanceUid].AppendString(sopInstanceUid);
         }
@@ -303,15 +322,16 @@ namespace ClearCanvas.Dicom.Network.Scu
         {
             QueryRetrieveLevel currentLevel = IodBase.ParseEnum(_dicomAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
 
-            if (currentLevel != QueryRetrieveLevel.None && queryRetrieveLevel != currentLevel)
-            {
-                throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Cannot add a {0} instance to Move request, alrady has a different kind of instance", queryRetrieveLevel));
-            }
-            else
-            {
-                IodBase.SetAttributeFromEnum(_dicomAttributeCollection[DicomTags.QueryRetrieveLevel], queryRetrieveLevel);
-            }
-
+			// Use the highest (most granular) query level (Image > Series > Study > Patient)
+			if (queryRetrieveLevel > currentLevel)
+			{
+				IodBase.SetAttributeFromEnum(_dicomAttributeCollection[DicomTags.QueryRetrieveLevel], queryRetrieveLevel);
+			}
+			else if(queryRetrieveLevel != currentLevel)
+			{
+				string message = String.Format("The current query/retrieve level is '{0}' and cannot be set to {1}", currentLevel, queryRetrieveLevel);
+				throw new InvalidOperationException(message);
+			}
         }
         #endregion
 
@@ -498,6 +518,15 @@ namespace ClearCanvas.Dicom.Network.Scu
         {
             get { return SopClass.PatientRootQueryRetrieveInformationModelMove; }
         }
+
+		public override void AddStudyInstanceUid(string studyInstanceUid)
+		{
+			if (base.DicomAttributeCollection[DicomTags.PatientId].Count != 1)
+				throw new InvalidOperationException("Exactly one patient ID must be specified.");
+
+			base.AddStudyInstanceUid(studyInstanceUid);
+		}
+
         #endregion
     }
 
@@ -543,6 +572,11 @@ namespace ClearCanvas.Dicom.Network.Scu
             get { return SopClass.StudyRootQueryRetrieveInformationModelMove; }
         }
         #endregion
+
+		public override void AddPatientId(string patientId)
+		{
+			throw new InvalidOperationException("Cannot add patient ID to study root move scu.");
+		}
     }
 
     #endregion
