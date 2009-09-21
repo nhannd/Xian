@@ -42,8 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "imageviewer-contextmenu/MenuZoom", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuZoom", "Select", Flags = ClickActionFlags.CheckAction)]
-	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarZoom", "Select", "ZoomDropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardZoom/Activate", "Select", KeyStroke = XKeys.Z)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarZoom", "Select", "ZoomDropDownMenuModel", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.Z)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ZoomToolSmall.png", "Icons.ZoomToolMedium.png", "Icons.ZoomToolLarge.png")]

@@ -43,8 +43,7 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuRotateLeft", "Activate")]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardRotateLeft", "Activate", KeyStroke = XKeys.L)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarRotateLeft", "Activate")]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarRotateLeft", "Activate", KeyStroke = XKeys.L)]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRotateLeft")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RotateLeftToolSmall.png", "Icons.RotateLeftToolMedium.png", "Icons.RotateLeftToolLarge.png")]

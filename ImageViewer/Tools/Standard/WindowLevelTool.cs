@@ -46,9 +46,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[DefaultMouseToolButton(XMouseButtons.Middle)]
 
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", "Select", KeyStroke = XKeys.W)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
-	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarWindowLevel", "Select", "PresetDropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarWindowLevel", "Select", "PresetDropDownMenuModel", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.W)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.WindowLevelToolSmall.png", "Icons.WindowLevelToolMedium.png", "Icons.WindowLevelToolLarge.png")]

@@ -48,8 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public sealed class ProbeToolDropDownToolExtensionPoint : ExtensionPoint<ITool> { }
 
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuProbe", "Select", Flags = ClickActionFlags.CheckAction)]
-	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardProbe/Activate", "Select", KeyStroke = XKeys.B)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.B)]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]

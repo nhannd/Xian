@@ -38,7 +38,6 @@ using ClearCanvas.ImageViewer.Annotations;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideTextOverlay", "ShowHide")]
-	[KeyboardAction("showHide", "imageviewer-keyboard/ToolsStandardShowHideTextOverlay", "ShowHide", KeyStroke = XKeys.O)]
 	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Text.ShowHide")]
 	[IconSet("showHide", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]

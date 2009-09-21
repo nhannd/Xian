@@ -34,6 +34,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
+using System.Text;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -67,7 +68,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             this.Text = _action.Label;
             this.Enabled = _action.Enabled;
-            this.ToolTipText = _action.Tooltip;
+			SetTooltipText();
 			this.Checked = _action.Checked;
 
             UpdateVisibility();
@@ -102,7 +103,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnActionTooltipChanged(object sender, EventArgs e)
 		{
-			this.ToolTipText = _action.Tooltip;
+			SetTooltipText();
 		}
 
 		private void OnActionIconSetChanged(object sender, EventArgs e)
@@ -162,6 +163,56 @@ namespace ClearCanvas.Desktop.View.WinForms
 					Platform.Log(LogLevel.Error, e);
 				}
 			}
+		}
+
+		private void SetTooltipText()
+		{
+			ToolTipText = GetTooltipText(_action);
+		}
+
+		internal static string GetTooltipText(IClickAction action)
+		{
+			if (action.KeyStroke == XKeys.None)
+				return action.Tooltip;
+
+			bool ctrl = (action.KeyStroke & XKeys.Control) == XKeys.Control;
+			bool alt = (action.KeyStroke & XKeys.Alt) == XKeys.Alt;
+			bool shift = (action.KeyStroke & XKeys.Shift) == XKeys.Shift;
+			XKeys keyCode = action.KeyStroke & XKeys.KeyCode;
+			
+			StringBuilder builder = new StringBuilder();
+			builder.Append(action.Tooltip);
+
+			if (keyCode != XKeys.None)
+			{
+				builder.AppendLine();
+				builder.AppendFormat("{0}: ", SR.LabelKeyboardShortcut);
+				if (ctrl)
+					builder.Append("Ctrl");
+
+				if (alt)
+				{
+					if (ctrl)
+						builder.Append("+");
+
+					builder.Append("Alt");
+				}
+
+				if (shift)
+				{
+					if (ctrl || alt)
+						builder.Append("+");
+					
+					builder.Append("Shift");
+				}
+
+				if (ctrl || alt || shift)
+					builder.Append("+");
+
+				builder.Append(keyCode);
+			}
+
+			return builder.ToString();
 		}
 	}
 }

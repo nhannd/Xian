@@ -183,7 +183,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Text = _action.Label;
 			this.Enabled = _action.Enabled;
 			this.Visible = _action.Visible;
-			this.ToolTipText = _action.Tooltip;
+			SetTooltipText();
 
 			UpdateCheckedState();
 			UpdateVisibility();
@@ -272,7 +272,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnActionTooltipChanged(object sender, EventArgs e)
 		{
-			this.ToolTipText = _action.Tooltip;
+			SetTooltipText();
 		}
 
 		private void OnActionIconSetChanged(object sender, EventArgs e)
@@ -315,6 +315,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 					Platform.Log(LogLevel.Error, e);
 				}
 			}
+		}
+
+		private void SetTooltipText()
+		{
+			ToolTipText = ActiveToolbarButton.GetTooltipText(_action);
 		}
 
 		protected override void Dispose(bool disposing)

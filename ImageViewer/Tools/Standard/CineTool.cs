@@ -38,8 +38,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuCine", "Activate")]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardCine", "Activate", KeyStroke = XKeys.C)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarCine", "Activate")]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarCine", "Activate", KeyStroke = XKeys.C)]
 	[Tooltip("activate", "TooltipCine")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CineToolSmall.png", "Icons.CineToolMedium.png", "Icons.CineToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Cine")]

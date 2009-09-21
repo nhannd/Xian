@@ -7,8 +7,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 {
-	[MenuAction("show", "imageviewer-contextmenu/MenuImageProperties", "Show")]
-	[KeyboardAction("show", "imageviewer-keyboard/ImageProperties", "Show", KeyStroke = XKeys.P)]
+	[MenuAction("show", "imageviewer-contextmenu/MenuImageProperties", "Show", KeyStroke = XKeys.Control | XKeys.P)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ImagePropertiesTool : ImageViewerTool
 	{

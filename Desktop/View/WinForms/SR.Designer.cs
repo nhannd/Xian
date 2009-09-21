@@ -154,6 +154,15 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shortcut.
+        /// </summary>
+        internal static string LabelKeyboardShortcut {
+            get {
+                return ResourceManager.GetString("LabelKeyboardShortcut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Main Menu.
         /// </summary>
         internal static string MenuBar {

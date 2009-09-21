@@ -40,14 +40,14 @@ using ClearCanvas.ImageViewer.BaseTools;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("undo", "global-menus/MenuEdit/MenuUndo", "Undo", KeyStroke = XKeys.Control | XKeys.Z)]
-	[ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarUndo", "Undo")]
+	[ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarUndo", "Undo", KeyStroke = XKeys.Control | XKeys.Z)]
 	[EnabledStateObserver("undo", "UndoEnabled", "UndoEnabledChanged")]
 	[IconSet("undo", IconScheme.Colour, "Icons.UndoToolSmall.png", "Icons.UndoToolMedium.png", "Icons.UndoToolLarge.png")]
 	[Tooltip("undo", "TooltipUndo")]
 	[GroupHint("undo", "Application.Edit.Undo")]
 
 	[MenuAction("redo", "global-menus/MenuEdit/MenuRedo", "Redo", KeyStroke = XKeys.Control | XKeys.Y)]
-	[ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarRedo", "Redo")]
+	[ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarRedo", "Redo", KeyStroke = XKeys.Control | XKeys.Y)]
 	[EnabledStateObserver("redo", "RedoEnabled", "RedoEnabledChanged")]
 	[IconSet("redo", IconScheme.Colour, "Icons.RedoToolSmall.png", "Icons.RedoToolMedium.png", "Icons.RedoToolLarge.png")]
 	[Tooltip("redo", "TooltipRedo")]

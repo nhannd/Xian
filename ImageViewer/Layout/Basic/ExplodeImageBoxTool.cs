@@ -41,9 +41,8 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[ButtonAction("explodeImageBox", "global-toolbars/ToolbarStandard/ToolbarExplodeImageBox", "ToggleExplode", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("explodeImageBox", "global-toolbars/ToolbarStandard/ToolbarExplodeImageBox", "ToggleExplode", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.X)]
 	[MenuAction("explodeImageBox", "global-menus/MenuTools/MenuStandard/MenuExplodeImageBox", "ToggleExplode", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("explodeImageBox", "imageviewer-keyboard/ExplodeImageBox", "ToggleExplode", KeyStroke = XKeys.X)]
 	[CheckedStateObserver("explodeImageBox", "Checked", "CheckedChanged")]
 	[EnabledStateObserver("explodeImageBox", "Enabled", "EnabledChanged")]
 	[Tooltip("explodeImageBox", "TooltipExplodeImageBox")]

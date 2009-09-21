@@ -41,16 +41,14 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[KeyboardAction("previous", "imageviewer-keyboard/ToolsStandardPreviousDisplaySet", "PreviousDisplaySet", KeyStroke = XKeys.E)]
 	[MenuAction("previous", "global-menus/MenuTools/MenuStandard/MenuPreviousDisplaySet", "PreviousDisplaySet")]
-	[ButtonAction("previous", "global-toolbars/ToolbarStandard/ToolbarPreviousDisplaySet", "PreviousDisplaySet")]
+	[ButtonAction("previous", "global-toolbars/ToolbarStandard/ToolbarPreviousDisplaySet", "PreviousDisplaySet", KeyStroke = XKeys.E)]
 	[Tooltip("previous", "TooltipPreviousDisplaySet")]
 	[IconSet("previous", IconScheme.Colour, "Icons.PreviousDisplaySetToolSmall.png", "Icons.PreviousDisplaySetToolMedium.png", "Icons.PreviousDisplaySetToolLarge.png")]
 	[GroupHint("previous", "Tools.Navigation.DisplaySets.Previous")]
 
-	[KeyboardAction("next", "imageviewer-keyboard/ToolsStandardNextDisplaySet", "NextDisplaySet", KeyStroke = XKeys.N)]
 	[MenuAction("next", "global-menus/MenuTools/MenuStandard/MenuNextDisplaySet", "NextDisplaySet")]
-	[ButtonAction("next", "global-toolbars/ToolbarStandard/ToolbarNextDisplaySet", "NextDisplaySet")]
+	[ButtonAction("next", "global-toolbars/ToolbarStandard/ToolbarNextDisplaySet", "NextDisplaySet", KeyStroke = XKeys.N)]
 	[Tooltip("next", "TooltipNextDisplaySet")]
 	[IconSet("next", IconScheme.Colour, "Icons.NextDisplaySetToolSmall.png", "Icons.NextDisplaySetToolMedium.png", "Icons.NextDisplaySetToolLarge.png")]
 	[GroupHint("next", "Tools.Navigation.DisplaySets.Next")]

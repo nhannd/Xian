@@ -43,8 +43,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	[MenuAction("create", "imageviewer-contextmenu/MenuCreateKeyImage", "Create")]
-	[ButtonAction("create", "global-toolbars/ToolbarStandard/ToolbarCreateKeyImage", "Create")]
-	[KeyboardAction("create", "imageviewer-keyboard/CreateKeyImage", "Create", KeyStroke = XKeys.Space)]
+	[ButtonAction("create", "global-toolbars/ToolbarStandard/ToolbarCreateKeyImage", "Create", KeyStroke = XKeys.Space)]
 	[Tooltip("create", "TooltipCreateKeyImage")]
 	[IconSet("create", IconScheme.Colour, "Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png")]
 	[EnabledStateObserver("create", "Enabled", "EnabledChanged")]
