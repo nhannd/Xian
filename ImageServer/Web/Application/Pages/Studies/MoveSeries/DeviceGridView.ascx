@@ -12,6 +12,7 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries.Devic
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" ></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description"></asp:BoundField>
+                    <asp:BoundField DataField="DeviceTypeEnum" HeaderText="Device Type" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:TemplateField HeaderText="IPAddress">
                         <ItemTemplate>
                             <asp:Label ID="IpAddressLabel" runat="server" Text="Label"></asp:Label>
