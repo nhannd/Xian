@@ -60,13 +60,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DicomExplorerConfigurationApplicationComponentControl.cs">
+    <Compile Include="DicomExplorerConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DicomExplorerConfigurationApplicationComponentControl.Designer.cs">
-      <DependentUpon>DicomExplorerConfigurationApplicationComponentControl.cs</DependentUpon>
+    <Compile Include="DicomExplorerConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DicomExplorerConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="DicomExplorerConfigurationApplicationComponentView.cs" />
+    <Compile Include="DicomExplorerConfigurationComponentView.cs" />
     <Compile Include="ModalityPicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -163,9 +163,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DicomExplorerConfigurationApplicationComponentControl.resx">
+    <EmbeddedResource Include="DicomExplorerConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>DicomExplorerConfigurationApplicationComponentControl.cs</DependentUpon>
+      <DependentUpon>DicomExplorerConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

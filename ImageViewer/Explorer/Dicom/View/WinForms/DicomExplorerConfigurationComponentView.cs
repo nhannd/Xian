@@ -35,21 +35,18 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="DicomExplorerConfigurationApplicationComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(DicomExplorerConfigurationApplicationComponentViewExtensionPoint))]
-    public class DicomExplorerConfigurationApplicationComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(DicomExplorerConfigurationComponentViewExtensionPoint))]
+    public class DicomExplorerConfigurationComponentView : WinFormsView, IApplicationComponentView
     {
-        private DicomExplorerConfigurationApplicationComponent _component;
-        private DicomExplorerConfigurationApplicationComponentControl _control;
+        private DicomExplorerConfigurationComponent _component;
+        private DicomExplorerConfigurationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (DicomExplorerConfigurationApplicationComponent)component;
+            _component = (DicomExplorerConfigurationComponent)component;
         }
 
         #endregion
@@ -60,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new DicomExplorerConfigurationApplicationComponentControl(_component);
+                    _control = new DicomExplorerConfigurationComponentControl(_component);
                 }
                 return _control;
             }

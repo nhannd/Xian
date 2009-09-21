@@ -103,6 +103,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
 			serverTreeComponent.ShowLocalDataStoreNode = HasLocalDatastoreSupport();
+
 			bool hasEditPermission = PermissionsHelper.IsInRole(AuthorityTokens.Configuration.MyServers);
 			serverTreeComponent.IsReadOnly = !hasEditPermission;
 
@@ -151,7 +152,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
 		{
 			IServerTreeNode initialSelection;
-			if (serverTreeComponent.ShowLocalDataStoreNode)
+			if (serverTreeComponent.ShowLocalDataStoreNode &&
+				!DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
 				initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
 			}
@@ -173,6 +175,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
 		{
+			if (serverGroup.IsEntireGroupChecked())
+				return serverGroup;
+
 			//consider groups and servers at this level
 			foreach (ServerGroup group in serverGroup.ChildGroups)
 			{

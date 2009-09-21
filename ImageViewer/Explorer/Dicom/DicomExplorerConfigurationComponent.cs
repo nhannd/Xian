@@ -39,28 +39,34 @@ using ClearCanvas.Desktop.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="DicomExplorerConfigurationApplicationComponent"/>
-	/// </summary>
 	[ExtensionPoint]
-	public sealed class DicomExplorerConfigurationApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class DicomExplorerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	/// <summary>
-	/// DicomExplorerConfigurationApplicationComponent class
-	/// </summary>
-	[AssociateView(typeof(DicomExplorerConfigurationApplicationComponentViewExtensionPoint))]
-	public class DicomExplorerConfigurationApplicationComponent : ConfigurationApplicationComponent
+	[AssociateView(typeof(DicomExplorerConfigurationComponentViewExtensionPoint))]
+	public class DicomExplorerConfigurationComponent : ConfigurationApplicationComponent
 	{
 		private bool _showPhoneticIdeographicNames = false;
 		private bool _showNumberOfImagesInStudy = false;
+		private bool _selectDefaultServerOnStartup = false;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public DicomExplorerConfigurationApplicationComponent()
+		public DicomExplorerConfigurationComponent()
 		{
+		}
+
+		public bool SelectDefaultServerOnStartup
+		{
+			get
+			{
+				return _selectDefaultServerOnStartup;
+			}
+			set
+			{
+				_selectDefaultServerOnStartup = value;
+				NotifyPropertyChanged("SelectDefaultServerOnStartup");
+				this.Modified = true;
+			}
 		}
 
 		public bool ShowPhoneticIdeographicNames
@@ -93,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Start()
 		{
+			SelectDefaultServerOnStartup = DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup;
 			_showPhoneticIdeographicNames = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
 			_showNumberOfImagesInStudy = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 			base.Start();
@@ -105,6 +112,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public override void Save()
 		{
+			DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup = SelectDefaultServerOnStartup;
 			DicomExplorerConfigurationSettings.Default.ShowIdeographicName = this.ShowPhoneticIdeographicNames;
 			DicomExplorerConfigurationSettings.Default.ShowPhoneticName = this.ShowPhoneticIdeographicNames;
 			DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy = this.ShowNumberOfImagesInStudy;

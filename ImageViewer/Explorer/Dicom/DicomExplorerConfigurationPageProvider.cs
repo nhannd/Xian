@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
 			if (PermissionsHelper.IsInRole(AuthorityTokens.DicomExplorer))
-				listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>("PathExplorer/PathDicom"));
+				listPages.Add(new ConfigurationPage<DicomExplorerConfigurationComponent>("PathExplorer/PathDicom"));
 
 			return listPages.AsReadOnly();
 		}
