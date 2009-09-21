@@ -53,13 +53,14 @@
             </td>
         </tr>
         <tr>
-            <td class="HistoryDetailsLabel" colspan="2" nowrap="nowrap">
-                Deleted&nbsp;Series:
+            <td class="HistoryDetailsLabel" colspan="2" nowrap="nowrap" style="padding-top: 8px;">
+                Deleted&nbsp;Series
             </td>
         </tr>
     </table>
     <div style="border-bottom: dashed 1px #999999; margin-top: 3px;">
     </div>
+    <div style="padding: 2px;">
     <table width="100%" cellspacing="0">
         <tr style="color: #205F87; background: #eeeeee; padding-top: 2px;">
             <td>
@@ -87,4 +88,5 @@
         </tr>
         <% }%>
     </table>
+    </div>
 </div>

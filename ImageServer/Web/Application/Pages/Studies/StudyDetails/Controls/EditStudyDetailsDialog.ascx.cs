@@ -43,6 +43,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -447,8 +448,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
             else
             {
-                Show(false);
+                EnsureDialogVisible();
             }
+        }
+
+        internal void EnsureDialogVisible()
+        {
+            EditStudyModalDialog.Show();
         }
 
         /// <summary>

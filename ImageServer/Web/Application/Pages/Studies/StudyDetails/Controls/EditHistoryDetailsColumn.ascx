@@ -53,8 +53,8 @@
             </td>
         </tr>
         <tr>
-            <td class="HistoryDetailsLabel">
-                Changes:
+            <td class="HistoryDetailsLabel" style="padding-top: 8px;">
+                Changes
             </td>
             <td align="left">
             </td>
@@ -62,18 +62,22 @@
     </table>
     <div style="border-bottom: dashed 1px #999999; margin-top: 3px;">
     </div>
-    <table class="ChangeHistorySummary" width="100%">
-        <tr>
-            <td>
-                <div>
+
                     <% if (EditHistory.UpdateCommands == null || EditHistory.UpdateCommands.Count == 0)
                        {%>
+    <table class="ChangeHistorySummary" width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+            <td>
                     <pre style="padding-left: 10px">Study was not changed.</pre>
+            </td>
+        </tr>
+   </table>
                     <%}
                        else
                        {%>
-                    <table width="100%">
-                        <tr style="color: #205F87;">
+                    <div style="padding: 2px;">                       
+                    <table width="100%" cellspacing="0" >
+                        <tr style="color: #205F87; background: #eeeeee; padding-top: 2px;">
                             <td>
                                 <b>Tag</b>
                             </td>
@@ -89,24 +93,21 @@
                               {
                                   IUpdateImageTagCommand theCmd = cmd as IUpdateImageTagCommand;
                                   if (theCmd != null)
-                                  { %><tr>
-                                                      <td>
+                                  { %><tr style="background: #fefefe">
+                                                      <td style="border-bottom: solid 1px #dddddd">
                                                           <pre><%= HtmlUtility.Encode(theCmd.UpdateEntry.TagPath.Tag) %></pre>
                                                       </td>
-                                                      <td>
+                                                      <td style="border-bottom: solid 1px #dddddd">
                                                           <pre><%= HtmlUtility.Encode(theCmd.UpdateEntry.OriginalValue) %></pre>
                                                       </td>
-                                                      <td>
+                                                      <td style="border-bottom: solid 1px #dddddd">
                                                           <pre><%= HtmlUtility.Encode(theCmd.UpdateEntry.Value!=null? theCmd.UpdateEntry.Value.ToString(): "") %></pre>
                                                       </td>
                                                   </tr>
-                        <%} %>
-                        <%}%>
+                                <%} %>
+                            <%}%>
                         <%}%>
                     </table>
+                    </div>
                     <%}%>
-                </div>
-            </td>
-        </tr>
-    </table>
 </div>

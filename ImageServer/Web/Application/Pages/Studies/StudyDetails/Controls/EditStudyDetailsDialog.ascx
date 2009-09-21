@@ -281,5 +281,10 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                     </td>
                 </tr>
             </table>
+
+       <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
+                                                ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
+                                                ValidationGroup='EditStudyValidationGroup'
+                                                Text="You must specify the reason for editing the studies for future auditing purposes." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
 </ContentTemplate>
 </ccAsp:ModalDialog>

@@ -158,7 +158,7 @@
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
                                                 ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
                                                 ValidationGroup='StudyGroup'
-                                                Text="You must specify the reason for deleting the studies for future auditing purpose." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
+                                                Text="You must specify the reason for deleting the studies for future auditing purposes." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
            
     </ContentTemplate>
 </ccAsp:ModalDialog>
