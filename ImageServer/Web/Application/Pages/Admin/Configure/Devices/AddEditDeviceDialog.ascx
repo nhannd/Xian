@@ -156,7 +156,7 @@ EnableClientScript="true" runat="server" ValidationGroup="AddEditDeviceValidatio
                                     <td>
                                         <asp:CheckBox ID="AllowStorageCheckBox" runat="server" Text="Storage" ToolTip="Accept or reject C-STORE from this device" CssClass="DialogCheckBox" />
                                         <div style="padding-left: 18px; padding-top: 3px; padding-bottom: 2px;">
-                                            <asp:CheckBox ID="AcceptKOPR" runat="server" Checked="False" Text="" CssClass="DialogCheckBox" /><asp:Label ID="AcceptKeyObjectStatesLabel" runat="server" Text="Only Accept Key/Object Presentation States" CssClass="DialogCheckBox" />
+                                            <asp:CheckBox ID="AcceptKOPR" runat="server" Checked="False" Text="" CssClass="DialogCheckBox" /><asp:Label ID="AcceptKeyObjectStatesLabel" runat="server" Text="Only Accept Key Objects and Presentation States" CssClass="DialogCheckBox" />
                                         </div>
                                     </td>
                                     <td>

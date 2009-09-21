@@ -296,7 +296,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                String.IsNullOrEmpty(StudyDescription.Text) &&
                ModalityListBox.SelectedIndex < 0 &&
                StatusListBox.SelectedIndex < 0) {
-                ConfirmStudySearchMessageBox.Message = "With no filters specified, this search may return a large number of studies. Are you sure you want to continue?";
+                ConfirmStudySearchMessageBox.Message = "With no filters specified, this search may return a large number of studies.<br/>Are you sure you want to continue?";
+                   ConfirmStudySearchMessageBox.MessageStyle = "font-weight: bold; color: #205F87;";
                 ConfirmStudySearchMessageBox.Show();
             } else
             {

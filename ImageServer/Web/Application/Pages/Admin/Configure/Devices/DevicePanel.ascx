@@ -31,6 +31,11 @@
                                                 <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
                                                 <asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by AE Title"></asp:TextBox></td>
+                                            <td align="left" valign="bottom">
+                                                <asp:Label ID="Label6" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False"></asp:Label><br />
+                                                <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Description"></asp:TextBox></td>
+
                                             <td align="left">
                                                 <asp:Label ID="Label2" runat="server" Text="IP Address" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />

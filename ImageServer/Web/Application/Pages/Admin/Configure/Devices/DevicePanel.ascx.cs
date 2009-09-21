@@ -211,6 +211,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 criteria.AeTitle.Like(key);
             }
 
+            if (!String.IsNullOrEmpty(DescriptionFilter.Text))
+            {
+                string key = DescriptionFilter.Text + "%";
+                key = key.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.Description.Like(key);
+            }
+
             if (!String.IsNullOrEmpty(IPAddressFilter.Text))
             {
                 string key = IPAddressFilter.Text + "%";
