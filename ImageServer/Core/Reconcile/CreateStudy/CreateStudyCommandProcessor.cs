@@ -30,23 +30,20 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Core.Reconcile;
-using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Core.Reconcile.MergeStudy;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
-	/// <summary>
+    /// <summary>
 	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "CreateStudy" operation
 	/// </summary>
-	class ReconcileCreateStudyProcessor : ServerCommandProcessor, IReconcileProcessor
+	class ReconcileCreateStudyProcessor : ReconcileProcessorBase, IReconcileProcessor
 	{
 		#region Private Members
-		private ReconcileStudyProcessorContext _context;
-		#endregion
+
+        #endregion
 
 		#region Constructors
 		/// <summary>
@@ -63,19 +60,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		#region IReconcileProcessor Members
 
 
-		public string Name
-		{
-			get { return "Create Study Processor"; }
-		}
-
-		public void Initialize(ReconcileStudyProcessorContext context)
+		public void Initialize(ReconcileStudyProcessorContext context, bool complete)
 		{
 			Platform.CheckForNullReference(context, "context");
-			_context = context;
+			Context = context;
 
-			ReconcileCreateStudyDescriptor desc = XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(_context.History.ChangeDescription);
+			ReconcileCreateStudyDescriptor desc = XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(Context.History.ChangeDescription);
 
-			if (_context.History.DestStudyStorageKey == null)
+			if (Context.History.DestStudyStorageKey == null)
 			{
 				CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters();
 				parameters.Commands = desc.Commands;
@@ -87,11 +79,17 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
 				parameters.Commands = desc.Commands;
 				parameters.UpdateDestination = false;
-				MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
+				MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
 				AddCommand(command);
 			}
+
+            if (complete)
+            {
+                ApplyStudyAndSeriesRuleCommands();
+                AddCleanupCommands();
+            }
 		}
 
-		#endregion      
+        #endregion      
 	}
 }

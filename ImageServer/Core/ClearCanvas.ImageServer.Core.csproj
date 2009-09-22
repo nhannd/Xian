@@ -68,6 +68,7 @@
     <Compile Include="Rebuild\StudyXmlRebuilder.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\CreateStudyCommandProcessor.cs" />
+    <Compile Include="Reconcile\ReconcileProcessorBase.cs" />
     <Compile Include="Reconcile\CreateStudy\SeriesSopUpdateCommand.cs" />
     <Compile Include="Reconcile\CreateStudy\UidMapper.cs" />
     <Compile Include="Reconcile\Discard\DiscardImageCommandProcessor.cs" />

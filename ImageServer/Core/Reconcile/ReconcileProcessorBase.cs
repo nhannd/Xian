@@ -29,36 +29,49 @@
 
 #endregion
 
-using System;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-	/// <summary>
-	/// Defines the interface of processors that processes different types of 'ReconcileStudy' entries
-	/// </summary>
-	public interface IReconcileProcessor : IDisposable
-	{
-		/// <summary>
-		/// Gets the name of the processor
-		/// </summary>
-		String Name { get; }
+    internal abstract class ReconcileProcessorBase : ServerCommandProcessor
+    {
+        private ReconcileStudyProcessorContext _context;
 
-		/// <summary>
-		/// Gets the reason why <see cref="Execute"/> failed.
-		/// </summary>
-		String FailureReason { get;}
+        /// <summary>
+        /// Create an instance of <see cref="ReconcileCreateStudyProcessor"/>
+        /// </summary>
+        public ReconcileProcessorBase(string name)
+            :base(name)
+        {
+        }
 
-		/// <summary>
-		/// Initializes the processor with the specified context
-		/// </summary>
-		/// <param name="context"></param>
-		/// <param name="complete"></param>
-		void Initialize(ReconcileStudyProcessorContext context, bool complete);
+        protected internal ReconcileStudyProcessorContext Context
+        {
+            get { return _context; }
+            set { _context = value; }
+        }
 
-		/// <summary>
-		/// Executes the processor
-		/// </summary>
-		/// <returns></returns>
-		bool Execute();
-	}
+
+
+        public string Name
+        {
+            get { return base.Description; }
+        }
+
+        protected void ApplyStudyAndSeriesRuleCommands()
+        {
+            StudyRulesEngine engine = new StudyRulesEngine(_context.DestStorageLocation, _context.Partition);
+            engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, this);
+        }
+
+        protected void AddCleanupCommands()
+        {
+            DeleteDirectoryCommand cmd = new DeleteDirectoryCommand(Context.ReconcileWorkQueueData.StoragePath, false);
+            cmd.DeleteOnlyIfEmpty = true;
+            AddCommand(cmd);
+        }
+    }
 }

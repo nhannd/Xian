@@ -220,5 +220,17 @@ namespace ClearCanvas.ImageServer.Common.Utilities
                 }
 			}
         }
+
+	    public static bool IsEmpty(string path)
+	    {
+	         string[] files = Directory.GetFiles(path);
+             if (files.Length == 0)
+             {
+                 string[] subDirs = Directory.GetDirectories(path);
+                 return subDirs != null && subDirs.Length == 0;
+             }
+
+             return false;
+	    }
     }
 }

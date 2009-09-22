@@ -64,10 +64,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
 			LoadUids(item);
 
+            InitializeContext();
 
+            SetupProcessor();
+				
 			if (WorkQueueUidList.Count == 0)
 			{
-				Complete();
+                Platform.Log(LogLevel.Info,
+                             "Completing study reconciliation for Study {0}, Patient {1} (PatientId:{2} A#:{3}) on Partition {4}, {5} objects",
+                             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                             Study.AccessionNumber, ServerPartition.Description, WorkQueueUidList.Count);
+                ExecuteCommands(true);
 			}
 			else
 			{
@@ -76,23 +83,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
 				             Study.AccessionNumber, ServerPartition.Description, WorkQueueUidList.Count);
 
-				InitializeContext();
-
-				SetupProcessor();
-
-				ExecuteCommands();
+				ExecuteCommands(false);
 			}
 		}
 
-    	private void ExecuteCommands()
+    	private void ExecuteCommands(bool complete)
         {
             if(_processor!=null)
             {
                 using(_processor)
                 {
-                    Platform.Log(LogLevel.Info, "Using {0}", _processor.Name);
-
-                    _processor.Initialize(_context);
+                    _processor.Initialize(_context, complete);
 
                     if (!_processor.Execute())
                     {
@@ -100,8 +101,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                     }
                     else
                     {
-                        // Must go to Idle and come back again because more uid may have been added to this entry since it started.
-                        BatchComplete();
+                        if (complete)
+                            OnComplete();
+                        else
+                            OnBatchComplete();
                     }
                 }                
             }            
@@ -129,20 +132,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
         #region Private Mehods
 
-        private void Complete()
+        private void OnComplete()
         {
-            DirectoryInfo dir = new DirectoryInfo(_reconcileQueueData.StoragePath);
-            DirectoryUtility.DeleteIfEmpty(dir.FullName);
-            if (dir.Parent!=null)
-                DirectoryUtility.DeleteIfEmpty(dir.Parent.FullName);
-
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             Platform.Log(LogLevel.Info, "Reconciliation completed");
         }
 
-        private void BatchComplete()
+        private void OnBatchComplete()
         {
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Pending, 
@@ -157,6 +155,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             ReconcileCommandXmlParser parser = new ReconcileCommandXmlParser();
             _processor = parser.Parse(_context.History.ChangeDescription);
+
+            Platform.Log(LogLevel.Info, "Using {0}", _processor.Name);
         }
 
         private void InitializeContext()

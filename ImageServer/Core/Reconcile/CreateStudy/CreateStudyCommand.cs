@@ -101,6 +101,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
             }
 		}
 
+	    private void ApplySeriesStudyRules()
+	    {
+            // Run Study / Series Rules Engine.
+            StudyRulesEngine engine = new StudyRulesEngine(Context.DestStorageLocation, Context.Partition);
+            engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
+	    }
+
 
 	    protected override void OnUndo()
 		{

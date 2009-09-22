@@ -65,6 +65,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _deleteTime; }
         }
 
+        public bool DeleteOnlyIfEmpty { get; set; }
+
         #endregion
 
         #region Overridden Protected Methods
@@ -75,6 +77,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 if (Directory.Exists(_dir))
                 {
+                    if (DeleteOnlyIfEmpty && !DirectoryUtility.IsEmpty(_dir))
+                    {
+                        return;
+                    }
+
                     Directory.Move(_dir, _dir +".deleted");
                     _sourceDirRenamed = true;
                 }

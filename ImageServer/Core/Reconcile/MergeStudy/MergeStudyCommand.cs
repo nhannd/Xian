@@ -93,9 +93,12 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             try
             {
                 LoadUidMappings();
-                ProcessUidList();
 
-                LogResult();
+                if (Context.WorkQueueUidList.Count>0)
+                {
+                    ProcessUidList();
+                    LogResult();
+                }
             }
             finally
             {
@@ -245,12 +248,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             // Add command to update the Series & Sop Instances.
             context.UpdateCommands.Add(new SeriesSopUpdateCommand(UidMapper));
 
-			PrintUpdateCommands(context.UpdateCommands);
-
-			// Load the Study XML File
-			StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
-			
-			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
+            // Load the Study XML File
+            StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
+            PrintUpdateCommands(context.UpdateCommands);
+            foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
 				// Load the file outside the try/catch block so it can be
 				// referenced in the c

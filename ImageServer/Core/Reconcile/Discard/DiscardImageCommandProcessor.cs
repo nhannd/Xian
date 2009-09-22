@@ -30,35 +30,34 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Reconcile;
-using ClearCanvas.ImageServer.Core.Reconcile.Discard;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 {
 	/// <summary>
 	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "Discard" operation
 	/// </summary>
-	class DiscardImageCommandProcessor : ServerCommandProcessor, IReconcileProcessor
+    class DiscardImageCommandProcessor : ReconcileProcessorBase, IReconcileProcessor
 	{
 		public DiscardImageCommandProcessor()
-			: base("Discard Image")
+			: base("Discard Image Processor")
 		{
 
-		}
-		public string Name
-		{
-			get { return "Discard Image Processor"; }
 		}
 		#region IReconcileProcessor Members
 
-		public void Initialize(ReconcileStudyProcessorContext context)
+		public void Initialize(ReconcileStudyProcessorContext context, bool complete)
 		{
 			Platform.CheckForNullReference(context, "context");
 
 			DiscardImagesCommand discard = new DiscardImagesCommand(context);
 
 			AddCommand(discard);
+
+            if (complete)
+            {
+                AddCleanupCommands();
+            }
+            
 		}
 
 		#endregion

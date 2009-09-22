@@ -30,41 +30,38 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Reconcile;
-using ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 {
 	/// <summary>
 	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "MergeStudy" operation
 	/// </summary>
-	internal class ReconcileProcessAsIsProcessor : ServerCommandProcessor, IReconcileProcessor
+    internal class ReconcileProcessAsIsProcessor : ReconcileProcessorBase, IReconcileProcessor
 	{
-		private ReconcileStudyProcessorContext _context;
 		public ReconcileProcessAsIsProcessor()
-			: base("Process As Is")
+			: base("Process As Is Processor")
 		{
 
-		}
-
-		public string Name
-		{
-			get { return "Process As Is Processor"; }
 		}
 
 		#region IReconcileProcessor Members
 
-		public void Initialize(ReconcileStudyProcessorContext context)
+		public void Initialize(ReconcileStudyProcessorContext context, bool complete)
 		{
 			Platform.CheckForNullReference(context, "context");
-			_context = context;
-			_context.DestStorageLocation = context.WorkQueueItemStudyStorage;
+			Context = context;
+			Context.DestStorageLocation = context.WorkQueueItemStudyStorage;
 
 			ProcessAsIsCommand.CommandParameters parms = new ProcessAsIsCommand.CommandParameters();
-			ProcessAsIsCommand command = new ProcessAsIsCommand(_context, parms);
+			ProcessAsIsCommand command = new ProcessAsIsCommand(Context, parms);
 
 			AddCommand(command);
+
+            if (complete)
+            {
+                ApplyStudyAndSeriesRuleCommands();
+                AddCleanupCommands();
+            }
 		}
 
 		#endregion

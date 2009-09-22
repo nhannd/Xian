@@ -94,16 +94,19 @@ namespace ClearCanvas.ImageServer.Rules
 		public void Apply(ServerRuleApplyTimeEnum applyTime)
 		{
 
-			ServerCommandProcessor theProcessor = new ServerCommandProcessor("Study Rule Processor");
-
-			Apply(applyTime, theProcessor);
-
-			if (false == theProcessor.Execute())
+			using(ServerCommandProcessor theProcessor = new ServerCommandProcessor("Study Rule Processor"))
 			{
-				Platform.Log(LogLevel.Error,
-				             "Unexpected failure processing Study level rules for study {0} on partition {1} for {2} apply time",
-				             _location.StudyInstanceUid, _partition.Description, applyTime.Description);
+                Apply(applyTime, theProcessor);
+
+                if (false == theProcessor.Execute())
+                {
+                    Platform.Log(LogLevel.Error,
+                                 "Unexpected failure processing Study level rules for study {0} on partition {1} for {2} apply time",
+                                 _location.StudyInstanceUid, _partition.Description, applyTime.Description);
+                }
 			}
+
+			
 		}
 
 		public void Apply(ServerRuleApplyTimeEnum applyTime, ServerCommandProcessor theProcessor)
