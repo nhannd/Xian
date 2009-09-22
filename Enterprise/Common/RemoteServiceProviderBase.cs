@@ -50,53 +50,53 @@ namespace ClearCanvas.Enterprise.Common
 	public class RemoteServiceProviderArgs
 	{
 		private string _baseUrl;
-        private string _failoverBaseUrl;
-        private IServiceChannelConfiguration _configuration;
+		private string _failoverBaseUrl;
+		private IServiceChannelConfiguration _configuration;
 		private int _maxReceivedMessageSize;
 		private X509CertificateValidationMode _certificateValidationMode;
 		private X509RevocationMode _revocationMode;
-        private IUserCredentialsProvider _userCredentialsProvider;
+		private IUserCredentialsProvider _userCredentialsProvider;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        /// <param name="configurationClassName"></param>
-        /// <param name="maxReceivedMessageSize"></param>
-        /// <param name="certificateValidationMode"></param>
-        /// <param name="revocationMode"></param>
-        [Obsolete("Use another constructor overload")]
-        public RemoteServiceProviderArgs(
-            string baseUrl,
-            string configurationClassName,
-            int maxReceivedMessageSize,
-            X509CertificateValidationMode certificateValidationMode,
-            X509RevocationMode revocationMode)
-            : this(baseUrl, null, configurationClassName, maxReceivedMessageSize, certificateValidationMode,
-                revocationMode, null)
-        {
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="baseUrl"></param>
+		/// <param name="configurationClassName"></param>
+		/// <param name="maxReceivedMessageSize"></param>
+		/// <param name="certificateValidationMode"></param>
+		/// <param name="revocationMode"></param>
+		[Obsolete("Use another constructor overload")]
+		public RemoteServiceProviderArgs(
+			string baseUrl,
+			string configurationClassName,
+			int maxReceivedMessageSize,
+			X509CertificateValidationMode certificateValidationMode,
+			X509RevocationMode revocationMode)
+			: this(baseUrl, null, configurationClassName, maxReceivedMessageSize, certificateValidationMode,
+				revocationMode, null)
+		{
+		}
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="baseUrl"></param>
-        /// <param name="failoverBaseUrl"></param>
-        /// <param name="configurationClassName"></param>
-        /// <param name="maxReceivedMessageSize"></param>
-        /// <param name="certificateValidationMode"></param>
-        /// <param name="revocationMode"></param>
-        public RemoteServiceProviderArgs(
-            string baseUrl,
-            string failoverBaseUrl,
-            string configurationClassName,
-            int maxReceivedMessageSize,
-            X509CertificateValidationMode certificateValidationMode,
-            X509RevocationMode revocationMode)
-            :this(baseUrl, failoverBaseUrl, configurationClassName, maxReceivedMessageSize, certificateValidationMode,
-                revocationMode, null)
-        {
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="baseUrl"></param>
+		/// <param name="failoverBaseUrl"></param>
+		/// <param name="configurationClassName"></param>
+		/// <param name="maxReceivedMessageSize"></param>
+		/// <param name="certificateValidationMode"></param>
+		/// <param name="revocationMode"></param>
+		public RemoteServiceProviderArgs(
+			string baseUrl,
+			string failoverBaseUrl,
+			string configurationClassName,
+			int maxReceivedMessageSize,
+			X509CertificateValidationMode certificateValidationMode,
+			X509RevocationMode revocationMode)
+			: this(baseUrl, failoverBaseUrl, configurationClassName, maxReceivedMessageSize, certificateValidationMode,
+				revocationMode, null)
+		{
+		}
 
 
 
@@ -104,22 +104,22 @@ namespace ClearCanvas.Enterprise.Common
 		/// Constructor
 		/// </summary>
 		public RemoteServiceProviderArgs(
-            string baseUrl,
-            string failoverBaseUrl,
-            string configurationClassName,
-            int maxReceivedMessageSize,
+			string baseUrl,
+			string failoverBaseUrl,
+			string configurationClassName,
+			int maxReceivedMessageSize,
 			X509CertificateValidationMode certificateValidationMode,
-            X509RevocationMode revocationMode,
-            string credentialsProviderClassName)
+			X509RevocationMode revocationMode,
+			string credentialsProviderClassName)
 		{
 			_baseUrl = baseUrl;
-            _failoverBaseUrl = failoverBaseUrl;
-            _configuration = InstantiateClass<IServiceChannelConfiguration>(configurationClassName);
+			_failoverBaseUrl = failoverBaseUrl;
+			_configuration = InstantiateClass<IServiceChannelConfiguration>(configurationClassName);
 			_maxReceivedMessageSize = maxReceivedMessageSize;
 			_certificateValidationMode = certificateValidationMode;
 			_revocationMode = revocationMode;
-            _userCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
-                InstantiateClass<IUserCredentialsProvider>(credentialsProviderClassName);
+			_userCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
+				InstantiateClass<IUserCredentialsProvider>(credentialsProviderClassName);
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// <summary>
 		/// Configuration that is responsible for configuring the service binding/endpoint.
 		/// </summary>
-        public IServiceChannelConfiguration Configuration
+		public IServiceChannelConfiguration Configuration
 		{
 			get { return _configuration; }
 			set { _configuration = value; }
@@ -176,18 +176,18 @@ namespace ClearCanvas.Enterprise.Common
 			set { _revocationMode = value; }
 		}
 
-        /// <summary>
-        /// Gets or sets an <see cref="IUserCredentialsProvider"/>.
-        /// May be null if user credentials are not relevant.
-        /// </summary>
-        public IUserCredentialsProvider UserCredentialsProvider
-        {
-            get { return _userCredentialsProvider; }
-            set { _userCredentialsProvider = value; }
-        }
+		/// <summary>
+		/// Gets or sets an <see cref="IUserCredentialsProvider"/>.
+		/// May be null if user credentials are not relevant.
+		/// </summary>
+		public IUserCredentialsProvider UserCredentialsProvider
+		{
+			get { return _userCredentialsProvider; }
+			set { _userCredentialsProvider = value; }
+		}
 
-        private static T InstantiateClass<T>(string className)
-        {
+		private static T InstantiateClass<T>(string className)
+		{
 			try
 			{
 				Type type = Type.GetType(className, true);
@@ -199,7 +199,7 @@ namespace ClearCanvas.Enterprise.Common
 				throw;
 			}
 		}
-    }
+	}
 
 	#endregion
 
@@ -209,99 +209,118 @@ namespace ClearCanvas.Enterprise.Common
 	/// </summary>
 	public abstract class RemoteServiceProviderBase : IServiceProvider
 	{
-        #region RemoteServiceProxyMixin class
+		#region RemoteServiceProxyMixin class
 
-        /// <summary>
-        /// Remote service proxy mix-in class.
-        /// </summary>
-        internal class RemoteServiceProxyMixin : IRemoteServiceProxy
-        {
-            private readonly object _channel;
+		/// <summary>
+		/// Remote service proxy mix-in class.
+		/// </summary>
+		internal class RemoteServiceProxyMixin : IRemoteServiceProxy
+		{
+			private readonly object _channel;
 
-            internal RemoteServiceProxyMixin(object channel)
-            {
-                _channel = channel;
-            }
+			internal RemoteServiceProxyMixin(object channel)
+			{
+				_channel = channel;
+			}
 
-            /// <summary>
-            /// Gets the channel object.
-            /// </summary>
-            /// <returns></returns>
-            object IRemoteServiceProxy.GetChannel()
-            {
-                return _channel;
-            }
-        }
+			/// <summary>
+			/// Gets the channel object.
+			/// </summary>
+			/// <returns></returns>
+			object IRemoteServiceProxy.GetChannel()
+			{
+				return _channel;
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region DisposableInterceptor
+		#region DisposableInterceptor
 
-        /// <summary>
-        /// Interceptor that ensure <see cref="IDisposable"/> is honoured.
-        /// </summary>
-        internal class DisposableInterceptor : IInterceptor
-        {
-            public void Intercept(IInvocation invocation)
-            {
-                // if the method being called is IDisposable.Dispose()
-                if (invocation.Method.DeclaringType == typeof(IDisposable)
-                    && invocation.Method.Name == "Dispose")
-                {
-                    //TODO before calling dispose, we should check if the target implements
-                    // IClientChannel, and if so, call Close()
-                    //if(invocation.InvocationTarget is IClientChannel)
-                    //{
-                    //    IClientChannel channel = (IClientChannel)invocation.InvocationTarget;
-                    //    channel.Close();
-                    //}
+		/// <summary>
+		/// Interceptor that ensure <see cref="IDisposable"/> is honoured.
+		/// </summary>
+		internal class DisposableInterceptor : IInterceptor
+		{
+			public void Intercept(IInvocation invocation)
+			{
+				if (InvocationMethodIsDispose(invocation))
+				{
+					//TODO before calling dispose, we should check if the target implements
+					// IClientChannel, and if so, call Close()
+					//if(invocation.InvocationTarget is IClientChannel)
+					//{
+					//    IClientChannel channel = (IClientChannel)invocation.InvocationTarget;
+					//    channel.Close();
+					//}
 
-                    // invoke the method directly on the target - do not proceed along interceptor chain
-                	object target = invocation.InvocationTarget;
+					// Dispose and then do not proceed along the interceptor chain
+					GetDisposableInvocationTarget(invocation).Dispose();
+				}
+				else
+				{
+					// proceed normally
+					invocation.Proceed();
+				}
+			}
 
+			private bool InvocationMethodIsDispose(IInvocation invocation)
+			{
+				return invocation.Method.DeclaringType == typeof(IDisposable)
+					&& invocation.Method.Name == "Dispose";
+			}
+
+			private IDisposable GetDisposableInvocationTarget(IInvocation invocation)
+			{
+				return (IDisposable)ResolveProxiedInvocationTarget(invocation);
+			}
+
+			private object ResolveProxiedInvocationTarget(IInvocation invocation)
+			{
+				var invocationTarget = invocation.InvocationTarget;
+
+				if ((invocationTarget is IProxyTargetAccessor))
+				{
 					// this is odd - it is not clear whether InvocationTarget is the proxy or the target
 					// DP seems to do different things under different circumstances, probably due to bugs
 					// we do the safe thing and check if we need to access the inner object
-					if (target is IProxyTargetAccessor)
-						target = ((IProxyTargetAccessor) target).DynProxyGetTarget();
-					IDisposable disposable = (IDisposable)target;
-					disposable.Dispose();
+					return ((IProxyTargetAccessor)invocationTarget).DynProxyGetTarget();
 				}
-                else
-                {
-                    // proceed normally
-                    invocation.Proceed();
-                }
-            }
-        }
+				else
+				{
+					// invoke the method directly on the target
+					return invocationTarget;
+				}
+			}
+		}
 
-        #endregion
+		#endregion
 
-        private readonly ProxyGenerator _proxyGenerator;
-        private readonly IChannelFactoryProvider _channelFactoryProvider;
-        private readonly IUserCredentialsProvider _userCredentialsProvider;
-        private List<IInterceptor> _interceptors;
+		private readonly ProxyGenerator _proxyGenerator;
+		private readonly IChannelFactoryProvider _channelFactoryProvider;
+		private readonly IUserCredentialsProvider _userCredentialsProvider;
+		private List<IInterceptor> _interceptors;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="args"></param>
 		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
-            :this(new StaticChannelFactoryProvider(args), args.UserCredentialsProvider)
+			: this(new StaticChannelFactoryProvider(args), args.UserCredentialsProvider)
 		{
 		}
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="channelFactoryProvider"></param>
-        /// <param name="userCredentialsProvider"></param>
-        protected RemoteServiceProviderBase(IChannelFactoryProvider channelFactoryProvider, IUserCredentialsProvider userCredentialsProvider)
-        {
-            _channelFactoryProvider = channelFactoryProvider;
-            _userCredentialsProvider = userCredentialsProvider;
-            _proxyGenerator = new ProxyGenerator();
-        }
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="channelFactoryProvider"></param>
+		/// <param name="userCredentialsProvider"></param>
+		protected RemoteServiceProviderBase(IChannelFactoryProvider channelFactoryProvider, IUserCredentialsProvider userCredentialsProvider)
+		{
+			_channelFactoryProvider = channelFactoryProvider;
+			_userCredentialsProvider = userCredentialsProvider;
+			_proxyGenerator = new ProxyGenerator();
+		}
 
 		#region IServiceProvider
 
@@ -314,11 +333,11 @@ namespace ClearCanvas.Enterprise.Common
 			// create the channel
 			// TODO: defer channel creation until an interceptor
 			// actually Proceed()s to it (DP2 supports this)
-            ChannelFactory factory = _channelFactoryProvider.GetPrimary(serviceContract);
-            object channel = CreateChannel(serviceContract, factory);
+			ChannelFactory factory = _channelFactoryProvider.GetPrimary(serviceContract);
+			object channel = CreateChannel(serviceContract, factory);
 
-		    // create an AOP proxy around the channel, and return that
-		    return CreateChannelProxy(serviceContract, channel);
+			// create an AOP proxy around the channel, and return that
+			return CreateChannelProxy(serviceContract, channel);
 		}
 
 		#endregion
@@ -333,13 +352,13 @@ namespace ClearCanvas.Enterprise.Common
 		/// <summary>
 		/// Applies AOP interceptors to the proxy.
 		/// </summary>
-        /// <remarks>
-        /// Override this method to customize which interceptors are applied to the
-        /// proxy by adding/removing or inserting into the specified list.
-        /// The order of interceptors is significant.  The first entry
-        /// in the list is the outermost, and the last entry in the list is the 
-        /// innermost.
-        /// </remarks>
+		/// <remarks>
+		/// Override this method to customize which interceptors are applied to the
+		/// proxy by adding/removing or inserting into the specified list.
+		/// The order of interceptors is significant.  The first entry
+		/// in the list is the outermost, and the last entry in the list is the 
+		/// innermost.
+		/// </remarks>
 		/// <param name="interceptors"></param>
 		protected virtual void ApplyInterceptors(IList<IInterceptor> interceptors)
 		{
@@ -363,7 +382,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		protected virtual string UserName
 		{
-            get { return _userCredentialsProvider == null ? "" : _userCredentialsProvider.UserName; }
+			get { return _userCredentialsProvider == null ? "" : _userCredentialsProvider.UserName; }
 		}
 
 		/// <summary>
@@ -371,22 +390,22 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		protected virtual string Password
 		{
-            get { return _userCredentialsProvider == null ? "" : _userCredentialsProvider.SessionTokenId; }
+			get { return _userCredentialsProvider == null ? "" : _userCredentialsProvider.SessionTokenId; }
 		}
 
-        /// <summary>
-        /// Attempts to get a failover channel for the specified service contract.
-        /// </summary>
-        /// <param name="serviceContract"></param>
-        /// <param name="failedEndpoint"></param>
-        /// <returns></returns>
-        protected internal object GetFailoverChannel(Type serviceContract, EndpointAddress failedEndpoint)
-        {
-            ChannelFactory alternate = _channelFactoryProvider.GetFailover(serviceContract, failedEndpoint);
-            return alternate != null ? CreateChannel(serviceContract, alternate) : null;
-        }
+		/// <summary>
+		/// Attempts to get a failover channel for the specified service contract.
+		/// </summary>
+		/// <param name="serviceContract"></param>
+		/// <param name="failedEndpoint"></param>
+		/// <returns></returns>
+		protected internal object GetFailoverChannel(Type serviceContract, EndpointAddress failedEndpoint)
+		{
+			ChannelFactory alternate = _channelFactoryProvider.GetFailover(serviceContract, failedEndpoint);
+			return alternate != null ? CreateChannel(serviceContract, alternate) : null;
+		}
 
-        #endregion
+		#endregion
 
 		#region Helpers
 
@@ -397,22 +416,22 @@ namespace ClearCanvas.Enterprise.Common
 		/// <param name="serviceContract"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-        private object CreateChannel(Type serviceContract, ChannelFactory factory)
-        {
-            bool authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
-            if (authenticationRequired)
-            {
-                factory.Credentials.UserName.UserName = this.UserName;
-                factory.Credentials.UserName.Password = this.Password;
-            }
+		private object CreateChannel(Type serviceContract, ChannelFactory factory)
+		{
+			bool authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
+			if (authenticationRequired)
+			{
+				factory.Credentials.UserName.UserName = this.UserName;
+				factory.Credentials.UserName.Password = this.Password;
+			}
 
-            // invoke the CreateChannel method on the factory
-            MethodInfo createChannelMethod = factory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
-            object channel = createChannelMethod.Invoke(factory, null);
-            Platform.Log(LogLevel.Debug, "Created service channel instance for service {0}, authenticationRequired={1}.",
-                         serviceContract.FullName, authenticationRequired);
-            return channel;
-        }
+			// invoke the CreateChannel method on the factory
+			MethodInfo createChannelMethod = factory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
+			object channel = createChannelMethod.Invoke(factory, null);
+			Platform.Log(LogLevel.Debug, "Created service channel instance for service {0}, authenticationRequired={1}.",
+						 serviceContract.FullName, authenticationRequired);
+			return channel;
+		}
 
 		private object CreateChannelProxy(Type serviceContract, object channel)
 		{
@@ -423,23 +442,19 @@ namespace ClearCanvas.Enterprise.Common
 				ApplyInterceptors(_interceptors);
 			}
 
-			// build AOP intercept chain
-			AopInterceptorChain aopIntercept = new AopInterceptorChain(_interceptors);
-
-			ProxyGenerationOptions options = new ProxyGenerationOptions();
+			var options = new ProxyGenerationOptions();
 			options.AddMixinInstance(new RemoteServiceProxyMixin(channel));
 
 			// create and return proxy
 			// note: _proxyGenerator does internal caching based on service contract
 			// so subsequent calls based on the same contract will be fast
 			// note: important to proxy IDisposable too, otherwise channels can't get disposed!!!
-            object proxy = _proxyGenerator.CreateInterfaceProxyWithTarget(
-                serviceContract,
-				new Type[] { serviceContract, typeof(IDisposable) },
-                channel,
-                options,
-                aopIntercept);
-			return proxy;
+			return _proxyGenerator.CreateInterfaceProxyWithTarget(
+				serviceContract,
+				new[] { serviceContract, typeof(IDisposable) },
+				channel,
+				options,
+				_interceptors.ToArray());
 		}
 
 		#endregion
@@ -456,7 +471,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// Constructor.
 		/// </summary>
 		/// <param name="args"></param>
-		public RemoteServiceProviderBase(RemoteServiceProviderArgs args)
+		protected RemoteServiceProviderBase(RemoteServiceProviderArgs args)
 			: base(args)
 		{
 		}

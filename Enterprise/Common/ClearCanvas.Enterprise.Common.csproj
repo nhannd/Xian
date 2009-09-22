@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -94,7 +94,6 @@
     <Compile Include="Admin\UserAdmin\UpdateUserResponse.cs" />
     <Compile Include="Admin\UserAdmin\UserDetail.cs" />
     <Compile Include="Admin\UserAdmin\UserSummary.cs" />
-    <Compile Include="AopInterceptorChain.cs" />
     <Compile Include="Audit\AuditSink.cs" />
     <Compile Include="Audit\IAuditService.cs" />
     <Compile Include="Audit\WriteEntryRequest.cs" />
