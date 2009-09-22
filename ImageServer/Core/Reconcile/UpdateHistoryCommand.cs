@@ -31,11 +31,10 @@
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Reconcile;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
@@ -44,17 +43,29 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	/// </summary>
 	class UpdateHistoryCommand : ServerDatabaseCommand<ReconcileStudyProcessorContext>
 	{
-		public UpdateHistoryCommand(ReconcileStudyProcessorContext context)
+	    private readonly UidMapper _uidMap;
+	    private readonly StudyReconcileDescriptor _changeLog;
+        
+        public UpdateHistoryCommand(ReconcileStudyProcessorContext context, UidMapper uidMap)
 			: base("UpdateHistoryCommand", true, context)
-		{
-            
-		}
+	    {
+	        _uidMap = uidMap;
+	        _changeLog = XmlUtils.Deserialize<StudyReconcileDescriptor>(context.History.ChangeDescription);
+	    }
 
-		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        
+	    protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
 			StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
 			parms.DestStudyStorageKey = Context.DestStorageLocation.Key;
+
+            if (_uidMap!=null)
+            {
+                _changeLog.SeriesMappings = new System.Collections.Generic.List<SeriesMapping>(_uidMap.GetSeriesMappings());
+                parms.ChangeDescription = XmlUtils.SerializeAsXmlDoc(_changeLog);
+            }
+
 			historyUpdateBroker.Update(Context.History.Key, parms);
 		}
 	}

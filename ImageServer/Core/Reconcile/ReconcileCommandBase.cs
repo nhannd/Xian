@@ -38,7 +38,9 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Reconcile;
+using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -46,8 +48,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 {
 	internal abstract class ReconcileCommandBase : ServerCommand<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
 	{
-        
-		/// <summary>
+	    private UidMapper _uidMapper;
+
+	    /// <summary>
 		/// Creates an instance of <see cref="ServerCommand"/>
 		/// </summary>
 		/// <param name="description"></param>
@@ -58,7 +61,19 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		{
 		}
 
-		protected string GetReconcileUidPath(WorkQueueUid sop)
+	    protected bool SeriesMappingUpdated
+	    {
+	        get;
+	        set;
+	    }
+
+	    public UidMapper UidMapper
+	    {
+	        get { return _uidMapper; }
+	        set { _uidMapper = value; }
+	    }
+
+	    protected string GetReconcileUidPath(WorkQueueUid sop)
 		{
 			if (String.IsNullOrEmpty(sop.RelativePath))
 			{
@@ -131,5 +146,38 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			return theXml;
 		}
+
+	    protected void LoadUidMappings()
+	    {
+	        // Load from history
+	        StudyReconcileDescriptor changeDesc = XmlUtils.Deserialize<StudyReconcileDescriptor>(Context.History.ChangeDescription);
+	        if (changeDesc.SeriesMappings != null)
+	        {
+	            _uidMapper = new UidMapper(changeDesc.SeriesMappings);
+	        }
+	        else
+	            _uidMapper = new UidMapper();
+
+	        _uidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
+	    }
+
+
+        void UidMapper_SeriesMapUpdated(object sender, SeriesMapUpdatedEventArgs e)
+        {
+            SeriesMappingUpdated = true;
+        }
+
+	    protected void UpdateHistory()
+	    {
+	        using(ServerCommandProcessor processor = new ServerCommandProcessor("Reconcile-CreateStudy-Update History"))
+	        {
+	            processor.AddCommand(new UpdateHistoryCommand(Context, UidMapper));
+	            if (!processor.Execute())
+	            {
+	                throw new ApplicationException("Unable to update the history", processor.FailureException);
+	            }
+	        }
+	        
+	    }
 	}
 }

@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 		private ImageSetDescriptor _imageSet;
 		private string _description;
 		private string _userName;
+	    private List<SeriesMapping> _seriesMappings;
 		#endregion
 
 		#region Public Properties
@@ -124,7 +125,13 @@ namespace ClearCanvas.ImageServer.Core.Data
 			set { _userName = value; }
 		}
 
-		#endregion
+	    public List<SeriesMapping> SeriesMappings
+	    {
+	        get { return _seriesMappings; }
+	        set { _seriesMappings = value; }
+	    }
+
+	    #endregion
 	}
 
 	[XmlRoot("Reconcile")]

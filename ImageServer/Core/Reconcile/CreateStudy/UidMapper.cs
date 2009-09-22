@@ -29,15 +29,29 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
+    public class SeriesMapUpdatedEventArgs:EventArgs
+    {
+        public Dictionary<string, SeriesMapping> SeriesMap { get; set; }
+    }
+
+    public class SopMapUpdatedEventArgs : EventArgs
+    {
+        public Dictionary<string, string> SopMap { get; set; }
+    }
+
 	public class UidMapper
 	{
 		private readonly Dictionary<string, SeriesMapping> _seriesMap = new Dictionary<string, SeriesMapping>();
 		private readonly Dictionary<string, string> _sopMap = new Dictionary<string, string>();
+        public event EventHandler<SeriesMapUpdatedEventArgs> SeriesMapUpdated;
+        public event EventHandler<SopMapUpdatedEventArgs> SopMapUpdated;
 
 		public UidMapper(IList<SeriesMapping> seriesList)
 		{
@@ -49,15 +63,51 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		{
 		}
 
-		public Dictionary<string, SeriesMapping> SeriesMap
+		public bool ContainsSop(string originalSopUid)
 		{
-			get { return _seriesMap; }
+		    return _sopMap.ContainsKey(originalSopUid);
 		}
 
-		public Dictionary<string, string> SopMap
-		{
-			get { return _sopMap; }
-		}
+        public string GetNewSopUid(string originalSopUid)
+        {
+            string newSopUid;
+            if (_sopMap.TryGetValue(originalSopUid, out newSopUid))
+                return newSopUid;
+            else
+                return null;
+        }
 
+        public string GetNewSeriesUid(string originalSeriesUid)
+        {
+            SeriesMapping mapping;
+            if (_seriesMap.TryGetValue(originalSeriesUid, out mapping))
+                return mapping.NewSeriesUid;
+            else
+                return null;
+        }
+
+	    public bool ContainsSeries(string originalSeriesUid)
+        {
+            return _seriesMap.ContainsKey(originalSeriesUid);
+        }
+
+        public void AddSop(string originalSopUid, string newSopUid)
+        {
+            _sopMap.Add(originalSopUid, newSopUid);
+            EventsHelper.Fire(SeriesMapUpdated, this, new SeriesMapUpdatedEventArgs() {SeriesMap = _seriesMap});
+        }
+
+        public void AddSeries(string originalSeriesUid, string newSeriesUid)
+        {
+            _seriesMap.Add(originalSeriesUid,
+                           new SeriesMapping() {OriginalSeriesUid = originalSeriesUid, NewSeriesUid = newSeriesUid});
+
+            EventsHelper.Fire(SopMapUpdated, this, new SopMapUpdatedEventArgs() { SopMap = _sopMap });
+        }
+
+	    public IEnumerable<SeriesMapping> GetSeriesMappings()
+	    {
+	        return _seriesMap.Values;
+	    }
 	}
 }

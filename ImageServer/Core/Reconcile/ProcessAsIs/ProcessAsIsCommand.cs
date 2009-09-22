@@ -74,7 +74,16 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 				DetermineTargetLocation();
 			}
 
-			ProcessUidList();
+            try
+            {
+                LoadUidMappings();
+                ProcessUidList();
+            }
+            finally
+            {
+                UpdateHistory();
+            }
+
 		}
 
 		private void DetermineTargetLocation()
@@ -96,65 +105,65 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			// undo is done  in SaveFile()
 		}
 
-		private void ProcessUidListOld()
-		{
-			int counter = 0;
-			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
+        //private void ProcessUidListOld()
+        //{
+        //    int counter = 0;
+        //    Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 		
-			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
-			{
-				string imagePath = GetReconcileUidPath(uid);
-				DicomFile file = new DicomFile(imagePath);
-				file.Load();
+        //    foreach (WorkQueueUid uid in Context.WorkQueueUidList)
+        //    {
+        //        string imagePath = GetReconcileUidPath(uid);
+        //        DicomFile file = new DicomFile(imagePath);
+        //        file.Load();
 
-				try
-				{
-					using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
-					{
-						processor.AddCommand(new SaveFileCommand(Context, file));
-						InsertWorkQueueCommand.CommandParameters parameters =
-							new InsertWorkQueueCommand.CommandParameters();
-						parameters.SeriesInstanceUid =
-							file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-						parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-						parameters.Extension = "dcm";
-						parameters.IsDuplicate = false;
-						processor.AddCommand(new InsertWorkQueueCommand(Context, parameters));
-						processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-						processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+        //        try
+        //        {
+        //            using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
+        //            {
+        //                processor.AddCommand(new SaveFileCommand(Context, file));
+        //                InsertWorkQueueCommand.CommandParameters parameters =
+        //                    new InsertWorkQueueCommand.CommandParameters();
+        //                parameters.SeriesInstanceUid =
+        //                    file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+        //                parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+        //                parameters.Extension = "dcm";
+        //                parameters.IsDuplicate = false;
+        //                processor.AddCommand(new InsertWorkQueueCommand(Context, parameters));
+        //                processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
+        //                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
-						if (counter == 0)
-						{
-							// Only update the first time through the loop
-							processor.AddCommand(new UpdateHistoryCommand(Context));
-							processor.AddCommand(new LockStudyCommand(Context.WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled));
-						}
+        //                if (counter == 0)
+        //                {
+        //                    // Only update the first time through the loop
+        //                    processor.AddCommand(new UpdateHistoryCommand(Context));
+        //                    processor.AddCommand(new LockStudyCommand(Context.WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled));
+        //                }
 
-						if (!processor.Execute())
-						{
-							if (processor.FailureException is InstanceAlreadyExistsException)
-							{
-								throw processor.FailureException;
-							}
-							else
-							{
-								FailUid(uid, true);
-								throw new ApplicationException(
-									String.Format("Unable to reconcile image {0} : {1}", file.Filename,
-									              processor.FailureReason), processor.FailureException);
-							}
-						}
+        //                if (!processor.Execute())
+        //                {
+        //                    if (processor.FailureException is InstanceAlreadyExistsException)
+        //                    {
+        //                        throw processor.FailureException;
+        //                    }
+        //                    else
+        //                    {
+        //                        FailUid(uid, true);
+        //                        throw new ApplicationException(
+        //                            String.Format("Unable to reconcile image {0} : {1}", file.Filename,
+        //                                          processor.FailureReason), processor.FailureException);
+        //                    }
+        //                }
 
-						counter++;
-						Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
-					}
-				}
-				catch(InstanceAlreadyExistsException)
-				{
-					CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
-				}
-			}
-		}
+        //                counter++;
+        //                Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+        //            }
+        //        }
+        //        catch(InstanceAlreadyExistsException)
+        //        {
+        //            CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
+        //        }
+        //    }
+        //}
 
 		private void ProcessUidList()
 		{
@@ -184,14 +193,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
-                    if (counter == 0)
-                    {
-                        // Update the history record so that it will show up in the study history
-                        sopProcessor.OnInsertingSop += delegate(object sender, SopInsertingEventArgs e)
-                        {
-                            e.Processor.AddCommand(new UpdateHistoryCommand(Context));
-                        };
-                    }
 					ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, GetReconcileUidPath(uid));
 					if (result.Status != ProcessingStatus.Success)
 					{

@@ -60,21 +60,21 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			string oldSopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 
 			string newSeriesUid;
-			if (_uidMapper.SeriesMap.ContainsKey(oldSeriesUid))
-				newSeriesUid = _uidMapper.SeriesMap[oldSeriesUid].NewSeriesUid;
-			else
-			{
-				newSeriesUid = DicomUid.GenerateUid().UID;
-				_uidMapper.SeriesMap.Add(oldSeriesUid, new SeriesMapping(oldSeriesUid,newSeriesUid));
-			}
+            if (_uidMapper.ContainsSeries(oldSeriesUid))
+                newSeriesUid = _uidMapper.GetNewSeriesUid(oldSeriesUid);
+            else
+            {
+                newSeriesUid = DicomUid.GenerateUid().UID;
+                _uidMapper.AddSeries(oldSeriesUid, newSeriesUid);
+            }
 
 			string newSopInstanceUid;
-			if (_uidMapper.SopMap.ContainsKey(oldSopUid))
-				newSopInstanceUid = _uidMapper.SopMap[oldSopUid];
+			if (_uidMapper.ContainsSop(oldSopUid))
+				newSopInstanceUid = _uidMapper.GetNewSopUid(oldSopUid);
 			else
 			{
 				newSopInstanceUid = DicomUid.GenerateUid().UID;
-				_uidMapper.SopMap.Add(oldSopUid, newSopInstanceUid);
+				_uidMapper.AddSop(oldSopUid, newSopInstanceUid);
 			}
 
 			file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(newSeriesUid);

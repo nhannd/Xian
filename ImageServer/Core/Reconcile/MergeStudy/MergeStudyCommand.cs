@@ -39,6 +39,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
+using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -89,9 +90,17 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             
 			LoadMergedStudyEntities();
 
-			ProcessUidList();
-            
-			LogResult();
+            try
+            {
+                LoadUidMappings();
+                ProcessUidList();
+
+                LogResult();
+            }
+            finally
+            {
+                UpdateHistory();
+            }
 		}
 
 		private void DetermineDestination()
@@ -190,7 +199,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 						if (counter == 0)
 						{
 							// Only update the first time through the loop
-							processor.AddCommand(new UpdateHistoryCommand(Context));
+							processor.AddCommand(new UpdateHistoryCommand(Context, UidMapper));
 						}
 
 						if (!processor.Execute())
@@ -232,6 +241,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 			// Add the update commands to
 			context.UpdateCommands.AddRange(BuildUpdateCommandList());
+
+            // Add command to update the Series & Sop Instances.
+            context.UpdateCommands.Add(new SeriesSopUpdateCommand(UidMapper));
+
 			PrintUpdateCommands(context.UpdateCommands);
 
 			// Load the Study XML File
@@ -250,14 +263,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
-                    if (counter == 0)
-                    {
-                        // Update the history record so that it will show up in the study history
-                        sopProcessor.OnInsertingSop += delegate(object sender, SopInsertingEventArgs e)
-                                                     {
-                                                         e.Processor.AddCommand(new UpdateHistoryCommand(Context));
-                                                     };
-                    }
                     ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, false, uid, GetReconcileUidPath(uid));
 					if (result.Status != ProcessingStatus.Success)
 					{
