@@ -83,7 +83,7 @@ namespace ClearCanvas.Dicom
 
         private bool _validateVrLengths = DicomSettings.Default.ValidateVrLengths;
 		private bool _validateVrValues = DicomSettings.Default.ValidateVrValues;
-
+    	private bool _ignoreOutOfRangeTags = DicomSettings.Default.IgnoreOutOfRangeTags;
 		#endregion
 
         #region Constructors
@@ -222,6 +222,11 @@ namespace ClearCanvas.Dicom
 			set { _validateVrValues = value; }
     	}
 
+		public bool IgnoreOutOfRangeTags
+		{
+			get { return _ignoreOutOfRangeTags; }
+			set { _ignoreOutOfRangeTags = value; }
+		}
         #endregion
 
         #region Public Methods
@@ -311,7 +316,7 @@ namespace ClearCanvas.Dicom
             DicomAttribute attr;
 			if (!_attributeList.TryGetValue(tag, out attr))
 			{
-                if ((tag < _startTag) || (tag > _endTag))
+                if (((tag < _startTag) || (tag > _endTag)) && !_ignoreOutOfRangeTags)
                     throw new DicomException("Tag is out of range for collection: " + tag.ToString("X8"));
 
                 DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
@@ -349,7 +354,7 @@ namespace ClearCanvas.Dicom
 
 			if (!_attributeList.TryGetValue(tag.TagValue, out attr))
 			{
-				if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
+				if (((tag.TagValue < _startTag) || (tag.TagValue > _endTag)) && !_ignoreOutOfRangeTags)
 					throw new DicomException("Tag is out of range for collection: " + tag);
 
 				attr = tag.CreateDicomAttribute();
@@ -376,10 +381,7 @@ namespace ClearCanvas.Dicom
                 // doesn't exist. Ignore it
                 return true;
             }
-            else
-            {
-                return _attributeList.Remove(tag);
-            }
+        	return _attributeList.Remove(tag);
         }
 
         /// <summary>
@@ -410,9 +412,6 @@ namespace ClearCanvas.Dicom
 
 				if (!_attributeList.TryGetValue(tag, out attr))
 				{
-					if ((tag < _startTag) || (tag > _endTag))
-						throw new DicomException("Tag is out of range for collection: " + tag);
-
 					DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 
 					if (dicomTag == null)
@@ -420,8 +419,16 @@ namespace ClearCanvas.Dicom
 						throw new DicomException("Invalid tag: " + tag.ToString("X8"));
 					}
 					attr = dicomTag.CreateDicomAttribute();
-					attr.ParentCollection = this;
-					_attributeList[tag] = attr;
+					if ((tag < _startTag) || (tag > _endTag))
+					{
+						if (!_ignoreOutOfRangeTags)
+							throw new DicomException("Tag is out of range for collection: " + tag);
+					}
+					else
+					{
+						attr.ParentCollection = this;
+						_attributeList[tag] = attr;
+					}
 				}
 
             	return attr; 
@@ -439,14 +446,19 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
-                    if ((tag < _startTag) || (tag > _endTag))
-                        throw new DicomException("Tag is out of range for collection: " + tag);
-
-                    if (value.Tag.TagValue != tag)
-                        throw new DicomException("Tag being set does not match tag in DicomAttribute");
-
-                    _attributeList[tag] = value;
-                    value.ParentCollection = this;                    
+					if (value.Tag.TagValue != tag)
+						throw new DicomException("Tag being set does not match tag in DicomAttribute");
+					
+					if ((tag < _startTag) || (tag > _endTag))
+					{
+						if (!_ignoreOutOfRangeTags)
+							throw new DicomException("Tag is out of range for collection: " + tag);
+					}
+					else
+					{					
+						_attributeList[tag] = value;
+						value.ParentCollection = this;
+					}
                 }
             }
         }
@@ -468,45 +480,55 @@ namespace ClearCanvas.Dicom
                 DicomAttribute attr;
 
 				if (!_attributeList.TryGetValue(tag.TagValue, out attr))
-				{
-					if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
-						throw new DicomException("Tag is out of range for collection: " + tag);
-
+				{					
 					attr = tag.CreateDicomAttribute();
 
 					if (attr == null)
 					{
 						throw new DicomException("Invalid tag: " + tag.HexString);
 					}
-					attr.ParentCollection = this;
-					_attributeList[tag.TagValue] = attr;
+					if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
+					{
+						if (!_ignoreOutOfRangeTags)
+							throw new DicomException("Tag is out of range for collection: " + tag);
+					}
+					else
+					{
+						attr.ParentCollection = this;
+						_attributeList[tag.TagValue] = attr;
+					}
 				}
 
             	return attr;
             }
             set
             {
-                if (value == null)
-                {
-                	DicomAttribute attr;
-                    if (_attributeList.TryGetValue(tag.TagValue, out attr))
-                    {
-                        attr.ParentCollection = null;
-                        _attributeList.Remove(tag.TagValue);
-                    }
-                }
-                else
-                {
-                	uint tagValue = tag.TagValue;
-                    if (value.Tag.TagValue != tagValue)
-                        throw new DicomException("Tag being set does not match tag in DicomAttribute");
-
-                    if ((tagValue < _startTag) || (tagValue > _endTag))
-                        throw new DicomException("Tag is out of range for collection: " + tag);
-
-                    _attributeList[tagValue] = value;
-                    value.ParentCollection = this;
-                }
+				if (value == null)
+				{
+					DicomAttribute attr;
+					if (_attributeList.TryGetValue(tag.TagValue, out attr))
+					{
+						attr.ParentCollection = null;
+						_attributeList.Remove(tag.TagValue);
+					}
+				}
+				else
+				{
+					uint tagValue = tag.TagValue;
+					if (value.Tag.TagValue != tagValue)
+						throw new DicomException("Tag being set does not match tag in DicomAttribute");
+				
+					if ((tagValue < _startTag) || (tagValue > _endTag))
+					{
+						if (!_ignoreOutOfRangeTags)
+							throw new DicomException("Tag is out of range for collection: " + tag);
+					}
+					else
+					{
+						_attributeList[tagValue] = value;
+						value.ParentCollection = this;
+					}
+				}
             }
         }
 
@@ -840,7 +862,7 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        private object LoadDicomFieldValue(DicomAttribute elem, Type vtype, DicomFieldDefault deflt, bool udzl)
+        private static object LoadDicomFieldValue(DicomAttribute elem, Type vtype, DicomFieldDefault deflt, bool udzl)
         {
             if (vtype.IsSubclassOf(typeof(DicomAttribute)))
             {
@@ -848,161 +870,146 @@ namespace ClearCanvas.Dicom
                     throw new DicomDataException("Invalid binding type for Element VR!");
                 return elem;
             }
-            else if (vtype.IsArray)
-            {
-                if (elem != null)
-                {
-                    if (vtype.GetElementType() == typeof(float) && (elem.Tag.VR == DicomVr.DSvr))
-                    {
-                        float[] array = new float[elem.Count];
-                        for (int i = 0; i < array.Length; i++)
-                        {
-                             elem.TryGetFloat32(i, out array[i]);
-                        }
-                        return array;
-                    }
-                    else if (vtype.GetElementType() == typeof(double) && (elem.Tag.VR == DicomVr.DSvr))
-                    {
-                        double[] array = new double[elem.Count];
-                        for (int i = 0; i < array.Length; i++)
-                            elem.TryGetFloat64(i, out array[i]);
+        	if (vtype.IsArray)
+        	{
+        		if (elem != null)
+        		{
+        			if (vtype.GetElementType() == typeof(float) && (elem.Tag.VR == DicomVr.DSvr))
+        			{
+        				float[] array = new float[elem.Count];
+        				for (int i = 0; i < array.Length; i++)
+        				{
+        					elem.TryGetFloat32(i, out array[i]);
+        				}
+        				return array;
+        			}
+        			if (vtype.GetElementType() == typeof(double) && (elem.Tag.VR == DicomVr.DSvr))
+        			{
+        				double[] array = new double[elem.Count];
+        				for (int i = 0; i < array.Length; i++)
+        					elem.TryGetFloat64(i, out array[i]);
 
-                        return array;
-                    }
-                    
-                    if (vtype.GetElementType() != elem.GetValueType())
-                        throw new DicomDataException("Invalid binding type for Element VR!");
-                    //if (elem.GetValueType() == typeof(DateTime))
-                    //    return (elem as AbstractAttribute).GetDateTimes();
-                    else
-                        return elem.Values;
-                }
-                else
-                {
-                    if (deflt == DicomFieldDefault.EmptyArray)
-                        return Array.CreateInstance(vtype, 0);
-                    else
-                        return null;
-                }
-            }
-            else
-            {
-                if (elem != null)
-                {
-                    if (elem.StreamLength == 0 && udzl)
-                    {
-                        return GetDefaultValue(vtype, deflt);
-                    }
-					if (vtype == typeof(string))
-                    {
-                        return elem.ToString();
-                    }
+        				return array;
+        			}
 
-					Type nullableType;
-					if (null != (nullableType = Nullable.GetUnderlyingType(vtype)) || vtype.IsValueType)
-					{
-						bool isNullable = nullableType != null;
-						Type valueType = nullableType ?? vtype;
+        			if (vtype.GetElementType() != elem.GetValueType())
+        				throw new DicomDataException("Invalid binding type for Element VR!");
+        				//if (elem.GetValueType() == typeof(DateTime))
+        				//    return (elem as AbstractAttribute).GetDateTimes();
+        			return elem.Values;
+        		}
+        		if (deflt == DicomFieldDefault.EmptyArray)
+        			return Array.CreateInstance(vtype, 0);
+        		return null;
+        	}
+        	if (elem != null)
+        	{
+        		if (elem.StreamLength == 0 && udzl)
+        		{
+        			return GetDefaultValue(vtype, deflt);
+        		}
+        		if (vtype == typeof(string))
+        		{
+        			return elem.ToString();
+        		}
 
-						if (valueType == typeof (ushort))
-						{
-							ushort value;
-							if (!elem.TryGetUInt16(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof (short))
-						{
-							short value;
-							if (!elem.TryGetInt16(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof (uint))
-						{
-							uint value;
-							if (!elem.TryGetUInt32(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof (int))
-						{
-							int value;
-							if (!elem.TryGetInt32(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof(UInt64))
-						{
-							UInt64 value;
-							if (!elem.TryGetUInt64(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof(Int64))
-						{
-							Int64 value;
-							if (!elem.TryGetInt64(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof(float))
-						{
-							float value;
-							if (!elem.TryGetFloat32(0, out value) && isNullable)
-								return null;
+        		Type nullableType;
+        		if (null != (nullableType = Nullable.GetUnderlyingType(vtype)) || vtype.IsValueType)
+        		{
+        			bool isNullable = nullableType != null;
+        			Type valueType = nullableType ?? vtype;
 
-							return value;
-						}
-						else if (valueType == typeof (double))
-						{
-							double value;
-							if (!elem.TryGetFloat64(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-						else if (valueType == typeof(DateTime))
-						{
-							DateTime value;
-							if (!elem.TryGetDateTime(0, out value) && isNullable)
-								return null;
-							return value;
-						}
-					}
+        			if (valueType == typeof (ushort))
+        			{
+        				ushort value;
+        				if (!elem.TryGetUInt16(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof (short))
+        			{
+        				short value;
+        				if (!elem.TryGetInt16(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof (uint))
+        			{
+        				uint value;
+        				if (!elem.TryGetUInt32(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof (int))
+        			{
+        				int value;
+        				if (!elem.TryGetInt32(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof(UInt64))
+        			{
+        				UInt64 value;
+        				if (!elem.TryGetUInt64(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof(Int64))
+        			{
+        				Int64 value;
+        				if (!elem.TryGetInt64(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof(float))
+        			{
+        				float value;
+        				if (!elem.TryGetFloat32(0, out value) && isNullable)
+        					return null;
+
+        				return value;
+        			}
+        			if (valueType == typeof (double))
+        			{
+        				double value;
+        				if (!elem.TryGetFloat64(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        			if (valueType == typeof(DateTime))
+        			{
+        				DateTime value;
+        				if (!elem.TryGetDateTime(0, out value) && isNullable)
+        					return null;
+        				return value;
+        			}
+        		}
                 	
-					if (vtype != elem.GetValueType())
-                    {
-                        if (vtype == typeof(DicomUid) && elem.Tag.VR == DicomVr.UIvr)
-                        {
-                            DicomUid uid;
-                            elem.TryGetUid(0, out uid);
-                            return uid;
-                        }
-                        else if (vtype == typeof(TransferSyntax) && elem.Tag.VR == DicomVr.UIvr)
-                        {
-                            return TransferSyntax.GetTransferSyntax(elem.ToString());
-                        }
-                        //else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AttributeMultiValueText)))
-                        //{
-                        //    return (elem as AbstractAttribute).GetDateTimeRange();
-                        // }
-                        else if (vtype == typeof(object))
-                        {
-                            return elem.Values;
-                        }
-                        else
-                            throw new DicomDataException("Invalid binding type for Element VR!");
-                    }
-                    else
-                    {
-                        return elem.Values;
-                    }
-                }
-                else
-                {
-                    return GetDefaultValue(vtype, deflt);
-                }
-            }
+        		if (vtype != elem.GetValueType())
+        		{
+        			if (vtype == typeof(DicomUid) && elem.Tag.VR == DicomVr.UIvr)
+        			{
+        				DicomUid uid;
+        				elem.TryGetUid(0, out uid);
+        				return uid;
+        			}
+        			if (vtype == typeof(TransferSyntax) && elem.Tag.VR == DicomVr.UIvr)
+        			{
+        				return TransferSyntax.GetTransferSyntax(elem.ToString());
+        			}
+        				//else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AttributeMultiValueText)))
+        				//{
+        				//    return (elem as AbstractAttribute).GetDateTimeRange();
+        				// }
+        			if (vtype == typeof(object))
+        			{
+        				return elem.Values;
+        			}
+        			throw new DicomDataException("Invalid binding type for Element VR!");
+        		}
+        		return elem.Values;
+        	}
+        	return GetDefaultValue(vtype, deflt);
         }
 
         /// <summary>

@@ -8,5 +8,8 @@
     <Setting Name="ValidateVrValues" Description="When set, the values of DICOM Attributes will be checked." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="IgnoreOutOfRangeTags" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

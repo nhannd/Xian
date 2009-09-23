@@ -413,6 +413,7 @@
     <Compile Include="ServiceModel\Streaming\StudyNotFoundFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsInUseFault.cs" />
     <Compile Include="ServiceModel\Streaming\StudyIsNearlineFault.cs" />
+    <Compile Include="Tests\AttributeCollectionTest.cs" />
     <Compile Include="Tests\DicomDirectoryTests.cs" />
     <Compile Include="Tests\ScuTests.cs" />
     <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
