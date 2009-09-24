@@ -425,8 +425,7 @@ Global.css - Defines the global styles for the entire web application relating
 	border-top: #205f87 1px solid;
 	border-left: #205f87 1px solid;
 	border-bottom: #205f87 1px solid;
-	background-color: #eeffe4;
-	margin: 5px;
+	background: #ffffff url(../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;
 }
 
 .EmptySearchResultsSuggestionContent
@@ -437,7 +436,8 @@ Global.css - Defines the global styles for the entire web application relating
 
 .EmptySearchResultsSuggestionPanelHeader
 {
-	border-bottom: #d3e6c6 3px solid;
+	border-bottom: #cccccc 2px solid;
+	padding: 4px;
 }
 
 /*================================

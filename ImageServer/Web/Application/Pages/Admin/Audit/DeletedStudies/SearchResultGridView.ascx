@@ -44,11 +44,12 @@
 					<EmptyDataTemplate>				    
 					<ccAsp:EmptySearchResultsMessage runat="server" ID="NoResultFoundMessage" Message="No studies found using the provided criteria.">
 						<SuggestionTemplate>					
-						    <ul>
+						    <ul style="padding-left: 15px; margin-left: 5px; margin-top: 4px; margin-bottom: 4px;">
 	                            <li>Modify your search criteria.</li>
 	                            <li>
+	                                Check that a copy of the study is maintained after deletion.<br />Use the "Delete Management" tab  on the Edit Dialog of the desired 
 	                                <asp:LinkButton runat="server" PostBackUrl="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" 
-	                                        CssClass="EmptySearchResultsSuggestionContent">Check if audit is turned on for all partitions.</asp:LinkButton>
+	                                        CssClass="EmptySearchResultsSuggestionContent">Server Partition</asp:LinkButton>.
 	                            </li>
 	                        </ul>	    
 						</SuggestionTemplate>

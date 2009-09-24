@@ -215,7 +215,7 @@
                             <table width="100%">
                             <tr>
                                 <td>
-                                    <asp:CheckBox ID="AuditDeleteStudyCheckBox" runat="server" Text="Study Deletion" CssClass="DialogCheckBox" 
+                                    <asp:CheckBox ID="AuditDeleteStudyCheckBox" runat="server" Text="Maintain a copy of each study after deletion" CssClass="DialogCheckBox" 
                                             ToolTip="<%$ Resources:Tooltips, ServerPartitionAddEditDialog_AuditDeleteStudy %>"/>
                                 </td>
                             </tr>
