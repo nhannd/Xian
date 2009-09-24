@@ -45,6 +45,9 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 			[AuthorityToken(Description = "Allow access to the Settings Management screen.")]
 			public const string SettingsManagement = "Desktop/Settings Management";
+
+			[AuthorityToken(Description = "Allow users to customize the Date-Time display format.")]
+			public const string CustomizeDateTimeFormat = "Desktop/Customize Date-Time Format";
 		}
 	}
 }

@@ -31,9 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Configuration.Standard;
 
 namespace ClearCanvas.Desktop.Configuration.Tools
@@ -58,14 +57,29 @@ namespace ClearCanvas.Desktop.Configuration.Tools
 		/// </summary>
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
+			var listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<DateFormatApplicationComponent>("TitleDateFormat"));
+			if(CheckPermission(AuthorityTokens.Desktop.CustomizeDateTimeFormat))
+			{
+				listPages.Add(new ConfigurationPage<DateFormatApplicationComponent>("TitleDateFormat"));
+			}
+
 			listPages.Add(new ConfigurationPage<ToolStripConfigurationComponent>("TitleToolbar"));
 		
 			return listPages.AsReadOnly();
 		}
 
 		#endregion
+
+		private static bool CheckPermission(string authorityToken)
+		{
+			// if the thread is running in a non-authenticated mode, then we have no choice but to allow.
+			// this seems a little counter-intuitive, but basically we're counting on the fact that if
+			// the desktop is running in an enterprise environment, then the thread *will* be authenticated,
+			// and that this is enforced by some mechanism outside the scope of this class.  The only
+			// scenario in which the thread would ever be unauthenticated is the stand-alone scenario.
+			return Thread.CurrentPrincipal == null || Thread.CurrentPrincipal.Identity.IsAuthenticated == false
+			       || Thread.CurrentPrincipal.IsInRole(authorityToken);
+		}
 	}
 }
