@@ -46,7 +46,7 @@
                                 </asp:TableHeaderRow>
                                 <asp:TableRow>
                                     <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
-                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No history record is found for this study.</asp:panel>
+                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No history record exists for this study.</asp:panel>
                                     </asp:TableCell>
                                 </asp:TableRow>
                             </asp:Table>
