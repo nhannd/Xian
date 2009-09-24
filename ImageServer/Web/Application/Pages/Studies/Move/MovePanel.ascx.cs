@@ -315,7 +315,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                 
                 MoveConfirmation.Message += DialogHelper.createStudyTable(StudyGridView.StudyList);
                     
-                MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.OKCANCEL;
 
                 MoveConfirmation.Data = DeviceGridPanel.SelectedDevices;
                 MoveConfirmation.Show();

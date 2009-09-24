@@ -358,7 +358,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
                 
                 MoveConfirmation.Message += DialogHelper.createSeriesTable(SeriesGridView.SeriesList);
 
-                MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.OKCANCEL;
 
                 // Create the move request, although it really isn't needed.
                 MoveRequest moveData = new MoveRequest();
