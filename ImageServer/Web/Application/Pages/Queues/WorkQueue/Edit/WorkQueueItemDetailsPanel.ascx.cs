@@ -314,8 +314,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     WorkQueueAlertPanelRow.Visible = true;
                     WorkQueueAlertPanel.Text =
                         WorkQueue.LastUpdatedTime > DateTime.MinValue
-                            ? String.Format("There seems to be no activity for this item since {0}. The server may be down or there is a problem with this entry.",WorkQueue.LastUpdatedTime)
-                            : "There seems to be no activity for this item. The server may be down or there is a problem with this entry.";
+                            ? String.Format("There does not seem to be any activity for this entry since {0}. The server may not be running or there is a problem with this entry.", WorkQueue.LastUpdatedTime)
+                            : "There does not seem to be any activity for this entry. The server may not be running or there is a problem with this entry.";
                 }
             }
             if (_detailsView != null)

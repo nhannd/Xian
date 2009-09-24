@@ -46,7 +46,7 @@
 								<asp:Label ID="StatusLabel" runat="server" Text='<%# Eval("StatusString") %>'></asp:Label>
 								
 								<asp:Image runat="server" Visible='<%# !(Container.DataItem as WorkQueueSummary).TheWorkQueueItem.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) && !ServerPlatform.IsActiveWorkQueue((Container.DataItem as WorkQueueSummary).TheWorkQueueItem) %>'  ImageAlign="AbsBottom" ID="StuckIcon" SkinID="WarningSmall"
-								    ToolTip="There does seem to be no activity for this entry. The server may not be running or there is a problem with this entry."/>
+								    ToolTip="There does not seem to be any activity for this entry. The server may not be running or there is a problem with this entry."/>
 							</itemtemplate>
 						</asp:TemplateField>
 						
