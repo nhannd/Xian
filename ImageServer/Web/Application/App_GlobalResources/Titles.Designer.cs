@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Deleted Studies | Audit | ClearCanvas ImageServer.
+        ///   Looks up a localized string similar to Deleted Studies | ClearCanvas ImageServer.
         /// </summary>
         internal static string DeletedStudiesPageTitle {
             get {
