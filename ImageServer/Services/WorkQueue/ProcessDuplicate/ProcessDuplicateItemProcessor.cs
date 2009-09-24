@@ -595,7 +595,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
                 string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
 
-                _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, true, _compare, null, null);
+                _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, _compare, null, null);
                 if (_result.Status == ProcessingStatus.Failed)
                 {
                     throw new ApplicationException("Unable to process file");

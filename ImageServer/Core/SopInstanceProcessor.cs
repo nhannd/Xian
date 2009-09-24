@@ -261,13 +261,12 @@ namespace ClearCanvas.ImageServer.Core
 		/// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
 		/// </summary>
 		/// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
-		/// <param name="duplicate"></param>
 		/// <param name="group"></param>
 		/// <param name="file"></param>
 		/// <param name="compare"></param>
 		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success.</param>
 		/// <param name="deleteFile">An option file to delete as part of the process</param>
-        public virtual ProcessingResult ProcessFile(String group, DicomFile file, StudyXml stream, bool duplicate, bool compare, WorkQueueUid uid, string deleteFile)
+        public virtual ProcessingResult ProcessFile(String group, DicomFile file, StudyXml stream, bool compare, WorkQueueUid uid, string deleteFile)
 		{
             _instanceStats.ProcessTime.Start();
             ProcessingResult result = new ProcessingResult();

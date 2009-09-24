@@ -44,6 +44,10 @@ using System.Diagnostics;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
+    public class SourceImageInfo
+    {
+        public string SopInstanceUid { get; set; }
+    }
 
 	/// <summary>
 	/// Class for representing a SOP Instance as XML.
@@ -68,6 +72,26 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		private IEnumerator<DicomAttribute> _baseCollectionEnumerator = null;
 		private IEnumerator _instanceXmlEnumerator = null;
+
+	    private IList<SourceImageInfo> _sourceImageInfoList;
+	    private bool _sourceImageInfoListLoaded;
+
+	    public IList<SourceImageInfo> SourceImageInfoList
+	    {
+	        get
+	        {
+                if (!_sourceImageInfoListLoaded)
+                {
+                    _sourceImageInfoList = LoadSourceImageInfo(Collection);
+                    _sourceImageInfoListLoaded = true;
+                }
+	            return _sourceImageInfoList;
+	        } 
+            private set
+            {
+                _sourceImageInfoList = value;
+            }
+	    }
 
 		#endregion
 
@@ -169,7 +193,25 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			_transferSyntax = syntax;
 		}
 
-		public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
+        private IList<SourceImageInfo> LoadSourceImageInfo(DicomAttributeCollection collection)
+	    {
+	        if (collection.Contains(DicomTags.SourceImageSequence))
+	        {
+	            DicomAttributeSQ sq = collection[DicomTags.SourceImageSequence] as DicomAttributeSQ;
+	            IList<SourceImageInfo> list = new List<SourceImageInfo>();
+	            foreach(DicomSequenceItem item in sq.Values as DicomSequenceItem[])
+	            {
+                    list.Add(new SourceImageInfo()
+	                                            {SopInstanceUid = item[DicomTags.ReferencedSopInstanceUid].ToString()});
+
+	            }
+                return list;
+	        }
+
+            return null;
+	    }
+
+	    public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
 		{
 			InstanceXmlDicomAttributeCollection thisCollection = new InstanceXmlDicomAttributeCollection();
 			_collection = thisCollection;
@@ -224,6 +266,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			{
 				_sopClass = SopClass.GetSopClass(Collection[DicomTags.SopClassUid].GetString(0, String.Empty));
 			}
+
 		}
 
 		#endregion

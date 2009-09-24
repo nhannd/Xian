@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             string group = queueUid.GroupID ?? ServerHelper.GetUidGroup(file, ServerPartition, WorkQueueItem.InsertTime);
 
-            ProcessingResult result = processor.ProcessFile(group, file, stream, queueUid.Duplicate, compare, queueUid, null);
+            ProcessingResult result = processor.ProcessFile(group, file, stream, compare, queueUid, null);
 
             if (result.Status == ProcessingStatus.Reconciled)
             {
@@ -310,7 +310,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
                             || result.DiscardImage)
                     {
-                    	FileUtils.Delete(path);
+                        RemoveWorkQueueUid(sop, null);
                     }
                     else {
                     	ProcessDuplicate(sop, basePath + ".dcm", path);
@@ -329,7 +329,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
                             || result.DiscardImage)
                         {
-                            FileUtils.Delete(path);
+                            RemoveWorkQueueUid(sop, path);
                         }
                         else
                         {
@@ -405,6 +405,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
             return result;
         }
+
+        private void RemoveWorkQueueUid(WorkQueueUid uid, string fileToDelete)
+        {
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Remove Work Queue Uid"))
+            {
+                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+                if (String.IsNullOrEmpty(fileToDelete) == false)
+                {
+                    processor.AddCommand(new FileDeleteCommand(fileToDelete, true));
+
+                }
+
+                if (!processor.Execute())
+                {
+                    String error = String.Format("Unable to delete Work Queue Uid {0}: {1}", uid.Key, processor.FailureReason);
+                    Platform.Log(LogLevel.Error, error);
+                    throw new ApplicationException(error, processor.FailureException);
+                }
+            }
+
+        }
+
 
         #region Protected Methods
 

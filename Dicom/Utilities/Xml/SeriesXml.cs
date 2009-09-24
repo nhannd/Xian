@@ -43,9 +43,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
     {
         #region Private members
 
+        private Dictionary<string, InstanceXml> _sourceImageList;
+
         private readonly Dictionary<string, InstanceXml> _instanceList = new Dictionary<string, InstanceXml>();
         private String _seriesInstanceUid = null;
         private BaseInstanceXml _seriesTagsStream = null;
+        private bool _dirty = true; 
 
         #endregion
 
@@ -97,6 +100,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 {
                     _instanceList[sopInstanceUid] = value;
                 }
+
+                _dirty = true;
             }
         }
 
@@ -163,6 +168,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         internal void SetMemento(XmlNode theSeriesNode)
         {
+            _dirty = true;
             _seriesInstanceUid = theSeriesNode.Attributes["UID"].Value;
 
             if (!theSeriesNode.HasChildNodes)
@@ -218,5 +224,37 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         }
 
         #endregion
+
+        public InstanceXml FindSourceImageInstanceXml(string instanceUid)
+        {
+            BuildSourceImageMap();
+            InstanceXml instanceXml;
+            if (_sourceImageList.TryGetValue(instanceUid, out instanceXml))
+            {
+                return instanceXml;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private void BuildSourceImageMap()
+        {
+            if (_dirty || _sourceImageList==null)
+            {
+                _sourceImageList = new Dictionary<string, InstanceXml>();
+                foreach(InstanceXml instanceXml in _instanceList.Values)
+                {
+                    if (instanceXml.SourceImageInfoList!=null)
+                    {
+                       foreach(SourceImageInfo sourceInfo in instanceXml.SourceImageInfoList)
+                       {
+                           _sourceImageList.Add(sourceInfo.SopInstanceUid, instanceXml);
+                       }
+                    }
+                }
+            }
+        }
     }
 }

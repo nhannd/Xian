@@ -81,7 +81,27 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			file.DataSet[DicomTags.SopInstanceUid].SetStringValue(newSopInstanceUid);
 			file.MediaStorageSopInstanceUid = newSopInstanceUid;
 
-			return true;
+            // add Source Image Sequence
+            AddSourceImageSequence(file, oldSopUid);
+
+		    return true;
 		}
+
+	    private void AddSourceImageSequence(DicomFile file, string oldSopUid)
+	    {
+	        DicomAttributeSQ sourceImageSQ =null;
+	        if (!file.DataSet.Contains(DicomTags.SourceImageSequence))
+	        {
+	            sourceImageSQ = new DicomAttributeSQ(DicomTags.SourceImageSequence);
+	            file.DataSet[DicomTags.SourceImageSequence] = sourceImageSQ;
+	        }
+	        else
+	            sourceImageSQ = file.DataSet[DicomTags.SourceImageSequence] as DicomAttributeSQ;
+
+	        DicomSequenceItem item = new DicomSequenceItem();
+	        item[DicomTags.ReferencedSopClassUid].SetStringValue(file.SopClass.Uid);
+	        item[DicomTags.ReferencedSopInstanceUid].SetStringValue(oldSopUid);
+	        sourceImageSQ.AddSequenceItem(item);
+	    }
 	}
 }
