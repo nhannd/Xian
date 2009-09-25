@@ -57,7 +57,13 @@
 								<asp:Label ID="ServerInfoLabel" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
 							</itemtemplate>
 						</asp:TemplateField>
-						<asp:BoundField HeaderText="Notes" DataField="Notes" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left"/>
+						<asp:TemplateField HeaderText="Notes">
+							<headerstyle wrap="false" horizontalalign="Left" />
+							<itemstyle wrap="false" horizontalalign="Left" />
+							<itemtemplate>
+								<asp:Label ID="NotesLabel" runat="server" Text='<%# Eval("Notes") %>' ToolTip='<%# Eval("FullDescription") %>'></asp:Label>
+							</itemtemplate>
+						</asp:TemplateField>
 						</Columns>
 						<EmptyDataTemplate>
                             <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />

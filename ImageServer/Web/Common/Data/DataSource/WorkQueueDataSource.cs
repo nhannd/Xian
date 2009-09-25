@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private ServerPartition _thePartition;
 		private WorkQueue _theWorkQueueItem;
         private bool _requiresAttention;
+        private string _fullDescription;
         #endregion Private members
 
 		#region Public Properties
@@ -123,6 +124,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             get { return _requiresAttention; }
             set { _requiresAttention = value; }
 	    }
+
+        public string FullDescription
+        {
+            get { return _fullDescription; }
+            set { _fullDescription = value; }
+        }
 
 	    #endregion Public Properties
 	}
@@ -413,6 +420,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 					if (item.FailureDescription.Length > 60)
 					{
 						summary.Notes = String.Format("{0}, Failure: {1} ...", summary.Notes, item.FailureDescription.Substring(0, 60));
+                        summary.FullDescription = String.Format("{0}, Failure: {1}", summary.Notes, item.FailureDescription);   //Set the FullDescription for the Tooltip in the GUI
 					}
 					else
 						summary.Notes = String.Format("{0}, Failure: {1}", summary.Notes, item.FailureDescription);
@@ -426,6 +434,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				{
 					summary.Notes = item.FailureDescription.Substring(0, 60);
 					summary.Notes += " ...";
+				    summary.FullDescription = item.FailureDescription;  //Set the FullDescription for the Tooltip in the GUI
 				}
 				else
 					summary.Notes = item.FailureDescription;
