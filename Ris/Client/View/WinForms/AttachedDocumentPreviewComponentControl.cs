@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_attachments.ShowToolbar = !_component.Readonly;
 
-			_attachments.Table = _component.Attachments;
+			_attachments.Table = _component.AttachmentTable;
 
 			if (!_component.Readonly)
 			{

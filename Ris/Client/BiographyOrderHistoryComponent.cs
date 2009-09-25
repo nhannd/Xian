@@ -118,8 +118,8 @@ namespace ClearCanvas.Ris.Client
 
 			public event EventHandler OrderListItemChanged
 			{
-				add { _component._orderLlistItemChanged += value; }
-				remove { _component._orderLlistItemChanged -= value; }
+				add { _component._orderListItemChanged += value; }
+				remove { _component._orderListItemChanged -= value; }
 			}
 
 			public OrderDetail Order
@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
 		private List<IBiographyOrderHistoryPage> _extensionPages;
-		private event EventHandler _orderLlistItemChanged;
+		private event EventHandler _orderListItemChanged;
 
 		/// <summary>
 		/// Constructor
@@ -312,7 +312,7 @@ namespace ClearCanvas.Ris.Client
 				_orderAdditionalInfoComponent.HealthcareContext = _selectedOrder;
 			}
 
-			EventsHelper.Fire(_orderLlistItemChanged, this, EventArgs.Empty);
+			EventsHelper.Fire(_orderListItemChanged, this, EventArgs.Empty);
 		}
 	}
 }

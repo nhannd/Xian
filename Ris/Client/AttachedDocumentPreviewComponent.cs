@@ -42,305 +42,293 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="AttachedDocumentPreviewComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class AttachedDocumentPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="AttachedDocumentPreviewComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class AttachedDocumentPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    [ExtensionPoint]
-    public class AttachedDocumentToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class AttachedDocumentToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public interface IAttachedDocumentToolContext : IToolContext
-    {
-        event EventHandler SelectedDocumentChanged;
-        EntityRef SelectedDocumentRef { get; }
+	public interface IAttachedDocumentToolContext : IToolContext
+	{
+		event EventHandler SelectedDocumentChanged;
+		EntityRef SelectedDocumentRef { get; }
 
-        void RemoveSelectedDocument();
-        event EventHandler ChangeCommitted;
-        bool IsReadonly { get; }
+		void RemoveSelectedDocument();
+		event EventHandler ChangeCommitted;
+		bool IsReadonly { get; }
 
-        IDesktopWindow DesktopWindow { get; }
-    }
+		IDesktopWindow DesktopWindow { get; }
+	}
 
-    /// <summary>
-    /// AttachedDocumentPreviewComponent class
-    /// </summary>
-    [AssociateView(typeof(AttachedDocumentPreviewComponentViewExtensionPoint))]
-    public class AttachedDocumentPreviewComponent : ApplicationComponent
-    {
-        public enum AttachmentMode
-        {
-            Patient,
-            Order
-        }
+	/// <summary>
+	/// AttachedDocumentPreviewComponent class
+	/// </summary>
+	[AssociateView(typeof(AttachedDocumentPreviewComponentViewExtensionPoint))]
+	public class AttachedDocumentPreviewComponent : ApplicationComponent
+	{
+		public enum AttachmentMode
+		{
+			Patient,
+			Order
+		}
 
-        class AttachedDocumentToolContext : ToolContext, IAttachedDocumentToolContext
-        {
-            private readonly AttachedDocumentPreviewComponent _component;
+		class AttachedDocumentToolContext : ToolContext, IAttachedDocumentToolContext
+		{
+			private readonly AttachedDocumentPreviewComponent _component;
 
-            internal AttachedDocumentToolContext(AttachedDocumentPreviewComponent component)
-            {
-                _component = component;
-            }
+			internal AttachedDocumentToolContext(AttachedDocumentPreviewComponent component)
+			{
+				_component = component;
+			}
 
-            #region IAttachedDocumentToolContext Members
+			#region IAttachedDocumentToolContext Members
 
-            public event EventHandler SelectedDocumentChanged
-            {
-                add { _component.SelectedDocumentChanged += value; }
-                remove { _component.SelectedDocumentChanged -= value; }
-            }
+			public event EventHandler SelectedDocumentChanged
+			{
+				add { _component.SelectedDocumentChanged += value; }
+				remove { _component.SelectedDocumentChanged -= value; }
+			}
 
-            public EntityRef SelectedDocumentRef
-            {
-                get { return _component.SelectedDocument == null ? null : _component.SelectedDocument.DocumentRef; }
-            }
+			public EntityRef SelectedDocumentRef
+			{
+				get { return _component.SelectedDocument == null ? null : _component.SelectedDocument.DocumentRef; }
+			}
 
-            public void RemoveSelectedDocument()
-            {
-                _component.RemoveSelectedDocument();
-            }
+			public void RemoveSelectedDocument()
+			{
+				_component.RemoveSelectedDocument();
+			}
 
-            public event EventHandler ChangeCommitted
-            {
-                add { _component.ChangeCommited += value; }
-                remove { _component.ChangeCommited -= value; }
-            }
+			public event EventHandler ChangeCommitted
+			{
+				add { _component.ChangeCommited += value; }
+				remove { _component.ChangeCommited -= value; }
+			}
 
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _component.Host.DesktopWindow; }
-            }
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
 
-            public bool IsReadonly
-            {
-                get { return _component.Readonly; }
-            }
+			public bool IsReadonly
+			{
+				get { return _component.Readonly; }
+			}
 
-            #endregion
-        }
+			#endregion
+		}
 
-        class AttachedDocumentDHtmlPreviewComponent : DHtmlComponent
-        {
-            private readonly AttachedDocumentPreviewComponent _component;
+		class AttachedDocumentDHtmlPreviewComponent : DHtmlComponent
+		{
+			private readonly AttachedDocumentPreviewComponent _component;
 
-            public AttachedDocumentDHtmlPreviewComponent(AttachedDocumentPreviewComponent component)
-            {
-                _component = component;
-                this.SetUrl(this.PreviewUrl);
-            }
+			public AttachedDocumentDHtmlPreviewComponent(AttachedDocumentPreviewComponent component)
+			{
+				_component = component;
+				this.SetUrl(this.PreviewUrl);
+			}
 
-            protected override DataContractBase GetHealthcareContext()
-            {
-                return _component.SelectedDocument;
-            }
+			protected override DataContractBase GetHealthcareContext()
+			{
+				return _component.SelectedDocument;
+			}
 
-            public string PreviewUrl
-            {
-                get { return WebResourcesSettings.Default.AttachedDocumentPreviewUrl; }
-            }
+			public string PreviewUrl
+			{
+				get { return WebResourcesSettings.Default.AttachedDocumentPreviewUrl; }
+			}
 
-            public void Refresh()
-            {
-                this.SetUrl(this.PreviewUrl);
-            }
-        }
+			public void Refresh()
+			{
+				this.SetUrl(this.PreviewUrl);
+			}
+		}
 
-        // Summary component members
-        private AttachmentMode _mode;
-        private ITable _attachmentTable;
-        private ISelection _selection;
-        private ISelection _initialSelection;
-        private event EventHandler _changeCommitted;
-        private event EventHandler _selectedDocumentChanged;
+		// Summary component members
+		private AttachmentMode _mode;
+		private ISelection _selection;
+		private ISelection _initialSelection;
+		private event EventHandler _changeCommitted;
+		private event EventHandler _selectedDocumentChanged;
 
-        private List<PatientAttachmentSummary> _patientAttachments;
-        private List<OrderAttachmentSummary> _orderAttachments;
+		private readonly PatientAttachmentTable _patientAttachmentTable;
+		private readonly OrderAttachmentTable _orderAttachmentTable;
 
-        private AttachedDocumentDHtmlPreviewComponent _previewComponent;
-        private ChildComponentHost _previewComponentHost;
+		private AttachedDocumentDHtmlPreviewComponent _previewComponent;
+		private ChildComponentHost _previewComponentHost;
 
-        private ToolSet _toolSet;
-        private bool _readonly;
+		private ToolSet _toolSet;
+		private bool _readonly;
 
-        /// <summary>
-        /// Constructor to show/hide the summary section
-        /// </summary>
-        /// <param name="readonly">True to show the summary toolbar, false to hide it</param>
-        /// <param name="mode">Set the component attachment mode</param>
-        public AttachedDocumentPreviewComponent(bool @readonly, AttachmentMode mode)
-        {
-            _readonly = @readonly;
-            _mode = mode;
+		/// <summary>
+		/// Constructor to show/hide the summary section
+		/// </summary>
+		/// <param name="readonly">True to show the summary toolbar, false to hide it</param>
+		/// <param name="mode">Set the component attachment mode</param>
+		public AttachedDocumentPreviewComponent(bool @readonly, AttachmentMode mode)
+		{
+			_readonly = @readonly;
+			_mode = mode;
 
-            _patientAttachments = new List<PatientAttachmentSummary>();
-            _orderAttachments = new List<OrderAttachmentSummary>();
-        }
+			_patientAttachmentTable = new PatientAttachmentTable();
+			_orderAttachmentTable = new OrderAttachmentTable();
+		}
 
-        public override void Start()
-        {
-            _toolSet = new ToolSet(new AttachedDocumentToolExtensionPoint(), new AttachedDocumentToolContext(this));
+		public override void Start()
+		{
+			_toolSet = new ToolSet(new AttachedDocumentToolExtensionPoint(), new AttachedDocumentToolContext(this));
 
-            _previewComponent = new AttachedDocumentDHtmlPreviewComponent(this);
-            _previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
-            _previewComponentHost.StartComponent();
+			_previewComponent = new AttachedDocumentDHtmlPreviewComponent(this);
+			_previewComponentHost = new ChildComponentHost(this.Host, _previewComponent);
+			_previewComponentHost.StartComponent();
 
-            base.Start();
-        }
+			base.Start();
+		}
 
-        public override void Stop()
-        {
-            if (_previewComponentHost != null)
-            {
-                _previewComponentHost.StopComponent();
-                _previewComponentHost = null;
-            }
+		public override void Stop()
+		{
+			if (_previewComponentHost != null)
+			{
+				_previewComponentHost.StopComponent();
+				_previewComponentHost = null;
+			}
 
-            _toolSet.Dispose();
-            base.Stop();
-        }
+			_toolSet.Dispose();
+			base.Stop();
+		}
 
-        #region Events
+		public void SaveChanges()
+		{
+			EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
+		}
 
-        public event EventHandler ChangeCommited
-        {
-            add { _changeCommitted += value; }
-            remove { _changeCommitted -= value; }
-        }
+		#region Events
 
-        public event EventHandler SelectedDocumentChanged
-        {
-            add { _selectedDocumentChanged += value; }
-            remove { _selectedDocumentChanged -= value; }
-        }
+		public event EventHandler ChangeCommited
+		{
+			add { _changeCommitted += value; }
+			remove { _changeCommitted -= value; }
+		}
 
-        #endregion
+		public event EventHandler SelectedDocumentChanged
+		{
+			add { _selectedDocumentChanged += value; }
+			remove { _selectedDocumentChanged -= value; }
+		}
 
-        #region Presentation Models
+		#endregion
 
-        public ApplicationComponentHost PreviewHost
-        {
-            get { return _previewComponentHost; }
-        }
+		#region Presentation Models
 
-        public bool Readonly
-        {
-            get { return _readonly; }
-            set { _readonly = value; }
-        }
+		public ApplicationComponentHost PreviewHost
+		{
+			get { return _previewComponentHost; }
+		}
 
-        public List<PatientAttachmentSummary> PatientAttachments
-        {
-            get { return _mode != AttachmentMode.Patient ? null : _patientAttachments; }
-            set
-            {
-                _patientAttachments = value;
-                _mode = AttachmentMode.Patient;
-                PatientAttachmentTable table = new PatientAttachmentTable();
-                table.Items.AddRange(_patientAttachments);
-                _attachmentTable = table;
-            }
-        }
+		public bool Readonly
+		{
+			get { return _readonly; }
+			set { _readonly = value; }
+		}
 
-        public List<OrderAttachmentSummary> OrderAttachments
-        {
-            get { return _mode != AttachmentMode.Order ? null : _orderAttachments; }
-            set
-            {
-                _orderAttachments = value;
-                _mode = AttachmentMode.Order;
-                OrderAttachmentTable table = new OrderAttachmentTable();
-                table.Items.AddRange(_orderAttachments);
-                _attachmentTable = table;
-            }
-        }
+		public IList<PatientAttachmentSummary> PatientAttachments
+		{
+			get { return _mode != AttachmentMode.Patient ? null : _patientAttachmentTable.Items; }
+			set
+			{
+				_mode = AttachmentMode.Patient;
+				_patientAttachmentTable.Items.Clear();
+				_patientAttachmentTable.Items.AddRange(value);
+			}
+		}
 
-        public ITable Attachments
-        {
-            get { return _attachmentTable; }
-        }
+		public IList<OrderAttachmentSummary> OrderAttachments
+		{
+			get { return _mode != AttachmentMode.Order ? null : _orderAttachmentTable.Items; }
+			set
+			{
+				_mode = AttachmentMode.Order;
+				_orderAttachmentTable.Items.Clear();
+				_orderAttachmentTable.Items.AddRange(value);
+			}
+		}
 
-        public ActionModelRoot AttachmentActionModel
-        {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "attached-document-items", _toolSet.Actions); }
-        }
+		public ITable AttachmentTable
+		{
+			get
+			{
+				if (_mode == AttachmentMode.Patient)
+					return _patientAttachmentTable;
 
-        public override IActionSet ExportedActions
-        {
-            get { return _toolSet.Actions; }
-        }
+				return _orderAttachmentTable;
+			}
+		}
 
-        public ISelection Selection
-        {
-            get { return _selection; }
-            set
-            {
-                if (_selection != value)
-                {
-                    _selection = value;
-                    _previewComponent.Refresh();
-                    NotifyPropertyChanged("Selection");
-                    EventsHelper.Fire(_selectedDocumentChanged, this, EventArgs.Empty);
-                }
-            }
-        }
+		public ActionModelRoot AttachmentActionModel
+		{
+			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "attached-document-items", _toolSet.Actions); }
+		}
 
-        public void OnControlLoad()
-        {
-            if (_initialSelection != null)
-                this.Selection = _initialSelection;
-        }
+		public override IActionSet ExportedActions
+		{
+			get { return _toolSet.Actions; }
+		}
 
-        public void SetInitialSelection(AttachmentSummary attachmentSummary)
-        {
-            _initialSelection = new Selection(attachmentSummary);
-        }
+		public ISelection Selection
+		{
+			get { return _selection; }
+			set
+			{
+				if (_selection != value)
+				{
+					_selection = value;
+					_previewComponent.Refresh();
+					NotifyPropertyChanged("Selection");
+					EventsHelper.Fire(_selectedDocumentChanged, this, EventArgs.Empty);
+				}
+			}
+		}
 
-        #endregion
+		public void OnControlLoad()
+		{
+			if (_initialSelection != null)
+				this.Selection = _initialSelection;
+		}
 
-        public AttachedDocumentSummary SelectedDocument
-        {
-            get
-            {
-                if (_selection == null)
-                    return null;
+		public void SetInitialSelection(AttachmentSummary attachmentSummary)
+		{
+			_initialSelection = new Selection(attachmentSummary);
+		}
 
-                if (_mode == AttachmentMode.Patient)
-                {
-                    PatientAttachmentSummary item = _selection.Item as PatientAttachmentSummary;
-                    return item == null ? null : item.Document;
-                }
-                else
-                {
-                    OrderAttachmentSummary item = _selection.Item as OrderAttachmentSummary;
-                    return item == null ? null : item.Document;
-                }
-            }
-        }
+		#endregion
 
-        public void RemoveSelectedDocument()
-        {
-            if (_selection == null)
-                return;
+		private AttachedDocumentSummary SelectedDocument
+		{
+			get
+			{
+				if (_selection == null)
+					return null;
 
-            _attachmentTable.Items.Remove(_selection.Item);
+				var attachment = (AttachmentSummary) _selection.Item;
+				return attachment == null ? null : attachment.Document;
+			}
+		}
 
-            if (_mode == AttachmentMode.Patient)
-                _patientAttachments.Remove((PatientAttachmentSummary)_selection.Item);
-            else
-                _orderAttachments.Remove((OrderAttachmentSummary)_selection.Item);
+		private void RemoveSelectedDocument()
+		{
+			if (_selection == null)
+				return;
 
-            this.Modified = true;
-        }
+			this.AttachmentTable.Items.Remove(_selection.Item);
+			this.Modified = true;
+		}
 
-        public void SaveChanges()
-        {
-            EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
-        }
-    }
+	}
 }
