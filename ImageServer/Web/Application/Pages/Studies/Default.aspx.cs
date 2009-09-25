@@ -87,7 +87,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             foreach (DeleteStudyInfo study in e.DeletedStudies)
             {
-                changedPartitions.Add(study.ServerPartitionAE);
+                if(!changedPartitions.Contains(study.ServerPartitionAE))
+                    changedPartitions.Add(study.ServerPartitionAE);
             }
             foreach (string partitionAE in changedPartitions)
             {
