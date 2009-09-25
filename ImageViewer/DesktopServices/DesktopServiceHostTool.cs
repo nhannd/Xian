@@ -30,6 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Policy;
+using System.IdentityModel.Tokens;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
@@ -37,11 +40,51 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Common;
+using System.Security.Principal;
+using System.IdentityModel.Claims;
 
 namespace ClearCanvas.ImageViewer.DesktopServices
 {
 	public abstract class DesktopServiceHostTool : Tool<IDesktopToolContext>
 	{
+		private class AuthorizationPolicy : IAuthorizationPolicy
+		{
+			private readonly IPrincipal _principal;
+			private readonly Guid _id;
+
+			public AuthorizationPolicy(IPrincipal principal)
+			{
+				_principal = principal;
+				_id = Guid.NewGuid();
+			}
+
+			#region IAuthorizationPolicy Members
+
+			public bool Evaluate(EvaluationContext evaluationContext, ref object state)
+			{
+				if (_principal != null)
+					evaluationContext.Properties["Principal"] = _principal;
+
+				return true;
+			}
+
+			public System.IdentityModel.Claims.ClaimSet Issuer
+			{
+				get { return ClaimSet.System; }
+			}
+
+			#endregion
+
+			#region IAuthorizationComponent Members
+
+			public string Id
+			{
+				get { return _id.ToString(); }
+			}
+
+			#endregion
+		}
+
 		internal static SynchronizationContext HostSynchronizationContext;
 		internal static AppDomain HostAppDomain;
 
@@ -82,7 +125,20 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 				}
 
 				ServiceHost host = CreateServiceHost();
-				host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.None;
+
+				if (Thread.CurrentPrincipal == null)
+				{
+					host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.None;
+				}
+				else
+				{
+					ServiceAuthorizationBehavior sa = host.Description.Behaviors.Find<ServiceAuthorizationBehavior>();
+					sa.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
+					List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+					policies.Add(new AuthorizationPolicy(Thread.CurrentPrincipal));
+					host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+				}
+
 				host.Open();
 				_host = host;
 			}

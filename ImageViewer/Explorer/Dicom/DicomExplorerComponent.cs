@@ -149,26 +149,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return component;
 		}
 
+		internal void SelectDefaultServers()
+		{
+			SelectDefaultServers(_serverTreeComponent);
+		}
+
 		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
 		{
-			IServerTreeNode initialSelection;
 			if (serverTreeComponent.ShowLocalDataStoreNode &&
 				!DicomExplorerConfigurationSettings.Default.SelectDefaultServerOnStartup)
 			{
-				initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
+				serverTreeComponent.SetSelection(serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode);
 			}
 			else
 			{
-				ServerTree serverTree = serverTreeComponent.ServerTree;
-
-				List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
-				CheckDefaultServers(serverTree, defaultServers);
-				initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
-				UncheckAllServers(serverTree);
-
-				if (initialSelection == null)
-					initialSelection = serverTree.RootNode.ServerGroupNode;
+				SelectDefaultServers(serverTreeComponent);
 			}
+		}
+
+		private static void SelectDefaultServers(ServerTreeComponent serverTreeComponent)
+		{
+			ServerTree serverTree = serverTreeComponent.ServerTree;
+
+			List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
+			CheckDefaultServers(serverTree, defaultServers);
+			IServerTreeNode initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
+			UncheckAllServers(serverTree);
+
+			if (initialSelection == null)
+				initialSelection = serverTree.RootNode.ServerGroupNode;
 
 			serverTreeComponent.SetSelection(initialSelection);
 		}

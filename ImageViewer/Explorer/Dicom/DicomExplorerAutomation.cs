@@ -111,21 +111,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			string aeTitle = (request.AETitle ?? "").Trim();
 			if (String.IsNullOrEmpty(aeTitle))
-				aeTitle = GetFirstDefaultServerAETitle();
+			{
+				explorerComponent.SelectDefaultServers();
+			}
+			else
+			{
+				Server server = CollectionUtils.SelectFirst(explorerComponent.ServerTreeComponent.ServerTree.FindChildServers(),
+													 delegate(IServerTreeNode node)
+													 {
+														 if (node is Server)
+															 return ((Server)node).AETitle == aeTitle;
 
-			Server server = CollectionUtils.SelectFirst(explorerComponent.ServerTreeComponent.ServerTree.FindChildServers(),
-												 delegate(IServerTreeNode node)
-												 {
-													 if (node is Server)
-														 return ((Server)node).AETitle == aeTitle;
+														 return false;
+													 }) as Server;
+				if (server == null)
+					throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault(), String.Format("Server '{0}' not found.", aeTitle));
 
-													 return false;
-												 }) as Server;
+				explorerComponent.ServerTreeComponent.SetSelection(server);
+			}
 
-			if (server == null)
-				throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault(), String.Format("Server '{0}' not found.", aeTitle));
-
-			explorerComponent.ServerTreeComponent.SetSelection(server);
 			SetSearchCriteria(explorerComponent.SearchPanelComponent, request.SearchCriteria);
 
 			SynchronizationContext.Current.Post(delegate { explorerComponent.SearchPanelComponent.Search(); }, null); 
