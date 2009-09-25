@@ -311,9 +311,10 @@ namespace ClearCanvas.Dicom.Iod
 
 		private void SetInternalPersonName(string personsName)
 		{
-			_personsName = personsName ?? "";
-			BreakApartIntoComponentGroups();
+			_personsName = PreserveAmpersand(personsName) ?? "";
+            BreakApartIntoComponentGroups();
 			SetFormattedName();
+		    
 		}
 
     	private void BreakApartIntoComponentGroups()
@@ -339,5 +340,12 @@ namespace ClearCanvas.Dicom.Iod
 			//by default, the formatted name is LastName, FirstName
 			_formattedName = StringUtilities.Combine<string>(new string[] { this.LastName, this.FirstName }, ", ");
 		}
+
+	    private string PreserveAmpersand(string name)
+	    {
+	        //If there is an "&amp;" string in the patient name, it needs to be preserved
+            //or it will appear as "&" in the UI.
+	        return name.Replace("&amp;", "&amp;amp;");
+	    }
     }
 }
