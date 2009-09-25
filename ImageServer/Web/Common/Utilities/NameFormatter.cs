@@ -209,6 +209,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
                 output = output.Replace("{Suffix}", GetComponent(pn, Component.Suffix));
                 output = output.Replace("{Prefix}", GetComponent(pn, Component.Prefix));
 
+                //Preserve the ampersand entity "&amp;"
+                output = output.Replace("&amp;", "&amp;amp;");
+
 
                 return output;
             }
