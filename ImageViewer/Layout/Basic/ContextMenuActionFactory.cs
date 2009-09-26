@@ -1,5 +1,6 @@
 ﻿using System;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -9,13 +10,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 		}
 
-		protected MenuAction CreateMenuAction(ContextMenuActionFactoryArgs args)
+		protected MenuAction CreateMenuAction(ContextMenuActionFactoryArgs args, string label, ClickHandlerDelegate clickHandler)
 		{
-			return CreateAction(args);
+			Platform.CheckForEmptyString(label, "label");
+			Platform.CheckForNullReference(clickHandler, "clickHandler");
+
+			MenuAction menuAction = CreateMenuAction(args);
+			menuAction.Label = label;
+			menuAction.SetClickHandler(clickHandler);
+			return menuAction;
 		}
 
-		internal static MenuAction CreateAction(ContextMenuActionFactoryArgs args)
+		protected MenuAction CreateMenuAction(ContextMenuActionFactoryArgs args)
 		{
+			Platform.CheckForNullReference(args, "args");
+
 			string actionId = args.GetNextActionId();
 			string fullyQualifiedActionId = args.GetFullyQualifiedActionId(actionId);
 

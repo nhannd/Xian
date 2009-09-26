@@ -7,6 +7,7 @@ namespace ClearCanvas.Dicom.Iod
 	public interface IApplicationEntity
 	{
 		string AETitle { get; }
+		string Name { get; }
 		string Description { get; }
 		string Location { get; }
 	}

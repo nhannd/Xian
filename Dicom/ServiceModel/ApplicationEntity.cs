@@ -19,15 +19,11 @@ namespace ClearCanvas.Dicom.ServiceModel
 			AETitle = aeTitle;
 		}
 
-		public ApplicationEntity(string aeTitle, string description)
+		public ApplicationEntity(string aeTitle, string name, string description, string location)
 			: this(aeTitle)
 		{
 			Description = description;
-		}
-
-		public ApplicationEntity(string aeTitle, string description, string location)
-			: this(aeTitle, description)
-		{
+			Name = name;
 			Location = location;
 		}
 
@@ -35,6 +31,9 @@ namespace ClearCanvas.Dicom.ServiceModel
 
 		[DataMember(IsRequired = true)]
 		public string AETitle { get; set; }
+
+		[DataMember(IsRequired = false)]
+		public string Name { get; set; }
 
 		[DataMember(IsRequired = false)]
 		public string Description { get; set; }

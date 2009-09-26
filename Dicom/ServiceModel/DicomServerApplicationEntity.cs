@@ -10,17 +10,12 @@ namespace ClearCanvas.Dicom.ServiceModel
 		{}
 
 		public DicomServerApplicationEntity(string aeTitle, string hostName, int port)
-			: this(aeTitle, hostName, port, "", "")
+			: this(aeTitle, hostName, port, "", "", "")
 		{
 		}
 
-		public DicomServerApplicationEntity(string aeTitle, string hostName, int port, string description)
-			: this(aeTitle, hostName, port, description, "")
-		{
-		}
-
-		public DicomServerApplicationEntity(string aeTitle, string hostName, int port, string description, string location)
-			: base(aeTitle, description, location)
+		public DicomServerApplicationEntity(string aeTitle, string hostName, int port, string name, string description, string location)
+			: base(aeTitle, name, description, location)
 		{
 			HostName = hostName;
 			Port = port;

@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	public class ContextMenuActionFactoryArgs
 	{
 		private int _nextActionNumber;
-
+		
 		internal ContextMenuActionFactoryArgs()
 		{
 		}
@@ -58,6 +58,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	
 		public IImageSet ImageSet { get; internal set; }
 
+		internal bool ExcludeDefaultActions { get; set; }
+
 		public string GetNextActionId()
 		{
 			return String.Format("imageSetAction{0}", ++_nextActionNumber);
@@ -66,6 +68,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		public string GetFullyQualifiedActionId(string actionId)
 		{
 			return String.Format("{0}:{1}", Namespace, actionId);
+		}
+
+		public void ReplaceDefaultActions()
+		{
+			ExcludeDefaultActions = true;
 		}
 	}
 
@@ -88,6 +95,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
     	private const string _rootPath = "imageviewer-contextmenu";
 		private static readonly List<IContextMenuActionFactory> _actionFactories = CreateActionFactories();
+		private static readonly DefaultContextMenuActionFactory _defaultActionFactory = new DefaultContextMenuActionFactory();
 
 		private List<string> _currentPathElements;
 
@@ -105,8 +113,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private static List<IContextMenuActionFactory> CreateActionFactories()
 		{
 			List<IContextMenuActionFactory> factories = new List<IContextMenuActionFactory>();
-
-			factories.Add(new DisplaySetContextMenuActionFactory());
 
 			try
 			{
@@ -235,12 +241,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						else
 							imageSetPath = basePath;
 
+						args.ExcludeDefaultActions = false;
+						args.BasePath = imageSetPath;
+						args.ImageSet = imageSet;
+						
 						foreach (IContextMenuActionFactory factory in _actionFactories)
-						{
-							args.BasePath = imageSetPath;
-							args.ImageSet = imageSet;
 							actions.AddRange(factory.CreateActions(args));
-						}
+
+						if (actions.Count == 0 || !args.ExcludeDefaultActions)
+							actions.AddRange(_defaultActionFactory.CreateActions(args));
 					}
 
 					if (group.Items.Count > 0 && base.ImageViewer.PriorStudyLoader.IsActive)
