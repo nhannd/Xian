@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A5B36F78-7CA7-4C46-ABD7-E8DF1517B64C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.Controls.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.Controls.WinForms</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEBUG,UNIT_TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <Compile Include="FolderControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FolderCoordinator.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FolderLocationToolStripTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FolderObject.cs" />
+    <Compile Include="FolderTree.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FolderView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IFolderCoordinatee.cs" />
+    <Compile Include="Native\Comctl32.cs" />
+    <Compile Include="Native\CSIDL.cs" />
+    <Compile Include="Native\IEnumIDList.cs" />
+    <Compile Include="Native\IShellFolder.cs" />
+    <Compile Include="Native\ListView.cs" />
+    <Compile Include="Native\Native.cs" />
+    <Compile Include="Native\SFGAO.cs" />
+    <Compile Include="Native\SHCONTF.cs" />
+    <Compile Include="Native\Shell32.cs" />
+    <Compile Include="Native\SHFILEINFO.cs" />
+    <Compile Include="Native\SHGFI.cs" />
+    <Compile Include="Native\SHGNO.cs" />
+    <Compile Include="Native\STRRET.cs" />
+    <Compile Include="Native\TreeView.cs" />
+    <Compile Include="Native\User32.cs" />
+    <Compile Include="PathNotFoundException.cs" />
+    <Compile Include="Pidl.cs" />
+    <Compile Include="ShellItem.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SystemImageList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
