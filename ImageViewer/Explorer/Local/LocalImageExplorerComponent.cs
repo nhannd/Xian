@@ -134,6 +134,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 				this.DefaultActionHandler();
 		}
 
+		public IDesktopWindow DesktopWindow
+		{
+			get { return base.Host.DesktopWindow; }
+		}
+
 		public ActionModelNode ContextMenuModel
 		{
 			get
