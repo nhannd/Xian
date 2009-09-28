@@ -344,7 +344,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			var interpretationSteps = new List<InterpretationStep>();
 			foreach (var procedure in order.Procedures)
 			{
-				if (procedure.DocumentationProcedureStep != null && procedure.DocumentationProcedureStep.State != ActivityStatus.CM)
+				if (procedure.DocumentationProcedureStep != null && !procedure.DocumentationProcedureStep.IsTerminated)
 				{
 					procedure.DocumentationProcedureStep.Complete();
 				}
