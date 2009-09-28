@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -48,227 +47,207 @@ using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(IModalityWorkflowService))]
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	[ServiceImplementsContract(typeof(IModalityWorkflowService))]
 	public class ModalityWorkflowService : WorkflowServiceBase<ModalityWorklistItem>, IModalityWorkflowService
-    {
-        /// <summary>
-        /// SearchWorklists for worklist items based on specified criteria.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [ReadOperation]
+	{
+		#region IModalityWorkflowService members
+
+		/// <summary>
+		/// SearchWorklists for worklist items based on specified criteria.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ReadOperation]
 		public TextQueryResponse<ModalityWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
-        {
-            ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
-            IModalityWorklistItemBroker broker = PersistenceContext.GetBroker<IModalityWorklistItemBroker>();
-			return SearchHelper<WorklistItem, ModalityWorklistItem>(request, broker,
-        	             delegate(WorklistItem item)
-        	             {
-        	             	return assembler.CreateWorklistItemSummary(item, PersistenceContext);
-        	             });
-        }
+		{
+			var assembler = new ModalityWorkflowAssembler();
+			var broker = this.PersistenceContext.GetBroker<IModalityWorklistItemBroker>();
+			return SearchHelper(request, broker, item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
+		}
 
-        /// <summary>
-        /// Query the specified worklist.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [ReadOperation]
-        public QueryWorklistResponse<ModalityWorklistItem> QueryWorklist(QueryWorklistRequest request)
-        {
-            ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
+		/// <summary>
+		/// Query the specified worklist.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[ReadOperation]
+		public QueryWorklistResponse<ModalityWorklistItem> QueryWorklist(QueryWorklistRequest request)
+		{
+			var assembler = new ModalityWorkflowAssembler();
+			return QueryWorklistHelper<WorklistItem, ModalityWorklistItem>(
+				request,
+				item => assembler.CreateWorklistItemSummary(item, this.PersistenceContext));
+		}
 
-            return QueryWorklistHelper<WorklistItem, ModalityWorklistItem>(request,
-                delegate (WorklistItem item)
-                {
-                    return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
-                });
-        }
+		/// <summary>
+		/// Returns a summary of the procedure plan for a specified order.
+		/// </summary>
+		/// <param name="request"><see cref="GetProcedurePlanRequest"/></param>
+		/// <returns><see cref="GetProcedurePlanResponse"/></returns>
+		[ReadOperation]
+		public GetProcedurePlanResponse GetProcedurePlan(GetProcedurePlanRequest request)
+		{
+			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			var assembler = new ProcedurePlanAssembler();
+			return new GetProcedurePlanResponse(assembler.CreateProcedurePlanSummary(order, this.PersistenceContext));
+		}
 
-    	/// <summary>
-    	/// Returns a summary of the procedure plan for a specified order.
-    	/// </summary>
-    	/// <param name="request"><see cref="GetProcedurePlanRequest"/></param>
-    	/// <returns><see cref="GetProcedurePlanResponse"/></returns>
-    	[ReadOperation]
-        public GetProcedurePlanResponse GetProcedurePlan(GetProcedurePlanRequest request)
-        {
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-             
-            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-            GetProcedurePlanResponse response = new GetProcedurePlanResponse();
-            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
-            return response;
-        }
+		/// <summary>
+		/// Returns a list of all modality performed procedure steps for a particular order.
+		/// </summary>
+		/// <param name="request"><see cref="ListPerformedProcedureStepsRequest"/></param>
+		/// <returns><see cref="ListPerformedProcedureStepsResponse"/></returns>
+		[ReadOperation]
+		public ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request)
+		{
+			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-        /// <summary>
-        /// Returns a list of all modality performed procedure steps for a particular order.
-        /// </summary>
-        /// <param name="request"><see cref="ListPerformedProcedureStepsRequest"/></param>
-        /// <returns><see cref="ListPerformedProcedureStepsResponse"/></returns>
-        [ReadOperation]
-        public ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request)
-        {
-            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			var assembler = new ModalityPerformedProcedureStepAssembler();
 
-            ModalityPerformedProcedureStepAssembler assembler = new ModalityPerformedProcedureStepAssembler();
+			ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
+			foreach (var procedure in order.Procedures)
+			{
+				foreach (var mps in procedure.ModalityProcedureSteps)
+				{
+					mppsSet.AddAll(mps.PerformedSteps);
+				}
+			}
 
-            ISet<PerformedStep> mppsSet = new HashedSet<PerformedStep>();
-            foreach (Procedure rp in order.Procedures)
-            {
-                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
-                {
-                    mppsSet.AddAll(mps.PerformedSteps);
-                }
-            }
-
-            ListPerformedProcedureStepsResponse response = new ListPerformedProcedureStepsResponse();
-            response.PerformedProcedureSteps = CollectionUtils.Map<ModalityPerformedProcedureStep, ModalityPerformedProcedureStepDetail>(
-                mppsSet,
-                delegate(ModalityPerformedProcedureStep mpps) { return assembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext); });
-
-            return response;
-        }
+			return new ListPerformedProcedureStepsResponse(
+				CollectionUtils.Map<ModalityPerformedProcedureStep, ModalityPerformedProcedureStepDetail>(
+					mppsSet,
+					mpps => assembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext)));
+		}
 
 
-        /// <summary>
-        /// Starts a specified set of modality procedure steps with a single modality performed procedure step.
-        /// </summary>
-        /// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
-        /// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
-        [UpdateOperation]
-        public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.ModalityProcedureSteps, "ModalityProcedureSteps");
+		/// <summary>
+		/// Starts a specified set of modality procedure steps with a single modality performed procedure step.
+		/// </summary>
+		/// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
+		/// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
+		[UpdateOperation]
+		public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ModalityProcedureSteps, "ModalityProcedureSteps");
 
-            // load the set of mps
-            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
-                delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
+			// load the set of mps
+			var modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(
+				request.ModalityProcedureSteps,
+				mpsRef => this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef));
 
-			bool hasProcedureNotCheckedIn = CollectionUtils.Contains(modalitySteps,
-				delegate(ModalityProcedureStep mps) { return mps.Procedure.ProcedureCheckIn.IsPreCheckIn; });
+			var hasProcedureNotCheckedIn = CollectionUtils.Contains(
+				modalitySteps,
+				mps => mps.Procedure.ProcedureCheckIn.IsPreCheckIn);
+
 			if (hasProcedureNotCheckedIn)
 				throw new RequestValidationException(SR.ExceptionProcedureNotCheckedIn);
 
-            StartModalityProcedureStepsOperation op = new StartModalityProcedureStepsOperation();
-            ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, request.StartTime, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext));
+			var op = new StartModalityProcedureStepsOperation();
+			var mpps = op.Execute(modalitySteps, request.StartTime, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext));
 
-            this.PersistenceContext.SynchState();
+			this.PersistenceContext.SynchState();
 
-            StartModalityProcedureStepsResponse response = new StartModalityProcedureStepsResponse();
-            ProcedurePlanAssembler procedurePlanAssembler = new ProcedurePlanAssembler();
-            ModalityPerformedProcedureStepAssembler modalityPerformedProcedureStepAssembler = new ModalityPerformedProcedureStepAssembler();
+			var procedurePlanAssembler = new ProcedurePlanAssembler();
+			var mppsAssembler = new ModalityPerformedProcedureStepAssembler();
+			return new StartModalityProcedureStepsResponse(
+				procedurePlanAssembler.CreateProcedurePlanSummary(modalitySteps[0].Procedure.Order, this.PersistenceContext),
+				mppsAssembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext));
+		}
 
-            response.ProcedurePlan = procedurePlanAssembler.CreateProcedurePlanSummary(modalitySteps[0].Procedure.Order, this.PersistenceContext);
-            response.StartedMpps = modalityPerformedProcedureStepAssembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext);
+		/// <summary>
+		/// Discontinues a set of specified modality procedure steps.
+		/// </summary>
+		/// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
+		/// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
+		[UpdateOperation]
+		public DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ModalityProcedureSteps, "ModalityProcedureSteps");
 
-            return response;
-        }
+			// load the set of mps
+			var modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(
+				request.ModalityProcedureSteps,
+				mpsRef => this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef));
 
-        /// <summary>
-        /// Discontinues a set of specified modality procedure steps.
-        /// </summary>
-        /// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
-        /// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
-        [UpdateOperation]
-        public DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request)
-        {
-            Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.ModalityProcedureSteps, "ModalityProcedureSteps");
-            
-            // load the set of mps
-            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
-                delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
+			foreach (var step in modalitySteps)
+			{
+				var op = new DiscontinueModalityProcedureStepOperation();
+				op.Execute(step, request.DiscontinuedTime, new PersistentWorkflow(this.PersistenceContext));
+			}
 
-            foreach (ModalityProcedureStep step in modalitySteps)
-            {
-                DiscontinueModalityProcedureStepOperation op = new DiscontinueModalityProcedureStepOperation();
-                op.Execute(step, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));
-            }
+			this.PersistenceContext.SynchState();
 
-            this.PersistenceContext.SynchState();
+			var assembler = new ProcedurePlanAssembler();
+			return new DiscontinueModalityProcedureStepsResponse(
+				assembler.CreateProcedurePlanSummary(modalitySteps[0].Procedure.Order, this.PersistenceContext));
+		}
 
-            DiscontinueModalityProcedureStepsResponse response = new DiscontinueModalityProcedureStepsResponse();
-            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-
-            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(modalitySteps[0].Procedure.Order, this.PersistenceContext);
-
-            return response;
-        }
-
-        /// <summary>
-        /// Completes a specified modality performed procedure step.
-        /// </summary>
-        /// <param name="request"><see cref="CompleteModalityPerformedProcedureStepRequest"/></param>
-        /// <returns><see cref="CompleteModalityPerformedProcedureStepResponse"/></returns>
-        [UpdateOperation]
-        public CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request)
-        {
-            ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
-
-            // copy extended properties (should this be in an assembler?)
-            foreach (KeyValuePair<string, string> pair in request.Mpps.ExtendedProperties)
-            {
-                mpps.ExtendedProperties[pair.Key] = pair.Value;
-            }
-
-			DicomSeriesAssembler dicomSeriesAssembler = new DicomSeriesAssembler();
-        	dicomSeriesAssembler.SynchronizeDicomSeries(mpps, request.Mpps.DicomSeries, this.PersistenceContext);
-
-            CompleteModalityPerformedProcedureStepOperation op = new CompleteModalityPerformedProcedureStepOperation();
-            op.Execute(mpps, request.CompletedTime, new PersistentWorkflow(PersistenceContext));
-
-            this.PersistenceContext.SynchState();
-
-            // Drill back to order so we can refresh procedure plan
-            ProcedureStep onePs = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>();
-            CompleteModalityPerformedProcedureStepResponse response = new CompleteModalityPerformedProcedureStepResponse();
-            ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-            ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
-
-            response.ProcedurePlan = assembler.CreateProcedurePlanSummary(onePs.Procedure.Order, this.PersistenceContext);
-            response.StoppedMpps = stepAssembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext);
-
-            return response;
-        }
-
-        /// <summary>
-        /// Discontinues a specified modality performed procedure step.
-        /// </summary>
-        /// <param name="request"><see cref="DiscontinueModalityPerformedProcedureStepRequest"/></param>
-        /// <returns><see cref="DiscontinueModalityPerformedProcedureStepResponse"/></returns>
-        [UpdateOperation]
-        public DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request)
-        {
-            ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
+		/// <summary>
+		/// Completes a specified modality performed procedure step.
+		/// </summary>
+		/// <param name="request"><see cref="CompleteModalityPerformedProcedureStepRequest"/></param>
+		/// <returns><see cref="CompleteModalityPerformedProcedureStepResponse"/></returns>
+		[UpdateOperation]
+		public CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request)
+		{
+			var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
 
 			// copy extended properties (should this be in an assembler?)
-			foreach (KeyValuePair<string, string> pair in request.Mpps.ExtendedProperties)
+			foreach (var pair in request.Mpps.ExtendedProperties)
 			{
 				mpps.ExtendedProperties[pair.Key] = pair.Value;
 			}
 
-			DicomSeriesAssembler dicomSeriesAssembler = new DicomSeriesAssembler();
+			var dicomSeriesAssembler = new DicomSeriesAssembler();
 			dicomSeriesAssembler.SynchronizeDicomSeries(mpps, request.Mpps.DicomSeries, this.PersistenceContext);
 
-			DiscontinueModalityPerformedProcedureStepOperation op = new DiscontinueModalityPerformedProcedureStepOperation();
-            op.Execute(mpps, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));
+			var op = new CompleteModalityPerformedProcedureStepOperation();
+			op.Execute(mpps, request.CompletedTime, new PersistentWorkflow(PersistenceContext));
 
-            this.PersistenceContext.SynchState();
+			this.PersistenceContext.SynchState();
 
-            // Drill back to order so we can refresh procedure plan
-            ProcedureStep oneMps = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>();
-            ProcedurePlanAssembler planAssembler = new ProcedurePlanAssembler();
-            ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
+			// Drill back to order so we can refresh procedure plan
+			var onePs = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>();
 
-            DiscontinueModalityPerformedProcedureStepResponse response = new DiscontinueModalityPerformedProcedureStepResponse();
-            response.ProcedurePlan = planAssembler.CreateProcedurePlanSummary(oneMps.Procedure.Order, this.PersistenceContext);
-            response.DiscontinuedMpps = stepAssembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext);
+			var planAssembler = new ProcedurePlanAssembler();
+			var stepAssembler = new ModalityPerformedProcedureStepAssembler();
+			return new CompleteModalityPerformedProcedureStepResponse(
+				planAssembler.CreateProcedurePlanSummary(onePs.Procedure.Order, this.PersistenceContext),
+				stepAssembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext));
+		}
 
-            return response;
-        }
+		/// <summary>
+		/// Discontinues a specified modality performed procedure step.
+		/// </summary>
+		/// <param name="request"><see cref="DiscontinueModalityPerformedProcedureStepRequest"/></param>
+		/// <returns><see cref="DiscontinueModalityPerformedProcedureStepResponse"/></returns>
+		[UpdateOperation]
+		public DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request)
+		{
+			var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.Mpps.ModalityPerformendProcedureStepRef);
+
+			CopyProperties(mpps.ExtendedProperties, request.Mpps.ExtendedProperties);
+
+			var dicomSeriesAssembler = new DicomSeriesAssembler();
+			dicomSeriesAssembler.SynchronizeDicomSeries(mpps, request.Mpps.DicomSeries, this.PersistenceContext);
+
+			var op = new DiscontinueModalityPerformedProcedureStepOperation();
+			op.Execute(mpps, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));
+
+			this.PersistenceContext.SynchState();
+
+			// Drill back to order so we can refresh procedure plan
+			var order = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>().Procedure.Order;
+
+			var planAssembler = new ProcedurePlanAssembler();
+			var stepAssembler = new ModalityPerformedProcedureStepAssembler();
+			return new DiscontinueModalityPerformedProcedureStepResponse(
+				planAssembler.CreateProcedurePlanSummary(order, this.PersistenceContext),
+				stepAssembler.CreateModalityPerformedProcedureStepDetail(mpps, this.PersistenceContext));
+		}
 
 		[ReadOperation]
 		public LoadOrderDocumentationDataResponse LoadOrderDocumentationData(LoadOrderDocumentationDataRequest request)
@@ -276,67 +255,50 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 
-			Order order = PersistenceContext.Load<Order>(request.OrderRef);
+			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-			StaffAssembler staffAssembler = new StaffAssembler();
+			var noteAssembler = new OrderNoteAssembler();
 
-			LoadOrderDocumentationDataResponse response = new LoadOrderDocumentationDataResponse();
-			response.OrderRef = order.GetRef();
-			response.OrderExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties);
-			response.OrderNotes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
-				OrderNote.GetNotesForOrder(order),
-				delegate(OrderNote note)
-				{
-					return noteAssembler.CreateOrderNoteDetail(note, PersistenceContext);
-				});
-
-			// establish whether there is a unique assigned interpreter for all procedures
-			HashedSet<Staff> interpreters = new HashedSet<Staff>();
-			foreach (Procedure procedure in order.Procedures)
+			return new LoadOrderDocumentationDataResponse
 			{
-				ProcedureStep pendingInterpretationStep = procedure.GetProcedureStep(
-					delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>() && ps.State == ActivityStatus.SC; });
-
-				if (pendingInterpretationStep != null && pendingInterpretationStep.AssignedStaff != null)
-					interpreters.Add(pendingInterpretationStep.AssignedStaff);
-			}
-
-			if (interpreters.Count == 1)
-				response.AssignedInterpreter = staffAssembler.CreateStaffSummary(CollectionUtils.FirstElement(interpreters), PersistenceContext);
-
-			return response;
+				OrderRef = order.GetRef(),
+				OrderExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties),
+				OrderNotes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
+					OrderNote.GetNotesForOrder(order),
+					note => noteAssembler.CreateOrderNoteDetail(note, PersistenceContext)),
+				AssignedInterpreter = GetUniqueAssignedInterpreter(order)
+			};
 		}
 
 		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Create)]
 		public SaveOrderDocumentationDataResponse SaveOrderDocumentationData(SaveOrderDocumentationDataRequest request)
 		{
-			Order order = PersistenceContext.Load<Order>(request.OrderRef);
+			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
 			CopyProperties(order.ExtendedProperties, request.OrderExtendedProperties);
 
-			DicomSeriesAssembler dicomSeriesAssembler = new DicomSeriesAssembler();
-			foreach (ModalityPerformedProcedureStepDetail detail in request.ModalityPerformedProcedureSteps)
+			var dicomSeriesAssembler = new DicomSeriesAssembler();
+			foreach (var detail in request.ModalityPerformedProcedureSteps)
 			{
-				ModalityPerformedProcedureStep mpps = PersistenceContext.Load<ModalityPerformedProcedureStep>(detail.ModalityPerformendProcedureStepRef);
+				var mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(detail.ModalityPerformendProcedureStepRef);
 				CopyProperties(mpps.ExtendedProperties, detail.ExtendedProperties);
 				dicomSeriesAssembler.SynchronizeDicomSeries(mpps, detail.DicomSeries, this.PersistenceContext);
 			}
 
 			// add new order notes
-			OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-			noteAssembler.SynchronizeOrderNotes(order, request.OrderNotes, CurrentUserStaff, PersistenceContext);
-
+			var noteAssembler = new OrderNoteAssembler();
+			noteAssembler.SynchronizeOrderNotes(order, request.OrderNotes, CurrentUserStaff, this.PersistenceContext);
 
 			// assign all procedures for this order to the specified interpreter (or unassign them, if null)
-			Staff interpreter = request.AssignedInterpreter == null ? null
-				: PersistenceContext.Load<Staff>(request.AssignedInterpreter.StaffRef, EntityLoadFlags.Proxy);
-			foreach (Procedure procedure in order.Procedures)
+			var interpreter = request.AssignedInterpreter == null
+				? null
+				: this.PersistenceContext.Load<Staff>(request.AssignedInterpreter.StaffRef, EntityLoadFlags.Proxy);
+			foreach (var procedure in order.Procedures)
 			{
 				if (procedure.IsPerformed)
 				{
-					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
+					var interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
 					{
 						interpretationStep.Assign(interpreter);
@@ -346,11 +308,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 			this.PersistenceContext.SynchState();
 
-			SaveOrderDocumentationDataResponse response = new SaveOrderDocumentationDataResponse();
-			ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-			response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
-
-			return response;
+			var planAssembler = new ProcedurePlanAssembler();
+			return new SaveOrderDocumentationDataResponse(planAssembler.CreateProcedurePlanSummary(order, this.PersistenceContext));
 		}
 
 		[ReadOperation]
@@ -359,15 +318,17 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept))
 				return new CanCompleteOrderDocumentationResponse(false, false);
 
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
 			// order documentation can be completed if all modality steps have been terminated
-			bool allModalityStepsTerminated = CollectionUtils.TrueForAll(order.Procedures,
-				delegate(Procedure p) { return AreAllModalityStepsTerminated(p); });
+			var allModalityStepsTerminated = CollectionUtils.TrueForAll(
+				order.Procedures,
+				procedure => CollectionUtils.TrueForAll(procedure.ModalityProcedureSteps, mps => mps.IsTerminated));
 
 			// order documentation is already completed if all procedures have a completed documentation step
-			bool alreadyCompleted = CollectionUtils.TrueForAll(order.Procedures,
-				delegate(Procedure p) { return p.DocumentationProcedureStep != null && p.DocumentationProcedureStep.IsTerminated; });
+			var alreadyCompleted = CollectionUtils.TrueForAll(
+				order.Procedures,
+				procedure => procedure.DocumentationProcedureStep != null && procedure.DocumentationProcedureStep.IsTerminated);
 
 			return new CanCompleteOrderDocumentationResponse(
 				allModalityStepsTerminated && alreadyCompleted == false,
@@ -378,11 +339,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Accept)]
 		public CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request)
 		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			var order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			DateTime now = Platform.Time;
-			List<InterpretationStep> interpSteps = new List<InterpretationStep>();
-			foreach (Procedure procedure in order.Procedures)
+			var interpretationSteps = new List<InterpretationStep>();
+			foreach (var procedure in order.Procedures)
 			{
 				if (procedure.DocumentationProcedureStep != null && procedure.DocumentationProcedureStep.State != ActivityStatus.CM)
 				{
@@ -394,40 +354,46 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 				// because it may be desirable to scheduled the interpretation prior to completing the documentation
 				if (procedure.IsPerformed)
 				{
-					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
+					var interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
 					{
 						// bug #3037: schedule the interpretation for the performed time, which may be earlier than the current time 
 						// in downtime mode
 						interpretationStep.Schedule(procedure.PerformedTime);
-						interpSteps.Add(interpretationStep);
+						interpretationSteps.Add(interpretationStep);
 					}
 				}
 			}
 
 			this.PersistenceContext.SynchState();
 
-			CompleteOrderDocumentationResponse response = new CompleteOrderDocumentationResponse();
-			ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
-			response.ProcedurePlan = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
-			response.InterpretationStepRefs = CollectionUtils.Map<InterpretationStep, EntityRef>(interpSteps,
-				delegate(InterpretationStep step) { return step.GetRef(); });
-
-			return response;
+			var planAssembler = new ProcedurePlanAssembler();
+			return new CompleteOrderDocumentationResponse
+			{
+				ProcedurePlan = planAssembler.CreateProcedurePlanSummary(order, this.PersistenceContext),
+				InterpretationStepRefs = CollectionUtils.Map<InterpretationStep, EntityRef>(interpretationSteps, step => step.GetRef())
+			};
 		}
+
+		#endregion
+
+		#region WorkflowServiceBase overrides
+
+		protected override object GetWorkItemKey(ModalityWorklistItem item)
+		{
+			return new WorklistItemKey(item.ProcedureStepRef);
+		}
+
+		#endregion
+
+		#region Private Members
 
 		private static void CopyProperties(IDictionary<string, string> dest, IDictionary<string, string> source)
 		{
-			foreach (KeyValuePair<string, string> kvp in source)
+			foreach (var kvp in source)
 			{
 				dest[kvp.Key] = kvp.Value;
 			}
-		}
-
-		private static bool AreAllModalityStepsTerminated(Procedure rp)
-		{
-			return rp.ModalityProcedureSteps.TrueForAll(
-					delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
 		}
 
 		private InterpretationStep GetPendingInterpretationStep(Procedure procedure)
@@ -437,27 +403,52 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			if (procedure.IsTerminated)
 				return null;
 
-			List<ProcedureStep> interpretationSteps = CollectionUtils.Select(procedure.ProcedureSteps,
-				delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
+			var interpretationSteps = CollectionUtils.Select(
+				procedure.ProcedureSteps,
+				ps => ps.Is<InterpretationStep>());
 
 			// no interp step, so create one
 			if (interpretationSteps.Count == 0)
 			{
-				InterpretationStep interpretationStep = new InterpretationStep(procedure);
-				PersistenceContext.Lock(interpretationStep, DirtyState.New);
+				var interpretationStep = new InterpretationStep(procedure);
+				this.PersistenceContext.Lock(interpretationStep, DirtyState.New);
 				return interpretationStep;
 			}
 
 			// may be multiple interp steps (eg maybe one was started and discontinued), so find the one that is scheduled
-			ProcedureStep pendingStep = CollectionUtils.SelectFirst(interpretationSteps,
-				delegate(ProcedureStep ps) { return ps.State == ActivityStatus.SC; });
+			var pendingStep = CollectionUtils.SelectFirst(
+				interpretationSteps,
+				ps => ps.State == ActivityStatus.SC);
 
 			return pendingStep == null ? null : pendingStep.As<InterpretationStep>();
 		}
 
-		protected override object GetWorkItemKey(ModalityWorklistItem item)
+		private StaffSummary GetUniqueAssignedInterpreter(Order order)
 		{
-			return new WorklistItemKey(item.ProcedureStepRef);
+			StaffSummary uniqueAssignedInterpreter = null;
+			var staffAssembler = new StaffAssembler();
+
+			// establish whether there is a unique assigned interpreter for all procedures
+			var interpreters = new HashedSet<Staff>();
+			foreach (var procedure in order.Procedures)
+			{
+				var pendingInterpretationStep = procedure.GetProcedureStep(
+					ps => ps.Is<InterpretationStep>() && ps.State == ActivityStatus.SC);
+
+				if (pendingInterpretationStep != null && pendingInterpretationStep.AssignedStaff != null)
+					interpreters.Add(pendingInterpretationStep.AssignedStaff);
+			}
+
+			if (interpreters.Count == 1)
+			{
+				uniqueAssignedInterpreter = staffAssembler.CreateStaffSummary(
+					CollectionUtils.FirstElement(interpreters),
+					this.PersistenceContext);
+			}
+
+			return uniqueAssignedInterpreter;
 		}
-    }
+
+		#endregion
+	}
 }

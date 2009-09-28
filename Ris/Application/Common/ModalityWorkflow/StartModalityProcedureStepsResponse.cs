@@ -34,13 +34,19 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
-    [DataContract]
-    public class StartModalityProcedureStepsResponse : DataContractBase
-    {
-        [DataMember]
-        public ProcedurePlanDetail ProcedurePlan;
+	[DataContract]
+	public class StartModalityProcedureStepsResponse : DataContractBase
+	{
+		public StartModalityProcedureStepsResponse(ProcedurePlanDetail procedurePlan, ModalityPerformedProcedureStepDetail startedMpps)
+		{
+			ProcedurePlan = procedurePlan;
+			StartedMpps = startedMpps;
+		}
 
-        [DataMember]
-        public ModalityPerformedProcedureStepDetail StartedMpps;
-    }
+		[DataMember]
+		public ProcedurePlanDetail ProcedurePlan;
+
+		[DataMember]
+		public ModalityPerformedProcedureStepDetail StartedMpps;
+	}
 }

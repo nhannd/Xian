@@ -34,10 +34,15 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
-    [DataContract]
-    public class SaveOrderDocumentationDataResponse : DataContractBase
-    {
-        [DataMember]
-        public ProcedurePlanDetail ProcedurePlan;
-    }
+	[DataContract]
+	public class SaveOrderDocumentationDataResponse : DataContractBase
+	{
+		public SaveOrderDocumentationDataResponse(ProcedurePlanDetail procedurePlan)
+		{
+			ProcedurePlan = procedurePlan;
+		}
+
+		[DataMember]
+		public ProcedurePlanDetail ProcedurePlan;
+	}
 }

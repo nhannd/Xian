@@ -35,15 +35,15 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
-    [DataContract]
-    public class ListPerformedProcedureStepsResponse : DataContractBase
-    {
-        public ListPerformedProcedureStepsResponse()
-        {
-            PerformedProcedureSteps = new List<ModalityPerformedProcedureStepDetail>();
-        }
+	[DataContract]
+	public class ListPerformedProcedureStepsResponse : DataContractBase
+	{
+		public ListPerformedProcedureStepsResponse(List<ModalityPerformedProcedureStepDetail> performedProcedureSteps)
+		{
+			PerformedProcedureSteps = performedProcedureSteps;
+		}
 
-        [DataMember]
-        public List<ModalityPerformedProcedureStepDetail> PerformedProcedureSteps;
-    }
+		[DataMember]
+		public List<ModalityPerformedProcedureStepDetail> PerformedProcedureSteps;
+	}
 }
