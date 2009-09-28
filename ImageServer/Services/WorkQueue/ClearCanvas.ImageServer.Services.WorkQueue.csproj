@@ -72,6 +72,7 @@
     <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="RecoveryModes.cs" />
     <Compile Include="StudyIntegrityValidationAttribute.cs" />
+    <Compile Include="StudyProcess\AutoReconcileException.cs" />
     <Compile Include="StudyProcess\AutoReconciler.cs" />
     <Compile Include="StudyProcess\BasePreprocessor.cs" />
     <Compile Include="StudyProcess\PatientNameAutoCorrection.cs" />

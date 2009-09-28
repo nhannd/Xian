@@ -80,6 +80,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				// Add the studyXml.gz file
 				zip.AddFile(Path.Combine(_studyFolder, String.Format("{0}.xml.gz", _studyXml.StudyInstanceUid)), String.Empty);
 
+			    string uidMapXmlPath = Path.Combine(_studyFolder, "UidMap.xml");
+                if (File.Exists(uidMapXmlPath))
+                    zip.AddFile(uidMapXmlPath);
+
 				// Add each sop from the StudyXmlFile
 				foreach (SeriesXml seriesXml in _studyXml)
 					foreach (InstanceXml instanceXml in seriesXml)

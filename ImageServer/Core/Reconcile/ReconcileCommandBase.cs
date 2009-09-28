@@ -149,16 +149,18 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 	    protected void LoadUidMappings()
 	    {
-	        // Load from history
-	        StudyReconcileDescriptor changeDesc = XmlUtils.Deserialize<StudyReconcileDescriptor>(Context.History.ChangeDescription);
-	        if (changeDesc.SeriesMappings != null)
-	        {
-	            _uidMapper = new UidMapper(changeDesc.SeriesMappings);
-	        }
-	        else
-	            _uidMapper = new UidMapper();
-
-	        _uidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
+	        // Load the mapping for the study
+            if (Context.DestStorageLocation!=null)
+            {
+                UidMapXml xml = new UidMapXml();
+                xml.Load(Context.DestStorageLocation);
+                _uidMapper = new UidMapper(xml);
+            }
+            else
+            {
+                _uidMapper = new UidMapper();
+            }
+            _uidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
 	    }
 
 
@@ -171,8 +173,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	    {
 	        using(ServerCommandProcessor processor = new ServerCommandProcessor("Reconcile-CreateStudy-Update History"))
 	        {
-	            processor.AddCommand(new UpdateHistoryCommand(Context, UidMapper));
-	            if (!processor.Execute())
+                processor.AddCommand(new SaveUidMapXmlCommand(Context.DestStorageLocation, UidMapper));
+                processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, UidMapper));
+                if (!processor.Execute())
 	            {
 	                throw new ApplicationException("Unable to update the history", processor.FailureException);
 	            }

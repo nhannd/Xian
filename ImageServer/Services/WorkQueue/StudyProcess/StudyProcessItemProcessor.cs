@@ -210,8 +210,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Process all of the SOP Instances associated with a <see cref="WorkQueue"/> item.
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> item.</param>
-        /// <returns>A value indicating whether the uid list has been successfully processed</returns>
-        private bool ProcessUidList(Model.WorkQueue item)
+        /// <returns>Number of instances that have been processed successfully.</returns>
+        private int ProcessUidList(Model.WorkQueue item)
         {
             StudyXml studyXml;
 
@@ -227,15 +227,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				if (CancelPending)
 				{
 					Platform.Log(LogLevel.Info, "Processing of study canceled for shutdown: {0}", StorageLocation.StudyInstanceUid);
-					return true;	
+                    return successfulProcessCount;	
 				}
 
                 if (ProcessWorkQueueUid(item, sop, studyXml))
                     successfulProcessCount++;
             }
 
-            //TODO: Should we return true only if ALL uids have been processed instead?
-            return successfulProcessCount > 0;
+            return successfulProcessCount;
 
         }
 
@@ -326,6 +325,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         file.Load();
 
                         PreProcessingResult result = PreProcessFile(sop, file);
+
                         if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
                             || result.DiscardImage)
                         {
@@ -501,53 +501,71 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
+            _statistics.TotalProcessTime.Start();
             
             bool successful = false;
         	bool idle = false;
-            _statistics.TotalProcessTime.Add(
-                    delegate
-                    	{
-                            //Load the specific UIDs that need to be processed.
-                            LoadUids(item);
+            //Load the specific UIDs that need to be processed.
+            LoadUids(item);
 
-                            if (WorkQueueUidList.Count == 0)
-                            {
-                                successful = true;
-                            	idle = true;
-                            }
-                            else
-                            {
-                                _context = new StudyProcessorContext(StorageLocation);
+            int totalUidCount = WorkQueueUidList.Count;
 
-                                // Load the rules engine
-                                _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
-								_sopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
-                                _sopProcessedRulesEngine.Load();
-                                _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
-                            	_context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
-                            	_context.ReadContext = ReadContext;
+            if (totalUidCount == 0)
+            {
+                successful = true;
+                idle = true;
+            }
+            else
+            {
+                try
+                {
+                    _context = new StudyProcessorContext(StorageLocation);
 
-								if (Study != null)
-								{
-									Platform.Log(LogLevel.Info, "Processing study {0} for Patient {1} (PatientId:{2} A#:{3}), {4} objects",
-									             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
-									             Study.AccessionNumber, WorkQueueUidList.Count);
-								}
-								else
-								{
-									Platform.Log(LogLevel.Info, "Processing study {0}, {1} objects",
-												 StorageLocation.StudyInstanceUid, WorkQueueUidList.Count);
-								}
-                            	// Process the images in the list
-                                successful = ProcessUidList(item);
-                            }
-                        }
-                );
+                    // Load the rules engine
+                    _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
+                    _sopProcessedRulesEngine.AddOmittedType(ServerRuleTypeEnum.SopCompress);
+                    _sopProcessedRulesEngine.Load();
+                    _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
+                    _context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
+                    _context.ReadContext = ReadContext;
+
+                    if (Study != null)
+                    {
+                        Platform.Log(LogLevel.Info, "Processing study {0} for Patient {1} (PatientId:{2} A#:{3}), {4} objects",
+                                     Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+                                     Study.AccessionNumber, WorkQueueUidList.Count);
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Info, "Processing study {0}, {1} objects",
+                                     StorageLocation.StudyInstanceUid, WorkQueueUidList.Count);
+                    }
+
+                    // Process the images in the list
+                    successful = ProcessUidList(item) > 0;
+                }
+                catch (TargetStudyIsNearline ex)
+                {
+                    // delay until the target is restored
+                    // NOTE: If the study could not be restored after certain period of time, this entry will be failed.
+                    if (ex.RestoreRequested)
+                    {
+                        PostponeItem(item, string.Format("Unable to auto-reconcile at this time: the target study {0} is not online yet. Restore has been requested.", ex.StudyInstanceUid));
+                        return;
+                    }
+                    else
+                    {
+                        // fail right away
+                        FailQueueItem(item, string.Format("Unable to auto-reconcile at this time: the target study {0} is not nearline and could not be restored.", ex.StudyInstanceUid));
+                        return;
+                    }
+                }
+            }
+            _statistics.TotalProcessTime.End();
 
 			if (successful)
 			{
-				if (idle
-					&& item.ExpirationTime <= Platform.Time)
+				if (idle && item.ExpirationTime <= Platform.Time)
 				{
 					// Run Study / Series Rules Engine.
 					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation, ServerPartition);

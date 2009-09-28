@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 	class MergeStudyCommand : ReconcileCommandBase
 	{
 		#region Private Members
-		private ServerCommandProcessor _processor;
+        private ServerCommandProcessor _processor;
 		private readonly List<WorkQueueUid> _processedUidList = new List<WorkQueueUid>();
 		private readonly List<WorkQueueUid> _failedUidList = new List<WorkQueueUid>();
 		private readonly List<WorkQueueUid> _duplicateList = new List<WorkQueueUid>();
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 						if (counter == 0)
 						{
 							// Only update the first time through the loop
-							processor.AddCommand(new UpdateHistoryCommand(Context, UidMapper));
+							processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, UidMapper));
 						}
 
 						if (!processor.Execute())

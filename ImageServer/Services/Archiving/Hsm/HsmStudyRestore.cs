@@ -93,16 +93,16 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         parms.StudyStorageKey = queueItem.StudyStorageKey;
                         IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
                         _location = broker.FindOne(parms);
-                        if (_location != null)
+                        if (_location == null)
                         {
                             _studyStorage = StudyStorage.Load(readContext, queueItem.StudyStorageKey);
                         }
                     }
 
                     if (_studyStorage == null)
-                        Platform.Log(LogLevel.Info, "Starting restore of study: {0}", _location.StudyInstanceUid);
+                        Platform.Log(LogLevel.Info, "Starting restore of online study: {0}", _location.StudyInstanceUid);
                     else
-                        Platform.Log(LogLevel.Info, "Starting restore of study: {0}", _studyStorage.StudyInstanceUid);
+                        Platform.Log(LogLevel.Info, "Starting restore of nearline study: {0}", _studyStorage.StudyInstanceUid);
 
                     // If restoring a Nearline study, select a filesystem
                     string destinationFolder;

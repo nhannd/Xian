@@ -31,7 +31,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
@@ -53,6 +55,17 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
         public event EventHandler<SeriesMapUpdatedEventArgs> SeriesMapUpdated;
         public event EventHandler<SopMapUpdatedEventArgs> SopMapUpdated;
 
+        public UidMapper(UidMapXml xml)
+        {
+            foreach (Map map in xml.Series)
+                _seriesMap.Add(map.Source,
+                               new SeriesMapping() {OriginalSeriesUid = map.Source, NewSeriesUid = map.Target});
+
+            foreach (Map map in xml.Instances)
+                _sopMap.Add(map.Source, map.Target);
+
+        }
+
 		public UidMapper(IList<SeriesMapping> seriesList)
 		{
 			foreach (SeriesMapping map in seriesList)
@@ -68,7 +81,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		    return _sopMap.ContainsKey(originalSopUid);
 		}
 
-        public string GetNewSopUid(string originalSopUid)
+        public string FindNewSopUid(string originalSopUid)
         {
             string newSopUid;
             if (_sopMap.TryGetValue(originalSopUid, out newSopUid))
@@ -77,7 +90,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
                 return null;
         }
 
-        public string GetNewSeriesUid(string originalSeriesUid)
+        public string FindNewSeriesUid(string originalSeriesUid)
         {
             SeriesMapping mapping;
             if (_seriesMap.TryGetValue(originalSeriesUid, out mapping))
@@ -108,6 +121,25 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 	    public IEnumerable<SeriesMapping> GetSeriesMappings()
 	    {
 	        return _seriesMap.Values;
+	    }
+
+	    public void Save(string path)
+	    {
+	        UidMapXml xml = new UidMapXml();
+	        xml.Series = new List<Map>();
+            foreach(SeriesMapping seriesMap in _seriesMap.Values)
+            {
+                xml.Series.Add(new Map() {Source = seriesMap.OriginalSeriesUid, Target = seriesMap.NewSeriesUid});
+            }
+
+            xml.Instances = new List<Map>();
+            foreach (var sop in _sopMap)
+            {
+                xml.Instances.Add(new Map() {Source = sop.Key, Target = sop.Value});
+            }
+
+	        XmlDocument doc = XmlUtils.SerializeAsXmlDoc(xml);
+	        doc.Save(path);
 	    }
 	}
 }

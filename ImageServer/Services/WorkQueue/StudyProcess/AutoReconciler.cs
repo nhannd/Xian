@@ -1,10 +1,40 @@
+#region License
+
+// Copyright (c) 2009, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -114,103 +144,60 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         #region Update Images to match destination study
 
                         UidMapper uidMapper = null;
-                        bool seriesMapUpdated = false;
+                        bool mapUpdated = false;
 
                         bool belongsToAnotherStudy;
                         if (lastHistory.DestStudyStorageKey != null)
                         {
-                            preProcessingResult = new AutoReconcilerResult(changeLog.Action);
                             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
                             dest = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
 
+                            if (dest==null)
+                            {
+                                throw new TargetStudyIsNearline() {
+                                              StudyInstanceUid = destinationStudy.StudyInstanceUid,
+                                              RestoreRequested = restored
+                                          };
+                            }
+
                             belongsToAnotherStudy = !dest.Equals(StorageLocation);
+                            
                             ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
                             IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(dest);
-
-                            if (changeLog.SeriesMappings!=null && changeLog.SeriesMappings.Count>0)
+                            if (belongsToAnotherStudy)
                             {
-                                uidMapper = new UidMapper(changeLog.SeriesMappings);
-                                uidMapper.SeriesMapUpdated += delegate { seriesMapUpdated = true; };
-                                if (uidMapper.ContainsSeries(originalSeriesUid))
-                                {
-                                    string newSeriesUid = uidMapper.GetNewSeriesUid(originalSeriesUid);
-                                    
-                                    // Check if there's an image that was originated from the same SOP Instance UID. 
-                                    // If so, throw this image away
-                                    StudyXml studyXml = dest.LoadStudyXml();
-                                    InstanceXml instanceXml = studyXml[newSeriesUid].FindSourceImageInstanceXml(originalSopUid);
-                                    if (instanceXml!=null)
-                                    {
-                                        Platform.Log(LogLevel.Info, "Found SOP {0} with the same SOP Instance UID {1} in Source Image Sequence. Discard this image (Overriding duplicate policy).",
-                                                instanceXml.SopInstanceUid, originalSopUid);
-                                        // let the caller to delete the file
-                                        preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard);
-                                        preProcessingResult.DiscardImage = true;
+                                Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Move SOP {0} to Study {1}, A#: {2}, Patient {3}", originalSopUid, dest.StudyInstanceUid, dest.Study.AccessionNumber, dest.Study.PatientsName);
 
-                                        if (!_duplicatePolicyOverriddenAlerts.ContainsKey(dest.Key))
-                                        {
-                                            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning,
-                                                                 "WorkQueue", 0, null, TimeSpan.Zero, 
-                                                                 "Duplicate Policy is overridden for study {0}. Image(s) has been assigned new SOP Instance UID and therefore discarded",
-                                                                 dest.StudyInstanceUid);
- 
-                                        }
-                                        break;
-                                    }
+                                UidMapXml mapXml = new UidMapXml();
+                                mapXml.Load(dest);
+                                uidMapper = new UidMapper(mapXml);
+                                uidMapper.SeriesMapUpdated += delegate { mapUpdated = true; };
+                                uidMapper.SopMapUpdated += delegate { mapUpdated = true; };
+
+                                try
+                                {
+                                    commands.Add(GetUidMappingCommand(dest, uidMapper, originalSopUid, originalSeriesUid));
                                 }
-
-                                else
+                                catch(InstanceAlreadyExistsException ex)
                                 {
-                                    commands.Add(new SeriesSopUpdateCommand(uidMapper));
+                                    Platform.Log(LogLevel.Info, "An instance already exists with the SOP Instance Uid {0}", ex.SopInstanceUid);
+                                    preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard);
+                                    preProcessingResult.DiscardImage = true;
+                                    break; // caller will delete the file
                                 }
                             }
 
-                            List<UpdateItem> updateList = new List<UpdateItem>();
-                            foreach(BaseImageLevelUpdateCommand cmd in commands)
-                            {
-                                if (cmd.UpdateEntry != null && cmd.UpdateEntry.TagPath != null && cmd.UpdateEntry.TagPath.Tag != null)
-                                {
-                                    UpdateItem item = new UpdateItem(cmd, file);
-                                    updateList.Add(item);
-                                }
-                                
-                            }
 
-                            preProcessingResult.Changes = updateList;
+                            preProcessingResult = new AutoReconcilerResult(changeLog.Action);
+                            preProcessingResult.Changes = GetUpdateList(file, commands);
 
-                            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Image According to History"))
-                            {
-                                foreach (BaseImageLevelUpdateCommand cmd in commands)
-                                {
-                                    cmd.File = file;
-                                    processor.AddCommand(cmd);
-                                }
-
-                                if (!processor.Execute())
-                                {
-                                    if (processor.FailureException != null)
-                                    {
-                                        throw processor.FailureException;
-                                    }
-                                    else
-                                        throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update image to match target study. Reason: {0}", processor.FailureReason), processor.FailureException);
-                                }
-                            }
+                            UpdateImage(file, commands);
 
                             // First, must update the map
-                            if (uidMapper != null && seriesMapUpdated)
+                            if (uidMapper != null && mapUpdated)
                             {
-                                using (ServerCommandProcessor processor =new ServerCommandProcessor("Update Series Mapping Processor"))
-                                {
-                                    processor.AddCommand(new UpdateHistorySeriesMappingCommand(lastHistory, uidMapper));
-                                    if (!processor.Execute())
-                                    {
-                                        throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update series mapping. Reason: {0}", processor.FailureReason), processor.FailureException);
-                                    }
-                                }
+                                UpdateHistoryAndUidMap(dest, lastHistory, uidMapper);
                             }
-
-
 
                             if (belongsToAnotherStudy)
                             {
@@ -223,6 +210,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                     throw new ApplicationException("Unable to import image to destination study");
                                 }
                             }
+
 
                         }
 
@@ -292,6 +280,93 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return preProcessingResult;
         }
 
+        private void UpdateHistoryAndUidMap(StudyStorageLocation dest, StudyHistory history, UidMapper uidMapper)
+        {
+            using (ServerCommandProcessor processor =new ServerCommandProcessor("Update Series Mapping Processor"))
+            {
+                processor.AddCommand(new UpdateHistorySeriesMappingCommand(history, uidMapper));
+                processor.AddCommand(new SaveUidMapXmlCommand(dest, uidMapper));
+                if (!processor.Execute())
+                {
+                    throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update series mapping. Reason: {0}", processor.FailureReason), processor.FailureException);
+                }
+            }
+        }
+
+        private void UpdateImage(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
+        {
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Image According to History"))
+            {
+                foreach (BaseImageLevelUpdateCommand cmd in commands)
+                {
+                    cmd.File = file;
+                    processor.AddCommand(cmd);
+                }
+
+                if (!processor.Execute())
+                {
+                    throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update image to match target study. Reason: {0}", processor.FailureReason), processor.FailureException);
+                }
+            }
+        }
+
+        private List<UpdateItem> GetUpdateList(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
+        {
+            List<UpdateItem> updateList = new List<UpdateItem>();
+            foreach(BaseImageLevelUpdateCommand cmd in commands)
+            {
+                if (cmd.UpdateEntry != null && cmd.UpdateEntry.TagPath != null && cmd.UpdateEntry.TagPath.Tag != null)
+                {
+                    UpdateItem item = new UpdateItem(cmd, file);
+                    updateList.Add(item);
+                }
+            }
+            return updateList;
+        }
+
+        private SeriesSopUpdateCommand GetUidMappingCommand(StudyStorageLocation targetStudy, UidMapper uidMapper, string originalSopUid, string originalSeriesUid)
+        {
+            SeriesSopUpdateCommand cmd;
+            string newSeriesUid = uidMapper.FindNewSeriesUid(originalSeriesUid);
+            string newSopUid = uidMapper.FindNewSopUid(originalSopUid);
+            if (string.IsNullOrEmpty(newSeriesUid) == false)
+            {
+                // Series was assigned new uid
+                if (string.IsNullOrEmpty(newSopUid))
+                {
+                    // this is new instance
+                    newSopUid = DicomUid.GenerateUid().UID;
+                    uidMapper.AddSop(originalSopUid, newSopUid);
+                    cmd =  new SeriesSopUpdateCommand(uidMapper);
+                }
+                else
+                {
+                    // this is duplicate
+                    if (File.Exists(targetStudy.GetSopInstancePath(newSeriesUid, newSopUid)))
+                        throw new InstanceAlreadyExistsException("Instance already exists")
+                                  {
+                                      SeriesInstanceUid = newSeriesUid,
+                                      SopInstanceUid = newSopUid
+                                  };
+
+                    cmd = new SeriesSopUpdateCommand(uidMapper);
+                }
+            }
+            else
+            {
+                // this is new series
+                newSopUid = DicomUid.GenerateUid().UID;
+                uidMapper.AddSeries(originalSeriesUid, newSopUid);
+                cmd = new SeriesSopUpdateCommand(uidMapper);
+            }
+
+            if (cmd!=null)
+            {
+                Platform.Log(LogLevel.Info, "Map SOP UID {0} to {1}", originalSopUid, newSopUid);
+            }
+            return cmd;
+        }
+
         #endregion
 
         private static IList<StudyHistory> FindReconcileHistories(StudyStorageLocation storageLocation, DicomFile file)
@@ -330,4 +405,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         
     }
+
 }

@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 			string newSeriesUid;
             if (_uidMapper.ContainsSeries(oldSeriesUid))
-                newSeriesUid = _uidMapper.GetNewSeriesUid(oldSeriesUid);
+                newSeriesUid = _uidMapper.FindNewSeriesUid(oldSeriesUid);
             else
             {
                 newSeriesUid = DicomUid.GenerateUid().UID;
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 			string newSopInstanceUid;
 			if (_uidMapper.ContainsSop(oldSopUid))
-				newSopInstanceUid = _uidMapper.GetNewSopUid(oldSopUid);
+				newSopInstanceUid = _uidMapper.FindNewSopUid(oldSopUid);
 			else
 			{
 				newSopInstanceUid = DicomUid.GenerateUid().UID;

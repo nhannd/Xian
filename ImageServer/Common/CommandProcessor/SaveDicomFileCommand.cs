@@ -52,6 +52,16 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		public InstanceAlreadyExistsException(string message)
 			: base(message)
 		{}
+
+        /// <summary>
+        /// The Series Instance UID of the existing instance.
+        /// </summary>        
+		public string SeriesInstanceUid { get; set; }
+		
+        /// <summary>
+        /// The SOP Instance UID of the existing instance.
+        /// </summary>
+		public string SopInstanceUid { get; set; }
 	}
 
 	/// <summary>

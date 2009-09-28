@@ -40,7 +40,11 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-    public class UpdateHistorySeriesMappingCommand : ServerDatabaseCommand
+    
+	/// <summary>
+	/// Command to update the study history record
+	/// </summary>
+	public class UpdateHistorySeriesMappingCommand : ServerDatabaseCommand
     {
         private readonly UidMapper _map;
         private readonly StudyHistory _studyHistory;
@@ -69,35 +73,4 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             historyUpdateBroker.Update(_studyHistory.Key, parms);
         }
     }
-	/// <summary>
-	/// Command to update the study history record
-	/// </summary>
-	public class UpdateHistoryCommand : ServerDatabaseCommand<ReconcileStudyProcessorContext>
-	{
-	    private readonly UidMapper _uidMap;
-	    private readonly StudyReconcileDescriptor _changeLog;
-        
-        public UpdateHistoryCommand(ReconcileStudyProcessorContext context, UidMapper uidMap)
-			: base("UpdateHistoryCommand", true, context)
-	    {
-	        _uidMap = uidMap;
-	        _changeLog = XmlUtils.Deserialize<StudyReconcileDescriptor>(context.History.ChangeDescription);
-	    }
-
-        
-	    protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
-		{
-			IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
-			StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
-			parms.DestStudyStorageKey = Context.DestStorageLocation.Key;
-
-            if (_uidMap!=null)
-            {
-                _changeLog.SeriesMappings = new System.Collections.Generic.List<SeriesMapping>(_uidMap.GetSeriesMappings());
-                parms.ChangeDescription = XmlUtils.SerializeAsXmlDoc(_changeLog);
-            }
-
-			historyUpdateBroker.Update(Context.History.Key, parms);
-		}
-	}
 }
