@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
@@ -42,14 +43,18 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 	public class SeriesSopUpdateCommand : BaseImageLevelUpdateCommand
 	{
 		private readonly UidMapper _uidMapper;
+        private readonly StudyStorageLocation _originalStudy;
+        private readonly StudyStorageLocation _targetStudy;
 
-		#region Constructors
+	    #region Constructors
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public SeriesSopUpdateCommand(UidMapper uidMapper)
+		public SeriesSopUpdateCommand(StudyStorageLocation originalStudy, StudyStorageLocation targetStudy, UidMapper uidMapper)
 			: base("SeriesSopUpdateCommand")
 		{
+		    _originalStudy = originalStudy;
+		    _targetStudy = targetStudy;
 			_uidMapper = uidMapper;
 		}
 		#endregion
@@ -65,7 +70,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
             else
             {
                 newSeriesUid = DicomUid.GenerateUid().UID;
-                _uidMapper.AddSeries(oldSeriesUid, newSeriesUid);
+                _uidMapper.AddSeries(_originalStudy.StudyInstanceUid, _targetStudy.StudyInstanceUid, oldSeriesUid, newSeriesUid);
             }
 
 			string newSopInstanceUid;

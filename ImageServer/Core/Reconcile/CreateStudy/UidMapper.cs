@@ -50,19 +50,31 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 	public class UidMapper
 	{
-		private readonly Dictionary<string, SeriesMapping> _seriesMap = new Dictionary<string, SeriesMapping>();
+        private readonly Dictionary<string, string> _studyMap = new Dictionary<string, string>();
+        private readonly Dictionary<string, SeriesMapping> _seriesMap = new Dictionary<string, SeriesMapping>();
 		private readonly Dictionary<string, string> _sopMap = new Dictionary<string, string>();
         public event EventHandler<SeriesMapUpdatedEventArgs> SeriesMapUpdated;
         public event EventHandler<SopMapUpdatedEventArgs> SopMapUpdated;
 
+	    private object _sync = new object();
+
+        public bool Dirty { get; set; }
+
         public UidMapper(UidMapXml xml)
         {
-            foreach (Map map in xml.Series)
-                _seriesMap.Add(map.Source,
-                               new SeriesMapping() {OriginalSeriesUid = map.Source, NewSeriesUid = map.Target});
+            foreach(StudyUidMap studyMap in xml.StudyUidMaps)
+            {
+                _studyMap.Add(studyMap.Source, studyMap.Target);
 
-            foreach (Map map in xml.Instances)
-                _sopMap.Add(map.Source, map.Target);
+                foreach (Map seriesMap in studyMap.Series)
+                    _seriesMap.Add(seriesMap.Source,
+                                   new SeriesMapping() { OriginalSeriesUid = seriesMap.Source, NewSeriesUid = seriesMap.Target });
+
+                foreach (Map sopMap in studyMap.Instances)
+                    _sopMap.Add(sopMap.Source, sopMap.Target);
+            
+            }
+            
 
         }
 
@@ -78,45 +90,88 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		public bool ContainsSop(string originalSopUid)
 		{
-		    return _sopMap.ContainsKey(originalSopUid);
+            lock(_sync)
+            {
+                return _sopMap.ContainsKey(originalSopUid);
+            }
+		    
 		}
 
         public string FindNewSopUid(string originalSopUid)
         {
-            string newSopUid;
-            if (_sopMap.TryGetValue(originalSopUid, out newSopUid))
-                return newSopUid;
-            else
-                return null;
+            lock (_sync)
+            {
+                string newSopUid;
+                if (_sopMap.TryGetValue(originalSopUid, out newSopUid))
+                    return newSopUid;
+                else
+                    return null;
+            }
         }
 
         public string FindNewSeriesUid(string originalSeriesUid)
         {
-            SeriesMapping mapping;
-            if (_seriesMap.TryGetValue(originalSeriesUid, out mapping))
-                return mapping.NewSeriesUid;
-            else
-                return null;
+            lock (_sync)
+            {
+                SeriesMapping mapping;
+                if (_seriesMap.TryGetValue(originalSeriesUid, out mapping))
+                    return mapping.NewSeriesUid;
+                else
+                    return null;
+            }
         }
 
 	    public bool ContainsSeries(string originalSeriesUid)
         {
-            return _seriesMap.ContainsKey(originalSeriesUid);
+            lock (_sync)
+            {
+                return _seriesMap.ContainsKey(originalSeriesUid);
+            }
         }
 
         public void AddSop(string originalSopUid, string newSopUid)
         {
-            _sopMap.Add(originalSopUid, newSopUid);
-            EventsHelper.Fire(SeriesMapUpdated, this, new SeriesMapUpdatedEventArgs() {SeriesMap = _seriesMap});
+            lock (_sync)
+            {
+                _sopMap.Add(originalSopUid, newSopUid);
+                Dirty = true;
+            }
+
+            EventsHelper.Fire(SeriesMapUpdated, this, new SeriesMapUpdatedEventArgs() { SeriesMap = _seriesMap });
         }
 
-        public void AddSeries(string originalSeriesUid, string newSeriesUid)
+        public void AddSeries(string originalStudyUid, string newStudyUid, string originalSeriesUid, string newSeriesUid)
         {
-            _seriesMap.Add(originalSeriesUid,
-                           new SeriesMapping() {OriginalSeriesUid = originalSeriesUid, NewSeriesUid = newSeriesUid});
+            lock (_sync)
+            {
+                if (!ContainsStudyMap(originalStudyUid, newStudyUid))
+                {
+                    _studyMap.Add(originalStudyUid, newStudyUid);
+                }
 
+                _seriesMap.Add(originalSeriesUid,
+                               new SeriesMapping() {OriginalSeriesUid = originalSeriesUid, NewSeriesUid = newSeriesUid});
+
+                Dirty = true;
+            }
             EventsHelper.Fire(SopMapUpdated, this, new SopMapUpdatedEventArgs() { SopMap = _sopMap });
         }
+
+	    private bool ContainsStudyMap(string originalStudyUid, string newStudyUid)
+	    {
+            lock (_sync)
+            {
+                foreach (var entry in _studyMap)
+                {
+                    if (entry.Key == originalStudyUid && entry.Value == newStudyUid)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+	    }
 
 	    public IEnumerable<SeriesMapping> GetSeriesMappings()
 	    {
@@ -125,21 +180,35 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 	    public void Save(string path)
 	    {
-	        UidMapXml xml = new UidMapXml();
-	        xml.Series = new List<Map>();
-            foreach(SeriesMapping seriesMap in _seriesMap.Values)
+            lock (_sync)
             {
-                xml.Series.Add(new Map() {Source = seriesMap.OriginalSeriesUid, Target = seriesMap.NewSeriesUid});
-            }
+                UidMapXml xml = new UidMapXml();
+                xml.StudyUidMaps = new List<StudyUidMap>();
 
-            xml.Instances = new List<Map>();
-            foreach (var sop in _sopMap)
-            {
-                xml.Instances.Add(new Map() {Source = sop.Key, Target = sop.Value});
-            }
+                foreach (var entry in _studyMap)
+                {
+                    StudyUidMap studyMap = new StudyUidMap() {Source = entry.Key, Target = entry.Value};
+                    xml.StudyUidMaps.Add(studyMap);
 
-	        XmlDocument doc = XmlUtils.SerializeAsXmlDoc(xml);
-	        doc.Save(path);
+                    studyMap.Series = new List<Map>();
+                    foreach (SeriesMapping seriesMap in _seriesMap.Values)
+                    {
+                        studyMap.Series.Add(new Map()
+                                                {Source = seriesMap.OriginalSeriesUid, Target = seriesMap.NewSeriesUid});
+                    }
+
+                    studyMap.Instances = new List<Map>();
+                    foreach (var sop in _sopMap)
+                    {
+                        studyMap.Instances.Add(new Map() {Source = sop.Key, Target = sop.Value});
+                    }
+                }
+
+                XmlDocument doc = XmlUtils.SerializeAsXmlDoc(xml);
+                doc.Save(path);
+
+                Dirty = false;
+            }
 	    }
 	}
 }

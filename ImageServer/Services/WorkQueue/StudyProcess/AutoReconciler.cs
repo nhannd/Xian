@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     class AutoReconciler : BasePreprocessor, IStudyPreProcessor
     {
-        private readonly static ServerCache<ServerEntityKey, StudyStorageLocation> _duplicatePolicyOverriddenAlerts = new ServerCache<ServerEntityKey, StudyStorageLocation>(TimeSpan.FromMinutes(2), TimeSpan.FromSeconds(30));
+        private readonly static ServerCache<ServerEntityKey, UidMapper> _uidMapCache = new ServerCache<ServerEntityKey, UidMapper>(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(15));
 
         private readonly string _contextID;
         
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             string originalSopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
 
             // Update the file based on the reconciliation in the past
-            StudyStorageLocation dest;
+            StudyStorageLocation destStudy;
             IList<StudyHistory> histories = FindReconcileHistories(StorageLocation, file);
             if (histories != null && histories.Count > 0)
             {
@@ -137,6 +137,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 bool restored;
                 StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
                 StudyReconcileDescriptor changeLog = parser.Parse(lastHistory.ChangeDescription);
+                
                 switch (changeLog.Action)
                 {
                     case StudyReconcileAction.CreateNewStudy:
@@ -144,15 +145,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         #region Update Images to match destination study
 
                         UidMapper uidMapper = null;
-                        bool mapUpdated = false;
-
                         bool belongsToAnotherStudy;
                         if (lastHistory.DestStudyStorageKey != null)
                         {
                             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-                            dest = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
+                            destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
 
-                            if (dest==null)
+                            if (destStudy == null)
                             {
                                 throw new TargetStudyIsNearline() {
                                               StudyInstanceUid = destinationStudy.StudyInstanceUid,
@@ -160,23 +159,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                           };
                             }
 
-                            belongsToAnotherStudy = !dest.Equals(StorageLocation);
+                            belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
                             
                             ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
-                            IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(dest);
+                            IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(destStudy);
                             if (belongsToAnotherStudy)
                             {
-                                Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Move SOP {0} to Study {1}, A#: {2}, Patient {3}", originalSopUid, dest.StudyInstanceUid, dest.Study.AccessionNumber, dest.Study.PatientsName);
+                                Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Move SOP {0} to Study {1}, A#: {2}, Patient {3}", originalSopUid, destStudy.StudyInstanceUid, destStudy.Study.AccessionNumber, destStudy.Study.PatientsName);
 
-                                UidMapXml mapXml = new UidMapXml();
-                                mapXml.Load(dest);
-                                uidMapper = new UidMapper(mapXml);
-                                uidMapper.SeriesMapUpdated += delegate { mapUpdated = true; };
-                                uidMapper.SopMapUpdated += delegate { mapUpdated = true; };
+								// Load the Uid Map, either from cache or from disk
+                                if (!_uidMapCache.TryGetValue(destStudy.Key, out uidMapper))
+                                {
+                                    UidMapXml mapXml = new UidMapXml();
+                                    mapXml.Load(destStudy);
+                                    uidMapper = new UidMapper(mapXml);
 
+                                    _uidMapCache.Add(destStudy.Key, uidMapper);
+                                }
+                                
                                 try
                                 {
-                                    commands.Add(GetUidMappingCommand(dest, uidMapper, originalSopUid, originalSeriesUid));
+                                    commands.Add(GetUidMappingCommand(StorageLocation, destStudy, uidMapper, originalSopUid, originalSeriesUid));
                                 }
                                 catch(InstanceAlreadyExistsException ex)
                                 {
@@ -194,14 +197,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             UpdateImage(file, commands);
 
                             // First, must update the map
-                            if (uidMapper != null && mapUpdated)
+                            if (uidMapper != null && uidMapper.Dirty)
                             {
-                                UpdateHistoryAndUidMap(dest, lastHistory, uidMapper);
+                                UpdateUidMap(destStudy, uidMapper);
                             }
 
                             if (belongsToAnotherStudy)
                             {
-                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(_contextID, file.SourceApplicationEntityTitle, dest.ServerPartition);
+                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(_contextID, file.SourceApplicationEntityTitle, destStudy.ServerPartition);
                                 SopInstanceImporter importer = new SopInstanceImporter(importContext);
                                 DicomProcessingResult result = importer.Import(file);
 
@@ -228,10 +231,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         if (lastHistory.DestStudyStorageKey != null)
                         {
                             StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-                            dest = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
+                            destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
                             preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);
 
-                            belongsToAnotherStudy = !dest.Equals(StorageLocation);
+                            belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
 
                             if (belongsToAnotherStudy)
                             {
@@ -239,12 +242,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 preProcessingResult.Changes.Add(new UpdateItem(
                                                                     DicomTags.StudyInstanceUid,
                                                                     file.DataSet[DicomTags.StudyInstanceUid].ToString(),
-                                                                    dest.StudyInstanceUid));
+                                                                    destStudy.StudyInstanceUid));
 
-                                file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(dest.StudyInstanceUid);
+                                file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(destStudy.StudyInstanceUid);
                                 SopInstanceImporterContext importContext = new SopInstanceImporterContext(
                                     _contextID,
-                                    file.SourceApplicationEntityTitle, dest.ServerPartition);
+                                    file.SourceApplicationEntityTitle, destStudy.ServerPartition);
                                 SopInstanceImporter importer = new SopInstanceImporter(importContext);
                                 DicomProcessingResult result = importer.Import(file);
 
@@ -280,20 +283,32 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return preProcessingResult;
         }
 
-        private void UpdateHistoryAndUidMap(StudyStorageLocation dest, StudyHistory history, UidMapper uidMapper)
+        private void UpdateHistory(StudyStorageLocation dest, StudyHistory history, UidMapper uidMapper)
         {
-            using (ServerCommandProcessor processor =new ServerCommandProcessor("Update Series Mapping Processor"))
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Series Mapping Processor"))
             {
-                processor.AddCommand(new UpdateHistorySeriesMappingCommand(history, uidMapper));
-                processor.AddCommand(new SaveUidMapXmlCommand(dest, uidMapper));
+                processor.AddCommand(new UpdateHistorySeriesMappingCommand(history, dest, uidMapper));
                 if (!processor.Execute())
                 {
                     throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update series mapping. Reason: {0}", processor.FailureReason), processor.FailureException);
                 }
             }
+            
         }
 
-        private void UpdateImage(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
+        private static void UpdateUidMap(StudyStorageLocation dest, UidMapper uidMapper)
+        {
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update UID Mapping Processor"))
+            {
+                processor.AddCommand(new SaveUidMapXmlCommand(dest, uidMapper));
+                if (!processor.Execute())
+                {
+                    throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update uid mapping. Reason: {0}", processor.FailureReason), processor.FailureException);
+                }
+            }
+        }
+
+        private static void UpdateImage(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
         {
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Image According to History"))
             {
@@ -310,7 +325,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
-        private List<UpdateItem> GetUpdateList(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
+        private static List<UpdateItem> GetUpdateList(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
         {
             List<UpdateItem> updateList = new List<UpdateItem>();
             foreach(BaseImageLevelUpdateCommand cmd in commands)
@@ -324,7 +339,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return updateList;
         }
 
-        private SeriesSopUpdateCommand GetUidMappingCommand(StudyStorageLocation targetStudy, UidMapper uidMapper, string originalSopUid, string originalSeriesUid)
+        private static SeriesSopUpdateCommand GetUidMappingCommand(StudyStorageLocation sourceStudy, StudyStorageLocation targetStudy, UidMapper uidMapper, string originalSopUid, string originalSeriesUid)
         {
             SeriesSopUpdateCommand cmd;
             string newSeriesUid = uidMapper.FindNewSeriesUid(originalSeriesUid);
@@ -337,33 +352,36 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     // this is new instance
                     newSopUid = DicomUid.GenerateUid().UID;
                     uidMapper.AddSop(originalSopUid, newSopUid);
-                    cmd =  new SeriesSopUpdateCommand(uidMapper);
+                    cmd =  new SeriesSopUpdateCommand(sourceStudy, targetStudy, uidMapper);
+
                 }
                 else
                 {
+                    Platform.Log(LogLevel.Info, "Map SOP UID {0} to {1}", originalSopUid, newSopUid);
                     // this is duplicate
                     if (File.Exists(targetStudy.GetSopInstancePath(newSeriesUid, newSopUid)))
+                    {
                         throw new InstanceAlreadyExistsException("Instance already exists")
-                                  {
-                                      SeriesInstanceUid = newSeriesUid,
-                                      SopInstanceUid = newSopUid
-                                  };
+                        {
+                            SeriesInstanceUid = newSeriesUid,
+                            SopInstanceUid = newSopUid
+                        };
 
-                    cmd = new SeriesSopUpdateCommand(uidMapper);
+                    }
+
+                    cmd = new SeriesSopUpdateCommand(sourceStudy, targetStudy, uidMapper);
                 }
             }
             else
             {
                 // this is new series
                 newSopUid = DicomUid.GenerateUid().UID;
-                uidMapper.AddSeries(originalSeriesUid, newSopUid);
-                cmd = new SeriesSopUpdateCommand(uidMapper);
-            }
+                uidMapper.AddSeries(sourceStudy.StudyInstanceUid, targetStudy.StudyInstanceUid, originalSeriesUid, newSopUid);
+                cmd = new SeriesSopUpdateCommand(sourceStudy, targetStudy, uidMapper);
 
-            if (cmd!=null)
-            {
                 Platform.Log(LogLevel.Info, "Map SOP UID {0} to {1}", originalSopUid, newSopUid);
             }
+
             return cmd;
         }
 
@@ -403,7 +421,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return reconcileHistories;
         }
 
-        
+
     }
 
 }

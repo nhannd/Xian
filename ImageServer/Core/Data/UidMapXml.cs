@@ -28,15 +28,35 @@ namespace ClearCanvas.ImageServer.Core.Data
         public string Target;
     }
 
+    public class StudyUidMap
+    {
+        /// <summary>
+        /// The original DICOM UID
+        /// </summary>
+        [XmlAttribute]
+        public string Source;
+
+
+        /// <summary>
+        /// The new DICOM UID
+        /// </summary>
+        [XmlAttribute]
+        public string Target;
+
+
+        public List<Map> Series { get; set; }
+        public List<Map> Instances { get; set; }
+    }
+
     /// <summary>
     /// Represents the Uid Map Xml used for mapping series/instance from one study to another
     /// during reconciliation.
     /// </summary>
     public class UidMapXml
     {
-
-        public List<Map> Series { get; set; }
-        public List<Map> Instances { get; set; }
+        [XmlArray(ElementName = "StudyUidMaps")]
+        [XmlArrayItem(ElementName="Study")]
+        public List<StudyUidMap> StudyUidMaps { get; set; }
 
         /// <summary>
         /// Loads the <see cref="Series"/> and<see cref="Instances"/> mappings for the specified study.
@@ -57,8 +77,7 @@ namespace ClearCanvas.ImageServer.Core.Data
             doc.Load(path);
 
             UidMapXml copy = XmlUtils.Deserialize<UidMapXml>(doc);
-            Series = copy.Series;
-            Instances = copy.Instances;
+            StudyUidMaps = copy.StudyUidMaps;
         }
 
     }

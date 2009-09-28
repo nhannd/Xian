@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			context.UpdateCommands.AddRange(Parameters.Commands);
 
 			// Add command to update the Series & Sop Instances.
-			context.UpdateCommands.Add(new SeriesSopUpdateCommand(UidMapper));
+			context.UpdateCommands.Add(new SeriesSopUpdateCommand(Context.WorkQueueItemStudyStorage, Context.DestStorageLocation, UidMapper));
 
 			// Create/Load the Study XML File
 			StudyXml xml = LoadStudyXml(Context.DestStorageLocation);

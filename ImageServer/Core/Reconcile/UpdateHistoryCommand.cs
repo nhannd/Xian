@@ -48,19 +48,21 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
     {
         private readonly UidMapper _map;
         private readonly StudyHistory _studyHistory;
+	    private readonly StudyStorageLocation _destStudy;
 
-        public UpdateHistorySeriesMappingCommand(StudyHistory studyHistory, UidMapper map) 
+	    public UpdateHistorySeriesMappingCommand(StudyHistory studyHistory, StudyStorageLocation destStudy, UidMapper map) 
             : base("Update Study History Series Mapping", true)
         {
             _map = map;
             _studyHistory = studyHistory;
+            _destStudy = destStudy;
         }
 
         protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
-            parms.DestStudyStorageKey = _studyHistory.DestStudyStorageKey;
+            parms.DestStudyStorageKey = _destStudy.Key;
 
             if (_map != null)
             {

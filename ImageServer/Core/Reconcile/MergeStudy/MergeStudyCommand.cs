@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 						if (counter == 0)
 						{
 							// Only update the first time through the loop
-							processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, UidMapper));
+							processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, Context.DestStorageLocation, UidMapper));
 						}
 
 						if (!processor.Execute())
@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			context.UpdateCommands.AddRange(BuildUpdateCommandList());
 
             // Add command to update the Series & Sop Instances.
-            context.UpdateCommands.Add(new SeriesSopUpdateCommand(UidMapper));
+            context.UpdateCommands.Add(new SeriesSopUpdateCommand(Context.WorkQueueItemStudyStorage, Context.DestStorageLocation, UidMapper));
 
             // Load the Study XML File
             StudyXml xml = LoadStudyXml(Context.DestStorageLocation);

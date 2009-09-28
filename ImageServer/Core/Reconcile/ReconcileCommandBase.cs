@@ -160,7 +160,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             {
                 _uidMapper = new UidMapper();
             }
-            _uidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
+
+	        _uidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
 	    }
 
 
@@ -174,7 +175,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	        using(ServerCommandProcessor processor = new ServerCommandProcessor("Reconcile-CreateStudy-Update History"))
 	        {
                 processor.AddCommand(new SaveUidMapXmlCommand(Context.DestStorageLocation, UidMapper));
-                processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, UidMapper));
+                processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, Context.DestStorageLocation, UidMapper));
                 if (!processor.Execute())
 	            {
 	                throw new ApplicationException("Unable to update the history", processor.FailureException);
