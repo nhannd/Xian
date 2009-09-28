@@ -386,6 +386,14 @@ img {
 	);
 }
 
+textarea.disabled {
+	background:LightGrey;
+}
+
+input.disabled {
+	background:LightGrey;
+}
+
 input.unresolved {
 	background-color: #FFF5C3;
 }
