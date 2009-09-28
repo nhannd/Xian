@@ -45,6 +45,23 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			yield return DicomTags.InstanceCreatorUid;
 			yield return DicomTags.StorageMediaFileSetUid;
 			yield return DicomTags.RequestAttributesSequence;
+
+			//A bunch of tags from Patient Identification and Patient Demographic Modules
+			// which seem like they should be anonymized, but aren't explicitly covered by PS 3.15 E.1.
+			// None of these attributes are crucial to maintain the DICOM model, so we'll just remove them.
+			// See Also: http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/d3be2bf5dfdac19f#
+			yield return DicomTags.OtherPatientIdsSequence;
+			yield return DicomTags.PatientsBirthName;
+			yield return DicomTags.PatientsMothersBirthName;
+			yield return DicomTags.PatientsInsurancePlanCodeSequence;
+			yield return DicomTags.PatientsPrimaryLanguageCodeSequence;
+			yield return DicomTags.PatientsAddress;
+			yield return DicomTags.MilitaryRank;
+			yield return DicomTags.BranchOfService;
+			yield return DicomTags.PatientsTelephoneNumbers;
+			yield return DicomTags.ResponsiblePerson;
+			yield return DicomTags.ResponsiblePersonRole;
+			yield return DicomTags.ResponsibleOrganization;
 		}
 
 		private static IEnumerable<uint> GetUidsToRemap()
