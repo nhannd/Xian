@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
 		public UpdateProcedureTypeGroupResponse UpdateProcedureTypeGroup(
             UpdateProcedureTypeGroupRequest request)
         {
-            ProcedureTypeGroup group = PersistenceContext.Load<ProcedureTypeGroup>(request.EntityRef);
+            ProcedureTypeGroup group = PersistenceContext.Load<ProcedureTypeGroup>(request.EntityRef, EntityLoadFlags.CheckVersion);
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
             assembler.UpdateProcedureTypeGroup(group, request.Detail, this.PersistenceContext);
 

@@ -101,6 +101,7 @@ namespace ClearCanvas.Ris.Client.Admin
                                 service.LoadProcedureTypeGroupForEdit(
                                     new LoadProcedureTypeGroupForEditRequest(_editedItemEntityRef));
 
+                            _editedItemEntityRef = response.EntityRef;
                             _editedItemDetail = response.Detail;
                             _selectedProcedureTypes.Items.AddRange(_editedItemDetail.ProcedureTypes);
                         }
