@@ -32,7 +32,6 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 
@@ -46,9 +45,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			protected PublicationStep CreateScheduledPublicationStep(Staff executingStaff, VerificationStep verification)
 			{
-				ReportingWorkflowSettings settings = new ReportingWorkflowSettings();
+				var settings = new ReportingWorkflowSettings();
 
-				PublicationStep publication = new PublicationStep(verification);
+				var publication = new PublicationStep(verification);
 				publication.Assign(executingStaff);
 				publication.Schedule(Platform.Time.AddSeconds(settings.PublicationDelay));
 
@@ -61,7 +60,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
 			{
 				step.ReportPart.Supervisor = supervisor;
-				foreach (KeyValuePair<string, string> pair in reportPartExtendedProperties)
+				foreach (var pair in reportPartExtendedProperties)
 				{
 					step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
 				}
@@ -101,17 +100,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// if a report has not yet been created for this step, create now
 				if (step.ReportPart == null)
 				{
-					Report report = new Report(step.Procedure);
-					ReportPart part = report.ActivePart;
+					var report = new Report(step.Procedure);
+					var reportPart = report.ActivePart;
 
-                    workflow.AddEntity(report);
+					workflow.AddEntity(report);
 
-					step.ReportPart = part;
+					step.ReportPart = reportPart;
 					step.ReportPart.Interpreter = executingStaff;
 				}
 
 				// attach linked interpretations to this report
-				foreach (InterpretationStep interpretation in linkInterpretations)
+				foreach (var interpretation in linkInterpretations)
 				{
 					interpretation.LinkTo(step);
 				}
@@ -205,9 +204,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// removed.
 				step.ReportPart.ResetTranscription();
 
-				TranscriptionStep transcription = new TranscriptionStep(step);
-				workflow.AddEntity(transcription);
-				return transcription;
+				var transcriptionStep = new TranscriptionStep(step);
+				workflow.AddEntity(transcriptionStep);
+				return transcriptionStep;
 			}
 		}
 
@@ -217,13 +216,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			{
 				UpdateStep(step, executingStaff);
 
-				VerificationStep verification = new VerificationStep(step);
+				var verificationStep = new VerificationStep(step);
 
 				// supervisor can be null, in which case the verification step is unassigned.
-				verification.Assign(step.ReportPart.Supervisor);
+				verificationStep.Assign(step.ReportPart.Supervisor);
 
-				workflow.AddEntity(verification);
-				return verification;
+				workflow.AddEntity(verificationStep);
+				return verificationStep;
 			}
 		}
 
@@ -233,15 +232,15 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			{
 				UpdateStep(step, executingStaff);
 
-				VerificationStep verification = new VerificationStep(step);
-				verification.Assign(executingStaff);
-				verification.Complete(executingStaff);
-				workflow.AddEntity(verification);
+				var verificationStep = new VerificationStep(step);
+				verificationStep.Assign(executingStaff);
+				verificationStep.Complete(executingStaff);
+				workflow.AddEntity(verificationStep);
 
-				PublicationStep publication = CreateScheduledPublicationStep(executingStaff, verification);
-				workflow.AddEntity(publication);
+				var publicationStep = CreateScheduledPublicationStep(executingStaff, verificationStep);
+				workflow.AddEntity(publicationStep);
 
-				return publication;
+				return publicationStep;
 			}
 		}
 
@@ -255,11 +254,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.ReportPart != null)
 					step.ReportPart.Cancel();
 
-				List<InterpretationStep> interpretations = new List<InterpretationStep>();
+				var interpretationSteps = new List<InterpretationStep>();
 				if (!IsAddendumStep(step))
 				{
-					HashedSet<Procedure> procedures = new HashedSet<Procedure>();
-					procedures.Add(step.Procedure);
+					var procedures = new HashedSet<Procedure> { step.Procedure };
 
 					// if there are linked procedures, schedule a new interpretation for each procedure being reported
 					if (step.ReportPart != null)
@@ -268,18 +266,23 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					}
 
 					// schedule new interpretations
-					foreach (Procedure procedure in procedures)
+					foreach (var procedure in procedures)
 					{
-						InterpretationStep interpretation = new InterpretationStep(procedure);
-						interpretation.Schedule(procedure.PerformedTime);
-						if (assignStaff != null)
-							interpretation.Assign(assignStaff);
+						var interpretationStep = new InterpretationStep(procedure);
 
-						interpretations.Add(interpretation);
-						workflow.AddEntity(interpretation);
+						// Bug: #5128 - if the procedure is not document, do not schedule the replacement interpretation step,
+						// since interpretation steps aren't scheduled until documentation is complete.
+						if (procedure.IsDocumented)
+							interpretationStep.Schedule(procedure.PerformedTime);
+
+						if (assignStaff != null)
+							interpretationStep.Assign(assignStaff);
+
+						interpretationSteps.Add(interpretationStep);
+						workflow.AddEntity(interpretationStep);
 					}
 				}
-				return interpretations;
+				return interpretationSteps;
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
@@ -321,17 +324,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				step.Discontinue();
 
 				// Create a new interpreatation step that uses the same report part
-				InterpretationStep interpretation = new InterpretationStep(step);
+				var interpretationStep = new InterpretationStep(step);
 
 				// Reset the interpretator
-				interpretation.ReportPart.Interpreter = executingStaff;
+				interpretationStep.ReportPart.Interpreter = executingStaff;
 
 				// Assign the new step to the resident
-				interpretation.Assign(executingStaff);
-				interpretation.Start(executingStaff);
+				interpretationStep.Assign(executingStaff);
+				interpretationStep.Start(executingStaff);
 
-				workflow.AddEntity(interpretation);
-				return interpretation;
+				workflow.AddEntity(interpretationStep);
+				return interpretationStep;
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
@@ -391,10 +394,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// this operation is legal even if the step was never started, therefore need to supply the performer
 				step.Complete(executingStaff);
 
-				PublicationStep publication = CreateScheduledPublicationStep(executingStaff, step);
-				workflow.AddEntity(publication);
+				var publicationStep = CreateScheduledPublicationStep(executingStaff, step);
+				workflow.AddEntity(publicationStep);
 
-				return publication;
+				return publicationStep;
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
@@ -423,17 +426,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// the procedure passed in may be any one of the procedures that this report covers
 				// ideally, the new interpretation step should be created on the procedure that the
 				// publication step was linked to (and only one of the reported procedures should have a publication step)
-				procedure = CollectionUtils.SelectFirst(procedure.ActiveReport.Procedures,
-						delegate(Procedure p)
-						{
-							return CollectionUtils.Contains(p.ReportingProcedureSteps,
-															delegate(ReportingProcedureStep ps) { return ps.Is<PublicationStep>() && ps.State == ActivityStatus.CM; });
-						})
+				procedure = CollectionUtils.SelectFirst(
+					procedure.ActiveReport.Procedures,
+					p => CollectionUtils.Contains(
+						p.ReportingProcedureSteps,
+						ps => ps.Is<PublicationStep>() && ps.State == ActivityStatus.CM))
+
 					// but if there are no publication steps (i.e. imported data), then just use the procedure that was provided.
 					// See bug #3450
 					?? procedure;
 
-				InterpretationStep interpretation = new InterpretationStep(procedure);
+				var interpretation = new InterpretationStep(procedure);
 				interpretation.Assign(executingStaff);
 				interpretation.ReportPart = procedure.ActiveReport.AddAddendum();
 				interpretation.ReportPart.Interpreter = executingStaff;
@@ -452,8 +455,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					return false;
 
 				// can only create an addendum if all reporting steps for the procedure are terminated
-				if (!CollectionUtils.TrueForAll(procedure.ReportingProcedureSteps,
-					delegate(ReportingProcedureStep ps) { return ps.IsTerminated; }))
+				if (!CollectionUtils.TrueForAll(procedure.ReportingProcedureSteps, ps => ps.IsTerminated))
 					return false;
 
 				return true;
@@ -473,17 +475,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				step.Discontinue();
 
 				// Create a new verification step that uses the same report part
-				VerificationStep verification = new VerificationStep(step);
+				var verificationStep = new VerificationStep(step);
 
 				// Reset the verifier
-				verification.ReportPart.Verifier = null;
+				verificationStep.ReportPart.Verifier = null;
 
 				// Assign the new step back to me
-				verification.Assign(executingStaff);
-				verification.Start(executingStaff);
+				verificationStep.Assign(executingStaff);
+				verificationStep.Start(executingStaff);
 
-				workflow.AddEntity(verification);
-				return verification;
+				workflow.AddEntity(verificationStep);
+				return verificationStep;
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
