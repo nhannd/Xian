@@ -32,7 +32,7 @@
 							            </asp:TableCell>
 							            <asp:TableCell style="border:none; vertical-align:top; text-align:left">
 							                 <asp:Label runat="server" ID="ExistingPatientId" CssClass="StudyField" Text='<%# Eval("ExistingPatientId")%>'></asp:Label> / 
-							                <asp:Label runat="server" ID="ExistingPatientName" CssClass="StudyField" Text='<%# Eval("ExistingPatientName")%>'></asp:Label>
+							                <asp:Label runat="server" ID="ExistingPatientName" CssClass="StudyField" Text='<%# NameFormatter.Format(Eval("ExistingPatientName").ToString())%>'></asp:Label>
 							            </asp:TableCell>
 							        </asp:TableRow>
 							        <asp:TableRow>
@@ -56,7 +56,7 @@
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left;">
 							            <asp:Label runat="server" ID="ConflictingPatientId" CssClass="StudyField" Text='<%# Eval("ConflictingPatientId")%>'></asp:Label> / 
-							            <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# Eval("ConflictingPatientName")%>'></asp:Label>
+							            <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# NameFormatter.Format(Eval("ConflictingPatientName").ToString())%>'></asp:Label>
 							        </td>							        
 							    </tr>
 							    <tr >

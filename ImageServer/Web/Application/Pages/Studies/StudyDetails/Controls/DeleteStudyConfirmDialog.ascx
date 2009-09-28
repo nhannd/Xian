@@ -68,22 +68,22 @@
                                         <ItemTemplate>
                                             <tr class="GlobalGridViewRow">
                                                 <td>
-                                                    <%# Eval("PatientsName") %>
+                                                    <%# HtmlUtility.GetEvalValue(Container.DataItem, "PatientsName", "&nbsp;")%>
                                                 </td>
                                                 <td>
-                                                    <%# Eval("PatientId") %>
+                                                    <%# HtmlUtility.GetEvalValue(Container.DataItem, "PatientId", "&nbsp;")%>
                                                 </td>
                                                 <td>
-                                                    <%# Eval("StudyDate") %>
+                                                    <%# HtmlUtility.GetEvalValue(Container.DataItem, "StudyDate", "&nbsp;")%>
                                                 </td>
                                                 <td>
-                                                    <%# Eval("StudyDescription") %>
+                                                    <%# HtmlUtility.GetEvalValue(Container.DataItem, "StudyDescription", "&nbsp;")%>
                                                 </td>
                                                 <td>
                                                     <%# HtmlUtility.GetEvalValue(Container.DataItem, "AccessionNumber", "&nbsp;")%>
                                                 </td>
                                                 <td>
-                                                    <%# Eval("Modalities")%>
+                                                    <%# HtmlUtility.GetEvalValue(Container.DataItem, "Modalities", "&nbsp;")%>
                                                 </td>
                                             </tr>
                                         </ItemTemplate>
