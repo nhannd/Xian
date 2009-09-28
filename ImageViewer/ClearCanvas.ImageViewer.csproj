@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{85100D3E-471C-47C9-9687-ABF25F617ED7}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -150,6 +150,13 @@
     <Compile Include="Common\MemoryManagementStrategy.cs" />
     <Compile Include="Common\MemoryManager.cs" />
     <Compile Include="Common\PermissionsHelper.cs" />
+    <Compile Include="RoiGraphics\Tests\ContainsPointTest.cs" />
+    <Compile Include="RoiGraphics\Tests\EllipticalRoiTests.cs" />
+    <Compile Include="RoiGraphics\Tests\PolygonalRoiTests.cs" />
+    <Compile Include="RoiGraphics\Tests\PolygonalRoiTestShapes.cs" />
+    <Compile Include="RoiGraphics\Tests\RectangularRoiTests.cs" />
+    <Compile Include="RoiGraphics\Tests\RoiStatisticsTests.cs" />
+    <Compile Include="RoiGraphics\Tests\RoiTestBase.cs" />
     <Compile Include="Common\RetryableCommandExecutor.cs" />
     <Compile Include="Comparers\DicomSopComparer.cs" />
     <Compile Include="Comparers\InstanceNumberComparer.cs" />
@@ -695,6 +702,78 @@
     <None Include="RoiGraphics\RoiSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RoiSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex01.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex02.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex03.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex04.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex05.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex06.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex07.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex08.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex09.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex10.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex11.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\complex12.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\real01.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\real02.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\real03.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\real04.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\real05.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\real06.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\simple01.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\simple02.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\simple03.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\simple04.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\simple05.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="RoiGraphics\Tests\Images\simple06.dcm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -145,7 +145,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Note that the RLE codec is in C# and does not have platform-specific builds -->
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll" />
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll" />
   </ItemGroup>

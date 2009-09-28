@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		/// <param name="presentationImage">The image containing the source pixel data.</param>
 		public PolygonalRoi(IEnumerable<PointF> vertices, IPresentationImage presentationImage) : base(presentationImage)
 		{
+			// vertices should not contain repeated start point
 			_polygon = new PolygonF(vertices);
 		}
 
@@ -68,10 +69,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			polygon.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				if (polygon.Points.Count >= 3)
+				if (polygon.Points.Count > 3)
 				{
-					List<PointF> vertices = new List<PointF>(polygon.Points.Count);
-					for (int n = 0; n < polygon.Points.Count; n++)
+					// this list of vertices *has* the repeated start point, so we remove it here
+					List<PointF> vertices = new List<PointF>(polygon.Points.Count - 1);
+					for (int n = 0; n < polygon.Points.Count - 1; n++)
 					{
 						vertices.Add(polygon.Points[n]);
 					}

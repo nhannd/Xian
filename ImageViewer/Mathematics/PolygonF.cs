@@ -43,7 +43,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -59,6 +58,15 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		private readonly RectangleF _boundingRect;
 		private readonly PointF[] _vertexArray;
 		private readonly bool _isComplex;
+
+		/// <summary>
+		/// Constructs a new polygon.
+		/// </summary>
+		/// <param name="pt1">The first vertex defining the polygon.</param>
+		/// <param name="pt2">The second vertex defining the polygon.</param>
+		/// <param name="pt3">The third vertex defining the polygon.</param>
+		/// <param name="additionalPoints">More ordered vertices defining the polygon.</param>
+		public PolygonF(PointF pt1, PointF pt2, PointF pt3, params PointF[] additionalPoints) : this(GetPoints(pt1, pt2, pt3, additionalPoints)) {}
 
 		/// <summary>
 		/// Constructs a new polygon.
@@ -220,35 +228,36 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		#region Math: Winding Count
 
 		/// <summary>
-		/// Counts the number of counter-clockwise windings that the polygon makes around a given <paramref name="pt">point</paramref>.
+		/// Counts the number of counter-clockwise windings that the polygon makes around a given <paramref name="testPoint">point</paramref>.
 		/// </summary>
-		/// <param name="pt">The test point.</param>
+		/// <param name="testPoint">The test point.</param>
 		/// <param name="vertices">A pointer to the array of vertices defining the polygon.</param>
 		/// <param name="vertexCount">The number of vertices in the array.</param>
 		/// <returns>The number of CCW windings.</returns>
 		/// <remarks>
 		/// Algorithm as given on <a href="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm">http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm</a>.
 		/// </remarks>
-		private static unsafe int CountWindings(PointF pt, PointF* vertices, int vertexCount)
+		private static unsafe int CountWindings(PointF testPoint, PointF* vertices, int vertexCount)
 		{
 			int wn = 0; // the winding number counter
 
 			// loop through all edges of the polygon
-			for (int i = 0; i < vertexCount; i++)
+			int point0 = vertexCount - 1;
+			for (int point1 = 0; point1 < vertexCount; point0 = point1, point1++)
 			{
-				// edge from vertices[i] to vertices[i+1]
-				if (vertices[i].Y <= pt.Y)
+				// edge from point0 to point1
+				if (vertices[point0].Y <= testPoint.Y)
 				{
-					// start y <= pt.y
-					if (vertices[i + 1].Y > pt.Y) // an upward crossing
-						if (IsLeft(vertices[i], vertices[i + 1], pt) > 0) // pt left of edge
+					// start y <= testPoint.y
+					if (vertices[point1].Y > testPoint.Y) // an upward crossing
+						if (IsLeft(vertices[point0], vertices[point1], testPoint) > 0) // testPoint left of edge
 							wn++; // have a valid up intersect
 				}
 				else
 				{
-					// start y > pt.y (no test needed)
-					if (vertices[i + 1].Y <= pt.Y) // a downward crossing
-						if (IsLeft(vertices[i], vertices[i + 1], pt) < 0) // pt right of edge
+					// start y > testPoint.y (no test needed)
+					if (vertices[point1].Y <= testPoint.Y) // a downward crossing
+						if (IsLeft(vertices[point0], vertices[point1], testPoint) < 0) // testPoint right of edge
 							--wn; // have a valid down intersect
 				}
 			}
@@ -259,15 +268,28 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <remarks>
 		/// Algorithm as given on <a href="http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm">http://softsurfer.com/Archive/algorithm_0103/algorithm_0103.htm</a>.
 		/// </remarks>
-		private static int IsLeft(PointF p0, PointF p1, PointF p2)
+		private static int IsLeft(PointF point0, PointF point1, PointF testPoint)
 		{
-			float result = (p1.X - p0.X)*(p2.Y - p0.Y) - (p2.X - p0.X)*(p1.Y - p0.Y);
+			// this is a dot product of the vector test to p0, with a normal to the vector p0 to p1.
+			float result = (point1.X - point0.X)*(testPoint.Y - point0.Y) - (testPoint.X - point0.X)*(point1.Y - point0.Y);
 			return FloatComparer.Compare(result, 0, 1);
 		}
 
 		#endregion
 
 		#region Initializers
+
+		private static IEnumerable<PointF> GetPoints(PointF pt1, PointF pt2, PointF pt3, params PointF[] additionalPoints)
+		{
+			yield return pt1;
+			yield return pt2;
+			yield return pt3;
+			if (additionalPoints != null)
+			{
+				for (int n = 0; n < additionalPoints.Length; n++)
+					yield return additionalPoints[n];
+			}
+		}
 
 		private static RectangleF InitializeBoundingRectangle(PointF[] vertices)
 		{
@@ -281,28 +303,33 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				int vertexCount = vertices.Length;
 				fixed (PointF* v = vertices)
 				{
-					// the line segments immediately preceding and succeeding a given segment are never considered as "intersecting"
-					for (int n = 2; n < vertexCount - 1; n++)
-					{
-						for (int i = 0; i <= n - 2; i++)
-						{
-							PointF intersection;
-							Vector.LineSegments type = Vector.LineSegmentIntersection(v[n], v[n+1], v[i], v[i+1], out intersection);
-							if (type == Vector.LineSegments.Intersect)
-								return true;
-						}
-					}
+					return CheckIsComplex(v, vertexCount);
+				}
+			}
+		}
 
-					// when checking against the last line segment, skip the first line segment (since they are adjacent)
-					for (int i = 1; i < vertexCount - 2; i++) {
-						PointF intersection;
-						Vector.LineSegments type = Vector.LineSegmentIntersection(v[vertexCount-1], v[0], v[i], v[i + 1], out intersection);
-						if (type == Vector.LineSegments.Intersect)
-							return true;
-					}
+		private static unsafe bool CheckIsComplex(PointF* vertices, int vertexCount)
+		{
+			// the line segments immediately preceding and succeeding a given segment are never considered as "intersecting"
+			for (int n = 2; n < vertexCount - 1; n++)
+			{
+				for (int i = 0; i <= n - 2; i++)
+				{
+					PointF intersection;
+					Vector.LineSegments type = Vector.LineSegmentIntersection(vertices[n], vertices[n + 1], vertices[i], vertices[i + 1], out intersection);
+					if (type == Vector.LineSegments.Intersect)
+						return true;
 				}
 			}
 
+			// when checking against the last line segment, skip the first line segment (since they are adjacent)
+			for (int i = 1; i < vertexCount - 2; i++)
+			{
+				PointF intersection;
+				Vector.LineSegments type = Vector.LineSegmentIntersection(vertices[vertexCount - 1], vertices[0], vertices[i], vertices[i + 1], out intersection);
+				if (type == Vector.LineSegments.Intersect)
+					return true;
+			}
 			return false;
 		}
 
@@ -319,6 +346,57 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		{
 			return ((IEnumerable<PointF>) this).GetEnumerator();
 		}
+
+		#endregion
+
+		#region Unsafe Algorithm Unit Test Entry Points
+
+#if UNIT_TESTS
+		/// <summary>
+		/// Unit test entry point for complex area computation algorithm.
+		/// </summary>
+		/// <remarks>These entry points exist to allow specific testing of the unsafe algorithms for buffer overruns.</remarks>
+		internal static unsafe double TestComplexAreaComputation(RectangleF bounds, PointF* vertices, int vertexCount)
+		{
+			return ComputeComplexArea(bounds, vertices, vertexCount);
+		}
+
+		/// <summary>
+		/// Unit test entry point for simple area computation algorithm.
+		/// </summary>
+		/// <remarks>These entry points exist to allow specific testing of the unsafe algorithms for buffer overruns.</remarks>
+		internal static unsafe double TestSimpleAreaComputation(PointF* vertices, int vertexCount)
+		{
+			return ComputeSimpleArea(vertices, vertexCount);
+		}
+
+		/// <summary>
+		/// Unit test entry point for point winding computation algorithm.
+		/// </summary>
+		/// <remarks>These entry points exist to allow specific testing of the unsafe algorithms for buffer overruns.</remarks>
+		internal static unsafe int TestWindingComputation(PointF pt, PointF* vertices, int vertexCount)
+		{
+			return CountWindings(pt, vertices, vertexCount);
+		}
+
+		/// <summary>
+		/// Unit test entry point for contains computation algorithm.
+		/// </summary>
+		/// <remarks>These entry points exist to allow specific testing of the unsafe algorithms for buffer overruns.</remarks>
+		internal static unsafe bool TestContains(PointF pt, PointF* vertices, int vertexCount)
+		{
+			return CountWindings(pt, vertices, vertexCount) != 0;
+		}
+
+		/// <summary>
+		/// Unit test entry point for complex polygon determination algorithm.
+		/// </summary>
+		/// <remarks>These entry points exist to allow specific testing of the unsafe algorithms for buffer overruns.</remarks>
+		internal static unsafe bool TestIsComplex(PointF* vertices, int vertexCount)
+		{
+			return CheckIsComplex(vertices, vertexCount);
+		}
+#endif
 
 		#endregion
 	}
