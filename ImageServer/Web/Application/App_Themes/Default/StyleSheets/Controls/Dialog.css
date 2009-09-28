@@ -120,6 +120,19 @@
 	border: solid 1px #618FAD;
 }
 
+.DialogTextBoxInvalidInput
+{
+    font-family: Sans-Serif;
+    font-size: 11px;
+    font-weight: normal;
+    padding-left: 2px;
+    width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+    border: solid 1px red;
+    background: #FAFFB5;
+}
+
 .DialogCheckBox
 {
     font-family: Sans-Serif;
@@ -136,6 +149,16 @@
 	font-family: Sans-Serif;
 	font-size: 11px;
 	border: solid 1px #618FAD;
+}
+
+.DialogDropDownListInvalidInput
+{
+	margin-left: 3px;
+	margin-right: 3px;
+	font-family: Sans-Serif;
+	font-size: 11px;
+    border: solid 1px red;
+    background: #FAFFB5;
 }
 
 .DialogCheckBoxList

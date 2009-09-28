@@ -160,32 +160,32 @@
     </asp:TableRow>
 </asp:Table>
 <ccValidator:RegularExpressionFieldValidator ID="PersonTitleValidator"
-    runat="server" ControlToValidate="PersonTitle" InvalidInputColor="#FAFFB5" ValidationGroup="PersonNameInputValidationGroup"
+    runat="server" ControlToValidate="PersonTitle" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="PersonNameInputValidationGroup"
     IgnoreEmptyValue="true"
     InvalidInputIndicatorID="PersonTitleIndicator" ValidationExpression="^([^\\]){1,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonGivenNameValidator"
-    runat="server" ControlToValidate="PersonGivenName" InvalidInputColor="#FAFFB5"
+    runat="server" ControlToValidate="PersonGivenName" InvalidInputCSS="DialogTextBoxInvalidInput"
     ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonGivenNameIndicator"
     ValidationExpression="^([^\\]){1,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonMiddleNameValidator"
-    runat="server" ControlToValidate="PersonMiddleName" InvalidInputColor="#FAFFB5"
+    runat="server" ControlToValidate="PersonMiddleName" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true" ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonMiddleNameIndicator" ValidationExpression="^([^\\]){0,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonLastNameValidator"
-    runat="server" ControlToValidate="PersonLastName" InvalidInputColor="#FAFFB5"
+    runat="server" ControlToValidate="PersonLastName" InvalidInputCSS="DialogTextBoxInvalidInput"
     ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonLastNameIndicator"
     ValidationExpression="^([^\\]){0,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonSuffixValidator"
-    runat="server" ControlToValidate="PersonSuffix" InvalidInputColor="#FAFFB5"
+    runat="server" ControlToValidate="PersonSuffix" InvalidInputCSS="DialogTextBoxInvalidInput"
     IgnoreEmptyValue="true" ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;."
     Display="None">

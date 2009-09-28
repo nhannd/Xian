@@ -27,14 +27,14 @@
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" Text="AE Title is required"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup" InvalidInputIndicatorID="AETitleHelp" />
+                                                        InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup" InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
                                                         runat="server" ControlToValidate="AETitleTextBox" Display="None" Text="The AE Title is not valid."
-                                                        InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="AddEditServerPartitionValidationGroup"
+                                                        InvalidInputCSS="DialogTextBoxInvalidInput" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:ServerPartitionValidator ID="ServerPartitionValidator" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
-                                                        Text="The AE Title is not valid." InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup"
+                                                        Text="The AE Title is not valid." InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                 </td>
                                             </tr>
@@ -63,7 +63,7 @@
                                                     <asp:Label ID="Label2" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup" MinValue="1" MaxValue="65535"
+                                                        InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup" MinValue="1" MaxValue="65535"
                                                         Text="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
                                                 </td>
                                                 <td valign="bottom">
@@ -81,7 +81,7 @@
                                                         ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"/>
                                                     <ccValidator:ServerPartitionFolderValidator ID="PartitionFolderValidator"
                                                         runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="false"
-                                                        Text="Folder Name is not valid" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup"
+                                                        Text="Folder Name is not valid" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                         InvalidInputIndicatorID="FolderHelp"/>
                                                 </td>
                                                 <td valign="bottom">
@@ -163,7 +163,7 @@
                                                     <td valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
-                                                            ControlToValidate="DefaultRemotePortTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerPartitionValidationGroup"
+                                                            ControlToValidate="DefaultRemotePortTextBox" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerPartitionValidationGroup"
                                                             MinValue="1" MaxValue="65535" Text="Remote device default port must be between 1 and 65535"
                                                             Display="None" InvalidInputIndicatorID="DefaultPortHelp" />
                                                     </td>

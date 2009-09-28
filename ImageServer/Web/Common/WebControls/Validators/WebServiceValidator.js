@@ -16,6 +16,8 @@ function @@CLIENTID@@_ClientSideEvaluator()
             '@@INPUT_INVALID_BKCOLOR@@',
             '@@INPUT_NORMAL_BORDERCOLOR@@',
             '@@INPUT_INVALID_BORDERCOLOR@@',            
+            '@@INPUT_NORMAL_CSS@@',
+            '@@INPUT_INVALID_CSS@@',                                    
             '@@INVALID_INPUT_INDICATOR_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_CLIENTID@@'),
             '@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@'),
             '@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'),

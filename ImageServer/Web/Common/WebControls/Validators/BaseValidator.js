@@ -30,6 +30,8 @@ function BaseClientValidator(
     inputInvalidColor,
     inputNormalBorderColor,
     inputInvalidBorderColor,
+    inputNormalCSS,
+    inputInvalidCSS,    
     errorIndicator,
     errorIndicatorTooltip,
     errorIndicatorTooltipPanel,
@@ -53,6 +55,12 @@ function BaseClientValidator(
     
     //alert('inputInvalidBorderColor='+inputInvalidBorderColor);
     this.inputInvalidBorderColor = inputInvalidBorderColor;
+
+    //alert('inputNormalBorderColor='+inputNormalBorderColor);
+    this.inputNormalCSS = inputNormalCSS;
+
+    //alert('inputInvalidBorderColor='+inputInvalidBorderColor);
+    this.inputInvalidCSS = inputInvalidCSS;    
     
     //alert('errorIndicator='+errorIndicator);
     this.errorIndicator = errorIndicator;
@@ -123,70 +131,62 @@ BaseClientValidator.prototype.OnEvaluate = function()
     return result;
 };
 
-BaseClientValidator.prototype.OnValidationPassed = function()
-{
+BaseClientValidator.prototype.OnValidationPassed = function() {
     //alert('Base validator: input is valid: color=' + this.inputNormalColor);
-    if (this.input['validatorscounter']=='1')
-    {
+    if (this.input['validatorscounter'] == '1') {
         // only myself is attached to this input, it's ok to clear the background
         this.input.style.backgroundColor = this.inputNormalColor;
         this.input.style.borderColor = this.inputNormalBorderColor;
+        this.input.className = this.inputNormalCSS;
     }
-    else
-    {
-        if (this.input['calledvalidatorcounter']==0)
-        {
+    else {
+        if (this.input['calledvalidatorcounter'] == 0) {
             // I am the first validator called to check the input, it's safe to clear the background
             this.input.style.backgroundColor = this.inputNormalColor;
             this.input.style.borderColor = this.inputNormalBorderColor;
-        }                    
+            this.input.className = this.inputNormalCSS;
+        }
     }
 
-    if (this.errorIndicator!=null)
-    {
+    if (this.errorIndicator != null) {
         // I am not sharing the popup help control with any other validators. It's safe to hide it 
-        if (this.errorIndicator['shared']!='true')
-            this.errorIndicator.style.visibility= 'hidden'; 
-        else
-        {
-            if (this.input['calledvalidatorcounter']==0)
-            {
+        if (this.errorIndicator['shared'] != 'true')
+            this.errorIndicator.style.visibility = 'hidden';
+        else {
+            if (this.input['calledvalidatorcounter'] == 0) {
                 // I am sharing the popup help control with any other validators, and I am the first one to validate the input
                 // So it's safe to hide it 
-                this.errorIndicator.style.visibility= 'hidden'; 
+                this.errorIndicator.style.visibility = 'hidden';
             }
         }
     }
 
     this.input['calledvalidatorcounter']++;
-    if (this.input['calledvalidatorcounter']==this.input['validatorscounter'])
-    {
+    if (this.input['calledvalidatorcounter'] == this.input['validatorscounter']) {
         // no more validator in the pipe, let's reset the calledvalidatorcounter value so that 
         // next time we validate the input we start from 0.
-        this.input['calledvalidatorcounter']=0;
+        this.input['calledvalidatorcounter'] = 0;
     }
 
 };
 
-BaseClientValidator.prototype.OnValidationFailed = function(error)
-{
+BaseClientValidator.prototype.OnValidationFailed = function(error) {
     //alert('Base validator: input is invalid');
     this.input.style.backgroundColor = this.inputInvalidColor;
     this.input.style.borderColor = this.inputInvalidBorderColor;
-    
-    if (this.errorIndicator!=null)
-    {
-        this.errorIndicator.style.visibility= 'visible';
+    this.input.className = this.inputInvalidCSS;
+
+    if (this.errorIndicator != null) {
+        this.errorIndicator.style.visibility = 'visible';
         this.SetErrorMessage(error);
     }
 
     this.input['calledvalidatorcounter']++;
-    if (this.input['calledvalidatorcounter']==this.input['validatorscounter'])
-    {
+    if (this.input['calledvalidatorcounter'] == this.input['validatorscounter']) {
         // no more validator in the pipe, let's reset the calledvalidatorcounter value so that 
         // next time we validate the input we start from 0.
-        this.input['calledvalidatorcounter']=0;
-    }  
+        this.input['calledvalidatorcounter'] = 0;
+    }
 };
 
 

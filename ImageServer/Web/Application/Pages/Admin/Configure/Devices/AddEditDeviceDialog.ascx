@@ -132,16 +132,15 @@ EnableClientScript="true" runat="server" ValidationGroup="AddEditDeviceValidatio
                                 </tr>
                             </table>
                             <ccValidator:RegularExpressionFieldValidator
-                                    ID="AETitleTextBoxValidator" runat="server" ControlToValidate="AETitleTextBox"
-                                    InvalidInputColor="#FAFFB5" ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"
+                                    ID="AETitleTextBoxValidator" runat="server" ControlToValidate="AETitleTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
+                                    ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"
                                     ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
-                            <ccValidator:ConditionalRequiredFieldValidator ID="IPAddressValidator"
-                                    runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
-                                    ConditionalCheckBoxID="DHCPCheckBox" ValidateWhenUnchecked="true"
+                            <ccValidator:ConditionalRequiredFieldValidator ID="IPAddressValidator" 
+                                    runat="server" ControlToValidate="IPAddressTextBox" ValidateWhenUnchecked="true" InvalidInputCSS="DialogTextBoxInvalidInput"
                                     ValidationGroup="AddEditDeviceValidationGroup" Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
                                     Display="None"></ccValidator:ConditionalRequiredFieldValidator>
                             <ccValidator:RangeValidator ID="PortValidator" runat="server" ControlToValidate="PortTextBox"
-                                    InvalidInputColor="#FAFFB5" ValidationGroup="AddEditDeviceValidationGroup" MinValue="1" MaxValue="65535"
+                                    ValidationGroup="AddEditDeviceValidationGroup" MinValue="1" MaxValue="65535" InvalidInputCSS="DialogTextBoxInvalidInput"
                                     Text="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
                                     Display="None"></ccValidator:RangeValidator>            
                     </ContentTemplate>

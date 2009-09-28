@@ -64,7 +64,7 @@ Specify the maximum number of simultaneous connections Image Server can initiate
     ID="MaxConnectionTextBoxValidator" runat="server"
     ConditionalCheckBoxID="LimitedCheckBox"
     ControlToValidate="MaxConnectionTextBox" InvalidInputIndicatorID="InvalidRangeIndicator" 
-    ValidationGroup="ThrottleSettingsValidationGroup" Display="None" InvalidInputColor="#FAFFB5"
+    ValidationGroup="ThrottleSettingsValidationGroup" Display="None" InvalidInputCSS="DialogTextBoxInvalidInput"
     MinValue="1" MaxValue="100"
     Text="The value must be between 1 and 100"
     ></ccValidator:RangeValidator>

@@ -27,7 +27,7 @@
 												<td valign="bottom" align="center">
 													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" SkinID="InvalidInputIndicator"/>
 													<ccValidator:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
-														ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditServerRuleValidationGroup"
+														ControlToValidate="RuleNameTextBox" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditServerRuleValidationGroup"
 														Text="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"/>
 												</td>
 											</tr>
@@ -97,7 +97,7 @@
 									<td>
 										<ccAsp:InvalidInputIndicator ID="InvalidRuleHint" runat="server" SkinID="InvalidInputIndicator" />
 										<ccValidator:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
-											InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
+											InputName="Server Rule XML" InvalidInputCSS="DialogTextBoxInvalidInput" InvalidInputIndicatorID="InvalidRuleHint"
 											ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
 											ParamsFunction="ValidationServerRuleParams" Text="Invalid Server Rule"
 											Display="None" ValidationGroup="AddEditServerRuleValidationGroup" />

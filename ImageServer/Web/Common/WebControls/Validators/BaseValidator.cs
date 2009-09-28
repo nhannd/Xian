@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         private string _invalidInputIndicatorID = "";
         private Color _invalidInputColor;
         private Color _invalidInputBorderColor;
+        private String _invalidInputCSS;
         private bool _validateWhenDisabled = false;
         private bool _ignoreEmptyValue = false;
         private string _inputName;
@@ -155,6 +156,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         }
 
         /// <summary>
+        /// Sets or retrieve the specified css for the input control when the validation fails.
+        /// </summary>
+        public String InvalidInputCSS
+        {
+            get { return _invalidInputCSS; }
+            set { _invalidInputCSS = value; }
+        }
+
+        /// <summary>
         /// Sets or retrieve the specified background color of the input control when the validation fails.
         /// </summary>
         public Color InvalidInputBorderColor
@@ -220,6 +230,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                     return (Color)ViewState[ "ValidateCtrlBorderColor"];
             }
             set { ViewState[ "ValidateCtrlBorderColor"] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the CSS class for the input control when validation passes.
+        /// </summary>
+        public string InputNormalCSS
+        {
+            get
+            {
+                if (ViewState["ValidateCtrlNormalCSS"] == null)
+                    return string.Empty;
+                else
+                    return (string)ViewState["ValidateCtrlNormalCSS"];
+            }
+            set { ViewState["ValidateCtrlNormalCSS"] = value; }
         }
 
         protected string ClientSideOnValidateFunctionName
@@ -298,13 +323,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 // save current background color
                 InputNormalColor = InputControl.BackColor;
                 InputNormalBorderColor = InputControl.BorderColor;
-                
+                InputNormalCSS = InputControl.CssClass;
             }
             else
             {
                 // Restore the input background color
                 InputControl.BackColor = InputNormalColor;
                 InputControl.BorderColor = InputNormalBorderColor;
+                InputControl.Attributes["class"] = InputNormalCSS;
             }
 
             if (EnableClientScript)
@@ -325,6 +351,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             template.Replace("@@INPUT_INVALID_BKCOLOR@@", ColorTranslator.ToHtml(InvalidInputColor));
             template.Replace("@@INPUT_NORMAL_BORDERCOLOR@@", ColorTranslator.ToHtml(InputNormalBorderColor));
             template.Replace("@@INPUT_INVALID_BORDERCOLOR@@", ColorTranslator.ToHtml(InvalidInputBorderColor));
+            template.Replace("@@INPUT_NORMAL_CSS@@", InputNormalCSS);
+            template.Replace("@@INPUT_INVALID_CSS@@", InvalidInputCSS);
             template.Replace("@@CLIENT_EVALUATION_CLASS@@", ClientSideOnValidateFunctionName);
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue? "true":"false");
             
@@ -380,10 +408,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 }
                 else
                 {
-                    if (InputControl.BackColor == InputNormalColor)
-                        InputControl.BackColor = InvalidInputColor;
-                    if (InputControl.BorderColor == InputNormalBorderColor)
-                        InputControl.BorderColor = InvalidInputBorderColor;
+                    if (string.IsNullOrEmpty(InvalidInputCSS))
+                    {
+                        if (InputControl.BackColor == InputNormalColor)
+                            InputControl.BackColor = InvalidInputColor;
+                        if (InputControl.BorderColor == InputNormalBorderColor)
+                            InputControl.BorderColor = InvalidInputBorderColor;
+                    } else
+                    {
+                        if (!InputControl.Attributes["class"].Equals(InvalidInputCSS))
+                            InputControl.Attributes["class"] = InvalidInputCSS;
+                    }
 
                     if (InvalidInputIndicator != null)
                     {

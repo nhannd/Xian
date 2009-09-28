@@ -14,7 +14,7 @@
                                 <td>
                                     <ccAsp:InvalidInputIndicator ID="DescriptionHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
-                                         runat="server" ControlToValidate="Description" InvalidInputColor="#FAFFB5"                                                        ValidationGroup="AddEditPartitionValidationGroup"
+                                         runat="server" ControlToValidate="Description" InvalidInputCSS="DialogTextBoxInvalidInput"                                                        ValidationGroup="AddEditPartitionValidationGroup"
                                          Text="Partition Archive description is a required field" InvalidInputIndicatorID="DescriptionHelp"
                                          Display="None"></ccValidator:ConditionalRequiredFieldValidator>
                                 </td>
@@ -26,12 +26,12 @@
                                 <td>                                   
                                 <ccAsp:InvalidInputIndicator ID="ArchiveDelayHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator2"
-                                         runat="server" ControlToValidate="ArchiveDelay" InvalidInputColor="#FAFFB5"
+                                         runat="server" ControlToValidate="ArchiveDelay" InvalidInputCSS="DialogTextBoxInvalidInput"
                                          ValidationGroup="AddEditPartitionValidationGroup"
                                          Text="Archive Delay is a required field" InvalidInputIndicatorID="ArchiveDelayHelp"
                                          Display="None"></ccValidator:ConditionalRequiredFieldValidator>
                                     <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
-                                         runat="server" ControlToValidate="ArchiveDelay" InvalidInputColor="#FAFFB5"
+                                         runat="server" ControlToValidate="ArchiveDelay" InvalidInputCSS="DialogTextBoxInvalidInput"
                                          IgnoreEmptyValue="true" ValidationGroup="AddEditPartitionValidationGroup" ValidationExpression="^([0-9]+)"
                                          Text="Archive Delay must be numeric" Display="None" InvalidInputIndicatorID="ArchiveDelayHelp"></ccValidator:RegularExpressionFieldValidator>                                         
                                  </td>

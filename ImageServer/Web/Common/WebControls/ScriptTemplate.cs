@@ -65,7 +65,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
             Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(validator.InputNormalColor));
             Replace("@@INPUT_INVALID_BKCOLOR@@", ColorTranslator.ToHtml(validator.InvalidInputColor));
             Replace("@@INPUT_NORMAL_BORDERCOLOR@@", ColorTranslator.ToHtml(validator.InputNormalBorderColor));
-            Replace("@@INPUT_INVALID_BORDERCOLOR@@", ColorTranslator.ToHtml(validator.InvalidInputBorderColor));            
+            Replace("@@INPUT_INVALID_BORDERCOLOR@@", ColorTranslator.ToHtml(validator.InvalidInputBorderColor));
+            Replace("@@INPUT_NORMAL_CSS@@", validator.InputNormalCSS);
+            Replace("@@INPUT_INVALID_CSS@@", validator.InvalidInputCSS);            
             Replace("@@INVALID_INPUT_INDICATOR_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.Container.ClientID);
             Replace("@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.TooltipLabel.ClientID);
             Replace("@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@", validator.InvalidInputIndicator == null ? null : validator.InvalidInputIndicator.TooltipLabelContainer.ClientID);

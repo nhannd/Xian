@@ -32,7 +32,7 @@
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
-                                                        runat="server" ControlToValidate="DescriptionTextBox" InvalidInputColor="#FAFFB5"
+                                                        runat="server" ControlToValidate="DescriptionTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
                                                         ValidationGroup="AddEditFileSystemValidationGroup" Text="Description is required!!" Display="None"
                                                         InvalidInputIndicatorID="InvalidDescriptionHint" RequiredWhenChecked="False">
                                                     </ccValidator:ConditionalRequiredFieldValidator>
@@ -63,7 +63,7 @@
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="InvalidPathHint" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
-                                                        InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"
+                                                        InputName="Filesystem Path" InvalidInputCSS="DialogTextBoxInvalidInput" InvalidInputIndicatorID="InvalidPathHint"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateFilesystemPath"
                                                         ParamsFunction="ValidationFilesystemPathParams" Display="None" ValidationGroup="AddEditFileSystemValidationGroup" />
                                                 </td>
@@ -159,7 +159,7 @@
                                                         </ccAsp:InvalidInputIndicator>
                                                         <ccValidator:RangeComparisonValidator ID="HighWatermarkValidator" runat="server"
                                                             ControlToValidate="HighWatermarkTextBox" ControlToCompare="LowWatermarkTextBox"
-                                                            GreaterThan="true" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
+                                                            GreaterThan="true" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
                                                             MaxValue="99" InputName="High watermark" CompareToInputName="Low watermark" Display="None"
                                                             InvalidInputIndicatorID="HighWatermarkHelp" />
                                                     </td>
@@ -187,7 +187,7 @@
                                                         </ccAsp:InvalidInputIndicator>
                                                         <ccValidator:RangeComparisonValidator ID="LowWatermarkValidator" EnableClientScript="true"
                                                             runat="server" ControlToValidate="LowWatermarkTextBox" ControlToCompare="HighWatermarkTextBox"
-                                                            GreaterThan="false" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
+                                                            GreaterThan="false" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditFileSystemValidationGroup" MinValue="1"
                                                             MaxValue="99" InputName="Low watermark" CompareToInputName="High watermark" Display="None"
                                                             InvalidInputIndicatorID="LowWatermarkHelp" />
                                                     </td>

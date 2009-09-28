@@ -87,7 +87,7 @@ font-family: sans-serif;
 
 .DialogValidationErrorMessage
 {
-    text-align:left; 
+    text-align:center; 
     font-size: 12px; 
     font-weight: bold; 
     background: #FFFFCC url(../../../PersistantImage.ashx?key=ErrorMessageBackground) repeat-x;

@@ -155,6 +155,16 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            (105,200,1,1,3,30,180,60,120,15,-1)
 GO
 
+  -- WebMoveStudy
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
+           ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
+           [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+     VALUES
+           (104,200,1,1,3,30,180,60,120,15,-1)
+GO
+
+
   -- CleanupStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
@@ -1050,6 +1060,12 @@ INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Invalid series data', 'DeleteSeriesReason', 'Series contains some invalid data.')          
+     
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
+     VALUES(newid(), 'Data is incorrect', 'EditStudyReason', 'Data is incorrect.')
+     
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
+     VALUES(newid(), 'Data is missing', 'EditStudyReason', 'Data is missing.')               
      
 -- Device Types     
 INSERT INTO [ImageServer].[dbo].[DeviceTypeEnum]

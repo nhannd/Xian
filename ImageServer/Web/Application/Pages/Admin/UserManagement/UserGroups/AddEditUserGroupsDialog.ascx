@@ -27,11 +27,11 @@ function ValidationUserGroupNameParams()
                 <td width="100%">
                     <ccAsp:InvalidInputIndicator ID="GroupNameHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserGroupsValidationGroup"
+                                                        ControlToValidate="GroupName" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserGroupsValidationGroup"
                                                         InvalidInputIndicatorID="GroupNameHelpId" Text="Group name is required" Display="None"
                                                         RequiredWhenChecked="False"/>
                     <ccValidator:DuplicateUsergroupValidator ID="DuplicateUsergroupValidator" runat="server"
-                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="AddEditUserGroupsValidationGroup"
+                                                        ControlToValidate="GroupName" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="AddEditUserGroupsValidationGroup"
                                                         InvalidInputIndicatorID="GroupNameHelpId" Text="User Group already exists." Display="None"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUserGroupName"
                                                         ParamsFunction="ValidationUserGroupNameParams"/>                                                        
