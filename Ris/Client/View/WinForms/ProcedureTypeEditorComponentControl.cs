@@ -35,21 +35,21 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ProcedureTypeEditorComponent"/>.
-    /// </summary>
-    public partial class ProcedureTypeEditorComponentControl : ApplicationComponentUserControl
-    {
-        private ProcedureTypeEditorComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ProcedureTypeEditorComponent"/>.
+	/// </summary>
+	public partial class ProcedureTypeEditorComponentControl : ApplicationComponentUserControl
+	{
+		private ProcedureTypeEditorComponent _component;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public ProcedureTypeEditorComponentControl(ProcedureTypeEditorComponent component)
-            :base(component)
-        {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public ProcedureTypeEditorComponentControl(ProcedureTypeEditorComponent component)
+			:base(component)
+		{
 			_component = component;
-            InitializeComponent();
+			InitializeComponent();
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_id.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -59,8 +59,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_baseType.DataBindings.Add("Value", _component, "BaseType", true, DataSourceUpdateMode.OnPropertyChanged);
 			_baseType.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatBaseTypeItem(e.ListItem); };
 
-        	Control xmlEditor = (Control) _component.XmlEditorHost.ComponentView.GuiElement;
-        	xmlEditor.Dock = DockStyle.Fill;
+			// The Text property of _xmlEditorPanel is only used for validation purpose only.
+			_xmlEditorPanel.DataBindings.Add("Text", _component, "PlanXml", true, DataSourceUpdateMode.OnValidation);
+
+			Control xmlEditor = (Control) _component.XmlEditorHost.ComponentView.GuiElement;
+			xmlEditor.Dock = DockStyle.Fill;
 			_xmlEditorPanel.Controls.Add(xmlEditor);
 		}
 
@@ -73,5 +76,5 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			_component.Cancel();
 		}
-    }
+	}
 }

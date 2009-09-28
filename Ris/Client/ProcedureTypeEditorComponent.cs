@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly bool _isNew;
 
 		private ProcedureTypeSummary _procedureTypeSummary;
-        private List<ProcedureTypeSummary> _baseTypeChoices;
+		private List<ProcedureTypeSummary> _baseTypeChoices;
 
 		private ChildComponentHost _xmlEditorHost;
 
@@ -94,17 +94,17 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IProcedureTypeAdminService>(
 				delegate(IProcedureTypeAdminService service)
 				{
-                    _baseTypeChoices =
-                        service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest()).BaseProcedureTypeChoices;
-                    if (_isNew)
-                    {
-                        _procedureTypeDetail = new ProcedureTypeDetail();
-                    }
-                    else
-                    {
-                        LoadProcedureTypeForEditResponse response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
-                        _procedureTypeDetail = response.ProcedureType;
-                    }
+					_baseTypeChoices =
+						service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest()).BaseProcedureTypeChoices;
+					if (_isNew)
+					{
+						_procedureTypeDetail = new ProcedureTypeDetail();
+					}
+					else
+					{
+						LoadProcedureTypeForEditResponse response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
+						_procedureTypeDetail = response.ProcedureType;
+					}
 				});
 
 			ICodeEditor editor = CodeEditorFactory.CreateCodeEditor();
@@ -139,8 +139,8 @@ namespace ClearCanvas.Ris.Client
 			get { return _xmlEditorHost; }
 		}
 
-        [ValidateNotNull]
-        public string ID
+		[ValidateNotNull]
+		public string ID
 		{
 			get { return _procedureTypeDetail.Id; }
 			set
@@ -150,8 +150,8 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-        [ValidateNotNull]
-        public string Name
+		[ValidateNotNull]
+		public string Name
 		{
 			get { return _procedureTypeDetail.Name; }
 			set
@@ -171,9 +171,20 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[ValidateNotNull]
+		public string PlanXml
+		{
+			get { return _procedureTypeDetail.PlanXml; }
+			protected set
+			{
+				_procedureTypeDetail.PlanXml = value;
+				this.Modified = true;
+			}
+		}
+
 		public IList BaseTypeChoices
 		{
-            get { return _baseTypeChoices; }
+			get { return _baseTypeChoices; }
 		}
 
 		public string FormatBaseTypeItem(object item)
@@ -182,24 +193,25 @@ namespace ClearCanvas.Ris.Client
 			return string.Format("{0} - {1}", summary.Id, summary.Name);
 		}
 
-        public bool AcceptEnabled
-        {
-            get { return this.Modified; }
-        }
-
-        public event EventHandler AcceptEnabledChanged
-        {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
-        }
-
-        public void Accept()
+		public bool AcceptEnabled
 		{
-			_procedureTypeDetail.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
+			get { return this.Modified; }
+		}
+
+		public event EventHandler AcceptEnabledChanged
+		{
+			add { this.ModifiedChanged += value; }
+			remove { this.ModifiedChanged -= value; }
+		}
+
+		public void Accept()
+		{
+			this.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
 
 			if (this.HasValidationErrors)
 			{
 				this.ShowValidation(true);
+				return;
 			}
 			else
 			{
