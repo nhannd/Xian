@@ -64,8 +64,8 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
         #endregion
 
-        private const int ItemsPerReadTransaction = 100;
-        private const int ItemsPerUpdateTransaction = 100;
+		protected const int ItemsPerReadTransaction = 100;
+        protected const int ItemsPerUpdateTransaction = 100;
 
 
         #region Absract Methods
