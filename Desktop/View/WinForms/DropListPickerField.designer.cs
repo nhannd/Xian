@@ -95,6 +95,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._itemString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._itemString.AutoEllipsis = true;
+			this._itemString.BackColor = System.Drawing.SystemColors.ControlLightLight;
 			this._itemString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this._itemString.Location = new System.Drawing.Point(3, 18);
 			this._itemString.Margin = new System.Windows.Forms.Padding(2);
