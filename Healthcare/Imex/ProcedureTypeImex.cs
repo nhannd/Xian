@@ -97,62 +97,12 @@ namespace ClearCanvas.Healthcare.Imex
 			pt.Deactivated = data.Deactivated;
 			if (!string.IsNullOrEmpty(data.BaseTypeId))
 			{
-				pt.BaseType = GetBaseProcedureType(data.BaseTypeId, context);
+				pt.BaseType = LoadOrCreateProcedureType(data.BaseTypeId, data.BaseTypeId, context);
 			}
 
 			if (data.PlanXml != null)
 			{
 				pt.SetPlanXml(data.PlanXml);
-			}
-		}
-
-		/// <summary>
-		/// Override the base ImportCore method so we can sort the import item based on the BaseTypeId dependency.
-		/// </summary>
-		/// <param name="items"></param>
-		protected override void ImportCore(IEnumerable<IImportItem> items)
-		{
-			var sortedProcedureTypeData = new List<ProcedureTypeData>();
-
-			// First sort the list of IImportItem based on the BaseTypeId dependency.
-			IEnumerator<IImportItem> enumerator = items.GetEnumerator();
-			for (bool more = true; more; )
-			{
-				for (int j = 0; j < ItemsPerUpdateTransaction && more; j++)
-				{
-					more = enumerator.MoveNext();
-					if (more)
-					{
-						IImportItem item = enumerator.Current;
-						var data = (ProcedureTypeData)Read(item.Read(), typeof(ProcedureTypeData));
-
-						// If there is a dependent data, insert the current data before it, otherwise append it at the end of the list.
-						var dependentData = CollectionUtils.SelectFirst(sortedProcedureTypeData, d => d.BaseTypeId != null && d.BaseTypeId == data.Id);
-						if (dependentData != null)
-						{
-							var indexOfDependentData = sortedProcedureTypeData.IndexOf(dependentData);
-							sortedProcedureTypeData.Insert(indexOfDependentData, data);
-						}
-						else
-						{
-							sortedProcedureTypeData.Add(data);
-						}
-					}
-				}
-			}
-
-			// Then import the sorted.
-			using (var scope = new PersistenceScope(PersistenceContextType.Update))
-			{
-				var context = (IUpdateContext)PersistenceScope.CurrentContext;
-				context.ChangeSetRecorder.OperationName = this.GetType().FullName;
-
-				foreach (var item in sortedProcedureTypeData)
-				{
-					Import(item, context);
-				}
-
-				scope.Complete();
 			}
 		}
 
@@ -176,13 +126,6 @@ namespace ClearCanvas.Healthcare.Imex
 			}
 
 			return pt;
-		}
-
-		private static ProcedureType GetBaseProcedureType(string id, IPersistenceContext context)
-		{
-			var where = new ProcedureTypeSearchCriteria();
-			where.Id.EqualTo(id);
-			return context.GetBroker<IProcedureTypeBroker>().FindOne(where);
 		}
 	}
 }
