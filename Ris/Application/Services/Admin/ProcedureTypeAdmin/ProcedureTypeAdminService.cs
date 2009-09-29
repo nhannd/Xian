@@ -160,6 +160,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.ProcedureType, "request.ProcedureType");
 
+			if (string.IsNullOrEmpty(request.ProcedureType.PlanXml))
+				throw new RequestValidationException(SR.ExceptionProcedurePlanXmlRequired);
+
 			ProcedureType item = new ProcedureType();
 
 			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
@@ -178,6 +181,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.ProcedureType, "request.ProcedureType");
 			Platform.CheckMemberIsSet(request.ProcedureType.ProcedureTypeRef, "request.ProcedureType.ProcedureTypeRef");
+
+			if (string.IsNullOrEmpty(request.ProcedureType.PlanXml))
+				throw new RequestValidationException(SR.ExceptionProcedurePlanXmlRequired);
 
 			ProcedureType item = PersistenceContext.Load<ProcedureType>(request.ProcedureType.ProcedureTypeRef);
 

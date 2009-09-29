@@ -241,6 +241,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A procedure plan Xml is required..
+        /// </summary>
+        internal static string ExceptionProcedurePlanXmlRequired {
+            get {
+                return ResourceManager.GetString("ExceptionProcedurePlanXmlRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A procedure type group with the name {0} already exists.
         /// </summary>
         internal static string ExceptionProcedureTypeGroupNameAlreadyExists {

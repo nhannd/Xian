@@ -216,4 +216,7 @@
   <data name="MessageNotAllProceduresPerformed" xml:space="preserve">
     <value>Not all ordered procedures have been performed.</value>
   </data>
+  <data name="ExceptionProcedurePlanXmlRequired" xml:space="preserve">
+    <value>A procedure plan Xml is required.</value>
+  </data>
 </root>

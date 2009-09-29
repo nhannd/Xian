@@ -171,17 +171,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[ValidateNotNull]
-		public string PlanXml
-		{
-			get { return _procedureTypeDetail.PlanXml; }
-			protected set
-			{
-				_procedureTypeDetail.PlanXml = value;
-				this.Modified = true;
-			}
-		}
-
 		public IList BaseTypeChoices
 		{
 			get { return _baseTypeChoices; }
@@ -206,7 +195,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void Accept()
 		{
-			this.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
+			_procedureTypeDetail.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
 
 			if (this.HasValidationErrors)
 			{

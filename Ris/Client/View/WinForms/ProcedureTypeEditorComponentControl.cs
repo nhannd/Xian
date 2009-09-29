@@ -59,9 +59,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_baseType.DataBindings.Add("Value", _component, "BaseType", true, DataSourceUpdateMode.OnPropertyChanged);
 			_baseType.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatBaseTypeItem(e.ListItem); };
 
-			// The Text property of _xmlEditorPanel is only used for validation purpose only.
-			_xmlEditorPanel.DataBindings.Add("Text", _component, "PlanXml", true, DataSourceUpdateMode.OnValidation);
-
 			Control xmlEditor = (Control) _component.XmlEditorHost.ComponentView.GuiElement;
 			xmlEditor.Dock = DockStyle.Fill;
 			_xmlEditorPanel.Controls.Add(xmlEditor);
