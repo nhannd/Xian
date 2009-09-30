@@ -418,6 +418,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>CannedTextSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="LocalFileSettings.config" />
     <None Include="DiagnosticServiceLookupSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticServiceLookupSettings.Designer.cs</LastGenOutput>
