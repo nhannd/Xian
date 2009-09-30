@@ -30,39 +30,7 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public class UserLookupHandler : ILookupHandler
 	{
-		class UserSuggestionProvider : SuggestionProviderBase<UserLookupData>
-		{
-			protected override IList<UserLookupData> GetShortList(string query)
-			{
-				List<UserLookupData> users = new List<UserLookupData>();
-				Platform.GetService<IUserAdminService>(
-					delegate(IUserAdminService service)
-					{
-						ListUsersRequest request = new ListUsersRequest();
-						request.UserName = query;
-						ListUsersResponse response = service.ListUsers(request);
-						users = CollectionUtils.Map<UserSummary, UserLookupData>(response.Users,
-							delegate(UserSummary summary) { return new UserLookupData(summary.UserName); });
-					});
-
-				// sort results in the way that they will be formatted for the suggest box
-				users.Sort(
-					delegate(UserLookupData x, UserLookupData y)
-					{
-						return UserLookupHandler.FormatItem(x).CompareTo(UserLookupHandler.FormatItem(y));
-					});
-
-				return users;
-			}
-
-			protected override string FormatItem(UserLookupData item)
-			{
-				return UserLookupHandler.FormatItem(item);
-			}
-		}
-
-
-		private UserSuggestionProvider _suggestionProvider;
+		private ISuggestionProvider _suggestionProvider;
 		private readonly IDesktopWindow _desktopWindow;
 
 
@@ -74,6 +42,20 @@ namespace ClearCanvas.Ris.Client
 		private static string FormatItem(UserLookupData user)
 		{
 			return user.UserName;
+		}
+
+		private static IList<UserLookupData> ListUsers(string query)
+		{
+			var users = new List<UserLookupData>();
+			Platform.GetService<IUserAdminService>(
+				service =>
+				{
+					var request = new ListUsersRequest {UserName = query};
+					var response = service.ListUsers(request);
+					users = CollectionUtils.Map(response.Users, (UserSummary summary) => new UserLookupData(summary.UserName));
+				});
+
+			return users;
 		}
 
 		#region ILookupHandler Members
@@ -105,7 +87,9 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				if (_suggestionProvider == null)
-					_suggestionProvider = new UserSuggestionProvider();
+				{
+					_suggestionProvider = new DefaultSuggestionProvider<UserLookupData>(ListUsers, FormatItem);
+				}
 
 				return _suggestionProvider;
 			}

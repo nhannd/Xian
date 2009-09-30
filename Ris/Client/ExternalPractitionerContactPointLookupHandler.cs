@@ -41,37 +41,10 @@ namespace ClearCanvas.Ris.Client
 {
 	public class ExternalPractitionerContactPointLookupHandler : ILookupHandler
 	{
-		class ContactPointSuggestionProvider : SuggestionProviderBase<ExternalPractitionerContactPointDetail>
-		{
-			private readonly List<ExternalPractitionerContactPointDetail> _contactPoints = new List<ExternalPractitionerContactPointDetail>();
-
-			public ContactPointSuggestionProvider(IEnumerable<ExternalPractitionerContactPointDetail> contactPoints)
-			{
-				_contactPoints = new List<ExternalPractitionerContactPointDetail>(contactPoints);
-
-				// sort results in the way that they will be formatted for the suggest box
-				_contactPoints.Sort(
-					delegate(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
-					{
-						return ExternalPractitionerContactPointLookupHandler.FormatItem(x).CompareTo(ExternalPractitionerContactPointLookupHandler.FormatItem(y));
-					});
-			}
-
-			protected override IList<ExternalPractitionerContactPointDetail> GetShortList(string query)
-			{
-				return _contactPoints;
-			}
-
-			protected override string FormatItem(ExternalPractitionerContactPointDetail item)
-			{
-				return ExternalPractitionerContactPointLookupHandler.FormatItem(item);
-			}
-		}
-
 		private readonly EntityRef _practitionerRef;
 		private readonly IList<ExternalPractitionerContactPointDetail> _contactPoints;
 		private readonly IDesktopWindow _desktopWindow;
-		private ContactPointSuggestionProvider _suggestionProvider;
+		private ISuggestionProvider _suggestionProvider;
 
 		public ExternalPractitionerContactPointLookupHandler(
 			EntityRef practitionerRef,
@@ -132,7 +105,8 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_suggestionProvider == null)
 				{
-					_suggestionProvider = new ContactPointSuggestionProvider(_contactPoints);
+					var sorted = CollectionUtils.Sort(_contactPoints, (x, y) => FormatItem(x).CompareTo(FormatItem(y)));
+					_suggestionProvider = new DefaultSuggestionProvider<ExternalPractitionerContactPointDetail>(sorted, FormatItem);
 				}
 				return _suggestionProvider;
 			}

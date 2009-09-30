@@ -106,45 +106,8 @@ namespace ClearCanvas.Ris.Client
 
     public class CannedTextLookupHandler : ICannedTextLookupHandler
     {
-        class CannedTextSuggestionProvider : SuggestionProviderBase<CannedText>
-        {
-            public CannedTextSuggestionProvider(bool matchAllTerms)
-                : base(matchAllTerms ? RefinementStrategies.MatchAllTerms : RefinementStrategies.StartsWith)
-            {
-            }
-
-            protected override IList<CannedText> GetShortList(string query)
-            {
-                List<CannedText> cannedTexts = new List<CannedText>();
-                Platform.GetService<ICannedTextService>(
-                    delegate(ICannedTextService service)
-                    {
-                        ListCannedTextResponse response = service.ListCannedText(new ListCannedTextRequest());
-                        cannedTexts = CollectionUtils.Map<CannedTextSummary, CannedText>(response.CannedTexts,
-                            delegate(CannedTextSummary s)
-                                {
-                                    return new CannedText(s);
-                                });
-                    });
-
-                // sort results in the way that they will be formatted for the suggest box
-                cannedTexts.Sort(
-                    delegate(CannedText x, CannedText y)
-                    {
-                        return CannedTextLookupHandler.FormatItem(x).CompareTo(CannedTextLookupHandler.FormatItem(y));
-                    });
-
-                return cannedTexts;
-            }
-
-            protected override string FormatItem(CannedText item)
-            {
-                return CannedTextLookupHandler.FormatItem(item);
-            }
-        }
-
         private readonly bool _matchAllTerms;
-        private CannedTextSuggestionProvider _suggestionProvider;
+        private ISuggestionProvider _suggestionProvider;
         private readonly IDesktopWindow _desktopWindow;
 
         public CannedTextLookupHandler(IDesktopWindow desktopWindow)
@@ -163,6 +126,19 @@ namespace ClearCanvas.Ris.Client
             return string.Format("{0} ({1})", ct.Name, ct.Category);
         }
 
+		private static IList<CannedText> ListCannedTexts()
+		{
+			var cannedTexts = new List<CannedText>();
+			Platform.GetService<ICannedTextService>(
+				service =>
+				{
+					var response = service.ListCannedText(new ListCannedTextRequest());
+					cannedTexts = CollectionUtils.Map(response.CannedTexts, (CannedTextSummary s) => new CannedText(s));
+				});
+
+			// sort results
+			return CollectionUtils.Sort(cannedTexts, (x, y) => FormatItem(x).CompareTo(FormatItem(y)));
+		}
 
         #region ILookupHandler Members
 
@@ -188,7 +164,14 @@ namespace ClearCanvas.Ris.Client
             {
                 if (_suggestionProvider == null)
                 {
-                    _suggestionProvider = new CannedTextSuggestionProvider(_matchAllTerms);
+                	var refineStrategy = _matchAllTerms
+                	                     	? SuggestionProviderBase<CannedText>.RefinementStrategies.MatchAllTerms
+                	                     	: SuggestionProviderBase<CannedText>.RefinementStrategies.StartsWith;
+
+                	_suggestionProvider = new DefaultSuggestionProvider<CannedText>(
+                		query => ListCannedTexts(),
+                		FormatItem,
+						refineStrategy) {AutoSort = false};	// we will take responsibility for sorting
                 }
                 return _suggestionProvider;
             }
