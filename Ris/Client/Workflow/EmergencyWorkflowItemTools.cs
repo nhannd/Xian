@@ -47,11 +47,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 				(IClickAction)CollectionUtils.SelectFirst(this.Actions, a => a is IClickAction && a.ActionID.EndsWith("pd")));
 		}
 
-		protected override string TemplateId
+		protected override string TemplatesXml
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.EmergencyDiagnosisTemplateId;
+				return PreliminaryDiagnosisSettings.Default.EmergencyDiagnosisTemplatesXml;
+			}
+		}
+
+		protected override string SoftKeysXml
+		{
+			get
+			{
+				return PreliminaryDiagnosisSettings.Default.EmergencyDiagnosisSoftKeysXml;
 			}
 		}
 	}

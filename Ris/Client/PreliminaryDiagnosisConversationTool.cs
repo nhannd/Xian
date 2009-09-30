@@ -78,9 +78,9 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		protected override IEnumerable<string> OrderNoteCategories
+		protected override string[] OrderNoteCategories
 		{
-			get { return new string[] { OrderNoteCategory.PreliminaryDiagnosis.Key }; }
+			get { return new [] { OrderNoteCategory.PreliminaryDiagnosis.Key }; }
 		}
 
 		protected override void OnDialogClosed(ApplicationComponentExitCode exitCode)

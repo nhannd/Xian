@@ -37,11 +37,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class ReportingPreliminaryDiagnosisTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
 	{
-		protected override string TemplateId
+		protected override string TemplatesXml
 		{
 			get
 			{
-				return PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplateId;
+				return PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplatesXml;
+			}
+		}
+
+		protected override string SoftKeysXml
+		{
+			get
+			{
+				return PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisSoftKeysXml;
 			}
 		}
 	}

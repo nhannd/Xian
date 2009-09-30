@@ -653,9 +653,6 @@
     <EmbeddedResource Include="Icons\FolderOpenErrorSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="OrderNoteConversationComponentSettingsTemplates.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\UpToolSmall.png" />
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FFB85377-995C-47A6-BF22-26D264CA3225}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -416,6 +416,9 @@
     <EmbeddedResource Include="Icons\AssignLarge.png" />
     <EmbeddedResource Include="Icons\AssignMedium.png" />
     <EmbeddedResource Include="Icons\AssignSmall.png" />
+    <EmbeddedResource Include="PreliminaryDiagnosisFromEmergencyTemplates.xml" />
+    <EmbeddedResource Include="PreliminaryDiagnosisFromEmergencySoftKeys.xml" />
+    <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologySoftKeys.xml" />
     <Content Include="Icons\ClearFilterLarge.png" />
     <Content Include="Icons\ClearFilterMedium.png" />
     <Content Include="Icons\ClearFilterSmall.png" />
@@ -429,6 +432,7 @@
     <Content Include="Icons\ImportAuthorityTokensLarge.png" />
     <Content Include="Icons\ImportAuthorityTokensMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensSmall.png" />
+    <EmbeddedResource Include="PreliminaryDiagnosisFromRadiologyTemplates.xml" />
     <EmbeddedResource Include="Icons\RejectProtocolLarge.png" />
     <EmbeddedResource Include="Icons\RejectProtocolMedium.png" />
     <EmbeddedResource Include="Icons\RejectProtocolSmall.png" />

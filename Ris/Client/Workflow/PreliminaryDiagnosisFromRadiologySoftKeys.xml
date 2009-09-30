@@ -1,0 +1,8 @@
+﻿<SoftKeyDefinitions hash="true">
+  <SoftKeys>
+    <item hash="true">
+      <ButtonName>Review</ButtonName>
+      <InsertText>Review is required.</InsertText>
+    </item>
+  </SoftKeys>
+</SoftKeyDefinitions>

@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -61,7 +62,7 @@ namespace ClearCanvas.Ris.Client
 
 		class StaffAndGroupLookupHandler : LookupHandlerAggregator
 		{
-			private DesktopWindow _desktopWindow;
+			private readonly DesktopWindow _desktopWindow;
 
 			internal StaffAndGroupLookupHandler(DesktopWindow desktopWindow)
 				: base(new Dictionary<ILookupHandler, Type>
@@ -78,8 +79,7 @@ namespace ClearCanvas.Ris.Client
 				result = null;
 				var component = new StaffOrStaffGroupSummaryComponent();
 
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
-					_desktopWindow, component, SR.TitleStaffOrStaffGroups);
+				var exitCode = LaunchAsDialog(_desktopWindow, component, SR.TitleStaffOrStaffGroups);
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
@@ -110,14 +110,19 @@ namespace ClearCanvas.Ris.Client
 		#region Private Fields
 
 		private EntityRef _orderRef;
-		private string _templateId;
 
+		private readonly List<TemplateData> _templateChoices;
+		private TemplateData _selectedTemplate;
+
+		private readonly List<SoftKeyData> _defaultSoftKeys;
 		private readonly List<SoftKeyData> _softKeys;
-		private readonly List<string> _orderNoteCategories;
+
+		private readonly IList<string> _orderNoteCategories;
 
 		private string _body;
 
 		private bool _urgent;
+		private bool _newConversation;
 
 		private IList<StaffGroupSummary> _onBehalfOfChoices;
 		private StaffGroupSummary _onBehalfOf;
@@ -139,17 +144,21 @@ namespace ClearCanvas.Ris.Client
 
 		#region Constructors
 
-		public OrderNoteConversationComponent(EntityRef orderRef, string orderNoteCategory, string templateId)
-			: this(orderRef, new[] { orderNoteCategory }, templateId)
+		public OrderNoteConversationComponent(EntityRef orderRef, string orderNoteCategory, string templatesXml, string softKeysXml)
+			: this(orderRef, new[] { orderNoteCategory },  templatesXml, softKeysXml)
 		{
 		}
 
-		public OrderNoteConversationComponent(EntityRef orderRef, IEnumerable<string> orderNoteCategories, string templateId)
+		public OrderNoteConversationComponent(EntityRef orderRef, string[] orderNoteCategories, string templatesXml, string softKeysXml)
 		{
+			Platform.CheckForNullReference(orderRef, "orderRef");
+			Platform.CheckForNullReference(orderNoteCategories, "orderNoteCategories");
+
 			_orderRef = orderRef;
 			_softKeys = new List<SoftKeyData>();
-			_orderNoteCategories = orderNoteCategories != null ? new List<string>(orderNoteCategories) : new List<string>();
-			_templateId = templateId;
+			_orderNoteCategories = orderNoteCategories;
+			_templateChoices = LoadTemplates(templatesXml);
+			_defaultSoftKeys = LoadSoftKeys(softKeysXml);
 
 			this.Validation.Add(new ValidationRule("SelectedRecipient",
 				delegate
@@ -176,10 +185,11 @@ namespace ClearCanvas.Ris.Client
 			// init recip table here, and not in constructor, because it relies on Host being set
 			_recipients = new RecipientTable(this);
 
-			// load template if specified
-			var template = _templateId == null ? null : LoadTemplate(_templateId);
-			if(template != null) 
-				_softKeys.AddRange(template.SoftKeys);
+			// if exactly 1 template choice, then it is selected
+			_selectedTemplate = _templateChoices.Count == 1 ? _templateChoices[0] : null;
+
+			// create soft keys
+			UpdateSoftKeys(_selectedTemplate);
 
 			// load the existing conversation, plus editor form data
 			var orderNotes = new List<OrderNoteDetail>();
@@ -188,27 +198,34 @@ namespace ClearCanvas.Ris.Client
 				service =>
 				{
 					var formDataRequest = new GetConversationEditorFormDataRequest(
-						template != null ? template.GetStaffRecipients() : new List<string>(),
-						template != null ? template.GetGroupRecipients() : new List<string>());
+						_selectedTemplate != null ? _selectedTemplate.GetStaffRecipients() : new List<string>(),
+						_selectedTemplate != null ? _selectedTemplate.GetGroupRecipients() : new List<string>());
 					formDataResponse = service.GetConversationEditorFormData(formDataRequest);
 
-					var request = new GetConversationRequest(_orderRef, _orderNoteCategories, false);
+					var request = new GetConversationRequest(_orderRef, new List<string>(_orderNoteCategories), false);
 					var response = service.GetConversation(request);
 
 					_orderRef = response.OrderRef;
 					orderNotes = response.OrderNotes;
 				});
 
+			_newConversation = orderNotes.Count == 0;
+
 
 			// init on-behalf of choices
 			_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
 			_onBehalfOfChoices.Insert(0, _emptyStaffGroup);
 
-			// Set default on-behalf of
-			_onBehalfOf = ComputeOnBehalfOf(template, orderNotes);
-
-			// Set default recipients list, either based on the existing conversation, or from template if new conversation
-			InitializeRecipients(orderNotes, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups, _onBehalfOf);
+			// if there is no existing conversation, and there is a selected template, use it to initialize the fields
+			if (_newConversation && _selectedTemplate != null)
+			{
+				InitializeFromTemplate(_selectedTemplate, formDataResponse.RecipientStaffs, formDataResponse.RecipientStaffGroups);
+			}
+			else
+			{
+				// otherwise initialize fields as a reply based on existing notes
+				InitializeReply(orderNotes);
+			}
 
 			// build the action model
 			_recipientsActionModel = new CrudActionModel(true, false, true, new ResourceResolver(this.GetType(), true));
@@ -242,6 +259,37 @@ namespace ClearCanvas.Ris.Client
 		public ApplicationComponentHost OrderNotesHost
 		{
 			get { return _orderNotesComponentHost; }
+		}
+
+		public IList TemplateChoices
+		{
+			get { return _templateChoices; }
+		}
+
+		public bool TemplateChoicesVisible
+		{
+			get { return _newConversation && _templateChoices.Count > 1; }
+		}
+
+		public object FormatTemplate(object p)
+		{
+			var template = (TemplateData) p;
+			return template.DisplayName;
+		}
+
+		public object SelectedTemplate
+		{
+			get { return _selectedTemplate; }
+			set
+			{
+				if(!Equals(value, _selectedTemplate))
+				{
+					_selectedTemplate = (TemplateData) value;
+					NotifyPropertyChanged("SelectedTemplate");
+					InitializeFromTemplate(_selectedTemplate);
+					UpdateSoftKeys(_selectedTemplate);
+				}
+			}
 		}
 
 		public string Body
@@ -424,58 +472,81 @@ namespace ClearCanvas.Ris.Client
 			get { return string.IsNullOrEmpty(_body); }
 		}
 
-		private StaffGroupSummary ComputeOnBehalfOf(TemplateData template, List<OrderNoteDetail> orderNotes)
+		private void UpdateSoftKeys(TemplateData template)
 		{
-			// if this is a new note, and we have a template, use the template,
-			// otherwise use the saved setting
-			if (orderNotes.Count == 0 && template != null)
+			_softKeys.Clear();
+
+			// add default soft keys
+			_softKeys.AddRange(_defaultSoftKeys);
+
+			// template may define additional soft keys
+			if (template != null)
 			{
-				// take from template, and update the user prefs
-				var groupName = template.OnBehalfOfGroup;
-				OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = groupName;
-				OrderNoteConversationComponentSettings.Default.Save();
-
-				return CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
+				_softKeys.AddRange(template.SoftKeys);
 			}
-			else
-			{
-				// attempt to deduce the value based on the existing notes
 
-				// find all staff groups with acknowledgements pending, which the current user belongs to
-				var myGroupsPendingAck = AggregateRecipients(orderNotes,
-											n => n.GroupRecipients,
-											gr => !gr.IsAcknowledged,
-											gr => gr.Group,
-											g => _onBehalfOfChoices.Contains(g));
-
-				// get the saved 'preferred' group
-				var preferredGroup = CollectionUtils.SelectFirst(_onBehalfOfChoices,
-					g => g.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
-
-				// use preferred group if a) it is one of those pending ack, or b) there are no pending acks,
-				// otherwise just take the 1st group pending ack
-				return (preferredGroup != null && myGroupsPendingAck.Contains(preferredGroup) || myGroupsPendingAck.Count == 0) ?
-										preferredGroup : CollectionUtils.FirstElement(myGroupsPendingAck);
-			}
+			NotifyPropertyChanged("SoftKeyNames");
 		}
 
-		private void InitializeRecipients(
-			List<OrderNoteDetail> orderNotes,
-			List<StaffSummary> templateStaffs,
-			List<StaffGroupSummary> templateGroups,
-			StaffGroupSummary onBehalfOf)
+		private void InitializeFromTemplate(TemplateData template)
 		{
-			// if this is a new note, initialize from template
-			if(orderNotes.Count == 0)
+			var staffRecips = new List<StaffSummary>();
+			var groupRecips = new List<StaffGroupSummary>();
+			var staffRecipIds = template.GetStaffRecipients();
+			var groupRecipIds = template.GetGroupRecipients();
+			if (staffRecipIds.Count > 0 || groupRecipIds.Count > 0)
 			{
-				_recipients.AddRange(templateStaffs, true);
-				_recipients.AddRange(templateGroups, true);
-				return;
+				// load the recipient staff/groups defined in the template
+				Platform.GetService<IOrderNoteService>(
+					service =>
+					{
+						var formDataRequest = new GetConversationEditorFormDataRequest(staffRecipIds, groupRecipIds);
+						var formDataResponse = service.GetConversationEditorFormData(formDataRequest);
+						staffRecips = formDataResponse.RecipientStaffs;
+						groupRecips = formDataResponse.RecipientStaffGroups;
+					});
 			}
 
-			// otherwise it is a reply, so compute the recipients based on the following rules
+			InitializeFromTemplate(template, staffRecips, groupRecips);
+		}
+
+		private void InitializeFromTemplate(TemplateData template,
+			List<StaffSummary> templateStaffs,
+			List<StaffGroupSummary> templateGroups)
+		{
+			// take from template, and update the user prefs
+			var groupName = template.OnBehalfOfGroup;
+			OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName = groupName;
+			OrderNoteConversationComponentSettings.Default.Save();
+
+			_onBehalfOf = CollectionUtils.SelectFirst(_onBehalfOfChoices, group => group.Name == groupName);
+
+			_recipients.Items.Clear();
+			_recipients.AddRange(templateStaffs, true);
+			_recipients.AddRange(templateGroups, true);
+		}
+
+		private void InitializeReply(List<OrderNoteDetail> orderNotes)
+		{
+			// find all staff groups with acknowledgements pending, which the current user belongs to
+			var myGroupsPendingAck = AggregateRecipients(orderNotes,
+										n => n.GroupRecipients,
+										gr => !gr.IsAcknowledged,
+										gr => gr.Group,
+										g => _onBehalfOfChoices.Contains(g));
+
+			// get the saved 'preferred' group
+			var preferredGroup = CollectionUtils.SelectFirst(_onBehalfOfChoices,
+				g => g.Name == OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName);
+
+			// use preferred group if a) it is one of those pending ack, or b) there are no pending acks,
+			// otherwise just take the 1st group pending ack
+			_onBehalfOf = (preferredGroup != null && myGroupsPendingAck.Contains(preferredGroup) || myGroupsPendingAck.Count == 0) ?
+									preferredGroup : CollectionUtils.FirstElement(myGroupsPendingAck);
+
+			// compute the recipients based on the following rules
 			var ackableNotes = CollectionUtils.Select(orderNotes, n => n.CanAcknowledge);
-			var sendersPendingAck = CollectionUtils.Map<OrderNoteDetail, object>(ackableNotes, n => n.OnBehalfOfGroup ?? (object) n.Author);
+			var sendersPendingAck = CollectionUtils.Map<OrderNoteDetail, object>(ackableNotes, n => n.OnBehalfOfGroup ?? (object)n.Author);
 
 			// 1. add any senders (staff or groups) of notes that current user can ack
 			// these recips are checked by default
@@ -488,7 +559,7 @@ namespace ClearCanvas.Ris.Client
 										n => n.GroupRecipients,
 										gr => true,
 										gr => gr.Group,
-										g => !Equals(g, onBehalfOf) && !sendersPendingAck.Contains(g));
+										g => !Equals(g, _onBehalfOf) && !sendersPendingAck.Contains(g));
 			_recipients.AddRange(otherGroups, false);
 
 

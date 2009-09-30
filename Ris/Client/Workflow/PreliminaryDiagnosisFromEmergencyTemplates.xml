@@ -1,0 +1,15 @@
+﻿<TemplateDefinitions hash="true">
+  <Templates array="true">
+    <item hash="true">
+      <DisplayName>To Radiology</DisplayName>
+      <OnBehalfOfGroup>ER Physician</OnBehalfOfGroup>
+      <Recipients array="true">
+        <item hash="true">
+          <Type>Group</Type>
+          <Id>Radiology Department</Id>
+        </item>
+      </Recipients>
+      <SoftKeys/>
+    </item>
+  </Templates>
+</TemplateDefinitions>

@@ -34,12 +34,6 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			/// <summary>
-			/// The unique ID of the template.
-			/// </summary>
-			[DataMember]
-			public string TemplateId;
-
-			/// <summary>
 			/// The display name of the template, that is presented to the user.
 			/// </summary>
 			[DataMember]
@@ -110,15 +104,38 @@ namespace ClearCanvas.Ris.Client
 			public string InsertText;
 		}
 
-		/// <summary>
-		/// Gets the specified template, or null if it does not exist.
-		/// </summary>
-		/// <param name="templateId"></param>
-		/// <returns></returns>
-		private static TemplateData LoadTemplate(string templateId)
+		[DataContract]
+		class SoftKeysData
 		{
-			var templatesData = JsmlSerializer.Deserialize<TemplatesData>(OrderNoteConversationComponentSettings.Default.TemplatesXml);
-			return CollectionUtils.SelectFirst(templatesData.Templates, t => t.TemplateId == templateId);
+			/// <summary>
+			/// Set of soft keys.
+			/// </summary>
+			[DataMember]
+			public List<SoftKeyData> SoftKeys;
+		}
+
+		/// <summary>
+		/// Parses templates XML document.
+		/// </summary>
+		private static List<TemplateData> LoadTemplates(string templatesXml)
+		{
+			if(string.IsNullOrEmpty(templatesXml))
+				return new List<TemplateData>();
+
+			var templatesData = JsmlSerializer.Deserialize<TemplatesData>(templatesXml);
+			return templatesData.Templates;
+		}
+
+		/// <summary>
+		/// Parses soft keys XML document.
+		/// </summary>
+		private static List<SoftKeyData> LoadSoftKeys(string softKeysXml)
+		{
+			if (string.IsNullOrEmpty(softKeysXml))
+				return new List<SoftKeyData>();
+
+			var data = JsmlSerializer.Deserialize<SoftKeysData>(softKeysXml);
+			return data.SoftKeys;
 		}
 	}
 }

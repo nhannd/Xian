@@ -70,13 +70,13 @@ namespace ClearCanvas.Ris.Client.Workflow
         /// <param name="orderRef"></param>
         /// <param name="title"></param>
         /// <param name="desktopWindow"></param>
-        /// <param name="templateId"></param>
         /// <returns></returns>
         public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title,
-			IDesktopWindow desktopWindow, string templateId)
+			IDesktopWindow desktopWindow)
         {
         	var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
-        	                                                   templateId);
+															   PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplatesXml,
+															   PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisSoftKeysXml);
         	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
         }
     }

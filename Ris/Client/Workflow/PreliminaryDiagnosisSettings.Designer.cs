@@ -23,21 +23,55 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// XML document that defines the templates available when accessed from Reporting.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document that defines the templates available when accessed from Reporting.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PrelimDiagnosisFromRadiology")]
-        public string RadiologyDiagnosisTemplateId {
+        [global::System.Configuration.DefaultSettingValueAttribute("PreliminaryDiagnosisFromRadiologyTemplates.xml")]
+        public string RadiologyDiagnosisTemplatesXml {
             get {
-                return ((string)(this["RadiologyDiagnosisTemplateId"]));
+                return ((string)(this["RadiologyDiagnosisTemplatesXml"]));
             }
         }
         
+        /// <summary>
+        /// XML document that defines the templates available when accessed from Emergency.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document that defines the templates available when accessed from Emergency.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PrelimDiagnosisFromEmergency")]
-        public string EmergencyDiagnosisTemplateId {
+        [global::System.Configuration.DefaultSettingValueAttribute("PreliminaryDiagnosisFromEmergencyTemplates.xml")]
+        public string EmergencyDiagnosisTemplatesXml {
             get {
-                return ((string)(this["EmergencyDiagnosisTemplateId"]));
+                return ((string)(this["EmergencyDiagnosisTemplatesXml"]));
+            }
+        }
+        
+        /// <summary>
+        /// XML document that defines the soft-keys available when accessed from Reporting.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document that defines the soft-keys available when accessed from Reporting.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PreliminaryDiagnosisFromRadiologySoftKeys.xml")]
+        public string RadiologyDiagnosisSoftKeysXml {
+            get {
+                return ((string)(this["RadiologyDiagnosisSoftKeysXml"]));
+            }
+        }
+        
+        /// <summary>
+        /// XML document that defines the soft-keys available when accessed from Emergency.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("XML document that defines the soft-keys available when accessed from Emergency.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PreliminaryDiagnosisFromEmergencySoftKeys.xml")]
+        public string EmergencyDiagnosisSoftKeysXml {
+            get {
+                return ((string)(this["EmergencyDiagnosisSoftKeysXml"]));
             }
         }
     }

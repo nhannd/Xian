@@ -30,13 +30,13 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Controls the behaviour of the Preliminary Diagnosis workflow.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class PreliminaryDiagnosisSettings
 	{

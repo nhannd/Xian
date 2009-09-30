@@ -34,18 +34,5 @@ namespace ClearCanvas.Ris.Client {
                 this["PreferredOnBehalfOfGroupName"] = value;
             }
         }
-        
-        /// <summary>
-        /// XML document specifying templates for component initialization.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("XML document specifying templates for component initialization.")]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("OrderNoteConversationComponentSettingsTemplates.xml")]
-        public string TemplatesXml {
-            get {
-                return ((string)(this["TemplatesXml"]));
-            }
-        }
     }
 }

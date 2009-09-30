@@ -36,6 +36,7 @@ using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Ris.Client;
 using System;
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -61,6 +62,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			orderNotes.Dock = DockStyle.Fill;
 			_orderNotesPanel.Controls.Add(orderNotes);
 
+			_templateSelectionPanel.Visible = _component.TemplateChoicesVisible;
+			_template.DataSource = _component.TemplateChoices;
+			_template.DataBindings.Add("Value", _component, "SelectedTemplate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_template.Format += (source, e) => e.Value = _component.FormatTemplate(e.ListItem);
+
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cannedTextSupport = new CannedTextSupport(_replyBody, _component.CannedTextLookupHandler);
 
@@ -85,20 +91,32 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_component.NewRecipientAdded += _component_NewRecipientAdded;
 
-			InitialiseSoftKeys();
+			CreateSoftKeys();
 		}
 
-		private void InitialiseSoftKeys()
+		private void CreateSoftKeys()
 		{
+			ClearSoftKeys();
+
 			_softKeyFlowPanel.Visible = _component.SoftKeysVisible;
 
-			CollectionUtils.ForEach(_component.SoftKeyNames, 
-				delegate(string name)
-					{
-						var softKeyButton = new Button {Text = name, AutoEllipsis = true};
-						softKeyButton.Click += softKeyButton_Click;
-						_softKeyFlowPanel.Controls.Add(softKeyButton);
-					});
+			foreach (var name in _component.SoftKeyNames)
+			{
+				var softKeyButton = new Button { Text = name, AutoEllipsis = true };
+				softKeyButton.Click += softKeyButton_Click;
+				_softKeyFlowPanel.Controls.Add(softKeyButton);
+			}
+		}
+
+		private void ClearSoftKeys()
+		{
+			foreach (Button button in _softKeyFlowPanel.Controls)
+			{
+				button.Click -= softKeyButton_Click;
+				button.Dispose();
+			}
+
+			_softKeyFlowPanel.Controls.Clear();
 		}
 
 		private void softKeyButton_Click(object sender, EventArgs e)
@@ -118,6 +136,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			if (e.PropertyName == "CompleteButtonLabel")
 			{
 				_completeButton.Text = _component.CompleteButtonLabel;
+			}
+			if(e.PropertyName == "SoftKeyNames")
+			{
+				CreateSoftKeys();
 			}
 		}
 

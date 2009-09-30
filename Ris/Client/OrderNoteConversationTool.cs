@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Specifies an enumeration of <see cref="OrderNoteCategory"/> which will be displayed in the <see cref="OrderNoteConversationComponent"/>
 		/// </summary>
-		protected abstract IEnumerable<string> OrderNoteCategories { get; }
+		protected abstract string[] OrderNoteCategories { get; }
 
 		/// <summary>
 		/// The first <see cref="TSummaryItem"/> in the current <see cref="TToolContext"/>
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				var component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories, this.TemplateId);
+				var component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories, this.TemplatesXml, this.SoftKeysXml);
 				var exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
 					component,
 					GetTitle());
@@ -120,9 +120,14 @@ namespace ClearCanvas.Ris.Client
 		{
 		}
 
-		protected virtual string TemplateId
+		protected virtual string TemplatesXml
 		{
-			get { return ""; }
+			get { return null; }
+		}
+
+		protected virtual string SoftKeysXml
+		{
+			get { return null; }
 		}
 
 		private string GetTitle()
@@ -179,7 +184,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		protected override IEnumerable<string> OrderNoteCategories
+		protected override string[] OrderNoteCategories
 		{
 			get { return new [] { this.SummaryItem.Category }; }
 		}

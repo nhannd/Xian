@@ -263,8 +263,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (ApplicationComponentExitCode.None == PreliminaryDiagnosis.ShowConversationDialog(
 						item.OrderRef,
 						title,
-						this.Context.DesktopWindow,
-						PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplateId))
+						this.Context.DesktopWindow))
 				{
 					return false; // user cancelled out
 				}
