@@ -80,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				case "Interpretation":
 				case "Transcription":
+				case "Transcriptioni Review":
 				case "Verification":
 				case "Publication":
 					return WebResourcesSettings.Default.ReportingFolderSystemUrl;

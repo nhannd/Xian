@@ -59,6 +59,13 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		{
 		}
 
+		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingAdminToBeTranscribedWorklist)]
+		[FolderPath("To Be Transcribed Items", true)]
+		public class ReportingAdminToBeTranscribedWorklist : ReportingWorkflowFolder
+		{
+		}
+
 		[FolderPath("Search Results")]
 		public class RadiologistAdminSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
 		{

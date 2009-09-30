@@ -5,4 +5,5 @@
   <subclass name="ReportingAdminUnreportedWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_ADMIN_UNREPORTED"/>
   <subclass name="ReportingAdminAssignedWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_ADMIN_ASSIGNED"/>
   <subclass name="ProtocollingAdminAssignedWorklist" extends="ReportingWorklist" discriminator-value="PROTOCOLLING_ADMIN_ASSIGNED"/>
+  <subclass name="ReportingAdminToBeTranscribedWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_ADMIN_TOBETRANSCRIBED"/>
 </hibernate-mapping>

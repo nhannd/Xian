@@ -619,7 +619,7 @@ Preview.ProtocolProceduresTable = function () {
 Preview.ReportingProceduresTable = function () {
 	var _getActiveReportingStep = function(procedure)
 	{
-		var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "VerificationStep", "PublicationStep"];
+		var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "TranscriptionReviewStep", "VerificationStep", "PublicationStep"];
 		var activeStatusCode = ["SC", "IP"];
 		var isActiveReportingStep = function(step) { return reportingStepNames.indexOf(step.StepClassName) >= 0 && activeStatusCode.indexOf(step.State.Code) >= 0; };
 		return procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();

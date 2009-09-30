@@ -402,6 +402,12 @@
   <data name="ReportingAdminAssignedWorklistDescription" xml:space="preserve">
     <value>Lists active procedures that are currently in reporting by a radiologist.</value>
   </data>
+  <data name="ReportingAdminToBeTranscribedWorklist" xml:space="preserve">
+    <value>To Be Transcribed</value>
+  </data>
+  <data name="ReportingAdminToBeTranscribedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been reported but not yet transcribed.</value>
+  </data>
   <data name="ReportingAdminUnreportedWorklist" xml:space="preserve">
     <value>Un-reported</value>
   </data>
