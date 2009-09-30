@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private GraphicState _newState;
 		private IMouseInformation _mouseInformation;
 
-		internal GraphicStateChangedEventArgs()
+		public GraphicStateChangedEventArgs()
 		{
 
 		}
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public IStatefulGraphic StatefulGraphic
 		{
 			get { return _statefulGraphic; }
-			internal set { _statefulGraphic = value; }
+			set { _statefulGraphic = value; }
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public GraphicState OldState
 		{
 			get { return _oldState; }
-			internal set { _oldState = value; }
+			set { _oldState = value; }
 		}
 
 		/// <summary>
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public GraphicState NewState
 		{
 			get { return _newState; }
-			internal set 
+			set 
 			{
 				Platform.CheckForNullReference(value, "NewState");
 				_newState = value; 
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public IMouseInformation MouseInformation
 		{
 			get { return _mouseInformation; }
-			internal set { _mouseInformation = value; }
+			set { _mouseInformation = value; }
 		}
 	}
 }

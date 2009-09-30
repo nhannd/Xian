@@ -309,7 +309,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the context menu <see cref="ActionModelNode"/> based on the current state of the mouse.
 		/// </summary>
-		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		public virtual ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
 			IActionSet actions = this.GetExportedActions("basicgraphic-menu", mouseInformation);
 			if (actions == null || actions.Count == 0)

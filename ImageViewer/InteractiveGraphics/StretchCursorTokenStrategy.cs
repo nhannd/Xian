@@ -58,10 +58,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// The target <see cref="Graphic"/> for which the <see cref="CursorToken"/>
 		/// is to be determined.
 		/// </summary>
-		protected internal IGraphic TargetGraphic
+		public IGraphic TargetGraphic
 		{
 			get { return _targetGraphic; }
-			internal set { _targetGraphic = value; }
+			set { _targetGraphic = value; }
 		}
 
 		#region ICursorTokenProvider Members
