@@ -132,7 +132,13 @@ namespace ClearCanvas.ImageServer.Core
 			get { return _failureReason; }
 			set { _failureReason = value; }
 		}
-		#endregion
+
+        /// <summary>
+        /// Gets the new <see cref="StudyStorageLocation"/> for the study after it is updated.
+        /// </summary>
+        public StudyStorageLocation NewStorageLocation { get; private set; }
+
+	    #endregion
 
 		#region Constructors
 		/// <summary>
@@ -264,7 +270,9 @@ namespace ClearCanvas.ImageServer.Core
 
 				if (processor.Execute())
 				{
-					context.NewStudystorageLocation = context.OriginalStudyStorageLocation; //won't change
+                    // reload the StudyStorageLocation
+                    NewStorageLocation = StudyStorageLocation.FindStorageLocations(StorageLocation.StudyStorage)[0];
+                    context.NewStudystorageLocation = NewStorageLocation;
 
 					OnStudyUpdated(context);
 

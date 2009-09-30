@@ -94,7 +94,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 					}
 					else
 					{
-						Complete();
+                        // update this to reflect any changes to the storage location, eg Study Folder
+					    StorageLocation = editor.NewStorageLocation;
+                        Platform.CheckForNullReference(StorageLocation, "StorageLocation"); 
+                        Complete();
 					}
 				}
 			}

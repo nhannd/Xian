@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageServer.Model
         public StudyStorageLocation(StudyStorageLocation original)
             : base("StudyStorageLocation")
         {
+            this.SetKey(original.Key);
             this.Enabled = original.Enabled;
             this.FilesystemKey = original.FilesystemKey;
             this.FilesystemPath = original.FilesystemPath;
@@ -765,5 +766,6 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         #endregion
+
     }
 }
