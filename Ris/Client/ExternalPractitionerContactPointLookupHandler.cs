@@ -69,20 +69,17 @@ namespace ClearCanvas.Ris.Client
 
 			ExternalPractitionerDetail practitionerDetail = null;
 			Platform.GetService<IExternalPractitionerAdminService>(
-				delegate(IExternalPractitionerAdminService service)
+				service =>
 				{
-					LoadExternalPractitionerForEditResponse response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(_practitionerRef));
+					var response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(_practitionerRef));
 					practitionerDetail = response.PractitionerDetail;
 				});
 
-			ExternalPractitionerContactPointSummaryComponent component = new ExternalPractitionerContactPointSummaryComponent(_practitionerRef);
+			var component = new ExternalPractitionerContactPointSummaryComponent(_practitionerRef);
 
-			practitionerDetail.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p)
-													  {
-														  component.Subject.Add(p);
-													  });
+			practitionerDetail.ContactPoints.ForEach(p => component.Subject.Add(p));
 
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			var exitCode = ApplicationComponent.LaunchAsDialog(
 				_desktopWindow, component, SR.TitleContactPoints);
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)

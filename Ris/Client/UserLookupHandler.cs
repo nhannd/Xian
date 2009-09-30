@@ -64,13 +64,13 @@ namespace ClearCanvas.Ris.Client
 		{
 			result = null;
 
-			UserSummaryComponent userComponent = new UserSummaryComponent(true);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			var userComponent = new UserSummaryComponent(true);
+			var exitCode = ApplicationComponent.LaunchAsDialog(
 				_desktopWindow, userComponent, SR.TitleUser);
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				UserSummary summary = (UserSummary) userComponent.SummarySelection.Item;
+				var summary = (UserSummary) userComponent.SummarySelection.Item;
 				result = new UserLookupData(summary.UserName);
 			}
 

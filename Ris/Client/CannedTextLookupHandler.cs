@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client
         bool ILookupHandler.Resolve(string query, bool interactive, out object result)
         {
             CannedText cannedText;
-            bool resolved = interactive
+            var resolved = interactive
                 ? ResolveNameInteractive(query, out cannedText)
                 : ResolveName(query, out cannedText);
 
@@ -188,17 +188,17 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 Platform.GetService<ICannedTextService>(
-                    delegate(ICannedTextService service)
-                    {
-                        LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(
-                            new LoadCannedTextForEditRequest(
-                                cannedText.Name,
-                                cannedText.Category,
-                                cannedText.StaffId,
-                                cannedText.StaffGroupName));
+                	service =>
+                	{
+                		var response = service.LoadCannedTextForEdit(
+                			new LoadCannedTextForEditRequest(
+                				cannedText.Name,
+                				cannedText.Category,
+                				cannedText.StaffId,
+                				cannedText.StaffGroupName));
 
-                        fullText = response.CannedTextDetail.Text;
-                    });
+                		fullText = response.CannedTextDetail.Text;
+                	});
             }
             catch (Exception e)
             {
@@ -210,24 +210,22 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private bool ResolveName(string query, out CannedText result)
+        private static bool ResolveName(string query, out CannedText result)
         {
             result = null;
             CannedTextSummary cannedText = null;
             Platform.GetService<ICannedTextService>(
-                delegate(ICannedTextService service)
-                {
-                    // Ask for maximum of 2 rows
-                    ListCannedTextRequest request = new ListCannedTextRequest();
-                    request.Name = query;
-                    request.Page = new SearchResultPage(-1, 2);
+            	service =>
+            	{
+            		// Ask for maximum of 2 rows
+            		var request = new ListCannedTextRequest {Name = query, Page = new SearchResultPage(-1, 2)};
 
-                    ListCannedTextResponse response = service.ListCannedText(request);
+            		var response = service.ListCannedText(request);
 
-                    // the name is resolved only if there is one match
-                    if (response.CannedTexts.Count == 1)
-                        cannedText = CollectionUtils.FirstElement(response.CannedTexts);
-                });
+            		// the name is resolved only if there is one match
+            		if (response.CannedTexts.Count == 1)
+            			cannedText = CollectionUtils.FirstElement(response.CannedTexts);
+            	});
 
             if (cannedText != null)
                 result = new CannedText(cannedText);
@@ -239,13 +237,13 @@ namespace ClearCanvas.Ris.Client
         {
             result = null;
 
-            CannedTextSummaryComponent cannedTextComponent = new CannedTextSummaryComponent(true, query);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+            var cannedTextComponent = new CannedTextSummaryComponent(true, query);
+            var exitCode = ApplicationComponent.LaunchAsDialog(
                 _desktopWindow, cannedTextComponent, SR.TitleCannedText);
 
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
-                CannedTextSummary summary = (CannedTextSummary)cannedTextComponent.SummarySelection.Item;
+                var summary = (CannedTextSummary)cannedTextComponent.SummarySelection.Item;
                 result = new CannedText(summary);
             }
 

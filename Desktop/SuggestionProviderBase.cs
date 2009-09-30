@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -110,7 +109,7 @@ namespace ClearCanvas.Desktop
 					return CollectionUtils.Select(shortList,
 						delegate(TItem item)
 						{
-							string itemString = formatter(item);
+							var itemString = formatter(item);
 							return itemString.StartsWith(query, StringComparison.CurrentCultureIgnoreCase);
 						});
 				}
@@ -123,20 +122,16 @@ namespace ClearCanvas.Desktop
 				public IList<TItem> Refine(IList<TItem> shortList, string query, Converter<TItem, string> formatter)
 				{
 					// break query up into keywords
-					List<string> keywords =
-						CollectionUtils.Map<Match, string>(_termDefinition.Matches(query), delegate(Match m) { return m.Value; });
+					var keywords = CollectionUtils.Map(_termDefinition.Matches(query), (Match m) => m.Value);
 
 					// refine the short-list
 					return CollectionUtils.Select(shortList,
 						delegate(TItem item)
 						{
 							// for an item to be included, the formatted string must contain *all* keywords
-							string itemString = formatter(item);
+							var itemString = formatter(item);
 							return CollectionUtils.TrueForAll(keywords,
-								delegate(string kw)
-								{
-									return Regex.Match(itemString, @"\b" + Regex.Escape(kw), RegexOptions.IgnoreCase).Success;
-								});
+								kw => Regex.Match(itemString, @"\b" + Regex.Escape(kw), RegexOptions.IgnoreCase).Success);
 						});
 				}
 			}
@@ -152,7 +147,8 @@ namespace ClearCanvas.Desktop
 		abstract class State
 		{
 			protected readonly SuggestionProviderBase<TItem> _owner;
-			public State(SuggestionProviderBase<TItem> owner)
+
+			protected State(SuggestionProviderBase<TItem> owner)
 			{
 				_owner = owner;
 			}
@@ -217,7 +213,7 @@ namespace ClearCanvas.Desktop
 					{
 						try
 						{
-							IList<TItem> results = _owner.GetShortList(_query);
+							var results = _owner.GetShortList(_query);
 							context.Complete(results);
 						}
 						catch (Exception e)
@@ -245,7 +241,7 @@ namespace ClearCanvas.Desktop
 				}
 				else
 				{
-					IList<TItem> shortlist = (IList<TItem>)e.Result;
+					var shortlist = (IList<TItem>)e.Result;
 					if(shortlist == null)
 					{
 						// the request did not return a shortlist
@@ -309,7 +305,7 @@ namespace ClearCanvas.Desktop
 			{
 				if(query == _query || _owner.IsQueryRefinement(query, _query))
 				{
-					IList<TItem> refinedList = _owner.RefineShortList(_shortlist, query);
+					var refinedList = _owner.RefineShortList(_shortlist, query);
 					_owner.PostSuggestions(refinedList);
 				}
 				else
@@ -464,7 +460,7 @@ namespace ClearCanvas.Desktop
 		/// Posts the specified list of suggested items to the consumer of this provider.
 		/// </summary>
 		/// <param name="suggestions"></param>
-		private void PostSuggestions(IList<TItem> suggestions)
+		private void PostSuggestions(IEnumerable<TItem> suggestions)
 		{
 			EventsHelper.Fire(_suggestionsProvided, this, new SuggestionsProvidedEventArgs(new List<TItem>(suggestions)));
 		}
