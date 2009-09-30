@@ -702,21 +702,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (SupervisorIsInvalid())
 					return;
 
-				// check for a prelim diagnosis
-				if (PreliminaryDiagnosis.ShouldShowDialog(this.WorklistItem.OrderRef, this.WorklistItem.PatientClass.Code))
-				{
-					var title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
-						PersonNameFormat.Format(this.WorklistItem.PatientName),
-						MrnFormat.Format(this.WorklistItem.Mrn),
-						AccessionFormat.Format(this.WorklistItem.AccessionNumber));
 
-					if (ApplicationComponentExitCode.None == PreliminaryDiagnosis.ShowConversationDialog(
-							this.WorklistItem.OrderRef,
-							title,
-							this.Host.DesktopWindow))
-					{
-						return; // user cancelled out
-					}
+				if (!PreliminaryDiagnosis.ShowDialogIfRequired(this.WorklistItem, this.Host.DesktopWindow))
+				{
+					return; // user cancelled out
 				}
 
 				if (_canCompleteInterpretationAndVerify)

@@ -252,21 +252,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
-			// check for a prelim diagnosis
-			if (PreliminaryDiagnosis.ShouldShowDialog(item.OrderRef, item.PatientClass.Code))
+			// show PD dialog if required
+			if (!PreliminaryDiagnosis.ShowDialogIfRequired(item, this.Context.DesktopWindow))
 			{
-				string title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
-					PersonNameFormat.Format(item.PatientName),
-					MrnFormat.Format(item.Mrn),
-					AccessionFormat.Format(item.AccessionNumber));
-
-				if (ApplicationComponentExitCode.None == PreliminaryDiagnosis.ShowConversationDialog(
-						item.OrderRef,
-						title,
-						this.Context.DesktopWindow))
-				{
-					return false; // user cancelled out
-				}
+				return false; // user cancelled out
 			}
 
 			try

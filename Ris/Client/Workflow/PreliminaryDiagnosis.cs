@@ -35,49 +35,70 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
     static class PreliminaryDiagnosis
     {
-        /// <summary>
-        /// Gets a value indicating whether a preliminary diagnosis dialog should appear.
-        /// </summary>
-        /// <param name="orderRef"></param>
-		/// <param name="patientClassCode"></param>
-		/// <returns></returns>
-        public static bool ShouldShowDialog(EntityRef orderRef, string patientClassCode)
-        {
-            var show = false;
-            var filters = new List<string>(new [] { OrderNoteCategory.PreliminaryDiagnosis.Key });
-            Platform.GetService<IOrderNoteService>(
-            	service => show = service.GetConversation(new GetConversationRequest(orderRef, filters, true)).NoteCount > 0);
+		/// <summary>
+		/// Determines if the PD dialog must be shown upon verification, for the specified worklist item.
+		/// </summary>
+		/// <param name="worklistItem"></param>
+		/// <param name="desktopWindow"></param>
+		/// <returns>True if the dialog was shown and accepted, or if it was not required.  False if the user cancelled out of the dialog.</returns>
+		public static bool ShowDialogIfRequired(ReportingWorklistItem worklistItem, IDesktopWindow desktopWindow)
+		{
 
-			var patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
-			var patientClassCodesForReview = string.IsNullOrEmpty(patientClassFilters)
-				? new List<string>()
-				: CollectionUtils.Map(patientClassFilters.Split(','), (string s) => s.Trim());
+			var existingConv = ConversationExists(worklistItem.OrderRef);
 
-			if (patientClassCodesForReview.Contains(patientClassCode))
-				show = true;
+			// if no existing conversation, may not need to show the dialog
+			if(!existingConv)
+			{
+				// if this is not an emergency order, do not show the dialog
+				if (!IsEmergencyOrder(worklistItem.PatientClass.Code))
+					return true;
 
-			return show;
-        }
+				// otherwise, ask the user if they would like to initiate a PD review
+				var msg = string.Format(SR.MessageQueryPrelimDiagnosisReviewRequired, worklistItem.PatientClass.Value);
+				var action = desktopWindow.ShowMessageBox(msg, MessageBoxActions.YesNo);
+				if(action == DialogBoxAction.No)
+					return true;
+			}
 
-        /// <summary>
-        /// Displays the prelminary diagnosis conversation dialog.
-        /// </summary>
-        /// <param name="orderRef"></param>
-        /// <param name="title"></param>
-        /// <param name="desktopWindow"></param>
-        /// <returns></returns>
-        public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title,
-			IDesktopWindow desktopWindow)
-        {
-        	var component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
+			// show dialog
+			var title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
+				PersonNameFormat.Format(worklistItem.PatientName),
+				MrnFormat.Format(worklistItem.Mrn),
+				AccessionFormat.Format(worklistItem.AccessionNumber));
+
+			var component = new OrderNoteConversationComponent(worklistItem.OrderRef, OrderNoteCategory.PreliminaryDiagnosis.Key,
 															   PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisTemplatesXml,
 															   PreliminaryDiagnosisSettings.Default.RadiologyDiagnosisSoftKeysXml);
-        	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
-        }
-    }
+
+        	return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title) == ApplicationComponentExitCode.Accepted;
+		}
+
+		private static bool ConversationExists(EntityRef orderRef)
+		{
+			var filters = new List<string>(new[] { OrderNoteCategory.PreliminaryDiagnosis.Key });
+			var show = false;
+			Platform.GetService<IOrderNoteService>(
+				service => show = service.GetConversation(new GetConversationRequest(orderRef, filters, true)).NoteCount > 0);
+
+			return show;
+		}
+
+		private static bool IsEmergencyOrder(string patientClassCode)
+		{
+			var patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
+			var patientClassCodesForReview = string.IsNullOrEmpty(patientClassFilters)
+												? new List<string>()
+												: CollectionUtils.Map(patientClassFilters.Split(','), (string s) => s.Trim());
+
+			return patientClassCodesForReview.Contains(patientClassCode);
+		}
+
+	}
 }

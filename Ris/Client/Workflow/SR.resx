@@ -656,4 +656,7 @@
   <data name="TitleVisitSummaryComponent" xml:space="preserve">
     <value>Patient Visits - {0} {1}</value>
   </data>
+  <data name="MessageQueryPrelimDiagnosisReviewRequired" xml:space="preserve">
+    <value>You are about to verify a '{0}' procedure.  Is a preliminary diagnosis review required?</value>
+  </data>
 </root>
