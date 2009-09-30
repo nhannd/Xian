@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -152,15 +153,15 @@ namespace ClearCanvas.Ris.Client.Admin
 			get { return _typeChoices; }
 		}
 
-		public string Status
+		public EnumValueInfo Status
 		{
-			get { return _status.Value; }
-			set { _status = EnumValueUtils.MapDisplayValue(_statusChoices, value); }
+			get { return _status; }
+			set { _status = value; }
 		}
 
-		public List<string> StatusChoices
+		public IList StatusChoices
 		{
-			get { return EnumValueUtils.GetDisplayValues(_statusChoices); }
+			get { return _statusChoices; }
 		}
 
 		public void Clear()
@@ -169,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			this.EndTime = null;
 			this.User = null;
 			this.Type = _any.Value;
-			this.Status = _any.Value;
+			this.Status = _any;
 			NotifyPropertyChanged("Status");
 		}
 

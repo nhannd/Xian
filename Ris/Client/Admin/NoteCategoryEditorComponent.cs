@@ -131,21 +131,18 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
-        public List<string> SeverityChoices
+        public IList SeverityChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_severityChoices); }
+            get { return _severityChoices; }
         }
 
         [ValidateNotNull]
-        public string Severity
+        public EnumValueInfo Severity
         {
-            get { return _noteCategoryDetail.Severity == null ? "" : _noteCategoryDetail.Severity.Value; }
+            get { return _noteCategoryDetail.Severity; }
             set
             {
-                _noteCategoryDetail.Severity = (value == "") ? null : 
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_severityChoices,
-                        delegate(EnumValueInfo e) { return e.Value == value; });
-
+            	_noteCategoryDetail.Severity = value;
                 this.Modified = true;
             }
         }

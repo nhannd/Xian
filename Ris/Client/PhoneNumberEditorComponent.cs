@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -49,11 +50,11 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(PhoneNumbersEditorComponentViewExtensionPoint))]
     public class PhoneNumberEditorComponent : ApplicationComponent
     {
-        private TelephoneDetail _phoneNumber;
-        private readonly IList<EnumValueInfo> _phoneTypeChoices;
-        private bool _phoneTypeEnabled;
+        private readonly TelephoneDetail _phoneNumber;
+        private readonly List<EnumValueInfo> _phoneTypeChoices;
+        private readonly bool _phoneTypeEnabled;
 
-        public PhoneNumberEditorComponent(TelephoneDetail phoneNumber, IList<EnumValueInfo> phoneTypeChoices)
+        public PhoneNumberEditorComponent(TelephoneDetail phoneNumber, List<EnumValueInfo> phoneTypeChoices)
         {
             _phoneNumber = phoneNumber;
             _phoneTypeChoices = phoneTypeChoices;
@@ -118,20 +119,19 @@ namespace ClearCanvas.Ris.Client
         }
 
         [ValidateNotNull]
-        public string PhoneType
+        public EnumValueInfo PhoneType
         {
-            get { return _phoneNumber.Type.Value; }
+            get { return _phoneNumber.Type; }
             set
             {
-                _phoneNumber.Type = EnumValueUtils.MapDisplayValue(_phoneTypeChoices, value);
-
+                _phoneNumber.Type = value;
                 this.Modified = true;
             }
         }
 
-        public List<string> PhoneTypeChoices
+        public IList PhoneTypeChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_phoneTypeChoices); }
+            get { return _phoneTypeChoices; }
         }
 
         public DateTime? ValidFrom

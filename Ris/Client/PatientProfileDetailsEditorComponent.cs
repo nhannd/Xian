@@ -139,19 +139,19 @@ namespace ClearCanvas.Ris.Client
         }
 
         [ValidateNotNull]
-        public string Sex
+        public EnumValueInfo Sex
         {
-            get { return _profile.Sex.Value; }
+            get { return _profile.Sex; }
             set
             {
-                _profile.Sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
+                _profile.Sex = value;
                 this.Modified = true;
             }
         }
 
-        public List<string> SexChoices
+        public IList SexChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_sexChoices); }
+            get { return _sexChoices; }
         }
 
         public string DateOfBirthMask

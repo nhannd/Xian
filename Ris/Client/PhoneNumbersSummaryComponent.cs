@@ -40,9 +40,9 @@ namespace ClearCanvas.Ris.Client
 	public class PhoneNumbersSummaryComponent : SummaryComponentBase<TelephoneDetail, TelephoneNumberTable>
     {
         private IList<TelephoneDetail> _phoneNumberList;
-        private readonly IList<EnumValueInfo> _phoneTypeChoices;
+        private readonly List<EnumValueInfo> _phoneTypeChoices;
 
-        public PhoneNumbersSummaryComponent(IList<EnumValueInfo> phoneTypeChoices)
+        public PhoneNumbersSummaryComponent(List<EnumValueInfo> phoneTypeChoices)
 			: base(false)
         {
             _phoneTypeChoices = phoneTypeChoices;

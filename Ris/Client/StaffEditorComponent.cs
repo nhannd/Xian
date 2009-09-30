@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client
 					if (_isNew)
 					{
 						_staffDetail = new StaffDetail();
-						_staffDetail.StaffType = formDataResponse.StaffTypeChoices[0];
+						_staffDetail.StaffType = CollectionUtils.FirstElement(formDataResponse.StaffTypeChoices);
 					}
 					else
 					{

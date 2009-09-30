@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -47,11 +48,11 @@ namespace ClearCanvas.Ris.Client
     public class AddressEditorComponent : ApplicationComponent
     {
         private AddressDetail _address;
-        private readonly IList<EnumValueInfo> _addressTypes;
+        private readonly List<EnumValueInfo> _addressTypes;
         private readonly bool _addressTypeEnabled;
 
 
-        public AddressEditorComponent(AddressDetail address, IList<EnumValueInfo> addressTypes)
+        public AddressEditorComponent(AddressDetail address, List<EnumValueInfo> addressTypes)
         {
             _address = address;
             _addressTypes = addressTypes;
@@ -169,19 +170,19 @@ namespace ClearCanvas.Ris.Client
             get { return _addressTypeEnabled; }
         }
 
-        public string AddressType
+        public EnumValueInfo AddressType
         {
-            get { return _address.Type.Value; }
+            get { return _address.Type; }
             set
             {
-                _address.Type = EnumValueUtils.MapDisplayValue(_addressTypes, value);
+            	_address.Type = value;
                 this.Modified = true;
             }
         }
 
-        public List<string> AddressTypeChoices
+        public IList AddressTypeChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_addressTypes); }
+            get { return _addressTypes; }
         }
 
         public void Accept()

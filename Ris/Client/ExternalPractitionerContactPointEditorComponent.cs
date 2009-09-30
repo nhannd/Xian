@@ -53,14 +53,14 @@ namespace ClearCanvas.Ris.Client
         private AddressesSummaryComponent _addressesSummary;
         private PhoneNumbersSummaryComponent _phoneNumbersSummary;
 
-        private readonly IList<EnumValueInfo> _addressTypeChoices;
-        private readonly IList<EnumValueInfo> _phoneTypeChoices;
-        private readonly IList<EnumValueInfo> _resultCommunicationModeChoices;
+        private readonly List<EnumValueInfo> _addressTypeChoices;
+        private readonly List<EnumValueInfo> _phoneTypeChoices;
+        private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExternalPractitionerContactPointEditorComponent(ExternalPractitionerContactPointDetail contactPoint, IList<EnumValueInfo> addressTypeChoices, IList<EnumValueInfo> phoneTypeChoices, IList<EnumValueInfo> resultCommunicationModeChoices)
+        public ExternalPractitionerContactPointEditorComponent(ExternalPractitionerContactPointDetail contactPoint, List<EnumValueInfo> addressTypeChoices, List<EnumValueInfo> phoneTypeChoices, List<EnumValueInfo> resultCommunicationModeChoices)
         {
             _contactPointDetail = contactPoint;
             _addressTypeChoices = addressTypeChoices;

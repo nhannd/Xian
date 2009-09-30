@@ -60,12 +60,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_otherReason.DataBindings.Add("Value", _component, "OtherReason", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cannedTextSupport = new CannedTextSupport(_otherReason, _component.CannedTextLookupHandler);
 
-			_btnOK.DataBindings.Add("Enabled", _component, "OkayEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnOK.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _btnOK_Click(object sender, EventArgs e)
 		{
-			_component.Okay();
+			_component.Accept();
 		}
 
 		private void _btnCancel_Click(object sender, EventArgs e)

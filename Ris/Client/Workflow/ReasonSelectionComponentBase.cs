@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -78,25 +79,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _selectedReason; }
 		}
 
-		public string SelectedReasonChoice
+		public EnumValueInfo SelectedReasonChoice
 		{
-			get
-			{
-				return _selectedReason == null ? "" : _selectedReason.Value;
-			}
+			get { return _selectedReason; }
 			set
 			{
-				_selectedReason = (value == "")
-					? null
-					: CollectionUtils.SelectFirst<EnumValueInfo>(
-						_availableReasons,
-						delegate(EnumValueInfo reason) { return reason.Value == value; });
+				_selectedReason = value;
 			}
 		}
 
-		public List<string> ReasonChoices
+		public IList ReasonChoices
 		{
-			get { return EnumValueUtils.GetDisplayValues(_availableReasons); }
+			get { return _availableReasons; }
 		}
 
 		public string OtherReason
@@ -105,12 +99,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			set { _otherReason = value; }
 		}
 
-		public bool OkayEnabled
+		public bool AcceptEnabled
 		{
 			get { return _selectedReason != null; }
 		}
 
-		public void Okay()
+		public void Accept()
 		{
 			this.Exit(ApplicationComponentExitCode.Accepted);
 		}

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -57,13 +58,13 @@ namespace ClearCanvas.Ris.Client
     {
         private PatientProfileDetail _profile;
 
-        private IList<EnumValueInfo> _religionChoices;
-        private IList<EnumValueInfo> _languageChoices;
+        private readonly List<EnumValueInfo> _religionChoices;
+        private readonly List<EnumValueInfo> _languageChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientProfileAdditionalInfoEditorComponent(IList<EnumValueInfo> religionChoices, IList<EnumValueInfo> languageChoices)
+        public PatientProfileAdditionalInfoEditorComponent(List<EnumValueInfo> religionChoices, List<EnumValueInfo> languageChoices)
         {
             _languageChoices = languageChoices;
             _religionChoices = religionChoices;
@@ -87,34 +88,34 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public string Religion
+        public EnumValueInfo Religion
         {
-            get { return _profile.Religion.Value; }
+            get { return _profile.Religion; }
             set
             {
-                _profile.Religion = EnumValueUtils.MapDisplayValue(_religionChoices, value);
+                _profile.Religion = value;
                 this.Modified = true;
             }
         }
 
-        public IList<string> ReligionChoices
+        public IList ReligionChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_religionChoices); }
+            get { return _religionChoices; }
         }
 
-        public string Language
+        public EnumValueInfo Language
         {
-            get { return _profile.PrimaryLanguage.Value; }
+            get { return _profile.PrimaryLanguage; }
             set
             {
-                _profile.PrimaryLanguage = EnumValueUtils.MapDisplayValue(_languageChoices, value);
+                _profile.PrimaryLanguage = value;
                 this.Modified = true;
             }
         }
 
-        public IList<string> LanguageChoices
+        public IList LanguageChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_languageChoices); }
+            get { return _languageChoices; }
         }
 
         #endregion

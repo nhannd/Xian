@@ -40,10 +40,10 @@ namespace ClearCanvas.Ris.Client
 	public class ContactPersonsSummaryComponent : SummaryComponentBase<ContactPersonDetail, ContactPersonTable>
     {
         private IList<ContactPersonDetail> _contactPersonList;
-        private readonly IList<EnumValueInfo> _contactTypeChoices;
-        private readonly IList<EnumValueInfo> _contactRelationshipChoices;
+        private readonly List<EnumValueInfo> _contactTypeChoices;
+        private readonly List<EnumValueInfo> _contactRelationshipChoices;
         
-        public ContactPersonsSummaryComponent(IList<EnumValueInfo> contactTypeChoices, IList<EnumValueInfo> contactRelationshipChoices)
+        public ContactPersonsSummaryComponent(List<EnumValueInfo> contactTypeChoices, List<EnumValueInfo> contactRelationshipChoices)
 			: base(false)
         {
             _contactTypeChoices = contactTypeChoices;

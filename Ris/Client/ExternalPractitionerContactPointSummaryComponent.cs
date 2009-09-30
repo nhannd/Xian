@@ -100,9 +100,9 @@ namespace ClearCanvas.Ris.Client
     	private readonly EntityRef _practitionerRef;
 		private Action _mergeContactPointAction;
 
-        private readonly IList<EnumValueInfo> _addressTypeChoices;
-        private readonly IList<EnumValueInfo> _phoneTypeChoices;
-        private readonly IList<EnumValueInfo> _resultCommunicationModeChoices;
+        private readonly List<EnumValueInfo> _addressTypeChoices;
+        private readonly List<EnumValueInfo> _phoneTypeChoices;
+        private readonly List<EnumValueInfo> _resultCommunicationModeChoices;
 		private readonly string _practitionerName;
         private readonly bool _supportsMergingOnly;
 
@@ -111,9 +111,9 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public ExternalPractitionerContactPointSummaryComponent(
 			EntityRef practitionerRef,
-			IList<EnumValueInfo> addressTypeChoices, 
-			IList<EnumValueInfo> phoneTypeChoices, 
-			IList<EnumValueInfo> resultCommunicationModeChoices,
+			List<EnumValueInfo> addressTypeChoices, 
+			List<EnumValueInfo> phoneTypeChoices, 
+			List<EnumValueInfo> resultCommunicationModeChoices,
 			string practitionerName,
             bool supportsMergingOnly)
             : base(false)

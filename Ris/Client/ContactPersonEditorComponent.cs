@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -56,13 +57,13 @@ namespace ClearCanvas.Ris.Client
     public class ContactPersonEditorComponent : ApplicationComponent
     {
         private ContactPersonDetail _contactPerson;
-        private IList<EnumValueInfo> _contactTypeChoices;
-        private IList<EnumValueInfo> _contactRelationshipChoices;
+        private List<EnumValueInfo> _contactTypeChoices;
+        private List<EnumValueInfo> _contactRelationshipChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ContactPersonEditorComponent(ContactPersonDetail contactPerson, IList<EnumValueInfo> contactTypeChoices, IList<EnumValueInfo> contactRelationshipChoices)
+        public ContactPersonEditorComponent(ContactPersonDetail contactPerson, List<EnumValueInfo> contactTypeChoices, List<EnumValueInfo> contactRelationshipChoices)
         {
             _contactPerson = contactPerson;
             _contactTypeChoices = contactTypeChoices;
@@ -134,35 +135,35 @@ namespace ClearCanvas.Ris.Client
         }
 
         [ValidateNotNull]
-        public string Type
+        public EnumValueInfo Type
         {
-            get { return _contactPerson.Type.Value; }
+            get { return _contactPerson.Type; }
             set
             {
-                _contactPerson.Type = EnumValueUtils.MapDisplayValue(_contactTypeChoices, value);
+                _contactPerson.Type = value;
                 this.Modified = true;
             }
         }
 
-        public List<string> TypeChoices
+        public IList TypeChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_contactTypeChoices); }
+            get { return _contactTypeChoices; }
         }
 
         [ValidateNotNull]
-        public string Relationship
+        public EnumValueInfo Relationship
         {
-            get { return _contactPerson.Relationship.Value; }
+            get { return _contactPerson.Relationship; }
             set
             {
-                _contactPerson.Relationship = EnumValueUtils.MapDisplayValue(_contactRelationshipChoices, value);
+                _contactPerson.Relationship = value;
                 this.Modified = true;
             }
         }
 
-        public List<string> RelationshipChoices
+        public IList RelationshipChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_contactRelationshipChoices); }
+            get { return _contactRelationshipChoices; }
         }
 
         public void Accept()

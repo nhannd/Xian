@@ -127,20 +127,20 @@ namespace ClearCanvas.Ris.Client
 		}
 
         [ValidateNotNull]
-        public string StaffType
+        public EnumValueInfo StaffType
 		{
-			get { return _staffDetail.StaffType.Value; }
+			get { return _staffDetail.StaffType; }
 			set
 			{
-				_staffDetail.StaffType = EnumValueUtils.MapDisplayValue(_staffTypeChoices, value);
+				_staffDetail.StaffType = value;
 
 				this.Modified = true;
 			}
 		}
 
-		public List<string> StaffTypeChoices
+		public IList StaffTypeChoices
 		{
-			get { return EnumValueUtils.GetDisplayValues(_staffTypeChoices); }
+			get { return _staffTypeChoices; }
 		}
 
         [ValidateNotNull]

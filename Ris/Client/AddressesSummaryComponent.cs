@@ -40,9 +40,9 @@ namespace ClearCanvas.Ris.Client
 	public class AddressesSummaryComponent : SummaryComponentBase<AddressDetail, AddressTable>
     {
         private IList<AddressDetail> _addressList;
-        private readonly IList<EnumValueInfo> _addressTypes;
+        private readonly List<EnumValueInfo> _addressTypes;
 
-        public AddressesSummaryComponent(IList<EnumValueInfo> addressTypes)
+        public AddressesSummaryComponent(List<EnumValueInfo> addressTypes)
 			: base(false)
         {
         	_addressList = new List<AddressDetail>();

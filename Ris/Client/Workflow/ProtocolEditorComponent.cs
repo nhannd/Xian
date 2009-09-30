@@ -42,6 +42,7 @@ using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -336,25 +337,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public string Urgency
+		public EnumValueInfo Urgency
 		{
 			get
 			{
 				if (_protocolDetail == null || _protocolDetail.Urgency == null)
-					return _protocolUrgencyNone.Value;
+					return _protocolUrgencyNone;
 
-				return _protocolDetail.Urgency.Value;
+				return _protocolDetail.Urgency;
 			}
 			set
 			{
-				_protocolDetail.Urgency = EnumValueUtils.MapDisplayValue(_protocolUrgencyChoices, value);
+				_protocolDetail.Urgency = value == _protocolUrgencyNone ? null : value;
 				this.Modified = true;
 			}
 		}
 
-		public List<string> UrgencyChoices
+		public IList UrgencyChoices
 		{
-			get { return EnumValueUtils.GetDisplayValues(_protocolUrgencyChoices); }
+			get { return _protocolUrgencyChoices; }
 		}
 
 		public IList<string> ProtocolGroupChoices

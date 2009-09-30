@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -149,19 +150,19 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         [ValidateNotNull]
-        public string Category
+        public EnumValueInfo Category
         {
-            get { return _editedItemDetail.Category == null ? string.Empty : _editedItemDetail.Category.Value; }
+            get { return _editedItemDetail.Category; }
             set
             {
-                _editedItemDetail.Category = EnumValueUtils.MapDisplayValue(_procedureTypeGroupCategoryChoices, value);
+                _editedItemDetail.Category = value;
                 this.Modified = true;
             }
         }
 
-        public IList<string> CategoryChoices
+        public IList CategoryChoices
         {
-            get { return EnumValueUtils.GetDisplayValues(_procedureTypeGroupCategoryChoices); }
+            get { return _procedureTypeGroupCategoryChoices; }
         }
 
         public bool CategoryEnabled
