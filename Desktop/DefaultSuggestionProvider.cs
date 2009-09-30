@@ -48,18 +48,19 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Constructor that accepts the full list of possible items.
 		/// </summary>
-		/// <param name="sourceList">The source list of objects.</param>
+		/// <param name="sourceList">The sorted source list of objects.</param>
 		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
 		public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler)
 		{
 			_shortlistProvider = delegate(string q) { return string.IsNullOrEmpty(q) ? null : sourceList; };
 			_formatHandler = formatHandler;
+			this.AutoSort = false;	// assume the source list is already sorted
 		}
 
 		/// <summary>
 		/// Constructor that accepts the full list of possible items.
 		/// </summary>
-		/// <param name="sourceList">The source list of objects.</param>
+		/// <param name="sourceList">The sorted source list of objects.</param>
 		/// <param name="formatHandler">A delegate that returns a formatted text string for the input object.</param>
 		/// <param name="refinementStrategy">An object that specifies how the shortlist is refined in response to user input.</param>
 		public DefaultSuggestionProvider(IList<TItem> sourceList, Converter<TItem, string> formatHandler, IRefinementStrategy refinementStrategy)
@@ -67,7 +68,8 @@ namespace ClearCanvas.Desktop
         {
 			_shortlistProvider = delegate(string q) { return string.IsNullOrEmpty(q) ? null : sourceList; };
             _formatHandler = formatHandler;
-        }
+			this.AutoSort = false;	// assume the source list is already sorted
+		}
 
 		/// <summary>
 		/// Constructor that accepts a delegate for providing a shortlist on demand.

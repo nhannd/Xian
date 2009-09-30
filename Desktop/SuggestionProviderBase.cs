@@ -266,6 +266,11 @@ namespace ClearCanvas.Desktop
 						// has the query been updated in the interim? if so, is it a refinement of the query that obtained the shortlist?
 						if (_currentQuery == _query || _owner.IsQueryRefinement(_currentQuery, _query))
 						{
+							if(_owner.AutoSort)
+							{
+								shortlist = CollectionUtils.Sort(shortlist, (x, y) => _owner.FormatItem(x).CompareTo(_owner.FormatItem(y)));
+							}
+
 							_owner.ChangeState(new ShortlistKnownState(_owner, _currentQuery, shortlist));
 						}
 						else
@@ -280,7 +285,7 @@ namespace ClearCanvas.Desktop
 
 		}
 
-		/// <summary>
+    	/// <summary>
 		/// Defines the state where the shortlist is known.
 		/// </summary>
 		class ShortlistKnownState : State
@@ -340,7 +345,13 @@ namespace ClearCanvas.Desktop
         {
 			_state = new CleanState(this);
 			_refinementStrategy = refinementStrategy;
+			this.AutoSort = true;	// default
         }
+
+		///<summary>
+		/// Gets a value indicating whether this instance will automatically sort contents according display format.
+		///</summary>
+		public bool AutoSort { get; set; }
 
 		#region ISuggestionProvider Members
 
