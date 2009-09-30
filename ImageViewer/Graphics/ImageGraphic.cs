@@ -342,6 +342,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected byte[] PixelDataRaw
 		{
 			get { return _pixelDataRaw; }
+			set { _pixelDataRaw = value; }
 		}
 
 		/// <summary>
@@ -352,6 +353,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected PixelDataGetter PixelDataGetter
 		{
 			get { return _pixelDataGetter; }
+			set { _pixelDataGetter = value; }
 		}
 
 		/// <summary>
