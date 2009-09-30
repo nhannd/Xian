@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(161, 265);
+			this._okButton.Location = new System.Drawing.Point(350, 299);
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(238, 265);
+			this._cancelButton.Location = new System.Drawing.Point(425, 299);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _scheduledTime
 			// 
 			this._scheduledTime.LabelText = "Scheduled Time";
-			this._scheduledTime.Location = new System.Drawing.Point(167, 84);
+			this._scheduledTime.Location = new System.Drawing.Point(277, 84);
 			this._scheduledTime.Margin = new System.Windows.Forms.Padding(2);
 			this._scheduledTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._scheduledTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._scheduledTime.Nullable = true;
 			this._scheduledTime.ShowDate = false;
 			this._scheduledTime.ShowTime = true;
-			this._scheduledTime.Size = new System.Drawing.Size(148, 41);
+			this._scheduledTime.Size = new System.Drawing.Size(223, 41);
 			this._scheduledTime.TabIndex = 2;
 			this._scheduledTime.Value = null;
 			// 
@@ -85,17 +85,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._scheduledDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._scheduledDate.Name = "_scheduledDate";
 			this._scheduledDate.Nullable = true;
-			this._scheduledDate.Size = new System.Drawing.Size(148, 41);
+			this._scheduledDate.Size = new System.Drawing.Size(223, 41);
 			this._scheduledDate.TabIndex = 1;
 			this._scheduledDate.Value = null;
 			// 
 			// _procedureType
 			// 
+			this._procedureType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._procedureType.LabelText = "Procedure Type";
 			this._procedureType.Location = new System.Drawing.Point(15, 20);
 			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
 			this._procedureType.Name = "_procedureType";
-			this._procedureType.Size = new System.Drawing.Size(300, 41);
+			this._procedureType.Size = new System.Drawing.Size(485, 41);
 			this._procedureType.TabIndex = 0;
 			this._procedureType.Value = null;
 			// 
@@ -108,7 +110,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._performingFacility.Location = new System.Drawing.Point(15, 143);
 			this._performingFacility.Margin = new System.Windows.Forms.Padding(2);
 			this._performingFacility.Name = "_performingFacility";
-			this._performingFacility.Size = new System.Drawing.Size(300, 41);
+			this._performingFacility.Size = new System.Drawing.Size(485, 41);
 			this._performingFacility.TabIndex = 3;
 			this._performingFacility.Value = null;
 			// 
@@ -118,17 +120,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._laterality.DisplayMember = "";
 			this._laterality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._laterality.LabelText = "Laterality";
-			this._laterality.Location = new System.Drawing.Point(165, 195);
+			this._laterality.Location = new System.Drawing.Point(277, 195);
 			this._laterality.Margin = new System.Windows.Forms.Padding(2);
 			this._laterality.Name = "_laterality";
-			this._laterality.Size = new System.Drawing.Size(150, 41);
-			this._laterality.TabIndex = 6;
+			this._laterality.Size = new System.Drawing.Size(223, 41);
+			this._laterality.TabIndex = 5;
 			this._laterality.Value = null;
 			// 
 			// _portable
 			// 
 			this._portable.AutoSize = true;
-			this._portable.Location = new System.Drawing.Point(15, 195);
+			this._portable.Location = new System.Drawing.Point(22, 214);
 			this._portable.Margin = new System.Windows.Forms.Padding(2);
 			this._portable.Name = "_portable";
 			this._portable.Size = new System.Drawing.Size(65, 17);
@@ -139,11 +141,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _checkedIn
 			// 
 			this._checkedIn.AutoSize = true;
-			this._checkedIn.Location = new System.Drawing.Point(15, 219);
+			this._checkedIn.Location = new System.Drawing.Point(375, 265);
 			this._checkedIn.Margin = new System.Windows.Forms.Padding(2);
 			this._checkedIn.Name = "_checkedIn";
 			this._checkedIn.Size = new System.Drawing.Size(125, 17);
-			this._checkedIn.TabIndex = 5;
+			this._checkedIn.TabIndex = 6;
 			this._checkedIn.Text = "Patient is checked-in";
 			this._checkedIn.UseVisualStyleBackColor = true;
 			// 
@@ -162,7 +164,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._okButton);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "ProcedureEditorComponentControl";
-			this.Size = new System.Drawing.Size(331, 298);
+			this.Size = new System.Drawing.Size(517, 327);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
