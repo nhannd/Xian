@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 
 			bool isGrayscale = roi.PixelData is GrayscalePixelData;
 
-			if (isGrayscale && IsBoundingBoxInImage(roi.BoundingBox, roi.ImageColumns, roi.ImageRows))
+			if (isGrayscale && roi.ContainsPixelData)
 			{
 				if (mode == RoiAnalysisMode.Responsive)
 				{
@@ -118,22 +118,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 			}
 
 			return sb.ToString();
-		}
-
-		private static bool IsBoundingBoxInImage(RectangleF boundingBox, float imageColumns, float imageRows)
-		{
-			boundingBox = RectangleUtilities.ConvertToPositiveRectangle(boundingBox);
-
-			if (boundingBox.Width == 0 || boundingBox.Height == 0)
-				return false;
-
-			if (boundingBox.Left < 0 ||
-			    boundingBox.Top < 0 ||
-			    boundingBox.Right > (imageColumns - 1) ||
-			    boundingBox.Bottom > (imageRows - 1))
-				return false;
-
-			return true;
 		}
 	}
 }

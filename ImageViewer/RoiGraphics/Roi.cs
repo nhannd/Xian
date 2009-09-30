@@ -37,6 +37,7 @@ using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
@@ -204,6 +205,15 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		public abstract bool Contains(PointF point);
 
 		/// <summary>
+		/// Tests to see whether or not the region of interest actual contains any pixel data.
+		/// </summary>
+		/// <returns>True if the region of interest contains pixel data; False otherwise..</returns>
+		public virtual bool ContainsPixelData
+		{
+			get { return IsBoundingBoxInImage(); }
+		}
+
+		/// <summary>
 		/// Tests to see if the given point is contained within the region of interest.
 		/// </summary>
 		/// <remarks>
@@ -343,6 +353,26 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 
 			return area*factor;
+		}
+
+		/// <summary>
+		/// Checks whether or not the region of interest's bounding box intersects the image.
+		/// </summary>
+		/// <returns>True if the bounding box intersects the image; False otherwise.</returns>
+		private bool IsBoundingBoxInImage()
+		{
+			RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(this.BoundingBox);
+
+			if (boundingBox.Width == 0 || boundingBox.Height == 0)
+				return false;
+
+			if (boundingBox.Left < 0 ||
+				boundingBox.Top < 0 ||
+				boundingBox.Right > (this.ImageColumns - 1) ||
+				boundingBox.Bottom > (this.ImageRows - 1))
+				return false;
+
+			return true;
 		}
 
 		private class IdentityLut : ILut

@@ -35,6 +35,19 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
+	public static class RoiSettingsHelper
+	{
+		public static bool ShowAnalysisByDefault
+		{
+			get { return RoiSettings.Default.ShowAnalysisByDefault; }
+		}
+
+		public static Units AnalysisUnits
+		{
+			get { return RoiSettings.Default.AnalysisUnits; }
+		}
+	}
+
 	[SettingsGroupDescription("Configures ROI settings.")]
 	[SettingsProvider(typeof (StandardSettingsProvider))]
 	internal sealed partial class RoiSettings
