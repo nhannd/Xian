@@ -448,14 +448,36 @@ namespace ClearCanvas.ImageViewer
 		/// This method can be used anywhere an offscreen bitmap is required, such as 
 		/// paper/DICOM printing, thumbnail generation, creation of new DICOM images, etc.
 		/// </remarks>
-		public Bitmap DrawToBitmap(int width, int height)
+		public virtual Bitmap DrawToBitmap(int width, int height)
 		{
 			Bitmap bmp = new Bitmap(width, height);
+
+			DrawToBitmap(bmp);
+
+			return bmp;
+		}
+
+		/// <summary>
+		/// Renders the <see cref="PresentationImage"/> to a provided offscreen <see cref="Bitmap"/>.
+		/// </summary>
+		/// <param name="bmp">The offscreen bitmap to render to.</param>
+		/// <returns></returns>
+		/// <remarks>
+		/// This method can be used anywhere an offscreen bitmap is required, such as 
+		/// paper/DICOM printing, thumbnail generation, creation of new DICOM images, etc.
+		/// </remarks>
+		public virtual void DrawToBitmap(Bitmap bmp)
+		{
+			Platform.CheckForNullReference(bmp, "bmp");
+
+			Platform.CheckPositive(bmp.Width, "bmp.Width");
+			Platform.CheckPositive(bmp.Height, "bmp.Height");
+
 			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp);
 
-			IRenderingSurface surface = this.ImageRenderer.GetRenderingSurface(IntPtr.Zero, width, height);
+			IRenderingSurface surface = this.ImageRenderer.GetRenderingSurface(IntPtr.Zero, bmp.Width, bmp.Height);
 			surface.ContextID = g.GetHdc();
-			surface.ClipRectangle = new Rectangle(0, 0, width, height);
+			surface.ClipRectangle = new Rectangle(0, 0, bmp.Width, bmp.Height);
 
 			DrawArgs drawArgs = new DrawArgs(surface, null, DrawMode.Render);
 			DrawNoEvents(drawArgs);
@@ -465,12 +487,11 @@ namespace ClearCanvas.ImageViewer
 			g.Dispose();
 
 			surface.Dispose();
-			return bmp;
 		}
 
 		#endregion
 
-		private void DrawNoEvents(DrawArgs drawArgs)
+		protected void DrawNoEvents(DrawArgs drawArgs)
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
 			Rectangle oldRectangle = _clientRectangle;
