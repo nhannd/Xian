@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                             if (destStudy == null)
                             {
-                                throw new TargetStudyIsNearline() {
+                                throw new TargetStudyIsNearlineException() {
                                               StudyInstanceUid = destinationStudy.StudyInstanceUid,
                                               RestoreRequested = restored
                                           };

@@ -33,14 +33,44 @@ using System;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    /// <summary>
+    /// Represents an exception that occured during auto-reconciliation
+    /// is nearline.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="StudyInstanceUid"/> indicates if a restore request has been submitted
+    /// for the target study.
+    /// </remarks>
     public class AutoReconcileException : Exception
     {
-        public string StudyInstanceUid { get; set; }
+        public AutoReconcileException(string message) : base(message)
+        {
+        }
     }
 
-
-    public class TargetStudyIsNearline : AutoReconcileException
+    /// <summary>
+    /// Represents an exception that occured when the target study during auto-reconciliation
+    /// is nearline.
+    /// </summary>
+    /// <remarks>
+    /// <see cref="RestoreRequested"/> indicates if a restore request has been submitted
+    /// for the target study.
+    /// </remarks>
+    public class TargetStudyIsNearlineException : AutoReconcileException
     {
+        public TargetStudyIsNearlineException()
+            :base("Target study is not online.")
+        {
+        }
+
+        /// <summary>
+        /// The Study Instance UID that is nearline.
+        /// </summary>
+        public string StudyInstanceUid { get; set; }
+        
+        /// <summary>
+        /// Indicates whether or not a restore request has been submitted.
+        /// </summary>
         public bool RestoreRequested { get; set; }
     }
 }

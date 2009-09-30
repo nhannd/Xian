@@ -348,6 +348,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 
                 return true;
             }
+            catch (TargetStudyIsNearlineException)
+            {
+                // handled by caller
+                throw;
+            }
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
@@ -544,7 +549,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     // Process the images in the list
                     successful = ProcessUidList(item) > 0;
                 }
-                catch (TargetStudyIsNearline ex)
+                catch (TargetStudyIsNearlineException ex)
                 {
                     // delay until the target is restored
                     // NOTE: If the study could not be restored after certain period of time, this entry will be failed.
