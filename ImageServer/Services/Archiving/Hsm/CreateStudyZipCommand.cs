@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 			    string uidMapXmlPath = Path.Combine(_studyFolder, "UidMap.xml");
                 if (File.Exists(uidMapXmlPath))
-                    zip.AddFile(uidMapXmlPath);
+                    zip.AddFile(uidMapXmlPath, String.Empty);
 
 				// Add each sop from the StudyXmlFile
 				foreach (SeriesXml seriesXml in _studyXml)
