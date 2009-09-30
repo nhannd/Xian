@@ -40,12 +40,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 {
 	public partial class ThumbnailComponent
 	{
-		private delegate void ThumbnailLoadedCallback(Thumbnail thumbnail);
+		public delegate void ThumbnailLoadedCallback(Thumbnail thumbnail);
 
-		private class Thumbnail : IGalleryItem, IDisposable
+		public class Thumbnail : IGalleryItem, IDisposable
 		{
-			private static readonly int _iconWidth = 100;
-			private static readonly int _iconHeight = 100;
+			private static readonly int DefaultIconWidth = 100;
+			private static readonly int DefaultIconHeight = 100;
 
 			private readonly IDisplaySet _displaySet;
 
@@ -58,19 +58,30 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 			private ThumbnailLoadedCallback _loadedCallback;
 
+			private int _iconWidth;
+			private int _iconHeight;
+
 			public Thumbnail(IDisplaySet displaySet, ThumbnailLoadedCallback loadedCallback)
+				: this(displaySet, loadedCallback, DefaultIconWidth, DefaultIconHeight)
+			{
+			}
+
+			public Thumbnail(IDisplaySet displaySet, ThumbnailLoadedCallback loadedCallback, int width, int height)
 			{
 				_displaySet = displaySet;
+
+				_iconWidth = width;
+				_iconHeight = height;
 
 				_image = GetMiddlePresentationImage(displaySet);
 				if (_image != null)
 				{
 					_image = _image.CreateFreshCopy();
-					_icon = CreateDummyBitmap(SR.MessageLoading);
+					_icon = CreateDummyBitmap(SR.MessageLoading, _iconWidth, _iconHeight);
 				}
 				else
 				{
-					_icon = CreateDummyBitmap(SR.MessageNoImages);
+					_icon = CreateDummyBitmap(SR.MessageNoImages, _iconWidth, _iconHeight);
 				}
 
 				_uiThreadContext = SynchronizationContext.Current;
@@ -156,12 +167,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				Bitmap icon;
 				try
 				{
-					icon = CreateBitmap(_image);
+					icon = CreateBitmap(_image, _iconWidth, _iconHeight);
 				}
 				catch (Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
-					icon = CreateDummyBitmap(SR.MessageLoadFailed);
+					icon = CreateDummyBitmap(SR.MessageLoadFailed, _iconWidth, _iconHeight);
 				}
 
 				_uiThreadContext.Post(this.OnLoaded, icon);
@@ -180,9 +191,9 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 					DisposeInternal();
 			}
 
-			private static Bitmap CreateDummyBitmap(string message)
+			private static Bitmap CreateDummyBitmap(string message, int width, int height)
 			{
-				Bitmap bmp = new Bitmap(_iconWidth, _iconHeight);
+				Bitmap bmp = new Bitmap(width, height);
 				System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bmp);
 
 				Brush brush = new SolidBrush(Color.WhiteSmoke);
@@ -192,8 +203,8 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				format.Alignment = StringAlignment.Center;
 				format.LineAlignment = StringAlignment.Center;
 
-				graphics.DrawString(message, font, brush, new Rectangle(0, 0, _iconWidth, _iconHeight), format);
-				DrawBorder(graphics);
+				graphics.DrawString(message, font, brush, new Rectangle(0, 0, width, height), format);
+				DrawBorder(graphics, width, height);
 				graphics.Dispose();
 
 				format.Dispose();
@@ -203,17 +214,17 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				return bmp;
 			}
 
-			private static Bitmap CreateBitmap(IPresentationImage image)
+			private static Bitmap CreateBitmap(IPresentationImage image, int width, int height)
 			{
 				image = image.CreateFreshCopy();
 
 				if (image is IAnnotationLayoutProvider)
 					((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
 
-				Bitmap bmp = image.DrawToBitmap(_iconWidth, _iconHeight);
+				Bitmap bmp = image.DrawToBitmap(width, height);
 				System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bmp);
 
-				DrawBorder(graphics);
+				DrawBorder(graphics, width, height);
 
 				image.Dispose();
 				graphics.Dispose();
@@ -221,11 +232,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				return bmp;
 			}
 
-			private static void DrawBorder(System.Drawing.Graphics graphics)
+			private static void DrawBorder(System.Drawing.Graphics graphics, int width, int height)
 			{
 				using (Pen pen = new Pen(Color.DarkGray))
 				{
-					graphics.DrawRectangle(pen, 0, 0, _iconWidth - 1, _iconHeight - 1);
+					graphics.DrawRectangle(pen, 0, 0, width - 1, height - 1);
 				}
 			}
 
