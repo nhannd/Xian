@@ -51,6 +51,11 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		StudyTree StudyTree { get; }
 
+		/// <summary> 
+ 		/// Gets the <see cref="ILayoutManager"/> associated with this image viewer. 
+ 		/// </summary> 
+ 		ILayoutManager LayoutManager { get; } 
+
         /// <summary>
         /// Gets the <see cref="PhysicalWorkspace"/>.
         /// </summary>

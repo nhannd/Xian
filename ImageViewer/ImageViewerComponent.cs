@@ -506,6 +506,14 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Gets the <see cref="ILayoutManager"/> associated with this <see cref="ImageViewerComponent"/>
+		/// </summary>
+		public ILayoutManager LayoutManager
+		{
+			get { return _layoutManager; }
+		}
+
+		/// <summary>
 		/// Gets the <see cref="IPriorStudyLoader"/> that uses a given <see cref="IPriorStudyFinder"/> to search
 		/// for prior studies, and adds the studies to the <see cref="IImageViewer.StudyTree"/>.
 		/// </summary>
@@ -595,14 +603,6 @@ namespace ClearCanvas.ImageViewer
 			{
 				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, "imageviewer-keyboard", _toolSet.Actions);
 			}
-		}
-
-		/// <summary>
-		/// Gets the <see cref="ILayoutManager"/>
-		/// </summary>
-		protected ILayoutManager LayoutManager
-		{
-			get { return _layoutManager; }
 		}
 
 		#endregion
