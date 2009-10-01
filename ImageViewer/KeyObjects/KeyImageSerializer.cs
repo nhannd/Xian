@@ -34,6 +34,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Principal;
 using System.Threading;
+using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.ContextGroups;
@@ -60,6 +61,14 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		private string _description;
 		private string _seriesDescription;
 		private string _author;
+
+		private string _sourceAETitle;
+		private string _stationName;
+		private Institution _institution;
+		private string _manufacturer;
+		private string _manufacturersModelName;
+		private string _deviceSerialNumber;
+		private string _softwareVersions;
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
 		/// <summary>
@@ -73,6 +82,14 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			_framePresentationStates = new FramePresentationList();
 			_datetime = Platform.Time;
 			_author = GetUserName();
+
+			_sourceAETitle = string.Empty;
+			_stationName = string.Empty;
+			_institution = Institution.Empty;
+			_manufacturer = "ClearCanvas";
+			_manufacturersModelName = Application.Name;
+			_deviceSerialNumber = string.Empty;
+			_softwareVersions = Application.Version.ToString();
 		}
 
 		/// <summary>
@@ -121,6 +138,69 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		}
 
 		/// <summary>
+		/// Gets or sets the instance creator's workstation AE title.
+		/// </summary>
+		public string SourceAETitle
+		{
+			get { return _sourceAETitle; }
+			set { _sourceAETitle = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the instance creator's workstation name.
+		/// </summary>
+		public string StationName
+		{
+			get { return _stationName; }
+			set { _stationName = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the instance creator's institution.
+		/// </summary>
+		public Institution Institution
+		{
+			get { return _institution; }
+			set { _institution = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's manufacturer.
+		/// </summary>
+		public string Manufacturer
+		{
+			get { return _manufacturer; }
+			protected set { _manufacturer = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's model name.
+		/// </summary>
+		public string ManufacturersModelName
+		{
+			get { return _manufacturersModelName; }
+			protected set { _manufacturersModelName = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's serial number.
+		/// </summary>
+		public string DeviceSerialNumber
+		{
+			get { return _deviceSerialNumber; }
+			protected set { _deviceSerialNumber = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's software version numbers (backslash-delimited for multiple values).
+		/// </summary>
+		public string SoftwareVersions
+		{
+			get { return _softwareVersions; }
+			protected set { _softwareVersions = value; }
+		}
+
+		/// <summary>
 		/// Adds a frame and associated presentation state to the serialization queue.
 		/// </summary>
 		public void AddImage(Frame frame, DicomSoftcopyPresentationState presentationState)
@@ -145,7 +225,18 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid))
 				{
 					DicomFile keyObjectDocument = new DicomFile();
+					keyObjectDocument.SourceApplicationEntityTitle = this.SourceAETitle;
+
 					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, keyObjectDocument.DataSet);
+
+					iod.GeneralEquipment.Manufacturer = this.Manufacturer ?? string.Empty; // this one is type 2 - all other GenEq attributes are type 3
+					iod.GeneralEquipment.ManufacturersModelName = string.IsNullOrEmpty(this.ManufacturersModelName) ? null : this.ManufacturersModelName;
+					iod.GeneralEquipment.DeviceSerialNumber = string.IsNullOrEmpty(this.DeviceSerialNumber) ? null : this.DeviceSerialNumber;
+					iod.GeneralEquipment.SoftwareVersions = string.IsNullOrEmpty(this.SoftwareVersions) ? null : this.SoftwareVersions;
+					iod.GeneralEquipment.InstitutionName = string.IsNullOrEmpty(this.Institution.Name) ? null : this.Institution.Name;
+					iod.GeneralEquipment.InstitutionAddress = string.IsNullOrEmpty(this.Institution.Address) ? null : this.Institution.Address;
+					iod.GeneralEquipment.InstitutionalDepartmentName = string.IsNullOrEmpty(this.Institution.DepartmentName) ? null : this.Institution.DepartmentName;
+					iod.GeneralEquipment.StationName = string.IsNullOrEmpty(this.StationName) ? null : this.StationName;
 
 					string seriesDescription = _seriesDescription;
 					if (!string.IsNullOrEmpty(_author))
@@ -370,9 +461,6 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				iod.ClinicalTrialStudy.ClinicalTrialTimePointDescription = sourceTrialStudy.ClinicalTrialTimePointDescription;
 				iod.ClinicalTrialStudy.ClinicalTrialTimePointId = sourceTrialStudy.ClinicalTrialTimePointId;
 			}
-
-			// initialize the general equipment module
-			iod.GeneralEquipment.Manufacturer = "";
 
 			return iod;
 		}

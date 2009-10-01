@@ -35,6 +35,7 @@ using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services;
@@ -85,7 +86,11 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 						{
 							DicomSoftcopyPresentationState presentationState = null;
 							if (item.Item is IPresentationImage && DicomSoftcopyPresentationState.IsSupported((IPresentationImage)item.Item))
-								presentationState = DicomSoftcopyPresentationState.Create((IPresentationImage) item.Item);
+							{
+								presentationState = DicomSoftcopyPresentationState.Create
+									((IPresentationImage) item.Item,
+									 delegate(DicomSoftcopyPresentationState ps) { ps.SourceAETitle = DicomServerConfigurationHelper.OfflineAETitle; });
+							}
 							_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
 						}
 					}
@@ -139,6 +144,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			serializer.Description = _sourceInformation.Description;
 			serializer.DocumentTitle = _sourceInformation.DocumentTitle;
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
+			serializer.SourceAETitle = DicomServerConfigurationHelper.OfflineAETitle;
 
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
 				serializer.AddImage(frameAndPR.Key, frameAndPR.Value);

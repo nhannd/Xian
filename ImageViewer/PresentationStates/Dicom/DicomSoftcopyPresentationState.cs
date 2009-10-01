@@ -32,11 +32,11 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
@@ -71,6 +71,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private string _presentationSopInstanceUid;
 		private string _presentationSeriesInstanceUid;
 		private string _presentationLabel;
+		private string _sourceAETitle;
+		private string _stationName;
+		private Institution _institution;
+		private string _manufacturer;
+		private string _manufacturersModelName;
+		private string _deviceSerialNumber;
+		private string _softwareVersions;
 
 		/// <summary>
 		/// Constructs a serialization-capable DICOM softcopy presentation state object.
@@ -82,6 +89,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_dicomFile = new DicomFile();
 
 			_serialized = false;
+			_sourceAETitle = string.Empty;
+			_stationName = string.Empty;
+			_institution = Institution.Empty;
+			_manufacturer = "ClearCanvas";
+			_manufacturersModelName = Application.Name;
+			_deviceSerialNumber = string.Empty;
+			_softwareVersions = Application.Version.ToString();
 			_presentationInstanceNum = 1;
 			_presentationSopInstanceUid = DicomUid.GenerateUid().UID;
 			_presentationSeriesInstanceUid = DicomUid.GenerateUid().UID;
@@ -105,6 +119,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_dicomFile = dicomFile;
 
 			_serialized = true;
+			_sourceAETitle = _dicomFile.SourceApplicationEntityTitle;
+			_stationName = _dicomFile.DataSet[DicomTags.StationName].ToString();
+			_institution = Institution.GetInstitution(_dicomFile);
+			_manufacturer = _dicomFile.DataSet[DicomTags.Manufacturer].ToString();
+			_manufacturersModelName = _dicomFile.DataSet[DicomTags.ManufacturersModelName].ToString();
+			_deviceSerialNumber = _dicomFile.DataSet[DicomTags.DeviceSerialNumber].ToString();
+			_softwareVersions = _dicomFile.DataSet[DicomTags.SoftwareVersions].ToString();
 			_presentationInstanceNum = _dicomFile.DataSet[DicomTags.InstanceNumber].GetInt32(0, 0);
 			_presentationSopInstanceUid = _dicomFile.DataSet[DicomTags.SopInstanceUid].ToString();
 			_presentationSeriesInstanceUid = _dicomFile.DataSet[DicomTags.SeriesInstanceUid].ToString();
@@ -217,6 +238,132 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		}
 
 		/// <summary>
+		/// Gets or sets the instance creator's workstation AE title.
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public string SourceAETitle
+		{
+			get { return _sourceAETitle; }
+			set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_sourceAETitle = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the instance creator's workstation name.
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public string StationName
+		{
+			get { return _stationName; }
+			set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_stationName = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the instance creator's institution.
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public Institution Institution
+		{
+			get { return _institution; }
+			set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_institution = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's manufacturer.
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public string Manufacturer
+		{
+			get { return _manufacturer; }
+			protected set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_manufacturer = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's model name.
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public string ManufacturersModelName
+		{
+			get { return _manufacturersModelName; }
+			protected set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_manufacturersModelName = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's serial number.
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public string DeviceSerialNumber
+		{
+			get { return _deviceSerialNumber; }
+			protected set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_deviceSerialNumber = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the workstation's software version numbers (backslash-delimited for multiple values).
+		/// </summary>
+		/// <remarks>
+		/// This property may only be set if the presentation state has not yet been serialized to a file.
+		/// </remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
+		public string SoftwareVersions
+		{
+			get { return _softwareVersions; }
+			protected set
+			{
+				if (_serialized)
+					throw new InvalidOperationException(_messageAlreadySerialized);
+				_softwareVersions = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets the DICOM file containing the presentation state after serialization.
 		/// </summary>
 		/// <exception cref="InvalidOperationException">Thrown if the presentation state has not yet been serialized to a file.</exception>
@@ -252,7 +399,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_serialized = true;
 
 			GeneralEquipmentModuleIod generalEquipmentModule = new GeneralEquipmentModuleIod(this.DataSet);
-			generalEquipmentModule.Manufacturer = "";
+			generalEquipmentModule.Manufacturer = this.Manufacturer ?? string.Empty; // this one is type 2 - all other GenEq attributes are type 3
+			generalEquipmentModule.ManufacturersModelName = string.IsNullOrEmpty(this.ManufacturersModelName) ? null : this.ManufacturersModelName;
+			generalEquipmentModule.DeviceSerialNumber = string.IsNullOrEmpty(this.DeviceSerialNumber) ? null : this.DeviceSerialNumber;
+			generalEquipmentModule.SoftwareVersions = string.IsNullOrEmpty(this.SoftwareVersions) ? null : this.SoftwareVersions;
+			generalEquipmentModule.InstitutionName = string.IsNullOrEmpty(this.Institution.Name) ? null : this.Institution.Name;
+			generalEquipmentModule.InstitutionAddress = string.IsNullOrEmpty(this.Institution.Address) ? null : this.Institution.Address;
+			generalEquipmentModule.InstitutionalDepartmentName = string.IsNullOrEmpty(this.Institution.DepartmentName) ? null : this.Institution.DepartmentName;
+			generalEquipmentModule.StationName = string.IsNullOrEmpty(this.StationName) ? null : this.StationName;
 
 			GeneralSeriesModuleIod generalSeriesModule = new GeneralSeriesModuleIod(this.DataSet);
 			generalSeriesModule.InitializeAttributes();
@@ -274,6 +428,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			PerformSerialization(images);
 
+			_dicomFile.SourceApplicationEntityTitle = this.SourceAETitle;
 			_dicomFile.MediaStorageSopClassUid = this.PresentationSopClassUid;
 			_dicomFile.MediaStorageSopInstanceUid = this.PresentationSopInstanceUid;
 		}
@@ -360,6 +515,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		#region Static Helpers
 
 		/// <summary>
+		/// Represents the method that initializes the instance properties of a <see cref="DicomSoftcopyPresentationState"/>.
+		/// </summary>
+		/// <param name="presentationState">A new, uninitialized presentation state SOP instance.</param>
+		public delegate void InitializeDicomSoftcopyPresentationStateDelegate(DicomSoftcopyPresentationState presentationState);
+
+		/// <summary>
 		/// Creates a <see cref="DicomSoftcopyPresentationState"/> for a given image.
 		/// </summary>
 		/// <param name="image">The image for which the presentation state should be created.</param>
@@ -368,15 +529,30 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <seealso cref="DicomSoftcopyPresentationState"/>
 		public static DicomSoftcopyPresentationState Create(IPresentationImage image)
 		{
+			return Create(image, delegate { });
+		}
+
+		/// <summary>
+		/// Creates a <see cref="DicomSoftcopyPresentationState"/> for a given image.
+		/// </summary>
+		/// <param name="image">The image for which the presentation state should be created.</param>
+		/// <param name="initializer">A method that initializes the instance properties of the created <see cref="DicomSoftcopyPresentationState"/>.</param>
+		/// <returns>One of the derived <see cref="DicomSoftcopyPresentationState"/> classes, depending on the type of the <paramref name="image"/>.</returns>
+		/// <exception cref="ArgumentException">Thrown if softcopy presentation states for the type of the given <paramref name="image"/> are not supported.</exception>
+		/// <seealso cref="DicomSoftcopyPresentationState"/>
+		public static DicomSoftcopyPresentationState Create(IPresentationImage image, InitializeDicomSoftcopyPresentationStateDelegate initializer)
+		{
 			if (image is DicomGrayscalePresentationImage)
 			{
 				DicomGrayscaleSoftcopyPresentationState grayscaleSoftcopyPresentationState = new DicomGrayscaleSoftcopyPresentationState();
+				initializer.Invoke(grayscaleSoftcopyPresentationState);
 				grayscaleSoftcopyPresentationState.Serialize(image);
 				return grayscaleSoftcopyPresentationState;
 			}
 			else if (image is DicomColorPresentationImage)
 			{
 				DicomColorSoftcopyPresentationState colorSoftcopyPresentationState = new DicomColorSoftcopyPresentationState();
+				initializer.Invoke(colorSoftcopyPresentationState);
 				colorSoftcopyPresentationState.Serialize(image);
 				return colorSoftcopyPresentationState;
 			}
@@ -402,6 +578,26 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <seealso cref="DicomSoftcopyPresentationState"/>
 		public static IDictionary<IPresentationImage, DicomSoftcopyPresentationState> Create(IEnumerable<IPresentationImage> images)
 		{
+			return Create(images, delegate { });
+		}
+
+		/// <summary>
+		/// Creates a minimal number of <see cref="DicomSoftcopyPresentationState"/>s for the given images.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Presentation state instances can contain information for multiple images, but the images must all be of the same type,
+		/// and contain non-conflicting presentation state information. This method creates a minimal number of presentation
+		/// state objects for the collection of given images.
+		/// </para>
+		/// </remarks>
+		/// <param name="images">The images for which presentation states are to be created.</param>
+		/// <param name="initializer">A method that initializes the instance properties of the created <see cref="DicomSoftcopyPresentationState"/>s.</param>
+		/// <returns>A dictionary mapping of presentation images to its associated presentation state instance.</returns>
+		/// <exception cref="ArgumentException">Thrown if softcopy presentation states are not supported for the type of any one of the given <paramref name="images"/>.</exception>
+		/// <seealso cref="DicomSoftcopyPresentationState"/>
+		public static IDictionary<IPresentationImage, DicomSoftcopyPresentationState> Create(IEnumerable<IPresentationImage> images, InitializeDicomSoftcopyPresentationStateDelegate initializer)
+		{
 			List<IPresentationImage> grayscaleImages = new List<IPresentationImage>();
 			List<IPresentationImage> colorImages = new List<IPresentationImage>();
 
@@ -425,6 +621,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			if (grayscaleImages.Count > 0)
 			{
 				DicomGrayscaleSoftcopyPresentationState grayscaleSoftcopyPresentationState = new DicomGrayscaleSoftcopyPresentationState();
+				initializer.Invoke(grayscaleSoftcopyPresentationState);
 				grayscaleSoftcopyPresentationState.Serialize(grayscaleImages);
 				foreach (IPresentationImage image in grayscaleImages)
 				{
@@ -434,6 +631,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			if (colorImages.Count > 0)
 			{
 				DicomColorSoftcopyPresentationState colorSoftcopyPresentationState = new DicomColorSoftcopyPresentationState();
+				initializer.Invoke(colorSoftcopyPresentationState);
 				colorSoftcopyPresentationState.Serialize(colorImages);
 				foreach (IPresentationImage image in colorImages)
 				{
