@@ -1,8 +1,8 @@
 <Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<ProjectRoot>..\..\..</ProjectRoot>
-		<OutputDir>.</OutputDir>
+		<ProjectRoot>$(MSBuildProjectDirectory)\..\..\..</ProjectRoot>
+		<OutputDir>$(MSBuildProjectDirectory)</OutputDir>
 	</PropertyGroup>
 	<ItemGroup>
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\ReferencedAssemblies\log4net.dll" />
