@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using NHibernate;
 using ClearCanvas.Enterprise.Common;
@@ -40,7 +39,6 @@ using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Common.Specifications;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
-using System.Reflection;
 using NHibernate.Type;
 using NHibernate.Collection;
 using Iesi.Collections;
@@ -74,11 +72,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="state"></param>
         /// <param name="propertyNames"></param>
         /// <param name="types"></param>
-        public override void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
+        public override void OnDelete(object entity, object id, object[] state, string[] propertyNames, IType[] types)
         {
             // build a list of property diffs
             // the current state is "null" since the entity was deleted
-            PropertyDiff[] propertyDiffs = GetPropertyDiffs(propertyNames, types, null, state);
+            var propertyDiffs = GetPropertyDiffs(propertyNames, types, null, state);
             RecordChange(entity, EntityChangeType.Delete, propertyDiffs);
         }
 
@@ -92,7 +90,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="propertyNames"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        public override bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
+        public override bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, IType[] types)
         {
             // This method may be called more 
             // than once for a given entity during the lifetime of the update context, and the difference between the 
@@ -100,26 +98,24 @@ namespace ClearCanvas.Enterprise.Hibernate
             // to the entity that have occured since the last time this method was called.
 
             // build a list of property diffs
-            PropertyDiff[] propertyDiffs = GetPropertyDiffs(propertyNames, types, currentState, previousState);
+            var propertyDiffs = GetPropertyDiffs(propertyNames, types, currentState, previousState);
 
 
             // Build a list of dirty properties for validation
-            List<PropertyDiff> dirtyProperties = CollectionUtils.Select(propertyDiffs,
-                delegate(PropertyDiff diff) { return diff.IsChanged; });
+            var dirtyProperties = CollectionUtils.Select(propertyDiffs, diff => diff.IsChanged);
 
             // validate the entity prior to flush, passing the list of dirty properties 
             // in order to optimize which rules are tested
             // rather than testing every validation rule we can selectively test only those rules
             // that may be affected by the modified state
-            Validate(entity, CollectionUtils.Map<PropertyDiff, string>(dirtyProperties,
-                delegate(PropertyDiff pc) { return pc.PropertyName; }));
+            Validate(entity, CollectionUtils.Map(dirtyProperties, (PropertyDiff pc) => pc.PropertyName));
 
             RecordChange(entity, EntityChangeType.Update, propertyDiffs);
             return false;
         }
 
         /// <summary>
-        /// Called when a new entity is added to the persistence context via <see cref="PersistenceContext.Lock"/> with
+        /// Called when a new entity is added to the persistence context via <see cref="PersistenceContext.Lock(ClearCanvas.Enterprise.Core.Entity)"/> with
         /// <see cref="DirtyState.New"/>.
         /// </summary>
         /// <param name="entity"></param>
@@ -128,7 +124,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="propertyNames"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        public override bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
+        public override bool OnSave(object entity, object id, object[] state, string[] propertyNames, IType[] types)
         {
             // ignore the addition of log entries (any subclass of LogEntry)
             if (typeof(LogEntry).IsAssignableFrom(NHibernateUtil.GetClass(entity)))
@@ -142,7 +138,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             // build a list of property diffs
             // the previous state is "null" since the entity was just created
-            PropertyDiff[] propertyDiffs = GetPropertyDiffs(propertyNames, types, state, null);
+            var propertyDiffs = GetPropertyDiffs(propertyNames, types, state, null);
             RecordChange(entity, EntityChangeType.Create, propertyDiffs);
             return false;
 
@@ -162,7 +158,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             // TODO: NH1.2 added new methods to the Interceptor API - see if any of these will get around this problem
             while (_pendingValidations.Count > 0)
             {
-                DomainObject obj = _pendingValidations.Dequeue();
+                var obj = _pendingValidations.Dequeue();
                 Validate(obj);
             }
 
@@ -183,37 +179,32 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (domainObject is EnumValue)
                 return;
 
-            Entity entity = (Entity)domainObject;
+            var entity = (Entity)domainObject;
             _changeTracker.RecordChange(entity, changeType, propertyDiffs);
         }
 
-        private void Validate(object domainObject, List<string> dirtyProperties)
+        private static void Validate(object domainObject, ICollection<string> dirtyProperties)
         {
             Validation.Validate((DomainObject)domainObject,
-                delegate(ISpecification rule)
-                {
-                    // see if the rule needs to be checked (i.e if relevant properties are dirty)
-                    return ShouldCheckRule(rule, (DomainObject)domainObject, dirtyProperties);
-                });
+                                rule => ShouldCheckRule(rule, (DomainObject) domainObject, dirtyProperties));
         }
 
-        private void Validate(object domainObject)
+        private static void Validate(object domainObject)
         {
             Validation.Validate((DomainObject)domainObject);
         }
 
-        private bool ShouldCheckRule(ISpecification rule, DomainObject domainObject, List<string> dirtyProperties)
+        private static bool ShouldCheckRule(ISpecification rule, DomainObject domainObject, ICollection<string> dirtyProperties)
         {
             // if the rule is not bound to specific properties, then it should be checked
             if (!(rule is IPropertyBoundRule))
                 return true;
 
-            IPropertyBoundRule pbRule = rule as IPropertyBoundRule;
+            var pbRule = rule as IPropertyBoundRule;
 
             // if the rule is bound to a property of an embedded value rather than the entity itself, then return true
             // (the rule won't actually be tested unless the property containing the embedded value is dirty)
-            if(CollectionUtils.Contains(pbRule.Properties,
-                delegate(PropertyInfo p) { return typeof(ValueObject).IsAssignableFrom(p.DeclaringType); }))
+            if(CollectionUtils.Contains(pbRule.Properties, p => typeof (ValueObject).IsAssignableFrom(p.DeclaringType)))
                 return true;
 
             // otherwise, we assume the rule is bound to a property of the entity
@@ -224,16 +215,16 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             // if the rule is bound to any properties that are dirty, return true
             return CollectionUtils.Contains((rule as IPropertyBoundRule).Properties,
-                        delegate(PropertyInfo prop) { return dirtyProperties.Contains(prop.Name); });
+                                            prop => dirtyProperties.Contains(prop.Name));
         }
 
-        private PropertyDiff[] GetPropertyDiffs(string[] propertyNames, IType[] types, object[] currentState, object[] previousState)
+        private static PropertyDiff[] GetPropertyDiffs(string[] propertyNames, IType[] types, object[] currentState, object[] previousState)
         {
-            PropertyDiff[] diffs = new PropertyDiff[propertyNames.Length];
-            for(int i = 0; i < diffs.Length; i++)
+            var diffs = new PropertyDiff[propertyNames.Length];
+            for(var i = 0; i < diffs.Length; i++)
             {
-                object oldValue = previousState == null ? null : previousState[i];
-                object newValue = currentState == null ? null : currentState[i];
+                var oldValue = previousState == null ? null : previousState[i];
+                var newValue = currentState == null ? null : currentState[i];
 
 				// need to handle collections specially
 				if (types[i].IsCollectionType && ReferenceEquals(oldValue, newValue))
@@ -261,7 +252,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 			}
 
 			// it is dirty, so we need to get the snapshot
-			ICollection snapshot = collection.CollectionSnapshot.Snapshot;
+			var snapshot = collection.CollectionSnapshot.Snapshot;
 
 			// sometimes it seems there is no snapshot - in this case we just return null
 			// to indicate that the snapshot is empty
@@ -275,28 +266,25 @@ namespace ClearCanvas.Enterprise.Hibernate
 				// we return an untyped set - this is a bit lazy, we could create a typed set with some extra effort, but do we need it?
 				return new HybridSet(((IDictionary)snapshot).Values);
 			}
-			else if(collection is IList && snapshot is IDictionary)
+			if(collection is IList && snapshot is IDictionary)
 			{
 				// "idbag"
 				// we return an untyped list - this is a bit lazy, we could create a typed list with some extra effort, but do we need it?
 				return new ArrayList(((IDictionary) snapshot).Values);
 			}
-			else if(collection is IList && snapshot is IList)
+			if(collection is IList && snapshot is IList)
 			{
 				// "list" or "bag"
 				// in this case, the NH snapshot is the same type as the original collection
 				return snapshot;
 			}
-			else if(collection is IDictionary)
+			if(collection is IDictionary)
 			{
 				// in this case, the NH snapshot is the same type as the original collection
 				return snapshot;
 			}
-			else
-			{
-				// TODO: implement this for other types of collection
-				throw new NotImplementedException("Snapshot is not implemented for this collection type.");
-			}
+			// TODO: implement this for other types of collection
+			throw new NotImplementedException("Snapshot is not implemented for this collection type.");
 		}
     }
 }

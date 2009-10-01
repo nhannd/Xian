@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -71,9 +69,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public EntityChange AsEntityChange()
         {
-            List<PropertyChange> propertyChanges = CollectionUtils.Map<PropertyDiff, PropertyChange>(
-                GetRelevantPropertyDiffs(), delegate(PropertyDiff diff) { return diff.AsPropertyChange(); });
-
+            var propertyChanges = CollectionUtils.Map(GetRelevantPropertyDiffs(), (PropertyDiff diff) => diff.AsPropertyChange());
             return new EntityChange(_entity.GetRef(), _changeType, propertyChanges.ToArray());
         }
 
@@ -86,8 +82,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         public ChangeRecord Compound(ChangeRecord previousChange)
         {
             // assume the propertyDiffs array in both objects is aligned
-            PropertyDiff[] resultDiffs = new PropertyDiff[_propertyDiffs.Length];
-            for (int i = 0; i < _propertyDiffs.Length; i++)
+            var resultDiffs = new PropertyDiff[_propertyDiffs.Length];
+            for (var i = 0; i < _propertyDiffs.Length; i++)
             {
                 resultDiffs[i] = _propertyDiffs[i].Compound(previousChange.PropertyDiffs[i]);
             }
