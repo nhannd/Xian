@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -58,9 +57,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		public ListStaffResponse ListStaff(ListStaffRequest request)
 		{
 
-			StaffAssembler assembler = new StaffAssembler();
+			var assembler = new StaffAssembler();
 
-			StaffSearchCriteria criteria = new StaffSearchCriteria();
+			var criteria = new StaffSearchCriteria();
 			criteria.Name.FamilyName.SortAsc(0);
 
             if (!string.IsNullOrEmpty(request.StaffID))
@@ -78,41 +77,38 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             if (!request.IncludeDeactivated)
 				criteria.Deactivated.EqualTo(false);
 
-			ApplyStaffTypesFilter(request.StaffTypesFilter, new StaffSearchCriteria[] { criteria });
+			ApplyStaffTypesFilter(request.StaffTypesFilter, new [] { criteria });
 
 			return new ListStaffResponse(
 				CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
 					PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, request.Page),
-					delegate(Staff s)
-					{
-						return assembler.CreateStaffSummary(s, PersistenceContext);
-					}));
+					s => assembler.CreateStaffSummary(s, PersistenceContext)));
 		}
 
 		[ReadOperation]
 		public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
 		{
-			Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
+			var s = PersistenceContext.Load<Staff>(request.StaffRef);
 
 			// ensure user has access to edit this staff
 			CheckReadAccess(s);
 
-			StaffAssembler assembler = new StaffAssembler();
+			var assembler = new StaffAssembler();
 			return new LoadStaffForEditResponse(assembler.CreateStaffDetail(s, this.PersistenceContext));
 		}
 
 		[ReadOperation]
 		public LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request)
 		{
-			StaffGroupAssembler groupAssember = new StaffGroupAssembler();
+			var groupAssember = new StaffGroupAssembler();
 
 			return new LoadStaffEditorFormDataResponse(
 				EnumUtils.GetEnumValueList<StaffTypeEnum>(this.PersistenceContext),
 				EnumUtils.GetEnumValueList<SexEnum>(this.PersistenceContext),
 				(new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices(),
 				EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
-				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
-					delegate(StaffGroup group) { return groupAssember.CreateSummary(group); })
+				CollectionUtils.Map(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
+				                    (StaffGroup group) => groupAssember.CreateSummary(group))
 				);
 		}
 
@@ -130,12 +126,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			}
 
 			// create new staff
-			Staff staff = new Staff();
+			var staff = new Staff();
 
 			// set properties from request
-			StaffAssembler assembler = new StaffAssembler();
+			var assembler = new StaffAssembler();
 
-			bool groupsEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup);
+			var groupsEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup);
 			assembler.UpdateStaff(request.StaffDetail,
 				staff,
 				groupsEditable,
@@ -156,7 +152,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.StaffDetail, "StaffDetail");
 
-			Staff staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef);
+			var staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef);
 
 			// ensure user has access to edit this staff
 			CheckWriteAccess(staff);
@@ -167,7 +163,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 				ValidateUserNameFree(request.StaffDetail.UserName);
 			}
 
-			StaffAssembler assembler = new StaffAssembler();
+			var assembler = new StaffAssembler();
 			assembler.UpdateStaff(request.StaffDetail,
 				staff,
 				request.UpdateElectiveGroups && (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup) || staff.UserName == this.CurrentUser),
@@ -183,13 +179,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		{
 			try
 			{
-				IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
-				Staff item = broker.Load(request.StaffRef, EntityLoadFlags.Proxy);
+				var broker = PersistenceContext.GetBroker<IStaffBroker>();
+				var item = broker.Load(request.StaffRef, EntityLoadFlags.Proxy);
 
 				//bug #3324: because StaffGroup owns the collection, need to iterate over each group
 				//and manually remove this staff
-				List<StaffGroup> groups = new List<StaffGroup>(item.Groups);
-				foreach (StaffGroup group in groups)
+				var groups = new List<StaffGroup>(item.Groups);
+				foreach (var group in groups)
 				{
 					group.RemoveMember(item);
 				}
@@ -207,24 +203,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		[ReadOperation]
 		public TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request)
 		{
-			IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
-			StaffAssembler assembler = new StaffAssembler();
+			var broker = PersistenceContext.GetBroker<IStaffBroker>();
+			var assembler = new StaffAssembler();
 
-			TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary> helper
-				= new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
+			var helper = new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
                     delegate
 					{
-                        string rawQuery = request.TextQuery;
+                        var rawQuery = request.TextQuery;
 
 						// this will hold all criteria
-						List<StaffSearchCriteria> criteria = new List<StaffSearchCriteria>();
+						var criteria = new List<StaffSearchCriteria>();
 
 						// build criteria against names
-						PersonName[] names = TextQueryHelper.ParsePersonNames(rawQuery);
-						criteria.AddRange(CollectionUtils.Map<PersonName, StaffSearchCriteria>(names,
-							delegate(PersonName n)
+						var names = TextQueryHelper.ParsePersonNames(rawQuery);
+						criteria.AddRange(CollectionUtils.Map(names,
+							(PersonName n) =>
 							{
-								StaffSearchCriteria sc = new StaffSearchCriteria();
+								var sc = new StaffSearchCriteria();
 								sc.Name.FamilyName.StartsWith(n.FamilyName);
 								if (n.GivenName != null)
 									sc.Name.GivenName.StartsWith(n.GivenName);
@@ -232,11 +227,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 							}));
 
 						// build criteria against identifiers
-						string[] ids = TextQueryHelper.ParseIdentifiers(rawQuery);
-						criteria.AddRange(CollectionUtils.Map<string, StaffSearchCriteria>(ids,
-									 delegate(string word)
+						var ids = TextQueryHelper.ParseIdentifiers(rawQuery);
+						criteria.AddRange(CollectionUtils.Map(ids,
+									 (string word) =>
 									 {
-										 StaffSearchCriteria c = new StaffSearchCriteria();
+										 var c = new StaffSearchCriteria();
 										 c.Id.StartsWith(word);
 										 return c;
 									 }));
@@ -246,18 +241,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 						return criteria.ToArray();
 					},
-					delegate(Staff staff)
-					{
-						return assembler.CreateStaffSummary(staff, PersistenceContext);
-					},
-					delegate(StaffSearchCriteria[] criteria, int threshold)
-					{
-						return broker.Count(criteria) <= threshold;
-					},
-					delegate(StaffSearchCriteria[] criteria, SearchResultPage page)
-					{
-						return broker.Find(criteria, page);
-					});
+                    staff => assembler.CreateStaffSummary(staff, PersistenceContext),
+                    (criteria, threshold) => broker.Count(criteria) <= threshold,
+					broker.Find);
 
 			return helper.Query(request);
 		}
@@ -305,17 +291,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		/// <param name="criteria"></param>
 		private void ApplyStaffTypesFilter(IEnumerable<string> staffTypesFilter, IEnumerable<StaffSearchCriteria> criteria)
 		{
-			IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
+			var broker = PersistenceContext.GetBroker<IEnumBroker>();
 			if (staffTypesFilter != null)
 			{
 				// parse strings into StaffType 
-				List<StaffTypeEnum> typeFilters = CollectionUtils.Map<string, StaffTypeEnum>(staffTypesFilter,
-					   delegate(string t) { return broker.Find<StaffTypeEnum>(t); });
+				var typeFilters = CollectionUtils.Map(staffTypesFilter, (string t) => broker.Find<StaffTypeEnum>(t));
 
 				if (typeFilters.Count > 0)
 				{
 					// apply type filter to each criteria object
-					foreach (StaffSearchCriteria criterion in criteria)
+					foreach (var criterion in criteria)
 					{
 						criterion.Type.In(typeFilters);
 					}
@@ -325,12 +310,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 		private void ValidateUserNameFree(string userName)
 		{
-			IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+			var staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
 			try
 			{
-				StaffSearchCriteria where = new StaffSearchCriteria();
+				var where = new StaffSearchCriteria();
 				where.UserName.EqualTo(userName);
-				Staff existing = staffBroker.FindOne(where);
+				var existing = staffBroker.FindOne(where);
 				if (existing != null)
 					throw new RequestValidationException(
 						string.Format("Staff cannot be associated with user {0} because this user is already associated to staff {1}",
