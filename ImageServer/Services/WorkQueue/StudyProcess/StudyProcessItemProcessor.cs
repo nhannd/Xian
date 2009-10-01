@@ -135,9 +135,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					             "Duplicate SOP being processed is identical.  Removing SOP: {0}",
 					             baseFile.MediaStorageSopInstanceUid);
 
-					FileInfo file = new FileInfo(duplicatePath);
-					file.Delete();
-				}
+				    RemoveWorkQueueUid(uid, duplicatePath);
+                }
 				else
 				{
 					CreateDuplicateSIQEntry(uid, dupFile, failureReason);
@@ -192,7 +191,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (result.Status == ProcessingStatus.Reconciled)
             {
-                // file has been saved in another place for reconcilation
+                // file has been saved by SopInstanceProcessor in another place for reconcilation
+                // Note: SopInstanceProcessor has removed the WorkQueueUid so we
+                // only need to delete the file here.
                 FileUtils.Delete(fileInfo.FullName);
             }
 			
