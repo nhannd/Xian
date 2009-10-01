@@ -122,24 +122,21 @@ namespace ClearCanvas.Enterprise.Hibernate
             switch (_changeType)
             {
                 // for creates, include all properties except "Version"
-                case EntityChangeType.Create:
-                    return CollectionUtils.Select(_propertyDiffs,
-                            delegate(PropertyDiff diff)
-                            {
-                                return diff.PropertyName != "Version";
-                            });
+				case EntityChangeType.Create:
+					return CollectionUtils.Select(_propertyDiffs,
+						diff => diff.PropertyName != "Version");
 
-                // for updates, include only the properties that have actually changed
+                // for updates, include only the properties that have actually changed, excluding Version
                 case EntityChangeType.Update:
                     return CollectionUtils.Select(_propertyDiffs,
-                            delegate(PropertyDiff diff)
-                            {
-                                return diff.PropertyName != "Version" && diff.IsChanged;
-                            });
+						diff => diff.PropertyName != "Version" && diff.IsChanged);
 
-                // include no properties    
-                case EntityChangeType.Delete:
-                default:
+				// for deletes, include all properties except "Version", and
+				// exclude collection properties (NH seems to complain when attmepting to lazy load collection after parent entity has been deleted)
+				case EntityChangeType.Delete:
+					return CollectionUtils.Select(_propertyDiffs,
+						diff => diff.PropertyName != "Version" && !diff.IsCollectionProperty);
+				default:
                     return new List<PropertyDiff>();
 
             }

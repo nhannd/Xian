@@ -137,11 +137,8 @@ namespace ClearCanvas.Enterprise.Core
                 writer.WriteAttributeString("oid", EntityRefUtils.GetOID(entityChange.EntityRef).ToString());
                 writer.WriteAttributeString("version", EntityRefUtils.GetVersion(entityChange.EntityRef).ToString());
 
-                // for creates and updates, write property changes
-                if(entityChange.ChangeType != EntityChangeType.Delete)
-                {
-                    WriteProperties(writer, entityChange);
-                }
+                // write property changes
+                WriteProperties(writer, entityChange);
 
                 writer.WriteEndElement();
             }
@@ -175,11 +172,18 @@ namespace ClearCanvas.Enterprise.Core
 		{
 			writer.WriteStartElement("property");
 			writer.WriteAttributeString("name", propertyName);
-			if (changeType == EntityChangeType.Update)
+
+			// for Updates and Deletes, write the old value
+			if (changeType != EntityChangeType.Create)
 			{
 				WritePropertyValue(writer, "old-value", oldValue);
 			}
-			WritePropertyValue(writer, "new-value", newValue);
+
+			// for Creates and Updates, write the new value
+			if(changeType != EntityChangeType.Delete)
+			{
+				WritePropertyValue(writer, "new-value", newValue);
+			}
 			writer.WriteEndElement();
 		}
 
