@@ -164,6 +164,7 @@ namespace ClearCanvas.Enterprise.Desktop
 
 		private readonly bool _dialogMode;
 		private bool _hostedMode;
+		private bool _readOnly;
 		private bool _setModifiedOnListChange;
 
 		private readonly bool _showActiveColumn;
@@ -207,6 +208,16 @@ namespace ClearCanvas.Enterprise.Desktop
 			set { _hostedMode = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets whether this component is in a read-only mode.  If true, the defaul add, edit, delete, and toggle activation
+		/// actions will be hidden.
+		/// </summary>
+		public bool ReadOnly
+		{
+			get { return _readOnly; }
+			set { _readOnly = value; }
+		}
+
 		#region ApplicationComponent overrides
 
 		public override void Start()
@@ -232,24 +243,30 @@ namespace ClearCanvas.Enterprise.Desktop
 				new ResourceResolver(this.GetType(), true));
 
 			if (SupportsAdd)
+			{
 				_actionModel.Add.SetClickHandler(AddItems);
+				_actionModel.Add.Visible = !this.ReadOnly;
+			}
 
 			if (SupportsEdit)
 			{
 				_actionModel.Edit.SetClickHandler(EditSelectedItems);
 				_actionModel.Edit.Enabled = false;
+				_actionModel.Edit.Visible = !this.ReadOnly;
 			}
 
 			if (SupportsDelete)
 			{
 				_actionModel.Delete.SetClickHandler(DeleteSelectedItems);
 				_actionModel.Delete.Enabled = false;
+				_actionModel.Delete.Visible = !this.ReadOnly;
 			}
 
 			if (SupportsDeactivation)
 			{
 				_actionModel.ToggleActivation.SetClickHandler(ToggleSelectedItemsActivation);
 				_actionModel.ToggleActivation.Enabled = false;
+				_actionModel.ToggleActivation.Visible = !this.ReadOnly;
 			}
 
 			InitializeActionModel(_actionModel);

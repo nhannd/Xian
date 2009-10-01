@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
 
 			// ensure user has access to edit this staff
-			CheckAccess(s);
+			CheckReadAccess(s);
 
 			StaffAssembler assembler = new StaffAssembler();
 			return new LoadStaffForEditResponse(assembler.CreateStaffDetail(s, this.PersistenceContext));
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			Staff staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef);
 
 			// ensure user has access to edit this staff
-			CheckAccess(staff);
+			CheckWriteAccess(staff);
 
 			// if trying to associate with a new user account, check the account is free
 			if (!string.IsNullOrEmpty(request.StaffDetail.UserName) && request.StaffDetail.UserName != staff.UserName)
@@ -268,7 +268,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		/// Throws an exception if the current user does not have access to edit specified staff.
 		/// </summary>
 		/// <param name="staff"></param>
-		private void CheckAccess(Staff staff)
+		private void CheckReadAccess(Staff staff)
 		{
 			// users with Admin.Data.Staff token can access any staff
 			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Staff))
@@ -276,6 +276,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 			// users can access their own staff profile
 			if (staff.UserName == this.CurrentUser)
+				return;
+
+			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+		}
+
+		/// <summary>
+		/// Throws an exception if the current user does not have access to edit specified staff.
+		/// </summary>
+		/// <param name="staff"></param>
+		private void CheckWriteAccess(Staff staff)
+		{
+			// users with Admin.Data.Staff token can access any staff
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Staff))
+				return;
+
+			// users can update their own staff profile with the Update token
+			if (staff.UserName == this.CurrentUser && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.StaffProfile.Update))
 				return;
 
 			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);

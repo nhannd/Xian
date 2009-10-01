@@ -231,8 +231,6 @@ namespace ClearCanvas.Ris.Client
 			_copyCannedTextToClipboardAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToClipboardToolSmall.png",
 				SR.MessageCopyToClipboard, CopyCannedText);
 
-			model.Edit.Enabled = false;
-			model.Delete.Enabled = false;
 			_duplicateCannedTextAction.Enabled = false;
 			_copyCannedTextToClipboardAction.Enabled = false;
 

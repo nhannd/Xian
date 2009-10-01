@@ -176,21 +176,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		#endregion
 
-		/// <summary>
-		/// Override this method to perform custom initialization of the action model,
-		/// such as adding permissions or adding custom actions.
-		/// </summary>
-		/// <param name="model"></param>
-		protected override void InitializeActionModel(AdminActionModel model)
-		{
-			base.InitializeActionModel(model);
-
-			model.Add.Visible = false;
-			model.Edit.Visible = false;
-			//model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.System.WorkQueue);
-			//model.ToggleActivation.Visible = false;
-		}
-
 		protected override IList<WorkQueueItemSummary> ListItems(ListWorkQueueItemsRequest request)
 		{
 			ListWorkQueueItemsResponse listResponse = null;
@@ -206,6 +191,16 @@ namespace ClearCanvas.Ris.Client.Admin
 				});
 			return listResponse.WorkQueueItems;
 
+		}
+
+		protected override bool SupportsAdd
+		{
+			get { return false; }
+		}
+
+		protected override bool SupportsEdit
+		{
+			get { return false; }
 		}
 
 		protected override bool AddItems(out IList<WorkQueueItemSummary> addedItems)

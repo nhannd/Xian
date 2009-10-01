@@ -35,8 +35,6 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
@@ -45,39 +43,6 @@ using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("launch", "global-menus/MenuTools/Staff Profile", "Launch")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.View)]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.Update)]
-    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class StaffProfileEditorTool : Tool<IDesktopToolContext>
-	{
-		public void Launch()
-		{
-			try
-			{
-				if(LoginSession.Current.Staff == null)
-				{
-					this.Context.DesktopWindow.ShowMessageBox(
-						string.Format("There is no staff profile associated with the user '{0}'", LoginSession.Current.UserName),
-						MessageBoxActions.Ok);
-					return;
-				}
-				
-				StaffEditorComponent component = new StaffEditorComponent(LoginSession.Current.Staff.StaffRef);
-
-				ApplicationComponent.LaunchAsDialog(
-					this.Context.DesktopWindow,
-					component,
-					SR.TitleStaff);
-			}
-			catch (Exception e)
-			{
-				// could not launch component
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-			}
-		}
-	}
-
 	/// <summary>
 	/// Defines an interface for providing custom editing pages to be displayed in the staff editor.
 	/// </summary>
@@ -212,25 +177,39 @@ namespace ClearCanvas.Ris.Client
 
 					_originalStaffUserName = _staffDetail.UserName;
 
-					this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new StaffDetailsEditorComponent(formDataResponse.StaffTypeChoices, formDataResponse.SexChoices)));
-					this.Pages.Add(new NavigatorPage("Staff/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
-					this.Pages.Add(new NavigatorPage("Staff/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
-					this.Pages.Add(new NavigatorPage("Staff/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
+					_detailsEditor = new StaffDetailsEditorComponent(formDataResponse.StaffTypeChoices, formDataResponse.SexChoices)
+					                 	{StaffDetail = _staffDetail};
+					this.Pages.Add(new NavigatorPage("Staff", _detailsEditor));
 
-					_addressesSummary.SetModifiedOnListChange = true;
-					_phoneNumbersSummary.SetModifiedOnListChange = true;
-					_emailAddressesSummary.SetModifiedOnListChange = true;
+					_phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)
+					                       	{
+					                       		ReadOnly = !CanModifyStaffProfile,
+					                       		SetModifiedOnListChange = true,
+					                       		Subject = _staffDetail.TelephoneNumbers
+					                       	};
+					this.Pages.Add(new NavigatorPage("Staff/Phone Numbers", _phoneNumbersSummary));
 
-					_detailsEditor.StaffDetail = _staffDetail;
-					_phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
-					_addressesSummary.Subject = _staffDetail.Addresses;
-					_emailAddressesSummary.Subject = _staffDetail.EmailAddresses;
+					_addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)
+					                    	{
+					                    		ReadOnly = !CanModifyStaffProfile,
+					                    		SetModifiedOnListChange = true,
+					                    		Subject = _staffDetail.Addresses
+					                    	};
+					this.Pages.Add(new NavigatorPage("Staff/Addresses", _addressesSummary));
+
+					_emailAddressesSummary = new EmailAddressesSummaryComponent
+					                         	{
+					                         		ReadOnly = !CanModifyStaffProfile,
+					                         		SetModifiedOnListChange = true,
+					                         		Subject = _staffDetail.EmailAddresses
+					                         	};
+					this.Pages.Add(new NavigatorPage("Staff/Email Addresses", _emailAddressesSummary));
+
+
 
 					// allow modification of non-elective groups only iff the user has StaffGroup admin permissions
-					bool nonElectiveGroupsReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup) == false;
-					string nonElectiveGroupsPageTitle = nonElectiveGroupsReadOnly ? "Staff/Groups/Non-elective (read only)" : "Staff/Groups/Non-elective";
-					this.Pages.Add(new NavigatorPage(nonElectiveGroupsPageTitle, _nonElectiveGroupsEditor = new StaffNonElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, nonElectiveGroupsReadOnly)));
-					this.Pages.Add(new NavigatorPage("Staff/Groups/Elective", _electiveGroupsEditor = new StaffElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, false)));
+					this.Pages.Add(new NavigatorPage("Staff/Groups/Non-elective", _nonElectiveGroupsEditor = new StaffNonElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, !CanModifyNonElectiveGroups)));
+					this.Pages.Add(new NavigatorPage("Staff/Groups/Elective", _electiveGroupsEditor = new StaffElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, !CanModifyStaffProfile)));
 				});
 
 			// instantiate all extension pages
@@ -340,5 +319,26 @@ namespace ClearCanvas.Ris.Client
 					});
 			}
 		}
+
+		private static bool CanModifyStaffProfile
+		{
+			get
+			{
+				// require either Staff Admin or StaffProfile.Update token
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff)
+					   || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.Update);
+			}
+		}
+
+		private static bool CanModifyNonElectiveGroups
+		{
+			get
+			{
+				// require both Staff and StaffGroup admin tokens
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff)
+					&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			}
+		}
+
 	}
 }
