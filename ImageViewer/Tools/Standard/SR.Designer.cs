@@ -1243,7 +1243,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show CT Raw Pixel Value.
+        ///   Looks up a localized string similar to Show Raw Pixel Value for CT Images.
         /// </summary>
         internal static string ShowCTPix {
             get {
@@ -1252,7 +1252,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Non-CT Modality Value.
+        ///   Looks up a localized string similar to Show Post-Modality LUT Value for non-CT Images.
         /// </summary>
         internal static string ShowNonCTMod {
             get {
@@ -1261,7 +1261,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show VOI LUT Value.
+        ///   Looks up a localized string similar to Show Post-VOI LUT Value for All Images.
         /// </summary>
         internal static string ShowVoiLut {
             get {
@@ -1819,7 +1819,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shows the modality pixel value on non-CT images.
+        ///   Looks up a localized string similar to Shows the post-modality LUT pixel value on non-CT images.
         /// </summary>
         internal static string TooltipShowNonCTMod {
             get {
@@ -1828,7 +1828,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shows the VOI LUT pixel value on images.
+        ///   Looks up a localized string similar to Shows the post-VOI LUT pixel value on all images.
         /// </summary>
         internal static string TooltipShowVoiLut {
             get {
