@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Dicom.Utilities;
@@ -171,6 +173,30 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void InitializeTable()
 		{
 			TableColumn<StudyItem, string> column;
+
+			try
+			{
+				// Create and add any extension columns
+				StudyColumnExtensionPoint xp = new StudyColumnExtensionPoint();
+				foreach (object obj in xp.CreateExtensions())
+				{
+					IStudyColumn newColumn = (IStudyColumn)obj;
+
+					column = new TableColumn<StudyItem, string>(
+						newColumn.Heading,
+						delegate(StudyItem item)
+						{
+							return newColumn.GetValue(item).ToString();
+						},
+						newColumn.WidthFactor);
+
+					newColumn.ColumnValueChanged += OnColumnValueChanged;
+					_studyTable.Columns.Add(column);
+				}
+			}
+			catch (NotSupportedException)
+			{
+			}
 
 			column = new TableColumn<StudyItem, string>(
 				SR.ColumnHeadingPatientId,
@@ -368,6 +394,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			return null;
+		}
+
+		private void OnColumnValueChanged(object sender, ItemEventArgs<StudyItem> e)
+		{
+			this.StudyTable.Items.NotifyItemUpdated(e.Item);
 		}
 
 		#endregion
