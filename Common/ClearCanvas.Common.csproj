@@ -316,6 +316,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ExtensionSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IUserCredentialsProvider.cs" />
     <Compile Include="Shreds\IShred.cs" />
     <Compile Include="Shreds\QueueProcessor.cs" />
     <Compile Include="Shreds\QueueProcessorShred.cs" />

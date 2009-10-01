@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClearCanvas.Enterprise.Common
+namespace ClearCanvas.Common
 {
     /// <summary>
     /// Defines an interface that supplies user credentials.

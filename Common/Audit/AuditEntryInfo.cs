@@ -42,14 +42,6 @@ namespace ClearCanvas.Common.Audit
 	[DataContract]
 	public class AuditEntryInfo
 	{
-		private string _category;
-		private DateTime _timestamp;
-		private string _hostName;
-		private string _application;
-		private string _user;
-		private string _operation;
-		private string _details;
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -58,14 +50,16 @@ namespace ClearCanvas.Common.Audit
 		/// <param name="hostName"></param>
 		/// <param name="application"></param>
 		/// <param name="user"></param>
+		/// <param name="userSessionId"></param>
 		/// <param name="operation"></param>
 		/// <param name="details"></param>
-		public AuditEntryInfo(string category, DateTime timeStamp, string hostName, string application, string user, string operation, string details)
+		public AuditEntryInfo(string category, DateTime timeStamp, string hostName, string application, string user, string userSessionId, string operation, string details)
 		{
 			TimeStamp = timeStamp;
 			HostName = hostName;
 			Application = application;
 			User = user;
+			UserSessionId = userSessionId;
 			Category = category;
 			Operation = operation;
 			Details = details;
@@ -75,70 +69,48 @@ namespace ClearCanvas.Common.Audit
 		/// Gets or sets the time at which this log entry was created.
 		/// </summary>
 		[DataMember]
-		public DateTime TimeStamp
-		{
-			get { return _timestamp; }
-			private set { _timestamp = value; }
-		}
+		public DateTime TimeStamp { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the hostname of the computer that generated this log entry.
 		/// </summary>
 		[DataMember]
-		public string HostName
-		{
-			get { return _hostName; }
-			private set { _hostName = value; }
-		}
+		public string HostName { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the the name of the application that created this log entry.
 		/// </summary>
 		[DataMember]
-		public string Application
-		{
-			get { return _application; }
-			private set { _application = value; }
-		}
+		public string Application { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the user of the application on whose behalf this log entry was created.
 		/// </summary>
 		[DataMember]
-		public string User
-		{
-			get { return _user; }
-			private set { _user = value; }
-		}
+		public string User { get; private set; }
+
+		/// <summary>
+		/// Gets or sets the user session ID on whose behalf this log entry was created.
+		/// </summary>
+		[DataMember]
+		public string UserSessionId { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the name of the operation that caused this log entry to be created.
 		/// </summary>
 		[DataMember]
-		public string Operation
-		{
-			get { return _operation; }
-			private set { _operation = value; }
-		}
+		public string Operation { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the contents of this log entry, which may be text or XML based.
 		/// </summary>
 		[DataMember]
-		public string Details
-		{
-			get { return _details; }
-			private set { _details = value; }
-		}
+		public string Details { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the category of this audit log entry.
 		/// </summary>
 		[DataMember]
-		public string Category
-		{
-			get { return _category; }
-			private set { _category = value; }
-		}
+		public string Category { get; private set; }
 	}
 }

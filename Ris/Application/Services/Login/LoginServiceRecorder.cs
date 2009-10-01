@@ -37,6 +37,7 @@ using ClearCanvas.Common.Audit;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Login;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -83,9 +84,23 @@ namespace ClearCanvas.Ris.Application.Services.Login
 		{
 			// because the login service is not authenticated, the thread that handles the request 
 			// does not have a principal, and the logEntry will not be associated with a user
-			// therefore, we explicitly specify the user to indicate who submitted the request
-			LoginServiceRequestBase request = (LoginServiceRequestBase)invocationInfo.Arguments[0];
-			auditLog.WriteEntry(invocationInfo.OperationName, details, request.UserName);
+			// therefore, we need to explicitly specify the user, which is found in the request
+			var request = (LoginServiceRequestBase)invocationInfo.Arguments[0];
+
+			// also need to determine the session token if possible
+			// note: ChangePassword does not submit a session token, so it is impossible to audit this
+			SessionToken sessionToken = null;
+			if (request is LoginRequest)
+			{
+				var response = (LoginResponse)invocationInfo.ReturnValue;
+				sessionToken = response.SessionToken;
+			}
+			else if (request is LogoutRequest)
+			{
+				sessionToken = ((LogoutRequest)request).SessionToken;
+			}
+
+			auditLog.WriteEntry(invocationInfo.OperationName, details, request.UserName, sessionToken == null ? null : sessionToken.Id);
 		}
 	}
 }

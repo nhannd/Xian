@@ -30,12 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.Reflection;
 using System.Threading;
 using System.Net;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -48,6 +46,7 @@ namespace ClearCanvas.Enterprise.Core
     	private string _hostName;
         private string _application;
         private string _user;
+    	private string _userSessionId;
         private string _operation;
         private string _details;
 
@@ -65,14 +64,16 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="hostName"></param>
         /// <param name="application"></param>
         /// <param name="user"></param>
+        /// <param name="userSessionId"></param>
         /// <param name="operation"></param>
         /// <param name="details"></param>
-        protected LogEntry(DateTime timestamp, string hostName, string application, string user, string operation, string details)
+        protected LogEntry(DateTime timestamp, string hostName, string application, string user, string userSessionId, string operation, string details)
         {
             _timestamp = timestamp;
         	_hostName = hostName;
             _application = application;
             _user = user;
+        	_userSessionId = userSessionId;
             _operation = operation;
             _details = details;
         }
@@ -88,13 +89,14 @@ namespace ClearCanvas.Enterprise.Core
 				SafeGetHostName(),
                 null, // TODO: replace this with something more meaningful????
                 Thread.CurrentPrincipal.Identity.Name,
+				SafeGetUserSessionId(),
                 operation,
                 details
                 )
         {
         }
 
-        /// <summary>
+    	/// <summary>
         /// Gets or sets the time at which this log entry was created.
         /// </summary>
         public DateTime TimeStamp
@@ -129,6 +131,15 @@ namespace ClearCanvas.Enterprise.Core
             get { return _user; }
             set { _user = value; }
         }
+
+		/// <summary>
+		/// Gets or sets the user session ID on whose behalf this log entry was created.
+		/// </summary>
+    	public string UserSessionId
+    	{
+			get { return _userSessionId; }
+			set { _userSessionId = value; }
+    	}
 
         /// <summary>
         /// Gets or sets the name of the operation that caused this log entry to be created.
@@ -180,6 +191,15 @@ namespace ClearCanvas.Enterprise.Core
 			{
 				return DateTime.Now;
 			}
+		}
+
+		/// <summary>
+		/// Gets the user session ID of the current thread, if supported.
+		/// </summary>
+		/// <returns></returns>
+		private static string SafeGetUserSessionId()
+		{
+			return (Thread.CurrentPrincipal is IUserCredentialsProvider) ? ((IUserCredentialsProvider)Thread.CurrentPrincipal).SessionTokenId : null;
 		}
 
 		#endregion

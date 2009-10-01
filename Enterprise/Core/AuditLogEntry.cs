@@ -60,10 +60,11 @@ namespace ClearCanvas.Enterprise.Core
 		/// <param name="hostName"></param>
 		/// <param name="application"></param>
 		/// <param name="user"></param>
+		/// <param name="userSessionId"></param>
 		/// <param name="operation"></param>
 		/// <param name="details"></param>
-		protected internal AuditLogEntry(string category, DateTime timestamp, string hostName, string application, string user, string operation, string details)
-			:base(timestamp, hostName, application, user, operation, details)
+		protected internal AuditLogEntry(string category, DateTime timestamp, string hostName, string application, string user, string userSessionId, string operation, string details)
+			:base(timestamp, hostName, application, user, userSessionId, operation, details)
 		{
 			_category = category;
 		}

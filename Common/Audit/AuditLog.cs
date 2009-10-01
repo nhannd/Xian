@@ -30,10 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Security.Principal;
-using System.Text;
 using System.Threading;
 
 namespace ClearCanvas.Common.Audit
@@ -66,7 +63,7 @@ namespace ClearCanvas.Common.Audit
 		/// <param name="application"></param>
 		/// <param name="category"></param>
 		public AuditLog(string application, string category)
-			:this(application, category, new IAuditSink[]{ CreateSink() })
+			:this(application, category, new []{ CreateSink() })
 		{
 		}
 
@@ -95,7 +92,7 @@ namespace ClearCanvas.Common.Audit
 		/// <param name="details"></param>
 		public void WriteEntry(string operation, string details)
 		{
-			WriteEntry(operation, details, GetUserName());
+			WriteEntry(operation, details, GetUserName(), GetUserSessionId());
 		}
 
 		/// <summary>
@@ -105,18 +102,20 @@ namespace ClearCanvas.Common.Audit
 		/// <param name="operation"></param>
 		/// <param name="details"></param>
 		/// <param name="user"></param>
-		public void WriteEntry(string operation, string details, string user)
+		/// <param name="userSessionId"></param>
+		public void WriteEntry(string operation, string details, string user, string userSessionId)
 		{
-			AuditEntryInfo entry = new AuditEntryInfo(
+			var entry = new AuditEntryInfo(
 				_category,
 				Platform.Time,
 				Dns.GetHostName(),
 				_application,
 				user,
+				userSessionId,
 				operation,
 				details);
 
-			foreach (IAuditSink sink in _sinks)
+			foreach (var sink in _sinks)
 			{
 				sink.WriteEntry(entry);
 			}
@@ -132,8 +131,18 @@ namespace ClearCanvas.Common.Audit
 		/// <returns></returns>
 		private static string GetUserName()
 		{
-			IPrincipal p = Thread.CurrentPrincipal;
+			var p = Thread.CurrentPrincipal;
 			return (p != null && p.Identity != null) ? p.Identity.Name : null;
+		}
+
+		/// <summary>
+		/// Gets the session token ID of the current thread or null if not established.
+		/// </summary>
+		/// <returns></returns>
+		private static string GetUserSessionId()
+		{
+			var p = Thread.CurrentPrincipal as IUserCredentialsProvider;
+			return (p != null) ? p.SessionTokenId : null;
 		}
 
 		/// <summary>

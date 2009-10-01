@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Audit;
 
 namespace ClearCanvas.Enterprise.Core.Audit
@@ -46,6 +43,7 @@ namespace ClearCanvas.Enterprise.Core.Audit
 				info.HostName,
 				info.Application,
 				info.User,
+				info.UserSessionId,
 				info.Operation,
 				info.Details);
 		}

@@ -30,10 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -60,7 +58,7 @@ namespace ClearCanvas.Enterprise.Common
 
 		private static IUserCredentialsProvider GetThreadCredentials()
 		{
-			IUserCredentialsProvider provider = Thread.CurrentPrincipal as IUserCredentialsProvider;
+			var provider = Thread.CurrentPrincipal as IUserCredentialsProvider;
 			if(provider == null)
                 throw new InvalidOperationException("Thread.CurrentPrincipal value does not implement IUserCredentialsProvider.");
 

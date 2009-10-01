@@ -10,6 +10,7 @@
     <property name="Application" column="Application_" type="String" not-null="false"/>
     <property name="Category" column="Category_" type="String" not-null="true"/>
     <property name="User" column="User_" type="String"/>
+    <property name="UserSessionId" column="UserSessionId_" type="String"/>
     <property name="Operation" column="Operation_" type="String" length="1000"/>
     <property name="Details" column="Details_" type="StringClob" length="1000000"/>
   </class>
