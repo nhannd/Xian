@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -64,11 +65,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	internal sealed class StudyLoaderMap : IEnumerable
     {
         private readonly Dictionary<string, IStudyLoader> _studyLoaderMap = new Dictionary<string, IStudyLoader>();
+		private static readonly Dictionary<string, string> _supportedStudyLoaders;
 
         public StudyLoaderMap()
         {
 			CreateStudyLoaders();
         }
+
+		static StudyLoaderMap()
+		{
+			StudyLoaderMap map = new StudyLoaderMap();
+			_supportedStudyLoaders = new Dictionary<string, string>();
+			foreach (IStudyLoader loader in map._studyLoaderMap.Values)
+				_supportedStudyLoaders[loader.Name] = loader.Name;
+		}
+
+		public static bool IsStudyLoaderSupported(string studyLoaderName)
+		{
+			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
+			return _supportedStudyLoaders.ContainsKey(studyLoaderName);
+		}
 
         public IStudyLoader this[string studyLoaderName]
         {

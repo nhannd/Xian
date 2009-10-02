@@ -67,10 +67,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     internal sealed class StudyFinderMap : IEnumerable
 	{
         private readonly Dictionary<string, IStudyFinder> _studyFinderMap = new Dictionary<string, IStudyFinder>();
+		private static readonly Dictionary<string, string> _supportedStudyFinders;
 
 		internal StudyFinderMap()
 		{
 			CreateStudyFinders();
+		}
+
+		static StudyFinderMap()
+		{
+			StudyFinderMap map = new StudyFinderMap();
+			_supportedStudyFinders = new Dictionary<string, string>();
+			foreach (IStudyFinder finder in map._studyFinderMap.Values)
+				_supportedStudyFinders[finder.Name] = finder.Name;
+		}
+
+		public static bool IsStudyFinderSupported(string studyFinderName)
+		{
+			Platform.CheckForEmptyString(studyFinderName, "studyFinderName");
+			return _supportedStudyFinders.ContainsKey(studyFinderName);
 		}
 
 		/// <summary>
@@ -119,6 +134,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
-
-    }
+	}
 }

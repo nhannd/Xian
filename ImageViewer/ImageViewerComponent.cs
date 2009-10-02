@@ -41,6 +41,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -197,9 +198,11 @@ namespace ClearCanvas.ImageViewer
 		private ToolSet _toolSet;
 		private ILayoutManager _layoutManager;
 		private readonly AsynchronousPriorStudyLoader _priorStudyLoader;
+		private SynchronizationContext _uiThreadSynchronizationContext;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
 		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
+
 
 		private event EventHandler _closingEvent;
 
@@ -325,6 +328,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			base.Start();
 
+			_uiThreadSynchronizationContext = SynchronizationContext.Current;
             _toolSet = new ToolSet(CreateTools(), new ImageViewerToolContext(this));
 
 			_shortcutManager = new ViewerShortcutManager();
@@ -530,13 +534,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return StringUtilities.Combine<Patient>(this.StudyTree.Patients, String.Format(" {0} ", SR.SeparatorPatientsLoaded),
-					delegate(Patient patient)
-					{
-						PersonName name = patient.PatientsName;
-						string formattedName = name.FormattedName;
-						return StringUtilities.Combine<string>(new string[] { formattedName, patient.PatientId } , String.Format(" {0} ", SR.SeparatorPatientDescription));
-					});
+				return CreateTitle(CollectionUtils.Map(this.StudyTree.Patients, (Patient patient) => (IPatientData) patient));
 			}
 		}
 
@@ -694,9 +692,12 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="StudyLoaderNotFoundException">The specified <see cref="IStudyLoader"/> could not be found.</exception>
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
-			using (SingleStudyLoader loader = new SingleStudyLoader(this, loadStudyArgs))
+			SynchronizationContext context = _uiThreadSynchronizationContext ?? SynchronizationContext.Current;
+			using (SingleStudyLoader loader = new SingleStudyLoader(context, this, loadStudyArgs))
 			{
 				loader.LoadStudy();
+				if (loader.Error != null)
+					throw loader.Error;
 			}
 		}
 
@@ -796,6 +797,27 @@ namespace ClearCanvas.ImageViewer
 
 		#region Utility Methods
 
+		public static bool IsStudyFinderSupported(string studyFinderName)
+		{
+			return StudyFinderMap.IsStudyFinderSupported(studyFinderName);
+		}
+
+		public static bool IsStudyLoaderSupported(string studyLoaderName)
+		{
+			return StudyLoaderMap.IsStudyLoaderSupported(studyLoaderName);
+		}
+
+		public static string CreateTitle(IEnumerable<IPatientData> patientData)
+		{
+			return StringUtilities.Combine(patientData, String.Format(" {0} ", SR.SeparatorPatientsLoaded),
+					delegate(IPatientData data)
+					{
+						PersonName name = new PersonName(data.PatientsName);
+						string formattedName = name.FormattedName;
+						return StringUtilities.Combine<string>(new string[] { formattedName, data.PatientId }, String.Format(" {0} ", SR.SeparatorPatientDescription));
+					});
+		}
+
 		/// <summary>
 		/// Tries to get a reference to an <see cref="IImageViewer"/> hosted by a workspace.
 		/// </summary>
@@ -833,7 +855,6 @@ namespace ClearCanvas.ImageViewer
 				workspace.Close();
 				throw;
 			}
-
 		}
 
 		/// <summary>

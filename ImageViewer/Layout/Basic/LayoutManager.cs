@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -65,6 +66,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				delegate(string modality) { return !String.IsNullOrEmpty(modality); });
 
 			_basicFactory.SingleImageModalities.AddRange(singleImageModalities);
+
+			base.AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
 		}
 
 		public override void SetImageViewer(IImageViewer imageViewer)

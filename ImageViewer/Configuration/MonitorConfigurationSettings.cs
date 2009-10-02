@@ -44,6 +44,11 @@ namespace ClearCanvas.ImageViewer.Configuration
 				return (WindowBehaviour)MonitorConfigurationSettings.Default.WindowBehaviour;
 			}
 		}
+
+		public static bool AllowEmptyViewer
+		{
+			get { return MonitorConfigurationSettings.Default.AllowEmptyViewer; }
+		}
 	}
 
 	[SettingsGroupDescription("Settings related to monitor configuration and multiple windows.")]
@@ -77,6 +82,21 @@ namespace ClearCanvas.ImageViewer.Configuration
 			set
 			{
 				this["WindowBehaviour"] = value;
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("False")]
+		public bool AllowEmptyViewer
+		{
+			get
+			{
+				return ((bool)(this["AllowEmptyViewer"]));
+			}
+			set
+			{
+				this["AllowEmptyViewer"] = value;
 			}
 		}
 	}

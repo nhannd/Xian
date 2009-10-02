@@ -30,11 +30,16 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -97,17 +102,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				OpenStudyHelper helper = new OpenStudyHelper();
 				helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
+				helper.AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
+
 				if (Context.SelectedServerGroup.IsLocalDatastore)
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
-						helper.AddStudy(study.StudyInstanceUid, study.Server, "DICOM_LOCAL");
+						helper.AddStudy(study.StudyInstanceUid, study.Server, LocalStudyLoaderName);
 				}
 				else
 				{
 					foreach (StudyItem study in Context.SelectedStudies)
-						helper.AddStudy(study.StudyInstanceUid, study.Server, "CC_STREAMING");
+					{
+						ApplicationEntity server = study.Server as ApplicationEntity;
+						if (server != null)
+						{
+							if (server.IsStreaming)
+								helper.AddStudy(study.StudyInstanceUid, study.Server, StreamingStudyLoaderName);
+							else
+								helper.AddStudy(study.StudyInstanceUid, study.Server, RemoteStudyLoaderName);
+						}
+					}
 				}
 
+				helper.Title = ImageViewerComponent.CreateTitle(GetSelectedPatients());
 				helper.OpenStudies();
 			}
 			catch (Exception e)
@@ -118,10 +135,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedServerGroup.HasAnyStreamingServers())
+			if (GetAtLeastOneServerSupportsLoading())
 				Context.DefaultActionHandler = OpenStudy;
 		}
-
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
 			UpdateEnabled();
@@ -136,20 +152,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			if (Context.SelectedServerGroup.IsLocalDatastore)
 			{
-				if (Context.SelectedStudy != null)
-					Enabled = true;
-				else
-					Enabled = false;
+				Enabled = Context.SelectedStudy != null;
 			}
 			else
 			{
 				if (Context.SelectedStudy != null)
-				{
-					if (Context.SelectedServerGroup.IsOnlyNonStreamingServers())
-						Enabled = false;
-					else
-						Enabled = true;
-				}
+					Enabled = GetAtLeastOneServerSupportsLoading();
 				else
 					Enabled = false;
 			}
@@ -165,24 +173,54 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return Context.SelectedStudies.Count;
 		}
 
+		private bool GetAtLeastOneServerSupportsLoading()
+		{
+			if (Context.SelectedServerGroup.IsLocalDatastore && base.IsLocalStudyLoaderSupported)
+				return true;
+
+			foreach (Server server in base.Context.SelectedServerGroup.Servers)
+			{
+				if (server.IsStreaming && base.IsStreamingStudyLoaderSupported)
+					return true;
+				else if (!server.IsStreaming && base.IsRemoteStudyLoaderSupported)
+					return true;
+			}
+
+			return false;
+		}
+
 		private int GetNumberOfLoadableStudies()
 		{
 			int number = 0;
 
 			if (Context.SelectedStudy != null)
 			{
-				if (Context.SelectedServerGroup.IsLocalDatastore)
+				if (Context.SelectedServerGroup.IsLocalDatastore && IsLocalStudyLoaderSupported)
 					return Context.SelectedStudies.Count;
 
 				foreach (StudyItem study in Context.SelectedStudies)
 				{
 					ApplicationEntity server = study.Server as ApplicationEntity;
-					if (server != null && server.IsStreaming)
-						++number;
+					if (server != null)
+					{
+						if (server.IsStreaming && IsStreamingStudyLoaderSupported)
+							++number;
+						else if (!server.IsStreaming && IsRemoteStudyLoaderSupported)
+							++number;
+					}
 				}
 			}
 
 			return number;
+		}
+
+		private IEnumerable<IPatientData> GetSelectedPatients()
+		{
+			if (base.Context.SelectedStudy != null)
+			{
+				foreach (StudyItem studyItem in base.Context.SelectedStudies)
+					yield return studyItem;
+			}
 		}
 	}
 }

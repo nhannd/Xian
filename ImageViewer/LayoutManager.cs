@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer
 	{
 		private IImageViewer _imageViewer;
 		private bool _layoutCompleted;
+		private bool _allowEmptyViewer;
 
 		/// <summary>
 		/// Constructor.
@@ -101,6 +102,12 @@ namespace ClearCanvas.ImageViewer
 				else
 					return null;
 			}
+		}
+
+		protected bool AllowEmptyViewer
+		{
+			get { return _allowEmptyViewer; }
+			set { _allowEmptyViewer = value; }
 		}
 
 		#endregion
@@ -218,7 +225,8 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
+			if (!_allowEmptyViewer)
+				throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
 		}
 
 		/// <summary>

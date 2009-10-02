@@ -30,14 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -46,9 +41,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
 
+		protected const string LocalStudyLoaderName = "DICOM_LOCAL";
+		protected const string RemoteStudyLoaderName = "DICOM_REMOTE";
+		protected const string StreamingStudyLoaderName = "CC_STREAMING";
+
 		public StudyBrowserTool()
 		{
 
+		}
+
+		protected bool IsLocalStudyLoaderSupported
+		{
+			get { return ImageViewerComponent.IsStudyLoaderSupported(LocalStudyLoaderName); }
+		}
+
+		protected bool IsStreamingStudyLoaderSupported
+		{
+			get { return ImageViewerComponent.IsStudyLoaderSupported(StreamingStudyLoaderName); }
+		}
+
+		protected bool IsRemoteStudyLoaderSupported
+		{
+			get { return ImageViewerComponent.IsStudyLoaderSupported(RemoteStudyLoaderName); }
 		}
 
 		public override void Initialize()

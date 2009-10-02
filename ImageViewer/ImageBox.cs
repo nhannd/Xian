@@ -422,10 +422,8 @@ namespace ClearCanvas.ImageViewer
 			}
 			set
 			{
-				if (this.DisplaySet == null)
+				if (this.DisplaySet == null || this.DisplaySet.PresentationImages.Count == 0)
 					return;
-
-				Platform.CheckPositive(this.DisplaySet.PresentationImages.Count, "ImageBox.DisplaySet.PresentationImages.Count");
 
 				int imageIndex;
 

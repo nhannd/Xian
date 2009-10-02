@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -137,9 +138,25 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
+		private bool GetAtLeastOneServerSupportsLoading()
+		{
+			if (Context.SelectedServerGroup.IsLocalDatastore && base.IsLocalStudyLoaderSupported)
+				return true;
+
+			foreach (Server server in base.Context.SelectedServerGroup.Servers)
+			{
+				if (server.IsStreaming && base.IsStreamingStudyLoaderSupported)
+					return true;
+				else if (!server.IsStreaming && base.IsRemoteStudyLoaderSupported)
+					return true;
+			}
+
+			return false;
+		}
+
 		private void SetDoubleClickHandler()
 		{
-			if (!Context.SelectedServerGroup.IsLocalDatastore && Context.SelectedServerGroup.IsOnlyNonStreamingServers())
+			if (!GetAtLeastOneServerSupportsLoading())
 				Context.DefaultActionHandler = RetrieveStudy;
 		}
 
@@ -152,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			UpdateEnabled();
 			SetDoubleClickHandler();
-        }
+		}
 
 		private void UpdateEnabled()
 		{

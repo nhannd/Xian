@@ -120,9 +120,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		#region Private Fields
 
-		private WindowBehaviour _windowBehaviour = WindowBehaviour.Auto;
-		private bool _loadPriors = true;
-		private string _title;
 		private readonly List<LoadStudyArgs> _studiesToOpen = new List<LoadStudyArgs>();
 
 		#endregion
@@ -132,6 +129,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public OpenStudyHelper()
 		{
+			LoadPriors = true;
+			WindowBehaviour = WindowBehaviour.Auto;
 		}
 
 		#region Launch Options
@@ -139,11 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the <see cref="WindowBehaviour"/> for launching the <see cref="ImageViewerComponent"/>.
 		/// </summary>
-		public WindowBehaviour WindowBehaviour
-		{
-			get { return _windowBehaviour; }
-			set { _windowBehaviour = value; }
-		}
+		public WindowBehaviour WindowBehaviour { get; set; }
 
 		/// <summary>
 		/// Gets or sets the title that should be used for the workspace in which the <see cref="ImageViewerComponent"/>
@@ -152,21 +147,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// The default value is null, which means that the title will be automatically figured out.
 		/// </remarks>
-		public string Title
-		{
-			get { return _title; }
-			set { _title = value; }
-		}
-	
+		public string Title { get; set; }
+
 		/// <summary>
 		/// Gets or sets whether or not the <see cref="ImageViewerComponent"/> should load any prior studies.
 		/// </summary>
-		public bool LoadPriors
-		{
-			get { return _loadPriors; }
-			set { _loadPriors = value; }
-		}
+		public bool LoadPriors { get; set; }
 
+		public bool AllowEmptyViewer { get; set; }
+		
 		#endregion
 
 		#region Instance Methods
@@ -203,7 +192,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			CodeClock codeClock = new CodeClock();
 			codeClock.Start();
 
-			ImageViewerComponent viewer = CreateViewer(_loadPriors);
+			ImageViewerComponent viewer = CreateViewer(LoadPriors);
 
 			try
 			{
@@ -214,13 +203,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 			}
 
-			if (!AnySopsLoaded(viewer))
+			if (!AnySopsLoaded(viewer) && !AllowEmptyViewer)
 			{
 				viewer.Dispose();
 				return null;
 			}
 
-			LaunchImageViewerArgs args = new LaunchImageViewerArgs(_windowBehaviour);
+			LaunchImageViewerArgs args = new LaunchImageViewerArgs(WindowBehaviour);
 			args.Title = Title;
 			ImageViewerComponent.Launch(viewer, args);
 
