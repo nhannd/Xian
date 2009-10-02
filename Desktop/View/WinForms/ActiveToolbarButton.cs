@@ -48,7 +48,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private EventHandler _actionTooltipChangedHandler;
 		private EventHandler _actionIconSetChangedHandler;
 
-        public ActiveToolbarButton(IClickAction action)
+		private ToolStripSizeType _toolStripSize;
+
+		public ActiveToolbarButton(IClickAction action)
+			: this(action, ToolStripSizeType.Medium)
+		{
+		}
+
+		public ActiveToolbarButton(IClickAction action, ToolStripSizeType toolStripSize)
         {
             _action = action;
 
@@ -65,6 +72,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.LabelChanged += _actionLabelChangedHandler;
 			_action.TooltipChanged += _actionTooltipChangedHandler;
 			_action.IconSetChanged += _actionIconSetChangedHandler;
+
+			_toolStripSize = toolStripSize;
 
             this.Text = _action.Label;
             this.Enabled = _action.Enabled;
@@ -150,8 +159,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 				try
 				{
 					Image oldImage = this.Image;
-					this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
 
+					if (_toolStripSize == ToolStripSizeType.Small)
+						this.Image = IconFactory.CreateIcon(_action.IconSet.SmallIcon, _action.ResourceResolver);
+					else if (_toolStripSize == ToolStripSizeType.Medium)
+						this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
+					else
+						this.Image = IconFactory.CreateIcon(_action.IconSet.LargeIcon, _action.ResourceResolver);
 					if (oldImage != null)
 						oldImage.Dispose();
 

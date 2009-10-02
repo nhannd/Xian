@@ -153,7 +153,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private EventHandler _actionIconSetChangedHandler;
 		private EventHandler _actionCheckedChangedHandler;
 
+		private ToolStripSizeType _toolStripSize;
+
 		public DropDownButtonToolbarItem(IClickAction action)
+			: this(action, ToolStripSizeType.Medium)
+		{
+		}
+
+		public DropDownButtonToolbarItem(IClickAction action, ToolStripSizeType toolStripSize)
 			: base()
 		{
 			IDropDownAction dropAction = (IDropDownAction) action;
@@ -176,6 +183,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.TooltipChanged += _actionTooltipChangedHandler;
 			_action.IconSetChanged += _actionIconSetChangedHandler;
 			_action.CheckedChanged += _actionCheckedChangedHandler;
+
+			_toolStripSize = toolStripSize;
 
 			this.DropDown = new ContextMenuStrip();
 			this.DropDownOpening += new EventHandler(OnDropDownOpening);
@@ -303,7 +312,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 				try
 				{
 					Image oldImage = this.Image;
-					this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
+
+					if (_toolStripSize == ToolStripSizeType.Small)
+						this.Image = IconFactory.CreateIcon(_action.IconSet.SmallIcon, _action.ResourceResolver);
+					else if (_toolStripSize == ToolStripSizeType.Medium)
+						this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
+					else
+						this.Image = IconFactory.CreateIcon(_action.IconSet.LargeIcon, _action.ResourceResolver);
 
 					if (oldImage != null)
 						oldImage.Dispose();

@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Configuration.Standard
@@ -41,6 +43,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 	{
 		private ToolStripSettingsHelper _settings;
 		private bool _wrapLongToolstrips;
+		private string _toolStripSize;
 
 		public bool WrapLongToolstrips
 		{
@@ -56,12 +59,27 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			}
 		}
 
+		public string ToolStripSize
+		{
+			get { return _toolStripSize; }
+			set
+			{
+				if (_toolStripSize != value)
+				{
+					_toolStripSize = value;
+					base.NotifyPropertyChanged("ToolStripSize");
+					base.Modified = true;
+				}
+			}
+		}
+
 		public override void Start()
 		{
 			base.Start();
 
 			_settings = ToolStripSettingsHelper.Default;
 			_wrapLongToolstrips = _settings.WrapLongToolstrips;
+			_toolStripSize = Enum.GetName(typeof(ToolStripSizeType), _settings.ToolStripSize);
 		}
 
 		public override void Stop()
@@ -74,6 +92,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 		public override void Save()
 		{
 			_settings.WrapLongToolstrips = _wrapLongToolstrips;
+			_settings.ToolStripSize = (ToolStripSizeType)Enum.Parse(typeof(ToolStripSizeType), _toolStripSize);
 			_settings.Save();
 		}
 	}

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Drawing;
 using System.ComponentModel;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
@@ -36,6 +37,11 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// Enumeration for the differnt possible sizes of toolstrip button items.
+	/// </summary>
+	public enum ToolStripSizeType { Small = 0, Medium, Large };
+
 	/// <summary>
 	/// Helper class that provides access to settings controlling display of toolstrips.
 	/// </summary>
@@ -112,6 +118,22 @@ namespace ClearCanvas.Desktop
 				{
 					_settings.WrapLongToolstrips = value;
 					this.NotifyPropertyChanged("WrapLongToolstrips");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating the size of toolstrip button items.
+		/// </summary>
+		public ToolStripSizeType ToolStripSize
+		{
+			get { return _settings.ToolStripSize; }
+			set
+			{
+				if (_settings.ToolStripSize != value)
+				{
+					_settings.ToolStripSize = value;
+					this.NotifyPropertyChanged("ToolStripSize");
 				}
 			}
 		}

@@ -50,7 +50,11 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 
 			_component = component;
 
-			_chkWrapGlobalToolbars.DataBindings.Add("Checked", _component, "WrapLongToolstrips", false, DataSourceUpdateMode.OnPropertyChanged);
+			BindingSource bindingSource = new BindingSource();
+			bindingSource.DataSource = _component;
+
+			_chkWrapGlobalToolbars.DataBindings.Add("Checked", bindingSource, "WrapLongToolstrips", false, DataSourceUpdateMode.OnPropertyChanged);
+			_toolStripSizes.DataBindings.Add("Text", bindingSource, "ToolStripSize", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

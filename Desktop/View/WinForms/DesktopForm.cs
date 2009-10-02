@@ -78,6 +78,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         	_toolstripSettings = ToolStripSettingsHelper.Default;
 			_toolstripSettings.PropertyChanged += OnToolStripSettingsPropertyChanged;
 			OnToolStripSettingsPropertyChanged(_toolstripSettings, new PropertyChangedEventArgs("WrapLongToolstrips"));
+			OnToolStripSettingsPropertyChanged(_toolstripSettings, new PropertyChangedEventArgs("ToolStripSize"));
         }
 
         #region Public properties
@@ -153,6 +154,16 @@ namespace ClearCanvas.Desktop.View.WinForms
     			}
     			_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
     		}
+			else if (e.PropertyName == "ToolStripSize")
+			{
+				_toolbar.ImageScalingSize = ConvertToolStripEnumToSize(this._toolstripSettings.ToolStripSize);
+
+				// The only way, it seems, to force the toolbar to re-layout itself properly is to change the layout style and then change it back again
+				_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.StackWithOverflow : ToolStripLayoutStyle.Flow;
+				_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
+
+				BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolbar, _toolbarModel);
+			}
     	}
 
         #endregion
@@ -197,7 +208,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					// Toolstrip should only be visible if there are items on it
 					toolStrip.Visible = true;
-					ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
+
+					if (kind == ToolStripBuilder.ToolStripKind.Toolbar)
+					{
+						ToolStripSettingsHelper settings = ToolStripSettingsHelper.Default;
+						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes, ToolStripBuilder.ToolStripBuilderStyle.GetDefault(), settings.ToolStripSize);
+					}
+					else
+						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
 				}
 				else
 				{
@@ -207,6 +225,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             toolStrip.ResumeLayout();
         }
+
+		private Size ConvertToolStripEnumToSize(ToolStripSizeType toolStripSize)
+		{
+			if (this._toolstripSettings.ToolStripSize == ToolStripSizeType.Small)
+				return new Size(24, 24);
+			else if (this._toolstripSettings.ToolStripSize == ToolStripSizeType.Medium)
+				return new Size(32, 32);
+			else
+				return new Size(48, 48);
+		}
 
         #endregion
     }

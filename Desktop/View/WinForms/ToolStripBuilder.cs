@@ -109,24 +109,37 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#region Public API
 
 		/// <summary>
-		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the default style.
+		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the default style and size.
 		/// </summary>
 		/// <param name="kind"></param>
 		/// <param name="parentItemCollection"></param>
 		/// <param name="nodes"></param>
 		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
-            BuildToolStrip(kind, parentItemCollection, nodes, ToolStripBuilderStyle.GetDefault());
+			BuildToolStrip(kind, parentItemCollection, nodes, ToolStripBuilderStyle.GetDefault());
         }
 
 		/// <summary>
-		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the specified style.
+		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the specified style and default size.
 		/// </summary>
 		/// <param name="kind"></param>
 		/// <param name="parentItemCollection"></param>
 		/// <param name="nodes"></param>
 		/// <param name="builderStyle"></param>
-        public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
+		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
+		{
+			BuildToolStrip(kind, parentItemCollection, nodes, builderStyle, ToolStripSizeType.Medium);
+		}
+
+		/// <summary>
+		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the specified style and size.
+		/// </summary>
+		/// <param name="kind"></param>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
+		/// <param name="builderStyle"></param>
+		/// <param name="toolStripSize"></param>
+		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle, ToolStripSizeType toolStripSize)
         {
             switch (kind)
             {
@@ -134,7 +147,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     BuildMenu(parentItemCollection, nodes);
                     break;
                 case ToolStripKind.Toolbar:
-                    BuildToolbar(parentItemCollection, nodes, builderStyle);
+					BuildToolbar(parentItemCollection, nodes, builderStyle, toolStripSize);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -142,22 +155,34 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		/// <summary>
-		/// Builds a toolbar from the specified action model nodes, using the default style.
+		/// Builds a toolbar from the specified action model nodes, using the default style and size.
 		/// </summary>
 		/// <param name="parentItemCollection"></param>
 		/// <param name="nodes"></param>
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
-        	BuildToolbar(parentItemCollection, nodes, ToolStripBuilderStyle.GetDefault());
+			BuildToolbar(parentItemCollection, nodes, ToolStripBuilderStyle.GetDefault());
         }
 
 		/// <summary>
-		/// Builds a toolbar from the specified action model nodes, using the specified style.
+		/// Builds a toolbar from the specified action model nodes, using the specified style and the default size.
 		/// </summary>
 		/// <param name="parentItemCollection"></param>
 		/// <param name="nodes"></param>
 		/// <param name="builderStyle"></param>
-        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
+		public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
+		{
+			BuildToolbar(parentItemCollection, nodes, builderStyle, ToolStripSizeType.Medium);
+		}
+
+		/// <summary>
+		/// Builds a toolbar from the specified action model nodes, using the specified style and size.
+		/// </summary>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
+		/// <param name="builderStyle"></param>
+		/// <param name="toolStripSize"></param>
+		public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle, ToolStripSizeType toolStripSize)
         {
 			List<ActionModelNode> nodeList = CombineAdjacentSeparators(new List<ActionModelNode>(nodes));
 			
@@ -170,7 +195,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (node is ActionNode)
                 {
                     IAction action = ((ActionNode)node).Action;
-                    ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar);
+                    ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar, toolStripSize);
                     button.Tag = node;
 
                     // By default, only display the image on the button
@@ -188,15 +213,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 				}
                 else
                 {
-                    BuildToolbar(parentItemCollection, node.ChildNodes, builderStyle);
+					BuildToolbar(parentItemCollection, node.ChildNodes, builderStyle, toolStripSize);
                 }
             }
         }
 
 		[Obsolete("This overload will be removed in a future version of the framework.")]
-        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle toolStripItemDisplayStyle)
+		public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle toolStripItemDisplayStyle)
         {
-            BuildToolbar(parentItemCollection, nodes, new ToolStripBuilderStyle(toolStripItemDisplayStyle));
+			BuildToolbar(parentItemCollection, nodes, new ToolStripBuilderStyle(toolStripItemDisplayStyle));
         }
 
 		/// <summary>
@@ -216,7 +241,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // this is a leaf node (terminal menu item)
                 	ActionNode actionNode = (ActionNode) node;
 					IAction action = actionNode.Action;
-                    toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu);
+                    toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu, ToolStripSizeType.Medium);
 
                     toolstripItem.Tag = node;
                     parentItemCollection.Add(toolstripItem);
@@ -331,7 +356,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return result;
 		}
 
-		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind)
+		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind, ToolStripSizeType toolStripSize)
         {
             // optimization: for framework-provided actions, we can just create the controls
             // directly rather than use the associated view, which is slower;
@@ -343,13 +368,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 					if (action is IDropDownAction)
 					{
 						if (action is IClickAction)
-							return new DropDownButtonToolbarItem((IClickAction)action);
-						
-						return new DropDownToolbarItem((IDropDownAction) action);
+							return new DropDownButtonToolbarItem((IClickAction)action, toolStripSize);
+
+						return new DropDownToolbarItem((IDropDownAction)action, toolStripSize);
 					}
 					else if (action is IClickAction)
 					{
-						return new ActiveToolbarButton((IClickAction)action);
+						return new ActiveToolbarButton((IClickAction)action, toolStripSize);
 					}
 				}
 				else
