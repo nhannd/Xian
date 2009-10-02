@@ -338,6 +338,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			if (this.ImageBox.DisplaySet != null)
 				UpdateScrollerRange(this.ImageBox.DisplaySet);
+
+			_imageScroller.GotFocus += ImageScroller_GotFocus;
     	}
 
 		/// <summary>
@@ -345,6 +347,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		/// </summary>
     	private void TerminateImageScroller()
     	{
+			_imageScroller.GotFocus -= ImageScroller_GotFocus;
+
     		this.ImageBox.LayoutCompleted -= ImageBox_LayoutCompleted;
     		this.ImageBox.DisplaySetChanged -= ImageBox_DisplaySetChanged;
 
@@ -354,6 +358,15 @@ namespace ClearCanvas.ImageViewer.View.WinForms
     	private void ImageBox_LayoutCompleted(object sender, EventArgs e)
     	{
     		UpdateScrollerRange(this.ImageBox.DisplaySet);
+    	}
+
+    	private void ImageScroller_GotFocus(object sender, EventArgs e)
+    	{
+    		if(this.ImageBox != null)
+    		{
+				if (!this.ImageBox.Selected && this.ImageBox.Tiles.Count > 0)
+    				this.ImageBox.Tiles[0].Select();
+    		}
     	}
 
     	private void ImageBox_DisplaySetChanged(object sender, DisplaySetChangedEventArgs e)

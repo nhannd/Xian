@@ -93,6 +93,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
+			// if the control is invisible or disabled, disallow interaction
+			if (!base.CanFocus)
+				return;
+
+			// if the control isn't already focused, give it focus now
+			if (!base.Focused)
+				base.Focus();
+
 			base.OnMouseDown(e);
 
 			// perform sanity check now; do not allow actions if it fails check
@@ -110,6 +118,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+			// if the control is invisible or disabled, disallow interaction
+			if (!base.CanFocus)
+				return;
+
 			base.OnMouseMove(e);
 
 			// perform sanity check now; do not allow actions if it fails check
@@ -125,6 +137,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
+			// if the control is invisible or disabled, disallow interaction
+			if (!base.CanFocus)
+				return;
+
 			_arrowHold = false;
 			_thumbDrag = false;
 
