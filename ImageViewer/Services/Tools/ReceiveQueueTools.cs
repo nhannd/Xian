@@ -189,6 +189,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				OpenStudyHelper helper = new OpenStudyHelper();
 				helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
+				helper.AllowEmptyViewer = ViewerLaunchSettings.AllowEmptyViewer;
 
 				foreach (ReceiveQueueItem item in Context.SelectedItems)
 					helper.AddStudy(item.StudyInformation.StudyInstanceUid, null, "DICOM_LOCAL");
