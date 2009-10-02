@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[ButtonAction("open", "global-toolbars/ToolbarOpenSelectionWithMpr", "LaunchMpr")]
 	[MenuAction("open", "imageviewer-contextmenu/MenuOpenWithMpr", "LaunchMpr")]
 	[MenuAction("open", "global-menus/MenuTools/MenuMpr/MenuOpenSelectionWithMpr", "LaunchMpr")]
-	[IconSet("open", IconScheme.Colour, "Icons.LaunchMprToolLarge.png", "Icons.LaunchMprToolMedium.png", "Icons.LaunchMprToolSmall.png")]
+	[IconSet("open", IconScheme.Colour, "Icons.LaunchMprToolSmall.png", "Icons.LaunchMprToolMedium.png", "Icons.LaunchMprToolLarge.png")]
 	[EnabledStateObserver("open", "Enabled", "EnabledChanged")]
 	[GroupHint("open", "Tools.Volume.MPR")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
