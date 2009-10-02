@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -39,26 +36,16 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     public interface IInvalidInputIndicator
     {
-        Control Container
-        { get;
-        }
+        Control Container { get; }
 
-        Label TooltipLabel
-        {
-            get;
-        }
+        Label TooltipLabel { get; }
 
-        Control TooltipLabelContainer
-        {
-            get;
-        }
-
+        Control TooltipLabelContainer { get; }
 
 
         void AttachValidator(BaseValidator validator);
 
         void Show();
         void Hide();
-
     }
 }

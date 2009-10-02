@@ -31,6 +31,7 @@
 
 using System;
 using System.ServiceModel;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
@@ -95,12 +96,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
-            
+
             try
             {
-                var fsInfo = ServerUtility.GetFilesystemInfo(path);
+                FilesystemInfo fsInfo = ServerUtility.GetFilesystemInfo(path);
 
-                return fsInfo!=null && fsInfo.Exists;
+                return fsInfo != null && fsInfo.Exists;
             }
             catch (EndpointNotFoundException e)
             {

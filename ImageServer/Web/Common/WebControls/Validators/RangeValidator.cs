@@ -60,32 +60,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// 
     public class RangeValidator : BaseValidator
     {
-        #region Private Members
-
-        private int _min;
-        private int _max;
-
-        #endregion Private Members
-
         #region Public Properties
 
         /// <summary>
         /// Sets or gets the minimum acceptable value.
         /// </summary>
-        public int MinValue
-        {
-            get { return _min; }
-            set { _min = value; }
-        }
+        public int MinValue { get; set; }
 
         /// <summary>
         /// Sets or gets the maximum acceptable value.
         /// </summary>
-        public int MaxValue
-        {
-            get { return _max; }
-            set { _max = value; }
-        }
+        public int MaxValue { get; set; }
 
         #endregion Public Properties
 
@@ -109,9 +94,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template =
+            var template =
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator.js");
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
+                             ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());

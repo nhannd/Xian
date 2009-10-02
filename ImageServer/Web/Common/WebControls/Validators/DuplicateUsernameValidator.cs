@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.ServiceModel;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -89,7 +88,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         protected override bool OnServerSideEvaluate()
         {
             String username = GetControlValidationValue("UserLoginId");
-            String originalUsername = ((HiddenField)FindControl("OriginalUserLoginId")).Value;
+            String originalUsername = ((HiddenField) FindControl("OriginalUserLoginId")).Value;
 
             if (String.IsNullOrEmpty(username))
             {
@@ -97,13 +96,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
-            UserManagementController controller = new UserManagementController();
+            var controller = new UserManagementController();
 
             if (controller.ExistsUsername(username) && !username.Equals(originalUsername))
             {
                 ErrorMessage = "Username already exists.";
                 return false;
-            } 
+            }
 
             return true;
         }

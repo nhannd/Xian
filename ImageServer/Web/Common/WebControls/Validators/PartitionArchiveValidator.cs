@@ -43,12 +43,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         public string OriginalAeTitle
         {
-            get { return _originalAeTitle;}
+            get { return _originalAeTitle; }
             set { _originalAeTitle = value; }
         }
 
         protected override void RegisterClientSideValidationExtensionScripts()
-        { }
+        {
+        }
 
         protected override bool OnServerSideEvaluate()
         {
@@ -63,8 +64,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             if (OriginalAeTitle.Equals(aeTitle))
                 return true;
 
-            ServerPartitionConfigController controller = new ServerPartitionConfigController();
-            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+            var controller = new ServerPartitionConfigController();
+            var criteria = new ServerPartitionSelectCriteria();
             criteria.AeTitle.EqualTo(aeTitle);
 
             IList<ServerPartition> list = controller.GetPartitions(criteria);

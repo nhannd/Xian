@@ -80,54 +80,50 @@ function BaseClientValidator(
     this.validateWhenUnchecked = validateWhenUnchecked;
 }
 
-BaseClientValidator.prototype.ShouldSkip = function()
-{
+BaseClientValidator.prototype.ShouldSkip = function() {
     var val = this.input.value;
-    
-    if (this.conditionalCtrl!=null)
-    {
-        if (this.validateWhenUnchecked)
-        {
+
+    debugger;
+
+    if (this.conditionalCtrl != null) {
+        if (this.validateWhenUnchecked) {
             // SKIP IF CHECKED
             if (this.conditionalCtrl.checked)
                 return true;
         }
-        else
-        {   
+        else {
             // SKIP IF UNCHECKED
             if (!this.conditionalCtrl.checked)
                 return true;
         }
     }
-    
-    if (val==null || val=='')
+
+    if (val == null || val == '')
         return this.ignoreEmptyValue;
-    
+
     return false;
 }
 
-BaseClientValidator.prototype.OnEvaluate = function()
-{
+BaseClientValidator.prototype.OnEvaluate = function() {
     var result = new ValidationResult();
     result.OK = true; // init
-    
-    if (this.ShouldSkip())
-    {
+
+    debugger;
+
+    if (this.ShouldSkip()) {
         result.Skipped = true;
         result.OK = true;
         return result;
     }
-    
-    if (this.input.value==null || this.input.value=='')
-    {
-        if (!this.ignoreEmptyValue)
-        {
+
+    if (this.input.value == null || this.input.value == '') {
+        if (!this.ignoreEmptyValue) {
             result.OK = false;
             result.Message = 'This field is required';
         }
-        
+
     }
-    
+
     return result;
 };
 
@@ -148,19 +144,8 @@ BaseClientValidator.prototype.OnValidationPassed = function() {
         }
     }
 
-    if (this.errorIndicator != null) {
-        // I am not sharing the popup help control with any other validators. It's safe to hide it 
-        if (this.errorIndicator['shared'] != 'true')
-            this.errorIndicator.style.visibility = 'hidden';
-        else {
-            if (this.input['calledvalidatorcounter'] == 0) {
-                // I am sharing the popup help control with any other validators, and I am the first one to validate the input
-                // So it's safe to hide it 
-                this.errorIndicator.style.visibility = 'hidden';
-            }
-        }
-    }
-
+    this.UpdateErrorIndicator(null, true);
+    
     this.input['calledvalidatorcounter']++;
     if (this.input['calledvalidatorcounter'] == this.input['validatorscounter']) {
         // no more validator in the pipe, let's reset the calledvalidatorcounter value so that 
@@ -176,10 +161,7 @@ BaseClientValidator.prototype.OnValidationFailed = function(error) {
     this.input.style.borderColor = this.inputInvalidBorderColor;
     this.input.className = this.inputInvalidCSS;
 
-    if (this.errorIndicator != null) {
-        this.errorIndicator.style.visibility = 'visible';
-        this.SetErrorMessage(error);
-    }
+    this.UpdateErrorIndicator(error, false);
 
     this.input['calledvalidatorcounter']++;
     if (this.input['calledvalidatorcounter'] == this.input['validatorscounter']) {
@@ -189,6 +171,34 @@ BaseClientValidator.prototype.OnValidationFailed = function(error) {
     }
 };
 
+BaseClientValidator.prototype.UpdateErrorIndicator = function(error, passed) {
+
+    if (this.errorIndicator != null) {
+        if (passed) {
+            // I am not sharing the popup help control with any other validators. It's safe to hide it
+            if (this.errorIndicator['shared'] != 'true')
+                this.errorIndicator.style.visibility = 'hidden';
+            else {
+                //The error indicator is shared. Since this control has passed validation,
+                //subtract it from the number of invalid fields.
+                if (this.errorIndicator['numberofinvalidfields'] > 0)
+                    this.errorIndicator['numberofinvalidfields']--;
+
+                //If this error indicator has at least one input that failed, then 
+                //we make sure the indicator visible.    
+                if (this.errorIndicator['numberofinvalidfields'] > 0)
+                    this.errorIndicator.style.visibility = 'visible';
+                else
+                    this.errorIndicator.style.visibility = 'hidden';
+            }
+
+        } else {
+            this.errorIndicator['numberofinvalidfields']++;
+            this.errorIndicator.style.visibility = 'visible';
+            this.SetErrorMessage(error);
+        }
+    }
+}
 
 function GetStringWidth(ElemStyle, text) 
 {

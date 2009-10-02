@@ -45,11 +45,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     public class WebServiceValidator : BaseValidator
     {
         #region Private members
-        private string _servicePath = "Not Specified";
-        private string _serviceOperation = "Not Specified";
-        private string _paramsFunction;
-        #endregion Private members
 
+        private string _serviceOperation = "Not Specified";
+        private string _servicePath = "Not Specified";
+
+        #endregion Private members
 
         #region Public Properties
 
@@ -63,7 +63,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             set { _servicePath = value; }
         }
 
-        
 
         /// <summary>
         /// Name of the service operation
@@ -121,58 +120,50 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// </code>
         /// 
         /// </example>
-        public string ParamsFunction
-        {
-            get { return _paramsFunction; }
-            set { _paramsFunction = value; }
-        }
-
+        public string ParamsFunction { get; set; }
 
         #endregion Public Properties
 
         #region Protected Properties
+
         protected string ServiceURL
         {
             get
             {
                 string baseUrl = Page.Request.Url.Scheme + "://" + Page.Request.Url.Authority +
-                        Page.Request.ApplicationPath.TrimEnd('/');
-                return baseUrl + Page.ResolveUrl(ServicePath); 
+                                 Page.Request.ApplicationPath.TrimEnd('/');
+                return baseUrl + Page.ResolveUrl(ServicePath);
             }
         }
 
-       
         #endregion Protected Properties
 
-
         #region Protected Methods
+
         protected override void OnInit(EventArgs e)
         {
-
             base.OnInit(e);
 
             if (EnableClientScript)
             {
                 RegisterWebServiceInitScripts();
             }
-            
         }
 
-        
 
         protected void RegisterWebServiceInitScripts()
         {
-            ScriptTemplate template = new ScriptTemplate(GetType().Assembly, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.WebServiceValidator_Init.js");
+            var template = new ScriptTemplate(GetType().Assembly,
+                                              "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.WebServiceValidator_Init.js");
             template.Replace("@@WEBSERVICE_URL@@", ServiceURL);
             Page.ClientScript.RegisterStartupScript(GetType(), "WebServiceInit", template.Script, true);
-        }    
+        }
 
-        
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-
-            ScriptTemplate template = new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.WebServiceValidator.js");
+            var template = new ScriptTemplate(this,
+                                              "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.WebServiceValidator.js");
             template.Replace("@@WEBSERVICE_OPERATION@@", ServiceOperation);
             template.Replace("@@WEBSERVICE_URL@@", ServiceURL);
             template.Replace("@@PARAMETER_FUNCTION@@", ParamsFunction);
@@ -186,8 +177,5 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         }
 
         #endregion Protected Methods
-
-
-       
     }
 }

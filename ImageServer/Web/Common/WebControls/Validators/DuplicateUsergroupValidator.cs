@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.ServiceModel;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -97,13 +96,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 return false;
             }
 
-            UserManagementController controller = new UserManagementController();
+            var controller = new UserManagementController();
 
             if (controller.ExistsUsergroup(groupName) && !groupName.Equals(originalgroupName))
             {
                 ErrorMessage = "User Group already exists.";
                 return false;
-            } 
+            }
 
             return true;
         }

@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
-
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
     /// <summary>
@@ -57,19 +55,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </example>
     public class DateValidator : BaseValidator
     {
-        #region Private Members
-
-        private DateTime _today = Platform.Time.Date;
-
-        #endregion Private Members
-
         #region Protected Methods
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-        
         protected override bool OnServerSideEvaluate()
         {
             return true;
@@ -79,10 +66,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template =
+            var template =
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DateValidator.js");
 
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
+                             ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);

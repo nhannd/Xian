@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Drawing;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -57,12 +56,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </example>
     public class LengthValidator : BaseValidator
     {
-        #region Private Members
-
-        private int _minLength = Int32.MinValue;
         private int _maxLength = Int32.MaxValue;
-
-        #endregion Private Members
+        private int _minLength = Int32.MinValue;
 
         #region Public Properties
 
@@ -82,12 +77,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         #region Protected Methods
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
-
         protected override bool OnServerSideEvaluate()
         {
             //String value = GetControlValidationValue(ControlToValidate);
@@ -105,15 +94,16 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template =
+            var template =
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.LengthValidator.js");
 
             template.Replace("@@MIN_LENGTH@@", MinLength.ToString());
             template.Replace("@@MAX_LENGTH@@", MaxLength.ToString());
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
+                             ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            
+
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }

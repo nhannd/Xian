@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
@@ -42,45 +41,25 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     {
         public const int ERRORCODE_SERVICENOTAVAILABLE = -5000;
 
-        #region Private Members
-
-        private bool _success;
-        private int _errorCode;
-        private String _errorText;
-
-        #endregion Private Members
-
         #region Public Properties
 
         /// <summary>
         /// Indicate the validation passes or fails.
         /// </summary>
-        [DataMember(Name="Success")]
-        public bool Success
-        {
-            get { return _success; }
-            set { _success = value; }
-        }
+        [DataMember(Name = "Success")]
+        public bool Success { get; set; }
 
         /// <summary>
         /// Validation failure code.
         /// </summary>
         [DataMember]
-        public int ErrorCode
-        {
-            get { return _errorCode; }
-            set { _errorCode = value; }
-        }
+        public int ErrorCode { get; set; }
 
         /// <summary>
         /// Validation failture message (reason)
         /// </summary>
         [DataMember]
-        public string ErrorText
-        {
-            get { return _errorText; }
-            set { _errorText = value; }
-        }
+        public string ErrorText { get; set; }
 
         #endregion Public Properties
     }

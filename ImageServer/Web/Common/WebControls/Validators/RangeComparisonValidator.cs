@@ -62,35 +62,20 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// </example>
     public class RangeComparisonValidator : BaseValidator
     {
-        #region Private Members
-
-        private int _min;
-        private int _max;
-        private string _comparisonControlId;
-        private bool _greaterThan;
         private string _compareToInputName;
-
-        #endregion Private Members
+        private string _comparisonControlId;
 
         #region Public Properties
 
         /// <summary>
         /// Sets or gets the minimum acceptable value.
         /// </summary>
-        public int MinValue
-        {
-            get { return _min; }
-            set { _min = value; }
-        }
+        public int MinValue { get; set; }
 
         /// <summary>
         /// Sets or gets the maximum acceptable value.
         /// </summary>
-        public int MaxValue
-        {
-            get { return _max; }
-            set { _max = value; }
-        }
+        public int MaxValue { get; set; }
 
         public string ControlToCompare
         {
@@ -98,20 +83,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             set { _comparisonControlId = value; }
         }
 
-        public bool GreaterThan
-        {
-            get { return _greaterThan; }
-            set { _greaterThan = value; }
-        }
+        public bool GreaterThan { get; set; }
 
         public string CompareToInputName
         {
             get
             {
-                if (String.IsNullOrEmpty(_compareToInputName))
-                    return _comparisonControlId;
-                else
-                    return _compareToInputName;
+                return String.IsNullOrEmpty(_compareToInputName) ? _comparisonControlId : _compareToInputName;
             }
             set { _compareToInputName = value; }
         }
@@ -126,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// <returns></returns>
         protected override bool OnServerSideEvaluate()
         {
-            bool result = false;
+            bool result;
             Decimal value1;
             if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), NumberStyles.Number, null, out value1))
             {
@@ -137,7 +115,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 else
                 {
                     Decimal value2;
-                    if (Decimal.TryParse(GetControlValidationValue(ControlToCompare), NumberStyles.Number, null, out value2))
+                    if (Decimal.TryParse(GetControlValidationValue(ControlToCompare), NumberStyles.Number, null,
+                                         out value2))
                     {
                         if (GreaterThan)
                         {
@@ -164,7 +143,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                                                  GreaterThan ? "greater than" : "less than",
                                                  CompareToInputName);
                 }
-
             }
             else
             {
@@ -181,17 +159,19 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             // Register Javascript for client-side validation
             string comparison = GreaterThan ? ">=" : "<=";
 
-            ScriptTemplate template =
-                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator.js");
+            var template =
+                new ScriptTemplate(this,
+                                   "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeComparisonValidator.js");
             template.Replace("@@COMPARE_INPUT_CLIENTID@@", GetControlRenderID(ControlToCompare));
             template.Replace("@@MIN_VALUE@@", MinValue.ToString());
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
             template.Replace("@@COMPARISON_OP@@", comparison);
             template.Replace("@@COMPARE_TO_INPUT_NAME@@", CompareToInputName);
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
+                             ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            
+
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }

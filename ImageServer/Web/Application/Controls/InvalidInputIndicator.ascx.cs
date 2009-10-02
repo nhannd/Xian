@@ -37,9 +37,9 @@ using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
     [Themeable(true)]
-    public partial class InvalidInputIndicator : System.Web.UI.UserControl, IInvalidInputIndicator
+    public partial class InvalidInputIndicator : UserControl, IInvalidInputIndicator
     {
-        private int _referenceCounter = 0;
+        private int _referenceCounter;
 
         public String ImageUrl
         {
@@ -49,7 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ContainerPanel.Attributes.Add("shared", _referenceCounter>1? "true":"false");  
+            ContainerPanel.Attributes.Add("shared", _referenceCounter>1? "true":"false");
+            ContainerPanel.Attributes.Add("numberofinvalidfields", "0");
  
             ContainerPanel.Style.Add("display", "block");
             ContainerPanel.Style.Add("visibility", "hidden");   
@@ -83,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         
 
-        public void AttachValidator(ClearCanvas.ImageServer.Web.Common.WebControls.Validators.BaseValidator validator)
+        public void AttachValidator(Common.WebControls.Validators.BaseValidator validator)
         {
             _referenceCounter ++;
             validator.InputControl.Attributes.Add("multiplevalidators", _referenceCounter > 1 ? "true" : "false");

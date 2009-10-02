@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 
@@ -48,15 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     {
         #region Private members
 
-        private string _invalidInputIndicatorID = "";
-        private Color _invalidInputColor;
-        private Color _invalidInputBorderColor;
-        private String _invalidInputCSS;
-        private bool _validateWhenDisabled = false;
-        private bool _ignoreEmptyValue = false;
         private string _inputName;
-        private string _conditionalCheckBoxID;
-        private bool _validateWhenUnchecked = false;
+        private string _invalidInputIndicatorID = "";
 
         #endregion Private members
 
@@ -72,11 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// If <seealso cref="ConditionalCheckBoxID"/> is not specified, <seealso cref="ConditionalRequiredFieldValidator"/>
         /// behaves the same as <seealso cref="RequiredFieldValidator"/> (ie, the input field must always contains value).
         /// </remarks>
-        public string ConditionalCheckBoxID
-        {
-            get { return _conditionalCheckBoxID; }
-            set { _conditionalCheckBoxID = value; }
-        }
+        public string ConditionalCheckBoxID { get; set; }
 
         /// <summary>
         /// Gets the reference to the control that contains the input to be validated
@@ -96,11 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// when the checkbox specified by <seealso cref="ConditionalCheckBoxID"/>
         /// is checked or is unchecked.
         /// </summary>
-        public bool ValidateWhenUnchecked
-        {
-            get { return _validateWhenUnchecked; }
-            set { _validateWhenUnchecked = value; }
-        }
+        public bool ValidateWhenUnchecked { get; set; }
 
         /// <summary>
         /// Gets the reference to the control that contains the input to be validated
@@ -139,46 +125,26 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// <summary>
         /// 
         /// </summary>
-        public bool IgnoreEmptyValue
-        {
-            get { return _ignoreEmptyValue; }
-            set { _ignoreEmptyValue = value; }
-        }
+        public bool IgnoreEmptyValue { get; set; }
 
 
         /// <summary>
         /// Sets or retrieve the specified background color of the input control when the validation fails.
         /// </summary>
-        public Color InvalidInputColor
-        {
-            get { return _invalidInputColor; }
-            set { _invalidInputColor = value; }
-        }
+        public Color InvalidInputColor { get; set; }
 
         /// <summary>
         /// Sets or retrieve the specified css for the input control when the validation fails.
         /// </summary>
-        public String InvalidInputCSS
-        {
-            get { return _invalidInputCSS; }
-            set { _invalidInputCSS = value; }
-        }
+        public String InvalidInputCSS { get; set; }
 
         /// <summary>
         /// Sets or retrieve the specified background color of the input control when the validation fails.
         /// </summary>
-        public Color InvalidInputBorderColor
-        {
-            get { return _invalidInputBorderColor; }
-            set { _invalidInputBorderColor = value; }
-        }
+        public Color InvalidInputBorderColor { get; set; }
 
 
-        public bool ValidateWhenDisabled
-        {
-            get { return _validateWhenDisabled; }
-            set { _validateWhenDisabled = value; }
-        }
+        public bool ValidateWhenDisabled { get; set; }
 
         #endregion Public Properties
 
@@ -207,14 +173,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// </summary>
         public Color InputNormalColor
         {
-            get
-            {
-                if (ViewState[ "ValidateCtrlBackColor"] == null)
-                    return Color.Empty;
-                else
-                    return (Color) ViewState[ "ValidateCtrlBackColor"];
+            get {
+                return ViewState["ValidateCtrlBackColor"] == null
+                           ? Color.Empty
+                           : (Color) ViewState["ValidateCtrlBackColor"];
             }
-            set { ViewState[ "ValidateCtrlBackColor"] = value; }
+            set { ViewState["ValidateCtrlBackColor"] = value; }
         }
 
         /// <summary>
@@ -222,14 +186,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// </summary>
         public Color InputNormalBorderColor
         {
-            get
-            {
-                if (ViewState[ "ValidateCtrlBorderColor"] == null)
-                    return Color.Empty;
-                else
-                    return (Color)ViewState[ "ValidateCtrlBorderColor"];
+            get {
+                return ViewState["ValidateCtrlBorderColor"] == null
+                           ? Color.Empty
+                           : (Color) ViewState["ValidateCtrlBorderColor"];
             }
-            set { ViewState[ "ValidateCtrlBorderColor"] = value; }
+            set { ViewState["ValidateCtrlBorderColor"] = value; }
         }
 
         /// <summary>
@@ -237,12 +199,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         /// </summary>
         public string InputNormalCSS
         {
-            get
-            {
-                if (ViewState["ValidateCtrlNormalCSS"] == null)
-                    return string.Empty;
-                else
-                    return (string)ViewState["ValidateCtrlNormalCSS"];
+            get {
+                return ViewState["ValidateCtrlNormalCSS"] == null
+                           ? string.Empty
+                           : (string) ViewState["ValidateCtrlNormalCSS"];
             }
             set { ViewState["ValidateCtrlNormalCSS"] = value; }
         }
@@ -267,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         #region Protected methods
 
-        protected override void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer)
+        protected override void AddAttributesToRender(HtmlTextWriter writer)
         {
             base.AddAttributesToRender(writer);
 
@@ -343,7 +303,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         protected void RegisterClientSideBaseValidationScripts()
         {
-            ScriptTemplate template =
+            var template =
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.BaseValidator.js");
             template.Replace("@@CLIENTID@@", ClientID);
             template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
@@ -354,8 +314,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             template.Replace("@@INPUT_NORMAL_CSS@@", InputNormalCSS);
             template.Replace("@@INPUT_INVALID_CSS@@", InvalidInputCSS);
             template.Replace("@@CLIENT_EVALUATION_CLASS@@", ClientSideOnValidateFunctionName);
-            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue? "true":"false");
-            
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
+
             Page.ClientScript.RegisterClientScriptBlock(GetType(), "BaseValidationScripts", template.Script, true);
 
             template =
@@ -371,10 +331,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             if (Enabled || ValidateWhenDisabled)
             {
-                if (ConditionalCheckBox!=null)
+                if (ConditionalCheckBox != null)
                 {
                     bool skip = false;
-                        
+
                     if (ConditionalCheckBox is RadioButton)
                     {
                         bool isChecked = (ConditionalCheckBox as RadioButton).Checked;
@@ -406,35 +366,35 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
                     return true;
                 }
+
+                if (string.IsNullOrEmpty(InvalidInputCSS))
+                {
+                    if (InputControl.BackColor == InputNormalColor)
+                        InputControl.BackColor = InvalidInputColor;
+                    if (InputControl.BorderColor == InputNormalBorderColor)
+                        InputControl.BorderColor = InvalidInputBorderColor;
+                }
                 else
                 {
-                    if (string.IsNullOrEmpty(InvalidInputCSS))
-                    {
-                        if (InputControl.BackColor == InputNormalColor)
-                            InputControl.BackColor = InvalidInputColor;
-                        if (InputControl.BorderColor == InputNormalBorderColor)
-                            InputControl.BorderColor = InvalidInputBorderColor;
-                    } else
-                    {
-                        if (!InputControl.Attributes["class"].Equals(InvalidInputCSS))
-                            InputControl.Attributes["class"] = InvalidInputCSS;
-                    }
-
-                    if (InvalidInputIndicator != null)
-                    {
-						if (String.IsNullOrEmpty(ErrorMessage))
-							InvalidInputIndicator.TooltipLabel.Text = Text;
-						else
-							InvalidInputIndicator.TooltipLabel.Text = ErrorMessage;
-                        InvalidInputIndicator.Show();
-                    }
-
-                    string errorMessage = "No error message provided. Stack Trace -\r\n" + Environment.StackTrace;
-                    if (!String.IsNullOrEmpty(ErrorMessage)) errorMessage = ErrorMessage;
-                    else if (!string.IsNullOrEmpty(Text)) errorMessage = Text;
-                    Platform.Log(LogLevel.Warn,"Control {0} failed server side validation. Error Message: {1}", ControlToValidate, errorMessage);
-                    return false;
+                    if (!InputControl.Attributes["class"].Equals(InvalidInputCSS))
+                        InputControl.Attributes["class"] = InvalidInputCSS;
                 }
+
+                if (InvalidInputIndicator != null)
+                {
+                    if (String.IsNullOrEmpty(ErrorMessage))
+                        InvalidInputIndicator.TooltipLabel.Text = Text;
+                    else
+                        InvalidInputIndicator.TooltipLabel.Text = ErrorMessage;
+                    InvalidInputIndicator.Show();
+                }
+
+                string errorMessage = "No error message provided. Stack Trace -\r\n" + Environment.StackTrace;
+                if (!String.IsNullOrEmpty(ErrorMessage)) errorMessage = ErrorMessage;
+                else if (!string.IsNullOrEmpty(Text)) errorMessage = Text;
+                Platform.Log(LogLevel.Warn, "Control {0} failed server side validation. Error Message: {1}",
+                             ControlToValidate, errorMessage);
+                return false;
             }
 
             return true;

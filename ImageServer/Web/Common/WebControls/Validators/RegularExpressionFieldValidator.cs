@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Text.RegularExpressions;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
@@ -59,23 +58,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// 
     public class RegularExpressionFieldValidator : BaseValidator
     {
-        #region Private Members
-
-        private string _regEx;
-        private bool _required = false;
-        #endregion Private Members
+        private bool _required;
 
         #region Public Properties
 
         /// <summary>
         /// Sets or gets the regular expression to validate the input.
         /// </summary>
-        public string ValidationExpression
-        {
-            get { return _regEx; }
-            set { _regEx = value; }
-        }
-
+        public string ValidationExpression { get; set; }
 
         #endregion Public Properties
 
@@ -88,24 +78,24 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         protected override bool OnServerSideEvaluate()
         {
             string value = GetControlValidationValue(ControlToValidate);
-            Regex regex = new Regex(ValidationExpression);
-            if (value != null)
-                return regex.IsMatch(value);
-            else
-                return false;
+            var regex = new Regex(ValidationExpression);
+            
+            return value != null ?  regex.IsMatch(value) : false;
         }
 
 
         protected override void RegisterClientSideValidationExtensionScripts()
         {
-            ScriptTemplate template =
-                new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
-            template.Replace("@@REQUIRED@@", _required? "true":"false");
+            var template =
+                new ScriptTemplate(this,
+                                   "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
+            template.Replace("@@REQUIRED@@", _required ? "true" : "false");
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
+                             ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
             template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
             template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
-            
+
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
