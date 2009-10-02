@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this._imageScroller.MinimumAlpha = 128;
 			this._imageScroller.Name = "_imageScroller";
 			this._imageScroller.Padding = new System.Windows.Forms.Padding(0, 4, 4, 4);
-			this._imageScroller.Size = new System.Drawing.Size(32, 150);
+			this._imageScroller.Size = new System.Drawing.Size(16, 150);
 			this._imageScroller.TabIndex = 0;
 			this._imageScroller.Visible = false;
 			this._imageScroller.VisibleChanged += new System.EventHandler(this.ImageScroller_VisibleChanged);
