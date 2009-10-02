@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
@@ -47,82 +46,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// <seealso cref="WorkQueueDetails"/>
     public class StudyDetails
     {
-        #region Private Members
-
-        private string _studyInstanceUID;
-        private string _patientID;
-        private string _patientName;
-        private string _status;
-        private bool? _lock;
-        private string _accessionNumber;
-        private string _studyDescription;
-        private string _studyDate;
-        private string _studyTime;
-        private string _modalities;
-
-        #endregion Private Members
-
         #region Public Properties
 
-        public string StudyInstanceUID
-        {
-            get { return _studyInstanceUID; }
-            set { _studyInstanceUID = value; }
-        }
+        public string StudyInstanceUID { get; set; }
 
-        public string Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
+        public string Status { get; set; }
 
-        public string PatientName
-        {
-            get { return _patientName; }
-            set { _patientName = value; }
-        }
+        public string PatientName { get; set; }
 
-        public string AccessionNumber
-        {
-            get { return _accessionNumber; }
-            set { _accessionNumber = value; }
-        }
+        public string AccessionNumber { get; set; }
 
-        public string PatientID
-        {
-            get { return _patientID; }
-            set { _patientID = value; }
-        }
+        public string PatientID { get; set; }
 
-        public string StudyDescription
-        {
-            get { return _studyDescription; }
-            set { _studyDescription = value; }
-        }
+        public string StudyDescription { get; set; }
 
-        public string StudyDate
-        {
-            get { return _studyDate; }
-            set { _studyDate = value; }
-        }
+        public string StudyDate { get; set; }
 
-        public string StudyTime
-        {
-            get { return _studyTime; }
-            set { _studyTime = value; }
-        }
+        public string StudyTime { get; set; }
 
-        public string Modalities
-        {
-            get { return _modalities; }
-            set { _modalities = value; }
-        }
+        public string Modalities { get; set; }
 
-        public bool? Lock
-        {
-            get { return _lock; }
-            set { _lock = value; }
-        }
+        public bool? Lock { get; set; }
 
         #endregion Public Properties
     }

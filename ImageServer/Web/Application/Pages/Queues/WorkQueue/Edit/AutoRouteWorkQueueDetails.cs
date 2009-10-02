@@ -36,26 +36,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// <summary>
     /// Detailed view of an Auto-route <see cref="WorkQueue"/> item in the context of a WorkQueue details page.
     /// </summary>
-    public class AutoRouteWorkQueueDetails:WorkQueueDetails
+    public class AutoRouteWorkQueueDetails : WorkQueueDetails
     {
         #region Private members
-        private string _destinationAE;
-        private string _studyInstanceUid;
+
         #endregion Private members
 
         #region Public Properties
 
-        public string DestinationAE
-        {
-            get { return _destinationAE; }
-            set { _destinationAE = value; }
-        }
+        public string DestinationAE { get; set; }
 
-        public string StudyInstanceUid
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
+        public string StudyInstanceUid { get; set; }
 
         #endregion Public Properties
     }

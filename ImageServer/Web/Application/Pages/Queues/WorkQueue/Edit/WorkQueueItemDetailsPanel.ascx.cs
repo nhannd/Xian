@@ -39,53 +39,48 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js", "application/x-javascript")]
+[assembly:
+    WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js",
+        "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
-
-    public class WorkQueueDetailsButtonEventArg:EventArgs
+    public class WorkQueueDetailsButtonEventArg : EventArgs
     {
-        private Model.WorkQueue _item;
-
         public WorkQueueDetailsButtonEventArg(Model.WorkQueue item)
         {
-            _item = item;
+            WorkQueueItem = item;
         }
 
-        public Model.WorkQueue WorkQueueItem
-        {
-            get { return _item; }
-            set { _item = value; }
-        }
+        public Model.WorkQueue WorkQueueItem { get; set; }
     }
 
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js")]
-
+    [ClientScriptResource(
+        ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel",
+        ResourcePath =
+            "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit.WorkQueueItemDetailsPanel.js")]
     /// <summary>
-    /// The <see cref="WorkQueue"/> details panel
-    /// </summary>
+        /// The <see cref="WorkQueue"/> details panel
+        /// </summary>
     public partial class WorkQueueItemDetailsPanel : AJAXScriptControl
     {
         #region Private members
 
-        private Model.WorkQueue _workQueue;
+        private EventHandler<WorkQueueDetailsButtonEventArg> _deleteClickHandler;
         private WorkQueueDetailsViewBase _detailsView;
+        private EventHandler<WorkQueueDetailsButtonEventArg> _reprocessClickHandler;
 
         private EventHandler<WorkQueueDetailsButtonEventArg> _rescheduleClickHandler;
         private EventHandler<WorkQueueDetailsButtonEventArg> _resetClickHandler;
-        private EventHandler<WorkQueueDetailsButtonEventArg> _deleteClickHandler;
-        private EventHandler<WorkQueueDetailsButtonEventArg> _reprocessClickHandler;
+        private Model.WorkQueue _workQueue;
+
         #endregion Private members
 
         #region Public Properties
 
         public Study ItemStudy
         {
-            get
-            {
-                return _workQueue.Study;
-            }
+            get { return _workQueue.Study; }
         }
 
         [ExtenderControlProperty]
@@ -106,29 +101,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         [ClientPropertyName("StudyInstanceUid")]
         public string StudyInstanceUid
         {
-            get
-            {
-                return ItemStudy.StudyInstanceUid;
-            }
+            get { return ItemStudy.StudyInstanceUid; }
         }
 
         [ExtenderControlProperty]
         [ClientPropertyName("ServerAE")]
         public string ServerAE
         {
-            get 
+            get
             {
                 ServerPartition partition = ServerPartition.Load(ItemStudy.ServerPartitionKey);
-                return partition.AeTitle; 
+                return partition.AeTitle;
             }
         }
 
         /// <summary>
-		/// Gets/Sets the <see cref="WorkQueue"/> item displayed in the panel
-		/// </summary>
-		/// <remarks>
-		/// <see cref="DataBind"/> must be called to bind the work queue item data
-		/// </remarks>
+        /// Gets/Sets the <see cref="WorkQueue"/> item displayed in the panel
+        /// </summary>
+        /// <remarks>
+        /// <see cref="DataBind"/> must be called to bind the work queue item data
+        /// </remarks>
         public Model.WorkQueue WorkQueue
         {
             get { return _workQueue; }
@@ -137,22 +129,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public bool AutoRefresh
         {
-            get
-            {
-                if (ViewState["AutoRefresh"]==null)
-                    return true;
-                else
-                    return (bool)ViewState[ "AutoRefresh"];
-            }
-            set { 
-                ViewState["AutoRefresh"] = value;
-            }
+            get { return ViewState["AutoRefresh"] == null || (bool) ViewState["AutoRefresh"]; }
+            set { ViewState["AutoRefresh"] = value; }
         }
 
         #endregion Public Properties
 
         #region Events
-
 
         /// <summary>
         /// Fired when user clicks on the Reschedule button
@@ -162,6 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             add { _rescheduleClickHandler += value; }
             remove { _rescheduleClickHandler -= value; }
         }
+
         /// <summary>
         /// Fired when user clicks on the Reset button
         /// </summary>
@@ -180,13 +164,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             remove { _deleteClickHandler -= value; }
         }
 
-        
+
         public event EventHandler<WorkQueueDetailsButtonEventArg> ReprocessButtonClick
         {
             add { _reprocessClickHandler += value; }
             remove { _reprocessClickHandler -= value; }
         }
-        
 
         #endregion Events
 
@@ -194,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected int GetRefreshInterval()
         {
-            int interval = WorkQueueSettings.Default.NormalRefreshIntervalSeconds * 1000;
+            int interval = WorkQueueSettings.Default.NormalRefreshIntervalSeconds*1000;
 
             if (WorkQueue != null)
             {
@@ -202,9 +185,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 TimeSpan span = WorkQueue.ScheduledTime.Subtract(Platform.Time);
                 if (span < TimeSpan.FromMinutes(1))
                 {
-                    interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds * 1000;
+                    interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds*1000;
                 }
-                
             }
 
             return interval;
@@ -219,7 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected override void OnPreRender(EventArgs e)
         {
-            if (WorkQueue==null)
+            if (WorkQueue == null)
             {
                 Visible = false;
             }
@@ -237,7 +219,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             AutoRefreshIndicator.Visible = RefreshTimer.Enabled;
             base.OnPreRender(e);
         }
-        
+
         protected void UpdateToolBarButtons()
         {
             RescheduleToolbarButton.Enabled = WorkQueue != null && WorkQueueController.CanReschedule(WorkQueue);
@@ -277,13 +259,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public override void DataBind()
         {
-            if (_detailsView==null && WorkQueue != null)
+            if (_detailsView == null && WorkQueue != null)
             {
                 if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
                 {
                     _detailsView = LoadControl("AutoRouteWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
-                    
                 }
                 else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
                 {
@@ -308,13 +289,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                 // If the entry isn't failed but hasn't been updated for some time, display the alert message
                 WorkQueueAlertPanelRow.Visible = false;
-                if (!WorkQueue.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) && 
+                if (!WorkQueue.WorkQueueStatusEnum.Equals(WorkQueueStatusEnum.Failed) &&
                     !ServerPlatform.IsActiveWorkQueue(WorkQueue))
                 {
                     WorkQueueAlertPanelRow.Visible = true;
                     WorkQueueAlertPanel.Text =
                         WorkQueue.LastUpdatedTime > DateTime.MinValue
-                            ? String.Format("There does not seem to be any activity for this entry since {0}. The server may not be running or there is a problem with this entry.", WorkQueue.LastUpdatedTime)
+                            ? String.Format(
+                                  "There does not seem to be any activity for this entry since {0}. The server may not be running or there is a problem with this entry.",
+                                  WorkQueue.LastUpdatedTime)
                             : "There does not seem to be any activity for this entry. The server may not be running or there is a problem with this entry.";
                 }
             }
@@ -336,8 +319,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         protected void OnAutoRefreshDisabled(object sender, TimerEventArgs e)
         {
             ScriptManager.RegisterStartupScript(this, GetType(), "AutoRefreshOff",
-                     "RaiseAppAlert('Auto refresh has been turned off due to inactivity.', 3000);",
-                     true);
+                                                "RaiseAppAlert('Auto refresh has been turned off due to inactivity.', 3000);",
+                                                true);
         }
     }
 }

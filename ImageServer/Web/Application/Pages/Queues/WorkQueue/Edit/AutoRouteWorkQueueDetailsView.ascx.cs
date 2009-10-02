@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 
@@ -54,26 +52,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public override Unit Width
         {
             get { return base.Width; }
-            set { 
+            set
+            {
                 base.Width = value;
                 AutoRouteDetailsView.Width = value;
             }
         }
+
         #endregion Public Properties
 
         #region Protected Methods
 
-       
         #endregion Protected Methods
 
         #region Public Methods
-
 
         public override void DataBind()
         {
             if (WorkQueue != null)
             {
-                List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
+                var detailsList = new List<WorkQueueDetails>();
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
                 GeneralInfoDetailsView.DataSource = detailsList;
                 AutoRouteDetailsView.DataSource = detailsList;
@@ -87,9 +85,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             base.DataBind();
         }
 
-
         #endregion Public Methods
-
-
     }
 }

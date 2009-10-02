@@ -36,8 +36,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
+using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -51,26 +52,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// </remarks>
     public partial class ResetWorkQueueDialog : UserControl
     {
-        #region Private Members
         private Model.WorkQueue _workQueue;
-        #endregion Private Members
-
 
         #region Events
-        public new event EventHandler<WorkQueueItemResetErrorEventArgs> Error;
 
-
-        public delegate void WorkQueueItemResetListener(Model.WorkQueue item);
-        public event WorkQueueItemResetListener WorkQueueItemReseted;
-
-        public delegate void OnShowEventHandler();
-        public event OnShowEventHandler OnShow;
+        #region Delegates
 
         public delegate void OnHideEventHandler();
+
+        public delegate void OnShowEventHandler();
+
+        public delegate void WorkQueueItemResetListener(Model.WorkQueue item);
+
+        #endregion
+
+        public new event EventHandler<WorkQueueItemResetErrorEventArgs> Error;
+
+        public event WorkQueueItemResetListener WorkQueueItemReseted;
+
+        public event OnShowEventHandler OnShow;
+
         public event OnHideEventHandler OnHide;
 
         #endregion Events
-
 
         #region Public Properties
 
@@ -79,36 +83,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public ServerEntityKey WorkQueueItemKey
         {
-            get
-            {
-                if (ViewState["WorkQueueItemKey"] == null) return null;
-                else return (ServerEntityKey)ViewState["WorkQueueItemKey"];
-            }
-            set
-            {
-                ViewState["WorkQueueItemKey"] = value;
-            }
-
+            get { return ViewState["WorkQueueItemKey"] == null ? null : (ServerEntityKey) ViewState["WorkQueueItemKey"]; }
+            set { ViewState["WorkQueueItemKey"] = value; }
         }
+
         public bool IsShown
         {
-            get
-            {
-                if (ViewState["IsShown"] == null) return false;
-                else return (bool)ViewState["IsShown"];
-            }
-            set
-            {
-                ViewState["IsShown"] = value;
-            }
+            get { return ViewState["IsShown"] != null && (bool) ViewState["IsShown"]; }
+            set { ViewState["IsShown"] = value; }
         }
-
-
 
         #endregion Public Properties
 
-
-        Model.WorkQueue WorkQueue
+        private Model.WorkQueue WorkQueue
         {
             get
             {
@@ -116,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 {
                     if (WorkQueueItemKey != null)
                     {
-                        WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                        var adaptor = new WorkQueueAdaptor();
                         _workQueue = adaptor.Get(WorkQueueItemKey);
                     }
                 }
@@ -148,24 +135,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         #endregion Protected Methods
 
         #region Private Methods
-        void PreResetConfirmDialog_Confirmed(object data)
+
+        private void PreResetConfirmDialog_Confirmed(object data)
         {
             Hide();
 
-            ServerEntityKey key = data as ServerEntityKey;
+            var key = data as ServerEntityKey;
 
             if (key != null)
             {
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                var adaptor = new WorkQueueAdaptor();
                 Model.WorkQueue item = adaptor.Get(key);
                 if (item == null)
                 {
-                    String errorMessage = String.Format(App_GlobalResources.SR.WorkQueueNotAvailable);
+                    String errorMessage = String.Format(SR.WorkQueueNotAvailable);
                     EventsHelper.Fire(Error, this, new WorkQueueItemResetErrorEventArgs(errorMessage, null));
                 }
                 else
                 {
-                    WorkQueueController controller = new WorkQueueController();
+                    var controller = new WorkQueueController();
                     DateTime scheduledTime = item.ScheduledTime;
                     if (scheduledTime < Platform.Time)
                         scheduledTime = Platform.Time.AddSeconds(WorkQueueSettings.Default.WorkQueueProcessDelaySeconds);
@@ -176,12 +164,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                     try
                     {
-                        List<Model.WorkQueue> items = new List<Model.WorkQueue>();
+                        var items = new List<Model.WorkQueue>();
                         items.Add(item);
 
                         controller.ResetWorkQueueItems(items, scheduledTime, expirationTime);
 
-                        Platform.Log(LogLevel.Info, "{0} Work Queue item reset:  Key={1}.", item.WorkQueueTypeEnum, item.GetKey() );
+                        Platform.Log(LogLevel.Info, "{0} Work Queue item reset:  Key={1}.", item.WorkQueueTypeEnum,
+                                     item.GetKey());
                         if (WorkQueueItemReseted != null)
                             WorkQueueItemReseted(item);
 
@@ -189,17 +178,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     }
                     catch (Exception e)
                     {
-                        Platform.Log(LogLevel.Error, e, "Unable to reset {0} work queue item. Key={1}.", item.WorkQueueTypeEnum, item.GetKey());
+                        Platform.Log(LogLevel.Error, e, "Unable to reset {0} work queue item. Key={1}.",
+                                     item.WorkQueueTypeEnum, item.GetKey());
 
-                        String errorMessage = String.Format(App_GlobalResources.SR.WorkQueueResetFailed, e.Message);
+                        String errorMessage = String.Format(SR.WorkQueueResetFailed, e.Message);
 
                         EventsHelper.Fire(Error, this, new WorkQueueItemResetErrorEventArgs(errorMessage, e));
                     }
-
                 }
             }
-
-
         }
 
         #endregion Private Methods
@@ -210,15 +197,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             if (WorkQueue != null)
             {
-
                 if (WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
                     if (!String.IsNullOrEmpty(_workQueue.ProcessorID)) // somebody has claimed it
                     {
                         PreResetConfirmDialog.MessageType =
-                        MessageBox.MessageTypeEnum.INFORMATION;
-                        PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
-                        
+                            MessageBox.MessageTypeEnum.INFORMATION;
+                        PreResetConfirmDialog.Message = SR.WorkQueueBeingProcessed;
                     }
                 }
                 else
@@ -226,7 +211,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     PreResetConfirmDialog.Data = WorkQueueItemKey;
                     PreResetConfirmDialog.MessageType =
                         MessageBox.MessageTypeEnum.YESNO;
-                    PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
+                    PreResetConfirmDialog.Message = SR.WorkQueueResetConfirm;
                 }
             }
 
@@ -239,15 +224,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// <remarks>
         /// The <see cref="WorkQueueItemKey"/> to be deleted must be set prior to calling <see cref="Show"/>.
         /// </remarks>
-       
         public void Show()
         {
             IsShown = true;
-            
+
             DataBind();
 
             if (OnShow != null) OnShow();
-            
         }
 
         /// <summary>
@@ -261,13 +244,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected override void OnPreRender(EventArgs e)
         {
-
             PreResetConfirmDialog.Close();
             if (IsShown)
             {
                 if (WorkQueue != null)
                 {
-
                     PreResetConfirmDialog.Show();
                 }
             }
@@ -275,30 +256,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         }
 
         #endregion Public Methods
-
     }
 
-    public class WorkQueueItemResetErrorEventArgs:EventArgs
+    public class WorkQueueItemResetErrorEventArgs : EventArgs
     {
-        private string _errorMessage;
-        private Exception _exception;
-
         public WorkQueueItemResetErrorEventArgs(string error, Exception exception)
         {
             ErrorMessage = error;
             Exception = exception;
         }
 
-        public string ErrorMessage
-        {
-            get { return _errorMessage; }
-            set { _errorMessage = value; }
-        }
+        public string ErrorMessage { get; set; }
 
-        public Exception Exception
-        {
-            get { return _exception; }
-            set { _exception = value; }
-        }
+        public Exception Exception { get; set; }
     }
 }

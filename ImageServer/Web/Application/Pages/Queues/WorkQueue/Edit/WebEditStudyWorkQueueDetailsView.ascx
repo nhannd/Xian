@@ -83,7 +83,7 @@
         </asp:TemplateField>
        
         <asp:BoundField HeaderText="Failure Count" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="FailureCount" />
-        <asp:BoundField HeaderText="Failure Description" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="FailureDescription" />        
+        <asp:BoundField HeaderText="Failure Description" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="FailureDescription" HeaderStyle-VerticalAlign="Top"/>        
         <asp:BoundField HeaderText="Filesystem Storage Location" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="StorageLocationPath" />
 
     </Fields>

@@ -55,7 +55,7 @@
             </ItemTemplate>
         </asp:TemplateField>
         
-        <asp:TemplateField HeaderText="Study Date/Time: ">
+        <asp:TemplateField HeaderText="Study Date/Time">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>
                 <ccUI:DALabel ID="StudyDate" runat="server"  Value='<%# Eval("Study.StudyDate") %>' ></ccUI:DALabel>
@@ -85,7 +85,7 @@
        
         <asp:BoundField HeaderText="Failure Count" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="FailureCount" />
         <asp:TemplateField HeaderText="Failure Description">
-            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" VerticalAlign="Top" />
             <ItemTemplate>
                 <asp:Label runat="server" ID="PatientID" Text='<%# HtmlUtility.Encode(Eval("FailureDescription") as String) %>' />
             </ItemTemplate>

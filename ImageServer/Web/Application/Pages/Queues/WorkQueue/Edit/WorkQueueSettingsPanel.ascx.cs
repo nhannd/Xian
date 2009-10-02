@@ -31,12 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
@@ -44,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// <summary>
     /// Represents a panel containing the different settings users can specify for a work queue item.
     /// </summary>
-    public partial class WorkQueueSettingsPanel : System.Web.UI.UserControl
+    public partial class WorkQueueSettingsPanel : UserControl
     {
         #region Constants
 
@@ -52,13 +50,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion Constants
 
-
         #region Private members
+
         private ListItemCollection _defaultTimeList;
 
-        #endregion 
+        #endregion
+
+        #region Delegates
 
         public delegate void OnNoItemsEventHandler();
+
+        #endregion
+
         public event OnNoItemsEventHandler OnNoWorkQueueItems;
 
         #region Public Properties
@@ -68,14 +71,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public WorkQueuePriorityEnum SelectedPriority
         {
-            get
-            {
-                return WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
-            }
-            set
-            {
-                PriorityDropDownList.SelectedValue = value.Lookup;
-            }
+            get { return WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue); }
+            set { PriorityDropDownList.SelectedValue = value.Lookup; }
         }
 
         /// <summary>
@@ -83,13 +80,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public DateTime? NewScheduledDateTime
         {
-            get
-            {
-                return (DateTime?) ViewState[ "NewScheduledDateTime"];
-            }
+            get { return (DateTime?) ViewState["NewScheduledDateTime"]; }
             set
             {
-                ViewState[ "NewScheduledDateTime"] = value;
+                ViewState["NewScheduledDateTime"] = value;
                 CalendarExtender.SelectedDate = value;
                 NewScheduleDate.Text = value == null ? string.Empty : value.Value.ToString(CalendarExtender.Format);
                 if (value != null && ScheduleNowCheckBox.Checked == false)
@@ -101,8 +95,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public bool ScheduleNow
         {
-            get { return (Boolean)ViewState[ "_ScheduleNow"]; }
-            set { ViewState[ "_ScheduleNow"] = value;
+            get { return (Boolean) ViewState["_ScheduleNow"]; }
+            set
+            {
+                ViewState["_ScheduleNow"] = value;
                 ScheduleNowCheckBox.Checked = value;
             }
         }
@@ -110,17 +106,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         #endregion Public Properties
 
         #region Public Methods
-
-        /// <summary>
-        /// Appends a specified time to the default list of schedule time.
-        /// </summary>
-        /// <param name="time"></param>
-        public void AddCustomTime(DateTime time)
-        {
-            string timeValue = time.ToString("HH:mm");
-
-            NewScheduleTime.Text = timeValue;
-        }
 
         /// <summary>
         /// Gets the default list of schedule times available for user selection
@@ -146,12 +131,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
         }
 
+        /// <summary>
+        /// Appends a specified time to the default list of schedule time.
+        /// </summary>
+        /// <param name="time"></param>
+        public void AddCustomTime(DateTime time)
+        {
+            string timeValue = time.ToString("HH:mm");
+
+            NewScheduleTime.Text = timeValue;
+        }
 
         #endregion Public Methods
 
         #region Protected Methods
 
-        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -168,26 +162,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             ScheduleNowCheckBox.Checked = false;
             NewScheduleDate.Enabled = true;
             NewScheduleTime.Enabled = true;
-
         }
 
         protected void ScheduleNow_CheckChanged(object sender, EventArgs arg)
         {
-            WorkQueueItemList itemList = Parent.FindControl("SelectedWorkQueueItemList") as WorkQueueItemList;
-            
-            if(itemList.WorkQueueItems == null || itemList.WorkQueueItems.Count == 0)
+            var itemList = Parent.FindControl("SelectedWorkQueueItemList") as WorkQueueItemList;
+
+            if (itemList.WorkQueueItems == null || itemList.WorkQueueItems.Count == 0)
             {
                 if (OnNoWorkQueueItems != null) OnNoWorkQueueItems();
                 return;
             }
-            
+
             ScheduleNow = ScheduleNowCheckBox.Checked;
 
-            if(ScheduleNow)
+            if (ScheduleNow)
             {
                 NewScheduleDate.Enabled = false;
                 NewScheduleTime.Enabled = false;
-            } else
+            }
+            else
             {
                 NewScheduleDate.Enabled = true;
                 NewScheduleTime.Enabled = true;
@@ -196,26 +190,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion Protected Methods
 
-
         #region Public Methods
 
         public override void DataBind()
         {
-
-            if(Page.IsPostBack) {
+            if (Page.IsPostBack)
+            {
                 if (!String.IsNullOrEmpty(NewScheduleDate.Text))
                 {
                     DateTime dt = DateTime.ParseExact(NewScheduleDate.Text, CalendarExtender.Format, null);
 
-                    DateTime time = Platform.Time; 
-                    
-                    if(NewScheduleTime.Text.Contains("_") == false)
+                    DateTime time = Platform.Time;
+
+                    if (NewScheduleTime.Text.Contains("_") == false)
                     {
                         try
                         {
                             time = DateTime.ParseExact(NewScheduleTime.Text, "HH:mm", null);
                         }
-						catch(Exception)
+                        catch (Exception)
                         {
                             //Ignore this exception since the time is not fully typed in or in an incorrect format,
                             //that will be validated when the user presses apply.
@@ -229,7 +222,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 else
                 {
                     NewScheduledDateTime = null;
-                }                
+                }
             }
 
             NewScheduleDate.Enabled = true;
@@ -246,10 +239,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public void WorkQueueItemNoLongerExists()
         {
-            
         }
 
         #endregion Public Methods
     }
-    
 }

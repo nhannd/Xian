@@ -30,13 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
-using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -49,6 +43,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             DeleteButton.Enabled = false;
             ReprocessButton.Enabled = false;
         }
-
     }
 }

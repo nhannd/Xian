@@ -35,8 +35,9 @@ using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
+using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -50,47 +51,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// </remarks>
     public partial class DeleteWorkQueueDialog : UserControl
     {
-        #region Private Members
         private Model.WorkQueue _workQueue;
-        
-        #endregion Private Members
 
         #region Events
 
-        /// <summary>
-        /// Fired when the <see cref="WorkQueue"/> object associated with this dialog box is deleted.
-        /// </summary>
-        public event WorkQueueItemDeletedListener WorkQueueItemDeleted;
-        
-        
+        #region Delegates
+
+        public delegate void OnHideEventHandler();
+
+        public delegate void OnShowEventHandler();
+
         /// <summary>
         /// Defines handler for <see cref="WorkQueueItemDeleted"/> event.
         /// </summary>
         /// <param name="item"></param>
         public delegate void WorkQueueItemDeletedListener(Model.WorkQueue item);
 
-        public delegate void OnShowEventHandler();
+        #endregion
+
+        /// <summary>
+        /// Fired when the <see cref="WorkQueue"/> object associated with this dialog box is deleted.
+        /// </summary>
+        public event WorkQueueItemDeletedListener WorkQueueItemDeleted;
+
         public event OnShowEventHandler OnShow;
 
-        public delegate void OnHideEventHandler();
         public event OnHideEventHandler OnHide;
 
-        
         #endregion Events
 
         #region Public Properties
 
         public bool IsShown
         {
-            get
-            {
-                if (ViewState["IsShown"] == null) return false;
-                else return (bool) ViewState["IsShown"];
-            }
-            set
-            {
-                ViewState["IsShown"] = value;
-            }
+            get { return ViewState["IsShown"] != null && (bool) ViewState["IsShown"]; }
+            set { ViewState["IsShown"] = value; }
         }
 
         /// <summary>
@@ -101,13 +96,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             get
             {
                 if (ViewState["WorkQueueItemKey"] == null) return null;
-                else return (ServerEntityKey)ViewState["WorkQueueItemKey"];
+                else return (ServerEntityKey) ViewState["WorkQueueItemKey"];
             }
-            set
-            {
-                ViewState["WorkQueueItemKey"] = value;
-            }
-            
+            set { ViewState["WorkQueueItemKey"] = value; }
         }
 
         #endregion Public Properties
@@ -121,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             PreDeleteConfirmDialog.Confirmed += PreDeleteConfirmDialog_Confirmed;
             PreDeleteConfirmDialog.Cancel += Hide;
             MessageBox.Cancel += Hide;
-            MessageBox.Confirmed += delegate(object obj) { Hide(); };
+            MessageBox.Confirmed += delegate { Hide(); };
         }
 
         protected override void OnLoad(EventArgs e)
@@ -133,33 +124,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 DataBind();
             }
         }
-        
+
         #endregion Protected Methods
 
         #region Private Methods
 
-        void PreDeleteConfirmDialog_Confirmed(object data)
+        private void PreDeleteConfirmDialog_Confirmed(object data)
         {
             Hide();
 
-            ServerEntityKey key = data as ServerEntityKey;
+            var key = data as ServerEntityKey;
             if (key != null)
             {
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                var adaptor = new WorkQueueAdaptor();
                 Model.WorkQueue item = adaptor.Get(key);
                 if (item == null)
                 {
-                    MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+                    MessageBox.Message = SR.WorkQueueNotAvailable;
                     MessageBox.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     MessageBox.Show();
                 }
                 else
                 {
-
                     if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                     {
-                        MessageBox.Message = App_GlobalResources.SR.WorkQueueBeingProcessed_CannotDelete;
+                        MessageBox.Message = SR.WorkQueueBeingProcessed_CannotDelete;
                         MessageBox.MessageType =
                             MessageBox.MessageTypeEnum.ERROR;
                         MessageBox.Show();
@@ -168,15 +158,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                     try
                     {
-                        bool successful = false;
-                        WorkQueueController controller = new WorkQueueController();
-                        List<Model.WorkQueue> items = new List<Model.WorkQueue>();
+                        bool successful;
+                        var controller = new WorkQueueController();
+                        var items = new List<Model.WorkQueue>();
                         items.Add(item);
 
                         successful = controller.DeleteWorkQueueItems(items);
                         if (successful)
                         {
-                            Platform.Log(LogLevel.Info, "Work Queue item deleted by user : Item Key={0}", item.GetKey().Key);
+                            Platform.Log(LogLevel.Info, "Work Queue item deleted by user : Item Key={0}",
+                                         item.GetKey().Key);
 
                             if (WorkQueueItemDeleted != null)
                                 WorkQueueItemDeleted(item);
@@ -186,9 +177,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                         else
                         {
                             Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0}", item.GetKey().Key);
+                                         "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0}",
+                                         item.GetKey().Key);
 
-                            MessageBox.Message = App_GlobalResources.SR.WorkQueueDeleteFailed;
+                            MessageBox.Message = SR.WorkQueueDeleteFailed;
                             MessageBox.MessageType =
                                 MessageBox.MessageTypeEnum.ERROR;
                             MessageBox.Show();
@@ -197,31 +189,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     catch (Exception e)
                     {
                         Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0} : {1}", item.GetKey().Key, e.StackTrace);
+                                     "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0} : {1}",
+                                     item.GetKey().Key, e.StackTrace);
 
-                        MessageBox.Message = String.Format(App_GlobalResources.SR.WorkQueueDeleteFailed_WithException, e.Message);
+                        MessageBox.Message = String.Format(SR.WorkQueueDeleteFailed_WithException, e.Message);
                         MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                         MessageBox.Show();
                     }
-
                 }
             }
-
-
         }
 
         #endregion Private Methods
 
-
-        Model.WorkQueue WorkQueue
+        private Model.WorkQueue WorkQueue
         {
             get
             {
-                if (_workQueue==null)
+                if (_workQueue == null)
                 {
                     if (WorkQueueItemKey != null)
                     {
-                        WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                        var adaptor = new WorkQueueAdaptor();
                         _workQueue = adaptor.Get(WorkQueueItemKey);
                     }
                 }
@@ -229,6 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 return _workQueue;
             }
         }
+
         #region Public Methods
 
         public override void DataBind()
@@ -237,12 +227,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 PreDeleteConfirmDialog.Data = WorkQueueItemKey;
                 PreDeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
-                PreDeleteConfirmDialog.Message = App_GlobalResources.SR.WorkQueueDeleteConfirm;
+                PreDeleteConfirmDialog.Message = SR.WorkQueueDeleteConfirm;
             }
             else
             {
                 MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+                MessageBox.Message = SR.WorkQueueNotAvailable;
             }
             base.DataBind();
         }
@@ -268,7 +258,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 if (WorkQueue != null)
                 {
-
                     PreDeleteConfirmDialog.Show();
                 }
                 else
@@ -284,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
-            IsShown = false; 
+            IsShown = false;
 
             if (OnHide != null) OnHide();
         }

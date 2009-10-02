@@ -40,40 +40,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// <summary>
     /// Assembles an instance of  <see cref="WorkQueueDetails"/> based on a <see cref="WorkQueue"/> object.
     /// </summary>
-    static public class WorkQueueDetailsAssembler
+    public static class WorkQueueDetailsAssembler
     {
         /// <summary>
         /// Creates an instance of <see cref="WorkQueueDetails"/> base on a <see cref="WorkQueue"/> object.
         /// </summary>
         /// <param name="workqueue"></param>
         /// <returns></returns>
-        static public WorkQueueDetails CreateWorkQueueDetail(Model.WorkQueue workqueue)
+        public static WorkQueueDetails CreateWorkQueueDetail(Model.WorkQueue workqueue)
         {
             if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
             {
                 return CreateAutoRouteWorkQueueItemDetails(workqueue);
             }
-            else if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
+            
+            if (workqueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
             {
                 return CreateWebMoveStudyWorkQueueItemDetails(workqueue);
             }
-            else
-            {
-                return CreateGeneralWorkQueueItemDetails(workqueue);
-            }
-
-
+            
+            return CreateGeneralWorkQueueItemDetails(workqueue);
+            
         }
 
         #region Private Static Methods
+
         private static WorkQueueDetails CreateGeneralWorkQueueItemDetails(Model.WorkQueue item)
         {
-            WorkQueueDetails detail = new WorkQueueDetails();
+            var detail = new WorkQueueDetails();
 
             detail.Key = item.Key;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
-        	detail.InsertTime = item.InsertTime;
+            detail.InsertTime = item.InsertTime;
             detail.FailureCount = item.FailureCount;
             detail.Type = item.WorkQueueTypeEnum;
             detail.Status = item.WorkQueueStatusEnum;
@@ -81,16 +80,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             detail.FailureDescription = item.FailureDescription;
             detail.ServerDescription = item.ProcessorID;
 
-			StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
-        	detail.StorageLocationPath = storage.GetStudyPath();
-			
+            StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+            detail.StorageLocationPath = storage.GetStudyPath();
+
             // Fetch UIDs
-            WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
-            WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
+            var wqUidsAdaptor = new WorkQueueUidAdaptor();
+            var uidCriteria = new WorkQueueUidSelectCriteria();
             uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
             IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
 
-            Hashtable mapSeries = new Hashtable();
+            var mapSeries = new Hashtable();
             foreach (WorkQueueUid uid in uids)
             {
                 if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
@@ -102,19 +101,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
 
             // Fetch the study and patient info
-            StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
+            var ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
 
-            StudyAdaptor studyAdaptor = new StudyAdaptor();
-            StudySelectCriteria studycriteria = new StudySelectCriteria();
+            var studyAdaptor = new StudyAdaptor();
+            var studycriteria = new StudySelectCriteria();
             studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-			studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
-			Study study = studyAdaptor.GetFirst(studycriteria);
+            studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+            Study study = studyAdaptor.GetFirst(studycriteria);
 
             // Study may not be available until the images are processed.
             if (study != null)
             {
-                StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
+                var studyAssembler = new StudyDetailsAssembler();
                 detail.Study = studyAssembler.CreateStudyDetail(study);
             }
             return detail;
@@ -122,37 +121,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         private static WorkQueueDetails CreateAutoRouteWorkQueueItemDetails(Model.WorkQueue item)
         {
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
-            WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
-            StudyAdaptor studyAdaptor = new StudyAdaptor();
+            var studyStorageAdaptor = new StudyStorageAdaptor();
+            var deviceAdaptor = new DeviceDataAdapter();
+            var wqUidsAdaptor = new WorkQueueUidAdaptor();
+            var studyAdaptor = new StudyAdaptor();
 
             StudyStorage studyStorage = studyStorageAdaptor.Get(item.StudyStorageKey);
-            
-            AutoRouteWorkQueueDetails detail = new AutoRouteWorkQueueDetails();
+
+            var detail = new AutoRouteWorkQueueDetails();
             detail.Key = item.GetKey();
-            detail.StudyInstanceUid = studyStorage==null? string.Empty:studyStorage.StudyInstanceUid;
+            detail.StudyInstanceUid = studyStorage == null ? string.Empty : studyStorage.StudyInstanceUid;
 
             detail.DestinationAE = deviceAdaptor.Get(item.DeviceKey).AeTitle;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
-			detail.InsertTime = item.InsertTime;
-			detail.FailureCount = item.FailureCount;
+            detail.InsertTime = item.InsertTime;
+            detail.FailureCount = item.FailureCount;
             detail.Type = item.WorkQueueTypeEnum;
             detail.Status = item.WorkQueueStatusEnum;
             detail.Priority = item.WorkQueuePriorityEnum;
             detail.ServerDescription = item.ProcessorID;
             detail.FailureDescription = item.FailureDescription;
 
-			StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
-			detail.StorageLocationPath = storage.GetStudyPath();
+            StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+            detail.StorageLocationPath = storage.GetStudyPath();
 
             // Fetch UIDs
-            WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
+            var uidCriteria = new WorkQueueUidSelectCriteria();
             uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
             IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
 
-            Hashtable mapSeries = new Hashtable();
+            var mapSeries = new Hashtable();
             foreach (WorkQueueUid uid in uids)
             {
                 if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
@@ -164,57 +163,57 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
 
             // Fetch the study and patient info
-            if (studyStorage!=null)
+            if (studyStorage != null)
             {
-                StudySelectCriteria studycriteria = new StudySelectCriteria();
+                var studycriteria = new StudySelectCriteria();
                 studycriteria.StudyInstanceUid.EqualTo(studyStorage.StudyInstanceUid);
-				studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+                studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
                 Study study = studyAdaptor.GetFirst(studycriteria);
 
                 // Study may not be available until the images are processed.
                 if (study != null)
                 {
-                    StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
+                    var studyAssembler = new StudyDetailsAssembler();
                     detail.Study = studyAssembler.CreateStudyDetail(study);
                 }
             }
-            
+
             return detail;
         }
 
         private static WorkQueueDetails CreateWebMoveStudyWorkQueueItemDetails(Model.WorkQueue item)
         {
-            DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            var deviceAdaptor = new DeviceDataAdapter();
+            var studyStorageAdaptor = new StudyStorageAdaptor();
             StudyStorage studyStorage = studyStorageAdaptor.Get(item.StudyStorageKey);
-            WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
-            StudyAdaptor studyAdaptor = new StudyAdaptor();
+            var wqUidsAdaptor = new WorkQueueUidAdaptor();
+            var studyAdaptor = new StudyAdaptor();
             Device dest = deviceAdaptor.Get(item.DeviceKey);
 
-            WebMoveStudyWorkQueueDetails detail = new WebMoveStudyWorkQueueDetails();
+            var detail = new WebMoveStudyWorkQueueDetails();
             detail.Key = item.GetKey();
 
-            detail.DestinationAE = dest==null? string.Empty:dest.AeTitle;
-            detail.StudyInstanceUid = studyStorage==null? string.Empty:studyStorage.StudyInstanceUid;
+            detail.DestinationAE = dest == null ? string.Empty : dest.AeTitle;
+            detail.StudyInstanceUid = studyStorage == null ? string.Empty : studyStorage.StudyInstanceUid;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
-			detail.InsertTime = item.InsertTime;
-			detail.FailureCount = item.FailureCount;
+            detail.InsertTime = item.InsertTime;
+            detail.FailureCount = item.FailureCount;
             detail.Type = item.WorkQueueTypeEnum;
             detail.Status = item.WorkQueueStatusEnum;
             detail.Priority = item.WorkQueuePriorityEnum;
             detail.ServerDescription = item.ProcessorID;
             detail.FailureDescription = item.FailureDescription;
 
-			StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
-			detail.StorageLocationPath = storage.GetStudyPath();
+            StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+            detail.StorageLocationPath = storage.GetStudyPath();
 
             // Fetch UIDs
-            WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
+            var uidCriteria = new WorkQueueUidSelectCriteria();
             uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
             IList<WorkQueueUid> uids = wqUidsAdaptor.Get(uidCriteria);
 
-            Hashtable mapSeries = new Hashtable();
+            var mapSeries = new Hashtable();
             foreach (WorkQueueUid uid in uids)
             {
                 if (mapSeries.ContainsKey(uid.SeriesInstanceUid) == false)
@@ -226,21 +225,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
 
             // Fetch the study and patient info
-            if (studyStorage!=null)
+            if (studyStorage != null)
             {
-                StudySelectCriteria studycriteria = new StudySelectCriteria();
+                var studycriteria = new StudySelectCriteria();
                 studycriteria.StudyInstanceUid.EqualTo(studyStorage.StudyInstanceUid);
-				studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
-				Study study = studyAdaptor.GetFirst(studycriteria);
+                studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+                Study study = studyAdaptor.GetFirst(studycriteria);
 
                 // Study may not be available until the images are processed.
-				if (study != null)
+                if (study != null)
                 {
-                    StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
+                    var studyAssembler = new StudyDetailsAssembler();
                     detail.Study = studyAssembler.CreateStudyDetail(study);
                 }
             }
-            
+
             return detail;
         }
 

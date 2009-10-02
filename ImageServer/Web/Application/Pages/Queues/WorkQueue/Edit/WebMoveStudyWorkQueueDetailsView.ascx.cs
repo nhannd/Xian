@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
@@ -64,17 +63,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Protected Methods
 
-       
         #endregion Protected Methods
 
         #region Public Methods
-
 
         public override void DataBind()
         {
             if (WorkQueue != null)
             {
-                List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
+                var detailsList = new List<WorkQueueDetails>();
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
                 WebMoveStudyDetailsView.DataSource = detailsList;
             }
@@ -86,9 +83,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             base.DataBind();
         }
 
-
         #endregion Public Methods
-
-
     }
 }

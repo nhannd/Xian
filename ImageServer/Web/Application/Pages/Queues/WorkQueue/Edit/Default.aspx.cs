@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -43,37 +44,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     public partial class Default : BasePage
     {
         #region Constants
+
         private const string SELECTED_WORKQUEUES_UIDS_KEY = "uid";
 
         #endregion Constants
 
-
-        #region Private Members
-
-        private ServerEntityKey _workQueueItemKey;
         private Model.WorkQueue _workQueue;
-
-        #endregion Private Members
 
         #region Protected Properties
 
-        protected ServerEntityKey WorkQueueItemKey
-        {
-            get { return _workQueueItemKey; }
-            set { _workQueueItemKey = value; }
-        }
+        protected ServerEntityKey WorkQueueItemKey { get; set; }
 
 
         protected bool ItemNotAvailableAlertShown
         {
-            get
-            {
-                if (ViewState[ "ItemNotAvailableAlertShown"] == null)
-                    return false;
-                else
-                    return (bool)ViewState[ "ItemNotAvailableAlertShown"];
-            }
-            set { ViewState[ "ItemNotAvailableAlertShown"] = value; }
+            get { return ViewState["ItemNotAvailableAlertShown"] != null && (bool) ViewState["ItemNotAvailableAlertShown"]; }
+            set { ViewState["ItemNotAvailableAlertShown"] = value; }
         }
 
         #endregion Protected Properties
@@ -84,7 +70,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             base.OnInit(e);
 
-            
 
             WorkQueueItemDetailsPanel.RescheduleButtonClick += WorkQueueItemDetailsPanel_RescheduleButtonClick;
             WorkQueueItemDetailsPanel.ResetButtonClick += WorkQueueItemDetailsPanel_ResetButtonClick;
@@ -92,35 +77,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             WorkQueueItemDetailsPanel.ReprocessButtonClick += WorkQueueItemDetailsPanel_ReprocessButtonClick;
 
             DeleteWorkQueueDialog.WorkQueueItemDeleted += DeleteWorkQueueDialog_WorkQueueItemDeleted;
-            DeleteWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
-            DeleteWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            DeleteWorkQueueDialog.OnShow += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            DeleteWorkQueueDialog.OnHide += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
-            ScheduleWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
-            ScheduleWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            ScheduleWorkQueueDialog.OnShow += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            ScheduleWorkQueueDialog.OnHide += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
             MessageBox.Confirmed += MessageBox_Confirmed;
-            MessageBox.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
-            MessageBox.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            MessageBox.OnShow += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            MessageBox.OnHide += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
-            ResetWorkQueueDialog.Error += new EventHandler<WorkQueueItemResetErrorEventArgs>(ResetWorkQueueDialog_Error);
-            ResetWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
-            ResetWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            ResetWorkQueueDialog.Error += ResetWorkQueueDialog_Error;
+            ResetWorkQueueDialog.OnShow += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            ResetWorkQueueDialog.OnHide += delegate { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
             LoadWorkQueueItemKey();
 
-            Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
+            Page.Title = Titles.WorkQueuePageTitle;
         }
 
-        void ResetWorkQueueDialog_Error(object sender, WorkQueueItemResetErrorEventArgs e)
+        private void ResetWorkQueueDialog_Error(object sender, WorkQueueItemResetErrorEventArgs e)
         {
             MessageBox.Message = e.ErrorMessage;
             MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
             MessageBox.Show();
             UpdatePanel.Update();
         }
-        
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -128,8 +113,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             UpdatePanel.Update();
 
             //Hide the UserPanel information
-            MasterProperties master = Master as MasterProperties;
-            master.DisplayUserInformationPanel = false;
+            var master = Master as MasterProperties;
+            if(master != null) master.DisplayUserInformationPanel = false;
         }
 
 
@@ -142,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 WorkQueueItemDetailsPanel.Visible = false;
                 ResetWorkQueueDialog.Hide();
 
-                Message.Text = App_GlobalResources.SR.WorkQueueNotAvailable;
+                Message.Text = SR.WorkQueueNotAvailable;
                 Message.Visible = true;
 
                 UpdatePanel.Update();
@@ -159,55 +144,52 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion Protected Methods
 
-
         #region Private Methods
 
-        void MessageBox_Confirmed(object data)
+        private void MessageBox_Confirmed(object data)
         {
             ItemNotAvailableAlertShown = true;
         }
 
-        void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<ClearCanvas.ImageServer.Model.WorkQueue> workqueueItems)
+        private void ScheduleWorkQueueDialog_OnWorkQueueUpdated(List<Model.WorkQueue> workqueueItems)
         {
             DataBind();
             WorkQueueItemDetailsPanel.Refresh();
         }
 
 
-        void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
+        private void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
         {
             DataBind();
             Response.Redirect(ImageServerConstants.PageURLs.WorkQueueItemDeletedPage);
         }
 
-        
-        void ResetWorkQueueDialog_WorkQueueItemReseted(Model.WorkQueue item)
+
+        private void ResetWorkQueueDialog_WorkQueueItemReseted(Model.WorkQueue item)
         {
             DataBind();
             WorkQueueItemDetailsPanel.Refresh();
         }
 
 
-        void WorkQueueItemDetailsPanel_ReprocessButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
+        private void WorkQueueItemDetailsPanel_ReprocessButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
         {
             Model.WorkQueue item = e.WorkQueueItem;
             ReprocessWorkQueueItem(item);
         }
 
 
-        void WorkQueueItemDetailsPanel_DeleteButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
+        private void WorkQueueItemDetailsPanel_DeleteButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
         {
-            Model.WorkQueue item = e.WorkQueueItem;
-            DeleteWorkQueueItem(item);
+            DeleteWorkQueueItem();
         }
 
-        void WorkQueueItemDetailsPanel_ResetButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
+        private void WorkQueueItemDetailsPanel_ResetButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
         {
-            Model.WorkQueue item = e.WorkQueueItem;
-            ResetWorkQueueItem(item);
+            ResetWorkQueueItem();
         }
 
-        void WorkQueueItemDetailsPanel_RescheduleButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
+        private void WorkQueueItemDetailsPanel_RescheduleButtonClick(object sender, WorkQueueDetailsButtonEventArg e)
         {
             Model.WorkQueue item = e.WorkQueueItem;
             RescheduleWorkQueueItem(item);
@@ -222,16 +204,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             if (item == null)
             {
                 MessageBox.BackgroundCSS = string.Empty;
-                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageBox.Message = SR.SelectedWorkQueueNoLongerOnTheList;
                 MessageBox.MessageStyle = "color: red; font-weight: bold;";
                 MessageBox.MessageType =
-                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                    MessageBox.MessageTypeEnum.ERROR;
                 MessageBox.Show();
 
                 return;
             }
-            
-            List<ServerEntityKey> keys = new List<ServerEntityKey>();
+
+            var keys = new List<ServerEntityKey>();
             keys.Add(item.GetKey());
             ScheduleWorkQueueDialog.WorkQueueKeys = keys;
 
@@ -239,14 +221,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
-                    MessageBox.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                    MessageBox.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
                     MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     MessageBox.Show();
                     return;
                 }
-                else if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
+                if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
-                    MessageBox.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
+                    MessageBox.Message = SR.WorkQueueBeingProcessed;
                     MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     MessageBox.Show();
                     return;
@@ -259,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// <summary>
         ///  Pops up a dialog box to let user to reschedule a work queue item
         /// </summary>
-        private void DeleteWorkQueueItem(Model.WorkQueue item)
+        private void DeleteWorkQueueItem()
         {
             if (WorkQueueItemKey != null)
             {
@@ -268,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
         }
 
-        private void ResetWorkQueueItem(Model.WorkQueue item)
+        private void ResetWorkQueueItem()
         {
             ResetWorkQueueDialog.WorkQueueItemKey = WorkQueueItemKey;
             ResetWorkQueueDialog.Show();
@@ -276,20 +258,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         private void ReprocessWorkQueueItem(Model.WorkQueue item)
         {
-            WorkQueueController controller = new WorkQueueController();
+            var controller = new WorkQueueController();
             if (controller.ReprocessWorkQueueItem(item))
             {
-                MessageBox.Message = App_GlobalResources.SR.ReprocessOK;
+                MessageBox.Message = SR.ReprocessOK;
                 MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
                 MessageBox.Show();
             }
             else
             {
-                MessageBox.Message = App_GlobalResources.SR.ReprocessFailed;
+                MessageBox.Message = SR.ReprocessFailed;
                 MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                 MessageBox.Show();
             }
-            
         }
 
         private void LoadWorkQueueItemKey()
@@ -299,50 +280,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 WorkQueueItemKey = new ServerEntityKey("WorkQueue", requestedGuid);
             }
-
         }
 
         #endregion Private Methods
 
-
         #region Public Methods
-
-        
 
         public override void DataBind()
         {
             if (WorkQueueItemKey != null)
             {
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                var adaptor = new WorkQueueAdaptor();
                 _workQueue = adaptor.Get(WorkQueueItemKey);
-                
+
                 WorkQueueItemDetailsPanel.WorkQueue = _workQueue;
 
                 if (_workQueue == null)
                 {
                     if (!ItemNotAvailableAlertShown)
                     {
-                        MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+                        MessageBox.Message = SR.WorkQueueNotAvailable;
                         MessageBox.MessageType =
-                                MessageBox.MessageTypeEnum.ERROR;
+                            MessageBox.MessageTypeEnum.ERROR;
                         ItemNotAvailableAlertShown = true;
                     }
-
                 }
-            } else
+            }
+            else
             {
                 ExceptionHandler.ThrowException(new WorkQueueItemNotFoundException());
             }
 
             base.DataBind();
-
         }
 
         public void HideRescheduleDialog()
         {
             ScheduleWorkQueueDialog.Hide();
-            WorkQueueItemList itemList = FindControl("WorkQueueItemList") as WorkQueueItemList;
-            itemList.Refresh();
+            var itemList = FindControl("WorkQueueItemList") as WorkQueueItemList;
+            if(itemList != null) itemList.Refresh();
         }
 
         #endregion Public Methods

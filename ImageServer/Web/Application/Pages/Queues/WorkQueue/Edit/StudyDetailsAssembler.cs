@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -47,9 +46,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         /// <param name="study"></param>
         /// <returns></returns>
-        public StudyDetails CreateStudyDetail(Model.Study study)
+        public StudyDetails CreateStudyDetail(Study study)
         {
-            StudyDetails details = new StudyDetails();
+            var details = new StudyDetails();
             details.StudyInstanceUID = study.StudyInstanceUid;
             details.PatientName = study.PatientsName;
             details.AccessionNumber = study.AccessionNumber;
@@ -58,7 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             details.StudyDate = study.StudyDate;
             details.StudyTime = study.StudyTime;
 
-            StudyController controller = new StudyController();
+            var controller = new StudyController();
             using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 details.Modalities = controller.GetModalitiesInStudy(ctx, study);
@@ -66,17 +65,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             if (study.StudyInstanceUid != null)
             {
-                StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
-                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+                var adaptor = new StudyStorageAdaptor();
+                var criteria = new StudyStorageSelectCriteria();
                 criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
                 criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
                 StudyStorage storages = adaptor.GetFirst(criteria);
-				if (storages != null)
-				{
-					details.Lock = storages.Lock;
-					details.Status = storages.StudyStatusEnum.ToString();
-				}
+                if (storages != null)
+                {
+                    details.Lock = storages.Lock;
+                    details.Status = storages.StudyStatusEnum.ToString();
+                }
             }
 
 

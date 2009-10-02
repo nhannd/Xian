@@ -32,16 +32,13 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
-using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
-
+using SR=ClearCanvas.ImageServer.Web.Application.App_GlobalResources.SR;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -53,15 +50,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// call <see cref="Show"/> to display the dialog. Optionally, caller can register an event listener for <see cref="ResetWorkQueueDialog.WorkQueueItemResetListener"/>
     /// which is fired when users confirmed to reset the entry and it was sucessfully reset.
     /// </remarks>
-    
     public partial class ScheduleWorkQueueDialog : UserControl
     {
-
-        #region Private Members
         private List<Model.WorkQueue> _workQueues;
-        #endregion
 
         #region Protected Properties
+
         protected List<Model.WorkQueue> WorkQueues
         {
             get
@@ -73,7 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 if (keys == null)
                     return null;
 
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                var adaptor = new WorkQueueAdaptor();
                 _workQueues = new List<Model.WorkQueue>();
                 foreach (ServerEntityKey key in keys)
                 {
@@ -83,7 +77,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 }
                 return _workQueues;
             }
-
         }
 
         #endregion Protected Properties
@@ -92,15 +85,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public bool IsShown
         {
-            get
-            {
-                if (ViewState["IsShown"] == null) return false;
-                else return (bool) ViewState["IsShown"];
-            }   
-            set
-            {
-                ViewState["IsShown"] = value;
-            }
+            get { return ViewState["IsShown"] != null && (bool) ViewState["IsShown"]; }
+            set { ViewState["IsShown"] = value; }
         }
 
         /// <summary>
@@ -108,13 +94,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public List<ServerEntityKey> WorkQueueKeys
         {
-            get {
-                return ViewState["_WorkQueueKeys"] as List<ServerEntityKey>;
-            }
-            set
-            {
-                ViewState["_WorkQueueKeys"] = value;
-            }
+            get { return ViewState["_WorkQueueKeys"] as List<ServerEntityKey>; }
+            set { ViewState["_WorkQueueKeys"] = value; }
         }
 
         public WorkQueueSettingsPanel SchedulePanel
@@ -125,21 +106,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         #endregion Public Properties
 
         #region Events
+
+        #region Delegates
+
+        public delegate void OnHideEventHandler();
+
+        public delegate void OnShowEventHandler();
+
         /// <summary>
         /// Defines the event handler for <see cref="WorkQueueUpdated"/> event.
         /// </summary>
         /// <param name="workqueueItems"></param>
         public delegate void WorkQueueUpdatedListener(List<Model.WorkQueue> workqueueItems);
 
+        #endregion
+
         /// <summary>
         /// Fires after changes to the work queue items have been committed
         /// </summary>
         public event WorkQueueUpdatedListener WorkQueueUpdated;
 
-        public delegate void OnShowEventHandler();
         public event OnShowEventHandler OnShow;
 
-        public delegate void OnHideEventHandler();
         public event OnHideEventHandler OnHide;
 
         #endregion Events
@@ -151,13 +139,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             PreOpenConfirmDialog.Confirmed += PreOpenConfirmDialog_Confirmed;
             PreApplyChangeConfirmDialog.Confirmed += PreApplyChangeConfirmDialog_Confirmed;
 
-            SelectedWorkQueueItemList.WorkQueueItemGridView.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
+            SelectedWorkQueueItemList.WorkQueueItemGridView.SelectedIndexChanged +=
+                WorkQueueListControl_SelectedIndexChanged;
 
             SelectedWorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
-                                            {
-                                                if (WorkQueueKeys == null) source.SearchKeys = new List<ServerEntityKey>();
-                                                else source.SearchKeys = WorkQueueKeys;
-                                            };
+                                                               {
+                                                                   if (WorkQueueKeys == null)
+                                                                       source.SearchKeys = new List<ServerEntityKey>();
+                                                                   else source.SearchKeys = WorkQueueKeys;
+                                                               };
 
             SelectedWorkQueueItemList.TheGrid = SelectedWorkQueueItemList.WorkQueueItemGridView;
             SelectedWorkQueueItemList.Refresh();
@@ -165,15 +155,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (WorkQueueKeys!=null)
+            if (WorkQueueKeys != null)
             {
-                if (SelectedWorkQueueItemList.WorkQueueItems!=null && 
+                if (SelectedWorkQueueItemList.WorkQueueItems != null &&
                     SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
-                    MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
+                    MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
                     MessageDialog.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
-                    MessageDialog.Show();                    
+                    MessageDialog.Show();
                 }
             }
         }
@@ -181,64 +171,58 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
         {
             Hide();
-            
-            bool prompt = false;
-            
+
             foreach (Model.WorkQueue wq in WorkQueues)
             {
                 if (wq == null)
                 {
                     // the workqueue no longer exist in the db
-                    MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemNotAvailable;
+                    MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemNotAvailable;
                     MessageDialog.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
                     return; // don't apply the changes
                 }
-                else
+
+                if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
-                    if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
-                    {
-                        MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
-                        MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                        MessageDialog.Show();
-                        return; // don't apply the changes
-                    }
-                    else if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
-                    {
-                        MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
-                        MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                        MessageDialog.Show();
-                        return; // don't apply the changes
-                    }
+                    MessageDialog.Message = SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
+                    MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                    MessageDialog.Show();
+                    return; // don't apply the changes
                 }
+                
+                if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
+                {
+                    MessageDialog.Message = SR.WorkQueueRescheduleFailed_ItemHasFailed;
+                    MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                    MessageDialog.Show();
+                    return; // don't apply the changes
+                }
+
             }
 
             if (SelectedWorkQueueItemList.WorkQueueItems == null || SelectedWorkQueueItemList.WorkQueueItems.Count == 0)
             {
                 MessageDialog.BackgroundCSS = string.Empty;
-                MessageDialog.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageDialog.Message = SR.SelectedWorkQueueNoLongerOnTheList;
                 MessageDialog.MessageStyle = "color: red; font-weight: bold;";
                 MessageDialog.MessageType =
-                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                    MessageBox.MessageTypeEnum.ERROR;
                 MessageDialog.Show();
 
                 return;
             }
 
-            if (!prompt)
-            {
-                WorkQueueSettingsPanel.UpdateScheduleDateTime();
-                ApplyChanges();
-            }           
+            WorkQueueSettingsPanel.UpdateScheduleDateTime();
+            ApplyChanges();
         }
 
         protected void ApplyChanges()
-        {           
+        {
             if (WorkQueues != null)
             {
-                
-                List<Model.WorkQueue> toBeUpdatedList = new List<Model.WorkQueue>();
+                var toBeUpdatedList = new List<Model.WorkQueue>();
                 foreach (Model.WorkQueue item in WorkQueues)
                 {
                     if (item != null)
@@ -247,63 +231,64 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     }
                 }
 
-                if (toBeUpdatedList.Count>0)
+                if (toBeUpdatedList.Count > 0)
                 {
                     DateTime newScheduleTime = Platform.Time;
 
-                        if (WorkQueueSettingsPanel.NewScheduledDateTime != null && WorkQueueSettingsPanel.ScheduleNow == false)
-                        {
-                            newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime.Value;
-                        }
+                    if (WorkQueueSettingsPanel.NewScheduledDateTime != null &&
+                        WorkQueueSettingsPanel.ScheduleNow == false)
+                    {
+                        newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime.Value;
+                    }
 
-                        if (newScheduleTime < Platform.Time && WorkQueueSettingsPanel.ScheduleNow == false)
-                        {
-                            MessageDialog.MessageType =
-                                MessageBox.MessageTypeEnum.ERROR;
-                            MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_MustBeInFuture;
-                            MessageDialog.Show();
-                            ModalDialog.Show();
-                        }
-                        else
-                        {
-                            DateTime expirationTime =
-                                newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
+                    if (newScheduleTime < Platform.Time && WorkQueueSettingsPanel.ScheduleNow == false)
+                    {
+                        MessageDialog.MessageType =
+                            MessageBox.MessageTypeEnum.ERROR;
+                        MessageDialog.Message = SR.WorkQueueRescheduleFailed_MustBeInFuture;
+                        MessageDialog.Show();
+                        ModalDialog.Show();
+                    }
+                    else
+                    {
+                        DateTime expirationTime =
+                            newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
 
-                            WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
+                        WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
 
-                            try
+                        try
+                        {
+                            var controller = new WorkQueueController();
+                            bool result =
+                                controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime,
+                                                                    priority);
+                            if (result)
                             {
-                                WorkQueueController controller = new WorkQueueController();
-                                bool result =
-                                    controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime,
-                                                                        priority);
-                                if (result)
-                                {
-                                    if (WorkQueueUpdated != null)
-                                        WorkQueueUpdated(toBeUpdatedList);
-                                }
-                                else
-                                {
-                                    Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
-                                    MessageDialog.MessageType =
-                                        MessageBox.MessageTypeEnum.ERROR;
-                                    MessageDialog.Message = "Unable to reschedule this/these work queue items";
-                                    MessageDialog.Show();
-                                }
+                                if (WorkQueueUpdated != null)
+                                    WorkQueueUpdated(toBeUpdatedList);
                             }
-                            catch (Exception e)
+                            else
                             {
-                                Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}",
-                                             e.StackTrace);
-
+                                Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
                                 MessageDialog.MessageType =
                                     MessageBox.MessageTypeEnum.ERROR;
-                                MessageDialog.Message =
-                                    String.Format(App_GlobalResources.SR.WorkQueueRescheduleFailed_Exception, e.Message);
+                                MessageDialog.Message = "Unable to reschedule this/these work queue items";
                                 MessageDialog.Show();
                             }
                         }
-                    }               
+                        catch (Exception e)
+                        {
+                            Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}",
+                                         e.StackTrace);
+
+                            MessageDialog.MessageType =
+                                MessageBox.MessageTypeEnum.ERROR;
+                            MessageDialog.Message =
+                                String.Format(SR.WorkQueueRescheduleFailed_Exception, e.Message);
+                            MessageDialog.Show();
+                        }
+                    }
+                }
             }
         }
 
@@ -316,12 +301,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Private Methods
 
-        void PreOpenConfirmDialog_Confirmed(object data)
+        private void PreOpenConfirmDialog_Confirmed(object data)
         {
             Display();
         }
 
-        void PreApplyChangeConfirmDialog_Confirmed(object data)
+        private void PreApplyChangeConfirmDialog_Confirmed(object data)
         {
             ApplyChanges();
         }
@@ -350,7 +335,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public void Hide()
         {
             IsShown = false;
-            if (OnHide != null) OnHide(); 
+            if (OnHide != null) OnHide();
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -369,7 +354,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public void Show()
         {
             IsShown = true;
-            
+
             DataBind();
 
             if (WorkQueues == null)
@@ -377,18 +362,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             if (SelectedWorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
-                MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
+                MessageDialog.Message = SR.WorkQueueNoLongerAvailable;
                 MessageDialog.MessageType =
                     MessageBox.MessageTypeEnum.INFORMATION;
-                MessageDialog.Show();    
+                MessageDialog.Show();
             }
 
             WorkQueueSettingsPanel.ScheduleNow = false;
 
             if (OnShow != null) OnShow();
-            
-            Display();
 
+            Display();
         }
 
         #endregion Public Methods

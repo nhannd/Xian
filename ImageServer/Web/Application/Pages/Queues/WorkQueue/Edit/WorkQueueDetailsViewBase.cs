@@ -39,25 +39,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// </summary>
     public class WorkQueueDetailsViewBase : UserControl
     {
-        private Unit _width;
-        private Model.WorkQueue _workQueue;
-
         /// <summary>
         /// Sets or gets the list of studies whose information are displayed
         /// </summary>
-        public Model.WorkQueue WorkQueue
-        {
-            get { return _workQueue; }
-            set { _workQueue = value; }
-        }
+        public Model.WorkQueue WorkQueue { get; set; }
 
         /// <summary>
         /// Sets or gets the width of control
         /// </summary>
-        public virtual Unit Width
-        {
-            get { return _width; }
-            set { _width = value;}
-        }
+        public virtual Unit Width { get; set; }
     }
 }

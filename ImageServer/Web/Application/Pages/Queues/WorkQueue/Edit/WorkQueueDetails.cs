@@ -42,109 +42,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     {
         #region Private members
 
-        private ServerEntityKey  _workQueueUid;
-        private DateTime _scheduledDateTime;
-        private DateTime _expirationTime;
-        private int _failureCount;
-        private WorkQueueTypeEnum _type;
-        private WorkQueueStatusEnum _status;
-        private WorkQueuePriorityEnum _priority;
-        private string _failureDescription;
-    	private string _storageLocationPath;
-        private string _serverDescription;
-        private int _numSeriesPending;
-        private int _numInstancesPending;
-        private StudyDetails _study;
-    	private DateTime _insertTime;
-
-    	#endregion Private members
+        #endregion Private members
 
         #region Public Properties
 
-        public DateTime ScheduledDateTime
-        {
-            get { return _scheduledDateTime; }
-            set { _scheduledDateTime = value; }
-        }
+        public DateTime ScheduledDateTime { get; set; }
 
-        public DateTime ExpirationTime
-        {
-            get { return _expirationTime; }
-            set { _expirationTime = value; }
-        }
+        public DateTime ExpirationTime { get; set; }
 
-		public DateTime InsertTime
-		{
-			get { return _insertTime; }
-			set { _insertTime = value; }
-		}
+        public DateTime InsertTime { get; set; }
 
-        public int FailureCount
-        {
-            get { return _failureCount; }
-            set { _failureCount = value; }
-        }
+        public int FailureCount { get; set; }
 
-        public WorkQueueTypeEnum Type
-        {
-            get { return _type; }
-            set { _type = value; }
-        }
+        public WorkQueueTypeEnum Type { get; set; }
 
-        public WorkQueueStatusEnum Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
+        public WorkQueueStatusEnum Status { get; set; }
 
-        public StudyDetails Study
-        {
-            get { return _study; }
-            set { _study = value; }
-        }
+        public StudyDetails Study { get; set; }
 
-        public string ServerDescription
-        {
-            get { return _serverDescription; }
-            set { _serverDescription = value; }
-        }
-		
-        public int NumInstancesPending
-        {
-            get { return _numInstancesPending; }
-            set { _numInstancesPending = value; }
-        }
+        public string ServerDescription { get; set; }
 
-        public int NumSeriesPending
-        {
-            get { return _numSeriesPending; }
-            set { _numSeriesPending = value; }
-        }
+        public int NumInstancesPending { get; set; }
 
-        public ServerEntityKey Key
-        {
-            get { return _workQueueUid; }
-            set { _workQueueUid = value; }
-        }
+        public int NumSeriesPending { get; set; }
 
-        public WorkQueuePriorityEnum Priority
-        {
-            get { return _priority; }
-            set { _priority = value; }
-        }
+        public ServerEntityKey Key { get; set; }
 
-        public string FailureDescription
-        {
-            get { return _failureDescription; }
-            set { _failureDescription = value; }
-        }
+        public WorkQueuePriorityEnum Priority { get; set; }
 
-    	public string StorageLocationPath
-    	{
-			get { return _storageLocationPath; }
-			set { _storageLocationPath = value; }
-    		
-    	}
+        public string FailureDescription { get; set; }
+
+        public string StorageLocationPath { get; set; }
+
         #endregion Public Properties
     }
 }

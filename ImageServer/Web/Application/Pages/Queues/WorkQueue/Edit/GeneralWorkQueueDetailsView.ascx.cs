@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 
@@ -47,6 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         #endregion Private members
 
         #region Public Properties
+
         /// <summary>
         /// Sets or gets the width of work queue details view panel
         /// </summary>
@@ -57,10 +57,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 base.Width = value;
                 GeneralInfoDetailsView.Width = value;
-
             }
         }
-
 
         #endregion Public Properties
 
@@ -70,12 +68,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Public Methods
 
-
         public override void DataBind()
         {
             if (WorkQueue != null)
             {
-                List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
+                var detailsList = new List<WorkQueueDetails>();
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
                 GeneralInfoDetailsView.DataSource = detailsList;
             }
@@ -89,19 +86,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
         {
-            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
+            var item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
             if (item != null)
             {
-
             }
-
-
         }
 
-
         #endregion Public Methods
-
     }
-    
-
 }
