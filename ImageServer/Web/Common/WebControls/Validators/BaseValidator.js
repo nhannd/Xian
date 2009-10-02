@@ -83,8 +83,6 @@ function BaseClientValidator(
 BaseClientValidator.prototype.ShouldSkip = function() {
     var val = this.input.value;
 
-    debugger;
-
     if (this.conditionalCtrl != null) {
         if (this.validateWhenUnchecked) {
             // SKIP IF CHECKED
@@ -107,8 +105,6 @@ BaseClientValidator.prototype.ShouldSkip = function() {
 BaseClientValidator.prototype.OnEvaluate = function() {
     var result = new ValidationResult();
     result.OK = true; // init
-
-    debugger;
 
     if (this.ShouldSkip()) {
         result.Skipped = true;
