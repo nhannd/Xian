@@ -30,23 +30,28 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Collections.Generic;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js", "application/x-javascript")]
+[assembly:
+    WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js",
+        "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js")]
+    [ClientScriptResource(
+        ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel",
+        ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js")]
     /// <summary>
-    /// Panel to display list of devices for a particular server partition.
-    /// </summary>
+        /// Panel to display list of devices for a particular server partition.
+        /// </summary>
     public partial class DevicePanel : AJAXScriptControl
     {
         #region Private members
@@ -54,8 +59,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         // the controller used for interaction with the database.
         private DeviceConfigurationController _theController;
         // the partition whose information will be displayed in this panel
-        private ServerPartition _partition;
-        private Default _enclosingPage;
 
         #endregion Private members
 
@@ -86,17 +89,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// <summary>
         /// Sets/Gets the partition whose information is displayed in this panel.
         /// </summary>
-        public ServerPartition ServerPartition
-        {
-            get { return _partition; }
-            set { _partition = value; }
-        }
+        public ServerPartition ServerPartition { get; set; }
 
-        public Default EnclosingPage
-        {
-            get { return _enclosingPage; }
-            set { _enclosingPage = value; }
-        }
+        public Default EnclosingPage { get; set; }
 
         #endregion
 
@@ -118,17 +113,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             _theController = new DeviceConfigurationController();
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, delegate { return DeviceGridViewControl1.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerTop.InitializeGridPager(SR.GridPagerDeviceSingleItem, SR.GridPagerDeviceMultipleItems,
+                                             DeviceGridViewControl1.TheGrid,
+                                             delegate { return DeviceGridViewControl1.Devices.Count; },
+                                             ImageServerConstants.GridViewPagerPosition.top);
             DeviceGridViewControl1.Pager = GridPagerTop;
             GridPagerTop.Reset();
-            
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
-            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.DHCP));
-            DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.NoDHCP));
+            StatusFilter.Items.Add(new ListItem(SR.All));
+            StatusFilter.Items.Add(new ListItem(SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(SR.Disabled));
+
+            DHCPFilter.Items.Add(new ListItem(SR.All));
+            DHCPFilter.Items.Add(new ListItem(SR.DHCP));
+            DHCPFilter.Items.Add(new ListItem(SR.NoDHCP));
         }
 
         /// <summary>
@@ -137,11 +135,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// <returns></returns>
         protected bool HasFilters()
         {
-            if (AETitleFilter.Text.Length > 0 || IPAddressFilter.Text.Length > 0 || StatusFilter.SelectedIndex > 0 ||
-                DHCPFilter.SelectedIndex > 0)
-                return true;
-            else
-                return false;
+            return AETitleFilter.Text.Length > 0 || IPAddressFilter.Text.Length > 0 || StatusFilter.SelectedIndex > 0 ||
+                   DHCPFilter.SelectedIndex > 0;
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -168,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             }
             else
             {
-                ListItem[] typeItems = new ListItem[DeviceTypeFilter.Items.Count];
+                var typeItems = new ListItem[DeviceTypeFilter.Items.Count];
                 DeviceTypeFilter.Items.CopyTo(typeItems, 0);
                 DeviceTypeFilter.Items.Clear();
                 int count = 0;
@@ -198,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// </remarks>
         public void LoadDevices()
         {
-            DeviceSelectCriteria criteria = new DeviceSelectCriteria();
+            var criteria = new DeviceSelectCriteria();
 
             // only query for device in this partition
             criteria.ServerPartitionKey.EqualTo(ServerPartition.GetKey());
@@ -245,7 +240,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
             if (DeviceTypeFilter.SelectedIndex > -1)
             {
-                List<DeviceTypeEnum> types = new List<DeviceTypeEnum>();
+                var types = new List<DeviceTypeEnum>();
                 foreach (ListItem item in DeviceTypeFilter.Items)
                 {
                     if (item.Selected)
@@ -288,7 +283,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             LoadDevices();
-
         }
 
         protected void AddDeviceButton_Click(object sender, ImageClickEventArgs e)

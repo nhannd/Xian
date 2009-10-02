@@ -30,13 +30,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
-using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
-
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
@@ -48,18 +46,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         #region private members
 
         // server partitions lookup table based on server key
-        private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
         // list of devices to display
         private IList<Device> _devices;
+        private Dictionary<string, ServerPartition> _dictionaryPartitions = new Dictionary<string, ServerPartition>();
         private Unit _height;
+
         #endregion Private members
 
         #region protected properties
 
         protected Dictionary<string, ServerPartition> DictionaryPartitions
         {
-            get { return _DictionaryPartitions; }
-            set { _DictionaryPartitions = value; }
+            get { return _dictionaryPartitions; }
+            set { _dictionaryPartitions = value; }
         }
 
         #endregion protected properties
@@ -91,10 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// </summary>
         public IList<Device> Devices
         {
-            get
-            {
-                return _devices;
-            }
+            get { return _devices; }
             set
             {
                 _devices = value;
@@ -108,10 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// </summary>
         public Unit Height
         {
-            get
-            {
-                return ContainerTable != null ? ContainerTable.Height : _height;
-            }
+            get { return ContainerTable != null ? ContainerTable.Height : _height; }
             set
             {
                 _height = value;
@@ -119,6 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                     ContainerTable.Height = value;
             }
         }
+
         #endregion
 
         #region protected methods
@@ -132,7 +126,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
-
         }
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -152,7 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         protected void CustomizeFeaturesColumn(GridViewRowEventArgs e)
         {
-            PlaceHolder placeHolder = e.Row.FindControl("FeaturePlaceHolder") as PlaceHolder;
+            var placeHolder = e.Row.FindControl("FeaturePlaceHolder") as PlaceHolder;
 
             if (placeHolder != null)
             {
@@ -202,7 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         private void AddAllowStorageImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
         {
-            Image img = new Image();
+            var img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AcceptKOPR")))
             {
                 img.ImageUrl = ImageServerConstants.ImageURLs.AcceptKOPRFeature;
@@ -223,7 +216,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         private void AddAllowAutoRouteImage(GridViewRowEventArgs e, PlaceHolder placeHolder)
         {
-            Image img = new Image();
+            var img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
                 img.ImageUrl = ImageServerConstants.ImageURLs.AutoRouteFeature;
@@ -240,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         protected void CustomizeDHCPColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image) e.Row.FindControl("DHCPImage"));
+            var img = ((Image) e.Row.FindControl("DHCPImage"));
             if (img != null)
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
@@ -257,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         protected void CustomizeActiveColumn(GridViewRowEventArgs e)
         {
-            Image img = ((Image) e.Row.FindControl("ActiveImage"));
+            var img = ((Image) e.Row.FindControl("ActiveImage"));
 
             if (img != null)
             {
@@ -276,18 +269,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         // Display the Partition Description in Server Partition column
         protected void CustomizeServerPartitionColumn(GridViewRowEventArgs e)
         {
-            Device dev = e.Row.DataItem as Device;
-            Label lbl = e.Row.FindControl("ServerParitionLabel") as Label; // The label is added in the template
-            lbl.Text = dev.ServerPartition.AeTitle;
+            var dev = e.Row.DataItem as Device;
+            var lbl = e.Row.FindControl("ServerParitionLabel") as Label; // The label is added in the template
+            if(lbl != null && dev != null) lbl.Text = dev.ServerPartition.AeTitle;
         }
 
         // Display the Partition Description in Server Partition column
         protected void CustomizeIpAddressColumn(GridViewRowEventArgs e)
         {
-            Device dev = e.Row.DataItem as Device;
-            Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
-            lbl.Text = dev.IpAddress;
-            
+            var dev = e.Row.DataItem as Device;
+            var lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
+            if(lbl != null && dev != null) lbl.Text = dev.IpAddress;
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
@@ -302,8 +294,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         }
 
         #endregion
-
-   
-   
     }
 }

@@ -12,8 +12,7 @@
 // is instantiated.
 //
 
-if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel']==null)
-{
+if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel'] == null) {
 
     Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices');
 
@@ -22,9 +21,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
     // Constructor
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel = function(element) { 
+    ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel = function(element) {
         ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.initializeBase(this, [element]);
-       
+
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,121 +31,115 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
     // Create the prototype for the control.
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.prototype = 
+    ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.prototype =
     {
-        initialize : function() {
-       
-            ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.callBaseMethod(this, 'initialize');        
-            
-            this._OnDeviceListRowClickedHandler = Function.createDelegate(this,this._OnDeviceListRowClicked);
-            
-            this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
+        initialize: function() {
+
+            ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.callBaseMethod(this, 'initialize');
+
+            this._OnDeviceListRowClickedHandler = Function.createDelegate(this, this._OnDeviceListRowClicked);
+
+            this._OnLoadHandler = Function.createDelegate(this, this._OnLoad);
             Sys.Application.add_load(this._OnLoadHandler);
-                 
+
         },
-        
-        dispose : function() {
+
+        dispose: function() {
             $clearHandlers(this.get_element());
 
             ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.callBaseMethod(this, 'dispose');
-            
+
             Sys.Application.remove_load(this._OnLoadHandler);
         },
-        
-        
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Events
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        _OnLoad : function()
-        {                    
+
+        _OnLoad: function() {
             var devicelist = $find(this._DeviceListClientID);
             devicelist.add_onClientRowClick(this._OnDeviceListRowClickedHandler);
-                 
+
             this._updateToolbarButtonStates();
         },
-        
+
         // called when user clicked on a row in the study list
-        _OnDeviceListRowClicked : function(sender, event)
-        {    
-            this._updateToolbarButtonStates();        
+        _OnDeviceListRowClicked: function(sender, event) {
+            this._updateToolbarButtonStates();
         },
-                       
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Private Methods
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        _updateToolbarButtonStates : function()
-        {
+
+        _updateToolbarButtonStates: function() {
             var devicelist = $find(this._DeviceListClientID);
-                               
+
             this._enableEditButton(false);
             this._enableDeleteButton(false);
-                                           
-            if (devicelist!=null )
-            {
+
+            if (devicelist != null) {
                 var rows = devicelist.getSelectedRowElements();
 
-                if(rows != null && rows.length > 0) {
+                if (rows != null && rows.length > 0) {
                     this._enableEditButton(true);
                     this._enableDeleteButton(true);
                 }
             }
         },
-        
-        _enableDeleteButton : function(en)
-        {
+
+        _enableDeleteButton: function(en) {
             var deleteButton = $find(this._DeleteButtonClientID);
             deleteButton.set_enable(en);
         },
-        
-        _enableEditButton : function(en)
-        {
+
+        _enableEditButton: function(en) {
             var editButton = $find(this._EditButtonClientID);
             editButton.set_enable(en);
-        },       
+        },
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Public methods
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        
+
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
         // Properties
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-               
-        get_DeleteButtonClientID : function() {
+
+        get_DeleteButtonClientID: function() {
             return this._DeleteButtonClientID;
         },
 
-        set_DeleteButtonClientID : function(value) {
+        set_DeleteButtonClientID: function(value) {
             this._DeleteButtonClientID = value;
             this.raisePropertyChanged('DeleteButtonClientID');
         },
-        
-        get_EditButtonClientID : function() {
+
+        get_EditButtonClientID: function() {
             return this._EditButtonClientID;
         },
 
-        set_EditButtonClientID : function(value) {
+        set_EditButtonClientID: function(value) {
             this._EditButtonClientID = value;
             this.raisePropertyChanged('EditButtonClientID');
         },
-               
-        get_DeviceListClientID : function() {
+
+        get_DeviceListClientID: function() {
             return this._DeviceListClientID;
         },
 
-        set_DeviceListClientID : function(value) {
+        set_DeviceListClientID: function(value) {
             this._DeviceListClientID = value;
             this.raisePropertyChanged('DeviceListClientID');
         }
@@ -154,8 +147,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
 
     // Register the class as a type that inherits from Sys.UI.Control.
     ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel', Sys.UI.Control);
-     
 
-    if (typeof(Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
+
+    if (typeof (Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
 
 }

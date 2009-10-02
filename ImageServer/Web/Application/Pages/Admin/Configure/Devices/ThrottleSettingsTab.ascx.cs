@@ -30,31 +30,27 @@
 #endregion
 
 using System;
+using System.Web.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
-    public partial class ThrottleSettingsTab : System.Web.UI.UserControl
+    public partial class ThrottleSettingsTab : UserControl
     {
-        private const short UNLIMITED = -1;
+        private const short Unlimited = -1;
 
-    	public short MaxConnections
+        public short MaxConnections
         {
-            get{
-                if (String.IsNullOrEmpty(MaxConnectionTextBox.Text))
-                    return UNLIMITED;
-                else
-                    return short.Parse(MaxConnectionTextBox.Text);
-            }
-            set
+            get
             {
-                MaxConnectionTextBox.Text = value==UNLIMITED? "":value.ToString();
+                return String.IsNullOrEmpty(MaxConnectionTextBox.Text) ? Unlimited : short.Parse(MaxConnectionTextBox.Text);
             }
+            set { MaxConnectionTextBox.Text = value == Unlimited ? "" : value.ToString(); }
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-            UnlimitedCheckBox.Checked = MaxConnections == UNLIMITED;
+            UnlimitedCheckBox.Checked = MaxConnections == Unlimited;
             LimitedCheckBox.Checked = !UnlimitedCheckBox.Checked;
         }
     }

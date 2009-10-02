@@ -33,11 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
@@ -47,11 +48,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         #region Private members
 
         // Map between the server partition and the panel
-        private IDictionary<ServerEntityKey, DevicePanel> _mapDevicePanel =
-            new Dictionary<ServerEntityKey, DevicePanel>();
 
         // the controller used for database interaction
-        private DeviceConfigurationController _controller = new DeviceConfigurationController();
+        private readonly DeviceConfigurationController _controller = new DeviceConfigurationController();
+
+        private readonly IDictionary<ServerEntityKey, DevicePanel> _mapDevicePanel =
+            new Dictionary<ServerEntityKey, DevicePanel>();
 
         #endregion Private members
 
@@ -78,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                        {
                                                            // Create new device in the database
                                                            Device newDev = _controller.AddDevice(dev);
-                                                           if (newDev!=null)
+                                                           if (newDev != null)
                                                            {
                                                                DevicePanel panel =
                                                                    _mapDevicePanel[newDev.ServerPartition.GetKey()];
@@ -89,17 +91,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
 
             DeleteConfirmation.Confirmed += delegate(object data)
-                                            {
-                                                // delete the device and reload the affected partition.
+                                                {
+                                                    // delete the device and reload the affected partition.
 
-                                                Device dev = data as Device;
-                                                DevicePanel oldPanel = _mapDevicePanel[dev.ServerPartition.GetKey()];
-                                                _controller.DeleteDevice(dev);
-                                                if (oldPanel != null)
-                                                    oldPanel.UpdateUI();
-                                            };
-            Page.Title = App_GlobalResources.Titles.DevicesPageTitle;
-
+                                                    var dev = data as Device;
+                                                    if (dev != null)
+                                                    {
+                                                        DevicePanel oldPanel = _mapDevicePanel[dev.ServerPartition.GetKey()];
+                                                        _controller.DeleteDevice(dev);
+                                                        if (oldPanel != null)
+                                                            oldPanel.UpdateUI();
+                                                    }
+                                                };
+            Page.Title = Titles.DevicesPageTitle;
         }
 
 
@@ -125,13 +129,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
-                                                               DevicePanel panel =
+                                                               var panel =
                                                                    LoadControl("DevicePanel.ascx") as DevicePanel;
-                                                               panel.ServerPartition = partition;
-                                                               panel.ID = "DevicePanel_" + partition.AeTitle;
+                                                               if (panel != null)
+                                                               {
+                                                                   panel.ServerPartition = partition;
+                                                                   panel.ID = "DevicePanel_" + partition.AeTitle;
 
-                                                               panel.EnclosingPage = this;
-                                                               _mapDevicePanel[partition.GetKey()] = panel; // this map is used to reload the list when the devices are updated.
+                                                                   panel.EnclosingPage = this;
+                                                                   _mapDevicePanel[partition.GetKey()] = panel;
+                                                                   // this map is used to reload the list when the devices are updated.
+                                                               }
                                                                return panel;
                                                            });
         }
@@ -141,7 +149,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         #region Public Methods
 
         public void OnAddDevice(DeviceConfigurationController controller, ServerPartition serverPartition)
-
         {
             // Populate the add device dialog and display it
             AddEditDeviceControl1.EditMode = false;
@@ -163,7 +170,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         public void OnDeleteDevice(DeviceConfigurationController controller, ServerPartition serverPartition, Device dev)
         {
-            DeleteConfirmation.Message = string.Format("Are you sure you want to remove {0} from partition {1}?", dev.AeTitle, serverPartition.AeTitle);
+            DeleteConfirmation.Message = string.Format("Are you sure you want to remove {0} from partition {1}?",
+                                                       dev.AeTitle, serverPartition.AeTitle);
             DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmation.Data = dev;
             DeleteConfirmation.Show();

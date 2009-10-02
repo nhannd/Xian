@@ -35,8 +35,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Common;
-
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
@@ -49,11 +49,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         // The server partitions that the new device can be associated with
         // This list will be determined by the user level permission.
-        private IList<ServerPartition> _partitions = new List<ServerPartition>();
-
-        private bool _editMode;
         // device being editted/added
         private Device _device;
+        private bool _editMode;
+        private IList<ServerPartition> _partitions = new List<ServerPartition>();
 
         #endregion
 
@@ -78,7 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             set
             {
                 _editMode = value;
-                ViewState[ "EditMode"] = value;
+                ViewState["EditMode"] = value;
             }
         }
 
@@ -91,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             {
                 _device = value;
                 // put into viewstate to retrieve later
-                ViewState[ "EditedDevice"] = _device;
+                ViewState["EditedDevice"] = _device;
             }
             get { return _device; }
         }
@@ -100,11 +99,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         #region Events
 
+        #region Delegates
+
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
         /// <param name="device">The device being added.</param>
         public delegate void OnOKClickedEventHandler(Device device);
+
+        #endregion
 
         /// <summary>
         /// Occurs when users click on "OK".
@@ -142,7 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                             }
                         </script>");
 
-            EditDeviceValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditStudyValidationError;
+            EditDeviceValidationSummary.HeaderText = ErrorMessages.EditStudyValidationError;
         }
 
 
@@ -153,11 +156,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             }
             else
             {
-                if (ViewState[ "EditMode"] != null)
-                    _editMode = (bool) ViewState[ "EditMode"];
+                if (ViewState["EditMode"] != null)
+                    _editMode = (bool) ViewState["EditMode"];
 
-                if (ViewState[ "EditedDevice"] != null)
-                    _device = ViewState[ "EditedDevice"] as Device;
+                if (ViewState["EditedDevice"] != null)
+                    _device = ViewState["EditedDevice"] as Device;
             }
 
             AllowStorageCheckBox.Attributes.Add("onclick", "AllowStorage_Changed()");
@@ -197,7 +200,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         }
 
 
-        
         private void SaveData()
         {
             if (Device == null)
@@ -222,17 +224,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             if (AllowStorageCheckBox.Checked)
             {
                 Device.AcceptKOPR = AcceptKOPR.Checked;
-            } else
+            }
+            else
             {
                 Device.AcceptKOPR = false;
             }
 
             Device.ThrottleMaxConnections = ThrottleSettingsTab.MaxConnections;
             Device.DeviceTypeEnum = DeviceTypeEnum.GetEnum(DeviceTypeDropDownList.SelectedItem.Value);
-            
-
         }
-
 
         #endregion Protected methods
 
@@ -263,14 +263,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             // SkinID cannot be set dynamically after Page_PreInit.
             if (EditMode)
             {
-                ModalDialog1.Title  = App_GlobalResources.SR.DialogEditDeviceTitle;
+                ModalDialog1.Title = SR.DialogEditDeviceTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
                 DeviceTypeDropDownList.Items.FindByValue(Device.DeviceTypeEnum.Lookup).Selected = true;
             }
             else
             {
-                ModalDialog1.Title = App_GlobalResources.SR.DialogAddDeviceTitle;
+                ModalDialog1.Title = SR.DialogAddDeviceTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
             }
@@ -278,12 +278,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             // Update the rest of the fields
             if (Device == null)
             {
-                AETitleTextBox.Text = App_GlobalResources.SR.DeviceAE;
+                AETitleTextBox.Text = SR.DeviceAE;
                 IPAddressTextBox.Text = string.Empty;
                 ActiveCheckBox.Checked = true;
                 DHCPCheckBox.Checked = false;
                 DescriptionTextBox.Text = string.Empty;
-                PortTextBox.Text = App_GlobalResources.SR.DeviceDefaultPort;
+                PortTextBox.Text = SR.DeviceDefaultPort;
                 AllowStorageCheckBox.Checked = true;
                 AllowQueryCheckBox.Checked = true;
                 AllowRetrieveCheckBox.Checked = true;
