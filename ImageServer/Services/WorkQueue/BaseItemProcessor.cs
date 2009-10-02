@@ -42,7 +42,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Process;
@@ -1077,7 +1076,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            return theXml;
         }
 
-		protected virtual void PostponeItem(Model.WorkQueue item, string reasonText)
+        protected virtual void PostponeItem(Model.WorkQueue item, string reasonText)
 		{
 			WorkQueueSettings settings = WorkQueueSettings.Instance;
 			DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
@@ -1139,7 +1138,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                    {
                        string reason = String.IsNullOrEmpty(stuckReason)
                                           ? String.Format("Aborted because {0}", postponeReason)
-                                          : String.Format("Aborted because {0} and {1}", postponeReason, stuckReason);
+                                          : String.Format("Aborted because {0}. {1}", postponeReason, stuckReason);
                        AbortQueueItem(item, reason, true);
                    }
                    else

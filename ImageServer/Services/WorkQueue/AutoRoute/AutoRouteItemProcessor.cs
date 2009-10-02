@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Validation;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.Dicom;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy;
@@ -50,6 +51,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     public class AutoRouteItemProcessor : BaseItemProcessor, ICancelable
     {
+        private const int TEMP_BLACKOUT_DURATION = 5; // seconds
+        // cache the list of device that has exceeded the limit
+        // to prevent repeat db hits when a server processes 
+        // multiple study move entries to the same device
+        private static readonly ServerCache<ServerEntityKey, Device> _tempBlackoutDevices = new ServerCache<ServerEntityKey, Device>(TimeSpan.FromSeconds(TEMP_BLACKOUT_DURATION), TimeSpan.FromSeconds(TEMP_BLACKOUT_DURATION));
+
         #region Private Members
         private readonly object _syncLock = new object();
         private Dictionary<string, WorkQueueUid> _uidMaps = null;
@@ -66,8 +73,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// <returns></returns>
         protected virtual IList<StorageInstance> GetStorageInstanceList()
         {
-            LoadUids(WorkQueueItem);
-            
             string studyPath = StorageLocation.GetStudyPath();
             StudyXml studyXml = LoadStudyXml(StorageLocation);
             
@@ -141,6 +146,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         #endregion
 
         #region Protected Properties
+
+        protected IList<StorageInstance> InstanceList { get; set; }
+
+        
         protected Device DestinationDevice
         {
             get
@@ -165,6 +174,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             base.Initialize(item);
 
             LoadStorageLocation(item);
+            LoadUids(item);
+            InstanceList = GetStorageInstanceList();
         }
 
         /// <summary>
@@ -179,17 +190,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 return;
             }
 
-            // Load the list of instances to be sent
-            IList<StorageInstance> instanceList = GetStorageInstanceList();
-            
-            if (instanceList == null || instanceList.Count == 0)
+            if (InstanceList == null || InstanceList.Count == 0)
             {
                 // nothing to process, change to idle state
                 PostProcessing(item, WorkQueueProcessorStatus.Idle, WorkQueueProcessorDatabaseUpdate.None);
                 return;
             }
 
-			Platform.Log(LogLevel.Info,
+            Platform.Log(LogLevel.Info,
 						 "Moving study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4} to {5}...",
 						 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId, Study.AccessionNumber,
 						 ServerPartition.Description, DestinationDevice.AeTitle);
@@ -224,7 +232,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             scu.LoadPreferredSyntaxes(ReadContext);
 
             // Load the Instances to Send into the SCU component
-            scu.AddStorageInstanceList(instanceList);
+            scu.AddStorageInstanceList(InstanceList);
 
             // Set an event to be called when each image is transferred
             scu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
@@ -279,7 +287,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 }
 
                 // Reset the WorkQueue entry status
-                if ((instanceList.Count > 0 && sendCounter != instanceList.Count) // not all sop were sent
+                if ((InstanceList.Count > 0 && sendCounter != InstanceList.Count) // not all sop were sent
                     || scu.Status == ScuOperationStatus.Failed
                     || scu.Status == ScuOperationStatus.ConnectFailed)
                 {
@@ -295,23 +303,56 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         protected override bool CanStart()
         {
-            int currentConnectionCounter = DestinationDevice.GetConcurrentMoveCount(ReadContext);
-            if (DestinationDevice.ThrottleMaxConnections == UNLIMITED)
-            {
-                if (currentConnectionCounter >= ImageServerCommonConfiguration.TooManyStudyMoveWarningThreshold)
-                {
-                    RaisePotentialTooManyConnectionAlert(currentConnectionCounter);
-                }
-            }
-            else if (currentConnectionCounter > DestinationDevice.ThrottleMaxConnections)
-            {
-                RaiseConnectionLimitReachedAlert();
+            if (InstanceList == null || InstanceList.Count == 0)
+                return true;
 
-                PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Pending,WorkQueueProcessorDatabaseUpdate.None);
+            if (DeviceIsBusy(DestinationDevice))
+            {
+                DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
+                PostponeItem(WorkQueueItem, newScheduledTime, newScheduledTime.AddSeconds(WorkQueueProperties.ExpireDelaySeconds),
+                             "Devices is busy. Max connection limit has been reached for the device");
                 return false;
             }
 
             return true;
+        }
+
+        private bool DeviceIsBusy(Device device)
+        {
+            bool busy = false;
+            if (device.ThrottleMaxConnections != UNLIMITED)
+            {
+                if (_tempBlackoutDevices.ContainsKey(device.Key))
+                {
+                    busy = true;
+                }
+                else
+                {
+                    List<Model.WorkQueue> currentMoves = device.GetAllCurrentMoveEntries(ReadContext);
+                    if (currentMoves.Count > device.ThrottleMaxConnections)
+                    {
+                        // sort the list to see where this entry is
+                        // and postpone it if its position is greater than the ThrottleMaxConnections 
+                        currentMoves.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
+                                              {
+                                                  return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
+                                              });
+                        int index = currentMoves.FindIndex(delegate(Model.WorkQueue item) { return item.Key.Equals(WorkQueueItem.Key); });
+
+                        if (index >= device.ThrottleMaxConnections)
+                        {
+                            Platform.Log(LogLevel.Warn, "Connection limit on device {0} has been reached. Max = {1}.", device.AeTitle, device.ThrottleMaxConnections);
+                            
+                            // blackout for 5 seconds
+                            _tempBlackoutDevices.Add(device.Key, device);
+                            busy = true;
+                        }
+                    }
+                }
+
+            }
+
+            return busy;
         }
 
         #endregion
@@ -340,20 +381,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             else
                 return null;
 
-        }
-
-        
-
-        private void RaiseConnectionLimitReachedAlert()
-        {
-            Platform.Log(LogLevel.Warn, "Connection limit on device {0} has been reached. Max = {1}.", DestinationDevice.AeTitle, DestinationDevice.ThrottleMaxConnections);
-        }
-
-        private void RaisePotentialTooManyConnectionAlert(int currentConnectionCounter)
-        {
-        	ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "Auto-route/Move",
-                                 AlertTypeCodes.LowResources, null, TimeSpan.Zero, "Number of current connections to {0} : {1}",
-        	                     DestinationDevice.AeTitle, currentConnectionCounter);
         }
 
         #endregion
