@@ -133,12 +133,6 @@
   <data name="ExceptionValueMustNotBeNegative" xml:space="preserve">
     <value>The value must not be negative.</value>
   </data>
-  <data name="FormatVersion" xml:space="preserve">
-    <value>Version {0}</value>
-  </data>
-  <data name="SplashShadow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\SplashShadow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="MenuWindowTileVertical" xml:space="preserve">
     <value>Tile &amp;Vertical</value>
   </data>

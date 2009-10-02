@@ -51,7 +51,7 @@ namespace ClearCanvas.Common
         }
 
 		// Public methods
-		public void LoadPlugin(string path)
+		public Assembly LoadPlugin(string path)
 		{
 			Platform.CheckForNullReference(path, "path");
 			Platform.CheckForEmptyString(path, "path");
@@ -62,16 +62,18 @@ namespace ClearCanvas.Common
                 _pluginList.Add(asm);
 
 				Platform.Log(LogLevel.Debug, SR.LogPluginLoaded, path);
+
+				return asm;
 			}
 			catch (FileNotFoundException e)
 			{
 				Platform.Log(LogLevel.Error, e);
-				throw e;
+				throw;
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
-				throw e;
+				throw;
 			}
 		}
 

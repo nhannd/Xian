@@ -172,7 +172,7 @@ namespace ClearCanvas.Common
             _plugins = ProcessAssemblies(assemblies);
 
             // If no plugins could be loaded, just setup empty lists
-			if (_plugins.Count == 0)
+            if (_plugins.Count == 0)
 			{
 				_extensions = new List<ExtensionInfo>();
 				_extensionPoints = new List<ExtensionPointInfo>();
@@ -258,7 +258,7 @@ namespace ClearCanvas.Common
 
 			try
 			{
-				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(SR.MessageFindingPlugins));
+				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(SR.MessageFindingPlugins, null));
 
 				// Create a secondary AppDomain where we can load all the DLLs in the plugin directory
 #if MONO
@@ -321,7 +321,7 @@ namespace ClearCanvas.Common
 				if (domain != null)
 					AppDomain.Unload(domain);
 
-                if (pluginFiles == null)
+                if (pluginFiles == null || pluginFiles.Length == 0)
 					throw new PluginException(SR.ExceptionNoPluginsFound);
 			}
             return pluginFiles;
@@ -336,9 +336,10 @@ namespace ClearCanvas.Common
 			// Load the legitimate plugins into the primary AppDomain
 			foreach (string pluginFile in pluginFileList)
 			{
-				loader.LoadPlugin(pluginFile);
+				Assembly pluginAssembly = loader.LoadPlugin(pluginFile);
 				string pluginName = Path.GetFileName(pluginFile);
-				EventsHelper.Fire(_pluginProgressEvent, this, new PluginLoadedEventArgs(String.Format(SR.FormatLoadingPlugin, pluginName)));
+				EventsHelper.Fire(_pluginProgressEvent, this, 
+					new PluginLoadedEventArgs(String.Format(SR.FormatLoadingPlugin, pluginName), pluginAssembly));
 			}
 
 			return loader.PluginAssemblies;

@@ -30,8 +30,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -57,7 +59,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		// Members used in updating the contents of the splash screen (thread-shared resources)
 		private static string _status = string.Empty;
-		//private static bool _updateLicenseInfo = false;
+		private static string _licenseText = string.Empty;
+		private static List<Assembly> _assemblies = new List<Assembly>();
+
+		private static bool _updateLicenseText = false;
 
 		// Members used in closing the splash sceen (thread-shared resources)
 		private static bool _closing = false;
@@ -145,6 +150,34 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
+		/// Set the license text to display in the splash screen.
+		/// </summary>
+		/// <param name="licenseText">The new license text to display on the splash screen.</param>
+		public static void SetLicenseText(string licenseText)
+		{
+			// Shared resource access follows
+			mutex.WaitOne();
+
+			// Store the license text temporarily until we can set it properly in the timer thread
+			_licenseText = licenseText;
+			_updateLicenseText = true;
+
+			mutex.ReleaseMutex();
+		}
+
+		public static void AddAssemblyIcon(Assembly pluginAssembly)
+		{
+			// Shared resource access follows
+			mutex.WaitOne();
+
+			// Store the assembly temporarily until we can add it properly in the timer thread
+			if (pluginAssembly != null)
+				_assemblies.Add(pluginAssembly);
+
+			mutex.ReleaseMutex();
+		}
+
+		/// <summary>
 		/// An entry point for the display thread that creates a splash screen form and begins a 
 		/// timer to handle fading it in and out and updating it.  A timer is used so that the 
 		/// splash screen form accessed through the same thread it was created in.  This avoids 
@@ -193,16 +226,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 				//	_splashScreen.SendToBack();
 
 				// Update the status
-				_splashScreen.UpdateStatus(_status);
-/*
-				// Update the license info, if necessary
-				if (_updateLicenseInfo)
+				_splashScreen.UpdateStatusText(_status);
+
+				// Update the license
+				if (_updateLicenseText)
 				{
-					// Update the license
-					_splashScreen.UpdateLicenseInfo();
-					_updateLicenseInfo = false;
+					_splashScreen.UpdateLicenseText(_licenseText);
+					_updateLicenseText = false;
 				}
-*/
+
+				// Update the icons
+				while (_assemblies.Count > 0)
+				{
+					_splashScreen.AddAssemblyIcon(_assemblies[0]);
+					_assemblies.RemoveAt(0);
+				}
+
 				if (_closing)
 				{
 					// Wait a fixed amount of time before actually closing the splash screen

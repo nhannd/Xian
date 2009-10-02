@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
 #if !MONO
@@ -74,6 +75,9 @@ namespace ClearCanvas.Desktop.Executable
 			Platform.CheckForNullReference(e, "e");
 #if !MONO
 			SplashScreenManager.SetStatus(e.Message);
+
+			if (e.PluginAssembly != null)
+				SplashScreenManager.AddAssemblyIcon(e.PluginAssembly);
 #endif
         }
 	}

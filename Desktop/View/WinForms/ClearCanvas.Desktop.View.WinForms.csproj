@@ -123,6 +123,12 @@
       <DependentUpon>RichTextField.cs</DependentUpon>
     </Compile>
     <Compile Include="ScreenInfoProvider.cs" />
+    <Compile Include="SplashScreenSettings.cs" />
+    <Compile Include="SplashScreenSettings.designer.cs">
+      <AutoGen>True</AutoGen> 
+      <DesignTimeSharedInput>True</DesignTimeSharedInput> 
+      <DependentUpon>SplashScreenSettings.settings</DependentUpon> 
+    </Compile>
     <Compile Include="SuggestComboField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -495,6 +501,10 @@
     <EmbeddedResource Include="Resources\ClearFilterLarge.png" />
     <EmbeddedResource Include="Resources\ClearFilterMedium.png" />
     <None Include="Resources\navBackButton.Image.png" />
+    <None Include="SplashScreenSettings.settings"> 
+      <Generator>SettingsSingleFileGenerator</Generator> 
+      <LastGenOutput>SplashScreenSettings.Designer.cs</LastGenOutput> 
+    </None> 
     <EmbeddedResource Include="Resources\ClearFilterSmall.png" />
     <EmbeddedResource Include="DefaultCodeEditorComponentControl.resx">
       <SubType>Designer</SubType>
@@ -525,7 +535,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\CheckSmall.png" />
-    <EmbeddedResource Include="Resources\SplashShadow.png" />
     <EmbeddedResource Include="Resources\Splash.png" />
     <EmbeddedResource Include="ComboBoxField.resx">
       <DependentUpon>ComboBoxField.cs</DependentUpon>

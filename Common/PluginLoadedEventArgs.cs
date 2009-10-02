@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 
 namespace ClearCanvas.Common
 {
@@ -43,10 +44,12 @@ namespace ClearCanvas.Common
 	public class PluginLoadedEventArgs : EventArgs
 	{
 		string _message;
+		Assembly _pluginAssembly;
 
-		internal PluginLoadedEventArgs(string message)
+		internal PluginLoadedEventArgs(string message, Assembly pluginAssembly)
 		{
 			_message = message;
+			_pluginAssembly = pluginAssembly;
 		}
 
 		/// <summary>
@@ -60,6 +63,20 @@ namespace ClearCanvas.Common
 			get
 			{
 				return _message;
+			}
+		}
+
+		/// <summary>
+		/// Gets the plugin assembly that was loaded, if any.
+		/// </summary>
+		/// <remarks>
+		/// Null if no actual assembly was loaded for this particular event.
+		/// </remarks>
+		public Assembly PluginAssembly
+		{
+			get
+			{
+				return _pluginAssembly;
 			}
 		}
 	}

@@ -136,15 +136,6 @@ namespace ClearCanvas.Desktop.View.WinForms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version {0} SP1.
-        /// </summary>
-        internal static string FormatVersion {
-            get {
-                return ResourceManager.GetString("FormatVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clear.
         /// </summary>
         internal static string ItemClear {
@@ -228,13 +219,6 @@ namespace ClearCanvas.Desktop.View.WinForms {
         internal static System.Drawing.Bitmap Splash {
             get {
                 object obj = ResourceManager.GetObject("Splash", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap SplashShadow {
-            get {
-                object obj = ResourceManager.GetObject("SplashShadow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

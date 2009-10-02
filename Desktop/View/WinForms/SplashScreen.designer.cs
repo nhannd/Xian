@@ -60,59 +60,67 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void InitializeComponent()
 		{
 			this._status = new System.Windows.Forms.Label();
-			this._versionLabel = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
+			this._version = new System.Windows.Forms.Label();
+			this._copyright = new System.Windows.Forms.Label();
+			this._license = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _status
 			// 
-			this._status.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this._status.AutoEllipsis = true;
-			this._status.BackColor = System.Drawing.Color.White;
-			this._status.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._status.BackColor = System.Drawing.Color.Transparent;
+			this._status.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this._status.ForeColor = System.Drawing.Color.Black;
 			this._status.Location = new System.Drawing.Point(295, 61);
 			this._status.Name = "_status";
-			this._status.Size = new System.Drawing.Size(354, 23);
-			this._status.TabIndex = 0;
-			this._status.Text = "Progress text";
+			this._status.Size = new System.Drawing.Size(354, 13);
+			this._status.TabIndex = 1;
+			this._status.Text = "Status";
 			// 
-			// _versionLabel
+			// _version
 			// 
-			this._versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._versionLabel.AutoSize = true;
-			this._versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
-			this._versionLabel.ForeColor = System.Drawing.Color.White;
-			this._versionLabel.Location = new System.Drawing.Point(447, 296);
-			this._versionLabel.Name = "_versionLabel";
-			this._versionLabel.Size = new System.Drawing.Size(42, 13);
-			this._versionLabel.TabIndex = 1;
-			this._versionLabel.Text = "Version";
+			this._version.BackColor = System.Drawing.Color.Transparent;
+			this._version.ForeColor = System.Drawing.Color.White;
+			this._version.Location = new System.Drawing.Point(447, 292);
+			this._version.Name = "_version";
+			this._version.Size = new System.Drawing.Size(214, 13);
+			this._version.TabIndex = 2;
+			this._version.Text = "Version";
 			// 
-			// label1
+			// _copyright
 			// 
-			this.label1.AutoEllipsis = true;
-			this.label1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
-			this.label1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label1.Location = new System.Drawing.Point(375, 340);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(287, 23);
-			this.label1.TabIndex = 2;
-			this.label1.Text = "Copyright 2009 ClearCanvas Inc. All rights reserved.";
+			this._copyright.BackColor = System.Drawing.Color.Transparent;
+			this._copyright.ForeColor = System.Drawing.Color.White;
+			this._copyright.Location = new System.Drawing.Point(375, 340);
+			this._copyright.Name = "_copyright";
+			this._copyright.Size = new System.Drawing.Size(286, 13);
+			this._copyright.TabIndex = 3;
+			this._copyright.Text = "Copyright 2009 ClearCanvas Inc. All rights reserved.";
+			// 
+			// _license
+			// 
+			this._license.AutoSize = true;
+			this._license.BackColor = System.Drawing.Color.Transparent;
+			this._license.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._license.ForeColor = System.Drawing.Color.Black;
+			this._license.Location = new System.Drawing.Point(617, 9);
+			this._license.Name = "_license";
+			this._license.Size = new System.Drawing.Size(44, 13);
+			this._license.TabIndex = 0;
+			this._license.Text = "License";
+			this._license.TextAlign = System.Drawing.ContentAlignment.TopRight;
+			this._license.Visible = false;
 			// 
 			// SplashScreen
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackgroundImage = global::ClearCanvas.Desktop.View.WinForms.SR.Splash;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
-			this.Controls.Add(this.label1);
-			this.Controls.Add(this._versionLabel);
+			this.Controls.Add(this._license);
+			this.Controls.Add(this._copyright);
+			this.Controls.Add(this._version);
 			this.Controls.Add(this._status);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
@@ -130,7 +138,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#endregion
 
 		private System.Windows.Forms.Label _status;
-		private System.Windows.Forms.Label _versionLabel;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label _version;
+		private System.Windows.Forms.Label _copyright;
+		private System.Windows.Forms.Label _license;
 	}
 }
