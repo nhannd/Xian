@@ -437,7 +437,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected virtual void OnTextLocationChanged()
 		{
 			EventsHelper.Fire(_textLocationChanged, this, EventArgs.Empty);
-			NotifyVisualStateChanged("Location");
+			NotifyVisualStateChanged("TextLocation");
 		}
 
 		/// <summary>

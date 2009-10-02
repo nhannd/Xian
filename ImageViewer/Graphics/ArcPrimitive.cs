@@ -204,27 +204,59 @@ namespace ClearCanvas.ImageViewer.Graphics
 			float y1 = boundingBox.Top + b;
 
 			// normalize the angles
-			float normSweepAngle = Math.Sign(sweepAngle)*Math.Min(360, Math.Abs(sweepAngle));
-			float normStartAngle = startAngle % 360;
-			float normEndAngle = (normStartAngle + normSweepAngle);
-			if(sweepAngle < 0)
+			float normalizedSweepAngle = Math.Sign(sweepAngle) * Math.Min(360, Math.Abs(sweepAngle));
+
+			float normalizedStartAngle = startAngle % 360;
+			if (normalizedStartAngle < 0)
+				normalizedStartAngle += 360;
+
+			float normalizedEndAngle = (normalizedStartAngle + normalizedSweepAngle);
+			if (normalizedSweepAngle < 0)
 			{
-				float t = normStartAngle;
-				normStartAngle = normEndAngle;
-				normEndAngle = t;
+				//swap start and end angles
+				float t = normalizedStartAngle;
+				normalizedStartAngle = normalizedEndAngle;
+				normalizedEndAngle = t;
+
+				//the sweep angle is now positive
+				normalizedSweepAngle *= -1;
 			}
 
-			PointF center = new PointF(x1, y1);
-			PointF result = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, point);
-			double angle = Vector.SubtendedAngle(center + new SizeF(1, 0), center, result);
-			if(angle > normStartAngle && angle < normEndAngle)
-				return result;
-			angle = (angle + 180)%360;
-			if (angle > normStartAngle && angle < normEndAngle)
-				return result;
+			// find the closest endpoint
+			const double degreesToRadians = Math.PI / 180;
 
-			//TODO check end points
-			return center;
+			PointF center = new PointF(x1, y1);
+			double normalizedStartAngleRadians = normalizedStartAngle * degreesToRadians;
+			double normalizedEndAngleRadians = normalizedEndAngle * degreesToRadians;
+			PointF start = new PointF(center.X + a * (float)Math.Cos(normalizedStartAngleRadians), center.Y + b * (float)Math.Sin(normalizedStartAngleRadians));
+			PointF end = new PointF(center.X + a * (float)Math.Cos(normalizedEndAngleRadians), center.Y + b * (float)Math.Sin(normalizedEndAngleRadians));
+
+			float distanceToStartX = start.X - point.X;
+			float distanceToStartY = start.Y - point.Y;
+			float distanceToEndX = end.X - point.X;
+			float distanceToEndY = end.Y - point.Y;
+
+			float squareDistanceToStart = distanceToStartX * distanceToStartX + distanceToStartY * distanceToStartY;
+			float squareDistanceToEnd = distanceToEndX * distanceToEndX + distanceToEndY * distanceToEndY;
+
+			PointF closestPoint = (squareDistanceToStart < squareDistanceToEnd) ? start : end;
+			float minSquareDistance = Math.Min(squareDistanceToStart, squareDistanceToEnd);
+
+			// find the intersection along the ray eminating from center towards point, and calculate its angle from the x-axis
+			PointF result = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, point);
+
+			//Check if the angle between 'start' and 'result' is positive and less than 'sweep'.
+			double angleStartToPoint = Vector.SubtendedAngle(result, center, start);
+			if (angleStartToPoint < normalizedSweepAngle && angleStartToPoint > 0)
+			{
+				float distanceToResultX = result.X - point.X;
+				float distanceToResultY = result.Y - point.Y;
+				float squareDistanceToResult = distanceToResultX * distanceToResultX + distanceToResultY * distanceToResultY;
+				if (squareDistanceToResult < minSquareDistance)
+					closestPoint = result;
+			}
+
+			return closestPoint;
 		}
 
 		internal static bool HitTest(
