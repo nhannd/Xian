@@ -8,7 +8,6 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <title>ClearCanvas ImageServer</title>
     <link id="Link1" rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />
 </head>
 <body class="LoginBody">

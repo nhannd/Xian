@@ -30,31 +30,19 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Security.Permissions;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
-using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Dashboard
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Admin.Dashboard.View)]
+    [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Dashboard.View)]
     public partial class Default : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Page.Title = App_GlobalResources.Titles.DashboardTitle;
+            SetPageTitle(Titles.DashboardTitle);
         }
     }
 }

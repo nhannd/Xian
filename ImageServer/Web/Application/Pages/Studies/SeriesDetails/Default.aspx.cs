@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails
             }
             else
             {
-                Page.Title = String.Format("{0}:{1} (Series: {2})", NameFormatter.Format(_study.PatientsName) , _study.PatientId, _series.SeriesNumber);
+                SetPageTitle(String.Format("{0}:{1} (Series: {2})", NameFormatter.Format(_study.PatientsName) , _study.PatientId, _series.SeriesNumber));
             }
  	        
             base.OnPreRender(e);

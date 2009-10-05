@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             DataBind();
 
+            SetPageTitle(Titles.LoginPageTitle);
+
         }
 
         protected bool EnterpriseMode
@@ -61,10 +63,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             	XmlDocument doc = new XmlDocument();
                 doc.Load(Server.MapPath("~/Web.Config"));
                 XmlNode node = doc.SelectSingleNode("//extensions/extension[@class='ClearCanvas.ImageServer.Services.Common.Authentication.DefaultAuthenticationService, ClearCanvas.ImageServer.Services.Common']");
-                if (node != null)
-                    return bool.Parse(node.Attributes["enabled"].Value) == false;
-                else
-                    return false;
+                return node != null && bool.Parse(node.Attributes["enabled"].Value) == false;
             }
         }
 

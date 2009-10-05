@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 {
@@ -46,6 +47,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             //Set the Page Theme, then set the Page object on the ImageServerConstants
             Page.Theme = ImageServerConstants.Default;
             ImageServerConstants.Theme = Page.Theme;
+        }
+
+        protected void SetPageTitle(string title)
+        {
+            Page.Title = string.IsNullOrEmpty(ConfigurationManager.AppSettings["ServerName"]) ? title : title + " [" + ConfigurationManager.AppSettings["ServerName"] + "]";
         }
     }
 

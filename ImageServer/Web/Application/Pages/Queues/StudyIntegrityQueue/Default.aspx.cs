@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                                                return panel;
                                                            });
 
-            Page.Title = Titles.StudyIntegrityQueuePageTitle;
+            SetPageTitle(Titles.StudyIntegrityQueuePageTitle);
         }
 
         public void OnReconcileItem(ReconcileDetails details)

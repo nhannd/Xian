@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                             oldPanel.UpdateUI();
                                                     }
                                                 };
-            Page.Title = Titles.DevicesPageTitle;
+            SetPageTitle(Titles.DevicesPageTitle);
         }
 
 

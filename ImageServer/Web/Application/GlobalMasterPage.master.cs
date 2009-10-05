@@ -40,65 +40,67 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
-public partial class GlobalMasterPage : System.Web.UI.MasterPage, MasterProperties
+namespace ClearCanvas.ImageServer.Web.Application
 {
-    private bool _displayUserInfo = true;
-
-    public bool DisplayUserInformationPanel
+    public partial class GlobalMasterPage : MasterPage, MasterProperties
     {
-        get { return _displayUserInfo; }
-        set { _displayUserInfo = value; }
-    }
+        private bool _displayUserInfo = true;
 
-    protected void Page_Load(object sender, EventArgs e)
-    {
-        if (IsPostBack)
-            return;
-
-        if (ConfigurationManager.AppSettings.GetValues("CachePages")[0].Equals("false"))
+        public bool DisplayUserInformationPanel
         {
-            Response.CacheControl = "no-cache";
-            Response.AddHeader("Pragma", "no-cache");
-            Response.Expires = -1;
+            get { return _displayUserInfo; }
+            set { _displayUserInfo = value; }
         }
 
-        AddIE6PngBugFixCSS(); 
-
-        CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
-
-        if (DisplayUserInformationPanel)
+        protected void Page_Load(object sender, EventArgs e)
         {
-            if (id != null)
+            if (IsPostBack)
+                return;
+
+            if (ConfigurationManager.AppSettings.GetValues("CachePages")[0].Equals("false"))
             {
-                Username.Text = id.DisplayName;
+                Response.CacheControl = "no-cache";
+                Response.AddHeader("Pragma", "no-cache");
+                Response.Expires = -1;
+            }
+
+            AddIE6PngBugFixCSS();
+
+            CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
+
+            if (DisplayUserInformationPanel)
+            {
+                if (id != null)
+                {
+                    Username.Text = id.DisplayName;
+                }
+                else
+                {
+                    Username.Text = "unknown";
+                }
+
+                try
+                {
+                    AlertIndicator alertControl = (AlertIndicator)LoadControl("~/Controls/AlertIndicator.ascx");
+                    AlertIndicatorPlaceHolder.Controls.Add(alertControl);
+                }
+                catch (Exception)
+                {
+                    //No permissions for Alerts, control won't be displayed
+                    //hide table cell that contains the control.
+                    AlertIndicatorCell.Visible = false;
+                }
             }
             else
             {
-                Username.Text = "unknown";
-            }
-
-            try
-            {
-                AlertIndicator alertControl = (AlertIndicator) LoadControl("~/Controls/AlertIndicator.ascx");
-                AlertIndicatorPlaceHolder.Controls.Add(alertControl);
-            }
-            catch (Exception)
-            {
-                //No permissions for Alerts, control won't be displayed
-                //hide table cell that contains the control.
-                AlertIndicatorCell.Visible = false;
+                UserInformationCell.Width = Unit.Percentage(0);
+                MenuCell.Width = Unit.Percentage(100);
             }
         }
-        else
+
+        private void AddIE6PngBugFixCSS()
         {
-            UserInformationCell.Width = Unit.Percentage(0);
-            MenuCell.Width = Unit.Percentage(100);
-        }
-    }
-
-    private void AddIE6PngBugFixCSS()
-    {
-        IE6PNGBugFixCSS.InnerHtml = @"
+            IE6PNGBugFixCSS.InnerHtml = @"
             input, img
             {
                 background-image: expression
@@ -113,18 +115,18 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage, MasterProperti
                 );
             }
         ";
-    }
+        }
 
-    protected void Logout_Click(Object sender, EventArgs e)
-    {
-        Platform.Log(LogLevel.Info, "{0} has logged out.", SessionManager.Current.User.Identity.Name);
-        SessionManager.SignOut();
-        Response.Redirect(SessionManager.LoginUrl);
-    }
+        protected void Logout_Click(Object sender, EventArgs e)
+        {
+            Platform.Log(LogLevel.Info, "{0} has logged out.", SessionManager.Current.User.Identity.Name);
+            SessionManager.SignOut();
+            Response.Redirect(SessionManager.LoginUrl);
+        }
 
-    protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)
-    {
-        GlobalScriptManager.AsyncPostBackErrorMessage = ExceptionHandler.ThrowAJAXException(e.Exception);
+        protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)
+        {
+            GlobalScriptManager.AsyncPostBackErrorMessage = ExceptionHandler.ThrowAJAXException(e.Exception);
+        }
     }
-
 }

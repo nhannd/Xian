@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.About.About" %>
+<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Help.About" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%>
 
 <asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">

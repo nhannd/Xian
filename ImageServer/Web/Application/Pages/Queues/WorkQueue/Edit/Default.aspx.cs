@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             LoadWorkQueueItemKey();
 
-            Page.Title = Titles.WorkQueuePageTitle;
+            SetPageTitle(Titles.WorkQueuePageTitle);
         }
 
         private void ResetWorkQueueDialog_Error(object sender, WorkQueueItemResetErrorEventArgs e)

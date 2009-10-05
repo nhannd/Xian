@@ -318,4 +318,10 @@
   <data name="CookiesRequiredPageTitle" xml:space="preserve">
     <value>Cookies Required</value>
   </data>
+  <data name="DefaultPageTitle" xml:space="preserve">
+    <value>ClearCanvas ImageServer</value>
+  </data>
+  <data name="LoginPageTitle" xml:space="preserve">
+    <value>ClearCanvas ImageServer</value>
+  </data>
 </root>

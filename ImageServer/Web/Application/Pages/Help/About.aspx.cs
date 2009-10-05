@@ -33,13 +33,13 @@
 using System;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
-namespace ClearCanvas.ImageServer.Web.Application.About
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Help
 {
     public partial class About : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Page.Title = App_GlobalResources.Titles.AboutPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.AboutPageTitle);
         }
     }
 }

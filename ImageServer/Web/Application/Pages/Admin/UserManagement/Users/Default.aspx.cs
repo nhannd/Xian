@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             SetupEventHandlers();
 
-            Page.Title = App_GlobalResources.Titles.UserManagementPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.UserManagementPageTitle);
         }
 
 

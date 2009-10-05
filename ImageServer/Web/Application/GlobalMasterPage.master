@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" Inherits="GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
 
 <%@ Register Src="~/Controls/AlertIndicator.ascx" TagName="AlertIndicator" TagPrefix="ccAsp" %>
 <%@ Register Src="~/Controls/SessionTimeout.ascx" TagName="SessionTimeout" TagPrefix="ccAsp" %>
@@ -8,7 +8,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>ClearCanvas ImageServer</title>
+    <title></title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
     <link rel="shortcut icon" type="image/ico" runat="server" href="~/Images/favicon.ico" />
     

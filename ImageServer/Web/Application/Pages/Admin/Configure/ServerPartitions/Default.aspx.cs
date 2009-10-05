@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         #region Private Members
 
         // used for database interaction
-        private ServerPartitionConfigController _controller = null;
+        private ServerPartitionConfigController _controller;
 
         #endregion
 
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
             ServerPartitionPanel.Controller = _controller;
 
-            Page.Title = App_GlobalResources.Titles.ServerPartitionsPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.ServerPartitionsPageTitle);
 
             SetupEventHandlers();
         }

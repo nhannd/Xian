@@ -232,6 +232,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas ImageServer.
+        /// </summary>
+        internal static string DefaultPageTitle {
+            get {
+                return ResourceManager.GetString("DefaultPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deleted Studies.
         /// </summary>
         internal static string DeletedStudies {
@@ -363,6 +372,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string JavascriptRequiredPageTitle {
             get {
                 return ResourceManager.GetString("JavascriptRequiredPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas ImageServer.
+        /// </summary>
+        internal static string LoginPageTitle {
+            get {
+                return ResourceManager.GetString("LoginPageTitle", resourceCulture);
             }
         }
         

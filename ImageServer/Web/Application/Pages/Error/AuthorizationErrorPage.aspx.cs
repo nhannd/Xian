@@ -30,15 +30,6 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -63,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
                 DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
 
-            Page.Title = App_GlobalResources.Titles.AuthorizationErrorPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.AuthorizationErrorPageTitle);
         }
 
         protected void Logout_Click(Object sender, EventArgs e)

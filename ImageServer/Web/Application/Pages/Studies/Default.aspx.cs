@@ -33,11 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
@@ -54,7 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             ServerPartitionTabs.SetupLoadPartitionTabs(CreatePartitionTab);
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
 
-            Page.Title = App_GlobalResources.Titles.StudiesPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.StudiesPageTitle);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -74,10 +72,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         private SearchPanel CreatePartitionTab(ServerPartition partition)
         {
             SearchPanel panel = LoadControl("SearchPanel.ascx") as SearchPanel;
-            panel.ServerPartition = partition;
-            panel.ID = "SearchPanel_" + partition.AeTitle;
-            panel.DeleteButtonClicked += SearchPanel_DeleteButtonClicked;
-            _partitionPanelMap.Add(partition.AeTitle, panel);
+            if (panel != null)
+            {
+                panel.ServerPartition = partition;
+                panel.ID = "SearchPanel_" + partition.AeTitle;
+                panel.DeleteButtonClicked += SearchPanel_DeleteButtonClicked;
+                _partitionPanelMap.Add(partition.AeTitle, panel);
+            }
             return panel;
         }
 

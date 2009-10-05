@@ -32,10 +32,8 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
-using ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
@@ -51,14 +49,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         	                                           	{
         	                                           		SearchPanel panel =
         	                                           			LoadControl("SearchPanel.ascx") as SearchPanel;
-        	                                           		panel.ServerPartition = partition;
-        	                                           		panel.ID = "SearchPanel_" + partition.AeTitle;
 
-        	                                           		panel.EnclosingPage = this;
-        	                                           		return panel;
+                                                            if (panel != null)
+                                                            {
+                                                                panel.ServerPartition = partition;
+                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                                panel.EnclosingPage = this;
+                                                            }
+
+        	                                           	    return panel;
         	                                           	});
 
-            Page.Title = App_GlobalResources.Titles.ArchiveQueuePageTitle;
+            SetPageTitle(App_GlobalResources.Titles.ArchiveQueuePageTitle);
         }
 
 		public void ResetArchiveQueueItem(IList<Model.ArchiveQueue> list)

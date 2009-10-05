@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                                                };
             
 
-            Page.Title = App_GlobalResources.Titles.ServerRulesPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.ServerRulesPageTitle);
 
             base.OnInit(e);
         }

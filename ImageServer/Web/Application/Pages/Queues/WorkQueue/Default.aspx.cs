@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 RefreshRateTextBox.Text = TimeSpan.FromMilliseconds(RefreshTimer.Interval).TotalSeconds.ToString();
             }
             
-            Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
+            SetPageTitle(App_GlobalResources.Titles.WorkQueuePageTitle);
         }
 
         void RefreshTimer_AutoDisabled(object sender, TimerEventArgs e)

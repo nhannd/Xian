@@ -44,16 +44,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         #region Protected Methods
         protected override void OnInit(EventArgs e)
         {
-            SearchPanel.ViewDetailsClicked += new EventHandler<DeletedStudyViewDetailsClickedEventArgs>(SearchPanel_ViewDetailsClicked);
-            SearchPanel.DeleteClicked += new EventHandler<DeletedStudyDeleteClickedEventArgs>(SearchPanel_DeleteClicked);
-            DeleteConfirmMessageBox.Confirmed += new ClearCanvas.ImageServer.Web.Application.Controls.MessageBox.ConfirmedEventHandler(DeleteConfirmMessageBox_Confirmed);
+            SearchPanel.ViewDetailsClicked += SearchPanel_ViewDetailsClicked;
+            SearchPanel.DeleteClicked += SearchPanel_DeleteClicked;
+            DeleteConfirmMessageBox.Confirmed += DeleteConfirmMessageBox_Confirmed;
             base.OnInit(e);
         }
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            Page.Title = App_GlobalResources.Titles.DeletedStudiesPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.DeletedStudiesPageTitle);
 
             DataBind();
         }

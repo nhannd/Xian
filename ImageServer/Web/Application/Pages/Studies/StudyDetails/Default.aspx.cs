@@ -102,27 +102,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             ReprocessConfirmationDialog.Show();
         }
 
-        void StudyDetailsPanel_DeleteStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelDeleteStudyClickEventArgs e)
+        void StudyDetailsPanel_DeleteStudyClicked(object sender, StudyDetailsPanelDeleteStudyClickEventArgs e)
         {
             DeleteStudy();
         }
 
-        void StudyDetailsTabs_DeleteSeriesClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsTabs.StudyDetailsTabsDeleteSeriesClickEventArgs e)
+        void StudyDetailsTabs_DeleteSeriesClicked(object sender, StudyDetailsTabs.StudyDetailsTabsDeleteSeriesClickEventArgs e)
         {
             DeleteSeries();
         }
 
-        void StudyDetailsPanel_EditStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelEditStudyClickEventArgs e)
+        void StudyDetailsPanel_EditStudyClicked(object sender, StudyDetailsPanelEditStudyClickEventArgs e)
         {
             EditStudy();
         }
 
-        void DeleteStudyConfirmDialog_StudyDeleted(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialogStudyDeletedEventArgs e)
+        void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
         {
             Refresh();
         }
 
-        void DeleteSeriesConfirmDialog_SeriesDeleted(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteSeriesConfirmDialogSeriesDeletedEventArgs e)
+        void DeleteSeriesConfirmDialog_SeriesDeleted(object sender, DeleteSeriesConfirmDialogSeriesDeletedEventArgs e)
         {
             Refresh();
         }
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
             //Hide the UserPanel information
             MasterProperties master = Master as MasterProperties;
-            master.DisplayUserInformationPanel = false;
+            if(master != null) master.DisplayUserInformationPanel = false;
         }
 
         protected override void OnInit(EventArgs e)
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
             else
             {
-                Page.Title = String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId);
+                SetPageTitle(String.Format("{0}:{1}", NameFormatter.Format(_study.PatientsName) , _study.PatientId));
             }
 
         }

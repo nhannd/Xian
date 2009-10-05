@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                             	UserGroupsPanel.UpdateUI();
                                             };
 
-            Page.Title = App_GlobalResources.Titles.UserGroupsPageTitle;
+            SetPageTitle(App_GlobalResources.Titles.UserGroupsPageTitle);
         }
 
         public void OnAddUserGroup()
