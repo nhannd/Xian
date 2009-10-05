@@ -61,15 +61,6 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Version {0}.
-        /// </summary>
-        public static string FormatVersion {
-            get {
-                return ResourceManager.GetString("FormatVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Could not find help file..
         /// </summary>
         public static string HelpNotFound {

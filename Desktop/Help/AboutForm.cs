@@ -57,8 +57,7 @@ namespace ClearCanvas.Desktop.Help
 
 		private void SetVersion()
 		{
-			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			this._versionLabel.Text = String.Format(SR.FormatVersion, version);
+			this._versionLabel.Text = Application.GetVersion(true, true);
 		}
 
 		private void OnCloseClicked(object sender, EventArgs e)

@@ -250,7 +250,7 @@ namespace ClearCanvas.Desktop.View.WinForms {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Version {0}")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Version {0} Alpha")]
         public string VersionTextFormat {
             get {
                 return ((string)(this["VersionTextFormat"]));
@@ -259,7 +259,7 @@ namespace ClearCanvas.Desktop.View.WinForms {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas.Desktop.View.WinForms")]
         public string VersionAssemblyName {
             get {
                 return ((string)(this["VersionAssemblyName"]));

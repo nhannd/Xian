@@ -297,4 +297,7 @@
   <data name="TitlePrevious" xml:space="preserve">
     <value>Previous Page</value>
   </data>
+  <data name="VersionSuffix" xml:space="preserve">
+    <value>Alpha</value>
+  </data>
 </root>

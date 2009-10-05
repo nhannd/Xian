@@ -78,10 +78,10 @@
       <Value Profile="(Default)">TopLeft</Value>
     </Setting>
     <Setting Name="VersionTextFormat" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Version {0}</Value>
+      <Value Profile="(Default)">Version {0} Alpha</Value>
     </Setting>
     <Setting Name="VersionAssemblyName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">ClearCanvas.Desktop.View.WinForms</Value>
     </Setting>
     <Setting Name="LicenseVisible" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>

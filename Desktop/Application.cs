@@ -154,6 +154,35 @@ namespace ClearCanvas.Desktop
             get { return _instance.ApplicationVersion; }
         }
 
+		/// <summary>
+		/// Gets the version suffix of the application.
+		/// </summary>
+    	public static string VersionSuffix
+    	{
+			get { return _instance.ApplicationVersionSuffix; }	
+    	}
+
+    	public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
+    	{
+			return String.Format("{0} {1}", Name, GetVersion(includeBuildAndRevision, includeVersionSuffix));
+    	}
+
+		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
+		{
+			string versionString;
+			Version version = Version;
+
+			if (includeBuildAndRevision)
+				versionString = String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+			else
+				versionString = String.Format("{0}.{1}", version.Major, version.Minor);
+
+			if (includeVersionSuffix && !String.IsNullOrEmpty(VersionSuffix))
+				return String.Format("{0} {1}", versionString, VersionSuffix);
+
+			return versionString;
+		}
+
         /// <summary>
         /// Gets the collection of application windows.
         /// </summary>
@@ -260,7 +289,8 @@ namespace ClearCanvas.Desktop
 
         private string _appName;
         private Version _appVersion;
-        private IGuiToolkit _guiToolkit;
+		private string _appVersionSuffix;
+		private IGuiToolkit _guiToolkit;
         private IApplicationView _view;
         private DesktopWindowCollection _windows;
         private ToolSet _toolSet;
@@ -388,6 +418,11 @@ namespace ClearCanvas.Desktop
             return Assembly.GetExecutingAssembly().GetName().Version;
         }
         
+		protected virtual string GetVersionSuffix()
+		{
+			return SR.VersionSuffix;
+		}
+
         #endregion
 
         #region Protected members
@@ -595,6 +630,19 @@ namespace ClearCanvas.Desktop
                 return _appVersion;
             }
         }
+
+		/// <summary>
+		/// Gets the cached version suffix.
+		/// </summary>
+		private string ApplicationVersionSuffix
+		{
+			get
+			{
+				if (_appVersionSuffix == null)
+					_appVersionSuffix = GetVersionSuffix();
+				return _appVersionSuffix;
+			}
+		}
 
         /// <summary>
         /// Creates a view for a desktop window.

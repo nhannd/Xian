@@ -599,5 +599,14 @@ namespace ClearCanvas.Desktop {
                 return ResourceManager.GetString("TitlePrevious", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alpha.
+        /// </summary>
+        public static string VersionSuffix {
+            get {
+                return ResourceManager.GetString("VersionSuffix", resourceCulture);
+            }
+        }
     }
 }
