@@ -664,6 +664,15 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Procedure Type Group.
+        /// </summary>
+        internal static string ProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("ProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Active Protocolling Items.
         /// </summary>
         internal static string ProtocollingAdminAssignedWorklist {

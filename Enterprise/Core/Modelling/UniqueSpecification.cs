@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Specifications;
 using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
@@ -47,10 +43,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// </remarks>
     public class UniqueSpecification : UniqueKeySpecification, IPropertyBoundRule
     {
-        private PropertyInfo _property;
+        private readonly PropertyInfo _property;
 
         public UniqueSpecification(PropertyInfo property)
-            : base(property.DeclaringType, property.Name, new string[] { property.Name })
+            : base(property.DeclaringType, property.Name, new [] { property.Name })
         {
             _property = property;
         }
@@ -59,7 +55,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         public PropertyInfo[] Properties
         {
-            get { return new PropertyInfo[] { _property }; }
+            get { return new [] { _property }; }
         }
 
         #endregion

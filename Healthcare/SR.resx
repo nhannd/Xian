@@ -318,6 +318,9 @@
   <data name="Procedure" xml:space="preserve">
     <value>Procedure</value>
   </data>
+  <data name="ProcedureTypeGroup" xml:space="preserve">
+    <value>Procedure Type Group</value>
+  </data>
   <data name="ProtocollingAdminAssignedWorklist" xml:space="preserve">
     <value>Active Protocolling Items</value>
   </data>

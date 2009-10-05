@@ -30,33 +30,32 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
+using System.Data;
+using NHibernate;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
-using ClearCanvas.Common;
-using System.Reflection;
-using NHibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
-using System.Data;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
+	/// <summary>
+	/// NHibernate implementation of <see cref="IUniqueConstraintValidationBroker"/>.
+	/// </summary>
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class UniqueConstraintValidationBroker : Broker, IUniqueConstraintValidationBroker
     {
         #region IUniqueConstraintValidationBroker Members
 
-        /// <summary>
-        /// Tests whether the specified object satisfies the specified unique constraint.
-        /// </summary>
-        /// <param name="obj">The object to test.</param>
-        /// <param name="entityClass"></param>
-        /// <param name="uniqueConstraintMembers">The properties of the object that form the unique key.
-        /// These may be compound property expressions (e.g. Name.FirstName, Name.LastName).
-        /// </param>
-        /// <returns></returns>
+		/// <summary>
+		/// Tests whether the specified object satisfies the specified unique constraint.
+		/// </summary>
+		/// <param name="obj">The object to test.</param>
+		/// <param name="entityClass">The class of entity to which the constraint applies.</param>
+		/// <param name="uniqueConstraintMembers">The properties of the object that form the unique key.
+		/// These may be compound property expressions (e.g. Name.FirstName, Name.LastName).
+		/// </param>
+		/// <returns></returns>
 		public bool IsUnique(DomainObject obj, Type entityClass, string[] uniqueConstraintMembers)
         {
             Platform.CheckForNullReference(obj, "obj");
@@ -66,30 +65,30 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (uniqueConstraintMembers.Length == 0)
                 throw new InvalidOperationException("uniqueConstraintMembers must contain at least one entry.");
 
-            HqlQuery hqlQuery = BuildQuery(obj, entityClass, uniqueConstraintMembers);
+            var hqlQuery = BuildQuery(obj, entityClass, uniqueConstraintMembers);
 
             // create a new session to do the validation query
             // this is a bit of a HACK, but we know that this may occur during an interceptor callback
             // on the originating session, and we don't want to modify the state of that session
             // ideally the new session should share the connection and transaction of the main session,
             // but this isn't possible with NHibernate 1.2.0
-            using (ISession auxSession = this.Context.PersistentStore.SessionFactory.OpenSession())
+            using (var auxSession = this.Context.PersistentStore.SessionFactory.OpenSession())
             {
                 // since we are forced to use a separate transaction, use ReadUncommitted isolation level
                 // we want to avoid deadlocking here at all costs, even if it means dirty reads
                 // the worst the can happen with a dirty read is that validation will be incorrect,
                 // but that's not the end of the world, because the DB will still enforce uniqueness
-                ITransaction tx = auxSession.BeginTransaction(IsolationLevel.ReadUncommitted);
+                var tx = auxSession.BeginTransaction(IsolationLevel.ReadUncommitted);
                 auxSession.FlushMode = FlushMode.Never;
-                IQuery query = auxSession.CreateQuery(hqlQuery.Hql);
-                int i = 0;
-                foreach (HqlCondition condition in hqlQuery.Conditions)
+                var query = auxSession.CreateQuery(hqlQuery.Hql);
+                var i = 0;
+                foreach (var condition in hqlQuery.Conditions)
                 {
-                    foreach(object paramVal in condition.Parameters)
+                    foreach(var paramVal in condition.Parameters)
                         query.SetParameter(i++, paramVal);
                 }
 
-                long count = query.UniqueResult<long>();
+                var count = query.UniqueResult<long>();
 
                 tx.Commit();    // no data will be written (Flushmode.Never, and we didn't write anything anyways)
 
@@ -100,59 +99,59 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         #endregion
 
-		private HqlQuery BuildQuery(DomainObject obj, Type entityClass, string[] uniqueConstraintMembers)
+		private static HqlQuery BuildQuery(DomainObject obj, Type entityClass, string[] uniqueConstraintMembers)
         {
             // get the id of the object being validated
             // if the object is unsaved, this id may be null
-            object id = (obj is Entity) ? (obj as Entity).OID : (obj as EnumValue).Code;
+            var id = (obj is Entity) ? ((Entity) obj).OID : ((EnumValue) obj).Code;
 
-            HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", entityClass.Name));
+            var query = new HqlQuery(string.Format("select count(*) from {0} x", entityClass.Name));
             if (id != null)
             {
                 // this object may have already been saved (i.e. this is an update) and therefore should be
                 // excluded
-                query.Conditions.Add(new HqlCondition("x.id <> ?", new object[] { id }));
+                query.Conditions.Add(new HqlCondition("x.id <> ?", new [] { id }));
             }
 
             // add other conditions 
-            foreach (string propertyExpression in uniqueConstraintMembers)
+            foreach (var propertyExpression in uniqueConstraintMembers)
             {
-                object value = EvaluatePropertyExpression(obj, propertyExpression);
+                var value = EvaluatePropertyExpression(obj, propertyExpression);
                 if (value == null)
                     query.Conditions.Add(new HqlCondition(string.Format("x.{0} is null", propertyExpression), new object[] { }));
                 else
-                    query.Conditions.Add(new HqlCondition(string.Format("x.{0} = ?", propertyExpression), new object[] { value }));
+                    query.Conditions.Add(new HqlCondition(string.Format("x.{0} = ?", propertyExpression), new [] { value }));
             }
 
             return query;
        }
 
-        private object EvaluatePropertyExpression(object subject, string propertyExpression)
+        private static object EvaluatePropertyExpression(object subject, string propertyExpression)
         {
             if (string.IsNullOrEmpty(propertyExpression))
                 throw new InvalidOperationException("propertyExpression must be non-empty.");
 
-            string[] parts = propertyExpression.Split('.');
+            var parts = propertyExpression.Split('.');
             return EvaluatePropertyExpression(subject, parts, 0);
         }
 
-        private object EvaluatePropertyExpression(object subject, string[] parts, int partIndex)
+        private static object EvaluatePropertyExpression(object subject, string[] parts, int partIndex)
         {
             // find property
-            Type subjectType = subject.GetType();
-            PropertyInfo propertyInfo = subjectType.GetProperty(parts[partIndex]);
+            var subjectType = subject.GetType();
+            var propertyInfo = subjectType.GetProperty(parts[partIndex]);
             if(propertyInfo == null)
                 throw new InvalidOperationException(string.Format("{0} is not a property of type {1}.",
                     parts[partIndex], subjectType.FullName));
 
             // find get method
-            MethodInfo getter = propertyInfo.GetGetMethod(true);
+            var getter = propertyInfo.GetGetMethod(true);
             if (getter == null)
                 throw new InvalidOperationException(string.Format("Property {0} of type {1} has no accessible get method.",
                     propertyInfo.Name, subjectType.FullName));
 
             // evaluate 
-            object result = getter.Invoke(subject, null);
+            var result = getter.Invoke(subject, null);
 
             // if null, can't go any further with the expression
             if (result == null)
