@@ -1,4 +1,4 @@
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
