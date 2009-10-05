@@ -29,11 +29,13 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Desktop;
+using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: change how this manager/provider relationship works ... it just doesn't feel right.
+
 	//TODO: the color map shouldn't *have* to be a data lut - it could be calculated.
 
 	/// <summary>
@@ -47,37 +49,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// creating new color maps.
 	/// </para>
 	/// <para>
-	/// Implementors must not return null from the <see cref="GetColorMap"/> method.
+	/// Implementors must not return null from the <see cref="IColorMapInstaller.ColorMap"/> property.
 	/// </para>
 	/// </remarks>
-	public interface IColorMapManager : IMemorable
+	public interface IColorMapManager : IColorMapInstaller, IMemorable
 	{
-		/// <summary>
-		/// Gets the currently installed color map.
-		/// </summary>
+		[Obsolete("Use the ColorMap property instead.")]
 		IDataLut GetColorMap();
-
-		/// <summary>
-		/// Installs a color map by name.
-		/// </summary>
-		/// <param name="name">the name of the color map to install.</param>
-		void InstallColorMap(string name);
-
-		/// <summary>
-		/// Installs a color map by name, given the input <see cref="ColorMapDescriptor"/>.
-		/// </summary>
-		/// <param name="descriptor">a <see cref="ColorMapDescriptor"/> describing the color map to be installed.</param>
-		void InstallColorMap(ColorMapDescriptor descriptor);
-
-		/// <summary>
-		/// Installs a color map.
-		/// </summary>
-		/// <param name="colorMap">The color map to install.</param>
-		void InstallColorMap(IDataLut colorMap);
-
-		/// <summary>
-		/// Gets all available color maps in the form of <see cref="ColorMapDescriptor"/>s.
-		/// </summary>
-		IEnumerable<ColorMapDescriptor> AvailableColorMaps { get; }
 	}
 }

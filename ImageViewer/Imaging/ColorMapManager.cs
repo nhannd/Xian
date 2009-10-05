@@ -31,51 +31,59 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class ColorMapManager : IColorMapManager
+	public sealed class ColorMapManager : IColorMapManager
 	{
 		#region Private Fields
 
-		private GrayscaleImageGraphic _grayscaleImageGraphic;
+		private readonly IColorMapInstaller _colorMapInstaller;
 		
 		#endregion
 
-		public ColorMapManager(GrayscaleImageGraphic grayscaleImageGraphic)
+		public ColorMapManager(IColorMapInstaller colorMapInstaller)
 		{
-			Platform.CheckForNullReference(grayscaleImageGraphic, "grayscaleImageGraphic");
-			_grayscaleImageGraphic = grayscaleImageGraphic;
+			Platform.CheckForNullReference(colorMapInstaller, "colorMapInstaller");
+			_colorMapInstaller = colorMapInstaller;
 		}
 
 		#region IColorMapManager Members
 
 		public IDataLut GetColorMap()
 		{
-			return _grayscaleImageGraphic.ColorMap;
+			return _colorMapInstaller.ColorMap;
+		}
+
+		#endregion
+
+		#region IColorMapInstaller Members
+
+		public IDataLut ColorMap
+		{
+			get { return _colorMapInstaller.ColorMap; }
 		}
 
 		public void InstallColorMap(string name)
 		{
-			_grayscaleImageGraphic.InstallColorMap(name);
+			_colorMapInstaller.InstallColorMap(name);
 		}
 
 		public void InstallColorMap(ColorMapDescriptor descriptor)
 		{
-			_grayscaleImageGraphic.InstallColorMap(descriptor.Name);
+			_colorMapInstaller.InstallColorMap(descriptor);
 		}
 
 		public void InstallColorMap(IDataLut colorMap)
 		{
-			_grayscaleImageGraphic.InstallColorMap(colorMap);
+			_colorMapInstaller.InstallColorMap(colorMap);
 		}
 
 		public IEnumerable<ColorMapDescriptor> AvailableColorMaps
 		{
 			get
 			{
-				return _grayscaleImageGraphic.AvailableColorMaps;
+				return _colorMapInstaller.AvailableColorMaps;
 			}
 		}
 
@@ -85,18 +93,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public object CreateMemento()
 		{
-			return new ComposableLutMemento(_grayscaleImageGraphic.ColorMap);
+			return new ComposableLutMemento(_colorMapInstaller.ColorMap);
 		}
 
 		public void SetMemento(object memento)
 		{
 			ComposableLutMemento lutMemento = (ComposableLutMemento) memento;
 
-			if (_grayscaleImageGraphic.ColorMap != lutMemento.OriginatingLut)
-				_grayscaleImageGraphic.InstallColorMap(lutMemento.OriginatingLut as IDataLut);
+			if (_colorMapInstaller.ColorMap != lutMemento.OriginatingLut)
+				_colorMapInstaller.InstallColorMap(lutMemento.OriginatingLut as IDataLut);
 
 			if (lutMemento.InnerMemento != null)
-				_grayscaleImageGraphic.ColorMap.SetMemento(lutMemento.InnerMemento);
+				_colorMapInstaller.ColorMap.SetMemento(lutMemento.InnerMemento);
 		}
 
 		#endregion

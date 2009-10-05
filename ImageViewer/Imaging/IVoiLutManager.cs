@@ -29,41 +29,34 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: change how this manager/provider relationship works ... it just doesn't feel right.
+
 	/// <summary>
 	/// A VOI LUT Manager, which is responsible for managing installation and restoration
 	/// of VOI LUTs via the Memento pattern.
 	/// </summary>
 	/// <remarks>
-	/// Implementors must not return null from the <see cref="GetLut"/> method.
+	/// Implementors must not return null from the <see cref="IVoiLutInstaller.VoiLut"/> method.
 	/// </remarks>
 	/// <seealso cref="IVoiLutProvider"/>
 	/// <seealso cref="IComposableLut"/>
-	public interface IVoiLutManager : IMemorable
+	public interface IVoiLutManager : IVoiLutInstaller, IMemorable
 	{
-		/// <summary>
-		/// Gets the currently installed VOI LUT.
-		/// </summary>
-		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
+		[Obsolete("Use the VoiLut property instead.")]
 		IComposableLut GetLut();
 
-		/// <summary>
-		/// Installs a new VOI LUT.
-		/// </summary>
-		/// <param name="lut">The LUT to be installed.</param>
-		void InstallLut(IComposableLut lut);
+		[Obsolete("Use the InstallVoiLut method instead.")]
+		void InstallLut(IComposableLut voiLut);
 
 		/// <summary>
-		/// Gets or sets whether the output of the VOI LUT should be inverted for display.
+		/// Toggles the state of the <see cref="IVoiLutInstaller.Invert"/> property.
 		/// </summary>
-		bool Invert { get; set; }
-
-		/// <summary>
-		/// Toggles the state of the <see cref="Invert"/> property.
-		/// </summary>
+		[Obsolete("Use the Invert property instead.")]
 		void ToggleInvert();
 
 		/// <summary>

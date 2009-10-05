@@ -48,7 +48,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable]
 	public class ColorImageGraphic
 		: ImageGraphic,
-		IVoiLutProvider
+		IVoiLutProvider,
+		IVoiLutInstaller
 	{
 		/// <summary>
 		/// We only support VOI LUTs right now, but theoretically we
@@ -195,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_voiLutManager == null)
-					_voiLutManager = new ColorVoiLutManager(this);
+					_voiLutManager = new VoiLutManager(this, true);
 
 				return _voiLutManager;
 			}
@@ -293,9 +294,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		#region Internal Properties / Methods
+		#region Private / Explicit Members
 
-		internal void InstallVoiLut(IComposableLut voiLut)
+		private void InstallVoiLut(IComposableLut voiLut)
 		{
 			Platform.CheckForNullReference(voiLut, "voiLut");
 
@@ -307,6 +308,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				this.LutComposer.LutCollection[(int) Luts.Voi] = voiLut;
 			}
+		}
+
+		void IVoiLutInstaller.InstallVoiLut(IComposableLut voiLut)
+		{
+			InstallVoiLut(voiLut);
 		}
 
 		#endregion

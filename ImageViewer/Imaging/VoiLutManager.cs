@@ -31,32 +31,47 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class VoiLutManager : IVoiLutManager
+	public sealed class VoiLutManager : IVoiLutManager
 	{
 		#region Private Fields
 		
-		private GrayscaleImageGraphic _grayscaleImageGraphic;
-		
+		private readonly IVoiLutInstaller _voiLutInstaller;
+		private bool _enabled = true;
+		private bool _allowDisable;
 		#endregion
 
-		public VoiLutManager(GrayscaleImageGraphic grayscaleImageGraphic)
+		public VoiLutManager(IVoiLutInstaller voiLutInstaller, bool allowDisable)
 		{
-			Platform.CheckForNullReference(grayscaleImageGraphic, "grayscaleImageGraphic");
-			_grayscaleImageGraphic = grayscaleImageGraphic;
+			Platform.CheckForNullReference(voiLutInstaller, "voiLutInstaller");
+			_voiLutInstaller = voiLutInstaller;
+			_allowDisable = allowDisable;
 		}
 
 		#region IVoiLutManager Members
 
 		public IComposableLut GetLut()
 		{
-			return _grayscaleImageGraphic.VoiLut;
+			return _voiLutInstaller.VoiLut;
 		}
 
 		public void InstallLut(IComposableLut lut)
+		{
+			InstallVoiLut(lut);
+		}
+
+		#endregion
+
+		#region IVoiLutInstaller Members
+
+		public IComposableLut VoiLut
+		{
+			get { return _voiLutInstaller.VoiLut; }	
+		}
+
+		public void InstallVoiLut(IComposableLut lut)
 		{
 			IComposableLut existingLut = GetLut();
 			if (existingLut is IGeneratedDataLut)
@@ -65,18 +80,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 				((IGeneratedDataLut)existingLut).Clear();
 			}
 			
-			_grayscaleImageGraphic.InstallVoiLut(lut);
+			_voiLutInstaller.InstallVoiLut(lut);
 		}
 
 		public bool Invert
 		{
-			get { return _grayscaleImageGraphic.Invert; }
-			set { _grayscaleImageGraphic.Invert = value; }
+			get { return _voiLutInstaller.Invert; }
+			set { _voiLutInstaller.Invert = value; }
 		}
 
 		public void ToggleInvert()
 		{
-			_grayscaleImageGraphic.Invert = !_grayscaleImageGraphic.Invert;
+			_voiLutInstaller.Invert = !_voiLutInstaller.Invert;
 		}
 
 		/// <summary>
@@ -88,8 +103,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <exception cref="NotSupportedException">Thrown if the set accessor is called.</exception>
 		bool IVoiLutManager.Enabled
 		{
-			get { return true; }
-			set { throw new NotSupportedException();}
+			get { return _enabled; }
+			set
+			{
+				if (!_allowDisable)
+					throw new InvalidOperationException();
+
+				_enabled = value;
+			}
 		}
 
 		#endregion
@@ -98,20 +119,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public object CreateMemento()
 		{
-			return new VoiLutMemento(_grayscaleImageGraphic.VoiLut, _grayscaleImageGraphic.Invert);
+			return new VoiLutMemento(_voiLutInstaller.VoiLut, _voiLutInstaller.Invert);
 		}
 
 		public void SetMemento(object memento)
 		{
 			VoiLutMemento lutMemento = (VoiLutMemento) memento;
 
-			if (_grayscaleImageGraphic.VoiLut != lutMemento.ComposableLutMemento.OriginatingLut)
+			if (_voiLutInstaller.VoiLut != lutMemento.ComposableLutMemento.OriginatingLut)
 				this.InstallLut(lutMemento.ComposableLutMemento.OriginatingLut);
 
 			if (lutMemento.ComposableLutMemento.InnerMemento != null)
-				_grayscaleImageGraphic.VoiLut.SetMemento(lutMemento.ComposableLutMemento.InnerMemento);
+				_voiLutInstaller.VoiLut.SetMemento(lutMemento.ComposableLutMemento.InnerMemento);
 
-			_grayscaleImageGraphic.Invert = lutMemento.Invert;
+			_voiLutInstaller.Invert = lutMemento.Invert;
 		}
 
 		#endregion

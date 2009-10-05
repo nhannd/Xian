@@ -601,7 +601,7 @@ namespace ClearCanvas.ImageViewer.Rendering.Tests
 
 			if (_image is GrayscaleImageGraphic)
 			{
-				((GrayscaleImageGraphic)_image).InstallColorMap(new GrayscaleColorMap());
+				(_image as IColorMapInstaller).InstallColorMap(new GrayscaleColorMap());
 			}
 
 			_containerGraphic = new CompositeImageGraphic(_image.Rows, _image.Columns);

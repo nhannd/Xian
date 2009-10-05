@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable]
 	public class GrayscaleImageGraphic
 		: ImageGraphic, 
+		IVoiLutInstaller, 
+		IColorMapInstaller, 
 		IModalityLutProvider, 
 		IVoiLutProvider, 
 		IColorMapProvider
@@ -191,14 +193,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 				this.InitializeNecessaryLuts(Luts.Modality);
 
 			if (source.LutComposer.LutCollection.Count > 1) //clone the voi lut.
-				this.InstallVoiLut(source.VoiLut.Clone());
+				(this as IVoiLutInstaller).InstallVoiLut(source.VoiLut.Clone());
 
 			//color map has already been cloned.
 		}
 
 		#endregion
 
-		#region Public properties
+		#region Public Properties / Methods
 
 		/// <summary>
 		/// Gets the number of bits stored in the image.
@@ -275,7 +277,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get 
 			{
 				if (_voiLutManager == null)
-					_voiLutManager = new VoiLutManager(this);
+					_voiLutManager = new VoiLutManager(this, false);
 
 				return _voiLutManager;
 			}
@@ -345,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_colorMap == null)
-					InstallColorMap(this.LutFactory.GetGrayscaleColorMap());
+					(this as IColorMapInstaller).InstallColorMap(this.LutFactory.GetGrayscaleColorMap());
 
 				return _colorMap;
 			}
@@ -470,15 +472,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				if (lut == null)
 					lut = new IdentityVoiLinearLut();
 
-				InstallVoiLut(lut);
+				(this as IVoiLutInstaller).InstallVoiLut(lut);
 			}
 		}
 
 		#endregion
 
-		#region Internal Properties / Methods
+		#region Explicit Properties / Methods
 
-		internal IEnumerable<ColorMapDescriptor> AvailableColorMaps
+		IEnumerable<ColorMapDescriptor> IColorMapInstaller.AvailableColorMaps
 		{
 			get
 			{
@@ -486,7 +488,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		internal void InstallVoiLut(IComposableLut voiLut)
+		void IVoiLutInstaller.InstallVoiLut(IComposableLut voiLut)
 		{
 			Platform.CheckForNullReference(voiLut, "voiLut");
 
@@ -502,12 +504,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		internal void InstallColorMap(string name)
+		void IColorMapInstaller.InstallColorMap(string name)
 		{
-			InstallColorMap(this.LutFactory.GetColorMap(name));
+			(this as IColorMapInstaller).InstallColorMap(this.LutFactory.GetColorMap(name));
 		}
 
-		internal void InstallColorMap(IDataLut colorMap)
+		void IColorMapInstaller.InstallColorMap(ColorMapDescriptor descriptor)
+		{
+			(this as IColorMapInstaller).InstallColorMap(descriptor.Name);
+		}
+
+		void IColorMapInstaller.InstallColorMap(IDataLut colorMap)
 		{
 			if (_colorMap == colorMap)
 				return;
