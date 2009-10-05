@@ -127,29 +127,30 @@ namespace ClearCanvas.Ris.Client
             _categoryChoices.Insert(0, "");
 
             Platform.GetService<ICannedTextService>(
-                delegate(ICannedTextService service)
-                    {
-                        GetCannedTextEditFormDataResponse formDataResponse =
-                            service.GetCannedTextEditFormData(new GetCannedTextEditFormDataRequest());
-                        _staffGroupChoices = formDataResponse.StaffGroups;
+            	service =>
+            	{
+            		var formDataResponse =
+            			service.GetCannedTextEditFormData(new GetCannedTextEditFormDataRequest());
+            		_staffGroupChoices = formDataResponse.StaffGroups;
 
 
-                        if (_isNew && _isDuplicate == false)
-                        {
-                            _cannedTextDetail = new CannedTextDetail();
-                            _isEditingPersonal = HasPersonalAdminAuthority;
-                        }
-                        else
-                        {
-                            LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(_cannedTextRef));
-                            _cannedTextDetail = response.CannedTextDetail;
+            		if (_isNew && _isDuplicate == false)
+            		{
+            			_cannedTextDetail = new CannedTextDetail();
+            			_isEditingPersonal = HasPersonalAdminAuthority;
+            		}
+            		else
+            		{
+            			var response =
+            				service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(_cannedTextRef));
+            			_cannedTextDetail = response.CannedTextDetail;
 
-                            _isEditingPersonal = _cannedTextDetail.IsPersonal;
+            			_isEditingPersonal = _cannedTextDetail.IsPersonal;
 
-                            if (_isDuplicate)
-                                this.Name = "";
-                        }
-                    });
+            			if (_isDuplicate)
+            				this.Name = "";
+            		}
+            	});
 
             // The selected staff groups should only contain entries in the selected group choices
             if (_cannedTextDetail.StaffGroup == null)
@@ -159,17 +160,16 @@ namespace ClearCanvas.Ris.Client
             else
             {
                 _cannedTextDetail.StaffGroup = CollectionUtils.SelectFirst(_staffGroupChoices,
-                    delegate(StaffGroupSummary choice)
-                    {
-                        return _cannedTextDetail.StaffGroup.StaffGroupRef.Equals(choice.StaffGroupRef, true);
-                    });
+                                                                           choice =>
+                                                                           _cannedTextDetail.StaffGroup.StaffGroupRef.
+                                                                           	Equals(choice.StaffGroupRef, true));
             }
 
             // add validation rule to ensure the group must be populated when editing group
             this.Validation.Add(new ValidationRule("StaffGroup",
                 delegate
                 {
-                    bool ok = this.IsEditingPersonal || this.IsEditingGroup && this.StaffGroup != null;
+                    var ok = this.IsEditingPersonal || this.IsEditingGroup && this.StaffGroup != null;
                     return new ValidationResult(ok, Desktop.SR.MessageValueRequired);
                 }));
 
@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Client
                     delegate
                     {
                         // only allow alphabets and space
-                        bool ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
+                        var ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
                         return new ValidationResult(ok, SR.MessageNameCanOnlyContainAlphaChars);
                     }));
             }
@@ -269,12 +269,12 @@ namespace ClearCanvas.Ris.Client
 
         public bool HasGroupAdminAuthority
         {
-            get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+            get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
         }
 
         public bool HasPersonalAdminAuthority
         {
-            get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
+            get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
         }
 
         [ValidateNotNull]
@@ -326,37 +326,30 @@ namespace ClearCanvas.Ris.Client
                 // Find a list of canned texts that matches the name
                 List<CannedTextSummary> cannedTexts = null;
                 Platform.GetService<ICannedTextService>(
-                    delegate(ICannedTextService service)
-                    {
-                        ListCannedTextRequest request = new ListCannedTextRequest();
-                        request.Name = this.Name;
-
-                        ListCannedTextResponse response = service.ListCannedText(request);
-                        cannedTexts = response.CannedTexts;
-                    });
+                	service =>
+                	{
+                		var response = service.ListCannedText(new ListCannedTextRequest {Name = this.Name});
+                		cannedTexts = response.CannedTexts;
+                	});
 
                 // If updating an existing canned text, remove the one being edited from the list
                 if (!_isNew)
                 {
-                    CollectionUtils.Remove(cannedTexts,
-                        delegate(CannedTextSummary c)
-                            {
-                                return c.CannedTextRef.Equals(_cannedTextRef, true);
-                            });
+                    CollectionUtils.Remove(cannedTexts, c => c.CannedTextRef.Equals(_cannedTextRef, true));
                 }
 
                 // Warn user if there are other cannedtext (for which the user has access to) with the same name
                 if (cannedTexts.Count > 0)
                 {
-                    StringBuilder messageBuilder = new StringBuilder();
+                    var messageBuilder = new StringBuilder();
 
                     messageBuilder.AppendLine(SR.MessageWarningDuplicateCannedTextName);
                     messageBuilder.AppendLine();
                     CollectionUtils.ForEach(cannedTexts,
-                        delegate(CannedTextSummary c)
-                            {
-                                messageBuilder.AppendLine(c.IsPersonal ? SR.ColumnPersonal : c.StaffGroup.Name);
-                            });
+                                            c =>
+                                            messageBuilder.AppendLine(c.IsPersonal
+                                                                      	? SR.ColumnPersonal
+                                                                      	: c.StaffGroup.Name));
 
                     if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
                         return;
@@ -364,19 +357,20 @@ namespace ClearCanvas.Ris.Client
 
                 // Commit the changes
                 Platform.GetService<ICannedTextService>(
-                    delegate(ICannedTextService service)
-                    {
-                        if (_isNew)
-                        {
-                            AddCannedTextResponse response = service.AddCannedText(new AddCannedTextRequest(_cannedTextDetail));
-                            _cannedTextSummary = response.CannedTextSummary;
-                        }
-                        else
-                        {
-                            UpdateCannedTextResponse response = service.UpdateCannedText(new UpdateCannedTextRequest(_cannedTextRef, _cannedTextDetail));
-                            _cannedTextSummary = response.CannedTextSummary;
-                        }
-                    });
+                	service =>
+                	{
+                		if (_isNew)
+                		{
+                			var response = service.AddCannedText(new AddCannedTextRequest(_cannedTextDetail));
+                			_cannedTextSummary = response.CannedTextSummary;
+                		}
+                		else
+                		{
+                			var response =
+                				service.UpdateCannedText(new UpdateCannedTextRequest(_cannedTextRef, _cannedTextDetail));
+                			_cannedTextSummary = response.CannedTextSummary;
+                		}
+                	});
 
                 this.Exit(ApplicationComponentExitCode.Accepted);
             }
@@ -403,13 +397,11 @@ namespace ClearCanvas.Ris.Client
 
         public string FormatStaffGroup(object item)
         {
-            if (item is StaffGroupSummary)
-            {
-                StaffGroupSummary staffGroup = (StaffGroupSummary)item;
-                return staffGroup.Name;
-            }
-            else
-                return item.ToString(); // place-holder items
+        	if (!(item is StaffGroupSummary))
+        		return item.ToString(); // place-holder items
+
+        	var staffGroup = (StaffGroupSummary)item;
+        	return staffGroup.Name;
         }
     }
 }

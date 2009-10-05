@@ -44,8 +44,8 @@ using ClearCanvas.Ris.Application.Common.CannedTextService;
 namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/MenuTools/Canned Text", "Launch")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal)]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group)]
+	[ActionPermission("launch", Application.Common.AuthorityTokens.Workflow.CannedText.Personal)]
+	[ActionPermission("launch", Application.Common.AuthorityTokens.Workflow.CannedText.Group)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class CannedTextTool : Tool<IDesktopToolContext>
 	{
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_shelf == null)
 				{
-					CannedTextSummaryComponent component = new CannedTextSummaryComponent();
+					var component = new CannedTextSummaryComponent();
 
 					_shelf = ApplicationComponent.LaunchAsShelf(
 						this.Context.DesktopWindow,
@@ -135,14 +135,14 @@ namespace ClearCanvas.Ris.Client
 			if (_selectedCannedTextDetail != null)
 				return _selectedCannedTextDetail.Text;
 
-			CannedTextSummary summary = CollectionUtils.FirstElement(this.SelectedItems);
+			var summary = CollectionUtils.FirstElement(this.SelectedItems);
 
 			try
 			{
 				Platform.GetService<ICannedTextService>(
-					delegate(ICannedTextService service)
+					service =>
 					{
-						LoadCannedTextForEditResponse response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(summary.CannedTextRef));
+						var response = service.LoadCannedTextForEdit(new LoadCannedTextForEditRequest(summary.CannedTextRef));
 						_selectedCannedTextDetail = response.CannedTextDetail;
 					});
 			}
@@ -164,11 +164,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				CannedTextSummary item = CollectionUtils.FirstElement(this.SelectedItems);
+				var item = CollectionUtils.FirstElement(this.SelectedItems);
 				IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
-				CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef, true);
+				var editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef, true);
 
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				var exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleDuplicateCannedText);
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
@@ -244,10 +244,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			ListCannedTextResponse listResponse = null;
 			Platform.GetService<ICannedTextService>(
-				delegate(ICannedTextService service)
-				{
-					listResponse = service.ListCannedText(request);
-				});
+				service => listResponse = service.ListCannedText(request));
 			return listResponse.CannedTexts;
 		}
 
@@ -259,9 +256,8 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<CannedTextSummary> addedItems)
 		{
 			addedItems = new List<CannedTextSummary>();
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices());
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
+			var editor = new CannedTextEditorComponent(GetCategoryChoices());
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(editor.UpdatedCannedTextSummary);
@@ -279,11 +275,10 @@ namespace ClearCanvas.Ris.Client
 		protected override bool EditItems(IList<CannedTextSummary> items, out IList<CannedTextSummary> editedItems)
 		{
 			editedItems = new List<CannedTextSummary>();
-			CannedTextSummary item = CollectionUtils.FirstElement(items);
+			var item = CollectionUtils.FirstElement(items);
 
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
+			var editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.UpdatedCannedTextSummary);
@@ -304,15 +299,12 @@ namespace ClearCanvas.Ris.Client
 			failureMessage = null;
 			deletedItems = new List<CannedTextSummary>();
 
-			foreach (CannedTextSummary item in items)
+			foreach (var item in items)
 			{
 				try
 				{
 					Platform.GetService<ICannedTextService>(
-						delegate(ICannedTextService service)
-						{
-							service.DeleteCannedText(new DeleteCannedTextRequest(item.CannedTextRef));
-						});
+						service => service.DeleteCannedText(new DeleteCannedTextRequest(item.CannedTextRef)));
 
 					deletedItems.Add(item);
 				}
@@ -345,7 +337,7 @@ namespace ClearCanvas.Ris.Client
 
 			if (this.SelectedItems.Count == 1)
 			{
-				CannedTextSummary selectedItem = this.SelectedItems[0];
+				var selectedItem = this.SelectedItems[0];
 
 				_copyCannedTextToClipboardAction.Enabled = true;
 
@@ -372,23 +364,23 @@ namespace ClearCanvas.Ris.Client
 
 		private static bool HasPersonalAdminAuthority
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
 		}
 
 		private static bool HasGroupAdminAuthority
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
 		}
 
 		private List<string> GetCategoryChoices()
 		{
-			List<string> categoryChoices = new List<string>();
+			var categoryChoices = new List<string>();
 			CollectionUtils.ForEach<CannedTextSummary>(this.SummaryTable.Items,
-				delegate(CannedTextSummary c)
-				{
-					if (!categoryChoices.Contains(c.Category))
-						categoryChoices.Add(c.Category);
-				});
+			                                           c =>
+			                                           {
+			                                           	if (!categoryChoices.Contains(c.Category))
+			                                           		categoryChoices.Add(c.Category);
+			                                           });
 
 			categoryChoices.Sort();
 
