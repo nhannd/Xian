@@ -214,6 +214,24 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initialize file transfer..
+        /// </summary>
+        public static string ExceptionFailedToInitializeFileTransfer {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToInitializeFileTransfer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to transfer file from {0} to {1}..
+        /// </summary>
+        public static string ExceptionFailedToTransferFile {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToTransferFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to We&apos;re sorry, but an error has occurred that ClearCanvas Workstation cannot recover from.  Please check the log and restart..
         /// </summary>
         public static string ExceptionFatalApplicationError {

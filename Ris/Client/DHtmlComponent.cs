@@ -265,7 +265,7 @@ namespace ClearCanvas.Ris.Client
 			public string GetAttachedDocumentUrl(string jsml)
 			{
 				var attachedDocumentSummary = JsmlSerializer.Deserialize<AttachedDocumentSummary>(jsml);
-				return AttachedDocument.DownloadToTempFile(attachedDocumentSummary.DocumentRef, attachedDocumentSummary.FileExtension);
+				return AttachedDocument.DownloadFile(attachedDocumentSummary);
 			}
 
 			public string ResolveStaffName(string search)

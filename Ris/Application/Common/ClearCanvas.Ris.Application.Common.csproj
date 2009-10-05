@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{09F49217-CD98-4773-8CFB-594F189EEE3B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -134,6 +135,12 @@
     <Compile Include="Admin\WorkQueueAdmin\RemoveWorkQueueItemResponse.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemRequest.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemResponse.cs" />
+    <Compile Include="AttachedDocumentFtpSettings.cs" />
+    <Compile Include="AttachedDocumentFtpSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AttachedDocumentFtpSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="AttachmentSummary.cs" />
     <Compile Include="Jsml\ShimUtil.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
@@ -291,8 +298,6 @@
     <Compile Include="OrderAttachmentSummary.cs" />
     <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataRequest.cs" />
     <Compile Include="AttachedDocumentService\GetAttachedDocumentFormDataResponse.cs" />
-    <Compile Include="AttachedDocumentService\GetDocumentDataRequest.cs" />
-    <Compile Include="AttachedDocumentService\GetDocumentDataResponse.cs" />
     <Compile Include="AttachedDocumentService\IAttachedDocumentService.cs" />
     <Compile Include="ExternalPractitionerDetail.cs" />
     <Compile Include="ExternalPractitionerSummary.cs" />
@@ -655,6 +660,13 @@
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="AttachedDocumentFtpSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AttachedDocumentFtpSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

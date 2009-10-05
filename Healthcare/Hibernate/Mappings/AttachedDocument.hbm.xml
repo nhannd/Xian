@@ -12,7 +12,7 @@
 		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
 		<property name="ReceivedTime" column="ReceivedTime_" type="DateTime" not-null="true"/>
 
-		<many-to-one name="Data" column="AttachedDocumentDataOID_" class="AttachedDocumentData" not-null="true" cascade="all" unique="true"/>
+		<property name="DataRelativeUrl" column="DataRelativeUrl_" type="string" length="1024" not-null="true"/>
 
 	</class>
 </hibernate-mapping>

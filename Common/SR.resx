@@ -315,4 +315,10 @@
   <data name="ShredStopping" xml:space="preserve">
     <value>Stopping {0} Shred</value>
   </data>
+  <data name="ExceptionFailedToInitializeFileTransfer" xml:space="preserve">
+    <value>Failed to initialize file transfer.</value>
+  </data>
+  <data name="ExceptionFailedToTransferFile" xml:space="preserve">
+    <value>Failed to transfer file from {0} to {1}.</value>
+  </data>
 </root>

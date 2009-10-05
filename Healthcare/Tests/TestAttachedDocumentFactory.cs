@@ -45,7 +45,7 @@ namespace ClearCanvas.Healthcare.Tests
 				"txt",
 				DateTime.Now,
 				DateTime.Now,
-				new AttachedDocumentData(Encoding.ASCII.GetBytes(testString)));
+				testString);
 		}
 	}
 }

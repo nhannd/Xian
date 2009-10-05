@@ -33,7 +33,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.AttachedDocumentService;
-using ClearCanvas.Ris.Application.Services;
 
 namespace ClearCanvas.Ris.Application.Services.AttachedDocumentService
 {
@@ -47,13 +46,6 @@ namespace ClearCanvas.Ris.Application.Services.AttachedDocumentService
             return new GetAttachedDocumentFormDataResponse(
                 EnumUtils.GetEnumValueList<PatientAttachmentCategoryEnum>(PersistenceContext),
                 EnumUtils.GetEnumValueList<OrderAttachmentCategoryEnum>(PersistenceContext));
-        }
-
-        [ReadOperation]
-        public GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request)
-        {
-            AttachedDocument document = PersistenceContext.Load<AttachedDocument>(request.DocumentRef);
-            return new GetDocumentDataResponse(document.Data.BinaryData);
         }
     }
 }

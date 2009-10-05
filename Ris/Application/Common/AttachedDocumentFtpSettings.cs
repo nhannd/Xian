@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,20 +29,27 @@
 
 #endregion
 
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using System;
+using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
+namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class GetDocumentDataRequest : DataContractBase
-    {
-        public GetDocumentDataRequest(EntityRef documentRef)
-        {
-            this.DocumentRef = documentRef;
-        }
 
-        [DataMember]
-        public EntityRef DocumentRef;
-    }
+	[SettingsGroupDescription("Configures the FTP properties of where the attached documents are stored.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	public sealed partial class AttachedDocumentFtpSettings
+	{
+		/// <summary>
+		/// Public constructor.
+		/// </summary>
+		/// <remarks>
+		/// Server-side settings classes should be instantiated via constructor rather
+		/// than using the <see cref="AttachedDocumentFtpSettings.Default"/> property to avoid creating a static instance.
+		/// </remarks>
+		public AttachedDocumentFtpSettings()
+		{
+			// Note: server-side settings classes do not register in the ApplicationSettingsRegistry
+		}
+	}
 }

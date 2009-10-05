@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -56,7 +56,6 @@
     <Compile Include="Brokers\OptimizedWorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\OrderNoteboxItemBroker.cs" />
     <Compile Include="Brokers\ProcedureTypeGroupBroker.cs" />
-    <Compile Include="Brokers\AttachedDocumentDataBroker.cs" />
     <Compile Include="Brokers\PatientHistoryBroker.cs" />
     <Compile Include="Brokers\PriorReportBroker.cs" />
     <Compile Include="Brokers\ProtocolGroupBroker.cs" />
@@ -193,7 +192,6 @@
     <EmbeddedResource Include="Mappings\ReportPartStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProcedureStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\AttachedDocument.hbm.xml" />
-    <EmbeddedResource Include="Mappings\AttachedDocumentData.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientAttachmentCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\OrderAttachmentCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\DocumentationProcedureStep.hbm.xml" />

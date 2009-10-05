@@ -30,7 +30,6 @@
 #endregion
 
 using System.ServiceModel;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
 {
@@ -40,14 +39,5 @@ namespace ClearCanvas.Ris.Application.Common.AttachedDocumentService
     {
         [OperationContract]
         GetAttachedDocumentFormDataResponse GetAttachedDocumentFormData(GetAttachedDocumentFormDataRequest request);
-
-        /// <summary>
-        /// Get the binary data of the document
-        /// </summary>
-        /// <param name="request"><see cref="GetDocumentDataRequest"/></param>
-        /// <returns><see cref="GetDocumentDataResponse"/></returns>
-        [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-        GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request);
     }
 }
