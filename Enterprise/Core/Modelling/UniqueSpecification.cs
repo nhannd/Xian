@@ -50,7 +50,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         private PropertyInfo _property;
 
         public UniqueSpecification(PropertyInfo property)
-            : base(property.Name, new string[] { property.Name })
+            : base(property.DeclaringType, property.Name, new string[] { property.Name })
         {
             _property = property;
         }

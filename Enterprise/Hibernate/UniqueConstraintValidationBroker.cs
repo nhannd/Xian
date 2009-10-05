@@ -52,19 +52,21 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// Tests whether the specified object satisfies the specified unique constraint.
         /// </summary>
         /// <param name="obj">The object to test.</param>
+        /// <param name="entityClass"></param>
         /// <param name="uniqueConstraintMembers">The properties of the object that form the unique key.
         /// These may be compound property expressions (e.g. Name.FirstName, Name.LastName).
         /// </param>
         /// <returns></returns>
-        public bool IsUnique(DomainObject obj, string[] uniqueConstraintMembers)
+		public bool IsUnique(DomainObject obj, Type entityClass, string[] uniqueConstraintMembers)
         {
             Platform.CheckForNullReference(obj, "obj");
-            Platform.CheckForNullReference(uniqueConstraintMembers, "uniqueConstraintMembers");
+			Platform.CheckForNullReference(entityClass, "entityClass");
+			Platform.CheckForNullReference(uniqueConstraintMembers, "uniqueConstraintMembers");
 
             if (uniqueConstraintMembers.Length == 0)
                 throw new InvalidOperationException("uniqueConstraintMembers must contain at least one entry.");
 
-            HqlQuery hqlQuery = BuildQuery(obj, uniqueConstraintMembers);
+            HqlQuery hqlQuery = BuildQuery(obj, entityClass, uniqueConstraintMembers);
 
             // create a new session to do the validation query
             // this is a bit of a HACK, but we know that this may occur during an interceptor callback
@@ -98,13 +100,13 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         #endregion
 
-        private HqlQuery BuildQuery(DomainObject obj, string[] uniqueConstraintMembers)
+		private HqlQuery BuildQuery(DomainObject obj, Type entityClass, string[] uniqueConstraintMembers)
         {
             // get the id of the object being validated
             // if the object is unsaved, this id may be null
             object id = (obj is Entity) ? (obj as Entity).OID : (obj as EnumValue).Code;
 
-            HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", obj.GetType().Name));
+            HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", entityClass.Name));
             if (id != null)
             {
                 // this object may have already been saved (i.e. this is an update) and therefore should be

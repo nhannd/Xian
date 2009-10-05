@@ -41,6 +41,13 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 {
     internal class ValidationBuilder
     {
+		class AttributeEntityClassPair
+		{
+			public Type EntityClass { get; set; }
+			public Attribute Attribute { get; set; }
+		}
+
+
         public ValidationBuilder()
         {
         }
@@ -50,27 +57,28 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             List<ISpecification> rules = new List<ISpecification>();
             ProcessClassProperties(entityClass, rules);
 
+
             // process class-level attributes
-            foreach (Attribute attr in entityClass.GetCustomAttributes(true))
+            foreach (var pair in GetClassAttributes(entityClass))
             {
-                ProcessEntityAttribute(entityClass, attr, rules);
+				ProcessEntityAttribute(entityClass, pair, rules);
             }
 
             return new ValidationRuleSet(rules);
         }
 
-        private void ProcessEntityAttribute(Type entityClass, Attribute attr, List<ISpecification> rules)
+		private void ProcessEntityAttribute(Type entityClass, AttributeEntityClassPair pair, List<ISpecification> rules)
         {
             // TODO: this could be changed to a dictionary of delegates, or a visitor pattern of some kind
 
-            if (attr is UniqueKeyAttribute)
-                ProcessUniqueKeyAttribute(entityClass, attr, rules);
+            if (pair.Attribute is UniqueKeyAttribute)
+                ProcessUniqueKeyAttribute(entityClass, pair, rules);
         }
 
-        private void ProcessUniqueKeyAttribute(Type entityClass, Attribute attr, List<ISpecification> rules)
+		private void ProcessUniqueKeyAttribute(Type entityClass, AttributeEntityClassPair pair, List<ISpecification> rules)
         {
-            UniqueKeyAttribute uka = (UniqueKeyAttribute)attr;
-            rules.Add(new UniqueKeySpecification(uka.LogicalName, uka.MemberProperties));
+            var uka = (UniqueKeyAttribute)pair.Attribute;
+            rules.Add(new UniqueKeySpecification(pair.EntityClass, uka.LogicalName, uka.MemberProperties));
         }
 
         private void ProcessClassProperties(Type domainClass, List<ISpecification> rules)
@@ -154,5 +162,19 @@ namespace ClearCanvas.Enterprise.Core.Modelling
                 throw new ModellingException(
                     string.Format("{0} attribute cannot be applied to property of type {1}.", attr.GetType().Name, property.PropertyType.FullName));
         }
+
+		private List<AttributeEntityClassPair> GetClassAttributes(Type entityClass)
+		{
+			// get attributes on this class only, not on the base class
+			var pairs = CollectionUtils.Map(entityClass.GetCustomAttributes(false),
+								(Attribute a) => new AttributeEntityClassPair { EntityClass = entityClass, Attribute = a });
+
+			// recur on base class
+			var baseClass = entityClass.BaseType;
+			if(baseClass != typeof(object))
+				pairs.AddRange(GetClassAttributes(baseClass));
+
+			return pairs;
+		}
     }
 }

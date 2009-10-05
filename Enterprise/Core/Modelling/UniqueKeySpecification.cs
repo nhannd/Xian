@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
@@ -45,12 +43,14 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// </remarks>
     public class UniqueKeySpecification : ISpecification
     {
-        private string[] _uniqueKeyMembers;
-        private string _logicalKeyName;
+    	private readonly Type _entityClass;
+        private readonly string[] _uniqueKeyMembers;
+        private readonly string _logicalKeyName;
 
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="entityClass">Class on which the unique key constraint is defined.</param>
         /// <param name="logicalKeyName">The logical name of the key.  This value is used in reporting failures,
         /// and will be used as a key into the string resources.
         /// </param>
@@ -60,28 +60,30 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         /// property expressions may be used, e.g. for a Person class with a Name property that itself has First
         /// and Last properties, the unique key members might be "Name.First" and "Name.Last".
         /// </param>
-        public UniqueKeySpecification(string logicalKeyName, string[] uniqueKeyMembers)
+        public UniqueKeySpecification(Type entityClass, string logicalKeyName, string[] uniqueKeyMembers)
         {
+        	_entityClass = entityClass;
             _uniqueKeyMembers = uniqueKeyMembers;
             _logicalKeyName = logicalKeyName;
         }
 
         public TestResult Test(object obj)
         {
-            IPersistenceContext context = PersistenceScope.CurrentContext;
+            var context = PersistenceScope.CurrentContext;
             if (context == null)
                 throw new SpecificationException(SR.ExceptionPersistenceContextRequired);
 
-            IUniqueConstraintValidationBroker broker = context.GetBroker<IUniqueConstraintValidationBroker>();
-            bool valid = broker.IsUnique((DomainObject)obj, _uniqueKeyMembers);
+        	var domainObj = (DomainObject) obj;
+            var broker = context.GetBroker<IUniqueConstraintValidationBroker>();
+			var valid = broker.IsUnique(domainObj, _entityClass, _uniqueKeyMembers);
 
-            return valid ? new TestResult(true) : new TestResult(false, new TestResultReason(GetMessage(obj)));
+			return valid ? new TestResult(true) : new TestResult(false, new TestResultReason(GetMessage(domainObj)));
         }
 
-        protected virtual string GetMessage(object obj)
+		protected virtual string GetMessage(DomainObject obj)
         {
-            return string.Format(SR.RuleUniqueKey, TerminologyTranslator.Translate(obj.GetType(), _logicalKeyName),
-                TerminologyTranslator.Translate(obj.GetType()));
+            return string.Format(SR.RuleUniqueKey, TerminologyTranslator.Translate(obj.GetClass(), _logicalKeyName),
+				TerminologyTranslator.Translate(_entityClass));
         }
     }
 }
