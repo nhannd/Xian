@@ -170,6 +170,7 @@
     </Compile>
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
+    <Compile Include="WebControls\Validators\DeviceValidator.cs" />
     <Compile Include="WebControls\Validators\DuplicateUsergroupValidator.cs" />
     <Compile Include="WebControls\Validators\DuplicateUsernameValidator.cs" />
     <Compile Include="WebControls\Validators\PartitionArchiveValidator.cs" />

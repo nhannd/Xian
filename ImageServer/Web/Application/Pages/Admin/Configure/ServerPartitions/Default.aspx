@@ -5,21 +5,25 @@
 <%@ Register Src="AddEditPartitionDialog.ascx" TagName="AddEditPartitionDialog" TagPrefix="uc2" %>
 <%@ Register Src="ServerPartitionPanel.ascx" TagName="ServerPartitionPanel" TagPrefix="uc1" %>
 
-<asp:Content ID="MainContent" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,ServerPartitions%>" /></asp:Content>
+<asp:Content ID="MainContent" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">
+    <asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,ServerPartitions%>" />
+</asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="Panel1" runat="server">
-                <uc1:ServerPartitionPanel ID="ServerPartitionPanel" runat="server"></uc1:ServerPartitionPanel>
-            </asp:Panel>      
-            <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
+            <uc1:ServerPartitionPanel ID="ServerPartitionPanel" runat="server"></uc1:ServerPartitionPanel>
+		    <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
         </ContentTemplate>
     </asp:UpdatePanel>
-
-    <ccAsp:MessageBox ID="deleteConfirmBox" runat="server" />       
-   <ccAsp:MessageBox ID="MessageBox" runat="server" />     
-            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" /> 
 </asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
+
+    <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" /> 
+    <ccAsp:MessageBox ID="deleteConfirmBox" runat="server" />       
+    <ccAsp:MessageBox ID="MessageBox" runat="server" />     
+</asp:Content>
+
 
 

@@ -136,6 +136,10 @@
                         ControlToValidate="AETitleTextBox" InvalidInputCSS="DialogTextBoxInvalidInput"
                         ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"
                         ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
+                    <ccValidator:DeviceValidator ID="DeviceValidator" runat="server"
+                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
+                        Text="The AE Title is not valid." InvalidInputCSS="DialogTextBoxInvalidInput" 
+                        ValidationGroup="AddEditDeviceValidationGroup" InvalidInputIndicatorID="AETitleHelp"></ccValidator:DeviceValidator>
                     <ccValidator:ConditionalRequiredFieldValidator ID="IPAddressValidator" runat="server"
                         ControlToValidate="IPAddressTextBox" ValidateWhenUnchecked="true" ConditionalCheckBoxID="DHCPCheckBox" InvalidInputCSS="DialogTextBoxInvalidInput"
                         ValidationGroup="AddEditDeviceValidationGroup" Text="Device IP address is required if it uses static IP"

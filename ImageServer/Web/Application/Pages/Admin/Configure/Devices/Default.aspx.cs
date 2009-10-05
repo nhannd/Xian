@@ -87,6 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                                panel.UpdateUI();
                                                            }
                                                        }
+													   UpdateUI();
                                                    };
 
 
@@ -102,6 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                         if (oldPanel != null)
                                                             oldPanel.UpdateUI();
                                                     }
+													UpdateUI();
                                                 };
             SetPageTitle(Titles.DevicesPageTitle);
         }
@@ -143,6 +145,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                                return panel;
                                                            });
         }
+
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			UpdateUI();
+		}
+
+		protected void UpdateUI()
+		{
+			AddEditDeviceControl1.UpdateLabels();
+			DialogUpdatePanel.Update();
+		}
 
         #endregion  Protected methods
 

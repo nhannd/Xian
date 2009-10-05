@@ -159,8 +159,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 if (ViewState["EditMode"] != null)
                     _editMode = (bool) ViewState["EditMode"];
 
-                if (ViewState["EditedDevice"] != null)
-                    _device = ViewState["EditedDevice"] as Device;
+				if (ViewState["EditedDevice"] != null)
+				{
+					_device = ViewState["EditedDevice"] as Device;
+				    DeviceValidator.OriginalAeTitle = _device.AeTitle;
+				}
             }
 
             AllowStorageCheckBox.Attributes.Add("onclick", "AllowStorage_Changed()");
@@ -237,7 +240,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         #endregion Protected methods
 
         #region Public methods
+		public void UpdateLabels()
+		{
+			// Update the title and OK button text. Changing the image is the only way to do this, since the 
+			// SkinID cannot be set dynamically after Page_PreInit.
+			if (EditMode)
+			{
+				ModalDialog1.Title = SR.DialogEditDeviceTitle;
+				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
+				OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+				DeviceTypeDropDownList.Items.FindByValue(Device.DeviceTypeEnum.Lookup).Selected = true;
+			}
+			else
+			{
+				ModalDialog1.Title = SR.DialogAddDeviceTitle;
+				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
+				OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
+			}
 
+		}
         public void UpdateUI()
         {
             // update the dropdown list
@@ -259,21 +280,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                     );
             }
 
-            // Update the title and OK button text. Changing the image is the only way to do this, since the 
-            // SkinID cannot be set dynamically after Page_PreInit.
-            if (EditMode)
-            {
-                ModalDialog1.Title = SR.DialogEditDeviceTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
-                DeviceTypeDropDownList.Items.FindByValue(Device.DeviceTypeEnum.Lookup).Selected = true;
-            }
-            else
-            {
-                ModalDialog1.Title = SR.DialogAddDeviceTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
-            }
+        	UpdateLabels();
 
             // Update the rest of the fields
             if (Device == null)
@@ -312,11 +319,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         /// <summary>
         /// Displays the add/edit device dialog box.
         /// </summary>
-        public void Show(bool updateUI)
+        public void Show(bool updateUi)
         {
-            if (updateUI)
+            if (updateUi)
                 UpdateUI();
-
 
             IPAddressTextBox.Enabled = !DHCPCheckBox.Checked;
 
