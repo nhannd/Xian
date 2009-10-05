@@ -321,7 +321,7 @@ namespace ClearCanvas.Common
 				if (domain != null)
 					AppDomain.Unload(domain);
 
-                if (pluginFiles == null || pluginFiles.Length == 0)
+                if (pluginFiles == null)
 					throw new PluginException(SR.ExceptionNoPluginsFound);
 			}
             return pluginFiles;
