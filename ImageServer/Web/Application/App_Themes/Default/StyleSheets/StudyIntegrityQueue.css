@@ -15,3 +15,15 @@
 	color:red;
 	
 }
+
+.SIQItemSummary
+{
+    text-align: left; 
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.SIQSubItemSummary
+{
+    font-size: 10px;
+}

@@ -35,26 +35,28 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
-using ClearCanvas.Common.Utilities;
-using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js", "application/x-javascript")]
+[assembly:
+    WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js",
+        "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-    [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js")]
+    [ClientScriptResource(
+        ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel",
+        ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js")]
     public partial class SearchPanel : AJAXScriptControl
     {
         #region Private members
 
-    	private ServerPartition _serverPartition;
-
-    	#endregion Private members
+        #endregion Private members
 
         #region Public Properties
 
@@ -72,14 +74,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             get { return StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.ClientID; }
         }
 
-		/// <summary>
-		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
-		/// </summary>
-		public ServerPartition ServerPartition
-		{
-			get { return _serverPartition; }
-			set { _serverPartition = value; }
-		}
+        /// <summary>
+        /// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+        /// </summary>
+        public ServerPartition ServerPartition { get; set; }
+
         #endregion Public Properties  
 
         #region Public Methods
@@ -117,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
                 if (patientID != null && patientName != null && partitionKey != null)
                 {
-                    ServerPartitionConfigController controller = new ServerPartitionConfigController();
+                    var controller = new ServerPartitionConfigController();
                     ServerPartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
 
                     PatientId.Text = patientID;
@@ -126,14 +125,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     StudyIntegrityQueueItemList.SetDataSource();
                     StudyIntegrityQueueItemList.Refresh();
                 }
-                if(reason != null)
+                if (reason != null)
                 {
                     ReasonListBox.Items.FindByValue(reason).Selected = true;
 
                     StudyIntegrityQueueItemList.SetDataSource();
                     StudyIntegrityQueueItemList.Refresh();
                 }
-                if(databind != null)
+                if (databind != null)
                 {
                     StudyIntegrityQueueItemList.SetDataSource();
                     StudyIntegrityQueueItemList.Refresh();
@@ -145,52 +144,58 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             base.OnInit(e);
 
-            ClearReceivedDateButton.OnClientClick = ScriptHelper.ClearDate(ReceivedDate.ClientID, ReceivedDateCalendarExtender.ClientID);
-                         
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
-                                             App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
+            ClearReceivedDateButton.OnClientClick = ScriptHelper.ClearDate(ReceivedDate.ClientID,
+                                                                           ReceivedDateCalendarExtender.ClientID);
+
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem,
+                                             Labels.GridPagerQueueMultipleItems,
                                              StudyIntegrityQueueItemList.StudyIntegrityQueueGrid,
-                                             delegate{return StudyIntegrityQueueItemList.ResultCount;},
+                                             delegate { return StudyIntegrityQueueItemList.ResultCount; },
                                              ImageServerConstants.GridViewPagerPosition.top);
             StudyIntegrityQueueItemList.Pager = GridPagerTop;
 
-			StudyIntegrityQueueItemList.DataSourceCreated += delegate(StudyIntegrityQueueDataSource source)
-										{
-											source.Partition = ServerPartition;
+            StudyIntegrityQueueItemList.DataSourceCreated += delegate(StudyIntegrityQueueDataSource source)
+                                                                 {
+                                                                     source.Partition = ServerPartition;
 
-											if (!String.IsNullOrEmpty(PatientName.Text))
-												source.PatientName = "*" + PatientName.Text + "*";
-                                            if (!String.IsNullOrEmpty(PatientId.Text))
-                                                source.PatientId = "*" + PatientId.Text + "*";
-                                            if (!String.IsNullOrEmpty(AccessionNumber.Text))
-										        source.AccessionNumber = "*" + AccessionNumber.Text + "*";
-                                            if (!String.IsNullOrEmpty(ReceivedDate.Text))
-                                                source.InsertTime =ReceivedDate.Text;
+                                                                     if (!String.IsNullOrEmpty(PatientName.Text))
+                                                                         source.PatientName = "*" + PatientName.Text +
+                                                                                              "*";
+                                                                     if (!String.IsNullOrEmpty(PatientId.Text))
+                                                                         source.PatientId = "*" + PatientId.Text + "*";
+                                                                     if (!String.IsNullOrEmpty(AccessionNumber.Text))
+                                                                         source.AccessionNumber = "*" +
+                                                                                                  AccessionNumber.Text +
+                                                                                                  "*";
+                                                                     if (!String.IsNullOrEmpty(ReceivedDate.Text))
+                                                                         source.InsertTime = ReceivedDate.Text;
 
-                                            if (ReasonListBox.SelectedIndex > -1)
-                                            {
-                                                List<StudyIntegrityReasonEnum> reasonEnums = new List<StudyIntegrityReasonEnum>();
-                                                foreach (ListItem item in ReasonListBox.Items)
-                                                {
-                                                    if (item.Selected)
-                                                    {
-                                                        reasonEnums.Add(StudyIntegrityReasonEnum.GetEnum(item.Value));
-                                                    }
-                                                }
+                                                                     if (ReasonListBox.SelectedIndex > -1)
+                                                                     {
+                                                                         var reasonEnums =
+                                                                             new List<StudyIntegrityReasonEnum>();
+                                                                         foreach (ListItem item in ReasonListBox.Items)
+                                                                         {
+                                                                             if (item.Selected)
+                                                                             {
+                                                                                 reasonEnums.Add(
+                                                                                     StudyIntegrityReasonEnum.GetEnum(
+                                                                                         item.Value));
+                                                                             }
+                                                                         }
 
-                                                source.ReasonEnum = reasonEnums;
-                                            }
-										};
+                                                                         source.ReasonEnum = reasonEnums;
+                                                                     }
+                                                                 };
 
             ReconcileButton.Roles =
                 AuthorityTokens.StudyIntegrityQueue.Reconcile;
 
             List<StudyIntegrityReasonEnum> reasons = StudyIntegrityReasonEnum.GetAll();
-            foreach(StudyIntegrityReasonEnum reason in reasons)
+            foreach (StudyIntegrityReasonEnum reason in reasons)
             {
                 ReasonListBox.Items.Add(new ListItem(reason.Description, reason.Lookup));
             }
-
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -200,9 +205,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected void ReconcileButton_Click(object sender, EventArgs e)
         {
-            ReconcileDetails details = ReconcileDetailsAssembler.CreateReconcileDetails(StudyIntegrityQueueItemList.SelectedItems[0]);
+            ReconcileDetails details =
+                ReconcileDetailsAssembler.CreateReconcileDetails(StudyIntegrityQueueItemList.SelectedItems[0]);
 
-            ((Default)Page).OnReconcileItem(details);
+            ((Default) Page).OnReconcileItem(details);
         }
 
         #endregion Protected Methods

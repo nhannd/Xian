@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -42,10 +41,8 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-    
     //
     // Dialog for handling duplicate sop.
     //
@@ -53,13 +50,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         private const string HighlightCssClass = " ConflictField ";
 
+        protected void OKButton_Click(object sender, ImageClickEventArgs e)
+        {
+            var itemKey = ViewState["QueueItem"] as ServerEntityKey;
+            var controller = new DuplicateSopEntryController();
+            ProcessDuplicateAction action = ProcessDuplicateAction.OverwriteAsIs;
+            if (UseExistingSopRadioButton.Checked)
+                action = ProcessDuplicateAction.OverwriteUseExisting;
+            else if (UseDuplicateRadioButton.Checked)
+                action = ProcessDuplicateAction.OverwriteUseDuplicates;
+            else if (DeleteDuplicateRadioButton.Checked)
+                action = ProcessDuplicateAction.Delete;
+            else if (ReplaceAsIsRadioButton.Checked)
+                action = ProcessDuplicateAction.OverwriteAsIs;
+
+            controller.Process(itemKey, action);
+
+            ((Default) Page).UpdateUI();
+            Close();
+        }
+
+        #region Nested type: ComparisonCallback
+
         private delegate void ComparisonCallback(bool different);
+
+        #endregion
 
         #region private variables
 
-        private Model.StudyIntegrityQueue _item = null;
-        private DuplicateEntryDetails _details = null;
-        private bool _consistentData = false;
+        private bool _consistentData;
+        private DuplicateEntryDetails _details;
+        private Model.StudyIntegrityQueue _item;
+
         #endregion
 
         #region public members
@@ -69,10 +91,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public Model.StudyIntegrityQueue StudyIntegrityQueueItem
         {
-            get
-            {
-                return _item;
-            }
+            get { return _item; }
             set
             {
                 _item = value;
@@ -86,10 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public DuplicateEntryDetails DuplicateEntryDetails
         {
             get { return _details; }
-            set { 
-                  _details = value;
-
-                }
+            set { _details = value; }
         }
 
         public bool DataIsConsistent
@@ -109,7 +125,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         #region Protected methods
 
-
         /// <summary>
         /// Handles event when user clicks on "Cancel" button.
         /// </summary>
@@ -119,7 +134,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             Close();
         }
-        
 
         #endregion Protected methods
 
@@ -142,12 +156,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ExistingPatientSeriesGridView.DataSource = DuplicateEntryDetails.ExistingStudy.Series;
             ConflictingPatientSeriesGridView.DataSource = DuplicateEntryDetails.ConflictingImageSet.StudyInfo.Series;
             StudyStorage storage =
-                StudyStorage.Load(HttpContextData.Current.ReadContext, this.StudyIntegrityQueueItem.StudyStorageKey);
+                StudyStorage.Load(HttpContextData.Current.ReadContext, StudyIntegrityQueueItem.StudyStorageKey);
 
             IList<StudyStorageLocation> studyLocations = StudyStorageLocation.FindStorageLocations(storage);
             StudyLocation.Text = studyLocations[0].GetStudyPath();
 
-            DuplicateSopReceivedQueue entry = new DuplicateSopReceivedQueue(StudyIntegrityQueueItem);
+            var entry = new DuplicateSopReceivedQueue(StudyIntegrityQueueItem);
 
             DuplicateSopLocation.Text = entry.GetFolderPath();
 
@@ -159,25 +173,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             if (DuplicateEntryDetails != null)
             {
-                Compare(DuplicateEntryDetails.ExistingStudy.Patient.Name, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
-                   delegate(bool different)
-                       {
-                           Highlight(ConflictingNameLabel, different);
-                       });
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.Name,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name,
+                        delegate(bool different) { Highlight(ConflictingNameLabel, different); });
 
-                Compare(DuplicateEntryDetails.ExistingStudy.Patient.PatientID, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
-                    delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
-                Compare(DuplicateEntryDetails.ExistingStudy.Patient.IssuerOfPatientID, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
-                    delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
-                Compare(DuplicateEntryDetails.ExistingStudy.Patient.BirthDate, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
-                    delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
-                Compare(DuplicateEntryDetails.ExistingStudy.Patient.Sex, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
-                    delegate(bool different) { Highlight(ConflictingPatientSex, different); });
-                Compare(DuplicateEntryDetails.ExistingStudy.StudyDate, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate,
-                    delegate(bool different) { Highlight(ConflictingStudyDate, different); });
-                Compare(DuplicateEntryDetails.ExistingStudy.AccessionNumber, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
-                    delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
-
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.PatientID,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
+                        delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.IssuerOfPatientID,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
+                        delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.BirthDate,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
+                        delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.Sex,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
+                        delegate(bool different) { Highlight(ConflictingPatientSex, different); });
+                Compare(DuplicateEntryDetails.ExistingStudy.StudyDate,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate,
+                        delegate(bool different) { Highlight(ConflictingStudyDate, different); });
+                Compare(DuplicateEntryDetails.ExistingStudy.AccessionNumber,
+                        DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
+                        delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
             }
         }
 
@@ -209,25 +226,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         #endregion Public methods
-            
-        protected void OKButton_Click(object sender, ImageClickEventArgs e)
-        {
-            ServerEntityKey itemKey = ViewState["QueueItem"] as ServerEntityKey;
-            DuplicateSopEntryController controller = new DuplicateSopEntryController();
-            ProcessDuplicateAction action = ProcessDuplicateAction.OverwriteAsIs;
-            if (UseExistingSopRadioButton.Checked)
-                action = ProcessDuplicateAction.OverwriteUseExisting;
-            else if (UseDuplicateRadioButton.Checked)
-                action = ProcessDuplicateAction.OverwriteUseDuplicates;
-            else if (DeleteDuplicateRadioButton.Checked)
-                action = ProcessDuplicateAction.Delete;
-            else if (ReplaceAsIsRadioButton.Checked)
-                action = ProcessDuplicateAction.OverwriteAsIs;
-
-            controller.Process(itemKey, action);
-
-            ((Default)Page).UpdateUI();
-            Close();
-        }
     }
 }

@@ -31,29 +31,32 @@
 
 using System;
 using System.Security.Permissions;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.StudyIntegrityQueue.Search)]
     public partial class Default : BasePage
-    {        
+    {
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
-                                                               SearchPanel panel =
+                                                               var panel =
                                                                    LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               panel.ServerPartition = partition;
-                                                               panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                               if(panel != null) {
+                                                                   panel.ServerPartition = partition;
+                                                                   panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                               }
                                                                return panel;
                                                            });
 
-            Page.Title = App_GlobalResources.Titles.StudyIntegrityQueuePageTitle;
+            Page.Title = Titles.StudyIntegrityQueuePageTitle;
         }
 
         public void OnReconcileItem(ReconcileDetails details)
@@ -62,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 DuplicateSopReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
                 DuplicateSopReconcileDialog.DuplicateEntryDetails = details as DuplicateEntryDetails;
-                
+
                 DuplicateSopReconcileDialog.DataBind();
                 DuplicateSopReconcileDialog.Show();
             }
@@ -71,19 +74,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 ReconcileDialog.ReconcileDetails = details;
                 ReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
                 ReconcileDialog.Show();
-            }           
+            }
         }
-    
+
         public void UpdateUI()
         {
-			foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)
-			{
-				SearchPanel panel =
-					ServerPartitionTabs.GetUserControlForPartition(partition.GetKey()).FindControl("SearchPanel_" +
-																								   partition.AeTitle) as
-					SearchPanel;
-				panel.UpdateUI();
-			}
+            foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)
+            {
+                var panel =
+                    ServerPartitionTabs.GetUserControlForPartition(partition.GetKey()).FindControl("SearchPanel_" +
+                                                                                                   partition.AeTitle) as
+                    SearchPanel;
+                panel.UpdateUI();
+            }
         }
     }
 }

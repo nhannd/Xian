@@ -36,15 +36,15 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-    
     //
     // Dialog for adding a new device or editting an existing device.
     //
@@ -52,16 +52,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         private const string HighlightCssClass = " ConflictField ";
 
+        #region Nested type: ComparisonCallback
+
         private delegate void ComparisonCallback(bool different);
+
+        #endregion
 
         #region private variables
 
         // The server partitions that the new device can be associated with
         // This list will be determined by the user level permission.
-        private IList<ServerPartition> _partitions = new List<ServerPartition>();
 
-        private Model.StudyIntegrityQueue _item = null;
-        private ReconcileDetails _details = null;
+        private Model.StudyIntegrityQueue _item;
+        private IList<ServerPartition> _partitions = new List<ServerPartition>();
 
         #endregion
 
@@ -82,28 +85,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public Model.StudyIntegrityQueue StudyIntegrityQueueItem
         {
-            get
-            {
-                return _item;
-            }
+            get { return _item; }
             set
             {
                 _item = value;
-                ViewState[ "StudyIntegrityQueueItem"] = _item.GetKey();
+                ViewState["StudyIntegrityQueueItem"] = _item.GetKey();
             }
         }
 
         /// <summary>
         /// Sets or gets the Reconcile Item Value
         /// </summary>
-        public ReconcileDetails ReconcileDetails
-        {
-            get { return _details; }
-            set { 
-                  _details = value;
-
-                }
-        }
+        public ReconcileDetails ReconcileDetails { get; set; }
 
         #endregion // public members
 
@@ -124,12 +117,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            ServerEntityKey itemKey = ViewState[ "StudyIntegrityQueueItem"] as ServerEntityKey;
-            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
+            var itemKey = ViewState["StudyIntegrityQueueItem"] as ServerEntityKey;
+            var controller = new StudyIntegrityQueueController();
 
             try
             {
-
                 if (MergeUsingExistingStudy.Checked)
                 {
                     controller.MergeStudy(itemKey, true);
@@ -153,12 +145,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             }
             catch (Exception ex)
             {
-                MessageBox.Message = String.Format(App_GlobalResources.ErrorMessages.ActionNotAllowedAtThisTime, ex.Message);
-                MessageBox.MessageType = ClearCanvas.ImageServer.Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Message = String.Format(ErrorMessages.ActionNotAllowedAtThisTime, ex.Message);
+                MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                 MessageBox.Show();
             }
 
-            ((Default)Page).UpdateUI();
+            ((Default) Page).UpdateUI();
             Close();
         }
 
@@ -171,7 +163,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             Close();
         }
-        
 
         #endregion Protected methods
 
@@ -199,41 +190,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             IList<StudyStorageLocation> studyLocations = StudyStorageLocation.FindStorageLocations(storage);
             StudyLocation.Text = studyLocations[0].GetStudyPath();
 
-            if(ReconcileDetails != null)
+            if (ReconcileDetails != null)
             {
-                ConflictingStudyLocation.Text = ReconcileDetails.GetFolderPath();    
-            } else
+                ConflictingStudyLocation.Text = ReconcileDetails.GetFolderPath();
+            }
+            else
             {
                 ConflictingStudyLocation.Text = "Not Specified.";
             }
-            
+
 
             base.DataBind();
         }
 
         private void HighlightDifferences()
         {
-            if (ReconcileDetails!=null)
+            if (ReconcileDetails != null)
             {
-                Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingStudyInfo.Patient.Name, 
-                   delegate(bool different)
-                       {
-                           Highlight(ConflictingNameLabel, different);
-                       });
+                Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingStudyInfo.Patient.Name,
+                        delegate(bool different) { Highlight(ConflictingNameLabel, different); });
 
-                Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingStudyInfo.Patient.PatientID,
-                    delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID,
-                    delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate,
-                    delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
+                Compare(ReconcileDetails.ExistingStudy.Patient.PatientID,
+                        ReconcileDetails.ConflictingStudyInfo.Patient.PatientID,
+                        delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
+                Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID,
+                        ReconcileDetails.ConflictingStudyInfo.Patient.IssuerOfPatientID,
+                        delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
+                Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate,
+                        ReconcileDetails.ConflictingStudyInfo.Patient.BirthDate,
+                        delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
                 Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingStudyInfo.Patient.Sex,
-                    delegate(bool different) { Highlight(ConflictingPatientSex, different); });
+                        delegate(bool different) { Highlight(ConflictingPatientSex, different); });
                 Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingStudyInfo.StudyDate,
-                    delegate(bool different) { Highlight(ConflictingStudyDate, different); });
-                Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingStudyInfo.AccessionNumber,
-                    delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
-
+                        delegate(bool different) { Highlight(ConflictingStudyDate, different); });
+                Compare(ReconcileDetails.ExistingStudy.AccessionNumber,
+                        ReconcileDetails.ConflictingStudyInfo.AccessionNumber,
+                        delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
             }
         }
 

@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-
+using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
@@ -45,53 +44,55 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     //
     public partial class StudyIntegrityQueueItemList : GridViewPanel
     {
+        #region Delegates
+
+        public delegate void StudyIntegrityQueueDataSourceCreated(StudyIntegrityQueueDataSource theSource);
+
+        #endregion
+
         private const string HighlightCssClass = "ConflictField";
 
-        #region Delegates
-		public delegate void StudyIntegrityQueueDataSourceCreated(StudyIntegrityQueueDataSource theSource);
-		public event StudyIntegrityQueueDataSourceCreated DataSourceCreated;
-		#endregion
+        public event StudyIntegrityQueueDataSourceCreated DataSourceCreated;
 
         #region Private members
+
         // list of studies to display
-        private IList<StudyIntegrityQueueSummary> _queueItems;
+        private StudyIntegrityQueueDataSource _dataSource;
         private Unit _height;
-    	private StudyIntegrityQueueDataSource _dataSource;
+
         #endregion Private members
 
         #region Public properties
 
-		public int ResultCount
-		{
-			get
-			{
-				if (_dataSource == null)
-				{
-					_dataSource = new StudyIntegrityQueueDataSource();
+        public int ResultCount
+        {
+            get
+            {
+                if (_dataSource == null)
+                {
+                    _dataSource = new StudyIntegrityQueueDataSource();
 
-                    _dataSource.StudyIntegrityQueueFoundSet += delegate(IList<StudyIntegrityQueueSummary> newlist)
-											{
-												Items = newlist;
-											};
-					if (DataSourceCreated != null)
-						DataSourceCreated(_dataSource);
-					_dataSource.SelectCount();
-				}
-				if (_dataSource.ResultCount == 0)
-				{
-					if (DataSourceCreated != null)
-						DataSourceCreated(_dataSource);
+                    _dataSource.StudyIntegrityQueueFoundSet +=
+                        delegate(IList<StudyIntegrityQueueSummary> newlist) { Items = newlist; };
+                    if (DataSourceCreated != null)
+                        DataSourceCreated(_dataSource);
+                    _dataSource.SelectCount();
+                }
+                if (_dataSource.ResultCount == 0)
+                {
+                    if (DataSourceCreated != null)
+                        DataSourceCreated(_dataSource);
 
-					_dataSource.SelectCount();
-				}
-				return _dataSource.ResultCount;
-			}
-		}
+                    _dataSource.SelectCount();
+                }
+                return _dataSource.ResultCount;
+            }
+        }
 
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
         /// </summary>
-        public Web.Common.WebControls.UI.GridView StudyIntegrityQueueGrid
+        public GridView StudyIntegrityQueueGrid
         {
             get { return StudyIntegrityQueueGridView; }
         }
@@ -103,9 +104,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             get
             {
-                if(!StudyIntegrityQueueGridView.IsDataBound) StudyIntegrityQueueGridView.DataBind();
+                if (!StudyIntegrityQueueGridView.IsDataBound) StudyIntegrityQueueGridView.DataBind();
 
-                if (Items==null || Items.Count == 0)
+                if (Items == null || Items.Count == 0)
                     return null;
 
                 int[] rows = StudyIntegrityQueueGridView.SelectedIndices;
@@ -113,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     return null;
 
                 IList<StudyIntegrityQueueSummary> queueItems = new List<StudyIntegrityQueueSummary>();
-                for(int i=0; i<rows.Length; i++)
+                for (int i = 0; i < rows.Length; i++)
                 {
                     if (rows[i] < Items.Count)
                     {
@@ -128,29 +129,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <summary>
         /// Gets/Sets the list of devices rendered on the screen.
         /// </summary>
-        public IList<StudyIntegrityQueueSummary> Items
-        {
-            get
-            {
-                return _queueItems;
-            }
-            set
-            {
-                _queueItems = value;
-            }
-        }
+        public IList<StudyIntegrityQueueSummary> Items { get; set; }
 
         /// <summary>
         /// Gets/Sets the height of the study list panel
         /// </summary>
         public Unit Height
         {
-            get {
-                if (ContainerTable != null)
-                    return ContainerTable.Height;
-                else
-                    return _height; 
-            }
+            get { return ContainerTable != null ? ContainerTable.Height : _height; }
             set
             {
                 _height = value;
@@ -162,12 +148,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #endregion
 
         #region Events
+
+        #region Delegates
+
         /// <summary>
         /// Defines the handler for <seealso cref="OnQueueItemSelectionChanged"/> event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedItems"></param>
-        public delegate void QueueItemSelectedEventHandler(object sender, IList<StudyIntegrityQueueSummary> selectedItems);
+        public delegate void QueueItemSelectedEventHandler(
+            object sender, IList<StudyIntegrityQueueSummary> selectedItems);
+
+        #endregion
 
         /// <summary>
         /// Occurs when the selected device in the list is changed.
@@ -178,9 +170,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public event QueueItemSelectedEventHandler OnQueueItemSelectionChanged;
 
         #endregion // Events
-        
+
         #region protected methods
-       
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -198,9 +190,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             if (IsPostBack || Page.IsAsync)
             {
                 TheGrid.DataSource = StudyIntegrityQueueDataSourceObject;
-            } 
-
-            
+            }
         }
 
         protected void StudyIntegrityQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
@@ -208,7 +198,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             IList<StudyIntegrityQueueSummary> queueItems = SelectedItems;
             if (queueItems != null)
                 if (OnQueueItemSelectionChanged != null)
-                    OnQueueItemSelectionChanged(this, queueItems);            
+                    OnQueueItemSelectionChanged(this, queueItems);
         }
 
         protected void StudyIntegrityQueueGridView_PageIndexChanged(object sender, EventArgs e)
@@ -222,31 +212,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             StudyIntegrityQueueGridView.DataBind();
         }
 
-		protected void GetStudyIntegrityQueueDataSource(object sender, ObjectDataSourceEventArgs e)
-		{
-			if (_dataSource == null)
-			{
+        protected void GetStudyIntegrityQueueDataSource(object sender, ObjectDataSourceEventArgs e)
+        {
+            if (_dataSource == null)
+            {
                 _dataSource = new StudyIntegrityQueueDataSource();
 
-                _dataSource.StudyIntegrityQueueFoundSet += delegate(IList<StudyIntegrityQueueSummary> newlist)
-										{
-											Items = newlist;
-										};
-			}
+                _dataSource.StudyIntegrityQueueFoundSet +=
+                    delegate(IList<StudyIntegrityQueueSummary> newlist) { Items = newlist; };
+            }
 
-			e.ObjectInstance = _dataSource;
+            e.ObjectInstance = _dataSource;
 
-			if (DataSourceCreated != null)
-				DataSourceCreated(_dataSource);
-
-		}
+            if (DataSourceCreated != null)
+                DataSourceCreated(_dataSource);
+        }
 
         protected void StudyIntegrityQueueItemList_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType == DataControlRowType.EmptyDataRow)
             {
-                EmptySearchResultsMessage message =
-                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                var message =
+                    (EmptySearchResultsMessage) e.Row.FindControl("EmptySearchResultsMessage");
                 if (message != null)
                 {
                     if (StudyIntegrityQueueGridView.DataSource == null)
@@ -258,7 +245,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                         message.Message = "No studies found matching the provided criteria.";
                     }
                 }
-
             }
             else
             {
@@ -268,13 +254,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 {
                     if (row.RowType == DataControlRowType.DataRow)
                     {
-                        StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
-                        row.FindControl("ExistingStudyTable").Visible = item.StudyExists;
-                        row.FindControl("StudyNotAvailableLabel").Visible = !item.StudyExists;
-                        if (item.StudyExists)
+                        var item = row.DataItem as StudyIntegrityQueueSummary;
+                        if (item != null)
                         {
-                            CustomizeRowAttribute(e.Row);
-                            HighlightDifference(e.Row);
+                            row.FindControl("ExistingStudyTable").Visible = item.StudyExists;
+                            row.FindControl("StudyNotAvailableLabel").Visible = !item.StudyExists;
+                            if (item.StudyExists)
+                            {
+                                CustomizeRowAttribute(e.Row);
+                                HighlightDifference(e.Row);
+                            }
                         }
                     }
                 }
@@ -283,24 +272,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         private static void HighlightDifference(GridViewRow row)
         {
-            StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
-            if (item!=null)
+            var item = row.DataItem as StudyIntegrityQueueSummary;
+            if (item != null)
             {
-                Label existingAccessionNumber = row.FindControl("ExistingAccessionNumber") as Label;
-                Label conflictingAccessionNumber = row.FindControl("ConflictingAccessionNumber") as Label;
-                Label existingPatientId = row.FindControl("ExistingPatientId") as Label;
-                Label conflictingPatientId = row.FindControl("ConflictingPatientId") as Label;
-                Label existingPatientName = row.FindControl("ExistingPatientName") as Label;
-                Label conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
+                var existingAccessionNumber = row.FindControl("ExistingAccessionNumber") as Label;
+                var conflictingAccessionNumber = row.FindControl("ConflictingAccessionNumber") as Label;
+                var existingPatientId = row.FindControl("ExistingPatientId") as Label;
+                var conflictingPatientId = row.FindControl("ConflictingPatientId") as Label;
+                var existingPatientName = row.FindControl("ExistingPatientName") as Label;
+                var conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
 
                 Highlight(item.ExistingPatientId, item.ConflictingPatientId, existingPatientId, conflictingPatientId);
-                Highlight(item.ExistingPatientName, item.ConflictingPatientName, existingPatientName, conflictingPatientName);
-                Highlight(item.ExistingAccessionNumber, item.ConflictingAccessionNumber, existingAccessionNumber, conflictingAccessionNumber);
-                
+                Highlight(item.ExistingPatientName, item.ConflictingPatientName, existingPatientName,
+                          conflictingPatientName);
+                Highlight(item.ExistingAccessionNumber, item.ConflictingAccessionNumber, existingAccessionNumber,
+                          conflictingAccessionNumber);
             }
         }
 
-        private static void Highlight(String value1, String value2, WebControl existingFieldControl, WebControl conflictingFieldControl)
+        private static void Highlight(String value1, String value2, WebControl existingFieldControl,
+                                      WebControl conflictingFieldControl)
         {
             if (existingFieldControl != null && conflictingFieldControl != null)
             {
@@ -314,12 +305,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         private static void CustomizeRowAttribute(GridViewRow row)
         {
-            StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
-            if (item!=null)
+            var item = row.DataItem as StudyIntegrityQueueSummary;
+            if (item != null)
             {
-                row.Attributes["canreconcile"] = item.CanReconcile ? "true" : "false";    
+                row.Attributes["canreconcile"] = item.CanReconcile ? "true" : "false";
             }
-            
         }
 
         public void SetDataSource()
@@ -329,5 +319,4 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         #endregion
     }
-
 }
