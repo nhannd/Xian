@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "LoginForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "ClearCanvas Login";
 			this.Load += new System.EventHandler(this.LoginForm_Load);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);

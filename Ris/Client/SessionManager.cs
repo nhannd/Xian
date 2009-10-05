@@ -42,6 +42,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using System.Drawing;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -183,6 +184,8 @@ namespace ClearCanvas.Ris.Client
                     delegate(FacilitySummary fs) { return fs.Code; }).ToArray();
 
                 string initialFacilityCode = LoginDialogSettings.Default.SelectedFacility;
+            	var location = LoginDialogSettings.Default.DialogScreenLocation;
+				
 
                 // if no saved facility, just choose the first one
                 if (string.IsNullOrEmpty(initialFacilityCode) && facilityCodes.Length > 0)
@@ -192,13 +195,16 @@ namespace ClearCanvas.Ris.Client
                 loginDialog.FacilityChoices = facilityCodes;
                 loginDialog.Facility = initialFacilityCode;
                 loginDialog.UserName = userName;
+				if (location != Point.Empty)
+					loginDialog.Location = location;
 
                 Platform.Log(LogLevel.Debug, "Showing login dialog.");
                 if (loginDialog.Show())
                 {
                     // save selected facility
                     LoginDialogSettings.Default.SelectedFacility = loginDialog.Facility;
-                    LoginDialogSettings.Default.Save();
+					LoginDialogSettings.Default.DialogScreenLocation = loginDialog.Location;
+					LoginDialogSettings.Default.Save();
 
                     userName = loginDialog.UserName;
                     password = loginDialog.Password;

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -45,6 +46,7 @@ namespace ClearCanvas.Ris.Client
     {
         bool Show();
 
+		Point Location { get; set; }
         LoginDialogMode Mode { get; set; }
         string[] FacilityChoices { get; set; }
         string Facility { get; set; }

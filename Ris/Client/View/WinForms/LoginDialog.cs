@@ -29,7 +29,10 @@
 
 #endregion
 
+using System;
+using System.Drawing;
 using ClearCanvas.Common;
+using System.Windows.Forms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -50,6 +53,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			System.Windows.Forms.Application.EnableVisualStyles();
 
+			// if location was not set manually, centre the dialog in the screen
+			_form.StartPosition = _form.Location == Point.Empty ? FormStartPosition.CenterScreen : FormStartPosition.Manual;
+
 			if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
 				return true;
@@ -58,6 +64,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			{
 				return false;
 			}
+		}
+
+		public Point Location
+		{
+			get { return _form.Location; }
+			set { _form.Location = value; }
 		}
 
 		public LoginDialogMode Mode
