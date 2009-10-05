@@ -31,12 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Login;
-using System.Threading;
-using System.Security.Principal;
 using System.ServiceModel;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
@@ -80,7 +76,7 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
-                LoginSession currentSession = LoginSession.Current;
+                var currentSession = LoginSession.Current;
                 if (currentSession != null)
                 {
                     currentSession.Terminate();
@@ -99,7 +95,7 @@ namespace ClearCanvas.Ris.Client
 
         internal static bool RenewLogin()
         {
-            LoginSession current = LoginSession.Current;
+            var current = LoginSession.Current;
             if (current == null)
                 return false;
 
@@ -108,7 +104,7 @@ namespace ClearCanvas.Ris.Client
 
         internal static bool ChangePassword()
         {
-            LoginSession current = LoginSession.Current;
+            var current = LoginSession.Current;
             if(current == null)
                 return false;
 
@@ -125,11 +121,11 @@ namespace ClearCanvas.Ris.Client
 
         private static bool Login(LoginDialogMode mode, string userName, string facility)
         {
-            bool needLoginDialog = true;
+            var needLoginDialog = true;
             string password = null;
 
             Platform.Log(LogLevel.Debug, "Contacting server to obtain facility choices for login dialog...");
-            List<FacilitySummary> facilities = GetFacilityChoices();
+            var facilities = GetFacilityChoices();
 
             Platform.Log(LogLevel.Debug, "Got facility choices for login dialog.");
             while (true)
@@ -145,8 +141,7 @@ namespace ClearCanvas.Ris.Client
 
                 try
                 {
-                    FacilitySummary selectedFacility = CollectionUtils.SelectFirst(facilities,
-                        delegate(FacilitySummary fs) { return fs.Code == facility; });
+                    var selectedFacility = CollectionUtils.SelectFirst(facilities, fs => fs.Code == facility);
 
                     // try to create the session
                     LoginSession.Create(userName, password, selectedFacility);
@@ -177,13 +172,11 @@ namespace ClearCanvas.Ris.Client
 
         private static bool ShowLoginDialog(LoginDialogMode mode, List<FacilitySummary> facilities, ref string userName, ref string facility, out string password)
         {
-            using (ILoginDialog loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
+            using (var loginDialog = (ILoginDialog)(new LoginDialogExtensionPoint()).CreateExtension())
             {
-                string[] facilityCodes = CollectionUtils.Map<FacilitySummary, string>(
-                    facilities,
-                    delegate(FacilitySummary fs) { return fs.Code; }).ToArray();
+                var facilityCodes = CollectionUtils.Map(facilities, (FacilitySummary fs) => fs.Code).ToArray();
 
-                string initialFacilityCode = LoginDialogSettings.Default.SelectedFacility;
+                var initialFacilityCode = LoginDialogSettings.Default.SelectedFacility;
             	var location = LoginDialogSettings.Default.DialogScreenLocation;
 				
 
@@ -222,7 +215,7 @@ namespace ClearCanvas.Ris.Client
 
         private static bool ChangePassword(string userName, string oldPassword, out string newPassword)
         {
-            using (IChangePasswordDialog changePasswordDialog = (IChangePasswordDialog)(new ChangePasswordDialogExtensionPoint()).CreateExtension())
+            using (var changePasswordDialog = (IChangePasswordDialog)(new ChangePasswordDialogExtensionPoint()).CreateExtension())
             {
                 changePasswordDialog.UserName = userName;
                 changePasswordDialog.Password = oldPassword;
@@ -257,26 +250,26 @@ namespace ClearCanvas.Ris.Client
         {
             if(e is RequestValidationException)
             {
-                ClearCanvas.Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
+                Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
             }
 			else if (e is UserAccessDeniedException)
             {
-                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginAccessDenied, MessageBoxActions.Ok);
+                Desktop.Application.ShowMessageBox(SR.MessageLoginAccessDenied, MessageBoxActions.Ok);
             }
             else if (e is CommunicationException)
             {
                 Platform.Log(LogLevel.Error, e);
-                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
+                Desktop.Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
             }
             else if (e is TimeoutException)
             {
                 Platform.Log(LogLevel.Error, e);
-                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
+                Desktop.Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
             }
             else
             {
                 Platform.Log(LogLevel.Error, e);
-                ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageUnknownErrorCommunicatingWithServer, MessageBoxActions.Ok);
+                Desktop.Application.ShowMessageBox(SR.MessageUnknownErrorCommunicatingWithServer, MessageBoxActions.Ok);
             }
         }
 
@@ -284,10 +277,7 @@ namespace ClearCanvas.Ris.Client
         {
             List<FacilitySummary> choices = null;
             Platform.GetService<ILoginService>(
-                delegate(ILoginService service)
-                {
-                    choices = service.GetWorkingFacilityChoices(new GetWorkingFacilityChoicesRequest()).FacilityChoices;
-                });
+            	service => choices = service.GetWorkingFacilityChoices(new GetWorkingFacilityChoicesRequest()).FacilityChoices);
             return choices;
         }
     }
