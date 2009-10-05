@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #region Private Members
         private readonly object _syncLock = new object();
-        private Dictionary<string, WorkQueueUid> _uidMaps = null;
+        private Dictionary<string, List<WorkQueueUid>> _uidMaps = null;
         private Device _device;
         private const short UNLIMITED = -1;
         #endregion
@@ -71,14 +71,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// Convert Uids into SopInstance
         /// </summary>
         /// <returns></returns>
-        protected virtual IList<StorageInstance> GetStorageInstanceList()
+        protected virtual IEnumerable<StorageInstance> GetStorageInstanceList()
         {
             string studyPath = StorageLocation.GetStudyPath();
             StudyXml studyXml = LoadStudyXml(StorageLocation);
-            
-            List<StorageInstance> list = new List<StorageInstance>();
+
+            Dictionary<string, StorageInstance> list = new Dictionary<string, StorageInstance>();
             foreach(WorkQueueUid uid in WorkQueueUidList)
             {
+                if (list.ContainsKey(uid.SopInstanceUid))
+                {
+                    Platform.Log(LogLevel.Warn, "WorkQueueUid {0} is a duplicate.", uid.Key);
+                    continue; // duplicate;}
+                }
                 SeriesXml seriesXml = studyXml[uid.SeriesInstanceUid];
                 InstanceXml instanceXml = seriesXml[uid.SopInstanceUid];
             
@@ -92,10 +97,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         	    instance.PatientId = studyXml.PatientId;
 			    instance.PatientsName = studyXml.PatientsName;
 
-                list.Add(instance);
+                list.Add(uid.SopInstanceUid, instance);
             }
 
-            return list;
+            return list.Values;
         }
 
         /// <summary>
@@ -110,7 +115,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         protected virtual void OnInstanceSent(StorageInstance instance)
         {
-            WorkQueueUid foundUid = FindWorkQueueUid(instance);
+            List<WorkQueueUid> foundUids = FindWorkQueueUids(instance);
 
             if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
             {
@@ -125,18 +130,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             if (instance.SendStatus.Status == DicomState.Failure)
             {
                 WorkQueueItem.FailureDescription = instance.SendStatus.Description;
-                if (foundUid != null)
+                foreach(WorkQueueUid uid in foundUids)
                 {
-                    foundUid.FailureCount++;
-                    UpdateWorkQueueUid(foundUid);
+                    uid.FailureCount++;
+                    UpdateWorkQueueUid(uid);
                 }
             }
-            else
+            else if (foundUids!=null)
             {
-                if (foundUid != null)
+                foreach (WorkQueueUid uid in foundUids)
                 {
-                    DeleteWorkQueueUid(foundUid);
-                    WorkQueueUidList.Remove(foundUid);
+                    DeleteWorkQueueUid(uid);
+                    WorkQueueUidList.Remove(uid);
                 }
             }
 
@@ -175,7 +180,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
             LoadStorageLocation(item);
             LoadUids(item);
-            InstanceList = GetStorageInstanceList();
+            InstanceList = new List<StorageInstance>(GetStorageInstanceList());
+        }
+
+        public bool HasPendingItems
+        {
+            get { return InstanceList != null && InstanceList.Count > 0; }
         }
 
         /// <summary>
@@ -190,7 +200,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 return;
             }
 
-            if (InstanceList == null || InstanceList.Count == 0)
+            if (!HasPendingItems)
             {
                 // nothing to process, change to idle state
                 PostProcessing(item, WorkQueueProcessorStatus.Idle, WorkQueueProcessorDatabaseUpdate.None);
@@ -359,28 +369,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #region Private Methods
 
-        private WorkQueueUid FindWorkQueueUid(StorageInstance instance)
+        private List<WorkQueueUid> FindWorkQueueUids(StorageInstance instance)
         {
             if (_uidMaps == null)
             {
                 if (WorkQueueUidList != null)
                 {
-                    _uidMaps = new Dictionary<string, WorkQueueUid>();
+                    _uidMaps = new Dictionary<string, List<WorkQueueUid>>();
                     foreach (WorkQueueUid uid in WorkQueueUidList)
                     {
-                        _uidMaps.Add(uid.SopInstanceUid, uid);
+                        if (!_uidMaps.ContainsKey(uid.SopInstanceUid))
+                            _uidMaps.Add(uid.SopInstanceUid, new List<WorkQueueUid>());
+
+                        _uidMaps[uid.SopInstanceUid].Add(uid);
                     }
                 }
             }
 
-            WorkQueueUid foundUid;
-            if (_uidMaps.TryGetValue(instance.SopInstanceUid, out foundUid))
+            if (_uidMaps!=null)
             {
-                return foundUid;
+                List<WorkQueueUid> foundUids;
+                if (_uidMaps.TryGetValue(instance.SopInstanceUid, out foundUids))
+                {
+                    return foundUids;
+                }
             }
-            else
-                return null;
 
+            return null;
         }
 
         #endregion

@@ -38,7 +38,6 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
@@ -51,7 +50,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
         /// Gets the list of instances to be sent from the study xml
         /// </summary>
         /// <returns></returns>
-        protected override IList<StorageInstance> GetStorageInstanceList()
+        protected override IEnumerable<StorageInstance> GetStorageInstanceList()
         {
         	IList<WorkQueueUid> seriesList = WorkQueueUidList;
 
@@ -62,6 +61,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
             StudyXml studyXml = LoadStudyXml(StorageLocation);
             foreach (SeriesXml seriesXml in studyXml)
             {
+                // FOR SERIES LEVEL Move,
+                // Check if the series is in the WorkQueueUid list. If it is not in the list then don't include it.
 				if (seriesList.Count > 0)
 				{
 					bool found = false;
@@ -74,8 +75,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 								break;
 							}
 					}
-					if (!found) continue;
+					if (!found) continue; // don't send this series
 				}
+
             	foreach (InstanceXml instanceXml in seriesXml)
                 {
                     string seriesPath = Path.Combine(studyPath, seriesXml.SeriesInstanceUid);
