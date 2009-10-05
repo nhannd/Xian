@@ -146,7 +146,7 @@ namespace ClearCanvas.Dicom.Network
                 }
                 RawPDU raw = _pdu.Write();
 
-                _networkBase.EnqueuePDU(raw);
+                _networkBase.EnqueuePdu(raw);
                 if (OnTick != null)
                     OnTick();
                 _pdu = new PDataTF();
