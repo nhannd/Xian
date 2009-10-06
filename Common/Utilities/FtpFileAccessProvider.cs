@@ -23,6 +23,10 @@ namespace ClearCanvas.Common.Utilities
 
 		#region Overrides
 
+		/// <summary>
+		/// Create a directory remotely.
+		/// </summary>
+		/// <param name="remotePath"></param>
 		public override void CreateRemoteDirectory(string remotePath)
 		{
 			try
@@ -45,6 +49,10 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// List the files in the remote path.
+		/// </summary>
+		/// <param name="remotePath"></param>
 		public override List<string> ListRemoteFiles(string remotePath)
 		{
 			var remoteFiles = new List<string>();
@@ -71,6 +79,10 @@ namespace ClearCanvas.Common.Utilities
 			return remoteFiles;
 		}
 
+		/// <summary>
+		/// Transfer files between local and server.
+		/// </summary>
+		/// <param name="requests"></param>
 		public override void TransferFiles(List<FileTransferRequest> requests)
 		{
 			FileTransferRequest requestBeingProcessed = null;

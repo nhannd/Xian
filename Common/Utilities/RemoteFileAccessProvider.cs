@@ -26,28 +26,53 @@ namespace ClearCanvas.Common.Utilities
 
 		#region IRemoteFileAccess Members
 
+		/// <summary>
+		/// User Id used to login to remote server.
+		/// </summary>
 		public string UserId { get; set; }
 
+		/// <summary>
+		/// Password used to login to remote server.
+		/// </summary>
 		public string Password { get; set; }
 
+		/// <summary>
+		/// The base url of the remote server.
+		/// </summary>
 		public string RemoteUrlBase { get; set; }
 
+		/// <summary>
+		/// Create a local directory.
+		/// </summary>
+		/// <param name="localPath"></param>
 		public void CreateLocalDirectory(string localPath)
 		{
 			if (!Directory.Exists(localPath))
 				Directory.CreateDirectory(localPath);
 		}
 
+		/// <summary>
+		/// Create a directory remotely.
+		/// </summary>
+		/// <param name="remotePath"></param>
 		public virtual void CreateRemoteDirectory(string remotePath)
 		{
 			throw new NotImplementedException("CreateRemoteDirectory is not implemented");
 		}
 
+		/// <summary>
+		/// List the files in the remote path.
+		/// </summary>
+		/// <param name="remotePath"></param>
 		public virtual List<string> ListRemoteFiles(string remotePath)
 		{
 			throw new NotImplementedException("ListRemoteFiles is not implemented");
 		}
 
+		/// <summary>
+		/// Transfer files between local and server.
+		/// </summary>
+		/// <param name="requests"></param>
 		public virtual void TransferFiles(List<FileTransferRequest> requests)
 		{
 			FileTransferRequest requestBeingProcessed = null;
