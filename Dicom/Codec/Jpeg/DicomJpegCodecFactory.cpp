@@ -88,7 +88,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = false;
+		codecParms->ConvertColorspaceToRGB = true;
 
 		return codecParms;
 	}
@@ -97,7 +97,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = false;
+		codecParms->ConvertColorspaceToRGB = true;
 
 		return codecParms;
 	}
@@ -117,7 +117,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = false;
+		codecParms->ConvertColorspaceToRGB = true;
 
 		return codecParms;
 	}
@@ -126,7 +126,7 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = false;
+		codecParms->ConvertColorspaceToRGB = true;
 
 		return codecParms;
 	}
