@@ -171,6 +171,12 @@
   <data name="AssigningAuthority" xml:space="preserve">
     <value>Assigning Authority</value>
   </data>
+  <data name="CannedText" xml:space="preserve">
+    <value>Canned Text</value>
+  </data>
+  <data name="CannedTextUniqueKey" xml:space="preserve">
+    <value>Name - Category - Owner combination</value>
+  </data>
   <data name="Code" xml:space="preserve">
     <value>Code</value>
   </data>

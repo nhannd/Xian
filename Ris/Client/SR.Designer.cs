@@ -151,6 +151,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Owner.
+        /// </summary>
+        internal static string ColumnCannedTextOwner {
+            get {
+                return ResourceManager.GetString("ColumnCannedTextOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Category.
         /// </summary>
         internal static string ColumnCategory {
@@ -1393,6 +1402,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Canned text Name, Category and Owner are identical to an existing canned text..
+        /// </summary>
+        internal static string MessageIdenticalCannedText {
+            get {
+                return ResourceManager.GetString("MessageIdenticalCannedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The value entered is not a valid date.
         /// </summary>
         internal static string MessageInvalidDateFormat {
@@ -1519,7 +1537,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Canned texts with the same name already exist for the following staff groups.  Are you sure you want to proceed?.
+        ///   Looks up a localized string similar to The following canned text(s) with the same name already exist.  Are you sure you want to proceed?.
         /// </summary>
         internal static string MessageWarningDuplicateCannedTextName {
             get {

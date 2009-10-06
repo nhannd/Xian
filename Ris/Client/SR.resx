@@ -601,7 +601,7 @@
     <value>An unknown error occured while attempting to communicate with the server.  See log for details.</value>
   </data>
   <data name="MessageWarningDuplicateCannedTextName" xml:space="preserve">
-    <value>Canned texts with the same name already exist for the following staff groups.  Are you sure you want to proceed?</value>
+    <value>The following canned text(s) with the same name already exist.  Are you sure you want to proceed?</value>
   </data>
   <data name="MessageWorklistMustHaveName" xml:space="preserve">
     <value>Worklist must have a name.</value>
@@ -872,5 +872,11 @@
   </data>
   <data name="TitleStaffOrStaffGroups" xml:space="preserve">
     <value>Choose a staff or staff group</value>
+  </data>
+  <data name="ColumnCannedTextOwner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="MessageIdenticalCannedText" xml:space="preserve">
+    <value>Canned text Name, Category and Owner are identical to an existing canned text.</value>
   </data>
 </root>

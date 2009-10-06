@@ -223,6 +223,24 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Canned Text.
+        /// </summary>
+        internal static string CannedText {
+            get {
+                return ResourceManager.GetString("CannedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name - Category - Owner combination.
+        /// </summary>
+        internal static string CannedTextUniqueKey {
+            get {
+                return ResourceManager.GetString("CannedTextUniqueKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Code.
         /// </summary>
         internal static string Code {

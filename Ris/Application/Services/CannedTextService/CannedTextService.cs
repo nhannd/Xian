@@ -125,32 +125,21 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
         [UpdateOperation]
         public AddCannedTextResponse AddCannedText(AddCannedTextRequest request)
         {
-            try
-            {
-                CheckCannedTextWriteAccess(request.Detail);
+            CheckCannedTextWriteAccess(request.Detail);
 
-                if (string.IsNullOrEmpty(request.Detail.Name))
-                    throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
+            if (string.IsNullOrEmpty(request.Detail.Name))
+                throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
 
-                if (string.IsNullOrEmpty(request.Detail.Category))
-                    throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
+            if (string.IsNullOrEmpty(request.Detail.Category))
+                throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
 
-                var assembler = new CannedTextAssembler();
-                var cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
+            var assembler = new CannedTextAssembler();
+            var cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
-                PersistenceContext.Lock(cannedText, DirtyState.New);
-                PersistenceContext.SynchState();
+            PersistenceContext.Lock(cannedText, DirtyState.New);
+            PersistenceContext.SynchState();
 
-                return new AddCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
-            }
-            catch (EntityValidationException)
-            {
-                var text = request.Detail.IsPersonal ?
-                    string.Format("staff {0}, {1}", this.CurrentUserStaff.Name.FamilyName, this.CurrentUserStaff.Name.GivenName) :
-                    string.Format("{0} group", request.Detail.StaffGroup.Name);
-
-                throw new RequestValidationException(string.Format(SR.ExceptionIdenticalCannedTextExist, text));
-            }
+            return new AddCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
         }
 
         [UpdateOperation]

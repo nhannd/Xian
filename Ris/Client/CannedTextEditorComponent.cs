@@ -333,9 +333,9 @@ namespace ClearCanvas.Ris.Client
                 if (this.IsEditingPersonal)
                     _cannedTextDetail.StaffGroup = null;
 
-                // Find a list of canned texts that matches the name
-//                if(!ValidateStuff())
-//					return;
+                // Warn user about possible name conflicts
+                if(!WarnAboutNameConflicts())
+					return;
 
             	// Commit the changes
                 Platform.GetService<ICannedTextService>(
@@ -377,7 +377,7 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-		private bool ValidateStuff()
+		private bool WarnAboutNameConflicts()
 		{
 			List<CannedTextSummary> cannedTexts = null;
 			Platform.GetService<ICannedTextService>(
@@ -393,6 +393,14 @@ namespace ClearCanvas.Ris.Client
 				CollectionUtils.Remove(cannedTexts, c => c.CannedTextRef.Equals(_cannedTextRef, true));
 			}
 
+			// check for an exact match
+			var exactMatch = CollectionUtils.Contains(cannedTexts, c => Equals(this.Category, c.Category) && Equals(this.StaffGroup, c.StaffGroup));
+			if(exactMatch)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageIdenticalCannedText, MessageBoxActions.Ok);
+				return false;
+			}
+
 			// Warn user if there are other cannedtext (for which the user has access to) with the same name
 			if (cannedTexts.Count > 0)
 			{
@@ -400,16 +408,21 @@ namespace ClearCanvas.Ris.Client
 
 				messageBuilder.AppendLine(SR.MessageWarningDuplicateCannedTextName);
 				messageBuilder.AppendLine();
-				CollectionUtils.ForEach(cannedTexts,
-										c =>
-										messageBuilder.AppendLine(c.IsPersonal
-																	? SR.ColumnPersonal
-																	: c.StaffGroup.Name));
+				foreach (var c in cannedTexts)
+				{
+					messageBuilder.AppendLine(FormatCannedText(c));
+				}
 
 				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
 					return false;
 			}
 			return true;
+		}
+
+		private static string FormatCannedText(CannedTextSummary cannedText)
+		{
+			return string.Format("{0}, Category: {1}, Owner: {2}", cannedText.Name, cannedText.Category,
+			                     cannedText.IsPersonal ? SR.ColumnPersonal : cannedText.StaffGroup.Name);
 		}
 	}
 }
