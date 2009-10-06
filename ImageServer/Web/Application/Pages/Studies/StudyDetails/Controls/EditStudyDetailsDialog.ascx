@@ -37,7 +37,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                             
                             <tr>
                                 <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" Text="Patient Name" CssClass="DialogTextBoxLabel" /></td>
-                                <td><ccAsp:PersonNameInputPanel runat="server" ID="PatientNamePanel"  Required="true"/></td>
+                                <td><ccAsp:PersonNameInputPanel runat="server" ID="PatientNamePanel"  Required="true" ValidationGroup="EditStudyValidationGroup"/></td>
                             </tr>
                             <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="DialogTextBoxLabel" /></td>

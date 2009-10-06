@@ -21,7 +21,7 @@
                 <tr>
                     <td colspan="2">
                         <asp:TextBox ID="PersonTitle" runat="server" MaxLength="64" CssClass="DialogTextBox"
-                            CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup" />
+                            CausesValidation="true" ValidationGroup="<%= ValidationGroup %>" />
                     </td>
                 </tr>
             </table>
@@ -38,7 +38,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <asp:TextBox ID="PersonGivenName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+                        <asp:TextBox ID="PersonGivenName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                             MaxLength="64" CssClass="DialogTextBox" />
                     </td>
                 </tr>
@@ -56,7 +56,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <asp:TextBox ID="PersonMiddleName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+                        <asp:TextBox ID="PersonMiddleName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                             MaxLength="64" CssClass="DialogTextBox" />
                     </td>
                 </tr>
@@ -74,7 +74,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <asp:TextBox ID="PersonLastName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+                        <asp:TextBox ID="PersonLastName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                             MaxLength="64" CssClass="DialogTextBox" />
                     </td>
                 </tr>
@@ -92,7 +92,7 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <asp:TextBox ID="PersonSuffix" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+                        <asp:TextBox ID="PersonSuffix" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                             MaxLength="64" CssClass="DialogTextBox" />
                     </td>
                 </tr>
@@ -112,19 +112,19 @@
             <asp:TextBox ID="PhoneticTitle" runat="server" MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="PhoneticGivenName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="PhoneticGivenName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="PhoneticMiddleName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="PhoneticMiddleName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="PhoneticLastName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="PhoneticLastName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="PhoneticSuffix" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="PhoneticSuffix" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
@@ -140,19 +140,19 @@
             <asp:TextBox ID="IdeographicTitle" runat="server" MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="IdeographicGivenName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="IdeographicGivenName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="IdeographicMiddleName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="IdeographicMiddleName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="IdeographicLastName" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="IdeographicLastName" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
-            <asp:TextBox ID="IdeographicSuffix" runat="server" CausesValidation="true" ValidationGroup="PersonNameInputValidationGroup"
+            <asp:TextBox ID="IdeographicSuffix" runat="server" CausesValidation="true" ValidationGroup="<%= ValidationGroup %>"
                 MaxLength="64" CssClass="DialogTextBox" />
         </asp:TableCell>
         <asp:TableCell>
@@ -160,7 +160,7 @@
     </asp:TableRow>
 </asp:Table>
 <ccValidator:RegularExpressionFieldValidator ID="PersonTitleValidator"
-    runat="server" ControlToValidate="PersonTitle" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="PersonNameInputValidationGroup"
+    runat="server" ControlToValidate="PersonTitle" InvalidInputCSS="DialogTextBoxInvalidInput" ValidationGroup="<%= ValidationGroup %>"
     IgnoreEmptyValue="true"
     InvalidInputIndicatorID="PersonTitleIndicator" ValidationExpression="^([^\\]){1,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluding &quot;\\&quot;"
@@ -168,25 +168,25 @@
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonGivenNameValidator"
     runat="server" ControlToValidate="PersonGivenName" InvalidInputCSS="DialogTextBoxInvalidInput"
-    ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonGivenNameIndicator"
+    ValidationGroup="<%= ValidationGroup %>" InvalidInputIndicatorID="PersonGivenNameIndicator"
     ValidationExpression="^([^\\]){1,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonMiddleNameValidator"
     runat="server" ControlToValidate="PersonMiddleName" InvalidInputCSS="DialogTextBoxInvalidInput"
-    IgnoreEmptyValue="true" ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonMiddleNameIndicator" ValidationExpression="^([^\\]){0,64}$"
+    IgnoreEmptyValue="true" ValidationGroup="<%= ValidationGroup %>" InvalidInputIndicatorID="PersonMiddleNameIndicator" ValidationExpression="^([^\\]){0,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonLastNameValidator"
     runat="server" ControlToValidate="PersonLastName" InvalidInputCSS="DialogTextBoxInvalidInput"
-    ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonLastNameIndicator"
+    ValidationGroup="<%= ValidationGroup %>" InvalidInputIndicatorID="PersonLastNameIndicator"
     ValidationExpression="^([^\\]){0,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonSuffixValidator"
     runat="server" ControlToValidate="PersonSuffix" InvalidInputCSS="DialogTextBoxInvalidInput"
-    IgnoreEmptyValue="true" ValidationGroup="PersonNameInputValidationGroup" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
+    IgnoreEmptyValue="true" ValidationGroup="<%= ValidationGroup %>" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;."
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>

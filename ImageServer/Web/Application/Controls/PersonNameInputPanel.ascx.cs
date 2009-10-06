@@ -30,15 +30,7 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageServer.Web.Common.WebControls;
@@ -47,10 +39,11 @@ using ClearCanvas.ImageServer.Web.Common.WebControls;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
-    public partial class PersonNameInputPanel : System.Web.UI.UserControl
+    public partial class PersonNameInputPanel : UserControl
     {
         private PersonName _personName;
-        private bool _required = false;
+        private bool _required;
+        private string _validationGroup = "PersonNameInputValidationGroup";
         public PersonName PersonName
         {
             set { _personName = value; }
@@ -110,16 +103,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             get { return _required; }
             set { _required = value; }
-        }
-
-
-        protected void Page_Load(object sender, EventArgs e)
+        }     
+   
+        public string ValidationGroup
         {
-
+            get { return _validationGroup; }
+            set { _validationGroup = value; }
         }
-        
 
-        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
