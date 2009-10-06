@@ -31,7 +31,6 @@
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {

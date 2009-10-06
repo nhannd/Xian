@@ -54,13 +54,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// Plugin for handling DICOM Query Requests implementing the <see cref="IDicomScp{TContext}"/> interface.
     ///</summary>
     [ExtensionOf(typeof (DicomScpExtensionPoint<DicomScpContext>))]
-    public class QueryScpExtension : BaseScp, IDicomScp<DicomScpContext>
+    public class QueryScpExtension : BaseScp
     {
         #region Private members
 
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
-		private bool _cancelReceived = false;
-		private Queue<DicomMessage> _responseQueue = new Queue<DicomMessage>(DicomSettings.Default.BufferedQueryResponses);
+		private bool _cancelReceived;
+		private readonly Queue<DicomMessage> _responseQueue = new Queue<DicomMessage>(DicomSettings.Default.BufferedQueryResponses);
 		private readonly object _syncLock = new object();
         #endregion
 
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">The connection to use to read the values.</param>
         /// <param name="response">The message to add the value into.</param>
         /// <param name="row">The <see cref="Study"/> entity to find the values for.</param>
-        private static void LoadModalitiesInStudy(IReadContext read, DicomMessage response, Study row)
+        private static void LoadModalitiesInStudy(IPersistenceContext read, DicomMessage response, Study row)
         {
             IQueryModalitiesInStudy select = read.GetBroker<IQueryModalitiesInStudy>();
 
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="read">The connection to use to read the values.</param>
         /// <param name="response">The message to add the values into.</param>
         /// <param name="row">The <see cref="Series"/> entity to load the related <see cref="RequestAttributes"/> entity for.</param>
-        private static void LoadRequestAttributes(IReadContext read, DicomMessage response, Series row)
+        private static void LoadRequestAttributes(IPersistenceContext read, DicomMessage response, Series row)
         {
 			IRequestAttributesEntityBroker select = read.GetBroker<IRequestAttributesEntityBroker>();
 
@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// <param name="read">The connection to use to read the values.</param>
         /// <param name="studyInstanceUid">The list of Study Instance Uids for which to retrieve the table keys.</param>
         /// <returns>A list of <see cref="ServerEntityKey"/>s.</returns>
-        private List<ServerEntityKey> LoadStudyKey(IReadContext read, string[] studyInstanceUid)
+        private List<ServerEntityKey> LoadStudyKey(IPersistenceContext read, string[] studyInstanceUid)
         {
             IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
 
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="response">The response message to populate with results.</param>
         /// <param name="tagList">The list of tags to populate.</param>
         /// <param name="row">The <see cref="Patient"/> table to populate from.</param>
-        private void PopulatePatient(DicomMessage response, IList<uint> tagList, Patient row)
+        private void PopulatePatient(DicomMessage response, IEnumerable<uint> tagList, Patient row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
@@ -583,7 +583,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             if (val.Contains("-"))
             {
-                string[] vals = val.Split(new char[] {'-'});
+                string[] vals = val.Split(new[] {'-'});
                 if (val.IndexOf('-') == 0)
                     cond.LessThanOrEqualTo(vals[1]);
                 else if (val.IndexOf('-') == val.Length - 1)
@@ -651,6 +651,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
                 DicomAttributeCollection data = message.DataSet;
+            	StudySelectCriteria studySelect = new StudySelectCriteria();
+            	bool studySubSelect = false;
                 foreach (DicomAttribute attrib in message.DataSet)
                 {
                     tagList.Add(attrib.Tag.TagValue);
@@ -667,6 +669,28 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                 SetStringCondition(criteria.IssuerOfPatientId,
 												   data[DicomTags.IssuerOfPatientId].GetString(0, string.Empty));
                                 break;
+							case DicomTags.PatientsSex:
+								// Specify a subselect on Patients Sex in Study
+								SetStringArrayCondition(studySelect.PatientsSex,
+														(string[])data[DicomTags.PatientsSex].Values);
+								if (!studySubSelect)
+								{
+									criteria.StudyRelatedEntityCondition.Exists(studySelect);
+									studySubSelect = true;
+								}
+                        		break;
+
+							case DicomTags.PatientsBirthDate:
+								// Specify a subselect on Patients Birth Date in Study
+								SetStringArrayCondition(studySelect.PatientsBirthDate,
+														(string[])data[DicomTags.PatientsBirthDate].Values);
+								if (!studySubSelect)
+								{
+									criteria.StudyRelatedEntityCondition.Exists(studySelect);
+									studySubSelect = true;
+								}
+								break;
+
                             default:
                                 break;
                         }
@@ -820,7 +844,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						// First find the Online studies
                     	StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
                     	storageCriteria.StudyStatusEnum.NotEqualTo(StudyStatusEnum.Nearline);
-						storageCriteria.QueueStudyStateEnum.NotIn(new QueueStudyStateEnum[] {QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled});
+						storageCriteria.QueueStudyStateEnum.NotIn(new[] {QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled});
                     	criteria.StudyStorageRelatedEntityCondition.Exists(storageCriteria);
 
                         find.Find(criteria, delegate(Study row)
@@ -848,7 +872,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						// Now find the Nearline studies
 						storageCriteria = new StudyStorageSelectCriteria();
 						storageCriteria.StudyStatusEnum.EqualTo(StudyStatusEnum.Nearline);
-						storageCriteria.QueueStudyStateEnum.NotIn(new QueueStudyStateEnum[] { QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled });
+						storageCriteria.QueueStudyStateEnum.NotIn(new[] { QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled });
 						criteria.StudyStorageRelatedEntityCondition.Exists(storageCriteria);
 
 						find.Find(criteria, delegate(Study row)
@@ -1056,7 +1080,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="matchTagList"></param>
         /// <param name="instanceStream"></param>
         /// <returns></returns>
-        private static bool CompareInstanceMatch(DicomMessage queryMessage, List<uint> matchTagList,
+        private static bool CompareInstanceMatch(DicomMessage queryMessage, IEnumerable<uint> matchTagList,
                                                  InstanceXml instanceStream)
         {
             foreach (uint tag in matchTagList)
@@ -1157,24 +1181,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
 						return;
 					}
-					else
-					{
-						resultCount++;
-						if (DicomSettings.Default.MaxQueryResponses != -1
-							&& DicomSettings.Default.MaxQueryResponses < resultCount)
-						{
-							SendBufferedResponses(server, presentationID, message);
-							Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
-							break;
-						}
+                	resultCount++;
+                	if (DicomSettings.Default.MaxQueryResponses != -1
+                	    && DicomSettings.Default.MaxQueryResponses < resultCount)
+                	{
+                		SendBufferedResponses(server, presentationID, message);
+                		Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
+                		break;
+                	}
 
-						DicomMessage response = new DicomMessage();
-						PopulateInstance(message, response, tagList, theInstanceStream);
-						_responseQueue.Enqueue(response);
+                	DicomMessage response = new DicomMessage();
+                	PopulateInstance(message, response, tagList, theInstanceStream);
+                	_responseQueue.Enqueue(response);
 
-						if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
-							SendBufferedResponses(server, presentationID, message);
-					}
+                	if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+                		SendBufferedResponses(server, presentationID, message);
                 }
             }
 
@@ -1229,77 +1250,71 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													});
                 	return true;
                 }
-                else if (level.Equals("SERIES"))
-                {
-					ThreadPool.QueueUserWorkItem(delegate
-													{
-														OnReceiveSeriesLevelQuery(server, presentationID, message);
-													});
-                	return true;
-                }
-                else if (level.Equals("IMAGE"))
-                {
-					ThreadPool.QueueUserWorkItem(delegate
-													{
-														OnReceiveImageLevelQuery(server, presentationID, message);
-													});
-                	return true;
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Error, "Unexpected Study Root Query/Retrieve level: {0}", level);
+            	if (level.Equals("SERIES"))
+            	{
+            		ThreadPool.QueueUserWorkItem(delegate
+            		                             	{
+            		                             		OnReceiveSeriesLevelQuery(server, presentationID, message);
+            		                             	});
+            		return true;
+            	}
+            	if (level.Equals("IMAGE"))
+            	{
+            		ThreadPool.QueueUserWorkItem(delegate
+            		                             	{
+            		                             		OnReceiveImageLevelQuery(server, presentationID, message);
+            		                             	});
+            		return true;
+            	}
+            	Platform.Log(LogLevel.Error, "Unexpected Study Root Query/Retrieve level: {0}", level);
 
-                    server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
-                                             DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
-                    return true;
-                }
+            	server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
+            	                         DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
+            	return true;
             }
-            else if (message.AffectedSopClassUid.Equals(SopClass.PatientRootQueryRetrieveInformationModelFindUid))
-            {
-                if (level.Equals("PATIENT"))
-                {
-					ThreadPool.QueueUserWorkItem(delegate
-								{
-									OnReceivePatientQuery(server, presentationID, message);
-								});
+        	if (message.AffectedSopClassUid.Equals(SopClass.PatientRootQueryRetrieveInformationModelFindUid))
+        	{
+        		if (level.Equals("PATIENT"))
+        		{
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceivePatientQuery(server, presentationID, message);
+        			                             	});
 
-                	return true;
-                }
-                else if (level.Equals("STUDY"))
-                {
-					ThreadPool.QueueUserWorkItem(delegate
-								{
-									OnReceiveStudyLevelQuery(server, presentationID, message);
-								});
-                	return true;
-                }
-                else if (level.Equals("SERIES"))
-                {
-					ThreadPool.QueueUserWorkItem(delegate
-								{
-									OnReceiveSeriesLevelQuery(server, presentationID, message);
-								});
-                	return true;
-                }
-                else if (level.Equals("IMAGE"))
-                {
-					ThreadPool.QueueUserWorkItem(delegate
-								{
-									OnReceiveImageLevelQuery(server, presentationID, message);
-								});
-                	return true;
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Error, "Unexpected Patient Root Query/Retrieve level: {0}", level);
+        			return true;
+        		}
+        		if (level.Equals("STUDY"))
+        		{
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceiveStudyLevelQuery(server, presentationID, message);
+        			                             	});
+        			return true;
+        		}
+        		if (level.Equals("SERIES"))
+        		{
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceiveSeriesLevelQuery(server, presentationID, message);
+        			                             	});
+        			return true;
+        		}
+        		if (level.Equals("IMAGE"))
+        		{
+        			ThreadPool.QueueUserWorkItem(delegate
+        			                             	{
+        			                             		OnReceiveImageLevelQuery(server, presentationID, message);
+        			                             	});
+        			return true;
+        		}
+        		Platform.Log(LogLevel.Error, "Unexpected Patient Root Query/Retrieve level: {0}", level);
 
-                    server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
-                                             DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
-                    return true;
-                }
-            }
+        		server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
+        		                         DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
+        		return true;
+        	}
 
-            // Not supported message type, send a failure status.
+        	// Not supported message type, send a failure status.
             server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(),
                                      DicomStatuses.QueryRetrieveIdentifierDoesNotMatchSOPClass);
             return true;

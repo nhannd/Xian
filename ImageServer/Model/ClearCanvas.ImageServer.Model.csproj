@@ -191,6 +191,7 @@
     <Compile Include="EntityBrokers\PartitionSopClassUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\PartitionTransferSyntaxSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PartitionTransferSyntaxUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\PatientSelectCriteria.cs" />
     <Compile Include="EntityBrokers\PatientSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PatientUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesSelectCriteria.gen.cs" />
