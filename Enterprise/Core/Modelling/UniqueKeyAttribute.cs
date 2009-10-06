@@ -41,7 +41,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     /// </summary>
     /// <remarks>
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class UniqueKeyAttribute : Attribute
     {
         private readonly string[] _memberProperties;

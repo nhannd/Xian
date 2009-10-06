@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Core
@@ -68,9 +65,9 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         /// <summary>
+        /// Gets the code.
         /// </summary>
         [Required]
-        [Unique]
         [Length(CodeLength)]
         public virtual string Code
         {
@@ -79,9 +76,9 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         /// <summary>
+        /// Gets the display value.
         /// </summary>
         [Required]
-        [Unique]
         [Length(ValueLength)]
         public virtual string Value
         {
@@ -90,6 +87,7 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         /// <summary>
+        /// Gets the description
         /// </summary>
         [Length(DescriptionLength)]
         public virtual string Description
@@ -132,9 +130,9 @@ namespace ClearCanvas.Enterprise.Core
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (object.ReferenceEquals(obj, this))
+            if (ReferenceEquals(obj, this))
                 return true;
-            EnumValue other = obj as EnumValue;
+            var other = obj as EnumValue;
             if (other == null)
                 return false;
 

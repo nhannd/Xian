@@ -1,15 +1,16 @@
 // This file is machine generated - changes will be lost.
-using System;
-using System.Collections;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 
-namespace <%= namespace %> {
+namespace <%= namespace %>
+{
+
     /// <summary>
     /// <%= className %> enumeration
     /// </summary>
+	[UniqueKey("Code", new [] { "Code" })]
+	[UniqueKey("Value", new [] { "Value" })]
     public class <%= className %> : EnumValue
     {
 		/// <summary>
