@@ -40,10 +40,10 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -51,6 +51,8 @@ using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
+
+
     public partial class EditStudyDetailsDialog : System.Web.UI.UserControl
     {
         private const string REASON_CANNEDTEXT_CATEGORY = "EditStudyReason";
@@ -104,6 +106,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         }
 
+        private static bool AreDifferent(String v1, String v2)
+        {
+            if (v1 == null)
+                return String.IsNullOrEmpty(v2) == false;
+
+            //v1 is not null
+            return !v1.Equals(v2);
+        }
 
         private List<UpdateItem> GetChanges()
         {
@@ -120,47 +130,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
                                         ? DateTime.Parse(PatientBirthDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
-            if (!Study.PatientsBirthDate.Equals(dicomBirthDate))
+            if (AreDifferent(Study.PatientsBirthDate, dicomBirthDate))
             {
                 UpdateItem item = new UpdateItem(DicomTags.PatientsBirthDate, Study.PatientsBirthDate, dicomBirthDate);
                 changes.Add(item);
             }
 
-            if (Study.PatientsAge == null || !PatientAge.Text.Equals(Study.PatientsAge))
+            string newPatientAge = String.IsNullOrEmpty(PatientAge.Text)? String.Empty:String.Format("{0}{1}", PatientAge.Text.PadLeft(3, '0'), PatientAgePeriod.SelectedValue);
+
+            if (AreDifferent(Study.PatientsAge, newPatientAge))
             {
-                string patientAge = String.IsNullOrEmpty(PatientAge.Text) ? String.Empty : String.Format("{0}{1}", PatientAge.Text.PadLeft(3, '0'), PatientAgePeriod.SelectedValue);
-                UpdateItem item = new UpdateItem(DicomTags.PatientsAge, Study.PatientsAge, patientAge);
+                UpdateItem item = new UpdateItem(DicomTags.PatientsAge, Study.PatientsAge, newPatientAge);
                 changes.Add(item);
             }
 
-            if (!Study.PatientsSex.Equals(PatientGender.Text))
+            // PatientGender is a required field.
+            if (AreDifferent(Study.PatientsSex, PatientGender.Text))
             {
                 UpdateItem item = new UpdateItem(DicomTags.PatientsSex, Study.PatientsSex, PatientGender.Text);
                 changes.Add(item);
             }
 
-            if (!Study.PatientId.Equals(PatientID.Text))
+            //PatientID.Text is a required field.
+            if (AreDifferent(Study.PatientId, PatientID.Text))
             {
                 UpdateItem item = new UpdateItem(DicomTags.PatientId, Study.PatientId, PatientID.Text);
                 changes.Add(item);
             }
 
-            if (String.IsNullOrEmpty(Study.StudyDescription)
-                || !Study.StudyDescription.Equals((StudyDescription.Text)))
+            if (AreDifferent(Study.StudyDescription, StudyDescription.Text))
             {
                 UpdateItem item = new UpdateItem(DicomTags.StudyDescription, Study.StudyDescription, StudyDescription.Text);
                 changes.Add(item);
             }
 
-            if (String.IsNullOrEmpty(Study.StudyId)
-                || !Study.StudyId.Equals((StudyID.Text)))
+            if (AreDifferent(Study.StudyId, StudyID.Text))
             {
                 UpdateItem item = new UpdateItem(DicomTags.StudyId, Study.StudyId, StudyID.Text);
                 changes.Add(item);
             }
 
-            if (String.IsNullOrEmpty(Study.AccessionNumber)
-                || !Study.AccessionNumber.Equals((AccessionNumber.Text)))
+            if (AreDifferent(Study.AccessionNumber, AccessionNumber.Text))
             {
                 UpdateItem item = new UpdateItem(DicomTags.AccessionNumber, Study.AccessionNumber, AccessionNumber.Text);
                 changes.Add(item);
@@ -175,13 +185,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 changes.Add(item);
             }
 
-            String dicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
+            String newDicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
                                         ? DateTime.Parse(StudyDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
 
-            if (!Study.StudyDate.Equals(dicomStudyDate))
+            if (AreDifferent(Study.StudyDate, newDicomStudyDate))
             {
-                UpdateItem item = new UpdateItem(DicomTags.StudyDate, Study.StudyDate, dicomStudyDate);
+                UpdateItem item = new UpdateItem(DicomTags.StudyDate, Study.StudyDate, newDicomStudyDate);
                 changes.Add(item);
             }
 
@@ -190,7 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             int ss = int.Parse(StudyTimeSeconds.Text);
             String dicomStudyTime = String.Format("{0:00}{1:00}{2:00}", hh, mm, ss);
 
-            if (!Study.StudyTime.Equals(dicomStudyTime))
+            if (AreDifferent(Study.StudyTime, dicomStudyTime))
             {
                 UpdateItem item = new UpdateItem(DicomTags.StudyTime, Study.StudyTime, dicomStudyTime);
                 changes.Add(item);
