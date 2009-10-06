@@ -33,7 +33,8 @@ namespace ClearCanvas.Ris.Client
 
 			var remoteFileUrl = ftp.GetFullUrl(documentSummary.DataRelativeUrl);
 
-			var localFilePath = Path.GetTempFileName();
+			var fileName = Path.GetFileName(remoteFileUrl);
+			var localFilePath = Path.Combine(Path.GetTempPath(), fileName);
 			var requests = new List<FileTransferRequest>
 				{
 					new FileTransferRequest(remoteFileUrl, localFilePath, FileTransferRequest.TransferMode.Download)
