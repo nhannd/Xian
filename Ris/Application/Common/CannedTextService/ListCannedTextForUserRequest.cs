@@ -35,17 +35,20 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.CannedTextService
 {
     [DataContract]
-    public class ListCannedTextRequest : ListRequestBase
+    public class ListCannedTextForUserRequest : ListRequestBase
     {
-        public ListCannedTextRequest()
+        public ListCannedTextForUserRequest()
         {
         }
 
-        public ListCannedTextRequest(SearchResultPage page)
+        public ListCannedTextForUserRequest(SearchResultPage page)
             :base(page)
         {
         }
 
+		/// <summary>
+		/// Name filter, exact match. Optional.
+		/// </summary>
         [DataMember]
         public string Name;
     }

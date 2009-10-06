@@ -36,9 +36,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.CannedTextService
 {
 	[DataContract]
-	public class ListCannedTextResponse : DataContractBase
+	public class ListCannedTextForUserResponse : DataContractBase
 	{
-		public ListCannedTextResponse(List<CannedTextSummary> cannedTexts)
+		public ListCannedTextForUserResponse(List<CannedTextSummary> cannedTexts)
 		{
 			this.CannedTexts = cannedTexts;
 		}

@@ -39,15 +39,15 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
     public interface ICannedTextService
     {
 		/// <summary>
-		/// List all the canned text subscribe by the current staff
+		/// List all the canned text subscribe by the current user.
 		/// </summary>
-		/// <param name="request"><see cref="ListCannedTextRequest"/></param>
-		/// <returns><see cref="ListCannedTextResponse"/></returns>
+		/// <param name="request"><see cref="ListCannedTextForUserRequest"/></param>
+		/// <returns><see cref="ListCannedTextForUserResponse"/></returns>
 		[OperationContract]
-		ListCannedTextResponse ListCannedText(ListCannedTextRequest request);
+		ListCannedTextForUserResponse ListCannedTextForUser(ListCannedTextForUserRequest request);
 
 		/// <summary>
-		/// Loads all form data needed to edit a CannedText
+		/// Loads all form data needed to edit a canned text.
 		/// </summary>
 		/// <param name="request"><see cref="GetCannedTextEditFormDataRequest"/></param>
 		/// <returns><see cref="GetCannedTextEditFormDataResponse"/></returns>
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		GetCannedTextEditFormDataResponse GetCannedTextEditFormData(GetCannedTextEditFormDataRequest request);
 
 		/// <summary>
-		/// Load details for a specified canned text
+		/// Load details for a specified canned text.
 		/// </summary>
 		/// <param name="request"><see cref="LoadCannedTextForEditRequest"/></param>
 		/// <returns><see cref="LoadCannedTextForEditResponse"/></returns>
@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request);
 
 		/// <summary>
-		/// Adds a new canned text
+		/// Adds a new canned text.
 		/// </summary>
 		/// <param name="request"><see cref="AddCannedTextRequest"/></param>
 		/// <returns><see cref="AddCannedTextResponse"/></returns>
@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		AddCannedTextResponse AddCannedText(AddCannedTextRequest request);
 
 		/// <summary>
-		/// Updates an existing canned text
+		/// Updates an existing canned text.
 		/// </summary>
 		/// <param name="request"><see cref="UpdateCannedTextRequest"/></param>
 		/// <returns><see cref="UpdateCannedTextResponse"/></returns>
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		UpdateCannedTextResponse UpdateCannedText(UpdateCannedTextRequest request);
 
 		/// <summary>
-		/// Deletes an existing CannedText.
+		/// Deletes an existing canned text.
 		/// </summary>
 		/// <param name="request"><see cref="DeleteCannedTextRequest"/></param>
 		/// <returns><see cref="DeleteCannedTextResponse"/></returns>

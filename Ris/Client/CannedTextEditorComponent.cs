@@ -304,6 +304,16 @@ namespace ClearCanvas.Ris.Client
             get { return _staffGroupChoices; }
         }
 
+		public string FormatStaffGroup(object item)
+		{
+			if (!(item is StaffGroupSummary))
+				return item.ToString(); // place-holder items
+
+			var staffGroup = (StaffGroupSummary)item;
+			return staffGroup.Name;
+		}
+
+
         public IList CategoryChoices
         {
             get { return _categoryChoices; }
@@ -324,38 +334,10 @@ namespace ClearCanvas.Ris.Client
                     _cannedTextDetail.StaffGroup = null;
 
                 // Find a list of canned texts that matches the name
-                List<CannedTextSummary> cannedTexts = null;
-                Platform.GetService<ICannedTextService>(
-                	service =>
-                	{
-                		var response = service.ListCannedText(new ListCannedTextRequest {Name = this.Name});
-                		cannedTexts = response.CannedTexts;
-                	});
+//                if(!ValidateStuff())
+//					return;
 
-                // If updating an existing canned text, remove the one being edited from the list
-                if (!_isNew)
-                {
-                    CollectionUtils.Remove(cannedTexts, c => c.CannedTextRef.Equals(_cannedTextRef, true));
-                }
-
-                // Warn user if there are other cannedtext (for which the user has access to) with the same name
-                if (cannedTexts.Count > 0)
-                {
-                    var messageBuilder = new StringBuilder();
-
-                    messageBuilder.AppendLine(SR.MessageWarningDuplicateCannedTextName);
-                    messageBuilder.AppendLine();
-                    CollectionUtils.ForEach(cannedTexts,
-                                            c =>
-                                            messageBuilder.AppendLine(c.IsPersonal
-                                                                      	? SR.ColumnPersonal
-                                                                      	: c.StaffGroup.Name));
-
-                    if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
-                        return;
-                }
-
-                // Commit the changes
+            	// Commit the changes
                 Platform.GetService<ICannedTextService>(
                 	service =>
                 	{
@@ -387,7 +369,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public void Cancel()
+    	public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.None;
             Host.Exit();
@@ -395,13 +377,39 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        public string FormatStaffGroup(object item)
-        {
-        	if (!(item is StaffGroupSummary))
-        		return item.ToString(); // place-holder items
+		private bool ValidateStuff()
+		{
+			List<CannedTextSummary> cannedTexts = null;
+			Platform.GetService<ICannedTextService>(
+				service =>
+				{
+					var response = service.ListCannedText(new ListCannedTextRequest { Name = this.Name });
+					cannedTexts = response.CannedTexts;
+				});
 
-        	var staffGroup = (StaffGroupSummary)item;
-        	return staffGroup.Name;
-        }
-    }
+			// If updating an existing canned text, remove the one being edited from the list
+			if (!_isNew)
+			{
+				CollectionUtils.Remove(cannedTexts, c => c.CannedTextRef.Equals(_cannedTextRef, true));
+			}
+
+			// Warn user if there are other cannedtext (for which the user has access to) with the same name
+			if (cannedTexts.Count > 0)
+			{
+				var messageBuilder = new StringBuilder();
+
+				messageBuilder.AppendLine(SR.MessageWarningDuplicateCannedTextName);
+				messageBuilder.AppendLine();
+				CollectionUtils.ForEach(cannedTexts,
+										c =>
+										messageBuilder.AppendLine(c.IsPersonal
+																	? SR.ColumnPersonal
+																	: c.StaffGroup.Name));
+
+				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
+					return false;
+			}
+			return true;
+		}
+	}
 }

@@ -50,12 +50,12 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
         #region ICannedTextService Members
 
         [ReadOperation]
-        public ListCannedTextResponse ListCannedText(ListCannedTextRequest request)
+        public ListCannedTextForUserResponse ListCannedTextForUser(ListCannedTextForUserRequest request)
         {
-            CannedTextAssembler assembler = new CannedTextAssembler();
-            List<CannedTextSearchCriteria> criterias = new List<CannedTextSearchCriteria>();
+            var assembler = new CannedTextAssembler();
+            var criterias = new List<CannedTextSearchCriteria>();
 
-            CannedTextSearchCriteria personalCannedTextCriteria = new CannedTextSearchCriteria();
+            var personalCannedTextCriteria = new CannedTextSearchCriteria();
             personalCannedTextCriteria.Staff.EqualTo(this.CurrentUserStaff);
             if (!string.IsNullOrEmpty(request.Name))
                 personalCannedTextCriteria.Name.EqualTo(request.Name);
@@ -63,42 +63,36 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 
             if (this.CurrentUserStaff.Groups != null && this.CurrentUserStaff.Groups.Count > 0)
             {
-                CannedTextSearchCriteria groupCannedTextCriteria = new CannedTextSearchCriteria();
+                var groupCannedTextCriteria = new CannedTextSearchCriteria();
                 groupCannedTextCriteria.StaffGroup.In(this.CurrentUserStaff.Groups);
                 if (!string.IsNullOrEmpty(request.Name))
                     groupCannedTextCriteria.Name.EqualTo(request.Name);
                 criterias.Add(groupCannedTextCriteria);
             }
 
-            IList<CannedText> results = PersistenceContext.GetBroker<ICannedTextBroker>().Find(criterias.ToArray(), request.Page);
+            var results = PersistenceContext.GetBroker<ICannedTextBroker>().Find(criterias.ToArray(), request.Page);
 
-            List<CannedTextSummary> staffCannedText = CollectionUtils.Map<CannedText, CannedTextSummary>(results,
-                delegate(CannedText cannedText)
-                    {
-                        return assembler.GetCannedTextSummary(cannedText, this.PersistenceContext);
-                    });
+            var staffCannedText = CollectionUtils.Map<CannedText, CannedTextSummary>(results,
+				cannedText => assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
 
-            return new ListCannedTextResponse(staffCannedText);
+            return new ListCannedTextForUserResponse(staffCannedText);
         }
 
         [ReadOperation]
         public GetCannedTextEditFormDataResponse GetCannedTextEditFormData(GetCannedTextEditFormDataRequest request)
         {
-            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+            var groupAssembler = new StaffGroupAssembler();
 
             return new GetCannedTextEditFormDataResponse(
                 CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
                     this.CurrentUserStaff.ActiveGroups,	// only active staff groups should be choosable
-                    delegate(StaffGroup group)
-                        {
-                            return groupAssembler.CreateSummary(group);
-                        }));
+                    groupAssembler.CreateSummary));
         }
 
         [ReadOperation]
         public LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request)
         {
-            ICannedTextBroker broker = PersistenceContext.GetBroker<ICannedTextBroker>();
+            var broker = PersistenceContext.GetBroker<ICannedTextBroker>();
             CannedText cannedText;
             
             if (request.CannedTextRef != null)
@@ -107,7 +101,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
             }
             else
             {
-                CannedTextSearchCriteria criteria = new CannedTextSearchCriteria();
+                var criteria = new CannedTextSearchCriteria();
 
                 if (!string.IsNullOrEmpty(request.Name))
                     criteria.Name.EqualTo(request.Name);
@@ -124,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
                 cannedText = broker.FindOne(criteria);
             }
 
-            CannedTextAssembler assembler = new CannedTextAssembler();
+            var assembler = new CannedTextAssembler();
             return new LoadCannedTextForEditResponse(assembler.GetCannedTextDetail(cannedText, this.PersistenceContext));
         }
 
@@ -141,8 +135,8 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
                 if (string.IsNullOrEmpty(request.Detail.Category))
                     throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
 
-                CannedTextAssembler assembler = new CannedTextAssembler();
-                CannedText cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
+                var assembler = new CannedTextAssembler();
+                var cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
                 PersistenceContext.Lock(cannedText, DirtyState.New);
                 PersistenceContext.SynchState();
@@ -151,7 +145,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
             }
             catch (EntityValidationException)
             {
-                string text = request.Detail.IsPersonal ?
+                var text = request.Detail.IsPersonal ?
                     string.Format("staff {0}, {1}", this.CurrentUserStaff.Name.FamilyName, this.CurrentUserStaff.Name.GivenName) :
                     string.Format("{0} group", request.Detail.StaffGroup.Name);
 
@@ -164,9 +158,9 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
         {
             CheckCannedTextWriteAccess(request.Detail);
 
-            CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
+            var cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
 
-            CannedTextAssembler assembler = new CannedTextAssembler();
+            var assembler = new CannedTextAssembler();
             assembler.UpdateCannedText(cannedText, request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
             PersistenceContext.SynchState();
@@ -176,7 +170,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
         [UpdateOperation]
         public DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request)
         {
-            CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
+            var cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
             CheckCannedTextWriteAccess(cannedText);
 
             PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
