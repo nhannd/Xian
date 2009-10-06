@@ -136,11 +136,21 @@ namespace ClearCanvas.Ris.Client
     [ExceptionPolicyFor(typeof(MessageSecurityException))]
     public class MessageSecurityExceptionPolicy : IExceptionPolicy
     {
-        public void Handle(Exception e, IExceptionHandlingContext exceptonHandlingContext)
+        public void Handle(Exception e, IExceptionHandlingContext context)
         {
-            // typically this means authentication failed, which is usually because
-            // the session has expired
-            SessionManager.RenewLogin();
+            try
+            {
+                // typically this means authentication failed, which is usually because
+                // the session has expired
+                SessionManager.RenewLogin();
+            }
+            catch (Exception)
+            {
+                // if we get another exception attempting to renew the login, then we just log the original exception
+                // and inform user that there is a problem communicating with server
+                context.Log(LogLevel.Error, e);
+                context.ShowMessageBox(SR.MessageCommunicationError, true);
+            }
         }
     }
 }
