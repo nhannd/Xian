@@ -161,14 +161,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (rowValues)
 			{
 				ImageOrientationPatient.Directions primary = imageOrientationPatient.GetPrimaryRowDirection(negativeDirection);
-				ImageOrientationPatient.Directions secondary = imageOrientationPatient.GetSecondaryRowDirection(negativeDirection);
+				ImageOrientationPatient.Directions secondary = imageOrientationPatient.GetSecondaryRowDirection(negativeDirection, 1);
 				markerText += GetMarkerText(primary);
 				markerText += GetMarkerText(secondary);
 			}
 			else
 			{
 				ImageOrientationPatient.Directions primary = imageOrientationPatient.GetPrimaryColumnDirection(negativeDirection);
-				ImageOrientationPatient.Directions secondary = imageOrientationPatient.GetSecondaryColumnDirection(negativeDirection);
+				ImageOrientationPatient.Directions secondary = imageOrientationPatient.GetSecondaryColumnDirection(negativeDirection, 1);
 				markerText += GetMarkerText(primary);
 				markerText += GetMarkerText(secondary);
 			}

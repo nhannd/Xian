@@ -81,12 +81,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// assign Image Orientation (Patient)
 			Matrix resliceAxesPatientOrientation = _volume.Volume.RotateToPatientOrientation(_resliceMatrix);
-			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(0, resliceAxesPatientOrientation[0, 0]);
-			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(1, resliceAxesPatientOrientation[0, 1]);
-			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(2, resliceAxesPatientOrientation[0, 2]);
-			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(3, resliceAxesPatientOrientation[1, 0]);
-			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(4, resliceAxesPatientOrientation[1, 1]);
-			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat64(5, resliceAxesPatientOrientation[1, 2]);
+			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(0, resliceAxesPatientOrientation[0, 0]);
+			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(1, resliceAxesPatientOrientation[0, 1]);
+			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(2, resliceAxesPatientOrientation[0, 2]);
+			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(3, resliceAxesPatientOrientation[1, 0]);
+			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(4, resliceAxesPatientOrientation[1, 1]);
+			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(5, resliceAxesPatientOrientation[1, 2]);
 
 			// assign Image Position (Patient)
 			Vector3D topLeftOfSlicePatient = GetTopLeftOfSlicePatient(frameSize, throughPoints[0], volume, slicerParams);

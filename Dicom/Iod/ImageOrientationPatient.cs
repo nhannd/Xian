@@ -265,10 +265,31 @@ namespace ClearCanvas.Dicom.Iod
 		/// <param name="opposingDirection">indicates the opposite direction to the secondary direction should be returned.
 		/// For example, if the secondary direction is Anterior, then Posterior will be returned if this parameter is true.</param>
 		/// <returns>the direction, in terms of the Patient based coordinate system</returns>
-
 		public Directions GetSecondaryRowDirection(bool opposingDirection)
 		{
 			return (Directions)(_secondaryRowDirection * (opposingDirection ? -1 : 1));
+		}
+
+		/// <summary>
+		/// Gets the secondary direction, in terms of the Patient based coordinate system, of the first row of the Image (increasing x).
+		/// </summary>
+		/// <param name="opposingDirection">indicates the opposite direction to the secondary direction should be returned.
+		/// For example, if the secondary direction is Anterior, then Posterior will be returned if this parameter is true.</param>
+		/// <param name="degreesTolerance">Specifies the angular tolerance in degrees. If the secondary directional cosine
+		/// does not exceed this value, then the result will be <see cref="Directions.None"/>.</param>
+		/// <returns>the direction, in terms of the Patient based coordinate system</returns>
+		public Directions GetSecondaryRowDirection(bool opposingDirection, double degreesTolerance)
+		{
+			// JY: Note that the same tolerance functionality is purposefully not available to the primary direction
+			if (degreesTolerance < 0 || degreesTolerance > 10)
+				throw new ArgumentOutOfRangeException("degreesTolerance", degreesTolerance, "Value must be between 0 and 10.");
+			double[] rowCosines = new double[] {_rowX, _rowY, _rowZ};
+			int[] rowCosineSortedIndices = BubbleSortCosineIndices(rowCosines);
+
+			// since degreesTolerance is [0,10], the RHS will always be positive
+			if (Math.Abs(rowCosines[rowCosineSortedIndices[1]]) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
+				return Directions.None;
+			return this.GetSecondaryRowDirection(opposingDirection);
 		}
 
 		/// <summary>
@@ -280,6 +301,28 @@ namespace ClearCanvas.Dicom.Iod
 		public Directions GetSecondaryColumnDirection(bool opposingDirection)
 		{
 			return (Directions)(_secondaryColumnDirection * (opposingDirection ? -1 : 1));
+		}
+
+		/// <summary>
+		/// Gets the secondary direction, in terms of the Patient based coordinate system, of the first column of the Image (increasing y).
+		/// </summary>
+		/// <param name="opposingDirection">indicates the opposite direction to the secondary direction should be returned.
+		/// For example, if the secondary direction is Anterior, then Posterior will be returned if this parameter is true.</param>
+		/// <param name="degreesTolerance">Specifies the angular tolerance in degrees. If the secondary directional cosine
+		/// does not exceed this value, then the result will be <see cref="Directions.None"/>.</param>
+		/// <returns>the direction, in terms of the Patient based coordinate system</returns>
+		public Directions GetSecondaryColumnDirection(bool opposingDirection, double degreesTolerance)
+		{
+			// JY: Note that the same tolerance functionality is purposefully not available to the primary direction
+			if (degreesTolerance < 0 || degreesTolerance > 10)
+				throw new ArgumentOutOfRangeException("degreesTolerance", degreesTolerance, "Value must be between 0 and 10.");
+			double[] columnCosines = new double[] {_columnX, _columnY, _columnZ};
+			int[] columnCosineSortedIndices = BubbleSortCosineIndices(columnCosines);
+
+			// since degreesTolerance is [0,10], the RHS will always be positive
+			if (Math.Abs(columnCosines[columnCosineSortedIndices[1]]) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
+				return Directions.None;
+			return this.GetSecondaryRowDirection(opposingDirection);
 		}
 
 		#region IEquatable<ImageOrientationPatient> Members
