@@ -1704,8 +1704,10 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: November 19, 2007
--- Update date: Oct 01, 2008
+-- Update date: Oct 06, 2009
 -- Description:	Completely delete a Study from the database
+-- History
+--	Oct 06, 2009:  Delete StudyHistory record if DestStudyStorageGUID matches
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -1758,7 +1760,7 @@ BEGIN
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
 	DELETE FROM StudyHistory
-	WHERE StudyStorageGUID = @StudyStorageGUID
+	WHERE StudyStorageGUID = @StudyStorageGUID OR DestStudyStorageGUID=@StudyStorageGUID
 
 	DELETE FROM StudyIntegrityQueueUid
 	WHERE StudyIntegrityQueueGUID IN (SELECT GUID from StudyIntegrityQueue WHERE StudyStorageGUID = @StudyStorageGUID)
