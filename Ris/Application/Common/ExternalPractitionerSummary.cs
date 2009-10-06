@@ -30,74 +30,72 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ExternalPractitionerSummary : DataContractBase, ICloneable, IEquatable<ExternalPractitionerSummary>
-    {
-        public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, string licenseNumber, string billingNumber,
+	[DataContract]
+	public class ExternalPractitionerSummary : DataContractBase, ICloneable, IEquatable<ExternalPractitionerSummary>
+	{
+		public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, string licenseNumber, string billingNumber,
 			bool deactivated)
-        {
-            this.PractitionerRef = pracRef;
-            this.Name = personNameDetail;
-            this.LicenseNumber = licenseNumber;
-            this.BillingNumber = billingNumber;
-        	this.Deactivated = deactivated;
-        }
+		{
+			this.PractitionerRef = pracRef;
+			this.Name = personNameDetail;
+			this.LicenseNumber = licenseNumber;
+			this.BillingNumber = billingNumber;
+			this.Deactivated = deactivated;
+		}
 
-        public ExternalPractitionerSummary()
-        {
-        }
+		public ExternalPractitionerSummary()
+		{
+		}
 
-        [DataMember]
-        public EntityRef PractitionerRef;
+		[DataMember]
+		public EntityRef PractitionerRef;
 
-        [DataMember]
-        public PersonNameDetail Name;
+		[DataMember]
+		public PersonNameDetail Name;
 
-        [DataMember]
-        public string LicenseNumber;
+		[DataMember]
+		public string LicenseNumber;
 
-        [DataMember]
-        public string BillingNumber;
+		[DataMember]
+		public string BillingNumber;
 
 		[DataMember]
 		public bool Deactivated;
-		
+
 		public bool Equals(ExternalPractitionerSummary externalPractitionerSummary)
-        {
-            if (externalPractitionerSummary == null) return false;
-            return Equals(PractitionerRef, externalPractitionerSummary.PractitionerRef);
-        }
+		{
+			if (externalPractitionerSummary == null) return false;
+			return Equals(PractitionerRef, externalPractitionerSummary.PractitionerRef);
+		}
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            return Equals(obj as ExternalPractitionerSummary);
-        }
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as ExternalPractitionerSummary);
+		}
 
-        public override int GetHashCode()
-        {
-            return PractitionerRef.GetHashCode();
-        }
+		public override int GetHashCode()
+		{
+			return PractitionerRef.GetHashCode();
+		}
 
-        #region ICloneable Members
+		#region ICloneable Members
 
-        public object Clone()
-        {
-            return new ExternalPractitionerSummary(
+		public object Clone()
+		{
+			return new ExternalPractitionerSummary(
 				this.PractitionerRef,
 				(PersonNameDetail)this.Name.Clone(),
 				this.LicenseNumber,
 				this.BillingNumber,
 				this.Deactivated);
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

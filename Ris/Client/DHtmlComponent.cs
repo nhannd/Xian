@@ -315,8 +315,11 @@ namespace ClearCanvas.Ris.Client
 			public void OpenPractitionerDetail(string jsml)
 			{
 				var practitionerSummary = JsmlSerializer.Deserialize<ExternalPractitionerSummary>(jsml);
-				var externalPractitionerEditorComponent = new ExternalPractitionerEditorComponent(practitionerSummary.PractitionerRef);
-				LaunchAsDialog(_component.Host.DesktopWindow, externalPractitionerEditorComponent, SR.TitleExternalPractitioner + " - " + PersonNameFormat.Format(practitionerSummary.Name));
+
+				ApplicationComponent.LaunchAsDialog(
+					_component.Host.DesktopWindow, 
+					new ExternalPractitionerOverviewComponent(practitionerSummary.PractitionerRef), 
+					SR.TitleExternalPractitioner + " - " + PersonNameFormat.Format(practitionerSummary.Name));
 			}
 
 			public void OnScriptCompleted()

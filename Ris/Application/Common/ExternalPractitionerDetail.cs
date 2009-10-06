@@ -29,59 +29,57 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ExternalPractitionerDetail : DataContractBase
-    {
-        public ExternalPractitionerDetail(
+	[DataContract]
+	public class ExternalPractitionerDetail : DataContractBase
+	{
+		public ExternalPractitionerDetail(
 			EntityRef practitionerRef,
-            PersonNameDetail personNameDetail,
-            string licenseNumber,
-            string billingNumber,
-            List<ExternalPractitionerContactPointDetail> contactPoints,
-            Dictionary<string, string> extendedProperties,
+			PersonNameDetail personNameDetail,
+			string licenseNumber,
+			string billingNumber,
+			List<ExternalPractitionerContactPointDetail> contactPoints,
+			Dictionary<string, string> extendedProperties,
 			bool deactivated)
-        {
-        	this.PractitionerRef = practitionerRef;
-            this.Name = personNameDetail;
-            this.LicenseNumber = licenseNumber;
-            this.BillingNumber = billingNumber;
-            this.ContactPoints = contactPoints;
-            this.ExtendedProperties = extendedProperties;
-        	this.Deactivated = deactivated;
-        }
+		{
+			this.PractitionerRef = practitionerRef;
+			this.Name = personNameDetail;
+			this.LicenseNumber = licenseNumber;
+			this.BillingNumber = billingNumber;
+			this.ContactPoints = contactPoints;
+			this.ExtendedProperties = extendedProperties;
+			this.Deactivated = deactivated;
+		}
 
-        public ExternalPractitionerDetail()
-        {
-            this.Name = new PersonNameDetail();
-            this.ContactPoints = new List<ExternalPractitionerContactPointDetail>();
-            this.ExtendedProperties = new Dictionary<string, string>();
-        }
+		public ExternalPractitionerDetail()
+		{
+			this.Name = new PersonNameDetail();
+			this.ContactPoints = new List<ExternalPractitionerContactPointDetail>();
+			this.ExtendedProperties = new Dictionary<string, string>();
+		}
 
 		[DataMember]
 		public EntityRef PractitionerRef;
 
 		[DataMember]
-        public PersonNameDetail Name;
+		public PersonNameDetail Name;
 
-        [DataMember]
-        public string LicenseNumber;
+		[DataMember]
+		public string LicenseNumber;
 
-        [DataMember]
-        public string BillingNumber;
+		[DataMember]
+		public string BillingNumber;
 
-        [DataMember]
-        public List<ExternalPractitionerContactPointDetail> ContactPoints;
+		[DataMember]
+		public List<ExternalPractitionerContactPointDetail> ContactPoints;
 
-        [DataMember]
-        public Dictionary<string, string> ExtendedProperties;
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
 
 		[DataMember]
 		public bool Deactivated;

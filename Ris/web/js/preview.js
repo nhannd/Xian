@@ -1762,3 +1762,108 @@ Preview.PhysiciansSection = function () {
 		}
 	};
 }();
+
+Preview.ExternalPractitionerSummary = function() {
+
+	var _detailsHtml = 
+		'<table cellspacing="5" class="PatientDemographicsTable">'+
+		'	<tr>'+
+		'		<td width="150" class="DemographicsLabel">License Number</td>'+
+		'		<td><div id="LicenseNumber"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td width="150" class="DemographicsLabel">Billing Number</td>'+
+		'		<td><div id="BillingNumber"/></td>'+
+		'	</tr>'+
+		'	</table>';
+
+	var _createBanner = function(element, externalPractitionerSummary)
+		{
+			var bannerContainer = document.createElement("div");
+			element.appendChild(bannerContainer);
+
+			var bannerName = document.createElement("div");
+			bannerContainer.appendChild(bannerName);
+			Preview.BannerSection.create(bannerName, Ris.formatPersonName(externalPractitionerSummary.Name), "");
+
+			var bannerDetails = document.createElement("div");
+			bannerDetails.innerHTML = _detailsHtml;
+			bannerContainer.appendChild(bannerDetails);
+
+			Field.setValue($("LicenseNumber"), externalPractitionerSummary.LicenseNumber);
+			Field.setValue($("BillingNumber"), externalPractitionerSummary.BillingNumber);
+		};
+
+	var _createContactPointTable = function(element, externalPractitionerSummary)
+		{
+			if(!externalPractitionerSummary.ContactPoints)
+				return;
+
+			var activeContactPoints = externalPractitionerSummary.ContactPoints.select(function(item) { return item.Deactivated == false; });
+
+			var htmlTable = Preview.ProceduresTableHelper.addTable(element, "ContactPointsTable");
+			var htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+				[
+					{
+						label: "Name",
+						cellType: "html",
+						getValue: function(item)
+						{
+							var name;
+							if(item.IsDefaultContactPoint)
+								name = item.Name + "[Default]";
+							else
+								name = item.Name;
+							return "<div class='DemographicsLabel'>" + name + "</div>"
+						}
+					},
+					{	label: "Contact Point",
+						cellType: "html",
+						getValue: function(item) 
+						{
+							var html = "";
+
+							html += "<table>";
+							if(item.Description)
+							{
+								html += "<tr>";
+								html += "	<td width='120' class='propertyname'>Description</td>";
+								html += "	<td >" + item.Description + "</td>";
+								html += "</tr>";
+							}
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Phone Number</td>";
+							html += "	<td width='200'>" + (Ris.formatTelephone(item.CurrentPhoneNumber) || "Not entered") + "</td>";
+							html += "</tr>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Fax Number</td>";
+							html += "	<td width='200'>" + (Ris.formatTelephone(item.CurrentFaxNumber) || "Not entered") + "</td>";
+							html += "</tr>";
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Address</td>";
+							html += "	<td width='200'>" + (Ris.formatAddress(item.CurrentAddress) || "Not entered") + "</td>";
+							html += "</tr>";
+							
+							html += "</table>";
+
+							return html;
+						}
+					}
+				]);
+			htmlTable.rowCycleClassNames = ["row0", "row1"];
+			htmlTable.bindItems(activeContactPoints);
+
+			Preview.SectionContainer.create(htmlTable, "Contact Points");
+		};
+
+	return {
+		create: function(element, externalPractitionerSummary) {
+
+			if(externalPractitionerSummary == null)
+				return;
+
+			_createBanner(element, externalPractitionerSummary);
+			_createContactPointTable(element, externalPractitionerSummary);
+		}
+	};
+}();

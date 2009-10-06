@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS")]
 		[global::System.Configuration.SettingsDescription("Provides base URL for HtmlApplicationComponent web resources.  URL should specify protocol (i.e. http://server, file:///C:/directory, etc.)")]
 		public string BaseUrl
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("banner.htm")]
 		public string BannerPageUrl
 		{
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("downtime-form-template.htm")]
 		public string DowntimeFormTemplatePageUrl
 		{
@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("PatientProfileDiff.html")]
 		public string PatientReconciliationPageUrl
 		{
@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("work-queue-preview.htm")]
 		public string WorkQueuePreviewPageUrl
 		{
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("order-note-preview.htm")]
 		public string OrderNotePreviewPageUrl
 		{
@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("worklist-summary.htm")]
 		public string WorklistSummaryPageUrl
 		{
@@ -131,19 +131,29 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("attached-document-preview.htm")]
-        public string AttachedDocumentPreviewUrl
-        {
-            get
-            {
-                return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["AttachedDocumentPreviewUrl"]));
-            }
-        }
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("attached-document-preview.htm")]
+		public string AttachedDocumentPreviewUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["AttachedDocumentPreviewUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
+		[global::System.Configuration.DefaultSettingValueAttribute("external-practitioner-overview.htm")]
+		public string ExternalPractitionerOverviewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ExternalPractitionerOverviewPageUrl"]));
+			}
+		}
 
 		#region Home Page Preview settings
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/registration.htm")]
 		public string RegistrationFolderSystemUrl
 		{
@@ -153,7 +163,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/booking.htm")]
 		public string BookingFolderSystemUrl
 		{
@@ -163,7 +173,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/performing.htm")]
 		public string PerformingFolderSystemUrl
 		{
@@ -173,7 +183,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/protocolling.htm")]
 		public string ProtocollingFolderSystemUrl
 		{
@@ -183,7 +193,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/reporting.htm")]
 		public string ReportingFolderSystemUrl
 		{
@@ -193,7 +203,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/transcription.htm")]
 		public string TranscriptionFolderSystemUrl
 		{
@@ -203,7 +213,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/emergency.htm")]
 		public string EmergencyFolderSystemUrl
 		{
@@ -213,7 +223,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/order-notes.htm")]
 		public string OrderNoteboxFolderSystemUrl
 		{
@@ -227,7 +237,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Patient Biography settings
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/order-detail.htm")]
 		public string BiographyOrderDetailPageUrl
 		{
@@ -237,7 +247,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/visit-detail.htm")]
 		public string BiographyVisitDetailPageUrl
 		{
@@ -247,7 +257,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/patient-profile-detail.htm")]
 		public string BiographyPatientProfilePageUrl
 		{
@@ -257,7 +267,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/report-detail.htm")]
 		public string BiographyReportDetailPageUrl
 		{
@@ -267,7 +277,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/workflow-history.htm")]
 		public string WorkflowHistoryPageUrl
 		{
@@ -282,7 +292,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Reporting Settings
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("reporting/order-detail.htm")]
 		public string ReportingOrderDetailPageUrl
 		{
@@ -292,7 +302,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("reporting/default-report-editor.htm")]
 		public string DefaultReportEditorPageUrl
 		{
@@ -302,7 +312,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("reporting/default-addendum-editor.htm")]
 		public string DefaultAddendumEditorPageUrl
 		{
@@ -312,7 +322,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("reporting/report-preview.htm")]
 		public string ReportPreviewPageUrl
 		{
@@ -322,7 +332,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("reporting/prior-report-preview.htm")]
 		public string PriorReportPreviewPageUrl
 		{
@@ -332,7 +342,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("reporting/print-report-preview.htm")]
 		public string PrintReportPreviewUrl
 		{
@@ -346,7 +356,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Protocolling Settings
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("protocolling/order-detail.htm")]
 		public string ProtocollingOrderDetailPageUrl
 		{
@@ -360,7 +370,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Performing Settings
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("performing/order-detail.htm")]
 		public string PerformingOrderDetailPageUrl
 		{
@@ -370,7 +380,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("performing/order-additional-info.htm")]
 		public string OrderAdditionalInfoPageUrl
 		{
@@ -380,7 +390,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("forms/performing/mpps.htm")]
 		public string DetailsPageUrl
 		{
@@ -394,7 +404,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Transcription Settings
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.ApplicationScopedSettingAttribute]
 		[global::System.Configuration.DefaultSettingValueAttribute("transcription/report-preview.htm")]
 		public string TranscriptionPreviewPageUrl
 		{
@@ -408,7 +418,7 @@ namespace ClearCanvas.Ris.Client
 
 	public static class WebResourceAbsoluteUrlHelper
 	{
-		private static readonly char[] _slash = new char[] {'/'};
+		private static readonly char[] _slash = new[] { '/' };
 
 		public static string FromRelative(string relativeUrl)
 		{
