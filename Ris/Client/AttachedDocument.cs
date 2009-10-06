@@ -43,34 +43,5 @@ namespace ClearCanvas.Ris.Client
 
 			return localFilePath;
 		}
-
-		/// <summary>
-		/// Upload a file to a specified relativeUrl.
-		/// </summary>
-		/// <param name="localFile"></param>
-		/// <param name="relativeUrl"></param>
-		/// <param name="deleteAfterUpload"></param>
-		public static void UploadFile(string localFile, string relativeUrl, bool deleteAfterUpload)
-		{
-			Platform.CheckForNullReference(relativeUrl, "relativeUrl");
-
-			var ftp = new FtpFileAccessProvider(
-				AttachedDocumentFtpSettings.Default.FtpUserId,
-				AttachedDocumentFtpSettings.Default.FtpPassword,
-				AttachedDocumentFtpSettings.Default.FtpBaseUrl,
-				AttachedDocumentFtpSettings.Default.FtpPassiveMode);
-
-			var remoteFileUrl = ftp.GetFullUrl(relativeUrl);
-
-			var requests = new List<FileTransferRequest>
-				{
-					new FileTransferRequest(remoteFileUrl, localFile, FileTransferRequest.TransferMode.Upload)
-				};
-
-			ftp.TransferFiles(requests);
-
-			if (deleteAfterUpload)
-				File.Delete(localFile);
-		}
 	}
 }
