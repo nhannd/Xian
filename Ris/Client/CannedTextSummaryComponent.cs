@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client
 	/// CannedTextSummaryComponent class
 	/// </summary>
 	[AssociateView(typeof(CannedTextSummaryComponentViewExtensionPoint))]
-	public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable, ListCannedTextRequest>
+	public class CannedTextSummaryComponent : SummaryComponentBase<CannedTextSummary, CannedTextTable, ListCannedTextForUserRequest>
 	{
 		private readonly string _initialFilterText;
 
@@ -240,11 +240,11 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
 		/// <returns></returns>
-		protected override IList<CannedTextSummary> ListItems(ListCannedTextRequest request)
+		protected override IList<CannedTextSummary> ListItems(ListCannedTextForUserRequest request)
 		{
-			ListCannedTextResponse listResponse = null;
+			ListCannedTextForUserResponse listResponse = null;
 			Platform.GetService<ICannedTextService>(
-				service => listResponse = service.ListCannedText(request));
+				service => listResponse = service.ListCannedTextForUser(request));
 			return listResponse.CannedTexts;
 		}
 

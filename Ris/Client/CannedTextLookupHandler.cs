@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<ICannedTextService>(
 				service =>
 				{
-					var response = service.ListCannedText(new ListCannedTextRequest());
+					var response = service.ListCannedTextForUser(new ListCannedTextForUserRequest());
 					cannedTexts = CollectionUtils.Map(response.CannedTexts, (CannedTextSummary s) => new CannedText(s));
 				});
 
@@ -218,9 +218,9 @@ namespace ClearCanvas.Ris.Client
             	service =>
             	{
             		// Ask for maximum of 2 rows
-            		var request = new ListCannedTextRequest {Name = query, Page = new SearchResultPage(-1, 2)};
+            		var request = new ListCannedTextForUserRequest {Name = query, Page = new SearchResultPage(-1, 2)};
 
-            		var response = service.ListCannedText(request);
+            		var response = service.ListCannedTextForUser(request);
 
             		// the name is resolved only if there is one match
             		if (response.CannedTexts.Count == 1)

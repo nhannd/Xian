@@ -383,7 +383,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<ICannedTextService>(
 				service =>
 				{
-					var response = service.ListCannedText(new ListCannedTextRequest { Name = this.Name });
+					var response = service.ListCannedTextForUser(new ListCannedTextForUserRequest { Name = this.Name });
 					cannedTexts = response.CannedTexts;
 				});
 
