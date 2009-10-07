@@ -324,8 +324,8 @@
     <Compile Include="Shreds\ShredExtensionPoint.cs" />
     <Compile Include="Utilities\FtpFileAccessProvider.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
-    <Compile Include="Utilities\IRemoteFileAccessProvider.cs" />
     <Compile Include="Utilities\RemoteFileAccessProvider.cs" />
+    <Compile Include="Utilities\HttpFileAccessProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

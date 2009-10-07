@@ -6,154 +6,66 @@ using System.IO;
 namespace ClearCanvas.Common.Utilities
 {
 	/// <summary>
-	/// This file access remote files using the FTP protocol.
+	/// Provide access to remote files using the FTP protocol.
 	/// </summary>
 	public class FtpFileAccessProvider : RemoteFileAccessProvider
 	{
+		private readonly string _userId;
+		private readonly string _password;
 		private readonly bool _usePassive;
+
+		// Keep track of the url created to reduce the number of FTP mkdir call
+		private readonly List<string> _urlCreated;
+
+		/// <summary>
+		/// Get the base Uri for the FTP site.
+		/// </summary>
+		public Uri BaseUri { get; private set; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public FtpFileAccessProvider(string userId, string password, string remoteUrlBase, bool usePassive)
-			: base(userId, password, remoteUrlBase)
+		public FtpFileAccessProvider(string userId, string password, string baseUri, bool usePassive)
 		{
+			_userId = userId;
+			_password = password;
 			_usePassive = usePassive;
-		}
-
-		#region Overrides
-
-		/// <summary>
-		/// Create a directory remotely.
-		/// </summary>
-		/// <param name="remotePath"></param>
-		public override void CreateRemoteDirectory(string remotePath)
-		{
-			try
-			{
-				var ftpRequest = (FtpWebRequest)WebRequest.Create(remotePath);
-				ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
-				ftpRequest.UseBinary = true;
-				ftpRequest.UsePassive = _usePassive;
-				ftpRequest.Credentials = new NetworkCredential(this.UserId, this.Password);
-
-				var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-				ftpResponse.Close();
-			}
-			catch (Exception)
-			{
-				// Purposely swallowing exception here because the remote folders may have existed already because of race condition.
-				// For example, two users creating the folders at a similar time.
-				// But this is okay because if there is a real problem creating folders, 
-				// another exception will be thrown when uploading files
-			}
+			BaseUri = new Uri(baseUri);
+			_urlCreated = new List<string>();
 		}
 
 		/// <summary>
-		/// List the files in the remote path.
+		/// Upload one file from local to remote.
 		/// </summary>
-		/// <param name="remotePath"></param>
-		public override List<string> ListRemoteFiles(string remotePath)
+		/// <param name="request"></param>
+		protected override void Upload(FileTransferRequest request)
 		{
-			var remoteFiles = new List<string>();
-
-			var ftpRequest = (FtpWebRequest) WebRequest.Create(remotePath);
-			ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
-			ftpRequest.UseBinary = true;
-			ftpRequest.UsePassive = _usePassive;
-			ftpRequest.Credentials = new NetworkCredential(this.UserId, this.Password);
-
-			var ftpResponse = (FtpWebResponse) ftpRequest.GetResponse();
-			var ftpResponseReader = new StreamReader(ftpResponse.GetResponseStream());
-
-			var remoteFileName = ftpResponseReader.ReadLine();
-			while (!string.IsNullOrEmpty(remoteFileName))
-			{
-				remoteFiles.Add(remoteFileName);
-				remoteFileName = ftpResponseReader.ReadLine();
-			}
-
-			ftpResponseReader.Close();
-			ftpResponse.Close();
-
-			return remoteFiles;
-		}
-
-		/// <summary>
-		/// Transfer files between local and server.
-		/// </summary>
-		/// <param name="requests"></param>
-		public override void TransferFiles(List<FileTransferRequest> requests)
-		{
-			FileTransferRequest requestBeingProcessed = null;
-
-			try
-			{
-				// create all the directories at the destination before processing the actual file transfer
-				CreateRemoteDirectoryFromRequest(requests);
-
-				foreach (var request in requests)
-				{
-					requestBeingProcessed = request;
-					if (request.Mode == FileTransferRequest.TransferMode.Download)
-					{
-						var path = GetParentPath(request.LocalFile, LocalPathSeparator);
-						CreateLocalDirectory(path);
-
-						Download(request);
-					}
-					else
-					{
-						Upload(request);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				string message;
-				if (requestBeingProcessed == null)
-				{
-					message = SR.ExceptionFailedToInitializeFileTransfer;
-				}
-				else
-				{
-					message = requestBeingProcessed.Mode == FileTransferRequest.TransferMode.Download
-						 ? string.Format(SR.ExceptionFailedToTransferFile, requestBeingProcessed.RemoteFile, requestBeingProcessed.LocalFile)
-						 : string.Format(SR.ExceptionFailedToTransferFile, requestBeingProcessed.LocalFile, requestBeingProcessed.RemoteFile);
-				}
-
-				throw new Exception(message, e);
-			}
-		}
-
-		#endregion
-
-		private void Upload(FileTransferRequest request)
-		{
-			var localFileInf = new FileInfo(request.LocalFile);
-			var ftpRequest = (FtpWebRequest)WebRequest.Create(request.RemoteFile);
-			ftpRequest.Credentials = new NetworkCredential(this.UserId, this.Password);
-			ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
-			ftpRequest.UseBinary = true;
-			ftpRequest.UsePassive = _usePassive;
-			ftpRequest.ContentLength = localFileInf.Length;
-
-			const int bufferLength = 2048;
-			var buffer = new byte[bufferLength];
-
 			FileStream localFileStream = null;
 			Stream ftpRequestStream = null;
 
 			try
 			{
+				CreateRemoteDirectoryForFile(request.RemoteFile);
+
+				// Create a FTP request to upload file
+				var localFileInf = new FileInfo(request.LocalFile);
+				var ftpRequest = (FtpWebRequest)WebRequest.Create(request.RemoteFile);
+				ftpRequest.Credentials = new NetworkCredential(_userId, _password);
+				ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
+				ftpRequest.UseBinary = true;
+				ftpRequest.UsePassive = _usePassive;
+				ftpRequest.ContentLength = localFileInf.Length;
+
+				// Open ftp and local streams
 				localFileStream = localFileInf.OpenRead();
 				ftpRequestStream = ftpRequest.GetRequestStream();
 
-				// Read from the file stream a packet at a time till Stream content ends
+				// Write Content from the file stream to the FTP Upload Stream
+				const int bufferLength = 2048;
+				var buffer = new byte[bufferLength];
 				var localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
 				while (localFileContentLength != 0)
 				{
-					// Write Content from the file stream to the FTP Upload Stream
 					ftpRequestStream.Write(buffer, 0, localFileContentLength);
 					localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
 				}
@@ -168,27 +80,38 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
-		private void Download(FileTransferRequest request)
+		/// <summary>
+		/// Download one file from remote to local
+		/// </summary>
+		/// <param name="request"></param>
+		protected override void Download(FileTransferRequest request)
 		{
-			var ftpRequest = (FtpWebRequest)WebRequest.Create(request.RemoteFile);
-			ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
-			ftpRequest.UseBinary = true;
-			ftpRequest.UsePassive = _usePassive;
-			ftpRequest.Credentials = new NetworkCredential(this.UserId, this.Password);
-
-			const int bufferSize = 2048;
-			var buffer = new byte[bufferSize];
-
 			FtpWebResponse ftpResponse = null;
 			Stream ftpResponseStream = null;
 			FileStream localFileStream = null;
 
 			try
 			{
+				// Create a FTP request to download file
+				var ftpRequest = (FtpWebRequest)WebRequest.Create(request.RemoteFile);
+				ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
+				ftpRequest.UseBinary = true;
+				ftpRequest.UsePassive = _usePassive;
+				ftpRequest.Credentials = new NetworkCredential(_userId, _password);
+
+				// Create download directory if not already exist
+				var downloadDirectory = Path.GetDirectoryName(request.LocalFile);
+				if (!Directory.Exists(downloadDirectory))
+					Directory.CreateDirectory(downloadDirectory);
+
+				// Open ftp and local streams
 				ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
 				ftpResponseStream = ftpResponse.GetResponseStream();
 				localFileStream = new FileStream(request.LocalFile, FileMode.Create);
 
+				// Write Content from the FTP download stream to local file stream
+				const int bufferSize = 2048;
+				var buffer = new byte[bufferSize];
 				var readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
 				while (readCount > 0)
 				{
@@ -206,6 +129,44 @@ namespace ClearCanvas.Common.Utilities
 				
 				if (ftpResponse != null)
 					ftpResponse.Close();
+			}
+		}
+
+		private void CreateRemoteDirectoryForFile(Uri urlToCreate)
+		{
+			var uri = new Uri(this.BaseUri.ToString());
+
+			// Continues to build uri and create them
+			foreach (var segment in urlToCreate.Segments)
+			{
+				uri = new Uri(uri, segment);
+
+				var isFileSegment = segment == urlToCreate.Segments[urlToCreate.Segments.Length - 1];
+
+				if (_urlCreated.Contains(uri.ToString()) || 
+					Equals(this.BaseUri, uri) ||	// The base Uri should already exist
+					isFileSegment)					// Skip the file segment, so we don't create a directory with the same name as the file
+					continue;
+
+				try
+				{
+					var ftpRequest = (FtpWebRequest)WebRequest.Create(uri);
+					ftpRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
+					ftpRequest.UseBinary = true;
+					ftpRequest.UsePassive = _usePassive;
+					ftpRequest.Credentials = new NetworkCredential(_userId, _password);
+
+					var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+					ftpResponse.Close();
+				}
+				catch (Exception)
+				{
+					// Purposely swallowing exception here because the remote folders may already exist.
+					// But this is okay because if there is a real problem creating folders, 
+					// another exception will be thrown when transfering files
+				}
+
+				_urlCreated.Add(uri.ToString());
 			}
 		}
 	}

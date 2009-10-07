@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -53,42 +55,51 @@ namespace ClearCanvas.Healthcare {
 		/// Upload a document to a storage site.
 		/// </summary>
 		/// <remarks>The DataRelativeUrl is constructed based on Year/Month/Day/EntityRefOID.FileExtension.</remarks>
-		public void UploadDocument(RemoteFileAccessProvider fileAccessProivder, string localFilePath)
+		public void UploadDocument(FtpFileAccessProvider ftpFileAccessProivder, string localFilePath)
 		{
-			var now = Platform.Time;
-			this.DataRelativeUrl = RemoteFileAccessProvider.BuildRelativeUrl(
-				now.Year.ToString(),
-				now.Month.ToString(),
-				now.Day.ToString(),
-				string.Format("{0}.{1}", this.GetRef().ToString(false, false), this.FileExtension));
-
-			var remoteFileUrl = fileAccessProivder.GetFullUrl(this.DataRelativeUrl);
+			this.DataRelativeUrl = BuildAttachedDocumentRelativeUri();
+			var remoteFileUrl = new Uri(ftpFileAccessProivder.BaseUri, this.DataRelativeUrl);
 
 			var requests = new List<FileTransferRequest>
 				{
-					new FileTransferRequest(remoteFileUrl, localFilePath, FileTransferRequest.TransferMode.Upload)
+					new FileTransferRequest(remoteFileUrl, localFilePath)
 				};
 
-			fileAccessProivder.TransferFiles(requests);
+			ftpFileAccessProivder.Upload(requests);
 		}
 
 		/// <summary>
 		/// Download a document to a temp file.
 		/// </summary>
 		/// <returns>The path of the downloaded file.</returns>
-		public string DownloadDocument(RemoteFileAccessProvider fileAccessProivder)
+		public string DownloadDocument(FtpFileAccessProvider ftpFileAccessProivder)
 		{
-			var remoteFileUrl = fileAccessProivder.GetFullUrl(this.DataRelativeUrl);
-			var localFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(remoteFileUrl));
+			var remoteFileUrl = new Uri(ftpFileAccessProivder.BaseUri, this.DataRelativeUrl);
+			var localFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(remoteFileUrl.LocalPath));
 
 			var requests = new List<FileTransferRequest>
 				{
-					new FileTransferRequest(remoteFileUrl, localFilePath, FileTransferRequest.TransferMode.Download)
+					new FileTransferRequest(remoteFileUrl, localFilePath)
 				};
 
-			fileAccessProivder.TransferFiles(requests);
+			ftpFileAccessProivder.Download(requests);
 
 			return localFilePath;
+		}
+
+		private string BuildAttachedDocumentRelativeUri()
+		{
+			var now = Platform.Time;
+
+			var builder = new StringBuilder();
+			builder.Append(now.Year.ToString());
+			builder.Append("/");
+			builder.Append(now.Month.ToString());
+			builder.Append("/");
+			builder.Append(now.Day.ToString());
+			builder.Append("/");
+			builder.AppendFormat("{0}.{1}", this.GetRef().ToString(false, false), this.FileExtension);
+			return builder.ToString();
 		}
 	}
 }
