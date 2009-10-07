@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -45,9 +46,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	public class MprViewerComponent : ImageViewerComponent
 	{
 		#region Private fields
-
-		private IToolSet _mprViewerToolSet;
-		private IActionSet _mprViewerActionSet;
 
 		private ObservableDisposableList<IMprVolume> _volumes;
 
@@ -101,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public override IActionSet ExportedActions
 		{
-			get { return _mprViewerActionSet; }
+			get { return base.ExportedActions.Select(ImageViewerToolActionPredicate); }
 		}
 
 		public override ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
@@ -123,19 +121,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return true;
 		}
 
-		public override void Start()
+		protected override IEnumerable CreateTools()
 		{
-			base.Start();
-			_mprViewerToolSet = new ToolSet(new MprViewerToolExtensionPoint(), new MprViewerToolContext(this));
-			_mprViewerActionSet = _mprViewerToolSet.Actions.Union(base.ExportedActions.Select(ImageViewerToolActionPredicate));
+			foreach (object tool in base.CreateTools())
+				yield return tool;
+			foreach (object tool in new MprViewerToolExtensionPoint().CreateExtensions())
+				yield return tool;
 		}
 
-		public override void Stop()
+		protected override IImageViewerToolContext CreateToolContext()
 		{
-			_mprViewerActionSet = null;
-			_mprViewerToolSet.Dispose();
-			_mprViewerToolSet = null;
-			base.Stop();
+			return new MprViewerToolContext(this);
 		}
 
 		protected override void Dispose(bool disposing)

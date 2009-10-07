@@ -49,10 +49,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	[IconSet("dropdown", IconScheme.Colour, "Icons.ResliceToolSmall.png", "Icons.ResliceToolMedium.png", "Icons.ResliceToolLarge.png")]
 	[CheckedStateObserver("dropdown", "Active", "ActivationChanged")]
 	[LabelValueObserver("dropdown", "Label", "SelectedToolChanged")]
-	[TooltipValueObserver("dropdown", "Label", "SelectedToolChanged")]
+	[TooltipValueObserver("dropdown", "Tooltip", "TooltipChanged")]
 	[GroupHint("dropdown", "Tools.Volume.MPR.Reslicing")]
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (MprViewerToolExtensionPoint))]
 	public partial class ResliceTool : MouseImageViewerToolMaster<MprViewerTool>
 	{
 		private static readonly Color[,] _colors = {
@@ -101,6 +101,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		public override void Initialize()
 		{
 			base.Initialize();
+			base.TooltipPrefix = SR.MenuReslice;
 
 			if (this.ImageViewer != null)
 			{
@@ -129,7 +130,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 		protected override void OnToolSelected(MprViewerTool tool)
 		{
 			base.OnToolSelected(tool);
-			_lastSelectedTool = (ResliceToolSlave)tool;
+			_lastSelectedTool = (ResliceToolSlave) tool;
+
+			if (_lastSelectedTool == null)
+				base.TooltipPrefix = SR.ToolbarReslice;
+			else
+				base.TooltipPrefix = _lastSelectedTool.Label;
 		}
 
 		public void ActivateLastSelected()

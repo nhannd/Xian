@@ -164,22 +164,35 @@ namespace ClearCanvas.ImageViewer
 	[AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
 	public partial class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
 	{
-		private class ImageViewerToolContext : ToolContext, IImageViewerToolContext
+		/// <summary>
+		/// A basic implementation of <see cref="IImageViewerToolContext"/>.
+		/// </summary>
+		protected class ImageViewerToolContext : ToolContext, IImageViewerToolContext
 		{
 			private readonly ImageViewerComponent _component;
 
-			internal ImageViewerToolContext(ImageViewerComponent component)
+			/// <summary>
+			/// Constructs a new <see cref="ImageViewerToolContext"/>.
+			/// </summary>
+			/// <param name="component">The <see cref="ImageViewerComponent"/> that owns the tools.</param>
+			public ImageViewerToolContext(ImageViewerComponent component)
 			{
 				_component = component;
 			}
 
 			#region IImageViewerToolContext Members
 
+			/// <summary>
+			/// Gets the <see cref="IImageViewer"/>.
+			/// </summary>
 			public IImageViewer Viewer
 			{
 				get { return _component; }
 			}
 
+			/// <summary>
+			/// Gets the <see cref="IDesktopWindow"/>.
+			/// </summary>
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
@@ -329,7 +342,7 @@ namespace ClearCanvas.ImageViewer
 			base.Start();
 
 			_uiThreadSynchronizationContext = SynchronizationContext.Current;
-            _toolSet = new ToolSet(CreateTools(), new ImageViewerToolContext(this));
+            _toolSet = new ToolSet(CreateTools(), CreateToolContext());
 
 			_shortcutManager = new ViewerShortcutManager();
 
@@ -572,6 +585,17 @@ namespace ClearCanvas.ImageViewer
         {
             return (new ImageViewerToolExtensionPoint()).CreateExtensions();
         }
+
+		/// <summary>
+		/// Creates an <see cref="IImageViewerToolContext"/> to provide to all the tools owned by this image viewer.
+		/// </summary>
+		/// <remarks>
+		/// Subclasses can override this to provide their own custom implementation of an <see cref="IImageViewerToolContext"/>.
+		/// </remarks>
+		protected virtual IImageViewerToolContext CreateToolContext()
+		{
+			return new ImageViewerToolContext(this);
+		}
 
 		#endregion
 

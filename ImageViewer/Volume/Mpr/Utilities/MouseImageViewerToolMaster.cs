@@ -46,8 +46,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 		private IToolSet _toolSet;
 		private IActionSet _actionSet;
 		private T _selectedTool;
-		private string _tooltip;
-		private event EventHandler _tooltipChanged;
 		private event EventHandler _selectedToolChanged;
 
 		protected MouseImageViewerToolMaster() {}
@@ -263,44 +261,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 
 		#region Tool Property Forwarding
 
-		public override string Tooltip
-		{
-			get { return this.TooltipCore; }
-		}
-
-		protected string TooltipCore
-		{
-			get { return _tooltip; }
-			set
-			{
-				if (_tooltip != value)
-				{
-					_tooltip = value;
-					EventsHelper.Fire(_tooltipChanged, this, EventArgs.Empty);
-				}
-			}
-		}
-
-		public override event EventHandler TooltipChanged
-		{
-			add { _tooltipChanged += value; }
-			remove { _tooltipChanged -= value; }
-		}
-
-		/// <summary>
-		/// This property is not applicable to this class, since tooltips are forwarded from the selected slave tool.
-		/// </summary>
-		[Obsolete("Tooltips are forwarded from the selected slave tool.")]
-		protected override sealed string TooltipPrefix
-		{
-			get { return string.Empty; }
-			set { }
-		}
-
 		protected virtual void OnToolTooltipChanged(object sender, EventArgs e)
 		{
 			if (this.SelectedTool == sender)
-				this.TooltipCore = this.SelectedTool.Tooltip;
+				this.TooltipPrefix = this.SelectedTool.Tooltip;
 		}
 
 		protected virtual void OnToolMouseWheelShortcutChanged(object sender, EventArgs e)
