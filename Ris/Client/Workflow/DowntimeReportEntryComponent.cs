@@ -151,15 +151,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// radiologist staff lookup handler, using filters provided by application configuration
-			string radFilters = DowntimeSettings.Default.ReportEntryRadiologistStaffTypeFilters;
-			string[] radStaffTypes = string.IsNullOrEmpty(radFilters) ? new string[] { } :
-				CollectionUtils.Map<string, string>(radFilters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+			var radFilters = DowntimeSettings.Default.ReportEntryRadiologistStaffTypeFilters;
+			var radStaffTypes = string.IsNullOrEmpty(radFilters) ? new string[] { } :
+				CollectionUtils.Map<string, string>(radFilters.Split(','), s => s.Trim()).ToArray();
 			_interpreterLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, radStaffTypes);
 
 			// transcriptionist staff lookup handler, using filters provided by application configuration
-			string transFilters = DowntimeSettings.Default.ReportEntryTranscriptionistStaffTypeFilters;
-			string[] transStaffTypes = string.IsNullOrEmpty(transFilters) ? new string[] { } :
-				CollectionUtils.Map<string, string>(transFilters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+			var transFilters = DowntimeSettings.Default.ReportEntryTranscriptionistStaffTypeFilters;
+			var transStaffTypes = string.IsNullOrEmpty(transFilters) ? new string[] { } :
+				CollectionUtils.Map<string, string>(transFilters.Split(','), s => s.Trim()).ToArray();
 			_transcriptionistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, transStaffTypes);
 
 			base.Start();
@@ -222,33 +222,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 			try
 			{
 				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
+					service =>
 					{
-						Dictionary<string, string> reportData = new Dictionary<string, string>();
-						if(_hasReport)
+						var reportData = new Dictionary<string, string>();
+						if (_hasReport)
 						{
-							ReportContent content = new ReportContent(_reportText);
+							var content = new ReportContent(_reportText);
 							reportData[ReportPartDetail.ReportContentKey] = content.ToJsml();
 						}
 
 						service.CompleteDowntimeProcedure(
 							new CompleteDowntimeProcedureRequest(
-							_procedureRef,
-							_hasReport,
-							reportData,
-							_interpreter == null ? null : _interpreter.StaffRef,
-							_transcriptionist == null ? null : _transcriptionist.StaffRef));
+								_procedureRef,
+								_hasReport,
+								reportData,
+								_interpreter == null ? null : _interpreter.StaffRef,
+								_transcriptionist == null ? null : _transcriptionist.StaffRef));
 					});
 
 				Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, "", this.Host.DesktopWindow,
-					delegate
-					{
-						Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(e, "", this.Host.DesktopWindow, () => Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 

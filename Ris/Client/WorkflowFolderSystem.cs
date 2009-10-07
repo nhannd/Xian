@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client
 				if (clickAction == null)
 					return;
 
-				foreach (DoubleClickHandlerRegistration handler in _owner._doubleClickHandlers)
+				foreach (var handler in _owner._doubleClickHandlers)
 				{
 					if (handler.ClickAction.ActionID == clickAction.ActionID)
 					{
@@ -408,7 +408,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void InvalidateFolders(Type folderClass)
 		{
-			InvalidateFolders(delegate(IFolder f) { return folderClass.IsAssignableFrom(f.GetType()); });
+			InvalidateFolders(f => folderClass.IsAssignableFrom(f.GetType()));
 		}
 
 		/// <summary>
@@ -417,7 +417,7 @@ namespace ClearCanvas.Ris.Client
 		public void InvalidateSelectedFolder()
 		{
 			if (this.SelectedFolder != null)
-				InvalidateFolders(delegate(IFolder f) { return f == this.SelectedFolder; });
+				InvalidateFolders(f => f == this.SelectedFolder);
 		}
 
 		/// <summary>
@@ -426,7 +426,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folder"></param>
 		public void InvalidateFolder(IFolder folder)
 		{
-			InvalidateFolders(delegate(IFolder f) { return f == folder; });
+			InvalidateFolders(f => f == folder);
 		}
 
 		#endregion
@@ -512,7 +512,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (disposing)
 			{
-				foreach (IFolder folder in _workflowFolders)
+				foreach (var folder in _workflowFolders)
 				{
 					if (folder is IDisposable)
 						((IDisposable)folder).Dispose();
@@ -642,7 +642,7 @@ namespace ClearCanvas.Ris.Client
 		private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs args)
 		{
 			// find a double-click handler
-			foreach (DoubleClickHandlerRegistration handler in _doubleClickHandlers)
+			foreach (var handler in _doubleClickHandlers)
 			{
 				if (handler.Handle())
 					break;
@@ -686,8 +686,7 @@ namespace ClearCanvas.Ris.Client
 				return result;
 
 			// try to resolve the unqualified name
-			string qualifiedKey = CollectionUtils.SelectFirst(_workflowEnablement.Keys,
-				delegate(string key) { return key.EndsWith(operationName); });
+			var qualifiedKey = CollectionUtils.SelectFirst(_workflowEnablement.Keys, key => key.EndsWith(operationName));
 
 			if (qualifiedKey != null && _workflowEnablement.TryGetValue(qualifiedKey, out result))
 				return result;
@@ -714,8 +713,8 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="condition"></param>
 		private void InvalidateFolders(Predicate<IFolder> condition)
 		{
-			int count = 0;
-			foreach (IFolder folder in _workflowFolders)
+			var count = 0;
+			foreach (var folder in _workflowFolders)
 			{
 				if (condition(folder))
 				{
@@ -805,8 +804,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				get
 				{
-					return CollectionUtils.Map<object, TItem>(this.Selection.Items,
-						delegate(object item) { return (TItem)item; });
+					return CollectionUtils.Map(this.Selection.Items, (object item) => (TItem) item);
 				}
 			}
 
@@ -913,7 +911,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			// cast items to type safe collection, cannot accept drop if items contains a different item type 
 			ICollection<TItem> dropItems = new List<TItem>();
-			foreach (object item in items)
+			foreach (var item in items)
 			{
 				if (item is TItem)
 					dropItems.Add((TItem)item);
@@ -922,11 +920,7 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			// check for a handler that can accept
-			return CollectionUtils.SelectFirst<IDropHandler<TItem>>(handlers,
-				delegate(IDropHandler<TItem> handler)
-				{
-					return handler.CanAcceptDrop(dropItems);
-				});
+			return CollectionUtils.SelectFirst(handlers, (IDropHandler<TItem> handler) => handler.CanAcceptDrop(dropItems));
 		}
 
 		/// <summary>
@@ -936,23 +930,20 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
 		{
-			Dictionary<string, bool> enablement = new Dictionary<string, bool>();
+			var enablement = new Dictionary<string, bool>();
 
 			// query all registered workflow service for operation enablement
-			foreach (Type serviceContract in GetRegisteredWorkflowServices())
+			foreach (var serviceContract in GetRegisteredWorkflowServices())
 			{
 				if (typeof(IWorkflowService).IsAssignableFrom(serviceContract))
 				{
-					IWorkflowService service = (IWorkflowService)Platform.GetService(serviceContract);
-					GetOperationEnablementResponse response = service.GetOperationEnablement(
+					var service = (IWorkflowService)Platform.GetService(serviceContract);
+					var response = service.GetOperationEnablement(
 						new GetOperationEnablementRequest(selection.Item));
 
 					// add fully qualified operation name to dictionary
 					CollectionUtils.ForEach(response.OperationEnablementDictionary,
-						delegate(KeyValuePair<string, bool> kvp)
-						{
-							enablement.Add(string.Format("{0}.{1}", serviceContract.FullName, kvp.Key), kvp.Value);
-						});
+					                        kvp => enablement.Add(string.Format("{0}.{1}", serviceContract.FullName, kvp.Key), kvp.Value));
 
 					// ensure to dispose of service
 					if (service is IDisposable)
