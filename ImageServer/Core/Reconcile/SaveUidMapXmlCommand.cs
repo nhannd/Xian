@@ -32,6 +32,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         #region Overridden Protected Methods
         protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
+            if (_map == null)
+                return;// nothing to save
+
             _path = Path.Combine(_studyLocation.GetStudyPath(), "UidMap.xml");
             if (RequiresRollback)
                 Backup();

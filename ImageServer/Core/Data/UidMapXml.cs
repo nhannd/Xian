@@ -58,6 +58,11 @@ namespace ClearCanvas.ImageServer.Core.Data
         [XmlArrayItem(ElementName="Study")]
         public List<StudyUidMap> StudyUidMaps { get; set; }
 
+        public UidMapXml()
+        {
+            StudyUidMaps = new List<StudyUidMap>();
+        }
+
         /// <summary>
         /// Loads the <see cref="Series"/> and<see cref="Instances"/> mappings for the specified study.
         /// </summary>
@@ -73,11 +78,15 @@ namespace ClearCanvas.ImageServer.Core.Data
         /// <param name="path"></param>
         public void Load(string path)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
+            if (File.Exists(path))
+            {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
 
-            UidMapXml copy = XmlUtils.Deserialize<UidMapXml>(doc);
-            StudyUidMaps = copy.StudyUidMaps;
+                UidMapXml copy = XmlUtils.Deserialize<UidMapXml>(doc);
+                StudyUidMaps = copy.StudyUidMaps;
+            }
+            
         }
 
     }
