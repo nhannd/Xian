@@ -55,34 +55,22 @@ namespace ClearCanvas.Healthcare {
 		/// Upload a document to a storage site.
 		/// </summary>
 		/// <remarks>The DataRelativeUrl is constructed based on Year/Month/Day/EntityRefOID.FileExtension.</remarks>
-		public void UploadDocument(FtpFileAccessProvider ftpFileAccessProivder, string localFilePath)
+		public void UploadDocument(FtpFileTransfer ftpFileTransfer, string localFilePath)
 		{
 			this.DataRelativeUrl = BuildAttachedDocumentRelativeUri();
-			var remoteFileUrl = new Uri(ftpFileAccessProivder.BaseUri, this.DataRelativeUrl);
-
-			var requests = new List<FileTransferRequest>
-				{
-					new FileTransferRequest(remoteFileUrl, localFilePath)
-				};
-
-			ftpFileAccessProivder.Upload(requests);
+			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.DataRelativeUrl);
+			ftpFileTransfer.Upload(new FileTransferRequest(remoteFileUrl, localFilePath));
 		}
 
 		/// <summary>
 		/// Download a document to a temp file.
 		/// </summary>
 		/// <returns>The path of the downloaded file.</returns>
-		public string DownloadDocument(FtpFileAccessProvider ftpFileAccessProivder)
+		public string DownloadDocument(FtpFileTransfer ftpFileTransfer)
 		{
-			var remoteFileUrl = new Uri(ftpFileAccessProivder.BaseUri, this.DataRelativeUrl);
+			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.DataRelativeUrl);
 			var localFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(remoteFileUrl.LocalPath));
-
-			var requests = new List<FileTransferRequest>
-				{
-					new FileTransferRequest(remoteFileUrl, localFilePath)
-				};
-
-			ftpFileAccessProivder.Download(requests);
+			ftpFileTransfer.Download(new FileTransferRequest(remoteFileUrl, localFilePath));
 
 			return localFilePath;
 		}

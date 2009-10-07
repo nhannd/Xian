@@ -26,22 +26,18 @@ namespace ClearCanvas.Ris.Client
 			if (!string.IsNullOrEmpty(tempFile))
 				return tempFile;
 
-			var ftp = new FtpFileAccessProvider(
+			var ftpFileTransfer = new FtpFileTransfer(
 				AttachedDocumentFtpSettings.Default.FtpUserId,
 				AttachedDocumentFtpSettings.Default.FtpPassword,
 				AttachedDocumentFtpSettings.Default.FtpBaseUrl,
 				AttachedDocumentFtpSettings.Default.FtpPassiveMode);
 
-			var remoteFileUrl = new Uri(ftp.BaseUri, documentSummary.DataRelativeUrl);
+			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, documentSummary.DataRelativeUrl);
 
 			var fileName = Path.GetFileName(remoteFileUrl.LocalPath);
 			var localFilePath = Path.Combine(Path.GetTempPath(), fileName);
-			var requests = new List<FileTransferRequest>
-				{
-					new FileTransferRequest(remoteFileUrl, localFilePath)
-				};
 
-			ftp.Download(requests);
+			ftpFileTransfer.Download(new FileTransferRequest(remoteFileUrl, localFilePath));
 
 			return localFilePath;
 		}

@@ -214,15 +214,6 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to initialize file transfer..
-        /// </summary>
-        public static string ExceptionFailedToInitializeFileTransfer {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToInitializeFileTransfer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to transfer file from {0} to {1}..
         /// </summary>
         public static string ExceptionFailedToTransferFile {

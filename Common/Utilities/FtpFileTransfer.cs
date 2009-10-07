@@ -8,7 +8,7 @@ namespace ClearCanvas.Common.Utilities
 	/// <summary>
 	/// Provide access to remote files using the FTP protocol.
 	/// </summary>
-	public class FtpFileAccessProvider : RemoteFileAccessProvider
+	public class FtpFileTransfer : IRemoteFileTransfer
 	{
 		private readonly string _userId;
 		private readonly string _password;
@@ -25,7 +25,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public FtpFileAccessProvider(string userId, string password, string baseUri, bool usePassive)
+		public FtpFileTransfer(string userId, string password, string baseUri, bool usePassive)
 		{
 			_userId = userId;
 			_password = password;
@@ -38,11 +38,8 @@ namespace ClearCanvas.Common.Utilities
 		/// Upload one file from local to remote.
 		/// </summary>
 		/// <param name="request"></param>
-		protected override void Upload(FileTransferRequest request)
+		public void Upload(FileTransferRequest request)
 		{
-			FileStream localFileStream = null;
-			Stream ftpRequestStream = null;
-
 			try
 			{
 				CreateRemoteDirectoryForFile(request.RemoteFile);
@@ -57,26 +54,24 @@ namespace ClearCanvas.Common.Utilities
 				ftpRequest.ContentLength = localFileInf.Length;
 
 				// Open ftp and local streams
-				localFileStream = localFileInf.OpenRead();
-				ftpRequestStream = ftpRequest.GetRequestStream();
-
-				// Write Content from the file stream to the FTP Upload Stream
-				const int bufferLength = 2048;
-				var buffer = new byte[bufferLength];
-				var localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
-				while (localFileContentLength != 0)
+				using (var localFileStream = localFileInf.OpenRead())
+				using (var ftpRequestStream = ftpRequest.GetRequestStream())
 				{
-					ftpRequestStream.Write(buffer, 0, localFileContentLength);
-					localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
+					// Write Content from the file stream to the FTP Upload Stream
+					const int bufferLength = 2048;
+					var buffer = new byte[bufferLength];
+					var localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
+					while (localFileContentLength != 0)
+					{
+						ftpRequestStream.Write(buffer, 0, localFileContentLength);
+						localFileContentLength = localFileStream.Read(buffer, 0, bufferLength);
+					}
 				}
 			}
-			finally
+			catch (Exception e)
 			{
-				if (ftpRequestStream != null)
-					ftpRequestStream.Close();
-
-				if (localFileStream != null)
-					localFileStream.Close();
+				var message = string.Format(SR.ExceptionFailedToTransferFile, request.LocalFile, request.RemoteFile);
+				throw new Exception(message, e);
 			}
 		}
 
@@ -84,16 +79,12 @@ namespace ClearCanvas.Common.Utilities
 		/// Download one file from remote to local
 		/// </summary>
 		/// <param name="request"></param>
-		protected override void Download(FileTransferRequest request)
+		public void Download(FileTransferRequest request)
 		{
-			FtpWebResponse ftpResponse = null;
-			Stream ftpResponseStream = null;
-			FileStream localFileStream = null;
-
 			try
 			{
 				// Create a FTP request to download file
-				var ftpRequest = (FtpWebRequest)WebRequest.Create(request.RemoteFile);
+				var ftpRequest = (FtpWebRequest) WebRequest.Create(request.RemoteFile);
 				ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
 				ftpRequest.UseBinary = true;
 				ftpRequest.UsePassive = _usePassive;
@@ -105,30 +96,26 @@ namespace ClearCanvas.Common.Utilities
 					Directory.CreateDirectory(downloadDirectory);
 
 				// Open ftp and local streams
-				ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
-				ftpResponseStream = ftpResponse.GetResponseStream();
-				localFileStream = new FileStream(request.LocalFile, FileMode.Create);
 
-				// Write Content from the FTP download stream to local file stream
-				const int bufferSize = 2048;
-				var buffer = new byte[bufferSize];
-				var readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
-				while (readCount > 0)
+				using (var ftpResponse = (FtpWebResponse) ftpRequest.GetResponse())
+				using (var ftpResponseStream = ftpResponse.GetResponseStream())
+				using (var localFileStream = new FileStream(request.LocalFile, FileMode.Create))
 				{
-					localFileStream.Write(buffer, 0, readCount);
-					readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
+					// Write Content from the FTP download stream to local file stream
+					const int bufferSize = 2048;
+					var buffer = new byte[bufferSize];
+					var readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
+					while (readCount > 0)
+					{
+						localFileStream.Write(buffer, 0, readCount);
+						readCount = ftpResponseStream.Read(buffer, 0, bufferSize);
+					}
 				}
 			}
-			finally
+			catch (Exception e)
 			{
-				if (ftpResponseStream != null)
-					ftpResponseStream.Close();
-
-				if (localFileStream != null)
-					localFileStream.Close();
-				
-				if (ftpResponse != null)
-					ftpResponse.Close();
+				var message = string.Format(SR.ExceptionFailedToTransferFile, request.RemoteFile, request.LocalFile);
+				throw new Exception(message, e);
 			}
 		}
 
@@ -155,7 +142,7 @@ namespace ClearCanvas.Common.Utilities
 					ftpRequest.UseBinary = true;
 					ftpRequest.UsePassive = _usePassive;
 					ftpRequest.Credentials = new NetworkCredential(_userId, _password);
-
+					
 					var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
 					ftpResponse.Close();
 				}

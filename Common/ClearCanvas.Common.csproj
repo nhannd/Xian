@@ -322,10 +322,10 @@
     <Compile Include="Shreds\QueueProcessorShred.cs" />
     <Compile Include="Shreds\Shred.cs" />
     <Compile Include="Shreds\ShredExtensionPoint.cs" />
-    <Compile Include="Utilities\FtpFileAccessProvider.cs" />
+    <Compile Include="Utilities\FtpFileTransfer.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
-    <Compile Include="Utilities\RemoteFileAccessProvider.cs" />
-    <Compile Include="Utilities\HttpFileAccessProvider.cs" />
+    <Compile Include="Utilities\IRemoteFileTransfer.cs" />
+    <Compile Include="Utilities\HttpFileTransfer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
