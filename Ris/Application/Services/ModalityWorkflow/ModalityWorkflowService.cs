@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -50,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
 	[ServiceImplementsContract(typeof(IModalityWorkflowService))]
-	public class ModalityWorkflowService : WorkflowServiceBase<ModalityWorklistItem>, IModalityWorkflowService
+	public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
 	{
 		#region IModalityWorkflowService members
 

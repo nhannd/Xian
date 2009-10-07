@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
     [ServiceImplementsContract(typeof(IReportingWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class ReportingWorkflowService : WorkflowServiceBase<ReportingWorklistItem>, IReportingWorkflowService
+    public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService
     {
         #region IReportingWorkflowService Members
 

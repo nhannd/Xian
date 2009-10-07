@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 {
 	[ServiceImplementsContract(typeof(ITranscriptionWorkflowService))]
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-	public class TranscriptionWorkflowService : WorkflowServiceBase<ReportingWorklistItem>, ITranscriptionWorkflowService
+	public class TranscriptionWorkflowService : WorkflowServiceBase, ITranscriptionWorkflowService
 	{
 		#region IWorklistService Members
 

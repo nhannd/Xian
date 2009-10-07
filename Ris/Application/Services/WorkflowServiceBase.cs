@@ -32,16 +32,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -62,8 +58,7 @@ namespace ClearCanvas.Ris.Application.Services
 	}
 
 
-	public abstract class WorkflowServiceBase<TItemSummary> : ApplicationServiceBase, IWorkflowService
-		where TItemSummary : DataContractBase
+	public abstract class WorkflowServiceBase : ApplicationServiceBase, IWorkflowService
     {
 		#region IWorkflowService implementation
 
@@ -75,14 +70,11 @@ namespace ClearCanvas.Ris.Application.Services
 		[ReadOperation]
 		public ListWorklistsForUserResponse ListWorklistsForUser(ListWorklistsForUserRequest request)
 		{
-			WorklistAssembler assembler = new WorklistAssembler();
+			var assembler = new WorklistAssembler();
 			return new ListWorklistsForUserResponse(
 				CollectionUtils.Map<Worklist, WorklistSummary>(
 					PersistenceContext.GetBroker<IWorklistBroker>().Find(CurrentUserStaff, request.WorklistTokens),
-					delegate(Worklist worklist)
-					{
-						return assembler.GetWorklistSummary(worklist, PersistenceContext);
-					}));
+					worklist => assembler.GetWorklistSummary(worklist, PersistenceContext)));
 		}
 
 		[ReadOperation]
@@ -125,14 +117,14 @@ namespace ClearCanvas.Ris.Application.Services
                 WorklistFactory.Instance.CreateWorklist(request.WorklistClass);
 
             IList results = null;
-            SearchResultPage page = new SearchResultPage(0, new WorklistSettings().ItemsPerPage);
+            var page = new SearchResultPage(0, new WorklistSettings().ItemsPerPage);
             if(request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page
                 results = worklist.GetWorklistItems(new WorklistQueryContext(this, page, request.DowntimeRecoveryMode));
             }
 
-            int count = -1;
+            var count = -1;
             if(request.QueryCount)
             {
                 // if the items were already queried, and the number returned is less than the max per page,
@@ -163,11 +155,10 @@ namespace ClearCanvas.Ris.Application.Services
 			where TSummary : DataContractBase
 			where TItem : WorklistItemBase
 		{
-			Type procedureStepClass = request.ProcedureStepClassName == null ? null
+			var procedureStepClass = request.ProcedureStepClassName == null ? null
 				: ProcedureStep.GetSubClass(request.ProcedureStepClassName, PersistenceContext);
 
-			WorklistItemTextQueryHelper<TItem, TSummary> helper =
-				new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, request.Options, PersistenceContext);
+			var helper = new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, request.Options, PersistenceContext);
 
 			return helper.Query(request);
 		}
@@ -183,29 +174,29 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <returns></returns>
 		private Dictionary<string, bool> GetOperationEnablement(object itemKey)
 		{
-			Dictionary<string, bool> results = new Dictionary<string, bool>();
+			var results = new Dictionary<string, bool>();
 			if (itemKey == null)
 				return results;
 
-			Type serviceContractType = this.GetType();
-			foreach (MethodInfo info in serviceContractType.GetMethods())
+			var serviceContractType = this.GetType();
+			foreach (var info in serviceContractType.GetMethods())
 			{
-				object[] attribs = info.GetCustomAttributes(typeof(OperationEnablementAttribute), true);
+				var attribs = info.GetCustomAttributes(typeof(OperationEnablementAttribute), true);
 				if (attribs.Length < 1)
 					continue;
 
 				// Evaluate the list of enablement method in the OperationEnablementAttribute
 
-				bool enablement = true;
-				foreach (object obj in attribs)
+				var enablement = true;
+				foreach (var obj in attribs)
 				{
-					OperationEnablementAttribute attrib = obj as OperationEnablementAttribute;
+					var attrib = (OperationEnablementAttribute)obj;
 
-					MethodInfo enablementHelper = serviceContractType.GetMethod(attrib.EnablementMethodName);
+					var enablementHelper = serviceContractType.GetMethod(attrib.EnablementMethodName);
 					if (enablementHelper == null)
 						throw new EnablementMethodNotFoundException(attrib.EnablementMethodName, info.Name);
 
-					bool test = (bool)enablementHelper.Invoke(this, new object[] { itemKey });
+					var test = (bool)enablementHelper.Invoke(this, new [] { itemKey });
 					if (test == false)
 					{
 						// No need to continue after any evaluation failed

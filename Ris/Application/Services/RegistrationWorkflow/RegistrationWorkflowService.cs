@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ServiceImplementsContract(typeof(IRegistrationWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class RegistrationWorkflowService : WorkflowServiceBase<RegistrationWorklistItem>, IRegistrationWorkflowService
+    public class RegistrationWorkflowService : WorkflowServiceBase, IRegistrationWorkflowService
     {
         #region IRegistrationWorkflowService Members
 

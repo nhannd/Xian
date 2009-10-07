@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 {
 	[ServiceImplementsContract(typeof(IProtocollingWorkflowService))]
 	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-	public class ProtocollingWorkflowService : WorkflowServiceBase<WorklistItemSummaryBase>, IProtocollingWorkflowService
+	public class ProtocollingWorkflowService : WorkflowServiceBase, IProtocollingWorkflowService
 	{
 		/// <summary>
 		/// Provides a context for determining if protocol operations are enabled.

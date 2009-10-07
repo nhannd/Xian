@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IOrderEntryService))]
-    public class OrderEntryService : WorkflowServiceBase<WorklistItemSummaryBase>, IOrderEntryService
+    public class OrderEntryService : WorkflowServiceBase, IOrderEntryService
     {
         public class WorklistItemKey
         {
