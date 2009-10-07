@@ -168,6 +168,11 @@ namespace ClearCanvas.Ris.Client
 			{
 				_owner.RegisterWorkflowService(serviceContract);
 			}
+
+			public void UnregisterWorkflowService(Type serviceContract)
+			{
+				_owner.UnregisterWorkflowService(serviceContract);
+			}
 		}
 
 		#endregion
@@ -653,6 +658,16 @@ namespace ClearCanvas.Ris.Client
 			if (!_workflowServices.Contains(workflowService))
 				_workflowServices.Add(workflowService);
 		}
+
+		/// <summary>
+		/// Unregisters the specified workflow service.
+		/// </summary>
+		/// <param name="workflowService"></param>
+		private void UnregisterWorkflowService(Type workflowService)
+		{
+			_workflowServices.Remove(workflowService);
+		}
+
 
 		/// <summary>
 		/// Gets a value indicating whether the specified operation is enabled for the current selection.

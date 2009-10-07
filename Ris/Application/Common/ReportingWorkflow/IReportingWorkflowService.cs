@@ -32,13 +32,15 @@
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [RisApplicationService]
     [ServiceContract]
     [ServiceKnownType(typeof(ReportingWorklistItem))]
-    public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
+	[ServiceKnownType(typeof(ModalityWorklistItem))] // bug  #4866: need to call this service from Performing FS
+	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
     {
         /// <summary>
         /// Indicates if all documentation for the order containing the specified procedure is complete

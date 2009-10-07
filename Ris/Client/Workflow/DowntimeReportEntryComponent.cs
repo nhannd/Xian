@@ -31,13 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -49,12 +47,27 @@ namespace ClearCanvas.Ris.Client.Workflow
     [MenuAction("apply", "folderexplorer-items-contextmenu/Complete Downtime Recovery...", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Complete Downtime Recovery...", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "VerifyReportSmall.png", "VerifyReportMedium.png", "VerifyReportLarge.png")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
-	public class DowntimeReportEntryTool : Tool<IPerformingWorkflowItemToolContext>
+	public class DowntimeReportEntryTool : WorkflowItemTool<ModalityWorklistItem, IPerformingWorkflowItemToolContext>
     {
+    	public DowntimeReportEntryTool()
+			: base("CompleteDowntimeProcedure")
+    	{
+    	}
+
+    	public override void Initialize()
+		{
+			base.Initialize();
+
+    		DowntimeRecovery.InDowntimeRecoveryModeChanged += delegate { UpdateReportingWorkflowServiceRegistration(); };
+
+			// init 
+    		UpdateReportingWorkflowServiceRegistration();
+		}
+
     	public bool Visible
     	{
 			get { return DowntimeRecovery.InDowntimeRecoveryMode; }
@@ -66,49 +79,38 @@ namespace ClearCanvas.Ris.Client.Workflow
 			remove { }
 		}
 
-		public bool Enabled
-		{
-			get
-			{
-				return this.Context.SelectedItems.Count == 1
-					// this is a blatant HACK!  we only want this tool enabled from Completed, and there is no
-					// easy way to do this (cannot use server-side enablement because operation is on the reporting workflow service)
-					 && this.Context.SelectedFolder is Folders.Performing.PerformedFolder
-					   && CollectionUtils.FirstElement(this.Context.SelectedItems).ProcedureRef != null;
-			}
-		}
-
-		public event EventHandler EnabledChanged
-		{
-			add { this.Context.SelectionChanged += value; }
-			remove { this.Context.SelectionChanged -= value; }
-		}
-
-		public void Apply()
-		{
-			ModalityWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+    	protected override bool Execute(ModalityWorklistItem item)
+    	{
 			if (item.ProcedureRef == null)
-				return;
+				return false;
 
-			try
+			var exitCode = ApplicationComponent.LaunchAsDialog(
+				this.Context.DesktopWindow,
+				new DowntimeReportEntryComponent(item.ProcedureRef),
+				"Complete Downtime Recovery");
+
+			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				DowntimeReportEntryComponent component = new DowntimeReportEntryComponent(item.ProcedureRef);
-
-				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-					this.Context.DesktopWindow, component, "Complete Downtime Recovery");
-
-				if (exitCode == ApplicationComponentExitCode.Accepted)
-				{
-					DocumentManager.InvalidateFolder(typeof(Folders.Performing.PerformedFolder));
-				}
-
+				DocumentManager.InvalidateFolder(typeof(Folders.Performing.PerformedFolder));
+				return true;
 			}
-			catch (Exception e)
+    		return false;
+		}
+
+		private void UpdateReportingWorkflowServiceRegistration()
+		{
+			if (DowntimeRecovery.InDowntimeRecoveryMode)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				// bug  #4866: in downtime mode register reporting service so we can get operation enablement
+				this.Context.RegisterWorkflowService(typeof(IReportingWorkflowService));
+			}
+			else
+			{
+				// otherwise unregister reporting service, so we don't degrade performance for no reason
+				this.Context.UnregisterWorkflowService(typeof(IReportingWorkflowService));
 			}
 		}
-    }
+	}
 
 
 

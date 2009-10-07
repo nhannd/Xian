@@ -491,6 +491,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
+		[OperationEnablement("CanCompleteDowntimeProcedure")]
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
         public CompleteDowntimeProcedureResponse CompleteDowntimeProcedure(CompleteDowntimeProcedureRequest request)
         {
@@ -688,6 +689,18 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return true;
         }
 
+		public bool CanCompleteDowntimeProcedure(WorklistItemKey itemKey)
+		{
+			// does the item have a procedure ref, or is it just a patient?
+			if (itemKey.ProcedureRef == null)
+				return false;
+
+			var procedure = PersistenceContext.Load<Procedure>(itemKey.ProcedureRef);
+
+			// is the procedure a downtime proc, and is it performed and documented??
+			return procedure.DowntimeRecoveryMode && procedure.IsPerformed && procedure.IsDocumented;
+		}
+
         private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
         {
             return CanExecuteOperation(op, itemKey, false);
@@ -722,7 +735,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         protected override object GetWorkItemKey(object item)
         {
-        	var summary = item as ReportingWorklistItem;
+			var summary = item as WorklistItemSummaryBase; // bug #4866: changed this to base class, so that it can be used by other folder systems
 			return summary == null ? null : new WorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
         }
 

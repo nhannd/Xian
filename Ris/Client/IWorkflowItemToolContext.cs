@@ -115,6 +115,12 @@ namespace ClearCanvas.Ris.Client
 		void RegisterWorkflowService(Type serviceContract);
 
 		/// <summary>
+		/// Allows the tool to unregister a previously registered workflow service.
+		/// </summary>
+		/// <param name="serviceContract"></param>
+		void UnregisterWorkflowService(Type serviceContract);
+
+		/// <summary>
 		/// Gets a value indicating whether the specified operation is enabled for the current items selection.
 		/// </summary>
 		/// <param name="serviceContract"></param>
