@@ -117,9 +117,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         #endregion
 
-		protected override object GetWorkItemKey(RegistrationWorklistItem item)
+		protected override object GetWorkItemKey(object item)
 		{
-			return new WorklistItemKey(item.OrderRef, item.PatientProfileRef);
+			var summary = item as RegistrationWorklistItem;
+			return summary == null ? null : new WorklistItemKey(summary.OrderRef, summary.PatientProfileRef);
 		}
 
         public bool CanCheckInProcedure(WorklistItemKey itemKey)

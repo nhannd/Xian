@@ -88,13 +88,11 @@ namespace ClearCanvas.Ris.Application.Services
 		[ReadOperation]
 		public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
 		{
-			TItemSummary item = request.WorkItem as TItemSummary;
-
 			//TODO: is this appropriate? or should we throw an exception?
-			if(item == null)
+			if (request.WorkItem == null)
 				return new GetOperationEnablementResponse(new Dictionary<string, bool>());
 
-			return new GetOperationEnablementResponse(GetOperationEnablement(GetWorkItemKey(item)));
+			return new GetOperationEnablementResponse(GetOperationEnablement(GetWorkItemKey(request.WorkItem)));
 		}
 
 
@@ -104,11 +102,11 @@ namespace ClearCanvas.Ris.Application.Services
 		#region Protected API
 
 		/// <summary>
-		/// Extracts a work-item key from the specified work-item.
+		/// Extracts a work-item key from the specified work-item, or returns null if the item cannot be converted to a key.
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		protected abstract object GetWorkItemKey(TItemSummary item);
+		protected abstract object GetWorkItemKey(object item);
 
 
 		/// <summary>
@@ -186,6 +184,8 @@ namespace ClearCanvas.Ris.Application.Services
 		private Dictionary<string, bool> GetOperationEnablement(object itemKey)
 		{
 			Dictionary<string, bool> results = new Dictionary<string, bool>();
+			if (itemKey == null)
+				return results;
 
 			Type serviceContractType = this.GetType();
 			foreach (MethodInfo info in serviceContractType.GetMethods())

@@ -517,9 +517,10 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				UpdateOrderNotes(step.Procedure.Order, notes);
 		}
 
-		protected override object GetWorkItemKey(WorklistItemSummaryBase item)
+		protected override object GetWorkItemKey(object item)
 		{
-			return new ProtocolOperationEnablementContext(item.OrderRef, item.ProcedureStepRef);
+			var summary = item as WorklistItemSummaryBase;
+			return summary == null ? null : new ProtocolOperationEnablementContext(summary.OrderRef, summary.ProcedureStepRef);
 		}
 
 		private void AddAdditionalCommentsNote(OrderNoteDetail detail, Order order)

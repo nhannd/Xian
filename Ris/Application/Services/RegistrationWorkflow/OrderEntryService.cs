@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -335,9 +336,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         #region Operation Enablement
 
-        protected override object GetWorkItemKey(WorklistItemSummaryBase item)
+        protected override object GetWorkItemKey(object item)
         {
-            return new WorklistItemKey(item.OrderRef);
+        	var summary = item as WorklistItemSummaryBase;
+        	return summary == null ? null : new WorklistItemKey(summary.OrderRef);
         }
 
         public bool CanReplaceOrder(WorklistItemKey itemKey)

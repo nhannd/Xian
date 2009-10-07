@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -379,9 +380,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 		#region WorkflowServiceBase overrides
 
-		protected override object GetWorkItemKey(ModalityWorklistItem item)
+		protected override object GetWorkItemKey(object item)
 		{
-			return new WorklistItemKey(item.ProcedureStepRef);
+			var summary = item as ModalityWorklistItem;
+			return summary == null ? null : new WorklistItemKey(summary.ProcedureStepRef);
 		}
 
 		#endregion

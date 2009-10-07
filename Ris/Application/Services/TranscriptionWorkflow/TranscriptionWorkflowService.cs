@@ -263,9 +263,10 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 		#endregion
 
-		protected override object GetWorkItemKey(ReportingWorklistItem item)
+		protected override object GetWorkItemKey(object item)
 		{
-			return new WorklistItemKey(item.ProcedureStepRef, item.ProcedureRef);
+			var summary = item as ReportingWorklistItem;
+			return summary == null ? null : new WorklistItemKey(summary.ProcedureStepRef, summary.ProcedureRef);
 		}
 
 		private void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties)
