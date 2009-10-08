@@ -414,7 +414,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         #endregion
         #region Protected Methods
-        
+       
         protected override void OnInit(EventArgs e)
         {
             SetupJavascript();

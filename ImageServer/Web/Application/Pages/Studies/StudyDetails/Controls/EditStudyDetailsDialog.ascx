@@ -131,7 +131,7 @@ EnableClientScript="true" runat="server" ValidationGroup="EditStudyValidationGro
                             <tr>
                                 <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label21" runat="server" Text="Referring Physician" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
-                                    <ccAsp:PersonNameInputPanel runat="server" ID="ReferringPhysicianNamePanel" Required="false"/>
+                                    <ccAsp:PersonNameInputPanel runat="server" ID="ReferringPhysicianNamePanel" Required="false" ValidationGroup="EditStudyValidationGroup"/>
                                 </td>
                             </tr>
                                 <tr>

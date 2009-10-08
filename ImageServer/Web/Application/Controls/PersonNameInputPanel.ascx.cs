@@ -103,11 +103,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             get { return _required; }
             set { _required = value; }
-        }     
-   
+        }
+
         public string ValidationGroup
         {
-            get { return _validationGroup; }
+            get
+            {
+                return _validationGroup;
+            }
             set { _validationGroup = value; }
         }
 
@@ -120,24 +123,46 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             ScriptTemplate script =
                 new ScriptTemplate(typeof(PersonNameInputPanel).Assembly,
                                    "ClearCanvas.ImageServer.Web.Application.Controls.PersonNameInputPanel.js");
-            script.Replace("@@CLIENTID@@", ClientID); 
+            script.Replace("@@CLIENTID@@", ClientID);
             script.Replace("@@PHONETIC_ROW_CLIENTID@@", PhoneticRow.ClientID);
             script.Replace("@@IDEOGRAPHY_ROW_CLIENTID@@", IdeographicRow.ClientID);
 
-            
+
             ShowOtherNameFormatButton.OnClientClick = ClientID + "_ShowOtherNameFormats(); return false;";
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script.Script, true);
 
             PersonGivenNameValidator.IgnoreEmptyValue = !Required;
             PersonLastNameValidator.IgnoreEmptyValue = !Required;
+
+            //Dynamically set all of the Validation Groups
+            PersonTitle.ValidationGroup = ValidationGroup;
+            PersonTitleValidator.ValidationGroup = ValidationGroup;
+            PersonGivenName.ValidationGroup = ValidationGroup;
+            PersonGivenNameValidator.ValidationGroup = ValidationGroup;
+            PersonMiddleName.ValidationGroup = ValidationGroup;
+            PersonMiddleNameValidator.ValidationGroup = ValidationGroup;
+            PersonLastName.ValidationGroup = ValidationGroup;
+            PersonLastNameValidator.ValidationGroup = ValidationGroup;
+            PersonSuffix.ValidationGroup = ValidationGroup;
+            PersonSuffixValidator.ValidationGroup = ValidationGroup;
+            PhoneticTitle.ValidationGroup = ValidationGroup;
+            PhoneticGivenName.ValidationGroup = ValidationGroup;
+            PhoneticMiddleName.ValidationGroup = ValidationGroup;
+            PhoneticLastName.ValidationGroup = ValidationGroup;
+            PhoneticSuffix.ValidationGroup = ValidationGroup;
+            IdeographicTitle.ValidationGroup = ValidationGroup;
+            IdeographicGivenName.ValidationGroup = ValidationGroup;
+            IdeographicMiddleName.ValidationGroup = ValidationGroup;
+            IdeographicLastName.ValidationGroup = ValidationGroup;
+            IdeographicSuffix.ValidationGroup = ValidationGroup;
         }
 
         public override void DataBind()
         {
             base.DataBind();
 
-            if (_personName!=null)
+            if (_personName != null)
             {
                 PersonLastName.Text = _personName.LastName;
                 PersonMiddleName.Text = _personName.MiddleName;
@@ -186,7 +211,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 IdeographicRow.Style.Add(HtmlTextWriterStyle.Visibility, "hidden");
                 IdeographicRow.Style.Add(HtmlTextWriterStyle.Display, "none");
             }
-            
+
         }
     }
 }
