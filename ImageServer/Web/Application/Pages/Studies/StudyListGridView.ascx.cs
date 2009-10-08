@@ -30,14 +30,10 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using System.Web.UI.WebControls;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
@@ -146,13 +142,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         /// </summary>
         public Unit Height
         {
-            get {
-                if (ContainerTable != null)
+            get
+            {
+            	if (ContainerTable != null)
                     return ContainerTable.Height;
-                else
-                    return _height; 
+            	return _height;
             }
-            set
+        	set
             {
                 _height = value;
                 if (ContainerTable != null)
@@ -165,7 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             StudyListControl.DataSource = StudyDataSourceObject;
         }
 
-        public bool isDataSourceSet()
+        public bool IsDataSourceSet()
         {
             return StudyListControl.DataSource != null;
         }
@@ -240,13 +236,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                         button = (LinkButton) row.FindControl("QueueLinkButton");
                         label = (Label) row.FindControl("QueueSeparatorLabel");
 
-                        if(study.IsLocked && Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.WorkQueue.Search))
+                        if(study.IsLocked)
                         {
-                            button.PostBackUrl = ImageServerConstants.PageURLs.WorkQueuePage +
-                                                 "?PatientID=" + study.PatientId + "&PatientName=" + study.PatientsName + "&PartitionKey=" + study.ThePartition.GetKey();
-                            button.Visible = true;
-                            button.Text = study.QueueStudyStateEnum.Description;
-                            label.Visible = true;
+							if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.RestoreScheduled))
+							{
+								if (Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.RestoreQueue.Search))
+								{
+									button.PostBackUrl = ImageServerConstants.PageURLs.RestoreQueuePage +
+														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
+									                     study.ThePartition.Key;
+									button.Visible = true;
+									button.Text = study.QueueStudyStateEnum.Description;
+									label.Visible = true;
+								}								
+							}
+							else if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ArchiveScheduled))
+							{
+								if (Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.ArchiveQueue.Search))
+								{
+									button.PostBackUrl = ImageServerConstants.PageURLs.ArchiveQueuePage +
+														 "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
+														 study.ThePartition.Key;
+									button.Visible = true;
+									button.Text = study.QueueStudyStateEnum.Description;
+									label.Visible = true;									
+								}
+							}
+							else
+							{
+								if (Context.User.IsInRole(Enterprise.Authentication.AuthorityTokens.WorkQueue.Search))
+								{
+									button.PostBackUrl = ImageServerConstants.PageURLs.WorkQueuePage +
+									                     "?PatientID=" + Server.UrlEncode(study.PatientId) + "&PatientName=" + Server.UrlEncode(study.PatientsName) + "&PartitionKey=" +
+									                     study.ThePartition.Key;
+									button.Visible = true;
+									button.Text = study.QueueStudyStateEnum.Description;
+									label.Visible = true;
+								}
+							}
                         } else
                         {
                             button.Visible = false;
@@ -265,13 +292,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
                 if (message != null)
                 {
-                    if(TheGrid.DataSource == null)
-                    {
-                        message.Message = "Please enter search criteria to find studies.";    
-                    } else
-                    {
-                        message.Message = "No studies found matching the provided criteria.";
-                    }
+                    message.Message = TheGrid.DataSource == null ? "Please enter search criteria to find studies." : "No studies found matching the provided criteria.";
                 }
             } 
         }

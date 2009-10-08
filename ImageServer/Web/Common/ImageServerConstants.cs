@@ -79,7 +79,9 @@ public class ImageServerConstants
         public const string ApplicationLog = "~/Pages/Admin/ApplicationLog/Default.aspx";
         public const string StudyIntegrityQueuePage = "~/Pages/Queues/StudyIntegrityQueue/Default.aspx";
         public const string WorkQueuePage = "~/Pages/Queues/WorkQueue/Default.aspx";
-        public const string StudiesPage = "~/Pages/Studies/Default.aspx";
+		public const string RestoreQueuePage = "~/Pages/Queues/RestoreQueue/Default.aspx";
+		public const string ArchiveQueuePage = "~/Pages/Queues/ArchiveQueue/Default.aspx";
+		public const string StudiesPage = "~/Pages/Studies/Default.aspx";
         public const string JavascriptErrorPage = "~/Pages/Error/JavascriptRequired.aspx";
         public const string CookiesErrorPage = "~/Pages/Error/CookiesRequired.aspx";	
     }

@@ -89,20 +89,29 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         _serverSyntax = ServerTransferSyntax.Load(readContext, _archiveStudyStorage.ServerTransferSyntaxKey);
                         _syntax = TransferSyntax.GetTransferSyntax(_serverSyntax.Uid);
 
-                        StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-                        parms.StudyStorageKey = queueItem.StudyStorageKey;
-                        IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
+                        StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+                                                                    	{StudyStorageKey = queueItem.StudyStorageKey};
+                    	IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
                         _location = broker.FindOne(parms);
                         if (_location == null)
                         {
                             _studyStorage = StudyStorage.Load(readContext, queueItem.StudyStorageKey);
+							if (_studyStorage==null)
+							{
+								DateTime scheduleTime = Platform.Time.AddMinutes(5);
+								Platform.Log(LogLevel.Error, "Unable to find storage location, rescheduling restore request to {0}",
+											 scheduleTime);
+								queueItem.FailureDescription = "Unable to find storage location, rescheduling request.";
+								_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
+								return;
+							}
                         }
                     }
 
-                    if (_studyStorage == null)
+					if (_location == null)
+						Platform.Log(LogLevel.Info, "Starting restore of nearline study: {0}", _studyStorage.StudyInstanceUid);
+					else
                         Platform.Log(LogLevel.Info, "Starting restore of online study: {0}", _location.StudyInstanceUid);
-                    else
-                        Platform.Log(LogLevel.Info, "Starting restore of nearline study: {0}", _studyStorage.StudyInstanceUid);
 
                     // If restoring a Nearline study, select a filesystem
                     string destinationFolder;
@@ -130,13 +139,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     string filename = String.Empty;
                     string studyInstanceUid = String.Empty;
                     XmlElement element = _archiveStudyStorage.ArchiveXml.DocumentElement;
-                    foreach (XmlElement node in element.ChildNodes)
-                        if (node.Name.Equals("StudyFolder"))
-                            studyFolder = node.InnerText;
-                        else if (node.Name.Equals("Filename"))
-                            filename = node.InnerText;
-                        else if (node.Name.Equals("Uid"))
-                            studyInstanceUid = node.InnerText;
+					if (element!=null)
+						foreach (XmlElement node in element.ChildNodes)
+							if (node.Name.Equals("StudyFolder"))
+								studyFolder = node.InnerText;
+							else if (node.Name.Equals("Filename"))
+								filename = node.InnerText;
+							else if (node.Name.Equals("Uid"))
+								studyInstanceUid = node.InnerText;
 
                     string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
                     zipFile = Path.Combine(zipFile, studyInstanceUid);
@@ -211,8 +221,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     // Apply the rules engine.
 					ServerActionContext context =
 						new ServerActionContext(null, fs.Filesystem.GetKey(), _hsmArchive.ServerPartition,
-						                        queueItem.StudyStorageKey);
-					context.CommandProcessor = processor;
+						                        queueItem.StudyStorageKey) {CommandProcessor = processor};
 					processor.AddCommand(
 						new ApplyRulesCommand(destinationFolder, _studyStorage.StudyInstanceUid, context));
 
@@ -239,9 +248,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						{
 							bool retVal = _hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
 							ILockStudy studyLock = update.GetBroker<ILockStudy>();
-							LockStudyParameters parms = new LockStudyParameters();
-							parms.StudyStorageKey = queueItem.StudyStorageKey;
-							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+							LockStudyParameters parms = new LockStudyParameters
+							                            	{
+							                            		StudyStorageKey = queueItem.StudyStorageKey,
+							                            		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+							                            	};
 							retVal = retVal && studyLock.Execute(parms);
 							if (!parms.Successful || !retVal)
 							{
@@ -269,7 +280,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			}
 		}
 
-        private void OnStudyRestored(StudyStorageLocation location)
+        private static void OnStudyRestored(StudyStorageLocation location)
         {
             using(ServerCommandProcessor processor = new ServerCommandProcessor("Update Study Size In DB"))
             {
@@ -296,7 +307,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					}
 
 					// We rebuild the StudyXml, in case any settings or issues have happened since archival
-					processor.AddCommand(new RebuildStudyXmlCommand(_studyStorage.StudyInstanceUid, destinationFolder));
+					processor.AddCommand(new RebuildStudyXmlCommand(_location.StudyInstanceUid, destinationFolder));
 
 					StudyStatusEnum status;
 
@@ -308,6 +319,13 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						status = StudyStatusEnum.Online;
 
 					processor.AddCommand(new UpdateStudyStateCommand(_location, status, _serverSyntax));
+
+					// Apply the rules engine.
+					ServerActionContext context =
+						new ServerActionContext(null, _location.FilesystemKey, _hsmArchive.ServerPartition,
+												queueItem.StudyStorageKey) {CommandProcessor = processor};
+					processor.AddCommand(
+						new ApplyRulesCommand(destinationFolder, _location.StudyInstanceUid, context));
 
 					if (!processor.Execute())
 					{
@@ -323,9 +341,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						{
 							_hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
 							ILockStudy studyLock = update.GetBroker<ILockStudy>();
-							LockStudyParameters parms = new LockStudyParameters();
-							parms.StudyStorageKey = queueItem.StudyStorageKey;
-							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+							LockStudyParameters parms = new LockStudyParameters
+							                            	{
+							                            		StudyStorageKey = queueItem.StudyStorageKey,
+							                            		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+							                            	};
 							bool retVal = studyLock.Execute(parms);
 							if (!parms.Successful || !retVal)
 							{

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
@@ -194,6 +195,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             DeleteItemButton.Roles = AuthorityTokens.ArchiveQueue.Delete;
         	ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
+
+			if (!IsPostBack && !Page.IsAsync)
+			{
+				string patientID = Server.UrlDecode(Request["PatientID"]);
+				string patientName = Server.UrlDecode(Request["PatientName"]);
+				string partitionKey = Server.UrlDecode(Request["PartitionKey"]);
+
+				if (patientID != null && patientName != null && partitionKey != null)
+				{
+					var controller = new ServerPartitionConfigController();
+					ServerPartition = controller.GetPartition(new ServerEntityKey("ServerPartition", partitionKey));
+
+					PatientId.Text = patientID;
+					PatientName.Text = patientName;
+
+					ArchiveQueueItemList.SetDataSource();
+					ArchiveQueueItemList.Refresh();
+				}
+			}
         }
        
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

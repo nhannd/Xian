@@ -200,8 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                     source.PriorityEnum = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
                                                             };
 
-            MessageBox.Confirmed += delegate(object data)
-                            {
+            MessageBox.Confirmed += delegate {
                                 workQueueItemList.RefreshCurrentPage();
                             };
 
@@ -298,8 +297,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             if (!IsPostBack && !Page.IsAsync)
             {
-                string patientID = Request["PatientID"];
-                string patientName = Request["PatientName"];
+                string patientID = Server.UrlDecode(Request["PatientID"]);
+                string patientName = Server.UrlDecode(Request["PatientName"]);
                 string partitionKey = Request["PartitionKey"];
                 string processorID = Request["ProcessorID"];
 

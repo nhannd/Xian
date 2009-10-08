@@ -280,6 +280,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             }
         }
+
+		public void SetDataSource()
+		{
+			ArchiveQueueGridView.DataSource = ArchiveQueueDataSourceObject;
+		}
+
         #endregion
 
     }

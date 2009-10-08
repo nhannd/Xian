@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         public void Refresh()
         {
-            if(!StudyListGridView.isDataSourceSet()) StudyListGridView.SetDataSource();
+            if(!StudyListGridView.IsDataSourceSet()) StudyListGridView.SetDataSource();
             StudyListGridView.RefreshCurrentPage();
         }
 

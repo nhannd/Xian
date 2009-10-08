@@ -291,6 +291,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             }
         }
 
+		public void SetDataSource()
+		{
+			RestoreQueueGridView.DataSource = RestoreQueueDataSourceObject;
+		}
+
         #endregion public methods
 
     }
