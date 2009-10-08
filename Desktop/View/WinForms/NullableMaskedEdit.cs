@@ -280,21 +280,13 @@ namespace Clifton.Windows.Forms
         /// </summary>
         public NullableMaskedEdit()
         {
-            this.MaskInputRejected += new MaskInputRejectedEventHandler(OnMaskInputRejected);
+            this.MaskInputRejected += delegate { badMaskChar = true; };
             // 04/19/06 - If set to true, the control displays "0" in the numeric input fields.
             // Also, SkipLiterals doesn't do what it says it's supposed to do.
             SkipLiterals = false;
         }
 
-        /// <summary>
-        /// Sets the badMaskChar to true.
-        /// </summary>
-        protected void OnMaskInputRejected(object sender, MaskInputRejectedEventArgs e)
-        {
-            badMaskChar = true;
-        }
-
-        /// <summary>
+    	/// <summary>
         /// On enter, set the mask to the edit mask, which
         /// override any null display value text.
         /// </summary>
@@ -564,6 +556,23 @@ namespace Clifton.Windows.Forms
         }
 
         protected void ClearSelection()
+        {
+            if (string.IsNullOrEmpty(this.Mask))
+            {
+                RemoveCharacters();
+            }
+            else
+            {
+                RemoveCharactersAndReplaceWithMaskPrompt();
+            }
+        }
+
+        private void RemoveCharacters()
+        {
+            Text = base.Text.Remove(SelectionStart, SelectionLength);
+        }
+
+        private void RemoveCharactersAndReplaceWithMaskPrompt()
         {
             MaskFormat maskFormat = TextMaskFormat;
             // Set to include prompts and literals;
