@@ -34,6 +34,7 @@ using System.Xml;
 using ClearCanvas.Enterprise.Common;
 using NHibernate.Cfg;
 using System.IO;
+using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -64,10 +65,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			using (XmlTextReader reader = new XmlTextReader(tr))
 			{
 				reader.WhitespaceHandling = WhitespaceHandling.None;
-				return (RelationalModelInfo) Read(reader, typeof(RelationalModelInfo));
+				var model = (RelationalModelInfo) Read(reader, typeof(RelationalModelInfo));
+
+				// bug #5300: need to convert any unique flags to explicit unique constraints
+				MakeUniqueConstraintsExplicit(model);
+				return model;
 			}
 		}
-
 
 		/// <summary>
 		/// Writes the specified data to the specified xml writer.
@@ -76,7 +80,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <param name="data"></param>
 		private static void Write(System.Xml.XmlWriter writer, object data)
 		{
-			JsmlSerializer.Serialize(writer, data, data.GetType().Name, false);
+			// bug #5300: do not write out the "Unique" flag anymore
+			var options = new JsmlSerializer.SerializeOptions { MemberFilter = (m => m.Name != "Unique") };
+			JsmlSerializer.Serialize(writer, data, data.GetType().Name, options);
 		}
 
 		/// <summary>
@@ -89,5 +95,29 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			return JsmlSerializer.Deserialize(reader, dataContractClass);
 		}
+
+		/// <summary>
+		/// Adds an explicit unique constraint for each column that is marked as unique.
+		/// </summary>
+		/// <remarks>
+		/// This is to support backwards compatability with prior versions, where
+		/// the Unique flag was set to indicate that a column had a unique constraint.
+		/// </remarks>
+		/// <param name="model"></param>
+		private static void MakeUniqueConstraintsExplicit(RelationalModelInfo model)
+		{
+			foreach (var table in model.Tables)
+			{
+				// explicitly model any unique columns as unique constraints
+				foreach (var col in table.Columns)
+				{
+					if (col.Unique)
+					{
+						table.UniqueKeys.Add(new ConstraintInfo(table, col));
+					}
+				}
+			}
+		}
+
 	}
 }

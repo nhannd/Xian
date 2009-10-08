@@ -73,7 +73,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		}
 
 		/// <summary>
-		/// Constructor for creating a unique constraint on a single column.
+		/// Constructor for creating a unique constraint on a single column that is marked unique.
 		/// </summary>
 		/// <param name="table"></param>
 		/// <param name="column"></param>
@@ -83,14 +83,31 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		}
 
 		/// <summary>
+		/// Constructor for creating a unique constraint on a single column that is marked unique.
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="column"></param>
+		internal ConstraintInfo(TableInfo table, ColumnInfo column)
+			: this("UQ_", table.Name, new [] { column })
+		{
+		}
+
+		/// <summary>
 		/// Protected constructor.
 		/// </summary>
 		protected ConstraintInfo(string prefix, string table, IEnumerable<Column> columns, string constraintName)
 		{
 			_name = string.IsNullOrEmpty(constraintName) ? MakeName(prefix, table, columns) : MakeName(prefix, table, constraintName);
-			_columns = CollectionUtils.Map<Column, string>(
-				columns,
-				delegate(Column column) { return column.Name; });
+			_columns = CollectionUtils.Map(columns, (Column column) => column.Name);
+		}
+
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		protected ConstraintInfo(string prefix, string table, IEnumerable<ColumnInfo> columns)
+		{
+			_name = MakeName(prefix, table, columns);
+			_columns = CollectionUtils.Map(columns, (ColumnInfo column) => column.Name);
 		}
 
 		/// <summary>

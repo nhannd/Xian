@@ -33,6 +33,7 @@ using System.Runtime.Serialization;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Mapping;
+using System;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -46,6 +47,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private int _length;
 		private bool _nullable;
 		private string _sqlType;
+
+		/// <summary>
+		/// This flag is obsolete as of #4968, since we now express all unique constraints explicitly.
+		/// However it needs to be retained for backwards de-serialization compatability. 
+		/// </summary>
+		private bool _unique;
 
 		/// <summary>
 		/// Constructor.
@@ -110,6 +117,20 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			get { return _sqlType; }
 			private set { _sqlType = value; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the column is defined as unique.
+		/// </summary>
+		/// <remarks>
+		/// This flag is obsolete - unique constraints are expressed explicitly.
+		/// It is retained only for backwards de-serialization compatability. 
+		/// </remarks>
+		[DataMember]
+		public bool Unique
+		{
+			get { return _unique; }
+			private set { _unique = value; }
 		}
 
 		/// <summary>

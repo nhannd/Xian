@@ -76,9 +76,23 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		protected static string MakeName(string prefix, string table, IEnumerable<Column> columns)
 		{
 			// concat column names into single string
-			string columnNames = StringUtilities.Combine(
-				new TypeSafeEnumerableWrapper<Column>(columns),
-				"", delegate(Column c) { return c.Name; });
+			var columnNames = StringUtilities.Combine(columns, "", c => c.Name);
+
+			return MakeName(prefix, table, columnNames);
+		}
+
+		/// <summary>
+		/// Creates a unique name for the element by combining the prefix, table, and element strings
+		/// along with a generated hash that is a function of the table and element.
+		/// </summary>
+		/// <param name="prefix"></param>
+		/// <param name="table"></param>
+		/// <param name="columns"></param>
+		/// <returns></returns>
+		protected static string MakeName(string prefix, string table, IEnumerable<ColumnInfo> columns)
+		{
+			// concat column names into single string
+			var columnNames = StringUtilities.Combine(columns, "", c => c.Name);
 
 			return MakeName(prefix, table, columnNames);
 		}

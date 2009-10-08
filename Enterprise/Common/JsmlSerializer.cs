@@ -44,6 +44,28 @@ namespace ClearCanvas.Enterprise.Common
 {
     public static class JsmlSerializer
     {
+		public class SerializeOptions
+		{
+			public static readonly SerializeOptions Default = new SerializeOptions();
+
+			public SerializeOptions()
+			{
+				// default to no filter
+				this.MemberFilter = delegate { return true; };
+			}
+
+
+			/// <summary>
+			/// Specifies whether or not to serialize null-valued properties.
+			/// If there are many null-valued properties, this will significantly affect the size of the JSML document.
+			/// </summary>
+			public bool IncludeEmptyTags { get; set; }
+
+			public Predicate<MemberInfo> MemberFilter { get; set; }
+		}
+
+
+
         /// <summary>
         /// Serializes the specified object to JSML format, using the specified objectName as the outermost tag name.
         /// </summary>
@@ -52,7 +74,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <returns></returns>
         public static string Serialize(object dataObject, string objectName)
         {
-            return Serialize(dataObject, objectName, false);
+            return Serialize(dataObject, objectName, SerializeOptions.Default);
         }
 
         /// <summary>
@@ -60,10 +82,21 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         /// <param name="dataObject"></param>
         /// <param name="objectName"></param>
-        /// <param name="includeEmptyTags">Specifies whether or not to serialize null-valued properties.
-        ///   If there are many null-valued properties, this will significantly affect the size of the JSML document.</param>
+		/// <param name="includeEmptyTags"></param>
         /// <returns></returns>
-        public static string Serialize(object dataObject, string objectName, bool includeEmptyTags)
+		public static string Serialize(object dataObject, string objectName, bool includeEmptyTags)
+        {
+        	return Serialize(dataObject, objectName, new SerializeOptions {IncludeEmptyTags = includeEmptyTags});
+        }
+
+        /// <summary>
+        /// Serializes the specified object to JSML format, using the specified objectName as the outermost tag name.
+        /// </summary>
+        /// <param name="dataObject"></param>
+        /// <param name="objectName"></param>
+		/// <param name="options"></param>
+        /// <returns></returns>
+		public static string Serialize(object dataObject, string objectName, SerializeOptions options)
         {
             if (dataObject == null)
                 return "";
@@ -74,7 +107,7 @@ namespace ClearCanvas.Enterprise.Common
             {
                 XmlTextWriter writer = new XmlTextWriter(sw);
                 writer.Formatting = Formatting.Indented;
-                SerializeHelper(dataObject, objectName, writer, includeEmptyTags);
+				SerializeHelper(dataObject, objectName, writer, options);
                 writer.Close();
                 jsml = sw.ToString();
             }
@@ -82,11 +115,16 @@ namespace ClearCanvas.Enterprise.Common
             return jsml;
         }
 
-        public static void Serialize(XmlWriter writer, object obj, string objectName, bool includeEmptyTags)
+		public static void Serialize(XmlWriter writer, object obj, string objectName, bool includeEmptyTags)
+        {
+			Serialize(writer, obj, objectName, new SerializeOptions { IncludeEmptyTags = includeEmptyTags });
+        }
+
+        public static void Serialize(XmlWriter writer, object obj, string objectName, SerializeOptions options)
         {
             if (obj != null)
             {
-                SerializeHelper(obj, objectName, writer, includeEmptyTags);
+				SerializeHelper(obj, objectName, writer, options);
             }
         }
 
@@ -142,12 +180,12 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="dataObject"></param>
         /// <param name="objectName"></param>
         /// <param name="writer"></param>
-        /// <param name="includeEmptyTags"></param>
-        private static void SerializeHelper(object dataObject, string objectName, XmlWriter writer, bool includeEmptyTags)
+        /// <param name="options"></param>
+        private static void SerializeHelper(object dataObject, string objectName, XmlWriter writer, SerializeOptions options)
         {
             if (dataObject == null)
             {
-                if (includeEmptyTags)
+                if (options.IncludeEmptyTags)
                     writer.WriteElementString(objectName, String.Empty);
             }
             else if (dataObject is EntityRef)
@@ -156,14 +194,14 @@ namespace ClearCanvas.Enterprise.Common
             }
             else if (IsDataContract(dataObject.GetType()))
             {
-                List<IObjectMemberContext> dataMemberFields = new List<IObjectMemberContext>(GetDataMemberFields(dataObject));
+                List<IObjectMemberContext> dataMemberFields = new List<IObjectMemberContext>(GetDataMemberFields(dataObject, options.MemberFilter));
                 if (dataMemberFields.Count > 0)
                 {
                     writer.WriteStartElement(objectName);
 					writer.WriteAttributeString("hash", "true");
 					foreach (IObjectMemberContext context in dataMemberFields)
                     {
-						SerializeHelper(context.MemberValue, context.Member.Name, writer, includeEmptyTags);
+						SerializeHelper(context.MemberValue, context.Member.Name, writer, options);
                     }
                     writer.WriteEndElement();
                 }
@@ -181,7 +219,7 @@ namespace ClearCanvas.Enterprise.Common
 				writer.WriteAttributeString("hash", "true");
 				foreach (DictionaryEntry entry in dic)
                 {
-                    SerializeHelper(entry.Value, entry.Key.ToString(), writer, includeEmptyTags);
+                    SerializeHelper(entry.Value, entry.Key.ToString(), writer, options);
                 }
                 writer.WriteEndElement();
             }
@@ -212,7 +250,7 @@ namespace ClearCanvas.Enterprise.Common
 
                 foreach (object item in (IList)dataObject)
                 {
-                    SerializeHelper(item, "item", writer, includeEmptyTags);
+                    SerializeHelper(item, "item", writer, options);
                 }
 
                 writer.WriteEndElement();
@@ -254,7 +292,7 @@ namespace ClearCanvas.Enterprise.Common
             {
                 dataObject = Activator.CreateInstance(dataType);
 
-				foreach (IObjectMemberContext context in GetDataMemberFields(dataObject))
+				foreach (IObjectMemberContext context in GetDataMemberFields(dataObject, delegate { return true; }))
                 {
 					XmlElement memberElement = GetFirstElementWithTagName(xmlElement, context.Member.Name);
                     if (memberElement != null)
@@ -339,10 +377,10 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// Get a list of properties and fields from a data contract object with DataMemberAttribute
         /// </summary>
-        private static IEnumerable<IObjectMemberContext> GetDataMemberFields(object dataObject)
+        private static IEnumerable<IObjectMemberContext> GetDataMemberFields(object dataObject, Predicate<MemberInfo> memberFilter)
         {
 			ObjectWalker walker = new ObjectWalker(
-				delegate(MemberInfo member) { return AttributeUtils.HasAttribute<DataMemberAttribute>(member, true); });
+				delegate(MemberInfo member) { return AttributeUtils.HasAttribute<DataMemberAttribute>(member, true) && memberFilter(member); });
         	walker.IncludeNonPublicFields = true;
         	walker.IncludeNonPublicProperties = true;
 
