@@ -38,7 +38,6 @@ using System.Xml;
 using System.IO;
 
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -101,18 +100,13 @@ namespace ClearCanvas.Enterprise.Common
             if (dataObject == null)
                 return "";
 
-            string jsml = "";
-
-            using (StringWriter sw = new StringWriter())
+            using (var sw = new StringWriter())
             {
-                XmlTextWriter writer = new XmlTextWriter(sw);
-                writer.Formatting = Formatting.Indented;
-				SerializeHelper(dataObject, objectName, writer, options);
+                var writer = new XmlTextWriter(sw) {Formatting = Formatting.Indented};
+            	SerializeHelper(dataObject, objectName, writer, options);
                 writer.Close();
-                jsml = sw.ToString();
+                return sw.ToString();
             }
-
-            return jsml;
         }
 
 		public static void Serialize(XmlWriter writer, object obj, string objectName, bool includeEmptyTags)
@@ -152,7 +146,7 @@ namespace ClearCanvas.Enterprise.Common
             if (String.IsNullOrEmpty(jsml))
                 return null;
 
-            XmlDocument xmlDoc = new XmlDocument();
+            var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(jsml);
 
             return DeserializeHelper(dataContract, xmlDoc.DocumentElement);
@@ -165,7 +159,7 @@ namespace ClearCanvas.Enterprise.Common
 
         public static object Deserialize(XmlReader reader, Type dataContract)
         {
-            XmlDocument xmlDoc = new XmlDocument();
+            var xmlDoc = new XmlDocument();
             xmlDoc.Load(reader);
 
             return DeserializeHelper(dataContract, xmlDoc.DocumentElement);
@@ -194,12 +188,12 @@ namespace ClearCanvas.Enterprise.Common
             }
             else if (IsDataContract(dataObject.GetType()))
             {
-                List<IObjectMemberContext> dataMemberFields = new List<IObjectMemberContext>(GetDataMemberFields(dataObject, options.MemberFilter));
+                var dataMemberFields = new List<IObjectMemberContext>(GetDataMemberFields(dataObject, options.MemberFilter));
                 if (dataMemberFields.Count > 0)
                 {
                     writer.WriteStartElement(objectName);
 					writer.WriteAttributeString("hash", "true");
-					foreach (IObjectMemberContext context in dataMemberFields)
+					foreach (var context in dataMemberFields)
                     {
 						SerializeHelper(context.MemberValue, context.Member.Name, writer, options);
                     }
@@ -213,7 +207,7 @@ namespace ClearCanvas.Enterprise.Common
                 // the dictionary is serialized as if it were an object and each key is a property on the object
                 // jscript will not be able to distinguish that it was originally a dictionary
                 // note that if the dictionary contains non-string keys, unpredictable behaviour may result
-                IDictionary dic = (IDictionary) dataObject;
+                var dic = (IDictionary) dataObject;
 
 				writer.WriteStartElement(objectName);
 				writer.WriteAttributeString("hash", "true");
@@ -248,7 +242,7 @@ namespace ClearCanvas.Enterprise.Common
                 writer.WriteStartElement(objectName);
                 writer.WriteAttributeString("array", "true");
 
-                foreach (object item in (IList)dataObject)
+                foreach (var item in (IList)dataObject)
                 {
                     SerializeHelper(item, "item", writer, options);
                 }
@@ -261,7 +255,7 @@ namespace ClearCanvas.Enterprise.Common
                 // output of the serializer
 				writer.WriteStartElement(objectName);
 				writer.WriteAttributeString("hash", "true");
-				XmlDocument xmlDoc = (XmlDocument)dataObject;
+				var xmlDoc = (XmlDocument)dataObject;
                 if(xmlDoc.DocumentElement != null)
                 {
  					xmlDoc.DocumentElement.WriteTo(writer);
@@ -292,12 +286,12 @@ namespace ClearCanvas.Enterprise.Common
             {
                 dataObject = Activator.CreateInstance(dataType);
 
-				foreach (IObjectMemberContext context in GetDataMemberFields(dataObject, delegate { return true; }))
+				foreach (var context in GetDataMemberFields(dataObject, delegate { return true; }))
                 {
-					XmlElement memberElement = GetFirstElementWithTagName(xmlElement, context.Member.Name);
+					var memberElement = GetFirstElementWithTagName(xmlElement, context.Member.Name);
                     if (memberElement != null)
                     {
-                        object memberObject = DeserializeHelper(context.MemberType, memberElement);
+                        var memberObject = DeserializeHelper(context.MemberType, memberElement);
                         context.MemberValue = memberObject;
                     }
                 }
@@ -308,17 +302,17 @@ namespace ClearCanvas.Enterprise.Common
                 // note that only strongly-typed dictionaries are supported, and the key type *must* be "string",
                 // and the value type must be JSML-serializable
                 dataObject = Activator.CreateInstance(dataType);
-                Type[] genericTypes = dataType.GetGenericArguments();
-                Type keyType = genericTypes[0];
+                var genericTypes = dataType.GetGenericArguments();
+                var keyType = genericTypes[0];
                 if(keyType != typeof(string))
                     throw new NotSupportedException("Only IDictionary<string, T>, where T is a JSML-serializable type, is supported.");
-                Type valueType = genericTypes[1];
+                var valueType = genericTypes[1];
 
                 foreach (XmlNode node in xmlElement.ChildNodes)
                 {
                     if(node is XmlElement)
                     {
-                        object value = DeserializeHelper(valueType, (XmlElement)node);
+                        var value = DeserializeHelper(valueType, (XmlElement)node);
                         ((IDictionary)dataObject).Add(node.Name, value);
                     }
                 }
@@ -342,22 +336,22 @@ namespace ClearCanvas.Enterprise.Common
             else if (dataType.GetInterface("IList") == typeof(IList))
             {
                 dataObject = Activator.CreateInstance(dataType);
-                Type[] genericTypes = dataType.GetGenericArguments();
+                var genericTypes = dataType.GetGenericArguments();
 
-                XmlNodeList nodeList = xmlElement.SelectNodes("item");
+                var nodeList = xmlElement.SelectNodes("item");
                 foreach (XmlNode node in nodeList)
                 {
-                    object iteratorObject = DeserializeHelper(genericTypes[0], (XmlElement)node);
+                    var iteratorObject = DeserializeHelper(genericTypes[0], (XmlElement)node);
                     ((IList)dataObject).Add(iteratorObject);
                 }
             }
             else if(dataType == typeof(XmlDocument))
             {
                 // this clause supports deserialization of an embedded JSML document
-                string xml = xmlElement.InnerXml;
+                var xml = xmlElement.InnerXml;
                 if(!string.IsNullOrEmpty(xml))
                 {
-                    XmlDocument doc = new XmlDocument();
+                    var doc = new XmlDocument();
                     doc.LoadXml(xml);
                     dataObject = doc;
                 }
@@ -379,15 +373,16 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         private static IEnumerable<IObjectMemberContext> GetDataMemberFields(object dataObject, Predicate<MemberInfo> memberFilter)
         {
-			ObjectWalker walker = new ObjectWalker(
-				delegate(MemberInfo member) { return AttributeUtils.HasAttribute<DataMemberAttribute>(member, true) && memberFilter(member); });
-        	walker.IncludeNonPublicFields = true;
-        	walker.IncludeNonPublicProperties = true;
+			var walker = new ObjectWalker(member => AttributeUtils.HasAttribute<DataMemberAttribute>(member, true) && memberFilter(member))
+			             	{
+			             		IncludeNonPublicFields = true,
+			             		IncludeNonPublicProperties = true
+			             	};
 
         	return walker.Walk(dataObject);
         }
 
-        private static XmlElement GetFirstElementWithTagName(XmlElement xmlElement, string tagName)
+        private static XmlElement GetFirstElementWithTagName(XmlNode xmlElement, string tagName)
         {
             return (XmlElement)CollectionUtils.FirstElement(xmlElement.SelectNodes(tagName));
         }

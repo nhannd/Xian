@@ -33,7 +33,6 @@ using System.Runtime.Serialization;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Mapping;
-using System;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {

@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Collections;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Mapping;
 
@@ -57,9 +56,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		protected static string MakeName(string prefix, string table, string element)
 		{
 			// use MD5 to obtain a 32-character hex string that is a unique function of the table and element
-			byte[] bytes = Encoding.UTF8.GetBytes(table + element);
-			byte[] hash = new MD5CryptoServiceProvider().ComputeHash(bytes);
-			string code = BitConverter.ToString(hash).Replace("-", "");
+			var bytes = Encoding.UTF8.GetBytes(table + element);
+			var hash = new MD5CryptoServiceProvider().ComputeHash(bytes);
+			var code = BitConverter.ToString(hash).Replace("-", "");
 
 			// return a value that is at most 64 chars long
 			return prefix + Truncate(element, 64 - prefix.Length - code.Length) + code;
@@ -115,7 +114,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <returns></returns>
         public override bool Equals(object obj)
         {
-            ElementInfo that = obj as ElementInfo;
+            var that = obj as ElementInfo;
             if (that == null)
                 return false;
             return this.GetType() == that.GetType() && this.Identity == that.Identity;

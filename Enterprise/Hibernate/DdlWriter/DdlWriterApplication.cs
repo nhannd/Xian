@@ -35,9 +35,7 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
-using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
-using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
@@ -46,7 +44,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
     {
         public void RunApplication(string[] args)
         {
-            DdlWriterCommandLine cmdLine = new DdlWriterCommandLine();
+            var cmdLine = new DdlWriterCommandLine();
             try
             {
                 cmdLine.Parse(args);
@@ -54,7 +52,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 // if a file name was supplied, write to the file
                 if (!string.IsNullOrEmpty(cmdLine.OutputFile))
                 {
-                    using (StreamWriter sw = File.CreateText(cmdLine.OutputFile))
+                    using (var sw = File.CreateText(cmdLine.OutputFile))
                     {
                         WriteOutput(sw, cmdLine);
                     }
@@ -72,18 +70,18 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             }
         }
 
-        private void WriteOutput(TextWriter writer, DdlWriterCommandLine cmdLine)
+        private static void WriteOutput(TextWriter writer, DdlWriterCommandLine cmdLine)
         {
             try
             {
 				// load the persistent store defined by the current set of binaries
-				PersistentStore store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
+				var store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
 
 				// get config
-				Configuration config = store.Configuration;
+				var config = store.Configuration;
 
 				// run pre-processors
-				PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
+				var preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
 				preProcessor.Process(config);
 
 
@@ -91,7 +89,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             	RelationalModelInfo baselineModel = null;
 				if(!string.IsNullOrEmpty(cmdLine.BaselineModelFile))
 				{
-					RelationalModelSerializer serializer = new RelationalModelSerializer();
+					var serializer = new RelationalModelSerializer();
 					baselineModel = serializer.ReadModel(File.OpenText(cmdLine.BaselineModelFile));
 				}
 
@@ -100,10 +98,12 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 					case DdlWriterCommandLine.FormatOptions.sql:
 
 						// create script writer and set properties based on command line 
-						ScriptWriter scriptWriter = new ScriptWriter(config);
-						scriptWriter.EnumOption = cmdLine.EnumOption;
-						scriptWriter.QualifyNames = cmdLine.QualifyNames;
-						scriptWriter.BaselineModel = baselineModel;
+						var scriptWriter = new ScriptWriter(config)
+						                   	{
+						                   		EnumOption = cmdLine.EnumOption,
+						                   		QualifyNames = cmdLine.QualifyNames,
+						                   		BaselineModel = baselineModel
+						                   	};
 
 						// decide whether to write a creation or upgrade script, depending on if a baseline was supplied
 						if(baselineModel == null)
@@ -119,7 +119,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 						if(baselineModel != null)
 							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
 
-						RelationalModelSerializer serializer = new RelationalModelSerializer();
+						var serializer = new RelationalModelSerializer();
 						serializer.WriteModel(new RelationalModelInfo(config), writer);
 						break;
 
@@ -133,9 +133,9 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             }
         }
 
-        private void Log(object obj, LogLevel level)
+        private static void Log(object obj, LogLevel level)
         {
-            Platform.Log(LogLevel.Error, obj);
+			Platform.Log(level, obj);
             Console.WriteLine(obj);
         }
     }

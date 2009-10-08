@@ -32,9 +32,7 @@
 using System;
 using System.Xml;
 using ClearCanvas.Enterprise.Common;
-using NHibernate.Cfg;
 using System.IO;
-using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -48,7 +46,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// </summary>
 		public void WriteModel(RelationalModelInfo model, TextWriter tw)
 		{
-			using (XmlTextWriter writer = new XmlTextWriter(tw))
+			using (var writer = new XmlTextWriter(tw))
 			{
 				writer.Formatting = Formatting.Indented;
 				Write(writer, model);
@@ -62,7 +60,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <returns></returns>
 		public RelationalModelInfo ReadModel(TextReader tr)
 		{
-			using (XmlTextReader reader = new XmlTextReader(tr))
+			using (var reader = new XmlTextReader(tr))
 			{
 				reader.WhitespaceHandling = WhitespaceHandling.None;
 				var model = (RelationalModelInfo) Read(reader, typeof(RelationalModelInfo));
@@ -78,7 +76,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="data"></param>
-		private static void Write(System.Xml.XmlWriter writer, object data)
+		private static void Write(XmlWriter writer, object data)
 		{
 			// bug #5300: do not write out the "Unique" flag anymore
 			var options = new JsmlSerializer.SerializeOptions { MemberFilter = (m => m.Name != "Unique") };

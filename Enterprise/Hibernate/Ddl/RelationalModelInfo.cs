@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Utilities;
 using Iesi.Collections;
@@ -66,8 +65,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <param name="config"></param>
 		public RelationalModelInfo(Configuration config)
 		{
-			_tables = CollectionUtils.Map<Table, TableInfo>(GetTables(config),
-							delegate(Table table) { return BuildTableInfo(table, config); });
+			_tables = CollectionUtils.Map(GetTables(config), (Table table) => BuildTableInfo(table, config));
 
 			_enumerations = new EnumMetadataReader().GetEnums(config);
 		}
@@ -125,25 +123,21 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private static List<Table> GetTables(Configuration cfg)
 		{
 			// build set of all tables
-			HybridSet tables = new HybridSet();
-			foreach (PersistentClass pc in cfg.ClassMappings)
+			var tables = new HybridSet();
+			foreach (var pc in cfg.ClassMappings)
 			{
-				foreach (Table table in pc.TableClosureIterator)
+				foreach (var table in pc.TableClosureIterator)
 				{
 					tables.Add(table);
 				}
 			}
 
-			foreach (Collection collection in cfg.CollectionMappings)
+			foreach (var collection in cfg.CollectionMappings)
 			{
 				tables.Add(collection.CollectionTable);
 			}
 
-			return CollectionUtils.Sort<Table>(tables,
-				delegate(Table x, Table y)
-				{
-					return x.Name.CompareTo(y.Name);
-				});
+			return CollectionUtils.Sort(tables, (Table x, Table y) => x.Name.CompareTo(y.Name));
 		}
 
 		/// <summary>
@@ -154,14 +148,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <returns></returns>
 		private static TableInfo BuildTableInfo(Table table, Configuration config)
 		{
-			Dialect dialect = Dialect.GetDialect(config.Properties);
+			var dialect = Dialect.GetDialect(config.Properties);
 
 			// map the set of additional unique constraints (not including individual unique columns)
-			List<ConstraintInfo> uniqueKeys = CollectionUtils.Map<UniqueKey, ConstraintInfo>(
-				table.UniqueKeyIterator, delegate(UniqueKey uk) { return new ConstraintInfo(table, uk); });
+			var uniqueKeys = CollectionUtils.Map(table.UniqueKeyIterator, (UniqueKey uk) => new ConstraintInfo(table, uk));
 
 			// explicitly model any unique columns as unique constraints
-			foreach (Column col in table.ColumnIterator)
+			foreach (var col in table.ColumnIterator)
 			{
 				if(col.Unique)
 				{
@@ -172,10 +165,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return new TableInfo(
 				table.Name,
 				table.Schema,
-				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnIterator, delegate(Column column) { return new ColumnInfo(column, config, dialect); }),
+				CollectionUtils.Map(table.ColumnIterator, (Column column) => new ColumnInfo(column, config, dialect)),
 				new ConstraintInfo(table, table.PrimaryKey),
-				CollectionUtils.Map<Index, IndexInfo>(table.IndexIterator, delegate(Index index) { return new IndexInfo(table, index); }),
-				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyIterator, delegate(ForeignKey fk) { return new ForeignKeyInfo(table, fk, config); }),
+				CollectionUtils.Map(table.IndexIterator, (Index index) => new IndexInfo(table, index)),
+				CollectionUtils.Map(table.ForeignKeyIterator, (ForeignKey fk) => new ForeignKeyInfo(table, fk, config)),
 				uniqueKeys
 				);
 		}

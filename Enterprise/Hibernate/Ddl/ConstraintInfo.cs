@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Mapping;
-using System.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -78,7 +77,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <param name="table"></param>
 		/// <param name="column"></param>
 		internal ConstraintInfo(Table table, Column column)
-			: this("UQ_", table.Name, new Column[] { column }, null)
+			: this("UQ_", table.Name, new [] { column }, null)
 		{
 		}
 
