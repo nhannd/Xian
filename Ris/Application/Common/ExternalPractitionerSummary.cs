@@ -69,14 +69,12 @@ namespace ClearCanvas.Ris.Application.Common
 
 		public bool Equals(ExternalPractitionerSummary externalPractitionerSummary)
 		{
-			if (externalPractitionerSummary == null) return false;
-			return Equals(PractitionerRef, externalPractitionerSummary.PractitionerRef);
+			return externalPractitionerSummary != null && Equals(PractitionerRef, externalPractitionerSummary.PractitionerRef);
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(this, obj)) return true;
-			return Equals(obj as ExternalPractitionerSummary);
+			return ReferenceEquals(this, obj) || Equals(obj as ExternalPractitionerSummary);
 		}
 
 		public override int GetHashCode()

@@ -31,103 +31,100 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ExternalPractitionerContactPointDetail : DataContractBase, ICloneable
-    {
-        public ExternalPractitionerContactPointDetail(EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, 
-            EnumValueInfo preferredResultCommunicationMode, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails,
-            TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, bool deactivated)
-        {
-            this.ContactPointRef = contactPointRef;
-            this.Name = name;
-            this.Description = description;
-            this.IsDefaultContactPoint = isDefaultContactPoint;
-            this.PreferredResultCommunicationMode = preferredResultCommunicationMode;
-            this.TelephoneNumbers = phoneDetails;
-            this.Addresses = addressDetails;
-            this.CurrentPhoneNumber = currentPhone;
-            this.CurrentFaxNumber = currentFax;
-            this.CurrentAddress = currentAddress;
-        	this.Deactivated = deactivated;
-        }
+	[DataContract]
+	public class ExternalPractitionerContactPointDetail : DataContractBase, ICloneable
+	{
+		public ExternalPractitionerContactPointDetail(EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, 
+			EnumValueInfo preferredResultCommunicationMode, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails,
+			TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, bool deactivated)
+		{
+			this.ContactPointRef = contactPointRef;
+			this.Name = name;
+			this.Description = description;
+			this.IsDefaultContactPoint = isDefaultContactPoint;
+			this.PreferredResultCommunicationMode = preferredResultCommunicationMode;
+			this.TelephoneNumbers = phoneDetails;
+			this.Addresses = addressDetails;
+			this.CurrentPhoneNumber = currentPhone;
+			this.CurrentFaxNumber = currentFax;
+			this.CurrentAddress = currentAddress;
+			this.Deactivated = deactivated;
+		}
 
-        public ExternalPractitionerContactPointDetail()
-        {
-            this.TelephoneNumbers = new List<TelephoneDetail>();
-            this.Addresses = new List<AddressDetail>();
-        }
+		public ExternalPractitionerContactPointDetail()
+		{
+			this.TelephoneNumbers = new List<TelephoneDetail>();
+			this.Addresses = new List<AddressDetail>();
+		}
 
-        [DataMember]
-        public EntityRef ContactPointRef;
+		[DataMember]
+		public EntityRef ContactPointRef;
 
-        [DataMember]
-        public string Name;
+		[DataMember]
+		public string Name;
 
-        [DataMember]
-        public string Description;
+		[DataMember]
+		public string Description;
 
-        [DataMember]
-        public bool IsDefaultContactPoint;
+		[DataMember]
+		public bool IsDefaultContactPoint;
 
-        [DataMember]
-        public EnumValueInfo PreferredResultCommunicationMode;
+		[DataMember]
+		public EnumValueInfo PreferredResultCommunicationMode;
 
-        [DataMember]
-        public TelephoneDetail CurrentPhoneNumber;
+		[DataMember]
+		public TelephoneDetail CurrentPhoneNumber;
 
-        [DataMember]
-        public TelephoneDetail CurrentFaxNumber;
+		[DataMember]
+		public TelephoneDetail CurrentFaxNumber;
 
-        [DataMember]
-        public AddressDetail CurrentAddress;
+		[DataMember]
+		public AddressDetail CurrentAddress;
 
-        [DataMember]
-        public List<TelephoneDetail> TelephoneNumbers;
+		[DataMember]
+		public List<TelephoneDetail> TelephoneNumbers;
 
-        [DataMember]
-        public List<AddressDetail> Addresses;
+		[DataMember]
+		public List<AddressDetail> Addresses;
 
 		[DataMember]
 		public bool Deactivated;
 
 		public ExternalPractitionerContactPointSummary GetSummary()
-        {
-            return new ExternalPractitionerContactPointSummary(
-                this.ContactPointRef,
-                this.Name,
-                this.Description,
-                this.IsDefaultContactPoint,
+		{
+			return new ExternalPractitionerContactPointSummary(
+				this.ContactPointRef,
+				this.Name,
+				this.Description,
+				this.IsDefaultContactPoint,
 				this.Deactivated);
-        }
+		}
 
-        #region ICloneable Members
+		#region ICloneable Members
 
-        public object Clone()
-        {
-            return new ExternalPractitionerContactPointDetail(
-                this.ContactPointRef,
-                this.Name,
-                this.Description,
-                this.IsDefaultContactPoint,
-                this.PreferredResultCommunicationMode,
-                CollectionUtils.Map<TelephoneDetail, TelephoneDetail>(this.TelephoneNumbers,
-                    delegate(TelephoneDetail detail) { return (TelephoneDetail)detail.Clone(); }),
-                CollectionUtils.Map<AddressDetail, AddressDetail>(this.Addresses,
-                    delegate(AddressDetail detail) { return (AddressDetail)detail.Clone(); }),
-                (TelephoneDetail)(this.CurrentPhoneNumber == null ? null : this.CurrentPhoneNumber.Clone()),
-                (TelephoneDetail) (this.CurrentFaxNumber == null ? null : this.CurrentFaxNumber.Clone()),
-                (AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone()),
+		public object Clone()
+		{
+			return new ExternalPractitionerContactPointDetail(
+				this.ContactPointRef,
+				this.Name,
+				this.Description,
+				this.IsDefaultContactPoint,
+				this.PreferredResultCommunicationMode,
+				CollectionUtils.Map(this.TelephoneNumbers, (TelephoneDetail detail) => (TelephoneDetail) detail.Clone()),
+				CollectionUtils.Map(this.Addresses, (AddressDetail detail) => (AddressDetail) detail.Clone()),
+				(TelephoneDetail)(this.CurrentPhoneNumber == null ? null : this.CurrentPhoneNumber.Clone()),
+				(TelephoneDetail) (this.CurrentFaxNumber == null ? null : this.CurrentFaxNumber.Clone()),
+				(AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone()),
 				this.Deactivated
-            );
-        }
+			);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

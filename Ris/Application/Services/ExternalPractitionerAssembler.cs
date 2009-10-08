@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -41,164 +38,142 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class ExternalPractitionerAssembler
-    {
-        public ExternalPractitionerSummary CreateExternalPractitionerSummary(ExternalPractitioner prac, IPersistenceContext context)
-        {
-            ExternalPractitionerSummary summary = new ExternalPractitionerSummary(
-                prac.GetRef(),
-                new PersonNameAssembler().CreatePersonNameDetail(prac.Name),
-                prac.LicenseNumber,
-                prac.BillingNumber,
+	public class ExternalPractitionerAssembler
+	{
+		public ExternalPractitionerSummary CreateExternalPractitionerSummary(ExternalPractitioner prac, IPersistenceContext context)
+		{
+			var summary = new ExternalPractitionerSummary(
+				prac.GetRef(),
+				new PersonNameAssembler().CreatePersonNameDetail(prac.Name),
+				prac.LicenseNumber,
+				prac.BillingNumber,
 				prac.Deactivated);
 
-            return summary;
-        }
+			return summary;
+		}
 
-        public ExternalPractitionerDetail CreateExternalPractitionerDetail(ExternalPractitioner prac, IPersistenceContext context)
-        {
-            PersonNameAssembler assembler = new PersonNameAssembler();
+		public ExternalPractitionerDetail CreateExternalPractitionerDetail(ExternalPractitioner prac, IPersistenceContext context)
+		{
+			var assembler = new PersonNameAssembler();
 
-            ExternalPractitionerDetail detail = new ExternalPractitionerDetail(
+			var detail = new ExternalPractitionerDetail(
 				prac.GetRef(),
-                assembler.CreatePersonNameDetail(prac.Name),
-                prac.LicenseNumber,
-                prac.BillingNumber,
-                CollectionUtils.Map<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
-                    prac.ContactPoints,
-                    delegate(ExternalPractitionerContactPoint cp)
-                    {
-                        return CreateExternalPractitionerContactPointDetail(cp, context);
-                    }),
-                    new Dictionary<string, string>(prac.ExtendedProperties),
+				assembler.CreatePersonNameDetail(prac.Name),
+				prac.LicenseNumber,
+				prac.BillingNumber,
+				CollectionUtils.Map(
+					prac.ContactPoints,
+					(ExternalPractitionerContactPoint cp) => CreateExternalPractitionerContactPointDetail(cp, context)),
+					new Dictionary<string, string>(prac.ExtendedProperties),
 					prac.Deactivated);
 
 
-            return detail;
-        }
+			return detail;
+		}
 
-        public void UpdateExternalPractitioner(ExternalPractitionerDetail detail, ExternalPractitioner prac, IPersistenceContext context)
-        {
-            // validate that only one contact point is specified as default
-            List<ExternalPractitionerContactPointDetail> defaultPoints = CollectionUtils.Select(detail.ContactPoints,
-                delegate(ExternalPractitionerContactPointDetail cp) { return cp.IsDefaultContactPoint; });
-            if(defaultPoints.Count > 1)
-                throw new RequestValidationException(SR.ExceptionOneDefaultContactPoint);
+		public void UpdateExternalPractitioner(ExternalPractitionerDetail detail, ExternalPractitioner prac, IPersistenceContext context)
+		{
+			// validate that only one contact point is specified as default
+			var defaultPoints = CollectionUtils.Select(detail.ContactPoints, cp => cp.IsDefaultContactPoint);
+			if(defaultPoints.Count > 1)
+				throw new RequestValidationException(SR.ExceptionOneDefaultContactPoint);
 
-            PersonNameAssembler assembler = new PersonNameAssembler();
-            assembler.UpdatePersonName(detail.Name, prac.Name);
+			var assembler = new PersonNameAssembler();
+			assembler.UpdatePersonName(detail.Name, prac.Name);
 
-            prac.LicenseNumber = detail.LicenseNumber;
-            prac.BillingNumber = detail.BillingNumber;
-        	prac.Deactivated = detail.Deactivated;
+			prac.LicenseNumber = detail.LicenseNumber;
+			prac.BillingNumber = detail.BillingNumber;
+			prac.Deactivated = detail.Deactivated;
 
-            // update contact points collection
-            CollectionSynchronizeHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail> syncHelper
-                = new CollectionSynchronizeHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
-                    delegate (ExternalPractitionerContactPoint cp, ExternalPractitionerContactPointDetail cpDetail)
-                    {
-                        // ignore version in this comparison - deal with this issue in the update delegate
-                        return cp.GetRef().Equals(cpDetail.ContactPointRef, true);
-                    },
-                    delegate (ExternalPractitionerContactPointDetail cpDetail, ICollection<ExternalPractitionerContactPoint> cps)
-                    {
-                        // create a new contact point
-                        ExternalPractitionerContactPoint cp = new ExternalPractitionerContactPoint(prac);
-                        UpdateExternalPractitionerContactPoint(cpDetail, cp, context);
-                        cps.Add(cp);
-                    },
-                    delegate(ExternalPractitionerContactPoint cp, ExternalPractitionerContactPointDetail cpDetail, ICollection<ExternalPractitionerContactPoint> cps)
-                    {
-                        UpdateExternalPractitionerContactPoint(cpDetail, cp, context);
-                    },
-                    delegate(ExternalPractitionerContactPoint cp, ICollection<ExternalPractitionerContactPoint> cps)
-                    {
-                        cps.Remove(cp);
-                    });
+			// update contact points collection
+			var syncHelper = new CollectionSynchronizeHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
+					delegate (ExternalPractitionerContactPoint cp, ExternalPractitionerContactPointDetail cpDetail)
+					{
+						// ignore version in this comparison - deal with this issue in the update delegate
+						return cp.GetRef().Equals(cpDetail.ContactPointRef, true);
+					},
+					delegate (ExternalPractitionerContactPointDetail cpDetail, ICollection<ExternalPractitionerContactPoint> cps)
+					{
+						// create a new contact point
+						var cp = new ExternalPractitionerContactPoint(prac);
+						UpdateExternalPractitionerContactPoint(cpDetail, cp, context);
+						cps.Add(cp);
+					},
+					(cp, cpDetail, cps) => UpdateExternalPractitionerContactPoint(cpDetail, cp, context),
+					(cp, cps) => cps.Remove(cp));
 
-            syncHelper.Synchronize(prac.ContactPoints, detail.ContactPoints);
+			syncHelper.Synchronize(prac.ContactPoints, detail.ContactPoints);
 
 
-            // explicitly copy each pair, so that we don't remove any properties that the client may have removed
-            foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
-            {
-                prac.ExtendedProperties[pair.Key] = pair.Value;
-            }
-        }
+			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
+			foreach (var pair in detail.ExtendedProperties)
+			{
+				prac.ExtendedProperties[pair.Key] = pair.Value;
+			}
+		}
 
-        public ExternalPractitionerContactPointSummary CreateExternalPractitionerContactPointSummary(ExternalPractitionerContactPoint contactPoint)
-        {
-            return new ExternalPractitionerContactPointSummary(contactPoint.GetRef(),
-                contactPoint.Name,
-                contactPoint.Description,
-                contactPoint.IsDefaultContactPoint,
+		public ExternalPractitionerContactPointSummary CreateExternalPractitionerContactPointSummary(ExternalPractitionerContactPoint contactPoint)
+		{
+			return new ExternalPractitionerContactPointSummary(contactPoint.GetRef(),
+				contactPoint.Name,
+				contactPoint.Description,
+				contactPoint.IsDefaultContactPoint,
 				contactPoint.Deactivated);
-        }
+		}
 
-        public ExternalPractitionerContactPointDetail CreateExternalPractitionerContactPointDetail(ExternalPractitionerContactPoint contactPoint,
-            IPersistenceContext context)
-        {
-            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            AddressAssembler addressAssembler = new AddressAssembler();
+		public ExternalPractitionerContactPointDetail CreateExternalPractitionerContactPointDetail(ExternalPractitionerContactPoint contactPoint,
+			IPersistenceContext context)
+		{
+			var telephoneNumberAssembler = new TelephoneNumberAssembler();
+			var addressAssembler = new AddressAssembler();
 
-            TelephoneNumber currentPhone = contactPoint.CurrentPhoneNumber;
-            TelephoneNumber currentFax = contactPoint.CurrentFaxNumber;
-            Address currentAddress = contactPoint.CurrentAddress;
+			var currentPhone = contactPoint.CurrentPhoneNumber;
+			var currentFax = contactPoint.CurrentFaxNumber;
+			var currentAddress = contactPoint.CurrentAddress;
 
-            return new ExternalPractitionerContactPointDetail(
-                contactPoint.GetRef(),
-                contactPoint.Name,
-                contactPoint.Description,
-                contactPoint.IsDefaultContactPoint,
-                EnumUtils.GetEnumValueInfo(contactPoint.PreferredResultCommunicationMode, context),
-                CollectionUtils.Map<TelephoneNumber, TelephoneDetail>(
-                    contactPoint.TelephoneNumbers,
-                    delegate(TelephoneNumber phone)
-                    {
-                        return telephoneNumberAssembler.CreateTelephoneDetail(phone, context);
-                    }),
-                CollectionUtils.Map<Address, AddressDetail>(
-                    contactPoint.Addresses,
-                    delegate(Address address)
-                    {
-                        return addressAssembler.CreateAddressDetail(address, context);
-                    }),
-                    currentPhone == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentPhone, context),
-                    currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
-                    currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
-					contactPoint.Deactivated
-                );
-       }
+			return new ExternalPractitionerContactPointDetail(
+				contactPoint.GetRef(),
+				contactPoint.Name,
+				contactPoint.Description,
+				contactPoint.IsDefaultContactPoint,
+				EnumUtils.GetEnumValueInfo(contactPoint.PreferredResultCommunicationMode, context),
+				CollectionUtils.Map(contactPoint.TelephoneNumbers, (TelephoneNumber phone) => telephoneNumberAssembler.CreateTelephoneDetail(phone, context)),
+				CollectionUtils.Map(contactPoint.Addresses, (Address address) => addressAssembler.CreateAddressDetail(address, context)),
+				currentPhone == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentPhone, context),
+				currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
+				currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
+				contactPoint.Deactivated);
+		}
 
-       public void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointDetail detail, ExternalPractitionerContactPoint contactPoint,
-           IPersistenceContext context)
-       {
-           contactPoint.Name = detail.Name;
-           contactPoint.Description = detail.Description;
-           contactPoint.IsDefaultContactPoint = detail.IsDefaultContactPoint;
-           contactPoint.PreferredResultCommunicationMode = EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
-		   contactPoint.Deactivated = detail.Deactivated;
+		public void UpdateExternalPractitionerContactPoint(ExternalPractitionerContactPointDetail detail, ExternalPractitionerContactPoint contactPoint, IPersistenceContext context)
+		{
+			contactPoint.Name = detail.Name;
+			contactPoint.Description = detail.Description;
+			contactPoint.IsDefaultContactPoint = detail.IsDefaultContactPoint;
+			contactPoint.PreferredResultCommunicationMode =
+				EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
+			contactPoint.Deactivated = detail.Deactivated;
 
-           TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
-           AddressAssembler addressAssembler = new AddressAssembler();
+			var phoneAssembler = new TelephoneNumberAssembler();
+			var addressAssembler = new AddressAssembler();
 
-           contactPoint.TelephoneNumbers.Clear();
-           if (detail.TelephoneNumbers != null)
-           {
-               foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
-               {
-                   contactPoint.TelephoneNumbers.Add(phoneAssembler.CreateTelephoneNumber(phoneDetail));
-               }
-           }
+			contactPoint.TelephoneNumbers.Clear();
+			if (detail.TelephoneNumbers != null)
+			{
+				foreach (var phoneDetail in detail.TelephoneNumbers)
+				{
+					contactPoint.TelephoneNumbers.Add(phoneAssembler.CreateTelephoneNumber(phoneDetail));
+				}
+			}
 
-           contactPoint.Addresses.Clear();
-           if (detail.Addresses != null)
-           {
-               foreach (AddressDetail addressDetail in detail.Addresses)
-               {
-                   contactPoint.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
-               }
-           }
-       }
-   }
+			contactPoint.Addresses.Clear();
+			if (detail.Addresses != null)
+			{
+				foreach (var addressDetail in detail.Addresses)
+				{
+					contactPoint.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
+				}
+			}
+		}
+	}
 }
