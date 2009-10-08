@@ -322,7 +322,7 @@ namespace ClearCanvas.Dicom.Iod
 			// since degreesTolerance is [0,10], the RHS will always be positive
 			if (Math.Abs(columnCosines[columnCosineSortedIndices[1]]) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
 				return Directions.None;
-			return this.GetSecondaryRowDirection(opposingDirection);
+			return this.GetSecondaryColumnDirection(opposingDirection);
 		}
 
 		#region IEquatable<ImageOrientationPatient> Members
