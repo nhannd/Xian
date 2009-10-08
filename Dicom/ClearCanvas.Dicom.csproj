@@ -316,6 +316,7 @@
     <Compile Include="Iod\Modules\SpecimenIdentificationModuleIod.cs" />
     <Compile Include="Iod\Modules\SrDocumentContentModule.cs" />
     <Compile Include="Iod\Modules\StudyModuleIod.cs" />
+    <Compile Include="Iod\PaletteColorLut.cs" />
     <Compile Include="Iod\PatientsSexNeutered.cs" />
     <Compile Include="Iod\ResponsiblePersonRole.cs" />
     <Compile Include="Iod\SequenceIodBase.cs" />

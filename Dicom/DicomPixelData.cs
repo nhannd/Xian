@@ -75,6 +75,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
@@ -821,7 +822,8 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Static Methods
-        public static void TogglePlanarConfiguration(byte[] pixelData, int numValues, int bitsAllocated,
+
+		public static void TogglePlanarConfiguration(byte[] pixelData, int numValues, int bitsAllocated,
         int samplesPerPixel, int oldPlanerConfiguration)
         {
             int bytesAllocated = bitsAllocated / 8;
@@ -922,8 +924,206 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+    	public unsafe static void PaletteColorToRgb(
+    		int bitsAllocated,
+    		bool isSigned,
+    		byte[] srcPixelData,
+    		byte[] rgbPixelData,
+    		PaletteColorLut lut)
+    	{
+    		Platform.CheckTrue(bitsAllocated == 8 || bitsAllocated == 16, "Valid Bits Allocated");
+    		Platform.CheckForNullReference(srcPixelData, "srcPixelData");
+    		Platform.CheckForNullReference(rgbPixelData, "rgbPixelData");
+    		Platform.CheckForNullReference(lut, "lut");
+
+    		int sizeInPixels = rgbPixelData.Length / 3;
+
+    		if (bitsAllocated == 8 && 3 * srcPixelData.Length != rgbPixelData.Length)
+    			throw new ArgumentException("Invalid destination buffer size", "rgbPixelData");
+    		else if (srcPixelData.Length / 2 != sizeInPixels)
+    			throw new ArgumentException("Invalid destination buffer size", "rgbPixelData");
+				
+    		int firstPixelMapped = lut.FirstMappedPixelValue;
+
+    		fixed (byte* pSrcPixelData = srcPixelData)
+    		{
+    			fixed (byte* pRgbPixelData = rgbPixelData)
+    			{
+    				int dst = 0;
+
+    				if (bitsAllocated == 8)
+    				{
+    					if (isSigned)
+    					{
+    						// 8-bit signed
+    						for (int i = 0; i < sizeInPixels; i++)
+    						{
+    							Color value = lut.Data[((sbyte*)pSrcPixelData)[i] - firstPixelMapped];
+    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst + 1] = value.G;
+    							pRgbPixelData[dst + 2] = value.R;
+
+    							dst += 3;
+    						}
+    					}
+    					else
+    					{
+    						// 8-bit unsigned
+    						for (int i = 0; i < sizeInPixels; i++)
+    						{
+    							Color value = lut.Data[pSrcPixelData[i] - firstPixelMapped];
+    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst + 1] = value.G;
+    							pRgbPixelData[dst + 2] = value.R;
+
+    							dst += 3;
+    						}
+    					}
+    				}
+    				else
+    				{
+    					if (isSigned)
+    					{
+    						// 16-bit signed
+    						for (int i = 0; i < sizeInPixels; i++)
+    						{
+    							Color value = lut.Data[((short*)pSrcPixelData)[i] - firstPixelMapped];
+    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst + 1] = value.G;
+    							pRgbPixelData[dst + 2] = value.R;
+
+    							dst += 3;
+    						}
+    					}
+    					else
+    					{
+    						// 16-bit unsinged
+    						for (int i = 0; i < sizeInPixels; i++)
+    						{
+    							Color value = lut.Data[((ushort*)pSrcPixelData)[i] - firstPixelMapped];
+    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst + 1] = value.G;
+    							pRgbPixelData[dst + 2] = value.R;
+
+    							dst += 3;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+
+    	/// <summary>
+		/// Converts a YBR_FULL value to RGB.
+		/// </summary>
+		/// <returns>A 32-bit ARGB value.</returns>
+		public static int YbrFullToRgb(int y, int b, int r)
+		{
+			// |r|   | 1.0000  0.0000  1.4020 | | y       |
+			// |g| = | 1.0000 -0.3441 -0.7141 | | b - 128 |
+			// |b|   | 1.0000  1.7720 -0.0000 | | r - 128 |
+
+			int alpha = 0xff;
+			int red = (int)(y + 1.4020 * (r - 128) + 0.5);
+			int green = (int)(y - 0.3441 * (b - 128) - 0.7141 * (r - 128) + 0.5);
+			int blue = (int)(y + 1.7720 * (b - 128) + 0.5);
+
+			Limit(ref red);
+			Limit(ref green);
+			Limit(ref blue);
+
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
+
+			return argb;
+		}
+
+		/// <summary>
+		/// Converts a YBR_FULL422 value to RGB.
+		/// </summary>
+		/// <returns>A 32-bit ARGB value.</returns>
+		public static int YbrFull422ToRgb(int y, int b, int r)
+		{
+			return YbrFullToRgb(y, b, r);
+		}
+
+		/// <summary>
+		/// Converts a YBR_PARTIAL422 value to RGB.
+		/// </summary>
+		/// <returns>A 32-bit ARGB value.</returns>
+		public static int YbrPartial422ToRgb(int y, int b, int r)
+		{
+			// |r|   |  1.1644  0.0000  1.5960 | | y - 16  |
+			// |g| = |  1.1644 -0.3917 -0.8130 | | b - 128 |
+			// |b|   |  1.1644  2.0173  0.0000 | | r - 128 |
+
+			int alpha = 0xff;
+			int red = (int)(1.1644 * (y - 16) + 1.5960 * (r - 128) + 0.5);
+			int green = (int)(1.1644 * (y - 16) - 0.3917 * (b - 128) - 0.8130 * (r - 128) + 0.5);
+			int blue = (int)(1.1644 * (y - 16) + 2.0173 * (b - 128) + 0.5);
+
+			Limit(ref red);
+			Limit(ref green);
+			Limit(ref blue);
+
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
+
+			return argb;
+		}
+
+		/// <summary>
+		/// Converts a YBR_ICT value to RGB.
+		/// </summary>
+		/// <returns>A 32-bit ARGB value.</returns>
+		public static int YbrIctToRgb(int y, int b, int r)
+		{
+			// |r|   |  1.00000  0.00000  1.40200 | | y |
+			// |g| = |  1.00000 -0.34412 -0.71414 | | b |
+			// |b|   |  1.00000  1.77200  0.00000 | | r |
+
+			int alpha = 0xff;
+			int red = (int)(y + 1.40200 * r + 0.5);
+			int green = (int)(y - 0.34412 * b - 0.71414 * r + 0.5);
+			int blue = (int)(y + 1.77200 * b + 0.5);
+
+			Limit(ref red);
+			Limit(ref green);
+			Limit(ref blue);
+
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
+
+			return argb;
+		}
+
+		/// <summary>
+		/// Converts a YBR_RCT value to RGB.
+		/// </summary>
+		/// <returns>A 32-bit ARGB value.</returns>
+		public static int YbrRctToRgb(int y, int b, int r)
+		{
+			int alpha = 0xff;
+			int green = y - (r + b) / 4;
+			int red = r + green;
+			int blue = b + green;
+
+			Limit(ref red);
+			Limit(ref green);
+			Limit(ref blue);
+
+			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
+
+			return argb;
+		}
+
     	#endregion
-    }
+
+		private static void Limit(ref int color)
+		{
+			if (color < 0)
+				color = 0;
+			else if (color > 255)
+				color = 255;
+		}
+	}
 
 
     /// <summary>
