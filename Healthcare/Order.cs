@@ -88,15 +88,15 @@ namespace ClearCanvas.Healthcare
 
 
 			// associate all procedures with the order
-			foreach (Procedure rp in args.Procedures)
+			foreach (var procedure in args.Procedures)
 			{
-				order.AddProcedure(rp);
+				order.AddProcedure(procedure);
 			}
 
 			// add recipients
 			if (args.ResultRecipients != null)
 			{
-				foreach (ResultRecipient recipient in args.ResultRecipients)
+				foreach (var recipient in args.ResultRecipients)
 				{
 					order.ResultRecipients.Add(recipient);
 				}
@@ -110,7 +110,7 @@ namespace ClearCanvas.Healthcare
 			if (!recipientsContainsOrderingPractitioner)
 			{
 				// find the default
-				var defaultContactPoint = 
+				var defaultContactPoint =
 					CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint)
 					// if no default, use first available
 					?? CollectionUtils.FirstElement(args.OrderingPractitioner.ContactPoints);
@@ -140,14 +140,14 @@ namespace ClearCanvas.Healthcare
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether all procedures in this order are performed.
+		/// Gets a value indicating whether all active (i.e. non terminated) procedures in this order are performed.
 		/// </summary>
-		public virtual bool AreAllProceduresPerformed
+		public virtual bool AreAllActiveProceduresPerformed
 		{
 			get
 			{
 				return CollectionUtils.TrueForAll(
-					this.Procedures,
+					CollectionUtils.Select(this.Procedures, p => !p.IsTerminated),
 					p => p.IsPerformed);
 			}
 		}
@@ -159,23 +159,23 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Adds the specified procedure to this order.
 		/// </summary>
-		/// <param name="rp"></param>
-		public virtual void AddProcedure(Procedure rp)
+		/// <param name="procedure"></param>
+		public virtual void AddProcedure(Procedure procedure)
 		{
-			if (rp.Order != null || rp.Status != ProcedureStatus.SC)
+			if (procedure.Order != null || procedure.Status != ProcedureStatus.SC)
 				throw new ArgumentException("Only new Procedure objects may be added to an order.");
 			if (this.IsTerminated)
 				throw new WorkflowException(string.Format("Cannot add procedure to order with status {0}.", _status));
 
-			rp.Order = this;
+			procedure.Order = this;
 
 			// generate an index for the procedure
 			var highestIndex = CollectionUtils.Max(
 				CollectionUtils.Map<Procedure, int>(_procedures, p => int.Parse(p.Index)), 0);
-			rp.Index = (highestIndex + 1).ToString();
+			procedure.Index = (highestIndex + 1).ToString();
 
 			// add to collection
-			_procedures.Add(rp);
+			_procedures.Add(procedure);
 
 			// update scheduling information
 			UpdateScheduling();
@@ -184,16 +184,16 @@ namespace ClearCanvas.Healthcare
 		/// <summary>
 		/// Removes the specified procedure from this order.
 		/// </summary>
-		/// <param name="rp"></param>
-		public virtual void RemoveProcedure(Procedure rp)
+		/// <param name="procedure"></param>
+		public virtual void RemoveProcedure(Procedure procedure)
 		{
-			if (!_procedures.Contains(rp))
+			if (!_procedures.Contains(procedure))
 				throw new ArgumentException("Specified procedure does not exist for this order.");
-			if (rp.Status != ProcedureStatus.SC)
+			if (procedure.Status != ProcedureStatus.SC)
 				throw new WorkflowException("Only procedures in the SC status can be removed from an order.");
 
-			_procedures.Remove(rp);
-			rp.Order = null;
+			_procedures.Remove(procedure);
+			procedure.Order = null;
 		}
 
 		/// <summary>
@@ -312,7 +312,8 @@ namespace ClearCanvas.Healthcare
 			_scheduledStartTime = MinMaxHelper.MinValue(
 				_procedures,
 				delegate { return true; },
-				rp => rp.ScheduledStartTime, null);
+				procedure => procedure.ScheduledStartTime,
+				null);
 		}
 
 		/// <summary>
@@ -326,19 +327,19 @@ namespace ClearCanvas.Healthcare
 			if (!IsTerminated)
 			{
 				// if all rp are cancelled, the order is cancelled
-				if (CollectionUtils.TrueForAll(_procedures, rp => rp.Status == ProcedureStatus.CA))
+				if (CollectionUtils.TrueForAll(_procedures, procedure => procedure.Status == ProcedureStatus.CA))
 				{
 					SetStatus(OrderStatus.CA);
 				}
 				else
 					// if all rp are cancelled or discontinued, the order is discontinued
-					if (CollectionUtils.TrueForAll(_procedures, rp => rp.Status == ProcedureStatus.CA || rp.Status == ProcedureStatus.DC))
+					if (CollectionUtils.TrueForAll(_procedures, procedure => procedure.Status == ProcedureStatus.CA || procedure.Status == ProcedureStatus.DC))
 					{
 						SetStatus(OrderStatus.DC);
 					}
 					else
 						// if all rp are cancelled, discontinued or completed, then the order is completed
-						if (CollectionUtils.TrueForAll(_procedures, rp => rp.IsTerminated))
+						if (CollectionUtils.TrueForAll(_procedures, procedure => procedure.IsTerminated))
 						{
 							SetStatus(OrderStatus.CM);
 						}
@@ -347,7 +348,7 @@ namespace ClearCanvas.Healthcare
 			// if the order is still scheduled, it may need to be auto-started
 			if (_status == OrderStatus.SC)
 			{
-				if (CollectionUtils.Contains(_procedures, rp => rp.Status == ProcedureStatus.IP || rp.Status == ProcedureStatus.CM))
+				if (CollectionUtils.Contains(_procedures, procedure => procedure.Status == ProcedureStatus.IP || procedure.Status == ProcedureStatus.CM))
 				{
 					SetStatus(OrderStatus.IP);
 				}
@@ -356,9 +357,9 @@ namespace ClearCanvas.Healthcare
 
 		private void SetStatus(OrderStatus status)
 		{
-			if (_status == status) 
+			if (_status == status)
 				return;
-			
+
 			_status = status;
 
 			if (_status == OrderStatus.IP)
@@ -373,8 +374,8 @@ namespace ClearCanvas.Healthcare
 			// compute the earliest procedure start time
 			_startTime = MinMaxHelper.MinValue(
 				_procedures,
-				delegate { return true; }, 
-				rp => rp.StartTime, 
+				delegate { return true; },
+				procedure => procedure.StartTime,
 				null);
 		}
 
@@ -383,8 +384,8 @@ namespace ClearCanvas.Healthcare
 			// compute the latest procedure end time
 			_endTime = MinMaxHelper.MaxValue(
 				_procedures,
-				delegate { return true; }, 
-				rp => rp.EndTime, 
+				delegate { return true; },
+				procedure => procedure.EndTime,
 				null);
 		}
 
