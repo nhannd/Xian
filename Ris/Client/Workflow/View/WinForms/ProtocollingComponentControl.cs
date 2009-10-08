@@ -52,25 +52,25 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			InitializeComponent();
 			_component = component;
 
-            _overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight; 
+			_overviewLayoutPanel.RowStyles[0].Height = _component.BannerHeight;
 
-			Control orderSummary = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
+			var orderSummary = (Control)_component.BannerComponentHost.ComponentView.GuiElement;
 			orderSummary.Dock = DockStyle.Fill;
 			_orderSummaryPanel.Controls.Add(orderSummary);
 
-			Control protocolEditor = (Control)_component.ProtocolEditorComponentHost.ComponentView.GuiElement;
+			var protocolEditor = (Control)_component.ProtocolEditorComponentHost.ComponentView.GuiElement;
 			protocolEditor.Dock = DockStyle.Fill;
 			_protocolEditorPanel.Controls.Add(protocolEditor);
 
-			Control orderNotes = (Control)_component.OrderNotesComponentHost.ComponentView.GuiElement;
+			var orderNotes = (Control)_component.OrderNotesComponentHost.ComponentView.GuiElement;
 			orderNotes.Dock = DockStyle.Fill;
 			_orderNotesPanel.Controls.Add(orderNotes);
 
-			Control orderDetails = (Control)_component.OrderDetailViewComponentHost.ComponentView.GuiElement;
+			var orderDetails = (Control)_component.OrderDetailViewComponentHost.ComponentView.GuiElement;
 			orderDetails.Dock = DockStyle.Fill;
 			_orderDetailsTabPage.Controls.Add(orderDetails);
 
-			Control priorReports = (Control)_component.PriorReportsComponentHost.ComponentView.GuiElement;
+			var priorReports = (Control)_component.PriorReportsComponentHost.ComponentView.GuiElement;
 			priorReports.Dock = DockStyle.Fill;
 			_priorReportsTabPage.Controls.Add(priorReports);
 

@@ -118,11 +118,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_loader.Dispose();
 
-            if (_reportViewComponentHost != null)
-            {
-                _reportViewComponentHost.StopComponent();
-                _reportViewComponentHost = null;
-            }
+			if (_reportViewComponentHost != null)
+			{
+				_reportViewComponentHost.StopComponent();
+				_reportViewComponentHost = null;
+			}
 
 			base.Stop();
 		}
@@ -157,7 +157,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return new Selection(_selectedPrior); }
 			set
 			{
-				PriorProcedureSummary newSelection = (PriorProcedureSummary)value.Item;
+				var newSelection = (PriorProcedureSummary)value.Item;
 				if (_selectedPrior != newSelection)
 				{
 					_selectedPrior = newSelection;
@@ -181,9 +181,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					},
 					delegate(Exception e)
 					{
-						if(e == null)
+						if (e == null)
 							_reportList.Items.AddRange(_relevantPriors);
-						else 
+						else
 							Platform.Log(LogLevel.Error, e);
 					});
 
@@ -209,10 +209,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private List<PriorProcedureSummary> LoadPriors(bool relevantOnly)
 		{
 			GetPriorsResponse response = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
+			Platform.GetService<IReportingWorkflowService>(service =>
 				{
-					GetPriorsRequest request = new GetPriorsRequest();
+					var request = new GetPriorsRequest();
 					if (relevantOnly)
 					{
 						if (_worklistItem.ReportRef != null)
@@ -234,7 +233,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				_worklistItem = value;
 
-				if(this.IsStarted)
+				if (this.IsStarted)
 				{
 					_relevantPriors = null;
 					_allPriors = null;
