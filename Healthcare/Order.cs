@@ -32,376 +32,370 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare
 {
-    /// <summary>
-    /// Order entity
-    /// </summary>
-    public partial class Order : Entity
-    {
-        #region Static Factory methods
+	/// <summary>
+	/// Order entity
+	/// </summary>
+	public partial class Order
+	{
+		#region Static Factory methods
 
-        /// <summary>
-        /// Factory method to create a new order.
-        /// </summary>
-        public static Order NewOrder(OrderCreationArgs args)
-        {
-            // validate required members are set
-            Platform.CheckMemberIsSet(args.Patient, "Patient");
-            Platform.CheckMemberIsSet(args.Visit, "Visit");
-            Platform.CheckMemberIsSet(args.AccessionNumber, "AccessionNumber");
-            Platform.CheckMemberIsSet(args.DiagnosticService, "DiagnosticService");
-            Platform.CheckMemberIsSet(args.ReasonForStudy, "ReasonForStudy");
-            Platform.CheckMemberIsSet(args.OrderingFacility, "OrderingFacility");
-            Platform.CheckMemberIsSet(args.OrderingPractitioner, "OrderingPractitioner");
-
-
-            // create the order
-            Order order = new Order();
-
-            order.Patient = args.Patient;
-            order.Visit = args.Visit;
-            order.AccessionNumber = args.AccessionNumber;
-            order.DiagnosticService = args.DiagnosticService;
-            order.ReasonForStudy = args.ReasonForStudy;
-            order.OrderingFacility = args.OrderingFacility;
-            order.OrderingPractitioner = args.OrderingPractitioner;
-
-            order.Priority = args.Priority;
-            order.SchedulingRequestTime = args.SchedulingRequestTime;
-            order.EnteredTime = args.EnteredTime;
-            order.EnteredBy = args.EnteredBy;
-            order.EnteredComment = args.EnteredComment;
-
-            if (args.Procedures == null || args.Procedures.Count == 0)
-            {
-                // create procedures according to the diagnostic service plan
-                args.Procedures = CollectionUtils.Map<ProcedureType, Procedure>(args.DiagnosticService.ProcedureTypes,
-                    delegate(ProcedureType type)
-                    {
-                        Procedure rp = new Procedure(type);
-                        rp.PerformingFacility = args.PerformingFacility ?? args.OrderingFacility;
-                        return rp;
-                    });
-            }
+		/// <summary>
+		/// Factory method to create a new order.
+		/// </summary>
+		public static Order NewOrder(OrderCreationArgs args)
+		{
+			// validate required members are set
+			Platform.CheckMemberIsSet(args.Patient, "Patient");
+			Platform.CheckMemberIsSet(args.Visit, "Visit");
+			Platform.CheckMemberIsSet(args.AccessionNumber, "AccessionNumber");
+			Platform.CheckMemberIsSet(args.DiagnosticService, "DiagnosticService");
+			Platform.CheckMemberIsSet(args.ReasonForStudy, "ReasonForStudy");
+			Platform.CheckMemberIsSet(args.OrderingFacility, "OrderingFacility");
+			Platform.CheckMemberIsSet(args.OrderingPractitioner, "OrderingPractitioner");
 
 
-            // associate all procedures with the order
-            foreach (Procedure rp in args.Procedures)
-            {
-                order.AddProcedure(rp);
-            }
+			// create the order
+			var order = new Order
+			{
+				Patient = args.Patient,
+				Visit = args.Visit,
+				AccessionNumber = args.AccessionNumber,
+				DiagnosticService = args.DiagnosticService,
+				ReasonForStudy = args.ReasonForStudy,
+				OrderingFacility = args.OrderingFacility,
+				OrderingPractitioner = args.OrderingPractitioner,
+				Priority = args.Priority,
+				SchedulingRequestTime = args.SchedulingRequestTime,
+				EnteredTime = args.EnteredTime,
+				EnteredBy = args.EnteredBy,
+				EnteredComment = args.EnteredComment
+			};
 
-            // add recipients
-            if (args.ResultRecipients != null)
-            {
-                foreach (ResultRecipient recipient in args.ResultRecipients)
-                {
-                    order.ResultRecipients.Add(recipient);
-                }
-            }
+			if (args.Procedures == null || args.Procedures.Count == 0)
+			{
+				// create procedures according to the diagnostic service plan
+				args.Procedures = CollectionUtils.Map<ProcedureType, Procedure>(
+					args.DiagnosticService.ProcedureTypes,
+					type => new Procedure(type)
+								{
+									PerformingFacility = args.PerformingFacility ?? args.OrderingFacility
+								});
+			}
 
-            bool recipientsContainsOrderingPractitioner = CollectionUtils.Contains(order.ResultRecipients,
-                    delegate(ResultRecipient r) { return r.PractitionerContactPoint.Practitioner.Equals(args.OrderingPractitioner); });
 
-            // if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
-            if (!recipientsContainsOrderingPractitioner)
-            {
-                // find the default
-                ExternalPractitionerContactPoint defaultContactPoint = CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints,
-                    delegate(ExternalPractitionerContactPoint cp)
-                    {
-                        return cp.IsDefaultContactPoint;
-                    });
+			// associate all procedures with the order
+			foreach (Procedure rp in args.Procedures)
+			{
+				order.AddProcedure(rp);
+			}
 
-                // if no default, use first available
-                if (defaultContactPoint == null)
-                    defaultContactPoint = CollectionUtils.FirstElement(args.OrderingPractitioner.ContactPoints);
+			// add recipients
+			if (args.ResultRecipients != null)
+			{
+				foreach (ResultRecipient recipient in args.ResultRecipients)
+				{
+					order.ResultRecipients.Add(recipient);
+				}
+			}
 
-                if (defaultContactPoint != null)
-                {
-                    order.ResultRecipients.Add(new ResultRecipient(defaultContactPoint, ResultCommunicationMode.ANY));
-                }
-            }
+			var recipientsContainsOrderingPractitioner = CollectionUtils.Contains(
+				order.ResultRecipients,
+				r => r.PractitionerContactPoint.Practitioner.Equals(args.OrderingPractitioner));
 
-            return order;
-        }
+			// if the result recipients collection does not contain the ordering practitioner, add it by force, using the default contact point
+			if (!recipientsContainsOrderingPractitioner)
+			{
+				// find the default
+				var defaultContactPoint = 
+					CollectionUtils.SelectFirst(args.OrderingPractitioner.ContactPoints, cp => cp.IsDefaultContactPoint)
+					// if no default, use first available
+					?? CollectionUtils.FirstElement(args.OrderingPractitioner.ContactPoints);
 
-        #endregion
+				if (defaultContactPoint != null)
+				{
+					order.ResultRecipients.Add(new ResultRecipient(defaultContactPoint, ResultCommunicationMode.ANY));
+				}
+			}
 
-        #region Public properties
+			return order;
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether this order is in a terminal state.
-        /// </summary>
-        public virtual bool IsTerminated
-        {
-            get
-            {
-                return _status == OrderStatus.CM || _status == OrderStatus.CA || _status == OrderStatus.DC || _status == OrderStatus.RP;
-            }
-        }
+		#endregion
 
-        /// <summary>
-        /// Gets a value indicating whether all procedures in this order are performed.
-        /// </summary>
-        public virtual bool AreAllProceduresPerformed
-        {
-            get
-            {
-                return CollectionUtils.TrueForAll(
-                    this.Procedures,
-                    delegate(Procedure p) { return p.IsPerformed; });
-            }
-        }
+		#region Public properties
 
-        #endregion
+		/// <summary>
+		/// Gets a value indicating whether this order is in a terminal state.
+		/// </summary>
+		public virtual bool IsTerminated
+		{
+			get
+			{
+				return _status == OrderStatus.CM || _status == OrderStatus.CA || _status == OrderStatus.DC || _status == OrderStatus.RP;
+			}
+		}
 
-        #region Public operations
+		/// <summary>
+		/// Gets a value indicating whether all procedures in this order are performed.
+		/// </summary>
+		public virtual bool AreAllProceduresPerformed
+		{
+			get
+			{
+				return CollectionUtils.TrueForAll(
+					this.Procedures,
+					p => p.IsPerformed);
+			}
+		}
 
-        /// <summary>
-        /// Adds the specified procedure to this order.
-        /// </summary>
-        /// <param name="rp"></param>
-        public virtual void AddProcedure(Procedure rp)
-        {
-            if (rp.Order != null || rp.Status != ProcedureStatus.SC)
-                throw new ArgumentException("Only new Procedure objects may be added to an order.");
-            if (this.IsTerminated)
-                throw new WorkflowException(string.Format("Cannot add procedure to order with status {0}.", _status));
+		#endregion
 
-            rp.Order = this;
+		#region Public operations
 
-            // generate an index for the procedure
-            int highestIndex = CollectionUtils.Max<int>(
-                CollectionUtils.Map<Procedure, int>(_procedures,
-                delegate(Procedure p) { return int.Parse(p.Index); }), 0);
-            rp.Index = (highestIndex + 1).ToString();
+		/// <summary>
+		/// Adds the specified procedure to this order.
+		/// </summary>
+		/// <param name="rp"></param>
+		public virtual void AddProcedure(Procedure rp)
+		{
+			if (rp.Order != null || rp.Status != ProcedureStatus.SC)
+				throw new ArgumentException("Only new Procedure objects may be added to an order.");
+			if (this.IsTerminated)
+				throw new WorkflowException(string.Format("Cannot add procedure to order with status {0}.", _status));
 
-            // add to collection
-            _procedures.Add(rp);
+			rp.Order = this;
 
-            // update scheduling information
-            UpdateScheduling();
-        }
+			// generate an index for the procedure
+			var highestIndex = CollectionUtils.Max(
+				CollectionUtils.Map<Procedure, int>(_procedures, p => int.Parse(p.Index)), 0);
+			rp.Index = (highestIndex + 1).ToString();
 
-        /// <summary>
-        /// Removes the specified procedure from this order.
-        /// </summary>
-        /// <param name="rp"></param>
-        public virtual void RemoveProcedure(Procedure rp)
-        {
-            if (!_procedures.Contains(rp))
-                throw new ArgumentException("Specified procedure does not exist for this order.");
-            if (rp.Status != ProcedureStatus.SC)
-                throw new WorkflowException("Only procedures in the SC status can be removed from an order.");
+			// add to collection
+			_procedures.Add(rp);
 
-            _procedures.Remove(rp);
-            rp.Order = null;
-        }
+			// update scheduling information
+			UpdateScheduling();
+		}
 
-        /// <summary>
-        /// Schedules all procedures in this order for the specified start time.
-        /// </summary>
-        /// <param name="startTime"></param>
-        public virtual void Schedule(DateTime? startTime)
-        {
-            foreach (Procedure procedure in _procedures)
-            {
-                procedure.Schedule(startTime);
-            }
-        }
+		/// <summary>
+		/// Removes the specified procedure from this order.
+		/// </summary>
+		/// <param name="rp"></param>
+		public virtual void RemoveProcedure(Procedure rp)
+		{
+			if (!_procedures.Contains(rp))
+				throw new ArgumentException("Specified procedure does not exist for this order.");
+			if (rp.Status != ProcedureStatus.SC)
+				throw new WorkflowException("Only procedures in the SC status can be removed from an order.");
 
-        /// <summary>
-        /// Cancels the order.
-        /// </summary>
-        /// <param name="cancelInfo"></param>
-        public virtual void Cancel(OrderCancelInfo cancelInfo)
-        {
-            if (this.Status != OrderStatus.SC)
-                throw new WorkflowException("Only orders in the SC status can be canceled");
+			_procedures.Remove(rp);
+			rp.Order = null;
+		}
 
-            _cancelInfo = cancelInfo;
+		/// <summary>
+		/// Schedules all procedures in this order for the specified start time.
+		/// </summary>
+		/// <param name="startTime"></param>
+		public virtual void Schedule(DateTime? startTime)
+		{
+			foreach (var procedure in _procedures)
+			{
+				procedure.Schedule(startTime);
+			}
+		}
 
-            // update the status prior to cancelling the procedures
-            // (otherwise cancelling the procedures will cause them to try and update the order status)
-            //SetStatus(OrderStatus.CA);
+		/// <summary>
+		/// Cancels the order.
+		/// </summary>
+		/// <param name="cancelInfo"></param>
+		public virtual void Cancel(OrderCancelInfo cancelInfo)
+		{
+			if (this.Status != OrderStatus.SC)
+				throw new WorkflowException("Only orders in the SC status can be canceled");
 
-            // cancel/discontinue all procedures
-            foreach (Procedure rp in _procedures)
-            {
-                // given that the order is still in SC, all procedures must be either
-                // SC or CA - and only those in SC need to be cancelled
-                if (rp.Status == ProcedureStatus.SC)
-                    rp.Cancel();
-            }
+			_cancelInfo = cancelInfo;
 
-            // if the order was replaced, change the status to RP
-            if (cancelInfo.ReplacementOrder != null)
-                SetStatus(OrderStatus.RP);
+			// update the status prior to cancelling the procedures
+			// (otherwise cancelling the procedures will cause them to try and update the order status)
+			//SetStatus(OrderStatus.CA);
 
-            // need to update the end-time again, after cacnelling procedures
-            UpdateEndTime();
-        }
+			// cancel/discontinue all procedures
+			foreach (var procedure in _procedures)
+			{
+				// given that the order is still in SC, all procedures must be either
+				// SC or CA - and only those in SC need to be cancelled
+				if (procedure.Status == ProcedureStatus.SC)
+					procedure.Cancel();
+			}
 
-        /// <summary>
-        /// Discontinues the order.
-        /// </summary>
-        public virtual void Discontinue(OrderCancelInfo cancelInfo)
-        {
-            if (this.Status != OrderStatus.IP)
-                throw new WorkflowException("Only orders in the IP status can be discontinued");
+			// if the order was replaced, change the status to RP
+			if (cancelInfo.ReplacementOrder != null)
+				SetStatus(OrderStatus.RP);
 
-            _cancelInfo = cancelInfo;
+			// need to update the end-time again, after cacnelling procedures
+			UpdateEndTime();
+		}
 
-            // update the status prior to cancelling the procedures
-            // (otherwise cancelling the procedures will cause them to try and update the order status)
-            SetStatus(OrderStatus.DC);
+		/// <summary>
+		/// Discontinues the order.
+		/// </summary>
+		public virtual void Discontinue(OrderCancelInfo cancelInfo)
+		{
+			if (this.Status != OrderStatus.IP)
+				throw new WorkflowException("Only orders in the IP status can be discontinued");
 
-            // cancel or discontinue any non-terminated procedures
-            foreach (Procedure rp in _procedures)
-            {
-                if (rp.Status == ProcedureStatus.SC)
-                    rp.Cancel();
-                else if (rp.Status == ProcedureStatus.IP)
-                    rp.Discontinue();
-            }
+			_cancelInfo = cancelInfo;
 
-            // need to update the end-time again, after discontinuing procedures
-            UpdateEndTime();
-        }
+			// update the status prior to cancelling the procedures
+			// (otherwise cancelling the procedures will cause them to try and update the order status)
+			SetStatus(OrderStatus.DC);
 
-        /// <summary>
-        /// Shifts the object in time by the specified number of minutes, which may be negative or positive.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The method is not intended for production use, but is provided for the purpose
-        /// of generating back-dated data for demos and load-testing.  Calling this method on a
-        /// <see cref="Order"/> will also shift all child objects (Procedures, ProcedureSteps, 
-        /// Reports, ProcedureCheckIn, Protocol).  The <see cref="Visit"/> is not shifted, because
-        /// it is not considered a child of the order.
-        /// </para>
-        /// <para>
-        /// Typically this method is called after the order is performed and the report(s) is 
-        /// created and published, so that the entire order and all resulting documentation is
-        /// shifted in time by the same amount.
-        /// </para>
-        /// </remarks>
-        /// <param name="minutes"></param>
-        public virtual void TimeShift(int minutes)
-        {
-            _enteredTime = _enteredTime.AddMinutes(minutes);
-            _schedulingRequestTime = _schedulingRequestTime.HasValue ? _schedulingRequestTime.Value.AddMinutes(minutes) : _schedulingRequestTime;
-            _scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddMinutes(minutes) : _scheduledStartTime;
-            _startTime = _startTime.HasValue ? _startTime.Value.AddMinutes(minutes) : _startTime;
-            _endTime = _endTime.HasValue ? _endTime.Value.AddMinutes(minutes) : _endTime;
+			// cancel or discontinue any non-terminated procedures
+			foreach (var procedure in _procedures)
+			{
+				if (procedure.Status == ProcedureStatus.SC)
+					procedure.Cancel();
+				else if (procedure.Status == ProcedureStatus.IP)
+					procedure.Discontinue();
+			}
 
-            foreach (Procedure procedure in _procedures)
-            {
-                procedure.TimeShift(minutes);
-            }
-        }
+			// need to update the end-time again, after discontinuing procedures
+			UpdateEndTime();
+		}
 
-        #endregion
+		/// <summary>
+		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method is not intended for production use, but is provided for the purpose
+		/// of generating back-dated data for demos and load-testing.  Calling this method on a
+		/// <see cref="Order"/> will also shift all child objects (Procedures, ProcedureSteps, 
+		/// Reports, ProcedureCheckIn, Protocol).  The <see cref="Visit"/> is not shifted, because
+		/// it is not considered a child of the order.
+		/// </para>
+		/// <para>
+		/// Typically this method is called after the order is performed and the report(s) is 
+		/// created and published, so that the entire order and all resulting documentation is
+		/// shifted in time by the same amount.
+		/// </para>
+		/// </remarks>
+		/// <param name="minutes"></param>
+		public virtual void TimeShift(int minutes)
+		{
+			_enteredTime = _enteredTime.AddMinutes(minutes);
+			_schedulingRequestTime = _schedulingRequestTime.HasValue ? _schedulingRequestTime.Value.AddMinutes(minutes) : _schedulingRequestTime;
+			_scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddMinutes(minutes) : _scheduledStartTime;
+			_startTime = _startTime.HasValue ? _startTime.Value.AddMinutes(minutes) : _startTime;
+			_endTime = _endTime.HasValue ? _endTime.Value.AddMinutes(minutes) : _endTime;
 
-        #region Helper methods
+			foreach (var procedure in _procedures)
+			{
+				procedure.TimeShift(minutes);
+			}
+		}
 
-        /// <summary>
-        /// Called by a child procedure to tell the order to update its scheduling information.
-        /// </summary>
-        protected internal virtual void UpdateScheduling()
-        {
-            // set the scheduled start time to the earliest non-null scheduled start time of any child procedure
-            _scheduledStartTime = MinMaxHelper.MinValue<Procedure, DateTime?>(_procedures,
-                delegate { return true; },
-                delegate(Procedure rp) { return rp.ScheduledStartTime; }, null);
-        }
+		#endregion
 
-        /// <summary>
-        /// Called by a child procedure to tell the order to update its status.  Only
-        /// certain status updates can be inferred deterministically from child statuses.  If no
-        /// status can be inferred, the status does not change.
-        /// </summary>
-        protected internal virtual void UpdateStatus()
-        {
-            // if the order has not yet terminated, it may need to be auto-terminated
-            if (!IsTerminated)
-            {
-                // if all rp are cancelled, the order is cancelled
-                if (CollectionUtils.TrueForAll(_procedures,
-                    delegate(Procedure rp) { return rp.Status == ProcedureStatus.CA; }))
-                {
-                    SetStatus(OrderStatus.CA);
-                }
-                else
-                    // if all rp are cancelled or discontinued, the order is discontinued
-                    if (CollectionUtils.TrueForAll(_procedures,
-                       delegate(Procedure rp) { return rp.Status == ProcedureStatus.CA || rp.Status == ProcedureStatus.DC; }))
-                    {
-                        SetStatus(OrderStatus.DC);
-                    }
-                    else
-                        // if all rp are cancelled, discontinued or completed, then the order is completed
-                        if (CollectionUtils.TrueForAll(_procedures,
-                           delegate(Procedure rp) { return rp.IsTerminated; }))
-                        {
-                            SetStatus(OrderStatus.CM);
-                        }
-            }
+		#region Helper methods
 
-            // if the order is still scheduled, it may need to be auto-started
-            if (_status == OrderStatus.SC)
-            {
-                if (CollectionUtils.Contains(_procedures,
-                   delegate(Procedure rp) { return rp.Status == ProcedureStatus.IP || rp.Status == ProcedureStatus.CM; }))
-                {
-                    SetStatus(OrderStatus.IP);
-                }
-            }
-        }
+		/// <summary>
+		/// Called by a child procedure to tell the order to update its scheduling information.
+		/// </summary>
+		protected internal virtual void UpdateScheduling()
+		{
+			// set the scheduled start time to the earliest non-null scheduled start time of any child procedure
+			_scheduledStartTime = MinMaxHelper.MinValue(
+				_procedures,
+				delegate { return true; },
+				rp => rp.ScheduledStartTime, null);
+		}
 
-        private void SetStatus(OrderStatus status)
-        {
-            if (_status != status)
-            {
-                _status = status;
+		/// <summary>
+		/// Called by a child procedure to tell the order to update its status.  Only
+		/// certain status updates can be inferred deterministically from child statuses.  If no
+		/// status can be inferred, the status does not change.
+		/// </summary>
+		protected internal virtual void UpdateStatus()
+		{
+			// if the order has not yet terminated, it may need to be auto-terminated
+			if (!IsTerminated)
+			{
+				// if all rp are cancelled, the order is cancelled
+				if (CollectionUtils.TrueForAll(_procedures, rp => rp.Status == ProcedureStatus.CA))
+				{
+					SetStatus(OrderStatus.CA);
+				}
+				else
+					// if all rp are cancelled or discontinued, the order is discontinued
+					if (CollectionUtils.TrueForAll(_procedures, rp => rp.Status == ProcedureStatus.CA || rp.Status == ProcedureStatus.DC))
+					{
+						SetStatus(OrderStatus.DC);
+					}
+					else
+						// if all rp are cancelled, discontinued or completed, then the order is completed
+						if (CollectionUtils.TrueForAll(_procedures, rp => rp.IsTerminated))
+						{
+							SetStatus(OrderStatus.CM);
+						}
+			}
 
-                if (_status == OrderStatus.IP)
-                    UpdateStartTime();
+			// if the order is still scheduled, it may need to be auto-started
+			if (_status == OrderStatus.SC)
+			{
+				if (CollectionUtils.Contains(_procedures, rp => rp.Status == ProcedureStatus.IP || rp.Status == ProcedureStatus.CM))
+				{
+					SetStatus(OrderStatus.IP);
+				}
+			}
+		}
 
-                if (this.IsTerminated)
-                    UpdateEndTime();
-            }
-        }
+		private void SetStatus(OrderStatus status)
+		{
+			if (_status == status) 
+				return;
+			
+			_status = status;
 
-        private void UpdateStartTime()
-        {
-            // compute the earliest procedure start time
-            _startTime = MinMaxHelper.MinValue<Procedure, DateTime?>(_procedures,
-                delegate { return true; },
-                delegate(Procedure rp) { return rp.StartTime; }, null);
-        }
+			if (_status == OrderStatus.IP)
+				UpdateStartTime();
 
-        private void UpdateEndTime()
-        {
-            // compute the latest procedure end time
-            _endTime = MinMaxHelper.MaxValue<Procedure, DateTime?>(_procedures,
-                delegate { return true; },
-                delegate(Procedure rp) { return rp.EndTime; }, null);
-        }
+			if (this.IsTerminated)
+				UpdateEndTime();
+		}
 
-        /// <summary>
-        /// This method is called from the constructor.  Use this method to implement any custom
-        /// object initialization.
-        /// </summary>
-        private void CustomInitialize()
-        {
-        }
+		private void UpdateStartTime()
+		{
+			// compute the earliest procedure start time
+			_startTime = MinMaxHelper.MinValue(
+				_procedures,
+				delegate { return true; }, 
+				rp => rp.StartTime, 
+				null);
+		}
 
-        #endregion
-    }
+		private void UpdateEndTime()
+		{
+			// compute the latest procedure end time
+			_endTime = MinMaxHelper.MaxValue(
+				_procedures,
+				delegate { return true; }, 
+				rp => rp.EndTime, 
+				null);
+		}
+
+		/// <summary>
+		/// This method is called from the constructor.  Use this method to implement any custom
+		/// object initialization.
+		/// </summary>
+		private void CustomInitialize()
+		{
+		}
+
+		#endregion
+	}
 }
