@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="AttachedDocument.cs" />
+    <Compile Include="Brokers\IAttachedDocumentBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
     <Compile Include="Brokers\IPatientHistoryBroker.cs" />
