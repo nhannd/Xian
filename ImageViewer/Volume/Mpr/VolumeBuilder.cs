@@ -61,7 +61,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			#region Private fields
 
 			private const float HALF_PI = (float) Math.PI/2;
-			private const float TILT_ABSOLUTE_TOLERANCE = 0.1f;
+			private const float GANTRY_TILT_TOLERANCE = 0.1f; // allowed tolerance for gantry tilt (in radians)
+			private const float ORIENTATION_TOLERANCE = 0.01f; // allowed tolerance for image orientation (direction cosine values)
+			private const float MINIMUM_SLICE_SPACING = 0.01f; // minimum spacing required between slices (in mm)
+			private const float SLICE_SPACING_TOLERANCE = 0.01f; // allowed tolerance for slice spacing (in mm)
 
 			private readonly List<IFrameReference> _frames;
 			private readonly CreateVolumeProgressCallback _callback;
@@ -343,8 +346,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				float aboutXradians = (float) GetXRotation(this.ImageOrientationPatient);
 
 				// If within specified tolerance of 0, Pi/2, -Pi/2, then treat as no tilt (return 0)
-				if (FloatComparer.AreEqual(aboutXradians, 0f, TILT_ABSOLUTE_TOLERANCE) ||
-				    FloatComparer.AreEqual(Math.Abs(aboutXradians), HALF_PI, TILT_ABSOLUTE_TOLERANCE))
+				if (FloatComparer.AreEqual(aboutXradians, 0f, GANTRY_TILT_TOLERANCE) ||
+				    FloatComparer.AreEqual(Math.Abs(aboutXradians), HALF_PI, GANTRY_TILT_TOLERANCE))
 					return 0f;
 
 				return aboutXradians;
@@ -355,8 +358,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				float aboutYradians = (float) GetYRotation(this.ImageOrientationPatient);
 
 				// If within specified tolerance of 0, Pi/2, -Pi/2, then treat as no tilt (return 0)
-				if (FloatComparer.AreEqual(aboutYradians, 0f, TILT_ABSOLUTE_TOLERANCE) ||
-				    FloatComparer.AreEqual(Math.Abs(aboutYradians), HALF_PI, TILT_ABSOLUTE_TOLERANCE))
+				if (FloatComparer.AreEqual(aboutYradians, 0f, GANTRY_TILT_TOLERANCE) ||
+				    FloatComparer.AreEqual(Math.Abs(aboutYradians), HALF_PI, GANTRY_TILT_TOLERANCE))
 					return 0f;
 
 				return aboutYradians;
@@ -396,7 +399,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					if (frame.Frame.ImageOrientationPatient.IsNull)
 						throw new CreateVolumeException(SR.MessageSourceDataSetMustDefineImageOrientationPatient);
-					if (!frame.Frame.ImageOrientationPatient.EqualsWithinTolerance(orient, .01f))
+					if (!frame.Frame.ImageOrientationPatient.EqualsWithinTolerance(orient, ORIENTATION_TOLERANCE))
 						throw new CreateVolumeException(SR.MessageSourceDataSetMustBeSameImageOrientationPatient);
 				}
 
@@ -409,11 +412,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				for (int i = 1; i < _frames.Count; i++)
 				{
 					float currentSpacing = CalcSpaceBetweenPlanes(_frames[i].Frame, _frames[i - 1].Frame);
-					if (currentSpacing < 0.01f)
+					if (currentSpacing < MINIMUM_SLICE_SPACING)
 						throw new CreateVolumeException(SR.MessageSourceDataSetImagesMustBeUniquelyLocatedForMpr);
 					if (!nominalSpacing.HasValue)
 						nominalSpacing = currentSpacing;
-					if (!FloatComparer.AreEqual(currentSpacing, nominalSpacing.Value))
+					if (!FloatComparer.AreEqual(currentSpacing, nominalSpacing.Value, SLICE_SPACING_TOLERANCE))
 						throw new CreateVolumeException(SR.MessageSourceDataSetImagesMustBeEvenlySpacedForMpr);
 				}
 
@@ -429,8 +432,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			private static bool IsMultiAxialTilt(ImageOrientationPatient imageOrientationPatient)
 			{
 				Matrix imageOrientationPatientMatrix = ImageOrientationPatientToMatrix(imageOrientationPatient);
-				return !FloatComparer.AreEqual(0f, (float) GetXRotation(imageOrientationPatientMatrix), TILT_ABSOLUTE_TOLERANCE)
-				       && !FloatComparer.AreEqual(0f, (float) GetYRotation(imageOrientationPatientMatrix), TILT_ABSOLUTE_TOLERANCE);
+				return !FloatComparer.AreEqual(0f, (float) GetXRotation(imageOrientationPatientMatrix), GANTRY_TILT_TOLERANCE)
+				       && !FloatComparer.AreEqual(0f, (float) GetYRotation(imageOrientationPatientMatrix), GANTRY_TILT_TOLERANCE);
 			}
 
 			/// <summary>
