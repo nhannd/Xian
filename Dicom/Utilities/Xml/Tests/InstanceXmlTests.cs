@@ -141,36 +141,46 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 		{
 			using (MemoryStream ms = new MemoryStream())
 			{
+				// generate the dataset
 				DicomAttributeCollection dataset = new DicomAttributeCollection();
-				Trace.WriteLine("Testing valid XML generation");
-				Trace.WriteLine(" * US-ASCII Characters (0-127)");
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(1, 128)));
-				Trace.WriteLine(" * Extended ASCII Characters (128-255)");
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(128, 256)));
-				Trace.WriteLine(" * Unicode Basic Multilingual Plane");
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(256, 0x4000)));
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0x4000, 0x8000)));
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0x8000, 0xC000)));
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0xC000, 0xD800)));
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0xE000, 0x10000)));
-				Trace.WriteLine(" * Unicode UTF-16 Surrogate Pairs");
-				dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateSurrogatesBinaryString()));
+				{
+					Trace.WriteLine("Generating dataset using Unicode data");
+					Trace.WriteLine(" * US-ASCII Characters (0-127)");
+					// the line feed characters /r and /n are deliberately excluded because
+					// automatic line end handling would otherwise mangle them in the DicomAttribute
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0, 0xA)));
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0xB, 0xD)));
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0xE, 128)));
+					Trace.WriteLine(" * Extended ASCII Characters (128-255)");
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(128, 256)));
+					Trace.WriteLine(" * Unicode Basic Multilingual Plane");
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(256, 0x4000)));
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0x4000, 0x8000)));
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0x8000, 0xC000)));
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0xC000, 0xD800)));
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateBinaryString(0xE000, 0x10000)));
+					Trace.WriteLine(" * Unicode UTF-16 Surrogate Pairs");
+					dataset[DicomTags.FailedAttributesSequence].AddSequenceItem(CreateSequenceItem(GenerateSurrogatesBinaryString()));
+				}
 
-				XmlDocument xmlDocument = new XmlDocument();
-				xmlDocument.AppendChild(xmlDocument.CreateXmlDeclaration("1.0", "UTF-8", null));
-				InstanceXml instanceXml = new InstanceXml(dataset, SopClass.RawDataStorage, TransferSyntax.ExplicitVrLittleEndian);
-				Assert.IsTrue(instanceXml[DicomTags.FailedAttributesSequence].Count > 0);
-				XmlElement xmlRoot = xmlDocument.CreateElement("test");
-				xmlDocument.AppendChild(xmlRoot);
-				XmlElement xmlElement = instanceXml.GetMemento(xmlDocument, new StudyXmlOutputSettings());
-				xmlRoot.AppendChild(xmlElement);
-				XmlWriter xmlWriter = XmlWriter.Create(ms);
-				xmlDocument.WriteTo(xmlWriter);
-				xmlWriter.Close();
+				// generate the InstanceXml document and dump into the MemoryStream
+				{
+					XmlDocument xmlDocument = new XmlDocument();
+					xmlDocument.AppendChild(xmlDocument.CreateXmlDeclaration("1.0", "UTF-8", null));
+					InstanceXml instanceXml = new InstanceXml(dataset, SopClass.RawDataStorage, TransferSyntax.ExplicitVrLittleEndian);
+					Assert.IsTrue(instanceXml[DicomTags.FailedAttributesSequence].Count > 0);
+					XmlElement xmlRoot = xmlDocument.CreateElement("test");
+					xmlDocument.AppendChild(xmlRoot);
+					XmlElement xmlElement = instanceXml.GetMemento(xmlDocument, new StudyXmlOutputSettings());
+					xmlRoot.AppendChild(xmlElement);
+					XmlWriter xmlWriter = XmlWriter.Create(ms);
+					xmlDocument.WriteTo(xmlWriter);
+					xmlWriter.Close();
+					Assert.IsTrue(ms.Length > 0);
+					Trace.WriteLine(string.Format("XML fragment length: {0}", ms.Length));
+				}
 
-				Assert.IsTrue(ms.Length > 0);
-				Trace.WriteLine(string.Format("XML fragment length: {0}", ms.Length));
-
+				// write the xml to a file
 				ms.Seek(0, SeekOrigin.Begin);
 				using (FileStream fs = File.OpenWrite("InstanceXmlTests.TestValidXmlOutput.Result.xml"))
 				{
@@ -178,13 +188,44 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 					fs.Close();
 				}
 
+				// parse and validate the xml using .NET
 				ms.Seek(0, SeekOrigin.Begin);
-				XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
-				xmlReaderSettings.CheckCharacters = true;
-				xmlReaderSettings.ConformanceLevel = ConformanceLevel.Fragment;
-				XmlReader xmlReader = XmlReader.Create(ms, xmlReaderSettings);
-				while (xmlReader.Read()) {}
-				xmlReader.Close();
+				{
+					XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
+					xmlReaderSettings.CheckCharacters = true;
+					xmlReaderSettings.ConformanceLevel = ConformanceLevel.Fragment;
+					XmlReader xmlReader = XmlReader.Create(ms, xmlReaderSettings);
+					while (xmlReader.Read()) {}
+					xmlReader.Close();
+				}
+
+				// read it back as an InstanceXml
+				ms.Seek(0, SeekOrigin.Begin);
+				{
+					XmlDocument xmlDocument = new XmlDocument();
+					xmlDocument.Load(ms);
+					InstanceXml instanceXml = new InstanceXml(xmlDocument.GetElementsByTagName("test")[0].FirstChild, new DicomAttributeCollection());
+					Assert.IsTrue(instanceXml[DicomTags.FailedAttributesSequence].Count > 0);
+
+					int i = 0;
+					Trace.WriteLine("Validating decoded dataset for correct Unicode data");
+					Trace.WriteLine(" * US-ASCII Characters (0-127)");
+					// the line feed characters /r and /n are deliberately excluded because
+					// automatic line end handling would otherwise mangle them in the DicomAttribute
+					Assert.AreEqual(GenerateBinaryString(0, 0xA), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Assert.AreEqual(GenerateBinaryString(0xB, 0xD), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Assert.AreEqual(GenerateBinaryString(0xE, 128), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Trace.WriteLine(" * Extended ASCII Characters (128-255)");
+					Assert.AreEqual(GenerateBinaryString(128, 256), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Trace.WriteLine(" * Unicode Basic Multilingual Plane");
+					Assert.AreEqual(GenerateBinaryString(256, 0x4000), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Assert.AreEqual(GenerateBinaryString(0x4000, 0x8000), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Assert.AreEqual(GenerateBinaryString(0x8000, 0xC000), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Assert.AreEqual(GenerateBinaryString(0xC000, 0xD800), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Assert.AreEqual(GenerateBinaryString(0xE000, 0x10000), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+					Trace.WriteLine(" * Unicode UTF-16 Surrogate Pairs");
+					Assert.AreEqual(GenerateSurrogatesBinaryString(), ReadSequenceItem(instanceXml[DicomTags.FailedAttributesSequence], i++));
+				}
 
 				ms.Close();
 			}
@@ -195,6 +236,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 			DicomSequenceItem sqItem = new DicomSequenceItem();
 			sqItem[DicomTags.TextValue].SetStringValue(unlimitedTextData);
 			return sqItem;
+		}
+
+		private static string ReadSequenceItem(DicomAttribute attribute, int index)
+		{
+			if (attribute is DicomAttributeSQ)
+				return (((DicomAttributeSQ) attribute)[index])[DicomTags.TextValue].ToString();
+			return null;
 		}
 
 		private static string GenerateBinaryString(int start, int stop)
