@@ -55,6 +55,11 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
+		public bool IsCurrent
+		{
+			get { return this.ValidRange == null || this.ValidRange.Includes(Platform.Time); }
+		}
+
         /// <summary>
         /// Returns true if the objects represent the same email address, regardless of validity range.
         /// </summary>

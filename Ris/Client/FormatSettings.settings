@@ -36,7 +36,7 @@
       <Value Profile="(Default)">%A %N</Value>
     </Setting>
     <Setting Name="ExternalPractitionerContactPointDefaultFormat" Description="Default display format for external practitioner contact point" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">%N (%A ph:%T fx:%F)</Value>
+      <Value Profile="(Default)">%N (%A ph:%T fx:%F Em:%E)</Value>
     </Setting>
     <Setting Name="AccessionNumberDefaultFormat" Description="Default display format for accession numbers.  Eligible placeholders are:  '%N' number (masked);  '%n' number (unmasked);  '%L' label" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%L %N</Value>

@@ -126,10 +126,12 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			var telephoneNumberAssembler = new TelephoneNumberAssembler();
 			var addressAssembler = new AddressAssembler();
+			var emailAddressAssembler = new EmailAddressAssembler();
 
 			var currentPhone = contactPoint.CurrentPhoneNumber;
 			var currentFax = contactPoint.CurrentFaxNumber;
 			var currentAddress = contactPoint.CurrentAddress;
+			var currentEmailAddress = contactPoint.CurrentEmailAddress;
 
 			return new ExternalPractitionerContactPointDetail(
 				contactPoint.GetRef(),
@@ -139,9 +141,11 @@ namespace ClearCanvas.Ris.Application.Services
 				EnumUtils.GetEnumValueInfo(contactPoint.PreferredResultCommunicationMode, context),
 				CollectionUtils.Map(contactPoint.TelephoneNumbers, (TelephoneNumber phone) => telephoneNumberAssembler.CreateTelephoneDetail(phone, context)),
 				CollectionUtils.Map(contactPoint.Addresses, (Address address) => addressAssembler.CreateAddressDetail(address, context)),
+				CollectionUtils.Map(contactPoint.EmailAddresses, (EmailAddress emailAddress) => emailAddressAssembler.CreateEmailAddressDetail(emailAddress, context)),
 				currentPhone == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentPhone, context),
 				currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
 				currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
+				currentEmailAddress == null ? null : emailAddressAssembler.CreateEmailAddressDetail(currentEmailAddress, context),
 				contactPoint.Deactivated);
 		}
 
@@ -156,6 +160,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			var phoneAssembler = new TelephoneNumberAssembler();
 			var addressAssembler = new AddressAssembler();
+			var emailAddressAssembler = new EmailAddressAssembler();
 
 			contactPoint.TelephoneNumbers.Clear();
 			if (detail.TelephoneNumbers != null)
@@ -172,6 +177,15 @@ namespace ClearCanvas.Ris.Application.Services
 				foreach (var addressDetail in detail.Addresses)
 				{
 					contactPoint.Addresses.Add(addressAssembler.CreateAddress(addressDetail));
+				}
+			}
+
+			contactPoint.EmailAddresses.Clear();
+			if (detail.EmailAddresses != null)
+			{
+				foreach (var emailAddressDetail in detail.EmailAddresses)
+				{
+					contactPoint.EmailAddresses.Add(emailAddressAssembler.CreateEmailAddress(emailAddressDetail));
 				}
 			}
 		}

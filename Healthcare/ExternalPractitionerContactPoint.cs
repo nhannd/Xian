@@ -81,8 +81,17 @@ namespace ClearCanvas.Healthcare {
                   delegate(TelephoneNumber phone) { return phone.Use == TelephoneUse.WPN && phone.Equipment == TelephoneEquipment.PH && phone.IsCurrent; });
             }
         }
-        
-        /// <summary>
+
+		public virtual EmailAddress CurrentEmailAddress
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this.EmailAddresses,
+				  delegate(EmailAddress emailAddress) { return emailAddress.IsCurrent; });
+			}
+		}
+
+		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
 		/// </summary>

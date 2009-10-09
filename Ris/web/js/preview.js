@@ -1843,7 +1843,11 @@ Preview.ExternalPractitionerSummary = function() {
 							html += "	<td width='120' class='propertyname'>Address</td>";
 							html += "	<td width='200'>" + (Ris.formatAddress(item.CurrentAddress) || "Not entered") + "</td>";
 							html += "</tr>";
-							
+							html += "<tr>";
+							html += "	<td width='120' class='propertyname'>Email Address</td>";
+							html += "	<td width='200'>" + (item.CurrentEmailAddress && item.CurrentEmailAddress.Address ? item.CurrentEmailAddress.Address : "Not entered") + "</td>";
+							html += "</tr>";
+
 							html += "</table>";
 
 							return html;

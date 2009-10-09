@@ -449,19 +449,22 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		private bool IsInvalidContactPoint(ResultRecipientDetail resultRecipientDetail)
 		{
-
 			if (resultRecipientDetail == null)
 				return true;
 			// TO DO: Server DataContract should indicate whether not Preffered Comm Mode is valid
 			// Temporarily using comparison to resolve validity of contact point
-			if (resultRecipientDetail.PreferredCommunicationMode.Code == "FAX")
-				return resultRecipientDetail.ContactPoint.CurrentFaxNumber == null;
-			else if (resultRecipientDetail.PreferredCommunicationMode.Code == "MAIL")
-				return resultRecipientDetail.ContactPoint.CurrentAddress == null;
-			//else if (resultRecipientDetail.PreferredCommunicationMode.Code == "EMAIL")
-			else
+			switch (resultRecipientDetail.PreferredCommunicationMode.Code)
 			{
-				return (resultRecipientDetail.ContactPoint.CurrentFaxNumber == null && resultRecipientDetail.ContactPoint.CurrentAddress == null);
+				case "FAX":
+					return resultRecipientDetail.ContactPoint.CurrentFaxNumber == null;
+				case "MAIL":
+					return resultRecipientDetail.ContactPoint.CurrentAddress == null;
+				case "EMAIL":
+					return resultRecipientDetail.ContactPoint.CurrentEmailAddress == null;
+				default:
+					return resultRecipientDetail.ContactPoint.CurrentFaxNumber == null && 
+						resultRecipientDetail.ContactPoint.CurrentAddress == null &&
+						resultRecipientDetail.ContactPoint.CurrentEmailAddress == null;
 			}
 		}
 

@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerContactPointDetailsEditorComponent _detailsEditor;
 		private AddressesSummaryComponent _addressesSummary;
 		private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+		private EmailAddressesSummaryComponent _emailAddressesSummary;
 
 		private readonly List<EnumValueInfo> _addressTypeChoices;
 		private readonly List<EnumValueInfo> _phoneTypeChoices;
@@ -68,14 +69,17 @@ namespace ClearCanvas.Ris.Client
 			this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new ExternalPractitionerContactPointDetailsEditorComponent(_contactPointDetail, _resultCommunicationModeChoices)));
 			this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(_addressTypeChoices)));
 			this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(_phoneTypeChoices)));
+			this.Pages.Add(new NavigatorPage(rootPath + "/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
 
 			_addressesSummary.SetModifiedOnListChange = true;
 			_phoneNumbersSummary.SetModifiedOnListChange = true;
+			_emailAddressesSummary.SetModifiedOnListChange = true;
 
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
 			_addressesSummary.Subject = _contactPointDetail.Addresses;
 			_phoneNumbersSummary.Subject = _contactPointDetail.TelephoneNumbers;
+			_emailAddressesSummary.Subject = _contactPointDetail.EmailAddresses;
 
 			base.Start();
 		}

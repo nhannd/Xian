@@ -40,9 +40,11 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class ExternalPractitionerContactPointDetail : DataContractBase, ICloneable
 	{
-		public ExternalPractitionerContactPointDetail(EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, 
-			EnumValueInfo preferredResultCommunicationMode, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails,
-			TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, bool deactivated)
+		public ExternalPractitionerContactPointDetail(
+			EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, EnumValueInfo preferredResultCommunicationMode, 
+			List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, List<EmailAddressDetail> emailAddressDetails,
+			TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, EmailAddressDetail currentEmailAddress,
+			bool deactivated)
 		{
 			this.ContactPointRef = contactPointRef;
 			this.Name = name;
@@ -51,9 +53,11 @@ namespace ClearCanvas.Ris.Application.Common
 			this.PreferredResultCommunicationMode = preferredResultCommunicationMode;
 			this.TelephoneNumbers = phoneDetails;
 			this.Addresses = addressDetails;
+			this.EmailAddresses = emailAddressDetails;
 			this.CurrentPhoneNumber = currentPhone;
 			this.CurrentFaxNumber = currentFax;
 			this.CurrentAddress = currentAddress;
+			this.CurrentEmailAddress = currentEmailAddress;
 			this.Deactivated = deactivated;
 		}
 
@@ -61,6 +65,7 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 			this.TelephoneNumbers = new List<TelephoneDetail>();
 			this.Addresses = new List<AddressDetail>();
+			this.EmailAddresses = new List<EmailAddressDetail>();
 		}
 
 		[DataMember]
@@ -88,10 +93,16 @@ namespace ClearCanvas.Ris.Application.Common
 		public AddressDetail CurrentAddress;
 
 		[DataMember]
+		public EmailAddressDetail CurrentEmailAddress;
+
+		[DataMember]
 		public List<TelephoneDetail> TelephoneNumbers;
 
 		[DataMember]
 		public List<AddressDetail> Addresses;
+
+		[DataMember]
+		public List<EmailAddressDetail> EmailAddresses;
 
 		[DataMember]
 		public bool Deactivated;
@@ -118,9 +129,11 @@ namespace ClearCanvas.Ris.Application.Common
 				this.PreferredResultCommunicationMode,
 				CollectionUtils.Map(this.TelephoneNumbers, (TelephoneDetail detail) => (TelephoneDetail) detail.Clone()),
 				CollectionUtils.Map(this.Addresses, (AddressDetail detail) => (AddressDetail) detail.Clone()),
+				CollectionUtils.Map(this.EmailAddresses, (EmailAddressDetail detail) => (EmailAddressDetail)detail.Clone()),
 				(TelephoneDetail)(this.CurrentPhoneNumber == null ? null : this.CurrentPhoneNumber.Clone()),
 				(TelephoneDetail) (this.CurrentFaxNumber == null ? null : this.CurrentFaxNumber.Clone()),
 				(AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone()),
+				(EmailAddressDetail)(this.CurrentEmailAddress == null ? null : this.CurrentEmailAddress.Clone()),
 				this.Deactivated
 			);
 		}

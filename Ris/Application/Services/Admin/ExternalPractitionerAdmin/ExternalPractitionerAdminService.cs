@@ -239,10 +239,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 								rr.PractitionerContactPoint = original;
 						}));
 
-			// copy all addresses/emails/telephones to the new contact point
-			CollectionUtils.ForEach(duplicate.Addresses, a => original.Addresses.Add((Address) a.Clone()));
+			// copy all telephones/addresses/emails to the new contact point
+			CollectionUtils.ForEach(duplicate.TelephoneNumbers, p => original.TelephoneNumbers.Add((TelephoneNumber)p.Clone()));
+			CollectionUtils.ForEach(duplicate.Addresses, a => original.Addresses.Add((Address)a.Clone()));
 			CollectionUtils.ForEach(duplicate.EmailAddresses, e => original.EmailAddresses.Add((EmailAddress) e.Clone()));
-			CollectionUtils.ForEach(duplicate.TelephoneNumbers, p => original.TelephoneNumbers.Add((TelephoneNumber) p.Clone()));
 
 			if (duplicate.IsDefaultContactPoint)
 				original.IsDefaultContactPoint = true;
