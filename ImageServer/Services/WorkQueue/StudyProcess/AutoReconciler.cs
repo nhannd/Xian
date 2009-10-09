@@ -153,11 +153,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                             if (destStudy == null)
                             {
-                                throw new TargetStudyIsNearlineException() {
-                                              StudyInstanceUid = destinationStudy.StudyInstanceUid,
-                                              RestoreRequested = restored
-                                          };
+                                throw new TargetStudyIsNearlineException()
+                                {
+                                    StudyInstanceUid = destStudy.StudyInstanceUid,
+                                    RestoreRequested = restored
+                                };
                             }
+
+                            EnsureStudyCanBeUpdated(destStudy);
 
                             belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
                             
@@ -236,6 +239,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                             belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
 
+                            EnsureStudyCanBeUpdated(destStudy);
+
                             if (belongsToAnotherStudy)
                             {
                                 preProcessingResult.Changes = new List<UpdateItem>();
@@ -281,6 +286,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                
             }
             return preProcessingResult;
+        }
+
+        private void EnsureStudyCanBeUpdated(StudyStorageLocation destStudy)
+        {
+            string reason;
+            if (!destStudy.CanUpdate(out reason))
+            {
+                throw new TargetStudyInvalidStateException(reason) { StudyInstanceUid = destStudy.StudyInstanceUid };
+            }
         }
 
         private void UpdateHistory(StudyStorageLocation dest, StudyHistory history, UidMapper uidMapper)

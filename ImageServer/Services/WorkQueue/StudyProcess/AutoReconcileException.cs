@@ -47,6 +47,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
         }
     }
+    
+    
+    /// <summary>
+    /// Represents an exception that occured when the target study during auto-reconciliation
+    /// is not in the right state (eg, it is lossy compressed but has been archived as lossless).
+    /// </summary>
+    public class TargetStudyInvalidStateException: AutoReconcileException
+    {
+        public TargetStudyInvalidStateException(string message)
+            : base(message)
+        {
+        }
+
+        /// <summary>
+        /// The Study Instance UID of the study that causes the issue.
+        /// </summary>
+        public string StudyInstanceUid { get; set; }
+    }
 
     /// <summary>
     /// Represents an exception that occured when the target study during auto-reconciliation
@@ -56,21 +74,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <see cref="RestoreRequested"/> indicates if a restore request has been submitted
     /// for the target study.
     /// </remarks>
-    public class TargetStudyIsNearlineException : AutoReconcileException
+    public class TargetStudyIsNearlineException : TargetStudyInvalidStateException
     {
         public TargetStudyIsNearlineException()
             :base("Target study is not online.")
         {
         }
-
-        /// <summary>
-        /// The Study Instance UID that is nearline.
-        /// </summary>
-        public string StudyInstanceUid { get; set; }
         
         /// <summary>
         /// Indicates whether or not a restore request has been submitted.
         /// </summary>
         public bool RestoreRequested { get; set; }
     }
+
+    
 }
