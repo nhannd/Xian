@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -60,12 +61,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 			Platform.CheckForNullReference(item, "item");
 			Platform.CheckForNullReference(item.Data, "item.Data");
 
-			_reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
+		    _reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
 
 			LoadUids(item);
 
             InitializeContext();
 
+            CheckStudyState();
+            
             SetupProcessor();
 				
 			if (WorkQueueUidList.Count == 0)
@@ -87,7 +90,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 			}
 		}
 
-    	private void ExecuteCommands(bool complete)
+        private void CheckStudyState()
+        {
+            Platform.CheckForNullReference(_context, "_context");
+            StudyStorageLocation dest = _context.DestStorageLocation;
+            if (dest==null)
+                return;
+
+            if (_context.DestStorageLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy) && 
+                _context.DestStorageLocation.IsLatestArchiveLossless)
+                throw new ApplicationException(String.Format("Target study {0} is lossy compressed but was archived lossless. It must be restored first.",
+                        _context.DestStorageLocation.StudyInstanceUid));
+        }
+
+        private void ExecuteCommands(bool complete)
         {
             if(_processor!=null)
             {

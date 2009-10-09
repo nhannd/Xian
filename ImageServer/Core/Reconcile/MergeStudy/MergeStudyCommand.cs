@@ -31,12 +31,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
@@ -85,6 +87,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 			DetermineDestination();
 
+            if (Context.DestStorageLocation != null)
+                EnsureStudyCanBeUpdated(Context.DestStorageLocation);
+
 			if (_parameters.UpdateDestination)
 				UpdateExistingStudy();
             
@@ -106,7 +111,27 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             }
 		}
 
-		private void DetermineDestination()
+
+        protected void LoadUidMappings()
+        {
+            // Load the mapping for the study
+            if (Context.DestStorageLocation != null)
+            {
+                string path = Path.Combine(Context.DestStorageLocation.GetStudyPath(), "UidMap.xml");
+                if (File.Exists(path))
+                {
+                    UidMapXml xml = new UidMapXml();
+                    xml.Load(Context.DestStorageLocation);
+                    UidMapper = new UidMapper(xml);
+
+                    UidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
+                }
+            }
+
+        }
+
+
+	    private void DetermineDestination()
 		{
 			if (Context.DestStorageLocation != null)
 				return;

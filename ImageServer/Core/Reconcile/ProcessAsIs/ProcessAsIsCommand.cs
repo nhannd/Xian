@@ -70,11 +70,11 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			if (Context.DestStorageLocation==null)
 			{
 				DetermineTargetLocation();
+                EnsureStudyCanBeUpdated(Context.DestStorageLocation);
 			}
 
             try
             {
-                LoadUidMappings();
                 ProcessUidList();
             }
             finally

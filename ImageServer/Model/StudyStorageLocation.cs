@@ -498,7 +498,21 @@ namespace ClearCanvas.ImageServer.Model
             return _integrityQueueItems;
         }
 
+        /// <summary>
+        /// Returns a value indicating whether this study can be updated.
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <returns></returns>
+        /// <remarks>A study can be updated does not necessarily mean a work queue entry
+        /// can be inserted. Other conditions may require.</remarks>
+        public bool CanUpdate(out string reason)
+        {
+            reason = null;
+            if (StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy) && IsLatestArchiveLossless)
+                reason = String.Format("Study {0} cannot be updated because it has been archived as lossless and is currently lossy compressed.", StudyInstanceUid);
 
+            return string.IsNullOrEmpty(reason);
+        }
         #endregion
 
         /// <summary>

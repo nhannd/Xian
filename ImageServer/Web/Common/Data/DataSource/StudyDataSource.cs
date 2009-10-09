@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -183,6 +184,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return _theArchiveLocation != null;
 			}
 		}
+
+
+	    public bool IsOnlineLossy
+        {
+            get { return _theStudyStorage.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy); }
+        }
 
 		public bool IsLocked
 		{
@@ -378,17 +385,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return false;
 			}
             
-			if (IsReconcileRequired)
-			{
-				reason = "There are images to be reconciled for this study";
-				return false;
-			}
 
 			reason = String.Empty;
 			return true;
 		}
 
-		public bool CanScheduleReconcile(out string reason)
+
+	    public bool CanScheduleReconcile(out string reason)
 		{
 			if (IsLocked)
 			{

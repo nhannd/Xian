@@ -65,6 +65,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			Platform.CheckForNullReference(context, "context");
 			Context = context;
 
+            EnsureStudyCanBeUpdated();
+
 			ReconcileCreateStudyDescriptor desc = XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(Context.History.ChangeDescription);
 
 			if (Context.History.DestStudyStorageKey == null)

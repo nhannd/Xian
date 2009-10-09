@@ -1,13 +1,17 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.ReconcileDialog"
     Codebehind="ReconcileDialog.ascx.cs" %>
 
+
 <ccAsp:ModalDialog ID="ReconcileItemModalDialog" runat="server" Width="900px" Title='<%$ Resources:Titles, ReconcileStudyDialog %>'>
     <ContentTemplate> 
+        <asp:Panel CssClass="StudyDetailsMessage" runat="server" ID="MessagePanel" Visible="false">
+                <asp:Label ID="AlertMessage" runat="Server" Text="" />
+            </asp:Panel>
         <aspAjax:TabContainer runat="server" ID="TabContainer"  Width="950px" ActiveTabIndex="0" CssClass="DialogTabControl">
             <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="Overview" Height="100%" CssClass="DialogTabControl">
                 <ContentTemplate>                    
-        <div class="ReconcilePanel">
-            <asp:Table runat="server">
+            <div class="ReconcilePanel">
+                <asp:Table runat="server">
                 <asp:TableRow CssClass="ReconcileHeaderRow">
                     <asp:TableCell >Existing Study</asp:TableCell>
                     <asp:TableCell CssClass="Separator"><asp:Image ID="Image1" runat="server" SkinID="Spacer" Width="1px" /></asp:TableCell>
@@ -149,7 +153,7 @@
                                     </div>
                                </asp:TableCell>
                             </asp:TableRow>
-                            <asp:TableRow>
+                            <asp:TableRow runat="server" ID="OptionRow">
                                 <asp:TableCell style="padding: 0px 10px 6px 10px;">
                                     <table cellpadding="0" cellspacing="0" width="100%" class="ReconcileButtonsTable">
                                         <tr style="padding-left: 5px; padding-top: 5px;"><td ><asp:radiobutton runat="server" ID="MergeUsingExistingStudy" Text=" Merge Using Existing Study" GroupName="ReconcileStudy" Checked="true"/></td><td><asp:radiobutton runat="server" ID="CreateNewStudy" Text=" Create New Study" GroupName="ReconcileStudy" CssClass="ReconcileRadioButton"/></td></tr>
@@ -162,7 +166,7 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-        </div>
+            </div>
         </ContentTemplate>
             </aspAjax:TabPanel>
             <aspAjax:TabPanel runat="server" id="DetailsTab" HeaderText="Additional Info">

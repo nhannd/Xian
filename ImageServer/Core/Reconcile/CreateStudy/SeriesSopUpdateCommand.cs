@@ -61,6 +61,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		public override bool Apply(DicomFile file)
 		{
+            if (_uidMapper == null)
+                return true; // Nothing to do
+
 			string oldSeriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
 			string oldSopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 

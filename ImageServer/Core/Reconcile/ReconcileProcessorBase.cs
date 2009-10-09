@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
@@ -72,6 +74,20 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             DeleteDirectoryCommand cmd = new DeleteDirectoryCommand(Context.ReconcileWorkQueueData.StoragePath, false);
             cmd.DeleteOnlyIfEmpty = true;
             AddCommand(cmd);
+        }
+
+        protected void EnsureStudyCanBeUpdated()
+        {
+            Platform.CheckForNullReference(Context, "Context");
+
+            if (Context.DestStorageLocation!=null)
+            {
+                string reason;
+                if (!Context.DestStorageLocation.CanUpdate(out reason))
+                {
+                    throw new ApplicationException(reason);
+                }
+            }
         }
     }
 }

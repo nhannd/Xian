@@ -37,9 +37,9 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 {
 	internal abstract class ReconcileCommandBase : ServerCommand<ReconcileStudyProcessorContext>, IReconcileServerCommand, IDisposable
 	{
-	    private UidMapper _uidMapper;
+	    
 
 	    /// <summary>
 		/// Creates an instance of <see cref="ServerCommand"/>
@@ -61,17 +61,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		{
 		}
 
-	    protected bool SeriesMappingUpdated
-	    {
-	        get;
-	        set;
-	    }
+	    protected bool SeriesMappingUpdated { get; set;}
 
-	    public UidMapper UidMapper
-	    {
-	        get { return _uidMapper; }
-	        set { _uidMapper = value; }
-	    }
+        protected UidMapper UidMapper { get; set; }
 
 	    protected string GetReconcileUidPath(WorkQueueUid sop)
 		{
@@ -147,25 +139,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			return theXml;
 		}
 
-	    protected void LoadUidMappings()
-	    {
-	        // Load the mapping for the study
-            if (Context.DestStorageLocation!=null)
-            {
-                UidMapXml xml = new UidMapXml();
-                xml.Load(Context.DestStorageLocation);
-                _uidMapper = new UidMapper(xml);
-            }
-            else
-            {
-                _uidMapper = new UidMapper();
-            }
-
-	        _uidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
-	    }
-
-
-        void UidMapper_SeriesMapUpdated(object sender, SeriesMapUpdatedEventArgs e)
+	    internal void UidMapper_SeriesMapUpdated(object sender, SeriesMapUpdatedEventArgs e)
         {
             SeriesMappingUpdated = true;
         }
@@ -182,6 +156,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	            }
 	        }
 	        
+	    }
+
+	    protected void EnsureStudyCanBeUpdated(StudyStorageLocation location)
+	    {
+	        string reason;
+	        if (!location.CanUpdate(out reason))
+	            throw new StudyIsInInvalidStateException(location, reason);
 	    }
 	}
 }

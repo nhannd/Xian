@@ -51,6 +51,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
         private readonly StudyIntegrityQueueAdaptor _adaptor = new StudyIntegrityQueueAdaptor();
 
+        public bool CanReconcile(StudyStorageLocation location, out string reason)
+        {
+            return location.CanUpdate(out reason);
+        }
+
 		public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyIntegrityQueueSelectCriteria criteria)
         {
             return _adaptor.Get(criteria);

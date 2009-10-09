@@ -98,8 +98,8 @@ namespace ClearCanvas.ImageServer.Common
                 Platform.Log(LogLevel.Warn, log.ToString());
                 return null;
             }
-            
-            writableFS = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
+
+            writableFS = CollectionUtils.Sort(writableFS, FilesystemSorter.SortByFreeSpace);
             ServerFilesystemInfo selectedFS = CollectionUtils.FirstElement(writableFS);
             Platform.CheckForNullReference(selectedFS, "selectedFS");
             return selectedFS;

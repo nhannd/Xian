@@ -75,6 +75,7 @@
     <Compile Include="Exceptions\InvalidStudyStateOperationException.cs" />
     <Compile Include="Exceptions\NoWritableFilesystemException.cs" />
     <Compile Include="Exceptions\SopInstanceProcessingException.cs" />
+    <Compile Include="Exceptions\StudyIsInInvalidStateException.cs" />
     <Compile Include="Exceptions\StudyIsNearlineException.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />

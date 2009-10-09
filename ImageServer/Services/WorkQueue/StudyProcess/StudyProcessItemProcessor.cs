@@ -390,6 +390,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             bool updated = false;
             AutoReconciler autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
             PreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
+            result.AutoReconciled = reconcileResult != null;
             updated |= reconcileResult != null;
             
             if (reconcileResult!=null && reconcileResult.DiscardImage)

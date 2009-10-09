@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
@@ -52,6 +53,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		{
 			Platform.CheckForNullReference(context, "context");
 			Context = context;
+
+            EnsureStudyCanBeUpdated();
+
 			ReconcileMergeToExistingStudyDescriptor desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(Context.History.ChangeDescription);
                 
 			if (Context.History.DestStudyStorageKey == null)
@@ -79,6 +83,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             
 		}
 
-		#endregion
+	    #endregion
 	}
 }

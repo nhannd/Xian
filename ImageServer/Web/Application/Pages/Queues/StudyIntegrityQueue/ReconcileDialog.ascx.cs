@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     public partial class ReconcileDialog : UserControl
     {
         private const string HighlightCssClass = " ConflictField ";
+        StudyIntegrityQueueController _controller = new StudyIntegrityQueueController();
 
         #region Nested type: ComparisonCallback
 
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         private Model.StudyIntegrityQueue _item;
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
+        protected internal bool CanReconcile { get; set; }
 
         #endregion
 
@@ -118,29 +120,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected void OKButton_Click(object sender, EventArgs e)
         {
             var itemKey = ViewState["StudyIntegrityQueueItem"] as ServerEntityKey;
-            var controller = new StudyIntegrityQueueController();
-
+            
             try
             {
                 if (MergeUsingExistingStudy.Checked)
                 {
-                    controller.MergeStudy(itemKey, true);
+                    _controller.MergeStudy(itemKey, true);
                 }
                 else if (MergeUsingConflictingStudy.Checked)
                 {
-                    controller.MergeStudy(itemKey, false);
+                    _controller.MergeStudy(itemKey, false);
                 }
                 else if (CreateNewStudy.Checked)
                 {
-                    controller.CreateNewStudy(itemKey);
+                    _controller.CreateNewStudy(itemKey);
                 }
                 else if (DiscardStudy.Checked)
                 {
-                    controller.Discard(itemKey);
+                    _controller.Discard(itemKey);
                 }
                 else if (IgnoreConflict.Checked)
                 {
-                    controller.IgnoreDifferences(itemKey);
+                    _controller.IgnoreDifferences(itemKey);
                 }
             }
             catch (Exception ex)
@@ -188,7 +189,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 StudyStorage.Load(HttpContextData.Current.ReadContext, StudyIntegrityQueueItem.StudyStorageKey);
 
             IList<StudyStorageLocation> studyLocations = StudyStorageLocation.FindStorageLocations(storage);
-            StudyLocation.Text = studyLocations[0].GetStudyPath();
+            StudyStorageLocation location = studyLocations[0];
+            StudyLocation.Text = location.GetStudyPath();
 
             if (ReconcileDetails != null)
             {
@@ -199,7 +201,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 ConflictingStudyLocation.Text = "Not Specified.";
             }
 
-
+            string reason;
+            CanReconcile = _controller.CanReconcile(location, out reason);
+            MessagePanel.Visible = !CanReconcile;
+            AlertMessage.Text = reason;
+            OKButton.Enabled = CanReconcile;
+            OptionRow.Visible = CanReconcile;
             base.DataBind();
         }
 

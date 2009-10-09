@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,43 +29,27 @@
 
 #endregion
 
-using ClearCanvas.Common;
+using System;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
+namespace ClearCanvas.ImageServer.Common.Exceptions
 {
-	/// <summary>
-	/// A processor implementing <see cref="IReconcileProcessor"/> to handle "MergeStudy" operation
-	/// </summary>
-    internal class ReconcileProcessAsIsProcessor : ReconcileProcessorBase, IReconcileProcessor
-	{
-		public ReconcileProcessAsIsProcessor()
-			: base("Process As Is Processor")
-		{
+    /// <summary>
+    /// Represents the exception thrown when the study is in invalid state.
+    /// </summary>
+    public class StudyIsInInvalidStateException: Exception
+    {
+        public StudyIsInInvalidStateException(StudyStorageLocation location, string message)
+            :base(message)
+        {
+            CurrentState = location.StudyStatusEnum.Description;
+            StudyInstanceUid = location.StudyInstanceUid;
+        }
 
-		}
-
-		#region IReconcileProcessor Members
-
-		public void Initialize(ReconcileStudyProcessorContext context, bool complete)
-		{
-			Platform.CheckForNullReference(context, "context");
-			Context = context;
-			Context.DestStorageLocation = context.WorkQueueItemStudyStorage;
-
-            EnsureStudyCanBeUpdated();
-
-			ProcessAsIsCommand.CommandParameters parms = new ProcessAsIsCommand.CommandParameters();
-			ProcessAsIsCommand command = new ProcessAsIsCommand(Context, parms);
-
-			AddCommand(command);
-
-            if (complete)
-            {
-                ApplyStudyAndSeriesRuleCommands();
-                AddCleanupCommands();
-            }
-		}
-
-		#endregion
-	}
+        public string CurrentState { get; set; }
+        /// <summary>
+        /// The study instance UID of the study that is nearline.
+        /// </summary>		
+        public string StudyInstanceUid { get; set; }
+    }
 }

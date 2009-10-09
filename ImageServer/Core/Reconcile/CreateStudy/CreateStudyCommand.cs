@@ -87,6 +87,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			Platform.CheckForNullReference(Context.WorkQueueItem, "Context.WorkQueueItem");
 			Platform.CheckForNullReference(Context.WorkQueueUidList, "Context.WorkQueueUidList");
 
+            if (Context.DestStorageLocation!=null)
+                EnsureStudyCanBeUpdated(Context.DestStorageLocation);
+
             try
             {
 
@@ -101,12 +104,23 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
             }
 		}
 
-	    private void ApplySeriesStudyRules()
-	    {
-            // Run Study / Series Rules Engine.
-            StudyRulesEngine engine = new StudyRulesEngine(Context.DestStorageLocation, Context.Partition);
-            engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
-	    }
+
+        protected void LoadUidMappings()
+        {
+            // Load the mapping for the study
+            if (Context.DestStorageLocation != null)
+            {
+                UidMapXml xml = new UidMapXml();
+                xml.Load(Context.DestStorageLocation);
+                UidMapper = new UidMapper(xml);
+            }
+            else
+            {
+                UidMapper = new UidMapper();
+            }
+
+            UidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
+        }
 
 
 	    protected override void OnUndo()

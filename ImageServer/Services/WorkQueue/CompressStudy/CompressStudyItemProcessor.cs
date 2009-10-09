@@ -60,11 +60,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		private CompressStudyStatistics _studyStats;
 		#endregion
 
-		private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml, IDicomCodecFactory theCodecFactory)
-		{
-			Platform.CheckForNullReference(item, "item");
-			Platform.CheckForNullReference(sop, "sop");
-			Platform.CheckForNullReference(studyXml, "studyXml");
+        #region Protected Properties
+        /// <summary>
+        /// Gets the new transfer syntax of the study after the compression.
+        /// </summary>
+        protected TransferSyntax CompressTransferSyntax { get; private set; }
+        
+        #endregion
+        protected override void Initialize(ClearCanvas.ImageServer.Model.WorkQueue item)
+        {
+            base.Initialize(item);
+
+            XmlElement element = WorkQueueItem.Data.DocumentElement;
+            string syntax = element.Attributes["syntax"].Value;
+            CompressTransferSyntax = TransferSyntax.GetTransferSyntax(syntax);   
+        }
+
+        #region Private Methods
+        private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml, IDicomCodecFactory theCodecFactory)
+        {
+            Platform.CheckForNullReference(item, "item");
+            Platform.CheckForNullReference(sop, "sop");
+            Platform.CheckForNullReference(studyXml, "studyXml");
 
             if (!studyXml.Contains(sop.SeriesInstanceUid, sop.SopInstanceUid))
             {
@@ -78,52 +95,83 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                 return true;
             }
 
-			string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
-			basePath = Path.Combine(basePath, sop.SopInstanceUid);
-			string path;
-			if (sop.Extension != null)
-				path = basePath + "." + sop.Extension;
-			else
-				path = basePath + ".dcm";
+            string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+            basePath = Path.Combine(basePath, sop.SopInstanceUid);
+            string path;
+            if (sop.Extension != null)
+                path = basePath + "." + sop.Extension;
+            else
+                path = basePath + ".dcm";
 
-			try
-			{
-				ProcessFile(item, sop, path, studyXml, theCodecFactory);
+            try
+            {
+                ProcessFile(item, sop, path, studyXml, theCodecFactory);
 
-				// WorkQueueUid has been deleted out by the processor
-				
-				return true;
-			}
-			catch (Exception e)
-			{
-				if (e.InnerException != null && e.InnerException is DicomCodecUnsupportedSopException)
-				{
-					Platform.Log(LogLevel.Warn, e, "Instance not supported for compressor: {0}.  Deleting WorkQueue entry for SOP {1}", e.Message, sop.SopInstanceUid);
+                // WorkQueueUid has been deleted out by the processor
 
-					if (e.InnerException != null)
-						item.FailureDescription = e.InnerException.Message;
-					else
-						item.FailureDescription = e.Message;
+                return true;
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException != null && e.InnerException is DicomCodecUnsupportedSopException)
+                {
+                    Platform.Log(LogLevel.Warn, e, "Instance not supported for compressor: {0}.  Deleting WorkQueue entry for SOP {1}", e.Message, sop.SopInstanceUid);
 
-					// Delete it out of the queue
-					DeleteWorkQueueUid(sop);
+                    if (e.InnerException != null)
+                        item.FailureDescription = e.InnerException.Message;
+                    else
+                        item.FailureDescription = e.Message;
 
-					return false;
-				}
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
-				if (e.InnerException != null)
-					item.FailureDescription = e.InnerException.Message;
-				else
-					item.FailureDescription = e.Message;
+                    // Delete it out of the queue
+                    DeleteWorkQueueUid(sop);
 
-				sop.FailureCount++;
+                    return false;
+                }
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
+                if (e.InnerException != null)
+                    item.FailureDescription = e.InnerException.Message;
+                else
+                    item.FailureDescription = e.Message;
 
-				UpdateWorkQueueUid(sop);
+                sop.FailureCount++;
 
-				return false;
-			}
-		}
+                UpdateWorkQueueUid(sop);
 
+                return false;
+            }
+        }
+
+        private void ReinsertFilesystemQueue(TimeSpan delay)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+                WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+                workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
+                broker.Delete(workQueueUidCriteria);
+
+                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+                if (CompressTransferSyntax.LosslessCompressed)
+                    parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
+                else
+                    parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LossyCompress;
+                parms.ScheduledTime = Platform.Time + delay;
+                parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
+                parms.FilesystemKey = StorageLocation.FilesystemKey;
+
+                parms.QueueXml = WorkQueueItem.Data;
+
+                IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+                if (false == insertQueue.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+                }
+                else
+                    updateContext.Commit();
+            }
+        } 
+        #endregion
 		/// <summary>
 		/// Process all of the SOP Instances associated with a <see cref="WorkQueue"/> item.
 		/// </summary>
@@ -388,6 +436,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
         protected override bool CanStart()
         {
+            
 			IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, 
                 new WorkQueueTypeEnum[]
 			    {
@@ -396,51 +445,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                 }, null);
 
 			if (relatedItems == null || relatedItems.Count == 0)
-				return true;
-
-			XmlElement element = WorkQueueItem.Data.DocumentElement;
-
-			string syntax = element.Attributes["syntax"].Value;
-
-			TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
-
-			Platform.Log(LogLevel.Info,
-						 "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue",
-						 StorageLocation.StudyInstanceUid);
-
-			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
-				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
-				workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
-				broker.Delete(workQueueUidCriteria);
-
-				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
-				if (compressSyntax.LosslessCompressed)
-					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
-				else
-					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LossyCompress;
-				parms.ScheduledTime = Platform.Time.AddMinutes(10);
-				parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
-				parms.FilesystemKey = StorageLocation.FilesystemKey;
-
-				parms.QueueXml = WorkQueueItem.Data;
-
-				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
-
-				if (false == insertQueue.Execute(parms))
-				{
-					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
-				}
-				else
-					updateContext.Commit();
+                // Don't compress lossy if the study needs to be reconciled.
+                // It's time wasting if we go ahead with the compression because later on
+                // users will have to restore the study in order to reconcile the images in SIQ.
+                if (CompressTransferSyntax.LossyCompressed && StorageLocation.IsReconcileRequired)
+                {
+                    Platform.Log(LogLevel.Info, "Study {0} cannot be compressed to lossy at this time because of pending reconciliation. Reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
+                    TimeSpan delay = TimeSpan.FromMinutes(60);
+                    ReinsertFilesystemQueue(delay);
+                    PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                    return false;
+                }
+			    else
+                    return true;
+			}
+            else
+			{
+                Platform.Log(LogLevel.Info, "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
+                TimeSpan delay = TimeSpan.FromMinutes(60);
+                ReinsertFilesystemQueue(delay);
+                PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+                return false;
 			}
 
-
-			PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete,
-				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-
-			return false;
+			
         }
 
 	}
