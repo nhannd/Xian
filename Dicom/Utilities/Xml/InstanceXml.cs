@@ -447,11 +447,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				{
 					// Cleanup the common XML character replacements
 					string tempString = attributeNode.InnerText;
-					tempString = tempString.Replace("&lt;", "<").
-						Replace("&gt;", ">").
-						Replace("&quot;", "\"").
-						Replace("&apos;", "'").
-						Replace("&amp;", "&");
+					tempString = XmlUnescapeString(tempString);
 					try
 					{
 						attribute.SetStringValue(tempString);
@@ -735,12 +731,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				}
 				else
 				{
-					// Do the regular expression to block out invalid XML characters in the string.
-					string text = SecurityElement.Escape(attribute);
-					if (text.Length == 0 || !Regex.IsMatch(text, "[^\x9\xA\xD\x20-\xD7FF\xE000-\xFFFD\x10000-\x10FFFF]"))
-						instanceElement.InnerText = text;
-					// else
-					//     Platform.Log(LogLevel.Error, "Invalid encoding: {0}", text);
+					instanceElement.InnerText = XmlEscapeString(attribute);
 				}
 
 				instance.AppendChild(instanceElement);
@@ -822,6 +813,49 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			return dicomAttributeElement;
 		}
+
+		private static string XmlEscapeString(string input)
+		{
+			string result = input ?? string.Empty;
+
+			result = SecurityElement.Escape(result);
+
+			// Do the regular expression to escape out other invalid XML characters in the string not caught by the above.
+			// NOTE: the \x sequences you see below are C# escapes, not Regex escapes
+			result = Regex.Replace(result, "[^\x9\xA\xD\x20-\xFFFD]", m => string.Format("&#x{0:X};", (int) m.Value[0]));
+
+			return result;
+		}
+
+		private static string XmlUnescapeString(string input)
+		{
+			string result = input ?? string.Empty;
+
+			// unescape any value-encoded XML entities
+			result = Regex.Replace(result, "&#[Xx]([0-9A-Fa-f]+);", m => ((char) int.Parse(m.Groups[1].Value, NumberStyles.AllowHexSpecifier)).ToString());
+			result = Regex.Replace(result, "&#([0-9]+);", m => ((char) int.Parse(m.Groups[1].Value)).ToString());
+
+			// unescape any entities encoded by SecurityElement.Escape (only <>'"&)
+			result = result.Replace("&lt;", "<").
+				Replace("&gt;", ">").
+				Replace("&quot;", "\"").
+				Replace("&apos;", "'").
+				Replace("&amp;", "&");
+
+			return result;
+		}
+
+#if UNIT_TESTS
+		internal static string TestXmlEscapeString(string input)
+		{
+			return XmlEscapeString(input);
+		}
+
+		internal static string TestXmlUnescapeString(string input)
+		{
+			return XmlUnescapeString(input);
+		}
+#endif
 
 		#endregion
 	}
