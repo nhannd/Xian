@@ -49,10 +49,11 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
-    <Compile Include="Brokers\AttachedDocumentBroker.cs" />
     <Compile Include="Brokers\DefaultWorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\ExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\ExternalPractitionerContactPointBroker.cs" />
+    <Compile Include="Brokers\OrderBroker.cs" />
+    <Compile Include="Brokers\PatientBroker.cs" />
     <Compile Include="Brokers\WorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\OptimizedWorklistItemSearchExecutionStrategy.cs" />
     <Compile Include="Brokers\OrderNoteboxItemBroker.cs" />
@@ -229,6 +230,8 @@
     <EmbeddedResource Include="Mappings\TranscriptionReviewStep.hbm.xml" />
     <EmbeddedResource Include="Mappings\TranscriptionRejectReason.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportingTrackingWorklists.hbm.xml" />
+    <EmbeddedResource Include="Brokers\OrderBroker.hbm.xml" />
+    <EmbeddedResource Include="Brokers\PatientBroker.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\PatientNoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
