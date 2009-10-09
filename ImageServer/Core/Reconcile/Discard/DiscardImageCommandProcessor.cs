@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 		public void Initialize(ReconcileStudyProcessorContext context, bool complete)
 		{
 			Platform.CheckForNullReference(context, "context");
+            Context = context;
 
 			DiscardImagesCommand discard = new DiscardImagesCommand(context);
 

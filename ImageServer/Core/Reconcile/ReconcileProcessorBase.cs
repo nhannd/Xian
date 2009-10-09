@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
@@ -71,9 +72,18 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
         protected void AddCleanupCommands()
         {
-            DeleteDirectoryCommand cmd = new DeleteDirectoryCommand(Context.ReconcileWorkQueueData.StoragePath, false);
+            DirectoryInfo dir = new DirectoryInfo(Context.ReconcileWorkQueueData.StoragePath);
+            DeleteDirectoryCommand cmd = new DeleteDirectoryCommand(dir.FullName, false);
             cmd.DeleteOnlyIfEmpty = true;
             AddCommand(cmd);
+
+            if (dir.Parent!=null)
+            {
+                cmd = new DeleteDirectoryCommand(dir.Parent.FullName, false);
+                cmd.DeleteOnlyIfEmpty = true;
+                AddCommand(cmd);
+            }
+            
         }
 
         protected void EnsureStudyCanBeUpdated()
