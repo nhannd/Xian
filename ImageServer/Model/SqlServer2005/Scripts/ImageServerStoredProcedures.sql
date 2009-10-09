@@ -425,9 +425,10 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: 7/30/2007
 -- Description:	
 -- History:
---		10/24/2008	:	Added IsReconcileRequired property into the result set.
---		07/04/2008	:	Modify to return storage location based on the study instance uid 
---						when StudyStorageGUID and ServerPartitionGUID aren''t provided. Used for image streaming service.
+--		Oct 09, 2009	:	Fixed issue with incorrect IsReconcileRequired being returned.
+--		Oct 24, 2008	:	Added IsReconcileRequired property into the result set.
+--		Jul 04, 2008	:	Modify to return storage location based on the study instance uid 
+--							when StudyStorageGUID and ServerPartitionGUID aren''t provided. Used for image streaming service.
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryStudyStorageLocation] 
 	-- Add the parameters for the stored procedure here
@@ -442,9 +443,17 @@ BEGIN
 	
 	DECLARE @IsReconcileRequired bit
 	SET @IsReconcileRequired =0;
-
+	DECLARE @StorageGUID uniqueidentifier
+			
 	IF @StudyStorageGUID is null and @ServerPartitionGUID is null
 	BEGIN
+		-- FIND LOCATION BASED ON @StudyInstanceUid
+
+		SELECT @StorageGUID=GUID FROM StudyStorage WHERE StudyInstanceUid = @StudyInstanceUid
+		
+		IF EXISTS(SELECT GUID FROM StudyIntegrityQueue WITH(NOLOCK) WHERE StudyStorageGUID=@StorageGUID)
+			SET @IsReconcileRequired = 1
+
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
@@ -454,13 +463,18 @@ BEGIN
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
 			JOIN Filesystem on FilesystemStudyStorage.FilesystemGUID = Filesystem.GUID
 			JOIN ServerTransferSyntax on ServerTransferSyntax.GUID = FilesystemStudyStorage.ServerTransferSyntaxGUID
-		WHERE StudyStorage.StudyInstanceUid = @StudyInstanceUid
+		WHERE StudyStorage.GUID = @StorageGUID
 	END
 	ELSE IF @StudyStorageGUID is null
 	BEGIN
-		IF EXISTS(SELECT GUID FROM StudyIntegrityQueue WITH(NOLOCK) 
-		WHERE StudyStorageGUID=@StudyStorageGUID)
-			SET @IsReconcileRequired = 1;
+		-- FIND LOCATION BASED ON @ServerPartitionGUID and @StudyInstanceUid
+
+		SELECT @StorageGUID=GUID FROM StudyStorage WHERE 
+			ServerPartitionGUID = @ServerPartitionGUID and StudyInstanceUid = @StudyInstanceUid
+
+		IF EXISTS(SELECT GUID FROM StudyIntegrityQueue WITH(NOLOCK) WHERE StudyStorageGUID=@StorageGUID)
+			SET @IsReconcileRequired = 1
+
 	
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
@@ -475,6 +489,10 @@ BEGIN
 	END
 	ELSE
 	BEGIN
+		-- FIND LOCATION BASED ON @StudyStorageGUID
+		IF EXISTS(SELECT GUID FROM StudyIntegrityQueue WITH(NOLOCK) WHERE StudyStorageGUID=@StudyStorageGUID)
+			SET @IsReconcileRequired = 1
+
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
