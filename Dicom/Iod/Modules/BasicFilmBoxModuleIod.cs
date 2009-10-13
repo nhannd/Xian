@@ -117,8 +117,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The film size id.</value>
         public FilmSize FilmSizeId
         {
-            get { return GetFilmSizeEnumFromString(base.DicomAttributeProvider[DicomTags.FilmOrientation].GetString(0, String.Empty)); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmOrientation], GetFilmSizeStringFromEnum(value), false); }
+			get { return GetFilmSizeEnumFromString(base.DicomAttributeProvider[DicomTags.FilmSizeId].GetString(0, String.Empty)); }
+			set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmSizeId], GetFilmSizeStringFromEnum(value), false); }
         }
 
         /// <summary>
