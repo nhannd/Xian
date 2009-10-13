@@ -142,6 +142,8 @@
       <DependentUpon>AttachedDocumentFtpSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AttachmentSummary.cs" />
+    <Compile Include="CannedTextService\EditCannedTextCategoriesRequest.cs" />
+    <Compile Include="CannedTextService\EditCannedTextCategoriesResponse.cs" />
     <Compile Include="Jsml\ShimUtil.cs" />
     <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsRequest.cs" />

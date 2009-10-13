@@ -1285,6 +1285,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changes the category of multiple canned texts..
+        /// </summary>
+        internal static string MessageChangeCategoryToolTip {
+            get {
+                return ResourceManager.GetString("MessageChangeCategoryToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A communication error occured while attempting to contact the server..
         /// </summary>
         internal static string MessageCommunicationError {
@@ -1884,6 +1893,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleCannedText {
             get {
                 return ResourceManager.GetString("TitleCannedText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Category.
+        /// </summary>
+        internal static string TitleChangeCategory {
+            get {
+                return ResourceManager.GetString("TitleChangeCategory", resourceCulture);
             }
         }
         

@@ -82,6 +82,7 @@
     <Compile Include="BiographyVisitDetailViewComponent.cs" />
     <Compile Include="BiographyVisitHistoryComponent.cs" />
     <Compile Include="BiographyOrderDetailViewComponent.cs" />
+    <Compile Include="CannedTextCategoryEditorComponent.cs" />
     <Compile Include="CannedTextSettings.cs" />
     <Compile Include="CannedTextSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -711,6 +712,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MultiEditToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

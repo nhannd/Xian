@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
@@ -43,148 +44,168 @@ using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.CannedTextService
 {
-    [ServiceImplementsContract(typeof(ICannedTextService))]
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class CannedTextService : ApplicationServiceBase, ICannedTextService
-    {
-        #region ICannedTextService Members
+	[ServiceImplementsContract(typeof(ICannedTextService))]
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	public class CannedTextService : ApplicationServiceBase, ICannedTextService
+	{
+		#region ICannedTextService Members
 
-        [ReadOperation]
-        public ListCannedTextForUserResponse ListCannedTextForUser(ListCannedTextForUserRequest request)
-        {
-            var assembler = new CannedTextAssembler();
-            var criterias = new List<CannedTextSearchCriteria>();
+		[ReadOperation]
+		public ListCannedTextForUserResponse ListCannedTextForUser(ListCannedTextForUserRequest request)
+		{
+			var assembler = new CannedTextAssembler();
+			var criterias = new List<CannedTextSearchCriteria>();
 
-            var personalCannedTextCriteria = new CannedTextSearchCriteria();
-            personalCannedTextCriteria.Staff.EqualTo(this.CurrentUserStaff);
-            if (!string.IsNullOrEmpty(request.Name))
-                personalCannedTextCriteria.Name.EqualTo(request.Name);
-            criterias.Add(personalCannedTextCriteria);
+			var personalCannedTextCriteria = new CannedTextSearchCriteria();
+			personalCannedTextCriteria.Staff.EqualTo(this.CurrentUserStaff);
+			if (!string.IsNullOrEmpty(request.Name))
+				personalCannedTextCriteria.Name.EqualTo(request.Name);
+			criterias.Add(personalCannedTextCriteria);
 
-            if (this.CurrentUserStaff.Groups != null && this.CurrentUserStaff.Groups.Count > 0)
-            {
-                var groupCannedTextCriteria = new CannedTextSearchCriteria();
-                groupCannedTextCriteria.StaffGroup.In(this.CurrentUserStaff.Groups);
-                if (!string.IsNullOrEmpty(request.Name))
-                    groupCannedTextCriteria.Name.EqualTo(request.Name);
-                criterias.Add(groupCannedTextCriteria);
-            }
+			if (this.CurrentUserStaff.Groups != null && this.CurrentUserStaff.Groups.Count > 0)
+			{
+				var groupCannedTextCriteria = new CannedTextSearchCriteria();
+				groupCannedTextCriteria.StaffGroup.In(this.CurrentUserStaff.Groups);
+				if (!string.IsNullOrEmpty(request.Name))
+					groupCannedTextCriteria.Name.EqualTo(request.Name);
+				criterias.Add(groupCannedTextCriteria);
+			}
 
-            var results = PersistenceContext.GetBroker<ICannedTextBroker>().Find(criterias.ToArray(), request.Page);
+			var results = PersistenceContext.GetBroker<ICannedTextBroker>().Find(criterias.ToArray(), request.Page);
 
-            var staffCannedText = CollectionUtils.Map<CannedText, CannedTextSummary>(results,
+			var staffCannedText = CollectionUtils.Map<CannedText, CannedTextSummary>(results,
 				cannedText => assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
 
-            return new ListCannedTextForUserResponse(staffCannedText);
-        }
+			return new ListCannedTextForUserResponse(staffCannedText);
+		}
 
-        [ReadOperation]
-        public GetCannedTextEditFormDataResponse GetCannedTextEditFormData(GetCannedTextEditFormDataRequest request)
-        {
-            var groupAssembler = new StaffGroupAssembler();
+		[ReadOperation]
+		public GetCannedTextEditFormDataResponse GetCannedTextEditFormData(GetCannedTextEditFormDataRequest request)
+		{
+			var groupAssembler = new StaffGroupAssembler();
 
-            return new GetCannedTextEditFormDataResponse(
-                CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-                    this.CurrentUserStaff.ActiveGroups,	// only active staff groups should be choosable
-                    groupAssembler.CreateSummary));
-        }
+			return new GetCannedTextEditFormDataResponse(
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+					this.CurrentUserStaff.ActiveGroups,	// only active staff groups should be choosable
+					groupAssembler.CreateSummary));
+		}
 
-        [ReadOperation]
-        public LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request)
-        {
-            var broker = PersistenceContext.GetBroker<ICannedTextBroker>();
-            CannedText cannedText;
-            
-            if (request.CannedTextRef != null)
-            {
-                cannedText = broker.Load(request.CannedTextRef);
-            }
-            else
-            {
-                var criteria = new CannedTextSearchCriteria();
+		[ReadOperation]
+		public LoadCannedTextForEditResponse LoadCannedTextForEdit(LoadCannedTextForEditRequest request)
+		{
+			var broker = PersistenceContext.GetBroker<ICannedTextBroker>();
+			CannedText cannedText;
 
-                if (!string.IsNullOrEmpty(request.Name))
-                    criteria.Name.EqualTo(request.Name);
+			if (request.CannedTextRef != null)
+			{
+				cannedText = broker.Load(request.CannedTextRef);
+			}
+			else
+			{
+				var criteria = new CannedTextSearchCriteria();
 
-                if (!string.IsNullOrEmpty(request.Category))
-                    criteria.Category.EqualTo(request.Category);
+				if (!string.IsNullOrEmpty(request.Name))
+					criteria.Name.EqualTo(request.Name);
 
-                if (!string.IsNullOrEmpty(request.StaffId))
-                    criteria.Staff.Id.EqualTo(request.StaffId);
+				if (!string.IsNullOrEmpty(request.Category))
+					criteria.Category.EqualTo(request.Category);
 
-                if (!string.IsNullOrEmpty(request.StaffGroupName))
-                    criteria.StaffGroup.Name.EqualTo(request.StaffGroupName);
+				if (!string.IsNullOrEmpty(request.StaffId))
+					criteria.Staff.Id.EqualTo(request.StaffId);
 
-                cannedText = broker.FindOne(criteria);
-            }
+				if (!string.IsNullOrEmpty(request.StaffGroupName))
+					criteria.StaffGroup.Name.EqualTo(request.StaffGroupName);
 
-            var assembler = new CannedTextAssembler();
-            return new LoadCannedTextForEditResponse(assembler.GetCannedTextDetail(cannedText, this.PersistenceContext));
-        }
+				cannedText = broker.FindOne(criteria);
+			}
 
-        [UpdateOperation]
-        public AddCannedTextResponse AddCannedText(AddCannedTextRequest request)
-        {
-            CheckCannedTextWriteAccess(request.Detail);
+			var assembler = new CannedTextAssembler();
+			return new LoadCannedTextForEditResponse(assembler.GetCannedTextDetail(cannedText, this.PersistenceContext));
+		}
 
-            if (string.IsNullOrEmpty(request.Detail.Name))
-                throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
+		[UpdateOperation]
+		public AddCannedTextResponse AddCannedText(AddCannedTextRequest request)
+		{
+			CheckCannedTextWriteAccess(request.Detail);
 
-            if (string.IsNullOrEmpty(request.Detail.Category))
-                throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
+			if (string.IsNullOrEmpty(request.Detail.Name))
+				throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
 
-            var assembler = new CannedTextAssembler();
-            var cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
+			if (string.IsNullOrEmpty(request.Detail.Category))
+				throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
 
-            PersistenceContext.Lock(cannedText, DirtyState.New);
-            PersistenceContext.SynchState();
+			var assembler = new CannedTextAssembler();
+			var cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
-            return new AddCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
-        }
+			PersistenceContext.Lock(cannedText, DirtyState.New);
+			PersistenceContext.SynchState();
 
-        [UpdateOperation]
-        public UpdateCannedTextResponse UpdateCannedText(UpdateCannedTextRequest request)
-        {
-            CheckCannedTextWriteAccess(request.Detail);
+			return new AddCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
+		}
 
-            var cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
+		[UpdateOperation]
+		public UpdateCannedTextResponse UpdateCannedText(UpdateCannedTextRequest request)
+		{
+			CheckCannedTextWriteAccess(request.Detail);
 
-            var assembler = new CannedTextAssembler();
-            assembler.UpdateCannedText(cannedText, request.Detail, this.CurrentUserStaff, this.PersistenceContext);
+			var cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
 
-            PersistenceContext.SynchState();
-            return new UpdateCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
-        }
+			var assembler = new CannedTextAssembler();
+			assembler.UpdateCannedText(cannedText, request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
-        [UpdateOperation]
-        public DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request)
-        {
-            var cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
-            CheckCannedTextWriteAccess(cannedText);
+			PersistenceContext.SynchState();
+			return new UpdateCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));
+		}
 
-            PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
+		[UpdateOperation]
+		public DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request)
+		{
+			var cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
+			CheckCannedTextWriteAccess(cannedText);
 
-            return new DeleteCannedTextResponse();
-        }
+			PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
 
-        #endregion
+			return new DeleteCannedTextResponse();
+		}
 
-        private static void CheckCannedTextWriteAccess(CannedText cannedText)
-        {
-            CheckCannedTextWriteAccess(cannedText.StaffGroup == null);
-        }
+		[UpdateOperation]
+		public EditCannedTextCategoriesResponse EditCannedTextCategories(EditCannedTextCategoriesRequest request)
+		{
+			var cannedTexts = CollectionUtils.Map<EntityRef, CannedText>(
+				request.CannedTextRefs,
+				cannedTextRef => this.PersistenceContext.Load<CannedText>(cannedTextRef));
 
-        private static void CheckCannedTextWriteAccess(CannedTextDetail cannedText)
-        {
-            CheckCannedTextWriteAccess(cannedText.IsPersonal);
-        }
+			foreach (var cannedText in cannedTexts)
+			{
+				cannedText.Category = request.Category;
+			}
 
-        private static void CheckCannedTextWriteAccess(bool isPersonal)
-        {
-            if (isPersonal && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.CannedText.Personal) == false || 
-                !isPersonal && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.CannedText.Group) == false)
-                throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
-        }
+			this.PersistenceContext.SynchState();
 
-    }
+			var assembler = new CannedTextAssembler();
+			return new EditCannedTextCategoriesResponse(CollectionUtils.Map<CannedText, CannedTextSummary>(
+				cannedTexts,
+				cannedText => assembler.GetCannedTextSummary(cannedText, this.PersistenceContext)));
+		}
+
+		#endregion
+
+		private static void CheckCannedTextWriteAccess(CannedText cannedText)
+		{
+			CheckCannedTextWriteAccess(cannedText.StaffGroup == null);
+		}
+
+		private static void CheckCannedTextWriteAccess(CannedTextDetail cannedText)
+		{
+			CheckCannedTextWriteAccess(cannedText.IsPersonal);
+		}
+
+		private static void CheckCannedTextWriteAccess(bool isPersonal)
+		{
+			if (isPersonal && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.CannedText.Personal) == false ||
+				!isPersonal && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.CannedText.Group) == false)
+				throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+		}
+
+	}
 }

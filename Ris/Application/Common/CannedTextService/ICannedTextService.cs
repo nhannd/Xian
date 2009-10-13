@@ -90,5 +90,15 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request);
+
+		/// <summary>
+		/// Modifies the category of a set of existing canned texts.
+		/// </summary>
+		/// <param name="request"><see cref="EditCannedTextCategoriesRequest"/></param>
+		/// <returns><see cref="EditCannedTextCategoriesResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		EditCannedTextCategoriesResponse EditCannedTextCategories(EditCannedTextCategoriesRequest request);
 	}
 }

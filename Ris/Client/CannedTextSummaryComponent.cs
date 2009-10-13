@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Desktop;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
 
@@ -63,7 +64,7 @@ namespace ClearCanvas.Ris.Client
 						this.Context.DesktopWindow,
 						component,
 						SR.TitleCannedText,
-						SR.TitleCannedText, 
+						SR.TitleCannedText,
 						ShelfDisplayHint.DockFloat);
 
 					_shelf.Closed += delegate { _shelf = null; };
@@ -102,6 +103,7 @@ namespace ClearCanvas.Ris.Client
 
 		private Action _duplicateCannedTextAction;
 		private Action _copyCannedTextToClipboardAction;
+		private Action _editCannedTextCategoryAction;
 
 		public CannedTextSummaryComponent()
 		{
@@ -189,6 +191,46 @@ namespace ClearCanvas.Ris.Client
 			EventsHelper.Fire(_copyCannedTextRequested, this, EventArgs.Empty);
 		}
 
+		public void EditCategories()
+		{
+			try
+			{
+				var items = this.SelectedItems;
+				var initialCategory = CollectionUtils.FirstElement(items).Category;
+				var editor = new CannedTextCategoryEditorComponent(GetCategoryChoices(), initialCategory);
+
+				var exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleChangeCategory);
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					var newCategory = editor.Category;
+
+					Platform.GetService<ICannedTextService>(
+						service =>
+						{
+							var response = service.EditCannedTextCategories(
+								new EditCannedTextCategoriesRequest(
+									CollectionUtils.Map<CannedTextSummary, EntityRef>(items, item => item.CannedTextRef),
+									newCategory));
+
+							var table = (Table<CannedTextSummary>)this.SummaryTable;
+							foreach (var cannedText in response.CannedTexts)
+							{
+								table.Items.Replace(
+									x => IsSameItem(cannedText, x),
+									cannedText);
+							}
+
+							this.SummarySelection = new Selection(response.CannedTexts);
+						});
+				}
+
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
 		#endregion
 
 		#region Overrides
@@ -231,9 +273,12 @@ namespace ClearCanvas.Ris.Client
 			_copyCannedTextToClipboardAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToClipboardToolSmall.png",
 				SR.MessageCopyToClipboard, CopyCannedText);
 
+			_editCannedTextCategoryAction = model.AddAction("editCategory", SR.TitleChangeCategory, "Icons.MultiEditToolSmall.png",
+				SR.MessageChangeCategoryToolTip, EditCategories);
+
 			_duplicateCannedTextAction.Enabled = false;
 			_copyCannedTextToClipboardAction.Enabled = false;
-
+			_editCannedTextCategoryAction.Enabled = false;
 		}
 
 		/// <summary>
@@ -344,7 +389,7 @@ namespace ClearCanvas.Ris.Client
 				this.ActionModel.Add.Enabled = HasPersonalAdminAuthority || HasGroupAdminAuthority;
 				this.ActionModel.Delete.Enabled =
 					_duplicateCannedTextAction.Enabled =
-						selectedItem.IsPersonal && HasPersonalAdminAuthority || 
+						selectedItem.IsPersonal && HasPersonalAdminAuthority ||
 						selectedItem.IsGroup && HasGroupAdminAuthority;
 			}
 			else
@@ -352,6 +397,8 @@ namespace ClearCanvas.Ris.Client
 				_duplicateCannedTextAction.Enabled = false;
 				_copyCannedTextToClipboardAction.Enabled = false;
 			}
+
+			_editCannedTextCategoryAction.Enabled = this.SelectedItems.Count > 1;
 
 			// The detail is only loaded whenever a copy/drag is performed
 			// Set this to null, so the view doesn't get wrong text data.
@@ -375,12 +422,11 @@ namespace ClearCanvas.Ris.Client
 		private List<string> GetCategoryChoices()
 		{
 			var categoryChoices = new List<string>();
-			CollectionUtils.ForEach<CannedTextSummary>(this.SummaryTable.Items,
-			                                           c =>
-			                                           {
-			                                           	if (!categoryChoices.Contains(c.Category))
-			                                           		categoryChoices.Add(c.Category);
-			                                           });
+			CollectionUtils.ForEach<CannedTextSummary>(this.SummaryTable.Items, c =>
+				{
+					if (!categoryChoices.Contains(c.Category))
+						categoryChoices.Add(c.Category);
+				});
 
 			categoryChoices.Sort();
 

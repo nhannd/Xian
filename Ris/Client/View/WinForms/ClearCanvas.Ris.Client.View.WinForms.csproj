@@ -94,6 +94,13 @@
       <DependentUpon>BiographyVisitHistoryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyVisitHistoryComponentView.cs" />
+    <Compile Include="CannedTextCategoryEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CannedTextCategoryEditorComponentControl.Designer.cs">
+      <DependentUpon>CannedTextCategoryEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CannedTextCategoryEditorComponentView.cs" />
     <Compile Include="CannedTextSupport.cs" />
     <Compile Include="CannedTextInplaceLookupControl.cs">
       <SubType>UserControl</SubType>
@@ -679,6 +686,9 @@
     <None Include="Resources\searchtoolsmall.png" />
     <None Include="Resources\UserText.png" />
     <None Include="Resources\PasswordText.png" />
+    <EmbeddedResource Include="CannedTextCategoryEditorComponentControl.resx">
+      <DependentUpon>CannedTextCategoryEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DateTimeEntryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>

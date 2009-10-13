@@ -879,4 +879,10 @@
   <data name="MessageIdenticalCannedText" xml:space="preserve">
     <value>Canned text Name, Category and Owner are identical to an existing canned text.</value>
   </data>
+  <data name="TitleChangeCategory" xml:space="preserve">
+    <value>Change Category</value>
+  </data>
+  <data name="MessageChangeCategoryToolTip" xml:space="preserve">
+    <value>Changes the category of multiple canned texts.</value>
+  </data>
 </root>
