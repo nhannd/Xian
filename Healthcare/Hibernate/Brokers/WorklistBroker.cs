@@ -40,11 +40,11 @@ using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class WorklistBroker : EntityBroker<Worklist, WorklistSearchCriteria>, IWorklistBroker
-    {
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class WorklistBroker : EntityBroker<Worklist, WorklistSearchCriteria>, IWorklistBroker
+	{
 
-        #region IWorklistBroker Members
+		#region IWorklistBroker Members
 
 		public int Count(WorklistOwner owner)
 		{
@@ -60,101 +60,101 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return (int)ExecuteHqlUnique<long>(query);
 		}
 
-        public IList<Worklist> Find(StaffGroup staffGroup)
-        {
-            HqlProjectionQuery query = GetBaseQuery();
-            AddStaffGroupConditions(query, staffGroup);
-
-            return ExecuteHql<Worklist>(query);
-        }
-
-        public IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames)
-        {
-            HqlProjectionQuery query = GetBaseQuery();
-            AddStaffConditions(query, staff, true);
-            AddClassConditions(query, worklistClassNames);
-
-            return ExecuteHql<Worklist>(query);
-        }
-
-        public IList<Worklist> Find(string name, bool includeUserDefinedWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page)
-        {
-            HqlProjectionQuery query = GetBaseQuery();
-
-            if (!string.IsNullOrEmpty(name))
-                query.Conditions.Add(new HqlCondition("w.Name like ?", string.Format("%{0}%", name)));
-
-            if (!includeUserDefinedWorklists)
-                query.Conditions.Add(new HqlCondition("(w.Owner.Staff is null and w.Owner.Group is null)"));
-
-            AddClassConditions(query, worklistClassNames);
-            query.Page = page;
-
-            return ExecuteHql<Worklist>(query);
-        }
-
-        public Worklist FindOne(string name, string worklistClassName)
-        {
-            HqlQuery query = new HqlQuery("from Worklist w");
-            query.Conditions.Add(new HqlCondition("w.Name = ?", name));
-            query.Conditions.Add(new HqlCondition("w.class = " + worklistClassName));
-
-            IList<Worklist> worklists = ExecuteHql<Worklist>(query);
-            if (worklists.Count == 0)
-                throw new EntityNotFoundException(string.Format("Worklist {0}, class {1} not found.", name, worklistClassName), null);
-
-            return CollectionUtils.FirstElement(worklists);
-        }
-
-        #endregion
-
-        private HqlProjectionQuery GetBaseQuery()
-        {
-            HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
-            query.Selects.Add(new HqlSelect("w"));
-            query.SelectDistinct = true;
-            return query;
-        }
-
-		private HqlProjectionQuery GetBaseCountQuery()
+		public IList<Worklist> Find(StaffGroup staffGroup)
 		{
-			HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
+			var query = GetBaseQuery();
+			AddStaffGroupConditions(query, staffGroup);
+
+			return ExecuteHql<Worklist>(query);
+		}
+
+		public IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames)
+		{
+			var query = GetBaseQuery();
+			AddStaffConditions(query, staff, true);
+			AddClassConditions(query, worklistClassNames);
+
+			return ExecuteHql<Worklist>(query);
+		}
+
+		public IList<Worklist> Find(string name, bool includeUserDefinedWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page)
+		{
+			HqlProjectionQuery query = GetBaseQuery();
+
+			if (!string.IsNullOrEmpty(name))
+				query.Conditions.Add(new HqlCondition("w.Name like ?", string.Format("%{0}%", name)));
+
+			if (!includeUserDefinedWorklists)
+				query.Conditions.Add(new HqlCondition("(w.Owner.Staff is null and w.Owner.Group is null)"));
+
+			AddClassConditions(query, worklistClassNames);
+			query.Page = page;
+
+			return ExecuteHql<Worklist>(query);
+		}
+
+		public Worklist FindOne(string name, string worklistClassName)
+		{
+			var query = new HqlQuery("from Worklist w");
+			query.Conditions.Add(new HqlCondition("w.Name = ?", name));
+			query.Conditions.Add(new HqlCondition("w.class = " + worklistClassName));
+
+			var worklists = ExecuteHql<Worklist>(query);
+			if (worklists.Count == 0)
+				throw new EntityNotFoundException(string.Format("Worklist {0}, class {1} not found.", name, worklistClassName), null);
+
+			return CollectionUtils.FirstElement(worklists);
+		}
+
+		#endregion
+
+		private static HqlProjectionQuery GetBaseQuery()
+		{
+			var query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
+			query.Selects.Add(new HqlSelect("w"));
+			query.SelectDistinct = true;
+			return query;
+		}
+
+		private static HqlProjectionQuery GetBaseCountQuery()
+		{
+			var query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
 			query.Selects.Add(new HqlSelect("count(*)"));
 			return query;
 		}
 
-        private void AddClassConditions(HqlProjectionQuery query, IEnumerable<string> worklistClassNames)
-        {
-            HqlOr classOr = new HqlOr();
-            foreach (string className in worklistClassNames)
-            {
-                classOr.Conditions.Add(new HqlCondition("w.class = " + className));
-            }
-            query.Conditions.Add(classOr);
-        }
+		private static void AddClassConditions(HqlProjectionQuery query, IEnumerable<string> worklistClassNames)
+		{
+			var classOr = new HqlOr();
+			foreach (var className in worklistClassNames)
+			{
+				classOr.Conditions.Add(new HqlCondition("w.class = " + className));
+			}
+			query.Conditions.Add(classOr);
+		}
 
-        private void AddStaffConditions(HqlProjectionQuery query, Staff staff, bool includeGroupWorklist)
-        {
-            query.Froms.Add(new HqlFrom("Staff", "s"));
-            query.Conditions.Add(new HqlCondition("s = ?", staff));
+		private static void AddStaffConditions(HqlProjectionQuery query, Staff staff, bool includeGroupWorklist)
+		{
+			query.Froms.Add(new HqlFrom("Staff", "s"));
+			query.Conditions.Add(new HqlCondition("s = ?", staff));
 
-            HqlOr staffOr = new HqlOr();
-            staffOr.Conditions.Add(new HqlCondition("s in elements(w.StaffSubscribers)"));
+			var staffOr = new HqlOr();
+			staffOr.Conditions.Add(new HqlCondition("s in elements(w.StaffSubscribers)"));
 
-            if (includeGroupWorklist)
-                staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
+			if (includeGroupWorklist)
+				staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
 
-            query.Conditions.Add(staffOr);
-        }
+			query.Conditions.Add(staffOr);
+		}
 
-		private void AddStaffGroupConditions(HqlProjectionQuery query, StaffGroup staffGroup)
+		private static void AddStaffGroupConditions(HqlProjectionQuery query, StaffGroup staffGroup)
 		{
 			query.Froms.Add(new HqlFrom("StaffGroup", "sg"));
 			query.Conditions.Add(new HqlCondition("sg = ?", staffGroup));
 
-			HqlOr staffGroupOr = new HqlOr();
+			var staffGroupOr = new HqlOr();
 			staffGroupOr.Conditions.Add(new HqlCondition("sg in elements(w.GroupSubscribers)"));
 			query.Conditions.Add(staffGroupOr);
 		}
-    }
+	}
 }
