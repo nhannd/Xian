@@ -54,47 +54,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     class AutoReconciler : BasePreprocessor, IStudyPreProcessor
     {
+        #region Private Fields
         private readonly static ServerCache<ServerEntityKey, UidMapper> _uidMapCache = new ServerCache<ServerEntityKey, UidMapper>(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(15));
 
         private readonly string _contextID;
-        
-        class AutoReconcilerResult : PreProcessingResult
-        {
-            #region Private Members
-            private readonly StudyReconcileAction _action;
-            private IList<UpdateItem> _changes = new List<UpdateItem>();
-            #endregion
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="action"></param>
-            public AutoReconcilerResult(StudyReconcileAction action)
-            {
-                AutoReconciled = true; 
-                _action = action;
-                
-            }
-                        
-            /// <summary>
-            /// Gets or sets the list of changes made when <see cref="AutoReconciler"/> was executed on a DICOM file.
-            /// </summary>
-            public IList<UpdateItem> Changes
-            {
-                get { return _changes; }
-                set { _changes = value; }
-            }
+        #endregion
 
-            /// <summary>
-            /// Gets other action that was used when <see cref="AutoReconciler"/> was executed on a DICOM file.
-            /// </summary>
-            public StudyReconcileAction Action
-            {
-                get { return _action; }
-
-            }
- 
-        }
         
         #region Private Members
 
@@ -117,158 +83,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region IStudyPreProcessor Members
 
+        /// <summary>
+        /// Processes the specified <see cref="DicomFile"/> object.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        /// <exception cref="TargetStudyIsNearlineException">Thrown when the target study is currently nearline.</exception>
+        /// <exception cref="TargetStudyInvalidStateException">Thrown when the target study is in invalid state and cannot be updated.</exception>
+        /// 
         public PreProcessingResult Process(DicomFile file)
         {
             Platform.CheckForNullReference(file, "file");
 
             AutoReconcilerResult preProcessingResult = null;
-            string originalSeriesUid = file.DataSet[DicomTags.SeriesInstanceUid].ToString();
-            string originalSopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
-
+            
             // Update the file based on the reconciliation in the past
-            StudyStorageLocation destStudy;
             IList<StudyHistory> histories = FindReconcileHistories(StorageLocation, file);
             if (histories != null && histories.Count > 0)
             {
-                #region Update the files based on history...
-
-                StudyHistory lastHistory = histories[0];
-
-                bool restored;
-                StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
-                StudyReconcileDescriptor changeLog = parser.Parse(lastHistory.ChangeDescription);
-                
-                switch (changeLog.Action)
-                {
-                    case StudyReconcileAction.CreateNewStudy:
-                    case StudyReconcileAction.Merge:
-                        #region Update Images to match destination study
-
-                        UidMapper uidMapper = null;
-                        bool belongsToAnotherStudy;
-                        if (lastHistory.DestStudyStorageKey != null)
-                        {
-                            StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-                            destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
-
-                            if (destStudy == null)
-                            {
-                                throw new TargetStudyIsNearlineException()
-                                {
-                                    StudyInstanceUid = destinationStudy.StudyInstanceUid,
-                                    RestoreRequested = restored
-                                };
-                            }
-
-                            EnsureStudyCanBeUpdated(destStudy);
-
-                            belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
-                            
-                            ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
-                            IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(destStudy);
-                            if (belongsToAnotherStudy)
-                            {
-                                Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Move SOP {0} to Study {1}, A#: {2}, Patient {3}", originalSopUid, destStudy.StudyInstanceUid, destStudy.Study.AccessionNumber, destStudy.Study.PatientsName);
-
-								// Load the Uid Map, either from cache or from disk
-                                if (!_uidMapCache.TryGetValue(destStudy.Key, out uidMapper))
-                                {
-                                    UidMapXml mapXml = new UidMapXml();
-                                    mapXml.Load(destStudy);
-                                    uidMapper = new UidMapper(mapXml);
-
-                                    _uidMapCache.Add(destStudy.Key, uidMapper);
-                                }
-                                
-                                try
-                                {
-                                    commands.Add(GetUidMappingCommand(StorageLocation, destStudy, uidMapper, originalSopUid, originalSeriesUid));
-                                }
-                                catch(InstanceAlreadyExistsException ex)
-                                {
-                                    Platform.Log(LogLevel.Info, "An instance already exists with the SOP Instance Uid {0}", ex.SopInstanceUid);
-                                    preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard);
-                                    preProcessingResult.DiscardImage = true;
-                                    break; // caller will delete the file
-                                }
-                            }
-
-
-                            preProcessingResult = new AutoReconcilerResult(changeLog.Action);
-                            preProcessingResult.Changes = GetUpdateList(file, commands);
-
-                            UpdateImage(file, commands);
-
-                            // First, must update the map
-                            if (uidMapper != null && uidMapper.Dirty)
-                            {
-                                UpdateUidMap(destStudy, uidMapper);
-                            }
-
-                            if (belongsToAnotherStudy)
-                            {
-                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(_contextID, file.SourceApplicationEntityTitle, destStudy.ServerPartition);
-                                SopInstanceImporter importer = new SopInstanceImporter(importContext);
-                                DicomProcessingResult result = importer.Import(file);
-
-                                if (!result.Successful)
-                                {
-                                    throw new ApplicationException("Unable to import image to destination study");
-                                }
-                            }
-
-
-                        }
-
-
-                        #endregion
-
-                        break;
-
-                    case StudyReconcileAction.Discard:
-                        preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard);
-                        preProcessingResult.DiscardImage = true;
-                        break;
-
-                    case StudyReconcileAction.ProcessAsIs:
-                        if (lastHistory.DestStudyStorageKey != null)
-                        {
-                            StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
-                            destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
-                            preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);
-
-                            belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
-
-                            EnsureStudyCanBeUpdated(destStudy);
-
-                            if (belongsToAnotherStudy)
-                            {
-                                preProcessingResult.Changes = new List<UpdateItem>();
-                                preProcessingResult.Changes.Add(new UpdateItem(
-                                                                    DicomTags.StudyInstanceUid,
-                                                                    file.DataSet[DicomTags.StudyInstanceUid].ToString(),
-                                                                    destStudy.StudyInstanceUid));
-
-                                file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(destStudy.StudyInstanceUid);
-                                SopInstanceImporterContext importContext = new SopInstanceImporterContext(
-                                    _contextID,
-                                    file.SourceApplicationEntityTitle, destStudy.ServerPartition);
-                                SopInstanceImporter importer = new SopInstanceImporter(importContext);
-                                DicomProcessingResult result = importer.Import(file);
-
-                                if (!result.Successful)
-                                {
-                                    throw new ApplicationException("Unable to import image to destination study");
-                                }
-                            }
-                           
-                        }
-                        break;
-
-                    default:
-                        throw new NotImplementedException();
-                }
-                #endregion
+                preProcessingResult = ApplyHistories(file, histories);
             }
 
             if (preProcessingResult!=null)
@@ -288,26 +121,171 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return preProcessingResult;
         }
 
-        private void EnsureStudyCanBeUpdated(StudyStorageLocation destStudy)
+        #endregion
+
+        #region Private Methods
+
+        private AutoReconcilerResult ApplyHistories(DicomFile file, IList<StudyHistory> histories)
+        {
+            Platform.CheckForNullReference(file, "file");
+            Platform.CheckForNullReference(histories, "histories");
+
+            AutoReconcilerResult preProcessingResult = null;
+
+            StudyHistory lastHistory = histories[0];
+            StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
+            StudyReconcileDescriptor changeLog = parser.Parse(lastHistory.ChangeDescription);
+
+            switch (changeLog.Action)
+            {
+                case StudyReconcileAction.CreateNewStudy:
+                case StudyReconcileAction.Merge:
+                    if (lastHistory.DestStudyStorageKey != null)
+                        preProcessingResult = MergeImage(changeLog.Action, file, lastHistory);
+                    break;
+
+                case StudyReconcileAction.Discard:
+                    preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard) { DiscardImage = true };
+                    break;
+
+                case StudyReconcileAction.ProcessAsIs:
+                    if (lastHistory.DestStudyStorageKey != null)
+                    {
+                        preProcessingResult = ProcessImageAsIs(file, lastHistory);
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+            return preProcessingResult;
+        }
+
+        private AutoReconcilerResult ProcessImageAsIs(DicomFile file, StudyHistory lastHistory)
+        {
+            bool restored;
+            StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
+            StudyStorageLocation destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
+            AutoReconcilerResult preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.ProcessAsIs);
+
+            bool belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
+
+            EnsureStudyCanBeUpdated(destStudy);
+
+            if (belongsToAnotherStudy)
+            {
+                preProcessingResult.Changes = new List<UpdateItem>
+                                                  {
+                                                      new UpdateItem(DicomTags.StudyInstanceUid, file.DataSet[DicomTags.StudyInstanceUid].ToString(), destStudy.StudyInstanceUid)
+                                                  };
+
+                file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(destStudy.StudyInstanceUid);
+                SopInstanceImporterContext importContext = new SopInstanceImporterContext(
+                    _contextID,
+                    file.SourceApplicationEntityTitle, destStudy.ServerPartition);
+                SopInstanceImporter importer = new SopInstanceImporter(importContext);
+                DicomProcessingResult result = importer.Import(file);
+
+                if (!result.Successful)
+                {
+                    throw new ApplicationException("Unable to import image to destination study");
+                }
+            }
+            return preProcessingResult;
+        }
+
+        private AutoReconcilerResult MergeImage(StudyReconcileAction action, DicomFile file, StudyHistory lastHistory)
+        {
+            string originalSeriesUid = file.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            string originalSopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
+            
+            AutoReconcilerResult preProcessingResult = null;
+            bool restored;
+            StudyStorageLocation destStudy;
+            UidMapper uidMapper = null;
+            bool belongsToAnotherStudy;
+            if (lastHistory.DestStudyStorageKey != null)
+            {
+                StudyStorage destinationStudy = StudyStorage.Load(lastHistory.DestStudyStorageKey);
+                destStudy = ServerHelper.GetStudyOnlineStorageLocation(destinationStudy, out restored);
+
+                if (destStudy == null)
+                {
+                    throw new TargetStudyIsNearlineException
+                              {
+                                  StudyInstanceUid = destinationStudy.StudyInstanceUid,
+                                  RestoreRequested = restored
+                              };
+                }
+
+                EnsureStudyCanBeUpdated(destStudy);
+
+                belongsToAnotherStudy = !destStudy.Equals(StorageLocation);
+
+                ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
+                IList<BaseImageLevelUpdateCommand> commands = commandBuilder.BuildCommands<StudyMatchingMap>(destStudy);
+                if (belongsToAnotherStudy)
+                {
+                    Platform.Log(LogLevel.Info, "AUTO-RECONCILE: Move SOP {0} to Study {1}, A#: {2}, Patient {3}", originalSopUid, destStudy.StudyInstanceUid, destStudy.Study.AccessionNumber, destStudy.Study.PatientsName);
+
+                    // Load the Uid Map, either from cache or from disk
+                    if (!_uidMapCache.TryGetValue(destStudy.Key, out uidMapper))
+                    {
+                        UidMapXml mapXml = new UidMapXml();
+                        mapXml.Load(destStudy);
+                        uidMapper = new UidMapper(mapXml);
+
+                        _uidMapCache.Add(destStudy.Key, uidMapper);
+                    }
+
+                    try
+                    {
+                        commands.Add(GetUidMappingCommand(StorageLocation, destStudy, uidMapper, originalSopUid, originalSeriesUid));
+                    }
+                    catch (InstanceAlreadyExistsException ex)
+                    {
+                        Platform.Log(LogLevel.Info, "An instance already exists with the SOP Instance Uid {0}", ex.SopInstanceUid);
+                        preProcessingResult = new AutoReconcilerResult(StudyReconcileAction.Discard) { DiscardImage = true };
+
+                        return preProcessingResult;
+                    }
+                }
+
+
+                preProcessingResult = new AutoReconcilerResult(action) { Changes = GetUpdateList(file, commands) };
+
+                UpdateImage(file, commands);
+
+                // First, must update the map
+                if (uidMapper != null && uidMapper.Dirty)
+                {
+                    UpdateUidMap(destStudy, uidMapper);
+                }
+
+                if (belongsToAnotherStudy)
+                {
+                    SopInstanceImporterContext importContext = new SopInstanceImporterContext(_contextID, file.SourceApplicationEntityTitle, destStudy.ServerPartition);
+                    SopInstanceImporter importer = new SopInstanceImporter(importContext);
+                    DicomProcessingResult result = importer.Import(file);
+
+                    if (!result.Successful)
+                    {
+                        throw new ApplicationException("Unable to import image to destination study");
+                    }
+                }
+
+
+            }
+            return preProcessingResult;
+        }
+
+        private static void EnsureStudyCanBeUpdated(StudyStorageLocation destStudy)
         {
             string reason;
             if (!destStudy.CanUpdate(out reason))
             {
                 throw new TargetStudyInvalidStateException(reason) { StudyInstanceUid = destStudy.StudyInstanceUid };
             }
-        }
-
-        private void UpdateHistory(StudyStorageLocation dest, StudyHistory history, UidMapper uidMapper)
-        {
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Series Mapping Processor"))
-            {
-                processor.AddCommand(new UpdateHistorySeriesMappingCommand(history, dest, uidMapper));
-                if (!processor.Execute())
-                {
-                    throw new ApplicationException(String.Format("AUTO-RECONCILE Failed: Unable to update series mapping. Reason: {0}", processor.FailureReason), processor.FailureException);
-                }
-            }
-            
         }
 
         private static void UpdateUidMap(StudyStorageLocation dest, UidMapper uidMapper)
@@ -322,7 +300,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
-        private static void UpdateImage(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
+        private static void UpdateImage(DicomFile file, IEnumerable<BaseImageLevelUpdateCommand> commands)
         {
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Image According to History"))
             {
@@ -339,10 +317,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
-        private static List<UpdateItem> GetUpdateList(DicomFile file, IList<BaseImageLevelUpdateCommand> commands)
+        private static List<UpdateItem> GetUpdateList(DicomFile file, IEnumerable<BaseImageLevelUpdateCommand> commands)
         {
             List<UpdateItem> updateList = new List<UpdateItem>();
-            foreach(BaseImageLevelUpdateCommand cmd in commands)
+            foreach (BaseImageLevelUpdateCommand cmd in commands)
             {
                 if (cmd.UpdateEntry != null && cmd.UpdateEntry.TagPath != null && cmd.UpdateEntry.TagPath.Tag != null)
                 {
@@ -366,7 +344,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     // this is new instance
                     newSopUid = DicomUid.GenerateUid().UID;
                     uidMapper.AddSop(originalSopUid, newSopUid);
-                    cmd =  new SeriesSopUpdateCommand(sourceStudy, targetStudy, uidMapper);
+                    cmd = new SeriesSopUpdateCommand(sourceStudy, targetStudy, uidMapper);
 
                 }
                 else
@@ -399,36 +377,34 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return cmd;
         }
 
-        #endregion
-
-        private static IList<StudyHistory> FindReconcileHistories(StudyStorageLocation storageLocation, DicomFile file)
+        private static IList<StudyHistory> FindReconcileHistories(StudyStorageLocation storageLocation, DicomMessageBase file)
         {
             ImageSetDescriptor fileDesc = new ImageSetDescriptor(file.DataSet);
 
             List<StudyHistory> studyHistoryList = new List<StudyHistory>(
                 ServerHelper.FindStudyHistories(storageLocation.StudyStorage,
-                                                new StudyHistoryTypeEnum[] { StudyHistoryTypeEnum.StudyReconciled }));
+                                                new[] { StudyHistoryTypeEnum.StudyReconciled }));
 
             IList<StudyHistory> reconcileHistories = studyHistoryList.FindAll(
                 delegate(StudyHistory item)
-                    {
-                        ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-                        return desc.Equals(fileDesc);
-                    });
+                {
+                    ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+                    return desc.Equals(fileDesc);
+                });
 
-            if (reconcileHistories == null || reconcileHistories.Count == 0)
+            if (reconcileHistories.Count == 0)
             {
                 // no history found in cache... reload the list and search again one more time
                 studyHistoryList = new List<StudyHistory>(
                     ServerHelper.FindStudyHistories(storageLocation.StudyStorage,
-                                                    new StudyHistoryTypeEnum[] { StudyHistoryTypeEnum.StudyReconciled }));
+                                                    new[] { StudyHistoryTypeEnum.StudyReconciled }));
 
                 reconcileHistories = studyHistoryList.FindAll(
                     delegate(StudyHistory item)
-                        {
-                            ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-                            return desc.Equals(fileDesc);
-                        });
+                    {
+                        ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+                        return desc.Equals(fileDesc);
+                    });
 
             }
 
@@ -436,6 +412,43 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
 
 
+        #endregion
     }
 
+    class AutoReconcilerResult : PreProcessingResult
+    {
+        #region Private Members
+        private readonly StudyReconcileAction _action;
+        private IList<UpdateItem> _changes = new List<UpdateItem>();
+        #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
+        public AutoReconcilerResult(StudyReconcileAction action)
+        {
+            AutoReconciled = true;
+            _action = action;
+        }
+
+        /// <summary>
+        /// Gets or sets the list of changes made when <see cref="AutoReconciler"/> was executed on a DICOM file.
+        /// </summary>
+        public IList<UpdateItem> Changes
+        {
+            get { return _changes; }
+            set { _changes = value; }
+        }
+
+        /// <summary>
+        /// Gets other action that was used when <see cref="AutoReconciler"/> was executed on a DICOM file.
+        /// </summary>
+        public StudyReconcileAction Action
+        {
+            get { return _action; }
+
+        }
+
+    }
 }
