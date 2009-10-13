@@ -129,8 +129,26 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 					foreach (DicomTag dicomTag in DicomTagDictionary.GetDicomTagList())
 					{
-						ColumnDefinition definition = CreateDefinition(dicomTag);
-						_dicomColumnDefinitions.Add(definition.Key, definition);
+						if ((dicomTag.Group & 0xFFE1) != 0x6000)
+						{
+							ColumnDefinition definition = CreateDefinition(dicomTag);
+							_dicomColumnDefinitions.Add(definition.Key, definition);
+						}
+						else
+						{
+							// the tag we're trying to add is in a repeating group (the overlays, group 6000)
+							// so we replicate the tag for each of the other repeated groups (the even numbers from 6002-601E)
+							for (uint n = 0; n <= 0x1E; n += 2)
+							{
+								DicomTag rDicomTag = new DicomTag(
+									dicomTag.TagValue + n * 0x10000,
+									string.Format(SR.FormatRepeatingDicomTagName, dicomTag.Name, 1 + n / 2), 
+									string.Format("{0}{1:X2}", dicomTag.VariableName, n),
+									dicomTag.VR, dicomTag.MultiVR, dicomTag.VMLow, dicomTag.VMHigh, dicomTag.Retired);
+								ColumnDefinition rDefinition = CreateDefinition(rDicomTag);
+								_dicomColumnDefinitions.Add(rDefinition.Key, rDefinition);
+							}
+						}
 					}
 				}
 				return _dicomColumnDefinitions.Values;
@@ -213,260 +231,108 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		#region Definitions
 
-		private class StringDicomColumnDefintion : ColumnDefinition
+		private abstract class DicomColumnDefinition : ColumnDefinition
 		{
-			private readonly DicomTag _tag;
+			protected readonly DicomTag Tag;
 
-			public StringDicomColumnDefintion(DicomTag tag) : base(tag.TagValue.ToString("x8"), tag.Name)
+			protected DicomColumnDefinition(DicomTag tag)
+				: base(tag.TagValue.ToString("x8"), string.Format(SR.FormatDicomTag, tag.Group, tag.Element, tag.Name))
 			{
-				_tag = tag;
-			}
-
-			public override StudyFilterColumn Create()
-			{
-				return new StringDicomTagColumn(_tag);
+				Tag = tag;
 			}
 		}
 
-		private class IntegerDicomColumnDefintion : ColumnDefinition
+		private class StringDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public IntegerDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public StringDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new IntegerDicomTagColumn(_tag);
+				return new StringDicomTagColumn(Tag);
 			}
 		}
 
-		private class UnsignedDicomColumnDefintion : ColumnDefinition
+		private class IntegerDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public UnsignedDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public IntegerDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new UnsignedDicomTagColumn(_tag);
+				return new IntegerDicomTagColumn(Tag);
 			}
 		}
 
-		private class FloatingPointDicomColumnDefintion : ColumnDefinition
+		private class UnsignedDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public FloatingPointDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public UnsignedDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new FloatingPointDicomTagColumn(_tag);
+				return new UnsignedDicomTagColumn(Tag);
 			}
 		}
 
-		private class AgeDicomColumnDefintion : ColumnDefinition
+		private class FloatingPointDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public AgeDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public FloatingPointDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new AgeDicomTagColumn(_tag);
+				return new FloatingPointDicomTagColumn(Tag);
 			}
 		}
 
-		private class DateTimeDicomColumnDefintion : ColumnDefinition
+		private class AgeDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public DateTimeDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public AgeDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new DateTimeDicomTagColumn(_tag);
+				return new AgeDicomTagColumn(Tag);
 			}
 		}
 
-		private class TextDicomColumnDefintion : ColumnDefinition
+		private class DateTimeDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public TextDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public DateTimeDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new TextDicomTagColumn(_tag);
+				return new DateTimeDicomTagColumn(Tag);
 			}
 		}
 
-		private class AttributeTagDicomColumnDefintion : ColumnDefinition
+		private class TextDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public AttributeTagDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public TextDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new AttributeTagDicomTagColumn(_tag);
+				return new TextDicomTagColumn(Tag);
 			}
 		}
 
-		private class BinaryDicomColumnDefintion : ColumnDefinition
+		private class AttributeTagDicomColumnDefintion : DicomColumnDefinition
 		{
-			private readonly DicomTag _tag;
-
-			public BinaryDicomColumnDefintion(DicomTag tag)
-				: base(tag.TagValue.ToString("x8"), tag.Name)
-			{
-				_tag = tag;
-			}
+			public AttributeTagDicomColumnDefintion(DicomTag tag) : base(tag) {}
 
 			public override StudyFilterColumn Create()
 			{
-				return new BinaryDicomTagColumn(_tag);
+				return new AttributeTagDicomTagColumn(Tag);
+			}
+		}
+
+		private class BinaryDicomColumnDefintion : DicomColumnDefinition
+		{
+			public BinaryDicomColumnDefintion(DicomTag tag) : base(tag) {}
+
+			public override StudyFilterColumn Create()
+			{
+				return new BinaryDicomTagColumn(Tag);
 			}
 		}
 
 		#endregion
-
-		#endregion
-
-		[Obsolete]
-		public static StudyFilterColumn CreateColumn(uint dicomTag)
-		{
-			DicomTag tag = DicomTagDictionary.GetDicomTag(dicomTag);
-			if (tag == null)
-				tag = new DicomTag(dicomTag, string.Empty, string.Empty, DicomVr.UNvr, false, uint.MinValue, uint.MaxValue, false);
-			return CreateColumn(tag);
-		}
-
-		[Obsolete]
-		public static StudyFilterColumn CreateColumn(DicomTag dicomTag)
-		{
-			switch (dicomTag.VR.Name)
-			{
-				case "AE":
-				case "CS":
-				case "LO":
-				case "PN":
-				case "SH":
-				case "UI":
-					// multi-valued strings
-					return new StringDicomTagColumn(dicomTag);
-				case "LT":
-				case "ST":
-				case "UT":
-					// single-valued strings
-					return new TextDicomTagColumn(dicomTag);
-				case "IS":
-				case "SL":
-				case "SS":
-					// multi-valued integers
-					return new IntegerDicomTagColumn(dicomTag);
-				case "UL":
-				case "US":
-					// multi-valued unsigned integers
-					return new UnsignedDicomTagColumn(dicomTag);
-				case "DS":
-				case "FL":
-				case "FD":
-					// multi-valued floating-point numbers
-					return new FloatingPointDicomTagColumn(dicomTag);
-				case "DA":
-				case "DT":
-				case "TM":
-					// multi-valued dates/times
-					return new DateTimeDicomTagColumn(dicomTag);
-				case "AS":
-					// multi-valued time spans
-					return new AgeDicomTagColumn(dicomTag);
-				case "AT":
-					// multi-valued DICOM tags
-					return new AttributeTagDicomTagColumn(dicomTag);
-				case "SQ":
-				case "OB":
-				case "OF":
-				case "OW":
-				case "UN":
-				default:
-					// sequence, binary and unknown data
-					return new BinaryDicomTagColumn(dicomTag);
-			}
-		}
-
-		#region Obsolescence
-
-		[Obsolete]
-		public static StudyFilterColumn GetColumn(string key)
-		{
-			return CreateColumn(key);
-		}
-
-		[Obsolete]
-		public static StudyFilterColumn GetDicomTagColumn(uint dicomTag)
-		{
-			return CreateColumn(dicomTag.ToString("x8"));
-		}
-
-		[Obsolete]
-		public static StudyFilterColumn GetDicomTagColumn(DicomTag dicomTag)
-		{
-			return GetDicomTagColumn(dicomTag.TagValue);
-		}
-
-		[Obsolete]
-		public static IEnumerable<StudyFilterColumn> GetSpecialColumns()
-		{
-			yield return Filename;
-			yield return Directory;
-			yield return Path;
-			yield return Extension;
-			yield return FileSize;
-		}
-
-		[Obsolete]
-		public static readonly StudyFilterColumn Filename = new FilenameColumn();
-
-		[Obsolete]
-		public static readonly StudyFilterColumn Directory = new DirectoryColumn();
-
-		[Obsolete]
-		public static readonly StudyFilterColumn Path = new PathColumn();
-
-		[Obsolete]
-		public static readonly StudyFilterColumn Extension = new ExtensionColumn();
-
-		[Obsolete]
-		public static readonly StudyFilterColumn FileSize = new FileSizeColumn();
 
 		#endregion
 	}

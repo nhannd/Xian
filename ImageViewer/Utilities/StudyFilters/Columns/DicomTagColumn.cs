@@ -20,8 +20,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Columns
 
 			if (DicomTagDictionary.GetDicomTag(dicomTag.TagValue) == null)
 				_tagName = string.Format(SR.FormatUnknownDicomTag, tagGroup, tagElement);
-			else if ((tagGroup & 0xFFE1) == 0x6000)
-				_tagName = string.Format(SR.FormatRepeatingDicomTag, tagGroup, tagElement, dicomTag.Name, (tagGroup & 0x000000FF)/2 + 1);
 			else
 				_tagName = string.Format(SR.FormatDicomTag, tagGroup, tagElement, dicomTag.Name);
 		}

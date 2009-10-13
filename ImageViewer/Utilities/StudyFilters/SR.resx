@@ -180,8 +180,8 @@
   <data name="FormatFileSizeTB" xml:space="preserve">
     <value>{0:f2} TiB</value>
   </data>
-  <data name="FormatRepeatingDicomTag" xml:space="preserve">
-    <value>{2} #{3} ({0:x4},{1:x4})</value>
+  <data name="FormatRepeatingDicomTagName" xml:space="preserve">
+    <value>{0} #{1}</value>
   </data>
   <data name="FormatUnknownDicomTag" xml:space="preserve">
     <value>({0:x4},{1:x4})</value>
