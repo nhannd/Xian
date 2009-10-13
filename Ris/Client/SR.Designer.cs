@@ -1276,6 +1276,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot edit the selected canned texts.  This may be because you do not have permission to edit personal canned texts, group canned texts or both..
+        /// </summary>
+        internal static string MessageCannotEditCategories {
+            get {
+                return ResourceManager.GetString("MessageCannotEditCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New contact points cannot be merged.  Please deselect &apos;{0}&apos; and select another item..
         /// </summary>
         internal static string MessageCannotMergeNewContactPoints {

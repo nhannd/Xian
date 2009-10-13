@@ -885,4 +885,7 @@
   <data name="MessageChangeCategoryToolTip" xml:space="preserve">
     <value>Changes the category of multiple canned texts.</value>
   </data>
+  <data name="MessageCannotEditCategories" xml:space="preserve">
+    <value>Cannot edit the selected canned texts.  This may be because you do not have permission to edit personal canned texts, group canned texts or both.</value>
+  </data>
 </root>

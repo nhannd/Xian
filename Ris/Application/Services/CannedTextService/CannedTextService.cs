@@ -177,6 +177,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 
 			foreach (var cannedText in cannedTexts)
 			{
+				CheckCannedTextWriteAccess(cannedText);
 				cannedText.Category = request.Category;
 			}
 

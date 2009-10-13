@@ -195,6 +195,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
+				if (!CanMultiEditCategories())
+				{
+					this.Host.DesktopWindow.ShowMessageBox(SR.MessageCannotEditCategories, MessageBoxActions.Ok);
+					return;
+				}
+
 				var items = this.SelectedItems;
 				var initialCategory = CollectionUtils.FirstElement(items).Category;
 				var editor = new CannedTextCategoryEditorComponent(GetCategoryChoices(), initialCategory);
@@ -398,13 +404,7 @@ namespace ClearCanvas.Ris.Client
 				_copyCannedTextToClipboardAction.Enabled = false;
 			}
 
-			_editCannedTextCategoryAction.Enabled = this.SelectedItems.Count > 1
-				&& (CollectionUtils.Contains(this.SelectedItems, item => item.IsPersonal)
-					? HasPersonalAdminAuthority
-					: true)
-				&& (CollectionUtils.Contains(this.SelectedItems, item => item.IsGroup)
-					? HasGroupAdminAuthority
-					: true);
+			_editCannedTextCategoryAction.Enabled = this.SelectedItems.Count > 1;
 
 			// The detail is only loaded whenever a copy/drag is performed
 			// Set this to null, so the view doesn't get wrong text data.
@@ -423,6 +423,16 @@ namespace ClearCanvas.Ris.Client
 		private static bool HasGroupAdminAuthority
 		{
 			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+		}
+
+		private bool CanMultiEditCategories()
+		{
+			return (CollectionUtils.Contains(this.SelectedItems, item => item.IsPersonal)
+						? HasPersonalAdminAuthority
+						: true)
+				   && (CollectionUtils.Contains(this.SelectedItems, item => item.IsGroup)
+						? HasGroupAdminAuthority
+						: true);
 		}
 
 		private List<string> GetCategoryChoices()
