@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_worklistItem = worklistItem;
 			_componentMode = mode;
-			_reportNextItem = false;
+			_reportNextItem = WorklistItemManagerSettings.Default.ShouldProceedToNextItem;
 
 			_isInitialized = true;
 		}
@@ -281,7 +281,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool ReportNextItem
 		{
 			get { return _reportNextItem; }
-			set { _reportNextItem = value; }
+			set
+			{
+				_reportNextItem = value;
+				WorklistItemManagerSettings.Default.ShouldProceedToNextItem = value;
+				WorklistItemManagerSettings.Default.Save();
+			}
 		}
 
 		public bool ReportNextItemEnabled

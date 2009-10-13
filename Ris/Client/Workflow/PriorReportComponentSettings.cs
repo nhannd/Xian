@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,58 +29,20 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public class ProtocollingComponentWorklistItemManager : WorklistItemManager<ReportingWorklistItem, IReportingWorkflowService>
+
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class PriorReportComponentSettings
 	{
-		public ProtocollingComponentWorklistItemManager(string folderName, EntityRef worklistRef, string worklistClassName)
-			: base(folderName, worklistRef, worklistClassName)
+		private PriorReportComponentSettings()
 		{
-		}
-
-		protected override IContinuousWorkflowComponentMode GetMode<TWorklistITem>(ReportingWorklistItem worklistItem)
-		{
-			throw new NotSupportedException("Protocolling component mode should be initialized externally.  ReportingWorklistItem does not have enough context.");
-		}
-
-		protected override string TaskName
-		{
-			get { return "Protocolling"; }
-		}
-	}
-
-	public static class ProtocollingComponentModes
-	{
-		public static IContinuousWorkflowComponentMode Assign = new AssignProtocolMode();
-		public static IContinuousWorkflowComponentMode Edit = new EditProtocolMode();
-		public static IContinuousWorkflowComponentMode Review = new ReviewProtocolMode();
-	}
-
-	public class AssignProtocolMode : ContinuousWorkflowComponentMode
-	{
-		public AssignProtocolMode()
-			: base(true, true, true)
-		{
-		}
-	}
-
-	public class EditProtocolMode : ContinuousWorkflowComponentMode
-	{
-		public EditProtocolMode()
-			: base(false, false, false)
-		{
-		}
-	}
-
-	public class ReviewProtocolMode : ContinuousWorkflowComponentMode
-	{
-		public ReviewProtocolMode()
-			: base(false, false, false)
-		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

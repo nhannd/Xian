@@ -66,9 +66,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	public class TranscriptionComponentModes
 	{
-		public static CreateTranscriptionComponentMode Create = new CreateTranscriptionComponentMode();
-		public static EditTranscriptionComponentMode Edit = new EditTranscriptionComponentMode();
-		public static ReviewTranscriptionComponentMode Review = new ReviewTranscriptionComponentMode();
+		public static IContinuousWorkflowComponentMode Create = new CreateTranscriptionComponentMode();
+		public static IContinuousWorkflowComponentMode Edit = new EditTranscriptionComponentMode();
+		public static IContinuousWorkflowComponentMode Review = new ReviewTranscriptionComponentMode();
 	}
 
 	public class EditTranscriptionComponentMode : ContinuousWorkflowComponentMode

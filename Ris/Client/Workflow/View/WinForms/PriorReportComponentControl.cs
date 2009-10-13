@@ -29,42 +29,37 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="PriorReportComponent"/>
-    /// </summary>
-    public partial class PriorReportComponentControl : ApplicationComponentUserControl
-    {
-        private PriorReportComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="PriorReportComponent"/>
+	/// </summary>
+	public partial class PriorReportComponentControl : ApplicationComponentUserControl
+	{
+		private PriorReportComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public PriorReportComponentControl(PriorReportComponent component)
-            :base(component)
-        {
-            InitializeComponent();
-            _component = component;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public PriorReportComponentControl(PriorReportComponent component)
+			: base(component)
+		{
+			InitializeComponent();
+			_component = component;
 
-            Control reportViewer = (Control)_component.ReportViewComponentHost.ComponentView.GuiElement;
-            reportViewer.Dock = DockStyle.Fill;
-            splitContainer1.Panel2.Controls.Add(reportViewer);
+			Control reportViewer = (Control)_component.ReportViewComponentHost.ComponentView.GuiElement;
+			reportViewer.Dock = DockStyle.Fill;
+			splitContainer1.Panel2.Controls.Add(reportViewer);
 
-            _reportList.Table = _component.Reports;
-            _reportList.DataBindings.Add("Selection", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reportList.Table = _component.Reports;
+			_reportList.DataBindings.Add("Selection", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _radioRelevantPriors.DataBindings.Add("Checked", _component, "RelevantPriorsOnly", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
-    }
+			_radioRelevantPriors.DataBindings.Add("Checked", _component, "RelevantPriorsOnly", true, DataSourceUpdateMode.OnPropertyChanged);
+			_radioAllPriors.DataBindings.Add("Checked", _component, "AllPriors", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+	}
 }

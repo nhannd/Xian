@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly PriorSummaryTable _reportList;
 		private PriorProcedureSummary _selectedPrior;
 
-		private bool _relevantPriorsOnly = true;
+		private bool _relevantPriorsOnly;
 
 		private List<PriorProcedureSummary> _relevantPriors;
 		private List<PriorProcedureSummary> _allPriors;
@@ -98,6 +98,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public PriorReportComponent(ReportingWorklistItem worklistItem)
 		{
 			_worklistItem = worklistItem;
+			_relevantPriorsOnly = PriorReportComponentSettings.Default.ShowRelevantPriorsOnly;
 
 			_reportList = new PriorSummaryTable();
 		}
@@ -142,9 +143,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (value != _relevantPriorsOnly)
 				{
 					_relevantPriorsOnly = value;
+					PriorReportComponentSettings.Default.ShowRelevantPriorsOnly = value;
+					PriorReportComponentSettings.Default.Save();
 					UpdateReportList();
 				}
 			}
+		}
+
+		public bool AllPriors
+		{
+			get { return !this.RelevantPriorsOnly; }
 		}
 
 		public ITable Reports

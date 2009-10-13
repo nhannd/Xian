@@ -70,6 +70,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PreliminaryDiagnosisSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PriorReportComponentSettings.cs" />
+    <Compile Include="PriorReportComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PriorReportComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
     <Compile Include="ProtocolReasonComponent.cs" />
@@ -188,6 +194,12 @@
     <Compile Include="PerformingWorklistTable.cs" />
     <Compile Include="WorkflowHistoryTool.cs" />
     <Compile Include="WorklistItemManager.cs" />
+    <Compile Include="WorklistItemManagerSettings.cs" />
+    <Compile Include="WorklistItemManagerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorklistItemManagerSettings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -232,6 +244,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PreliminaryDiagnosisSettings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="PriorReportComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PriorReportComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ProtocollingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProtocollingSettings.Designer.cs</LastGenOutput>
@@ -247,6 +263,10 @@
     <None Include="TranscriptionSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>TranscriptionSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WorklistItemManagerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorklistItemManagerSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				case StepState.Scheduled:
 					return worklistItem.IsAddendumStep 
-						? (IContinuousWorkflowComponentMode) ReportingComponentModes.CreateAddendum
+						? ReportingComponentModes.CreateAddendum
 						: ReportingComponentModes.Create;
 				case StepState.InProgress:
 					return ReportingComponentModes.Edit;
@@ -76,12 +76,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	public class ReportingComponentModes
 	{
-		public static CreateReportComponentMode Create = new CreateReportComponentMode();
-		public static CreateReportAddendumComponentMode CreateAddendum = new CreateReportAddendumComponentMode();
-		public static EditReportComponentMode Edit = new EditReportComponentMode();
-		public static ReviewTranscriptionReportComponentMode ReviewTranscription = new ReviewTranscriptionReportComponentMode();
-		public static ReviewReportComponentMode Review = new ReviewReportComponentMode();
-		public static VerifyReportComponentMode Verify = new VerifyReportComponentMode();
+		public static IContinuousWorkflowComponentMode Create = new CreateReportComponentMode();
+		public static IContinuousWorkflowComponentMode CreateAddendum = new CreateReportAddendumComponentMode();
+		public static IContinuousWorkflowComponentMode Edit = new EditReportComponentMode();
+		public static IContinuousWorkflowComponentMode ReviewTranscription = new ReviewTranscriptionReportComponentMode();
+		public static IContinuousWorkflowComponentMode Review = new ReviewReportComponentMode();
+		public static IContinuousWorkflowComponentMode Verify = new VerifyReportComponentMode();
 	}
 
 	public class EditReportComponentMode : ContinuousWorkflowComponentMode
