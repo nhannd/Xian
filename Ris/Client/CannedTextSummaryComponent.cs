@@ -398,7 +398,13 @@ namespace ClearCanvas.Ris.Client
 				_copyCannedTextToClipboardAction.Enabled = false;
 			}
 
-			_editCannedTextCategoryAction.Enabled = this.SelectedItems.Count > 1;
+			_editCannedTextCategoryAction.Enabled = this.SelectedItems.Count > 1
+				&& (CollectionUtils.Contains(this.SelectedItems, item => item.IsPersonal)
+					? HasPersonalAdminAuthority
+					: true)
+				&& (CollectionUtils.Contains(this.SelectedItems, item => item.IsGroup)
+					? HasGroupAdminAuthority
+					: true);
 
 			// The detail is only loaded whenever a copy/drag is performed
 			// Set this to null, so the view doesn't get wrong text data.
