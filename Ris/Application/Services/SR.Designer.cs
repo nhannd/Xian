@@ -142,6 +142,24 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have reached the maximum number of worklists that can be defined for a staff..
+        /// </summary>
+        internal static string ExceptionMaximumWorklistsReachedForStaff {
+            get {
+                return ResourceManager.GetString("ExceptionMaximumWorklistsReachedForStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have reached the maximum number of worklists that can be defined for a staff group..
+        /// </summary>
+        internal static string ExceptionMaximumWorklistsReachedForStaffGroup {
+            get {
+                return ResourceManager.GetString("ExceptionMaximumWorklistsReachedForStaffGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A modality with ID {0} already exists.
         /// </summary>
         internal static string ExceptionModalityAlreadyExist {

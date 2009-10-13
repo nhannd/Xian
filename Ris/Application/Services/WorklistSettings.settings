@@ -5,5 +5,11 @@
     <Setting Name="ItemsPerPage" Description="For worklist queries, controls number of worklist items per page" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="MaxPersonalWorklists" Description="Maximum number of worklists that can be owned by a staff." Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="MaxWorklistsPerStaffGroup" Description="Maximum number of worklists that can be owned by a staff group." Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

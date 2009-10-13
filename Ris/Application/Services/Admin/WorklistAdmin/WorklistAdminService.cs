@@ -235,6 +235,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             // ensure user has access to create this worklist
             CheckAccess(owner);
 
+            CheckWorklistCountRestriction(owner);
+
             // create instance of appropriate class
             Worklist worklist = WorklistFactory.Instance.CreateWorklist(request.Detail.WorklistClass.ClassName);
 
@@ -336,6 +338,26 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
         }
+
+		private void CheckWorklistCountRestriction(WorklistOwner owner)
+		{
+			var worklistCount = PersistenceContext.GetBroker<IWorklistBroker>().Count(owner);
+
+			// admin can have unlimited worklists
+			if (owner.IsAdminOwner)
+				return;
+
+			if (owner.IsStaffOwner)
+			{
+				if (worklistCount >= WorklistSettings.Default.MaxPersonalWorklists)
+					throw new RequestValidationException(SR.ExceptionMaximumWorklistsReachedForStaff);
+			}
+			else if (owner.IsGroupOwner)
+			{
+				if (worklistCount >= WorklistSettings.Default.MaxWorklistsPerStaffGroup)
+					throw new RequestValidationException(SR.ExceptionMaximumWorklistsReachedForStaffGroup);
+			}
+		}
 
         private void UpdateWorklistHelper(WorklistAdminDetail detail, Worklist worklist)
         {

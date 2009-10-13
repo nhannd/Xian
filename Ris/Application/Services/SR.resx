@@ -219,4 +219,10 @@
   <data name="ExceptionProcedurePlanXmlRequired" xml:space="preserve">
     <value>A procedure plan Xml is required.</value>
   </data>
+  <data name="ExceptionMaximumWorklistsReachedForStaff" xml:space="preserve">
+    <value>You have reached the maximum number of worklists that can be defined for a staff.</value>
+  </data>
+  <data name="ExceptionMaximumWorklistsReachedForStaffGroup" xml:space="preserve">
+    <value>You have reached the maximum number of worklists that can be defined for a staff group.</value>
+  </data>
 </root>
