@@ -44,84 +44,79 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    public enum WorklistEditorMode
-    {
-        Add,
-        Edit,
-        Duplicate
-    }
+	public enum WorklistEditorMode
+	{
+		Add,
+		Edit,
+		Duplicate
+	}
 
-    public class StaffSelectorTable : Table<StaffSummary>
-    {
-        public StaffSelectorTable()
-        {
-            this.Columns.Add(new TableColumn<StaffSummary, string>("Name",
-                delegate(StaffSummary item) { return PersonNameFormat.Format(item.Name); }, 1.0f));
-            this.Columns.Add(new TableColumn<StaffSummary, string>("Role",
-                delegate(StaffSummary item) { return item.StaffType.Value; }, 0.5f));
-        }
-    }
+	public class StaffSelectorTable : Table<StaffSummary>
+	{
+		public StaffSelectorTable()
+		{
+			this.Columns.Add(new TableColumn<StaffSummary, string>("Name", item => PersonNameFormat.Format(item.Name), 1.0f));
+			this.Columns.Add(new TableColumn<StaffSummary, string>("Role", item => item.StaffType.Value, 0.5f));
+		}
+	}
 
-    /// <summary>
-    /// WorklistEditorComponent class
-    /// </summary>
-    public class WorklistEditorComponent : NavigatorComponentContainer
-    {
-        class ProcedureTypeGroupTable : Table<ProcedureTypeGroupSummary>
-        {
-            public ProcedureTypeGroupTable()
-            {
-                this.Columns.Add(new TableColumn<ProcedureTypeGroupSummary, string>(SR.ColumnName,
-                    delegate(ProcedureTypeGroupSummary summary) { return summary.Name; }));
-            }
-        }
+	/// <summary>
+	/// WorklistEditorComponent class
+	/// </summary>
+	public class WorklistEditorComponent : NavigatorComponentContainer
+	{
+		class ProcedureTypeGroupTable : Table<ProcedureTypeGroupSummary>
+		{
+			public ProcedureTypeGroupTable()
+			{
+				this.Columns.Add(new TableColumn<ProcedureTypeGroupSummary, string>(SR.ColumnName, summary => summary.Name));
+			}
+		}
 
-        class LocationTable : Table<LocationSummary>
-        {
-            public LocationTable()
-            {
-                this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnName,
-                    delegate(LocationSummary summary) { return summary.Name; }));
-            }
-        }
+		class LocationTable : Table<LocationSummary>
+		{
+			public LocationTable()
+			{
+				this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnName, summary => summary.Name));
+			}
+		}
 
-        class StaffGroupTable : Table<StaffGroupSummary>
-        {
-            public StaffGroupTable()
-            {
-                this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name",
-                    delegate(StaffGroupSummary item) { return item.Name; }, 1.0f));
-            }
-        }
+		class StaffGroupTable : Table<StaffGroupSummary>
+		{
+			public StaffGroupTable()
+			{
+				this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name", item => item.Name, 1.0f));
+			}
+		}
 
-        private readonly WorklistEditorMode _mode;
-        private readonly bool _adminMode;
-        private readonly string _initialClassName;
-        private readonly IList<string> _worklistClassChoices;
+		private readonly WorklistEditorMode _mode;
+		private readonly bool _adminMode;
+		private readonly string _initialClassName;
+		private readonly IList<string> _worklistClassChoices;
 
-        private EntityRef _worklistRef;
-        private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
-        private WorklistAdminDetail _worklistDetail;
+		private EntityRef _worklistRef;
+		private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
+		private WorklistAdminDetail _worklistDetail;
 
-        private WorklistDetailEditorComponentBase _detailComponent;
-        private WorklistFilterEditorComponent _filterComponent;
-        private StaffSelectorEditorComponent _interpretedByFilterComponent;
-        private StaffSelectorEditorComponent _transcribedByFilterComponent;
-        private StaffSelectorEditorComponent _verifiedByFilterComponent;
-        private StaffSelectorEditorComponent _supervisedByFilterComponent;
-        private WorklistTimeWindowEditorComponent _timeWindowComponent;
-        private SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
-        private SelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
-        private SelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
-        private SelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
-        private WorklistSummaryComponent _summaryComponent;
-    	private NavigatorPage _patientLocationComponentPage;
-    	private NavigatorPage _interpretedByFilterComponentPage;
-    	private NavigatorPage _transcribedByFilterComponentPage;
-    	private NavigatorPage _verifiedByFilterComponentPage;
-    	private NavigatorPage _supervisedByFilterComponentPage;
-    	private NavigatorPage _timeWindowComponentPage;
-    	private NavigatorPage _summaryComponentPage;
+		private WorklistDetailEditorComponentBase _detailComponent;
+		private WorklistFilterEditorComponent _filterComponent;
+		private StaffSelectorEditorComponent _interpretedByFilterComponent;
+		private StaffSelectorEditorComponent _transcribedByFilterComponent;
+		private StaffSelectorEditorComponent _verifiedByFilterComponent;
+		private StaffSelectorEditorComponent _supervisedByFilterComponent;
+		private WorklistTimeWindowEditorComponent _timeWindowComponent;
+		private SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
+		private SelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
+		private SelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
+		private SelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
+		private WorklistSummaryComponent _summaryComponent;
+		private NavigatorPage _patientLocationComponentPage;
+		private NavigatorPage _interpretedByFilterComponentPage;
+		private NavigatorPage _transcribedByFilterComponentPage;
+		private NavigatorPage _verifiedByFilterComponentPage;
+		private NavigatorPage _supervisedByFilterComponentPage;
+		private NavigatorPage _timeWindowComponentPage;
+		private NavigatorPage _summaryComponentPage;
 
 		/// <summary>
 		/// Constructor to create new worklist(s).
@@ -175,116 +170,112 @@ namespace ClearCanvas.Ris.Client
 			this.StartFullyExpanded = true;
 		}
 
-        public override void Start()
-        {
-            Platform.GetService<IWorklistAdminService>(
-                delegate(IWorklistAdminService service)
-                {
+		public override void Start()
+		{
+			Platform.GetService(
+				delegate(IWorklistAdminService service)
+				{
 					var request = new GetWorklistEditFormDataRequest
 									{
 										GetWorklistEditFormChoicesRequest = new GetWorklistEditFormChoicesRequest(!_adminMode)
 									};
-                	var formDataResponse = service.GetWorklistEditFormData(request).GetWorklistEditFormChoicesResponse;
+					var formDataResponse = service.GetWorklistEditFormData(request).GetWorklistEditFormChoicesResponse;
 
-                    // initialize _worklistDetail depending on add vs edit vs duplicate mode
-                    List<ProcedureTypeGroupSummary> procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
-                    if (_mode == WorklistEditorMode.Add)
-                    {
-                        _worklistDetail = new WorklistAdminDetail();
-                        _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
+					// initialize _worklistDetail depending on add vs edit vs duplicate mode
+					var procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
+					if (_mode == WorklistEditorMode.Add)
+					{
+						_worklistDetail = new WorklistAdminDetail
+							{
+								FilterByWorkingFacility = true,
+								WorklistClass = CollectionUtils.SelectFirst(formDataResponse.WorklistClasses, wc => wc.ClassName == _initialClassName)
+							};
 
-                        // establish initial class name
-                        _worklistDetail.WorklistClass =
-                            CollectionUtils.SelectFirst(formDataResponse.WorklistClasses,
-                                delegate(WorklistClassSummary wc) { return wc.ClassName == _initialClassName; });
-                    }
-                    else
-                    {
-                        // load the existing worklist
-                        LoadWorklistForEditResponse response =
-                            service.LoadWorklistForEdit(new LoadWorklistForEditRequest(_worklistRef));
+						// establish initial class name
+					}
+					else
+					{
+						// load the existing worklist
+						var response = service.LoadWorklistForEdit(new LoadWorklistForEditRequest(_worklistRef));
 
-                        _worklistDetail = response.Detail;
-                        _worklistRef = response.Detail.EntityRef;
+						_worklistDetail = response.Detail;
+						_worklistRef = response.Detail.EntityRef;
 
-                        // determine initial set of proc type groups, since worklist class already known
-                        ListProcedureTypeGroupsResponse groupsResponse = service.ListProcedureTypeGroups(
-                            new ListProcedureTypeGroupsRequest(_worklistDetail.WorklistClass.ProcedureTypeGroupClassName));
-                        procedureTypeGroups = groupsResponse.ProcedureTypeGroups;
-                    }
+						// determine initial set of proc type groups, since worklist class already known
+						var groupsResponse = service.ListProcedureTypeGroups(new ListProcedureTypeGroupsRequest(_worklistDetail.WorklistClass.ProcedureTypeGroupClassName));
+						procedureTypeGroups = groupsResponse.ProcedureTypeGroups;
+					}
 
 					// limit class choices if filter specified
 					if (_worklistClassChoices != null)
 					{
 						formDataResponse.WorklistClasses =
-							CollectionUtils.Select(formDataResponse.WorklistClasses,
-							delegate(WorklistClassSummary wc) { return _worklistClassChoices.Contains(wc.ClassName); });
+							CollectionUtils.Select(formDataResponse.WorklistClasses, wc => _worklistClassChoices.Contains(wc.ClassName));
 					}
 
-                    // sort worklist classes so they appear alphabetically in editor
-                    formDataResponse.WorklistClasses = CollectionUtils.Sort(formDataResponse.WorklistClasses,
-                        delegate(WorklistClassSummary x, WorklistClassSummary y) { return x.DisplayName.CompareTo(y.DisplayName); });
+					// sort worklist classes so they appear alphabetically in editor
+					formDataResponse.WorklistClasses = CollectionUtils.Sort(formDataResponse.WorklistClasses, (x, y) => x.DisplayName.CompareTo(y.DisplayName));
 
-                    // determine which main page to show (multi or single)
-                    if (_mode == WorklistEditorMode.Add && _adminMode)
-                    {
-                        _detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses, formDataResponse.OwnerGroupChoices);
-                    }
-                    else
-                    {
-                        _detailComponent = new WorklistDetailEditorComponent(
-                            _worklistDetail,
-                            formDataResponse.WorklistClasses,
-                            formDataResponse.OwnerGroupChoices,
-                            _mode,
-                            _adminMode,
-                            false);
-                    }
-                    _detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
-                	_detailComponent.WorklistClassChanged += OnWorklistClassChanged;
+					// determine which main page to show (multi or single)
+					if (_mode == WorklistEditorMode.Add && _adminMode)
+					{
+						_detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses, formDataResponse.OwnerGroupChoices);
+					}
+					else
+					{
+						_detailComponent = new WorklistDetailEditorComponent(
+							_worklistDetail,
+							formDataResponse.WorklistClasses,
+							formDataResponse.OwnerGroupChoices,
+							_mode,
+							_adminMode,
+							false);
+					}
+					_detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
+					_detailComponent.WorklistClassChanged += OnWorklistClassChanged;
 
-                    // create all other pages
-                    _filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
-                        procedureTypeGroups, formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
-                        formDataResponse.PatientClassChoices);
+					// create all other pages
+					_filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
+						procedureTypeGroups, formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
+						formDataResponse.PatientClassChoices);
 
-                    _procedureTypeGroupFilterComponent = new SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
-                        procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, delegate(ProcedureTypeGroupSummary s) { return s.ProcedureTypeGroupRef; });
+					_procedureTypeGroupFilterComponent = new SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
+						procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, s => s.ProcedureTypeGroupRef);
 
-                    _locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
-                        formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, delegate(LocationSummary s) { return s.LocationRef; });
+					_locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
+						formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, s => s.LocationRef);
 
-                    _timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
+					_timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
 
-                    _interpretedByFilterComponent = new StaffSelectorEditorComponent(
-                        formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
-                    _transcribedByFilterComponent = new StaffSelectorEditorComponent(
-                        formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff.Staff, _worklistDetail.TranscribedByStaff.IncludeCurrentUser);
-                    _verifiedByFilterComponent = new StaffSelectorEditorComponent(
-                        formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff.Staff, _worklistDetail.VerifiedByStaff.IncludeCurrentUser);
-                    _supervisedByFilterComponent = new StaffSelectorEditorComponent(
-                        formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff.Staff, _worklistDetail.SupervisedByStaff.IncludeCurrentUser);
+					_interpretedByFilterComponent = new StaffSelectorEditorComponent(
+						formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
+					_transcribedByFilterComponent = new StaffSelectorEditorComponent(
+						formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff.Staff, _worklistDetail.TranscribedByStaff.IncludeCurrentUser);
+					_verifiedByFilterComponent = new StaffSelectorEditorComponent(
+						formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff.Staff, _worklistDetail.VerifiedByStaff.IncludeCurrentUser);
+					_supervisedByFilterComponent = new StaffSelectorEditorComponent(
+						formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff.Staff, _worklistDetail.SupervisedByStaff.IncludeCurrentUser);
 
-                    if (ShowSubscriptionPages)
-                    {
-                        _staffSubscribersComponent = new SelectorEditorComponent<StaffSummary, StaffSelectorTable>(
-                            formDataResponse.StaffChoices,
-                            _worklistDetail.StaffSubscribers,
-                            delegate(StaffSummary s) { return s.StaffRef; },
-                            SubscriptionPagesReadOnly);
-                        _groupSubscribersComponent = new SelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
-                            formDataResponse.GroupSubscriberChoices,
-                            _worklistDetail.GroupSubscribers,
-                            delegate(StaffGroupSummary s) { return s.StaffGroupRef; },
-                            SubscriptionPagesReadOnly);
-                    }
-                });
+					if (ShowSubscriptionPages)
+					{
+						_staffSubscribersComponent = new SelectorEditorComponent<StaffSummary, StaffSelectorTable>(
+							formDataResponse.StaffChoices,
+							_worklistDetail.StaffSubscribers,
+							s => s.StaffRef,
+							SubscriptionPagesReadOnly);
+						_groupSubscribersComponent = new SelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
+							formDataResponse.GroupSubscriberChoices,
+							_worklistDetail.GroupSubscribers,
+							s => s.StaffGroupRef,
+							SubscriptionPagesReadOnly);
+					}
+				});
 
-            // add pages
-            this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
-            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
-            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
-            this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
+			// add pages
+			this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
+			this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
 
 			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
 			_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent);
@@ -295,18 +286,18 @@ namespace ClearCanvas.Ris.Client
 
 			ShowWorklistCategoryDependantPages();
 
-        	if (ShowSubscriptionPages)
-            {
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
-            }
+			if (ShowSubscriptionPages)
+			{
+				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
+				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
+			}
 			this.Pages.Add(_summaryComponentPage = new NavigatorPage("NodeWorklist/Summary", _summaryComponent = new WorklistSummaryComponent(_worklistDetail, _adminMode)));
 
-            this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
+			this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
 
-            this.ValidationStrategy = new AllComponentsValidationStrategy();
+			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
-            base.Start();
+			base.Start();
 
 			// Modify EntityRef and add the word "copy" to the worklist name.
 			// This is done after the Start() call, so changing the worklist name will trigger a component modify changed.
@@ -315,25 +306,25 @@ namespace ClearCanvas.Ris.Client
 				_worklistDetail.EntityRef = null;
 				((WorklistDetailEditorComponent)_detailComponent).Name = _worklistDetail.Name + " copy";
 			}
-        }
+		}
 
-    	private void OnWorklistClassChanged(object sender, EventArgs e)
-    	{
-    		ShowWorklistCategoryDependantPages();
-    	}
+		private void OnWorklistClassChanged(object sender, EventArgs e)
+		{
+			ShowWorklistCategoryDependantPages();
+		}
 
-    	private void ShowWorklistCategoryDependantPages()
-    	{
-    		bool showStaffFilters = _worklistDetail.WorklistClass == null || ShowReportingStaffRoleFilters;
+		private void ShowWorklistCategoryDependantPages()
+		{
+			var showStaffFilters = _worklistDetail.WorklistClass == null || ShowReportingStaffRoleFilters;
 			ShowAfterPage(_interpretedByFilterComponentPage, showStaffFilters, _patientLocationComponentPage);
 			ShowAfterPage(_transcribedByFilterComponentPage, showStaffFilters, _interpretedByFilterComponentPage);
 			ShowAfterPage(_verifiedByFilterComponentPage, showStaffFilters, _transcribedByFilterComponentPage);
 			ShowAfterPage(_supervisedByFilterComponentPage, showStaffFilters, _verifiedByFilterComponentPage);
 
-    		// add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
-    		bool showTimeFilter = _worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow;
-    		ShowBeforePage(_timeWindowComponentPage, showTimeFilter, _summaryComponentPage);
-    	}
+			// add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
+			var showTimeFilter = _worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow;
+			ShowBeforePage(_timeWindowComponentPage, showTimeFilter, _summaryComponentPage);
+		}
 
 		private void ShowAfterPage(NavigatorPage page, bool show, NavigatorPage insertAfterPage)
 		{
@@ -345,7 +336,7 @@ namespace ClearCanvas.Ris.Client
 						this.Pages.Add(page);
 					else
 					{
-						int index = this.Pages.IndexOf(insertAfterPage);
+						var index = this.Pages.IndexOf(insertAfterPage);
 						this.Pages.Insert(index + 1, page);
 					}
 
@@ -358,7 +349,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-    	private void ShowBeforePage(NavigatorPage page, bool show, NavigatorPage insertBeforePage)
+		private void ShowBeforePage(NavigatorPage page, bool show, NavigatorPage insertBeforePage)
 		{
 			if (show)
 			{
@@ -368,7 +359,7 @@ namespace ClearCanvas.Ris.Client
 						this.Pages.Add(page);
 					else
 					{
-						int index = this.Pages.IndexOf(insertBeforePage);
+						var index = this.Pages.IndexOf(insertBeforePage);
 						this.Pages.Insert(index, page);
 					}
 					
@@ -381,20 +372,20 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-    	private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
-        {
+		private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
+		{
 			// Update the summary page when it is active
-            if (this.CurrentPage.Component == _summaryComponent)
-            {
-                UpdateWorklistDetail();
+			if (this.CurrentPage.Component == _summaryComponent)
+			{
+				UpdateWorklistDetail();
 
 				if (_detailComponent is WorklistMultiDetailEditorComponent)
 				{
-					WorklistMultiDetailEditorComponent detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
+					var detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
 
-					List<string> names = new List<string>();
-					List<string> descriptions = new List<string>();
-					List<WorklistClassSummary> classes = new List<WorklistClassSummary>();
+					var names = new List<string>();
+					var descriptions = new List<string>();
+					var classes = new List<WorklistClassSummary>();
 
 					CollectionUtils.ForEach(detailEditor.WorklistsToCreate,
 							delegate(WorklistMultiDetailEditorComponent.WorklistTableEntry entry)
@@ -405,179 +396,175 @@ namespace ClearCanvas.Ris.Client
 								});
 
 					_summaryComponent.SetMultipleWorklistInfo(names, descriptions, classes);
-            }
+			}
 
-                _summaryComponent.Refresh();
-        }
-        }
+				_summaryComponent.Refresh();
+		}
+		}
 
-        private void ProcedureTypeGroupClassChangedEventHandler(object sender, EventArgs e)
-        {
-            Platform.GetService<IWorklistAdminService>(
-                delegate(IWorklistAdminService service)
-                {
-                    ListProcedureTypeGroupsResponse groupsResponse = service.ListProcedureTypeGroups(
-                        new ListProcedureTypeGroupsRequest(_detailComponent.ProcedureTypeGroupClass));
+		private void ProcedureTypeGroupClassChangedEventHandler(object sender, EventArgs e)
+		{
+			Platform.GetService(
+				delegate(IWorklistAdminService service)
+				{
+					var groupsResponse = service.ListProcedureTypeGroups(
+						new ListProcedureTypeGroupsRequest(_detailComponent.ProcedureTypeGroupClass));
 
-                    _procedureTypeGroupFilterComponent.AllItems = groupsResponse.ProcedureTypeGroups;
-                });
-        }
+					_procedureTypeGroupFilterComponent.AllItems = groupsResponse.ProcedureTypeGroups;
+				});
+		}
 
-        public List<WorklistAdminSummary> EditedWorklistSummaries
-        {
-            get { return _editedWorklistSummaries; }
-        }
+		public List<WorklistAdminSummary> EditedWorklistSummaries
+		{
+			get { return _editedWorklistSummaries; }
+		}
 
-        #region Presentation Model
+		#region Presentation Model
 
-        public override void Accept()
-        {
-            UpdateWorklistDetail();
+		public override void Accept()
+		{
+			UpdateWorklistDetail();
 
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-            }
-            else
-            {
-                try
-                {
-                    if (_mode == WorklistEditorMode.Add || _mode == WorklistEditorMode.Duplicate)
-                    {
-                        AddWorklists();
-                    }
-                    else
-                    {
-                        UpdateWorklist();
-                    }
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+			}
+			else
+			{
+				try
+				{
+					if (_mode == WorklistEditorMode.Add || _mode == WorklistEditorMode.Duplicate)
+					{
+						AddWorklists();
+					}
+					else
+					{
+						UpdateWorklist();
+					}
 
-                    // save any modified user settings
-                    WorklistEditorComponentSettings.Default.Save();
+					// save any modified user settings
+					WorklistEditorComponentSettings.Default.Save();
 
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionSaveWorklist, this.Host.DesktopWindow,
-                        delegate
-                        {
-                            this.Exit(ApplicationComponentExitCode.Error);
-                        });
-                }
-            }
-        }
+					this.Exit(ApplicationComponentExitCode.Accepted);
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, SR.ExceptionSaveWorklist, this.Host.DesktopWindow,
+						() => this.Exit(ApplicationComponentExitCode.Error));
+				}
+			}
+		}
 
-        public void ItemsAddedOrRemoved()
-        {
-            this.Modified = true;
-        }
+		public void ItemsAddedOrRemoved()
+		{
+			this.Modified = true;
+		}
 
-        #endregion
+		#endregion
 
-        private bool ShowSubscriptionPages
-        {
-            get { return _adminMode && Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
-        }
+		private bool ShowSubscriptionPages
+		{
+			get { return _adminMode && Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
+		}
 
-        private bool SubscriptionPagesReadOnly
-        {
-            get { return _worklistDetail.IsUserWorklist; }
-        }
+		private bool SubscriptionPagesReadOnly
+		{
+			get { return _worklistDetail.IsUserWorklist; }
+		}
 
-        private bool ShowReportingStaffRoleFilters
-        {
-            get
-            {
-                return _worklistDetail != null && _worklistDetail.WorklistClass != null
-                        ? _worklistDetail.WorklistClass.SupportsReportingStaffRoleFilters
-                        : false;
-            }
-        }
+		private bool ShowReportingStaffRoleFilters
+		{
+			get
+			{
+				return _worklistDetail != null && _worklistDetail.WorklistClass != null
+						? _worklistDetail.WorklistClass.SupportsReportingStaffRoleFilters
+						: false;
+			}
+		}
 
-        private void UpdateWorklistDetail()
-        {
-            if (_filterComponent.IsStarted)
-                _filterComponent.SaveData();
+		private void UpdateWorklistDetail()
+		{
+			if (_filterComponent.IsStarted)
+				_filterComponent.SaveData();
 
-            if (_timeWindowComponent.IsStarted)
-                _timeWindowComponent.SaveData();
+			if (_timeWindowComponent.IsStarted)
+				_timeWindowComponent.SaveData();
 
-            if (_procedureTypeGroupFilterComponent.IsStarted)
-                _worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
+			if (_procedureTypeGroupFilterComponent.IsStarted)
+				_worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
 
-            if (_locationFilterComponent.IsStarted)
-                _worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
+			if (_locationFilterComponent.IsStarted)
+				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
 
-            if (ShowSubscriptionPages && _groupSubscribersComponent.IsStarted)
-                _worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);
+			if (ShowSubscriptionPages && _groupSubscribersComponent.IsStarted)
+				_worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);
 
-            if (ShowSubscriptionPages && _staffSubscribersComponent.IsStarted)
-                _worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
+			if (ShowSubscriptionPages && _staffSubscribersComponent.IsStarted)
+				_worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
 
-            if (ShowReportingStaffRoleFilters && _interpretedByFilterComponent.IsStarted)
-            {
-                _worklistDetail.InterpretedByStaff.Staff = new List<StaffSummary>(_interpretedByFilterComponent.SelectedItems);
-                _worklistDetail.InterpretedByStaff.IncludeCurrentUser = _interpretedByFilterComponent.IncludeCurrentUser;
-            }
+			if (ShowReportingStaffRoleFilters && _interpretedByFilterComponent.IsStarted)
+			{
+				_worklistDetail.InterpretedByStaff.Staff = new List<StaffSummary>(_interpretedByFilterComponent.SelectedItems);
+				_worklistDetail.InterpretedByStaff.IncludeCurrentUser = _interpretedByFilterComponent.IncludeCurrentUser;
+			}
 
-            if (ShowReportingStaffRoleFilters && _transcribedByFilterComponent.IsStarted)
-            {
-                _worklistDetail.TranscribedByStaff.Staff = new List<StaffSummary>(_transcribedByFilterComponent.SelectedItems);
-                _worklistDetail.TranscribedByStaff.IncludeCurrentUser = _transcribedByFilterComponent.IncludeCurrentUser;
-            }
+			if (ShowReportingStaffRoleFilters && _transcribedByFilterComponent.IsStarted)
+			{
+				_worklistDetail.TranscribedByStaff.Staff = new List<StaffSummary>(_transcribedByFilterComponent.SelectedItems);
+				_worklistDetail.TranscribedByStaff.IncludeCurrentUser = _transcribedByFilterComponent.IncludeCurrentUser;
+			}
 
-            if (ShowReportingStaffRoleFilters && _verifiedByFilterComponent.IsStarted)
-            {
-                _worklistDetail.VerifiedByStaff.Staff = new List<StaffSummary>(_verifiedByFilterComponent.SelectedItems);
-                _worklistDetail.VerifiedByStaff.IncludeCurrentUser = _verifiedByFilterComponent.IncludeCurrentUser;
-            }
+			if (ShowReportingStaffRoleFilters && _verifiedByFilterComponent.IsStarted)
+			{
+				_worklistDetail.VerifiedByStaff.Staff = new List<StaffSummary>(_verifiedByFilterComponent.SelectedItems);
+				_worklistDetail.VerifiedByStaff.IncludeCurrentUser = _verifiedByFilterComponent.IncludeCurrentUser;
+			}
 
-            if (ShowReportingStaffRoleFilters && _supervisedByFilterComponent.IsStarted)
-            {
-                _worklistDetail.SupervisedByStaff.Staff = new List<StaffSummary>(_supervisedByFilterComponent.SelectedItems);
-                _worklistDetail.SupervisedByStaff.IncludeCurrentUser = _supervisedByFilterComponent.IncludeCurrentUser;
-            }
-        }
+			if (ShowReportingStaffRoleFilters && _supervisedByFilterComponent.IsStarted)
+			{
+				_worklistDetail.SupervisedByStaff.Staff = new List<StaffSummary>(_supervisedByFilterComponent.SelectedItems);
+				_worklistDetail.SupervisedByStaff.IncludeCurrentUser = _supervisedByFilterComponent.IncludeCurrentUser;
+			}
+		}
 
-        private void AddWorklists()
-        {
-            Platform.GetService<IWorklistAdminService>(
-                delegate(IWorklistAdminService service)
-                {
-                    if (_detailComponent is WorklistMultiDetailEditorComponent)
-                    {
-                        // add each worklist in the multi editor
-                        WorklistMultiDetailEditorComponent detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
-                        foreach (WorklistMultiDetailEditorComponent.WorklistTableEntry entry in detailEditor.WorklistsToCreate)
-                        {
-                            _worklistDetail.Name = entry.Name;
-                            _worklistDetail.Description = entry.Description;
-                            _worklistDetail.WorklistClass = entry.Class;
+		private void AddWorklists()
+		{
+			Platform.GetService(
+				delegate(IWorklistAdminService service)
+				{
+					if (_detailComponent is WorklistMultiDetailEditorComponent)
+					{
+						// add each worklist in the multi editor
+						var detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
+						foreach (var entry in detailEditor.WorklistsToCreate)
+						{
+							_worklistDetail.Name = entry.Name;
+							_worklistDetail.Description = entry.Description;
+							_worklistDetail.WorklistClass = entry.Class;
 
-                            AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail, !_adminMode));
-                            _editedWorklistSummaries.Add(response.WorklistAdminSummary);
-                        }
-                    }
-                    else
-                    {
-                        // only 1 worklist to add
-                        AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail, !_adminMode));
-                        _editedWorklistSummaries.Add(response.WorklistAdminSummary);
-                    }
+							var response = service.AddWorklist(new AddWorklistRequest(_worklistDetail, !_adminMode));
+							_editedWorklistSummaries.Add(response.WorklistAdminSummary);
+						}
+					}
+					else
+					{
+						// only 1 worklist to add
+						var response = service.AddWorklist(new AddWorklistRequest(_worklistDetail, !_adminMode));
+						_editedWorklistSummaries.Add(response.WorklistAdminSummary);
+					}
 
-                });
-        }
+				});
+		}
 
-        private void UpdateWorklist()
-        {
-            Platform.GetService<IWorklistAdminService>(
-                delegate(IWorklistAdminService service)
-                {
-                    UpdateWorklistResponse response =
-                        service.UpdateWorklist(new UpdateWorklistRequest(_worklistRef, _worklistDetail));
-                    _worklistRef = response.WorklistAdminSummary.WorklistRef;
-                    _editedWorklistSummaries.Add(response.WorklistAdminSummary);
-                });
-        }
-    }
+		private void UpdateWorklist()
+		{
+			Platform.GetService(
+				delegate(IWorklistAdminService service)
+				{
+					var response = service.UpdateWorklist(new UpdateWorklistRequest(_worklistRef, _worklistDetail));
+					_worklistRef = response.WorklistAdminSummary.WorklistRef;
+					_editedWorklistSummaries.Add(response.WorklistAdminSummary);
+				});
+		}
+	}
 }

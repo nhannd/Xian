@@ -42,43 +42,43 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="WorklistDetailEditorComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class WorklistDetailEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="WorklistDetailEditorComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class WorklistDetailEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// WorklistDetailEditorComponent class
-    /// </summary>
-    [AssociateView(typeof(WorklistDetailEditorComponentViewExtensionPoint))]
-    public class WorklistDetailEditorComponent : WorklistDetailEditorComponentBase
-    {
-        private readonly WorklistAdminDetail _worklistDetail;
-        private readonly WorklistEditorMode _editorMode;
-        private readonly bool _dialogMode;
-    	private readonly bool _adminMode;
+	/// <summary>
+	/// WorklistDetailEditorComponent class
+	/// </summary>
+	[AssociateView(typeof(WorklistDetailEditorComponentViewExtensionPoint))]
+	public class WorklistDetailEditorComponent : WorklistDetailEditorComponentBase
+	{
+		private readonly WorklistAdminDetail _worklistDetail;
+		private readonly WorklistEditorMode _editorMode;
+		private readonly bool _dialogMode;
+		private readonly bool _adminMode;
 		private readonly List<StaffGroupSummary> _groupChoices;
 
-    	private bool _isPersonal;
+		private bool _isPersonal;
 
-    	private bool _hasWorklistCountError;
-    	private string _worklistCountErrorMessage;
+		private bool _hasWorklistCountError;
+		private string _worklistCountErrorMessage;
 		private AsyncLoader _asyncLoader;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices, WorklistEditorMode editorMode, bool adminMode, bool dialogMode)
 			:base(worklistClasses, GetDefaultWorklistClass(worklistClasses, detail))
-        {
-            _worklistDetail = detail;
-            _dialogMode = dialogMode;
-            _editorMode = editorMode;
+		{
+			_worklistDetail = detail;
+			_dialogMode = dialogMode;
+			_editorMode = editorMode;
 			_adminMode = adminMode;
-        	_groupChoices = ownerGroupChoices;
+			_groupChoices = ownerGroupChoices;
 
 			if(_editorMode == WorklistEditorMode.Add)
 			{
@@ -92,15 +92,15 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			// update the class to the default (if this is a new worklist)
-        	_worklistDetail.WorklistClass = GetDefaultWorklistClass(worklistClasses, detail);
+			_worklistDetail.WorklistClass = GetDefaultWorklistClass(worklistClasses, detail);
 
-            this.Validation.Add(
-                new ValidationRule("SelectedGroup",
-                    delegate
-                    {
-                        bool success = _adminMode || this.IsPersonal || (this.IsGroup && this.SelectedGroup != null);
-                        return new ValidationResult(success, "Value Required");
-                    }));
+			this.Validation.Add(
+				new ValidationRule("SelectedGroup",
+					delegate
+					{
+						var success = _adminMode || this.IsPersonal || (this.IsGroup && this.SelectedGroup != null);
+						return new ValidationResult(success, "Value Required");
+					}));
 
 			this.Validation.Add(new ValidationRule("IsPersonal",
 				delegate
@@ -131,17 +131,17 @@ namespace ClearCanvas.Ris.Client
 			base.Stop();
 		}
 
-    	#region Presentation Model
+		#region Presentation Model
 
-    	public bool IsOwnerPanelVisible
-    	{
+		public bool IsOwnerPanelVisible
+		{
 			get { return !_adminMode; }
-    	}
+		}
 
-    	public bool IsPersonalGroupSelectionEnabled
-    	{
+		public bool IsPersonalGroupSelectionEnabled
+		{
 			get { return _editorMode != WorklistEditorMode.Edit && HasGroupAdminAuthority && HasPersonalAdminAuthority; }
-    	}
+		}
 
 		public bool IsPersonal
 		{
@@ -168,66 +168,66 @@ namespace ClearCanvas.Ris.Client
 			set { this.IsPersonal = !value; }
 		}
 
-    	public bool IsGroupChoicesEnabled
-    	{
-            get { return _editorMode != WorklistEditorMode.Edit && HasGroupAdminAuthority && IsGroup; }
-    	}
+		public bool IsGroupChoicesEnabled
+		{
+			get { return _editorMode != WorklistEditorMode.Edit && HasGroupAdminAuthority && IsGroup; }
+		}
 
-    	public IList GroupChoices
-    	{
+		public IList GroupChoices
+		{
 			get { return _groupChoices; }
-    	}
+		}
 
 		public string FormatGroup(object item)
 		{
-			StaffGroupSummary group = (StaffGroupSummary)item;
+			var group = (StaffGroupSummary)item;
 			return group.Name;
 		}
 
-    	public StaffGroupSummary SelectedGroup
-    	{
+		public StaffGroupSummary SelectedGroup
+		{
 			get { return _worklistDetail.OwnerGroup; }
 			set
 			{
-				if (!Equals(_worklistDetail.OwnerGroup, value))
-				{
-					_worklistDetail.OwnerGroup = value;
-					this.Modified = true;
-					ValidateWorklistCount();
-					NotifyPropertyChanged("SelectedGroup");
-				}
+				if (Equals(_worklistDetail.OwnerGroup, value))
+					return;
+
+				_worklistDetail.OwnerGroup = value;
+				this.Modified = true;
+				ValidateWorklistCount();
+				NotifyPropertyChanged("SelectedGroup");
 			}
-    	}
+		}
 
-        [ValidateNotNull]
-        public string Name
-        {
-            get { return _worklistDetail.Name; }
-            set
-            {
-                _worklistDetail.Name = value;
-                this.Modified = true;
-            }
-        }
+		[ValidateNotNull]
+		public string Name
+		{
+			get { return _worklistDetail.Name; }
+			set
+			{
+				_worklistDetail.Name = value;
+				this.Modified = true;
+			}
+		}
 
-        public string Description
-        {
-            get { return _worklistDetail.Description; }
-            set
-            {
-                _worklistDetail.Description = value;
-                this.Modified = true;
-            }
-        }
+		public string Description
+		{
+			get { return _worklistDetail.Description; }
+			set
+			{
+				_worklistDetail.Description = value;
+				this.Modified = true;
+			}
+		}
 
-    	public bool IsWorklistClassReadOnly
-    	{
-            get { return _editorMode == WorklistEditorMode.Edit; }
-    	}
+		public bool IsWorklistClassReadOnly
+		{
+			get { return _editorMode == WorklistEditorMode.Edit; }
+		}
 
 		[ValidateNotNull]
 		public WorklistClassSummary WorklistClass
-    	{
+		{
 			get { return _worklistDetail.WorklistClass; }
 			set
 			{
@@ -244,43 +244,40 @@ namespace ClearCanvas.Ris.Client
 					NotifyPropertyChanged("WorklistClassDescription");
 				}
 			}
-    	}
+		}
 
 		public string FormatWorklistClass(object item)
 		{
-			WorklistClassSummary summary = (WorklistClassSummary) item;
+			var summary = (WorklistClassSummary) item;
 			return summary.DisplayName;
 		}
 
-        public string WorklistClassDescription
-        {
-            get
-            {
-				return _worklistDetail.WorklistClass == null ? null : _worklistDetail.WorklistClass.Description;
-            }
-        }
+		public string WorklistClassDescription
+		{
+			get { return _worklistDetail.WorklistClass == null ? null : _worklistDetail.WorklistClass.Description; }
+		}
 
-        public bool AcceptButtonVisible
-        {
-            get { return _dialogMode; }
-        }
+		public bool AcceptButtonVisible
+		{
+			get { return _dialogMode; }
+		}
 
-        public bool CancelButtonVisible
-        {
-            get { return _dialogMode; }
-        }
+		public bool CancelButtonVisible
+		{
+			get { return _dialogMode; }
+		}
 
-        public void Accept()
-        {
-            Exit(ApplicationComponentExitCode.Accepted);
-        }
+		public void Accept()
+		{
+			Exit(ApplicationComponentExitCode.Accepted);
+		}
 
-        public void Cancel()
-        {
-            Exit(ApplicationComponentExitCode.None);
-        }
+		public void Cancel()
+		{
+			Exit(ApplicationComponentExitCode.None);
+		}
 
-        #endregion
+		#endregion
 
 		protected override void UpdateWorklistClassChoices()
 		{
@@ -291,21 +288,20 @@ namespace ClearCanvas.Ris.Client
 			base.UpdateWorklistClassChoices();
 		}
 
-		private bool HasGroupAdminAuthority
+		private static bool HasGroupAdminAuthority
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Group); }
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Worklist.Group); }
 		}
 
-		private bool HasPersonalAdminAuthority
+		private static bool HasPersonalAdminAuthority
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Personal); }
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Worklist.Personal); }
 		}
 
-		private static WorklistClassSummary GetDefaultWorklistClass(List<WorklistClassSummary> worklistClasses, WorklistAdminDetail detail)
+		private static WorklistClassSummary GetDefaultWorklistClass(IEnumerable<WorklistClassSummary> worklistClasses, WorklistAdminDetail detail)
 		{
 			return detail.WorklistClass
-				?? CollectionUtils.SelectFirst(worklistClasses,
-					delegate(WorklistClassSummary w) { return w.ClassName == WorklistEditorComponentSettings.Default.DefaultWorklistClass; });
+				?? CollectionUtils.SelectFirst(worklistClasses, w => w.ClassName == WorklistEditorComponentSettings.Default.DefaultWorklistClass);
 		}
 
 

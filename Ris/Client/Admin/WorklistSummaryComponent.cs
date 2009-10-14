@@ -67,23 +67,20 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public override void Start()
 		{
-			Platform.GetService<IWorklistAdminService>(
+			Platform.GetService(
 					delegate(IWorklistAdminService service)
 					{
-						GetWorklistEditFormDataRequest request = new GetWorklistEditFormDataRequest
+						var request = new GetWorklistEditFormDataRequest
 								{
 									GetWorklistEditFormChoicesRequest = new GetWorklistEditFormChoicesRequest(false)
 								};
-						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(request);
+						var response = service.GetWorklistEditFormData(request);
 						_worklistClassChoices.Add(_filterNone);
 						response.GetWorklistEditFormChoicesResponse.WorklistClasses.Sort(
-							delegate(WorklistClassSummary x, WorklistClassSummary y)
-							{
-								if (x.CategoryName.Equals(y.CategoryName))
-									return x.DisplayName.CompareTo(y.DisplayName);
-								else
-									return x.CategoryName.CompareTo(y.CategoryName);
-							});
+							(x, y) =>
+							x.CategoryName.Equals(y.CategoryName)
+								? x.DisplayName.CompareTo(y.DisplayName)
+								: x.CategoryName.CompareTo(y.CategoryName));
 						_worklistClassChoices.AddRange(response.GetWorklistEditFormChoicesResponse.WorklistClasses);
 					});
 			base.Start();
@@ -102,10 +99,10 @@ namespace ClearCanvas.Ris.Client.Admin
 			// add a "duplicate worklist" action 
 			this.ActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.DuplicateSmall.png", DuplicateWorklist);
 
-			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
-			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
-			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
-			model[_duplicateWorklistActionKey].SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model.Add.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model.Edit.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model.Delete.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.Worklist);
+			model[_duplicateWorklistActionKey].SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.Worklist);
 		}
 
 		#region Presentation Model
@@ -151,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			if (item != _filterNone)
 			{
-				WorklistClassSummary summary = (WorklistClassSummary)item;
+				var summary = (WorklistClassSummary)item;
 				return string.Format("{0} - {1}", summary.CategoryName, summary.DisplayName);
 			}
 			return SR.DummyItemNone;
@@ -163,9 +160,9 @@ namespace ClearCanvas.Ris.Client.Admin
 			{
 				if (this.SelectedItems.Count != 1) return;
 
-				WorklistAdminSummary worklist = CollectionUtils.FirstElement(this.SelectedItems);
-				WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, true, null, null);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+				var worklist = CollectionUtils.FirstElement(this.SelectedItems);
+				var editor = new WorklistEditorComponent(worklist.WorklistRef, true, null, null);
+				var exitCode = LaunchAsDialog(this.Host.DesktopWindow,
 					new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -197,11 +194,11 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			ListWorklistsResponse listResponse = null;
 
-			Platform.GetService<IWorklistAdminService>(
+			Platform.GetService(
 				delegate(IWorklistAdminService service)
 				{
-					string[] classNames = (_worklistClass == null || _worklistClass == _filterNone) ?
-						new string[] { } : new string[] { _worklistClass.ClassName };
+					var classNames = (_worklistClass == null || _worklistClass == _filterNone) ?
+						new string[] { } : new[] { _worklistClass.ClassName };
 					request.ClassNames = new List<string>(classNames);
 					request.WorklistName = _name;
 					request.IncludeUserDefinedWorklists = _includeUseDefinedWorklists;
@@ -214,38 +211,36 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		protected override bool AddItems(out IList<WorklistAdminSummary> addedItems)
 		{
-			WorklistEditorComponent editor = new WorklistEditorComponent(true);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+			var editor = new WorklistEditorComponent(true);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow,
 				new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 
-			if (exitCode == ApplicationComponentExitCode.Accepted)
+			switch (exitCode)
 			{
-				addedItems = editor.EditedWorklistSummaries;
-				return true;
-			}
-			else
-			{
-				addedItems = null;
-				return false;
+				case ApplicationComponentExitCode.Accepted:
+					addedItems = editor.EditedWorklistSummaries;
+					return true;
+				default:
+					addedItems = null;
+					return false;
 			}
 		}
 
 		protected override bool EditItems(IList<WorklistAdminSummary> items, out IList<WorklistAdminSummary> editedItems)
 		{
-			WorklistAdminSummary worklist = CollectionUtils.FirstElement(items);
-			WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, true);
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
+			var worklist = CollectionUtils.FirstElement(items);
+			var editor = new WorklistEditorComponent(worklist.WorklistRef, true);
+			var exitCode = LaunchAsDialog(this.Host.DesktopWindow,
 				new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.DisplayName, null, DialogSizeHint.Medium));
 
-			if (exitCode == ApplicationComponentExitCode.Accepted)
+			switch (exitCode)
 			{
-				editedItems = editor.EditedWorklistSummaries;
-				return true;
-			}
-			else
-			{
-				editedItems = null;
-				return false;
+				case ApplicationComponentExitCode.Accepted:
+					editedItems = editor.EditedWorklistSummaries;
+					return true;
+				default:
+					editedItems = null;
+					return false;
 			}
 		}
 
@@ -254,15 +249,13 @@ namespace ClearCanvas.Ris.Client.Admin
 			failureMessage = null;
 			deletedItems = new List<WorklistAdminSummary>();
 
-			foreach (WorklistAdminSummary item in items)
+			foreach (var item in items)
 			{
 				try
 				{
+					var summary = item;
 					Platform.GetService<IWorklistAdminService>(
-						delegate(IWorklistAdminService service)
-						{
-							service.DeleteWorklist(new DeleteWorklistRequest(item.WorklistRef));
-						});
+						service => service.DeleteWorklist(new DeleteWorklistRequest(summary.WorklistRef)));
 
 					deletedItems.Add(item);
 				}
