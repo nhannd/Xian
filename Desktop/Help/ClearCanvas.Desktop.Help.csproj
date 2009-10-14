@@ -109,6 +109,12 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AboutSettings.cs" />
+    <Compile Include="AboutSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AboutSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -141,14 +147,15 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AboutSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AboutSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="app.config" />
     <None Include="HelpSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>HelpSettings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -176,6 +183,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\Common\ClearCanvas.Strings.targets" />

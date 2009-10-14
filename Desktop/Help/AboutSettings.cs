@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -31,12 +31,13 @@
 
 using System.Configuration;
 
-namespace ClearCanvas.Desktop.View.WinForms
+namespace ClearCanvas.Desktop.Help
 {
-	[SettingsGroupDescription("Stores settings for display and customization of the splash screen.")]
-	public sealed partial class SplashScreenSettings
+	[SettingsGroupDescription("Provides settings that allow the About box to be customized.")]
+	[SettingsProvider(typeof(LocalFileSettingsProvider))]
+	internal sealed partial class AboutSettings
 	{
-		private SplashScreenSettings()
+		private AboutSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}

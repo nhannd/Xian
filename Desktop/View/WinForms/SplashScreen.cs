@@ -133,21 +133,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 			SetStatusText(string.Empty);
 
 			// Initialize the version text to the executing assembly's
-			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			this._version.Text = String.Format(SplashScreenSettings.Default.VersionTextFormat, version);
+			_version.Text = String.Format(SplashScreenSettings.Default.VersionTextFormat, Product.GetVersion(true, true));
+			_copyright.Text = Product.Copyright;
+			_license.Text = Product.License;
 
 			// Make the window completely transparent
 			Opacity = 0;
 
 			// Apply any splash screen settings, if requested
-			if (SplashScreenSettingsHelper.Default.UseSplashScreenSettings)
+			if (SplashScreenSettings.Default.UseSplashScreenSettings)
 			{
 				this.SuspendLayout();
 
-				Assembly assembly = Assembly.Load(SplashScreenSettingsHelper.Default.BackgroundImageAssemblyName);
+				Assembly assembly = Assembly.Load(SplashScreenSettings.Default.BackgroundImageAssemblyName);
 				if (assembly != null)
 				{
-					string streamName = SplashScreenSettingsHelper.Default.BackgroundImageAssemblyName + "." + SplashScreenSettingsHelper.Default.BackgroundImageResourceName;
+					string streamName = SplashScreenSettings.Default.BackgroundImageAssemblyName + "." + SplashScreenSettings.Default.BackgroundImageResourceName;
 					Stream stream = assembly.GetManifestResourceStream(streamName);
 					if (stream != null)
 					{
@@ -156,62 +157,43 @@ namespace ClearCanvas.Desktop.View.WinForms
 					}
 				}
 
-				this._status.Visible = SplashScreenSettingsHelper.Default.StatusVisible;
-				this._status.Location = SplashScreenSettingsHelper.Default.StatusLocation;
-				this._status.Size = SplashScreenSettingsHelper.Default.StatusSize;
-				this._status.AutoSize = SplashScreenSettingsHelper.Default.StatusAutoSize;
-				this._status.ForeColor = SplashScreenSettingsHelper.Default.StatusForeColor;
-				this._status.Font = SplashScreenSettingsHelper.Default.StatusFontBold ? new Font(this._status.Font, FontStyle.Bold) : this._status.Font;
-				this._status.TextAlign = SplashScreenSettingsHelper.Default.StatusTextAlign;
+				this._status.Visible = SplashScreenSettings.Default.StatusVisible;
+				this._status.Location = SplashScreenSettings.Default.StatusLocation;
+				this._status.Size = SplashScreenSettings.Default.StatusSize;
+				this._status.AutoSize = SplashScreenSettings.Default.StatusAutoSize;
+				this._status.ForeColor = SplashScreenSettings.Default.StatusForeColor;
+				this._status.Font = SplashScreenSettings.Default.StatusFontBold ? new Font(this._status.Font, FontStyle.Bold) : this._status.Font;
+				this._status.TextAlign = SplashScreenSettings.Default.StatusTextAlign;
 
-				this._copyright.Visible = SplashScreenSettingsHelper.Default.CopyrightVisible;
-				this._copyright.Location = SplashScreenSettingsHelper.Default.CopyrightLocation;
-				this._copyright.Size = SplashScreenSettingsHelper.Default.CopyrightSize;
-				this._copyright.AutoSize = SplashScreenSettingsHelper.Default.CopyrightAutoSize;
-				this._copyright.ForeColor = SplashScreenSettingsHelper.Default.CopyrightForeColor;
-				this._copyright.Font = SplashScreenSettingsHelper.Default.CopyrightFontBold ? new Font(this._copyright.Font, FontStyle.Bold) : this._copyright.Font;
-				this._copyright.TextAlign = SplashScreenSettingsHelper.Default.CopyrightTextAlign;
-				this._copyright.Text = SplashScreenSettingsHelper.Default.CopyrightText;
+				this._copyright.Visible = SplashScreenSettings.Default.CopyrightVisible;
+				this._copyright.Location = SplashScreenSettings.Default.CopyrightLocation;
+				this._copyright.Size = SplashScreenSettings.Default.CopyrightSize;
+				this._copyright.AutoSize = SplashScreenSettings.Default.CopyrightAutoSize;
+				this._copyright.ForeColor = SplashScreenSettings.Default.CopyrightForeColor;
+				this._copyright.Font = SplashScreenSettings.Default.CopyrightFontBold ? new Font(this._copyright.Font, FontStyle.Bold) : this._copyright.Font;
+				this._copyright.TextAlign = SplashScreenSettings.Default.CopyrightTextAlign;
 
-				this._version.Visible = SplashScreenSettingsHelper.Default.VersionVisible;
-				this._version.Location = SplashScreenSettingsHelper.Default.VersionLocation;
-				this._version.Size = SplashScreenSettingsHelper.Default.VersionSize;
-				this._version.AutoSize = SplashScreenSettingsHelper.Default.VersionAutoSize;
-				this._version.ForeColor = SplashScreenSettingsHelper.Default.VersionForeColor;
-				this._version.Font = SplashScreenSettingsHelper.Default.VersionFontBold ? new Font(this._version.Font, FontStyle.Bold) : this._version.Font;
-				this._version.TextAlign = SplashScreenSettingsHelper.Default.VersionTextAlign;
+				this._version.Visible = SplashScreenSettings.Default.VersionVisible;
+				this._version.Location = SplashScreenSettings.Default.VersionLocation;
+				this._version.Size = SplashScreenSettings.Default.VersionSize;
+				this._version.AutoSize = SplashScreenSettings.Default.VersionAutoSize;
+				this._version.ForeColor = SplashScreenSettings.Default.VersionForeColor;
+				this._version.Font = SplashScreenSettings.Default.VersionFontBold ? new Font(this._version.Font, FontStyle.Bold) : this._version.Font;
+				this._version.TextAlign = SplashScreenSettings.Default.VersionTextAlign;
 
-				Assembly versionAssembly;
-				try
-				{
-					versionAssembly = Assembly.Load(SplashScreenSettingsHelper.Default.VersionAssemblyName);
-				}
-				catch
-				{
-					versionAssembly = Assembly.GetExecutingAssembly();
-				}
+				this._license.Visible = SplashScreenSettings.Default.LicenseVisible;
+				this._license.Location = SplashScreenSettings.Default.LicenseLocation;
+				this._license.Size = SplashScreenSettings.Default.LicenseSize;
+				this._license.AutoSize = SplashScreenSettings.Default.LicenseAutoSize;
+				this._license.ForeColor = SplashScreenSettings.Default.LicenseForeColor;
+				this._license.Font = SplashScreenSettings.Default.LicenseFontBold ? new Font(this._license.Font, FontStyle.Bold) : this._license.Font;
+				this._license.TextAlign = SplashScreenSettings.Default.LicenseTextAlign;
 
-				System.Diagnostics.FileVersionInfo versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(versionAssembly.Location);
-				if (versionInfo != null)
-					this._version.Text = string.Format(SplashScreenSettingsHelper.Default.VersionTextFormat, versionInfo.ProductVersion);
-				else
-					this._version.Text = string.Format(SplashScreenSettingsHelper.Default.VersionTextFormat, string.Empty);
-
-				this._license.Visible = SplashScreenSettingsHelper.Default.LicenseVisible;
-				this._license.Location = SplashScreenSettingsHelper.Default.LicenseLocation;
-				this._license.Size = SplashScreenSettingsHelper.Default.LicenseSize;
-				this._license.AutoSize = SplashScreenSettingsHelper.Default.LicenseAutoSize;
-				this._license.ForeColor = SplashScreenSettingsHelper.Default.LicenseForeColor;
-				this._license.Font = SplashScreenSettingsHelper.Default.LicenseFontBold ? new Font(this._license.Font, FontStyle.Bold) : this._license.Font;
-				this._license.TextAlign = SplashScreenSettingsHelper.Default.LicenseTextAlign;
-				this._license.Text = SplashScreenSettingsHelper.Default.LicenseText;
-
-				this._pluginIconsRectangle = SplashScreenSettingsHelper.Default.PluginIconsRectangle;
+				this._pluginIconsRectangle = SplashScreenSettings.Default.PluginIconsRectangle;
 				this._nextIconPositionX = _pluginIconsRectangle.Left + IconPaddingX / 2;
 				this._nextIconPositionY = _pluginIconsRectangle.Top;
 
-				this.ResumeLayout(false);
-				this.PerformLayout();
+				this.ResumeLayout();
 			}
 		}
 

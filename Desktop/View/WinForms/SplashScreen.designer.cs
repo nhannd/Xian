@@ -69,7 +69,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._status.AutoEllipsis = true;
 			this._status.BackColor = System.Drawing.Color.Transparent;
-			this._status.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this._status.ForeColor = System.Drawing.Color.Black;
 			this._status.Location = new System.Drawing.Point(295, 61);
 			this._status.Name = "_status";
@@ -90,12 +89,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _copyright
 			// 
 			this._copyright.BackColor = System.Drawing.Color.Transparent;
-			this._copyright.ForeColor = System.Drawing.Color.White;
+			this._copyright.ForeColor = System.Drawing.Color.Black;
 			this._copyright.Location = new System.Drawing.Point(375, 340);
 			this._copyright.Name = "_copyright";
 			this._copyright.Size = new System.Drawing.Size(286, 13);
 			this._copyright.TabIndex = 3;
-			this._copyright.Text = "Copyright 2009 ClearCanvas Inc. All rights reserved.";
+			this._copyright.Text = "Copyright";
 			// 
 			// _license
 			// 
@@ -126,6 +125,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "SplashScreen";
+			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ClearCanvas";

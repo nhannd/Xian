@@ -124,7 +124,7 @@ namespace ClearCanvas.Desktop
             _dialogs = new DialogBoxCollection(this);
 
             // if no title supplied, create default title
-			_baseTitle = !string.IsNullOrEmpty(args.Title) ? args.Title : Application.GetNameAndVersion(false, true);
+			_baseTitle = !string.IsNullOrEmpty(args.Title) ? args.Title : Product.GetNameAndVersion(false, true);
 
             _menuActionSite = args.MenuSite ?? GlobalMenus;
             _toolbarActionSite = args.ToolbarSite ?? GlobalToolbars;

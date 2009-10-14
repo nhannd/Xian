@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Help;
@@ -42,7 +41,7 @@ namespace ClearCanvas.Desktop.Help.UpdateTools
 	[MenuAction("checkForUpdates", "global-menus/MenuHelp/MenuCheckForUpdates", "CheckForUpdates")]
 	[GroupHint("checkForUpdates", "Application.Help.Updates")]
 
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	[Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class UpdateTool : Tool<IDesktopToolContext>
 	{
 		public UpdateTool()
@@ -69,7 +68,7 @@ namespace ClearCanvas.Desktop.Help.UpdateTools
 
 					if (!IsValidProduct(result.InstalledProduct) || IsSameProduct(result.InstalledProduct, installedProduct))
 					{
-						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNoUpdate, MessageBoxActions.Ok);
+						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNoUpdate, Common.MessageBoxActions.Ok);
 					}
 					else
 					{
@@ -81,8 +80,8 @@ namespace ClearCanvas.Desktop.Help.UpdateTools
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Warn, e, "The request for update information failed.");
-					base.Context.DesktopWindow.ShowMessageBox(SR.MessageUpdateRequestFailed, MessageBoxActions.Ok);
+					Common.Platform.Log(Common.LogLevel.Warn, e, "The request for update information failed.");
+					base.Context.DesktopWindow.ShowMessageBox(SR.MessageUpdateRequestFailed, Common.MessageBoxActions.Ok);
 				}
 			}
 		}

@@ -61,15 +61,6 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas Workstation.
-        /// </summary>
-        public static string ApplicationName {
-            get {
-                return ResourceManager.GetString("ApplicationName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Configures global exception handling behaviour..
         /// </summary>
         public static string DescriptionExceptionHandlerSettings {
@@ -597,15 +588,6 @@ namespace ClearCanvas.Desktop {
         public static string TitlePrevious {
             get {
                 return ResourceManager.GetString("TitlePrevious", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Alpha.
-        /// </summary>
-        public static string VersionSuffix {
-            get {
-                return ResourceManager.GetString("VersionSuffix", resourceCulture);
             }
         }
     }

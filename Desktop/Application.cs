@@ -141,7 +141,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the name of the application.
         /// </summary>
-        public static string Name
+		public static string Name
         {
             get { return _instance.ApplicationName; }
         }
@@ -149,39 +149,10 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the version of the application.
         /// </summary>
-        public static Version Version
+		public static Version Version
         {
             get { return _instance.ApplicationVersion; }
         }
-
-		/// <summary>
-		/// Gets the version suffix of the application.
-		/// </summary>
-    	public static string VersionSuffix
-    	{
-			get { return _instance.ApplicationVersionSuffix; }	
-    	}
-
-    	public static string GetNameAndVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
-    	{
-			return String.Format("{0} {1}", Name, GetVersion(includeBuildAndRevision, includeVersionSuffix));
-    	}
-
-		public static string GetVersion(bool includeBuildAndRevision, bool includeVersionSuffix)
-		{
-			string versionString;
-			Version version = Version;
-
-			if (includeBuildAndRevision)
-				versionString = String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
-			else
-				versionString = String.Format("{0}.{1}", version.Major, version.Minor);
-
-			if (includeVersionSuffix && !String.IsNullOrEmpty(VersionSuffix))
-				return String.Format("{0} {1}", versionString, VersionSuffix);
-
-			return versionString;
-		}
 
         /// <summary>
         /// Gets the collection of application windows.
@@ -289,7 +260,6 @@ namespace ClearCanvas.Desktop
 
         private string _appName;
         private Version _appVersion;
-		private string _appVersionSuffix;
 		private IGuiToolkit _guiToolkit;
         private IApplicationView _view;
         private DesktopWindowCollection _windows;
@@ -406,7 +376,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected virtual string GetName()
         {
-            return SR.ApplicationName;
+			return Product.Name;
         }
 
         /// <summary>
@@ -415,14 +385,9 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected virtual Version GetVersion()
         {
-            return Assembly.GetExecutingAssembly().GetName().Version;
+			return Product.Version;
         }
         
-		protected virtual string GetVersionSuffix()
-		{
-			return SR.VersionSuffix;
-		}
-
         #endregion
 
         #region Protected members
@@ -630,19 +595,6 @@ namespace ClearCanvas.Desktop
                 return _appVersion;
             }
         }
-
-		/// <summary>
-		/// Gets the cached version suffix.
-		/// </summary>
-		private string ApplicationVersionSuffix
-		{
-			get
-			{
-				if (_appVersionSuffix == null)
-					_appVersionSuffix = GetVersionSuffix();
-				return _appVersionSuffix;
-			}
-		}
 
         /// <summary>
         /// Creates a view for a desktop window.

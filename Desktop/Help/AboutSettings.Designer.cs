@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Desktop.View.WinForms {
+namespace ClearCanvas.Desktop.Help {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
-    public sealed partial class SplashScreenSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class AboutSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static SplashScreenSettings defaultInstance = ((SplashScreenSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new SplashScreenSettings())));
+        private static AboutSettings defaultInstance = ((AboutSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AboutSettings())));
         
-        public static SplashScreenSettings Default {
+        public static AboutSettings Default {
             get {
                 return defaultInstance;
             }
@@ -26,15 +26,15 @@ namespace ClearCanvas.Desktop.View.WinForms {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseSplashScreenSettings {
+        public bool UseSettings {
             get {
-                return ((bool)(this["UseSplashScreenSettings"]));
+                return ((bool)(this["UseSettings"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas.Desktop.View.WinForms")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BackgroundImageAssemblyName {
             get {
                 return ((string)(this["BackgroundImageAssemblyName"]));
@@ -43,82 +43,10 @@ namespace ClearCanvas.Desktop.View.WinForms {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Resources.Splash.png")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string BackgroundImageResourceName {
             get {
                 return ((string)(this["BackgroundImageResourceName"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool StatusVisible {
-            get {
-                return ((bool)(this["StatusVisible"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("295, 61")]
-        public global::System.Drawing.Point StatusLocation {
-            get {
-                return ((global::System.Drawing.Point)(this["StatusLocation"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("354, 13")]
-        public global::System.Drawing.Size StatusSize {
-            get {
-                return ((global::System.Drawing.Size)(this["StatusSize"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StatusAutoSize {
-            get {
-                return ((bool)(this["StatusAutoSize"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
-        public global::System.Drawing.Color StatusForeColor {
-            get {
-                return ((global::System.Drawing.Color)(this["StatusForeColor"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StatusFontBold {
-            get {
-                return ((bool)(this["StatusFontBold"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TopLeft")]
-        public global::System.Drawing.ContentAlignment StatusTextAlign {
-            get {
-                return ((global::System.Drawing.ContentAlignment)(this["StatusTextAlign"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CopyrightVisible {
-            get {
-                return ((bool)(this["CopyrightVisible"]));
             }
         }
         
@@ -173,15 +101,6 @@ namespace ClearCanvas.Desktop.View.WinForms {
         public global::System.Drawing.ContentAlignment CopyrightTextAlign {
             get {
                 return ((global::System.Drawing.ContentAlignment)(this["CopyrightTextAlign"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool VersionVisible {
-            get {
-                return ((bool)(this["VersionVisible"]));
             }
         }
         
@@ -259,7 +178,7 @@ namespace ClearCanvas.Desktop.View.WinForms {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("617, 9")]
+        [global::System.Configuration.DefaultSettingValueAttribute("617, 33")]
         public global::System.Drawing.Point LicenseLocation {
             get {
                 return ((global::System.Drawing.Point)(this["LicenseLocation"]));
@@ -313,19 +232,10 @@ namespace ClearCanvas.Desktop.View.WinForms {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PluginIconsVisible {
+        [global::System.Configuration.DefaultSettingValueAttribute("60, 150, 208")]
+        public global::System.Drawing.Color CloseButtonLinkColor {
             get {
-                return ((bool)(this["PluginIconsVisible"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0, 0, 0, 0")]
-        public global::System.Drawing.Rectangle PluginIconsRectangle {
-            get {
-                return ((global::System.Drawing.Rectangle)(this["PluginIconsRectangle"]));
+                return ((global::System.Drawing.Color)(this["CloseButtonLinkColor"]));
             }
         }
     }

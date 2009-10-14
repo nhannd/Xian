@@ -317,6 +317,12 @@
       <DependentUpon>ExtensionSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="IUserCredentialsProvider.cs" />
+    <Compile Include="ProductSettings.cs" />
+    <Compile Include="ProductSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ProductSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Shreds\IShred.cs" />
     <Compile Include="Shreds\QueueProcessor.cs" />
     <Compile Include="Shreds\QueueProcessorShred.cs" />
@@ -343,6 +349,10 @@
     <None Include="ExtensionSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExtensionSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ProductSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ProductSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

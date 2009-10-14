@@ -215,6 +215,8 @@
   </ItemGroup>
   
   <ItemGroup>
+    <EnterpriseDesktopFiles Include="$(TrunkDirectory)\Enterprise\Desktop\bin\$(Configuration)\ClearCanvas.Enterprise.Desktop.dll" />
+    <EnterpriseDesktopFiles Include="$(TrunkDirectory)\Enterprise\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Enterprise.Desktop.View.WinForms.dll" />
     <EnterpriseDesktopFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" />
     <EnterpriseDesktopFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" />
   </ItemGroup>
