@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 	/// <summary>
 	/// Jpeg Baseline SOP Compress Action Operator, for use with <see cref="IXmlActionCompilerOperator{ServerActionContext,ServerRuleTypeEnum}"/>
 	/// </summary>
-	[ExtensionOf(typeof(IXmlActionCompilerOperator<ServerActionContext, ServerRuleTypeEnum>))]
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext, ServerRuleTypeEnum>))]
 	public class JpegBaselineSopActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext, ServerRuleTypeEnum>
 	{
 		public JpegBaselineSopActionOperator()
