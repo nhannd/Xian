@@ -124,9 +124,20 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 return DicomPresContextResult.RejectUser;
             }
+			if (Device.AcceptKOPR)
+			{
+				DicomPresContext context = association.GetPresentationContext(pcid);
+				if (context.AbstractSyntax.Equals(SopClass.KeyObjectSelectionDocumentStorage)
+				  ||context.AbstractSyntax.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
+				  ||context.AbstractSyntax.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
+				  ||context.AbstractSyntax.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass)
+				  ||context.AbstractSyntax.Equals(SopClass.PseudoColorSoftcopyPresentationStateStorageSopClass))
+					return DicomPresContextResult.Accept;
+
+				return DicomPresContextResult.RejectUser;
+			}
 
             return DicomPresContextResult.Accept;
-
         }
 
         #endregion Overridden BaseSCP methods
