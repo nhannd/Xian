@@ -35,6 +35,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Desktop.Explorer
 {
 	[SettingsGroupDescription("Local settings for how this client installation should launch the Explorer.")]
+	[SettingsProvider(typeof(LocalFileSettingsProvider))]
 	internal sealed partial class ExplorerLocalSettings
 	{
 		private ExplorerLocalSettings()

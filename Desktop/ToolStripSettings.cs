@@ -42,6 +42,8 @@ namespace ClearCanvas.Desktop
 	/// </summary>
 	public enum ToolStripSizeType { Small = 0, Medium, Large };
 
+	//TODO: remove this class now that we can make settings classes public?
+
 	/// <summary>
 	/// Helper class that provides access to settings controlling display of toolstrips.
 	/// </summary>

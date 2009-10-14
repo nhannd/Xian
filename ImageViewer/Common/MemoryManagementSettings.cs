@@ -35,6 +35,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Common
 {
 	[SettingsGroupDescription("Application settings for memory management on the local machine.")]
+	[SettingsProvider(typeof(LocalFileSettingsProvider))]
 	internal sealed partial class MemoryManagementSettings
 	{
 		private MemoryManagementSettings()

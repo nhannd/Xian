@@ -30,10 +30,12 @@
 #endregion
 
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.ImageViewer
 {
 	[SettingsGroupDescription("Settings configuring default behaviour of DICOM-based presentation images.")]
+	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class DicomPresentationImageSettings
 	{
 		public DicomPresentationImageSettings()

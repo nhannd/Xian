@@ -34,6 +34,7 @@ using System.Configuration;
 namespace ClearCanvas.Desktop.View.WinForms
 {
 	[SettingsGroupDescription("Stores settings for display and customization of the splash screen.")]
+	[SettingsProvider(typeof(LocalFileSettingsProvider))]
 	public sealed partial class SplashScreenSettings
 	{
 		private SplashScreenSettings()

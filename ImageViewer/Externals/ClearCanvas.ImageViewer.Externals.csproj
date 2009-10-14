@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B33560E9-4B0C-4B8A-AF6B-721A06DD407B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Config\ExternalsConfigurationComponent.cs" />
     <Compile Include="Config\ConfigurationPageProvider.cs" />
+    <Compile Include="Config\ExternalsConfigurationSettings.cs" />
     <Compile Include="Config\ExternalsConfigurationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
