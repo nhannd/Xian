@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private List<Server> _defaultServers;
 		private List<Server> _allServers;
 		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _framePresentationStates;
+		private Dictionary<string, SeriesInfo> _seriesIndex;
 
 		public KeyImagePublisher(KeyImageInformation information, bool publishToSourceServer)
 		{
@@ -79,17 +80,31 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				if (_framePresentationStates == null)
 				{
 					_framePresentationStates = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
+					_seriesIndex = new Dictionary<string, SeriesInfo>();
 					foreach (IClipboardItem item in _sourceInformation.ClipboardItems)
 					{
 						IImageSopProvider provider = item.Item as IImageSopProvider;
 						if (provider != null)
 						{
+							string key = provider.ImageSop.StudyInstanceUid;
+							if (!_seriesIndex.ContainsKey(key))
+							{
+								_seriesIndex.Add(key, new SeriesInfo(provider));
+							}
+
 							DicomSoftcopyPresentationState presentationState = null;
 							if (item.Item is IPresentationImage && DicomSoftcopyPresentationState.IsSupported((IPresentationImage)item.Item))
 							{
 								presentationState = DicomSoftcopyPresentationState.Create
 									((IPresentationImage) item.Item,
-									 delegate(DicomSoftcopyPresentationState ps) { ps.SourceAETitle = DicomServerConfigurationHelper.OfflineAETitle; });
+									 delegate(DicomSoftcopyPresentationState ps)
+									 	{
+									 		ps.PresentationSeriesInstanceUid = _seriesIndex[key].PresentationSeriesUid;
+									 		ps.PresentationSeriesNumber = _seriesIndex[key].PresentationSeriesNumber;
+									 		ps.PresentationSeriesDateTime = _seriesIndex[key].PresentationSeriesDateTime;
+									 		ps.PresentationInstanceNumber = _seriesIndex[key].GetNextPresentationInstanceNumber();
+									 		ps.SourceAETitle = DicomServerConfigurationHelper.OfflineAETitle;
+									 	});
 							}
 							_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
 						}
@@ -149,7 +164,18 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
 				serializer.AddImage(frameAndPR.Key, frameAndPR.Value);
 
-			_keyObjectDocuments.AddRange(serializer.Serialize());
+			_keyObjectDocuments.AddRange(serializer.Serialize(
+				delegate(KeyImageSerializer.KeyObjectDocumentSeries keyObjectDocumentSeries)
+					{
+						string key = keyObjectDocumentSeries.StudyInstanceUid;
+						if (_seriesIndex.ContainsKey(key))
+						{
+							keyObjectDocumentSeries.SeriesDateTime = _seriesIndex[key].KeyObjectSeriesDateTime;
+							keyObjectDocumentSeries.SeriesNumber = _seriesIndex[key].KeyObjectSeriesNumber;
+							keyObjectDocumentSeries.SeriesInstanceUid = _seriesIndex[key].KeyObjectSeriesUid;
+						}
+					}
+				));
 		}
 
 		private static DicomFile GetKeyObjectDocument(string studyInstanceUid, List<DicomFile> documents)
@@ -320,6 +346,49 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageLocalPublishingFailed, MessageBoxActions.Ok);
 			else if (remotePublishFailed)
 				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageRemotePublishingFailed, MessageBoxActions.Ok);
+		}
+
+		private class SeriesInfo
+		{
+			public readonly string PresentationSeriesUid;
+			public readonly int PresentationSeriesNumber;
+			public readonly DateTime PresentationSeriesDateTime;
+			public readonly string KeyObjectSeriesUid;
+			public readonly int KeyObjectSeriesNumber;
+			public readonly DateTime KeyObjectSeriesDateTime;
+
+			private int _presentationNextInstanceNumber;
+
+			public SeriesInfo(IImageSopProvider provider)
+			{
+				this.KeyObjectSeriesUid = DicomUid.GenerateUid().UID;
+				this.KeyObjectSeriesNumber = CalculateSeriesNumber(provider.Frame);
+				this.KeyObjectSeriesDateTime = DateTime.Now;
+				this.PresentationSeriesUid = DicomUid.GenerateUid().UID;
+				this.PresentationSeriesNumber = KeyObjectSeriesNumber + 1;
+				this.PresentationSeriesDateTime = DateTime.Now;
+				_presentationNextInstanceNumber = 1;
+			}
+
+			public int GetNextPresentationInstanceNumber()
+			{
+				return _presentationNextInstanceNumber++;
+			}
+
+			private static int CalculateSeriesNumber(Frame frame)
+			{
+				if (frame.ParentImageSop == null || frame.ParentImageSop.ParentSeries == null || frame.ParentImageSop.ParentSeries.ParentStudy == null)
+					return 1;
+
+				int maxValue = 0;
+				foreach (Series series in frame.ParentImageSop.ParentSeries.ParentStudy.Series)
+				{
+					if (series.SeriesNumber > maxValue)
+						maxValue = series.SeriesNumber;
+				}
+
+				return maxValue + 1;
+			}
 		}
 	}
 }

@@ -213,6 +213,17 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		/// </summary>
 		public List<DicomFile> Serialize()
 		{
+			return Serialize(null);
+		}
+
+		/// <summary>
+		/// Serializes the current contents into a number of key object selection document SOP instances.
+		/// </summary>
+		/// <param name="callback">A callback method to initialize the series-level attributes of the key object document.</param>
+		public List<DicomFile> Serialize(InitializeKeyObjectDocumentSeriesCallback callback)
+		{
+			callback = callback ?? DefaultInitializeKeyObjectDocumentSeriesCallback;
+
 			if (_framePresentationStates.Count == 0)
 				throw new InvalidOperationException("Key object selection cannot be empty.");
 
@@ -224,6 +235,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				string studyInstanceUid = frame.StudyInstanceUid;
 				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid))
 				{
+					KeyObjectDocumentSeries seriesInfo = new KeyObjectDocumentSeries(frame.ParentImageSop.PatientId, studyInstanceUid);
+					callback.Invoke(seriesInfo);
+
 					DicomFile keyObjectDocument = new DicomFile();
 					keyObjectDocument.SourceApplicationEntityTitle = this.SourceAETitle;
 
@@ -244,11 +258,12 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 					iod.KeyObjectDocumentSeries.InitializeAttributes();
 					iod.KeyObjectDocumentSeries.Modality = Modality.KO;
-					iod.KeyObjectDocumentSeries.SeriesDateTime = _datetime;
+					iod.KeyObjectDocumentSeries.SeriesDateTime = seriesInfo.SeriesDateTime;
 					iod.KeyObjectDocumentSeries.SeriesDescription = seriesDescription;
-					iod.KeyObjectDocumentSeries.SeriesInstanceUid = DicomUid.GenerateUid().UID;
-					iod.KeyObjectDocumentSeries.SeriesNumber = CalculateSeriesNumber(frame);
+					iod.KeyObjectDocumentSeries.SeriesInstanceUid = CreateUid(seriesInfo.SeriesInstanceUid);
+					iod.KeyObjectDocumentSeries.SeriesNumber = seriesInfo.SeriesNumber ?? CalculateSeriesNumber(frame);
 					iod.KeyObjectDocumentSeries.ReferencedPerformedProcedureStepSequence = null;
+
 					iod.SopCommon.SopClass = SopClass.KeyObjectSelectionDocumentStorage;
 					iod.SopCommon.SopInstanceUid = DicomUid.GenerateUid().UID;
 
@@ -354,7 +369,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			return keyObjectDocuments;
 		}
 
-		private int CalculateSeriesNumber(Frame frame)
+		private static int CalculateSeriesNumber(Frame frame)
 		{
 			if (frame.ParentImageSop == null || frame.ParentImageSop.ParentSeries == null || frame.ParentImageSop.ParentSeries.ParentStudy == null)
 				return 1;
@@ -463,6 +478,13 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 
 			return iod;
+		}
+
+		private static string CreateUid(string uidHint)
+		{
+			if (string.IsNullOrEmpty(uidHint))
+				return DicomUid.GenerateUid().UID;
+			return uidHint;
 		}
 
 		private static string GetUserName()
@@ -620,6 +642,64 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				public string RetrieveAeTitle = "";
 				public string StorageMediaFileSetId = "";
 				public string StorageMediaFileSetUid = "";
+			}
+		}
+
+		#endregion
+
+		#region Series-Level Attribute Initializer
+
+		/// <summary>
+		/// Represents the callback method that initializes the <see cref="KeyObjectDocumentSeriesModuleIod">series-level attributes</see> of a key object selection document.
+		/// </summary>
+		/// <param name="keyObjectDocumentSeries">A key object document series module.</param>
+		public delegate void InitializeKeyObjectDocumentSeriesCallback(KeyObjectDocumentSeries keyObjectDocumentSeries);
+
+		private static void DefaultInitializeKeyObjectDocumentSeriesCallback(KeyObjectDocumentSeries keyObjectDocumentSeries) {}
+
+		/// <summary>
+		/// Supplies the series-level attribute values of a key object selection document.
+		/// </summary>
+		public class KeyObjectDocumentSeries
+		{
+			/// <summary>
+			/// Gets the patient ID of the study for which the key object selection document is being created.
+			/// </summary>
+			public readonly string PatientId;
+
+			/// <summary>
+			/// Gets the study instance UID of the study for which the key object selection document is being created.
+			/// </summary>
+			public readonly string StudyInstanceUid;
+
+			/// <summary>
+			/// Gets or sets the series instance UID for the key object selection document.
+			/// </summary>
+			/// <remarks>
+			/// If this property is set to empty or null, a new UID will be generated automatically.
+			/// </remarks>
+			public string SeriesInstanceUid = null;
+
+			/// <summary>
+			/// Gets or sets the series number for the key object selection document.
+			/// </summary>
+			/// <remarks>
+			/// If this property is set to null, a series number will be computed automatically.
+			/// </remarks>
+			public int? SeriesNumber = null;
+
+			/// <summary>
+			/// Gets or sets the series date/time for the key object selection document.
+			/// </summary>
+			/// <remarks>
+			/// If this property is set to null, the series date/time attributes will not be included.
+			/// </remarks>
+			public DateTime? SeriesDateTime = null;
+
+			internal KeyObjectDocumentSeries(string patientId, string studyInstanceUid)
+			{
+				this.PatientId = patientId;
+				this.StudyInstanceUid = studyInstanceUid;
 			}
 		}
 
