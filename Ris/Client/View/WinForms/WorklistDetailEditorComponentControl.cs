@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         	_ownerGroupBox.Visible = _component.IsOwnerPanelVisible;
 			_radioGroup.Enabled = _component.IsPersonalGroupSelectionEnabled;
-			_radioGroup.Checked = _component.IsGroup;
+			_radioGroup.DataBindings.Add("Checked", _component, "IsGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 			_radioPersonal.Enabled = _component.IsPersonalGroupSelectionEnabled;
 			_radioPersonal.DataBindings.Add("Checked", _component, "IsPersonal", true, DataSourceUpdateMode.OnPropertyChanged);
 

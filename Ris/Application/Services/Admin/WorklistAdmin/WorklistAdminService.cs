@@ -134,41 +134,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 		{
 			var response = new GetWorklistEditFormDataResponse();
 
-			var assembler = new WorklistAdminAssembler();
-			response.WorklistClasses = CollectionUtils.Map<Type, WorklistClassSummary>(
-				WorklistFactory.Instance.ListWorklistClasses(false),
-				assembler.CreateClassSummary);
+			if (request.GetWorklistEditFormChoicesRequest != null)
+				response.GetWorklistEditFormChoicesResponse = GetWorklistEditFormChoices(request.GetWorklistEditFormChoicesRequest);
 
-			var staffAssembler = new StaffAssembler();
-			response.StaffChoices = CollectionUtils.Map<Staff, StaffSummary>(
-				this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(false),
-				item => staffAssembler.CreateStaffSummary(item, PersistenceContext));
-
-			var staffGroupAssembler = new StaffGroupAssembler();
-			response.GroupSubscriberChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-				this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
-				staffGroupAssembler.CreateSummary);
-
-			var facilityAssembler = new FacilityAssembler();
-			response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
-				this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
-				facilityAssembler.CreateFacilitySummary);
-
-			var locationAssembler = new LocationAssembler();
-			response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
-				this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(false),
-				locationAssembler.CreateLocationSummary);
-
-			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
-			response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
-
-			// add extra data iff editing a user-defined worklist (bug #4871)
-			if (request.UserDefinedWorklist)
-			{
-				response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-					this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
-					staffGroupAssembler.CreateSummary);
-			}
+			if (request.GetWorklistEditValidationRequest != null)
+				response.GetWorklistEditValidationResponse = GetWorklistEditValidation(request.GetWorklistEditValidationRequest);
 
 			return response;
 		}
@@ -264,6 +234,82 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 		}
 
 		#endregion
+		
+		private GetWorklistEditFormChoicesResponse GetWorklistEditFormChoices(GetWorklistEditFormChoicesRequest request)
+		{
+			var response = new GetWorklistEditFormChoicesResponse();
+
+			var assembler = new WorklistAdminAssembler();
+			response.WorklistClasses = CollectionUtils.Map<Type, WorklistClassSummary>(
+				WorklistFactory.Instance.ListWorklistClasses(false),
+				assembler.CreateClassSummary);
+
+			var staffAssembler = new StaffAssembler();
+			response.StaffChoices = CollectionUtils.Map<Staff, StaffSummary>(
+				this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(false),
+				item => staffAssembler.CreateStaffSummary(item, PersistenceContext));
+
+			var staffGroupAssembler = new StaffGroupAssembler();
+			response.GroupSubscriberChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+				this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
+				staffGroupAssembler.CreateSummary);
+
+			var facilityAssembler = new FacilityAssembler();
+			response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
+				this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
+				facilityAssembler.CreateFacilitySummary);
+
+			var locationAssembler = new LocationAssembler();
+			response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
+				this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(false),
+				locationAssembler.CreateLocationSummary);
+
+			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
+			response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
+
+			// add extra data iff editing a user-defined worklist (bug #4871)
+			if (request.UserDefinedWorklist)
+			{
+				response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+					this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
+					staffGroupAssembler.CreateSummary);
+			}
+
+			return response;
+		}
+
+		private GetWorklistEditValidationResponse GetWorklistEditValidation(GetWorklistEditValidationRequest request)
+		{
+			WorklistOwner owner;
+
+			if (!request.IsUserWorklist)
+			{
+				// if not creating a user worklist, the owner is Admin
+				owner = WorklistOwner.Admin;
+			}
+			else if (request.OwnerGroup != null)
+			{
+				// if an owner group is specified, assign ownership to the group
+				var group = PersistenceContext.Load<StaffGroup>(request.OwnerGroup.StaffGroupRef, EntityLoadFlags.Proxy);
+				owner = new WorklistOwner(group);
+			}
+			else
+			{
+				// otherwise assign ownership to current user, regardless of whether a different owner staff specified
+				owner = new WorklistOwner(CurrentUserStaff);
+			}
+
+			try
+			{
+				CheckWorklistCountRestriction(owner);
+			}
+			catch (RequestValidationException e)
+			{
+				return new GetWorklistEditValidationResponse(e.Message);
+			}
+
+			return new GetWorklistEditValidationResponse();
+		}
 
 		private WorklistOwner CreateOwner(WorklistAdminDetail detail, bool userWorklist)
 		{
@@ -305,13 +351,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
 		}
 
+		/// <summary>
+		/// Checks whether the current user has access to worklists owned by the specified worklist owner.
+		/// </summary>
+		/// <param name="owner"></param>
+		/// <remarks>Throws a RequestValidationException if the worklist count exceed the configured maximum.</remarks>
 		private void CheckWorklistCountRestriction(WorklistOwner owner)
 		{
-			var worklistCount = PersistenceContext.GetBroker<IWorklistBroker>().Count(owner);
-
 			// admin can have unlimited worklists
 			if (owner.IsAdminOwner)
 				return;
+
+			var worklistCount = PersistenceContext.GetBroker<IWorklistBroker>().Count(owner);
 
 			var settings = new WorklistSettings();
 			if (owner.IsStaffOwner)
@@ -360,7 +411,5 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 			return worklistClasses;
 		}
-
-
 	}
 }

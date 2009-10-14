@@ -117,6 +117,10 @@
     <Compile Include="Admin\StaffGroupAdmin\StaffGroupTextQueryRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\DeleteWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\DeleteWorklistResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormChoicesRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormChoicesResponse.cs" />
+    <Compile Include="Admin\WorklistAdmin\GetWorklistEditValidationRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\GetWorklistEditValidationResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistCategoriesRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistCategoriesResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistClassesRequest.cs" />

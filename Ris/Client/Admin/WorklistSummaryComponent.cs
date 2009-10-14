@@ -70,9 +70,13 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<IWorklistAdminService>(
 					delegate(IWorklistAdminService service)
 					{
-						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest(false));
+						GetWorklistEditFormDataRequest request = new GetWorklistEditFormDataRequest
+								{
+									GetWorklistEditFormChoicesRequest = new GetWorklistEditFormChoicesRequest(false)
+								};
+						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(request);
 						_worklistClassChoices.Add(_filterNone);
-						response.WorklistClasses.Sort(
+						response.GetWorklistEditFormChoicesResponse.WorklistClasses.Sort(
 							delegate(WorklistClassSummary x, WorklistClassSummary y)
 							{
 								if (x.CategoryName.Equals(y.CategoryName))
@@ -80,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Admin
 								else
 									return x.CategoryName.CompareTo(y.CategoryName);
 							});
-						_worklistClassChoices.AddRange(response.WorklistClasses);
+						_worklistClassChoices.AddRange(response.GetWorklistEditFormChoicesResponse.WorklistClasses);
 					});
 			base.Start();
 			_worklistClass = _filterNone;

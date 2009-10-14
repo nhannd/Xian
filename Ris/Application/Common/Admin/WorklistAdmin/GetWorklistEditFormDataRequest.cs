@@ -31,22 +31,16 @@
 
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
-    [DataContract]
-    public class GetWorklistEditFormDataRequest : DataContractBase
-    {
-    	public GetWorklistEditFormDataRequest(bool userDefinedWorklist)
-    	{
-    		UserDefinedWorklist = userDefinedWorklist;
-    	}
-
-    	/// <summary>
-		/// Specifies whether to obtain form data specific to creating user-defined worklists.
-		/// </summary>
+	[DataContract]
+	public class GetWorklistEditFormDataRequest : DataContractBase
+	{
 		[DataMember]
-    	public bool UserDefinedWorklist;
-    }
+		public GetWorklistEditFormChoicesRequest GetWorklistEditFormChoicesRequest;
+
+		[DataMember]
+		public GetWorklistEditValidationRequest GetWorklistEditValidationRequest;
+	}
 }

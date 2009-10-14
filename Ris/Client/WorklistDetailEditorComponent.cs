@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -63,6 +64,10 @@ namespace ClearCanvas.Ris.Client
 
     	private bool _isPersonal;
 
+    	private bool _hasWorklistCountError;
+    	private string _worklistCountErrorMessage;
+		private AsyncLoader _asyncLoader;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -96,6 +101,34 @@ namespace ClearCanvas.Ris.Client
                         bool success = _adminMode || this.IsPersonal || (this.IsGroup && this.SelectedGroup != null);
                         return new ValidationResult(success, "Value Required");
                     }));
+
+			this.Validation.Add(new ValidationRule("IsPersonal",
+				delegate
+					{
+						var showValidation = this.IsPersonalGroupSelectionEnabled && this.IsPersonal && _hasWorklistCountError;
+						return new ValidationResult(!showValidation, _worklistCountErrorMessage);
+					}));
+
+			this.Validation.Add(new ValidationRule("SelectedGroup",
+				delegate
+					{
+						var showValidation = this.IsPersonalGroupSelectionEnabled && this.IsGroup && _worklistDetail.OwnerGroup != null && _hasWorklistCountError;
+						return new ValidationResult(!showValidation, _worklistCountErrorMessage);
+					}));
+		}
+
+		public override void Start()
+		{
+			_asyncLoader = new AsyncLoader();
+			ValidateWorklistCount();
+
+			base.Start();
+		}
+
+		public override void Stop()
+		{
+			_asyncLoader.Dispose();
+			base.Stop();
 		}
 
     	#region Presentation Model
@@ -122,6 +155,7 @@ namespace ClearCanvas.Ris.Client
 						this.SelectedGroup = null;
 
 					this.Modified = true;
+					ValidateWorklistCount();
 					NotifyPropertyChanged("IsPersonal");
 					NotifyPropertyChanged("IsGroup");
 				}
@@ -159,6 +193,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					_worklistDetail.OwnerGroup = value;
 					this.Modified = true;
+					ValidateWorklistCount();
 					NotifyPropertyChanged("SelectedGroup");
 				}
 			}
@@ -273,6 +308,42 @@ namespace ClearCanvas.Ris.Client
 					delegate(WorklistClassSummary w) { return w.ClassName == WorklistEditorComponentSettings.Default.DefaultWorklistClass; });
 		}
 
+
+		private void ValidateWorklistCount()
+		{
+			if (_editorMode == WorklistEditorMode.Edit && !this.IsPersonalGroupSelectionEnabled)
+				return;
+
+			_hasWorklistCountError = false;
+			_worklistCountErrorMessage = null;
+
+			_asyncLoader.Run(
+				delegate
+				{
+					Platform.GetService(
+						delegate(IWorklistAdminService service)
+						{
+							var request = new GetWorklistEditFormDataRequest
+							{
+								GetWorklistEditValidationRequest = new GetWorklistEditValidationRequest(!_adminMode, _worklistDetail.OwnerGroup)
+							};
+
+							var response = service.GetWorklistEditFormData(request);
+							_hasWorklistCountError = response.GetWorklistEditValidationResponse.HasError;
+							_worklistCountErrorMessage = response.GetWorklistEditValidationResponse.ErrorMessage;
+						});
+				},
+				delegate(Exception e)
+				{
+					if (e == null)
+					{
+						if (_hasWorklistCountError)
+							ShowValidation(true);
+					}
+					else
+						Platform.Log(LogLevel.Error, e);
+				});
+		}
 
 	}
 }
