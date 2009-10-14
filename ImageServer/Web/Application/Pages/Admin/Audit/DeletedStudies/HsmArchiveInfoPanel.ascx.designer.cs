@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
     
     
-    /// <summary>
-    /// HsmArchiveInfoPanel class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class HsmArchiveInfoPanel {
         
         /// <summary>

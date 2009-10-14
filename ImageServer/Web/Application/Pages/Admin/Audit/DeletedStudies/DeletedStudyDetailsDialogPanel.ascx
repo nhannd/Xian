@@ -11,7 +11,7 @@
             </ContentTemplate>
         </aspAjax:TabPanel>
         
-        <aspAjax:TabPanel ID="ArchiveInfoTabPanel" runat="server" HeaderText="Archive" CssClass="DialogTabControl">
+        <aspAjax:TabPanel ID="ArchiveInfoTabPanel" runat="server" HeaderText="Archive Information" CssClass="DialogTabControl">
             <ContentTemplate>
              <localAsp:ArchiveInfoPanel runat="server" ID="ArchiveInfoPanel" />
             </ContentTemplate>

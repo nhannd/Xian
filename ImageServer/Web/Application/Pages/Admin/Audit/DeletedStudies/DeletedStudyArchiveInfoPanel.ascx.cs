@@ -31,10 +31,14 @@
 
 using System;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using System.Xml;
+using AjaxControlToolkit;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
@@ -78,11 +82,48 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
         private void CreateArchivePanel()
         {
-            ArchiveTypeEnum archivetype = GetArchiveType(viewModel.DeletedStudyRecord.Archives[0]);
-            Control detailsPanel = LoadArchiveInformationPanel(archivetype, viewModel.DeletedStudyRecord.Archives[0]);
-            detailsPanel.DataBind();
-            ArchiveViewPlaceHolder.Controls.Add(detailsPanel); 
+            DeletedStudyArchiveInfoCollection archiveList = viewModel.DeletedStudyRecord.Archives;
+            Platform.CheckTrue(archiveList.Count > 0, "archiveList is empty");
+
+            // make sure the list is sorted by timestamp
+            archiveList.Sort(
+                delegate(DeletedStudyArchiveInfo archive1, DeletedStudyArchiveInfo archive2)
+                    {
+                        return archive2.ArchiveTime.CompareTo(archive1.ArchiveTime);
+                    });
+
+            Control panel = LoadArchiveInformationPanel(GetArchiveType(archiveList[0]), archiveList[0]);
+            ArchiveViewPlaceHolder.Controls.Add(panel);
+
+            if (archiveList.Count>1)
+            {
+                TabContainer container = new TabContainer();
+                container.CssClass = "DialogTabControl";
+
+                for (int i = 1; i < archiveList.Count; i++)
+                {
+                    DeletedStudyArchiveInfo theArchive = archiveList[i];
+                    Control detailPanel = LoadArchiveInformationPanel(GetArchiveType(theArchive), theArchive);
+
+                    TabPanel tabPanel = new TabPanel();
+                    tabPanel.HeaderText = String.Format("{0} {1}", DateTimeFormatter.Format(theArchive.ArchiveTime, DateTimeFormatter.Style.Date),
+                                                            TransferSyntax.GetTransferSyntax(theArchive.TransferSyntaxUid). LossyCompressed
+                                                            ? "(Lossy)":String.Empty);
+
+                    tabPanel.Controls.Add(detailPanel);
+
+                    container.Tabs.Add(tabPanel);
+
+                }
+
+                AdditionalArchivePlaceHolder.Controls.Add(container);
+
+            }
+
+            AdditionalArchivePlaceHolder.Visible = archiveList.Count > 1;
             
+            ArchiveViewPlaceHolder.DataBind();
+            AdditionalArchivePlaceHolder.DataBind();
         }
 
         private Control LoadArchiveInformationPanel(ArchiveTypeEnum type, DeletedStudyArchiveInfo info)
@@ -99,6 +140,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
                 panel = LoadControl("HsmArchiveInfoPanel.ascx") as BaseDeletedStudyArchiveUIPanel;
                 panel.ArchiveInfo = info;
             }
+
+            panel.DataBind();
             return panel;
         }
 
@@ -124,13 +167,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
             if (viewModel != null && viewModel.DeletedStudyRecord.Archives != null && viewModel.DeletedStudyRecord.Archives.Count>0)
             {
-                NoArchiveMessagePanel.Visible = false;
-
+                NoArchiveMessagePanel.Visible = false; 
+                ArchiveViewPlaceHolder.Visible = true;
                 CreateArchivePanel();
             }
             else
             {
                 NoArchiveMessagePanel.Visible = true;
+                ArchiveViewPlaceHolder.Visible = false;
+                AdditionalArchivePlaceHolder.Visible = false;
             }
 
             base.DataBind();

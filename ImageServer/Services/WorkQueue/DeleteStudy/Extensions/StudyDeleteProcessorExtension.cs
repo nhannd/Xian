@@ -349,7 +349,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
     /// Collection of archive entry information for a deleted study
     /// </summary>
     [Serializable]
-    public class DeletedStudyArchiveInfoCollection : Collection<DeletedStudyArchiveInfo>
+    public class DeletedStudyArchiveInfoCollection : List<DeletedStudyArchiveInfo>
     {
     }
 }

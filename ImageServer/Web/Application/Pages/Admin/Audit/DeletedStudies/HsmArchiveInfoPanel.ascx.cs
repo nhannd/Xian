@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         {
             get
             {
-                if (String.IsNullOrEmpty(_archivePath))
+                if (String.IsNullOrEmpty(_archivePath) && _archive!=null)
                 {
 
                     HsmArchiveConfigXml config = XmlUtils.Deserialize<HsmArchiveConfigXml>(_archive.ConfigurationXml);

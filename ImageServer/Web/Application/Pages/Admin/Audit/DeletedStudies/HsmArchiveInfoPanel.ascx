@@ -26,7 +26,7 @@
                                 <asp:Label ID="TransferSyntaxUid" runat="server" Text='<%# String.Format("{1} ({0})", Eval("TransferSyntaxUid"), TransferSyntax.GetTransferSyntax( (string) Eval("TransferSyntaxUid") ).Name) %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Archive File:">
+                        <asp:TemplateField HeaderText="Archive Location:">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
                                 <asp:Label ID="TransferSyntaxUid" runat="server" Text='<%# Eval("ArchiveFolderPath" ) %>'></asp:Label>

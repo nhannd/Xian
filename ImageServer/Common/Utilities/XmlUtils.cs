@@ -80,7 +80,14 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         {
             if (node == null)
                 return null;
-            return Deserialize<T>(new XmlNodeReader(node));
+
+            MemoryStream stream = new MemoryStream();
+            XmlWriter sw = new XmlTextWriter(stream, Encoding.Unicode);
+            node.WriteTo(sw);
+            sw.Flush();
+            stream.Position = 0;
+            
+            return Deserialize<T>(new XmlTextReader(stream));
         }
 
 

@@ -8,14 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
-{
-    /// <summary>
-    /// DeletedStudyArchiveInfoPanel class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
+    
+    
     public partial class DeletedStudyArchiveInfoPanel {
         
         /// <summary>
@@ -53,5 +48,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.PlaceHolder ArchiveViewPlaceHolder;
+        
+        /// <summary>
+        /// AdditionalArchivePlaceHolder control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder AdditionalArchivePlaceHolder;
     }
 }

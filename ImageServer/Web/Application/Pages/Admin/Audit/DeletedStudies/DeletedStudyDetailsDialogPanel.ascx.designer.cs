@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
     
     
-    /// <summary>
-    /// DeletedStudyDetailsDialogPanel class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class DeletedStudyDetailsDialogPanel {
         
         /// <summary>
