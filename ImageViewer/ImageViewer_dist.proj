@@ -351,6 +351,7 @@
 
   <Target Name="Copy Service Tools">
     <Copy SourceFiles="@(ServiceToolsFiles)" DestinationFolder="$(PluginsDirectory)" />
+    <CombineAppConfigs SourceFiles="$(TrunkDirectory)\ImageViewer\ImageViewer.Services.Tools_dist.config;$(DistributionDesktopConfig)" OutputFile="$(DistributionDesktopConfig)" />
   </Target>
   
   <Target Name="Copy Desktop Services">

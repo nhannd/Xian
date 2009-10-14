@@ -34,7 +34,7 @@ namespace ClearCanvas.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Mi4wLjAuMA==")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Version {
             get {
                 return ((string)(this["Version"]));
@@ -43,7 +43,7 @@ namespace ClearCanvas.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("VHJpYWw=")]
+        [global::System.Configuration.DefaultSettingValueAttribute("RGV2ZWxvcG1lbnQ=")]
         public string VersionSuffix {
             get {
                 return ((string)(this["VersionSuffix"]));

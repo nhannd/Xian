@@ -6,10 +6,10 @@
       <Value Profile="(Default)">Q2xlYXJDYW52YXMgV29ya3N0YXRpb24=</Value>
     </Setting>
     <Setting Name="Version" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Mi4wLjAuMA==</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="VersionSuffix" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">VHJpYWw=</Value>
+      <Value Profile="(Default)">RGV2ZWxvcG1lbnQ=</Value>
     </Setting>
     <Setting Name="Copyright" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Q29weXJpZ2h0IDIwMDkgQ2xlYXJDYW52YXMgSW5jLiBBbGwgcmlnaHRzIHJlc2VydmVkLg==</Value>
