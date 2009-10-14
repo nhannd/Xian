@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
@@ -301,7 +302,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
 
             int reprocessedCounter = 0;
-            
+            List<FileInfo> removedFiles = new List<FileInfo>();
             try
             {
                 // Traverse the directories, process 500 files at a time
@@ -370,17 +371,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                   }
                                                   catch (DicomException ex)
                                                   {
+                                                      removedFiles.Add(file);
                                                       Platform.Log(LogLevel.Warn, "Skip reprocessing and delete {0}: Not readable.", path);
                                                       FileUtils.Delete(path);
                                                       failureDescription = ex.Message;
-
-                                                      RaiseAlert(item, AlertLevel.Critical,
-                                                                 String.Format("File {0} is not readable and has been removed from study.", path));
                                                   }
                                               }
                                               else if (!file.Extension.Equals(".xml") && !file.Extension.Equals(".gz"))
                                               {
                                                   // not a ".dcm" or header file, delete it
+                                                  removedFiles.Add(file); 
                                                   FileUtils.Delete(path);
                                               }
 
@@ -409,6 +409,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
             finally
             {
+                LogRemovedFiles(removedFiles);
+
                 // Update the state
                 _queueData.State.ExecuteAtLeastOnce = true;
                 _queueData.State.Completed = _completed;
@@ -442,6 +444,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                         Platform.Log(LogLevel.Info, "Completed reprocessing of study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Description);
                     }                
                 }
+            }
+        }
+
+        private void LogRemovedFiles(List<FileInfo> removedFiles)
+        {
+            if (removedFiles.Count>0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("The following files have been deleted because they are not readable or have bad extensions:");
+                for(int i=0; i< removedFiles.Count; i++)
+                {
+                    if (i == 0)
+                        sb.AppendFormat("{0}", removedFiles[i].Name);
+                    else
+                        sb.AppendFormat(", {0}", removedFiles[i].Name);
+                }
+                Platform.Log(LogLevel.Warn, sb.ToString());
+                RaiseAlert(WorkQueueItem, AlertLevel.Warning, sb.ToString());
             }
         }
 
