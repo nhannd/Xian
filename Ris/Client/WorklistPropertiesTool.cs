@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("launch", "Folder Properties")]
 	[IconSet("launch", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png")]
 	[EnabledStateObserver("launch", "Enabled", "EnabledChanged")]
-	//[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
+	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
 	public class WorklistPropertiesTool : Tool<IFolderExplorerGroupToolContext>
 	{
 		private bool _enabled;
