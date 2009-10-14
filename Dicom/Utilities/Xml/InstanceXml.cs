@@ -39,8 +39,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using System.Diagnostics;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
@@ -59,19 +57,19 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	{
 		#region Private members
 
-		private readonly String _sopInstanceUid = null;
-		private readonly SopClass _sopClass = null;
-		private readonly TransferSyntax _transferSyntax = null;
-		private string _sourceFileName = null;
+		private readonly String _sopInstanceUid;
+		private readonly SopClass _sopClass;
+		private readonly TransferSyntax _transferSyntax;
+		private string _sourceFileName;
 		private long _fileSize = 0;
 
-		private BaseInstanceXml _baseInstance = null;
-		private XmlElement _cachedElement = null;
+		private BaseInstanceXml _baseInstance;
+		private XmlElement _cachedElement;
 
-		private DicomAttributeCollection _collection = null;
+		private DicomAttributeCollection _collection;
 
-		private IEnumerator<DicomAttribute> _baseCollectionEnumerator = null;
-		private IEnumerator _instanceXmlEnumerator = null;
+		private IEnumerator<DicomAttribute> _baseCollectionEnumerator;
+		private IEnumerator _instanceXmlEnumerator;
 
 	    private IList<SourceImageInfo> _sourceImageInfoList;
 	    private bool _sourceImageInfoListLoaded;
@@ -174,10 +172,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				ParseTo(tag);
 				return ((IInstanceXmlDicomAttributeCollection) _collection).IsTagExcluded(tag);
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
 		#endregion
@@ -191,9 +186,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			_collection = collection;
 			_sopClass = sopClass;
 			_transferSyntax = syntax;
+
+			_collection.ValidateVrValues = false;
+			_collection.ValidateVrLengths = false;
 		}
 
-        private IList<SourceImageInfo> LoadSourceImageInfo(DicomAttributeCollection collection)
+        private static IList<SourceImageInfo> LoadSourceImageInfo(DicomAttributeCollection collection)
 	    {
 	        if (collection.Contains(DicomTags.SourceImageSequence))
 	        {
@@ -215,6 +213,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			InstanceXmlDicomAttributeCollection thisCollection = new InstanceXmlDicomAttributeCollection();
 			_collection = thisCollection;
+			_collection.ValidateVrValues = false;
+			_collection.ValidateVrLengths = false;
 
 			if (baseCollection != null)
 			{
@@ -242,14 +242,9 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				_sopClass = SopClass.GetSopClass(instanceNode.Attributes["SopClassUID"].Value);
 			}
 
-			if (instanceNode.Attributes["TransferSyntaxUID"] != null)
-			{
-				_transferSyntax = TransferSyntax.GetTransferSyntax(instanceNode.Attributes["TransferSyntaxUID"].Value);
-			}
-			else
-			{
-				_transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-			}
+			_transferSyntax = instanceNode.Attributes["TransferSyntaxUID"] != null 
+				? TransferSyntax.GetTransferSyntax(instanceNode.Attributes["TransferSyntaxUID"].Value) 
+				: TransferSyntax.ExplicitVrLittleEndian;
 
 			if (instanceNode.Attributes["SourceFileName"] != null)
 			{
@@ -331,8 +326,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			{
 				if (attribute.Tag.IsPrivate)
 					return settings.IncludePrivateValues;
-				else
-					return StudyXmlTagInclusion.IncludeTagValue;
+				return StudyXmlTagInclusion.IncludeTagValue;
 			}
 
 
@@ -492,6 +486,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			// Give to the garbage collector the memory associated with the collection
 			_collection = new InstanceXmlDicomAttributeCollection();
+			_collection.ValidateVrValues = false;
+			_collection.ValidateVrLengths = false;
 
 			if (_baseInstance != null)
 			{
@@ -684,7 +680,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					}
 					continue;
 				}
-				else if (inclusion == StudyXmlTagInclusion.IgnoreTag)
+				if (inclusion == StudyXmlTagInclusion.IgnoreTag)
 				{
 					continue;
 				}
@@ -769,18 +765,16 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			String tag = attributeNode.Attributes["Tag"].Value;
 
-			uint tagValue;
 			DicomTag theTag;
-			DicomVr xmlVr;
 			if (tag.StartsWith("$"))
 			{
 				theTag = DicomTagDictionary.GetDicomTag(tag.Substring(1));
 			}
 			else
 			{
-				tagValue = uint.Parse(tag, NumberStyles.HexNumber);
+				uint tagValue = uint.Parse(tag, NumberStyles.HexNumber);
 				theTag = DicomTagDictionary.GetDicomTag(tagValue);
-				xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
+				DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
 				if (theTag == null)
 					theTag = new DicomTag(tagValue, "Unknown tag", "UnknownTag", xmlVr, false, 1, uint.MaxValue, false);
 
