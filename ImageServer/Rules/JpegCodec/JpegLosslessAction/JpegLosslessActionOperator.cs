@@ -36,7 +36,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 {
@@ -66,6 +65,13 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 			// this will throw exception if the unit is not defined
 			TimeUnit unit = (TimeUnit) Enum.Parse(typeof (TimeUnit), xmlUnit, true);
 
+			bool convertFromPalette = false;
+			if (xmlNode.Attributes["convertFromPalette"] != null)
+			{
+				if (false == bool.TryParse(xmlNode.Attributes["convertFromPalette"].Value, out convertFromPalette))
+					throw new XmlActionCompilerException("Unable to parse convertFromPalette value for jpeg-lossless scheduling rule");
+			}
+
 			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
 
@@ -75,18 +81,16 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 				{
 					string language = xmlNode["expressionLanguage"].Value;
 					Expression scheduledTime = CreateExpression(refValue, language);
-					return new JpegLosslessActionItem(time, unit, scheduledTime);
+					return new JpegLosslessActionItem(time, unit, scheduledTime, convertFromPalette);
 				}
 				else
 				{
 					Expression scheduledTime = CreateExpression(refValue);
-					return new JpegLosslessActionItem(time, unit, scheduledTime);
+					return new JpegLosslessActionItem(time, unit, scheduledTime, convertFromPalette);
 				}
 			}
-			else
-			{
-				return new JpegLosslessActionItem(time, unit);
-			}
+
+			return new JpegLosslessActionItem(time, unit, convertFromPalette);
 		}
 
 		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
@@ -95,6 +99,14 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 				return null;
 
 			XmlSchemaElement element = GetTimeSchema(OperatorTag);
+
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute
+			                            	{
+			                            		Name = "convertFromPalette",
+			                            		Use = XmlSchemaUse.Optional,
+			                            		SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema")
+			                            	};
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;
 		}

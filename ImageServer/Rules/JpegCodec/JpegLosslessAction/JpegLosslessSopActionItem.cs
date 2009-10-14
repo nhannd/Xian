@@ -40,9 +40,12 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 	/// </summary>
 	public class JpegLosslessSopActionItem : ServerActionItemBase
 	{
-		public JpegLosslessSopActionItem()
+		private readonly bool _convertFromPalette;
+
+		public JpegLosslessSopActionItem(bool convertFromPalette)
 			: base("JPEG Lossless SOP compression action")
 		{
+			_convertFromPalette = convertFromPalette;
 		}
 
 		protected override bool OnExecute(ServerActionContext context)
@@ -53,6 +56,10 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 			doc.AppendChild(element);
 			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
 			syntaxAttribute.Value = TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(new DicomCompressCommand(context.Message, doc));

@@ -41,11 +41,13 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 	public class JpegExtendedSopActionItem : ServerActionItemBase
 	{
 		private readonly int _quality;
+		private readonly bool _convertFromPalette;
 
-		public JpegExtendedSopActionItem(int quality)
+		public JpegExtendedSopActionItem(int quality, bool convertFromPalette)
 			: base("JPEG Extended SOP compression action")
 		{
 			_quality = quality;
+			_convertFromPalette = convertFromPalette;
 		}
 
 		protected override bool OnExecute(ServerActionContext context)
@@ -60,6 +62,10 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 
 			syntaxAttribute = doc.CreateAttribute("quality");
 			syntaxAttribute.Value = _quality.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(new DicomCompressCommand(context.Message, doc));

@@ -50,7 +50,14 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 
 		public IActionItem<ServerActionContext> Compile(XmlElement xmlNode)
 		{
-			return new JpegLosslessSopActionItem();
+			bool convertFromPalette = false;
+			if (xmlNode.Attributes["convertFromPalette"] != null)
+			{
+				if (false == bool.TryParse(xmlNode.Attributes["convertFromPalette"].Value, out convertFromPalette))
+					throw new XmlActionCompilerException("Unable to parse convertFromPalette value for jpeg-lossless-sop scheduling rule");
+			}
+
+			return new JpegLosslessSopActionItem(convertFromPalette);
 		}
 
 		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
@@ -59,6 +66,14 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 				return null;
 
 			XmlSchemaElement element = GetBaseSchema(OperatorTag);
+
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute
+			{
+				Name = "convertFromPalette",
+				Use = XmlSchemaUse.Optional,
+				SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema")
+			};
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;
 		}

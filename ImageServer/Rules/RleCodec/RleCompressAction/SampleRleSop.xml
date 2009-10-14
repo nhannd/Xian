@@ -28,6 +28,6 @@ already.
 	</and>
   </condition>
   <action>
-	<rle-sop/>
+	<rle-sop convertFromPalette="false"/>
   </action>
 </rule>

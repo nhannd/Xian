@@ -40,9 +40,12 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 	/// </summary>
 	public class RleSopActionItem : ServerActionItemBase
 	{
-		public RleSopActionItem()
+		private readonly bool _convertFromPalette;
+
+		public RleSopActionItem(bool convertFromPalette)
 			: base("RLE SOP compression action")
 		{
+			_convertFromPalette = convertFromPalette;
 		}
 
 		protected override bool OnExecute(ServerActionContext context)
@@ -53,6 +56,10 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 			doc.AppendChild(element);
 			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
 			syntaxAttribute.Value = TransferSyntax.RleLosslessUid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(new DicomCompressCommand(context.Message, doc));

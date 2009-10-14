@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
                 _lastServiceAvailableTime = Platform.Time;
                 return 100.0f - ((float)fsInfo.FreeSizeInKB) / fsInfo.SizeInKB * 100.0F;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 _serviceIsOffline = true;
                 _lastServiceAvailableTime = Platform.Time;

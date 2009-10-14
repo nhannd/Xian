@@ -132,6 +132,16 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 			jparams->Irreversible = true;
 	}
 
+	// Convert to RGB
+	if (oldPixelData->HasPaletteColorLut && jparams->ConvertPaletteToRGB)
+	{
+		oldPixelData->ConvertPaletteColorToRgb();
+		newPixelData->HasPaletteColorLut = false;
+		newPixelData->SamplesPerPixel = oldPixelData->SamplesPerPixel;
+		newPixelData->PlanarConfiguration = oldPixelData->PlanarConfiguration;
+		newPixelData->PhotometricInterpretation = oldPixelData->PhotometricInterpretation;
+	}
+
 	int pixelCount = oldPixelData->ImageHeight * oldPixelData->ImageWidth;
 
 	for (int frame = 0; frame < oldPixelData->NumberOfFrames; frame++) {

@@ -48,18 +48,20 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 		private readonly Expression _exprScheduledTime;
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;
+		private readonly bool _convertFromPalette;
 
-		public JpegLosslessActionItem(int time, TimeUnit unit)
-			: this(time, unit, null)
+		public JpegLosslessActionItem(int time, TimeUnit unit, bool convertFromPalette)
+			: this(time, unit, null, convertFromPalette)
 		{
 		}
 
-		public JpegLosslessActionItem(int time, TimeUnit unit, Expression exprScheduledTime)
+		public JpegLosslessActionItem(int time, TimeUnit unit, Expression exprScheduledTime, bool convertFromPalette)
 			: base("JPEG Lossless compression action")
 		{
 			_offsetTime = time;
 			_units = unit;
 			_exprScheduledTime = exprScheduledTime;
+			_convertFromPalette = convertFromPalette;
 		}
  
 
@@ -79,6 +81,10 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegLosslessAction
 			doc.AppendChild(element);
 			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
 			syntaxAttribute.Value = TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(

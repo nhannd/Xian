@@ -49,19 +49,21 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;
 		private readonly int _quality;
+		private readonly bool _convertFromPalette;
 
-		public JpegBaselineActionItem(int time, TimeUnit unit, int quality)
-			: this(time, unit, null, quality)
+		public JpegBaselineActionItem(int time, TimeUnit unit, int quality, bool convertFromPalette)
+			: this(time, unit, null, quality, convertFromPalette)
 		{
 		}
 
-		public JpegBaselineActionItem(int time, TimeUnit unit, Expression exprScheduledTime, int quality)
+		public JpegBaselineActionItem(int time, TimeUnit unit, Expression exprScheduledTime, int quality, bool convertFromPalette)
 			: base("JPEG Baseline compression action")
 		{
 			_offsetTime = time;
 			_units = unit;
 			_exprScheduledTime = exprScheduledTime;
 			_quality = quality;
+			_convertFromPalette = convertFromPalette;
 		}
 
 		protected override bool OnExecute(ServerActionContext context)
@@ -84,6 +86,10 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 
 			syntaxAttribute = doc.CreateAttribute("quality");
 			syntaxAttribute.Value = _quality.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(

@@ -62,6 +62,9 @@ public:
 		_pointTransform = 0;
 	}
 
+	///<summary>
+	///The quality factor (0-100) for compression.  Default is 90.
+	///</summary>
 	property int Quality {
 		int get() { return _quality; }
 		void set(int value) { _quality = value; }
@@ -72,11 +75,17 @@ public:
 		void set(int value) { _smoothing = value; }
 	}
 
-	property bool ConvertColorspaceToRGB {
+	///<summary>
+	///Convert YBR encoded compressed pixel to RGB on decompress
+	///</summary>
+	property bool ConvertYBRtoRGB {
 		bool get() { return _convertColorspace; }
 		void set(bool value) { _convertColorspace = value; }
 	}
 
+	///<summary>
+	/// The YBR Sampling factor for compression of color images.
+	///</summary>
 	property JpegSampleFactor SampleFactor {
 		JpegSampleFactor get() { return _sample; }
 		void set(JpegSampleFactor value) { _sample = value; }

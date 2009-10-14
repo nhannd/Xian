@@ -10,6 +10,6 @@ on CT and MR studies.
 		</or>
 	</condition>
 	<action>
-		<jpeg-lossless time="10" unit="weeks"/>
+		<jpeg-lossless time="10" unit="weeks" convertFromPalette="true"/>
 	</action>
 </rule>

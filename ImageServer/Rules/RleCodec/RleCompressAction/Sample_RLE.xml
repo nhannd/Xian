@@ -10,6 +10,6 @@ on US and CR studies.
 		</or>
 	</condition>
 	<action>
-	  <rle time="10" unit="weeks"/>
+	  <rle time="10" unit="weeks" convertFromPalette="true"/>
 	</action>
 </rule>

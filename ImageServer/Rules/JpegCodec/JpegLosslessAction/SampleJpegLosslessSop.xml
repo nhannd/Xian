@@ -25,6 +25,6 @@ CR and DX studies that have not been compressed already.
 	</and>
   </condition>
   <action>
-	<jpeg-lossless-sop/>
+	<jpeg-lossless-sop convertFromPalette="true"/>
   </action>
 </rule>

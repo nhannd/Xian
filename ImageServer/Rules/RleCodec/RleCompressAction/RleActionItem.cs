@@ -48,18 +48,20 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 		private readonly Expression _exprScheduledTime;
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;
+		private readonly bool _convertFromPalette;
 
-		public RleActionItem(int time, TimeUnit unit)
-			: this(time, unit, null)
+		public RleActionItem(int time, TimeUnit unit, bool convertFromPalette)
+			: this(time, unit, null, convertFromPalette)
 		{
 		}
 
-		public RleActionItem(int time, TimeUnit unit, Expression exprScheduledTime)
+		public RleActionItem(int time, TimeUnit unit, Expression exprScheduledTime, bool convertFromPalette)
 			: base("RLE compression action")
 		{
 			_offsetTime = time;
 			_units = unit;
 			_exprScheduledTime = exprScheduledTime;
+			_convertFromPalette = convertFromPalette;
 		}
 
 		protected override bool OnExecute(ServerActionContext context)
@@ -79,6 +81,10 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 			doc.AppendChild(element);
 			XmlAttribute syntaxAttribute = doc.CreateAttribute("syntax");
 			syntaxAttribute.Value = TransferSyntax.RleLosslessUid;
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(

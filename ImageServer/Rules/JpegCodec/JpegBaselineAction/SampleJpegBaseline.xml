@@ -14,6 +14,6 @@ on 8-bit US and RF studies.
 		</and>
 	</condition>
 	<action>
-		<jpeg-baseline quality="80" time="10" unit="weeks"/>
+		<jpeg-baseline quality="80" time="10" unit="weeks" convertFromPalette="true"/>
 	</action>
 </rule>

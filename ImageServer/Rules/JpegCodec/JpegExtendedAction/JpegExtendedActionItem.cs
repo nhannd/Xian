@@ -35,7 +35,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 {
@@ -44,24 +43,26 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 	/// </summary>
 	public class JpegExtendedActionItem : ServerActionItemBase
 	{
-		private static readonly FilesystemQueueTypeEnum _queueType = FilesystemQueueTypeEnum.LossyCompress;
+		private static readonly FilesystemQueueTypeEnum QueueType = FilesystemQueueTypeEnum.LossyCompress;
 		private readonly Expression _exprScheduledTime;
 		private readonly int _offsetTime;
 		private readonly TimeUnit _units;
 		private readonly int _quality;
+		private readonly bool _convertFromPalette;
 
-		public JpegExtendedActionItem(int time, TimeUnit unit, int quality)
-			: this(time, unit, null, quality)
+		public JpegExtendedActionItem(int time, TimeUnit unit, int quality, bool convertFromPalette)
+			: this(time, unit, null, quality, convertFromPalette)
 		{
 		}
 
-		public JpegExtendedActionItem(int time, TimeUnit unit, Expression exprScheduledTime, int quality)
+		public JpegExtendedActionItem(int time, TimeUnit unit, Expression exprScheduledTime, int quality, bool convertFromPalette)
 			: base("JPEG Extended compression action")
 		{
 			_offsetTime = time;
 			_units = unit;
 			_exprScheduledTime = exprScheduledTime;
 			_quality = quality;
+			_convertFromPalette = convertFromPalette;
 		}
   
 		protected override bool OnExecute(ServerActionContext context)
@@ -86,8 +87,12 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 			syntaxAttribute.Value = _quality.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
 			context.CommandProcessor.AddCommand(
-				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
+				new InsertFilesystemQueueCommand(QueueType, context.FilesystemKey, context.StudyLocationKey,
 				                                 scheduledTime, doc));
 
 			return true;

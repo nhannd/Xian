@@ -36,7 +36,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 {
@@ -66,27 +65,29 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 			// this will throw exception if the unit is not defined
 			TimeUnit unit = (TimeUnit)Enum.Parse(typeof(TimeUnit), xmlUnit, true);
 
+			bool convertFromPalette = false;
+			if (xmlNode.Attributes["convertFromPalette"] != null)
+			{
+				if (false == bool.TryParse(xmlNode.Attributes["convertFromPalette"].Value, out convertFromPalette))
+					throw new XmlActionCompilerException("Unable to parse convertFromPalette value for rle scheduling rule");
+			}
+
 			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
-
-
 			if (!String.IsNullOrEmpty(refValue))
 			{
 				if (xmlNode["expressionLanguage"] != null)
 				{
 					string language = xmlNode["expressionLanguage"].Value;
 					Expression scheduledTime = CreateExpression(refValue, language);
-					return new RleActionItem(time, unit, scheduledTime);
+					return new RleActionItem(time, unit, scheduledTime, convertFromPalette);
 				}
 				else
 				{
 					Expression scheduledTime = CreateExpression(refValue);
-					return new RleActionItem(time, unit, scheduledTime);
+					return new RleActionItem(time, unit, scheduledTime, convertFromPalette);
 				}
 			}
-			else
-			{
-				return new RleActionItem(time, unit);
-			}	
+			return new RleActionItem(time, unit, convertFromPalette);
 		}
 
 		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
@@ -95,6 +96,12 @@ namespace ClearCanvas.ImageServer.Rules.RleCodec.RleCompressAction
 				return null;
 
 			XmlSchemaElement element = GetTimeSchema(OperatorTag);
+
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "convertFromPalette";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema");
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;
 		}

@@ -28,6 +28,19 @@ namespace Jpeg2000 {
 		codecParms->Irreversible = false;
 		codecParms->UpdatePhotometricInterpretation = true;
 		codecParms->Rate = 1; //1 == Lossless
+
+		XmlElement^ element = parms->DocumentElement;
+		if (element->Attributes["convertFromPalette"])
+		{
+			String^ boolString = element->Attributes["convertFromPalette"]->Value;
+			bool convert;
+			if (false == bool::TryParse(boolString, convert))
+				throw gcnew ApplicationException("Invalid convertFromPalette specified for JPEG 2000 Lossless: " + boolString);
+			codecParms->ConvertPaletteToRGB = convert;
+		}
+		else
+			codecParms->ConvertPaletteToRGB = true;
+
 		return codecParms;
 	}
 	IDicomCodec^ DicomJpeg2000LosslessCodecFactory::GetDicomCodec() {
@@ -67,6 +80,17 @@ namespace Jpeg2000 {
 			throw gcnew ApplicationException("Invalid compression ratio specified for JPEG 2000 Lossy: " + ratioString);
 
 		codecParms->Rate = ratio;
+
+		if (element->Attributes["convertFromPalette"])
+		{
+			String^ boolString = element->Attributes["convertFromPalette"]->Value;
+			bool convert;
+			if (false == bool::TryParse(boolString, convert))
+				throw gcnew ApplicationException("Invalid convertFromPalette specified for JPEG 2000 Lossy: " + boolString);
+			codecParms->ConvertPaletteToRGB = convert;
+		}
+		else
+			codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
 	}

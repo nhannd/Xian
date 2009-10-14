@@ -34,7 +34,6 @@ using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 {
@@ -55,7 +54,14 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 			if (false == int.TryParse(xmlNode.Attributes["quality"].Value, out quality))
 				throw new XmlActionCompilerException("Unable to parse quality value for jpeg-baseline-sop quality factor");
 
-			return new JpegBaselineSopActionItem(quality);
+			bool convertFromPalette = false;
+			if (xmlNode.Attributes["convertFromPalette"] != null)
+			{
+				if (false == bool.TryParse(xmlNode.Attributes["convertFromPalette"].Value, out convertFromPalette))
+					throw new XmlActionCompilerException("Unable to parse convertFromPalette value for jpeg-baseline-sop scheduling rule");
+			}
+
+			return new JpegBaselineSopActionItem(quality, convertFromPalette);
 		}
 
 		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
@@ -69,6 +75,14 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 			attrib.Name = "quality";
 			attrib.Use = XmlSchemaUse.Required;
 			attrib.SchemaTypeName = new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema");
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute
+			{
+				Name = "convertFromPalette",
+				Use = XmlSchemaUse.Optional,
+				SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema")
+			};
 			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;

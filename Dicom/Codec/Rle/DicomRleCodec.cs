@@ -146,7 +146,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
                 get { return _count; }
             }
 
-            public long Length
+        	private long Length
             {
                 get { return _stream.Length; }
             }
@@ -305,7 +305,17 @@ namespace ClearCanvas.Dicom.Codec.Rle
             if (rleParams == null)
                 throw new DicomCodecException("Unexpected RLE Codec parameters");
 
-            int pixelCount = oldPixelData.ImageWidth * oldPixelData.ImageHeight;
+			// Convert to RGB
+			if (oldPixelData.HasPaletteColorLut && parameters.ConvertPaletteToRGB)
+			{
+				oldPixelData.ConvertPaletteColorToRgb();
+				newPixelData.HasPaletteColorLut = false;
+				newPixelData.SamplesPerPixel = oldPixelData.SamplesPerPixel;
+				newPixelData.PlanarConfiguration = oldPixelData.PlanarConfiguration;
+				newPixelData.PhotometricInterpretation = oldPixelData.PhotometricInterpretation;
+			}
+
+        	int pixelCount = oldPixelData.ImageWidth * oldPixelData.ImageHeight;
             int numberOfSegments = oldPixelData.BytesAllocated * oldPixelData.SamplesPerPixel;
 
             for (int i = 0; i < oldPixelData.NumberOfFrames; i++)
@@ -360,16 +370,16 @@ namespace ClearCanvas.Dicom.Codec.Rle
         private class RLEDecoder
         {
             #region Private Members
-            private int _count;
-            private int[] _offsets;
-            private byte[] _data;
+            private readonly int _count;
+            private readonly int[] _offsets;
+            private readonly byte[] _data;
             #endregion
 
             #region Public Constructors
             public RLEDecoder(IList<DicomFragment> data)
             {
-                uint size = 0;
-                foreach (DicomFragment frag in data)
+            	uint size = 0;
+            	foreach (DicomFragment frag in data)
                     size += frag.Length;
                 MemoryStream stream = new MemoryStream(data[0].GetByteArray());
                 for (int i = 1; i < data.Count; i++)
@@ -513,10 +523,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
                     int next = GetSegmentOffset(segment + 1);
                     return next - offset;
                 }
-                else
-                {
-                    return _data.Length - offset;
-                }
+            	return _data.Length - offset;
             }
             #endregion
         }

@@ -41,11 +41,13 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 	public class JpegBaselineSopActionItem : ServerActionItemBase
 	{
 		private readonly int _quality;
+		private readonly bool _convertFromPalette;
 
-		public JpegBaselineSopActionItem(int quality)
+		public JpegBaselineSopActionItem(int quality, bool convertFromPalette)
 			: base("JPEG Baseline SOP compression action")
 		{
 			_quality = quality;
+			_convertFromPalette = convertFromPalette;
 		}
 
 		protected override bool OnExecute(ServerActionContext context)
@@ -60,6 +62,10 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegBaselineAction
 
 			syntaxAttribute = doc.CreateAttribute("quality");
 			syntaxAttribute.Value = _quality.ToString();
+			element.Attributes.Append(syntaxAttribute);
+
+			syntaxAttribute = doc.CreateAttribute("convertFromPalette");
+			syntaxAttribute.Value = _convertFromPalette.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
 			context.CommandProcessor.AddCommand(new DicomCompressCommand(context.Message, doc));

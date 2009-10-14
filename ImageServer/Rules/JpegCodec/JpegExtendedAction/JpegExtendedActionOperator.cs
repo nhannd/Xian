@@ -36,7 +36,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 {
@@ -72,6 +71,12 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 
 			string refValue = xmlNode.Attributes["refValue"] != null ? xmlNode.Attributes["refValue"].Value : null;
 
+			bool convertFromPalette = false;
+			if (xmlNode.Attributes["convertFromPalette"] != null)
+			{
+				if (false == bool.TryParse(xmlNode.Attributes["convertFromPalette"].Value, out convertFromPalette))
+					throw new XmlActionCompilerException("Unable to parse convertFromPalette value for jpeg-extended scheduling rule");
+			}
 
 			if (!String.IsNullOrEmpty(refValue))
 			{
@@ -79,18 +84,16 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 				{
 					string language = xmlNode["expressionLanguage"].Value;
 					Expression scheduledTime = CreateExpression(refValue, language);
-					return new JpegExtendedActionItem(time, unit, scheduledTime, quality);
+					return new JpegExtendedActionItem(time, unit, scheduledTime, quality, convertFromPalette);
 				}
 				else
 				{
 					Expression scheduledTime = CreateExpression(refValue);
-					return new JpegExtendedActionItem(time, unit, scheduledTime, quality);
+					return new JpegExtendedActionItem(time, unit, scheduledTime, quality, convertFromPalette);
 				}
 			}
-			else
-			{
-				return new JpegExtendedActionItem(time, unit, quality);
-			}
+
+			return new JpegExtendedActionItem(time, unit, quality, convertFromPalette);
 		}
 
 		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
@@ -100,10 +103,21 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 
 			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
-			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-			attrib.Name = "quality";
-			attrib.Use = XmlSchemaUse.Required;
-			attrib.SchemaTypeName = new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema");
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute
+			                            	{
+			                            		Name = "quality",
+			                            		Use = XmlSchemaUse.Required,
+			                            		SchemaTypeName =
+			                            			new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema")
+			                            	};
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute
+			         	{
+			         		Name = "convertFromPalette",
+			         		Use = XmlSchemaUse.Optional,
+			         		SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema")
+			         	};
 			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;

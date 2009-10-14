@@ -25,6 +25,6 @@ JPEG Extended, or JPEG 2000 Lossy.
 	</and>
   </condition>
   <action>
-	<jpeg-extended-sop quality="80"/>
+	<jpeg-extended-sop quality="80" convertFromPalette="true"/>
   </action>
 </rule>

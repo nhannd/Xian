@@ -146,11 +146,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					return;
 
 				bool threadsAvailable = _threadPool.CanQueueItem;
-				bool memoryAvailable = WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB == 0
+				bool memoryAvailable = true;/* WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB == 0
 				                      ||
 				                      SystemResources.GetAvailableMemory(SizeUnits.Megabytes) >
 				                      WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB;
-
+				*/
 				if (threadsAvailable && memoryAvailable)
 				{
 					try

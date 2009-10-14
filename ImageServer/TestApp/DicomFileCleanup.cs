@@ -166,7 +166,8 @@ namespace ClearCanvas.ImageServer.TestApp
 		private enum SearchTypes
 		{
 			PrivateSequence,
-			Overlay
+			Overlay,
+			PaletteColor
 		}
 		private bool SearchAttributeSet(DicomAttributeCollection set, string filename, SearchTypes searchType)
 		{
@@ -179,13 +180,11 @@ namespace ClearCanvas.ImageServer.TestApp
 						Platform.Log(LogLevel.Info, "Found file with private SQ: {0}", filename);
 						return true;
 					}
-					else if (attrib.Tag.VR.Equals(DicomVr.SQvr) && !attrib.IsNull)
+					if (!attrib.Tag.VR.Equals(DicomVr.SQvr) || attrib.IsNull) continue;
+					// Recursive search
+					foreach (DicomSequenceItem item in (DicomSequenceItem[]) attrib.Values)
 					{
-						// Recursive search
-						foreach (DicomSequenceItem item in (DicomSequenceItem[]) attrib.Values)
-						{
-							SearchAttributeSet(item, filename, searchType);
-						}
+						SearchAttributeSet(item, filename, searchType);
 					}
 				}
 			}
@@ -198,9 +197,18 @@ namespace ClearCanvas.ImageServer.TestApp
 						Platform.Log(LogLevel.Info, "Found embedded overlay in file: {0}", filename);
 						return true;
 					}
-					else if (attrib.Tag.TagValue > 0x70000000)
+					if (attrib.Tag.TagValue > 0x70000000)
 						return false;
 				}
+			}
+			else if (searchType == SearchTypes.PaletteColor)
+			{
+				if (set.Contains(DicomTags.PhotometricInterpretation))
+				{
+					if (set[DicomTags.PhotometricInterpretation].ToString().Equals("PALETTE COLOR"))
+						return true;
+				}
+				return false;
 			}
 
 			return false;
@@ -223,7 +231,7 @@ namespace ClearCanvas.ImageServer.TestApp
 					Platform.Log(LogLevel.Info, "Checking file: {0}", file.FullName);
 					dicomFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
 
-					if (SearchAttributeSet(dicomFile.DataSet, file.FullName, SearchTypes.Overlay))
+					if (SearchAttributeSet(dicomFile.DataSet, file.FullName, SearchTypes.PaletteColor))
 					{
 						string destination = Path.Combine(DestinationDirectory, _imageCount + ".dcm");
 

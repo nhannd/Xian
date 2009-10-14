@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using ClearCanvas.Common;
 
@@ -55,11 +56,26 @@ namespace ClearCanvas.Dicom.Codec.Rle
 
         virtual public DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet)
         {
-            return new DicomRleCodecParameters();
-        }
+			DicomRleCodecParameters codecParms = new DicomRleCodecParameters { ConvertPaletteToRGB = true };
+
+			return codecParms;
+		}
 		public DicomCodecParameters GetCodecParameters(XmlDocument parms)
 		{
 			DicomRleCodecParameters codecParms = new DicomRleCodecParameters();
+
+			XmlElement element = parms.DocumentElement;
+
+			if (element != null && element.Attributes["convertFromPalette"]!=null)
+			{
+				String boolString = element.Attributes["convertFromPalette"].Value;
+				bool convert;
+				if (false == bool.TryParse(boolString, out convert))
+					throw new ApplicationException("Invalid convertFromPalette value specified for RLE: " + boolString);
+				codecParms.ConvertPaletteToRGB = convert;
+			}
+			else
+				codecParms.ConvertPaletteToRGB = true;
 
 			return codecParms;
 		}

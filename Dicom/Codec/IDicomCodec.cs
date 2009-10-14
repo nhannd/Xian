@@ -63,6 +63,21 @@ namespace ClearCanvas.Dicom.Codec
     /// </summary>
     public abstract class DicomCodecParameters
     {
+        #region Private Members
+
+		#endregion
+
+        #region Public Members
+        #endregion
+
+        #region Public Properties
+
+		/// <summary>
+		/// Specifies if Palette Color images should be converted to RGB for compression.
+		/// </summary>
+		public bool ConvertPaletteToRGB { get; set; }
+
+		#endregion
     }
 
     /// <summary>

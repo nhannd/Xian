@@ -653,8 +653,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							parms.StudyStorageKey = item.StudyStorageKey;
 							parms.ProcessorID = item.ProcessorID;
 
-							WorkQueueSettings settings = WorkQueueSettings.Instance;
-
 							if (item.FailureDescription != null)
 								parms.FailureDescription = item.FailureDescription;
 

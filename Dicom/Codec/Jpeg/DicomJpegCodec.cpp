@@ -100,6 +100,16 @@ void DicomJpegCodec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompr
 
 	DicomJpegParameters^ jparams = (DicomJpegParameters^)parameters;
 
+	// Convert to RGB
+	if (oldPixelData->HasPaletteColorLut && jparams->ConvertPaletteToRGB)
+	{
+		oldPixelData->ConvertPaletteColorToRgb();
+		newPixelData->HasPaletteColorLut = false;
+		newPixelData->SamplesPerPixel = oldPixelData->SamplesPerPixel;
+		newPixelData->PlanarConfiguration = oldPixelData->PlanarConfiguration;
+		newPixelData->PhotometricInterpretation = oldPixelData->PhotometricInterpretation;
+	}
+
 	IJpegCodec^ codec = GetCodec(oldPixelData->BitsStored, jparams);
 
 	for (int frame = 0; frame < oldPixelData->NumberOfFrames; frame++) {
@@ -150,7 +160,7 @@ void DicomJpegCodec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompr
 		codec->Decode(oldPixelData, newPixelData, jparams, frame);	
 
 		if (oldPixelData->PhotometricInterpretation->StartsWith("YBR_")) {
-			if (jparams->ConvertColorspaceToRGB && codec->Mode != JpegMode::Lossless) {
+			if (jparams->ConvertYBRtoRGB && codec->Mode != JpegMode::Lossless) {
 				newPixelData->PhotometricInterpretation = "RGB";
 			}
 		}
@@ -178,7 +188,7 @@ void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelDa
 	codec->Decode(oldPixelData, newPixelData, jparams, frame);	
 
 	if (oldPixelData->PhotometricInterpretation->StartsWith("YBR_")) {
-		if (jparams->ConvertColorspaceToRGB && codec->Mode != JpegMode::Lossless) {
+		if (jparams->ConvertYBRtoRGB && codec->Mode != JpegMode::Lossless) {
 			newPixelData->PhotometricInterpretation = "RGB";
 		}
 	}

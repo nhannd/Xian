@@ -14,6 +14,6 @@ on 8-bit US and RF studies after the study is 1 year old.
 	</and>
   </condition>
   <action>
-	<jpeg-baseline quality="80"  time="1" unit="years" refValue="$StudyDate"/>
+	<jpeg-baseline quality="80"  time="1" unit="years" refValue="$StudyDate" convertFromPalette="true"/>
   </action>
 </rule>

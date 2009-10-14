@@ -22,7 +22,7 @@ namespace ClearCanvas.Dicom.Iod
 			Platform.CheckForNullReference(blueLut, "blueLut");
 			Platform.CheckTrue(redLut.Length == greenLut.Length, "redLut.Length == greenLut.Length");
 			Platform.CheckTrue(redLut.Length == blueLut.Length, "redLut.Length == blueLut.Length");
-			Platform.CheckTrue(redLut.Length == size || (redLut.Length == 2 * size && bitsPerLutEntry == 8), "Valid Lut Size");
+			Platform.CheckTrue(redLut.Length == size || (redLut.Length == 2 * size && bitsPerLutEntry > 8), "Valid Lut Size");
 
 			_firstMappedPixelValue = firstMappedPixel;
 			_data = Create(size, bitsPerLutEntry, redLut, greenLut, blueLut);

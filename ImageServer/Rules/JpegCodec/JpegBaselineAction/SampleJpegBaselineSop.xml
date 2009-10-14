@@ -22,6 +22,6 @@ JPEG Baseline, JPEG Extended, and Jpeg 2000 Lossy.
 	</and>
   </condition>
   <action>
-	<jpeg-baseline-sop quality="80"/>
+	<jpeg-baseline-sop quality="80" convertFromPalette="true"/>
   </action>
 </rule>

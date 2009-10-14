@@ -24,7 +24,9 @@ namespace Jpeg {
 	}
 	DicomCodecParameters^ DicomJpegProcess1CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) 
 	{
-		return gcnew DicomJpegParameters();
+		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
+		codecParms->ConvertPaletteToRGB = true;
+		return codecParms;
 	}
 	DicomCodecParameters^ DicomJpegProcess1CodecFactory::GetCodecParameters(XmlDocument^ parms)
     {
@@ -38,10 +40,22 @@ namespace Jpeg {
 			throw gcnew ApplicationException("Invalid quality specified for JPEG Process 1: " + qualityString);
 
 		codecParms->Quality = quality;
-		codecParms->ConvertColorspaceToRGB = true;
+		codecParms->ConvertYBRtoRGB = true;
+
+		if (element->Attributes["convertFromPalette"])
+		{
+			String^ boolString = element->Attributes["convertFromPalette"]->Value;
+			bool convert;
+			if (false == bool::TryParse(boolString, convert))
+				throw gcnew ApplicationException("Invalid compressor thread count specified for JPEG Process 1: " + boolString);
+			codecParms->ConvertPaletteToRGB = convert;
+		}
+		else
+			codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
 	}
+
 	IDicomCodec^ DicomJpegProcess1CodecFactory::GetDicomCodec() {
 		return gcnew DicomJpegProcess1Codec();
 	}
@@ -54,7 +68,9 @@ namespace Jpeg {
 		return ClearCanvas::Dicom::TransferSyntax::JpegExtendedProcess24->Name;	
 	}
 	DicomCodecParameters^ DicomJpegProcess24CodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
-		return gcnew DicomJpegParameters();
+		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
+		codecParms->ConvertPaletteToRGB = true;
+		return codecParms;
 	}
 	DicomCodecParameters^ DicomJpegProcess24CodecFactory::GetCodecParameters(XmlDocument^ parms)
     {
@@ -68,7 +84,17 @@ namespace Jpeg {
 			throw gcnew ApplicationException("Invalid quality specified for JPEG Process 24: " + qualityString);
 
 		codecParms->Quality = quality;
-		codecParms->ConvertColorspaceToRGB = true;
+
+		if (element->Attributes["convertFromPalette"])
+		{
+			String^ boolString = element->Attributes["convertFromPalette"]->Value;
+			bool convert;
+			if (false == bool::TryParse(boolString, convert))
+				throw gcnew ApplicationException("Invalid convertFromPalette specified for JPEG Process 24: " + boolString);
+			codecParms->ConvertPaletteToRGB = convert;
+		}
+		else
+			codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
 	}
@@ -88,7 +114,8 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = true;
+		codecParms->ConvertYBRtoRGB = true;
+		codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
 	}
@@ -97,7 +124,19 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = true;
+		codecParms->ConvertYBRtoRGB = true;
+
+		XmlElement^ element = parms->DocumentElement;
+		if (element->Attributes["convertFromPalette"])
+		{
+			String^ boolString = element->Attributes["convertFromPalette"]->Value;
+			bool convert;
+			if (false == bool::TryParse(boolString, convert))
+				throw gcnew ApplicationException("Invalid convertFromPalette specified for JPEG Lossless 14: " + boolString);
+			codecParms->ConvertPaletteToRGB = convert;
+		}
+		else
+			codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
 	}
@@ -117,8 +156,9 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = true;
-
+		codecParms->ConvertYBRtoRGB = true;
+		codecParms->ConvertPaletteToRGB = true;
+		
 		return codecParms;
 	}
 	DicomCodecParameters^ DicomJpegLossless14SV1CodecFactory::GetCodecParameters(XmlDocument^ parms)
@@ -126,7 +166,19 @@ namespace Jpeg {
 		DicomJpegParameters^ codecParms = gcnew DicomJpegParameters();
 
 		codecParms->Quality = 1;
-		codecParms->ConvertColorspaceToRGB = true;
+		codecParms->ConvertYBRtoRGB = true;
+
+		XmlElement^ element = parms->DocumentElement;
+		if (element->Attributes["convertFromPalette"])
+		{
+			String^ boolString = element->Attributes["convertFromPalette"]->Value;
+			bool convert;
+			if (false == bool::TryParse(boolString, convert))
+				throw gcnew ApplicationException("Invalid convertFromPalette specified for JPEG Lossless SV1: " + boolString);
+			codecParms->ConvertPaletteToRGB = convert;
+		}
+		else
+			codecParms->ConvertPaletteToRGB = true;
 
 		return codecParms;
 	}

@@ -18,6 +18,6 @@ compression only works with 12 bit images and not with PALETTE COLOR.
 	</and>
   </condition>
   <action>
-	<jpeg-extended quality="90"  time="10" unit="weeks"/>
+	<jpeg-extended quality="90"  time="10" unit="weeks" convertFromPalette="true"/>
   </action>
 </rule>

@@ -482,7 +482,7 @@ void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressed
 	if (jpeg_read_header(&dinfo, TRUE) == JPEG_SUSPENDED)
 		throw gcnew DicomCodecException(gcnew String("Unable to decompress JPEG. Reason: Suspended"));
 
-    if (params->ConvertColorspaceToRGB) {
+    if (params->ConvertYBRtoRGB) {
         if (dinfo.out_color_space == JCS_YCbCr || dinfo.out_color_space == JCS_RGB)
         {
             if (oldPixelData->IsSigned)

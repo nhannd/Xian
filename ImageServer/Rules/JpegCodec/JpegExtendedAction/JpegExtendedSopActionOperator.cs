@@ -54,7 +54,14 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 			if (false == int.TryParse(xmlNode.Attributes["quality"].Value, out quality))
 				throw new XmlActionCompilerException("Unable to parse quality value for jpeg-extended-sop scheduling rule");
 
-			return new JpegExtendedSopActionItem(quality);
+			bool convertFromPalette = false;
+			if (xmlNode.Attributes["convertFromPalette"] != null)
+			{
+				if (false == bool.TryParse(xmlNode.Attributes["convertFromPalette"].Value, out convertFromPalette))
+					throw new XmlActionCompilerException("Unable to parse convertFromPalette value for jpeg-extended-sop scheduling rule");
+			}
+
+			return new JpegExtendedSopActionItem(quality, convertFromPalette);
 		}
 
 		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
@@ -64,10 +71,21 @@ namespace ClearCanvas.ImageServer.Rules.JpegCodec.JpegExtendedAction
 
 			XmlSchemaElement element = GetBaseSchema(OperatorTag);
 
-			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
-			attrib.Name = "quality";
-			attrib.Use = XmlSchemaUse.Required;
-			attrib.SchemaTypeName = new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema");
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute
+			                            	{
+			                            		Name = "quality",
+			                            		Use = XmlSchemaUse.Required,
+			                            		SchemaTypeName =
+			                            			new XmlQualifiedName("unsignedByte", "http://www.w3.org/2001/XMLSchema")
+			                            	};
+			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute
+			         	{
+			         		Name = "convertFromPalette",
+			         		Use = XmlSchemaUse.Optional,
+			         		SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema")
+			         	};
 			(element.SchemaType as XmlSchemaComplexType).Attributes.Add(attrib);
 
 			return element;

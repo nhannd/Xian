@@ -101,13 +101,8 @@ namespace ClearCanvas.Dicom
         private int _frames = 1;
 
 		#region Image Pixel Macro
-		
-		private ushort _width;
-        private ushort _height;
-        private ushort _highBit;
-        private ushort _bitsStored;
-        private ushort _bitsAllocated;
-        private ushort _samplesPerPixel = 1;
+
+    	private ushort _samplesPerPixel = 1;
         private ushort _pixelRepresentation;
         private ushort _planarConfiguration;
         private string _photometricInterpretation;
@@ -115,14 +110,13 @@ namespace ClearCanvas.Dicom
 		#endregion
 
 		private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-		private SopClass _sopClass = null;
+		private SopClass _sopClass;
 
 		#region General Image Module
 
 		private string _lossyImageCompression = "";
         private string _lossyImageCompressionMethod = "";
-        private float _compressionRatio;
-		private string _derivationDescription = "";
+    	private string _derivationDescription = "";
 
 		#endregion
 
@@ -143,6 +137,11 @@ namespace ClearCanvas.Dicom
 		private List<Window> _linearVoiLuts = new List<Window>();
     	private readonly bool _hasDataVoiLuts = false;
 		#endregion
+		#endregion
+
+		#region Palette Color LUT
+    	private bool _hasPaletteColorLut = false;
+    	private readonly PaletteColorLut _paletteColorLut;
 		#endregion
 
 		#region Public Static Methods
@@ -181,23 +180,23 @@ namespace ClearCanvas.Dicom
         /// </returns>
         public static DicomPixelData CreateFrom(DicomMessageBase message)
         {
-            if (message.TransferSyntax.LosslessCompressed || message.TransferSyntax.LossyCompressed)
+        	if (message.TransferSyntax.LosslessCompressed || message.TransferSyntax.LossyCompressed)
                 return new DicomCompressedPixelData(message);
-            else
-                return new DicomUncompressedPixelData(message);
+        	return new DicomUncompressedPixelData(message);
         }
-        #endregion
+
+    	#endregion
 
         #region Constructors
 
-        public DicomPixelData(DicomMessageBase message)
+    	protected DicomPixelData(DicomMessageBase message)
 			: this(message.DataSet)
         {
             _transferSyntax = message.TransferSyntax;
 		}
 
 
-        public DicomPixelData(DicomAttributeCollection collection)
+    	protected DicomPixelData(DicomAttributeCollection collection)
         {
             collection.LoadDicomFields(this);
 
@@ -232,7 +231,12 @@ namespace ClearCanvas.Dicom
 				_hasDataVoiLuts = !attrib.IsEmpty && !attrib.IsNull;
 			}
 
-		}
+			if (collection.Contains(DicomTags.RedPaletteColorLookupTableDescriptor))
+			{
+				_paletteColorLut = PaletteColorLut.Create(collection);
+				_hasPaletteColorLut = true;
+			}
+        }
 
         internal DicomPixelData(DicomPixelData attrib)
         {
@@ -257,6 +261,8 @@ namespace ClearCanvas.Dicom
 
         	_hasDataModalityLut = attrib.HasDataModalityLut;
         	_hasDataVoiLuts = attrib.HasDataVoiLuts;
+        	_hasPaletteColorLut = attrib.HasPaletteColorLut;
+        	_paletteColorLut = attrib.PaletteColorLut;
 
         	foreach (Window window in attrib.LinearVoiLuts)
 				_linearVoiLuts.Add(new Window(window));
@@ -309,42 +315,22 @@ namespace ClearCanvas.Dicom
 
 		#region Image Pixel Macro
 
-		[DicomField(DicomTags.Columns, DefaultValue = DicomFieldDefault.Default)]
-        public ushort ImageWidth
-        {
-            get { return _width; }
-            set { _width = value; }
-        }
+    	[DicomField(DicomTags.Columns, DefaultValue = DicomFieldDefault.Default)]
+    	public ushort ImageWidth { get; set; }
 
-        [DicomField(DicomTags.Rows, DefaultValue = DicomFieldDefault.Default)]
-        public ushort ImageHeight
-        {
-            get { return _height; }
-            set { _height = value; }
-        }
+    	[DicomField(DicomTags.Rows, DefaultValue = DicomFieldDefault.Default)]
+    	public ushort ImageHeight { get; set; }
 
-        [DicomField(DicomTags.HighBit, DefaultValue = DicomFieldDefault.Default)]
-        public ushort HighBit
-        {
-            get { return _highBit; }
-            set { _highBit = value; }
-        }
+    	[DicomField(DicomTags.HighBit, DefaultValue = DicomFieldDefault.Default)]
+    	public ushort HighBit { get; set; }
 
-        [DicomField(DicomTags.BitsStored, DefaultValue = DicomFieldDefault.Default)]
-        public ushort BitsStored
-        {
-            get { return _bitsStored; }
-            set { _bitsStored = value; }
-        }
+    	[DicomField(DicomTags.BitsStored, DefaultValue = DicomFieldDefault.Default)]
+    	public ushort BitsStored { get; set; }
 
-        [DicomField(DicomTags.BitsAllocated, DefaultValue = DicomFieldDefault.Default)]
-        public ushort BitsAllocated
-        {
-            get { return _bitsAllocated; }
-            set { _bitsAllocated = value; }
-        }
+    	[DicomField(DicomTags.BitsAllocated, DefaultValue = DicomFieldDefault.Default)]
+    	public ushort BitsAllocated { get; set; }
 
-		public int BytesAllocated
+    	public int BytesAllocated
 		{
 			get
 			{
@@ -399,7 +385,9 @@ namespace ClearCanvas.Dicom
 		#endregion
 
 		#region Modality Lut
-
+		/// <summary>
+		/// The rescale slope as a decimal string.
+		/// </summary>
 		public string RescaleSlope
 		{
 			get { return _rescaleSlopeString; }
@@ -414,7 +402,9 @@ namespace ClearCanvas.Dicom
 				}
 			}
 		}
-
+		/// <summary>
+		/// The rescale intercept as a decimal string.
+		/// </summary>
 		public string RescaleIntercept
 		{
 			get { return _rescaleInterceptString; }
@@ -477,6 +467,31 @@ namespace ClearCanvas.Dicom
 
 		#endregion
 
+		#region Palette Color LUT
+
+		/// <summary>
+		/// Palette Color LUT module
+		/// </summary>
+		public PaletteColorLut PaletteColorLut
+		{
+			get
+			{
+				if (_hasPaletteColorLut) return _paletteColorLut;
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Does the Pixel data have a Palette Color LUT
+		/// </summary>
+    	public bool HasPaletteColorLut
+    	{
+			get { return _hasPaletteColorLut; }
+			set { _hasPaletteColorLut = value; }
+    	}
+
+		#endregion
+
         /// <summary>
         /// The frame size of an uncompressed frame.
         /// </summary>
@@ -510,17 +525,17 @@ namespace ClearCanvas.Dicom
 			{
 				if (_sopClass == null) return false;
 
-				if (_sopClass.Uid.Equals(Dicom.SopClass.CtImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.ComputedRadiographyImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.SecondaryCaptureImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.XRayAngiographicImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.XRayRadiofluoroscopicImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.RtImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid)
-				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid))
+				if (_sopClass.Uid.Equals(SopClass.CtImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.ComputedRadiographyImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.SecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.XRayAngiographicImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.XRayRadiofluoroscopicImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid)
+				    || _sopClass.Uid.Equals(SopClass.RtImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid))
 // PET IOD has a note in the IOD that Rescale Intercept is also 0, so we say its not supported here
 //				    || _sopClass.Uid.Equals(Dicom.SopClass.PositronEmissionTomographyImageStorageUid))
 					return true;
@@ -538,13 +553,9 @@ namespace ClearCanvas.Dicom
             set { _lossyImageCompression = value; }
         }
 
-        public float LossyImageCompressionRatio
-        {
-            get { return _compressionRatio; }
-            set { _compressionRatio = value; }
-        }
+    	public float LossyImageCompressionRatio { get; set; }
 
-        public string DerivationDescription
+    	public string DerivationDescription
         {
             get { return _derivationDescription; }
             set { _derivationDescription = value; }
@@ -568,7 +579,7 @@ namespace ClearCanvas.Dicom
     {
         #region Private Members
 
-        private readonly DicomAttribute _pd;
+        private DicomAttribute _pd;
         private MemoryStream _ms;
 
         #endregion
@@ -663,6 +674,20 @@ namespace ClearCanvas.Dicom
 
 			dataset[DicomTags.PixelData] = _pd;
 
+			//Remove the palette color lut, if the pixels were translated to RGB
+			if (dataset.Contains(DicomTags.RedPaletteColorLookupTableData)
+				&& dataset.Contains(DicomTags.BluePaletteColorLookupTableData)
+				&& dataset.Contains(DicomTags.GreenPaletteColorLookupTableData)
+				&& !HasPaletteColorLut)
+			{
+				dataset.RemoveAttribute(DicomTags.BluePaletteColorLookupTableDescriptor);
+				dataset.RemoveAttribute(DicomTags.BluePaletteColorLookupTableData);
+				dataset.RemoveAttribute(DicomTags.RedPaletteColorLookupTableDescriptor);
+				dataset.RemoveAttribute(DicomTags.RedPaletteColorLookupTableData);
+				dataset.RemoveAttribute(DicomTags.GreenPaletteColorLookupTableDescriptor);
+				dataset.RemoveAttribute(DicomTags.GreenPaletteColorLookupTableData);
+			}
+
             if (_ms != null)
             {
                 // Add a padding character
@@ -696,10 +721,7 @@ namespace ClearCanvas.Dicom
         {
             if (_ms == null)
             {
-                if (_pd.Count == 0)
-                    _ms = new MemoryStream(frameData.Length);
-                else
-                    _ms = new MemoryStream((byte[]) _pd.Values);
+                _ms = _pd == null || _pd.Count == 0 ? new MemoryStream(frameData.Length) : new MemoryStream((byte[]) _pd.Values);
             }
 
             _ms.Seek(0, SeekOrigin.End);
@@ -819,10 +841,45 @@ namespace ClearCanvas.Dicom
             return null;
         }
 
+		public void ConvertPaletteColorToRgb()
+		{
+			Platform.CheckTrue(PhotometricInterpretation.Equals("PALETTE COLOR"),"Photometric Interpretation Palette Color Check");
+
+			List<byte[]> frames = new List<byte[]>();
+
+			for (int i=0; i < NumberOfFrames;i++)
+			{
+				byte[] currentFrame = GetFrame(i);
+				byte[] newFrame = new byte[UncompressedFrameSize * 3];
+
+				PaletteColorToRgb(BitsAllocated, IsSigned, currentFrame, newFrame, PaletteColorLut);
+				frames.Add(newFrame);
+			}
+
+			// Dereference the current pixel data
+			_ms = null;
+			_pd = null;
+
+			foreach (byte[] frame in frames)
+				AppendFrame(frame);
+
+			SamplesPerPixel = 3;
+			PhotometricInterpretation = "RGB";
+			PlanarConfiguration = 0;
+			HasPaletteColorLut = false;
+		}
         #endregion
 
         #region Static Methods
 
+		/// <summary>
+		/// Toggle the planar configuration of a pixel data array
+		/// </summary>
+		/// <param name="pixelData"></param>
+		/// <param name="numValues"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="samplesPerPixel"></param>
+		/// <param name="oldPlanerConfiguration"></param>
 		public static void TogglePlanarConfiguration(byte[] pixelData, int numValues, int bitsAllocated,
         int samplesPerPixel, int oldPlanerConfiguration)
         {
@@ -861,6 +918,12 @@ namespace ClearCanvas.Dicom
 				throw new DicomCodecUnsupportedSopException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
         }
 
+		/// <summary>
+		/// Toggle the pixel representation of a frame
+		/// </summary>
+		/// <param name="frameData"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="bitsAllocated"></param>
 		public unsafe static void TogglePixelRepresentation(byte[] frameData, int bitsStored, int bitsAllocated)
 		{
 			if (bitsAllocated > 16 || bitsStored > bitsAllocated)
@@ -924,6 +987,14 @@ namespace ClearCanvas.Dicom
 			}
 		}
 
+		/// <summary>
+		/// Convert Palette Color pixel data to RGB.
+		/// </summary>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="isSigned"></param>
+		/// <param name="srcPixelData"></param>
+		/// <param name="rgbPixelData"></param>
+		/// <param name="lut"></param>
     	public unsafe static void PaletteColorToRgb(
     		int bitsAllocated,
     		bool isSigned,
@@ -940,9 +1011,9 @@ namespace ClearCanvas.Dicom
 
     		if (bitsAllocated == 8 && 3 * srcPixelData.Length != rgbPixelData.Length)
     			throw new ArgumentException("Invalid destination buffer size", "rgbPixelData");
-    		else if (srcPixelData.Length / 2 != sizeInPixels)
+			if (bitsAllocated > 8 && srcPixelData.Length / 2 != sizeInPixels)
     			throw new ArgumentException("Invalid destination buffer size", "rgbPixelData");
-				
+
     		int firstPixelMapped = lut.FirstMappedPixelValue;
 
     		fixed (byte* pSrcPixelData = srcPixelData)
@@ -959,9 +1030,9 @@ namespace ClearCanvas.Dicom
     						for (int i = 0; i < sizeInPixels; i++)
     						{
     							Color value = lut.Data[((sbyte*)pSrcPixelData)[i] - firstPixelMapped];
-    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst] = value.R;
     							pRgbPixelData[dst + 1] = value.G;
-    							pRgbPixelData[dst + 2] = value.R;
+    							pRgbPixelData[dst + 2] = value.B;
 
     							dst += 3;
     						}
@@ -972,9 +1043,9 @@ namespace ClearCanvas.Dicom
     						for (int i = 0; i < sizeInPixels; i++)
     						{
     							Color value = lut.Data[pSrcPixelData[i] - firstPixelMapped];
-    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst] = value.R;
     							pRgbPixelData[dst + 1] = value.G;
-    							pRgbPixelData[dst + 2] = value.R;
+    							pRgbPixelData[dst + 2] = value.B;
 
     							dst += 3;
     						}
@@ -988,9 +1059,9 @@ namespace ClearCanvas.Dicom
     						for (int i = 0; i < sizeInPixels; i++)
     						{
     							Color value = lut.Data[((short*)pSrcPixelData)[i] - firstPixelMapped];
-    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst] = value.R;
     							pRgbPixelData[dst + 1] = value.G;
-    							pRgbPixelData[dst + 2] = value.R;
+    							pRgbPixelData[dst + 2] = value.B;
 
     							dst += 3;
     						}
@@ -1001,9 +1072,9 @@ namespace ClearCanvas.Dicom
     						for (int i = 0; i < sizeInPixels; i++)
     						{
     							Color value = lut.Data[((ushort*)pSrcPixelData)[i] - firstPixelMapped];
-    							pRgbPixelData[dst] = value.B;
+    							pRgbPixelData[dst] = value.R;
     							pRgbPixelData[dst + 1] = value.G;
-    							pRgbPixelData[dst + 2] = value.R;
+    							pRgbPixelData[dst + 2] = value.B;
 
     							dst += 3;
     						}
@@ -1023,7 +1094,7 @@ namespace ClearCanvas.Dicom
 			// |g| = | 1.0000 -0.3441 -0.7141 | | b - 128 |
 			// |b|   | 1.0000  1.7720 -0.0000 | | r - 128 |
 
-			int alpha = 0xff;
+			const int alpha = 0xff;
 			int red = (int)(y + 1.4020 * (r - 128) + 0.5);
 			int green = (int)(y - 0.3441 * (b - 128) - 0.7141 * (r - 128) + 0.5);
 			int blue = (int)(y + 1.7720 * (b - 128) + 0.5);
@@ -1056,7 +1127,7 @@ namespace ClearCanvas.Dicom
 			// |g| = |  1.1644 -0.3917 -0.8130 | | b - 128 |
 			// |b|   |  1.1644  2.0173  0.0000 | | r - 128 |
 
-			int alpha = 0xff;
+			const int alpha = 0xff;
 			int red = (int)(1.1644 * (y - 16) + 1.5960 * (r - 128) + 0.5);
 			int green = (int)(1.1644 * (y - 16) - 0.3917 * (b - 128) - 0.8130 * (r - 128) + 0.5);
 			int blue = (int)(1.1644 * (y - 16) + 2.0173 * (b - 128) + 0.5);
@@ -1080,7 +1151,7 @@ namespace ClearCanvas.Dicom
 			// |g| = |  1.00000 -0.34412 -0.71414 | | b |
 			// |b|   |  1.00000  1.77200  0.00000 | | r |
 
-			int alpha = 0xff;
+			const int alpha = 0xff;
 			int red = (int)(y + 1.40200 * r + 0.5);
 			int green = (int)(y - 0.34412 * b - 0.71414 * r + 0.5);
 			int blue = (int)(y + 1.77200 * b + 0.5);
@@ -1100,7 +1171,7 @@ namespace ClearCanvas.Dicom
 		/// <returns>A 32-bit ARGB value.</returns>
 		public static int YbrRctToRgb(int y, int b, int r)
 		{
-			int alpha = 0xff;
+			const int alpha = 0xff;
 			int green = y - (r + b) / 4;
 			int red = r + green;
 			int blue = b + green;
@@ -1206,7 +1277,21 @@ namespace ClearCanvas.Dicom
 
 			if (dataset.Contains(DicomTags.WindowCenter) || LinearVoiLuts.Count > 0)
 				Window.SetWindowCenterAndWidth(dataset, LinearVoiLuts);
-			
+
+			//Remove the palette color lut, if the pixels were translated to RGB
+			if (dataset.Contains(DicomTags.RedPaletteColorLookupTableData)
+			&& dataset.Contains(DicomTags.BluePaletteColorLookupTableData)
+			&& dataset.Contains(DicomTags.GreenPaletteColorLookupTableData)
+			&& !HasPaletteColorLut)
+			{
+				dataset.RemoveAttribute(DicomTags.BluePaletteColorLookupTableDescriptor);
+				dataset.RemoveAttribute(DicomTags.BluePaletteColorLookupTableData);
+				dataset.RemoveAttribute(DicomTags.RedPaletteColorLookupTableDescriptor);
+				dataset.RemoveAttribute(DicomTags.RedPaletteColorLookupTableData);
+				dataset.RemoveAttribute(DicomTags.GreenPaletteColorLookupTableDescriptor);
+				dataset.RemoveAttribute(DicomTags.GreenPaletteColorLookupTableData);
+			}
+
 			dataset.SaveDicomFields(this);
             dataset[DicomTags.PixelData] = _sq;
         }
