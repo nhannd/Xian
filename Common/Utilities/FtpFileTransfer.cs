@@ -30,7 +30,7 @@ namespace ClearCanvas.Common.Utilities
 			_userId = userId;
 			_password = password;
 			_usePassive = usePassive;
-			BaseUri = new Uri(baseUri);
+			BaseUri = CreateProperBaseUri(baseUri);
 			_urlCreated = new List<string>();
 		}
 
@@ -155,6 +155,18 @@ namespace ClearCanvas.Common.Utilities
 
 				_urlCreated.Add(uri.ToString());
 			}
+		}
+
+		private static Uri CreateProperBaseUri(string baseUri)
+		{
+			// Construct a temporary Uri object.  The first segment is always the slash
+			var tempUri = new Uri(baseUri);
+			var segmentDelimiter = tempUri.Segments[0];
+
+			// Make sure the baseUri always ends with a trailing slash.
+			return baseUri.EndsWith(segmentDelimiter) 
+				? new Uri(baseUri) 
+				: new Uri(string.Concat(baseUri, segmentDelimiter));
 		}
 	}
 }
