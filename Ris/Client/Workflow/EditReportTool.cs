@@ -37,7 +37,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -56,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly IconSet _createReportIcons;
 		private readonly IconSet _editReportIcons;
 
-		public EditReportToolBase(bool loadImages, string createReportTitle, string editReportTitle, IconSet createReportIcons, IconSet editReportIcons)
+		protected EditReportToolBase(bool loadImages, string createReportTitle, string editReportTitle, IconSet createReportIcons, IconSet editReportIcons)
 			: base("EditReport")
 		{
 			_loadImages = loadImages;
@@ -70,11 +69,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				var item = GetSelectedItem();
 				if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
 					return _createReportTitle;
-				else
-					return _editReportTitle;
+
+				return _editReportTitle;
 			}
 		}
 
@@ -82,11 +81,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				ReportingWorklistItem item = GetSelectedItem();
+				var item = GetSelectedItem();
 				if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
 					return _createReportIcons;
-				else
-					return _editReportIcons;
+
+				return _editReportIcons;
 			}
 		}
 
@@ -192,26 +191,26 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[IconSetObserver("group", "GroupCurrentIconSet", "LabelChanged")]
 	[LabelValueObserver("group", "GroupLabel", "LabelChanged")]
 
-	[MenuAction("withImagesContext", "folderexplorer-items-contextmenu/Edit Report and View Images", "ApplyWithImages")]
+	[MenuAction("withImagesContext", "folderexplorer-items-contextmenu/Edit Report and Open Images", "ApplyWithImages")]
 	[EnabledStateObserver("withImagesContext", "Enabled", "EnabledChanged")]
-	[IconSetObserver("withImagesContext", "withImagesIconSet", "LabelChanged")]
-	[LabelValueObserver("withImagesContext", "withImagesLabel", "LabelChanged")]
+	[IconSetObserver("withImagesContext", "WithImagesIconSet", "LabelChanged")]
+	[LabelValueObserver("withImagesContext", "WithImagesLabel", "LabelChanged")]
 
-	[ButtonAction("withImagesToolbar", "editreport-toolbar-dropdown/Edit Report and View Images", "ApplyWithImagesAndSetDefault")]
+	[ButtonAction("withImagesToolbar", "editreport-toolbar-dropdown/Edit Report and Open Images", "ApplyWithImagesAndSetDefault")]
 	[EnabledStateObserver("withImagesToolbar", "Enabled", "EnabledChanged")]
-	[IconSetObserver("withImagesToolbar", "withImagesIconSet", "LabelChanged")]
-	[LabelValueObserver("withImagesToolbar", "withImagesLabel", "LabelChanged")]
+	[IconSetObserver("withImagesToolbar", "WithImagesIconSet", "LabelChanged")]
+	[LabelValueObserver("withImagesToolbar", "WithImagesLabel", "LabelChanged")]
 	[CheckedStateObserver("withImagesToolbar", "WithImagesChecked", "ActiveToolChanged")]
 
 	[MenuAction("withoutImagesContext", "folderexplorer-items-contextmenu/Edit Report", "ApplyWithoutImages")]
 	[EnabledStateObserver("withoutImagesContext", "Enabled", "EnabledChanged")]
-	[IconSetObserver("withoutImagesContext", "withoutImagesIconSet", "LabelChanged")]
-	[LabelValueObserver("withoutImagesContext", "withoutImagesLabel", "LabelChanged")]
+	[IconSetObserver("withoutImagesContext", "WithoutImagesIconSet", "LabelChanged")]
+	[LabelValueObserver("withoutImagesContext", "WithoutImagesLabel", "LabelChanged")]
 
 	[ButtonAction("withoutImagesToolbar", "editreport-toolbar-dropdown/Edit Report", "ApplyWithoutImagesAndSetDefault")]
 	[EnabledStateObserver("withoutImagesToolbar", "Enabled", "EnabledChanged")]
-	[IconSetObserver("withoutImagesToolbar", "withoutImagesIconSet", "LabelChanged")]
-	[LabelValueObserver("withoutImagesToolbar", "withoutImagesLabel", "LabelChanged")]
+	[IconSetObserver("withoutImagesToolbar", "WithoutImagesIconSet", "LabelChanged")]
+	[LabelValueObserver("withoutImagesToolbar", "WithoutImagesLabel", "LabelChanged")]
 	[CheckedStateObserver("withoutImagesToolbar", "WithoutImagesChecked", "ActiveToolChanged")]
 
 	[ActionPermission("group", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
@@ -248,7 +247,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_editReportWithoutImagesTool.SetContext(this.Context);
 			_editReportWithoutImagesTool.Initialize();
 
-			if (ReportingSettings.Default != null 
+			if (ReportingSettings.Default != null
 				&& ReportingSettings.Default.ShouldOpenImages
 				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Images.View))
 				SetActiveTool(_editReportWithImagesTool);
@@ -347,22 +346,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 			ApplyWithoutImages();
 		}
 
-		public string withImagesLabel
+		public string WithImagesLabel
 		{
 			get { return _editReportWithImagesTool.Label; }
 		}
 
-		public IconSet withImagesIconSet
+		public IconSet WithImagesIconSet
 		{
 			get { return _editReportWithImagesTool.CurrentIconSet; }
 		}
 
-		public string withoutImagesLabel
+		public string WithoutImagesLabel
 		{
 			get { return _editReportWithoutImagesTool.Label; }
 		}
 
-		public IconSet withoutImagesIconSet
+		public IconSet WithoutImagesIconSet
 		{
 			get { return _editReportWithoutImagesTool.CurrentIconSet; }
 		}
@@ -389,11 +388,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftFolder), _editReportWithImagesTool);
 
 				this.Context.UnregisterDoubleClickHandler(
-					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImagesContext"); }));
+					(IClickAction)CollectionUtils.SelectFirst(
+						this.Actions,
+						a => a is IClickAction && a.ActionID.EndsWith("withoutImagesContext")));
 				this.Context.RegisterDoubleClickHandler(
-					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImagesContext"); }));
+					(IClickAction)CollectionUtils.SelectFirst(
+						this.Actions,
+						a => a is IClickAction && a.ActionID.EndsWith("withImagesContext")));
 			}
 			else
 			{
@@ -403,11 +404,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftFolder), _editReportWithoutImagesTool);
 
 				this.Context.UnregisterDoubleClickHandler(
-					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImagesContext"); }));
+					(IClickAction)CollectionUtils.SelectFirst(
+						this.Actions,
+						a => a is IClickAction && a.ActionID.EndsWith("withImagesContext")));
 				this.Context.RegisterDoubleClickHandler(
-					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImagesContext"); }));
+					(IClickAction)CollectionUtils.SelectFirst(
+						this.Actions,
+						a => a is IClickAction && a.ActionID.EndsWith("withoutImagesContext")));
 			}
 
 			ReportingSettings.Default.Save();
