@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client
                     return new ValidationResult(ok, Desktop.SR.MessageValueRequired);
                 }));
 
-            if (CannedTextSettings.Default.RestrictCannedTextNameToAlphaChars)
+            if (CannedTextSettings.Default.RestrictCannedTextNameAndNameFieldsToAlphaChars)
             {
                 // add validation rule to ensure the name does not contain invalid characters
                 this.Validation.Add(new ValidationRule("Name",
@@ -181,9 +181,20 @@ namespace ClearCanvas.Ris.Client
                     {
                         // only allow alphabets and space
                         var ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
-                        return new ValidationResult(ok, SR.MessageNameCanOnlyContainAlphaChars);
+                        return new ValidationResult(ok, SR.MessageCannedTextNameCanOnlyContainAlphaChars);
                     }));
-            }
+
+				// add validation rule to ensure the name field in the text does not contain invalid characters
+				this.Validation.Add(new ValidationRule("Text",
+					delegate
+					{
+						// look for none alphabets and space within the named field square brackets
+						var pattern = @"\[[^\[\]]*[^a-zA-Z ][^\[\]]*\]";
+						var match = Regex.Match(this.Text, pattern);
+						var message = match.Success ? string.Format(SR.MessageCannedTextNameFieldCanOnlyContainAlphaChars, match.Value) : null;
+						return new ValidationResult(!match.Success, message);
+					}));
+			}
 
             base.Start();
         }

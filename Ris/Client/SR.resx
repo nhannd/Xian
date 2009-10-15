@@ -570,8 +570,8 @@
   <data name="MessageMergeIdenticalItems" xml:space="preserve">
     <value>You cannot merge two identical items.</value>
   </data>
-  <data name="MessageNameCanOnlyContainAlphaChars" xml:space="preserve">
-    <value>The value can only contain space and alphabet characters</value>
+  <data name="MessageCannedTextNameCanOnlyContainAlphaChars" xml:space="preserve">
+    <value>The canned text name can only contain space and alphabet characters.</value>
   </data>
   <data name="MessageNoActiveProcedures" xml:space="preserve">
     <value>At least one active procedure is required.</value>
@@ -887,5 +887,8 @@
   </data>
   <data name="MessageCannotEditCategories" xml:space="preserve">
     <value>Cannot edit the selected canned texts.  This may be because you do not have permission to edit personal canned texts, group canned texts or both.</value>
+  </data>
+  <data name="MessageCannedTextNameFieldCanOnlyContainAlphaChars" xml:space="preserve">
+    <value>The name field {0} can only contain space and alphabet characters.</value>
   </data>
 </root>

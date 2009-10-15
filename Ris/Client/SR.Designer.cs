@@ -1276,6 +1276,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The canned text name can only contain space and alphabet characters..
+        /// </summary>
+        internal static string MessageCannedTextNameCanOnlyContainAlphaChars {
+            get {
+                return ResourceManager.GetString("MessageCannedTextNameCanOnlyContainAlphaChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name field {0} can only contain space and alphabet characters..
+        /// </summary>
+        internal static string MessageCannedTextNameFieldCanOnlyContainAlphaChars {
+            get {
+                return ResourceManager.GetString("MessageCannedTextNameFieldCanOnlyContainAlphaChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot edit the selected canned texts.  This may be because you do not have permission to edit personal canned texts, group canned texts or both..
         /// </summary>
         internal static string MessageCannotEditCategories {
@@ -1461,15 +1479,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageMergeIdenticalItems {
             get {
                 return ResourceManager.GetString("MessageMergeIdenticalItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The value can only contain space and alphabet characters.
-        /// </summary>
-        internal static string MessageNameCanOnlyContainAlphaChars {
-            get {
-                return ResourceManager.GetString("MessageNameCanOnlyContainAlphaChars", resourceCulture);
             }
         }
         

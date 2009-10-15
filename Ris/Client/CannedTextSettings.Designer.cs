@@ -24,16 +24,17 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        /// Enable validation of characters in the canned text name.  If true, the name can only contain space and alphabets.
+        /// Enable validation of characters in the canned text name and name fields.  If true, the name and the name fields enclosed in square brackets can only contain space and alphabets.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Enable validation of characters in the canned text name.  If true, the name can o" +
-            "nly contain space and alphabets.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Enable validation of characters in the canned text name and name fields.  If true" +
+            ", the name and the name fields enclosed in square brackets can only contain spac" +
+            "e and alphabets.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool RestrictCannedTextNameToAlphaChars {
+        public bool RestrictCannedTextNameAndNameFieldsToAlphaChars {
             get {
-                return ((bool)(this["RestrictCannedTextNameToAlphaChars"]));
+                return ((bool)(this["RestrictCannedTextNameAndNameFieldsToAlphaChars"]));
             }
         }
         
