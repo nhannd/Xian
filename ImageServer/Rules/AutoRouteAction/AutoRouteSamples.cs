@@ -75,4 +75,18 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopEdited);
 		}
 	}
+
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class SourceAeAutoRouteSample : SampleRuleBase
+	{
+		public SourceAeAutoRouteSample()
+			: base("SourceAeAutoRoute",
+				   "AutoRoute based on Source AE Title",
+				   ServerRuleTypeEnum.AutoRoute,
+				   "Sample_AutoRouteSourceAe.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.SopEdited);
+		}
+	}
 }
