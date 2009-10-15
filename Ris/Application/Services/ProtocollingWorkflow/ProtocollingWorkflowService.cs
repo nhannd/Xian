@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			var assembler = new ProtocolAssembler();
 
-			return new GetProtocolGroupDetailResponse(assembler.CreateProtocolGroupDetail(protocolGroup, this.PersistenceContext));
+			return new GetProtocolGroupDetailResponse(assembler.CreateProtocolGroupDetail(protocolGroup, false, this.PersistenceContext));
 		}
 
 		[ReadOperation]

@@ -95,10 +95,14 @@ namespace ClearCanvas.Ris.Application.Services
 			return new ProtocolGroupSummary(group.GetRef(), group.Name, group.Description);
 		}
 
-		public ProtocolGroupDetail CreateProtocolGroupDetail(ProtocolGroup group, IPersistenceContext context)
+		public ProtocolGroupDetail CreateProtocolGroupDetail(ProtocolGroup group, bool includeDeactivatedCodes, IPersistenceContext context)
 		{
-			var codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
-				group.Codes,
+			var protocolCodes = includeDeactivatedCodes
+				? group.Codes
+				: CollectionUtils.Select(group.Codes, code => !code.Deactivated);
+
+			var protocolCodeSummaries = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
+				protocolCodes,
 				CreateProtocolCodeSummary);
 
 			var assembler = new ProcedureTypeGroupAssembler();
@@ -106,7 +110,7 @@ namespace ClearCanvas.Ris.Application.Services
 				group.ReadingGroups,
 				readingGroup => assembler.GetProcedureTypeGroupSummary(readingGroup, context));
 
-			return new ProtocolGroupDetail(group.Name, group.Description, codes, groups);
+			return new ProtocolGroupDetail(group.Name, group.Description, protocolCodeSummaries, groups);
 		}
 	}
 }
