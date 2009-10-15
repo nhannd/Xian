@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 			}
 
 			vtkUnsignedShortArray vtkVolumeData = new vtkUnsignedShortArray();
-			vtkVolumeData.SetArray(volumeData, volumeData.Length, 1);
+			vtkVolumeData.SetArray(volumeData, new VtkIdType(volumeData.Length), 1);
 			
 			return vtkVolumeData;
 		}
