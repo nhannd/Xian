@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -40,62 +39,60 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 {
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(IProtocolAdminService))]
-    public class ProtocolAdminService : ApplicationServiceBase, IProtocolAdminService
-    {
-        #region IProtocolAdminService Members
+	[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+	[ServiceImplementsContract(typeof(IProtocolAdminService))]
+	public class ProtocolAdminService : ApplicationServiceBase, IProtocolAdminService
+	{
+		#region IProtocolAdminService Members
 
 		[ReadOperation]
-    	public ListProtocolCodesResponse ListProtocolCodes(ListProtocolCodesRequest request)
-    	{
-			ProtocolCodeSearchCriteria where = new ProtocolCodeSearchCriteria();
+		public ListProtocolCodesResponse ListProtocolCodes(ListProtocolCodesRequest request)
+		{
+			var where = new ProtocolCodeSearchCriteria();
 			where.Name.SortAsc(0);
 			if (!request.IncludeDeactivated)
 				where.Deactivated.EqualTo(false);
 
-    		IList<ProtocolCode> codes = PersistenceContext.GetBroker<IProtocolCodeBroker>().Find(where, request.Page);
+			var codes = this.PersistenceContext.GetBroker<IProtocolCodeBroker>().Find(where, request.Page);
 
-			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+			var assembler = new ProtocolGroupAssembler();
 			return new ListProtocolCodesResponse(
-				CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(codes,
-					delegate (ProtocolCode code)
-					{
-						return assembler.GetProtocolCodeSummary(code);
-					}));
-    	}
+				CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
+					codes,
+					code => assembler.GetProtocolCodeSummary(code)));
+		}
 
 		[ReadOperation]
 		public LoadProtocolCodeForEditResponse LoadProtocolCodeForEdit(LoadProtocolCodeForEditRequest request)
-    	{
-			ProtocolCode code = this.PersistenceContext.Load<ProtocolCode>(request.ProtocolCodeRef);
+		{
+			var code = this.PersistenceContext.Load<ProtocolCode>(request.ProtocolCodeRef);
 
-			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+			var assembler = new ProtocolGroupAssembler();
 			return new LoadProtocolCodeForEditResponse(assembler.GetProtocolCodeDetail(code));
 		}
 
-    	[UpdateOperation]
-        public AddProtocolCodeResponse AddProtocolCode(AddProtocolCodeRequest request)
-        {
-			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
-			ProtocolCode protocolCode = new ProtocolCode();
+		[UpdateOperation]
+		public AddProtocolCodeResponse AddProtocolCode(AddProtocolCodeRequest request)
+		{
+			var assembler = new ProtocolGroupAssembler();
+			var protocolCode = new ProtocolCode();
 			assembler.UpdateProtocolCode(protocolCode, request.ProtocolCode);
-            this.PersistenceContext.Lock(protocolCode, DirtyState.New);
+			this.PersistenceContext.Lock(protocolCode, DirtyState.New);
 
-            this.PersistenceContext.SynchState();
+			this.PersistenceContext.SynchState();
 
-            return new AddProtocolCodeResponse(assembler.GetProtocolCodeSummary(protocolCode));
-        }
+			return new AddProtocolCodeResponse(assembler.GetProtocolCodeSummary(protocolCode));
+		}
 
-        [UpdateOperation]
-        public UpdateProtocolCodeResponse UpdateProtocolCode(UpdateProtocolCodeRequest request)
-        {
-        	ProtocolCode code = PersistenceContext.Load<ProtocolCode>(request.ProtocolCode.ProtocolCodeRef);
-			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+		[UpdateOperation]
+		public UpdateProtocolCodeResponse UpdateProtocolCode(UpdateProtocolCodeRequest request)
+		{
+			var code = this.PersistenceContext.Load<ProtocolCode>(request.ProtocolCode.ProtocolCodeRef);
+			var assembler = new ProtocolGroupAssembler();
 			assembler.UpdateProtocolCode(code, request.ProtocolCode);
 
 			this.PersistenceContext.SynchState();
@@ -103,16 +100,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 			return new UpdateProtocolCodeResponse(assembler.GetProtocolCodeSummary(code));
 		}
 
-        [UpdateOperation]
-        public DeleteProtocolCodeResponse DeleteProtocolCode(DeleteProtocolCodeRequest request)
-        {
+		[UpdateOperation]
+		public DeleteProtocolCodeResponse DeleteProtocolCode(DeleteProtocolCodeRequest request)
+		{
 			try
 			{
-				IProtocolCodeBroker broker = PersistenceContext.GetBroker<IProtocolCodeBroker>();
-				ProtocolCode item = broker.Load(request.ProtocolCodeRef, EntityLoadFlags.Proxy);
+				var broker = this.PersistenceContext.GetBroker<IProtocolCodeBroker>();
+				var item = broker.Load(request.ProtocolCodeRef, EntityLoadFlags.Proxy);
 				broker.Delete(item);
 
-				PersistenceContext.SynchState();
+				this.PersistenceContext.SynchState();
 
 				return new DeleteProtocolCodeResponse();
 			}
@@ -123,94 +120,94 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 			}
 		}
 
-        [ReadOperation]
-        public ListProtocolGroupsResponse ListProtocolGroups(ListProtocolGroupsRequest request)
-        {
-			ProtocolGroupSearchCriteria where = new ProtocolGroupSearchCriteria();
+		[ReadOperation]
+		public ListProtocolGroupsResponse ListProtocolGroups(ListProtocolGroupsRequest request)
+		{
+			var where = new ProtocolGroupSearchCriteria();
 			where.Name.SortAsc(0);
 
-			List<ProtocolGroupSummary> protocolGroups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
-                this.PersistenceContext.GetBroker<IProtocolGroupBroker>().Find(where, request.Page),
-                delegate(ProtocolGroup pg) { return new ProtocolGroupSummary(pg.GetRef(), pg.Name, pg.Description); });
+			var protocolGroups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
+				this.PersistenceContext.GetBroker<IProtocolGroupBroker>().Find(where, request.Page),
+				pg => new ProtocolGroupSummary(pg.GetRef(), pg.Name, pg.Description));
 
-            return new ListProtocolGroupsResponse(protocolGroups);
-        }
+			return new ListProtocolGroupsResponse(protocolGroups);
+		}
 
-        [ReadOperation]
+		[ReadOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
 		public LoadProtocolGroupForEditResponse LoadProtocolGroupForEdit(LoadProtocolGroupForEditRequest request)
-        {
-            ProtocolGroup group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
+		{
+			var group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
 
-            ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
-            return new LoadProtocolGroupForEditResponse(group.GetRef(), assembler.GetProtocolGroupDetail(group, this.PersistenceContext));
-        }
+			var assembler = new ProtocolGroupAssembler();
+			return new LoadProtocolGroupForEditResponse(group.GetRef(), assembler.GetProtocolGroupDetail(group, this.PersistenceContext));
+		}
 
-        [ReadOperation]
-        public GetProtocolGroupEditFormDataResponse GetProtocolGroupEditFormData(
-            GetProtocolGroupEditFormDataRequest request)
-        {
-			ProtocolGroupAssembler protocolAssembler = new ProtocolGroupAssembler();
-			List<ProtocolCodeSummary> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
+		[ReadOperation]
+		public GetProtocolGroupEditFormDataResponse GetProtocolGroupEditFormData(
+			GetProtocolGroupEditFormDataRequest request)
+		{
+			var protocolAssembler = new ProtocolGroupAssembler();
+			var codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
 				this.PersistenceContext.GetBroker<IProtocolCodeBroker>().FindAll(false),
-				delegate(ProtocolCode code) { return protocolAssembler.GetProtocolCodeSummary(code); });
+				code => protocolAssembler.GetProtocolCodeSummary(code));
 
-            ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
+			var procedureTypeGroupAssembler = new ProcedureTypeGroupAssembler();
 
-            List<ProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
-                this.PersistenceContext.GetBroker<IReadingGroupBroker>().FindAll(),
-                delegate(ProcedureTypeGroup readingGroup) { return assembler.GetProcedureTypeGroupSummary(readingGroup, this.PersistenceContext); });
+			var readingGroups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
+				this.PersistenceContext.GetBroker<IReadingGroupBroker>().FindAll(),
+				readingGroup => procedureTypeGroupAssembler.GetProcedureTypeGroupSummary(readingGroup, this.PersistenceContext));
 
-            return new GetProtocolGroupEditFormDataResponse(codes, readingGroups);
-        }
+			return new GetProtocolGroupEditFormDataResponse(codes, readingGroups);
+		}
 
-        [UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
 		public AddProtocolGroupResponse AddProtocolGroup(AddProtocolGroupRequest request)
-        {
-            ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+		{
+			var assembler = new ProtocolGroupAssembler();
 
-            ProtocolGroup group = new ProtocolGroup();
-            assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
+			var group = new ProtocolGroup();
+			assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
 
-            this.PersistenceContext.Lock(group, DirtyState.New);
-            this.PersistenceContext.SynchState();
+			this.PersistenceContext.Lock(group, DirtyState.New);
+			this.PersistenceContext.SynchState();
 
-            return new AddProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));
-        }
+			return new AddProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));
+		}
 
-        [UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
 		public UpdateProtocolGroupResponse UpdateProtocolGroup(UpdateProtocolGroupRequest request)
-        {
-            ProtocolGroup group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
+		{
+			var group = this.PersistenceContext.Load<ProtocolGroup>(request.ProtocolGroupRef);
 
-            ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
-            assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
+			var assembler = new ProtocolGroupAssembler();
+			assembler.UpdateProtocolGroup(group, request.Detail, this.PersistenceContext);
 
-            this.PersistenceContext.SynchState();
+			this.PersistenceContext.SynchState();
 
-            return new UpdateProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));
-        }
+			return new UpdateProtocolGroupResponse(assembler.GetProtocolGroupSummary(group));
+		}
 
-        [UpdateOperation]
+		[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
 		public DeleteProtocolGroupResponse DeleteProtocolGroup(DeleteProtocolGroupRequest request)
-        {
+		{
 			try
 			{
-				IProtocolGroupBroker broker = PersistenceContext.GetBroker<IProtocolGroupBroker>();
-				ProtocolGroup item = broker.Load(request.ProtocolGroupRef, EntityLoadFlags.Proxy);
+				var broker = PersistenceContext.GetBroker<IProtocolGroupBroker>();
+				var item = broker.Load(request.ProtocolGroupRef, EntityLoadFlags.Proxy);
 				broker.Delete(item);
-				PersistenceContext.SynchState();
+				this.PersistenceContext.SynchState();
 				return new DeleteProtocolGroupResponse();
 			}
 			catch (PersistenceException)
 			{
 				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(ProtocolGroup))));
 			}
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

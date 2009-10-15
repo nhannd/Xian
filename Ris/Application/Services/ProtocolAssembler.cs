@@ -41,37 +41,33 @@ namespace ClearCanvas.Ris.Application.Services
 	{
 		public ProtocolDetail CreateProtocolDetail(Protocol protocol, IPersistenceContext context)
 		{
-			ProtocolDetail detail = new ProtocolDetail();
-			StaffAssembler assembler = new StaffAssembler();
+			var detail = new ProtocolDetail();
+			var staffAssembler = new StaffAssembler();
 
 			detail.ProtocolRef = protocol.GetRef();
-			detail.Author = protocol.Author != null ? assembler.CreateStaffSummary(protocol.Author, context) : null;
-			detail.Supervisor = protocol.Supervisor != null ? assembler.CreateStaffSummary(protocol.Supervisor, context) : null;
+			detail.Author = protocol.Author != null ? staffAssembler.CreateStaffSummary(protocol.Author, context) : null;
+			detail.Supervisor = protocol.Supervisor != null ? staffAssembler.CreateStaffSummary(protocol.Supervisor, context) : null;
 			detail.Status = EnumUtils.GetEnumValueInfo(protocol.Status, context);
 			detail.Urgency = EnumUtils.GetEnumValueInfo(protocol.Urgency);
 			detail.RejectReason = EnumUtils.GetEnumValueInfo(protocol.RejectReason);
 
 			detail.Codes = protocol.Codes == null
 				? new List<ProtocolCodeSummary>()
-				: CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(protocol.Codes,
-					delegate(ProtocolCode code) { return CreateProtocolCodeSummary(code); });
+				: CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(protocol.Codes, CreateProtocolCodeSummary);
 
-			ProcedureAssembler procedureAssembler = new ProcedureAssembler();
+			var procedureAssembler = new ProcedureAssembler();
 			detail.Procedures = protocol.Procedures == null
 				? new List<ProcedureDetail>()
-				: CollectionUtils.Map<Procedure, ProcedureDetail>(protocol.Procedures,
-					delegate(Procedure procedure)
-					{
-						return procedureAssembler.CreateProcedureDetail(procedure, delegate { return false; }, false, context);
-					});
+				: CollectionUtils.Map<Procedure, ProcedureDetail>(
+					protocol.Procedures,
+					procedure => procedureAssembler.CreateProcedureDetail(procedure, delegate { return false; }, false, context));
 
 			return detail;
 		}
 
 		public ProtocolCodeDetail CreateProtocolCodeDetail(ProtocolCode pc)
 		{
-			ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description, pc.Deactivated);
-			return detail;
+			return new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description, pc.Deactivated);
 		}
 
 		public ProtocolCodeSummary CreateProtocolCodeSummary(ProtocolCode code)
@@ -87,9 +83,9 @@ namespace ClearCanvas.Ris.Application.Services
 			protocol.Supervisor = detail.Supervisor != null ? context.Load<Staff>(detail.Supervisor.StaffRef) : protocol.Supervisor;
 
 			protocol.Codes.Clear();
-			foreach (ProtocolCodeSummary item in detail.Codes)
+			foreach (var codeSummary in detail.Codes)
 			{
-				ProtocolCode code = context.Load<ProtocolCode>(item.ProtocolCodeRef, EntityLoadFlags.Proxy);
+				var code = context.Load<ProtocolCode>(codeSummary.ProtocolCodeRef, EntityLoadFlags.Proxy);
 				protocol.Codes.Add(code);
 			}
 		}
@@ -101,15 +97,14 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public ProtocolGroupDetail CreateProtocolGroupDetail(ProtocolGroup group, IPersistenceContext context)
 		{
-			List<ProtocolCodeSummary> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
+			var codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
 				group.Codes,
-				delegate(ProtocolCode code) { return CreateProtocolCodeSummary(code); });
+				CreateProtocolCodeSummary);
 
-			ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
-			List<ProcedureTypeGroupSummary> groups =
-				CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
-					group.ReadingGroups,
-					delegate(ProcedureTypeGroup readingGroup) { return assembler.GetProcedureTypeGroupSummary(readingGroup, context); });
+			var assembler = new ProcedureTypeGroupAssembler();
+			var groups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(
+				group.ReadingGroups,
+				readingGroup => assembler.GetProcedureTypeGroupSummary(readingGroup, context));
 
 			return new ProtocolGroupDetail(group.Name, group.Description, codes, groups);
 		}
