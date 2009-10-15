@@ -187,8 +187,12 @@ namespace ClearCanvas.Ris.Client
 				isWorklistEditorReadOnly);
 
 			this.Pages.Add(new NavigatorPage("Staff Group", _detailsEditor));
-			this.Pages.Add(new NavigatorPage("Staff Group/Staffs", _staffEditor));
-			this.Pages.Add(new NavigatorPage(isWorklistEditorReadOnly ? "Staff Group/Worklists (read only)" : "Staff Group/Worklists", _worklistEditor));
+			this.Pages.Add(new NavigatorPage("Staff Group/Members", _staffEditor));
+			this.Pages.Add(new NavigatorPage(
+				isWorklistEditorReadOnly 
+					? "Staff Group/Subscribed Worklists (read only)"
+					: "Staff Group/Subscribed Worklists", 
+				_worklistEditor));
 
 			// instantiate all extension pages
 			_extensionPages = new List<IStaffGroupEditorPage>();
