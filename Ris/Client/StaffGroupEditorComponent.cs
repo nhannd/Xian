@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client
 	/// Allows editing of staff group information.
 	/// </summary>
 	public class StaffGroupEditorComponent : NavigatorComponentContainer
-    {
+	{
 		#region StaffGroupEditorContext
 
 		class EditorContext : IStaffGroupEditorContext
@@ -100,10 +100,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			public StaffTable()
 			{
-				this.Columns.Add(new TableColumn<StaffSummary, string>("Name",
-					delegate(StaffSummary item) { return PersonNameFormat.Format(item.Name); }, 1.0f));
-				this.Columns.Add(new TableColumn<StaffSummary, string>("Role",
-					delegate(StaffSummary item) { return item.StaffType.Value; }, 0.5f));
+				this.Columns.Add(new TableColumn<StaffSummary, string>("Name", item => PersonNameFormat.Format(item.Name), 1.0f));
+				this.Columns.Add(new TableColumn<StaffSummary, string>("Role", item => item.StaffType.Value, 0.5f));
 			}
 		}
 
@@ -111,82 +109,81 @@ namespace ClearCanvas.Ris.Client
 		{
 			public WorklistTable()
 			{
-				this.Columns.Add(new TableColumn<WorklistSummary, string>("Name",
-					delegate(WorklistSummary summary) { return summary.DisplayName; },
-					0.5f));
-
+				this.Columns.Add(new TableColumn<WorklistSummary, string>("Name", summary => summary.DisplayName, 0.5f));
 				this.Columns.Add(new TableColumn<WorklistSummary, string>("Class",
-					delegate(WorklistSummary summary) { return string.Concat(summary.ClassCategoryName, " - ", summary.ClassDisplayName); },
+					summary => string.Concat(summary.ClassCategoryName, " - ", summary.ClassDisplayName),
 					0.5f));
 			}
-        }
+		}
 
-        private EntityRef _staffGroupRef;
-        private StaffGroupDetail _staffGroupDetail;
+		private EntityRef _staffGroupRef;
+		private StaffGroupDetail _staffGroupDetail;
 
-        // return value
-        private StaffGroupSummary _staffGroupSummary;
+		// return value
+		private StaffGroupSummary _staffGroupSummary;
 
-    	private StaffGroupDetailsEditorComponent _detailsEditor;
-    	private SelectorEditorComponent<StaffSummary, StaffTable> _staffEditor;
+		private StaffGroupDetailsEditorComponent _detailsEditor;
+		private SelectorEditorComponent<StaffSummary, StaffTable> _staffEditor;
 		private SelectorEditorComponent<WorklistSummary, WorklistTable> _worklistEditor;
 
 		private List<IStaffGroupEditorPage> _extensionPages;
 
-        /// <summary>
-        /// Constructs an editor to edit a new staff
-        /// </summary>
-        public StaffGroupEditorComponent()
-        {
-        }
+		/// <summary>
+		/// Constructs an editor to edit a new staff
+		/// </summary>
+		public StaffGroupEditorComponent()
+		{
+		}
 
-        /// <summary>
-        /// Constructs an editor to edit an existing staff profile
-        /// </summary>
-        public StaffGroupEditorComponent(EntityRef staffGroupRef)
-        {
-            _staffGroupRef = staffGroupRef;
-        }
+		/// <summary>
+		/// Constructs an editor to edit an existing staff profile
+		/// </summary>
+		public StaffGroupEditorComponent(EntityRef staffGroupRef)
+		{
+			_staffGroupRef = staffGroupRef;
+		}
 
 		/// <summary>
 		/// Gets summary of staff group that was added or edited
 		/// </summary>
 		public StaffGroupSummary StaffGroupSummary
-        {
-            get { return _staffGroupSummary; }
-        }
+		{
+			get { return _staffGroupSummary; }
+		}
 
-        public override void Start()
-        {
-        	LoadStaffGroupEditorFormDataResponse formDataResponse = null;
+		public override void Start()
+		{
+			LoadStaffGroupEditorFormDataResponse formDataResponse = null;
 
-            Platform.GetService<IStaffGroupAdminService>(
-                delegate(IStaffGroupAdminService service)
-                {
-                    formDataResponse = service.LoadStaffGroupEditorFormData(
-                        new LoadStaffGroupEditorFormDataRequest());
+			Platform.GetService<IStaffGroupAdminService>(service =>
+				{
+					formDataResponse = service.LoadStaffGroupEditorFormData(
+						new LoadStaffGroupEditorFormDataRequest());
 
-                    if (_staffGroupRef == null)
-                    {
-                        _staffGroupDetail = new StaffGroupDetail();
-                    }
-                    else
-                    {
-                        LoadStaffGroupForEditResponse response = service.LoadStaffGroupForEdit(new LoadStaffGroupForEditRequest(_staffGroupRef));
-                        _staffGroupRef = response.StaffGroup.StaffGroupRef;
-                        _staffGroupDetail = response.StaffGroup;
-                    }
-                });
+					if (_staffGroupRef == null)
+					{
+						_staffGroupDetail = new StaffGroupDetail();
+					}
+					else
+					{
+						var response = service.LoadStaffGroupForEdit(new LoadStaffGroupForEditRequest(_staffGroupRef));
+						_staffGroupRef = response.StaffGroup.StaffGroupRef;
+						_staffGroupDetail = response.StaffGroup;
+					}
+				});
 
-        	_detailsEditor = new StaffGroupDetailsEditorComponent();
-			_detailsEditor.StaffGroupDetail = _staffGroupDetail;
+			_detailsEditor = new StaffGroupDetailsEditorComponent { StaffGroupDetail = _staffGroupDetail };
 
-			_staffEditor = new SelectorEditorComponent<StaffSummary, StaffTable>(formDataResponse.AllStaff, _staffGroupDetail.Members,
-				delegate(StaffSummary staff) { return staff.StaffRef; });
+			_staffEditor = new SelectorEditorComponent<StaffSummary, StaffTable>(
+				formDataResponse.AllStaff,
+				_staffGroupDetail.Members,
+				staff => staff.StaffRef);
 
-			bool isWorklistEditorReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist) == false;
-			_worklistEditor = new SelectorEditorComponent<WorklistSummary, WorklistTable>(formDataResponse.AllAdminWorklists, _staffGroupDetail.Worklists,
-				delegate(WorklistSummary worklist) { return worklist.WorklistRef; },
+			var isWorklistEditorReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist) == false;
+			_worklistEditor = new SelectorEditorComponent<WorklistSummary, WorklistTable>(
+				formDataResponse.AllAdminWorklists,
+				_staffGroupDetail.Worklists,
+				worklist => worklist.WorklistRef,
 				isWorklistEditorReadOnly);
 
 			this.Pages.Add(new NavigatorPage("Staff Group", _detailsEditor));
@@ -202,62 +199,59 @@ namespace ClearCanvas.Ris.Client
 
 			// add extension pages to navigator
 			// the navigator will start those components if the user goes to that page
-			foreach (IStaffGroupEditorPage page in _extensionPages)
+			foreach (var page in _extensionPages)
 			{
 				this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
 			}
 
-            base.Start();
-        }
+			base.Start();
+		}
 
-        public override void Accept()
-        {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-                return;
-            }
+		public override void Accept()
+		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
 
-            try
-            {
+			try
+			{
 				// give extension pages a chance to save data prior to commit
-				_extensionPages.ForEach(delegate(IStaffGroupEditorPage page) { page.Save(); });
+				_extensionPages.ForEach(page => page.Save());
 
 				// Update staffs
 				_staffGroupDetail.Members = new List<StaffSummary>(_staffEditor.SelectedItems);
 
 				if (!_worklistEditor.IsReadOnly)
-            		_staffGroupDetail.Worklists = new List<WorklistSummary>(_worklistEditor.SelectedItems);
+					_staffGroupDetail.Worklists = new List<WorklistSummary>(_worklistEditor.SelectedItems);
 
-                Platform.GetService<IStaffGroupAdminService>(
-                    delegate(IStaffGroupAdminService service)
-                    {
-                        if (_staffGroupRef == null)
-                        {
-                            AddStaffGroupResponse response = service.AddStaffGroup(
-                                new AddStaffGroupRequest(_staffGroupDetail));
-                            _staffGroupRef = response.StaffGroup.StaffGroupRef;
-                            _staffGroupSummary = response.StaffGroup;
-                        }
-                        else
-                        {
-                            UpdateStaffGroupResponse response = service.UpdateStaffGroup(
-                                new UpdateStaffGroupRequest(_staffGroupDetail));
-                            _staffGroupRef = response.StaffGroup.StaffGroupRef;
-                            _staffGroupSummary = response.StaffGroup;
-                        }
-                    });
+				Platform.GetService<IStaffGroupAdminService>(service =>
+					{
+						if (_staffGroupRef == null)
+						{
+							var response = service.AddStaffGroup(new AddStaffGroupRequest(_staffGroupDetail));
+							_staffGroupRef = response.StaffGroup.StaffGroupRef;
+							_staffGroupSummary = response.StaffGroup;
+						}
+						else
+						{
+							var response = service.UpdateStaffGroup(new UpdateStaffGroupRequest(_staffGroupDetail));
+							_staffGroupRef = response.StaffGroup.StaffGroupRef;
+							_staffGroupSummary = response.StaffGroup;
+						}
+					});
 
-                this.Exit(ApplicationComponentExitCode.Accepted);
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, "Unable to save Staff Group", this.Host.DesktopWindow,
-                    delegate
-                    {
-                        this.Exit(ApplicationComponentExitCode.Error);
-                    });
-            }
-        }
-    }
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, "Unable to save Staff Group", this.Host.DesktopWindow,
+					delegate
+					{
+						this.Exit(ApplicationComponentExitCode.Error);
+					});
+			}
+		}
+	}
 }
