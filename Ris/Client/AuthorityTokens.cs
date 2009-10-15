@@ -42,6 +42,9 @@ namespace ClearCanvas.Ris.Client
         {
             [AuthorityToken(Description = "Allow administration of User-Interface validation rules.")]
             public const string UIValidationRules = "Desktop/UI Validation Rules";
-        }
+		
+			[AuthorityToken(Description = "Allow access to the RIS Folder Organization functionality.")]
+			public const string FolderOrganization = "Desktop/RIS/Folder Organization";
+		}
 	}
 }

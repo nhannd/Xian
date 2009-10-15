@@ -54,10 +54,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			var listPages = new List<IConfigurationPage>();
 
-			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View))
-				return listPages;
-
-			listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
+			if (Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.HomePage.View) &&
+				Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Desktop.FolderOrganization))
+			{
+				listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
+			}
 
 			return listPages.AsReadOnly();
 		}
