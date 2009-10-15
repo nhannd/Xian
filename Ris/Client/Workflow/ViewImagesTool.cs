@@ -32,15 +32,15 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Client.Workflow;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Images.View)]
 	[MenuAction("apply", "folderexplorer-items-contextmenu/View Images", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Verify", "Apply")]
 	[ButtonAction("apply", "biography-reports-toolbar/View Images", "Apply")]
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </summary>
 		public event EventHandler VisibleChanged
 		{
-			add {  }
+			add { }
 			remove { }
 		}
 
@@ -133,26 +133,31 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return (((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
 					&& ((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
 			}
-			else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+
+			if (this.ContextBase is IRegistrationWorkflowItemToolContext)
 			{
 				return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-					&& ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+						&& ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
 			}
-			else if (this.ContextBase is IOrderNoteboxItemToolContext)
+
+			if (this.ContextBase is IOrderNoteboxItemToolContext)
 			{
 				return (((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems != null
-					&& ((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+						&& ((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems.Count == 1);
 			}
-			else if (this.ContextBase is IPerformingWorkflowItemToolContext)
+
+			if (this.ContextBase is IPerformingWorkflowItemToolContext)
 			{
 				return (((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-					&& ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+						&& ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
 			}
-			else if (this.ContextBase is IBiographyOrderReportsToolContext)
+
+			if (this.ContextBase is IBiographyOrderReportsToolContext)
 			{
-				var context = (IBiographyOrderReportsToolContext) this.ContextBase;
+				var context = (IBiographyOrderReportsToolContext)this.ContextBase;
 				return !string.IsNullOrEmpty(context.AccessionNumber);
 			}
+
 			return false;
 		}
 
@@ -186,30 +191,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		public void Apply()
-		{				
+		{
 			if (this.ContextBase is IRegistrationWorkflowItemToolContext)
 			{
-				IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
+				var context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
 				OpenViewer((WorklistItemSummaryBase)context.Selection.Item, context.DesktopWindow);
 			}
 			else if (this.ContextBase is IReportingWorkflowItemToolContext)
 			{
-				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
+				var context = (IReportingWorkflowItemToolContext)this.ContextBase;
 				OpenViewer((WorklistItemSummaryBase)context.Selection.Item, context.DesktopWindow);
 			}
 			else if (this.ContextBase is IOrderNoteboxItemToolContext)
 			{
-				IOrderNoteboxItemToolContext context = (IOrderNoteboxItemToolContext)this.ContextBase;
+				var context = (IOrderNoteboxItemToolContext)this.ContextBase;
 				OpenViewer((OrderNoteboxItemSummary)context.Selection.Item, context.DesktopWindow);
 			}
 			else if (this.ContextBase is IPerformingWorkflowItemToolContext)
 			{
-				IPerformingWorkflowItemToolContext context = (IPerformingWorkflowItemToolContext)this.ContextBase;
+				var context = (IPerformingWorkflowItemToolContext)this.ContextBase;
 				OpenViewer((WorklistItemSummaryBase)context.Selection.Item, context.DesktopWindow);
 			}
 			else if (this.ContextBase is IBiographyOrderReportsToolContext)
 			{
-				IBiographyOrderReportsToolContext context = (IBiographyOrderReportsToolContext) this.ContextBase;
+				var context = (IBiographyOrderReportsToolContext)this.ContextBase;
 				OpenViewer(context.AccessionNumber, context.DesktopWindow);
 			}
 		}
@@ -222,7 +227,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private static void OpenViewer(OrderNoteboxItemSummary item, IDesktopWindow desktopWindow)
 		{
-			if(item != null)
+			if (item != null)
 				OpenViewer(item.AccessionNumber, desktopWindow);
 		}
 

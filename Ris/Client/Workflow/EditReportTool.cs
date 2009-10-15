@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -196,26 +197,32 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[IconSetObserver("withImagesContext", "withImagesIconSet", "LabelChanged")]
 	[LabelValueObserver("withImagesContext", "withImagesLabel", "LabelChanged")]
 
-	[ButtonAction("withImagesToolbar", "editreport-toolbar-dropdown/Edit Report and ViewImages", "ApplyWithImagesAndSetDefault")]
+	[ButtonAction("withImagesToolbar", "editreport-toolbar-dropdown/Edit Report and View Images", "ApplyWithImagesAndSetDefault")]
 	[EnabledStateObserver("withImagesToolbar", "Enabled", "EnabledChanged")]
 	[IconSetObserver("withImagesToolbar", "withImagesIconSet", "LabelChanged")]
 	[LabelValueObserver("withImagesToolbar", "withImagesLabel", "LabelChanged")]
 	[CheckedStateObserver("withImagesToolbar", "WithImagesChecked", "ActiveToolChanged")]
 
-	[MenuAction("withoutImagesContext", "folderexplorer-items-contextmenu/Edit Report and View Images", "ApplyWithoutImages")]
+	[MenuAction("withoutImagesContext", "folderexplorer-items-contextmenu/Edit Report", "ApplyWithoutImages")]
 	[EnabledStateObserver("withoutImagesContext", "Enabled", "EnabledChanged")]
 	[IconSetObserver("withoutImagesContext", "withoutImagesIconSet", "LabelChanged")]
 	[LabelValueObserver("withoutImagesContext", "withoutImagesLabel", "LabelChanged")]
 
-	[ButtonAction("withoutImagesToolbar", "editreport-toolbar-dropdown/Edit Report and ViewImages", "ApplyWithoutImagesAndSetDefault")]
+	[ButtonAction("withoutImagesToolbar", "editreport-toolbar-dropdown/Edit Report", "ApplyWithoutImagesAndSetDefault")]
 	[EnabledStateObserver("withoutImagesToolbar", "Enabled", "EnabledChanged")]
 	[IconSetObserver("withoutImagesToolbar", "withoutImagesIconSet", "LabelChanged")]
 	[LabelValueObserver("withoutImagesToolbar", "withoutImagesLabel", "LabelChanged")]
 	[CheckedStateObserver("withoutImagesToolbar", "WithoutImagesChecked", "ActiveToolChanged")]
 
 	[ActionPermission("group", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-	[ActionPermission("withImages", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-	[ActionPermission("withoutImages", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ActionPermission("withImagesToolbar",
+		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create,
+		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Images.View)]
+	[ActionPermission("withImagesContext",
+		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create,
+		ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Images.View)]
+	[ActionPermission("withoutImagesToolbar", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ActionPermission("withoutImagesContext", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class EditReportTool : ReportingWorkflowItemTool
 	{
@@ -241,7 +248,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_editReportWithoutImagesTool.SetContext(this.Context);
 			_editReportWithoutImagesTool.Initialize();
 
-			if (ReportingSettings.Default != null && ReportingSettings.Default.ShouldOpenImages)
+			if (ReportingSettings.Default != null 
+				&& ReportingSettings.Default.ShouldOpenImages
+				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Images.View))
 				SetActiveTool(_editReportWithImagesTool);
 			else
 				SetActiveTool(_editReportWithoutImagesTool);
