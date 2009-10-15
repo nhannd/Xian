@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
@@ -270,7 +271,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                     if (!result.Successful)
                     {
-                        throw new ApplicationException("Unable to import image to destination study");
+                        throw new ApplicationException(result.ErrorMessage);
                     }
                 }
 
@@ -285,6 +286,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (!destStudy.CanUpdate(out reason))
             {
                 throw new TargetStudyInvalidStateException(reason) { StudyInstanceUid = destStudy.StudyInstanceUid };
+            }
+
+            if (!FilesystemMonitor.Instance.IsWritable(destStudy.FilesystemKey))
+            {
+                throw new FilesystemNotWritableException(destStudy.FilesystemPath);
             }
         }
 

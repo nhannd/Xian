@@ -36,6 +36,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -200,6 +201,7 @@ namespace ClearCanvas.ImageServer.Common
 					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
 				
+                // TODO: Should we throw an exception instead?
 				if (info==null)
 					return null;
 
@@ -415,7 +417,7 @@ namespace ClearCanvas.ImageServer.Common
 				}
 			}
 
-			//Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
+            // TODO: throw new FilesystemIsNotWritableException();
 			location = null;
 			return false;
 		}
@@ -433,6 +435,18 @@ namespace ClearCanvas.ImageServer.Common
 				return GetOnlineStudyStorageLocation(read, studyStorageKey, out location);
 			}
 		}
+
+        /// <summary>
+        /// Returns a value indicating whether the filesystem with the specified key
+        /// is writable.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public bool IsWritable(ServerEntityKey key)
+        {
+            ServerFilesystemInfo fs = GetFilesystemInfo(key);
+            return fs.Writeable;
+        }
 		#endregion
 
 		#region Private Methods

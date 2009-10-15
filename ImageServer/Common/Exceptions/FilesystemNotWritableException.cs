@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.ImageServer.Common.Exceptions
 {
     /// <summary>
@@ -36,9 +38,18 @@ namespace ClearCanvas.ImageServer.Common.Exceptions
     /// </summary>
     public class FilesystemNotWritableException : SopInstanceProcessingException
     {
+
+        public string Path { get; private set; }
+
         public FilesystemNotWritableException()
             : base("Study is online but the filesystem is no longer writable.")
         {
+        }
+
+        public FilesystemNotWritableException(string path) 
+            : base(String.Format("Filesystem is not writable: {0}", path))
+        {
+            Path = path;
         }
     }
 }
