@@ -34,9 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -119,12 +117,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				doc.Close();
 		}
 
-		private bool UserElectsToLeaveExistingDocumentOpen(WorklistItemSummaryBase item, IEnumerable<Workspace> documents)
+		private bool UserElectsToLeaveExistingDocumentOpen(ReportingWorklistItem item, IEnumerable<Workspace> documents)
 		{
 			var firstDocument = CollectionUtils.FirstElement(documents);
 			firstDocument.Activate();
 
-			var message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
+			var message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, ReportDocument.GetTitle(item));
 			return DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 		}
 
