@@ -403,21 +403,18 @@ namespace ClearCanvas.Ris.Client
 				: CollectionUtils.SelectFirst(_subTree.Items,
 					delegate(DraggableTreeNode child) { return child.Text == text; });
 			
-			if (childWithMatchingText == null)
+			if (path.Segments.Count == 1)
 			{
-				if (path.Segments.Count == 1)
-				{
-					// There are no more depth to the path, add child now.
-					AddChildNode(node);
-                    PropagateCheckStateUp(node.Parent);
-				}
-				else
-				{
-					// create a container node and insert into the container node's subtree
-					ContainerNode containerNode = new ContainerNode(text);
-					AddChildNode(containerNode);
-					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
-				}
+				// There are no more depth to the path, add child now.
+				AddChildNode(node);
+				PropagateCheckStateUp(node.Parent);
+			}
+			else if (childWithMatchingText == null)
+			{
+				// create a container node and insert into the container node's subtree
+				ContainerNode containerNode = new ContainerNode(text);
+				AddChildNode(containerNode);
+				containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
 			}
 			else
 			{

@@ -231,24 +231,24 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="alphabetical"></param>
 		protected void InsertFolder(IFolder folder, int depth, bool alphabetical)
 		{
-            if (depth == folder.FolderPath.Segments.Count)
+			if (depth == folder.FolderPath.Segments.Count)
 			{
 				SetFolder(folder);
 			}
 			else
 			{
-				PathSegment segment = folder.FolderPath.Segments[depth];
+				var segment = folder.FolderPath.Segments[depth];
 
 				// find an existing node at this path point
-				FolderTreeNode node = CollectionUtils.SelectFirst(_subTree.Items,
-											delegate(FolderTreeNode n)
-											{
-												return Equals(n.Folder.FolderPath.Segments[depth], segment);
-											});
-				// if not, create the node
-				if (node == null)
+				var node = CollectionUtils.SelectFirst(_subTree.Items,
+					n => Equals(n.Folder.FolderPath.Segments[depth], segment));
+
+				var isLeafNode = (depth == folder.FolderPath.Segments.Count - 1);
+
+				if (node == null || isLeafNode)
 				{
-					node = new FolderTreeNode(_explorer, this, folder.FolderPath.SubPath(0, depth+1));
+					// create the node if it doesn't exist, or if this is the leaf node
+					node = new FolderTreeNode(_explorer, this, folder.FolderPath.SubPath(0, depth + 1));
 					if(alphabetical)
 						InsertChildAlphabetical(node, depth);
 					else
