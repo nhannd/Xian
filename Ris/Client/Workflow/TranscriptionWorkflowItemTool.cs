@@ -29,20 +29,16 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	public abstract class TranscriptionWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
 	{
-		public TranscriptionWorkflowItemTool(string operationName)
+		protected TranscriptionWorkflowItemTool(string operationName)
 			: base(operationName)
 		{
 		}
@@ -56,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
 		{
-			Workspace workspace = DocumentManager.Get<TranscriptionDocument>(item.ProcedureStepRef);
+			var workspace = DocumentManager.Get<TranscriptionDocument>(item.ProcedureStepRef);
 			if (workspace != null)
 			{
 				workspace.Activate();
@@ -67,48 +63,43 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected void OpenTranscriptionEditor(ReportingWorklistItem item)
 		{
-			if (!ActivateIfAlreadyOpen(item))
+			if (ActivateIfAlreadyOpen(item))
+				return;
+
+			if (!TranscriptionSettings.Default.AllowMultipleTranscriptionWorkspaces)
 			{
-				if (!TranscriptionSettings.Default.AllowMultipleTranscriptionWorkspaces)
+				var documents = DocumentManager.GetAll<TranscriptionDocument>();
+
+				// Show warning message and ask if the existing document should be closed or not
+				if (documents.Count > 0)
 				{
-					List<Workspace> documents = DocumentManager.GetAll<TranscriptionDocument>();
+					var firstDocument = CollectionUtils.FirstElement(documents);
+					firstDocument.Activate();
 
-					// Show warning message and ask if the existing document should be closed or not
-					if (documents.Count > 0)
-					{
-						Workspace firstDocument = CollectionUtils.FirstElement(documents);
-						firstDocument.Activate();
+					var message = string.Format(SR.MessageTranscriptionComponentAlreadyOpened, firstDocument.Title, TranscriptionDocument.GetTitle(item));
+					if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
+						return;		// Leave the existing document open
 
-						string message = string.Format(SR.MessageTranscriptionComponentAlreadyOpened, firstDocument.Title, TranscriptionDocument.GetTitle(item));
-						if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
-						{
-							// Leave the existing document open
-							return;
-						}
-						else
-						{
-							// close documents and continue
-							CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
-						}
-					}
+					// close documents and continue
+					CollectionUtils.ForEach(documents, document => document.Close());
 				}
-
-				// open the report editor
-				TranscriptionDocument doc = new TranscriptionDocument(item, this.Context);
-				doc.Open();
-
-				// Need to re-invalidate folders that open a report document, since cancelling the report
-				// can re-insert items into the same folder.
-				Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
-				doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 			}
+
+			// open the report editor
+			var doc = new TranscriptionDocument(item, this.Context);
+			doc.Open();
+
+			// Need to re-invalidate folders that open a report document, since cancelling the report
+			// can re-insert items into the same folder.
+			var selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
+			doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 		}
 
 		protected ReportingWorklistItem GetSelectedItem()
 		{
-			if (this.Context.SelectedItems.Count != 1)
-				return null;
-			return CollectionUtils.FirstElement(this.Context.SelectedItems);
+			return this.Context.SelectedItems.Count != 1 
+				? null 
+				: CollectionUtils.FirstElement(this.Context.SelectedItems);
 		}
 	}
 }

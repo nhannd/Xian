@@ -35,8 +35,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Open Protocol", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	public class EditProtocolTool : ProtocolWorkflowItemTool
 	{
@@ -59,8 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftProtocolFolder), this);
 			this.Context.RegisterDoubleClickHandler(
-				(IClickAction)CollectionUtils.SelectFirst(this.Actions,
-					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
+				(IClickAction)CollectionUtils.SelectFirst(this.Actions, a => a is IClickAction && a.ActionID.EndsWith("apply")));
 		}
 
 		public override bool Enabled
@@ -70,14 +69,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (this.Context.SelectedItems.Count != 1)
 					return false;
 
-				ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+				var item = CollectionUtils.FirstElement(this.Context.SelectedItems);
 				if (item.OrderRef == null)
 					return false;
 
-				if (item.ProcedureStepRef == null)
-					return false;
-
-				return true;
+				return item.ProcedureStepRef != null;
 			}
 		}
 
@@ -101,44 +97,39 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void OpenProtocolEditor(ReportingWorklistItem item)
 		{
-			if (!ActivateIfAlreadyOpen(item))
+			if (ActivateIfAlreadyOpen(item))
+				return;
+
+			if (!ProtocollingSettings.Default.AllowMultipleProtocollingWorkspaces)
 			{
-				if (!ProtocollingSettings.Default.AllowMultipleProtocollingWorkspaces)
+				var documents = DocumentManager.GetAll<ProtocolDocument>();
+
+				// Show warning message and ask if the existing document should be closed or not
+				if (documents.Count > 0)
 				{
-					List<Workspace> documents = DocumentManager.GetAll<ProtocolDocument>();
+					var firstDocument = CollectionUtils.FirstElement(documents);
+					firstDocument.Activate();
 
-					// Show warning message and ask if the existing document should be closed or not
-					if (documents.Count > 0)
-					{
-						Workspace firstDocument = CollectionUtils.FirstElement(documents);
-						firstDocument.Activate();
+					var message = string.Format(SR.MessageProtocollingComponentAlreadyOpened, firstDocument.Title, ProtocolDocument.GetTitle(item));
+					if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
+						return;		// Leave the existing document open
 
-						string message = string.Format(SR.MessageProtocollingComponentAlreadyOpened, firstDocument.Title, ProtocolDocument.GetTitle(item));
-						if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
-						{
-							// Leave the existing document open
-							return;
-						}
-						else
-						{
-							// close documents and continue
-							CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
-						}
-					}
+					// close documents and continue
+					CollectionUtils.ForEach(documents, document => document.Close());
 				}
-
-				// open the protocol editor
-				ProtocolDocument protocolDocument = new ProtocolDocument(item, GetMode(item), this.Context);
-				protocolDocument.Open();
-
-				Type selectedFolderType = this.Context.SelectedFolder.GetType();
-				protocolDocument.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 			}
+
+			// open the protocol editor
+			var protocolDocument = new ProtocolDocument(item, GetMode(item), this.Context);
+			protocolDocument.Open();
+
+			var selectedFolderType = this.Context.SelectedFolder.GetType();
+			protocolDocument.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 		}
 
 		private static bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
 		{
-			Workspace workspace = DocumentManager.Get<ProtocolDocument>(item.OrderRef);
+			var workspace = DocumentManager.Get<ProtocolDocument>(item.OrderRef);
 			if (workspace != null)
 			{
 				workspace.Activate();
@@ -154,10 +145,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (CanCreateProtocol(item))
 				return ProtocollingComponentModes.Assign;
-			else if (CanEditProtocol(item))
-				return ProtocollingComponentModes.Edit;
-			else
-				return ProtocollingComponentModes.Review;
+			
+			return CanEditProtocol(item) 
+				? ProtocollingComponentModes.Edit 
+				: ProtocollingComponentModes.Review;
 		}
 
 		private bool CanCreateProtocol(ReportingWorklistItem item)
