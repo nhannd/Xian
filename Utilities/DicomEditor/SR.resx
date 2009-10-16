@@ -187,7 +187,9 @@
     <value>Would you like to revert *all* loaded files in addition to this one?</value>
   </data>
   <data name="MessageConfirmSaveAllFiles" xml:space="preserve">
-    <value>The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?</value>
+    <value>The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?
+
+NOTE: if any of the edited files are from the local data store, it should be reindexed, otherwise the edited values may appear unchanged.</value>
   </data>
   <data name="MessageDumpProgressBar" xml:space="preserve">
     <value>Processing Files...</value>
