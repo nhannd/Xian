@@ -305,6 +305,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		{
 			if (!e.Item.IsFolder)
 			{
+				_lastClickOnFolderView = true;
 				this.OnItemOpened(sender, e);
 			}
 		}
