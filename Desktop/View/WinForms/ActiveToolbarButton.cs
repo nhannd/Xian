@@ -186,8 +186,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		internal static string GetTooltipText(IClickAction action)
 		{
+			string actionTooltip = action.Tooltip;
+			if (string.IsNullOrEmpty(actionTooltip))
+				actionTooltip = (action.Label ?? string.Empty).Replace("&", "");
+
 			if (action.KeyStroke == XKeys.None)
-				return action.Tooltip;
+				return actionTooltip;
 
 			bool ctrl = (action.KeyStroke & XKeys.Control) == XKeys.Control;
 			bool alt = (action.KeyStroke & XKeys.Alt) == XKeys.Alt;
@@ -195,11 +199,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			XKeys keyCode = action.KeyStroke & XKeys.KeyCode;
 			
 			StringBuilder builder = new StringBuilder();
-			builder.Append(action.Tooltip);
+			builder.Append(actionTooltip);
 
 			if (keyCode != XKeys.None)
 			{
-				builder.AppendLine();
+				if (builder.Length > 0)
+					builder.AppendLine();
 				builder.AppendFormat("{0}: ", SR.LabelKeyboardShortcut);
 				if (ctrl)
 					builder.Append("Ctrl");
