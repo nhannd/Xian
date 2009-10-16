@@ -56,8 +56,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	#region Toolbar
 
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarDrawShutter", "Select", "DrawShutterMenuModel", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuDrawShutter", "Select", Flags = ClickActionFlags.CheckAction)]
-	[GroupHint("activate", "Tools.Image.Manipulation.Shutter")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
@@ -78,6 +76,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[CheckedStateObserver("selectDrawRectangleShutter", "DrawRectangleShutterChecked", "SelectedShutterTypeChanged")]
 
 	#endregion
+	#endregion
+
+	#region Menu
+
+	[ButtonAction("selectDrawCircleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
+	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("selectDrawCircleShutter", "Enabled", "EnabledChanged")]
+
+	[ButtonAction("selectDrawPolygonShutter", "global-menus/MenuTools/MenuStandard/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
+	[GroupHint("selectDrawPolygonShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("selectDrawPolygonShutter", "Enabled", "EnabledChanged")]
+
+	[ButtonAction("selectDrawRectangleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
+	[GroupHint("selectDrawCircleShutter", "Tools.Image.Manipulation.Shutter")]
+	[EnabledStateObserver("selectDrawRectangleShutter", "Enabled", "EnabledChanged")]
+
 	#endregion
 
 	[MouseToolButton(XMouseButtons.Left, false)]
@@ -208,6 +222,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
+			if (!Enabled)
+				return false;
+
 			base.Start(mouseInformation);
 
 			if (_graphicBuilder != null)
@@ -231,6 +248,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
+			if (!Enabled)
+				return false;
+
 			if (_graphicBuilder != null)
 			{
 				bool returnValue = _graphicBuilder.Track(mouseInformation);
@@ -243,6 +263,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
+			if (!Enabled)
+				return false;
+
 			if (_graphicBuilder != null && _graphicBuilder.Stop(mouseInformation))
 			{
 				_primitiveGraphic.Draw();
