@@ -741,4 +741,7 @@ Please check the log for more details.</value>
   <data name="PrefixDefaultVoiDataLutExplanation" xml:space="preserve">
     <value>LUT</value>
   </data>
+  <data name="TooltipMatchScale" xml:space="preserve">
+    <value>Match Scale</value>
+  </data>
 </root>

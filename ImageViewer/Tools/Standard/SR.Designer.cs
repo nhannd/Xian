@@ -1729,6 +1729,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Match Scale.
+        /// </summary>
+        internal static string TooltipMatchScale {
+            get {
+                return ResourceManager.GetString("TooltipMatchScale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pan.
         /// </summary>
         internal static string TooltipPan {
