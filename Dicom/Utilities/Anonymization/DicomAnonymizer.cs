@@ -433,6 +433,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			}
 
 			_currentFile.DataSet[DicomTags.SopInstanceUid].SetStringValue(newUid);
+			_currentFile.MetaInfo[DicomTags.SourceApplicationEntityTitle].SetStringValue(string.Empty);
 			_currentFile.MetaInfo[DicomTags.MediaStorageSopInstanceUid].SetStringValue(newUid);
 			_currentFile.MetaInfo[DicomTags.MediaStorageSopClassUid].Values = _currentFile.DataSet[DicomTags.SopClassUid].Values;
 		}
