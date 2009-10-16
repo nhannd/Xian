@@ -909,7 +909,7 @@ namespace ClearCanvas.Common
             Platform.CheckForNullReference(conditionName, "conditionName");
 
             if (testTrueCondition != true)
-                throw new ArgumentException(SR.ExceptionConditionIsNotMet, conditionName);
+                throw new ArgumentException(String.Format(SR.ExceptionConditionIsNotMet, conditionName));
         }
 
 
@@ -925,7 +925,7 @@ namespace ClearCanvas.Common
             Platform.CheckForNullReference(conditionName, "conditionName");
 
             if (testFalseCondition != false)
-                throw new ArgumentException(SR.ExceptionConditionIsNotMet, conditionName);
+				throw new ArgumentException(String.Format(SR.ExceptionConditionIsNotMet, conditionName));
         }
 
 		/// <summary>
