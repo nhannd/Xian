@@ -180,6 +180,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			get { return _dataLuts[_index].LastMappedPixelValue; }
 		}
 
+		public string Explanation
+		{
+			get { return _dataLuts[_index].Explanation; }
+		}
+
 		public override sealed int[] Data
 		{
 			get { return _dataLuts[_index].Data; }
@@ -197,11 +202,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		public override string GetDescription()
 		{
-			string name = _dataLuts[_index].Explanation;
+			string name = Explanation;
 			if (String.IsNullOrEmpty(name))
-				name = "LUT" + _index;
+				name = String.Format("{0}{1}", SR.PrefixDefaultVoiDataLutExplanation, _index + 1);
 
-			return String.Format(SR.FormatAutoVoiDataLutDescription, _dataLuts[_index].Explanation);
+			return String.Format(SR.FormatAutoVoiDataLutDescription, name);
 		}
 
 		public override sealed object CreateMemento()
@@ -275,6 +280,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
 		{
 			return provider != null && provider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0;
+		}
+
+		public override string GetDescription()
+		{
+			string name = base.Explanation;
+			if (String.IsNullOrEmpty(name))
+				name = SR.LabelPresentationStateVoiDataLut;
+
+			return String.Format(SR.FormatAutoVoiDataLutDescription, name);
 		}
 
 		public static AutoPresentationVoiDataLut CreateFrom(IDicomVoiLutsProvider provider)
