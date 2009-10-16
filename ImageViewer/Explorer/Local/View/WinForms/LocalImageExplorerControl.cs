@@ -34,7 +34,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Desktop;
@@ -55,8 +57,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			InitializeHistoryMenu();
 			InitializeIcons();
 
-			_folderView.ExceptionRaised += delegate(object sender, ItemEventArgs<Exception> e) { this.ReportException(e.Item); };
-			_folderView.ExceptionRaised += delegate(object sender, ItemEventArgs<Exception> e) { this.ReportException(e.Item); };
+			_folderView.ExceptionRaised += OnFolderControlExceptionRaised;
+			_folderTree.ExceptionRaised += OnFolderControlExceptionRaised;
 
 			//Tell the component how to get the paths to use.
 			component.GetSelectedPathsDelegate = GetSelectedPaths;
@@ -67,16 +69,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			ToolStripBuilder.BuildMenu(_folderTreeContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 		}
 
-		private void ReportException(Exception ex)
+		private void OnFolderControlExceptionRaised(object sender, ItemEventArgs<Exception> e)
 		{
-			if (ex is PathNotFoundException)
-			{
-				ExceptionHandler.Report(ex, string.Format(SR.ErrorPathUnavailable, ((PathNotFoundException) ex).Path), _component.DesktopWindow);
-			}
-			else
-			{
-				ExceptionHandler.Report(ex, ex.Message, _component.DesktopWindow);
-			}
+			Exception ex = e.Item;
+			ExceptionHandler.Report(ex, ex.Message, _component.DesktopWindow);
 		}
 
 		private IEnumerable<string> GetSelectedPaths()
@@ -252,7 +248,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			}
 			catch (Exception ex)
 			{
-				this.ReportException(ex);
+				this.OnFolderControlExceptionRaised(null, new ItemEventArgs<Exception>(ex));
 				_txtAddress.Text = _lastValidLocation;
 			}
 		}
@@ -321,5 +317,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		}
 
 		#endregion
+
+		[ExceptionPolicyFor(typeof (PathNotFoundException))]
+		[ExtensionOf(typeof (ExceptionPolicyExtensionPoint))]
+		private class ExceptionPolicy : IExceptionPolicy
+		{
+			public void Handle(Exception ex, IExceptionHandlingContext exceptionHandlingContext)
+			{
+				StringBuilder sb = new StringBuilder();
+				sb.AppendLine(SR.ErrorPathUnavailable);
+				sb.AppendLine(string.Format(SR.FormatPath, ((PathNotFoundException) ex).Path));
+				exceptionHandlingContext.ShowMessageBox(sb.ToString());
+			}
+		}
 	}
 }

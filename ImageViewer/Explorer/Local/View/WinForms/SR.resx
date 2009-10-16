@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ErrorPathUnavailable" xml:space="preserve">
-    <value>The path "{0}" is unavailable. The resource may be offline, moved or deleted. Please try again later.</value>
+    <value>The requested path is unavailable. The resource may be offline, moved or deleted. Please try again later.</value>
+  </data>
+  <data name="FormatPath" xml:space="preserve">
+    <value>Path: {0}</value>
   </data>
 </root>

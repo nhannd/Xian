@@ -61,11 +61,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The path &quot;{0}&quot; is unavailable. The resource may be offline, moved or deleted. Please try again later..
+        ///   Looks up a localized string similar to The requested path is unavailable. The resource may be offline, moved or deleted. Please try again later..
         /// </summary>
         internal static string ErrorPathUnavailable {
             get {
                 return ResourceManager.GetString("ErrorPathUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Path: {0}.
+        /// </summary>
+        internal static string FormatPath {
+            get {
+                return ResourceManager.GetString("FormatPath", resourceCulture);
             }
         }
     }
