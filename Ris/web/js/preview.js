@@ -1811,7 +1811,7 @@ Preview.ExternalPractitionerSummary = function() {
 						{
 							var name;
 							if(item.IsDefaultContactPoint)
-								name = item.Name + "[Default]";
+								name = item.Name + " [Default]";
 							else
 								name = item.Name;
 							return "<div class='DemographicsLabel'>" + name + "</div>"
@@ -1833,19 +1833,19 @@ Preview.ExternalPractitionerSummary = function() {
 							}
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Phone Number</td>";
-							html += "	<td width='200'>" + (Ris.formatTelephone(item.CurrentPhoneNumber) || "Not entered") + "</td>";
+							html += "	<td>" + (Ris.formatTelephone(item.CurrentPhoneNumber) || "Not entered") + "</td>";
 							html += "</tr>";
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Fax Number</td>";
-							html += "	<td width='200'>" + (Ris.formatTelephone(item.CurrentFaxNumber) || "Not entered") + "</td>";
+							html += "	<td>" + (Ris.formatTelephone(item.CurrentFaxNumber) || "Not entered") + "</td>";
 							html += "</tr>";
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Address</td>";
-							html += "	<td width='200'>" + (Ris.formatAddress(item.CurrentAddress) || "Not entered") + "</td>";
+							html += "	<td>" + (Ris.formatAddress(item.CurrentAddress) || "Not entered") + "</td>";
 							html += "</tr>";
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Email Address</td>";
-							html += "	<td width='200'>" + (item.CurrentEmailAddress && item.CurrentEmailAddress.Address ? item.CurrentEmailAddress.Address : "Not entered") + "</td>";
+							html += "	<td>" + (item.CurrentEmailAddress && item.CurrentEmailAddress.Address ? item.CurrentEmailAddress.Address : "Not entered") + "</td>";
 							html += "</tr>";
 
 							html += "</table>";

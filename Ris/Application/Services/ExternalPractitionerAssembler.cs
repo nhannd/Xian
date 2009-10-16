@@ -56,17 +56,26 @@ namespace ClearCanvas.Ris.Application.Services
 		{
 			var assembler = new PersonNameAssembler();
 
+			var sortedContactPoints = CollectionUtils.Sort(prac.ContactPoints, (x, y) =>
+				{
+					if (ReferenceEquals(x, y)) return 0;
+					if (x.IsDefaultContactPoint) return -1;
+					if (y.IsDefaultContactPoint) return 1;
+					return string.Compare(x.Name, y.Name);
+				});
+
+			var contactPointDetails = CollectionUtils.Map(
+				sortedContactPoints,
+				(ExternalPractitionerContactPoint cp) => CreateExternalPractitionerContactPointDetail(cp, context));
+
 			var detail = new ExternalPractitionerDetail(
 				prac.GetRef(),
 				assembler.CreatePersonNameDetail(prac.Name),
 				prac.LicenseNumber,
 				prac.BillingNumber,
-				CollectionUtils.Map(
-					prac.ContactPoints,
-					(ExternalPractitionerContactPoint cp) => CreateExternalPractitionerContactPointDetail(cp, context)),
-					new Dictionary<string, string>(prac.ExtendedProperties),
-					prac.Deactivated);
-
+				contactPointDetails,
+				new Dictionary<string, string>(prac.ExtendedProperties),
+				prac.Deactivated);
 
 			return detail;
 		}
