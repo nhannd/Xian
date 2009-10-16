@@ -60,6 +60,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 			//Tell the component how to get the paths to use.
 			component.GetSelectedPathsDelegate = GetSelectedPaths;
+
+			//Build the menus here, as the tools have no access to any events to decide whether to enable/disable or show/hide themselves.
+			//TODO: fix the tool context so that there are such events, and revert the changes from this revision (hint: blame this file)
+			ToolStripBuilder.BuildMenu(_folderViewContextMenu.Items, _component.ContextMenuModel.ChildNodes);
+			ToolStripBuilder.BuildMenu(_folderTreeContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 		}
 
 		private void ReportException(Exception ex)
@@ -307,15 +312,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private void _folderViewContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			_lastClickOnFolderView = true;
-			ToolStripBuilder.Clear(_folderViewContextMenu.Items);
-			ToolStripBuilder.BuildMenu(_folderViewContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 		}
 
 		private void _folderTreeContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			_lastClickOnFolderView = false;
-			ToolStripBuilder.Clear(_folderTreeContextMenu.Items);
-			ToolStripBuilder.BuildMenu(_folderTreeContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 		}
 
 		#endregion
