@@ -237,6 +237,7 @@ Preview.ProceduresTableHelper = function () {
 			
 		addTable: function(parentElement, id, noTableHeading)
 		{
+
 			noTableHeading = !!noTableHeading;
 
 			var htmlTableContainer = document.createElement("DIV");
@@ -254,7 +255,29 @@ Preview.ProceduresTableHelper = function () {
 			}
 
 			return htmlTable;
-		}
+		},
+		
+		addTableWithClass: function(parentElement, id, noTableHeading, cssClass)
+		{
+
+			noTableHeading = !!noTableHeading;
+
+			var htmlTableContainer = document.createElement("DIV");
+			htmlTableContainer.className = cssClass;
+			var htmlTable = document.createElement("TABLE");
+			htmlTableContainer.appendChild(htmlTable);
+			parentElement.appendChild(htmlTableContainer);
+			var body = document.createElement("TBODY");
+			htmlTable.appendChild(body);
+
+			if(noTableHeading)
+			{
+				var headingRow = document.createElement("TR");
+				body.appendChild(headingRow);
+			}
+
+			return htmlTable;
+		}		
 	};
 }();
 
@@ -932,7 +955,87 @@ Preview.OrderNotesTable = function () {
 
 	return {
 		create: function(parentElement, notes, subsections, hideHeading, checkBoxesProperties)
+		{		
+			if(notes.length == 0)
+				return;
+
+			if(subsections)
+			{
+				for(var i = 0; i < subsections.length; i++)
+				{
+					if(subsections[i])
+					{
+						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading, hideHeading, checkBoxesProperties);
+					}
+				}
+			}
+			else
+			{
+				_createSubsection(parentElement, notes);
+			}
+
+			if(!hideHeading)
+				Preview.SectionContainer.create(parentElement, "Order Notes");
+		},
+		
+		defaultSubsections:
+		[
+			{category:"General", subsectionHeading:"General"}, 
+			{category:"Protocol", subsectionHeading:"Protocol"}, 
+			{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"}
+		]
+	};
+}();
+
+/*
+ *	Create a list of conversation items. Each item contains the author, post date and a message.
+ * 	
+ *	Exposes one method: create(parentElement, notes, subsections, hideHeading, canAcknowledge)
+ * 		parentElement - parent node for table(s)
+ *		notes - the list of note objects
+ *		subsections - optional - a list of objects of form { category: "SomeNoteCategory", subsectionHeading: "SomeHeading" }.  
+ *			If no subsections are specified, all notes are shown in a single table.
+ *		hideHeading - optional - hide heading and category headings
+ *		checkBoxesProperties - optional - customize the checkbox behaviour, including callback when a checkbox is toggled and override when a checkbox is visible
+ *  Also exposes defaultSubsections array which can be used as the subsections parameter in create(...)
+ */
+Preview.ConversationHistory = function () {
+	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading, hideHeading, checkBoxesProperties)
+	{
+		var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
+
+		if (filteredNotes.length == 0)
+			return;
+
+		if(subsectionHeading && !hideHeading)
 		{
+			Preview.ProceduresTableHelper.addHeading(parentElement, subsectionHeading, 'subsectionheading');
+		}
+
+		var canAcknowledge = checkBoxesProperties && checkBoxesProperties.onItemChecked && filteredNotes.find(function(note) { return note.CanAcknowledge; });
+
+		var htmlTable = Preview.ProceduresTableHelper.addTableWithClass(parentElement, "NoteEntryTable", noColumnHeadings=true, "ConversationHistoryTable");
+		htmlTable = Table.createTable(htmlTable, { checkBoxes: false, checkBoxesProperties: checkBoxesProperties, editInPlace: false, flow: false, addColumnHeadings: false },
+		[
+			{   label: "Order Note",
+				cellType: "html",
+				getValue: function(item) 
+				{
+					var divTag = document.createElement("div");
+					Preview.ConversationNote.create(divTag, item);
+					
+					// retrieve the innerHTML of the template table
+					return Field.getValue(divTag);
+				}
+			}
+		]);
+
+		htmlTable.bindItems(filteredNotes);
+	};
+
+	return {
+		create: function(parentElement, notes, subsections, hideHeading, checkBoxesProperties)
+		{		
 			if(notes.length == 0)
 				return;
 
@@ -1523,7 +1626,7 @@ Preview.OrderNoteSection = function() {
 			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 
 			var html = "";
-			html += '<table style="{width:98%; margin:0px;}" border="0">';
+			html += '<table style="{width:98%; margin-left:10px;}" border="0">';
 			html += '	<tr>';
 			html += '		<td>From:</td>';
 			html += '		<td>' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
@@ -1548,6 +1651,121 @@ Preview.OrderNoteSection = function() {
 			html += '		<td colspan="4" style="{text-align:justify;}">' +  note.NoteBody.replaceLineBreak() + '</td>';
 			html += '	</tr>';
 			html += '</table>';
+			
+			element.innerHTML = html;
+		}
+	};
+}();
+
+/*
+ *	Create a conversation note that shows author, post date, urgency, receipients and note body.
+ *	Exposes:
+ *		create(element, note)
+ *			element - parent node for the order note
+ *			note - the order note object
+ */
+Preview.ConversationNote = function() {
+	var _formatStaffNameAndRoleAndOnBehalf = function(author, onBehalfOfGroup)
+		{
+			return Ris.formatStaffNameAndRole(author) + ((onBehalfOfGroup != null) ? (" on behalf of " + onBehalfOfGroup.Name) : "");
+		};
+
+	var _formatAcknowledgedTime = function(acknowledgedTime)
+		{
+			return acknowledgedTime ? (" at " + Ris.formatDateTime(acknowledgedTime)) : "";
+		};
+		
+	var _formatAcknowledged = function(groups, staffs)
+		{
+			var recipientSeparator = "<br>";
+
+			// create string of group acknowledgements
+			var formattedGroups = String.combine(
+				groups.map(function(r) 
+					{
+						return _formatStaffNameAndRoleAndOnBehalf(r.AcknowledgedByStaff, r.Group) + _formatAcknowledgedTime(r.AcknowledgedTime); 
+					}), 
+				recipientSeparator);
+
+			// create string of staff acknowledgements
+			// if staff already acknowledged for a group, no need to list it the second time in the staff recipients
+			var groupAckStaffIds = groups.map(function(r) { return r.AcknowledgedByStaff.StaffId; }).unique();
+			var formattedStaff = String.combine(
+				staffs.map(function(r) 
+					{ 
+						var staffIdAlreadyExist = groupAckStaffIds.find(function(id) { return id == r.Staff.StaffId; });
+						return staffIdAlreadyExist ? "" : Ris.formatStaffNameAndRole(r.Staff) + _formatAcknowledgedTime(r.AcknowledgedTime); 
+					}), 
+				recipientSeparator);
+
+			return String.combine([formattedGroups, formattedStaff], recipientSeparator);
+		};
+	
+	var _formatNotAcknowledged = function(groups, staffs)
+		{
+			var recipientSeparator = "; ";
+
+			var formattedGroups = String.combine(
+				groups.map(function(r) { return r.Group.Name; }), 
+				recipientSeparator);
+
+			var formattedStaff = String.combine(
+				staffs.map(function(r) { return Ris.formatStaffNameAndRole(r.Staff); }), 
+				recipientSeparator);
+
+			return String.combine([formattedGroups, formattedStaff], recipientSeparator);
+		};
+	
+	return {
+		create: function(element, note)
+		{			
+			if(note == null)
+				return;
+
+			note.GroupRecipients = note.GroupRecipients || [];
+			note.StaffRecipients = note.StaffRecipients || [];
+			var acknowledgedGroups = note.GroupRecipients.select(function(recipient) { return recipient.IsAcknowledged; });
+			var acknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return recipient.IsAcknowledged; });
+			var notAcknowledgedGroups = note.GroupRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
+			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
+
+			var html = "";
+			html += '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td class="ConversationNote_topleft"></td><td class="ConversationNote_top"></td><td class="ConversationNote_topright"></td></tr>';
+			html += '<tr><td class="ConversationNote_left_upper"></td><td class="ConversationNote_content_upper">';
+			html += '<table width="100%" class="ConversationNoteDetails" border="0" cellspacing="0" cellpadding="0">';
+			html += '	<tr>';
+			html += '		<td><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">From:</span> ' +  _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '<span style="{padding-left: 20px;}">' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</span></td>';
+			html += '		<td style="{padding-right: 10px; text-align:right; color: #205F87; font-weight: bold;}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
+			html += '	</tr>';
+			if (note.CanAcknowledge) {
+				html += '	<tr id="notAcknowledgedRow">';
+				html += '		<td valign="middle" colspan="2" ><input type="checkbox" id="' + note.OrderNoteRef + '"/><span style="{margin-left: 5px; margin-right: 10px;}">Waiting For Acknowledgement:</span>';
+				html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
+				html += '	</tr>';
+			}
+			else {
+				if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0) {
+					html += '	<tr id="acknowledgedRow">';
+					html += '		<td colspan="2" NOWRAP valign="top"><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">Acknowledged By:</span>';
+					html += '		' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+					html += '	</tr>';
+				}
+				if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0) {
+					html += '	<tr id="notAcknowledgedRow">';
+					html += '		<td colspan="2" NOWRAP valign="top"><span style="{padding-right: 10px;}">Waiting For Acknowledgement:</span>';
+					html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
+					html += '	</tr>';
+				}
+			}
+			html += '   </table>';
+			html += '   </td><td class="ConversationNote_right_upper"></td></tr>';
+			html += '   <tr><td class="ConversationNote_left_lower"></td><td class="ConversationNote_content_lower"><table>'
+			html += '	<tr>';
+			html += '		<td colspan="4" style="{text-align:justify;}"><div class="ConversationNoteMessage">' +  note.NoteBody.replaceLineBreak() + '</div></td>';
+			html += '	</tr>';
+			html += '   </table>';
+			html += '</td><td class="ConversationNote_right_lower"></td></tr>';
+			html += '<tr><td class="ConversationNote_bottomleft"></td><td class="ConversationNote_bottom"></td><td class="ConversationNote_bottomright"></td></tr></table>';
 			
 			element.innerHTML = html;
 		}
@@ -1811,7 +2029,7 @@ Preview.ExternalPractitionerSummary = function() {
 						{
 							var name;
 							if(item.IsDefaultContactPoint)
-								name = item.Name + " [Default]";
+								name = item.Name + "[Default]";
 							else
 								name = item.Name;
 							return "<div class='DemographicsLabel'>" + name + "</div>"
@@ -1833,19 +2051,19 @@ Preview.ExternalPractitionerSummary = function() {
 							}
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Phone Number</td>";
-							html += "	<td>" + (Ris.formatTelephone(item.CurrentPhoneNumber) || "Not entered") + "</td>";
+							html += "	<td width='200'>" + (Ris.formatTelephone(item.CurrentPhoneNumber) || "Not entered") + "</td>";
 							html += "</tr>";
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Fax Number</td>";
-							html += "	<td>" + (Ris.formatTelephone(item.CurrentFaxNumber) || "Not entered") + "</td>";
+							html += "	<td width='200'>" + (Ris.formatTelephone(item.CurrentFaxNumber) || "Not entered") + "</td>";
 							html += "</tr>";
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Address</td>";
-							html += "	<td>" + (Ris.formatAddress(item.CurrentAddress) || "Not entered") + "</td>";
+							html += "	<td width='200'>" + (Ris.formatAddress(item.CurrentAddress) || "Not entered") + "</td>";
 							html += "</tr>";
 							html += "<tr>";
 							html += "	<td width='120' class='propertyname'>Email Address</td>";
-							html += "	<td>" + (item.CurrentEmailAddress && item.CurrentEmailAddress.Address ? item.CurrentEmailAddress.Address : "Not entered") + "</td>";
+							html += "	<td width='200'>" + (item.CurrentEmailAddress && item.CurrentEmailAddress.Address ? item.CurrentEmailAddress.Address : "Not entered") + "</td>";
 							html += "</tr>";
 
 							html += "</table>";

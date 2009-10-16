@@ -200,7 +200,7 @@ tr.row0 {
 }
 
 tr.row1 {
-	background-color: #EEEEEE;
+	background-color: #f4f4f4;
 }
 
 tr.highlight {
@@ -526,3 +526,110 @@ a:hover {
 a:active {
  color: #205F87;
 }
+
+/*
+ * ConversationNote - A section representing an order note that includes From, Date, acknowledgement and the note itself.
+ */
+
+.ConversationNote_topleft {
+	background: url(../images/ConversationNote_tl.png) no-repeat top right;
+	height: 9px;
+	width: 9px;
+}
+
+.ConversationNote_top {
+	background: url(../images/ConversationNote_t.png) repeat-x top;
+	height: 9px;
+	width: 1px;
+}
+
+.ConversationNote_topright {
+	background: url(../images/ConversationNote_tr.png) no-repeat top left;
+	height: 9px;
+	width: 9px;
+}
+
+.ConversationNote_left_upper {
+	background: url(../images/ConversationNote_ul.png) no-repeat bottom right;
+	width: 9px;
+}
+
+.ConversationNote_right_upper {
+	background: #ffffff url(../images/ConversationNote_ur.png) no-repeat bottom left;
+	width: 9px;
+}
+
+.ConversationNote_content_upper {
+	background: #f3f9fd url(../images/ConversationNoteBackground_u.png) repeat-x bottom;
+}
+
+.ConversationNote_left_lower {
+	background: url(../images/ConversationNote_ll.png) no-repeat bottom right;
+	width: 9px;
+}
+
+.ConversationNote_right_lower {
+	background: url(../images/ConversationNote_rl.png) no-repeat bottom left;
+	width: 9px;
+}
+
+.ConversationNote_content_lower {
+	background: #e5f3f9 url(../images/ConversationNoteBackground_l.png) repeat-x bottom;
+}
+
+.ConversationNote_bottomleft {
+	background: url(../images/ConversationNote_bl.png) no-repeat bottom right;
+	height: 9px;
+	width: 9px;
+}
+
+.ConversationNote_bottom {
+	background: url(../images/ConversationNote_b.png) repeat-x bottom;
+	height: 9px;
+	width: 1px;
+}
+
+.ConversationNote_bottomright {
+	background: url(../images/ConversationNote_br.png) no-repeat bottom left;
+	height: 9px;
+	width: 9px;
+}
+
+#notAcknowledgedRow
+{
+	font-weight: bold;
+	color: red;
+}
+
+.AwaitingAcknowledgement
+{
+	font-weight: bold;
+	color: #205F87;
+}
+
+.ConversationNoteDetails {
+	width:100%;
+	margin-right: 15px;
+	margin-left: 4px;
+}
+
+.ConversationNoteDetails td {
+	padding: 2px;
+}
+
+#conversationHistorySection
+{
+	margin-top: 5px;
+}
+
+.ConversationNoteMessage
+{
+	border: solid 1px #58acdb; 
+	padding: 5px 10px 5px 10px; 
+	background: #ffffff url(../images/ConversationNoteBackground.png) repeat-x top;
+}
+
+.ConversationHistoryTable td {
+	padding: 4px;
+}
+
