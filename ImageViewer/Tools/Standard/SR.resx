@@ -732,4 +732,13 @@ Please check the log for more details.</value>
   <data name="MenuImageProperties" xml:space="preserve">
     <value>Image Properties</value>
   </data>
+  <data name="LabelPresentationStateVoiDataLut" xml:space="preserve">
+    <value>PRES. STATE</value>
+  </data>
+  <data name="LabelPresentationStateVoiLinearLut" xml:space="preserve">
+    <value>PRES. STATE</value>
+  </data>
+  <data name="PrefixDefaultVoiDataLutExplanation" xml:space="preserve">
+    <value>LUT</value>
+  </data>
 </root>

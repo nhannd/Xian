@@ -347,9 +347,6 @@
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>
   </data>
-  <data name="LabelPresentationStateLut" xml:space="preserve">
-    <value>PR LUT</value>
-  </data>
   <data name="LabelUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
@@ -497,5 +494,11 @@ Please check the log for more details.</value>
   </data>
   <data name="SuffixFormatSingleFrameDisplaySet" xml:space="preserve">
     <value>Image #{0}, Frame #{1}</value>
+  </data>
+  <data name="LabelPresentationVoiDataLut" xml:space="preserve">
+    <value>USER</value>
+  </data>
+  <data name="LabelPresentationVoiLinearLut" xml:space="preserve">
+    <value>USER</value>
   </data>
 </root>

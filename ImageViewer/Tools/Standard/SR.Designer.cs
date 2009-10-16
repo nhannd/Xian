@@ -684,6 +684,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PRES. STATE.
+        /// </summary>
+        internal static string LabelPresentationStateVoiDataLut {
+            get {
+                return ResourceManager.GetString("LabelPresentationStateVoiDataLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PRES. STATE.
+        /// </summary>
+        internal static string LabelPresentationStateVoiLinearLut {
+            get {
+                return ResourceManager.GetString("LabelPresentationStateVoiLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to VOI.
         /// </summary>
         internal static string LabelVOILut {
@@ -1230,6 +1248,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LUT.
+        /// </summary>
+        internal static string PrefixDefaultVoiDataLutExplanation {
+            get {
+                return ResourceManager.GetString("PrefixDefaultVoiDataLutExplanation", resourceCulture);
             }
         }
         

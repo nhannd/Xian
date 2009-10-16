@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					IVoiLutLinear voiLut = (IVoiLutLinear) lut;
 					sequenceItem.WindowWidth = new double[] {voiLut.WindowWidth};
 					sequenceItem.WindowCenter = new double[] {voiLut.WindowCenter};
-					sequenceItem.WindowCenterWidthExplanation = null;
+					sequenceItem.WindowCenterWidthExplanation = new string[] { SR.LabelPresentationVoiLinearLut };
 					sequenceItem.VoiLutFunction = VoiLutFunction.Linear; // we don't support sigmoid
 				}
 				else
@@ -162,7 +162,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						{
 							for (int n = 0; n < countWindows; n++)
 							{
-								voiLuts.AddPresentationLinearLut(widths[n], centers[n], explanation[n] ?? SR.LabelPresentationStateLut);
+								voiLuts.AddPresentationLinearLut(widths[n], centers[n], explanation[n]);
 							}
 						}
 					}
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			VoiLutSequenceItem lutseq = new VoiLutSequenceItem();
 			lutseq.LutDescriptor = descriptor;
 			lutseq.LutData = data;
-			lutseq.LutExplanation = null;
+			lutseq.LutExplanation = SR.LabelPresentationVoiDataLut;
 			return lutseq;
 		}
 

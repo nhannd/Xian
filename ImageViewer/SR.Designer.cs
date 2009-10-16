@@ -745,11 +745,20 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PR LUT.
+        ///   Looks up a localized string similar to USER.
         /// </summary>
-        public static string LabelPresentationStateLut {
+        public static string LabelPresentationVoiDataLut {
             get {
-                return ResourceManager.GetString("LabelPresentationStateLut", resourceCulture);
+                return ResourceManager.GetString("LabelPresentationVoiDataLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to USER.
+        /// </summary>
+        public static string LabelPresentationVoiLinearLut {
+            get {
+                return ResourceManager.GetString("LabelPresentationVoiLinearLut", resourceCulture);
             }
         }
         

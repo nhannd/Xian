@@ -130,6 +130,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			get { return _windows[_index].Center; }
 		}
 
+		public string Explanation
+		{
+			get { return _windows[_index].Explanation; }	
+		}
+
 		public bool IsLast
 		{
 			get { return _index >= _windows.Count - 1; }
@@ -140,12 +145,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			this.Index = _index + 1;
 		}
 
-		public override sealed string GetDescription()
+		public override string GetDescription()
 		{
-			if (string.IsNullOrEmpty(_windows[_index].Explanation))
+			if (string.IsNullOrEmpty(Explanation))
 				return String.Format(SR.FormatDescriptionAutoLinearLutNoExplanation, WindowWidth, WindowCenter);
 			else
-				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, _windows[_index].Explanation);
+				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, Explanation);
 		}
 
 		public override sealed object CreateMemento()
@@ -213,6 +218,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
 		{
 			return provider != null && provider.DicomVoiLuts.PresentationVoiLinearLuts.Count > 0;
+		}
+
+		public override sealed string GetDescription()
+		{
+			if (string.IsNullOrEmpty(Explanation))
+				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, SR.LabelPresentationStateVoiLinearLut);
+			else
+				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, Explanation);
 		}
 
 		public static AutoPresentationVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider)
