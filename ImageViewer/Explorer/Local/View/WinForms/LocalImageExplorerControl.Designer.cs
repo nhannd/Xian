@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			{
 				components.Dispose();
 			}
+			this.PerformDispose(disposing);
 			base.Dispose(disposing);
 		}
 

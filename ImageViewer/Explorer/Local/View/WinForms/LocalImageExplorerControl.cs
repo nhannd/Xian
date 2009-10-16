@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 	{
 		private LocalImageExplorerComponent _component;
 		private bool _lastClickOnFolderView = false;
+		private Pidl _homeLocation = null;
 
 		public LocalImageExplorerControl(LocalImageExplorerComponent component)
 		{
@@ -56,6 +57,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			InitializeComponent();
 			InitializeHistoryMenu();
 			InitializeIcons();
+
+			SetViewMode(Settings.Default.FolderViewMode, false);
+			SetHomeLocation(Settings.Default.HomeLocation);
 
 			_folderView.ExceptionRaised += OnFolderControlExceptionRaised;
 			_folderTree.ExceptionRaised += OnFolderControlExceptionRaised;
@@ -67,6 +71,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			//TODO: fix the tool context so that there are such events, and revert the changes from this revision (hint: blame this file)
 			ToolStripBuilder.BuildMenu(_folderViewContextMenu.Items, _component.ContextMenuModel.ChildNodes);
 			ToolStripBuilder.BuildMenu(_folderTreeContextMenu.Items, _component.ContextMenuModel.ChildNodes);
+		}
+
+		private void PerformDispose(bool disposing)
+		{
+			if (_homeLocation != null)
+			{
+				_homeLocation.Dispose();
+				_homeLocation = null;
+			}
 		}
 
 		private void OnFolderControlExceptionRaised(object sender, ItemEventArgs<Exception> e)
@@ -99,6 +112,58 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			}
 		}
 
+		private void SetViewMode(System.Windows.Forms.View view, bool saveSetting)
+		{
+			_mnuIconsView.Checked = (view == System.Windows.Forms.View.LargeIcon);
+			_mnuListView.Checked = (view == System.Windows.Forms.View.List);
+			_mnuDetailsView.Checked = (view == System.Windows.Forms.View.Details);
+			_mnuTilesView.Checked = (view == System.Windows.Forms.View.Tile);
+			_folderView.View = view;
+
+			if (saveSetting)
+			{
+				Settings settings = Settings.Default;
+				settings.FolderViewMode = view;
+				settings.Save();
+			}
+		}
+
+		private void SetHomeLocation(string homeLocation)
+		{
+			if (!string.IsNullOrEmpty(homeLocation))
+			{
+				try
+				{
+					Environment.SpecialFolder specialFolder = (Environment.SpecialFolder) Enum.Parse(typeof (Environment.SpecialFolder), homeLocation);
+					_homeLocation = new Pidl(specialFolder);
+					return;
+				}
+				catch (ArgumentException) {}
+				catch (NotSupportedException) {}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Debug, ex, "The special folder {0} isn't available.", homeLocation);
+				}
+
+				Pidl pidl;
+				if (Pidl.TryParse(homeLocation, out pidl))
+				{
+					_homeLocation = pidl;
+					return;
+				}
+
+				_homeLocation = null;
+			}
+		}
+
+		public void BrowseToHome()
+		{
+			if (_homeLocation == null)
+				_folderCoordinator.BrowseToHome();
+			else
+				_folderCoordinator.BrowseTo(_homeLocation);
+		}
+
 		#region Explorer Control
 
 		private const int ShowHistoryCount = 10;
@@ -126,7 +191,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			InitializeImageList(_mediumIconImageList, "Medium");
 			InitializeImageList(_smallIconImageList, "Small");
 
-			_toolStrip.ImageList = _mediumIconImageList;
+			switch (Settings.Default.ToolbarIconSize)
+			{
+				case ToolStripSizeType.Large:
+					_toolStrip.ImageList = _largeIconImageList;
+					break;
+				case ToolStripSizeType.Medium:
+					_toolStrip.ImageList = _mediumIconImageList;
+					break;
+				case ToolStripSizeType.Small:
+				default:
+					_toolStrip.ImageList = _smallIconImageList;
+					break;
+			}
+
 			_btnBack.ImageKey = "Back";
 			_btnForward.ImageKey = "Next";
 			_btnUp.ImageKey = "Up";
@@ -159,7 +237,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		protected override void OnLoad(EventArgs e)
 		{
-			_folderCoordinator.BrowseToHome();
+			this.BrowseToHome();
 			base.OnLoad(e);
 		}
 
@@ -231,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _btnHome_Click(object sender, EventArgs e)
 		{
-			_folderCoordinator.BrowseToHome();
+			this.BrowseToHome();
 		}
 
 		private void _btnRefresh_Click(object sender, EventArgs e)
@@ -271,30 +349,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _mnuTilesView_Click(object sender, EventArgs e)
 		{
-			_folderView.View = System.Windows.Forms.View.Tile;
-			_mnuIconsView.Checked = _mnuListView.Checked = _mnuDetailsView.Checked = false;
-			_mnuTilesView.Checked = true;
+			SetViewMode(System.Windows.Forms.View.Tile, true);
 		}
 
 		private void _mnuIconsView_Click(object sender, EventArgs e)
 		{
-			_folderView.View = System.Windows.Forms.View.LargeIcon;
-			_mnuTilesView.Checked = _mnuListView.Checked = _mnuDetailsView.Checked = false;
-			_mnuIconsView.Checked = true;
+			SetViewMode(System.Windows.Forms.View.LargeIcon, true);
 		}
 
 		private void _mnuListView_Click(object sender, EventArgs e)
 		{
-			_folderView.View = System.Windows.Forms.View.List;
-			_mnuTilesView.Checked = _mnuIconsView.Checked = _mnuDetailsView.Checked = false;
-			_mnuListView.Checked = true;
+			SetViewMode(System.Windows.Forms.View.List, true);
 		}
 
 		private void _mnuDetailsView_Click(object sender, EventArgs e)
 		{
-			_folderView.View = System.Windows.Forms.View.Details;
-			_mnuTilesView.Checked = _mnuIconsView.Checked = _mnuListView.Checked = false;
-			_mnuDetailsView.Checked = true;
+			SetViewMode(System.Windows.Forms.View.Details, true);
 		}
 
 		private void _folderView_ItemDoubleClick(object sender, FolderViewItemEventArgs e)
