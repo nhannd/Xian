@@ -213,10 +213,18 @@ namespace ClearCanvas.Utilities.BuildTasks
 							elementPath = string.Format("{0}/{1}", sectionGroupName, typeElement.Name);
 							XmlElement newTypeElement = CreateElement(newConfigurationElement, elementPath, null, null);
 							
-							foreach (XmlElement settingElement in typeElement)
+							foreach (XmlNode childNode in typeElement)
 							{
-								xPath = string.Format("setting[@name='{0}']", settingElement.GetAttribute("name"));
-								UpdateNode(newTypeElement, settingElement, xPath);
+								if (childNode is XmlElement)
+								{
+									XmlElement settingElement = (XmlElement)childNode;
+									xPath = string.Format("setting[@name='{0}']", settingElement.GetAttribute("name"));
+									UpdateNode(newTypeElement, settingElement, xPath);
+								}
+								else if (childNode is XmlComment)
+								{
+									newTypeElement.AppendChild(newTypeElement.OwnerDocument.ImportNode(childNode, true));
+								}
 							}
 						}
 					}
