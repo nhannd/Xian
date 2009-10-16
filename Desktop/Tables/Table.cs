@@ -252,6 +252,10 @@ namespace ClearCanvas.Desktop.Tables
     	public void RemoveFilter()
         {
             _isFiltered = false;
+
+			// ensure old filtered collections aren't updated when the table is updated.
+    		_filteredData.Detach();
+    		_filteredData = null;
         }
 
     	/// <summary>

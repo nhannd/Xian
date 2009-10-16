@@ -45,6 +45,7 @@ namespace ClearCanvas.Desktop.Tables
         private readonly TableColumnCollection<TItem> _columns;
         private readonly TableFilterParams _filterParams;
         private readonly List<TItem> _filteredList;
+    	private readonly IItemCollection<TItem> _baseCollection;
 
         /// <summary>
         /// Constructor.
@@ -54,6 +55,7 @@ namespace ClearCanvas.Desktop.Tables
         public FilteredItemCollection(ITable<TItem> table, TableFilterParams filterParams)
             : base(table.Items)
         {
+        	_baseCollection = table.Items;
             _columns = table.Columns;
             _filterParams = filterParams;
 
@@ -61,8 +63,13 @@ namespace ClearCanvas.Desktop.Tables
                                 ? GetFilteredItemCollection(AnyColumnMatch)
                                 : GetFilteredItemCollection(SingleColumnMatch);
 
-            base.ItemsChanged += BaseItemsChanged;
+        	_baseCollection.ItemsChanged += BaseItemsChanged;
         }
+
+		public void Detach()
+		{
+			_baseCollection.ItemsChanged -= BaseItemsChanged;
+		}
 
         #region IItemCollection<TItem> Members
 
@@ -137,9 +144,9 @@ namespace ClearCanvas.Desktop.Tables
             TItem item = this[index];
             _filteredList.RemoveAt(index);
 
-            base.ItemsChanged -= BaseItemsChanged;
+            _baseCollection.ItemsChanged -= BaseItemsChanged;
             base.RemoveAt(base.IndexOf(item));
-            base.ItemsChanged += BaseItemsChanged;
+            _baseCollection.ItemsChanged += BaseItemsChanged;
         }
 
 		/// <summary>
@@ -171,9 +178,9 @@ namespace ClearCanvas.Desktop.Tables
         {
             _filteredList.Insert(index, item);
             // is just adding it to the unfiltered list okay??
-            base.ItemsChanged -= BaseItemsChanged;
+            _baseCollection.ItemsChanged -= BaseItemsChanged;
             base.Add(item);
-            base.ItemsChanged += BaseItemsChanged;
+            _baseCollection.ItemsChanged += BaseItemsChanged;
         }
 
 		/// <summary>
@@ -225,9 +232,9 @@ namespace ClearCanvas.Desktop.Tables
         {
             _filteredList.Add(item);
 
-            base.ItemsChanged -= BaseItemsChanged;
+            _baseCollection.ItemsChanged -= BaseItemsChanged;
             base.Add(item);
-            base.ItemsChanged += BaseItemsChanged;
+            _baseCollection.ItemsChanged += BaseItemsChanged;
         }
 
 		/// <summary>
@@ -253,9 +260,9 @@ namespace ClearCanvas.Desktop.Tables
         /// <returns>True if the item existed in the collection and was removed, otherwise false.</returns>
 		public override bool Remove(TItem item)
         {
-            base.ItemsChanged -= BaseItemsChanged;
+            _baseCollection.ItemsChanged -= BaseItemsChanged;
             base.RemoveAt(base.IndexOf(item));
-            base.ItemsChanged += BaseItemsChanged;
+            _baseCollection.ItemsChanged += BaseItemsChanged;
 
             // Bug: item cannot be removed from filtered list until after it is removed from original list
             // Not sure why this is the case, but the code works as written.
@@ -359,10 +366,20 @@ namespace ClearCanvas.Desktop.Tables
                 case ItemChangeType.ItemRemoved:
                     if (_filteredList.Contains(item)) _filteredList.Remove(item);
                     break;
+				case ItemChangeType.ItemChanged:
+				case ItemChangeType.ItemInserted:
+				case ItemChangeType.Reset:
+					_filteredList.Clear();
+					_filteredList.AddRange(_filterParams.Column == null
+						? GetFilteredItemCollection(AnyColumnMatch)
+						: GetFilteredItemCollection(SingleColumnMatch));
+					break;
                 default:
                     break;
             }
-        }
+
+			NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
+		}
 
         #endregion
     }
