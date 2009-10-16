@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private static bool CanExplodeTiles(IImageBox imageBox)
 		{
-			return imageBox.Tiles.Count > 1;
+			return imageBox.Tiles.Count > 1 && !imageBox.ParentPhysicalWorkspace.Locked;
 		}
 
 		private void DisposeUnexplodeCommands()

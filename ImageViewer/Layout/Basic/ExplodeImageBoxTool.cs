@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 			else
 			{
-				base.Enabled = workspace.ImageBoxes.Count > 1 && workspace.SelectedImageBox != null &&
+				base.Enabled = !workspace.Locked && workspace.ImageBoxes.Count > 1 && workspace.SelectedImageBox != null &&
 				               workspace.SelectedImageBox.SelectedTile != null &&
 				               workspace.SelectedImageBox.SelectedTile.PresentationImage != null;
 			}
