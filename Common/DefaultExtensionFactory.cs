@@ -44,7 +44,7 @@ namespace ClearCanvas.Common
     /// </remarks>
     internal class DefaultExtensionFactory : IExtensionFactory
     {
-    	private IDictionary<Type, List<ExtensionInfo>> _extensionMap;
+    	private volatile IDictionary<Type, List<ExtensionInfo>> _extensionMap;
 		private readonly object _syncLock = new object();
 
         internal DefaultExtensionFactory()
