@@ -731,7 +731,7 @@ namespace ClearCanvas.ImageViewer.Common
 		/// </summary>
 		protected virtual void RemoveItem(T item)
 		{
-			foreach (FilteredGroup<T> group in ChildGroups)
+			foreach (FilteredGroup<T> group in new List<FilteredGroup<T>>(ChildGroups))
 				group.RemoveItem(item);
 
 			_items.Remove(item);
