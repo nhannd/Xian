@@ -59,19 +59,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #endregion
 
         #region Private Methods
-		private bool GetStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
-		{
-			using (IReadContext context = _store.OpenReadContext())
-			{
-				IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-				parms.ServerPartitionKey = partitionKey;
-				parms.StudyInstanceUid = studyInstanceUid;
-				location =  procedure.FindOne(parms);
-
-				return location != null;
-			}
-		}
 
 		private static void RemoveStudyStorage(StudyStorageLocation location)
 		{
@@ -119,79 +106,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 			}
 		}
 
-		private List<FileInfo> LoadSopFiles(DirectoryInfo studyDir, bool cleanup)
-		{
-		    List<string> filesDeleted = new List<string>();
-            List<FileInfo> fileList = new List<FileInfo>();
-            FileProcessor.Process(studyDir.FullName, "*.*",
-		                          delegate(string filePath, out bool cancel)
-		                              {
-		                                  cancel = CancelPending;
-                                          if (cancel)
-                                          {
-                                              return;
-                                          }
-
-                                          FileInfo file = new FileInfo(filePath);
-
-                                          // if the file is located in a "deleted" directory then skip it
-                                          if (file.DirectoryName.EndsWith("Deleted", StringComparison.InvariantCultureIgnoreCase))
-                                              return;
-					    
-
-                                          if (file.Extension.Equals(".dcm", StringComparison.InvariantCultureIgnoreCase))
-                                          {
-                                              fileList.Add(file);    
-                                          }
-                                          else
-                                          {
-                                              if (file.Extension.Equals(".xml", StringComparison.InvariantCultureIgnoreCase) || 
-                                                  file.Extension.Equals(".gz", StringComparison.InvariantCultureIgnoreCase))
-                                              {
-                                                  // is header file
-                                              }
-                                              else
-                                              {
-                                                  // TODO: Should we be smarter when dealing with left-over files?
-                                                  // For eg, if we encounter 123.dcm_temp that appears to be
-                                                  // a complete version of a corrupted 123.dcm, shouldn't we replace
-                                                  // 123.dcm with the 123.dcm_temp instead of deleting 123.dcm_temp?
-
-                                                  // Delete it
-                                                  if (cleanup)
-                                                  {
-                                                      file.Delete();
-                                                      filesDeleted.Add(filePath);
-                                                  } 
-                                              }
-                                              
-                                          }
-                                          
-		                              },
-		                          true);
-
-            if (filesDeleted.Count>0)
-            {
-                // Raise alerts. Each alert lists 10 files that were deleted.
-                int count = 0;
-                StringBuilder msg = new StringBuilder();
-                foreach(string file in filesDeleted)
-                {
-                    count++;
-                    msg.AppendLine(String.Format("{0};", file));
-                    
-                    if (count % 10 == 0 || count == filesDeleted.Count)
-                    {
-                        ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "Reinventory", 10000, null, TimeSpan.Zero, "Following files were removed:{0}", msg.ToString());
-                        msg = new StringBuilder();
-                    }
-                }
-                
-            }
-			return fileList;
-		}
-
-        private void ReinventoryFilesystem(Filesystem filesystem)
+		private void ReinventoryFilesystem(Filesystem filesystem)
         {
             ServerPartition partition;
 
@@ -266,20 +181,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                 continue;
                             }
 
-                            DicomFile file = null;
-                            foreach (FileInfo fInfo in fileList)
-                                try
-                                {
-                                    file = new DicomFile(fInfo.FullName);
-                                    file.Load(DicomTags.StudyId, DicomReadOptions.DoNotStorePixelDataInDataSet);
-                                    break;
-                                }
-                                catch (Exception e)
-                                {
-                                    Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.",
-                                                 fInfo.FullName);
-                                    file = null;
-                                }
+							DicomFile file = LoadFileFromList(fileList);
 
                             if (file == null)
                             {

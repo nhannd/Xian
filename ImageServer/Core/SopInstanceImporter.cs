@@ -163,15 +163,25 @@ namespace ClearCanvas.ImageServer.Core
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
 
-            Validate(message);
+			DicomProcessingResult result = new DicomProcessingResult
+			                               	{
+			                               		Successful = true,
+			                               		StudyInstanceUid = studyInstanceUid,
+			                               		SeriesInstanceUid = seriesInstanceUid,
+			                               		SopInstanceUid = sopInstanceUid,
+			                               		AccessionNumber = accessionNumber
+			                               	};
 
-            DicomProcessingResult result = new DicomProcessingResult();
-            result.Successful = true; // assumed for now 
-            result.StudyInstanceUid = studyInstanceUid;
-            result.SeriesInstanceUid = seriesInstanceUid;
-            result.SopInstanceUid = sopInstanceUid;
-            result.AccessionNumber = accessionNumber;
-            
+        	try
+			{
+				Validate(message);
+			}
+			catch (DicomDataException e)
+			{
+				result.SetError(DicomStatuses.ProcessingFailure, e.Message);
+				return result;
+			}
+
             // Use the command processor for rollback capabilities.
             using (ServerCommandProcessor commandProcessor =
                 new ServerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
@@ -192,27 +202,26 @@ namespace ClearCanvas.ImageServer.Core
                         result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
                         return result;
                     }
-                    else if (studyLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
-                    {
-                        if (studyLocation.IsLatestArchiveLossless)
-                        {
-                            result.DicomStatus = DicomStatuses.StorageStorageOutOfResources;
-                            failureMessage = String.Format("Study {0} on partition {1} can't accept new images due to lossy compression of the study.  Restoring study.",
-                                                           studyLocation.StudyInstanceUid, _context.Partition.Description);
-                            Platform.Log(LogLevel.Error, failureMessage);
-                            if (ServerHelper.InsertRestoreRequest(studyLocation) == null)
-                            {
-                                Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
-                            }
+                	if (studyLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
+                	{
+                		if (studyLocation.IsLatestArchiveLossless)
+                		{
+                			result.DicomStatus = DicomStatuses.StorageStorageOutOfResources;
+                			failureMessage = String.Format("Study {0} on partition {1} can't accept new images due to lossy compression of the study.  Restoring study.",
+                			                               studyLocation.StudyInstanceUid, _context.Partition.Description);
+                			Platform.Log(LogLevel.Error, failureMessage);
+                			if (ServerHelper.InsertRestoreRequest(studyLocation) == null)
+                			{
+                				Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
+                			}
 
-                            result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
-                            return result;
-                        }
-                    }
+                			result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+                			return result;
+                		}
+                	}
 
-                    String path = studyLocation.FilesystemPath;
-                    bool dupImage = false;
-                    string extension = null;
+                	String path = studyLocation.FilesystemPath;
+                	string extension = null;
                     String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
                     DicomFile file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
 
@@ -222,33 +231,30 @@ namespace ClearCanvas.ImageServer.Core
                         result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
                         return result;
                     }
-                    else
-                    {
-                        if (File.Exists(finalDest))
-                        {
-                            result = HandleDuplicate(sopInstanceUid, studyLocation, commandProcessor, file);
-                            if (!result.Successful)
-                                return result;
-                        }
-                        else
-                        {
-                            HandleNonDuplicate(seriesInstanceUid, sopInstanceUid, studyLocation, commandProcessor, file, path, dupImage, extension);
-                        }
+                	if (File.Exists(finalDest))
+                	{
+                		result = HandleDuplicate(sopInstanceUid, studyLocation, commandProcessor, file);
+                		if (!result.Successful)
+                			return result;
+                	}
+                	else
+                	{
+                		HandleNonDuplicate(seriesInstanceUid, sopInstanceUid, studyLocation, commandProcessor, file, path, false, extension);
+                	}
 
-                        if (commandProcessor.Execute())
-                        {
-                            result.DicomStatus = DicomStatuses.Success;
-                        }
-                        else
-                        {
-                            failureMessage =
-                                String.Format("Failure processing message: {0}. Sending failure status.",
-                                              commandProcessor.FailureReason);
-                            result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
-                            // processor already rolled back
-                            return result;
-                        }
-                    }
+                	if (commandProcessor.Execute())
+                	{
+                		result.DicomStatus = DicomStatuses.Success;
+                	}
+                	else
+                	{
+                		failureMessage =
+                			String.Format("Failure processing message: {0}. Sending failure status.",
+                			              commandProcessor.FailureReason);
+                		result.SetError(DicomStatuses.ProcessingFailure, failureMessage);
+                		// processor already rolled back
+                		return result;
+                	}
                 }
                 catch(NoWritableFilesystemException)
                 {
@@ -310,7 +316,7 @@ namespace ClearCanvas.ImageServer.Core
 
                 if (storage != null)
                 {
-                    if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+                	if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
                     {
                         string failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _context.Partition.Description);
                         Platform.Log(LogLevel.Error, failureMessage);
@@ -320,20 +326,11 @@ namespace ClearCanvas.ImageServer.Core
                             Platform.Log(LogLevel.Warn, "Unable to insert Restore Request for Study");
                             throw new StudyIsNearlineException(false);
                         }
-                        else
-                        {
-                            throw new StudyIsNearlineException(true);
-                        }
+                    	throw new StudyIsNearlineException(true);
                     }
-                    else
-                    {
-                        throw new FilesystemNotWritableException();
-                    }
+                	throw new FilesystemNotWritableException();
                 }
-                else
-                {
-                    throw new SopInstanceProcessingException("No StudyStorage record.");
-                }
+            	throw new SopInstanceProcessingException("No StudyStorage record.");
             }
             Platform.CheckForNullReference(studyLocation, "studyLocation");
             return studyLocation;
@@ -364,7 +361,7 @@ namespace ClearCanvas.ImageServer.Core
                 new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 
             #region SPECIAL CODE FOR TESTING
-            if (ClearCanvas.ImageServer.Common.Diagnostics.Settings.SimulateFileCorruption)
+            if (Common.Diagnostics.Settings.SimulateFileCorruption)
             {
                 commandProcessor.AddCommand(new CorruptDicomFileCommand(path));
             }
@@ -373,8 +370,7 @@ namespace ClearCanvas.ImageServer.Core
 
         private DicomProcessingResult HandleDuplicate(string sopInstanceUid, StudyStorageLocation studyLocation, ServerCommandProcessor commandProcessor, DicomFile file)
         {
-            DicomProcessingResult result;
-            Study study = studyLocation.Study ??
+        	Study study = studyLocation.Study ??
                           studyLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
             if (study != null)
                 Platform.Log(LogLevel.Info, "Received duplicate SOP {0} (A#:{1} StudyUid:{2}  Patient: {3}  ID:{4})",
@@ -387,7 +383,7 @@ namespace ClearCanvas.ImageServer.Core
                              sopInstanceUid, studyLocation.StudyInstanceUid);
 
             SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, studyLocation, _context.ContextID);
-            result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
+            DicomProcessingResult result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
             return result;
         }
 
@@ -417,10 +413,8 @@ namespace ClearCanvas.ImageServer.Core
             }
 
             file.SourceApplicationEntityTitle = sourceAE;
-            if (message.TransferSyntax.Encapsulated)
-                file.TransferSyntax = message.TransferSyntax;
-            else
-                file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+            file.TransferSyntax = message.TransferSyntax.Encapsulated ? 
+				message.TransferSyntax : TransferSyntax.ExplicitVrLittleEndian;
 
             return file;
         }
@@ -489,9 +483,9 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			Random rand = new Random();
 
-			if (ClearCanvas.ImageServer.Common.Diagnostics.Settings.SimulateFileCorruption)
+			if (Common.Diagnostics.Settings.SimulateFileCorruption)
 			{
-				ClearCanvas.ImageServer.Common.Diagnostics.RandomError.Generate(
+				Common.Diagnostics.RandomError.Generate(
 					rand.Next()%2 == 0,
 					String.Format("Corrupting the file {0}", _path),
 					delegate

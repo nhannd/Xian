@@ -33,15 +33,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Rebuild;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 {
@@ -51,25 +49,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 	public class FilesystemRebuildXmlItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
 	{
 		#region Private Members
-		private IPersistentStore _store;
+
 		private IList<ServerPartition> _partitions;
 		#endregion
 
 		#region Private Methods
-		private bool GetStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
-		{
-			using (IReadContext context = _store.OpenReadContext())
-			{
-				IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-				parms.ServerPartitionKey = partitionKey;
-				parms.StudyInstanceUid = studyInstanceUid;
-				location = procedure.FindOne(parms);
-
-				return location != null;
-			}
-		}
-
 		/// <summary>
 		/// Traverse the filesystem directories for studies to rebuild the XML for.
 		/// </summary>
@@ -95,46 +79,67 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
 					{
 						// Check for Cancel message
-						if (CancelPending) return; 
-						
+						if (CancelPending) return;
+
 						String studyInstanceUid = studyDir.Name;
 
 						StudyStorageLocation location;
 						if (false == GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
 						{
-							StudyStorage storage;
-							if (GetStudyStorage(partition, studyInstanceUid, out storage))
+							List<FileInfo> fileList = LoadSopFiles(studyDir, true);
+							if (fileList.Count == 0)
 							{
-								Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}", studyInstanceUid,
-								             partition.Description, studyDir.ToString());
+								Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
+								continue;
 							}
-							else
-								Platform.Log(LogLevel.Info, "Found study directory not in the database, ignoring: {0}", studyDir.ToString());
-						}
-						else
-						{
-							try
+
+							DicomFile file = LoadFileFromList(fileList);
+							if (file == null)
 							{
-								if (!location.AcquireLock())
+								Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
+								continue;
+							}
+
+							// Do a second check, using the study instance uid from a file in the directory.
+							// had an issue with trailing periods on uids causing us to not find the 
+							// study storage, and insert a new record into the database.
+							studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+							if (!GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+							{
+								StudyStorage storage;
+								if (GetStudyStorage(partition, studyInstanceUid, out storage))
 								{
-									Platform.Log(LogLevel.Warn, "Unable to lock study: {0}, delaying rebuild", location.StudyInstanceUid);
-									lockFailures.Add(location);
-									continue;
+									Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}", studyInstanceUid,
+									             partition.Description, studyDir.ToString());
 								}
+								else
+									Platform.Log(LogLevel.Info, "Found study directory not in the database, ignoring: {0}", studyDir.ToString());
 
-								StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
-								rebuilder.RebuildXml();
-
-								location.ReleaseLock();
+								continue;
 							}
-							catch (Exception e)
+						}
+						try
+						{
+							if (!location.AcquireLock())
 							{
-								Platform.Log(LogLevel.Error, e, "Unexpected exception when rebuilding study xml for study: {0}",
-								             location.StudyInstanceUid);
+								Platform.Log(LogLevel.Warn, "Unable to lock study: {0}, delaying rebuild", location.StudyInstanceUid);
 								lockFailures.Add(location);
+								continue;
 							}
+
+							StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
+							rebuilder.RebuildXml();
+
+							location.ReleaseLock();
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Error, e, "Unexpected exception when rebuilding study xml for study: {0}",
+							             location.StudyInstanceUid);
+							lockFailures.Add(location);
 						}
 					}
+
 
 					// Cleanup the parent date directory, if its empty
 					DirectoryUtility.DeleteIfEmpty(dateDir.FullName);
@@ -216,7 +221,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		/// <param name="item"></param>
         protected override void OnProcess(Model.ServiceLock item)
 		{
-			_store = PersistentStoreRegistry.GetDefaultStore();
+			PersistentStoreRegistry.GetDefaultStore();
 
 			IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
 			ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();

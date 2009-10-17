@@ -59,14 +59,23 @@ namespace ClearCanvas.ImageServer.Core
 
             if (studyInstanceUid.Length > 64 || seriesInstanceUid.Length > 64 || sopInstanceUid.Length > 64)
             {
-                if (studyInstanceUid.Length > 64)
+            	if (studyInstanceUid.Length > 64)
                     throw new DicomDataException(string.Format("Study Instance UID is > 64 bytes in the SOP Instance : {0}", studyInstanceUid));
 
-                else if (seriesInstanceUid.Length > 64)
-                    throw new DicomDataException(string.Format("Series Instance UID is > 64 bytes in the SOP Instance : {0}", seriesInstanceUid));
-                else
-                    throw new DicomDataException(string.Format("SOP Instance UID is > 64 bytes in the SOP Instance : {0}", sopInstanceUid));
+            	if (seriesInstanceUid.Length > 64)
+            		throw new DicomDataException(string.Format("Series Instance UID is > 64 bytes in the SOP Instance : {0}", seriesInstanceUid));
+
+            	throw new DicomDataException(string.Format("SOP Instance UID is > 64 bytes in the SOP Instance : {0}", sopInstanceUid));
             }
-        }
+
+			if (studyInstanceUid.EndsWith("."))
+				throw new DicomDataException(string.Format("Study Instance UID ends with period : {0}", studyInstanceUid));
+
+			if (seriesInstanceUid.EndsWith("."))
+				throw new DicomDataException(string.Format("Series Instance UID ends with period : {0}", seriesInstanceUid));
+
+			if (sopInstanceUid.EndsWith("."))
+				throw new DicomDataException(string.Format("SOP Instance UID ends with period : {0}", sopInstanceUid));
+		}
     }
 }
