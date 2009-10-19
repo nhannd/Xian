@@ -76,7 +76,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					var firstDocument = CollectionUtils.FirstElement(documents);
 					firstDocument.Activate();
 
-					var message = string.Format(SR.MessageTranscriptionComponentAlreadyOpened, firstDocument.Title, TranscriptionDocument.GetTitle(item));
+					var message = string.Format(SR.MessageTranscriptionComponentAlreadyOpened, 
+						TranscriptionDocument.StripTitle(firstDocument.Title), 
+						TranscriptionDocument.StripTitle(TranscriptionDocument.GetTitle(item)));
 					if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
 						return;		// Leave the existing document open
 

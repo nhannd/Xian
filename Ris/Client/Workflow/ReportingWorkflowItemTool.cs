@@ -122,7 +122,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			var firstDocument = CollectionUtils.FirstElement(documents);
 			firstDocument.Activate();
 
-			var message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, ReportDocument.GetTitle(item));
+			var message = string.Format(SR.MessageReportingComponentAlreadyOpened,
+				ReportDocument.StripTitle(firstDocument.Title),
+				ReportDocument.StripTitle(ReportDocument.GetTitle(item)));
 			return DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 		}
 

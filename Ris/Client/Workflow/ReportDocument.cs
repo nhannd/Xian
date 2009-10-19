@@ -95,5 +95,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			return string.Format("Report - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
 		}
+
+		public static string StripTitle(string title)
+		{
+			return title.Replace("Report - ", "");
+		}
 	}
 }

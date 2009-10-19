@@ -29,13 +29,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -110,7 +108,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					var firstDocument = CollectionUtils.FirstElement(documents);
 					firstDocument.Activate();
 
-					var message = string.Format(SR.MessageProtocollingComponentAlreadyOpened, firstDocument.Title, ProtocolDocument.GetTitle(item));
+					var message = string.Format(SR.MessageProtocollingComponentAlreadyOpened, 
+						ProtocolDocument.StripTitle(firstDocument.Title), 
+						ProtocolDocument.StripTitle(ProtocolDocument.GetTitle(item)));
 					if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
 						return;		// Leave the existing document open
 

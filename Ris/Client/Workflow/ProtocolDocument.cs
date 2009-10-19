@@ -90,7 +90,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public static string GetTitle(ReportingWorklistItem item)
 		{
-            return string.Format("Protocol - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
+			return string.Format("Protocol - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
+		}
+
+		public static string StripTitle(string title)
+		{
+			return title.Replace("Protocol - ", "");
 		}
 	}
 }

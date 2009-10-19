@@ -405,7 +405,8 @@
     <value>Printing downtime form {0} of {1}</value>
   </data>
   <data name="MessageProtocollingComponentAlreadyOpened" xml:space="preserve">
-    <value>You are currently editing {0}.  Do you want to close it and open the protocol for {1} instead?  The {0} will be saved to your DRAFT folder.</value>
+    <value>You are currently editing the protocol for {0}.
+Do you want to save it to your Drafts folder and open the protocol for {1}?</value>
   </data>
   <data name="MessageRadiologistAdminSearchMessage" xml:space="preserve">
     <value>Enter search criteria (Staff Name or Staff ID)</value>
@@ -417,10 +418,12 @@
     <value>Would you like to report anyways?</value>
   </data>
   <data name="MessageReportingComponentAlreadyOpened" xml:space="preserve">
-    <value>You are currently editing {0}.  Do you want to close it and open the report for {1} instead?  The {0} will be saved to your DRAFT folder.</value>
+    <value>You are currently editing the report for {0}.
+Do you want to save it to your Drafts folder and open the report for {1}?</value>
   </data>
   <data name="MessageTranscriptionComponentAlreadyOpened" xml:space="preserve">
-    <value>You are currently editing {0}.  Do you want to close it and open the transcription for {1} instead?  The {0} will be saved to your DRAFT folder.</value>
+    <value>You are currently editing the transcription for {0}.
+Do you want to save it to your Drafts folder and open the transcription for {1}?</value>
   </data>
   <data name="MessageTranscriptionHasErrors" xml:space="preserve">
     <value>Transcription has flagged the report</value>
