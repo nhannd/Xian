@@ -181,6 +181,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private class MprLayoutManager : LayoutManager
 		{
+			private bool _logicalWorkspaceBuilt = false;
+
 			public override void Layout()
 			{
 				this.BuildLogicalWorkspace();
@@ -222,6 +224,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			protected override void BuildLogicalWorkspace()
 			{
+				if (_logicalWorkspaceBuilt)
+					return;
+
+				_logicalWorkspaceBuilt = true;
+
 				foreach (MprVolume volume in this.ImageViewer.StudyTree)
 				{
 					this.ImageViewer.LogicalWorkspace.ImageSets.Add(CreateImageSet(volume));
