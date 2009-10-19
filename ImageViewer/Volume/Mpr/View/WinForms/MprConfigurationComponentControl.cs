@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.View.WinForms
 					// clear any errors that may be in the component
 					if (!string.IsNullOrEmpty(_errorProvider.GetError(_pnlProportionalSliceSpacing)))
 					{
-						_component.SliceSpacingFactor = 0.1f;
+						_component.SliceSpacingFactor = 1f;
 						_errorProvider.SetError(_pnlProportionalSliceSpacing, string.Empty);
 					}
 				}
