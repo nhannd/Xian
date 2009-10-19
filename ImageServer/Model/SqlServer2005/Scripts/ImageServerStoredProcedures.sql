@@ -181,6 +181,10 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Postp
 DROP PROCEDURE [dbo].[PostponeWorkQueue]
 GO
 
+/****** Object:  StoredProcedure [dbo].[QueryCurrentStudyMoveCount]    Script Date: 10/19/2009 11:21:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryCurrentStudyMoveCount]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryCurrentStudyMoveCount]
+GO
 
 
 
@@ -4000,3 +4004,35 @@ END
 '
 END
 GO
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryCurrentStudyMoveCount]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: October 19, 2009
+-- Description:	Returns In-Progress Move WorkQueue entries for a given device
+-- History:
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryCurrentStudyMoveCount]
+	@DeviceGUID uniqueidentifier
+AS
+BEGIN
+	SET NOCOUNT ON;
+	declare @InProgressStatusEnum as int
+	select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
+
+	SELECT * FROM WorkQueue WITH(NOLOCK)
+	WHERE DEVICEGUID=@DeviceGUID and WorkQueueStatusEnum=@InProgressStatusEnum	
+	ORDER BY ScheduledTime ASC
+END
+'
+END
+GO
+

@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Enterprise;
@@ -338,8 +339,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 }
                 else
                 {
-                    List<Model.WorkQueue> currentMoves = device.GetAllCurrentMoveEntries(ReadContext);
-                    if (currentMoves.Count > device.ThrottleMaxConnections)
+                    List<Model.WorkQueue> currentMoves;
+
+                    using(IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                        currentMoves = device.GetAllCurrentMoveEntries(context);
+                    }
+
+                    if (currentMoves!=null && currentMoves.Count > device.ThrottleMaxConnections)
                     {
                         // sort the list to see where this entry is
                         // and postpone it if its position is greater than the ThrottleMaxConnections 

@@ -56,6 +56,7 @@
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\IPostponeWorkQueue.cs" />
+    <Compile Include="Brokers\IQueryCurrentStudyMove.cs" />
     <Compile Include="Brokers\IWorkQueueProcessorIDs.cs" />
     <Compile Include="Brokers\ICreatePatientForStudy.cs" />
     <Compile Include="Brokers\IDeleteInstance.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="InconsistentDataSIQEntry.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\PostponeWorkQueueParameters.cs" />
+    <Compile Include="Parameters\QueryCurrentStudyMoveParameters.cs" />
     <Compile Include="Parameters\WorkQueueProcessordIDsParameters.cs" />
     <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
     <Compile Include="Parameters\DeleteInstanceParameters.cs" />

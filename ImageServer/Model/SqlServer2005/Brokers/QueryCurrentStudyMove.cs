@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,47 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    public partial class Device
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class QueryCurrentStudyMove: ProcedureQueryBroker<QueryCurrentStudyMoveParameters, WorkQueue>, IQueryCurrentStudyMove
     {
-        #region Private Members
-        private ServerPartition _serverPartition;
-        #endregion
-
-        #region Public Properties
-        public ServerPartition ServerPartition
+        public QueryCurrentStudyMove()
+            : base("QueryCurrentStudyMove")
         {
-            get
-            {
-                if (_serverPartition == null)
-                    _serverPartition = ServerPartition.Load(_serverPartitionKey);
-                return _serverPartition;
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Gets a list of Web Study Move or AutoRoute WorkQueue entries 
-        /// that are in progress for this device.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public List<WorkQueue> GetAllCurrentMoveEntries(IPersistenceContext context)
-        {
-            IQueryCurrentStudyMove broker = context.GetBroker<IQueryCurrentStudyMove>();
-            QueryCurrentStudyMoveParameters criteria = new QueryCurrentStudyMoveParameters();
-            criteria.DeviceKey = Key;
-            return new List<WorkQueue>(broker.Find(criteria));
         }
     }
 }
