@@ -20,13 +20,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.View.WinForms
 
 			_sliceSpacingFactor = _component.SliceSpacingFactor.ToString();
 
-			_txtSliceSpacing.DataBindings.Add("Text", this, "SliceSpacingFactor", true, DataSourceUpdateMode.OnPropertyChanged);
-			_chkAutoSliceSpacing.DataBindings.Add("Checked", component, "AutoSliceSpacing", false, DataSourceUpdateMode.OnPropertyChanged);
-		}
-
-		private void _chkAutoSliceSpacing_CheckedChanged(object sender, EventArgs e)
-		{
-			_txtSliceSpacing.Enabled = !_chkAutoSliceSpacing.Checked;
+			_txtProportionalSliceSpacing.DataBindings.Add("Text", this, "SliceSpacingFactor", true, DataSourceUpdateMode.OnPropertyChanged);
+			_txtProportionalSliceSpacing.DataBindings.Add("Enabled", this, "ProportionalSliceSpacing", true, DataSourceUpdateMode.OnPropertyChanged);
+			_radAutomaticSliceSpacing.DataBindings.Add("Checked", this, "AutomaticSliceSpacing", false, DataSourceUpdateMode.OnPropertyChanged);
+			_radProportionalSliceSpacing.DataBindings.Add("Checked", this, "ProportionalSliceSpacing", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged
@@ -38,6 +35,57 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.View.WinForms
 		protected void NotifyPropertyChanged(string propertyName)
 		{
 			EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
+
+			if (propertyName == "ProportionalSliceSpacing")
+			{
+				// this block fixes the validation failure if the user inputs invalid data in the text box
+				// then toggles the radio button selection to automatic
+
+				if (this.ProportionalSliceSpacing)
+				{
+					// force trigger the code to set error messages in the GUI
+					string sliceSpacingFactor = this.SliceSpacingFactor;
+					this.SliceSpacingFactor = string.Empty;
+					this.SliceSpacingFactor = sliceSpacingFactor;
+				}
+				else
+				{
+					// clear any errors that may be in the component
+					if (!string.IsNullOrEmpty(_errorProvider.GetError(_pnlProportionalSliceSpacing)))
+					{
+						_component.SliceSpacingFactor = 0.1f;
+						_errorProvider.SetError(_pnlProportionalSliceSpacing, string.Empty);
+					}
+				}
+			}
+		}
+
+		public bool AutomaticSliceSpacing
+		{
+			get { return _component.AutoSliceSpacing; }
+			set
+			{
+				if (_component.AutoSliceSpacing != value)
+				{
+					_component.AutoSliceSpacing = value;
+					this.NotifyPropertyChanged("AutomaticSliceSpacing");
+					this.NotifyPropertyChanged("ProportionalSliceSpacing");
+				}
+			}
+		}
+
+		public bool ProportionalSliceSpacing
+		{
+			get { return !_component.AutoSliceSpacing; }
+			set
+			{
+				if (!_component.AutoSliceSpacing != value)
+				{
+					_component.AutoSliceSpacing = !value;
+					this.NotifyPropertyChanged("AutomaticSliceSpacing");
+					this.NotifyPropertyChanged("ProportionalSliceSpacing");
+				}
+			}
 		}
 
 		public string SliceSpacingFactor
@@ -56,20 +104,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.View.WinForms
 						if (fValue >= float.Epsilon && fValue <= 5)
 						{
 							_component.SliceSpacingFactor = fValue;
-							_errorProvider.SetError(_txtSliceSpacing, string.Empty);
+							_errorProvider.SetError(_pnlProportionalSliceSpacing, string.Empty);
 						}
 						else
 						{
 							// deliberately set a value out of range, so that the component will fail internal range validation and refuse to exit
 							_component.SliceSpacingFactor = -1;
-							_errorProvider.SetError(_txtSliceSpacing, SR.ErrorSliceSpacingOutOfRange);
+							_errorProvider.SetError(_pnlProportionalSliceSpacing, SR.ErrorSliceSpacingOutOfRange);
 						}
 					}
 					else
 					{
 						// deliberately set a value out of range, so that the component will fail internal range validation and refuse to exit
 						_component.SliceSpacingFactor = -1;
-						_errorProvider.SetError(_txtSliceSpacing, SR.ErrorInvalidNumberFormat);
+						_errorProvider.SetError(_pnlProportionalSliceSpacing, SR.ErrorInvalidNumberFormat);
 					}
 				}
 			}

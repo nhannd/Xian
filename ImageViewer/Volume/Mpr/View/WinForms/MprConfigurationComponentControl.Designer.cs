@@ -24,54 +24,78 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			this._lblSliceSpacing = new System.Windows.Forms.Label();
-			this._txtSliceSpacing = new System.Windows.Forms.TextBox();
+			this._lblProportionalSliceSpacing = new System.Windows.Forms.Label();
+			this._txtProportionalSliceSpacing = new System.Windows.Forms.TextBox();
 			this._grpSliceSpacing = new System.Windows.Forms.GroupBox();
-			this._chkAutoSliceSpacing = new System.Windows.Forms.CheckBox();
+			this._radAutomaticSliceSpacing = new System.Windows.Forms.RadioButton();
+			this._radProportionalSliceSpacing = new System.Windows.Forms.RadioButton();
+			this._pnlProportionalSliceSpacing = new System.Windows.Forms.Panel();
 			this._errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			this._grpSliceSpacing.SuspendLayout();
+			this._pnlProportionalSliceSpacing.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// _lblSliceSpacing
+			// _lblProportionalSliceSpacing
 			// 
-			this._lblSliceSpacing.AutoSize = true;
-			this._lblSliceSpacing.Location = new System.Drawing.Point(23, 41);
-			this._lblSliceSpacing.Name = "_lblSliceSpacing";
-			this._lblSliceSpacing.Size = new System.Drawing.Size(211, 13);
-			this._lblSliceSpacing.TabIndex = 0;
-			this._lblSliceSpacing.Text = "Slice Spacing (in multiples of Pixel Spacing)";
+			this._lblProportionalSliceSpacing.AutoSize = true;
+			this._lblProportionalSliceSpacing.Location = new System.Drawing.Point(60, 3);
+			this._lblProportionalSliceSpacing.Name = "_lblProportionalSliceSpacing";
+			this._lblProportionalSliceSpacing.Size = new System.Drawing.Size(95, 13);
+			this._lblProportionalSliceSpacing.TabIndex = 0;
+			this._lblProportionalSliceSpacing.Text = "times pixel spacing";
 			// 
-			// _txtSliceSpacing
+			// _txtProportionalSliceSpacing
 			// 
-			this._txtSliceSpacing.Location = new System.Drawing.Point(26, 57);
-			this._txtSliceSpacing.Name = "_txtSliceSpacing";
-			this._txtSliceSpacing.Size = new System.Drawing.Size(83, 20);
-			this._txtSliceSpacing.TabIndex = 1;
+			this._txtProportionalSliceSpacing.Location = new System.Drawing.Point(0, 0);
+			this._txtProportionalSliceSpacing.Name = "_txtProportionalSliceSpacing";
+			this._txtProportionalSliceSpacing.Size = new System.Drawing.Size(54, 20);
+			this._txtProportionalSliceSpacing.TabIndex = 1;
 			// 
 			// _grpSliceSpacing
 			// 
-			this._grpSliceSpacing.Controls.Add(this._chkAutoSliceSpacing);
-			this._grpSliceSpacing.Controls.Add(this._lblSliceSpacing);
-			this._grpSliceSpacing.Controls.Add(this._txtSliceSpacing);
-			this._grpSliceSpacing.Dock = System.Windows.Forms.DockStyle.Top;
+			this._grpSliceSpacing.Controls.Add(this._radAutomaticSliceSpacing);
+			this._grpSliceSpacing.Controls.Add(this._radProportionalSliceSpacing);
+			this._grpSliceSpacing.Controls.Add(this._pnlProportionalSliceSpacing);
 			this._grpSliceSpacing.Location = new System.Drawing.Point(10, 10);
 			this._grpSliceSpacing.Name = "_grpSliceSpacing";
-			this._grpSliceSpacing.Size = new System.Drawing.Size(427, 99);
+			this._grpSliceSpacing.Size = new System.Drawing.Size(310, 112);
 			this._grpSliceSpacing.TabIndex = 2;
 			this._grpSliceSpacing.TabStop = false;
 			this._grpSliceSpacing.Text = "Slice Spacing";
 			// 
-			// _chkAutoSliceSpacing
+			// _radAutomaticSliceSpacing
 			// 
-			this._chkAutoSliceSpacing.AutoSize = true;
-			this._chkAutoSliceSpacing.Location = new System.Drawing.Point(6, 19);
-			this._chkAutoSliceSpacing.Name = "_chkAutoSliceSpacing";
-			this._chkAutoSliceSpacing.Size = new System.Drawing.Size(240, 17);
-			this._chkAutoSliceSpacing.TabIndex = 2;
-			this._chkAutoSliceSpacing.Text = "Automatically determine suitable slice spacing";
-			this._chkAutoSliceSpacing.UseVisualStyleBackColor = true;
-			this._chkAutoSliceSpacing.CheckedChanged += new System.EventHandler(this._chkAutoSliceSpacing_CheckedChanged);
+			this._radAutomaticSliceSpacing.AutoSize = true;
+			this._radAutomaticSliceSpacing.Location = new System.Drawing.Point(6, 19);
+			this._radAutomaticSliceSpacing.Name = "_radAutomaticSliceSpacing";
+			this._radAutomaticSliceSpacing.Size = new System.Drawing.Size(157, 17);
+			this._radAutomaticSliceSpacing.TabIndex = 3;
+			this._radAutomaticSliceSpacing.TabStop = true;
+			this._radAutomaticSliceSpacing.Text = "Use automatic slice spacing";
+			this._radAutomaticSliceSpacing.UseVisualStyleBackColor = true;
+			// 
+			// _radProportionalSliceSpacing
+			// 
+			this._radProportionalSliceSpacing.AutoSize = true;
+			this._radProportionalSliceSpacing.Location = new System.Drawing.Point(6, 42);
+			this._radProportionalSliceSpacing.Name = "_radProportionalSliceSpacing";
+			this._radProportionalSliceSpacing.Size = new System.Drawing.Size(269, 17);
+			this._radProportionalSliceSpacing.TabIndex = 4;
+			this._radProportionalSliceSpacing.TabStop = true;
+			this._radProportionalSliceSpacing.Text = "Use a slice spacing proportional to the pixel spacing";
+			this._radProportionalSliceSpacing.UseVisualStyleBackColor = true;
+			// 
+			// _pnlProportionalSliceSpacing
+			// 
+			this._pnlProportionalSliceSpacing.AutoSize = true;
+			this._pnlProportionalSliceSpacing.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._pnlProportionalSliceSpacing.Controls.Add(this._txtProportionalSliceSpacing);
+			this._pnlProportionalSliceSpacing.Controls.Add(this._lblProportionalSliceSpacing);
+			this._pnlProportionalSliceSpacing.Location = new System.Drawing.Point(23, 65);
+			this._pnlProportionalSliceSpacing.Name = "_pnlProportionalSliceSpacing";
+			this._pnlProportionalSliceSpacing.Size = new System.Drawing.Size(158, 23);
+			this._pnlProportionalSliceSpacing.TabIndex = 5;
 			// 
 			// _errorProvider
 			// 
@@ -87,6 +111,8 @@
 			this.Size = new System.Drawing.Size(447, 256);
 			this._grpSliceSpacing.ResumeLayout(false);
 			this._grpSliceSpacing.PerformLayout();
+			this._pnlProportionalSliceSpacing.ResumeLayout(false);
+			this._pnlProportionalSliceSpacing.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this._errorProvider)).EndInit();
 			this.ResumeLayout(false);
 
@@ -94,10 +120,12 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label _lblSliceSpacing;
-		private System.Windows.Forms.TextBox _txtSliceSpacing;
+		private System.Windows.Forms.Label _lblProportionalSliceSpacing;
+		private System.Windows.Forms.TextBox _txtProportionalSliceSpacing;
 		private System.Windows.Forms.GroupBox _grpSliceSpacing;
-		private System.Windows.Forms.CheckBox _chkAutoSliceSpacing;
 		private System.Windows.Forms.ErrorProvider _errorProvider;
+		private System.Windows.Forms.RadioButton _radProportionalSliceSpacing;
+		private System.Windows.Forms.RadioButton _radAutomaticSliceSpacing;
+		private System.Windows.Forms.Panel _pnlProportionalSliceSpacing;
 	}
 }
