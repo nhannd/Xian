@@ -9,10 +9,10 @@
 		<property name="MimeType" column="MimeType_" type="string" length="32" not-null="true"/>
 		<property name="FileExtension" column="FileExtension_" type="string" length="16" not-null="true"/>
 
-		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
 		<property name="ReceivedTime" column="ReceivedTime_" type="DateTime" not-null="true"/>
 
-		<property name="DataRelativeUrl" column="DataRelativeUrl_" type="string" length="1024" not-null="true"/>
+		<property name="ContentUrl" column="ContentUrl_" type="string" length="1024" not-null="true"/>
 
 	</class>
 </hibernate-mapping>

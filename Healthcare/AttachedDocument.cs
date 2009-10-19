@@ -57,8 +57,8 @@ namespace ClearCanvas.Healthcare {
 		/// <remarks>The DataRelativeUrl is constructed based on Year/Month/Day/EntityRefOID.FileExtension.</remarks>
 		public void UploadDocument(FtpFileTransfer ftpFileTransfer, string localFilePath)
 		{
-			this.DataRelativeUrl = BuildAttachedDocumentRelativeUri();
-			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.DataRelativeUrl);
+			this.ContentUrl = BuildAttachedDocumentRelativeUri();
+			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.ContentUrl);
 			ftpFileTransfer.Upload(new FileTransferRequest(remoteFileUrl, localFilePath));
 		}
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.Healthcare {
 		/// <returns>The path of the downloaded file.</returns>
 		public string DownloadDocument(FtpFileTransfer ftpFileTransfer)
 		{
-			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.DataRelativeUrl);
+			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.ContentUrl);
 			var localFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(remoteFileUrl.LocalPath));
 			ftpFileTransfer.Download(new FileTransferRequest(remoteFileUrl, localFilePath));
 
