@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -156,15 +155,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (_folder == folder)
 				return this;
-			else
+
+			foreach (var child in _subTree.Items)
 			{
-				foreach (FolderTreeNode child in _subTree.Items)
-				{
-					FolderTreeNode node = child.FindNode(folder);
-					if (node != null)
-						return node;
-				}
+				var node = child.FindNode(folder);
+				if (node != null)
+					return node;
 			}
+
 			return null;
 		}
 
@@ -177,13 +175,13 @@ namespace ClearCanvas.Ris.Client
 			// update this node
 			_folder.Update();
 
+			if (!_expanded)
+				return;
+
 			// only update the child nodes if this node is expanded
-			if(_expanded)
+			foreach (var child in _subTree.Items)
 			{
-				foreach (FolderTreeNode child in _subTree.Items)
-				{
-					child.Update();
-				}
+				child.Update();
 			}
 		}
 
@@ -203,23 +201,23 @@ namespace ClearCanvas.Ris.Client
 			if (_subTree.Items.Contains(node))
 			{
 				// important to null out the folder, to unsubscribe from events, etc. before removing from the collection
-				node.SetFolder(null);	
+				node.SetFolder(null);
 				_subTree.Items.Remove(node);
 				return true;
 			}
-			else
+
+			foreach (var child in _subTree.Items)
 			{
-				foreach (FolderTreeNode child in _subTree.Items)
-				{
-					if (child.RemoveNode(node))
-					{
-						if (child.IsEmptyContainer())
-							RemoveNode(child);
-						return true;
-					}
-				}
-				return false;
+				if (!child.RemoveNode(node))
+					continue;
+
+				if (child.IsEmptyContainer())
+					RemoveNode(child);
+
+				return true;
 			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -279,8 +277,8 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (this.Folder is ContainerFolder)
 					return true;
-				else
-					return this.GetSubTree().Items.Count > 0;
+
+				return this.GetSubTree().Items.Count > 0;
 			}
 		}
 
@@ -302,15 +300,15 @@ namespace ClearCanvas.Ris.Client
 
 			_folder = folder;
 
-			if (_folder != null)
-			{
-				_folder.TextChanged += FolderTextOrIconChangedEventHandler;
-				_folder.IconChanged += FolderTextOrIconChangedEventHandler;
-				_expanded = _folder.StartExpanded;
+			if (_folder == null)
+				return;
 
-				// since the folder has changed, need to immediately notify the tree that this item is updated.
-				NotifyItemUpdated();
-			}
+			_folder.TextChanged += FolderTextOrIconChangedEventHandler;
+			_folder.IconChanged += FolderTextOrIconChangedEventHandler;
+			_expanded = _folder.StartExpanded;
+
+			// since the folder has changed, need to immediately notify the tree that this item is updated.
+			NotifyItemUpdated();
 		}
 
 		/// <summary>
@@ -351,14 +349,11 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="pathDepth"></param>
 		private void InsertChildAlphabetical(FolderTreeNode node, int pathDepth)
 		{
-			PathSegment segment = node.Folder.FolderPath.Segments[pathDepth];
+			var segment = node.Folder.FolderPath.Segments[pathDepth];
 
 			// find the insertion point - the first node greater/equalto the node to be inserted
-			int insertPoint = _subTree.Items.FindIndex(
-				delegate(FolderTreeNode n)
-				{
-					return n.Folder.FolderPath.Segments[pathDepth].LocalizedText.CompareTo(segment.LocalizedText) >= 0;
-				});
+			var insertPoint = _subTree.Items.FindIndex(
+				n => n.Folder.FolderPath.Segments[pathDepth].LocalizedText.CompareTo(segment.LocalizedText) >= 0);
 
 			if (insertPoint > -1)
 				_subTree.Items.Insert(insertPoint, node);
@@ -373,20 +368,19 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		private static TreeItemBinding<FolderTreeNode> GetBinding(FolderExplorerComponent explorer)
 		{
-			TreeItemBinding<FolderTreeNode> binding = new TreeItemBinding<FolderTreeNode>();
-
-			binding.NodeTextProvider = delegate(FolderTreeNode node) { return node.Folder.Text; };
-			binding.IconSetProvider = delegate(FolderTreeNode node) { return node.Folder.IconSet; };
-			binding.TooltipTextProvider = delegate(FolderTreeNode node) { return node.Folder.Tooltip; };
-			binding.ResourceResolverProvider = delegate(FolderTreeNode node) { return node.Folder.ResourceResolver; };
-
-			binding.CanAcceptDropHandler = explorer.CanFolderAcceptDrop;
-			binding.AcceptDropHandler = explorer.FolderAcceptDrop;
-
-			binding.CanHaveSubTreeHandler = delegate(FolderTreeNode node) { return node.CanHaveSubTree; };
-			binding.IsExpandedGetter = delegate(FolderTreeNode node) { return node.Expanded; };
-			binding.IsExpandedSetter = delegate(FolderTreeNode node, bool expanded) { node.Expanded = expanded; };
-			binding.SubTreeProvider = delegate(FolderTreeNode node) { return node.GetSubTree(); };
+			var binding = new TreeItemBinding<FolderTreeNode>
+				{
+					NodeTextProvider = node => node.Folder.Text,
+					IconSetProvider = node => node.Folder.IconSet,
+					TooltipTextProvider = node => node.Folder.Tooltip,
+					ResourceResolverProvider = node => node.Folder.ResourceResolver,
+					CanAcceptDropHandler = explorer.CanFolderAcceptDrop,
+					AcceptDropHandler = explorer.FolderAcceptDrop,
+					CanHaveSubTreeHandler = node => node.CanHaveSubTree,
+					IsExpandedGetter = node => node.Expanded,
+					IsExpandedSetter = (node, expanded) => node.Expanded = expanded,
+					SubTreeProvider = node => node.GetSubTree()
+				};
 
 			return binding;
 		}

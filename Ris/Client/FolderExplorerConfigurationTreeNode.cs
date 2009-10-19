@@ -58,11 +58,11 @@ namespace ClearCanvas.Ris.Client
 				get { return _text; }
 				set
 				{
-					if (_text != value)
-					{
-						_text = value;
-						this.Modified = true;
-					}
+					if (_text == value)
+						return;
+
+					_text = value;
+					this.Modified = true;
 				}
 			}
 
@@ -103,12 +103,12 @@ namespace ClearCanvas.Ris.Client
 		private bool _modifiedEnabled;
 		private event EventHandler _modifiedChanged;
 
-		public DraggableTreeNode()
+		protected DraggableTreeNode()
 			: this(true)
 		{
 		}
 
-		public DraggableTreeNode(bool isChecked)
+		protected DraggableTreeNode(bool isChecked)
 		{
 			_isExpanded = true;
 			_isChecked = isChecked;
@@ -144,16 +144,16 @@ namespace ClearCanvas.Ris.Client
 			get { return _isChecked; }
 			set
 			{
-				if (_isChecked != value)
-				{
-                    SetCheckStateInternal(value);
+				if (_isChecked == value)
+					return;
 
-					if (this.CheckStateChained)
-					{
-                        PropagateCheckStateUp(_parent);
-                        PropagateCheckStateDown(this);
-					}
-				}
+				SetCheckStateInternal(value);
+
+				if (!this.CheckStateChained)
+					return;
+
+				PropagateCheckStateUp(_parent);
+				PropagateCheckStateDown(this);
 			}
 		}
 
@@ -177,7 +177,6 @@ namespace ClearCanvas.Ris.Client
 			get { return null; }
 		}
 
-
 		/// <summary>
 		/// Gets the resource resolver that is used to resolve the Icon
 		/// </summary>
@@ -193,12 +192,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				Path thisPath = new Path(this.Text);
+				var thisPath = new Path(this.Text);
 
 				if (_parent == null || _parent.Path == null)
 					return thisPath;
-				else
-					return _parent.Path.Append(thisPath);
+
+				return _parent.Path.Append(thisPath);
 			}
 		}
 
@@ -214,15 +213,15 @@ namespace ClearCanvas.Ris.Client
 			get { return _modified; }
 			protected set
 			{
-				if (_modifiedEnabled && value != _modified)
-				{
-					_modified = value;
+				if (!_modifiedEnabled || value == _modified)
+					return;
 
-					if (_parent != null)
-						_parent.Modified = true;
+				_modified = value;
 
-					EventsHelper.Fire(_modifiedChanged, this, EventArgs.Empty);
-				}
+				if (_parent != null)
+					_parent.Modified = true;
+
+				EventsHelper.Fire(_modifiedChanged, this, EventArgs.Empty);
 			}
 		}
 
@@ -239,11 +238,7 @@ namespace ClearCanvas.Ris.Client
 
 				if (_subTree != null)
 				{
-					CollectionUtils.ForEach(_subTree.Items,
-						delegate(DraggableTreeNode child)
-							{
-								child.ModifiedEnabled = value;
-							});
+					CollectionUtils.ForEach(_subTree.Items, child => child.ModifiedEnabled = value);
 				}
 			}
 		}
@@ -277,7 +272,7 @@ namespace ClearCanvas.Ris.Client
 					return null;
 
 				// Find index of current node
-				int index = _parent.SubTree.Items.IndexOf(this);
+				var index = _parent.SubTree.Items.IndexOf(this);
 
 				// has older sibling
 				return index <= 0 ? null : _parent.SubTree.Items[index - 1];
@@ -295,7 +290,7 @@ namespace ClearCanvas.Ris.Client
 					return null;
 
 				// Find index of current node
-				int index = _parent.SubTree.Items.IndexOf(this);
+				var index = _parent.SubTree.Items.IndexOf(this);
 
 				// has younger sibling
 				return index == _parent.SubTree.Items.Count - 1 ? null : _parent.SubTree.Items[index + 1];
@@ -318,7 +313,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				List<DraggableTreeNode> descendents = new List<DraggableTreeNode>();
+				var descendents = new List<DraggableTreeNode>();
 
 				if (_subTree != null)
 				{
@@ -380,7 +375,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public DraggableTreeNode RemoveChildNode(DraggableTreeNode node)
 		{
-			DraggableTreeNode nextSelectedNode = node.NextSibling ?? node.PreviousSibling ?? this;
+			var nextSelectedNode = node.NextSibling ?? node.PreviousSibling ?? this;
 			this.SubTree.Items.Remove(node);
 			this.Modified = true;
 			return nextSelectedNode;
@@ -417,10 +412,8 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			string text  = CollectionUtils.FirstElement(path.Segments).LocalizedText;
-			DraggableTreeNode childWithMatchingText = _subTree == null ? null
-				: CollectionUtils.SelectFirst(_subTree.Items,
-					delegate(DraggableTreeNode child) { return child.Text == text; });
+			var text  = CollectionUtils.FirstElement(path.Segments).LocalizedText;
+			var childWithMatchingText = _subTree == null ? null : CollectionUtils.SelectFirst(_subTree.Items, child => child.Text == text);
 			
 			if (childWithMatchingText == null)
 			{
@@ -433,7 +426,7 @@ namespace ClearCanvas.Ris.Client
 				else
 				{
 					// create a container node and insert into the container node's subtree
-					ContainerNode containerNode = new ContainerNode(text);
+					var containerNode = new ContainerNode(text);
 					AddChildNode(containerNode);
 					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
 				}
@@ -463,11 +456,11 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void MoveUp()
 		{
-			DraggableTreeNode previousSibling = this.PreviousSibling;
+			var previousSibling = this.PreviousSibling;
 			if (_parent == null || previousSibling == null)
 				return;
 
-			int index = _parent.SubTree.Items.IndexOf(this);
+			var index = _parent.SubTree.Items.IndexOf(this);
 
 			// remove and re-insert this node at the prior index
 			_parent.SubTree.Items.Remove(previousSibling);
@@ -481,12 +474,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void MoveDown()
 		{
-			DraggableTreeNode nextSibling = this.NextSibling;
+			var nextSibling = this.NextSibling;
 			if (_parent == null || nextSibling == null)
 				return;
 
 			// Find index of current node
-			int index = _parent.SubTree.Items.IndexOf(this);
+			var index = _parent.SubTree.Items.IndexOf(this);
 
 			// remove and re-insert this node at the next index
 			_parent.SubTree.Items.Remove(nextSibling);
@@ -513,7 +506,7 @@ namespace ClearCanvas.Ris.Client
 				dropData.Parent.SubTree.Items.Remove(dropData);
 
 			AddChildNode(dropData);
-            PropagateCheckStateUp(this);
+			PropagateCheckStateUp(this);
 
 			this.Modified = true;
 
@@ -559,77 +552,76 @@ namespace ClearCanvas.Ris.Client
 			if (ancestorNode.SubTree == null)
 				return false;
 
-			bool isDescendentOfAncestorNode = CollectionUtils.Contains(ancestorNode.SubTree.Items,
-				delegate(DraggableTreeNode childOfTestNode) { return this == childOfTestNode || this.IsDescendentOf(childOfTestNode); });
+			var isDescendentOfAncestorNode = CollectionUtils.Contains(ancestorNode.SubTree.Items,
+				childOfTestNode => this == childOfTestNode || this.IsDescendentOf(childOfTestNode));
 
 			return isDescendentOfAncestorNode;
 		}
 
-        /// <summary>
-        /// Sets the checked state without propagating.
-        /// </summary>
-        /// <param name="value"></param>
-        private void SetCheckStateInternal(bool value)
-        {
-            if (_isChecked != value)
-            {
-                _isChecked = value;
-                this.Modified = true;
-                NotifyItemUpdated();
-            }
-        }
+		/// <summary>
+		/// Sets the checked state without propagating.
+		/// </summary>
+		/// <param name="value"></param>
+		private void SetCheckStateInternal(bool value)
+		{
+			if (_isChecked == value)
+				return;
 
-        /// <summary>
-        /// Propagates check state up to parent.
-        /// </summary>
-        /// <param name="parent"></param>
-        private void PropagateCheckStateUp(DraggableTreeNode parent)
-        {
-            if (parent == null)
-                return;
+			_isChecked = value;
+			this.Modified = true;
+			NotifyItemUpdated();
+		}
 
-            bool b = CollectionUtils.Contains(parent.SubTree.Items,
-                delegate(DraggableTreeNode n) { return n.IsChecked; });
-            parent.SetCheckStateInternal(b);
+		/// <summary>
+		/// Propagates check state up to parent.
+		/// </summary>
+		/// <param name="parent"></param>
+		private static void PropagateCheckStateUp(DraggableTreeNode parent)
+		{
+			if (parent == null)
+				return;
 
-            PropagateCheckStateUp(parent.Parent);
-        }
+			var b = CollectionUtils.Contains(parent.SubTree.Items, n => n.IsChecked);
+			parent.SetCheckStateInternal(b);
 
-        /// <summary>
-        /// Propagates check state down to children.
-        /// </summary>
-        /// <param name="parent"></param>
-        private void PropagateCheckStateDown(DraggableTreeNode parent)
-        {
-            if (parent == null || parent.SubTree == null)
-                return;
+			PropagateCheckStateUp(parent.Parent);
+		}
 
-            foreach (DraggableTreeNode child in parent.SubTree.Items)
-            {
-                child.SetCheckStateInternal(parent.IsChecked);
-                PropagateCheckStateDown(child);
-            }
-        }
+		/// <summary>
+		/// Propagates check state down to children.
+		/// </summary>
+		/// <param name="parent"></param>
+		private static void PropagateCheckStateDown(DraggableTreeNode parent)
+		{
+			if (parent == null || parent.SubTree == null)
+				return;
 
-        #endregion
+			foreach (var child in parent.SubTree.Items)
+			{
+				child.SetCheckStateInternal(parent.IsChecked);
+				PropagateCheckStateDown(child);
+			}
+		}
+
+		#endregion
 
 		public static Tree<DraggableTreeNode> BuildTree()
 		{
-			TreeItemBinding<DraggableTreeNode> binding = new TreeItemBinding<DraggableTreeNode>(
-					delegate(DraggableTreeNode node) { return node.Text; },
-					delegate(DraggableTreeNode node) { return node.SubTree; });
-			binding.NodeTextSetter = delegate(DraggableTreeNode node, string text) { node.Text = text; };
-			binding.CanSetNodeTextHandler = delegate(DraggableTreeNode node) { return node.CanEdit; };
-			binding.CanHaveSubTreeHandler = delegate(DraggableTreeNode node) { return node.SubTree != null; };
-			binding.IsCheckedGetter = delegate(DraggableTreeNode node) { return node.IsChecked; };
-			binding.IsCheckedSetter = delegate(DraggableTreeNode node, bool isChecked) { node.IsChecked = isChecked; };
-			binding.TooltipTextProvider = delegate(DraggableTreeNode node) { return node.ToolTip; };
-			binding.IsExpandedGetter = delegate(DraggableTreeNode node) { return node.IsExpanded; };
-			binding.IsExpandedSetter = delegate(DraggableTreeNode node, bool isExpanded) { node.IsExpanded = isExpanded; };
-			binding.CanAcceptDropHandler = delegate(DraggableTreeNode node, object dropData, DragDropKind kind) { return node.CanAcceptDrop((dropData as DraggableTreeNode), kind); };
-			binding.AcceptDropHandler = delegate(DraggableTreeNode node, object dropData, DragDropKind kind) { return node.AcceptDrop((dropData as DraggableTreeNode), kind); };
-			binding.IconSetProvider = delegate(DraggableTreeNode node) { return node.IconSet; };
-			binding.ResourceResolverProvider = delegate(DraggableTreeNode node) { return node.ResourceResolver; };
+			var binding = new TreeItemBinding<DraggableTreeNode>(node => node.Text, node => node.SubTree)
+				{
+					NodeTextSetter = (node, text) => node.Text = text,
+					CanSetNodeTextHandler = node => node.CanEdit,
+					CanHaveSubTreeHandler = node => node.SubTree != null,
+					IsCheckedGetter = node => node.IsChecked,
+					IsCheckedSetter = (node, isChecked) => node.IsChecked = isChecked,
+					TooltipTextProvider = node => node.ToolTip,
+					IsExpandedGetter = node => node.IsExpanded,
+					IsExpandedSetter = (node, isExpanded) => node.IsExpanded = isExpanded,
+					CanAcceptDropHandler = (node, dropData, kind) => node.CanAcceptDrop((dropData as DraggableTreeNode), kind),
+					AcceptDropHandler = (node, dropData, kind) => node.AcceptDrop((dropData as DraggableTreeNode), kind),
+					IconSetProvider = node => node.IconSet,
+					ResourceResolverProvider = node => node.ResourceResolver
+				};
 			return new Tree<DraggableTreeNode>(binding);
 		}
 	}
@@ -655,13 +647,13 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				List<IFolder> folders = new List<IFolder>();
+				var folders = new List<IFolder>();
 				CollectionUtils.ForEach(this.Descendents,
 					delegate(DraggableTreeNode node)
 						{
 							if (node is FolderConfigurationNode)
 							{
-								FolderConfigurationNode folderNode = (FolderConfigurationNode)node;
+								var folderNode = (FolderConfigurationNode)node;
 								folders.Add(folderNode.Folder);
 							}
 						});
@@ -680,8 +672,8 @@ namespace ClearCanvas.Ris.Client
 				{
 					if (node is FolderConfigurationNode)
 					{
-						FolderConfigurationNode folderNode = (FolderConfigurationNode) node;
-					folderNode.Folder.FolderPath = folderNode.Path;
+						var folderNode = (FolderConfigurationNode) node;
+						folderNode.Folder.FolderPath = folderNode.Path;
 					}
 				});
 		}
@@ -752,11 +744,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _text; }
 			set
 			{
-				if (_text != value)
-				{
-					_text = value;
-					this.Modified = true;
-				}
+				if (_text == value)
+					return;
+
+				_text = value;
+				this.Modified = true;
 			}
 		}
 
@@ -768,7 +760,7 @@ namespace ClearCanvas.Ris.Client
 		public override bool CanEdit
 		{
 			get { return true; }
-			}
+		}
 
 		public override bool CanDelete
 		{
@@ -786,7 +778,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override IconSet IconSet
 		{
-            get { return _folder.IconSet; }
+			get { return _folder.IconSet; }
 		}
 
 		public override IResourceResolver ResourceResolver
