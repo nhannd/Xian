@@ -2466,13 +2466,16 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @StudyDeleteTypeEnum smallint
+	DECLARE @StudyPurgeTypeEnum smallint
 	DECLARE @PendingArchiveQueueStatus smallint
 	DECLARE @StudyDeleteCount int
+	DECLARE @StudyPurgeCount int
 	DECLARE @ArchiveStudyStorageCount int
 	DECLARE @ArchiveDelayHours int
 	DECLARE	@PartitionArchiveGUID uniqueidentifier
 
 	SELECT @StudyDeleteTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
+	SELECT @StudyPurgeTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''PurgeStudy''
 	SELECT @PendingArchiveQueueStatus = Enum from ArchiveQueueStatusEnum where Lookup = ''Pending''
 
 	BEGIN TRANSACTION
@@ -2480,6 +2483,11 @@ BEGIN
 	-- Check if there''s any DeleteStudy records in the db
 	SELECT @StudyDeleteCount=count(*) FROM FilesystemQueue 
 		WHERE FilesystemQueueTypeEnum=@StudyDeleteTypeEnum
+			AND StudyStorageGUID=@StudyStorageGUID
+
+	-- Check if there''s any PurgeStudy records in the db
+	SELECT @StudyPurgeCount=count(*) FROM FilesystemQueue 
+		WHERE FilesystemQueueTypeEnum=@StudyPurgeTypeEnum
 			AND StudyStorageGUID=@StudyStorageGUID
 
 
@@ -2527,6 +2535,13 @@ BEGIN
 		END
 		CLOSE PartitionArchiveCursor
 		DEALLOCATE PartitionArchiveCursor	
+		
+		IF @StudyPurgeCount > 0
+		BEGIN
+			DELETE FROM FilesystemQueue 
+			WHERE FilesystemQueueTypeEnum=@StudyPurgeTypeEnum
+			AND StudyStorageGUID=@StudyStorageGUID
+		END
 	END
 	ELSE
 	BEGIN
