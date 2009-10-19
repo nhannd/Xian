@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 {
@@ -11,7 +12,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Configuration
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			yield return new ConfigurationPage(MprConfigurationComponent.Path, new MprConfigurationComponent());
+			if (PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.ViewerVisible))
+				yield return new ConfigurationPage(MprConfigurationComponent.Path, new MprConfigurationComponent());
 		}
 
 		#endregion

@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Externals.Config
 {
@@ -40,7 +41,8 @@ namespace ClearCanvas.ImageViewer.Externals.Config
 	{
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
-			yield return new ConfigurationPage(ExternalsConfigurationComponent.PATH, new ExternalsConfigurationComponent());
+			if (PermissionsHelper.IsInRole(ImageViewer.AuthorityTokens.ViewerVisible))
+				yield return new ConfigurationPage(ExternalsConfigurationComponent.PATH, new ExternalsConfigurationComponent());
 		}
 	}
 }
