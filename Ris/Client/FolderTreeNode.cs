@@ -243,9 +243,10 @@ namespace ClearCanvas.Ris.Client
 				var node = CollectionUtils.SelectFirst(_subTree.Items,
 					n => Equals(n.Folder.FolderPath.Segments[depth], segment));
 
-				var isLeafNode = (depth == folder.FolderPath.Segments.Count - 1);
+				var isAddingLeafNode = (depth == folder.FolderPath.Segments.Count - 1);
+				var existingNodeIsAContainer = node != null && node.Folder is ContainerFolder;
 
-				if (node == null || isLeafNode)
+				if (node == null || (isAddingLeafNode && !existingNodeIsAContainer))
 				{
 					// create the node if it doesn't exist, or if this is the leaf node
 					node = new FolderTreeNode(_explorer, this, folder.FolderPath.SubPath(0, depth + 1));
@@ -254,6 +255,7 @@ namespace ClearCanvas.Ris.Client
 					else
 						_subTree.Items.Add(node);
 				}
+
 				node.InsertFolder(folder, depth + 1, alphabetical);
 			}
 		}

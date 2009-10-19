@@ -387,6 +387,25 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
+		/// Replace a child node with a new node.
+		/// </summary>
+		public void ReplaceChildNode(DraggableTreeNode oldChildNode, DraggableTreeNode newChildNode)
+		{
+			// Move the subtree of the old node to the new node.
+			foreach (var node in oldChildNode.SubTree.Items)
+			{
+				newChildNode.AddChildNode(node);
+			}
+			oldChildNode.ClearSubTree();
+
+			// replace the nodes
+			var index = this.SubTree.Items.IndexOf(oldChildNode);
+			this.SubTree.Items.Insert(index, newChildNode);
+			this.SubTree.Items.Remove(oldChildNode);
+			this.Modified = true;
+		}
+
+		/// <summary>
 		/// Insert a node to the proper depth using the path.
 		/// </summary>
 		public void InsertNode(DraggableTreeNode node, Path path)
@@ -403,23 +422,39 @@ namespace ClearCanvas.Ris.Client
 				: CollectionUtils.SelectFirst(_subTree.Items,
 					delegate(DraggableTreeNode child) { return child.Text == text; });
 			
-			if (path.Segments.Count == 1)
+			if (childWithMatchingText == null)
 			{
-				// There are no more depth to the path, add child now.
-				AddChildNode(node);
-				PropagateCheckStateUp(node.Parent);
-			}
-			else if (childWithMatchingText == null)
-			{
-				// create a container node and insert into the container node's subtree
-				ContainerNode containerNode = new ContainerNode(text);
-				AddChildNode(containerNode);
-				containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
+				if (path.Segments.Count == 1)
+				{
+					// There are no more depth to the path, add child now.
+					AddChildNode(node);
+					PropagateCheckStateUp(node.Parent);
+				}
+				else
+				{
+					// create a container node and insert into the container node's subtree
+					ContainerNode containerNode = new ContainerNode(text);
+					AddChildNode(containerNode);
+					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
+				}
 			}
 			else
 			{
-				// insert this node child's subtree
-				childWithMatchingText.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
+				if (path.Segments.Count == 1)
+				{
+					// There are no more depth to the path, add child now.
+					if (childWithMatchingText is ContainerNode)
+						ReplaceChildNode(childWithMatchingText, node);
+					else
+						AddChildNode(node);
+
+					PropagateCheckStateUp(node.Parent);
+				}
+				else
+				{
+					// insert this node child's subtree
+					childWithMatchingText.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
+				}
 			}
 		}
 
@@ -733,7 +768,7 @@ namespace ClearCanvas.Ris.Client
 		public override bool CanEdit
 		{
 			get { return true; }
-		}
+			}
 
 		public override bool CanDelete
 		{
