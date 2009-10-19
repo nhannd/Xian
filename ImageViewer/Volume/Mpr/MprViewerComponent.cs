@@ -34,10 +34,8 @@ using System.Collections;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Tools;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
@@ -48,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#region Private fields
 
 		private ObservableDisposableList<IMprVolume> _volumes;
+		private IMprWorkspace _mprWorkspace;
 
 		private string _title;
 
@@ -67,6 +66,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			_volumes = new ObservableDisposableList<IMprVolume>();
 			_volumes.EnableEvents = true;
+
+			_mprWorkspace = new BasicMprWorkspace(this);
+		}
+
+		public IMprWorkspace MprWorkspace
+		{
+			get { return _mprWorkspace; }
 		}
 
 		public new IObservableList<IMprVolume> StudyTree
@@ -177,6 +183,62 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
+		#region MprWorkspace
+
+		private class BasicMprWorkspace : IMprWorkspace
+		{
+			private event EventHandler _drawing;
+			private MprViewerComponent _mprViewer;
+			private ObservableList<IImageSet> _imageSets = new ObservableList<IImageSet>();
+
+			public BasicMprWorkspace(MprViewerComponent mprViewer)
+			{
+				_mprViewer = mprViewer;
+			}
+
+			public void Dispose()
+			{
+				if (_imageSets != null)
+				{
+					foreach (IImageSet imageSet in _imageSets)
+					{
+						imageSet.Dispose();
+					}
+					_imageSets.Clear();
+					_imageSets = null;
+				}
+
+				_mprViewer = null;
+			}
+
+			public MprViewerComponent MprViewer
+			{
+				get { return _mprViewer; }
+			}
+
+			public ObservableList<IImageSet> ImageSets
+			{
+				get { return _imageSets; }
+			}
+
+			public event EventHandler Drawing
+			{
+				add { _drawing += value; }
+				remove { _drawing -= value; }
+			}
+
+			public void Draw()
+			{
+				EventsHelper.Fire(_drawing, this, EventArgs.Empty);
+				foreach (IImageSet imageSet in _imageSets)
+				{
+					imageSet.Draw();
+				}
+			}
+		}
+
+		#endregion
+
 		#region Layout Manager
 
 		private class MprLayoutManager : LayoutManager
@@ -231,7 +293,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				foreach (MprVolume volume in this.ImageViewer.StudyTree)
 				{
-					this.ImageViewer.LogicalWorkspace.ImageSets.Add(CreateImageSet(volume));
+					this.ImageViewer.MprWorkspace.ImageSets.Add(CreateImageSet(volume));
 				}
 			}
 
@@ -254,9 +316,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				// 4. All of the above
 
 				IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
-				ILogicalWorkspace logicalWorkspace = ImageViewer.LogicalWorkspace;
+				IMprWorkspace mprWorkspace = ImageViewer.MprWorkspace;
 
-				if (logicalWorkspace.ImageSets.Count == 0)
+				if (mprWorkspace.ImageSets.Count == 0)
 					return;
 
 				int imageSetIndex = 0;
@@ -264,16 +326,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				foreach (IImageBox imageBox in physicalWorkspace.ImageBoxes)
 				{
-					if (displaySetIndex == logicalWorkspace.ImageSets[imageSetIndex].DisplaySets.Count)
+					if (displaySetIndex == mprWorkspace.ImageSets[imageSetIndex].DisplaySets.Count)
 					{
 						imageSetIndex++;
 						displaySetIndex = 0;
 
-						if (imageSetIndex == logicalWorkspace.ImageSets.Count)
+						if (imageSetIndex == mprWorkspace.ImageSets.Count)
 							break;
 					}
 
-					imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
+					imageBox.DisplaySet = mprWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
 					displaySetIndex++;
 				}
 

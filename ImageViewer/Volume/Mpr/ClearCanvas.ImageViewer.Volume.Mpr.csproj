@@ -81,6 +81,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>MprSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IMprWorkspace.cs" />
     <Compile Include="MprDisplaySet.cs" />
     <Compile Include="MprSliceSop.cs" />
     <Compile Include="MprStaticSliceSet.cs" />
@@ -147,10 +148,6 @@
     <ProjectReference Include="..\..\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
       <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
       <Name>ClearCanvas.ImageViewer.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tools\Synchronization\ClearCanvas.ImageViewer.Tools.Synchronization.csproj">
-      <Project>{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}</Project>
-      <Name>ClearCanvas.ImageViewer.Tools.Synchronization</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
