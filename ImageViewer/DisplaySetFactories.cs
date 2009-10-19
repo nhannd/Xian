@@ -49,15 +49,27 @@ namespace ClearCanvas.ImageViewer
 	internal class SingleFrameDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
+		private readonly string _seriesInstanceUid;
 		private readonly string _sopInstanceUid;
 		private readonly int _frameNumber;
 
-		public SingleFrameDisplaySetDescriptor(ISeriesIdentifier sourceSeries, string sopInstanceUid, int instanceNumber, int frameNumber)
+		public SingleFrameDisplaySetDescriptor(ISeriesIdentifier sourceSeries, Frame frame)
 			: base(sourceSeries)
 		{
-			_sopInstanceUid = sopInstanceUid;
-			_frameNumber = frameNumber;
-			_suffix = String.Format(SR.SuffixFormatSingleFrameDisplaySet, instanceNumber, _frameNumber);
+			_seriesInstanceUid = frame.SeriesInstanceUid;
+			_sopInstanceUid = frame.SopInstanceUid;
+			_frameNumber = frame.FrameNumber;
+
+			if (sourceSeries.SeriesInstanceUid == frame.SeriesInstanceUid)
+			{
+				_suffix = String.Format(SR.SuffixFormatSingleFrameDisplaySet, frame.ParentImageSop.InstanceNumber, _frameNumber);
+			}
+			else
+			{
+				//this is a referenced frame (e.g. key iamge).
+				_suffix = String.Format(SR.SuffixFormatSingleReferencedFrameDisplaySet, 
+					frame.ParentImageSop.SeriesNumber, frame.ParentImageSop.InstanceNumber, _frameNumber);
+			}
 		}
 
 		protected SingleFrameDisplaySetDescriptor(SingleFrameDisplaySetDescriptor source, ICloningContext context)
@@ -84,7 +96,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected override string GetUid()
 		{
-			return String.Format("{0}:{1}:{2}", SourceSeries.SeriesInstanceUid, _sopInstanceUid, _frameNumber);
+			return String.Format("{0}:{1}:{2}:{3}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid, _frameNumber);
 		}
 	}
 
@@ -92,13 +104,49 @@ namespace ClearCanvas.ImageViewer
 	internal class SingleImageDisplaySetDescriptor : DicomDisplaySetDescriptor
 	{
 		private readonly string _suffix;
+		private readonly string _seriesInstanceUid;
 		private readonly string _sopInstanceUid;
 
-		public SingleImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, string sopInstanceUid, int instanceNumber)
+		public SingleImageDisplaySetDescriptor(ISeriesIdentifier sourceSeries, ImageSop imageSop)
 			: base(sourceSeries)
 		{
-			_sopInstanceUid = sopInstanceUid;
-			_suffix = String.Format(SR.SuffixFormatSingleImageDisplaySet, instanceNumber);
+			_sopInstanceUid = imageSop.SopInstanceUid;
+			_seriesInstanceUid = imageSop.SeriesInstanceUid;
+
+			string laterality = imageSop.ImageLaterality;
+			string viewPosition = imageSop.ViewPosition;
+			if (string.IsNullOrEmpty(viewPosition))
+			{
+				DicomAttributeSQ codeSequence = imageSop[DicomTags.ViewCodeSequence] as DicomAttributeSQ;
+				if (codeSequence != null && codeSequence.Count > 0)
+					viewPosition = codeSequence[0][DicomTags.CodeMeaning].GetString(0, null);
+			}
+
+			string lateralityViewPosition = null;
+			if (!String.IsNullOrEmpty(laterality) && !String.IsNullOrEmpty(viewPosition))
+				lateralityViewPosition = String.Format("{0}/{1}", laterality, viewPosition);
+			else if (!String.IsNullOrEmpty(laterality))
+				lateralityViewPosition = laterality;
+			else if (!String.IsNullOrEmpty(viewPosition))
+				lateralityViewPosition = viewPosition;
+
+			if (sourceSeries.SeriesInstanceUid == imageSop.SeriesInstanceUid)
+			{
+				if (lateralityViewPosition != null)
+					_suffix = String.Format(SR.SuffixFormatSingleImageDisplaySetWithLateralityViewPosition, lateralityViewPosition, imageSop.InstanceNumber);
+				else
+					_suffix = String.Format(SR.SuffixFormatSingleImageDisplaySet, imageSop.InstanceNumber);
+			}
+			else
+			{
+				//this is a referenced image (e.g. key iamge).
+				if (lateralityViewPosition != null)
+					_suffix = String.Format(SR.SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition, 
+						lateralityViewPosition, imageSop.SeriesNumber, imageSop.InstanceNumber);
+				else
+					_suffix = String.Format(SR.SuffixFormatSingleReferencedImageDisplaySet,
+						imageSop.SeriesNumber, imageSop.InstanceNumber);
+			}
 		}
 
 		protected SingleImageDisplaySetDescriptor(SingleImageDisplaySetDescriptor source, ICloningContext context)
@@ -125,7 +173,8 @@ namespace ClearCanvas.ImageViewer
 
 		protected override string GetUid()
 		{
-			return String.Format("{0}:{1}", SourceSeries.SeriesInstanceUid, _sopInstanceUid);
+			//TODO: this is not guaranteed to be unique b/c of key images.
+			return String.Format("{0}:{1}:{2}", SourceSeries.SeriesInstanceUid, _seriesInstanceUid, _sopInstanceUid);
 		}
 	}
 
@@ -173,7 +222,8 @@ namespace ClearCanvas.ImageViewer
 
 			if (images.Count > 0)
 			{
-				displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
+				DisplaySetDescriptor descriptor = new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory);
+				displaySet = new DisplaySet(descriptor);
 				foreach (IPresentationImage image in images)
 					displaySet.PresentationImages.Add(image);
 			}
@@ -194,7 +244,8 @@ namespace ClearCanvas.ImageViewer
 				if (series.Sops.Count == 1 && images.Count == 1)
 				{
 					//The sop is actually a container for other referenced sops, like key images, but there's only one image to show, so it's a complete series.
-					DisplaySet displaySet = new DisplaySet(new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory));
+					DisplaySetDescriptor descriptor = new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory);
+					DisplaySet displaySet = new DisplaySet(descriptor);
 					displaySet.PresentationImages.Add(images[0]);
 					displaySets.Add(displaySet);
 				}
@@ -204,7 +255,7 @@ namespace ClearCanvas.ImageViewer
 					DisplaySetDescriptor descriptor;
 
 					if (imageSop.NumberOfFrames == 1)
-						descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber);
+						descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), imageSop);
 					else
 						descriptor = new MultiframeDisplaySetDescriptor(series.GetIdentifier(), sop.SopInstanceUid, sop.InstanceNumber);
 
@@ -222,9 +273,9 @@ namespace ClearCanvas.ImageViewer
 						IImageSopProvider provider = (IImageSopProvider)image;
 						DisplaySetDescriptor descriptor;
 						if (provider.ImageSop.NumberOfFrames == 1)
-							descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber);
+							descriptor = new SingleImageDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop);
 						else
-							descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.ImageSop.SopInstanceUid, provider.ImageSop.InstanceNumber, provider.Frame.FrameNumber);
+							descriptor = new SingleFrameDisplaySetDescriptor(series.GetIdentifier(), provider.Frame);
 
 						DisplaySet displaySet = new DisplaySet(descriptor);
 						displaySet.PresentationImages.Add(image);

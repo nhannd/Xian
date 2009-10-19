@@ -1178,7 +1178,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Image #{0}, Frame #{1}.
+        ///   Looks up a localized string similar to Image/Frame#: {0}/{1}.
         /// </summary>
         public static string SuffixFormatSingleFrameDisplaySet {
             get {
@@ -1192,6 +1192,42 @@ namespace ClearCanvas.ImageViewer {
         public static string SuffixFormatSingleImageDisplaySet {
             get {
                 return ResourceManager.GetString("SuffixFormatSingleImageDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Image# {1}).
+        /// </summary>
+        public static string SuffixFormatSingleImageDisplaySetWithLateralityViewPosition {
+            get {
+                return ResourceManager.GetString("SuffixFormatSingleImageDisplaySetWithLateralityViewPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series/Image/Frame: {0}/{1}/{2}.
+        /// </summary>
+        public static string SuffixFormatSingleReferencedFrameDisplaySet {
+            get {
+                return ResourceManager.GetString("SuffixFormatSingleReferencedFrameDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series/Image#: {0}/{1}.
+        /// </summary>
+        public static string SuffixFormatSingleReferencedImageDisplaySet {
+            get {
+                return ResourceManager.GetString("SuffixFormatSingleReferencedImageDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Series/Image#: {1}/{2}).
+        /// </summary>
+        public static string SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition {
+            get {
+                return ResourceManager.GetString("SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition", resourceCulture);
             }
         }
         

@@ -486,19 +486,31 @@ Please check the log for more details.</value>
   <data name="SuffixFormatMultiframeDisplaySet" xml:space="preserve">
     <value>Multiframe #{0}</value>
   </data>
-  <data name="SuffixFormatSingleImageDisplaySet" xml:space="preserve">
-    <value>Image #{0}</value>
-  </data>
   <data name="SuffixSingleImagesDisplaySet" xml:space="preserve">
     <value>Single images</value>
   </data>
   <data name="SuffixFormatSingleFrameDisplaySet" xml:space="preserve">
-    <value>Image #{0}, Frame #{1}</value>
+    <value>Image/Frame#: {0}/{1}</value>
   </data>
   <data name="LabelPresentationVoiDataLut" xml:space="preserve">
     <value>USER</value>
   </data>
   <data name="LabelPresentationVoiLinearLut" xml:space="preserve">
     <value>USER</value>
+  </data>
+  <data name="SuffixFormatSingleImageDisplaySet" xml:space="preserve">
+    <value>Image #{0}</value>
+  </data>
+  <data name="SuffixFormatSingleImageDisplaySetWithLateralityViewPosition" xml:space="preserve">
+    <value>{0} (Image# {1})</value>
+  </data>
+  <data name="SuffixFormatSingleReferencedFrameDisplaySet" xml:space="preserve">
+    <value>Series/Image/Frame: {0}/{1}/{2}</value>
+  </data>
+  <data name="SuffixFormatSingleReferencedImageDisplaySet" xml:space="preserve">
+    <value>Series/Image#: {0}/{1}</value>
+  </data>
+  <data name="SuffixFormatSingleReferencedImageDisplaySetWithLateralityViewPosition" xml:space="preserve">
+    <value>{0} (Series/Image#: {1}/{2})</value>
   </data>
 </root>
