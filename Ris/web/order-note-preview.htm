@@ -49,7 +49,7 @@
 						showItemCheckBox: function(item) { return item.CanAcknowledge; }
 					};
 
-				Preview.OrderNotesTable.create($("orderNoteSection"), orderNotes, orderNotesSubsections, true, checkBoxesProperties);
+				Preview..ConversationHistory.create($("conversationHistorySection"), orderNotes, orderNotesSubsections, true, checkBoxesProperties);
 			}
 			catch(e)
 			{
@@ -60,28 +60,28 @@
 	</script>
 	<style>
 		body {
-			margin:0 0.5em 0 0.5em;
+			margin:0 0em 0 0em;
 			padding:0;
 		}
-		#orderNoteSection tr {
+		#conversationHistorySection tr {
 			vertical-align:top;
 			margin-top: 0;
 		}
-		#noNotesSection {
+		#noConversationSection {
 			font-family: Tahoma, Geneva, Arial;
 			font-size: 150%;
 			font-weight: bold;
 			color: #CCCCCC;
 			text-align:center;
-			margin-top:1em;
+			margin-top:3em;
 		}
 	</style>
 </head>
 <body onload="javascript: onBodyLoad()">
 	<form id="myForm">
 
-	<div id="noNotesSection">No Notes</div>
-	<div id="orderNoteSection"></div>
+	<div id="noConversationSection">No Conversations</div>
+	<div id="conversationHistorySection"></div>
 
 	</form>
 </body>
