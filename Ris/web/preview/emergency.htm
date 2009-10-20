@@ -107,8 +107,8 @@
 					if (orderDetail)
 						patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
 
-					Preview.ImagingServiceTable.createActive($("activeProceduresSection"), patientOrderData);
-					Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
+					Preview.ImagingServiceTable.createActiveCollapsible($("activeProceduresSection"), patientOrderData, true);
+					Preview.ImagingServiceTable.createPastCollapsible($("pastProceduresSection"), patientOrderData, true);
 				}
 			}
 			catch(e)

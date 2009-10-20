@@ -429,16 +429,45 @@ Preview.ImagingServiceTable = function () {
 	return {
 		createActive: function(parentElement, ordersList)
 		{
+			this.createActive(parentElement, ordersList, false, false);
+		},
+		
+		createActive: function(parentElement, ordersList, collapsible, collapsedByDefault)
+		{
 			var activeProcedures = _getActiveProcedures(ordersList);
+					
 			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
-			Preview.SectionContainer.create(parentElement, "Active Imaging Services");						
+			Preview.SectionContainer.create(parentElement, "Active Imaging Services", collapsible, collapsedByDefault);						
+		},
+		
+		createActiveCollapsible: function(parentElement, ordersList, collapsedByDefault)
+		{
+			this.createActive(parentElement, ordersList, true, collapsedByDefault);
 		},
 		
 		createPast: function(parentElement, ordersList)
 		{
+			this.createPast(parentElement, ordersList, false, false);
+		},
+		
+		createPastCollapsible: function(parentElement, ordersList, collapsedByDefault)
+		{
+			this.createPast(parentElement, ordersList, true, collapsedByDefault);
+		},	
+		
+		createPast: function(parentElement, ordersList)
+		{
+			this.createPast(parentElement, ordersList, false, false);
+		},			
+		
+		createPast: function(parentElement, ordersList, collapsible, collapsedByDefault)
+		{
 			var pastProcedures = _getNonActiveProcedures(ordersList);
+				
+
+				
 			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
-			Preview.SectionContainer.create(parentElement, "Past Imaging Services");						
+			Preview.SectionContainer.create(parentElement, "Past Imaging Services", collapsible, collapsedByDefault);						
 		}
 	};
 }();
@@ -1323,7 +1352,7 @@ Preview.ImagingServiceSection = function () {
  */
 Preview.SectionContainer = function () {
 
-	var _createContainer = function(element, title)
+	var _createContainer = function(element, title, collapsible, collapsedByDefault)
 	{
 		var _createContentContainer = function(contentElement)
 		{
@@ -1340,6 +1369,25 @@ Preview.SectionContainer = function () {
 			cell.innerText = text || "";
 			return cell;
 		};
+		
+		var _createHeadingCell = function(row, className, text, collapsible, collapsedByDefault)
+		{
+			var cell = row.insertCell();
+			cell.className = className;
+			
+			if (collapsible) {
+				var imageSrc = imagePath + "/";
+				imageSrc += collapsedByDefault ? "Expand.png" : "Collapse.png";
+				title = "<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
+				 		"<img src='" + imageSrc + "' border='0' style='{margin-right: 5px; margin-left: -8px; background: #1b4066;}'/>" + text + "</a>";
+				cell.innerHTML = title;
+			}
+			else {
+				cell.innerText = text || "";
+			}
+			
+			return cell;
+		};		
 
 		var content = _createContentContainer(element);
 
@@ -1351,20 +1399,32 @@ Preview.SectionContainer = function () {
 		var row, cell;
 		row = body.insertRow();
 		_createCell(row, "SectionHeadingLeft");
-		_createCell(row, "SectionHeadingBackground", title);
+		_createHeadingCell(row, "SectionHeadingBackground", title, collapsible, collapsedByDefault);
 		_createCell(row, "SectionHeadingRight");
 
 		row = body.insertRow();
 		cell = _createCell(row, "ContentCell");
 		cell.colSpan = "3";
 		cell.appendChild(content);
-
+		
+		if(collapsible) collapseSection(table, collapsedByDefault);
+		
 		return table;
 	};
 
 	return {
 		create: function (element, title)
 		{
+			this.create(element, title, false, false);
+		},
+		
+		createCollapsible: function (element, title, defaultCollapsed)
+		{
+			this.create(element, title, true, defaultCollapsed);
+		},
+		
+		create: function (element, title, collapsible, defaultCollapsed)
+		{			
 			// no need to create a contrainer if the element is hidden
 			if (element.style.display == 'none')
 				return;
@@ -1374,7 +1434,7 @@ Preview.SectionContainer = function () {
 			// be propagated to the new element.  Hence the DOM manipulation to preserve the handlers.
 			var parent = element.parentNode;
 			var nextSibling = element.nextSibling;
-			var newElement = _createContainer(element, title);
+			var newElement = _createContainer(element, title, collapsible, defaultCollapsed);
 			if (nextSibling)
 				parent.insertBefore(newElement, nextSibling);
 			else

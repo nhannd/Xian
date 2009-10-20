@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="../js/ris.js"></script>
 		<script type="text/javascript" src="../js/preview.js"></script>
 		<script type="text/javascript" src="../js/layout.js"></script>
+		<script type="text/javascript" src="../js/collapse.js"></script>		
 		<script type="text/javascript" >
 			var imagePath = "../images";
 
@@ -93,8 +94,8 @@
 						if (orderDetail)
 							patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
 
-						Preview.ImagingServiceTable.createActive($("activeProceduresSection"), patientOrderData);
-						Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
+					Preview.ImagingServiceTable.createActiveCollapsible($("activeProceduresSection"), patientOrderData, true);
+					Preview.ImagingServiceTable.createPastCollapsible($("pastProceduresSection"), patientOrderData, true);
 					}
 				}
 				catch(e)
