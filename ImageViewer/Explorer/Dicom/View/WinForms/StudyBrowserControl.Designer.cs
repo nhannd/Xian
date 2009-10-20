@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void InitializeComponent()
 		{
 			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
-			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._studyTableView = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.StudyTableView();
 			this.SuspendLayout();
 			// 
 			// _resultsTitleBar
@@ -78,7 +78,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _studyTableView
 			// 
-			this._studyTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
 			this._studyTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._studyTableView.Location = new System.Drawing.Point(0, 30);
 			this._studyTableView.Name = "_studyTableView";
@@ -102,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		#endregion
 
-		private ClearCanvas.Desktop.View.WinForms.TableView _studyTableView;
+		private ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.StudyTableView _studyTableView;
 		private Crownwood.DotNetMagic.Controls.TitleBar _resultsTitleBar;
 
 

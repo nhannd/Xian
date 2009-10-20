@@ -121,7 +121,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
 		[DefaultValue(DataGridViewAutoSizeColumnsMode.Fill)]
-		public DataGridViewAutoSizeColumnsMode AutoSizeColumnsMode
+		public virtual DataGridViewAutoSizeColumnsMode AutoSizeColumnsMode
     	{
 			get { return _dataGridView.AutoSizeColumnsMode; }
 			set { _dataGridView.AutoSizeColumnsMode = value; }
@@ -264,7 +264,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ITable Table
+        public virtual ITable Table
         {
             get
             {
