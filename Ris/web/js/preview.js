@@ -1031,6 +1031,18 @@ Preview.ConversationHistory = function () {
 		]);
 
 		htmlTable.bindItems(filteredNotes);
+		
+		// after binding the items, need to hook up the check boxes manually
+		notes.each(
+			function(note)
+			{			
+				var checkBox = $(note.OrderNoteRef);	// the OrderNoteRef was used as the checkbox "id"
+				// checkBox may be null if that note was not ack'able
+				if(checkBox)
+				{
+					checkBox.onclick = function() { checkBoxesProperties.onItemChecked(note, checkBox.checked); };
+				}
+			});
 	};
 
 	return {
@@ -1728,6 +1740,7 @@ Preview.ConversationNote = function() {
 			var acknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return recipient.IsAcknowledged; });
 			var notAcknowledgedGroups = note.GroupRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
+			var checkBoxId = note.OrderNoteRef;
 
 			var html = "";
 			html += '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td class="ConversationNote_topleft"></td><td class="ConversationNote_top"></td><td class="ConversationNote_topright"></td></tr>';
@@ -1739,7 +1752,7 @@ Preview.ConversationNote = function() {
 			html += '	</tr>';
 			if (note.CanAcknowledge) {
 				html += '	<tr id="notAcknowledgedRow">';
-				html += '		<td valign="middle" colspan="2" ><input type="checkbox" id="' + note.OrderNoteRef + '"/><span style="{margin-left: 5px; margin-right: 10px;}">Waiting For Acknowledgement:</span>';
+				html += '		<td valign="middle" colspan="2" ><input type="checkbox" id="' + checkBoxId + '"/><span style="{margin-left: 5px; margin-right: 10px;}">Waiting For Acknowledgement:</span>';
 				html += '		' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</td>';
 				html += '	</tr>';
 			}
