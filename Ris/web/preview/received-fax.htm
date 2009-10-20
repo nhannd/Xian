@@ -40,14 +40,14 @@
 					{
 						Field.setValue($("senderNumber"), Ris.formatStringTelephone(faxboxItem.SenderNumber));
 						Field.setValue($("receivedAtNumber"), Ris.formatStringTelephone(faxboxItem.ReceivedAt.Number));
-						Field.setValue($("original"), "Not implemented yet."); // TODO: Implement.	
-						Field.setValue($("status"), faxboxItem.Status.Value); // TODO: Implement.	
+						Field.setValue($("pages"), faxboxItem.Document.Pages);
+						Field.setValue($("status"), faxboxItem.Status.Value);
 					}
 					else
 					{
 						Field.setValue($("senderNumber"), "Not found.");
 						Field.setValue($("receivedAtNumber"), "Not found.");
-						Field.setValue($("original"), "Not implemented yet.");
+						Field.setValue($("pages"), "Not implemented yet.");
 						Field.setValue($("status"), "Not found.");
 					}
 				}
@@ -87,7 +87,7 @@
 					<td valign="top" class="DemographicsLabel" nowrap="nowrap">To #: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="receivedAtNumber"/></td>
 				</tr>
 				<tr>
-					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Original Copy: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="original"/></td>
+					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Pages: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="pages"/></td>
 					<td valign="top" class="DemographicsLabel" nowrap="nowrap">Status: </td><td valign="top" class="DemographicsCell" nowrap="nowrap"><div id="status"/></td>
 				</tr>
 			</table>
