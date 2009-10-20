@@ -329,6 +329,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			// _addressStrip
 			// 
+			this._addressStrip.CanOverflow = false;
 			this._addressStrip.Dock = System.Windows.Forms.DockStyle.None;
 			this._addressStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._addressStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -341,7 +342,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._addressStrip.Stretch = true;
 			this._addressStrip.TabIndex = 4;
 			this._addressStrip.Text = "Address Bar";
-			this._addressStrip.SizeChanged += new System.EventHandler(this._addressStrip_SizeChanged);
 			// 
 			// _lblAddress
 			// 

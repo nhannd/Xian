@@ -241,16 +241,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			base.OnLoad(e);
 		}
 
-		private void _addressStrip_SizeChanged(object sender, EventArgs e)
-		{
-			_txtAddress.Size = new Size(
-				_toolStripContainer.Width - _txtAddress.Margin.Horizontal
-				- (_btnGo.Width + _btnGo.Margin.Horizontal)
-				- (_lblAddress.Width + _lblAddress.Margin.Horizontal)
-				- _addressStrip.GripRectangle.Width - 10
-				, _txtAddress.Height);
-		}
-
 		private void _folderCoordinator_CurrentPidlChanged(object sender, EventArgs e)
 		{
 			_btnUp.Enabled = _folderCoordinator.CanBrowseToParent;
