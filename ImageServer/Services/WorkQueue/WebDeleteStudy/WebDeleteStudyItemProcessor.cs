@@ -200,6 +200,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 						// The WorkQueueUid must be cleared before the entry can be removed from the queue
                         DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
                         processor.AddCommand(deleteUid);
+
+						// Force a re-archival if necessary
+                    	processor.AddCommand(new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey));
                     }
 
                     if (!processor.Execute())
