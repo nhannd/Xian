@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         #region Private Members
         private readonly ServerCommandProcessor _commandProcessor;
         private readonly StudyStorageLocation _studyLocation;
-        private readonly string _uidGroup;
+        private readonly string _group;
         private readonly ServerPartition _partition; 
         #endregion
 
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         {
             _commandProcessor = commandProcessor;
             _studyLocation = studyLocation;
-            _uidGroup = uidGroup;
+            _group = uidGroup;
             _partition = studyLocation.ServerPartition;
         }
         
@@ -83,9 +83,9 @@ namespace ClearCanvas.ImageServer.Core.Process
             get { return _studyLocation; }
         }
 
-        public string UidGroup
+        public string Group
         {
-            get { return _uidGroup; }
+            get { return _group; }
         }
 
         #endregion
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Core.Process
         {
             Platform.CheckForNullReference(file, "file");
             Platform.CheckForNullReference(context, "context");
-            Platform.CheckMemberIsSet(context.UidGroup, "parameters.UidGroup");
+            Platform.CheckMemberIsSet(context.Group, "parameters.Group");
             Platform.CheckMemberIsSet(context.CommandProcessor, "parameters.CommandProcessor");
             Platform.CheckMemberIsSet(context.StudyLocation, "parameters.StudyLocation");
 
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             relativePath = relativePath + "." + DUPLICATE_EXTENSION;
 
             context.CommandProcessor.AddCommand(
-                new UpdateWorkQueueCommand(file, context.StudyLocation, true, DUPLICATE_EXTENSION, context.UidGroup, relativePath));
+                new UpdateWorkQueueCommand(file, context.StudyLocation, true, DUPLICATE_EXTENSION, context.Group, relativePath));
 
         }
 
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             path = Path.Combine(path, RECONCILE_STORAGE_FOLDER);
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
-            path = Path.Combine(path, context.UidGroup /* the AE title + timestamp */);
+            path = Path.Combine(path, context.Group /* the AE title + timestamp */);
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, context.StudyLocation.StudyInstanceUid);
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             path = Path.Combine(path, sopUid);
             path += "." + DUPLICATE_EXTENSION;
 
-            context.CommandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
+            context.CommandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 
             Platform.Log(ServerPlatform.InstanceLogLevel, "Duplicate ==> {0}", path);
         } 

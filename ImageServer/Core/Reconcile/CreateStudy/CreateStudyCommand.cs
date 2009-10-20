@@ -38,10 +38,8 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
-using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -92,8 +90,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
             try
             {
-
-                LoadUidMappings();
+                CreateOrLoadUidMappings();
 
                 PrintChangeList();
                 ProcessUidList();
@@ -104,8 +101,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
             }
 		}
 
-
-        protected void LoadUidMappings()
+        protected void CreateOrLoadUidMappings()
         {
             // Load the mapping for the study
             if (Context.DestStorageLocation != null)
@@ -146,86 +142,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			Platform.Log(LogLevel.Info, log);
 		}
 
-        //private void ProcessUidListOld()
-        //{
-        //    int counter = 0;
-        //    Platform.Log(LogLevel.Info, "Populating images into study folder.. {0} to go", Context.WorkQueueUidList.Count);		
-
-        //    foreach (WorkQueueUid uid in Context.WorkQueueUidList)
-        //    {
-        //        string imagePath = GetReconcileUidPath(uid);
-        //        DicomFile file = new DicomFile(imagePath);
-        //        file.Load();
-        //        string oldSeriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-        //        try
-        //        {
-        //            using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
-        //            {
-        //                // Assign new series and instance uid
-        //                string newSeriesUid;
-        //                if (_uidMapper.SeriesMap.ContainsKey(oldSeriesUid))
-        //                    newSeriesUid = _uidMapper.SeriesMap[oldSeriesUid].NewSeriesUid;
-        //                else
-        //                {
-        //                    newSeriesUid = DicomUid.GenerateUid().UID;
-        //                    _uidMapper.SeriesMap.Add(oldSeriesUid, new SeriesMapping(oldSeriesUid,newSeriesUid));
-        //                }
-
-        //                string newSopInstanceUid = DicomUid.GenerateUid().UID;
-        //                file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(newSeriesUid);
-        //                file.DataSet[DicomTags.SopInstanceUid].SetStringValue(newSopInstanceUid);
-        //                file.MediaStorageSopInstanceUid = newSopInstanceUid;
-        //                foreach (BaseImageLevelUpdateCommand command in Parameters.Commands)
-        //                {
-        //                    command.File = file;
-        //                    processor.AddCommand(command);
-        //                }
-
-        //                if (Context.DestStorageLocation == null)
-        //                {
-        //                    processor.AddCommand(new InitializeStorageCommand(Context, file));
-        //                }
-                        
-        //                processor.AddCommand(new SaveFileCommand(Context, file));
-        //                InsertWorkQueueCommand.CommandParameters parameters = new InsertWorkQueueCommand.CommandParameters();
-        //                parameters.SeriesInstanceUid = newSeriesUid;
-        //                parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-        //                parameters.Extension = "dcm";
-        //                parameters.IsDuplicate = false;
-        //                processor.AddCommand(new InsertWorkQueueCommand(Context, parameters));
-        //                processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-        //                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-
-        //                if (counter == 0)
-        //                {
-        //                    // Only update the first time through the loop
-        //                    processor.AddCommand(new UpdateHistoryCommand(Context));
-        //                }
-
-        //                if (!processor.Execute())
-        //                {
-        //                    if (processor.FailureException is InstanceAlreadyExistsException)
-        //                    {
-        //                        throw processor.FailureException;
-        //                    }
-        //                    else
-        //                    {
-        //                        FailUid(uid, true);
-        //                        throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason), processor.FailureException);
-        //                    }                             
-        //                }
-        //            }
-
-        //            counter++;
-        //            Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]",
-        //                         uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
-        //        }
-        //        catch (InstanceAlreadyExistsException)
-        //        {
-        //            CreateWorkQueueEntryForDuplicate(file, Context.WorkQueueItem, uid, Context.DestStorageLocation.ServerPartition);
-        //        }
-        //    }
-        //}
 
 		private void ProcessUidList()
 		{
@@ -258,10 +174,11 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			{
 				string imagePath = GetReconcileUidPath(uid);
 				DicomFile file = new DicomFile(imagePath);
-				file.Load();
-
+				
 				try
 				{
+					file.Load();
+					
 					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
@@ -277,7 +194,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, "Unexpected exception when processing reconcile item", e);
+					Platform.Log(LogLevel.Error, e, "Unexpected exception when processing reconcile item");
 					FailUid(uid, true);
 				}
 			}
@@ -315,23 +232,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				{
 					throw new ApplicationException(String.Format("Unable to create Study Storage for study: {0}", newStudyInstanceUid), processor.FailureException);
 				}
-			}
-		}
-
-		private void CreateWorkQueueEntryForDuplicate(DicomFile file, WorkQueue queue, WorkQueueUid uid, ServerPartition partition)
-		{
-			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
-			String uidGroup = queue.GroupID ?? ServerHelper.GetUidGroup(file, partition, queue.InsertTime );
-			using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
-			{
-				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, Context.DestStorageLocation, uidGroup);
-				DicomProcessingResult result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
-				if (!result.Successful) throw new ApplicationException(result.ErrorMessage);
-
-				commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-				commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-
-				commandProcessor.Execute();
 			}
 		}
 
@@ -373,10 +273,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		{
 			if (Context.DestStorageLocation != null)
 				return;
-			else
-			{
-				Context.DestStorageLocation = FindOrCreateStudyStorageLocation();
-			}
+			Context.DestStorageLocation = FindOrCreateStudyStorageLocation();
 		}
 
 		private StudyStorageLocation FindOrCreateStudyStorageLocation()
@@ -421,12 +318,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				}
 
 				IInsertStudyStorage locInsert = UpdateContext.GetBroker<IInsertStudyStorage>();
-				InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-				insertParms.ServerPartitionKey = Context.Partition.GetKey();
-				insertParms.StudyInstanceUid = _studyInstanceUid;
-				insertParms.Folder = folder;
-				insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
-				insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+				InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters
+				                                           	{
+				                                           		ServerPartitionKey = Context.Partition.GetKey(),
+				                                           		StudyInstanceUid = _studyInstanceUid,
+				                                           		Folder = folder,
+				                                           		FilesystemKey = filesystem.Filesystem.GetKey(),
+				                                           		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+				                                           	};
 
 				if (_transferSyntax.LosslessCompressed)
 				{

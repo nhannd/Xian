@@ -50,17 +50,31 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 	public class UidMapper
 	{
-        private readonly Dictionary<string, string> _studyMap = new Dictionary<string, string>();
-        private readonly Dictionary<string, SeriesMapping> _seriesMap = new Dictionary<string, SeriesMapping>();
-		private readonly Dictionary<string, string> _sopMap = new Dictionary<string, string>();
-        public event EventHandler<SeriesMapUpdatedEventArgs> SeriesMapUpdated;
-        public event EventHandler<SopMapUpdatedEventArgs> SopMapUpdated;
+		#region Private Members
 
+		private readonly Dictionary<string, string> _studyMap = new Dictionary<string, string>();
+        private readonly Dictionary<string, SeriesMapping> _seriesMap = new Dictionary<string, SeriesMapping>();
+		private readonly Dictionary<string, string> _sopMap = new Dictionary<string, string>();        
 	    private object _sync = new object();
 
-        public bool Dirty { get; set; }
+		#endregion
 
-        public UidMapper(UidMapXml xml)
+		#region Events
+
+		public event EventHandler<SeriesMapUpdatedEventArgs> SeriesMapUpdated;
+		public event EventHandler<SopMapUpdatedEventArgs> SopMapUpdated;
+		
+		#endregion
+
+		#region Public Properties
+
+		public bool Dirty { get; set; }
+
+		#endregion
+
+		#region Constructors
+
+		public UidMapper(UidMapXml xml)
         {
             foreach(StudyUidMap studyMap in xml.StudyUidMaps)
             {
@@ -68,17 +82,15 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
                 foreach (Map seriesMap in studyMap.Series)
                     _seriesMap.Add(seriesMap.Source,
-                                   new SeriesMapping() { OriginalSeriesUid = seriesMap.Source, NewSeriesUid = seriesMap.Target });
+                                   new SeriesMapping { OriginalSeriesUid = seriesMap.Source, NewSeriesUid = seriesMap.Target });
 
                 foreach (Map sopMap in studyMap.Instances)
                     _sopMap.Add(sopMap.Source, sopMap.Target);
             
-            }
-            
-
+            }           
         }
 
-		public UidMapper(IList<SeriesMapping> seriesList)
+		public UidMapper(IEnumerable<SeriesMapping> seriesList)
 		{
 			foreach (SeriesMapping map in seriesList)
 				_seriesMap.Add(map.OriginalSeriesUid, map);
@@ -87,6 +99,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		public UidMapper()
 		{
 		}
+
+		#endregion
+
+		#region Public Methods
 
 		public bool ContainsSop(string originalSopUid)
 		{
@@ -104,8 +120,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
                 string newSopUid;
                 if (_sopMap.TryGetValue(originalSopUid, out newSopUid))
                     return newSopUid;
-                else
-                    return null;
+            	return null;
             }
         }
 
@@ -116,8 +131,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
                 SeriesMapping mapping;
                 if (_seriesMap.TryGetValue(originalSeriesUid, out mapping))
                     return mapping.NewSeriesUid;
-                else
-                    return null;
+            	return null;
             }
         }
 
@@ -137,7 +151,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
                 Dirty = true;
             }
 
-            EventsHelper.Fire(SeriesMapUpdated, this, new SeriesMapUpdatedEventArgs() { SeriesMap = _seriesMap });
+            EventsHelper.Fire(SeriesMapUpdated, this, new SeriesMapUpdatedEventArgs { SeriesMap = _seriesMap });
         }
 
         public void AddSeries(string originalStudyUid, string newStudyUid, string originalSeriesUid, string newSeriesUid)
@@ -150,30 +164,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
                 }
 
                 _seriesMap.Add(originalSeriesUid,
-                               new SeriesMapping() {OriginalSeriesUid = originalSeriesUid, NewSeriesUid = newSeriesUid});
+                               new SeriesMapping {OriginalSeriesUid = originalSeriesUid, NewSeriesUid = newSeriesUid});
 
                 Dirty = true;
             }
-            EventsHelper.Fire(SopMapUpdated, this, new SopMapUpdatedEventArgs() { SopMap = _sopMap });
-        }
-
-	    private bool ContainsStudyMap(string originalStudyUid, string newStudyUid)
-	    {
-            lock (_sync)
-            {
-                foreach (var entry in _studyMap)
-                {
-                    if (entry.Key == originalStudyUid && entry.Value == newStudyUid)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-	    }
-
-	    public IEnumerable<SeriesMapping> GetSeriesMappings()
+            EventsHelper.Fire(SopMapUpdated, this, new SopMapUpdatedEventArgs { SopMap = _sopMap });
+		}
+		
+		public IEnumerable<SeriesMapping> GetSeriesMappings()
 	    {
 	        return _seriesMap.Values;
 	    }
@@ -187,20 +185,19 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
                 foreach (var entry in _studyMap)
                 {
-                    StudyUidMap studyMap = new StudyUidMap() {Source = entry.Key, Target = entry.Value};
+                    StudyUidMap studyMap = new StudyUidMap {Source = entry.Key, Target = entry.Value};
                     xml.StudyUidMaps.Add(studyMap);
 
                     studyMap.Series = new List<Map>();
                     foreach (SeriesMapping seriesMap in _seriesMap.Values)
                     {
-                        studyMap.Series.Add(new Map()
-                                                {Source = seriesMap.OriginalSeriesUid, Target = seriesMap.NewSeriesUid});
+                        studyMap.Series.Add(new Map {Source = seriesMap.OriginalSeriesUid, Target = seriesMap.NewSeriesUid});
                     }
 
                     studyMap.Instances = new List<Map>();
                     foreach (var sop in _sopMap)
                     {
-                        studyMap.Instances.Add(new Map() {Source = sop.Key, Target = sop.Value});
+                        studyMap.Instances.Add(new Map {Source = sop.Key, Target = sop.Value});
                     }
                 }
 
@@ -210,5 +207,27 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
                 Dirty = false;
             }
 	    }
+
+		#endregion
+
+		#region Private Methods
+
+		private bool ContainsStudyMap(string originalStudyUid, string newStudyUid)
+		{
+			lock (_sync)
+			{
+				foreach (var entry in _studyMap)
+				{
+					if (entry.Key == originalStudyUid && entry.Value == newStudyUid)
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+		}
+
+		#endregion
 	}
 }

@@ -568,7 +568,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 					// overwrite it
 				}
 
-				SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false, true);
+				SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
 				filesystemUpdateProcessor.AddCommand(saveCommand);
 
 				if (_rulesEngine != null)

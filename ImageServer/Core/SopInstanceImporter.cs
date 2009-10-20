@@ -355,7 +355,7 @@ namespace ClearCanvas.ImageServer.Core
             path = Path.Combine(path, sopInstanceUid);
             path += ".dcm";
 
-            commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
+            commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 
             commandProcessor.AddCommand(
                 new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));

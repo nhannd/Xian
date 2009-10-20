@@ -57,6 +57,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             _failIfError = failIfError;
         }
 
+		public DeleteDirectoryCommand(string dir, bool failIfError, bool deleteOnlyIfEmpty)
+			: base(String.Format("DeleteDirectory {0}", dir), true)
+		{
+			_dir = dir;
+			_failIfError = failIfError;
+			DeleteOnlyIfEmpty = deleteOnlyIfEmpty;
+		}
+
 		/// <summary>
 		/// Gets the time spent on deleting the directory.
 		/// </summary>
@@ -91,11 +99,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 if (_failIfError)
                     throw;
-                else
-                {
-                    // ignore it
-                    Platform.Log(LogLevel.Warn, ex, "Unexpected exception occurred when deleting {0}. It is ignored.", _dir);
-                }
+            	// ignore it
+            	Platform.Log(LogLevel.Warn, ex, "Unexpected exception occurred when deleting {0}. It is ignored.", _dir);
             }
         }
 

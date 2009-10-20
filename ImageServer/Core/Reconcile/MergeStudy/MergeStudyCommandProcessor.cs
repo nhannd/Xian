@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
@@ -54,35 +53,29 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			Platform.CheckForNullReference(context, "context");
 			Context = context;
 
-            EnsureStudyCanBeUpdated();
+			EnsureStudyCanBeUpdated();
 
-			ReconcileMergeToExistingStudyDescriptor desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(Context.History.ChangeDescription);
-                
-			if (Context.History.DestStudyStorageKey == null)
-			{
-				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
-				parameters.UpdateDestination = true;
-				parameters.Commands = desc.Commands;
-				MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
-				AddCommand(command);
-			}
-			else
-			{
-				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
-				parameters.UpdateDestination = false; // the target study has been assigned (ie, this entry has been excecuted at least once), we don't need to update the study again (for performance reason).
-				parameters.Commands = desc.Commands;
-				MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
-				AddCommand(command);
-			}
+			ReconcileMergeToExistingStudyDescriptor desc =
+				XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(Context.History.ChangeDescription);
 
-            if (complete)
-            {
-                ApplyStudyAndSeriesRuleCommands();
-                AddCleanupCommands();
-            }
-            
+
+			ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters
+			                                                  	{
+			                                                  		UpdateDestination = Context.History.DestStudyStorageKey == null,
+			                                                  		Commands = desc.Commands
+			                                                  	};
+
+			MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
+			AddCommand(command);
+
+			if (complete)
+			{
+				ApplyStudyAndSeriesRuleCommands();
+				AddCleanupCommands();
+			}
 		}
 
-	    #endregion
+
+		#endregion
 	}
 }

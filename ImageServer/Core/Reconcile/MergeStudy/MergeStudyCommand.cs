@@ -61,10 +61,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 	class MergeStudyCommand : ReconcileCommandBase
 	{
 		#region Private Members
-        private ServerCommandProcessor _processor;
-		private readonly List<WorkQueueUid> _processedUidList = new List<WorkQueueUid>();
-		private readonly List<WorkQueueUid> _failedUidList = new List<WorkQueueUid>();
-		private readonly List<WorkQueueUid> _duplicateList = new List<WorkQueueUid>();
+		private int _failedCount;
+		private int _processedCount;
 		private readonly ReconcileMergeStudyCommandParameters _parameters;
 
 		#endregion
@@ -111,7 +109,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             }
 		}
 
-
         protected void LoadUidMappings()
         {
             // Load the mapping for the study
@@ -127,9 +124,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
                     UidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
                 }
             }
-
         }
-
 
 	    private void DetermineDestination()
 		{
@@ -142,34 +137,27 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		#endregion
 
 		#region Protected Methods
+	
 		protected override void OnUndo()
 		{
-			if (_processor != null)
-			{
-				_processor.Rollback();
-				_processor = null;
-			}
 		}
+
 		#endregion
 
 		#region Private Members
+		
 		private void LogResult()
 		{
 			StringBuilder log = new StringBuilder();
 			log.AppendFormat("Destination location: {0}", Context.DestStorageLocation.GetStudyPath());
 			log.AppendLine();
-			if (_failedUidList.Count > 0)
+			if (_failedCount > 0)
 			{
-				log.AppendFormat("{0} images failed to be reconciled.", _failedUidList.Count);
-				log.AppendLine();
-			}
-			if (_duplicateList.Count > 0)
-			{
-				log.AppendFormat("{0} images are duplicate.", _duplicateList.Count);
+				log.AppendFormat("{0} images failed to be reconciled.", _failedCount);
 				log.AppendLine();
 			}
             
-			log.AppendFormat("{0} images have been reconciled and will be processed.", _processedUidList.Count);
+			log.AppendFormat("{0} images have been reconciled and will be processed.", _processedCount);
 			log.AppendLine();
 			Platform.Log(LogLevel.Info, log);
 		}
@@ -187,72 +175,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 					throw new ApplicationException(
 						String.Format("Unable to update existing study: {0}", updateProcessor.FailureReason));
 				}
-			}
-            
-		}
-
-		private void ProcessUidListOld()
-		{
-			List<BaseImageLevelUpdateCommand> updateCommandList = BuildUpdateCommandList();
-			PrintUpdateCommands(updateCommandList);
-			int counter = 0;
-			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
-			
-			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
-			{
-				string imagePath = GetReconcileUidPath(uid);
-				DicomFile file = new DicomFile(imagePath);
-				file.Load();
-                          
-				try
-				{
-					using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
-					{
-						foreach (BaseImageLevelUpdateCommand command in updateCommandList)
-						{
-							command.File = file;
-							processor.AddCommand(command);
-						}
-
-						processor.AddCommand(new SaveFileCommand(Context, file));
-						InsertWorkQueueCommand.CommandParameters parameters = new InsertWorkQueueCommand.CommandParameters();
-						parameters.SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-						parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-						parameters.Extension = "dcm";
-						parameters.IsDuplicate = false;
-						processor.AddCommand(new InsertWorkQueueCommand(Context, parameters));
-						processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-						processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-
-						if (counter == 0)
-						{
-							// Only update the first time through the loop
-							processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, Context.DestStorageLocation, UidMapper));
-						}
-
-						if (!processor.Execute())
-						{
-							if (processor.FailureException is InstanceAlreadyExistsException)
-							{
-								throw processor.FailureException;
-							}
-							else
-							{
-								FailUid(uid, true);
-								throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason), processor.FailureException);
-							}
-						}
-
-						counter++;
-						_processedUidList.Add(uid);
-						Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
-					}
-				}
-				catch(InstanceAlreadyExistsException)
-				{
-					CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
-				}                
-			}
+			}            
 		}
 
 		private void ProcessUidList()
@@ -282,10 +205,11 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				// referenced in the c
 				string imagePath = GetReconcileUidPath(uid);
 				DicomFile file = new DicomFile(imagePath);
-				file.Load();
 
 				try
 				{
+					file.Load();
+
 					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
@@ -295,8 +219,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 						throw new ApplicationException(String.Format("Unable to reconcile image {0}", file.Filename));
 					}
 
-                    counter++;
-					_processedUidList.Add(uid);
+					_processedCount++;
                     
                     Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
 				}
@@ -309,12 +232,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 					}
 					else
 						FailUid(uid, true);
+					_failedCount++;
 				}
 			}
 		}
-
-        
-
 
 	    private void CreatDuplicateSIQEntry(DicomFile file, WorkQueue queue, WorkQueueUid uid)
 		{

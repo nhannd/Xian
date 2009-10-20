@@ -403,14 +403,14 @@ namespace ClearCanvas.ImageServer.Core
 
 					if (_context.UpdateCommands.Count > 0)
 					{
-						processor.AddCommand(new SaveDicomFileCommand(_context.StorageLocation, file, file.Filename != finalDest, true));
+						processor.AddCommand(new SaveDicomFileCommand(_context.StorageLocation, file, file.Filename != finalDest));
 					}
 					else if (file.Filename != finalDest || processor.CommandCount > 0)
                     {
 						// Have to be careful here about failure on exists vs. not failing on exists
 						// because of the different use cases of the importer.
                         // save the file in the study folder, or if its been compressed
-						processor.AddCommand(new SaveDicomFileCommand(finalDest, file, file.Filename != finalDest, true));
+						processor.AddCommand(new SaveDicomFileCommand(finalDest, file, file.Filename != finalDest));
                     }
 
 					// Update the StudyStream object

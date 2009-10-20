@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
         public string Name
         {
-            get { return base.Description; }
+            get { return Description; }
         }
 
         protected void ApplyStudyAndSeriesRuleCommands()
@@ -73,17 +73,12 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         protected void AddCleanupCommands()
         {
             DirectoryInfo dir = new DirectoryInfo(Context.ReconcileWorkQueueData.StoragePath);
-            DeleteDirectoryCommand cmd = new DeleteDirectoryCommand(dir.FullName, false);
-            cmd.DeleteOnlyIfEmpty = true;
-            AddCommand(cmd);
+            AddCommand( new DeleteDirectoryCommand(dir.FullName, false, true));
 
             if (dir.Parent!=null)
             {
-                cmd = new DeleteDirectoryCommand(dir.Parent.FullName, false);
-                cmd.DeleteOnlyIfEmpty = true;
-                AddCommand(cmd);
-            }
-            
+                AddCommand(new DeleteDirectoryCommand(dir.Parent.FullName, false, true));
+            }            
         }
 
         protected void EnsureStudyCanBeUpdated()

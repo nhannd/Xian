@@ -41,7 +41,6 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Process;
-using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -78,6 +77,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         
         #endregion
 
+		#region Public Methods
+
         /// <summary>
         /// Gets the path to the folder that contains the images to be reconciled.
         /// </summary>
@@ -93,10 +94,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         /// <summary>
         /// Gets the path to the images, relative to the path returned by <see cref="GetFolderPath"/>
         /// </summary>
-        /// <param name="seriesUid"></param>
         /// <param name="sopUid"></param>
         /// <returns></returns>
-        public string GetSopRelativePath(string seriesUid, string sopUid)
+        public string GetSopRelativePath(string sopUid)
         {
             return sopUid  + ".dcm";
         }
@@ -105,16 +105,16 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         /// <summary>
         /// Gets the path to the image that needs to be reconciled.
         /// </summary>
-        /// <param name="seriesUid"></param>
         /// <param name="sopUid"></param>
         /// <returns></returns>
-        public string GetSopInstancePath(string seriesUid, string sopUid)
+        public string GetSopInstancePath(string sopUid)
         {
-            string path = Path.Combine(GetFolderPath(), GetSopRelativePath(seriesUid, sopUid));
+            string path = Path.Combine(GetFolderPath(), GetSopRelativePath(sopUid));
             return path;
-        }
+		}
 
-    }
+		#endregion
+	}
 
     /// <summary>
     /// Helper class to insert a <see cref="StudyIntegrityQueue"/> for manual image reconciliation.
@@ -158,19 +158,19 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(_context.StudyLocation.FilesystemKey);
             Platform.CheckForNullReference(fs, "fs");
             
-            ReconcileStorage reconcileStorage = new ReconcileStorage(_context.StudyLocation, _context.UidGroup); 
+            ReconcileStorage reconcileStorage = new ReconcileStorage(_context.StudyLocation, _context.Group); 
 
             using(ServerCommandProcessor processor = new ServerCommandProcessor("Schedule Manual Reconciliation"))
             {
-                string path = reconcileStorage.GetSopInstancePath(file.DataSet[DicomTags.SeriesInstanceUid].ToString(), file.DataSet[DicomTags.SopInstanceUid].ToString());
+            	string path = reconcileStorage.GetSopInstancePath(file.DataSet[DicomTags.SopInstanceUid].ToString());
                 DirectoryInfo dir = new DirectoryInfo(path);
                 CreateDirectoryCommand mkdir = new CreateDirectoryCommand(dir.Parent.FullName);
                 processor.AddCommand(mkdir);
 
-                SaveDicomFileCommand saveFileCommand = new SaveDicomFileCommand(path, file, true, true);
+                SaveDicomFileCommand saveFileCommand = new SaveDicomFileCommand(path, file, true);
                 processor.AddCommand(saveFileCommand);
 
-                InsertSIQCommand updateStudyCommand = new InsertSIQCommand(_context.StudyLocation, reason, file, _context.UidGroup, reconcileStorage);
+                InsertSIQCommand updateStudyCommand = new InsertSIQCommand(_context.StudyLocation, reason, file, _context.Group, reconcileStorage);
                 processor.AddCommand(updateStudyCommand);
 
 				if (uid != null)
@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             parameters.SopInstanceUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             parameters.StudyData = XmlUtils.SerializeAsXmlDoc(imageSet); // this is used by the stored proc on initial insert only 
             parameters.GroupID = _uidGroup;
-            parameters.UidRelativePath = _reconcileImageStorage.GetSopRelativePath(_file.DataSet[DicomTags.SeriesInstanceUid].ToString(), _file.DataSet[DicomTags.SopInstanceUid].ToString()); 
+            parameters.UidRelativePath = _reconcileImageStorage.GetSopRelativePath(_file.DataSet[DicomTags.SopInstanceUid].ToString()); 
             StudyIntegrityQueue item = broker.FindOne(parameters);
             if (item == null)
             {
@@ -285,7 +285,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                 StudyIntegrityQueueUpdateColumns columns = new StudyIntegrityQueueUpdateColumns();
                 columns.QueueData = updatedQueueDataXml;
                 updateBroker.Update(item.GetKey(), columns);
-
             }
         }
 

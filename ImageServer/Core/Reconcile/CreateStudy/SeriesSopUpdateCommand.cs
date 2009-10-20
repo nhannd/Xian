@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 
@@ -97,19 +96,19 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 	    private void AddSourceImageSequence(DicomFile file, string oldSopUid)
 	    {
-	        DicomAttributeSQ sourceImageSQ =null;
+	        DicomAttributeSQ sourceImageSq;
 	        if (!file.DataSet.Contains(DicomTags.SourceImageSequence))
 	        {
-	            sourceImageSQ = new DicomAttributeSQ(DicomTags.SourceImageSequence);
-	            file.DataSet[DicomTags.SourceImageSequence] = sourceImageSQ;
+	            sourceImageSq = new DicomAttributeSQ(DicomTags.SourceImageSequence);
+	            file.DataSet[DicomTags.SourceImageSequence] = sourceImageSq;
 	        }
 	        else
-	            sourceImageSQ = file.DataSet[DicomTags.SourceImageSequence] as DicomAttributeSQ;
+	            sourceImageSq = file.DataSet[DicomTags.SourceImageSequence] as DicomAttributeSQ;
 
 	        DicomSequenceItem item = new DicomSequenceItem();
 	        item[DicomTags.ReferencedSopClassUid].SetStringValue(file.SopClass.Uid);
 	        item[DicomTags.ReferencedSopInstanceUid].SetStringValue(oldSopUid);
-	        sourceImageSQ.AddSequenceItem(item);
+	        sourceImageSq.AddSequenceItem(item);
 	    }
 	}
 }

@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                             new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms);
                         processor.AddCommand(compressCommand);
 
-                        SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file, false, true);
+                        SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file, false);
                         processor.AddCommand(save);
 
                         // Update the StudyStream object, must be done after compression

@@ -92,7 +92,6 @@
     <Compile Include="Process\InsertInstanceCommand.cs" />
     <Compile Include="Reconcile\InsertMergeHistoryCommand.cs" />
     <Compile Include="Reconcile\InsertReconcileStudyCommand.cs" />
-    <Compile Include="Reconcile\InsertSIQReconcileStudyCommand.cs" />
     <Compile Include="Process\InsertStudyXmlCommand.cs" />
     <Compile Include="Process\InstanceStatistics.cs" />
     <Compile Include="Reconcile\IReconcileProcessor.cs" />

@@ -143,15 +143,19 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			get
 			{
-				lock (_lock)
+				if (_singleton == null)
 				{
-					if (_singleton == null)
+					lock (_lock)
 					{
-						_singleton = new FilesystemMonitor();
-						_singleton.Initialize();
+						if (_singleton == null)
+						{
+							_singleton = new FilesystemMonitor();
+							_singleton.Initialize();
+						}
+						return _singleton;
 					}
-					return _singleton;
 				}
+				return _singleton;
 			}
 		}
 		#endregion

@@ -90,9 +90,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <param name="path">The path to save the file.</param>
 		/// <param name="file">The file to save.</param>
 		/// <param name="failOnExists">If the file already exists, the file will save.</param>
-		/// <param name="saveTemp">Save the file to a temporary file first, then move to the final file.  This 
-		/// reduces the likelyhood of having partial files if a crash in the service occurs when the file is being written.</param>
-		public SaveDicomFileCommand(string path, DicomFile file, bool failOnExists, bool saveTemp)
+		public SaveDicomFileCommand(string path, DicomFile file, bool failOnExists)
 			: base("Save DICOM Message", true)
 		{
 			Platform.CheckForNullReference(path, "File name");
@@ -101,7 +99,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_path = path;
 			_file = file;
 			_failOnExists = failOnExists;
-			_saveTemp = saveTemp;
+			_saveTemp = true;
 		}
 
 		/// <summary>
@@ -109,10 +107,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// </summary>
 		/// <param name="file">The file to save.</param>
 		/// <param name="failOnExists">If the file already exists, the file will save.</param>
-		/// <param name="saveTemp">Save the file to a temporary file first, then move to the final file.  This 
-		/// reduces the likelyhood of having partial files if a crash in the service occurs when the file is being written.</param>
 		/// <param name="location">The storage location for the file.</param>
-		public SaveDicomFileCommand(StudyStorageLocation location, DicomFile file, bool failOnExists, bool saveTemp)
+		public SaveDicomFileCommand(StudyStorageLocation location, DicomFile file, bool failOnExists)
 			: base("Save DICOM Message", true)
 		{
 			Platform.CheckForNullReference(file, "Dicom File object");
@@ -120,7 +116,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_path = null;
 			_file = file;
 			_failOnExists = failOnExists;
-			_saveTemp = saveTemp;
+			_saveTemp = true;
 		}
 
 		public Stack<IServerCommand> AggregateCommands

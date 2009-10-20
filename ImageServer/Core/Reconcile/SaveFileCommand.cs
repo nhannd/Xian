@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				throw new ApplicationException(theProcessor.FailureReason);
 			if (!theProcessor.ExecuteSubCommand(this, new CreateDirectoryCommand(Context.DestStorageLocation.GetSeriesPath(seriesInstanceUid))))
 				throw new ApplicationException(theProcessor.FailureReason);
-			if (!theProcessor.ExecuteSubCommand(this, new SaveDicomFileCommand(destPath, file, true, true)))
+			if (!theProcessor.ExecuteSubCommand(this, new SaveDicomFileCommand(destPath, file, true)))
 				throw new ApplicationException(theProcessor.FailureReason);
 		}
 

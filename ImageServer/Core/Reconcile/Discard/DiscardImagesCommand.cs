@@ -34,7 +34,6 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
@@ -44,12 +43,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 	/// </summary>
 	class DiscardImagesCommand : ReconcileCommandBase
 	{
-
 		#region Constructors
+
 		public DiscardImagesCommand(ReconcileStudyProcessorContext context)
 			: base("Discard image", false, context)
 		{
 		}
+
 		#endregion
 
 		#region Overidden Protected Methods
@@ -62,27 +62,36 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.Discard
 			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
 				string imagePath = Path.Combine(Context.ReconcileWorkQueueData.StoragePath, uid.SopInstanceUid + ".dcm");
-				using(ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Deleting {0}", uid.SopInstanceUid)))
+
+				try
 				{
-					FileDeleteCommand deleteFile = new FileDeleteCommand(imagePath, true);
-					DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
-					processor.AddCommand(deleteFile);
-					processor.AddCommand(deleteUid);
-					Platform.Log(ServerPlatform.InstanceLogLevel, deleteFile.ToString());
-					if (!processor.Execute())
+					using (
+						ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Deleting {0}", uid.SopInstanceUid)))
 					{
-						throw new Exception(String.Format("Unable to discard image {0}", uid.SopInstanceUid));
-					} 
+						FileDeleteCommand deleteFile = new FileDeleteCommand(imagePath, true);
+						DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
+						processor.AddCommand(deleteFile);
+						processor.AddCommand(deleteUid);
+						Platform.Log(ServerPlatform.InstanceLogLevel, deleteFile.ToString());
+						if (!processor.Execute())
+						{
+							throw new Exception(String.Format("Unable to discard image {0}", uid.SopInstanceUid));
+						}
+					}
 				}
-                
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e, "Unexpected exception discarding file: {0}", imagePath);
+					FailUid(uid, true);
+				}
 			}
 		}
 
-       
 		protected override void OnUndo()
 		{
 
 		}
+
 		#endregion
 	}
 }

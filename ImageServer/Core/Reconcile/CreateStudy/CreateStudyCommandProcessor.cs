@@ -71,16 +71,20 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 			if (Context.History.DestStudyStorageKey == null)
 			{
-				CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters();
-				parameters.Commands = desc.Commands;
+				CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters
+				                                                  	{
+				                                                  		Commands = desc.Commands
+				                                                  	};
 				CreateStudyCommand command = new CreateStudyCommand(context, parameters);
 				AddCommand(command);
 			}
 			else
 			{
-				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
-				parameters.Commands = desc.Commands;
-				parameters.UpdateDestination = false;
+				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters
+				                                                  	{
+				                                                  		Commands = desc.Commands,
+				                                                  		UpdateDestination = false
+				                                                  	};
 				MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
 				AddCommand(command);
 			}

@@ -39,7 +39,6 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -66,16 +65,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         protected UidMapper UidMapper { get; set; }
 
 	    protected string GetReconcileUidPath(WorkQueueUid sop)
-		{
-			if (String.IsNullOrEmpty(sop.RelativePath))
+	    {
+	    	if (String.IsNullOrEmpty(sop.RelativePath))
 			{
 				return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
 			}
-			else
-				return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
-		}
+	    	return Path.Combine(Context.ReconcileWorkQueueData.StoragePath, sop.RelativePath);
+	    }
 
-        
 		#region IDisposable Members
 
 		public void Dispose()
@@ -119,6 +116,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 		protected static StudyXml LoadStudyXml(StudyStorageLocation location)
 		{
+			// This method should be combined with StudyStorageLocation.LoadStudyXml()
 			StudyXml theXml = new StudyXml(location.StudyInstanceUid);
 
 			String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
