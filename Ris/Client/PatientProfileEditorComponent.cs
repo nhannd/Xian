@@ -149,6 +149,7 @@ namespace ClearCanvas.Ris.Client
                     if (_newAttachments.Count > 0)
                     {
                         _profile.Attachments.AddRange(_newAttachments);
+                    	this.Modified = true;
                         this.AcceptEnabled = true;
                     }
 

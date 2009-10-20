@@ -1217,6 +1217,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_rightHandComponentContainer.CurrentPage = attachmentsTabPage;
 				_attachmentSummaryComponent.SetInitialSelection(_newAttachments[0]);
+				this.Modified = true;
 			}
 		}
 
