@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common;
@@ -32,12 +31,12 @@ namespace ClearCanvas.Ris.Client
 				AttachedDocumentFtpSettings.Default.FtpBaseUrl,
 				AttachedDocumentFtpSettings.Default.FtpPassiveMode);
 
-			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, documentSummary.DataRelativeUrl);
+			var fullUrl = new Uri(ftpFileTransfer.BaseUri, documentSummary.ContentUrl);
 
-			var fileName = Path.GetFileName(remoteFileUrl.LocalPath);
+			var fileName = Path.GetFileName(fullUrl.LocalPath);
 			var localFilePath = Path.Combine(Path.GetTempPath(), fileName);
 
-			ftpFileTransfer.Download(new FileTransferRequest(remoteFileUrl, localFilePath));
+			ftpFileTransfer.Download(new FileTransferRequest(fullUrl, localFilePath));
 
 			return localFilePath;
 		}

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public string FileExtension;
 
 		[DataMember]
-		public string DataRelativeUrl;
+		public string ContentUrl;
 
 		[DataMember]
 		public Dictionary<string, string> DocumentHeaders;
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Common
 				ReceivedTime = this.ReceivedTime,
 				MimeType = this.MimeType,
 				FileExtension = this.FileExtension,
-				DataRelativeUrl = this.DataRelativeUrl,
+				ContentUrl = this.ContentUrl,
 				DocumentHeaders = this.DocumentHeaders,
 				DocumentTypeName = this.DocumentTypeName
 			};

@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services
 			summary.CreationTime = doc.CreationTime;
 			summary.ReceivedTime = doc.ReceivedTime;
 			summary.MimeType = doc.MimeType;
-			summary.DataRelativeUrl = doc.ContentUrl;
+			summary.ContentUrl = doc.ContentUrl;
 			summary.FileExtension = doc.FileExtension;
 			summary.DocumentHeaders = new Dictionary<string, string>(doc.DocumentHeaders);
 			summary.DocumentTypeName = doc.DocumentTypeName;

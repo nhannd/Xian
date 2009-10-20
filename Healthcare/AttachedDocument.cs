@@ -51,42 +51,16 @@ namespace ClearCanvas.Healthcare {
 			get { return "Attached Document"; }
 		}
 
-		/// <summary>
-		/// Upload a document to a storage site.
-		/// </summary>
-		/// <remarks>The DataRelativeUrl is constructed based on Year/Month/Day/EntityRefOID.FileExtension.</remarks>
-		public void UploadDocument(FtpFileTransfer ftpFileTransfer, string localFilePath)
+		public static string BuildContentUrl(AttachedDocument document, string pathDelimiter)
 		{
-			this.ContentUrl = BuildAttachedDocumentRelativeUri();
-			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.ContentUrl);
-			ftpFileTransfer.Upload(new FileTransferRequest(remoteFileUrl, localFilePath));
-		}
-
-		/// <summary>
-		/// Download a document to a temp file.
-		/// </summary>
-		/// <returns>The path of the downloaded file.</returns>
-		public string DownloadDocument(FtpFileTransfer ftpFileTransfer)
-		{
-			var remoteFileUrl = new Uri(ftpFileTransfer.BaseUri, this.ContentUrl);
-			var localFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(remoteFileUrl.LocalPath));
-			ftpFileTransfer.Download(new FileTransferRequest(remoteFileUrl, localFilePath));
-
-			return localFilePath;
-		}
-
-		private string BuildAttachedDocumentRelativeUri()
-		{
-			var now = Platform.Time;
-
 			var builder = new StringBuilder();
-			builder.Append(now.Year.ToString());
-			builder.Append("/");
-			builder.Append(now.Month.ToString());
-			builder.Append("/");
-			builder.Append(now.Day.ToString());
-			builder.Append("/");
-			builder.AppendFormat("{0}.{1}", this.GetRef().ToString(false, false), this.FileExtension);
+			builder.Append(document.CreationTime.Year.ToString());
+			builder.Append(pathDelimiter);
+			builder.Append(document.CreationTime.Month.ToString());
+			builder.Append(pathDelimiter);
+			builder.Append(document.CreationTime.Day.ToString());
+			builder.Append(pathDelimiter);
+			builder.AppendFormat("{0}.{1}", document.GetRef().ToString(false, false), document.FileExtension);
 			return builder.ToString();
 		}
 	}
