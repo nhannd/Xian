@@ -238,9 +238,7 @@ namespace ClearCanvas.Ris.Client
             Path path = folder.FolderPath;
             if (!string.IsNullOrEmpty(worklist.DisplayName))
             {
-                // escape slashes in the display name, otherwise they are interpreted as separators
-                string name = worklist.DisplayName.Replace("/", "//");
-                path = new Path(string.Concat(path.ToString(), "/", name), folder.ResourceResolver);
+            	path = path.Append(new PathSegment(worklist.DisplayName, folder.ResourceResolver));
             }
 
             // init folder

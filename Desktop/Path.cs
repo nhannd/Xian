@@ -85,6 +85,15 @@ namespace ClearCanvas.Desktop
 		{
 		}
 
+		/// <summary>
+		/// Creates a new single segment <see cref="Path"/> from the specified segment.
+		/// </summary>
+		/// <param name="segment"></param>
+		public Path(PathSegment segment)
+			:this(new[]{ segment })
+		{
+		}
+
         /// <summary>
         /// Internal constructor.
         /// </summary>
@@ -144,6 +153,16 @@ namespace ClearCanvas.Desktop
 			return new Path(combined);
 		}
 
+		///<summary>
+		/// Returns a new <see cref="Path"/> object obtained by appending <paramref name="segment"/> to this path.
+		///</summary>
+		///<param name="segment"></param>
+		///<returns></returns>
+		public Path Append(PathSegment segment)
+		{
+			return new Path(new List<PathSegment>(_segments) {segment});
+		}
+
         /// <summary>
         /// Converts this path back to a string.
         /// </summary>
@@ -199,17 +218,17 @@ namespace ClearCanvas.Desktop
 			pathString = StringUtilities.EmptyIfNull(pathString).Replace(ESCAPED_SEPARATOR, TEMP);
 
 			// split string by separator
-			var parts = pathString.Split(new[] { SEPARATOR }, StringSplitOptions.None);
-			var n = parts.Length;
-			var segments = new PathSegment[n];
-			for (var i = 0; i < n; i++)
-			{
-				// replace the temp string with the unescaped separator
-				parts[i] = parts[i].Replace(TEMP, SEPARATOR);
-				segments[i] = new PathSegment(parts[i], resolver != null ? resolver.LocalizeString(parts[i]) : parts[i]);
-			}
-			return segments;
+        	var parts = pathString.Split(new[] {SEPARATOR}, StringSplitOptions.None);
+
+			// replace temp string with unescaped separator, and create segments
+			return CreateSegments(
+				CollectionUtils.Map(parts, (string p) => p.Replace(TEMP, SEPARATOR)),
+				resolver);
 		}
 
-	}
+    	private static PathSegment[] CreateSegments(IList<string> parts, IResourceResolver resolver)
+    	{
+    		return CollectionUtils.Map(parts, (string p) => new PathSegment(p, resolver)).ToArray();
+    	}
+    }
 }

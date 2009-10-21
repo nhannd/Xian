@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -40,6 +41,26 @@ namespace ClearCanvas.Desktop
     {
         private readonly string _key;
         private readonly string _localized;
+
+		///<summary>
+		/// Creates a <see cref="PathSegment"/> from the specified string, treated as a literal.
+		///</summary>
+		///<param name="p"></param>
+		public PathSegment(string p)
+			:this(p, (IResourceResolver)null)
+    	{
+    	}
+
+
+		/// <summary>
+		/// Creates a <see cref="PathSegment"/> from the specified string, which may be either a resource key or a literal.
+		/// </summary>
+		/// <param name="p"></param>
+		/// <param name="resolver"></param>
+    	public PathSegment(string p, IResourceResolver resolver)
+			:this(p, resolver != null ? resolver.LocalizeString(p) : p)
+    	{
+    	}
 
         /// <summary>
         /// Internal constructor.

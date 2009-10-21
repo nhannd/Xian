@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client
 			: base(orderNoteboxFolderSystem, "OrderNoteGroupInbox")
 		{
 			_groupRef = staffGroup.StaffGroupRef;
-			this.FolderPath = new Path(string.Concat(this.FolderPath.ToString(), "/", staffGroup.Name), this.ResourceResolver);
+			this.FolderPath = this.FolderPath.Append(new PathSegment(staffGroup.Name, this.ResourceResolver));
 			this.Tooltip = staffGroup.Name;
             this.IsStatic = false;
 		}

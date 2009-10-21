@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		internal class ContainerFolder : Folder
 		{
-			public ContainerFolder(string path, bool startExpanded)
+			public ContainerFolder(Path path, bool startExpanded)
 				: base(path, startExpanded)
 			{
 			}
@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client
 			_subTree = new Tree<FolderTreeNode>(GetBinding(_explorer));
 
 			// always start with container folder
-			SetFolder(new ContainerFolder(path.ToString(), true));
+			SetFolder(new ContainerFolder(path, true));
 		}
 
 		#region Public API

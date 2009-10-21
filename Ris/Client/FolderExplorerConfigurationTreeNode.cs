@@ -192,10 +192,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				var thisPath = new Path(this.Text);
+				var thisPath = new PathSegment(this.Text);
 
 				if (_parent == null || _parent.Path == null)
-					return thisPath;
+					return new Path(thisPath);
 
 				return _parent.Path.Append(thisPath);
 			}
@@ -392,6 +392,7 @@ namespace ClearCanvas.Ris.Client
 				newChildNode.AddChildNode(node);
 			}
 			oldChildNode.ClearSubTree();
+			newChildNode.Parent = oldChildNode.Parent;
 
 			// replace the nodes
 			var index = this.SubTree.Items.IndexOf(oldChildNode);
