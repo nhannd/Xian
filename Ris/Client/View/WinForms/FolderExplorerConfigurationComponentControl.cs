@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_folders.MenuModel = _component.FoldersActionModel;
 			_folders.ToolbarModel = _component.FoldersActionModel;
 			_folders.Tree = _component.FolderTree;
+        	_folders.DataBindings.Add("Enabled", _component, "FolderEditorEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
         	_component.OnEditFolder += delegate { _folders.EditSelectedNode(); };
 		}

@@ -136,34 +136,24 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Save()
 		{
-			FolderExplorerComponentSettings.Default.BeginTransaction();
-
-			try
-			{
-				// Save the ordering of the folder systems
-				FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
-					CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
-						_folderSystems,
-						node => node.FolderSystem));
-
-				CollectionUtils.ForEach(_folderSystems, node =>
+			FolderExplorerComponentSettings.Default.UpdateUserConfiguration(userConfiguration =>
 				{
-					if (!node.Modified) return;
+					// Save the ordering of the folder systems
+					userConfiguration.SaveUserFolderSystemsOrder(
+						CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
+							_folderSystems,
+							node => node.FolderSystem));
 
-					node.UpdateFolderPath();
-					FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(
-						node.FolderSystem, node.Folders);
+					// and then save each folder systems' folder customizations
+					CollectionUtils.ForEach(_folderSystems, node =>
+					{
+						if (!node.Modified) return;
+
+						node.UpdateFolderPath();
+						userConfiguration.SaveUserFoldersCustomizations(
+							node.FolderSystem, node.Folders);
+					});
 				});
-
-				// commit the changes
-				FolderExplorerComponentSettings.Default.CommitTransaction();
-			}
-			catch
-			{
-				// rollback changes
-				FolderExplorerComponentSettings.Default.RollbackTransaction();
-				throw;
-			}
 		}
 
 		#endregion
@@ -189,6 +179,8 @@ namespace ClearCanvas.Ris.Client
 				_selectedFolderSystemNode = value < 0 ? null : _folderSystems[value];
 
 				UpdateFolderSystemActionModel();
+				UpdateFolderActionModel(this.FolderEditorEnabled);
+
 				NotifyPropertyChanged("SelectedFolderSystemIndex");
 
 				BuildFolderTreeIfNotExist(_selectedFolderSystemNode);
@@ -200,6 +192,11 @@ namespace ClearCanvas.Ris.Client
 					this.SelectedFolderNode = new Selection(_selectedFolderSystemNode);
 				}
 			}
+		}
+
+		public bool FolderEditorEnabled
+		{
+			get { return _selectedFolderSystemNode != null ? !_selectedFolderSystemNode.Readonly : false; }
 		}
 
 		public bool CanMoveFolderSystemUp
@@ -307,17 +304,12 @@ namespace ClearCanvas.Ris.Client
 
 		private void LoadFolderSystems()
 		{
-			// Get a list of folder systems, initialize each of them so the folder list is populated
-			var folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
-
-			List<IFolderSystem> remainder;
-			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
-			// add the remainder to the end of the ordered list
-			folderSystems.AddRange(remainder);
+			var folderSystems = FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(
+				CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions()));
 
 			var fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode>(
 				folderSystems,
-				fs => new FolderSystemConfigurationNode(fs));
+				fs => new FolderSystemConfigurationNode(fs, FolderExplorerComponentSettings.Default.IsFolderSystemReadOnly(fs)));
 
 			CollectionUtils.ForEach(
 				fsNodes, 
@@ -378,18 +370,12 @@ namespace ClearCanvas.Ris.Client
 			// Initialize the list of Folders
 			folderSystemNode.FolderSystem.Initialize();
 
-			// put folders in correct insertion order from XML
-			List<IFolder> orderedFolders;
-			List<IFolder> remainderFolders;
-			FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(folderSystemNode.FolderSystem, out orderedFolders, out remainderFolders);
-
-			// add the remainder to the end of the ordered list
-			orderedFolders.AddRange(remainderFolders);
+			var folders = FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(folderSystemNode.FolderSystem);
 
 			// add each ordered folder to the tree
 			folderSystemNode.ModifiedEnabled = false;
 			folderSystemNode.ClearSubTree();
-			CollectionUtils.ForEach(orderedFolders, folder => folderSystemNode.InsertNode(new FolderConfigurationNode(folder), folder.FolderPath));
+			CollectionUtils.ForEach(folders, folder => folderSystemNode.InsertNode(new FolderConfigurationNode(folder), folder.FolderPath));
 
 			folderSystemNode.ModifiedEnabled = true;
 		}
@@ -432,11 +418,18 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdateFolderActionModel()
 		{
-			_foldersActionModel[_addFolderKey].Enabled = _selectedFolderNode != null;
-			_foldersActionModel[_editFolderKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.CanEdit;
-			_foldersActionModel[_deleteFolderKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.CanDelete;
-			_foldersActionModel[_moveFolderUpKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.PreviousSibling != null;
-			_foldersActionModel[_moveFolderDownKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.NextSibling != null;
+			UpdateFolderActionModel(true);
+		}
+
+		private void UpdateFolderActionModel(bool canEditFolderSystem)
+		{
+			var editsEnabled = canEditFolderSystem && _selectedFolderNode != null;
+
+			_foldersActionModel[_addFolderKey].Enabled = editsEnabled;
+			_foldersActionModel[_editFolderKey].Enabled = editsEnabled && _selectedFolderNode.CanEdit;
+			_foldersActionModel[_deleteFolderKey].Enabled = editsEnabled && _selectedFolderNode.CanDelete;
+			_foldersActionModel[_moveFolderUpKey].Enabled = editsEnabled && _selectedFolderNode.PreviousSibling != null;
+			_foldersActionModel[_moveFolderDownKey].Enabled = editsEnabled && _selectedFolderNode.NextSibling != null;
 		}
 
 		#endregion

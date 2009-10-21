@@ -629,15 +629,22 @@ namespace ClearCanvas.Ris.Client
 	public class FolderSystemConfigurationNode : DraggableTreeNode
 	{
 		private readonly IFolderSystem _folderSystem;
+		private readonly bool _readonly;
 
-		public FolderSystemConfigurationNode(IFolderSystem folderSystem)
+		public FolderSystemConfigurationNode(IFolderSystem folderSystem, bool isReadonly)
 		{
 			_folderSystem = folderSystem;
+			_readonly = isReadonly;
 		}
 
 		public IFolderSystem FolderSystem
 		{
 			get { return _folderSystem; }
+		}
+
+		public bool Readonly
+		{
+			get { return _readonly; }
 		}
 
 		/// <summary>

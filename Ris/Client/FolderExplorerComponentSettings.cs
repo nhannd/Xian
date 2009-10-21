@@ -32,11 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Xml;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Text;
-using System.IO;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -48,325 +44,79 @@ namespace ClearCanvas.Ris.Client
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class FolderExplorerComponentSettings
 	{
-		public delegate void InsertFolderDelegate(IFolder folder);
-
-		private XmlDocument _xmlDoc;
-		private event EventHandler _changesCommitted;
-        private bool _transactionPending;
+		private readonly IFolderExplorerConfiguration _baseConfig;
+		private readonly IFolderExplorerUserConfiguration _userConfig;
 
 		private FolderExplorerComponentSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+
+			_baseConfig = new FolderExplorerConfiguration(this.DefaultConfigurationXml);
+			_userConfig = new FolderExplorerUserConfiguration(this.UserConfigurationXml, updatedUserConfigurationXml =>
+				{
+					this.UserConfigurationXml = updatedUserConfigurationXml;
+					Save();
+				});
 		}
 
 		#region Public API
 
 		/// <summary>
-		/// Orders the folder systems based on what is in the XML document,
-		/// and puts any items without an XML entry into the remainder list.
+		/// Orders the folder systems based on what is in the XML document
 		/// </summary>
 		/// <param name="folderSystems">Input list of folder systems</param>
-		/// <param name="ordered"></param>
-		/// <param name="remainder"></param>
-		public void ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems, out List<IFolderSystem> ordered, out List<IFolderSystem> remainder)
+		public IEnumerable<IFolderSystem> ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
 		{
-			OrderFolderSystems(folderSystems, this.ListXmlFolderSystems(), out ordered, out remainder);
+			folderSystems = _baseConfig.ApplyUserFolderSystemsOrder(folderSystems);
+			return _userConfig.ApplyUserFolderSystemsOrder(folderSystems);
 		}
 
 		/// <summary>
-		/// Customizes the folders in the specified folder system according to what is in the XML document,
-		/// and puts any items without an XML entry into the remainder list.
+		/// Customizes the folders in the specified folder system according to what is in the XML document
 		/// </summary>
 		/// <param name="folderSystem"></param>
-		/// <param name="ordered"></param>
-		/// <param name="remainder"></param>
-		public void ApplyUserFoldersCustomizations(IFolderSystem folderSystem, out List<IFolder> ordered, out List<IFolder> remainder)
+		public IEnumerable<IFolder> ApplyUserFoldersCustomizations(IFolderSystem folderSystem)
 		{
-			XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id) ?? CreateXmlFolderSystem(folderSystem.Id);
-			CustomizeFolders(folderSystem.Folders, xmlFolderSystem, out ordered, out remainder);
+			var folders = _baseConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folderSystem.Folders);
+			return _userConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folders);
 		}
 
-        /// <summary>
-        /// Begins a transaction.
-        /// </summary>
-        public void BeginTransaction()
-        {
-            _transactionPending = true;
-        }
-
-        /// <summary>
-        /// Rollsback the transaction.
-        /// </summary>
-        public void RollbackTransaction()
-        {
-            if (!_transactionPending)
-                throw new InvalidOperationException("Must call BeginTransaction() first.");
-
-            _xmlDoc = null;     // force xml doc to be reloaded from stored setting
-            _transactionPending = false;
-
-        }
-
-        /// <summary>
-        /// Commits the transaction.
-        /// </summary>
-        public void CommitTransaction()
-        {
-            if (!_transactionPending)
-                throw new InvalidOperationException("Must call BeginTransaction() first.");
-
-            // copy document to setting
-            StringBuilder sb = new StringBuilder();
-            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
-            writer.Formatting = System.Xml.Formatting.Indented;
-            _xmlDoc.Save(writer);
-
-            this.FolderPathXml = sb.ToString();
-
-            // persist settings
-            Save();
-
-            _transactionPending = false;
-
-            // notify subscribers
-            EventsHelper.Fire(_changesCommitted, this, EventArgs.Empty);
-        }
-
-		/// <summary>
-		/// Saves the order of the specified folder sytems.
-		/// </summary>
-		/// <param name="folderSystems"></param>
-		public void SaveUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
+		public delegate void UpdateFolderExplorerUserConfigurationAction(IFolderExplorerUserConfigurationUpdater userConfiguration);
+		public bool UpdateUserConfiguration(UpdateFolderExplorerUserConfigurationAction updateAction)
 		{
-            if (!_transactionPending)
-                throw new InvalidOperationException("Must call BeginTransaction() first.");
+			_userConfig.BeginTransaction();
 
-			XmlElement replacementFolderSystems = this.GetXmlDocument().CreateElement("folder-systems");
-
-			foreach (IFolderSystem folderSystem in folderSystems)
+			try
 			{
-				XmlElement existingFolderSystem = FindXmlFolderSystem(folderSystem.Id) ?? CreateXmlFolderSystem(folderSystem.Id);
-				replacementFolderSystems.AppendChild(existingFolderSystem.CloneNode(true));
+				updateAction(_userConfig);
+
+				// commit the changes
+				_userConfig.CommitTransaction();
+				return true;
 			}
-
-			GetFolderSystemsNode().InnerXml = replacementFolderSystems.InnerXml;
-		}
-
-		/// <summary>
-		/// For the specified <see cref="IFolderSystem"/>, saves customizations of paths and visibility of <see cref="IFolder"/> items in the list.
-		/// </summary>
-		/// <param name="folderSystem"></param>
-		/// <param name="customizedFolders"></param>
-		public void SaveUserFoldersCustomizations(IFolderSystem folderSystem, List<IFolder> customizedFolders)
-		{
-            if (!_transactionPending)
-                throw new InvalidOperationException("Must call BeginTransaction() first.");
-
-            XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id);
-			XmlElement replacementFolderSystem = CreateXmlFolderSystem(folderSystem.Id);
-
-			foreach (IFolder folder in customizedFolders)
+			catch
 			{
-				XmlElement newXmlFolder = CreateXmlFolder(folder);
-				replacementFolderSystem.AppendChild(newXmlFolder);
+				// rollback changes
+				_userConfig.RollbackTransaction();
+				throw;
 			}
-
-			XmlElement folderSystemsNode = GetFolderSystemsNode();
-			if (xmlFolderSystem != null)
-				xmlFolderSystem.InnerXml = replacementFolderSystem.InnerXml;
-			else
-				folderSystemsNode.AppendChild(replacementFolderSystem);
 		}
 
 		/// <summary>
 		/// Indicates that the current user's folder/folder system customizations have been committed.
 		/// </summary>
-		public event EventHandler ChangesCommitted
+		public event EventHandler UserConfigurationSaved
 		{
-			add { _changesCommitted += value; }
-			remove { _changesCommitted -= value; }
+			add { _userConfig.ChangesCommitted += value; }
+			remove { _userConfig.ChangesCommitted -= value; }
+		}
+
+		public bool IsFolderSystemReadOnly(IFolderSystem folderSystem)
+		{
+			return _baseConfig.IsFolderSystemReadOnly(folderSystem);
 		}
 
 		#endregion
 
-		#region Private Utility Methods
-
-		/// <summary>
-		/// Orders the items in the input list.
-		/// </summary>
-		/// <remarks>
-		/// Orders the input items according to the order specified by the <paramref name="ordering"/> XML list,
-		/// and puts the result into the <paramref name="ordered"/> list.  Any items not found in the XML ordering list
-		/// are put into the <paramref name="remainder"/> list.
-		/// </remarks>
-		/// <param name="input"></param>
-		/// <param name="ordering"></param>
-		/// <param name="ordered"></param>
-		/// <param name="remainder"></param>
-		private void OrderFolderSystems(IEnumerable<IFolderSystem> input, XmlNodeList ordering,
-			out List<IFolderSystem> ordered, out List<IFolderSystem> remainder)
-		{
-			ordered = new List<IFolderSystem>();
-			remainder = new List<IFolderSystem>(input);
-
-			// order the items based on the order in the XML
-			foreach (XmlElement element in ordering)
-			{
-				string id = element.GetAttribute("id");
-
-				IFolderSystem item = CollectionUtils.SelectFirst(remainder,
-					delegate(IFolderSystem fs) { return Equals(fs.Id, id); });
-
-				if (item != null)
-				{
-					ordered.Add(item);
-					remainder.Remove(item);
-					if (remainder.Count == 0)
-						break;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Applies user customizations to the path and visibility of items in the input list.
-		/// </summary>
-		/// <remarks>
-        /// Orders the input items according to the order specified by the <paramref name="xmlFolderSystem"/> XML list,
-		/// and puts the result into the <paramref name="ordered"/> list.  Any items not found in the XML ordering list
-		/// are put into the <paramref name="remainder"/> list.
-		/// </remarks>
-		/// <param name="input"></param>
-		/// <param name="ordering"></param>
-		/// <param name="ordered"></param>
-		/// <param name="remainder"></param>
-        private void CustomizeFolders(IEnumerable<IFolder> input, XmlElement xmlFolderSystem, 
-			out List<IFolder> ordered, out List<IFolder> remainder)
-		{
-			ordered = new List<IFolder>();
-			remainder = new List<IFolder>(input);
-
-			// order the items based on the order in the XML
-            List<XmlNode> ordering = CollectionUtils.Select<XmlNode>(xmlFolderSystem.ChildNodes,
-                delegate(XmlNode n) { return n.Name == "folder" || n.Name == "folder-class"; });
-            foreach (XmlElement element in ordering)
-			{
-                Predicate<IFolder> selector = null;
-                if(element.Name == "folder")
-                {
-                    string id = element.GetAttribute("id");
-                    selector = delegate(IFolder f) { return f.Id == id; }; 
-                }
-                else if (element.Name == "folder-class")
-                {
-                    string cls = element.GetAttribute("class");
-                    selector = delegate(IFolder f) { return f.GetType().Name == cls; };
-                }
-
-                string pathSetting = element.GetAttribute("path");
-                string visibleSetting = element.GetAttribute("visible");
-                foreach (IFolder item in CollectionUtils.Select(remainder, selector))
-                {
-                    if (!string.IsNullOrEmpty(pathSetting))
-                    {
-                        item.FolderPath = new Desktop.Path(pathSetting);
-                    }
-
-                    item.Visible = string.IsNullOrEmpty(visibleSetting) || string.Compare(visibleSetting, "false", true) != 0;
-
-                    ordered.Add(item);
-                    remainder.Remove(item);
-
-                    if (remainder.Count == 0)
-                        break;
-                }
-			}
-		}
-
-		private XmlDocument GetXmlDocument()
-		{
-			if (_xmlDoc == null)
-			{
-				try
-				{
-					_xmlDoc = new XmlDocument();
-                    _xmlDoc.PreserveWhitespace = true;
-					_xmlDoc.LoadXml(this.FolderPathXml);
-				}
-				catch (Exception)
-				{
-					// any exception loading the XML document should reset the reference to null
-					// so that we don't try to work with an invalid document in the future
-					_xmlDoc = null;
-					throw;
-				}
-			}
-
-			return _xmlDoc;
-		}
-
-		private XmlElement GetFolderSystemsNode()
-		{
-			return (XmlElement)this.GetXmlDocument().GetElementsByTagName("folder-systems")[0];
-		}
-
-		/// <summary>
-		/// Creates the specified folder system, but *does not* immediately append it to the xmlDoc.
-		/// </summary>
-		/// <param name="id">the id of the "folder-system" to create</param>
-		/// <returns>An "folder-system" element</returns>
-		private XmlElement CreateXmlFolderSystem(string id)
-		{
-			XmlElement xmlFolderSystem = this.GetXmlDocument().CreateElement("folder-system");
-			xmlFolderSystem.SetAttribute("id", id);
-			return xmlFolderSystem;
-		}
-
-		/// <summary>
-		/// Creates a "folder" node for insertion into an "folder-system" node in the Xml store.
-		/// </summary>
-		/// <param name="folder">the folder whose relevant properties are to be used to create the node</param>
-		/// <returns>a "folder" element</returns>
-		private XmlElement CreateXmlFolder(IFolder folder)
-		{
-			XmlElement xmlFolder = this.GetXmlDocument().CreateElement("folder");
-
-			xmlFolder.SetAttribute("id", folder.Id);
-			xmlFolder.SetAttribute("path", folder.FolderPath.LocalizedPath);
-			xmlFolder.SetAttribute("visible", folder.Visible.ToString());
-
-			return xmlFolder;
-		}
-
-		/// <summary>
-		/// Finds a stored folder system in the XML doc with the specified ID.
-		/// </summary>
-		/// <param name="id">The folder system ID</param>
-		/// <returns>An "folder-system" element, or null if not found</returns>
-		private XmlElement FindXmlFolderSystem(string id)
-		{
-			return (XmlElement)this.GetFolderSystemsNode().SelectSingleNode(String.Format("/folder-systems/folder-system[@id='{0}']", id));
-		}
-
-		/// <summary>
-		/// List the stored folder systems in the XML doc
-		/// </summary>
-		/// <returns>A list of "folder-system" element</returns>
-		private XmlNodeList ListXmlFolderSystems()
-		{
-			return this.GetFolderSystemsNode().SelectNodes(String.Format("/folder-systems/folder-system"));
-		}
-
-		/// <summary>
-		/// Finds a folder with the specified id in the specified "folder-system" node.
-		/// </summary>
-		/// <param name="id">the id of the folder to find</param>
-		/// <param name="xmlFolderSystem">the "folder-system" node to search in</param>
-		/// <returns>the XmlElement of the folder if found, otherwise null</returns>
-		private XmlElement FindXmlFolder(string id, XmlElement xmlFolderSystem)
-		{
-			return (XmlElement)xmlFolderSystem.SelectSingleNode(String.Format("folder[@id='{0}']", id));
-		}
-
-		#endregion
 	}
 }

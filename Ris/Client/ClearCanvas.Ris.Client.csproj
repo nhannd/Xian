@@ -95,6 +95,7 @@
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CheckInSettings.cs" />
     <Compile Include="ExternalPractitionerOverviewComponent.cs" />
+    <Compile Include="FolderExplorerConfiguration.cs" />
     <Compile Include="LookupHandlerAggregator.cs" />
     <Compile Include="LookupHandlerCellEditor.cs" />
     <Compile Include="OrderNoteConversationComponentRecipientTable.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="StaffProfileEditorTool.cs" />
     <Compile Include="StaffSelectorEditorComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
+    <Compile Include="FolderExplorerUserConfiguration.cs" />
     <Compile Include="UserLookupHandler.cs" />
     <Compile Include="UserWorklistTool.cs" />
     <Compile Include="ViewImagesHelper.cs" />
@@ -715,6 +717,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\MultiEditToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FolderExplorerComponentUserSettings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

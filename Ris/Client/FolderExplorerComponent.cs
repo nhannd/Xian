@@ -387,16 +387,10 @@ namespace ClearCanvas.Ris.Client
 			// clear existing
 			_folderTreeRoot.GetSubTree().Items.Clear();
 
-			// put folders in correct insertion order from XML
-			List<IFolder> orderedFolders;
-			List<IFolder> remainderFolders;
-			FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(_folderSystem, out orderedFolders, out remainderFolders);
+			var orderedFolders = FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(_folderSystem);
+			orderedFolders = CollectionUtils.Select(orderedFolders, f => f.Visible);
 
-			orderedFolders = CollectionUtils.Select(orderedFolders, delegate(IFolder f) { return f.Visible; });
-			remainderFolders = CollectionUtils.Select(remainderFolders, delegate(IFolder f) { return f.Visible; });
-
-			_folderTreeRoot.InsertFolders(orderedFolders, false);	// insert the ordered folders as ordered
-			_folderTreeRoot.InsertFolders(remainderFolders, true);	// insert the remainder sorting alphabetically
+			_folderTreeRoot.InsertFolders(orderedFolders, false);
 		}
 
 		#endregion

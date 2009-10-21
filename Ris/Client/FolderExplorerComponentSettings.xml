@@ -66,7 +66,7 @@
     <folder-class class="PerformedFolder" />
     <folder-class class="CancelledFolder" />
   </folder-system>
-  <folder-system id="ClearCanvas.Ris.Client.OrderNoteboxFolderSystem">
+  <folder-system id="ClearCanvas.Ris.Client.OrderNoteboxFolderSystem" readonly="true">
     <folder-class class="PersonalInboxFolder" />
     <!-- Hide group folders by default -->
     <folder-class class="GroupInboxFolder" visible="false"/>

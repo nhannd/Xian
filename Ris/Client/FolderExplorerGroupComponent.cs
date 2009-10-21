@@ -285,7 +285,7 @@ namespace ClearCanvas.Ris.Client
 			// create tools
 			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
 
-			FolderExplorerComponentSettings.Default.ChangesCommitted += OnUserFolderSystemCustomizationsChanged;
+			FolderExplorerComponentSettings.Default.UserConfigurationSaved += OnUserFolderSystemCustomizationsChanged;
 
 			base.Start();
 		}
@@ -311,7 +311,7 @@ namespace ClearCanvas.Ris.Client
 				DocumentManager.UnregisterFolderSystem(folderSystem);
 			}
 
-			FolderExplorerComponentSettings.Default.ChangesCommitted -= OnUserFolderSystemCustomizationsChanged;
+			FolderExplorerComponentSettings.Default.UserConfigurationSaved -= OnUserFolderSystemCustomizationsChanged;
 
 			base.Stop();
 		}
@@ -471,12 +471,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void BuildFolderExplorers()
 		{
-			// Order the Folder Systems
-			List<IFolderSystem> folderSystems, remainder;
-			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(_folderSystems, out folderSystems, out remainder);
-
-			// add the remainder to the end of the ordered list
-			folderSystems.AddRange(remainder);
+			var folderSystems = FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(_folderSystems);
 
 			// create a folder explorer component and a tab page for each folder system
 			foreach (IFolderSystem folderSystem in folderSystems)
