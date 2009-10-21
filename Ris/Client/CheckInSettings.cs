@@ -35,55 +35,55 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Provides application settings for check-in.
-    /// </summary>
-    /// <remarks>
-    /// This code is adapted from the Visual Studio generated template code;  the generated code has been removed from the project.  Additional 
-    /// settings need to be manually added to this class.
-    /// </remarks>
-    [SettingsGroupDescription("Configures behaviour of check-in procedures.")]
-    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    public sealed class CheckInSettings : global::System.Configuration.ApplicationSettingsBase
-    {
-        private static CheckInSettings defaultInstance = ((CheckInSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new CheckInSettings())));
-        
-        public CheckInSettings()
-        {
-            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-        }
+	/// <summary>
+	/// Provides application settings for check-in.
+	/// </summary>
+	/// <remarks>
+	/// This code is adapted from the Visual Studio generated template code;  the generated code has been removed from the project.  Additional 
+	/// settings need to be manually added to this class.
+	/// </remarks>
+	[SettingsGroupDescription("Configures behaviour of check-in procedures.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	public sealed class CheckInSettings : global::System.Configuration.ApplicationSettingsBase
+	{
+		private static CheckInSettings defaultInstance = ((CheckInSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new CheckInSettings())));
+		
+		public CheckInSettings()
+		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
 
-        public static CheckInSettings Default {
-            get {
-                return defaultInstance;
-            }
-        }
-        
-        /// <summary>
-        /// Acceptable early check-in threshold before warning user in minutes.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Acceptable early check-in threshold before warning user. (in minutes)")]
-        [global::System.Configuration.DefaultSettingValueAttribute("120")]
-        public int EarlyCheckInWarningThreshold {
-            get {
-                return ((int)(this["EarlyCheckInWarningThreshold"]));
-            }
-        }
+		public static CheckInSettings Default {
+			get {
+				return defaultInstance;
+			}
+		}
+		
+		/// <summary>
+		/// Acceptable early check-in threshold before warning user in minutes.
+		/// </summary>
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.SettingsDescriptionAttribute("Acceptable early check-in threshold before warning user. (in minutes)")]
+		[global::System.Configuration.DefaultSettingValueAttribute("120")]
+		public int EarlyCheckInWarningThreshold {
+			get {
+				return ((int)(this["EarlyCheckInWarningThreshold"]));
+			}
+		}
 
-        /// <summary>
-        /// Acceptable late check-in threshold before warning user in minutes.
-        /// </summary>
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Acceptable late check-in threshold before warning user. (in minutes)")]
-        [global::System.Configuration.DefaultSettingValueAttribute("180")]
-        public int LateCheckInWarningThreshold {
-            get {
-                return ((int)(this["LateCheckInWarningThreshold"]));
-            }
-        }
+		/// <summary>
+		/// Acceptable late check-in threshold before warning user in minutes.
+		/// </summary>
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+		[global::System.Configuration.SettingsDescriptionAttribute("Acceptable late check-in threshold before warning user. (in minutes)")]
+		[global::System.Configuration.DefaultSettingValueAttribute("180")]
+		public int LateCheckInWarningThreshold {
+			get {
+				return ((int)(this["LateCheckInWarningThreshold"]));
+			}
+		}
 
 		public enum ValidateResult { Success, ScheduledTimeTooEarly, ScheduledTimeTooLate }
 
@@ -102,7 +102,6 @@ namespace ClearCanvas.Ris.Client
 
 			if (scheduledTime > lateBound)
 			{
-				// scheduled time too early
 				message = SR.MessageAlertScheduledTimeTooLate;
 				return ValidateResult.ScheduledTimeTooLate;
 			}
