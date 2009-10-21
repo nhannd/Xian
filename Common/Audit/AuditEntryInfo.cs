@@ -92,7 +92,7 @@ namespace ClearCanvas.Common.Audit
 		/// <summary>
 		/// Gets or sets the user session ID on whose behalf this log entry was created.
 		/// </summary>
-		[DataMember]
+		[DataMember(IsRequired = false)]
 		public string UserSessionId { get; private set; }
 
 		/// <summary>
