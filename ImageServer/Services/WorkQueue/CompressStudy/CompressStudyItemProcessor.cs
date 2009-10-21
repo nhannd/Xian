@@ -297,12 +297,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                             Platform.Log(LogLevel.Error, "Compression file that failed: {0}", file.Filename);
                             throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid,processor.FailureException);
                         }
-                        else
-                        {
-                            _instanceStats.CompressTime.Add(compressCommand.CompressTime);
-							Platform.Log(ServerPlatform.InstanceLogLevel, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
-                                         patientsName);
-                        }
+                    	_instanceStats.CompressTime.Add(compressCommand.CompressTime);
+                    	Platform.Log(ServerPlatform.InstanceLogLevel, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
+                    	             patientsName);
                     }
                     
                 }
@@ -438,38 +435,34 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
         {
             
 			IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, 
-                new WorkQueueTypeEnum[]
+                new[]
 			    {
 			        WorkQueueTypeEnum.StudyProcess, 
                     WorkQueueTypeEnum.ReconcileStudy
                 }, null);
 
+        	TimeSpan delay;
+
 			if (relatedItems == null || relatedItems.Count == 0)
 			{
-                // Don't compress lossy if the study needs to be reconciled.
+				// Don't compress lossy if the study needs to be reconciled.
                 // It's time wasting if we go ahead with the compression because later on
                 // users will have to restore the study in order to reconcile the images in SIQ.
                 if (CompressTransferSyntax.LossyCompressed && StorageLocation.IsReconcileRequired)
                 {
                     Platform.Log(LogLevel.Info, "Study {0} cannot be compressed to lossy at this time because of pending reconciliation. Reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
-                    TimeSpan delay = TimeSpan.FromMinutes(60);
+                    delay = TimeSpan.FromMinutes(60);
                     ReinsertFilesystemQueue(delay);
                     PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
                     return false;
                 }
-			    else
-                    return true;
+				return true;
 			}
-            else
-			{
-                Platform.Log(LogLevel.Info, "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
-                TimeSpan delay = TimeSpan.FromMinutes(60);
-                ReinsertFilesystemQueue(delay);
-                PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-                return false;
-			}
-
-			
+        	Platform.Log(LogLevel.Info, "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue", StorageLocation.StudyInstanceUid);
+        	delay = TimeSpan.FromMinutes(60);
+        	ReinsertFilesystemQueue(delay);
+        	PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+        	return false;
         }
 
 	}

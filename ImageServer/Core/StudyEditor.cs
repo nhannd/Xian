@@ -54,9 +54,9 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			private readonly WebEditStudyContext _context;
 
-			public StudyEditingEventArgs(WebEditStudyContext _context)
+			public StudyEditingEventArgs(WebEditStudyContext context)
 			{
-				this._context = _context;
+				_context = context;
 			}
 
 			public WebEditStudyContext Context
@@ -72,9 +72,9 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			private readonly WebEditStudyContext _context;
 
-			public StudyEditedEventArgs(WebEditStudyContext _context)
+			public StudyEditedEventArgs(WebEditStudyContext context)
 			{
-				this._context = _context;
+				_context = context;
 			}
 
 			public WebEditStudyContext Context
@@ -99,41 +99,26 @@ namespace ClearCanvas.ImageServer.Core
 		#endregion
 
 		#region Private Fields
+
 		private EventHandler<StudyEditingEventArgs> _edittingHandlers;
 		private EventHandler<StudyEditedEventArgs> _editedHandlers;
-		private readonly Patient _patient;
-		private readonly Study _study;
-		private readonly ServerPartition _serverPartition;
-		private readonly StudyStorageLocation _storageLocation;
-
 		private IList<IWebEditStudyProcessorExtension> _plugins;
-		public string _failureReason = string.Empty;
+
 		#endregion
 
 		#region Properties
-		public Patient Patient
-		{
-			get { return _patient; }
-		}
-		public Study Study
-		{
-			get { return _study; }
-		}
-		public ServerPartition ServerPartition
-		{
-			get { return _serverPartition; }
-		}
-		public StudyStorageLocation StorageLocation
-		{
-			get { return _storageLocation; }
-		}
-		public string FailureReason
-		{
-			get { return _failureReason; }
-			set { _failureReason = value; }
-		}
 
-        /// <summary>
+		public Patient Patient { get; private set; }
+
+		public Study Study { get; private set; }
+
+		public ServerPartition ServerPartition { get; private set; }
+
+		public StudyStorageLocation StorageLocation { get; private set; }
+
+		public string FailureReason { get; set; }
+
+		/// <summary>
         /// Gets the new <see cref="StudyStorageLocation"/> for the study after it is updated.
         /// </summary>
         public StudyStorageLocation NewStorageLocation { get; private set; }
@@ -150,15 +135,16 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="theStudy"></param>
 		public StudyEditor(ServerPartition thePartition, StudyStorageLocation location, Patient thePatient, Study theStudy)
 		{
+			FailureReason = string.Empty;
 			Platform.CheckForNullReference(thePartition, "thePartition");
 			Platform.CheckForNullReference(location, "location");
 			Platform.CheckForNullReference(thePatient, "thePatient");
 			Platform.CheckForNullReference(theStudy, "theStudy");
 
-			_serverPartition = thePartition;
-			_storageLocation = location;
-			_patient = thePatient;
-			_study = theStudy;
+			ServerPartition = thePartition;
+			StorageLocation = location;
+			Patient = thePatient;
+			Study = theStudy;
 		}
 		#endregion
 
@@ -177,12 +163,9 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			Platform.Log(LogLevel.Debug, "Loading extensions..");
 			WebEditStudyProcessorExtensionPoint ex = new WebEditStudyProcessorExtensionPoint();
-			_plugins = CollectionUtils.Select<IWebEditStudyProcessorExtension>(
+			_plugins = CollectionUtils.Select(
 								ex.CreateExtensions(),
-								delegate(IWebEditStudyProcessorExtension plugin)
-								{
-									return plugin.Enabled;
-								});
+								(IWebEditStudyProcessorExtension plugin) => plugin.Enabled);
 
 			if (_plugins != null && _plugins.Count > 0)
 			{
@@ -191,24 +174,10 @@ namespace ClearCanvas.ImageServer.Core
 				foreach (IWebEditStudyProcessorExtension plugin in _plugins)
 				{
 					plugin.Initialize();
+					IWebEditStudyProcessorExtension extension = plugin;
+					StudyEditing += ((sender, ev) => extension.OnStudyEditing(ev.Context));
+					StudyEdited += ((sender, ev) => extension.OnStudyEdited(ev.Context));
 				}
-
-				StudyEditing += delegate(object sender, StudyEditingEventArgs ev)
-								{
-									foreach (IWebEditStudyProcessorExtension plugin in _plugins)
-									{
-										plugin.OnStudyEditing(ev.Context);
-									}
-								};
-
-				StudyEdited += delegate(object sender, StudyEditedEventArgs ev)
-								   {
-									   foreach (IWebEditStudyProcessorExtension plugin in _plugins)
-									   {
-										   plugin.OnStudyEdited(ev.Context);
-									   }
-								   };
-
 			}
 		}
 		#endregion
@@ -220,7 +189,6 @@ namespace ClearCanvas.ImageServer.Core
 		/// <returns></returns>
 		public bool Edit(XmlElement actionXml)
 		{
-
 			Platform.Log(LogLevel.Info,
 						 "Starting Edit of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
 						 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
@@ -231,64 +199,61 @@ namespace ClearCanvas.ImageServer.Core
             EditStudyWorkQueueDataParser parser = new EditStudyWorkQueueDataParser();
 		    EditStudyWorkQueueData data = parser.Parse(actionXml);
 
-		    using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
+			using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
 			{
-				// Load the engine for editing rules.
-				ServerRulesEngine engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopEdited, ServerPartition.Key);
-				engine.Load();
-
 				// Convert UpdateItem in the request into BaseImageLevelUpdateCommand
-                List<BaseImageLevelUpdateCommand> updateCommands = null;
-                if (data!=null)
-                {
-                	updateCommands= CollectionUtils.Map<UpdateItem, BaseImageLevelUpdateCommand>(
-					        data.EditRequest.UpdateEntries,
-					        delegate(UpdateItem item)
-					            {
-					                // Note: For edit, we assume each UpdateItem is equivalent to SetTagCommand
-					                return new SetTagCommand(item.DicomTag.TagValue, item.OriginalValue, item.Value);
-					            }
-					        );
-                }               
-                
+				List<BaseImageLevelUpdateCommand> updateCommands = null;
+				if (data != null)
+				{
+					updateCommands = CollectionUtils.Map<UpdateItem, BaseImageLevelUpdateCommand>(
+						data.EditRequest.UpdateEntries,
+						delegate(UpdateItem item)
+							{
+								// Note: For edit, we assume each UpdateItem is equivalent to SetTagCommand
+								return new SetTagCommand(item.DicomTag.TagValue, item.OriginalValue, item.Value);
+							}
+						);
+				}
 
 				UpdateStudyCommand updateStudyCommand =
-					new UpdateStudyCommand(ServerPartition, StorageLocation, updateCommands, engine);
+					new UpdateStudyCommand(ServerPartition, StorageLocation, updateCommands, 
+						ServerRuleApplyTimeEnum.SopEdited);
 				processor.AddCommand(updateStudyCommand);
-
-				WebEditStudyContext context = new WebEditStudyContext();
-				context.CommandProcessor = processor;
-				context.EditType = EditType.WebEdit;
-				context.OriginalStudyStorageLocation = StorageLocation;
-				context.EditCommands = updateCommands;
-				context.OriginalStudy = _study;
-				context.OrginalPatient = _patient;
-			    context.UserId = data.EditRequest.UserId;
-			    context.Reason = data.EditRequest.Reason;
+		
+				WebEditStudyContext context = new WebEditStudyContext
+				                              	{
+				                              		CommandProcessor = processor,
+				                              		EditType = EditType.WebEdit,
+				                              		OriginalStudyStorageLocation = StorageLocation,
+				                              		EditCommands = updateCommands,
+				                              		OriginalStudy = Study,
+				                              		OrginalPatient = Patient,
+				                              		UserId = data.EditRequest.UserId,
+				                              		Reason = data.EditRequest.Reason
+				                              	};
 
 				OnStudyUpdating(context);
 
-				if (processor.Execute())
+				if (!processor.Execute())
 				{
-                    // reload the StudyStorageLocation
-                    NewStorageLocation = StudyStorageLocation.FindStorageLocations(StorageLocation.StudyStorage)[0];
-                    context.NewStudystorageLocation = NewStorageLocation;
-
-					OnStudyUpdated(context);
-
-					if (updateStudyCommand.Statistics != null)
-						StatisticsLogger.Log(LogLevel.Info, updateStudyCommand.Statistics);
-
-					return true;
-				}
-				else
-				{
+					Platform.Log(LogLevel.Error, processor.FailureException, "Unexpected failure editing study: {0}",
+					             processor.FailureReason);
 					FailureReason = processor.FailureReason;
 
 					return false;
 				}
-			}
 
+				// reload the StudyStorageLocation
+				NewStorageLocation = StudyStorageLocation.FindStorageLocations(StorageLocation.StudyStorage)[0];
+				context.NewStudystorageLocation = NewStorageLocation;
+
+				OnStudyUpdated(context);
+
+				if (updateStudyCommand.Statistics != null)
+					StatisticsLogger.Log(LogLevel.Info, updateStudyCommand.Statistics);
+
+				return true;
+			}
 		}
 
 		/// <summary>

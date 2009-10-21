@@ -46,19 +46,15 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				{
 					return XmlUtils.Deserialize<StudyReconcileDescriptor>(doc.DocumentElement);
 				}
-				else
-				{
-					// Note, the prior software versions had "MergeStudy", "CreateStudy"
-					// and "Discard" Document Elements.  With 1.5, they were all changed
-					// to "Reconcile".
-					if (doc.DocumentElement.Name == "MergeStudy"
-					    ||doc.DocumentElement.Name == "CreateStudy"
-					    ||doc.DocumentElement.Name == "Discard")
-						throw new NotSupportedException(String.Format("ReconcileStudy Command from prior version no longer supported: {0}", doc.DocumentElement.Name));
+				// Note, the prior software versions had "MergeStudy", "CreateStudy"
+				// and "Discard" Document Elements.  With 1.5, they were all changed
+				// to "Reconcile".
+				if (doc.DocumentElement.Name == "MergeStudy"
+				    ||doc.DocumentElement.Name == "CreateStudy"
+				    ||doc.DocumentElement.Name == "Discard")
+					throw new NotSupportedException(String.Format("ReconcileStudy Command from prior version no longer supported: {0}", doc.DocumentElement.Name));
                 
-					throw new NotSupportedException(String.Format("ReconcileStudy Command: {0}", doc.DocumentElement.Name));
-				}
-
+				throw new NotSupportedException(String.Format("ReconcileStudy Command: {0}", doc.DocumentElement.Name));
 			}
 
 			return null;

@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                         _studyUpdateCommands = BuildUpdateStudyCommandsFromDuplicate();
                         using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Existing Study w/ Duplicate Info"))
                         {
-                            processor.AddCommand(new UpdateStudyCommand(ServerPartition, StorageLocation, _studyUpdateCommands));
+							processor.AddCommand(new UpdateStudyCommand(ServerPartition, StorageLocation, _studyUpdateCommands, ServerRuleApplyTimeEnum.SopProcessed));
                             if (!processor.Execute())
                             {
                                 throw new ApplicationException(processor.FailureReason, processor.FailureException);

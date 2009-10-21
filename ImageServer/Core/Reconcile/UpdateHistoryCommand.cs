@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -61,10 +60,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
         {
             IStudyHistoryEntityBroker historyUpdateBroker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
-            StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
-            parms.DestStudyStorageKey = _destStudy.Key;
+        	StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns {DestStudyStorageKey = _destStudy.Key};
 
-            if (_map != null)
+        	if (_map != null)
             {
                 // replace the mapping in the history
                 StudyReconcileDescriptor changeLog = XmlUtils.Deserialize<StudyReconcileDescriptor>(_studyHistory.ChangeDescription);

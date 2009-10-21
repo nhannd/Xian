@@ -30,7 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
 
@@ -41,84 +40,37 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	/// </summary>
 	public class ReconcileStudyProcessorContext
 	{
-		#region Private Members
-		private WorkQueue _item;
-		private ServerPartition _partition;
-		private StudyStorageLocation _workQueueItemStudyStorage;
-		private ReconcileStudyWorkQueueData _data;
-		private StudyHistory _history;
-		private StudyStorageLocation _destStudyStorageLocation;
-		private ServerFilesystemInfo _targetFilesystem;
-		private IList<WorkQueueUid> _workQueueUidList;
-		#endregion
-
-
-
 		#region Public Properties
+
 		/// <summary>
 		/// The 'ReconcileStudy' <see cref="WorkQueue"/> item.
 		/// </summary>
-		public WorkQueue WorkQueueItem
-		{
-			get { return _item; }
-			set { _item = value; }
-		}
+		public WorkQueue WorkQueueItem { get; set; }
 
 		/// <summary>
 		/// The server partition associated with <see cref="WorkQueueItem"/>
 		/// </summary>
-		public ServerPartition Partition
-		{
-			get { return _partition; }
-			set { _partition = value; }
-		}
+		public ServerPartition Partition { get; set; }
 
 		/// <summary>
 		/// The "decoded" queue data associated with <see cref="WorkQueueItem"/>
 		/// </summary>
-		public ReconcileStudyWorkQueueData ReconcileWorkQueueData
-		{
-			get { return _data; }
-			set { _data = value; }
-		}
+		public ReconcileStudyWorkQueueData ReconcileWorkQueueData { get; set; }
 
 		/// <summary>
 		/// The <see cref="StudyHistory"/> associated with the <see cref="WorkQueueItem"/>
 		/// </summary>
-		public StudyHistory History
-		{
-			get { return _history; }
-			set { _history = value; }
-		}
+		public StudyHistory History { get; set; }
 
 		/// <summary>
 		/// The <see cref="StudyStorageLocation"/> of the resultant study which the images will be reconciled to.
 		/// </summary>
-		public StudyStorageLocation DestStorageLocation
-		{
-			get { return _destStudyStorageLocation; }
-			set { _destStudyStorageLocation = value; }
-		}
+		public StudyStorageLocation DestStorageLocation { get; set; }
 
-		public ServerFilesystemInfo DestFilesystem
-		{
-			get { return _targetFilesystem; }
-			set { _targetFilesystem = value; }
-		}
+		public IList<WorkQueueUid> WorkQueueUidList { get; set; }
 
-		public IList<WorkQueueUid> WorkQueueUidList
-		{
-			get { return _workQueueUidList; }
-			set { _workQueueUidList = value; }
-		}
-
-		public StudyStorageLocation WorkQueueItemStudyStorage
-		{
-			get { return _workQueueItemStudyStorage; }
-			set { _workQueueItemStudyStorage = value; }
-		}
+		public StudyStorageLocation WorkQueueItemStudyStorage { get; set; }
 
 		#endregion
-
 	}
 }

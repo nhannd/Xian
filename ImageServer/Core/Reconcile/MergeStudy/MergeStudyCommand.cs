@@ -85,8 +85,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 			DetermineDestination();
 
-            if (Context.DestStorageLocation != null)
-                EnsureStudyCanBeUpdated(Context.DestStorageLocation);
+            EnsureStudyCanBeUpdated(Context.DestStorageLocation);
 
 			if (_parameters.UpdateDestination)
 				UpdateExistingStudy();
@@ -168,7 +167,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			Platform.Log(LogLevel.Info, "Updating existing study...");
 			using(ServerCommandProcessor updateProcessor = new ServerCommandProcessor("Update Study"))
 			{
-				UpdateStudyCommand studyUpdateCommand = new UpdateStudyCommand(Context.Partition, Context.DestStorageLocation, _parameters.Commands);
+				UpdateStudyCommand studyUpdateCommand = new UpdateStudyCommand(Context.Partition, Context.DestStorageLocation, _parameters.Commands, ServerRuleApplyTimeEnum.SopProcessed);
 				updateProcessor.AddCommand(studyUpdateCommand);
 				if (!updateProcessor.Execute())
 				{
@@ -180,7 +179,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 		private void ProcessUidList()
 		{
-			int counter = 0;
 			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 
 			StudyProcessorContext context = new StudyProcessorContext(Context.DestStorageLocation);
@@ -220,8 +218,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 					}
 
 					_processedCount++;
-                    
-                    Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+
+					Platform.Log(ServerPlatform.InstanceLogLevel, "Reconciled SOP {0} [{1} of {2}]", uid.SopInstanceUid, _processedCount, Context.WorkQueueUidList.Count);
 				}
 				catch (Exception e)
 				{
@@ -245,14 +243,19 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			{
 				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, Context.DestStorageLocation, uidGroup);
 				DicomProcessingResult result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
-				if (!result.Successful) throw new ApplicationException(result.ErrorMessage);
+				if (!result.Successful)
+				{
+					FailUid(uid, true);
+					return;
+				}
 
 				commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
 				commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
 				if (!commandProcessor.Execute())
 				{
-					Platform.Log(LogLevel.Error, "Unexpectedly not able to insert Duplicate SOP for {0}", uid.SopInstanceUid);
+					Platform.Log(LogLevel.Error, "Unexpected error when creating duplicate study integrity queue entry: {0}", commandProcessor.FailureReason);
+					FailUid(uid, true);
 				}
 			}
 		}

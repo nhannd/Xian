@@ -150,10 +150,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
-                InsertDuplicateQueueEntryCommand insertCommand = new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, file, uid.RelativePath, differences);
+                InsertOrUpdateEntryCommand insertCommand = new InsertOrUpdateEntryCommand(uid.GroupID, StorageLocation, file, uid.RelativePath, differences);
                 processor.AddCommand(insertCommand);
-                processor.AddCommand(new UpdateDuplicateQueueEntryCommand(
-                        delegate() { return insertCommand.QueueEntry; }, file));
 
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 

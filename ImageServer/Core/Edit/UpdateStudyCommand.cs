@@ -94,27 +94,19 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#region Constructors
 		public UpdateStudyCommand(ServerPartition partition, 
 		                          StudyStorageLocation studyLocation,
-		                          IList<BaseImageLevelUpdateCommand> imageLevelCommands) 
+		                          IList<BaseImageLevelUpdateCommand> imageLevelCommands,
+								  ServerRuleApplyTimeEnum applyTime) 
 			: base("Update existing study", true)
 		{
 			_partition = partition;
 			_oldStudyLocation = studyLocation;
 			_commands = imageLevelCommands;
 			_statistics = new UpdateStudyStatistics(_oldStudyLocation.StudyInstanceUid);
-			_rulesEngine = null;
-		}
-
-		public UpdateStudyCommand(ServerPartition partition,
-								  StudyStorageLocation studyLocation,
-								  IList<BaseImageLevelUpdateCommand> imageLevelCommands,
-								  ServerRulesEngine rulesEngine)
-			: base("Update existing study", true)
-		{
-			_partition = partition;
-			_oldStudyLocation = studyLocation;
-			_commands = imageLevelCommands;
-			_statistics = new UpdateStudyStatistics(_oldStudyLocation.StudyInstanceUid);
-			_rulesEngine = rulesEngine;
+			// Load the engine for editing rules.
+			_rulesEngine = new ServerRulesEngine(applyTime, _partition.Key);
+			if (applyTime.Equals(ServerRuleApplyTimeEnum.SopProcessed))
+				_rulesEngine.AddIncludeType(ServerRuleTypeEnum.AutoRoute);
+			_rulesEngine.Load();
 		}
 
 		#endregion
@@ -147,6 +139,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 			UpdateFilesystem();
 
+			//This should only be applied when editing a complete study.  it should not be
+			// applied on reconcile.
+			//StudyRulesEngine engine = new StudyRulesEngine(_oldStudyLocation, _partition);
+			//engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, theProcessor);
+    
 			UpdateDatabase();
 
 			Statistics.ProcessTime.End();
@@ -173,82 +170,85 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#region Private Methods
 		private void Initialize()
 		{
-			_backupDir = ExecutionContext.BackupDirectory;
-
-			_oldStudyPath = _oldStudyLocation.GetStudyPath();
-			_oldStudyInstanceUid = _oldStudyLocation.StudyInstanceUid;
-			_oldStudyFolder = _oldStudyLocation.StudyFolder;
-			_newStudyFolder = _oldStudyFolder;
-			_newStudyInstanceUid = _oldStudyInstanceUid;
-
-			_study = _oldStudyLocation.LoadStudy(UpdateContext);
-			_totalSopCount = _study.NumberOfStudyRelatedInstances;
-			_curPatient = _study.LoadPatient(UpdateContext);
-			_oldPatientInfo = new PatientInfo();
-			_oldPatientInfo.Name = _curPatient.PatientsName;
-			_oldPatientInfo.PatientId = _curPatient.PatientId;
-			_oldPatientInfo.IssuerOfPatientId = _curPatient.IssuerOfPatientId;
-
-			_newPatientInfo = new PatientInfo(_oldPatientInfo);
-			Debug.Assert(_newPatientInfo.Equals(_oldPatientInfo));
-
-			foreach (BaseImageLevelUpdateCommand command in _commands)
+			using (IPersistenceContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 			{
-				ImageLevelUpdateEntry imageLevelUpdate = command.UpdateEntry;
-				if (imageLevelUpdate != null)
+				_backupDir = ExecutionContext.BackupDirectory;
+
+				_oldStudyPath = _oldStudyLocation.GetStudyPath();
+				_oldStudyInstanceUid = _oldStudyLocation.StudyInstanceUid;
+				_oldStudyFolder = _oldStudyLocation.StudyFolder;
+				_newStudyFolder = _oldStudyFolder;
+				_newStudyInstanceUid = _oldStudyInstanceUid;
+
+				_study = _oldStudyLocation.LoadStudy(readContext);
+				_totalSopCount = _study.NumberOfStudyRelatedInstances;
+				_curPatient = _study.LoadPatient(readContext);
+				_oldPatientInfo = new PatientInfo();
+				_oldPatientInfo.Name = _curPatient.PatientsName;
+				_oldPatientInfo.PatientId = _curPatient.PatientId;
+				_oldPatientInfo.IssuerOfPatientId = _curPatient.IssuerOfPatientId;
+
+				_newPatientInfo = new PatientInfo(_oldPatientInfo);
+				Debug.Assert(_newPatientInfo.Equals(_oldPatientInfo));
+
+				foreach (BaseImageLevelUpdateCommand command in _commands)
 				{
-					if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
+					ImageLevelUpdateEntry imageLevelUpdate = command.UpdateEntry;
+					if (imageLevelUpdate != null)
 					{
-						// Update the folder name if the system is not currently using receiving date as the study folder
-						if (!ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder)
-							_newStudyFolder = imageLevelUpdate.GetStringValue();
-					}
-					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
-					{
-						_newStudyInstanceUid = imageLevelUpdate.GetStringValue();
-					}
-					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
-					{
-						_newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
-					}
-					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
-					{
-						_newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
-					}
-					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
-					{
-						_newPatientInfo.Name = imageLevelUpdate.GetStringValue();
+						if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
+						{
+							// Update the folder name if the system is not currently using receiving date as the study folder
+							if (!ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder)
+								_newStudyFolder = imageLevelUpdate.GetStringValue();
+						}
+						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
+						{
+							_newStudyInstanceUid = imageLevelUpdate.GetStringValue();
+						}
+						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
+						{
+							_newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
+						}
+						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
+						{
+							_newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
+						}
+						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
+						{
+							_newPatientInfo.Name = imageLevelUpdate.GetStringValue();
+						}
 					}
 				}
+
+
+				Platform.CheckForNullReference(_newStudyInstanceUid, "_newStudyInstanceUid");
+
+				if (String.IsNullOrEmpty(_newStudyFolder))
+				{
+					_newStudyFolder = ImageServerCommonConfiguration.DefaultStudyRootFolder;
+				}
+
+				_newStudyPath = Path.Combine(_oldStudyLocation.FilesystemPath, _partition.PartitionFolder);
+				_newStudyPath = Path.Combine(_newStudyPath, _newStudyFolder);
+				_newStudyPath = Path.Combine(_newStudyPath, _newStudyInstanceUid);
+
+				_newPatient = FindPatient(_newPatientInfo, readContext);
+				_patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
+
+				Statistics.InstanceCount = _study.NumberOfStudyRelatedInstances;
+				Statistics.StudySize = (ulong) _oldStudyLocation.LoadStudyXml().GetStudySize();
+
+				// The study path will be changed. We will need to delete the original folder at the end.
+				// May be too simple to test if two paths are the same. But let's assume it is good enough for 99% of the time.
+				_deleteOriginalFolder = NewStudyPath != _oldStudyPath;
+				_initialized = true;
 			}
-
-
-			Platform.CheckForNullReference(_newStudyInstanceUid, "_newStudyInstanceUid");
-
-			if (String.IsNullOrEmpty(_newStudyFolder))
-			{
-				_newStudyFolder = ImageServerCommonConfiguration.DefaultStudyRootFolder;
-			}
-
-			_newStudyPath = Path.Combine(_oldStudyLocation.FilesystemPath, _partition.PartitionFolder);
-			_newStudyPath = Path.Combine(_newStudyPath, _newStudyFolder);
-			_newStudyPath = Path.Combine(_newStudyPath, _newStudyInstanceUid);
-
-			_newPatient = FindPatient(_newPatientInfo);
-			_patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
-
-			Statistics.InstanceCount = _study.NumberOfStudyRelatedInstances;
-			Statistics.StudySize = (ulong) _oldStudyLocation.LoadStudyXml().GetStudySize();
-
-			// The study path will be changed. We will need to delete the original folder at the end.
-			// May be too simple to test if two paths are the same. But let's assume it is good enough for 99% of the time.
-			_deleteOriginalFolder = NewStudyPath != _oldStudyPath; 
-			_initialized = true;
 		}
 
-		private Patient FindPatient(PatientInfo patientInfo)
+		private Patient FindPatient(PatientInfo patientInfo, IPersistenceContext context)
 		{
-			IPatientEntityBroker patientFindBroker = UpdateContext.GetBroker<IPatientEntityBroker>();
+			IPatientEntityBroker patientFindBroker = context.GetBroker<IPatientEntityBroker>();
 			PatientSelectCriteria criteria = new PatientSelectCriteria();
 			criteria.PatientId.EqualTo(patientInfo.PatientId);
 			criteria.PatientsName.EqualTo(patientInfo.Name);
@@ -359,7 +359,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		private void LoadEntities()
 		{
-			_storage = StudyStorage.Load(_oldStudyLocation.GetKey());
+			_storage = StudyStorage.Load(_oldStudyLocation.Key);
 			_study = _storage.LoadStudy(UpdateContext);
 		}
 
@@ -383,9 +383,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			IFilesystemStudyStorageEntityBroker filesystemStorageBroker = UpdateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
 			FilesystemStudyStorageSelectCriteria criteria = new FilesystemStudyStorageSelectCriteria();
 			criteria.FilesystemKey.Equals(_oldStudyLocation.FilesystemKey);
-			criteria.StudyStorageKey.EqualTo(_oldStudyLocation.GetKey());
-			FilesystemStudyStorageUpdateColumns columns = new FilesystemStudyStorageUpdateColumns();
-			columns.StudyFolder = _newStudyFolder;
+			criteria.StudyStorageKey.EqualTo(_oldStudyLocation.Key);
+			FilesystemStudyStorageUpdateColumns columns = new FilesystemStudyStorageUpdateColumns 
+						{StudyFolder = _newStudyFolder};
 			filesystemStorageBroker.Update(criteria, columns);
 
 			// Update Patient level info. Different cases can occur here: 

@@ -135,10 +135,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             {
                 return ParseOldXml(element);
             }
-            else
-            {
-                return XmlUtils.Deserialize<EditStudyWorkQueueData>(element);
-            }
+        	return XmlUtils.Deserialize<EditStudyWorkQueueData>(element);
         }
 
         private EditStudyWorkQueueData ParseOldXml(XmlElement element)

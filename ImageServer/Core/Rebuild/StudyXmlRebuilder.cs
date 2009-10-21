@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Core.Rebuild
 
 					if (!processor.Execute())
 					{
-						throw new ApplicationException(processor.FailureReason);
+						throw new ApplicationException(processor.FailureReason, processor.FailureException);
 					}
 
 					Platform.Log(LogLevel.Info, "Completed reprocessing Study XML file for study {0}", _location.StudyInstanceUid);

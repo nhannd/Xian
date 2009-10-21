@@ -60,7 +60,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         
         #endregion
 
-
         #region Public Methods
         public void Dispose()
         {
@@ -68,7 +67,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             {
                 File.Delete(_backupPath);
             }
-
         } 
         #endregion
     }

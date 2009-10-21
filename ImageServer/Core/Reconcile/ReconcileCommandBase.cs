@@ -152,8 +152,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 	            {
 	                throw new ApplicationException("Unable to update the history", processor.FailureException);
 	            }
-	        }
-	        
+	        }	        
 	    }
 
 	    protected void EnsureStudyCanBeUpdated(StudyStorageLocation location)
