@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Edit;
@@ -44,7 +43,6 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -100,9 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// </summary>
 		public void DeleteStudy(ServerEntityKey studyKey, string reason)
         {
-			StudySummary study;
-
-            study = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, Study.Load(HttpContextData.Current.ReadContext, studyKey));
+			StudySummary study = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, Study.Load(HttpContextData.Current.ReadContext, studyKey));
 			if (study.IsReconcileRequired)
 			{
 				throw new ApplicationException(
@@ -114,9 +110,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-                LockStudyParameters lockParms = new LockStudyParameters();
-				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.WebDeleteScheduled;
-                lockParms.StudyStorageKey = study.TheStudyStorage.Key;
+                LockStudyParameters lockParms = new LockStudyParameters
+                                                	{
+                                                		QueueStudyStateEnum = QueueStudyStateEnum.WebDeleteScheduled,
+                                                		StudyStorageKey = study.TheStudyStorage.Key
+                                                	};
 				ILockStudy broker = ctx.GetBroker<ILockStudy>();
 				broker.Execute(lockParms);
 				if (!lockParms.Successful)
@@ -125,18 +123,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				}
 				
 
-				InsertWorkQueueParameters insertParms = new InsertWorkQueueParameters();
-				insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
-			    insertParms.ServerPartitionKey = study.ThePartition.Key;
-				insertParms.StudyStorageKey = study.TheStudyStorage.Key;
-                insertParms.ScheduledTime = Platform.Time; // spread by 15 seconds
+				InsertWorkQueueParameters insertParms = new InsertWorkQueueParameters
+				                                        	{
+				                                        		WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy,
+				                                        		ServerPartitionKey = study.ThePartition.Key,
+				                                        		StudyStorageKey = study.TheStudyStorage.Key,
+				                                        		ScheduledTime = Platform.Time
+				                                        	};
 
-			    WebDeleteStudyLevelQueueData extendedData = new WebDeleteStudyLevelQueueData();
-			    extendedData.Level = DeletionLevel.Study;
-                extendedData.Reason = reason;
-			    extendedData.UserId = ServerHelper.CurrentUserId;
-			    extendedData.UserName = ServerHelper.CurrentUserName;
-                insertParms.WorkQueueData = XmlUtils.SerializeAsXmlDoc(extendedData);
+				WebDeleteStudyLevelQueueData extendedData = new WebDeleteStudyLevelQueueData
+			                                                	{
+			                                                		Level = DeletionLevel.Study,
+			                                                		Reason = reason,
+			                                                		UserId = ServerHelper.CurrentUserId,
+			                                                		UserName = ServerHelper.CurrentUserName
+			                                                	};
+				insertParms.WorkQueueData = XmlUtils.SerializeAsXmlDoc(extendedData);
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
 				
                 if (insertWorkQueue.FindOne(insertParms)==null)
@@ -184,8 +186,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         }
 
         public bool MoveStudy(Study study, Device device, IList<Series> seriesList)
-        {
-            DateTime scheduledTime = Platform.Time.AddSeconds(10);
+        {            
 			if (seriesList != null)
 			{
                 using (
@@ -204,32 +205,31 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					return true;
 				}
 			}
-			else
-			{
-                WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-                WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-                columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
-                columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                columns.ServerPartitionKey = study.ServerPartitionKey;
+        	WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+        	WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns
+        	                                 	{
+        	                                 		WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy,
+        	                                 		WorkQueueStatusEnum = WorkQueueStatusEnum.Pending,
+        	                                 		ServerPartitionKey = study.ServerPartitionKey
+        	                                 	};
 
-                StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+        	StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+        	StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+        	criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+        	criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
-                StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+        	StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
-                columns.StudyStorageKey = storage.Key;
-                DateTime time = Platform.Time;
-                columns.ScheduledTime = time;
-                columns.ExpirationTime = time.AddMinutes(4);
-                columns.FailureCount = 0;
-                columns.DeviceKey = device.Key;
+        	columns.StudyStorageKey = storage.Key;
+        	DateTime time = Platform.Time;
+        	columns.ScheduledTime = time;
+        	columns.ExpirationTime = time.AddMinutes(4);
+        	columns.FailureCount = 0;
+        	columns.DeviceKey = device.Key;
 
-                workqueueAdaptor.Add(columns);
-            }
-               
-            return true;
+        	workqueueAdaptor.Add(columns);
+
+        	return true;
 	    }
 
         public void EditStudy(Study study, List<UpdateItem> updateItems, string reason)
@@ -278,18 +278,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return true;
         }
 
-        private ServerEntityKey GetStudyStorageGUID(Study study)
-        {
-            return GetStudyStorage(study).Key;
-        }
-
         /// <summary>
         /// Returns a value indicating whether the specified study has been scheduled for delete.
         /// </summary>
         /// <param name="study"></param>
         /// <param name="workQueueType"></param>
         /// <returns></returns>           
-        private bool IsStudyInWorkQueue(Study study, WorkQueueTypeEnum workQueueType)
+        private static bool IsStudyInWorkQueue(Study study, WorkQueueTypeEnum workQueueType)
         {
             Platform.CheckForNullReference(study, "Study");
             
@@ -312,13 +307,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 IList<WorkQueue> list = adaptor.Get(workQueueCriteria);
                 if (list != null && list.Count > 0)
                     return true;
-                else
-                {
-                    workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Idle); // not likely but who knows
-                    list = adaptor.Get(workQueueCriteria);
-                    if (list != null && list.Count > 0)
-                        return true;
-                }
+
+            	workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Idle); // not likely but who knows
+            	list = adaptor.Get(workQueueCriteria);
+            	if (list != null && list.Count > 0)
+            		return true;
             }
             return false;
         }
@@ -371,7 +364,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+			workQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
             workQueueCriteria.ScheduledTime.SortAsc(0);
             return adaptor.Get(workQueueCriteria);
         }
@@ -382,7 +375,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             FileSystemQueueAdaptor adaptor = new FileSystemQueueAdaptor();
             FilesystemQueueSelectCriteria fileSystemQueueCriteria = new FilesystemQueueSelectCriteria();
-            fileSystemQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+			fileSystemQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
             fileSystemQueueCriteria.ScheduledTime.SortAsc(0);
             return adaptor.Get(fileSystemQueueCriteria);
         }
@@ -393,10 +386,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             ArchiveQueueAdaptor adaptor = new ArchiveQueueAdaptor();
             ArchiveQueueSelectCriteria archiveQueueCriteria = new ArchiveQueueSelectCriteria();
-            archiveQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+            archiveQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
 			archiveQueueCriteria.ScheduledTime.SortDesc(0);
             return adaptor.Get(archiveQueueCriteria);
         }
+
+		public int GetArchiveQueueCount(Study study)
+		{
+			Platform.CheckForNullReference(study, "Study");
+
+			ArchiveQueueAdaptor adaptor = new ArchiveQueueAdaptor();
+			ArchiveQueueSelectCriteria archiveQueueCriteria = new ArchiveQueueSelectCriteria();
+			archiveQueueCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
+			archiveQueueCriteria.ScheduledTime.SortDesc(0);
+			return adaptor.GetCount(archiveQueueCriteria);
+		}
 
         public IList<ArchiveStudyStorage> GetArchiveStudyStorage(Study study)
         {
@@ -404,7 +408,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         	ArchiveStudyStorageAdaptor adaptor = new ArchiveStudyStorageAdaptor();
         	ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
-        	archiveStudyStorageCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+        	archiveStudyStorageCriteria.StudyStorageKey.EqualTo(study.StudyStorageKey);
         	archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
 
         	return adaptor.Get(archiveStudyStorageCriteria);
@@ -428,11 +432,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             
             IQueryStudyStorageLocation select = HttpContextData.Current.ReadContext.GetBroker<IQueryStudyStorageLocation>();
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+                                                        	{StudyStorageKey = study.StudyStorageKey};
 
-            parms.StudyStorageKey = GetStudyStorageGUID(study);
-
-            IList<StudyStorageLocation> storage = select.Find(parms);
+        	IList<StudyStorageLocation> storage = select.Find(parms);
 
             if (storage == null)
 			{
@@ -448,19 +451,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                              study.GetKey().Key);
             }
 
-            return storage;
-        
+            return storage;        
         }
+
 		public StudyStorage GetStudyStorage(Study study)
 		{
 			Platform.CheckForNullReference(study, "Study");
 
-			StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-			criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-			criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-			return studyStorageAdaptor.GetFirst(criteria);
+			return StudyStorage.Load(study.StudyStorageKey);
 		}   
 
         public void ReprocessStudy(String reason, ServerEntityKey key)
@@ -472,8 +470,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             reprocessor.ReprocessStudy(reason, storageLocation, Platform.Time);
         }
 
-        #endregion
-
-        
+        #endregion      
     }
 }

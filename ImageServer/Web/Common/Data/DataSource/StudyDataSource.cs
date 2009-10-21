@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -110,8 +109,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			set { _accessionNumber = value; }
 		}
 
-
-
 		public string StudyDescription
 		{
 			get { return _studyDescription; }
@@ -185,7 +182,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			}
 		}
 
-
 	    public bool IsOnlineLossy
         {
             get { return _theStudyStorage.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy); }
@@ -208,6 +204,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _isProcessing; }
 			set { _isProcessing = value; }
 		}
+
+		public bool IsArchiving { get; set; }
 
 		public bool IsReconcileRequired
 		{
@@ -278,7 +276,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                     }
                 }
 
-
                 return _requiresWorkQueueAttention.Value;
             }
         } 
@@ -331,7 +328,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return false;
 			}
 
-            if (this.StudyStatusEnum.Equals(ImageServer.Model.StudyStatusEnum.OnlineLossy) 
+            if (StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy) 
                 && IsArchivedLossless)
             {
                 reason = "Study was archived as lossless. It must be restored before it can be edited.";
@@ -373,6 +370,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public bool CanScheduleRestore(out string reason)
 		{
+			if (IsArchiving)
+			{
+				reason = "Study is being archived";
+				return false;
+			}
+
 			if (!IsArchived)
 			{
 				reason = "Study has not been archived.";
@@ -385,11 +388,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return false;
 			}
             
-
 			reason = String.Empty;
 			return true;
 		}
-
 
 	    public bool CanScheduleReconcile(out string reason)
 		{
@@ -455,89 +456,40 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		#region Private Members
 		private readonly StudyController _searchController = new StudyController();
-		private string _accessionNumber;
-		private string _patientId;
-		private string _patientName;
-		private string _studyDescription;
-		private string _toStudyDate;
-        private string _fromStudyDate;
-		private int _resultCount;
-		private ServerPartition _partition;
-		private string _dateFormats;
 		private IList<StudySummary> _list = new List<StudySummary>();
 		private readonly string STUDYDATE_DATEFORMAT = "yyyyMMdd";
-		private string[] _modalities;
-        private string[] _statuses;
+
 		#endregion
 
 		#region Public Properties
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
 
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
-		public string PatientName
-		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
+		public string AccessionNumber { get; set; }
 
-        public string ToStudyDate
-		{
-			get { return _toStudyDate; }
-			set { _toStudyDate = value; }
-		}
+		public string PatientId { get; set; }
 
-        public string FromStudyDate
-        {
-            get { return _fromStudyDate; }
-            set { _fromStudyDate = value; }
-        }
+		public string PatientName { get; set; }
 
-		public ServerPartition Partition
-		{
-			get { return _partition; }
-			set { _partition = value; }
-		}
-		public string DateFormats
-		{
-			get { return _dateFormats; }
-			set { _dateFormats = value; }
-		}
+		public string StudyDescription { get; set; }
+
+		public string ToStudyDate { get; set; }
+
+		public string FromStudyDate { get; set; }
+
+		public ServerPartition Partition { get; set; }
+
+		public string DateFormats { get; set; }
 
 		public IList<StudySummary> List
 		{
 			get { return _list; }
 		}
 
-		public int ResultCount
-		{
-			get { return _resultCount; }
-			set { _resultCount = value; }
-		}
+		public int ResultCount { get; set; }
 
-		public string[] Modalities
-		{
-			get { return _modalities; }
-			set { _modalities = value; }
-		}
+		public string[] Modalities { get; set; }
 
-        public string[] Statuses
-        {
-            get { return _statuses; }
-            set { _statuses = value; }
-        }
+		public string[] Statuses { get; set; }
+
 		#endregion
 
 		#region Private Methods
@@ -718,6 +670,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			if (archiveList.Count > 0)
 				studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
 
+			studySummary.IsArchiving = controller.GetArchiveQueueCount(study) > 0;
 
 			studySummary.IsProcessing = studySummary.TheStudyStorage.Lock;
 
