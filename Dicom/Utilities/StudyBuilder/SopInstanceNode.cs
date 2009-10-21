@@ -59,9 +59,6 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		{
 			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(), sourceDicomFile.DataSet.Copy());
 
-			// FIXME: Remove this next line when #3163 is fixed
-			_dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].Values = sourceDicomFile.MetaInfo[DicomTags.TransferSyntaxUid].Values;
-
 			_instanceUid = sourceDicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 			if (_instanceUid == "")
 				_instanceUid = StudyBuilder.NewUid();
@@ -75,9 +72,6 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		{
 			_instanceUid = StudyBuilder.NewUid();
 			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true, true, true), source._dicomFile.DataSet.Copy(true, true, true));
-
-			// FIXME: Remove this next line when #3163 is fixed
-			_dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(source._dicomFile.TransferSyntaxUid);
 		}
 
 		#region Data Properties

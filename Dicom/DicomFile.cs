@@ -92,7 +92,11 @@ namespace ClearCanvas.Dicom
 
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
-            _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+
+			// If the meta info doesn't already specify the transfer syntax, give it the default transfer syntax of ELE
+			if (string.IsNullOrEmpty(_metaInfo[DicomTags.TransferSyntaxUid].ToString()))
+				_metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+
 			_metaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
         }
 

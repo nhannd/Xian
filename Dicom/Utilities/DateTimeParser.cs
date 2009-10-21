@@ -263,7 +263,7 @@ namespace ClearCanvas.Dicom.Utilities
 		/// Parses the date and time.  Gets the values for each tag from the attribute colllection. The <paramref name="dicomDateTime"/> would be a DateTime tag value - such as AcquisitionDatetime,
 		/// the <paramref name="dicomDate"/> would be just a Date tag value - such as AcquisitionDate; and <paramref name="dicomTime"/> would
 		/// be just the Time tag value - such as AcquisitionTime.  So, this method will parse the <paramref name="dicomDateTime"/> if it is not empty,
-		/// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTimee/> together.
+		/// otherwise it will parse the <paramref name="dicomDate"/> and <paramref name="dicomTime"/> together.
 		/// </summary>
 		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
 		/// <param name="dicomDateTimeTag">The dicom date time tag.</param>
