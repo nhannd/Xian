@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client
 				}
 				catch (Exception e)
 				{
-					ExceptionHandler.Report(e, "Unable to save procedure type", this.Host.DesktopWindow,
+					ExceptionHandler.Report(e, SR.ExceptionSaveProcedureType, this.Host.DesktopWindow,
 						delegate
 						{
 							this.Exit(ApplicationComponentExitCode.Error);

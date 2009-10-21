@@ -891,4 +891,7 @@
   <data name="MessageCannedTextNameFieldCanOnlyContainAlphaChars" xml:space="preserve">
     <value>The name field {0} can only contain space and alphabet characters.</value>
   </data>
+  <data name="ExceptionSaveProcedureType" xml:space="preserve">
+    <value>Unable to save procedure type</value>
+  </data>
 </root>

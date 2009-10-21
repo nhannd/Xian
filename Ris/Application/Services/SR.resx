@@ -217,7 +217,7 @@
     <value>Not all ordered procedures have been performed.</value>
   </data>
   <data name="ExceptionProcedurePlanXmlRequired" xml:space="preserve">
-    <value>A procedure plan Xml is required.</value>
+    <value>A procedure plan XML is required.</value>
   </data>
   <data name="ExceptionMaximumWorklistsReachedForStaff" xml:space="preserve">
     <value>You have reached the maximum number of worklists that can be defined for a staff.</value>
