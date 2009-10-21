@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Configuration;
 using ClearCanvas.Desktop;
 
@@ -83,5 +84,30 @@ namespace ClearCanvas.Ris.Client
                 return ((int)(this["LateCheckInWarningThreshold"]));
             }
         }
-    }
+
+		public enum ValidateResult { Success, ScheduledTimeTooEarly, ScheduledTimeTooLate }
+
+		public static ValidateResult Validate(DateTime? scheduledTime, DateTime checkInTime, out string message)
+		{
+			message = "";
+
+			var earlyBound = checkInTime.AddMinutes(-CheckInSettings.Default.EarlyCheckInWarningThreshold);
+			var lateBound = checkInTime.AddMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
+
+			if (scheduledTime < earlyBound)
+			{
+				message = SR.MessageAlertScheduledTimeTooEarly;
+				return ValidateResult.ScheduledTimeTooEarly;
+			}
+
+			if (scheduledTime > lateBound)
+			{
+				// scheduled time too early
+				message = SR.MessageAlertScheduledTimeTooLate;
+				return ValidateResult.ScheduledTimeTooLate;
+			}
+
+			return ValidateResult.Success;
+		}
+	}
 }

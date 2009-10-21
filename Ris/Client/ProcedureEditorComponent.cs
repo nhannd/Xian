@@ -99,23 +99,14 @@ namespace ClearCanvas.Ris.Client
             this.Validation.Add(new ValidationRule("CheckedIn",
                 delegate
                 {
-
                     // This validation does not apply if the procedure is not checked in
                     if (!_checkedIn)
                         return new ValidationResult(true, "");
 
-                    DateTime now = Platform.Time;
-                    DateTime earlyBound = now.AddMinutes(-CheckInSettings.Default.EarlyCheckInWarningThreshold);
-                    DateTime lateBound = now.AddMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
-                    bool newScheduledTimeTooEarly = _scheduledTime < earlyBound;
-                    bool newScheduledTimeTooLate = _scheduledTime > lateBound;
-                    string alertMessage = "";
-                    if (newScheduledTimeTooEarly)
-                        alertMessage = SR.MessageAlertScheduledTimeTooEarly;
-                    else if (newScheduledTimeTooLate)
-                        alertMessage = SR.MessageAlertScheduledTimeTooLate;
-
-                    return new ValidationResult(!(newScheduledTimeTooEarly || newScheduledTimeTooLate), alertMessage);
+					var alertMessage = "";
+                	var checkInTime = Platform.Time;
+					var success = CheckInSettings.ValidateResult.Success == CheckInSettings.Validate(_scheduledTime, checkInTime, out alertMessage);
+                    return new ValidationResult(success, alertMessage);
                 }));
 
             _procedureTypeChoices.Sort(

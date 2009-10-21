@@ -745,26 +745,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} early by {1} hours {2} minutes
-        ///.
-        /// </summary>
-        internal static string FormatEarlyProcedureCheckInList {
-            get {
-                return ResourceManager.GetString("FormatEarlyProcedureCheckInList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} late by {1} hours {2} minutes
-        ///.
-        /// </summary>
-        internal static string FormatLateProcedureCheckInList {
-            get {
-                return ResourceManager.GetString("FormatLateProcedureCheckInList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Protocolling from the &quot;{0}&quot; worklist.
         /// </summary>
         internal static string FormatProtocolFolderName {
@@ -810,6 +790,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following procedure(s) are being checked in earlier/later than expected:.
+        /// </summary>
+        internal static string MessageCheckInProceduresTooLateOrTooEarly {
+            get {
+                return ResourceManager.GetString("MessageCheckInProceduresTooLateOrTooEarly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must choose a supervisor..
         /// </summary>
         internal static string MessageChooseRadiologist {
@@ -828,11 +817,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following procedure(s) are being checked in earlier/later than expected:.
+        ///   Looks up a localized string similar to Do you still want to check-in the selected procedure(s)?.
         /// </summary>
-        internal static string MessageConfirmCheckInProcedure {
+        internal static string MessageConfirmCheckInProcedures {
             get {
-                return ResourceManager.GetString("MessageConfirmCheckInProcedure", resourceCulture);
+                return ResourceManager.GetString("MessageConfirmCheckInProcedures", resourceCulture);
             }
         }
         

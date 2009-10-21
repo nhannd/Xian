@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Text;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -38,191 +39,150 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="CheckInOrderComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class CheckInOrderComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="CheckInOrderComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class CheckInOrderComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// CheckInOrderComponent class
-    /// </summary>
-    [AssociateView(typeof(CheckInOrderComponentViewExtensionPoint))]
-    public class CheckInOrderComponent : ApplicationComponent
-    {
-        private readonly RegistrationWorklistItem _worklistItem;
-        private CheckInOrderTable _checkInOrderTable;
-        private List<EntityRef> _selectedProcedures;
-        private bool _acceptEnabled;
-        private event EventHandler _acceptEnabledChanged;
+	/// <summary>
+	/// CheckInOrderComponent class
+	/// </summary>
+	[AssociateView(typeof(CheckInOrderComponentViewExtensionPoint))]
+	public class CheckInOrderComponent : ApplicationComponent
+	{
+		private readonly RegistrationWorklistItem _worklistItem;
+		private CheckInOrderTable _checkInOrderTable;
+		private DateTime _checkInTime;
 
-    	private DateTime _checkInTime;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public CheckInOrderComponent(RegistrationWorklistItem item)
+		{
+			_worklistItem = item;
+		}
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public CheckInOrderComponent(RegistrationWorklistItem item)
-        {
-            _worklistItem = item;
-        }
+		public override void Start()
+		{
+			_checkInOrderTable = new CheckInOrderTable();
+			_checkInTime = Platform.Time;
 
-        public override void Start()
-        {
-            _selectedProcedures = new List<EntityRef>();
-            _checkInOrderTable = new CheckInOrderTable();
-        	_checkInTime = Platform.Time;
+			Platform.GetService(
+				delegate(IRegistrationWorkflowService service)
+				{
+					var response = service.ListProceduresForCheckIn(new ListProceduresForCheckInRequest(_worklistItem.OrderRef));
+					_checkInOrderTable.Items.AddRange(
+						CollectionUtils.Map(response.Procedures,
+								delegate(ProcedureSummary item)
+								{
+									var entry = new CheckInOrderTableEntry(item);
+									entry.CheckedChanged += OrderCheckedStateChangedEventHandler;
+									return entry;
+								}));
+				});
 
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    ListProceduresForCheckInResponse response = service.ListProceduresForCheckIn(new ListProceduresForCheckInRequest(_worklistItem.OrderRef));
-                    _checkInOrderTable.Items.AddRange(
-                        CollectionUtils.Map<ProcedureSummary, CheckInOrderTableEntry>(response.Procedures,
-                                delegate(ProcedureSummary item)
-                                {
-                                    CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
-                                    entry.CheckedChanged += OrderCheckedStateChangedEventHandler;
-                                    return entry;
-                                }));
-                });
+			base.Start();
+		}
 
-            UpdateAcceptStatus();
+		#region Presentation Model
 
-            base.Start();
-        }
+		public ITable OrderTable
+		{
+			get { return _checkInOrderTable; }
+		}
 
-        #region Presentation Model
-
-        public ITable OrderTable
-        {
-            get { return _checkInOrderTable; }
-        }
-
-        public List<EntityRef> SelectedProcedures
-        {
-            get { return _selectedProcedures; }
-        }
-
-    	public DateTime CheckInTime
-    	{
+		public DateTime CheckInTime
+		{
 			get { return _checkInTime; }
 			set { _checkInTime = value; }
-    	}
+		}
 
-    	public bool IsCheckInTimeVisible
-    	{
+		public bool CheckInTimeVisible
+		{
 			get { return DowntimeRecovery.InDowntimeRecoveryMode; }
-    	}
+		}
 
-        #endregion
+		public bool AcceptEnabled
+		{
+			get { return CollectionUtils.Contains(_checkInOrderTable.Items, entry => entry.Checked); }
+		}
 
-        public void Accept()
-        {
-            DateTime? earlyBound = _checkInTime.AddMinutes(CheckInSettings.Default.EarlyCheckInWarningThreshold);
-            DateTime? lateBound = _checkInTime.AddMinutes(-CheckInSettings.Default.LateCheckInWarningThreshold);
-            string earlyProcedures = "";
-            string lateProcedures = "";
+		#endregion
 
-            // Get the list of Order EntityRef from the table
-            foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
-            {
-                DateTime? scheduledStartTime = entry.Procedure.ScheduledStartTime;
-                TimeSpan checkInTimeDifference = scheduledStartTime.Value - _checkInTime;
-                bool tooEarly = earlyBound < scheduledStartTime;
-                bool tooLate = lateBound > scheduledStartTime;
-                if (entry.Checked)
-                {
-                    if (tooEarly || tooLate)
-                    {
-                        if (tooEarly)
-                            earlyProcedures += String.Format(SR.FormatEarlyProcedureCheckInList, 
-                                                                Formatting.ProcedureFormat.Format(entry.Procedure),
-                                                                (checkInTimeDifference.Days * 24 + checkInTimeDifference.Hours),
-                                                                checkInTimeDifference.Minutes);
-                        else
-                            lateProcedures += String.Format(SR.FormatLateProcedureCheckInList,
-                                                                Formatting.ProcedureFormat.Format(entry.Procedure),
-                                                                ((-checkInTimeDifference).Days * 24 + (-checkInTimeDifference).Hours),
-                                                                (-checkInTimeDifference).Minutes);
-                    }
-                    _selectedProcedures.Add(entry.Procedure.ProcedureRef);
-                }
-            }
+		public void Accept()
+		{
+			var earlyProcedures = new List<ProcedureSummary>();
+			var lateProcedures = new List<ProcedureSummary>();
+			var checkedProcedureRefs = new List<EntityRef>();
 
-            if(earlyProcedures != "" || lateProcedures != "")
-                if(this.Host.DesktopWindow.ShowMessageBox(String.Format((earlyProcedures != "" ? SR.MessageConfirmCheckInProcedure + "\n\n{0}" : "") +
-                                                                    (lateProcedures != "" ? "{1}\n" : "") + 
-                                                                    "Do you still want to check-in the selected procedure(s)?", 
-                                                                    earlyProcedures, lateProcedures), 
-                                                                    MessageBoxActions.YesNo) == DialogBoxAction.No)
-                {
-                    _selectedProcedures.Clear();
-                    return;
-                }
+			// Get the list of Order EntityRef from the table
+			foreach (var entry in _checkInOrderTable.Items)
+			{
+				if (!entry.Checked)
+					continue;
+
+				checkedProcedureRefs.Add(entry.Procedure.ProcedureRef);
+
+				string checkInValidationMessage;
+				var result = CheckInSettings.Validate(entry.Procedure.ScheduledStartTime, _checkInTime, out checkInValidationMessage);
+				switch (result)
+				{
+					case CheckInSettings.ValidateResult.ScheduledTimeTooEarly:
+						earlyProcedures.Add(entry.Procedure);
+						break;
+					case CheckInSettings.ValidateResult.ScheduledTimeTooLate:
+						lateProcedures.Add(entry.Procedure);
+						break;
+					default:
+						break;
+				}
+			}
+
+			if (earlyProcedures.Count > 0 || lateProcedures.Count > 0)
+			{
+				var messageBuilder = new StringBuilder();
+				messageBuilder.AppendLine(SR.MessageCheckInProceduresTooLateOrTooEarly);
+				messageBuilder.AppendLine();
+				CollectionUtils.ForEach(earlyProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
+				CollectionUtils.ForEach(lateProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
+				messageBuilder.AppendLine();
+				messageBuilder.Append(SR.MessageConfirmCheckInProcedures);
+
+				if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.YesNo))
+				{
+					return;
+				}
+			}
 
 			try
 			{
-				Platform.GetService<IRegistrationWorkflowService>(
-					delegate(IRegistrationWorkflowService service)
-					{
-						service.CheckInProcedure(
-							new CheckInProcedureRequest(_selectedProcedures,
-								DowntimeRecovery.InDowntimeRecoveryMode ? (DateTime?)_checkInTime : null));
-					});
+				Platform.GetService( (IRegistrationWorkflowService service) => service.CheckInProcedure(
+					new CheckInProcedureRequest(checkedProcedureRefs, 
+						DowntimeRecovery.InDowntimeRecoveryMode ? (DateTime?) _checkInTime : null)));
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, "Unable to check-in procedures", this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
 			}
 		}
 
-        public void Cancel()
-        {
-            this.Exit(ApplicationComponentExitCode.None);
-        }
+		public void Cancel()
+		{
+			this.Exit(ApplicationComponentExitCode.None);
+		}
 
-        public bool AcceptEnabled
-        {
-            get { return _acceptEnabled; }
-        }
-
-        public event EventHandler AcceptEnabledChanged
-        {
-            add { _acceptEnabledChanged += value; }
-            remove { _acceptEnabledChanged -= value; }
-        }
-
-        private void OrderCheckedStateChangedEventHandler(object sender, EventArgs e)
-        {
-            UpdateAcceptStatus();
-        }
-
-        private void UpdateAcceptStatus()
-        {
-            bool entryChecked = CollectionUtils.Contains(
-                _checkInOrderTable.Items,
-                delegate(CheckInOrderTableEntry entry)
-                {
-                    return entry.Checked;
-                });
-
-            if (_acceptEnabled != entryChecked)
-            {
-                _acceptEnabled = entryChecked;
-                EventsHelper.Fire(_acceptEnabledChanged, this, EventArgs.Empty);
-            }
-        }
-
-    }
+		private void OrderCheckedStateChangedEventHandler(object sender, EventArgs e)
+		{
+			NotifyPropertyChanged("AcceptEnabled");
+		}
+	}
 }
