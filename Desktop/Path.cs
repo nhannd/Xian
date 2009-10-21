@@ -30,8 +30,6 @@
 #endregion
 
 using System.Reflection;
-using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System;
 using System.Collections.Generic;
@@ -128,7 +126,7 @@ namespace ClearCanvas.Desktop
 			get
 			{
 				return StringUtilities.Combine(_segments, SEPARATOR,
-					delegate(PathSegment s) { return s.LocalizedText.Replace(SEPARATOR, ESCAPED_SEPARATOR); }, false);
+					s => s.LocalizedText.Replace(SEPARATOR, ESCAPED_SEPARATOR), false);
 			}
 		}
 
@@ -140,7 +138,7 @@ namespace ClearCanvas.Desktop
 		/// <returns></returns>
 		public Path Append(Path other)
 		{
-			List<PathSegment> combined = new List<PathSegment>(_segments);
+			var combined = new List<PathSegment>(_segments);
 			combined.AddRange(other.Segments);
 			
 			return new Path(combined);
@@ -152,7 +150,7 @@ namespace ClearCanvas.Desktop
         public override string ToString()
         {
 			return StringUtilities.Combine(_segments, SEPARATOR,
-				delegate(PathSegment s) { return s.ResourceKey.Replace(SEPARATOR, ESCAPED_SEPARATOR); }, false);
+				s => s.ResourceKey.Replace(SEPARATOR, ESCAPED_SEPARATOR), false);
 		}
 
 		/// <summary>
@@ -163,8 +161,8 @@ namespace ClearCanvas.Desktop
 		/// <returns></returns>
 		public Path GetCommonPath(Path other)
 		{
-			List<PathSegment> commonPath = new List<PathSegment>();
-			for(int i = 0; i < Math.Min(_segments.Count, other.Segments.Count); i++)
+			var commonPath = new List<PathSegment>();
+			for(var i = 0; i < Math.Min(_segments.Count, other.Segments.Count); i++)
 			{
 				if(_segments[i] == other.Segments[i])
 					commonPath.Add(_segments[i]);
@@ -187,7 +185,7 @@ namespace ClearCanvas.Desktop
                 return false;
 
             // check that segments are equal up to length of other path
-            for (int i = 0; i < other.Segments.Count; i++)
+            for (var i = 0; i < other.Segments.Count; i++)
             {
                 if (!Equals(_segments[i], other.Segments[i]))
                     return false;
@@ -201,10 +199,10 @@ namespace ClearCanvas.Desktop
 			pathString = StringUtilities.EmptyIfNull(pathString).Replace(ESCAPED_SEPARATOR, TEMP);
 
 			// split string by separator
-			string[] parts = pathString.Split(new string[] { SEPARATOR }, StringSplitOptions.None);
-			int n = parts.Length;
-			PathSegment[] segments = new PathSegment[n];
-			for (int i = 0; i < n; i++)
+			var parts = pathString.Split(new[] { SEPARATOR }, StringSplitOptions.None);
+			var n = parts.Length;
+			var segments = new PathSegment[n];
+			for (var i = 0; i < n; i++)
 			{
 				// replace the temp string with the unescaped separator
 				parts[i] = parts[i].Replace(TEMP, SEPARATOR);
