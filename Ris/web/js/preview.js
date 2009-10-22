@@ -1,6 +1,6 @@
 /*
  *	Provides several genaral methods for formatting data for preview pages.
-*/
+ */
 var Preview = function () {
 
 	var _getAlertIcon = function(alertItem)
@@ -586,8 +586,8 @@ Preview.ProtocolProceduresTable = function () {
 	
 		// TODO: WTIS -> urgency and override in UHN-specific script.
 		
-		create: function(parentElement, procedures)
-		{
+		create: function(parentElement, procedures, notes)
+		{			
 			if(procedures.length == 0)
 			{
 				parentElement.style.display = 'none';
@@ -652,6 +652,10 @@ Preview.ProtocolProceduresTable = function () {
 
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(procGroupings);
+									
+			if(notes.length > 0) {
+				Preview.OrderNotesTable.createAsSubSection(parentElement, notes, "Notes");
+			}
 
 			Preview.SectionContainer.create(parentElement, "Protocols");
 		}
@@ -936,24 +940,20 @@ Preview.ReportListTable = function () {
  *  Also exposes defaultSubsections array which can be used as the subsections parameter in create(...)
  */
 Preview.OrderNotesTable = function () {
-	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading, hideHeading, checkBoxesProperties)
+	var _createNotesTable = function(parentElement, notes, title)
 	{
-		var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
-
-		if (filteredNotes.length == 0)
+		if (notes.length == 0)
 			return;
-
-		if(subsectionHeading && !hideHeading)
+			
+		if(title)
 		{
-			Preview.ProceduresTableHelper.addHeading(parentElement, subsectionHeading, 'subsectionheading');
-		}
+			Preview.ProceduresTableHelper.addHeading(parentElement, title, 'subsectionheading');
+		}			
 
-		var canAcknowledge = checkBoxesProperties && checkBoxesProperties.onItemChecked && filteredNotes.find(function(note) { return note.CanAcknowledge; });
-
-		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, "NoteEntryTable", noColumnHeadings=true);
-		htmlTable = Table.createTable(htmlTable, { checkBoxes: canAcknowledge, checkBoxesProperties: checkBoxesProperties, editInPlace: false, flow: false, addColumnHeadings: false },
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement, null, true);
+		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: false },
 		[
-			{   label: "Order Note",
+			{   
 				cellType: "html",
 				getValue: function(item) 
 				{
@@ -966,53 +966,38 @@ Preview.OrderNotesTable = function () {
 			}
 		]);
 
-		if (canAcknowledge)
+		// highlight the row that need to be acknowledged
+		htmlTable.renderRow = function(sender, args)
 		{
-			// highlight the row that need to be acknowledged
-			htmlTable.renderRow = function(sender, args)
+			if(args.item.CanAcknowledge)
 			{
-				if(args.item.CanAcknowledge)
-				{
-					args.htmlRow.className = "attention" + (args.rowIndex % 2);
-				}
-			};
-		}
+				args.htmlRow.className = "attention" + (args.rowIndex % 2);
+			}
+		};
 
-		htmlTable.rowCycleClassNames = ["row1", "row0"];
-		htmlTable.bindItems(filteredNotes);
+//		htmlTable.rowCycleClassNames = ["row1", "row0"];
+
+		htmlTable.bindItems(notes);
 	};
 
 	return {
-		create: function(parentElement, notes, subsections, hideHeading, checkBoxesProperties)
+		create: function(parentElement, notes, heading, collapsedByDefault)
 		{		
 			if(notes.length == 0)
 				return;
 
-			if(subsections)
-			{
-				for(var i = 0; i < subsections.length; i++)
-				{
-					if(subsections[i])
-					{
-						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading, hideHeading, checkBoxesProperties);
-					}
-				}
-			}
-			else
-			{
-				_createSubsection(parentElement, notes);
-			}
+			_createNotesTable(parentElement, notes);
 
-			if(!hideHeading)
-				Preview.SectionContainer.create(parentElement, "Order Notes");
+			Preview.SectionContainer.createCollapsible(parentElement, heading, collapsedByDefault);
 		},
 		
-		defaultSubsections:
-		[
-			{category:"General", subsectionHeading:"General"}, 
-			{category:"Protocol", subsectionHeading:"Protocol"}, 
-			{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"}
-		]
+		createAsSubSection: function(parentElement, notes, title) {
+			if(notes.length == 0)
+				return;
+
+			_createNotesTable(parentElement, notes, title);			
+		}
+		
 	};
 }();
 
@@ -1698,29 +1683,29 @@ Preview.OrderNoteSection = function() {
 			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 
 			var html = "";
-			html += '<table style="{width:98%; margin-left:10px;}" border="0">';
-			html += '	<tr>';
-			html += '		<td>From:</td>';
-			html += '		<td>' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
+			html += '<table style="{width:100%; margin-top: 4px;}" border="0" cellspacing="0" cellpadding="0">';
+			html += '	<tr style="{background: #f1f4f8}">';
+			html += '		<td style="{padding-bottom: 3px; padding-top: 3px;}"><span style="{padding-right: 5px; font-weight: bold; color: #336699}">From:</span>';
+			html += '		' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
 			html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
-			html += '		<td style="{width:10em;text-align:right}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
+			html += '		<td style="{width:10em;text-align:right; padding-right: 20px; font-weight: bold; color: #336699}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
 			{
 				html += '	<tr id="acknowledgedRow">';
 				html += '		<td style="{width:10em;}" NOWRAP valign="top">Acknowledged By:</td>';
-				html += '		<td colspan="3">' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+				html += '		<td colspan="2">' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
 				html += '	</tr>';
 			}
 			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0)
 			{
 				html += '	<tr id="notAcknowledgedRow">';
 				html += '		<td style="{width:10em;}" class="propertyname" valign="top">Waiting For Acknowledgement:</td>';
-				html += '		<td colspan="3"><B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
+				html += '		<td colspan="2"><B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
 				html += '	</tr>';
 			}
 			html += '	<tr>';
-			html += '		<td colspan="4" style="{text-align:justify;}">' +  note.NoteBody.replaceLineBreak() + '</td>';
+			html += '		<td colspan="3" style="{text-align:justify; padding-bottom: 5px; border-top: dashed 1px #AACCEE; padding-top: 5px; }">' +  note.NoteBody.replaceLineBreak() + '</td>';
 			html += '	</tr>';
 			html += '</table>';
 			

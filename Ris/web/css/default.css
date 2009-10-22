@@ -111,8 +111,8 @@ a.sectionheading  {
 }
 
 .subsectionheading {
-	margin-left:1em;
-	border-bottom: 1px dashed #A8D8F4;
+	padding-left:1em;
+	border-bottom: 2px solid #A8D8F4;
 }
 
 .pageheading {
@@ -197,10 +197,12 @@ a.sectionheading  {
 
 tr.row0 {
 	background-color: #FFFFFF;
+	padding: 12px;
 }
 
 tr.row1 {
-	background-color: #f4f4f4;
+	background-color: #f1f1f1;
+	padding: 12px;	
 }
 
 tr.highlight {

@@ -81,15 +81,17 @@
 				{
 					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
 					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-					
-					var orderNotesSubsections = 
-						[
-							{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"},
-							{category:"General", subsectionHeading:"General"}, 
-							{category:"Protocol", subsectionHeading:"Protocol"}
-						];
 
-					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, orderNotesSubsections);
+					// select CT and MRI procedures
+					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);					
+					var filteredNotes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });						
+					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, filteredNotes);
+
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
 				}
 				else
 				{
@@ -129,7 +131,9 @@
 		<div id="orderDetailsSection">
 			<div id="imagingServiceSection"></div>
 			<div id="proceduresSection"></div>
-			<div id="notesSection"></div>
+			<div id="protocolProceduresSection"></div>
+			<div id="prelimDiagnosisNotesSection"></div>
+			<div id="generalNotesSection"></div>
 		</div>
 
 		<div id="reportListSection"></div>

@@ -88,9 +88,14 @@
 
 					// select CT and MRI procedures
 					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
-					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures);
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
+					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
 
-					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
+					var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+					Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
+
+					notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+					Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", true);
 				}
 				else
 				{
@@ -135,7 +140,8 @@
 				<div id="imagingServiceSection"></div>
 				<div id="reportingProceduresSection"></div>
 				<div id="protocolProceduresSection"></div>
-				<div id="notesSection"></div>
+				<div id="prelimDiagnosisNotesSection"></div>
+				<div id="generalNotesSection"></div>
 			</div>
 
 			<div id="reportSection"></div>
