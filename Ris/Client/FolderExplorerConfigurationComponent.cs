@@ -83,8 +83,8 @@ namespace ClearCanvas.Ris.Client
 		private BindingList<FolderSystemConfigurationNode> _folderSystems;
 		private FolderSystemConfigurationNode _selectedFolderSystemNode;
 		private SimpleActionModel _folderSystemsActionModel;
-		private readonly Tree<DraggableTreeNode> _folderTree;
-		private DraggableTreeNode _selectedFolderNode;
+		private readonly Tree<FolderConfigurationNodeBase> _folderTree;
+		private FolderConfigurationNodeBase _selectedFolderNode;
 		private SimpleActionModel _foldersActionModel;
 		private readonly IList<IFolderSystem> _folderSystemsToReset;
 
@@ -101,14 +101,14 @@ namespace ClearCanvas.Ris.Client
 
 		public FolderExplorerConfigurationComponent()
 		{
-			_folderTree = DraggableTreeNode.BuildTree();
+			_folderTree = FolderConfigurationNodeBase.BuildTree();
 			_folderSystemsToReset = new List<IFolderSystem>();
 		}
 
 		public override void Start()
 		{
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
-			IResourceResolver resourceResolver = new ResourceResolver(typeof(DraggableTreeNode).Assembly);
+			IResourceResolver resourceResolver = new ResourceResolver(typeof(FolderConfigurationNodeBase).Assembly);
 
 			_folderSystemsActionModel = new SimpleActionModel(resourceResolver);
 			_folderSystemsActionModel.AddAction(_moveFolderSystemUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderSystemUp);
@@ -277,7 +277,7 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedFolderNode); }
 			set
 			{
-				var node = (DraggableTreeNode)value.Item;
+				var node = (FolderConfigurationNodeBase)value.Item;
 
 				_selectedFolderNode = node;
 				UpdateFolderActionModel();
@@ -301,9 +301,9 @@ namespace ClearCanvas.Ris.Client
 
 		public void OnItemDropped(object droppedItem, DragDropKind kind)
 		{
-			if (droppedItem is DraggableTreeNode && kind == DragDropKind.Move)
+			if (droppedItem is FolderConfigurationNodeBase && kind == DragDropKind.Move)
 			{
-				var droppedNode = (DraggableTreeNode)droppedItem;
+				var droppedNode = (FolderConfigurationNodeBase)droppedItem;
 				this.SelectedFolderNode = new Selection(droppedNode);
 			}
 		}
@@ -421,7 +421,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void AddFolder()
 		{
-			var newFolderNode = new DraggableTreeNode.ContainerNode("New Folder");
+			var newFolderNode = new FolderConfigurationNodeBase.ContainerNode("New Folder");
 			_selectedFolderNode.AddChildNode(newFolderNode);
 			this.SelectedFolderNode = new Selection(newFolderNode);
 			EventsHelper.Fire(_onEditFolder, this, EventArgs.Empty);

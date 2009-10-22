@@ -37,9 +37,12 @@ using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Ris.Client
 {
-	public abstract class DraggableTreeNode
+	/// <summary>
+	/// Abstract base class for tree nodes in the folder explorer configuration page.
+	/// </summary>
+	public abstract class FolderConfigurationNodeBase
 	{
-		public class ContainerNode : DraggableTreeNode
+		public class ContainerNode : FolderConfigurationNodeBase
 		{
 			private string _text;
 			private readonly IResourceResolver _resourceResolver;
@@ -51,7 +54,7 @@ namespace ClearCanvas.Ris.Client
 				_resourceResolver = new ResourceResolver(typeof(ContainerNode).Assembly);
 			}
 
-			#region DraggableTreeNode Overrides
+			#region FolderConfigurationNodeBase Overrides
 
 			public override string Text
 			{
@@ -96,19 +99,19 @@ namespace ClearCanvas.Ris.Client
 
 		private bool _isChecked;
 		private bool _isExpanded;
-		private DraggableTreeNode _parent;
-		private Tree<DraggableTreeNode> _subTree;
+		private FolderConfigurationNodeBase _parent;
+		private Tree<FolderConfigurationNodeBase> _subTree;
 
 		private bool _modified;
 		private bool _modifiedEnabled;
 		private event EventHandler _modifiedChanged;
 
-		protected DraggableTreeNode()
+		protected FolderConfigurationNodeBase()
 			: this(true)
 		{
 		}
 
-		protected DraggableTreeNode(bool isChecked)
+		protected FolderConfigurationNodeBase(bool isChecked)
 		{
 			_isExpanded = true;
 			_isChecked = isChecked;
@@ -264,7 +267,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the previous sibling of this node, null if none.
 		/// </summary>
-		public DraggableTreeNode PreviousSibling
+		public FolderConfigurationNodeBase PreviousSibling
 		{
 			get
 			{
@@ -282,7 +285,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the next sibling of this node, null if none.
 		/// </summary>
-		public DraggableTreeNode NextSibling
+		public FolderConfigurationNodeBase NextSibling
 		{
 			get
 			{
@@ -300,7 +303,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the parent of this node, null if none.
 		/// </summary>
-		public DraggableTreeNode Parent
+		public FolderConfigurationNodeBase Parent
 		{
 			get { return _parent; }
 			private set { _parent = value; }
@@ -309,16 +312,16 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets a list of all descendent nodes, by in-order traversal.
 		/// </summary>
-		public List<DraggableTreeNode> Descendents
+		public List<FolderConfigurationNodeBase> Descendents
 		{
 			get
 			{
-				var descendents = new List<DraggableTreeNode>();
+				var descendents = new List<FolderConfigurationNodeBase>();
 
 				if (_subTree != null)
 				{
 					CollectionUtils.ForEach(_subTree.Items,
-						delegate(DraggableTreeNode child)
+						delegate(FolderConfigurationNodeBase child)
 						{
 							descendents.Add(child);
 							descendents.AddRange(child.Descendents);
@@ -333,7 +336,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the subtree of this node, null if none.
 		/// </summary>
-		public Tree<DraggableTreeNode> SubTree
+		public Tree<FolderConfigurationNodeBase> SubTree
 		{
 			get { return _subTree; }
 		}
@@ -357,7 +360,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Add a node to the sub tree.
 		/// </summary>
-		public void AddChildNode(DraggableTreeNode node)
+		public void AddChildNode(FolderConfigurationNodeBase node)
 		{
 			BuildSubTree();
 
@@ -373,7 +376,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Remove a child node and return the node's next sibling, previous sibling or the parent node.
 		/// </summary>
-		public DraggableTreeNode RemoveChildNode(DraggableTreeNode node)
+		public FolderConfigurationNodeBase RemoveChildNode(FolderConfigurationNodeBase node)
 		{
 			var nextSelectedNode = node.NextSibling ?? node.PreviousSibling ?? this;
 			this.SubTree.Items.Remove(node);
@@ -384,7 +387,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Replace a child node with a new node.
 		/// </summary>
-		public void ReplaceChildNode(DraggableTreeNode oldChildNode, DraggableTreeNode newChildNode)
+		public void ReplaceChildNode(FolderConfigurationNodeBase oldChildNode, FolderConfigurationNodeBase newChildNode)
 		{
 			// Move the subtree of the old node to the new node.
 			foreach (var node in oldChildNode.SubTree.Items)
@@ -404,7 +407,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Insert a node to the proper depth using the path.
 		/// </summary>
-		public void InsertNode(DraggableTreeNode node, Path path)
+		public void InsertNode(FolderConfigurationNodeBase node, Path path)
 		{
 			// There is no recommended path.  Add it immediately
 			if (path == null || path.Segments.Count == 0)
@@ -493,7 +496,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Drag & Drop supports
 
-		public DragDropKind CanAcceptDrop(DraggableTreeNode dropData, DragDropKind kind)
+		public DragDropKind CanAcceptDrop(FolderConfigurationNodeBase dropData, DragDropKind kind)
 		{
 			if (dropData == null || this == dropData || this == dropData.Parent || this.IsDescendentOf(dropData))
 				return DragDropKind.None;
@@ -501,7 +504,7 @@ namespace ClearCanvas.Ris.Client
 			return DragDropKind.Move;
 		}
 
-		public DragDropKind AcceptDrop(DraggableTreeNode dropData, DragDropKind kind)
+		public DragDropKind AcceptDrop(FolderConfigurationNodeBase dropData, DragDropKind kind)
 		{
 			if (dropData.Parent != null)
 				dropData.Parent.SubTree.Items.Remove(dropData);
@@ -547,7 +550,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="ancestorNode">The unknown ancestorNode.</param>
 		/// <returns>True if this node is the descendent of the ancestorNode.</returns>
-		private bool IsDescendentOf(DraggableTreeNode ancestorNode)
+		private bool IsDescendentOf(FolderConfigurationNodeBase ancestorNode)
 		{
 			// testNode has no children
 			if (ancestorNode.SubTree == null)
@@ -577,7 +580,7 @@ namespace ClearCanvas.Ris.Client
 		/// Propagates check state up to parent.
 		/// </summary>
 		/// <param name="parent"></param>
-		private static void PropagateCheckStateUp(DraggableTreeNode parent)
+		private static void PropagateCheckStateUp(FolderConfigurationNodeBase parent)
 		{
 			if (parent == null)
 				return;
@@ -592,7 +595,7 @@ namespace ClearCanvas.Ris.Client
 		/// Propagates check state down to children.
 		/// </summary>
 		/// <param name="parent"></param>
-		private static void PropagateCheckStateDown(DraggableTreeNode parent)
+		private static void PropagateCheckStateDown(FolderConfigurationNodeBase parent)
 		{
 			if (parent == null || parent.SubTree == null)
 				return;
@@ -606,9 +609,9 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		public static Tree<DraggableTreeNode> BuildTree()
+		public static Tree<FolderConfigurationNodeBase> BuildTree()
 		{
-			var binding = new TreeItemBinding<DraggableTreeNode>(node => node.Text, node => node.SubTree)
+			var binding = new TreeItemBinding<FolderConfigurationNodeBase>(node => node.Text, node => node.SubTree)
 				{
 					NodeTextSetter = (node, text) => node.Text = text,
 					CanSetNodeTextHandler = node => node.CanEdit,
@@ -618,16 +621,19 @@ namespace ClearCanvas.Ris.Client
 					TooltipTextProvider = node => node.ToolTip,
 					IsExpandedGetter = node => node.IsExpanded,
 					IsExpandedSetter = (node, isExpanded) => node.IsExpanded = isExpanded,
-					CanAcceptDropHandler = (node, dropData, kind) => node.CanAcceptDrop((dropData as DraggableTreeNode), kind),
-					AcceptDropHandler = (node, dropData, kind) => node.AcceptDrop((dropData as DraggableTreeNode), kind),
+					CanAcceptDropHandler = (node, dropData, kind) => node.CanAcceptDrop((dropData as FolderConfigurationNodeBase), kind),
+					AcceptDropHandler = (node, dropData, kind) => node.AcceptDrop((dropData as FolderConfigurationNodeBase), kind),
 					IconSetProvider = node => node.IconSet,
 					ResourceResolverProvider = node => node.ResourceResolver
 				};
-			return new Tree<DraggableTreeNode>(binding);
+			return new Tree<FolderConfigurationNodeBase>(binding);
 		}
 	}
 
-	public class FolderSystemConfigurationNode : DraggableTreeNode
+	/// <summary>
+	/// Represents a folder-system in the folder explorer configuration page.
+	/// </summary>
+	public class FolderSystemConfigurationNode : FolderConfigurationNodeBase
 	{
 		private readonly IFolderSystem _folderSystem;
 		private readonly bool _readonly;
@@ -657,7 +663,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				var folders = new List<IFolder>();
 				CollectionUtils.ForEach(this.Descendents,
-					delegate(DraggableTreeNode node)
+					delegate(FolderConfigurationNodeBase node)
 						{
 							if (node is FolderConfigurationNode)
 							{
@@ -676,7 +682,7 @@ namespace ClearCanvas.Ris.Client
 		public void UpdateFolderPath()
 		{
 			CollectionUtils.ForEach(this.Descendents,
-				delegate(DraggableTreeNode node)
+				delegate(FolderConfigurationNodeBase node)
 				{
 					if (node is FolderConfigurationNode)
 					{
@@ -686,7 +692,7 @@ namespace ClearCanvas.Ris.Client
 				});
 		}
 
-		#region DraggableTreeNode Overrides
+		#region FolderConfigurationNodeBase Overrides
 
 		public override string Text
 		{
@@ -726,7 +732,10 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 	}
 
-	public class FolderConfigurationNode : DraggableTreeNode
+	/// <summary>
+	/// Represents a folder in the folder explorer configuration page.
+	/// </summary>
+	public class FolderConfigurationNode : FolderConfigurationNodeBase
 	{
 		private readonly IFolder _folder;
 		private string _text;
@@ -745,7 +754,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _folder; }
 		}
 
-		#region DraggableTreeNode Overrides
+		#region FolderConfigurationNodeBase Overrides
 
 		public override string Text
 		{
