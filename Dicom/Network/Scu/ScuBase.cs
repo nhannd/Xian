@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Network.Scu
 {
@@ -599,7 +598,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			if (Status == ScuOperationStatus.Running)
 				FailureDescription = String.Format("Unexpected network error: {0}", e == null ? "Unknown" : e.Message);
 
-			if (client._state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+			if (client.State == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
 			{
 				//When this state is set and an error occurs, an appropriate message has already been logged in the client.
 			}

@@ -170,7 +170,7 @@ namespace ClearCanvas.Dicom.Network
         private DcmDimseInfo _dimse;
         private Thread _thread;
         private bool _stop;
-        internal DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
+        internal DicomAssociationState State = DicomAssociationState.Sta1_Idle;
 		private bool _logInformation = true;
 
         internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
@@ -281,7 +281,7 @@ namespace ClearCanvas.Dicom.Network
         protected virtual void OnUserException(Exception e, String description)
         {
             Platform.Log(LogLevel.Error, e, "Unexpected User exception, description: " + description);
-            switch (_state)
+            switch (State)
             {
                 case DicomAssociationState.Sta2_TransportConnectionOpen:
                     OnNetworkError(e, true);
@@ -649,8 +649,8 @@ namespace ClearCanvas.Dicom.Network
 		{
 			try
 			{
-				if (_state != DicomAssociationState.Sta1_Idle
-				 && _state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+				if (State != DicomAssociationState.Sta1_Idle
+				 && State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
 					SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
 			}
 			finally
@@ -679,8 +679,8 @@ namespace ClearCanvas.Dicom.Network
 		{
 			try
 			{
-				if (_state != DicomAssociationState.Sta1_Idle
-				 && _state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+				if (State != DicomAssociationState.Sta1_Idle
+				 && State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
 					SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
 			}
 			finally
@@ -707,7 +707,7 @@ namespace ClearCanvas.Dicom.Network
             _assoc = associate;
             AAssociateRQ pdu = new AAssociateRQ(_assoc);
 
-        	_state = DicomAssociationState.Sta5_AwaitingAAssociationACOrReject;
+        	State = DicomAssociationState.Sta5_AwaitingAAssociationACOrReject;
 
             EnqueuePdu(pdu.Write());
 
@@ -720,12 +720,12 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="reason">The reason for the abort.</param>
         public void SendAssociateAbort(DicomAbortSource source, DicomAbortReason reason)
         {
-            if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+            if (State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
             {
                 AAbort pdu = new AAbort(source, reason);
 
                 EnqueuePdu(pdu.Write());
-                _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+                State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
 
                 if (AssociationAborted != null)
@@ -749,7 +749,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="associate">The parameters to use for the association accept.</param>
         public void SendAssociateAccept(AssociationParameters associate)
         {
-            if (_state != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
+            if (State != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
             {
                 Platform.Log(LogLevel.Error, "Error attempting to send association accept at invalid time in association.");
                 SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
@@ -760,7 +760,7 @@ namespace ClearCanvas.Dicom.Network
 
             EnqueuePdu(pdu.Write());
 
-            _state = DicomAssociationState.Sta6_AssociationEstablished;
+            State = DicomAssociationState.Sta6_AssociationEstablished;
 
 
             if (AssociationEstablished != null)
@@ -775,7 +775,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="reason"></param>
         public void SendAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
         {
-            if (_state != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
+            if (State != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
             {
                 Platform.Log(LogLevel.Error, "Error attempting to send association reject at invalid time in association.");
                 SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
@@ -786,7 +786,7 @@ namespace ClearCanvas.Dicom.Network
 
             EnqueuePdu(pdu.Write());
 
-            _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+            State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
             if (AssociationRejected != null)
                 AssociationRejected(source, reason);
@@ -797,7 +797,7 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         public void SendReleaseRequest()
         {
-            if (_state != DicomAssociationState.Sta6_AssociationEstablished)
+            if (State != DicomAssociationState.Sta6_AssociationEstablished)
             {
                 Platform.Log(LogLevel.Error, "Unexpected attempt to send Release Request when in invalid state.");
                 return;
@@ -807,7 +807,7 @@ namespace ClearCanvas.Dicom.Network
 
             EnqueuePdu(pdu.Write());
 
-            _state = DicomAssociationState.Sta7_AwaitingAReleaseRP;
+            State = DicomAssociationState.Sta7_AwaitingAReleaseRP;
 
             // still waiting for remote AE to send release response
             if (AssociationReleasing != null)
@@ -819,14 +819,14 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         protected void SendReleaseResponse()
         {
-            if (_state != DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser)
+            if (State != DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser)
             {
             }
 
             AReleaseRP pdu = new AReleaseRP();
 
             EnqueuePdu(pdu.Write());
-            _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+            State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
             if (AssociationReleased != null)
                 AssociationReleased(_assoc);
@@ -1330,20 +1330,17 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                DateTime timeout;
-				if (_assoc != null)
-					timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout / 1000);
-				else
-					timeout = DateTime.Now.AddSeconds(Timeout);
+            	DateTime timeout = _assoc != null
+            	                   	? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout)
+            	                   	: DateTime.Now.AddSeconds(Timeout);
 
 				while (!_stop)
                 {
                     if (NetworkHasData())
                     {
-                        if (_assoc != null)
-                            timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout/1000);
-                        else
-                            timeout = DateTime.Now.AddSeconds(Timeout);
+                        timeout = _assoc != null 
+							? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout) 
+							: DateTime.Now.AddSeconds(Timeout);
 
                         bool success = ProcessNextPDU();
                         if (!success)
@@ -1364,40 +1361,42 @@ namespace ClearCanvas.Dicom.Network
                     }
                     else if (DateTime.Now > timeout)
                     {
-                        switch (_state)
+                    	string errorMessage;
+                    	switch (State)
                         {
                         	case DicomAssociationState.Sta6_AssociationEstablished:
                         		OnDimseTimeout();
-                        		timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout/1000);
+								timeout = DateTime.Now.AddMilliseconds(_assoc.ReadTimeout);
                         		break;
                         	case DicomAssociationState.Sta2_TransportConnectionOpen:
-                        		Platform.Log(LogLevel.Error,
-                        		             "ARTIM timeout when waiting for AAssociate Request PDU, closing connection.");
-                        		_state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
-                        		OnNetworkError(null, true);
+                        		errorMessage = "ARTIM timeout when waiting for AAssociate Request PDU, closing connection.";
+                        		Platform.Log(LogLevel.Error, errorMessage);
+                        		State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+                        		OnNetworkError(new DicomNetworkException(errorMessage), true);
                         		if (NetworkClosed != null)
-                        			NetworkClosed("ARTIM timeout when waiting for AAssociate Request PDU");
+                        			NetworkClosed(errorMessage);
                         		break;
                         	case DicomAssociationState.Sta5_AwaitingAAssociationACOrReject:
-                        		Platform.Log(LogLevel.Error,
-                        		             "ARTIM timeout when waiting for AAssociate AC or RJ PDU, closing connection.");
-                        		_state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
-                        		OnNetworkError(null, true);
+                        		errorMessage = "ARTIM timeout when waiting for AAssociate AC or RJ PDU, closing connection.";
+                        		Platform.Log(LogLevel.Error,errorMessage );
+                        		State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+								OnNetworkError(new DicomNetworkException(errorMessage), true);
                         		if (NetworkClosed != null)
-                        			NetworkClosed("ARTIM timeout when waiting for AAssociate AC or RJ PDU");
+                        			NetworkClosed(errorMessage);
                         		break;
                         	case DicomAssociationState.Sta13_AwaitingTransportConnectionClose:
-                        		Platform.Log(LogLevel.Error,
-                        		             "Timeout when waiting for transport connection to close from {0} to {1}.  Dropping Connection.",
-                        		             _assoc.CallingAE, _assoc.CalledAE);
-                        		OnNetworkError(null, true);
+                        		errorMessage = string.Format(
+                        				"Timeout when waiting for transport connection to close from {0} to {1}.  Dropping Connection.",
+                        				_assoc.CallingAE, _assoc.CalledAE);
+                        		Platform.Log(LogLevel.Error, errorMessage);
+								OnNetworkError(new DicomNetworkException(errorMessage), true);
                         		if (NetworkClosed != null)
-                        			NetworkClosed("Timeout when waiting for transport connection to close");
+                        			NetworkClosed(errorMessage);
                         		break;
                         	default:
-                        		Platform.Log(LogLevel.Error, "DIMSE timeout in unexpected state: {0}", _state.ToString());
+                        		Platform.Log(LogLevel.Error, "DIMSE timeout in unexpected state: {0}", State.ToString());
                         		OnDimseTimeout();
-                        		timeout = _assoc != null ? DateTime.Now.AddSeconds(_assoc.ReadTimeout/1000) : DateTime.Now.AddSeconds(Timeout);
+								timeout = _assoc != null ? DateTime.Now.AddMilliseconds(_assoc.ReadTimeout) : DateTime.Now.AddSeconds(Timeout);
                         		break;
                         }
                     }
@@ -1443,11 +1442,11 @@ namespace ClearCanvas.Dicom.Network
                             _assoc = new ServerAssociationParameters();
                             AAssociateRQ pdu = new AAssociateRQ(_assoc);
                             pdu.Read(raw);
-                            _state = DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative;
+                            State = DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative;
                             OnReceiveAssociateRequest(_assoc as ServerAssociationParameters);
 
-                            if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose &&
-                                _state != DicomAssociationState.Sta6_AssociationEstablished)
+                            if (State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose &&
+                                State != DicomAssociationState.Sta6_AssociationEstablished)
                             {
 								Platform.Log(LogLevel.Error, "Association incorrectly not accepted or rejected, aborting.");
                                 return false;
@@ -1463,7 +1462,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             AAssociateAC pdu = new AAssociateAC(_assoc);
                             pdu.Read(raw);
-                            _state = DicomAssociationState.Sta6_AssociationEstablished;
+                            State = DicomAssociationState.Sta6_AssociationEstablished;
 
                             OnReceiveAssociateAccept(_assoc);
 
@@ -1476,7 +1475,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             AAssociateRJ pdu = new AAssociateRJ();
                             pdu.Read(raw);
-                            _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+                            State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
                             if (AssociationRejected != null)
                                 AssociationRejected(pdu.Source, pdu.Reason);
@@ -1495,7 +1494,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             AReleaseRQ pdu = new AReleaseRQ();
                             pdu.Read(raw);
-                            _state = DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser;
+                            State = DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser;
 
                             OnReceiveReleaseRequest();
 
@@ -1505,7 +1504,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             AReleaseRP pdu = new AReleaseRP();
                             pdu.Read(raw);
-                            _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+                            State = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 
                             if (AssociationReleased != null)
                                 AssociationReleased(_assoc);
@@ -1519,7 +1518,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             AAbort pdu = new AAbort();
                             pdu.Read(raw);
-                            _state = DicomAssociationState.Sta1_Idle;
+                            State = DicomAssociationState.Sta1_Idle;
 
                             if (AssociationAborted != null)
                                 AssociationAborted(_assoc, pdu.Reason);
@@ -1551,7 +1550,6 @@ namespace ClearCanvas.Dicom.Network
 
         private bool ProcessPDataTF(PDataTF pdu)
         {
-        	int bytes = 0;
         	try
             {
             	byte pcid = 0;
@@ -1586,7 +1584,6 @@ namespace ClearCanvas.Dicom.Network
 							Platform.Log(LogLevel.Error, "Unexpected parsing error when reading command group elements.");
                             return false;
                         }
-                        bytes += pdv.Value.Length;
                         _assoc.TotalBytesRead += (UInt64) pdv.Value.Length;
                         if (DimseMessageReceiving != null)
                             DimseMessageReceiving(_assoc, pcid);
@@ -1658,7 +1655,6 @@ namespace ClearCanvas.Dicom.Network
                             return false;
                         }
 
-                        bytes += pdv.Value.Length;
                         _assoc.TotalBytesRead += (UInt64) pdv.Value.Length;
                         if (DimseMessageReceiving != null)
                             DimseMessageReceiving(_assoc, pcid);

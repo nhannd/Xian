@@ -104,14 +104,14 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Private Members
-        private string _host;
+        private readonly string _host;
 		private Socket _socket;
 		private Stream _network;
 		private ManualResetEvent _closedEvent;
-		private bool _closedOnError = false;
+		private bool _closedOnError;
         IDicomServerHandler _handler;
         private Dictionary<string, ListenerInfo> _appList;
-        private bool _disposed = false;
+        private bool _disposed;
 		#endregion
 
         #region Public Properties
@@ -245,7 +245,7 @@ namespace ClearCanvas.Dicom.Network
                     _closedEvent.Set();
                     _closedEvent = null;
                 }
-				_state = DicomAssociationState.Sta1_Idle;
+				State = DicomAssociationState.Sta1_Idle;
             }			
         }
 
@@ -302,7 +302,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                if (_handler != null && _state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+                if (_handler != null && State != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
                     _handler.OnNetworkError(this, _assoc as ServerAssociationParameters, e);
             }
             catch (Exception x) 

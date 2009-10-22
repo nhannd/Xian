@@ -76,7 +76,7 @@ namespace ClearCanvas.Dicom.Network
 		private ManualResetEvent _closedEvent;
 		private bool _closedOnError;
         readonly IDicomClientHandler _handler;
-        private bool _disposed = false;
+        private bool _disposed;
 		#endregion
 
 		#region Public Constructors
@@ -309,7 +309,7 @@ namespace ClearCanvas.Dicom.Network
                 {
                     _closedEvent.Set();
                 }
-				_state = DicomAssociationState.Sta1_Idle;
+				State = DicomAssociationState.Sta1_Idle;
             }        	
         }
 
