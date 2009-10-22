@@ -162,7 +162,6 @@
     <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="Setup\SetupCommandLine.cs" />
     <Compile Include="StaticChannelFactoryProvider.cs" />
-    <Compile Include="TBoneSteakServiceProvider.cs" />
     <Compile Include="UserAccessDeniedException.cs" />
     <Compile Include="InvalidUserSessionException.cs" />
     <Compile Include="IServiceChannelConfiguration.cs" />

@@ -39,7 +39,6 @@ using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Enterprise.Core;
 using System.Threading;
 using ClearCanvas.Common.Configuration;
-using IConfigurationService=ClearCanvas.Enterprise.Common.Configuration.IConfigurationService;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
