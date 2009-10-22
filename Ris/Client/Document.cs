@@ -36,77 +36,77 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class Document
-    {
-        private readonly string _key;
-        private readonly IDesktopWindow _desktopWindow;
-        private event EventHandler<ClosedEventArgs> _closed;
+	public abstract class Document
+	{
+		private readonly string _key;
+		private readonly IDesktopWindow _desktopWindow;
+		private event EventHandler<ClosedEventArgs> _closed;
 
-        public Document(EntityRef subject, IDesktopWindow desktopWindow)
-        {
-            _key = DocumentManager.GenerateDocumentKey(this, subject);
-            _desktopWindow = desktopWindow;
-        }
+		protected Document(EntityRef subject, IDesktopWindow desktopWindow)
+		{
+			_key = DocumentManager.GenerateDocumentKey(this, subject);
+			_desktopWindow = desktopWindow;
+		}
 
-        public void Open()
-        {
-            Workspace workspace = DocumentManager.Get(_key);
-            if (workspace != null)
-            {
-                workspace.Activate();
-            }
-            else
-            {
-                workspace = LaunchWorkspace();
-                if (workspace != null)
-                    workspace.Closed += DocumentClosedEventHandler;
-            }
-        }
+		public void Open()
+		{
+			var workspace = DocumentManager.Get(_key);
+			if (workspace != null)
+			{
+				workspace.Activate();
+			}
+			else
+			{
+				workspace = LaunchWorkspace();
+				if (workspace != null)
+					workspace.Closed += DocumentClosedEventHandler;
+			}
+		}
 
-        public bool Close()
-        {
-            Workspace workspace = DocumentManager.Get(_key);
-            return workspace == null ? false : workspace.Close();
-        }
+		public bool Close()
+		{
+			var workspace = DocumentManager.Get(_key);
+			return workspace == null ? false : workspace.Close();
+		}
 
-        public event EventHandler<ClosedEventArgs> Closed
-        {
-            add { _closed += value; }
-            remove { _closed -= value; }
-        }
+		public event EventHandler<ClosedEventArgs> Closed
+		{
+			add { _closed += value; }
+			remove { _closed -= value; }
+		}
 
-        public abstract string GetTitle();
+		public abstract string GetTitle();
 
-        public abstract IApplicationComponent GetComponent();
+		public abstract IApplicationComponent GetComponent();
 
-        #region Private Helpers
+		#region Private Helpers
 
-        private void DocumentClosedEventHandler(object sender, ClosedEventArgs e)
-        {
-            EventsHelper.Fire(_closed, this, e);
-        }
+		private void DocumentClosedEventHandler(object sender, ClosedEventArgs e)
+		{
+			EventsHelper.Fire(_closed, this, e);
+		}
 
-        private Workspace LaunchWorkspace()
-        {
-            Workspace workspace = null;
+		private Workspace LaunchWorkspace()
+		{
+			Workspace workspace = null;
 
-            try
-            {
-                workspace = ApplicationComponent.LaunchAsWorkspace(
-                    _desktopWindow,
-                    GetComponent(),
-                    GetTitle(),
-                    _key);
-            }
-            catch (Exception e)
-            {
-                // could not launch component
-                ExceptionHandler.Report(e, _desktopWindow);
-            }
+			try
+			{
+				workspace = ApplicationComponent.LaunchAsWorkspace(
+					_desktopWindow,
+					GetComponent(),
+					GetTitle(),
+					_key);
+			}
+			catch (Exception e)
+			{
+				// could not launch component
+				ExceptionHandler.Report(e, _desktopWindow);
+			}
 
-            return workspace;
-        }
+			return workspace;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
