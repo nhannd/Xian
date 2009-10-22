@@ -86,6 +86,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly Tree<DraggableTreeNode> _folderTree;
 		private DraggableTreeNode _selectedFolderNode;
 		private SimpleActionModel _foldersActionModel;
+		private readonly IList<IFolderSystem> _folderSystemsToReset;
 
 		private const string _moveFolderSystemUpKey = "MoveFolderSystemUp";
 		private const string _moveFolderSystemDownKey = "MoveFolderSystemDown";
@@ -101,6 +102,7 @@ namespace ClearCanvas.Ris.Client
 		public FolderExplorerConfigurationComponent()
 		{
 			_folderTree = DraggableTreeNode.BuildTree();
+			_folderSystemsToReset = new List<IFolderSystem>();
 		}
 
 		public override void Start()
@@ -141,6 +143,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			FolderExplorerComponentSettings.Default.UpdateUserConfiguration(userConfiguration =>
 				{
+					foreach(var folderSystem in _folderSystemsToReset)
+					{
+						userConfiguration.RemoveUserFoldersCustomizations(folderSystem);
+					}
+
 					// Save the ordering of the folder systems
 					userConfiguration.SaveUserFolderSystemsOrder(
 						CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
@@ -307,7 +314,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void LoadFolderSystems()
 		{
-			var folderSystems = FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(
+			var folderSystems = FolderExplorerComponentSettings.Default.ApplyFolderSystemsOrder(
 				CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions()));
 
 			var fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode>(
@@ -346,22 +353,18 @@ namespace ClearCanvas.Ris.Client
 			if (_selectedFolderSystemNode == null)
 				return;
 
-			if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageResetFolderSystem, MessageBoxActions.YesNo)) 
-				return;
-
-			FolderExplorerComponentSettings.Default.UpdateUserConfiguration(userConfiguration =>
-				userConfiguration.RemoveUserFoldersCustomizations(_selectedFolderSystemNode.FolderSystem));
-
-			RefreshSelectedFolderSystemFolders();
+			_folderSystemsToReset.Add(_selectedFolderSystemNode.FolderSystem);
+			RefreshSelectedFolderSystemFolders(false);
+			this.Modified = true;
 		}
 
-		private void RefreshSelectedFolderSystemFolders()
+		private void RefreshSelectedFolderSystemFolders(bool includeUserCustomizations)
 		{
 			if(_selectedFolderSystemNode == null)
 				return;
 
 			_selectedFolderSystemNode.ClearSubTree();
-			BuildFolderTreeIfNotExist(_selectedFolderSystemNode);
+			BuildFolderTreeIfNotExist(_selectedFolderSystemNode, includeUserCustomizations);
 
 			_folderTree.Items.Clear();
 			_folderTree.Items.Add(_selectedFolderSystemNode);
@@ -393,7 +396,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Folders Helper
 
-		private void BuildFolderTreeIfNotExist(FolderSystemConfigurationNode folderSystemNode)
+		private void BuildFolderTreeIfNotExist(FolderSystemConfigurationNode folderSystemNode, bool includeUserCustomizations)
 		{
 			if (folderSystemNode.SubTree != null)
 				return;
@@ -401,7 +404,7 @@ namespace ClearCanvas.Ris.Client
 			// Initialize the list of Folders
 			folderSystemNode.FolderSystem.Initialize();
 
-			var folders = FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(folderSystemNode.FolderSystem);
+			var folders = FolderExplorerComponentSettings.Default.ApplyFolderCustomizations(folderSystemNode.FolderSystem, includeUserCustomizations);
 
 			// add each ordered folder to the tree
 			folderSystemNode.ModifiedEnabled = false;
@@ -409,6 +412,11 @@ namespace ClearCanvas.Ris.Client
 			CollectionUtils.ForEach(folders, folder => folderSystemNode.InsertNode(new FolderConfigurationNode(folder), folder.FolderPath));
 
 			folderSystemNode.ModifiedEnabled = true;
+		}
+
+		private void BuildFolderTreeIfNotExist(FolderSystemConfigurationNode folderSystemNode)
+		{
+			BuildFolderTreeIfNotExist(folderSystemNode, true);
 		}
 
 		private void AddFolder()

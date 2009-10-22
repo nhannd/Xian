@@ -387,7 +387,7 @@ namespace ClearCanvas.Ris.Client
 			// clear existing
 			_folderTreeRoot.GetSubTree().Items.Clear();
 
-			var orderedFolders = FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(_folderSystem);
+			var orderedFolders = FolderExplorerComponentSettings.Default.ApplyFolderCustomizations(_folderSystem);
 			orderedFolders = CollectionUtils.Select(orderedFolders, f => f.Visible);
 
 			_folderTreeRoot.InsertFolders(orderedFolders, false);

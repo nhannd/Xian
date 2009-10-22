@@ -471,7 +471,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void BuildFolderExplorers()
 		{
-			var folderSystems = FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(_folderSystems);
+			var folderSystems = FolderExplorerComponentSettings.Default.ApplyFolderSystemsOrder(_folderSystems);
 
 			// create a folder explorer component and a tab page for each folder system
 			foreach (IFolderSystem folderSystem in folderSystems)
