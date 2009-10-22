@@ -68,8 +68,7 @@
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.OrderNoteboxFolderSystem" readonly="true">
     <folder-class class="PersonalInboxFolder" />
-    <!-- Hide group folders by default -->
-    <folder-class class="GroupInboxFolder" visible="false"/>
+    <folder-class class="GroupInboxFolder"/>
     <folder-class class="SentItemsFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RadiologistAdminWorkflowFolderSystem">
