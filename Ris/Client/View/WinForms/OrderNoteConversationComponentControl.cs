@@ -29,14 +29,10 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client;
-using System;
-using ClearCanvas.Common.Utilities;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -58,7 +54,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_component = component;
 
-			Control orderNotes = (Control)_component.OrderNotesHost.ComponentView.GuiElement;
+			var orderNotes = (Control)_component.OrderNotesHost.ComponentView.GuiElement;
 			orderNotes.Dock = DockStyle.Fill;
 			_orderNotesPanel.Controls.Add(orderNotes);
 
@@ -83,7 +79,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_completeButton.DataBindings.Add("Text", _component, "CompleteButtonLabel", true, DataSourceUpdateMode.OnPropertyChanged);
-			_completeButton.DataBindings.Add("Enabled", _component, "CompleteButtonEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_notesGroupBox.Text = _component.OrderNotesLabel;
 

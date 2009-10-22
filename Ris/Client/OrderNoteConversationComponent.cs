@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client
 		#region Constructors
 
 		public OrderNoteConversationComponent(EntityRef orderRef, string orderNoteCategory, string templatesXml, string softKeysXml)
-			: this(orderRef, new[] { orderNoteCategory },  templatesXml, softKeysXml)
+			: this(orderRef, new[] { orderNoteCategory }, templatesXml, softKeysXml)
 		{
 		}
 
@@ -168,6 +168,12 @@ namespace ClearCanvas.Ris.Client
 					return new ValidationResult(atLeastOneRecipient || IsBodyEmpty, SR.MessageNoRecipientsSelected);
 				}));
 
+			this.Validation.Add(new ValidationRule("Body",
+				delegate
+				{
+					var isNotEmptyNewNote = !(this.IsBodyEmpty && !_orderNoteViewComponent.HasAcknowledgeableNotes);
+					return new ValidationResult(isNotEmptyNewNote, SR.MessageBodyCannotBeEmpty);
+				}));
 		}
 
 		#endregion
@@ -273,7 +279,7 @@ namespace ClearCanvas.Ris.Client
 
 		public object FormatTemplate(object p)
 		{
-			var template = (TemplateData) p;
+			var template = (TemplateData)p;
 			return template.DisplayName;
 		}
 
@@ -282,9 +288,9 @@ namespace ClearCanvas.Ris.Client
 			get { return _selectedTemplate; }
 			set
 			{
-				if(!Equals(value, _selectedTemplate))
+				if (!Equals(value, _selectedTemplate))
 				{
-					_selectedTemplate = (TemplateData) value;
+					_selectedTemplate = (TemplateData)value;
 					NotifyPropertyChanged("SelectedTemplate");
 					InitializeFromTemplate(_selectedTemplate);
 					UpdateSoftKeys(_selectedTemplate);
@@ -323,7 +329,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string FormatOnBehalfOf(object item)
 		{
-			var s = item == null ? null : ((StaffGroupSummary) item).Name;
+			var s = item == null ? null : ((StaffGroupSummary)item).Name;
 			return s ?? "";
 		}
 
@@ -335,7 +341,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			set
 			{
-				if(!Equals(value, _onBehalfOf))
+				if (!Equals(value, _onBehalfOf))
 				{
 					_onBehalfOf = value;
 					NotifyPropertyChanged("OnBehalfOf");
@@ -380,7 +386,7 @@ namespace ClearCanvas.Ris.Client
 			_selectedRecipient = CollectionUtils.SelectFirst(_recipients.Items, i => i.Item.Recipient == null);
 
 			// if none, then add one
-			if(_selectedRecipient == null)
+			if (_selectedRecipient == null)
 			{
 				_selectedRecipient = _recipients.AddNew(true);
 			}
@@ -422,18 +428,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return _orderNoteViewComponent.CheckedNotes.Count > 0
+				return _orderNoteViewComponent.HasAcknowledgeableNotes
 						? (IsBodyEmpty ? SR.TitleAcknowledge : SR.TitleAcknowledgeAndPost)
 						: SR.TitlePost;
-			}
-		}
-
-		public bool CompleteButtonEnabled
-		{
-			get
-			{
-				return (_orderNoteViewComponent.CheckedNotes.Count != 0 || !IsBodyEmpty)
-					/* && _orderNoteViewComponent.AllAcknowledgeableNotesAreChecked */;
 			}
 		}
 
@@ -445,9 +442,9 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			if(!_orderNoteViewComponent.AllAcknowledgeableNotesAreChecked)
+			if (!_orderNoteViewComponent.AllAcknowledgeableNotesAreChecked)
 			{
-				string mesage = this.IsBodyEmpty
+				var mesage = this.IsBodyEmpty
 					? SR.MessageMustAcknowledge
 					: SR.MessageMustAcknowledgeWithPost;
 				this.Host.DesktopWindow.ShowMessageBox(mesage, MessageBoxActions.Ok);
@@ -463,7 +460,7 @@ namespace ClearCanvas.Ris.Client
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
-				                        () => Exit(ApplicationComponentExitCode.Error));
+										() => Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 
@@ -614,7 +611,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void DeleteRecipient()
 		{
-			if (_selectedRecipient == null) 
+			if (_selectedRecipient == null)
 				return;
 
 			_recipients.Items.Remove(_selectedRecipient);

@@ -73,11 +73,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.label1 = new System.Windows.Forms.Label();
 			this._onBehalf = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._recipients = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._softKeyFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this._replyBody = new System.Windows.Forms.RichTextBox();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this._templateSelectionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._template = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._replyBody = new System.Windows.Forms.RichTextBox();
+			this._softKeyFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._componentTableLayout.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this._componentSplitContainer.Panel1.SuspendLayout();
@@ -273,29 +273,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipients.Size = new System.Drawing.Size(234, 172);
 			this._recipients.TabIndex = 0;
 			// 
-			// _softKeyFlowPanel
-			// 
-			this._softKeyFlowPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._softKeyFlowPanel.AutoScroll = true;
-			this._softKeyFlowPanel.Location = new System.Drawing.Point(3, 56);
-			this._softKeyFlowPanel.Name = "_softKeyFlowPanel";
-			this._softKeyFlowPanel.Size = new System.Drawing.Size(550, 31);
-			this._softKeyFlowPanel.TabIndex = 1;
-			// 
-			// _replyBody
-			// 
-			this._replyBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._replyBody.AutoWordSelection = true;
-			this._replyBody.DetectUrls = false;
-			this._replyBody.Location = new System.Drawing.Point(3, 93);
-			this._replyBody.Name = "_replyBody";
-			this._replyBody.Size = new System.Drawing.Size(550, 181);
-			this._replyBody.TabIndex = 2;
-			this._replyBody.Text = "";
-			// 
 			// tableLayoutPanel2
 			// 
 			this.tableLayoutPanel2.ColumnCount = 1;
@@ -340,6 +317,30 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._template.Size = new System.Drawing.Size(235, 41);
 			this._template.TabIndex = 1;
 			this._template.Value = null;
+			// 
+			// _replyBody
+			// 
+			this._replyBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._replyBody.AutoWordSelection = true;
+			this._replyBody.DetectUrls = false;
+			this._replyBody.Location = new System.Drawing.Point(3, 93);
+			this._replyBody.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
+			this._replyBody.Name = "_replyBody";
+			this._replyBody.Size = new System.Drawing.Size(538, 181);
+			this._replyBody.TabIndex = 2;
+			this._replyBody.Text = "";
+			// 
+			// _softKeyFlowPanel
+			// 
+			this._softKeyFlowPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._softKeyFlowPanel.AutoScroll = true;
+			this._softKeyFlowPanel.Location = new System.Drawing.Point(3, 56);
+			this._softKeyFlowPanel.Name = "_softKeyFlowPanel";
+			this._softKeyFlowPanel.Size = new System.Drawing.Size(550, 31);
+			this._softKeyFlowPanel.TabIndex = 1;
 			// 
 			// OrderNoteConversationComponentControl
 			// 

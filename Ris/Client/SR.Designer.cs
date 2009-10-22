@@ -1276,6 +1276,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must provide a message body when creating a new note..
+        /// </summary>
+        internal static string MessageBodyCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("MessageBodyCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A cancellation reason is required to replace an order..
         /// </summary>
         internal static string MessageCancellationReasonRequired {
