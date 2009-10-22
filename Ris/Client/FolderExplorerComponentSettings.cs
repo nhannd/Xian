@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client
 		#region Public API
 
 		/// <summary>
-		/// Orders the folder systems based on what is in the XML document
+		/// Orders the folder systems according to the default and user specific settings
 		/// </summary>
 		/// <param name="folderSystems">Input list of folder systems</param>
 		public IEnumerable<IFolderSystem> ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Customizes the folders in the specified folder system according to what is in the XML document
+		/// Customizes the folders in the specified folder system according to the default and user specific settings
 		/// </summary>
 		/// <param name="folderSystem"></param>
 		public IEnumerable<IFolder> ApplyUserFoldersCustomizations(IFolderSystem folderSystem)
@@ -82,6 +82,12 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public delegate void UpdateFolderExplorerUserConfigurationAction(IFolderExplorerUserConfigurationUpdater userConfiguration);
+
+		/// <summary>
+		/// Allows user configuration to be stored.  The update action should be used to invoke methods on the 
+		/// <see cref="IFolderExplorerUserConfigurationUpdater"/> to set the required user configuration.
+		/// </summary>
+		/// <param name="updateAction"></param>
 		public void UpdateUserConfiguration(UpdateFolderExplorerUserConfigurationAction updateAction)
 		{
 			_userConfig.BeginTransaction();

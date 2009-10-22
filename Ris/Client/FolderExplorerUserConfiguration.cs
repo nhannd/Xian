@@ -7,21 +7,60 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Interface for updating a users customizations to the folder explorer
+	/// </summary>
 	public interface IFolderExplorerUserConfigurationUpdater
 	{
+		/// <summary>
+		/// Sets the order in which folder systems should appear in the folder explorer
+		/// </summary>
+		/// <param name="folderSystems"></param>
 		void SaveUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems);
+
+		/// <summary>
+		/// Saves the customizations contained in the specified <see cref="IFolder"/> list for the specified <see cref="IFolderSystem"/>
+		/// </summary>
+		/// <param name="folderSystem"></param>
+		/// <param name="customizedFolders"></param>
 		void SaveUserFoldersCustomizations(IFolderSystem folderSystem, List<IFolder> customizedFolders);
+
+		/// <summary>
+		/// Removes all user customizations from the specified <see cref="IFolderSystem"/>
+		/// </summary>
+		/// <param name="folderSystem"></param>
 		void RemoveUserFoldersCustomizations(IFolderSystem folderSystem);
 	}
 
+	/// <summary>
+	/// Interface for applying, updating and transactionally persisting a per user customizations to the folder explorer
+	/// </summary>
 	public interface IFolderExplorerUserConfiguration : IFolderExplorerConfiguration, IFolderExplorerUserConfigurationUpdater
 	{
-		void CommitTransaction();
-		void RollbackTransaction();
+		/// <summary>
+		/// Begins a transaction.
+		/// </summary>
 		void BeginTransaction();
+
+		/// <summary>
+		/// Commits the transaction.
+		/// </summary>
+		void CommitTransaction();
+
+		/// <summary>
+		/// Rollsback the transaction.
+		/// </summary>
+		void RollbackTransaction();
+
+		/// <summary>
+		/// Indicates that the current user's folder/folder system customizations have been committed.
+		/// </summary>
 		event EventHandler ChangesCommitted;
 	}
 
+	/// <summary>
+	/// Provides per user folder explorer customizations
+	/// </summary>
 	public class FolderExplorerUserConfiguration : FolderExplorerConfiguration, IFolderExplorerUserConfiguration
 	{
 		#region Private fields
@@ -44,17 +83,11 @@ namespace ClearCanvas.Ris.Client
 
 		#region IFolderExplorerUserConfiguration members
 
-		/// <summary>
-		/// Begins a transaction.
-		/// </summary>
 		public void BeginTransaction()
 		{
 			_transactionPending = true;
 		}
 
-		/// <summary>
-		/// Rollsback the transaction.
-		/// </summary>
 		public void RollbackTransaction()
 		{
 			if (!_transactionPending)
@@ -64,9 +97,6 @@ namespace ClearCanvas.Ris.Client
 			_transactionPending = false;
 		}
 
-		/// <summary>
-		/// Commits the transaction.
-		/// </summary>
 		public void CommitTransaction()
 		{
 			if (!_transactionPending)
@@ -140,9 +170,6 @@ namespace ClearCanvas.Ris.Client
 				this.GetFolderSystemsNode().ReplaceChild(CreateXmlFolderSystem(folderSystem.Id), xmlFolderSystem);
 		}
 
-		/// <summary>
-		/// Indicates that the current user's folder/folder system customizations have been committed.
-		/// </summary>
 		public event EventHandler ChangesCommitted
 		{
 			add { _changesCommitted += value; }
@@ -155,14 +182,17 @@ namespace ClearCanvas.Ris.Client
 
 		protected override Predicate<IFolder> GetFolderFilterFromCustomizatinSpec(XmlElement element)
 		{
+			// User customizations are made to a specific folder, not a folder class, so use the "id"
 			var id = element.GetAttribute("id");
 			return f => f.Id == id;
 		}
 
-		protected override void CustomizeItem(XmlElement element, IFolder folder)
+		protected override void CustomizeItem(IFolder folder, XmlElement element)
 		{
-			base.CustomizeItem(element, folder);
+			// reuse visibility customization from FolderExplorerConfiguration
+			base.CustomizeItem(folder, element);
 
+			// and add path customization
 			var pathSetting = element.GetAttribute("path");
 			if (!string.IsNullOrEmpty(pathSetting))
 			{
@@ -172,7 +202,9 @@ namespace ClearCanvas.Ris.Client
 
 		protected override IList<XmlNode> GetFolderCustomizationSpecsForFolderSystem(string folderSystemId)
 		{
+			// for user customizations, need to create any missing nodes so that new customizations can be stored
 			var xmlFolderSystem = FindXmlFolderSystem(folderSystemId) ?? CreateXmlFolderSystem(folderSystemId);
+			// User customizations are made to a specific folder, not a folder class, so look for <folder> nodes
 			return CollectionUtils.Select<XmlNode>(xmlFolderSystem.ChildNodes, n => n.Name == "folder");
 		}
 
