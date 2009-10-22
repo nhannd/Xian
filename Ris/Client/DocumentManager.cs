@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client

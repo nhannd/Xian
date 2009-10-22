@@ -36,26 +36,26 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class PerformingDocumentationDocument : Document
-    {
-        private readonly ModalityWorklistItem _item;
-    	private PerformingDocumentationComponent _component;
+	public class PerformingDocumentationDocument : Document
+	{
+		private readonly ModalityWorklistItem _item;
+		private PerformingDocumentationComponent _component;
 
-        public PerformingDocumentationDocument(ModalityWorklistItem item, IDesktopWindow desktopWindow)
-            : base(item.OrderRef, desktopWindow)
-        {
-            if(item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
+		public PerformingDocumentationDocument(ModalityWorklistItem item, IDesktopWindow desktopWindow)
+			: base(item.OrderRef, desktopWindow)
+		{
+			if(item == null)
+			{
+				throw new ArgumentNullException("item");
+			}
 
-            _item = item;
-        }
+			_item = item;
+		}
 
-        public override string GetTitle()
-        {
-            return string.Format("Performing - {0} - {1}", PersonNameFormat.Format(_item.PatientName), MrnFormat.Format(_item.Mrn));
-        }
+		public override string GetTitle()
+		{
+			return string.Format("Performing - {0} - {1}", PersonNameFormat.Format(_item.PatientName), MrnFormat.Format(_item.Mrn));
+		}
 
 		public override bool SaveAndClose()
 		{
@@ -63,10 +63,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return base.Close();
 		}
 
-        public override IApplicationComponent GetComponent()
-        {
-        	_component = new PerformingDocumentationComponent(_item);
-        	return _component;
-        }
-    }
+		public override IApplicationComponent GetComponent()
+		{
+			_component = new PerformingDocumentationComponent(_item);
+			return _component;
+		}
+	}
 }
