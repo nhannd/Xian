@@ -482,7 +482,7 @@ namespace ClearCanvas.Ris.Client
 				_stackTabComponent.Pages.Add(page);
 
 				folderSystem.TitleChanged += FolderSystemTitleChangedEventHandler;
-				folderSystem.TitleChanged += FolderSystemIconChangedEventHandler;
+				folderSystem.TitleIconChanged += FolderSystemIconChangedEventHandler;
 			}
 		}
 
@@ -492,7 +492,7 @@ namespace ClearCanvas.Ris.Client
 			foreach (IFolderSystem folderSystem in _folderSystems)
 			{
 				folderSystem.TitleChanged -= FolderSystemTitleChangedEventHandler;
-				folderSystem.TitleChanged -= FolderSystemIconChangedEventHandler;
+				folderSystem.TitleIconChanged -= FolderSystemIconChangedEventHandler;
 			}
 
 			// remove all the folder explorer component pages from the UI
