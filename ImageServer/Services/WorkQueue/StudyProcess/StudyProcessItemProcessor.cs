@@ -49,8 +49,6 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-
- 
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
@@ -118,10 +116,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 						                               baseFile.TransferSyntax, dupFile.TransferSyntax);
 
 						List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
-						DicomAttributeComparisonResult result = new DicomAttributeComparisonResult();
-						result.ResultType = ComparisonResultType.DifferentValues;
-						result.TagName = DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name;
-						result.Details = failure;
+						DicomAttributeComparisonResult result = new DicomAttributeComparisonResult
+						                                        	{
+						                                        		ResultType = ComparisonResultType.DifferentValues,
+						                                        		TagName =
+						                                        			DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name,
+						                                        		Details = failure
+						                                        	};
 						list.Add(result);
 						CreateDuplicateSIQEntry(uid, dupFile, list);
 						return;
@@ -172,10 +173,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream, bool compare)
         {
             SopInstanceProcessor processor = new SopInstanceProcessor( _context);
- 
-			long fileSize;
-			FileInfo fileInfo = new FileInfo(file.Filename);
-			fileSize = fileInfo.Length;
+
+        	FileInfo fileInfo = new FileInfo(file.Filename);
+			long fileSize = fileInfo.Length;
 
 			processor.InstanceStats.FileLoadTime.Start();
 			processor.InstanceStats.FileLoadTime.End();
@@ -212,9 +212,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <returns>Number of instances that have been processed successfully.</returns>
         private int ProcessUidList(Model.WorkQueue item)
         {
-            StudyXml studyXml;
-
-            studyXml = LoadStudyXml(StorageLocation);
+        	StudyXml studyXml = LoadStudyXml(StorageLocation);
 
             int successfulProcessCount = 0;
 
@@ -355,10 +353,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
-                if (e.InnerException != null)
-                    item.FailureDescription = String.Format("{0}:{1}", e.GetType().Name, e.InnerException.Message);
-                else
-                    item.FailureDescription = String.Format("{0}:{1}", e.GetType().Name, e.Message);
+                item.FailureDescription = e.InnerException != null ? 
+					String.Format("{0}:{1}", e.GetType().Name, e.InnerException.Message) : String.Format("{0}:{1}", e.GetType().Name, e.Message);
 
                 sop.FailureCount++;
                 UpdateWorkQueueUid(sop);
@@ -467,9 +463,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 {
                     DirectoryUtility.DeleteIfEmpty(GetDuplicateGroupPath(uid));
                 }
-
             }
-            
         }
 
         #endregion
@@ -498,8 +492,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(item, "item");
 
-            _statistics = new StudyProcessStatistics();
-            _statistics.Description = String.Format("{0}[Key={1}]", item.WorkQueueTypeEnum, item.Key.Key);
+            _statistics = new StudyProcessStatistics
+                          	{
+                          		Description = String.Format("{0}[Key={1}]", item.WorkQueueTypeEnum, item.Key.Key)
+                          	};
         }
         
         protected override void ProcessItem(Model.WorkQueue item)
@@ -508,7 +504,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
             _statistics.TotalProcessTime.Start();
             
-            bool successful = false;
+            bool successful;
         	bool idle = false;
             //Load the specific UIDs that need to be processed.
             LoadUids(item);
@@ -558,12 +554,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         PostponeItem(item, string.Format("Unable to auto-reconcile at this time: the target study {0} is not online yet. Restore has been requested.", ex.StudyInstanceUid));
                         return;
                     }
-                    else
-                    {
-                        // fail right away
-                        FailQueueItem(item, string.Format("Unable to auto-reconcile at this time: the target study {0} is not nearline and could not be restored.", ex.StudyInstanceUid));
-                        return;
-                    }
+                	// fail right away
+                	FailQueueItem(item, string.Format("Unable to auto-reconcile at this time: the target study {0} is not nearline and could not be restored.", ex.StudyInstanceUid));
+                	return;
                 }
             }
             _statistics.TotalProcessTime.End();
@@ -595,10 +588,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			}
 			else
 			{
-				bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, delegate(WorkQueueUid uid)
-																			   {
-																				   return uid.Duplicate && uid.Failed;
-																			   });
+				bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, uid => uid.Duplicate && uid.Failed);
 
 				if (allFailedDuplicate)
 				{
@@ -607,10 +597,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
 					return;
 				}
-				else
-				{
-					PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
-				}
+				PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
 			}				
         }
 

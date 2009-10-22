@@ -48,17 +48,17 @@ namespace ClearCanvas.ImageServer.Core.Validation
     {
         #region Private Members
         private readonly ValidationErrors _error;
-        private readonly StudyInfo _studyInfo;
+        private readonly ValidationStudyInfo _validationStudyInfo;
         #endregion
         #region Constructors
 
-        public StudyIntegrityValidationFailure(ValidationErrors error, StudyInfo studyInfo, string details)
+        public StudyIntegrityValidationFailure(ValidationErrors error, ValidationStudyInfo validationStudyInfo, string details)
             : base(details)
         {
-            Platform.CheckForNullReference(studyInfo, "studyInfo");
+            Platform.CheckForNullReference(validationStudyInfo, "validationStudyInfo");
 
             _error = error;
-            _studyInfo = studyInfo;
+            _validationStudyInfo = validationStudyInfo;
         }
         
         #endregion
@@ -68,11 +68,11 @@ namespace ClearCanvas.ImageServer.Core.Validation
         #endregion
 
         /// <summary>
-        /// Gets the <see cref="StudyInfo"/> for the study that failed the validation.
+        /// Gets the <see cref="ValidationStudyInfo"/> for the study that failed the validation.
         /// </summary>
-        public StudyInfo StudyInfo
+        public ValidationStudyInfo ValidationStudyInfo
         {
-            get { return _studyInfo; }
+            get { return _validationStudyInfo; }
         }
 
         /// <summary>

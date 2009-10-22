@@ -60,7 +60,7 @@
     <Compile Include="Edit\UpdateStudyCommand.cs" />
     <Compile Include="Edit\UpdateStudyStatistics.cs" />
     <Compile Include="Edit\WebDeleteWorkQueueEntryData.cs" />
-    <Compile Include="Edit\StudyMatchingMap.cs" />
+    <Compile Include="Reconcile\StudyMatchingMap.cs" />
     <Compile Include="Edit\WebEditStudyCommandCompiler.cs" />
     <Compile Include="Edit\WebEditStudyContext.cs" />
     <Compile Include="Edit\WebEditStudyHistoryRecord.cs" />
@@ -111,7 +111,7 @@
     <Compile Include="SopInstanceProcessor.cs" />
     <Compile Include="StudyEditor.cs" />
     <Compile Include="UpdateStudyStatusCommand.cs" />
-    <Compile Include="Validation\StudyInfo.cs" />
+    <Compile Include="Validation\ValidationStudyInfo.cs" />
     <Compile Include="Validation\StudyIntegrityValidationFailure.cs" />
     <Compile Include="Validation\StudyIntegrityValidationModes.cs" />
     <Compile Include="Validation\StudyIntegrityValidator.cs" />

@@ -65,16 +65,16 @@ namespace ClearCanvas.ImageServer.Core.Validation
                     {
                         if (studyXml != null && studyXml.NumberOfStudyRelatedInstances != study.NumberOfStudyRelatedInstances)
                         {
-                            StudyInfo studyInfo = new StudyInfo();
-                            studyInfo.AccessionNumber = study.AccessionNumber;
-                            studyInfo.PatientsId = study.PatientId;
-                            studyInfo.PatientsName = study.PatientsName;
-                            studyInfo.ServerAE = studyStorage.ServerPartition.AeTitle;
-                            studyInfo.StudyInstaneUid = study.StudyInstanceUid;
-                            studyInfo.StudyDate = study.StudyDate;
+                            ValidationStudyInfo validationStudyInfo = new ValidationStudyInfo();
+                            validationStudyInfo.AccessionNumber = study.AccessionNumber;
+                            validationStudyInfo.PatientsId = study.PatientId;
+                            validationStudyInfo.PatientsName = study.PatientsName;
+                            validationStudyInfo.ServerAE = studyStorage.ServerPartition.AeTitle;
+                            validationStudyInfo.StudyInstaneUid = study.StudyInstanceUid;
+                            validationStudyInfo.StudyDate = study.StudyDate;
 
                             throw new StudyIntegrityValidationFailure(
-                                ValidationErrors.InconsistentObjectCount, studyInfo,
+                                ValidationErrors.InconsistentObjectCount, validationStudyInfo,
                                 String.Format("Number of instances in database and xml do not match: {0} vs {1}.",
                                     study.NumberOfStudyRelatedInstances,
                                     studyXml.NumberOfStudyRelatedInstances

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
@@ -64,7 +62,7 @@ namespace ClearCanvas.ImageServer.Core.Data
         }
 
         /// <summary>
-        /// Loads the <see cref="Series"/> and<see cref="Instances"/> mappings for the specified study.
+        /// Loads the <see cref="Series"/> and instance mappings for the specified study.
         /// </summary>
         /// <param name="location"></param>
         public void Load(StudyStorageLocation location)
@@ -73,7 +71,7 @@ namespace ClearCanvas.ImageServer.Core.Data
         }
 
         /// <summary>
-        /// Loads the <see cref="Series"/> and<see cref="Instances"/> mappings from the specified file.
+        /// Loads the <see cref="Series"/> and instance mappings from the specified file.
         /// </summary>
         /// <param name="path"></param>
         public void Load(string path)
@@ -86,8 +84,6 @@ namespace ClearCanvas.ImageServer.Core.Data
                 UidMapXml copy = XmlUtils.Deserialize<UidMapXml>(doc);
                 StudyUidMaps = copy.StudyUidMaps;
             }
-            
         }
-
     }
 }

@@ -119,15 +119,17 @@ namespace ClearCanvas.ImageServer.Core
         			}
 
         			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
-        			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-        			insertParms.ServerPartitionKey = partition.GetKey();
-        			insertParms.StudyInstanceUid = studyInstanceUid;
-
-        			insertParms.Folder =
-        				ResolveStorageFolder(partition, studyInstanceUid, studyDate, updateContext, false
-        					/* set to false for optimization because we are sure it's not in the system */);
-        			insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
-        			insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+        			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters
+        			                                           	{
+        			                                           		ServerPartitionKey = partition.GetKey(),
+        			                                           		StudyInstanceUid = studyInstanceUid,
+        			                                           		Folder =
+        			                                           			ResolveStorageFolder(partition, studyInstanceUid, studyDate,
+        			                                           			                     updateContext, false
+        			                                           			/* set to false for optimization because we are sure it's not in the system */),
+        			                                           		FilesystemKey = filesystem.Filesystem.GetKey(),
+        			                                           		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+        			                                           	};
 
         			if (message.TransferSyntax.LosslessCompressed)
         			{
@@ -170,10 +172,9 @@ namespace ClearCanvas.ImageServer.Core
             {
                 IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
 
-                InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-                parms.StudyStorageKey = storage.Key;
+                InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters {StudyStorageKey = storage.Key};
 
-                RestoreQueue queue = broker.FindOne(parms);
+            	RestoreQueue queue = broker.FindOne(parms);
 
                 if (queue == null)
                 {
@@ -344,8 +345,7 @@ namespace ClearCanvas.ImageServer.Core
                 StudyStorage storage = StudyStorage.Load(context.PersistenceContext, partition.Key, studyInstanceUid);
                 if (storage != null)
                     return StudyStorageLocation.FindStorageLocations(context.PersistenceContext, storage);
-                else
-                    return null;
+            	return null;
             }
         }
 
@@ -361,21 +361,20 @@ namespace ClearCanvas.ImageServer.Core
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
-                LockStudyParameters lockStudyParams = new LockStudyParameters();
-                lockStudyParams.StudyStorageKey = studyStorageKey;
-                lockStudyParams.QueueStudyStateEnum = state;
+                LockStudyParameters lockStudyParams = new LockStudyParameters
+                                                      	{
+                                                      		StudyStorageKey = studyStorageKey,
+                                                      		QueueStudyStateEnum = state
+                                                      	};
 
-                if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
+            	if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
                 {
                     failureReason = lockStudyParams.FailureReason;
                     return false;
                 }
-                else
-                {
-                    updateContext.Commit();
-                    failureReason = null;
-                    return true;
-                }
+            	updateContext.Commit();
+            	failureReason = null;
+            	return true;
             }
         }
 
@@ -389,18 +388,17 @@ namespace ClearCanvas.ImageServer.Core
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
-                LockStudyParameters lockStudyParams = new LockStudyParameters();
-                lockStudyParams.StudyStorageKey = studyStorageKey;
-                lockStudyParams.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+                LockStudyParameters lockStudyParams = new LockStudyParameters
+                                                      	{
+                                                      		StudyStorageKey = studyStorageKey,
+                                                      		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+                                                      	};
 
-                if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
+            	if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
                     return false;
 
-                else
-                {
-                    updateContext.Commit();
-                    return true;
-                }
+            	updateContext.Commit();
+            	return true;
             }
         }
 
@@ -411,10 +409,9 @@ namespace ClearCanvas.ImageServer.Core
         {
             get
             {
-                if (Thread.CurrentPrincipal is CustomPrincipal)
+            	if (Thread.CurrentPrincipal is CustomPrincipal)
                     return (Thread.CurrentPrincipal as CustomPrincipal).DisplayName;
-                else
-                    return Thread.CurrentPrincipal.Identity.Name;
+            	return Thread.CurrentPrincipal.Identity.Name;
             }
         }
 
@@ -425,10 +422,9 @@ namespace ClearCanvas.ImageServer.Core
         {
             get
             {
-                if (Thread.CurrentPrincipal is CustomPrincipal)
+            	if (Thread.CurrentPrincipal is CustomPrincipal)
                     return (Thread.CurrentPrincipal as CustomPrincipal).Credentials.UserName;
-                else
-                    return Thread.CurrentPrincipal.Identity.Name;
+            	return Thread.CurrentPrincipal.Identity.Name;
             }
         }
         

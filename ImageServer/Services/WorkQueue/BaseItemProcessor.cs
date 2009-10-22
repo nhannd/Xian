@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     {
         #region Private Members
         private String _workQueueItemKey;
-        private StudyInfo _studyInfo; 
+        private ValidationStudyInfo _validationStudyInfo; 
         #endregion
 
         #region Public Properties
@@ -68,10 +68,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             set { _workQueueItemKey = value; }
         }
 
-        public StudyInfo StudyInfo
+        public ValidationStudyInfo ValidationStudyInfo
         {
-            get { return _studyInfo; }
-            set { _studyInfo = value; }
+            get { return _validationStudyInfo; }
+            set { _validationStudyInfo = value; }
         } 
         #endregion
     }
@@ -1240,17 +1240,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 StudyStorageLocation location = locations[0];
                 if (location != null)
                 {
-                    contextData.StudyInfo = new StudyInfo();
-                    contextData.StudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+                    contextData.ValidationStudyInfo = new ValidationStudyInfo();
+                    contextData.ValidationStudyInfo.StudyInstaneUid = location.StudyInstanceUid;
 
                     // study info is not always available (eg, when all images failed to process)
                     if (location.Study != null)
                     {
-                        contextData.StudyInfo.AccessionNumber = location.Study.AccessionNumber;
-                        contextData.StudyInfo.PatientsId = location.Study.PatientId;
-                        contextData.StudyInfo.PatientsName = location.Study.PatientsName;
-                        contextData.StudyInfo.ServerAE = location.ServerPartition.AeTitle;
-                        contextData.StudyInfo.StudyDate = location.Study.StudyDate;
+                        contextData.ValidationStudyInfo.AccessionNumber = location.Study.AccessionNumber;
+                        contextData.ValidationStudyInfo.PatientsId = location.Study.PatientId;
+                        contextData.ValidationStudyInfo.PatientsName = location.Study.PatientsName;
+                        contextData.ValidationStudyInfo.ServerAE = location.ServerPartition.AeTitle;
+                        contextData.ValidationStudyInfo.StudyDate = location.Study.StudyDate;
                     }
                 }
             }

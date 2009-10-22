@@ -58,15 +58,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
     [XmlRoot("WebDeleteWorkQueueEntry")]
     public class WebDeleteWorkQueueEntryData
     {
-        #region Private Members
-        private DeletionLevel _level;
-        private string _reason;
-        private string _userId;
-        private string _userName;
-        private DateTime _timestamp;
-        
-        #endregion
-
         #region Constructors
 
         public WebDeleteWorkQueueEntryData()
@@ -74,53 +65,35 @@ namespace ClearCanvas.ImageServer.Core.Edit
             Level = DeletionLevel.Study;
         } 
         #endregion
-        #region Public Properties
 
-        /// <summary>
-        /// Gets the Deletion Level.
-        /// </summary>
-        public DeletionLevel Level
-        {
-            get { return _level; }
-            set { _level = value; }
-        }
+		#region Public Properties
 
-        
+    	/// <summary>
+    	/// Gets the Deletion Level.
+    	/// </summary>
+    	public DeletionLevel Level { get; set; }
 
-        /// <summary>
-        /// User-specified reason for deletion.
-        /// </summary>
-        public string Reason
-        {
-            get { return _reason; }
-            set { _reason = value; }
-        }
+    	/// <summary>
+    	/// User-specified reason for deletion.
+    	/// </summary>
+    	public string Reason { get; set; }
 
-        /// <summary>
-        /// Gets the user who entered the delete request.
-        /// </summary>
-        public string UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
-        }
+    	/// <summary>
+    	/// Gets the user who entered the delete request.
+    	/// </summary>
+    	public string UserId { get; set; }
 
-        /// <summary>
-        /// Gets the timestamp when the delete request was entered.
-        /// </summary>
-        public DateTime Timestamp
-        {
-            get { return _timestamp; }
-            set { _timestamp = value; }
-        }
+    	/// <summary>
+    	/// Gets the timestamp when the delete request was entered.
+    	/// </summary>
+    	public DateTime Timestamp { get; set; }
 
-        public string UserName
-        {
-            get { return _userName; }
-            set { _userName = value; }
-        }
+		/// <summary>
+		/// Gets the user name who entered the delete request
+		/// </summary>
+    	public string UserName { get; set; }
 
-        #endregion
+    	#endregion
     }
 
     /// <summary>
@@ -130,38 +103,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
     [XmlRoot("WebMoveWorkQueueEntry")]
     public class WebMoveWorkQueueEntryData
     {
-        private MoveLevel _level;
-        private string _reason;
-        private string _userId;
-        private DateTime _timestamp;
+    	public string Reason { get; set; }
 
-        public string Reason
-        {
-            get { return _reason; }
-            set { _reason = value; }
-        }
+    	public MoveLevel Level { get; set; }
 
-        public MoveLevel Level
-        {
-            get { return _level; }
-            set { _level = value; }
-        }
+    	public string UserId { get; set; }
 
-        public string UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
-        }
+    	public DateTime Timestamp { get; set; }
 
-        public DateTime Timestamp
+    	public WebMoveWorkQueueEntryData()
         {
-            get { return _timestamp; }
-            set { _timestamp = value; }
-        }
-
-        public WebMoveWorkQueueEntryData()
-        {
-            this.Level = MoveLevel.Study;
+            Level = MoveLevel.Study;
         }
     }
 

@@ -105,12 +105,8 @@ namespace ClearCanvas.ImageServer.Core.Data
 				attribute = null;
 				return false;
 			}
-			else
-			{
-				attribute = this[tag];
-				return true;
-			}
-            
+			attribute = this[tag];
+			return true;
 		}
 
 		public bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)

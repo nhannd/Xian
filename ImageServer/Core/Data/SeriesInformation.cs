@@ -42,10 +42,8 @@ namespace ClearCanvas.ImageServer.Core.Data
 	public class SeriesInformation
 	{
 		#region Private Members
-		private string _seriesInstanceUid;
-		private string _seriesDescription;
-		private string _modality;
-		private int _numberOfInstances = 0;
+
+		private int _numberOfInstances;
 		#endregion
 
 		#region Constructors
@@ -65,38 +63,26 @@ namespace ClearCanvas.ImageServer.Core.Data
 
             if (attributeProvider[DicomTags.NumberOfSeriesRelatedInstances] != null)
                 Int32.TryParse(attributeProvider[DicomTags.NumberOfSeriesRelatedInstances].ToString(), out _numberOfInstances);
-
 		}
 
 		#endregion
 
 		#region Public Properties
-		[XmlAttribute]
-		public string SeriesInstanceUid
-		{
-			get { return _seriesInstanceUid; }
-			set { _seriesInstanceUid = value; }
-		}
-		[XmlAttribute]
-		public string Modality
-		{
-			get { return _modality; }
-			set { _modality = value; }
-		}
 
-        public string SeriesDescription
-		{
-			get { return _seriesDescription; }
-			set { _seriesDescription = value; }
-		}
+		[XmlAttribute]
+		public string SeriesInstanceUid { get; set; }
 
-        public int NumberOfInstances
+		[XmlAttribute]
+		public string Modality { get; set; }
+
+		public string SeriesDescription { get; set; }
+
+		public int NumberOfInstances
 		{
 			get { return _numberOfInstances; }
 			set { _numberOfInstances = value; }
 		}
 
 	    #endregion
-
 	}
 }

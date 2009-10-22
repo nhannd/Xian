@@ -46,6 +46,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -202,20 +203,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private StudyHistoryUpdateColumns CreateStudyHistoryRecord()
         {
-            StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
-            columns.InsertTime = Platform.Time;
-            columns.StudyHistoryTypeEnum = StudyHistoryTypeEnum.Duplicate;
-            columns.StudyStorageKey = StorageLocation.GetKey();
-            columns.DestStudyStorageKey = StorageLocation.GetKey();
+            StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns
+                                                	{
+                                                		InsertTime = Platform.Time,
+                                                		StudyHistoryTypeEnum = StudyHistoryTypeEnum.Duplicate,
+                                                		StudyStorageKey = StorageLocation.GetKey(),
+                                                		DestStudyStorageKey = StorageLocation.GetKey(),
+                                                		StudyData = XmlUtils.SerializeAsXmlDoc(_originalStudyInfo)
+                                                	};
 
-            columns.StudyData = XmlUtils.SerializeAsXmlDoc(_originalStudyInfo);
-
-            ProcessDuplicateChangeLog changeLog = new ProcessDuplicateChangeLog();
-            changeLog.Action = _processDuplicateEntry.QueueData.Action;
-            changeLog.DuplicateDetails = _duplicateSopDetails;
-            changeLog.StudySnapShot = _originalStudyInfo;
-            changeLog.StudyUpdateCommands = _studyUpdateCommands;
-            XmlDocument doc = XmlUtils.SerializeAsXmlDoc(changeLog);
+        	ProcessDuplicateChangeLog changeLog = new ProcessDuplicateChangeLog
+                                                  	{
+                                                  		Action = _processDuplicateEntry.QueueData.Action,
+                                                  		DuplicateDetails = _duplicateSopDetails,
+                                                  		StudySnapShot = _originalStudyInfo,
+                                                  		StudyUpdateCommands = _studyUpdateCommands
+                                                  	};
+        	XmlDocument doc = XmlUtils.SerializeAsXmlDoc(changeLog);
             columns.ChangeDescription = doc;
             return columns;
         }
@@ -276,10 +280,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 {
                     throw new ApplicationException(processor.FailureReason, processor.FailureException);
                 }
-                else
-                {
-                    Platform.Log(ServerPlatform.InstanceLogLevel, "Discard duplicate SOP {0} in {1}", uid.SopInstanceUid, duplicateFile.FullName);
-                }
+            	Platform.Log(ServerPlatform.InstanceLogLevel, "Discard duplicate SOP {0} in {1}", uid.SopInstanceUid, duplicateFile.FullName);
             }
         }
 
@@ -342,13 +343,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 {
                     throw new ApplicationException(processor.FailureReason, processor.FailureException);
                 }
-                else
-                {
-                    if (needOverwrite)
-						Platform.Log(ServerPlatform.InstanceLogLevel, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, dupFilePath);
-                    else
-						Platform.Log(ServerPlatform.InstanceLogLevel, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, dupFilePath);
-                }
+            	if (needOverwrite)
+            		Platform.Log(ServerPlatform.InstanceLogLevel, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, dupFilePath);
+            	else
+            		Platform.Log(ServerPlatform.InstanceLogLevel, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, dupFilePath);
             }
         }
 
@@ -394,7 +392,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         }
 
-        private void PrintCommands(IList<BaseImageLevelUpdateCommand> commands)
+        private void PrintCommands(ICollection<BaseImageLevelUpdateCommand> commands)
         {
             StringBuilder log = new StringBuilder();
             log.AppendLine("Update on duplicate sops:");
@@ -463,11 +461,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             String instanceUid = _file.DataSet[DicomTags.SopInstanceUid].ToString();
             
             IDeleteInstance deleteInstanceBroker = updateContext.GetBroker<IDeleteInstance>();
-            DeleteInstanceParameters parameters = new DeleteInstanceParameters();
-            parameters.StudyStorageKey = _studyLocation.GetKey();
-            parameters.SeriesInstanceUid = seriesUid;
-            parameters.SOPInstanceUid = instanceUid;
-            if (!deleteInstanceBroker.Execute(parameters))
+            DeleteInstanceParameters parameters = new DeleteInstanceParameters
+                                                  	{
+                                                  		StudyStorageKey = _studyLocation.GetKey(),
+                                                  		SeriesInstanceUid = seriesUid,
+                                                  		SOPInstanceUid = instanceUid
+                                                  	};
+        	if (!deleteInstanceBroker.Execute(parameters))
             {
                 throw new ApplicationException("Unable to update instance count in db");
             }
@@ -589,19 +589,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             {
                 throw new ApplicationException("No online storage found");
             }
-            else
-            {
-                StudyProcessorContext context = new StudyProcessorContext(_storageLocation);
-                SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
-                string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
+        	StudyProcessorContext context = new StudyProcessorContext(_storageLocation);
+        	SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
+        	string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
 
-                _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, _compare, null, null);
-                if (_result.Status == ProcessingStatus.Failed)
-                {
-                    throw new ApplicationException("Unable to process file");
-                }
-            }
-
+        	_result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, _compare, null, null);
+        	if (_result.Status == ProcessingStatus.Failed)
+        	{
+        		throw new ApplicationException("Unable to process file");
+        	}
         }
 
         protected override void OnUndo()

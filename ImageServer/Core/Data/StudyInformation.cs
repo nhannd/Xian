@@ -43,14 +43,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 	public class StudyInformation 
 	{
 		#region Private Fields
-		private string _studyId;
-		private string _accessionNumber;
-		private string _studyDate;
-		private string _studyTime;
-		private string _modalities;
-		private string _studyInstanceUid;
-		private string _studyDescription;
-		private string _referringPhysician;
+
 		private PatientInformation _patientInfo = new PatientInformation();
 		private List<SeriesInformation> _series= new List<SeriesInformation> ();
 
@@ -99,54 +92,23 @@ namespace ClearCanvas.ImageServer.Core.Data
 		#endregion
 
 		#region Public Properties
-		public string StudyId
-		{
-			get { return _studyId; }
-			set { _studyId = value; }
-		}
-        
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
 
-		public string StudyDate
-		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
-		}
+		public string StudyId { get; set; }
 
-		public string StudyTime
-		{
-			get { return _studyTime; }
-			set { _studyTime = value; }
-		}
+		public string AccessionNumber { get; set; }
 
-		public string Modalities
-		{
-			get { return _modalities; }
-			set { _modalities = value; }
-		}
+		public string StudyDate { get; set; }
 
-		public string StudyInstanceUid
-		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
-		}
+		public string StudyTime { get; set; }
 
-		public string StudyDescription
-		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
-		}
+		public string Modalities { get; set; }
+
+		public string StudyInstanceUid { get; set; }
+
+		public string StudyDescription { get; set; }
 
 
-		public string ReferringPhysician
-		{
-			get { return _referringPhysician; }
-			set { _referringPhysician = value; }
-		}
+		public string ReferringPhysician { get; set; }
 
 		public PatientInformation PatientInfo
 		{
@@ -171,14 +133,10 @@ namespace ClearCanvas.ImageServer.Core.Data
 		public void Add(DicomMessageBase message)
 		{
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].ToString();
-			SeriesInformation theSeries = Series.Find(delegate(SeriesInformation ser)
-			                                          	{
-			                                          		return ser.SeriesInstanceUid == seriesInstanceUid;
-			                                          	});
+			SeriesInformation theSeries = Series.Find(ser => ser.SeriesInstanceUid == seriesInstanceUid);
 			if (theSeries==null)
 			{
-				SeriesInformation newSeries = new SeriesInformation(message.DataSet);
-				newSeries.NumberOfInstances = 1;
+				SeriesInformation newSeries = new SeriesInformation(message.DataSet) {NumberOfInstances = 1};
 				Series.Add(newSeries);
 			}
 			else

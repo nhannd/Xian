@@ -227,11 +227,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                 catch (StudyIntegrityValidationFailure ex)
                 {
                     StringBuilder error = new StringBuilder();
-                    error.AppendLine(String.Format("Partition  : {0}", ex.StudyInfo.ServerAE));
-                    error.AppendLine(String.Format("Patient    : {0}", ex.StudyInfo.PatientsName));
-                    error.AppendLine(String.Format("Study Uid  : {0}", ex.StudyInfo.StudyInstaneUid));
-                    error.AppendLine(String.Format("Accession# : {0}", ex.StudyInfo.AccessionNumber));
-                    error.AppendLine(String.Format("Study Date : {0}", ex.StudyInfo.StudyDate));
+                    error.AppendLine(String.Format("Partition  : {0}", ex.ValidationStudyInfo.ServerAE));
+                    error.AppendLine(String.Format("Patient    : {0}", ex.ValidationStudyInfo.PatientsName));
+                    error.AppendLine(String.Format("Study Uid  : {0}", ex.ValidationStudyInfo.StudyInstaneUid));
+                    error.AppendLine(String.Format("Accession# : {0}", ex.ValidationStudyInfo.AccessionNumber));
+                    error.AppendLine(String.Format("Study Date : {0}", ex.ValidationStudyInfo.StudyDate));
 
                     queueItem.FailureDescription = error.ToString();
                     _hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);

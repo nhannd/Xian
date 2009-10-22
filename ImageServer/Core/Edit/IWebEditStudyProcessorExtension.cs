@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Core;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {

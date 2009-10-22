@@ -35,7 +35,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
-using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -67,11 +66,13 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 		public void OnStudyEditing(WebEditStudyContext context)
 		{
 			_studyInfo = StudyInformation.CreateFrom(context.OriginalStudy);
-			_changeDesc = new WebEditStudyHistoryChangeDescription();
-			_changeDesc.UpdateCommands = context.EditCommands;
-		    _changeDesc.TimeStamp = Platform.Time;
-		    _changeDesc.UserId = context.UserId;
-		    _changeDesc.Reason = context.Reason;
+			_changeDesc = new WebEditStudyHistoryChangeDescription
+			              	{
+			              		UpdateCommands = context.EditCommands,
+			              		TimeStamp = Platform.Time,
+			              		UserId = context.UserId,
+			              		Reason = context.Reason
+			              	};
 		}
 
         
@@ -94,18 +95,21 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
 		#endregion
 
 		#region Private Methods
+
 		private StudyHistoryUpdateColumns CreateStudyHistoryRecord(WebEditStudyContext context)
 		{
 			Platform.CheckForNullReference(context.OriginalStudyStorageLocation, "context.OriginalStudyStorageLocation");
 			Platform.CheckForNullReference(context.NewStudystorageLocation, "context.NewStudystorageLocation");
 
-			StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
-			columns.InsertTime = Platform.Time;
-			columns.StudyHistoryTypeEnum = StudyHistoryTypeEnum.WebEdited; // TODO: 
-			columns.StudyStorageKey = context.OriginalStudyStorageLocation.GetKey();
-			columns.DestStudyStorageKey = context.NewStudystorageLocation.GetKey();
+			StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns
+			                                    	{
+			                                    		InsertTime = Platform.Time,
+			                                    		StudyHistoryTypeEnum = StudyHistoryTypeEnum.WebEdited,
+			                                    		StudyStorageKey = context.OriginalStudyStorageLocation.GetKey(),
+			                                    		DestStudyStorageKey = context.NewStudystorageLocation.GetKey(),
+			                                    		StudyData = XmlUtils.SerializeAsXmlDoc(_studyInfo)
+			                                    	};
 
-			columns.StudyData = XmlUtils.SerializeAsXmlDoc(_studyInfo);
 			XmlDocument doc = XmlUtils.SerializeAsXmlDoc(_changeDesc);
 			columns.ChangeDescription = doc;
 			return columns;
@@ -120,7 +124,6 @@ namespace ClearCanvas.ImageServer.Core.Edit.Extensions.LogHistory
             
 		}
 
-		#endregion
-        
+		#endregion   
 	}
 }

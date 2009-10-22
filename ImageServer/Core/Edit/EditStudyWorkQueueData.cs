@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
 
@@ -13,10 +12,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
     public class UpdateItem
     {
         private DicomTag _dicomTag;
-        private string _value;
-        private string _originalValue;
 
-        /// <summary>
+    	/// <summary>
         /// *** For serialization ***
         /// </summary>
         public UpdateItem()
@@ -67,62 +64,35 @@ namespace ClearCanvas.ImageServer.Core.Edit
             }
         }
 
-        [XmlAttribute("Value")]
-        public string Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
+    	[XmlAttribute("Value")]
+    	public string Value { get; set; }
 
-        [XmlAttribute("OriginalValue")]
-        public string OriginalValue
-        {
-            get { return _originalValue; }
-            set { _originalValue = value; }
-        }
+    	[XmlAttribute("OriginalValue")]
+    	public string OriginalValue { get; set; }
     }
 
+	/// <summary>
+	/// Edit request descriptor
+	/// </summary>
     public class EditRequest
     {
-        private List<UpdateItem> _updateEntries;
-        private string _userId;
-        private DateTime? _timeStamp;
-        private string _reason;
+    	public List<UpdateItem> UpdateEntries { get; set; }
 
-        public List<UpdateItem> UpdateEntries
-        {
-            get { return _updateEntries; }
-            set { _updateEntries = value; }
-        }
+    	public string UserId { get; set; }
 
-        public string UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
-        }
+    	public string Reason { get; set; }
 
-        public string Reason
-        {
-            get { return _reason; }
-            set { _reason = value; }
-        }
-
-        public DateTime? TimeStamp
-        {
-            get { return _timeStamp; }
-            set { _timeStamp = value; }
-        }
+    	public DateTime? TimeStamp { get; set; }
     }
 
     public class EditStudyWorkQueueData
     {
-        private EditRequest _request = new EditRequest();
+    	public EditStudyWorkQueueData()
+    	{
+    		EditRequest = new EditRequest();
+    	}
 
-        public EditRequest EditRequest
-        {
-            get { return _request; }
-            set { _request = value; }
-        }
+    	public EditRequest EditRequest { get; set; }
     }
 
     public class EditStudyWorkQueueDataParser
@@ -138,7 +108,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
         	return XmlUtils.Deserialize<EditStudyWorkQueueData>(element);
         }
 
-        private EditStudyWorkQueueData ParseOldXml(XmlElement element)
+        private static EditStudyWorkQueueData ParseOldXml(XmlElement element)
         {
             EditStudyWorkQueueData data = new EditStudyWorkQueueData();
 

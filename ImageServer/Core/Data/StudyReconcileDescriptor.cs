@@ -32,7 +32,6 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 
@@ -47,61 +46,37 @@ namespace ClearCanvas.ImageServer.Core.Data
 	public class StudyReconcileDescriptor
 	{
 		#region Private Members
-		private bool _auto;
+
 		private List<BaseImageLevelUpdateCommand> _commands;
-		private StudyReconcileAction _action;
-		private StudyInformation _existingStudyInfo;
-		private ImageSetDescriptor _imageSet;
-		private string _description;
-		private string _userName;
-	    private List<SeriesMapping> _seriesMappings;
+
 		#endregion
 
 		#region Public Properties
+
 		/// <summary>
 		/// Reconciliation option
 		/// </summary>
-		public StudyReconcileAction Action
-		{
-			get { return _action; }
-			set { _action = value; }
-		}
+		public StudyReconcileAction Action { get; set; }
 
 		/// <summary>
 		/// User-defined description.
 		/// </summary>
-		public string Description
-		{
-			get { return _description; }
-			set { _description = value; }
-		}
+		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets value indicating whether the reconciliation was automatic or manual.
 		/// </summary>
-		public bool Automatic
-		{
-			get { return _auto; }
-			set { _auto = value; }
-		}
+		public bool Automatic { get; set; }
 
 		/// <summary>
 		/// Gets or sets the <see cref="StudyInformation"/>
 		/// </summary>
-		public StudyInformation ExistingStudy
-		{
-			get { return _existingStudyInfo; }
-			set { _existingStudyInfo = value; }
-		}
+		public StudyInformation ExistingStudy { get; set; }
 
 		/// <summary>
 		/// Gets or sets the <see cref="ImageSetDescriptor"/>
 		/// </summary>
-		public ImageSetDescriptor ImageSetData
-		{
-			get { return _imageSet; }
-			set { _imageSet = value; }
-		}
+		public ImageSetDescriptor ImageSetData { get; set; }
 
 		/// <summary>
 		/// Gets or sets the commands that are part of the reconciliation process.
@@ -119,19 +94,11 @@ namespace ClearCanvas.ImageServer.Core.Data
 			set { _commands = value; }
 		}
 
-		public string UserName
-		{
-			get { return _userName; }
-			set { _userName = value; }
-		}
+		public string UserName { get; set; }
 
-	    public List<SeriesMapping> SeriesMappings
-	    {
-	        get { return _seriesMappings; }
-	        set { _seriesMappings = value; }
-	    }
+		public List<SeriesMapping> SeriesMappings { get; set; }
 
-	    #endregion
+		#endregion
 	}
 
 	[XmlRoot("Reconcile")]

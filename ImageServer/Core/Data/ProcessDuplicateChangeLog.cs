@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 
@@ -42,49 +41,29 @@ namespace ClearCanvas.ImageServer.Core.Data
 {
     public class ProcessDuplicateChangeLog
     {
-        #region Private Members
-        private DateTime _timeStamp = Platform.Time;
-        private ProcessDuplicateAction _action;
-        private ImageSetDetails _duplicateSetDetails;
-        private StudyInformation _studySnapShot;
-        private List<BaseImageLevelUpdateCommand> _studyUpdateCommands;
-            
-        #endregion
+        #region Constructors
+
+    	public ProcessDuplicateChangeLog()
+    	{
+    		TimeStamp = Platform.Time;
+    	}
+
+    	#endregion
 
         #region Public Properties
 
-        public DateTime TimeStamp
-        {
-            get { return _timeStamp; }
-            set { _timeStamp = value; }
-        }
+    	public DateTime TimeStamp { get; set; }
 
-        public ProcessDuplicateAction Action
-        {
-            get { return _action; }
-            set { _action = value; }
-        }
+    	public ProcessDuplicateAction Action { get; set; }
 
-        public ImageSetDetails DuplicateDetails
-        {
-            get { return _duplicateSetDetails; }
-            set { _duplicateSetDetails = value; }
-        }
+    	public ImageSetDetails DuplicateDetails { get; set; }
 
-        public StudyInformation StudySnapShot
-        {
-            get { return _studySnapShot; }
-            set { _studySnapShot = value; }
-        }
+    	public StudyInformation StudySnapShot { get; set; }
 
-        [XmlArray("StudyUpdateCommands")]
-        [XmlArrayItem("Command", Type = typeof(AbstractProperty<BaseImageLevelUpdateCommand>))]
-        public List<BaseImageLevelUpdateCommand> StudyUpdateCommands
-        {
-            get { return _studyUpdateCommands; }
-            set { _studyUpdateCommands = value; }
-        }
+    	[XmlArray("StudyUpdateCommands")]
+    	[XmlArrayItem("Command", Type = typeof (AbstractProperty<BaseImageLevelUpdateCommand>))]
+    	public List<BaseImageLevelUpdateCommand> StudyUpdateCommands { get; set; }
 
-        #endregion
+    	#endregion
     }
 }

@@ -53,47 +53,22 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	/// </summary>
 	public class WebEditStudyContext
 	{
-		#region Private Fields
-		private StudyEditor _workQueueProcessor;
-		private ServerCommandProcessor _commandProcessor;
-		private EditType _type;
-		private StudyStorageLocation _originalLocation;
-		private Study _originalStudy;
-		private Patient _orginalPatient;
-		private List<BaseImageLevelUpdateCommand> _editCommandList;
-		private StudyStorageLocation _newLocation;
-	    private string _userId;
-	    private string _reason;
-
-	    #endregion
-
 		#region Public Properties
+
 		/// <summary>
 		/// Gets or sets the value indicating how the edit operation was triggered.
 		/// </summary>
-		public EditType EditType
-		{
-			get { return _type; }
-			set { _type = value; }
-		}
+		public EditType EditType { get; set; }
 
 		/// <summary>
 		/// List of command executed on the images.
 		/// </summary>
-		public List<BaseImageLevelUpdateCommand> EditCommands
-		{
-			get { return _editCommandList; }
-			set { _editCommandList = value; }
-		}
+		public List<BaseImageLevelUpdateCommand> EditCommands { get; set; }
 
 		/// <summary>
 		/// Gets or sets the reference to the <see cref="StudyEditor"/>
 		/// </summary>
-		public StudyEditor WorkQueueProcessor
-		{
-			get { return _workQueueProcessor; }
-			set { _workQueueProcessor = value; }
-		}
+		public StudyEditor WorkQueueProcessor { get; set; }
 
 		/// <summary>
 		/// Gets or sets the reference to the <see cref="ServerCommandProcessor"/> currently used.
@@ -101,11 +76,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// <remarks>
 		/// Different <see cref="ServerCommandProcessor"/> may be used per images/series.
 		/// </remarks>
-		public ServerCommandProcessor CommandProcessor
-		{
-			get { return _commandProcessor; }
-			set { _commandProcessor = value; }
-		}
+		public ServerCommandProcessor CommandProcessor { get; set; }
 
 		/// <summary>
 		/// Gets or sets the original (prior to update) <see cref="StudyStorageLocation"/> object.
@@ -114,11 +85,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// This property is a snapshot of the study location before the edit is executed. 
 		/// Once the study has been updated, this object may contain invalid information.
 		/// </remarks>
-		public StudyStorageLocation OriginalStudyStorageLocation
-		{
-			get { return _originalLocation; }
-			set { _originalLocation = value; }
-		}
+		public StudyStorageLocation OriginalStudyStorageLocation { get; set; }
 
 		/// <summary>
 		/// Gets or sets the new (updated) <see cref="StudyStorageLocation"/> object.
@@ -128,11 +95,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// Depending on what is modified, it may have the same or different data 
 		/// compared with <see cref="OriginalStudyStorageLocation"/>.
 		/// </remarks>
-		public StudyStorageLocation NewStudystorageLocation
-		{
-			get { return _newLocation; }
-			set { _newLocation = value; }
-		}
+		public StudyStorageLocation NewStudystorageLocation { get; set; }
 
 		/// <summary>
 		/// Gets or sets the original <see cref="Study"/>
@@ -141,11 +104,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// This property is a snapshot of the study before the edit is executed. 
 		/// Once the study has been updated, this object may contain invalid information.
 		/// </remarks>
-		public Study OriginalStudy
-		{
-			get { return _originalStudy; }
-			set { _originalStudy = value; }
-		}
+		public Study OriginalStudy { get; set; }
 
 		/// <summary>
 		/// Gets or sets the reference to the original <see cref="Patient"/> before the study is updated.
@@ -154,30 +113,18 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// This property is a snapshot of the patient before the edit is executed. 
 		/// Once the study has been updated, this object may contain invalid information.
 		/// </remarks>
-		public Patient OrginalPatient
-		{
-			get { return _orginalPatient; }
-			set { _orginalPatient = value; }
-		}
+		public Patient OrginalPatient { get; set; }
 
-        /// <summary>
-        /// Gets or sets the id of the user who requested the edit.
-        /// </summary>
-	    public string UserId
-	    {
-            get { return _userId; }
-	        set { _userId = value; }
-	    }
+		/// <summary>
+		/// Gets or sets the id of the user who requested the edit.
+		/// </summary>
+		public string UserId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the reason that the study is being editted.
-        /// </summary>
-        public string Reason
-        {
-            get { return _reason; }
-            set { _reason = value; }
-        }
+		/// <summary>
+		/// Gets or sets the reason that the study is being editted.
+		/// </summary>
+		public string Reason { get; set; }
 
-	    #endregion
+		#endregion
 	}
 }

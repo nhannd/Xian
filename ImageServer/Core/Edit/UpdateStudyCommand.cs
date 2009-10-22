@@ -183,10 +183,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				_study = _oldStudyLocation.LoadStudy(readContext);
 				_totalSopCount = _study.NumberOfStudyRelatedInstances;
 				_curPatient = _study.LoadPatient(readContext);
-				_oldPatientInfo = new PatientInfo();
-				_oldPatientInfo.Name = _curPatient.PatientsName;
-				_oldPatientInfo.PatientId = _curPatient.PatientId;
-				_oldPatientInfo.IssuerOfPatientId = _curPatient.IssuerOfPatientId;
+				_oldPatientInfo = new PatientInfo
+				                  	{
+				                  		Name = _curPatient.PatientsName,
+				                  		PatientId = _curPatient.PatientId,
+				                  		IssuerOfPatientId = _curPatient.IssuerOfPatientId
+				                  	};
 
 				_newPatientInfo = new PatientInfo(_oldPatientInfo);
 				Debug.Assert(_newPatientInfo.Equals(_oldPatientInfo));
@@ -246,7 +248,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 		}
 
-		private Patient FindPatient(PatientInfo patientInfo, IPersistenceContext context)
+		private static Patient FindPatient(PatientInfo patientInfo, IPersistenceContext context)
 		{
 			IPatientEntityBroker patientFindBroker = context.GetBroker<IPatientEntityBroker>();
 			PatientSelectCriteria criteria = new PatientSelectCriteria();
@@ -429,12 +431,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			Platform.Log(LogLevel.Info, "Creating new patient {0}", patientInfo.PatientId);
 			ICreatePatientForStudy createStudyBroker = UpdateContext.GetBroker<ICreatePatientForStudy>();
-			CreatePatientForStudyParameters parms = new CreatePatientForStudyParameters();
-			parms.IssuerOfPatientId = patientInfo.IssuerOfPatientId;
-			parms.PatientId = patientInfo.PatientId;
-			parms.PatientsName = patientInfo.Name;
-			parms.SpecificCharacterSet = _curPatient.SpecificCharacterSet; // assume it's the same
-			parms.StudyKey = _study.GetKey();
+			CreatePatientForStudyParameters parms = new CreatePatientForStudyParameters
+			                                        	{
+			                                        		IssuerOfPatientId = patientInfo.IssuerOfPatientId,
+			                                        		PatientId = patientInfo.PatientId,
+			                                        		PatientsName = patientInfo.Name,
+			                                        		SpecificCharacterSet = _curPatient.SpecificCharacterSet,
+			                                        		StudyKey = _study.GetKey()
+			                                        	};
 			Patient newPatient = createStudyBroker.FindOne(parms);
 			if (newPatient==null)
 				throw new ApplicationException("Unable to create patient for the study");
@@ -482,10 +486,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
 						DicomFile file = new DicomFile(path);
 						file.Load();
 
-						InstanceInfo instance = new InstanceInfo();
-						instance.SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-						instance.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-                        
+						InstanceInfo instance = new InstanceInfo
+						                        	{
+						                        		SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty),
+						                        		SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty)
+						                        	};
+
 						foreach (BaseImageLevelUpdateCommand command in _commands)
 						{
 							command.File = file;
@@ -542,7 +548,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			String sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 
 			String destPath = _oldStudyLocation.FilesystemPath;
-			String extension = ".dcm";
+			const string extension = ".dcm";
 
 			using (ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Update Study"))
 			{
@@ -573,8 +579,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 				if (_rulesEngine != null)
 				{
-					ServerActionContext context = new ServerActionContext(file, _oldStudyLocation.FilesystemKey, _partition, _oldStudyLocation.Key);
-					context.CommandProcessor = filesystemUpdateProcessor;
+					ServerActionContext context = new ServerActionContext(file, _oldStudyLocation.FilesystemKey, _partition, _oldStudyLocation.Key)
+					                              	{CommandProcessor = filesystemUpdateProcessor};
 					_rulesEngine.Execute(context);
 				}
 

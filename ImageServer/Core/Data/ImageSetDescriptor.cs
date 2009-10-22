@@ -94,15 +94,14 @@ namespace ClearCanvas.ImageServer.Core.Data
 		#endregion
 
 		#region Private Methods
-		private string RemoveEscapeChars(string text)
+		private static string RemoveEscapeChars(string text)
 		{
 			if (String.IsNullOrEmpty(text))
 				return text;
 
 			// Remove escape characters
-			string escape = String.Format("{0}", (char)0x1B);
-			string replacement = "";
-			text = text.Replace(escape, replacement);
+			string escape = String.Format("{0}", (char)0x1B);			
+			text = text.Replace(escape, String.Empty);
 			return text;
 		}
 
@@ -140,7 +139,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 		#region Private Methods
 		private void PopulateField(uint tag, IDicomAttributeProvider attributeProvider)
 		{
-			DicomAttribute attr = null;
+			DicomAttribute attr;
 			if (attributeProvider.TryGetAttribute(tag, out attr))
 			{
 				AddField(new ImageSetField(attr));
@@ -182,8 +181,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 			{
 				if (_fields.ContainsKey(tag))
 					return _fields[tag];
-				else
-					return null;
+				return null;
 			}
 		}
 
@@ -220,11 +218,8 @@ namespace ClearCanvas.ImageServer.Core.Data
                 value = null;
                 return false;
             }
-            else
-            {
-                value = field.Value;
-                return true;
-            }
+        	value = field.Value;
+        	return true;
         } 
         #endregion
 
@@ -270,9 +265,11 @@ namespace ClearCanvas.ImageServer.Core.Data
             
 			while (reader.NodeType == XmlNodeType.Element && reader.LocalName == "Field")
 			{
-				ImageSetField field = new ImageSetField();
-				field.Tag = reader["Tag"];
-				field.Value = String.IsNullOrEmpty(reader["Value"]) ? String.Empty : reader["Value"];
+				ImageSetField field = new ImageSetField
+				                      	{
+				                      		Tag = reader["Tag"],
+				                      		Value = String.IsNullOrEmpty(reader["Value"]) ? String.Empty : reader["Value"]
+				                      	};
 				AddField(field);
 				reader.Read();
 			}

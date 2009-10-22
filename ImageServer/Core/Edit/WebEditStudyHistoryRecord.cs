@@ -43,67 +43,32 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	/// </summary>
 	public class WebEditStudyHistoryChangeDescription
 	{
-		#region Private Fields
-		private List<BaseImageLevelUpdateCommand> _commands;
-		private EditType _editType;
-	    private string _userId;
-	    private DateTime? _timeStamp;
-	    private string _reason;
-		#endregion
-
 		#region Public Properties
 
 		/// <summary>
 		/// Type of the edit operation occured on the study.
 		/// </summary>
 		[XmlElement("EditType")]
-		public EditType EditType
-		{
-			get { return _editType; }
-			set { _editType = value; }
-		}
+		public EditType EditType { get; set; }
 
-        /// <summary>
-        /// Reason that the study is being editted
-        /// </summary>
-        [XmlElement("Reason")]
-        public string Reason
-        {
-            get { return _reason; }
-            set { _reason = value; }
-        }
-
+		/// <summary>
+		/// Reason that the study is being editted
+		/// </summary>
+		[XmlElement("Reason")]
+		public string Reason { get; set; }
 
 		/// <summary>
 		/// List of <see cref="BaseImageLevelUpdateCommand"/> that were executed on the study.
 		/// </summary>
-		[XmlArrayItem("Command", Type=typeof(AbstractProperty<BaseImageLevelUpdateCommand>))]
-		public List<BaseImageLevelUpdateCommand> UpdateCommands
-		{
-			get
-			{
-				return _commands;
-			}
-			set
-			{
-				_commands = value;
-			}
-		}
+		[XmlArrayItem("Command", Type = typeof (AbstractProperty<BaseImageLevelUpdateCommand>))]
+		public List<BaseImageLevelUpdateCommand> UpdateCommands { get; set; }
 
-        [XmlElement("UserId")]
-        public string UserId
-	    {
-	        get { return _userId; }
-	        set { _userId = value; }
-	    }
+		[XmlElement("UserId")]
+		public string UserId { get; set; }
 
-        [XmlElement("TimeStamp")]
-        public DateTime? TimeStamp
-	    {
-	        get { return _timeStamp; }
-	        set { _timeStamp = value; }
-	    }
+		[XmlElement("TimeStamp")]
+		public DateTime? TimeStamp { get; set; }
 
-	    #endregion
+		#endregion
 	}
 }

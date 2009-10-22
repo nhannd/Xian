@@ -198,10 +198,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
         private static WorkQueue InsertEditStudyRequest(IUpdateContext context, StudyStorageLocation location, List<UpdateItem> updateItems, string reason)
         {
-            WorkQueue editEntry;
-            IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
+        	IInsertWorkQueue broker = context.GetBroker<IInsertWorkQueue>();
             InsertWorkQueueParameters criteria = new EditStudyWorkQueueParameters(location, updateItems, reason);
-            editEntry = broker.FindOne(criteria);
+            WorkQueue editEntry = broker.FindOne(criteria);
             if (editEntry == null)
             {
                 throw new ApplicationException(
@@ -274,13 +273,18 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public EditStudyWorkQueueParameters(StudyStorageLocation location, List<UpdateItem> updateItems, string reason)
         {
             DateTime now = Platform.Time;
-            EditStudyWorkQueueData data = new EditStudyWorkQueueData();
-            data.EditRequest.TimeStamp = now;
-            data.EditRequest.UserId = ServerHelper.CurrentUserName;
-            data.EditRequest.UpdateEntries = updateItems;
-            data.EditRequest.Reason = reason;
+            EditStudyWorkQueueData data = new EditStudyWorkQueueData
+                                          	{
+                                          		EditRequest =
+                                          			{
+                                          				TimeStamp = now,
+                                          				UserId = ServerHelper.CurrentUserName,
+                                          				UpdateEntries = updateItems,
+                                          				Reason = reason
+                                          			}
+                                          	};
 
-            WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
+        	WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
             StudyStorageKey = location.Key;
             ServerPartitionKey = location.ServerPartitionKey;
             ScheduledTime = now;
@@ -293,12 +297,14 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public DeleteSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, string reason)
         {
             DateTime now = Platform.Time;
-            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
-            data.Reason = reason;
-            data.Timestamp = now;
-            data.UserId = ServerHelper.CurrentUserName;
-            
-            WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
+            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData
+                                                 	{
+                                                 		Reason = reason,
+                                                 		Timestamp = now,
+                                                 		UserId = ServerHelper.CurrentUserName
+                                                 	};
+
+        	WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
             StudyStorageKey = studyStorageLocation.Key;
             ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             ScheduledTime = now;
@@ -312,11 +318,13 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public MoveSeriesWorkQueueParameters(StudyStorageLocation studyStorageLocation, string seriesInstanceUid, ServerEntityKey deviceKey)
         {
             DateTime now = Platform.Time;
-            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData();
-            data.Timestamp = now;
-            data.UserId = ServerHelper.CurrentUserName;
+            WebDeleteSeriesLevelQueueData data = new WebDeleteSeriesLevelQueueData
+                                                 	{
+                                                 		Timestamp = now,
+                                                 		UserId = ServerHelper.CurrentUserName
+                                                 	};
 
-            WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
+        	WorkQueueTypeEnum = WorkQueueTypeEnum.WebMoveStudy;
             StudyStorageKey = studyStorageLocation.Key;
             ServerPartitionKey = studyStorageLocation.ServerPartitionKey;
             ScheduledTime = now;

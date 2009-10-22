@@ -37,65 +37,33 @@ namespace ClearCanvas.ImageServer.Core.Validation
     /// <summary>
     /// Information associated with a validation failure.
     /// </summary>
-    public class StudyInfo
+    public class ValidationStudyInfo
     {
-        #region Private Members
-        private string _serverAE;
-        private string _patientsName;
-        private string _patientsId;
-        private string _studyInstaneUid;
-        private string _accessionNumber;
-        private string _studyDate;
-        #endregion
         #region Public Properties
 
-        public string ServerAE
-        {
-            get { return _serverAE; }
-            set { _serverAE = value; }
-        }
+    	public string ServerAE { get; set; }
 
-        public string PatientsName
-        {
-            get { return _patientsName; }
-            set { _patientsName = value; }
-        }
+    	public string PatientsName { get; set; }
 
-        public string PatientsId
-        {
-            get { return _patientsId; }
-            set { _patientsId = value; }
-        }
+    	public string PatientsId { get; set; }
 
-        public string StudyInstaneUid
-        {
-            get { return _studyInstaneUid; }
-            set { _studyInstaneUid = value; }
-        }
+    	public string StudyInstaneUid { get; set; }
 
-        public string AccessionNumber
-        {
-            get { return _accessionNumber; }
-            set { _accessionNumber = value; }
-        }
+    	public string AccessionNumber { get; set; }
 
-        public string StudyDate
-        {
-            get { return _studyDate; }
-            set { _studyDate = value; }
-        }
+    	public string StudyDate { get; set; }
 
-        #endregion
+    	#endregion
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine(String.Format("Partition : {0}", _serverAE));
-            sb.AppendLine(String.Format("Patient   : {0}", _patientsName));
-            sb.AppendLine(String.Format("Patient ID: {0}", _patientsId));
-            sb.AppendLine(String.Format("Study UID : {0}", _studyInstaneUid));
-            sb.AppendLine(String.Format("Accession#: {0}", _accessionNumber));
-            sb.AppendLine(String.Format("Study Date: {0}", _studyDate));
+            sb.AppendLine(String.Format("Partition : {0}", ServerAE));
+            sb.AppendLine(String.Format("Patient   : {0}", PatientsName));
+            sb.AppendLine(String.Format("Patient ID: {0}", PatientsId));
+            sb.AppendLine(String.Format("Study UID : {0}", StudyInstaneUid));
+            sb.AppendLine(String.Format("Accession#: {0}", AccessionNumber));
+            sb.AppendLine(String.Format("Study Date: {0}", StudyDate));
 
             return sb.ToString();
         }

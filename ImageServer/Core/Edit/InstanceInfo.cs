@@ -33,19 +33,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 {
 	class InstanceInfo
 	{
-		private string _seriesInstanceUid;
-		private string _sopInstanceUid;
+		public string SeriesInstanceUid { get; set; }
 
-		public string SeriesInstanceUid
-		{
-			get { return _seriesInstanceUid; }
-			set { _seriesInstanceUid = value; }
-		}
-
-		public string SopInstanceUid
-		{
-			get { return _sopInstanceUid; }
-			set { _sopInstanceUid = value; }
-		}
+		public string SopInstanceUid { get; set; }
 	}
 }

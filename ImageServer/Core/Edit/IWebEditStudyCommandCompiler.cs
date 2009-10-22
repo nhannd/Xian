@@ -30,7 +30,6 @@
 #endregion
 
 using System.Xml;
-using ClearCanvas.ImageServer.Core.Edit;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {

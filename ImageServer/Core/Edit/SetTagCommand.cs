@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		[XmlAttribute(AttributeName = "TagName")]
 		public string TagName
 		{
-			get { return _updateEntry.TagPath.Tag.Name; }
+			get { return UpdateEntry.TagPath.Tag.Name; }
 			set
 			{
 				// NO-OP 
@@ -133,10 +133,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
         [XmlAttribute(AttributeName = "OriginalValue")]
         public string OriginalValue
 	    {
-            get { return _updateEntry.OriginalValue; }
+            get { return UpdateEntry.OriginalValue; }
             set
             {
-                _updateEntry.OriginalValue = value;
+                UpdateEntry.OriginalValue = value;
             }
 	    }
 
@@ -148,25 +148,25 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			get
 			{
-				if (_updateEntry == null)
+				if (UpdateEntry == null)
 					return null;
 
-				return _updateEntry.Value != null ? _updateEntry.Value.ToString() : null;
+				return UpdateEntry.Value != null ? UpdateEntry.Value.ToString() : null;
 			}
 			set
 			{
-				_updateEntry.Value = value;
+				UpdateEntry.Value = value;
 			}
 		}
 
 		[XmlAttribute(AttributeName = "TagPath")]
 		public string TagPath
 		{
-			get { return _updateEntry.TagPath.HexString(); }
+			get { return UpdateEntry.TagPath.HexString(); }
 			set
 			{
 				DicomTagPathConverter converter = new DicomTagPathConverter();
-				_updateEntry.TagPath = (DicomTagPath)converter.ConvertFromString(value);
+				UpdateEntry.TagPath = (DicomTagPath)converter.ConvertFromString(value);
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			get
 			{
-				return _updateEntry.TagPath.Tag;
+				return UpdateEntry.TagPath.Tag;
 			}
 		}
 
@@ -185,12 +185,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		public override bool Apply(DicomFile file)
 		{
-			if (_updateEntry != null)
+			if (UpdateEntry != null)
 			{
 				DicomAttribute attr = FindAttribute(file.DataSet, UpdateEntry);
 				if (attr != null)
 				{
-				    this._updateEntry.OriginalValue = attr.ToString();
+				    this.UpdateEntry.OriginalValue = attr.ToString();
 				    attr.SetStringValue(UpdateEntry.GetStringValue());
 				}
 			}

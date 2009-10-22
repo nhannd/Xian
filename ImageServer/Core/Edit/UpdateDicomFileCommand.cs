@@ -50,12 +50,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	{
 		#region Private Members
 		private readonly DicomFileUpdateCommandActionList _actionList;
-		private string _outputFilePath;
 		private string _backupExistingFileName;
-		private bool _backup = false;
+		private bool _backup;
 		bool _saved;
-		private DicomFile _file;
-		private List<DicomAttribute> _affectedAttributes;
+
 		#endregion
 
 		#region Construtors
@@ -71,14 +69,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#endregion
 
 		#region Public Properties
+
 		/// <summary>
 		/// Sets or gets the Dicom file to be updated
 		/// </summary>
-		public DicomFile DicomFile
-		{
-			get { return _file; }
-			set { _file = value; }
-		}
+		public DicomFile DicomFile { get; set; }
 
 		/// <summary>
 		/// Sets or gets the path where the updated file will be saved. 
@@ -86,16 +81,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		/// <remarks>
 		/// If this property is not set, the <see cref="DicomFile"/> will be updated but will not be saved.
 		/// </remarks>
-		public string OutputFilePath
-		{
-			get { return _outputFilePath; }
-			set { _outputFilePath = value; }
-		}
+		public string OutputFilePath { get; set; }
 
-		public IEnumerable<DicomAttribute> AffectedAttributes
-		{
-			get { return _affectedAttributes; }
-		}
+		public List<DicomAttribute> AffectedAttributes { get; private set; }
 
 		#endregion
 
@@ -109,10 +97,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		{
 			Platform.CheckForNullReference(DicomFile, "DicomFile");
 
-			_affectedAttributes = new List<DicomAttribute>();
+			AffectedAttributes = new List<DicomAttribute>();
 			foreach(IDicomFileUpdateCommandAction action in _actionList)
 			{
-				_affectedAttributes.AddRange(action.Apply(DicomFile));
+				AffectedAttributes.AddRange(action.Apply(DicomFile));
 			}
 
 			if (!String.IsNullOrEmpty(OutputFilePath))

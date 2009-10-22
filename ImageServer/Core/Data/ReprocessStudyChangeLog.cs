@@ -5,37 +5,19 @@ namespace ClearCanvas.ImageServer.Core.Data
     public class ReprocessStudyChangeLog
     {
         #region Private Members
-        private string _studyInstanceUid;
-        private DateTime _timeStamp;
-        private string _user;
-        private string _reason; 
-        #endregion
+
+    	#endregion
 
         #region Public Properties
-        public DateTime TimeStamp
-        {
-            get { return _timeStamp; }
-            set { _timeStamp = value; }
-        }
 
-        public string Reason
-        {
-            get { return _reason; }
-            set { _reason = value; }
-        }
+    	public DateTime TimeStamp { get; set; }
 
-        public string User
-        {
-            get { return _user; }
-            set { _user = value; }
-        }
+    	public string Reason { get; set; }
 
-        public string StudyInstanceUid
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
+    	public string User { get; set; }
 
-        #endregion
+    	public string StudyInstanceUid { get; set; }
+
+    	#endregion
     }
 }

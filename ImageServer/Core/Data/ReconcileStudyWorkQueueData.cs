@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Core.Data
@@ -42,9 +41,8 @@ namespace ClearCanvas.ImageServer.Core.Data
     public class SeriesMapping
     {
         #region Private Members
-        private string _originalSeriesUid;
-        private string _newSeriesUid; 
-        #endregion
+
+    	#endregion
 
 		#region Constructors
 		/// <summary>
@@ -60,24 +58,18 @@ namespace ClearCanvas.ImageServer.Core.Data
 		/// <param name="newUid"></param>
 		public SeriesMapping(string originalUid, string newUid)
 		{
-			_originalSeriesUid = originalUid;
-			_newSeriesUid = newUid;
+			OriginalSeriesUid = originalUid;
+			NewSeriesUid = newUid;
 		}
     	#endregion
 
 		#region Public Properties
-		public string OriginalSeriesUid
-        {
-            get { return _originalSeriesUid; }
-            set { _originalSeriesUid = value; }
-        }
 
-        public string NewSeriesUid
-        {
-            get { return _newSeriesUid; }
-            set { _newSeriesUid = value; }
-        } 
-        #endregion
+    	public string OriginalSeriesUid { get; set; }
+
+    	public string NewSeriesUid { get; set; }
+
+    	#endregion
     }
 
 	/// <summary>
@@ -86,44 +78,20 @@ namespace ClearCanvas.ImageServer.Core.Data
 	public class ReconcileStudyWorkQueueData
 	{
         #region Private members
-        private string _storagePath;
-        private ImageSetDetails _details;
-	    private string _userId;
-	    private DateTime? _timeStamp;
-        #endregion
+
+		#endregion
 
         #region Public Properties
-        public string StoragePath
-        {
-            get { return _storagePath; }
-            set { _storagePath = value; }
-        }
 
-        public ImageSetDetails Details
-        {
-            get
-            {
-                return _details;
-            }
-            set { _details = value; }
-        }
+		public string StoragePath { get; set; }
 
+		public ImageSetDetails Details { get; set; }
 
+		public string UserId { get; set; }
 
+		public DateTime? TimeStamp { get; set; }
 
-	    public string UserId
-	    {
-	        get { return _userId; }
-	        set { _userId = value; }
-	    }
-
-	    public DateTime? TimeStamp
-	    {
-	        get { return _timeStamp; }
-	        set { _timeStamp = value; }
-	    }
-
-	    #endregion
+		#endregion
 	}
 
     /// <summary>
@@ -131,13 +99,6 @@ namespace ClearCanvas.ImageServer.Core.Data
     /// </summary>
     public class DuplicateSIQQueueData : ReconcileStudyWorkQueueData
     {
-        private List<DicomAttributeComparisonResult> _comparisonResults;
-
-
-        public List<DicomAttributeComparisonResult> ComparisonResults
-        {
-            get { return _comparisonResults; }
-            set { _comparisonResults = value; }
-        }
+    	public List<DicomAttributeComparisonResult> ComparisonResults { get; set; }
     }
 }

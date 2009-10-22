@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,50 +29,51 @@
 
 #endregion
 
-using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Core.Data
+namespace ClearCanvas.ImageServer.Core.Reconcile
 {
 	/// <summary>
-	/// Represents the serializable detailed information of an image set.
+	/// Contains a list of fields that will be updated when processing duplicates. This is the list
+	/// in the server partition configuration.
 	/// </summary>
-	[XmlRoot("Details")]
-	public class ImageSetDetails
+	public class StudyMatchingMap
 	{
-		#region Constructors
-
-		public ImageSetDetails()
-		{
-		}
-
-		public ImageSetDetails(IDicomAttributeProvider attributeProvider)
-		{
-			StudyInfo = new StudyInformation(attributeProvider);
-		}
-
-		#endregion
-
 		#region Public Properties
 
-		public int SopInstanceCount { get; set; }
+		[DicomField(DicomTags.PatientsName)]
+		public string PatientsName { get; set; }
 
-		/// <summary>
-		/// Gets or sets the <see cref="StudyInformation"/> of the image set.
-		/// </summary>
-		public StudyInformation StudyInfo { get; set; }
+		[DicomField(DicomTags.PatientId)]
+		public string PatientId { get; set; }
 
-		#endregion
+		[DicomField(DicomTags.IssuerOfPatientId)]
+		public string IssuerOfPatientId { get; set; }
 
-		#region Public Methods
-		/// <summary>
-		/// Inserts a <see cref="DicomMessageBase"/> into the set.
-		/// </summary>
-		/// <param name="message"></param>
-		public void InsertFile(DicomMessageBase message)
-		{
-			StudyInfo.Add(message);
-		}
+		[DicomField(DicomTags.PatientsBirthDate)]
+		public string PatientsBirthDate { get; set; }
+
+		[DicomField(DicomTags.PatientsSex)]
+		public string PatientsSex { get; set; }
+
+		[DicomField(DicomTags.AccessionNumber)]
+		public string AccessionNumber { get; set; }
+
+		[DicomField(DicomTags.StudyInstanceUid)]
+		public string StudyInstanceUid { get; set; }
+
+		[DicomField(DicomTags.StudyId)]
+		public string StudyId { get; set; }
+
+		[DicomField(DicomTags.StudyDescription)]
+		public string StudyDescription { get; set; }
+
+		[DicomField(DicomTags.StudyDate)]
+		public string StudyDate { get; set; }
+
+		[DicomField(DicomTags.StudyTime)]
+		public string StudyTime { get; set; }
+
 		#endregion
 	}
 }

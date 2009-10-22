@@ -336,6 +336,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	public class EntityDicomMapManager : Dictionary<Type, EntityDicomMap>
 	{
 		private static readonly EntityDicomMapManager _instance = new EntityDicomMapManager();
+		private static readonly object _syncLock = new object();
+
 		public static EntityDicomMapManager Instance
 		{
 			get { return _instance; }
@@ -368,10 +370,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		public static EntityDicomMap Get(Type type)
 		{
-			if (Instance.ContainsKey(type))
-				return Instance[type];
-			else
+			lock (_syncLock)
 			{
+				if (Instance.ContainsKey(type))
+					return Instance[type];
+
 				AddEntity(type);
 				return Instance[type];
 			}
