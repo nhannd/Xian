@@ -150,15 +150,15 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-                Workspace workspace = DocumentManager.Get<PatientBiographyDocument>(profileRef);
-                if (workspace == null)
+                var document = DocumentManager.Get<PatientBiographyDocument>(profileRef);
+				if (document == null)
                 {
-                    Document doc = new PatientBiographyDocument(patientRef, profileRef, orderRef, window);
-                    doc.Open();
+					document = new PatientBiographyDocument(patientRef, profileRef, orderRef, window);
+					document.Open();
                 }
                 else
                 {
-                    workspace.Activate();
+					document.Open();
                 }
             }
             catch (Exception e)

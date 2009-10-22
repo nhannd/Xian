@@ -70,10 +70,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
 		{
-			var workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
-			if (workspace != null)
+			var document = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
+			if (document != null)
 			{
-				workspace.Activate();
+				document.Open();
 				return true;
 			}
 			return false;
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						return;
 
 					// close documents and continue
-					CollectionUtils.ForEach(documents, document => document.Close());
+					CollectionUtils.ForEach(documents, document => document.SaveAndClose());
 				}
 			}
 
@@ -117,13 +117,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				doc.Close();
 		}
 
-		private bool UserElectsToLeaveExistingDocumentOpen(ReportingWorklistItem item, IEnumerable<Workspace> documents)
+		private bool UserElectsToLeaveExistingDocumentOpen(ReportingWorklistItem item, IEnumerable<ReportDocument> documents)
 		{
 			var firstDocument = CollectionUtils.FirstElement(documents);
-			firstDocument.Activate();
+			firstDocument.Open();
 
 			var message = string.Format(SR.MessageReportingComponentAlreadyOpened,
-				ReportDocument.StripTitle(firstDocument.Title),
+				ReportDocument.StripTitle(firstDocument.GetTitle()),
 				ReportDocument.StripTitle(ReportDocument.GetTitle(item)));
 			return DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 		}

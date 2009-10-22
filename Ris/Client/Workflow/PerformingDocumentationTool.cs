@@ -79,18 +79,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (item != null && item.OrderRef != null)
                 {
-                    Workspace workspace = DocumentManager.Get<PerformingDocumentationDocument>(item.OrderRef);
-                    if (workspace == null)
+                    var document = DocumentManager.Get<PerformingDocumentationDocument>(item.OrderRef);
+                    if (document == null)
                     {
-                        Document doc = new PerformingDocumentationDocument(item, this.Context.DesktopWindow);
-                        doc.Open();
+                        document = new PerformingDocumentationDocument(item, this.Context.DesktopWindow);
+                        document.Open();
 
                         Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
-                        doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
+                        document.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
                     }
                     else
                     {
-                        workspace.Activate();
+                        document.Open();
                     }
                 }
 

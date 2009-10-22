@@ -640,6 +640,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void SaveReport()
 		{
+			SaveReport(false);
+		}
+
+		public void SaveReport(bool overrideDoNotPerformNextItem)
+		{
 			try
 			{
 				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.SaveDraft))
@@ -656,7 +661,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Transcription.DraftFolder));
 
-				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed, overrideDoNotPerformNextItem);
 			}
 			catch (Exception ex)
 			{

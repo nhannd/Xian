@@ -42,6 +42,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
+		private TranscriptionComponent _component;
 
 		public TranscriptionDocument(ReportingWorklistItem worklistItem, IReportingWorkflowItemToolContext context)
 			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
@@ -66,9 +67,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return TranscriptionDocument.GetTitle(_worklistItem);
 		}
 
+		public override bool SaveAndClose()
+		{
+			_component.SaveReport(true);
+			return base.Close();
+		}
+
 		public override IApplicationComponent GetComponent()
 		{
-			return new TranscriptionComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName);
+			_component = new TranscriptionComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName);
+			return _component;
 		}
 
 		public static string GetTitle(ReportingWorklistItem item)

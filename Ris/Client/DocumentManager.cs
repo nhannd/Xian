@@ -40,46 +40,50 @@ namespace ClearCanvas.Ris.Client
 	public static class DocumentManager
 	{
 		private readonly static List<IFolderSystem> _folderSystems = new List<IFolderSystem>();
+		private static readonly Dictionary<string, Document> _documentMap = new Dictionary<string, Document>();
 
-		public static Workspace Get<TDocument>(EntityRef subject)
+		public static Document Get(string documentKey)
+		{
+			return !string.IsNullOrEmpty(documentKey) && _documentMap.ContainsKey(documentKey) ? _documentMap[documentKey] : null;
+		}
+
+		public static TDocument Get<TDocument>(EntityRef subject)
 			where TDocument : Document
 		{
 			var documentKey = GenerateDocumentKey(typeof(TDocument), subject);
-			return Get(documentKey);
+			return (TDocument) Get(documentKey);
 		}
 
-		public static List<Workspace> GetAll<TDocument>()
+		public static List<TDocument> GetAll<TDocument>()
 			where TDocument : Document
 		{
-			var documents = new List<Workspace>();
+			var documents = new List<TDocument>();
 			var documentKeyBase = GenerateDocumentKey(typeof(TDocument), null);
 
-			foreach (var window in Desktop.Application.DesktopWindows)
+			foreach (var key in _documentMap.Keys)
 			{
-				foreach (var workspace in window.Workspaces)
-				{
-					if (!string.IsNullOrEmpty(workspace.Name) && workspace.Name.Contains(documentKeyBase))
-						documents.Add(workspace);
-				}
+				if (!string.IsNullOrEmpty(documentKeyBase) && key.Contains(documentKeyBase))
+					documents.Add((TDocument) _documentMap[key]);
 			}
 
 			return documents;
 		}
 
-		public static Workspace Get(string documentKey)
-		{
-			foreach (var window in Desktop.Application.DesktopWindows)
-			{
-				if (window.Workspaces.Contains(documentKey))
-					return window.Workspaces[documentKey];
-			}
-
-			return null;
-		}
-
 		public static string GenerateDocumentKey(Document doc, EntityRef subject)
 		{
 			return GenerateDocumentKey(doc.GetType(), subject);
+		}
+
+		public static void RegisterDocument(Document document)
+		{
+			if (!_documentMap.ContainsKey(document.Key))
+				_documentMap[document.Key] = document;
+		}
+
+		public static void UnregisterDocument(Document document)
+		{
+			if (_documentMap.ContainsKey(document.Key))
+				_documentMap.Remove(document.Key);
 		}
 
 		public static void RegisterFolderSystem(IFolderSystem folderSystem)

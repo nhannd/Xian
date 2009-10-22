@@ -99,6 +99,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		void ProceedToNextWorklistItem(WorklistItemCompletedResult result);
 
 		/// <summary>
+		/// Used to request the next <see cref="TWorklistItem"/> to be loaded.
+		/// </summary>
+		/// <param name="result">Indicates whether previous item was completed or skipped.</param>
+		/// <param name="overrideDoNotPerformNextItem">Override the default behaviour.  Complete the current item and do not proceed to next item.</param>
+		void ProceedToNextWorklistItem(WorklistItemCompletedResult result, bool overrideDoNotPerformNextItem);
+
+		/// <summary>
 		/// Specify a list of <see cref="TWorklistItem"/> that should be excluded from <see cref="ProceedToNextWorklistItem"/>
 		/// </summary>
 		/// <param name="worklistItems"></param>
@@ -209,6 +216,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void ProceedToNextWorklistItem(WorklistItemCompletedResult result)
 		{
+			ProceedToNextWorklistItem(result, false);
+		}
+
+		public void ProceedToNextWorklistItem(WorklistItemCompletedResult result, bool overrideDoNotPerformNextItem)
+		{
 			if (result == WorklistItemCompletedResult.Completed)
 			{
 				_completedItemsCount++;
@@ -222,7 +234,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_isInitialItem = false;
 
-			if (_reportNextItem)
+			if (_reportNextItem && overrideDoNotPerformNextItem == false)
 			{
 				if (_worklistCache.Count == 0)
 				{

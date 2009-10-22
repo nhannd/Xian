@@ -70,6 +70,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return ReportDocument.GetTitle(_worklistItem);
 		}
 
+		public override bool SaveAndClose()
+		{
+			_component.SaveReport(true);
+			return base.Close();
+		}
+
 		public override IApplicationComponent GetComponent()
 		{
 			_component = new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName, _shouldOpenImages);

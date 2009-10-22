@@ -387,6 +387,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save()
 		{
+			Save(false);
+		}
+
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
+		public void Save(bool overrideDoNotPerformNextItem)
+		{
 			try
 			{
 				Platform.GetService<IProtocollingWorkflowService>(service =>
@@ -395,7 +401,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftProtocolFolder));
 
-				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed, overrideDoNotPerformNextItem);
 			}
 			catch (Exception e)
 			{

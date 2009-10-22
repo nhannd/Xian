@@ -48,9 +48,14 @@ namespace ClearCanvas.Ris.Client
 			_desktopWindow = desktopWindow;
 		}
 
+		public string Key
+		{
+			get { return _key; }
+		}
+
 		public void Open()
 		{
-			var workspace = DocumentManager.Get(_key);
+			var workspace = GetWorkspace(_key);
 			if (workspace != null)
 			{
 				workspace.Activate();
@@ -61,13 +66,21 @@ namespace ClearCanvas.Ris.Client
 				if (workspace != null)
 					workspace.Closed += DocumentClosedEventHandler;
 			}
+
+			DocumentManager.RegisterDocument(this);
 		}
 
 		public bool Close()
 		{
-			var workspace = DocumentManager.Get(_key);
+			var workspace = GetWorkspace(_key);
 			return workspace == null ? false : workspace.Close();
 		}
+
+		public abstract bool SaveAndClose();
+
+		public abstract string GetTitle();
+
+		public abstract IApplicationComponent GetComponent();
 
 		public event EventHandler<ClosedEventArgs> Closed
 		{
@@ -75,14 +88,11 @@ namespace ClearCanvas.Ris.Client
 			remove { _closed -= value; }
 		}
 
-		public abstract string GetTitle();
-
-		public abstract IApplicationComponent GetComponent();
-
 		#region Private Helpers
 
 		private void DocumentClosedEventHandler(object sender, ClosedEventArgs e)
 		{
+			DocumentManager.UnregisterDocument(this);
 			EventsHelper.Fire(_closed, this, e);
 		}
 
@@ -105,6 +115,17 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return workspace;
+		}
+
+		private static Workspace GetWorkspace(string documentKey)
+		{
+			foreach (var window in Desktop.Application.DesktopWindows)
+			{
+				if (!string.IsNullOrEmpty(documentKey) && window.Workspaces.Contains(documentKey))
+					return window.Workspaces[documentKey];
+			}
+
+			return null;
 		}
 
 		#endregion

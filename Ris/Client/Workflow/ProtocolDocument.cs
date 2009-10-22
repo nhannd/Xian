@@ -48,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
+		private ProtocollingComponent _component;
 
 		#endregion
 
@@ -81,9 +82,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return ProtocolDocument.GetTitle(_item);
 		}
 
+		public override bool SaveAndClose()
+		{
+			_component.Save(true);
+			return base.Close();
+		}
+
 		public override IApplicationComponent GetComponent()
 		{
-			return new ProtocollingComponent(_item, _mode, _folderName, _worklistRef, _worklistClassName);
+			_component = new ProtocollingComponent(_item, _mode, _folderName, _worklistRef, _worklistClassName);
+			return _component;
 		}
 
 		#endregion

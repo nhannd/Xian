@@ -62,6 +62,11 @@ namespace ClearCanvas.Ris.Client
             return "";  // not relevant - component will set title
         }
 
+		public override bool SaveAndClose()
+		{
+			return base.Close();
+		}
+
         public override IApplicationComponent GetComponent()
         {
             BiographyOverviewComponent component = new BiographyOverviewComponent(_patientRef, _profileRef);

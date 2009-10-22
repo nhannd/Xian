@@ -862,6 +862,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void SaveReport()
 		{
+			SaveReport(false);
+		}
+
+		public void SaveReport(bool overrideDoNotPerformNextItem)
+		{
 			try
 			{
 				CloseImages();
@@ -883,7 +888,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
 				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
 
-				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed, overrideDoNotPerformNextItem);
 			}
 			catch (Exception ex)
 			{

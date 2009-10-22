@@ -52,10 +52,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
 		{
-			var workspace = DocumentManager.Get<TranscriptionDocument>(item.ProcedureStepRef);
-			if (workspace != null)
+			var document = DocumentManager.Get<TranscriptionDocument>(item.ProcedureStepRef);
+			if (document != null)
 			{
-				workspace.Activate();
+				document.Open();
 				return true;
 			}
 			return false;
@@ -74,16 +74,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (documents.Count > 0)
 				{
 					var firstDocument = CollectionUtils.FirstElement(documents);
-					firstDocument.Activate();
+					firstDocument.Open();
 
-					var message = string.Format(SR.MessageTranscriptionComponentAlreadyOpened, 
-						TranscriptionDocument.StripTitle(firstDocument.Title), 
+					var message = string.Format(SR.MessageTranscriptionComponentAlreadyOpened,
+						TranscriptionDocument.StripTitle(firstDocument.GetTitle()), 
 						TranscriptionDocument.StripTitle(TranscriptionDocument.GetTitle(item)));
 					if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
 						return;		// Leave the existing document open
 
 					// close documents and continue
-					CollectionUtils.ForEach(documents, document => document.Close());
+					CollectionUtils.ForEach(documents, document => document.SaveAndClose());
 				}
 			}
 

@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     public class PerformingDocumentationDocument : Document
     {
         private readonly ModalityWorklistItem _item;
+    	private PerformingDocumentationComponent _component;
 
         public PerformingDocumentationDocument(ModalityWorklistItem item, IDesktopWindow desktopWindow)
             : base(item.OrderRef, desktopWindow)
@@ -56,9 +57,16 @@ namespace ClearCanvas.Ris.Client.Workflow
             return string.Format("Performing - {0} - {1}", PersonNameFormat.Format(_item.PatientName), MrnFormat.Format(_item.Mrn));
         }
 
+		public override bool SaveAndClose()
+		{
+			_component.SaveDocumentation();
+			return base.Close();
+		}
+
         public override IApplicationComponent GetComponent()
         {
-        	return new PerformingDocumentationComponent(_item);
+        	_component = new PerformingDocumentationComponent(_item);
+        	return _component;
         }
     }
 }
