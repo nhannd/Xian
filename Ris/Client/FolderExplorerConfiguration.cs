@@ -17,13 +17,14 @@ namespace ClearCanvas.Ris.Client
 		#region Private Members
 
 		private XmlDocument _xmlDoc;
-		private readonly string _settingXml;
+		private readonly SettingProvider _settingXml;
 
 		#endregion
 
 		#region Constructor
 
-		public FolderExplorerConfiguration(string settingXml)
+		public delegate string SettingProvider();
+		public FolderExplorerConfiguration(SettingProvider settingXml)
 		{
 			_settingXml = settingXml;
 		}
@@ -133,8 +134,8 @@ namespace ClearCanvas.Ris.Client
 				{
 					try
 					{
-						_xmlDoc = new XmlDocument { PreserveWhitespace = true };
-						_xmlDoc.LoadXml(_settingXml);
+						_xmlDoc = new XmlDocument { /*PreserveWhitespace = true*/ };
+						_xmlDoc.LoadXml(_settingXml());
 					}
 					catch (Exception)
 					{

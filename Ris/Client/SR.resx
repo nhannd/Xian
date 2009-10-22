@@ -894,4 +894,10 @@
   <data name="ExceptionSaveProcedureType" xml:space="preserve">
     <value>Unable to save procedure type</value>
   </data>
+  <data name="TitleReset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="MessageResetFolderSystem" xml:space="preserve">
+    <value>Resetting the selected folder system will permanantly remove all customizations from its folders.  Are you sure you would like to reset the folder system?</value>
+  </data>
 </root>

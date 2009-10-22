@@ -44,15 +44,15 @@ namespace ClearCanvas.Ris.Client
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class FolderExplorerComponentSettings
 	{
-		private readonly IFolderExplorerConfiguration _baseConfig;
+		private readonly IFolderExplorerConfiguration _defaultConfig;
 		private readonly IFolderExplorerUserConfiguration _userConfig;
 
 		private FolderExplorerComponentSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 
-			_baseConfig = new FolderExplorerConfiguration(this.DefaultConfigurationXml);
-			_userConfig = new FolderExplorerUserConfiguration(this.UserConfigurationXml, updatedUserConfigurationXml =>
+			_defaultConfig = new FolderExplorerConfiguration(() => this.DefaultConfigurationXml);
+			_userConfig = new FolderExplorerUserConfiguration(() => this.UserConfigurationXml, updatedUserConfigurationXml =>
 				{
 					this.UserConfigurationXml = updatedUserConfigurationXml;
 					Save();
@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folderSystems">Input list of folder systems</param>
 		public IEnumerable<IFolderSystem> ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
 		{
-			folderSystems = _baseConfig.ApplyUserFolderSystemsOrder(folderSystems);
+			folderSystems = _defaultConfig.ApplyUserFolderSystemsOrder(folderSystems);
 			return _userConfig.ApplyUserFolderSystemsOrder(folderSystems);
 		}
 
@@ -77,26 +77,22 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folderSystem"></param>
 		public IEnumerable<IFolder> ApplyUserFoldersCustomizations(IFolderSystem folderSystem)
 		{
-			var folders = _baseConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folderSystem.Folders);
+			var folders = _defaultConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folderSystem.Folders);
 			return _userConfig.ApplyUserFoldersCustomizations(folderSystem.Id, folders);
 		}
 
 		public delegate void UpdateFolderExplorerUserConfigurationAction(IFolderExplorerUserConfigurationUpdater userConfiguration);
-		public bool UpdateUserConfiguration(UpdateFolderExplorerUserConfigurationAction updateAction)
+		public void UpdateUserConfiguration(UpdateFolderExplorerUserConfigurationAction updateAction)
 		{
 			_userConfig.BeginTransaction();
 
 			try
 			{
 				updateAction(_userConfig);
-
-				// commit the changes
 				_userConfig.CommitTransaction();
-				return true;
 			}
 			catch
 			{
-				// rollback changes
 				_userConfig.RollbackTransaction();
 				throw;
 			}
@@ -113,10 +109,9 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsFolderSystemReadOnly(IFolderSystem folderSystem)
 		{
-			return _baseConfig.IsFolderSystemReadOnly(folderSystem);
+			return _defaultConfig.IsFolderSystemReadOnly(folderSystem);
 		}
 
 		#endregion
-
 	}
 }

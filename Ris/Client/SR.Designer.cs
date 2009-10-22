@@ -1510,6 +1510,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resetting the selected folder system will permanantly remove all customizations from its folders.  Are you sure you would like to reset the folder system?.
+        /// </summary>
+        internal static string MessageResetFolderSystem {
+            get {
+                return ResourceManager.GetString("MessageResetFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No results were found using the specified criteria..
         /// </summary>
         internal static string MessageResultsNotFound {
@@ -2226,6 +2235,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleRenameFolder {
             get {
                 return ResourceManager.GetString("TitleRenameFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string TitleReset {
+            get {
+                return ResourceManager.GetString("TitleReset", resourceCulture);
             }
         }
         

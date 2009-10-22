@@ -9,8 +9,9 @@ namespace ClearCanvas.Ris.Client
 {
 	public interface IFolderExplorerUserConfigurationUpdater
 	{
-		void SaveUserFoldersCustomizations(IFolderSystem folderSystem, List<IFolder> customizedFolders);
 		void SaveUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems);
+		void SaveUserFoldersCustomizations(IFolderSystem folderSystem, List<IFolder> customizedFolders);
+		void RemoveUserFoldersCustomizations(IFolderSystem folderSystem);
 	}
 
 	public interface IFolderExplorerUserConfiguration : IFolderExplorerConfiguration, IFolderExplorerUserConfigurationUpdater
@@ -33,7 +34,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Constructor
 
-		public FolderExplorerUserConfiguration(string settingXml, Action<string> updateSetting)
+		public FolderExplorerUserConfiguration(SettingProvider settingXml, Action<string> updateSetting)
 			: base(settingXml)
 		{
 			_updateSetting = updateSetting;
@@ -78,6 +79,7 @@ namespace ClearCanvas.Ris.Client
 
 			_updateSetting(sb.ToString());
 
+			this.XmlDocument = null;
 			_transactionPending = false;
 
 			// notify subscribers
@@ -128,6 +130,14 @@ namespace ClearCanvas.Ris.Client
 				xmlFolderSystem.InnerXml = replacementFolderSystem.InnerXml;
 			else
 				folderSystemsNode.AppendChild(replacementFolderSystem);
+		}
+
+		public void RemoveUserFoldersCustomizations(IFolderSystem folderSystem)
+		{
+			var xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id);
+
+			if (xmlFolderSystem != null)
+				this.GetFolderSystemsNode().ReplaceChild(CreateXmlFolderSystem(folderSystem.Id), xmlFolderSystem);
 		}
 
 		/// <summary>
@@ -193,8 +203,7 @@ namespace ClearCanvas.Ris.Client
 
 			xmlFolder.SetAttribute("id", folder.Id);
 			xmlFolder.SetAttribute("path", folder.FolderPath.LocalizedPath);
-			// Visible is not editable by the user, so no need to save it?
-			//xmlFolder.SetAttribute("visible", folder.Visible.ToString());
+			xmlFolder.SetAttribute("visible", folder.Visible.ToString());
 
 			return xmlFolder;
 		}

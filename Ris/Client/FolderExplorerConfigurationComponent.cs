@@ -89,6 +89,7 @@ namespace ClearCanvas.Ris.Client
 
 		private const string _moveFolderSystemUpKey = "MoveFolderSystemUp";
 		private const string _moveFolderSystemDownKey = "MoveFolderSystemDown";
+		private const string _resetFolderSystemKey = "ResetFolderSystem";
 		private const string _addFolderKey = "AddFolder";
 		private const string _editFolderKey = "EditFolder";
 		private const string _deleteFolderKey = "DeleteFolder";
@@ -110,8 +111,10 @@ namespace ClearCanvas.Ris.Client
 			_folderSystemsActionModel = new SimpleActionModel(resourceResolver);
 			_folderSystemsActionModel.AddAction(_moveFolderSystemUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderSystemUp);
 			_folderSystemsActionModel.AddAction(_moveFolderSystemDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderSystemDown);
+			_folderSystemsActionModel.AddAction(_resetFolderSystemKey, SR.TitleReset, "Icons.ResetToolSmall.png", SR.TitleReset, ResetFolderSystem);
 			_folderSystemsActionModel[_moveFolderSystemUpKey].Enabled = false;
 			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = false;
+			_folderSystemsActionModel[_resetFolderSystemKey].Enabled = false;
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
 			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAddContainerFolder, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
@@ -338,6 +341,33 @@ namespace ClearCanvas.Ris.Client
 			NudgeSelectedFolderSystemUpOrDownOnePosition(true);
 		}
 
+		private void ResetFolderSystem()
+		{
+			if (_selectedFolderSystemNode == null)
+				return;
+
+			if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageResetFolderSystem, MessageBoxActions.YesNo)) 
+				return;
+
+			FolderExplorerComponentSettings.Default.UpdateUserConfiguration(userConfiguration =>
+				userConfiguration.RemoveUserFoldersCustomizations(_selectedFolderSystemNode.FolderSystem));
+
+			RefreshSelectedFolderSystemFolders();
+		}
+
+		private void RefreshSelectedFolderSystemFolders()
+		{
+			if(_selectedFolderSystemNode == null)
+				return;
+
+			_selectedFolderSystemNode.ClearSubTree();
+			BuildFolderTreeIfNotExist(_selectedFolderSystemNode);
+
+			_folderTree.Items.Clear();
+			_folderTree.Items.Add(_selectedFolderSystemNode);
+			this.SelectedFolderNode = new Selection(_selectedFolderSystemNode);
+		}
+
 		private void NudgeSelectedFolderSystemUpOrDownOnePosition(bool up)
 		{
 			var offset = up ? +1 : -1;
@@ -356,6 +386,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			_folderSystemsActionModel[_moveFolderSystemUpKey].Enabled = this.CanMoveFolderSystemUp;
 			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = this.CanMoveFolderSystemDown;
+			_folderSystemsActionModel[_resetFolderSystemKey].Enabled = _selectedFolderSystemNode != null;
 		}
 
 		#endregion
