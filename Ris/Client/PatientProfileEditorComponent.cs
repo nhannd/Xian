@@ -233,6 +233,8 @@ namespace ClearCanvas.Ris.Client
 
         private void SaveChanges()
         {
+			SynchronizeAttachedDocumentChanges();
+
             Platform.GetService<IPatientAdminService>(
                 delegate(IPatientAdminService service)
                 {
@@ -258,5 +260,16 @@ namespace ClearCanvas.Ris.Client
                 _documentSummary.SaveChanges();
         }
 
+    	private void SynchronizeAttachedDocumentChanges()
+    	{
+			// resynchronize the profile's documents if the document summary was created
+			// (the document summary does not use the same object for its list of attachments,
+			// so changes must be manually synchronized.
+			if (_documentSummary != null)
+    		{
+    			_profile.Attachments.Clear();
+    			_profile.Attachments.AddRange(_documentSummary.PatientAttachments);
+    		}
+    	}
     }
 }
