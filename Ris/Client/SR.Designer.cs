@@ -1492,6 +1492,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox..
+        /// </summary>
+        internal static string MessageMustAcknowledge {
+            get {
+                return ResourceManager.GetString("MessageMustAcknowledge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox before new notes can be posted..
+        /// </summary>
+        internal static string MessageMustAcknowledgeWithPost {
+            get {
+                return ResourceManager.GetString("MessageMustAcknowledgeWithPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At least one active procedure is required..
         /// </summary>
         internal static string MessageNoActiveProcedures {

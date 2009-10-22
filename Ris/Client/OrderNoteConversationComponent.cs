@@ -433,7 +433,7 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				return (_orderNoteViewComponent.CheckedNotes.Count != 0 || !IsBodyEmpty)
-					&& _orderNoteViewComponent.AllAcknowledgeableNotesAreChecked;
+					/* && _orderNoteViewComponent.AllAcknowledgeableNotesAreChecked */;
 			}
 		}
 
@@ -442,6 +442,15 @@ namespace ClearCanvas.Ris.Client
 			if (this.HasValidationErrors)
 			{
 				this.ShowValidation(true);
+				return;
+			}
+
+			if(!_orderNoteViewComponent.AllAcknowledgeableNotesAreChecked)
+			{
+				string mesage = this.IsBodyEmpty
+					? SR.MessageMustAcknowledge
+					: SR.MessageMustAcknowledgeWithPost;
+				this.Host.DesktopWindow.ShowMessageBox(mesage, MessageBoxActions.Ok);
 				return;
 			}
 

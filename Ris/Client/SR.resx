@@ -900,4 +900,10 @@
   <data name="MessageResetFolderSystem" xml:space="preserve">
     <value>Resetting the selected folder system will permanantly remove all customizations from its folders.  Are you sure you would like to reset the folder system?</value>
   </data>
+  <data name="MessageMustAcknowledge" xml:space="preserve">
+    <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox.</value>
+  </data>
+  <data name="MessageMustAcknowledgeWithPost" xml:space="preserve">
+    <value>All unread notes in this conversation must be read and acknowledged by checking off the left-hand side checkbox before new notes can be posted.</value>
+  </data>
 </root>
