@@ -103,7 +103,7 @@ namespace ClearCanvas.Desktop
             string message =
                 string.IsNullOrEmpty(_contextualMessage) || prependContextualMessage == false
                     ? detailMessage
-                    : string.Format("{0}: \n{1}", _contextualMessage, detailMessage);
+                    : string.Format("{0}: {1}", _contextualMessage, detailMessage);
 
             ShowMessageBox(message);
         }
