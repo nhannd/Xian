@@ -31,245 +31,265 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
-using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Formatting;
-using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class PatientProfileEditorComponent : NavigatorComponentContainer
-    {
-        private EntityRef _patientRef;
-        private EntityRef _profileRef;
-        private PatientProfileDetail _profile;
-        private readonly bool _isNew;
-        private readonly List<PatientAttachmentSummary> _newAttachments;
+	public class PatientProfileEditorComponent : NavigatorComponentContainer
+	{
+		private EntityRef _patientRef;
+		private EntityRef _profileRef;
+		private PatientProfileDetail _profile;
+		private readonly bool _isNew;
+		private readonly List<PatientAttachmentSummary> _newAttachments;
 
-        private PatientProfileDetailsEditorComponent _patientEditor;
-        private AddressesSummaryComponent _addressesSummary;
-        private PhoneNumbersSummaryComponent _phoneNumbersSummary;
-        private EmailAddressesSummaryComponent _emailAddressesSummary;
-        private ContactPersonsSummaryComponent _contactPersonsSummary;
-        private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
-        private PatientNoteSummaryComponent _notesSummary;
-        private AttachedDocumentPreviewComponent _documentSummary;
+		private PatientProfileDetailsEditorComponent _patientEditor;
+		private AddressesSummaryComponent _addressesSummary;
+		private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+		private EmailAddressesSummaryComponent _emailAddressesSummary;
+		private ContactPersonsSummaryComponent _contactPersonsSummary;
+		private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
+		private PatientNoteSummaryComponent _notesSummary;
+		private AttachedDocumentPreviewComponent _documentSummary;
 
-        /// <summary>
-        /// Constructs an editor to edit the specified profile
-        /// </summary>
-        /// <param name="profileRef"></param>
-        public PatientProfileEditorComponent(EntityRef profileRef)
-        {
-            _profileRef = profileRef;
-            _isNew = false;
-            _newAttachments = new List<PatientAttachmentSummary>();
-        }
+		/// <summary>
+		/// Constructs an editor to edit the specified profile
+		/// </summary>
+		/// <param name="profileRef"></param>
+		public PatientProfileEditorComponent(EntityRef profileRef)
+		{
+			_profileRef = profileRef;
+			_isNew = false;
+			_newAttachments = new List<PatientAttachmentSummary>();
+		}
 
-        /// <summary>
-        /// Constructs an editor to edit a new profile
-        /// </summary>
-        public PatientProfileEditorComponent()
-        {
-            _isNew = true;
-            _newAttachments = new List<PatientAttachmentSummary>();
-        }
+		/// <summary>
+		/// Constructs an editor to edit a new profile
+		/// </summary>
+		public PatientProfileEditorComponent()
+		{
+			_isNew = true;
+			_newAttachments = new List<PatientAttachmentSummary>();
+		}
 
-        /// <summary>
-        /// Constructs an editor to edit a new profile with attachments
-        /// </summary>
-        public PatientProfileEditorComponent(EntityRef profileRef, List<PatientAttachmentSummary> attachments)
-        {
-            Platform.CheckForNullReference(attachments, "attachments");
+		/// <summary>
+		/// Constructs an editor to edit a new profile with attachments
+		/// </summary>
+		public PatientProfileEditorComponent(EntityRef profileRef, List<PatientAttachmentSummary> attachments)
+		{
+			Platform.CheckForNullReference(attachments, "attachments");
 
-            _profileRef = profileRef;
-            _isNew = false;
-            _newAttachments = attachments;
-        }
+			_profileRef = profileRef;
+			_isNew = false;
+			_newAttachments = attachments;
+		}
 
-        /// <summary>
-        /// Constructs an editor to edit a new profile with attachments
-        /// </summary>
-        public PatientProfileEditorComponent(List<PatientAttachmentSummary> attachments)
-        {
-            Platform.CheckForNullReference(attachments, "attachments");
+		/// <summary>
+		/// Constructs an editor to edit a new profile with attachments
+		/// </summary>
+		public PatientProfileEditorComponent(List<PatientAttachmentSummary> attachments)
+		{
+			Platform.CheckForNullReference(attachments, "attachments");
 
-            _isNew = true;
-            _newAttachments = attachments;
-        }
+			_isNew = true;
+			_newAttachments = attachments;
+		}
 
-        public EntityRef PatientRef
-        {
-            get { return _patientRef; }
-        }
+		public EntityRef PatientRef
+		{
+			get { return _patientRef; }
+		}
 
-        public EntityRef PatientProfileRef
-        {
-            get { return _profileRef; }
-        }
+		public EntityRef PatientProfileRef
+		{
+			get { return _profileRef; }
+		}
 
-        public PatientProfileDetail PatientProfile
-        {
-            get { return _profile; }
-        }
+		public PatientProfileDetail PatientProfile
+		{
+			get { return _profile; }
+		}
 
-        public override void Start()
-        {
-            Platform.GetService<IPatientAdminService>(
-                delegate(IPatientAdminService service)
-                {
-                    LoadPatientProfileEditorFormDataResponse formData = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
-                    if (_isNew)
-                    {
-                        _profile = new PatientProfileDetail();
-                        _profile.Mrn.AssigningAuthority = formData.MrnAssigningAuthorityChoices.Count > 0 ? formData.MrnAssigningAuthorityChoices[0] : null;
-                        _profile.Healthcard.AssigningAuthority = formData.HealthcardAssigningAuthorityChoices.Count > 0 ? formData.HealthcardAssigningAuthorityChoices[0] : null;
-                        _profile.Sex = formData.SexChoices[0];
-                        _profile.Religion = formData.ReligionChoices[0];
-                        _profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
-                        _profile.DateOfBirth = Platform.Time.Date;
-                    }
-                    else
-                    {
-                        LoadPatientProfileForEditResponse response = service.LoadPatientProfileForEdit(
-                            new LoadPatientProfileForEditRequest(_profileRef));
+		public override void Start()
+		{
+			Platform.GetService<IPatientAdminService>(
+				service =>
+				{
+					var formData = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
+					if (_isNew)
+					{
+						_profile = new PatientProfileDetail();
+						_profile.Mrn.AssigningAuthority = formData.MrnAssigningAuthorityChoices.Count > 0
+							? formData.MrnAssigningAuthorityChoices[0]
+							: null;
+						_profile.Healthcard.AssigningAuthority = formData.HealthcardAssigningAuthorityChoices.Count > 0
+							? formData.HealthcardAssigningAuthorityChoices[0]
+							: null;
+						_profile.Sex = formData.SexChoices[0];
+						_profile.Religion = formData.ReligionChoices[0];
+						_profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
+						_profile.DateOfBirth = Platform.Time.Date;
+					}
+					else
+					{
+						var response = service.LoadPatientProfileForEdit(new LoadPatientProfileForEditRequest(_profileRef));
 
-                        _profileRef = response.PatientProfileRef;
-                        _profile = response.PatientDetail;
+						_profileRef = response.PatientProfileRef;
+						_profile = response.PatientDetail;
 
-                        this.Host.Title =
-                            string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
-                    }
+						this.Host.Title =
+							string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn));
+					}
 
-                    if (_newAttachments.Count > 0)
-                    {
-                        _profile.Attachments.AddRange(_newAttachments);
-                    	this.Modified = true;
-                        this.AcceptEnabled = true;
-                    }
+					if (_newAttachments.Count > 0)
+					{
+						_profile.Attachments.AddRange(_newAttachments);
+						this.Modified = true;
+						this.AcceptEnabled = true;
+					}
 
-                    // if the user has permission to either a) create a new patient, or b) update the patient profile, then 
-                    // these pages should be displayed
-                    if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)
-                        || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create))
-                    {
-                        this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
-                        this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
-                        this.Pages.Add(new NavigatorPage("Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
-                        this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
-                        this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
-                        this.Pages.Add(new NavigatorPage("Patient/Culture", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
+					// if the user has permission to either a) create a new patient, or b) update the patient profile, then 
+					// these pages should be displayed
+					if (Thread.CurrentPrincipal.IsInRole(
+							ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)
+						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create))
+					{
+						this.Pages.Add(
+							new NavigatorPage(
+								"Patient",
+								_patientEditor =
+								new PatientProfileDetailsEditorComponent(
+									formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
+						this.Pages.Add(
+							new NavigatorPage(
+								"Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
+						this.Pages.Add(
+							new NavigatorPage(
+								"Patient/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formData.PhoneTypeChoices)));
+						this.Pages.Add(
+							new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
+						this.Pages.Add(
+							new NavigatorPage(
+								"Patient/Contact Persons",
+								_contactPersonsSummary =
+								new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
+						this.Pages.Add(
+							new NavigatorPage(
+								"Patient/Culture",
+								_additionalPatientInfoSummary =
+								new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
 
-                        _addressesSummary.SetModifiedOnListChange = true;
-                        _phoneNumbersSummary.SetModifiedOnListChange = true;
-                        _emailAddressesSummary.SetModifiedOnListChange = true;
-                        _contactPersonsSummary.SetModifiedOnListChange = true;
+						_addressesSummary.SetModifiedOnListChange = true;
+						_phoneNumbersSummary.SetModifiedOnListChange = true;
+						_emailAddressesSummary.SetModifiedOnListChange = true;
+						_contactPersonsSummary.SetModifiedOnListChange = true;
 
-                        _patientEditor.Subject = _profile;
-                        _addressesSummary.Subject = _profile.Addresses;
-                        _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
-                        _emailAddressesSummary.Subject = _profile.EmailAddresses;
-                        _contactPersonsSummary.Subject = _profile.ContactPersons;
-                        _additionalPatientInfoSummary.Subject = _profile;
-                    }
+						_patientEditor.Subject = _profile;
+						_addressesSummary.Subject = _profile.Addresses;
+						_phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
+						_emailAddressesSummary.Subject = _profile.EmailAddresses;
+						_contactPersonsSummary.Subject = _profile.ContactPersons;
+						_additionalPatientInfoSummary.Subject = _profile;
+					}
 
-                    // if the user has permission to either a) create a new patient, or b) update a patient, then
-                    // these pages should be displayed
-                    if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)
-                        || Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
-                    {
-                        this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
-                        _notesSummary.Subject = _profile.Notes;
+					// if the user has permission to either a) create a new patient, or b) update a patient, then
+					// these pages should be displayed
+					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)
+						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
+					{
+						this.Pages.Add(
+							new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
+						_notesSummary.Subject = _profile.Notes;
 
-                        NavigatorPage patientDocumentsPage = new NavigatorPage("Patient/Documents",
-                            _documentSummary = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Patient));
-                        this.Pages.Add(patientDocumentsPage);
-                        _documentSummary.PatientAttachments = _profile.Attachments;
+						var patientDocumentsPage = new NavigatorPage(
+							"Patient/Documents",
+							_documentSummary =
+							new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Patient));
+						this.Pages.Add(patientDocumentsPage);
+						_documentSummary.PatientAttachments = _profile.Attachments;
 
-                        if (_newAttachments.Count > 0)
-                        {
-                            this.MoveTo(this.Pages.IndexOf(patientDocumentsPage));
-                            _documentSummary.SetInitialSelection(_newAttachments[0]);
-                        }
-                    }
+						if (_newAttachments.Count > 0)
+						{
+							this.MoveTo(this.Pages.IndexOf(patientDocumentsPage));
+							_documentSummary.SetInitialSelection(_newAttachments[0]);
+						}
+					}
 
-                    this.ValidationStrategy = new AllComponentsValidationStrategy();
+					this.ValidationStrategy = new AllComponentsValidationStrategy();
+				});
 
-                });
 
+			base.Start();
+		}
 
-            base.Start();
-        }
+		public override void Accept()
+		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+			}
+			else
+			{
+				try
+				{
+					SaveChanges();
+					this.Exit(ApplicationComponentExitCode.Accepted);
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
+											delegate
+											{
+												this.ExitCode = ApplicationComponentExitCode.Error;
+												this.Host.Exit();
+											});
+				}
+			}
+		}
 
-        public override void Accept()
-        {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-            }
-            else
-            {
-                try
-                {
-                    SaveChanges();
-                    this.Exit(ApplicationComponentExitCode.Accepted);
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
-                                            delegate
-                                            {
-                                                this.ExitCode = ApplicationComponentExitCode.Error;
-                                                this.Host.Exit();
-                                            });
-                }
-            }
-        }
-
-        private void SaveChanges()
-        {
+		private void SaveChanges()
+		{
 			SynchronizeAttachedDocumentChanges();
 
-            Platform.GetService<IPatientAdminService>(
-                delegate(IPatientAdminService service)
-                {
-                    if (_isNew)
-                    {
-                        AddPatientResponse response = service.AddPatient(
-                            new AddPatientRequest(_profile));
+			Platform.GetService<IPatientAdminService>(service =>
+				{
+					if (_isNew)
+					{
+						var response = service.AddPatient(new AddPatientRequest(_profile));
 
-                        _patientRef = response.PatientProfile.PatientRef;
-                        _profileRef = response.PatientProfile.PatientProfileRef;
-                    }
-                    else
-                    {
-                        UpdatePatientProfileResponse response = service.UpdatePatientProfile(
-                            new UpdatePatientProfileRequest(_profileRef, _profile));
+						_patientRef = response.PatientProfile.PatientRef;
+						_profileRef = response.PatientProfile.PatientProfileRef;
+					}
+					else
+					{
+						var response = service.UpdatePatientProfile(new UpdatePatientProfileRequest(_profileRef, _profile));
 
-                        _patientRef = response.PatientProfile.PatientRef;
-                        _profileRef = response.PatientProfile.PatientProfileRef;
-                    }
-                });
+						_patientRef = response.PatientProfile.PatientRef;
+						_profileRef = response.PatientProfile.PatientProfileRef;
+					}
+				});
 
-            if (_documentSummary != null)
-                _documentSummary.SaveChanges();
-        }
+			if (_documentSummary != null)
+				_documentSummary.SaveChanges();
+		}
 
-    	private void SynchronizeAttachedDocumentChanges()
-    	{
+		private void SynchronizeAttachedDocumentChanges()
+		{
+			if (_documentSummary == null)
+				return;
+
 			// resynchronize the profile's documents if the document summary was created
 			// (the document summary does not use the same object for its list of attachments,
 			// so changes must be manually synchronized.
-			if (_documentSummary != null)
-    		{
-    			_profile.Attachments.Clear();
-    			_profile.Attachments.AddRange(_documentSummary.PatientAttachments);
-    		}
-    	}
-    }
+			_profile.Attachments.Clear();
+			_profile.Attachments.AddRange(_documentSummary.PatientAttachments);
+		}
+	}
 }
