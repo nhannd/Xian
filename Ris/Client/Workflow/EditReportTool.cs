@@ -190,6 +190,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("group", "Enabled", "EnabledChanged")]
 	[IconSetObserver("group", "GroupCurrentIconSet", "LabelChanged")]
 	[LabelValueObserver("group", "GroupLabel", "LabelChanged")]
+	[TooltipValueObserver("group", "GroupLabel", "LabelChanged")]
 
 	[MenuAction("withImagesContext", "folderexplorer-items-contextmenu/Edit Report and Open Images", "ApplyWithImages")]
 	[EnabledStateObserver("withImagesContext", "Enabled", "EnabledChanged")]
