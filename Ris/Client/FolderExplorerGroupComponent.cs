@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -172,7 +171,7 @@ namespace ClearCanvas.Ris.Client
 			private void SelectedItemDoubleClickeEventHandler(object sender, EventArgs e)
 			{
 				// it only makes sense to notify the folder system if it is the active folder system
-				if(_explorerComponent == _owner._selectedFolderExplorer)
+				if (_explorerComponent == _owner._selectedFolderExplorer)
 					EventsHelper.Fire(_selectedItemDoubleClicked, _contentsComponent, EventArgs.Empty);
 			}
 
@@ -277,7 +276,7 @@ namespace ClearCanvas.Ris.Client
 			_stackTabComponentContainerHost.StartComponent();
 
 			// register folder system instances with document manager
-			foreach (IFolderSystem folderSystem in _folderSystems)
+			foreach (var folderSystem in _folderSystems)
 			{
 				DocumentManager.RegisterFolderSystem(folderSystem);
 			}
@@ -298,15 +297,15 @@ namespace ClearCanvas.Ris.Client
 				_toolSet = null;
 			}
 
-            if (_stackTabComponentContainerHost != null)
-            {
-                _stackTabComponent.CurrentPageChanged -= OnCurrentPageChanged;
-                _stackTabComponentContainerHost.StopComponent();
-                _stackTabComponentContainerHost = null;
-            }
+			if (_stackTabComponentContainerHost != null)
+			{
+				_stackTabComponent.CurrentPageChanged -= OnCurrentPageChanged;
+				_stackTabComponentContainerHost.StopComponent();
+				_stackTabComponentContainerHost = null;
+			}
 
 			// un-register folder system instances with document manager
-			foreach (IFolderSystem folderSystem in _folderSystems)
+			foreach (var folderSystem in _folderSystems)
 			{
 				DocumentManager.UnregisterFolderSystem(folderSystem);
 			}
@@ -379,7 +378,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void Search(string textSearch)
 		{
-			SearchParams searchParams = this.SelectedFolderExplorer.CreateSearchParams(textSearch);
+			var searchParams = this.SelectedFolderExplorer.CreateSearchParams(textSearch);
 			Search(searchParams);
 		}
 
@@ -405,24 +404,25 @@ namespace ClearCanvas.Ris.Client
 
 		private void OnCurrentPageChanged(object sender, EventArgs e)
 		{
-			FolderExplorerComponent explorer = (FolderExplorerComponent)_stackTabComponent.CurrentPage.Component;
-			if (_selectedFolderExplorer != explorer)
-			{
-				_selectedFolderExplorer = explorer;
-				SearchComponentManager.EnsureProperSearchComponent(_selectedFolderExplorer.FolderSystem);
-				NotifyPropertyChanged("SearchEnabled");
-				NotifyPropertyChanged("SearchMessage");
-				EventsHelper.Fire(_selectedFolderExplorerChanged, this, EventArgs.Empty);
+			var explorer = (FolderExplorerComponent)_stackTabComponent.CurrentPage.Component;
 
-				// refresh folders in newly selected folder explorer
-				if(_selectedFolderExplorer.IsInitialized)
-				{
-					_selectedFolderExplorer.InvalidateFolders();
-				}
-				else
-				{
-					_selectedFolderExplorer.Initialize();
-				}
+			if (_selectedFolderExplorer == explorer)
+				return;
+
+			_selectedFolderExplorer = explorer;
+			SearchComponentManager.EnsureProperSearchComponent(_selectedFolderExplorer.FolderSystem);
+			NotifyPropertyChanged("SearchEnabled");
+			NotifyPropertyChanged("SearchMessage");
+			EventsHelper.Fire(_selectedFolderExplorerChanged, this, EventArgs.Empty);
+
+			// refresh folders in newly selected folder explorer
+			if (_selectedFolderExplorer.IsInitialized)
+			{
+				_selectedFolderExplorer.InvalidateFolders();
+			}
+			else
+			{
+				_selectedFolderExplorer.Initialize();
 			}
 		}
 
@@ -440,7 +440,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			// this event handler is only needed to force the initial invalidation of the
 			// first selected folder explorer
-			if(sender == _selectedFolderExplorer)
+			if (sender == _selectedFolderExplorer)
 			{
 				_selectedFolderExplorer.InvalidateFolders();
 			}
@@ -448,16 +448,16 @@ namespace ClearCanvas.Ris.Client
 
 		private void FolderSystemTitleChangedEventHandler(object sender, EventArgs e)
 		{
-			IFolderSystem fs = (IFolderSystem)sender;
-			StackTabPage page = FindPage(fs);
-			page.Title = fs.Title;
+			var folderSystem = (IFolderSystem)sender;
+			var page = FindPage(folderSystem);
+			page.Title = folderSystem.Title;
 		}
 
 		private void FolderSystemIconChangedEventHandler(object sender, EventArgs e)
 		{
-			IFolderSystem fs = (IFolderSystem)sender;
-			StackTabPage page = FindPage(fs);
-			page.IconSet = fs.TitleIcon;
+			var folderSystem = (IFolderSystem)sender;
+			var page = FindPage(folderSystem);
+			page.IconSet = folderSystem.TitleIcon;
 		}
 
 		private void OnUserFolderSystemCustomizationsChanged(object sender, EventArgs e)
@@ -474,9 +474,9 @@ namespace ClearCanvas.Ris.Client
 			var folderSystems = FolderExplorerComponentSettings.Default.ApplyFolderSystemsOrder(_folderSystems);
 
 			// create a folder explorer component and a tab page for each folder system
-			foreach (IFolderSystem folderSystem in folderSystems)
+			foreach (var folderSystem in folderSystems)
 			{
-				StackTabPage page = CreatePageForFolderSystem(folderSystem);
+				var page = CreatePageForFolderSystem(folderSystem);
 
 				_folderExplorerComponents.Add(folderSystem, (FolderExplorerComponent)page.Component);
 				_stackTabComponent.Pages.Add(page);
@@ -489,7 +489,7 @@ namespace ClearCanvas.Ris.Client
 		private void DestroyFolderExplorers()
 		{
 			// disconnect UI from folder-system events
-			foreach (IFolderSystem folderSystem in _folderSystems)
+			foreach (var folderSystem in _folderSystems)
 			{
 				folderSystem.TitleChanged -= FolderSystemTitleChangedEventHandler;
 				folderSystem.TitleIconChanged -= FolderSystemIconChangedEventHandler;
@@ -505,12 +505,12 @@ namespace ClearCanvas.Ris.Client
 
 		private StackTabPage CreatePageForFolderSystem(IFolderSystem folderSystem)
 		{
-			FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem, this);
+			var explorer = new FolderExplorerComponent(folderSystem, this);
 			folderSystem.SetContext(new FolderSystemContext(this, explorer, _contentComponent));
 			explorer.Initialized += FolderSystemInitializedEventHandler;
 			explorer.SelectedFolderChanged += OnSelectedFolderChanged;
 
-			StackTabPage thisPage = new StackTabPage(
+			var thisPage = new StackTabPage(
 				folderSystem.Title,
 				explorer,
 				folderSystem.Title,
@@ -525,10 +525,8 @@ namespace ClearCanvas.Ris.Client
 
 		private StackTabPage FindPage(IFolderSystem folderSystem)
 		{
-			FolderExplorerComponent explorer = _folderExplorerComponents[folderSystem];
-
-			return CollectionUtils.SelectFirst(_stackTabComponent.Pages,
-				delegate(StackTabPage page) { return ReferenceEquals(page.Component, explorer); });
+			var explorer = _folderExplorerComponents[folderSystem];
+			return CollectionUtils.SelectFirst(_stackTabComponent.Pages, page => ReferenceEquals(page.Component, explorer));
 		}
 
 		/// <summary>
@@ -539,7 +537,7 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		private ActionModelNode CreateActionModel(string site)
 		{
-			IActionSet allActions = _toolSet.Actions;
+			var allActions = _toolSet.Actions;
 			if (_selectedFolderExplorer != null)
 			{
 				allActions = allActions.Union(_selectedFolderExplorer.ExportedActions);
