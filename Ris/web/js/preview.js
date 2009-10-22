@@ -1684,28 +1684,28 @@ Preview.OrderNoteSection = function() {
 
 			var html = "";
 			html += '<table style="{width:100%; margin-top: 4px;}" border="0" cellspacing="0" cellpadding="0">';
-			html += '	<tr style="{background: #f1f4f8}">';
-			html += '		<td style="{padding-bottom: 3px; padding-top: 3px;}"><span style="{padding-right: 5px; font-weight: bold; color: #336699}">From:</span>';
+			html += '	<tr class="orderNoteHeading">';
+			html += '		<td><span style="{padding-right: 5px;}" class="orderNoteLabel">From:</span>';
 			html += '		' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
 			html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
-			html += '		<td style="{width:10em;text-align:right; padding-right: 20px; font-weight: bold; color: #336699}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
+			html += '		<td style="{width:10em;text-align:right; padding-right: 20px;}" class="orderNoteLabel" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
 			{
-				html += '	<tr id="acknowledgedRow">';
-				html += '		<td style="{width:10em;}" NOWRAP valign="top">Acknowledged By:</td>';
-				html += '		<td colspan="2">' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+				html += '	<tr id="acknowledgedRow" class="orderNoteHeading">';
+				html += '		<td colspan="3" NOWRAP valign="top"><span style="{padding-right: 5px;}" class="orderNoteLabel">Acknowledged By:</span>';
+				html += '		' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
 				html += '	</tr>';
 			}
 			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0)
 			{
-				html += '	<tr id="notAcknowledgedRow">';
-				html += '		<td style="{width:10em;}" class="propertyname" valign="top">Waiting For Acknowledgement:</td>';
-				html += '		<td colspan="2"><B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
+				html += '	<tr id="notAcknowledgedRow" class="orderNoteHeading">';
+				html += '		<td valign="top" colspan="3"><span style="{padding-right: 5px;}" class="orderNoteLabel">Waiting For Acknowledgement:</span>';
+				html += '		<B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
 				html += '	</tr>';
 			}
 			html += '	<tr>';
-			html += '		<td colspan="3" style="{text-align:justify; padding-bottom: 5px; border-top: dashed 1px #AACCEE; padding-top: 5px; }">' +  note.NoteBody.replaceLineBreak() + '</td>';
+			html += '		<td colspan="3" class="orderNote">' +  note.NoteBody.replaceLineBreak() + '</td>';
 			html += '	</tr>';
 			html += '</table>';
 			

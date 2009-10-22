@@ -19,7 +19,7 @@
 				return;
 
 			try
-			{
+			{				
 				var context = Ris.getHealthcareContext();
 				if (context == null)
 				{
@@ -31,8 +31,8 @@
 				// initialize an array of boolean check states to false
 				var checkStates = orderNotes.map(function(n) { return false; });
 
-				Field.show($("noNotesSection"), !orderNotes || orderNotes.length == 0);
-				
+				Field.show($("noConversationSection"), !orderNotes || orderNotes.length == 0);
+								
 				var orderNotesSubsections = 
 					[
 						{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"}
@@ -48,8 +48,9 @@
 							},
 						showItemCheckBox: function(item) { return item.CanAcknowledge; }
 					};
-
-				Preview..ConversationHistory.create($("conversationHistorySection"), orderNotes, orderNotesSubsections, true, checkBoxesProperties);
+					
+				Preview.ConversationHistory.create($("conversationHistorySection"), orderNotes, orderNotesSubsections, true, checkBoxesProperties);
+				
 			}
 			catch(e)
 			{
@@ -80,7 +81,7 @@
 <body onload="javascript: onBodyLoad()">
 	<form id="myForm">
 
-	<div id="noConversationSection">No Conversations</div>
+	<div id="noConversationSection">No Notes</div>
 	<div id="conversationHistorySection"></div>
 
 	</form>

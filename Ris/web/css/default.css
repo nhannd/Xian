@@ -635,3 +635,27 @@ a:active {
 	padding: 4px;
 }
 
+.orderNoteHeading
+{
+	background: #f1f4f8;
+}
+
+.orderNoteHeading td
+{
+	padding-bottom: 3px; 
+	padding-top: 3px;
+}
+
+.orderNoteLabel
+{
+	 font-weight: bold; 
+	 color: #336699;
+}
+
+.orderNote
+{
+	text-align:justify; 
+	padding-bottom: 5px; 
+	padding-top: 5px; 	
+	border-top: dashed 1px #AACCEE; 
+}
