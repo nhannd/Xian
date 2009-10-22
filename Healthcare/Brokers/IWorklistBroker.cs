@@ -38,7 +38,7 @@ namespace ClearCanvas.Healthcare.Brokers
 	public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
 	{
 		/// <summary>
-		/// Count the number of worklists assigned to specified owner.
+		/// Count the number of worklists owned by the specified owner.
 		/// </summary>
 		/// <param name="owner"></param>
 		/// <returns></returns>

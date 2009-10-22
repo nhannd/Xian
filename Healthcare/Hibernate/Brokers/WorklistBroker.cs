@@ -48,12 +48,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 		public int Count(WorklistOwner owner)
 		{
-			var query = GetBaseCountQuery();
+			var query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
+			query.Selects.Add(new HqlSelect("count(*)"));
 
 			if (owner.IsStaffOwner)
-				AddStaffConditions(query, owner.Staff, false);
+				query.Conditions.Add(new HqlCondition("w.Owner.Staff = ?", owner.Staff));
 			else if (owner.IsGroupOwner)
-				AddStaffGroupConditions(query, owner.Group);
+				query.Conditions.Add(new HqlCondition("w.Owner.Group = ?", owner.Group));
 			else if (owner.IsAdminOwner)
 				query.Conditions.Add(new HqlCondition("(w.Owner.Staff is null and w.Owner.Group is null)"));
 
@@ -71,7 +72,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		public IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames)
 		{
 			var query = GetBaseQuery();
-			AddStaffConditions(query, staff, true);
+			AddStaffConditions(query, staff);
 			AddClassConditions(query, worklistClassNames);
 
 			return ExecuteHql<Worklist>(query);
@@ -116,13 +117,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return query;
 		}
 
-		private static HqlProjectionQuery GetBaseCountQuery()
-		{
-			var query = new HqlProjectionQuery(new HqlFrom("Worklist", "w"));
-			query.Selects.Add(new HqlSelect("count(*)"));
-			return query;
-		}
-
 		private static void AddClassConditions(HqlProjectionQuery query, IEnumerable<string> worklistClassNames)
 		{
 			var classOr = new HqlOr();
@@ -133,16 +127,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			query.Conditions.Add(classOr);
 		}
 
-		private static void AddStaffConditions(HqlProjectionQuery query, Staff staff, bool includeGroupWorklist)
+		private static void AddStaffConditions(HqlProjectionQuery query, Staff staff)
 		{
 			query.Froms.Add(new HqlFrom("Staff", "s"));
 			query.Conditions.Add(new HqlCondition("s = ?", staff));
 
 			var staffOr = new HqlOr();
 			staffOr.Conditions.Add(new HqlCondition("s in elements(w.StaffSubscribers)"));
-
-			if (includeGroupWorklist)
-				staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
+			staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
 
 			query.Conditions.Add(staffOr);
 		}
