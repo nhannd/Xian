@@ -652,7 +652,9 @@ Do you want to save it to your Drafts folder and open the transcription for {1}?
     <value>Patient Visits - {0} {1}</value>
   </data>
   <data name="MessageQueryPrelimDiagnosisReviewRequired" xml:space="preserve">
-    <value>You are about to verify a '{0}' procedure.  Is a preliminary diagnosis review required?</value>
+    <value>You are about to verify a '{0}' procedure.  Do you wish to send a review request for this report?
+Choose "Yes" to open up the Preliminary Diagnosis window and enter your request.
+Choose "No" to verify this report without further action.</value>
   </data>
   <data name="MessageConfirmCheckInProcedures" xml:space="preserve">
     <value>Do you still want to check-in the selected procedure(s)?</value>
