@@ -164,7 +164,7 @@ namespace ClearCanvas.Desktop
 		}
 
         /// <summary>
-        /// Converts this path back to a string.
+        /// Converts this path back to the original string on which it was based.
         /// </summary>
         public override string ToString()
         {

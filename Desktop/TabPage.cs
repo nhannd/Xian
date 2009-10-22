@@ -50,6 +50,16 @@ namespace ClearCanvas.Desktop
         }
 
 		/// <summary>
+		/// Creates a tab page for the specified component, using the last segment of the supplied path as the name.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="component"></param>
+    	public TabPage(Path path, IApplicationComponent component)
+			:this(path.LastSegment.LocalizedText, component)
+    	{
+    	}
+
+		/// <summary>
 		/// Gets the name of the page.
 		/// </summary>
 		public string Name

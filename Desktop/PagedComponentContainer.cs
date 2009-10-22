@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
@@ -48,9 +49,11 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		/// <param name="component">The <see cref="IApplicationComponent"/> to host 
 		/// in a page within the <see cref="PagedComponentContainer{TPage}"/>.</param>
-        public ContainerPage(IApplicationComponent component)
+		protected ContainerPage(IApplicationComponent component)
         {
-            _component = component;
+			Platform.CheckForNullReference(component, "component");
+
+			_component = component;
         }
 
         /// <summary>

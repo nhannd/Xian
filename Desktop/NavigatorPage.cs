@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -41,7 +40,7 @@ namespace ClearCanvas.Desktop
     public class NavigatorPage : ContainerPage
     {
 
-        private Path _path;
+        private readonly Path _path;
 
         /// <summary>
         /// Constructor.
@@ -49,13 +48,22 @@ namespace ClearCanvas.Desktop
         /// <param name="path">The path to this page in the navigation tree.</param>
         /// <param name="component">The application component to be displayed by this page</param>
         public NavigatorPage(string path, IApplicationComponent component)
-            :base(component)
+            :this(new Path(path, new ResourceResolver(new [] { component.GetType().Assembly })), component)
         {
-			Platform.CheckForEmptyString(path, "path");
-			Platform.CheckForNullReference(component, "component");
-
-            _path = new ClearCanvas.Desktop.Path(path, new ResourceResolver(new Assembly[] { component.GetType().Assembly }));
         }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="path">The path to this page in the navigation tree.</param>
+		/// <param name="component">The application component to be displayed by this page</param>
+		public NavigatorPage(Path path, IApplicationComponent component)
+			:base(component)
+    	{
+			Platform.CheckForNullReference(path, "path");
+
+			_path = path;
+    	}
 
         /// <summary>
         /// Gets the path to this page.
