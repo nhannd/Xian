@@ -35,21 +35,21 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="FolderExplorerConfigurationComponent"/>.
-    /// </summary>
-    public partial class FolderExplorerConfigurationComponentControl : ApplicationComponentUserControl
-    {
-        private readonly FolderExplorerConfigurationComponent _component;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="FolderExplorerConfigurationComponent"/>.
+	/// </summary>
+	public partial class FolderExplorerConfigurationComponentControl : ApplicationComponentUserControl
+	{
+		private readonly FolderExplorerConfigurationComponent _component;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public FolderExplorerConfigurationComponentControl(FolderExplorerConfigurationComponent component)
-            :base(component)
-        {
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public FolderExplorerConfigurationComponentControl(FolderExplorerConfigurationComponent component)
+			: base(component)
+		{
 			_component = component;
-            InitializeComponent();
+			InitializeComponent();
 
 			_folderSystems.DataBindings.Add("SelectedIndex", _component, "SelectedFolderSystemIndex", true, DataSourceUpdateMode.OnPropertyChanged);
 			_folderSystems.Format += _folderSystems_Format;
@@ -62,9 +62,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_folders.MenuModel = _component.FoldersActionModel;
 			_folders.ToolbarModel = _component.FoldersActionModel;
 			_folders.Tree = _component.FolderTree;
-        	_folders.DataBindings.Add("Enabled", _component, "FolderEditorEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_folders.DataBindings.Add("Enabled", _component, "FolderEditorEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-        	_component.OnEditFolder += delegate { _folders.EditSelectedNode(); };
+			_component.OnEditFolder += delegate { _folders.EditSelectedNode(); };
 		}
 
 		private void _folderSystems_Format(object sender, ListControlConvertEventArgs e)
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private void _folders_ItemDrag(object sender, ItemDragEventArgs e)
 		{
 			// allow dragging of nodes
-			ISelection selection = (ISelection)e.Item;
+			var selection = (ISelection)e.Item;
 
 			// send the node
 			if (selection.Item != null)

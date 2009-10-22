@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					try
 					{
-						_xmlDoc = new XmlDocument { /*PreserveWhitespace = true*/ };
+						_xmlDoc = new XmlDocument();
 						_xmlDoc.LoadXml(_settingXml());
 					}
 					catch (Exception)
