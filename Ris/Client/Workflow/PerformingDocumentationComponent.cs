@@ -579,7 +579,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			foreach (var page in _extensionPages)
 			{
-				_documentationTabContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+				_documentationTabContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 			}
 
 			_documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);

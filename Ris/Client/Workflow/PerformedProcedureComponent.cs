@@ -365,7 +365,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_detailsPagesHost = new ChildComponentHost(this.Host, tabContainer);
 				foreach (IPerformedStepEditorPage page in _editorPages)
 				{
-					tabContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+					tabContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 				}
 			}
 			else

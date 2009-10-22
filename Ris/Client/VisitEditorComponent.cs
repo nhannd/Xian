@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client
 			// the navigator will start those components if the user goes to that page
 			foreach (IVisitEditorPage page in _extensionPages)
 			{
-				this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
+				this.Pages.Add(new NavigatorPage(page.Path, page.GetComponent()));
 			}
 
 			this.ValidationStrategy = new AllComponentsValidationStrategy();

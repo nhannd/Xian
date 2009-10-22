@@ -192,7 +192,7 @@ namespace ClearCanvas.Ris.Client
 			// the container will start those components if the user goes to that page
 			foreach (IBiographyOrderHistoryPage page in _extensionPages)
 			{
-				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path, page.GetComponent()));
 			}
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
