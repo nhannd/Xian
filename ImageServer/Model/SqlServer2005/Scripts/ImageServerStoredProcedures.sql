@@ -181,9 +181,9 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Postp
 DROP PROCEDURE [dbo].[PostponeWorkQueue]
 GO
 
-/****** Object:  StoredProcedure [dbo].[QueryCurrentStudyMoveCount]    Script Date: 10/19/2009 11:21:26 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryCurrentStudyMoveCount]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[QueryCurrentStudyMoveCount]
+/****** Object:  StoredProcedure [dbo].[QueryCurrentStudyMove]    Script Date: 10/19/2009 11:21:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryCurrentStudyMove]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryCurrentStudyMove]
 GO
 
 
@@ -4026,7 +4026,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryCurrentStudyMoveCount]') AND type in (N'P', N'PC'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryCurrentStudyMove]') AND type in (N'P', N'PC'))
 BEGIN
 EXEC dbo.sp_executesql @statement = N'
 -- =============================================
@@ -4035,7 +4035,7 @@ EXEC dbo.sp_executesql @statement = N'
 -- Description:	Returns In-Progress Move WorkQueue entries for a given device
 -- History:
 -- =============================================
-CREATE PROCEDURE [dbo].[QueryCurrentStudyMoveCount]
+CREATE PROCEDURE [dbo].[QueryCurrentStudyMove]
 	@DeviceGUID uniqueidentifier
 AS
 BEGIN
