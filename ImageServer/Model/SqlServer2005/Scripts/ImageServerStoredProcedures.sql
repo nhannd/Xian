@@ -3998,14 +3998,14 @@ BEGIN
 
 		IF @UpdateWorkQueue=0
 		BEGIN
-		UPDATE WorkQueue
-			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum
-		WHERE GUID=@WorkQueueGUID
+			UPDATE WorkQueue
+				SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum, FailureDescription=@Reason
+			WHERE GUID=@WorkQueueGUID
 		END
 		ELSE
 		BEGIN
 			UPDATE WorkQueue
-			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate()
+			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate(), FailureDescription=@Reason
 			WHERE GUID=@WorkQueueGUID
 		END
 

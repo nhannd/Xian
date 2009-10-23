@@ -50,14 +50,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	{
 		#region Private members
 
-	    private string _patientID;
-		private string _patientName;
-		private string _notes;
-		private ServerPartition _thePartition;
 		private WorkQueue _theWorkQueueItem;
-        private bool _requiresAttention;
-        private string _fullDescription;
-        #endregion Private members
+
+		#endregion Private members
 
 		#region Public Properties
 
@@ -81,28 +76,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _theWorkQueueItem.WorkQueuePriorityEnum.Description; }
 		}
 
-		public string PatientId
-		{
-			get { return _patientID; }
-			set { _patientID = value; }
-		}
+		public string PatientId { get; set; }
 
-		public string PatientsName
-		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
+		public string PatientsName { get; set; }
 
 		public ServerEntityKey Key
 		{
 			get { return _theWorkQueueItem.Key; }
 		}
 
-		public string Notes
-		{
-			get { return _notes; }
-			set { _notes = value; }
-		}
+		public string Notes { get; set; }
 
 		public string ProcessorID
 		{
@@ -113,25 +96,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _theWorkQueueItem; }
 			set { _theWorkQueueItem = value; }
 		}
-		public ServerPartition ThePartition
-		{
-			get { return _thePartition; }
-			set { _thePartition = value; }
-		}
 
-        public bool RequiresAttention
-	    {
-            get { return _requiresAttention; }
-            set { _requiresAttention = value; }
-	    }
+		public ServerPartition ThePartition { get; set; }
 
-        public string FullDescription
-        {
-            get { return _fullDescription; }
-            set { _fullDescription = value; }
-        }
+		public bool RequiresAttention { get; set; }
 
-	    #endregion Public Properties
+		public string FullDescription { get; set; }
+
+		#endregion Public Properties
 	}
 
 	/// <summary>
@@ -147,72 +119,30 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		#region Private Members
 		private readonly WorkQueueController _searchController = new WorkQueueController();
-		private string _patientId;
-		private string _scheduledDate;
-		private string _patientName;
 		private int _resultCount;
-		private ServerPartition _partition;
-		private WorkQueueTypeEnum[] _typeEnums;
-		private WorkQueueStatusEnum[] _statusEnums;
-		private WorkQueuePriorityEnum _priorityEnum;
-		private string _dateFormats;
 		private IList<WorkQueueSummary> _list = new List<WorkQueueSummary>();
-		private IList<ServerEntityKey> _searchKeys;
-	    private string _processingServer;
+
 		#endregion
 
 		#region Public Properties
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
-		public string ScheduledDate
-		{
-			get { return _scheduledDate; }
-			set { _scheduledDate = value; }
-		}
-		public string PatientsName
-		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
 
-	    public string ProcessingServer
-	    {
-            get { return _processingServer; }
-            set { _processingServer = value; }
-	    }
+		public string PatientId { get; set; }
 
-		public ServerPartition Partition
-		{
-			get { return _partition; }
-			set { _partition = value; }
-		}
+		public string ScheduledDate { get; set; }
 
-		public WorkQueueTypeEnum[] TypeEnums
-		{
-			get { return _typeEnums; }
-			set { _typeEnums = value; }
-		}
+		public string PatientsName { get; set; }
 
-		public WorkQueueStatusEnum[] StatusEnums
-		{
-			get { return _statusEnums; }
-			set { _statusEnums = value; }
-		}
+		public string ProcessingServer { get; set; }
 
-		public WorkQueuePriorityEnum PriorityEnum
-		{
-			get { return _priorityEnum; }
-			set { _priorityEnum = value; }
-		}
+		public ServerPartition Partition { get; set; }
 
-		public string DateFormats
-		{
-			get { return _dateFormats; }
-			set { _dateFormats = value; }
-		}
+		public WorkQueueTypeEnum[] TypeEnums { get; set; }
+
+		public WorkQueueStatusEnum[] StatusEnums { get; set; }
+
+		public WorkQueuePriorityEnum PriorityEnum { get; set; }
+
+		public string DateFormats { get; set; }
 
 		public IList<WorkQueueSummary> List
 		{
@@ -225,11 +155,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			set { _resultCount = value; }
 		}
 
-		public IList<ServerEntityKey> SearchKeys
-		{
-			get { return _searchKeys; }
-			set { _searchKeys = value; }
-		}
+		public IList<ServerEntityKey> SearchKeys { get; set; }
 
 		#endregion
 
@@ -251,9 +177,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				return workQueueList;
 			}
 
-			WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
-			parameters.StartIndex = startRowIndex;
-			parameters.MaxRowCount = maximumRows;
+			WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters
+			                                         	{
+			                                         		StartIndex = startRowIndex,
+			                                         		MaxRowCount = maximumRows
+			                                         	};
 
 			if (Partition != null)
 				parameters.ServerPartitionKey = Partition.Key;
@@ -327,12 +255,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			resultCount = parameters.ResultCount;
 
-            string workQueueItems = "\n";
-            foreach (WorkQueue item in list)
-            {
-                workQueueItems += "[" + item.Key + "]";
-            }
-
 			return list;
 		}
 		#endregion
@@ -377,9 +299,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		/// </remark>
 		private WorkQueueSummary CreateWorkQueueSummary(WorkQueue item)
 		{
-			WorkQueueSummary summary = new WorkQueueSummary();
-			summary.TheWorkQueueItem = item;
-			summary.ThePartition = Partition;
+			WorkQueueSummary summary = new WorkQueueSummary
+			                           	{
+			                           		TheWorkQueueItem = item,
+			                           		ThePartition = Partition
+			                           	};
 
 			// Fetch the patient info:
 			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
@@ -417,13 +341,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 				if (item.FailureDescription != null)
 				{
-					if (item.FailureDescription.Length > 60)
-					{
-						summary.Notes = String.Format("{0}, Failure: {1} ...", summary.Notes, item.FailureDescription.Substring(0, 60));
-                        summary.FullDescription = String.Format("{0}, Failure: {1}", summary.Notes, item.FailureDescription);   //Set the FullDescription for the Tooltip in the GUI
-					}
-					else
-						summary.Notes = String.Format("{0}, Failure: {1}", summary.Notes, item.FailureDescription);
+					summary.FullDescription = String.Format("{0}, {1}", summary.Notes, item.FailureDescription);   //Set the FullDescription for the Tooltip in the GUI
+					summary.Notes = summary.FullDescription.Length > 60 
+						? summary.FullDescription.Substring(0, 60) 
+						: summary.FullDescription;
 				}
 			}
 			else if (item.FailureDescription != null)

@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
-    	private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
+    	private const string ReconcileStorageFolder = "Reconcile";
         #endregion
 
         #region Public Properties
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (!String.IsNullOrEmpty(sop.RelativePath))
             {
                 dupPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                dupPath = Path.Combine(dupPath, RECONCILE_STORAGE_FOLDER);
+                dupPath = Path.Combine(dupPath, ReconcileStorageFolder);
                 dupPath = Path.Combine(dupPath, sop.GroupID);
                 dupPath = Path.Combine(dupPath, sop.RelativePath);
             }
@@ -267,7 +267,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (!String.IsNullOrEmpty(sop.RelativePath))
             {
                 groupFolderPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                groupFolderPath = Path.Combine(groupFolderPath, RECONCILE_STORAGE_FOLDER);
+                groupFolderPath = Path.Combine(groupFolderPath, ReconcileStorageFolder);
                 groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
             }
 
@@ -459,7 +459,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // Delete the container if it's empty
                 FileInfo f = new FileInfo(dupPath);
 
-                if (DirectoryUtility.DeleteIfEmpty(f.Directory.FullName))
+                if (f.Directory!=null && DirectoryUtility.DeleteIfEmpty(f.Directory.FullName))
                 {
                     DirectoryUtility.DeleteIfEmpty(GetDuplicateGroupPath(uid));
                 }
@@ -614,7 +614,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					Platform.Log(LogLevel.Debug,
 								 "StudyProcess cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
 								 failureReason);
-					PostponeItem(WorkQueueItem, "Study is being locked by another processor");
+					PostponeItem(WorkQueueItem, String.Format("Study is being locked by another processor: {0}", failureReason));
                     return false;
                 }
             }

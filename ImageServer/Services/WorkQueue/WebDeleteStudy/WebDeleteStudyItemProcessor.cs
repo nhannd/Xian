@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 				             "ProcessDuplicate cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
 				             failureReason);
 
-				PostponeItem(WorkQueueItem, "Study is being locked by another processor");
+				PostponeItem(WorkQueueItem, string.Format("Study is being locked by another processor: {0}", failureReason));
 				return false;
 			}
 
@@ -183,13 +183,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                     foreach (WorkQueueUid uid in WorkQueueUidList)
                     {
                         // Delete from DB
-                        Series theSeries = CollectionUtils.SelectFirst(existingSeries, delegate(Series series) { return series.SeriesInstanceUid == uid.SeriesInstanceUid; });
+                    	WorkQueueUid queueUid = uid;
+                    	Series theSeries = CollectionUtils.SelectFirst(existingSeries,
+                                                                       series =>
+                                                                       series.SeriesInstanceUid == queueUid.SeriesInstanceUid);
                         if (theSeries!=null)
                         {
                             _seriesToDelete.Add(theSeries);
                             DeleteSeriesFromDBCommand delSeries = new DeleteSeriesFromDBCommand(StorageLocation, theSeries);
                             processor.AddCommand(delSeries);
-                            delSeries.Executing += DeleteSeriesFromDB_Executing;
+                            delSeries.Executing += DeleteSeriesFromDbExecuting;
                         }
                         else
                         {
@@ -254,10 +257,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
         }
 
 
-        private void DeleteSeriesFromDB_Executing(object sender, EventArgs e)
+        private void DeleteSeriesFromDbExecuting(object sender, EventArgs e)
         {
             DeleteSeriesFromDBCommand cmd = sender as DeleteSeriesFromDBCommand;
-            OnDeletingSeriesInDatabase(cmd.Series);
+			if (cmd!=null)
+				OnDeletingSeriesInDatabase(cmd.Series);
         }
 
         private void OnDeletingSeriesInDatabase(Series series)
