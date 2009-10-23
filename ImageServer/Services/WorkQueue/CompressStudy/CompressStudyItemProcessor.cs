@@ -262,8 +262,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
                     if (file.TransferSyntax.Equals(theCodecFactory.CodecTransferSyntax))
                     {
-                        Platform.Log(LogLevel.Warn, "Skip compressing SOP {0}. Its current transfer syntax is {1}", 
-                            file.MediaStorageSopInstanceUid, file.TransferSyntax.Name); 
+						// Delete the WorkQueueUid item
+						processor.AddCommand(new DeleteWorkQueueUidCommand(sop));
+
+						// Do the actual processing
+						if (!processor.Execute())
+						{
+							Platform.Log(LogLevel.Warn, "Failure deleteing WorkQueueUid: {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+							Platform.Log(LogLevel.Warn, "Compression file that failed: {0}", file.Filename);
+						}
+						else
+						{
+							Platform.Log(LogLevel.Warn, "Skip compressing SOP {0}. Its current transfer syntax is {1}",
+							             file.MediaStorageSopInstanceUid, file.TransferSyntax.Name);
+						}
                     }
                     else
                     {
