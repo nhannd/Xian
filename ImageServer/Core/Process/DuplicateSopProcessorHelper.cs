@@ -47,11 +47,12 @@ namespace ClearCanvas.ImageServer.Core.Process
     public class SopProcessingContext
     {
         #region Private Members
+
         private readonly ServerCommandProcessor _commandProcessor;
         private readonly StudyStorageLocation _studyLocation;
         private readonly string _group;
-        private readonly ServerPartition _partition; 
-        #endregion
+
+    	#endregion
 
         #region Constructors
 
@@ -66,7 +67,6 @@ namespace ClearCanvas.ImageServer.Core.Process
             _commandProcessor = commandProcessor;
             _studyLocation = studyLocation;
             _group = uidGroup;
-            _partition = studyLocation.ServerPartition;
         }
         
         #endregion
@@ -97,9 +97,11 @@ namespace ClearCanvas.ImageServer.Core.Process
     static public class DuplicateSopProcessorHelper
     {
         #region Private Members
+
         // TODO: Make these values configurable
-        private const string DUPLICATE_EXTENSION = "dup";
-        private const string RECONCILE_STORAGE_FOLDER = "Reconcile"; 
+        private const string DuplicateExtension = "dup";
+        private const string ReconcileStorageFolder = "Reconcile"; 
+
         #endregion
 
         #region Public Methods
@@ -124,59 +126,68 @@ namespace ClearCanvas.ImageServer.Core.Process
             Platform.CheckMemberIsSet(context.CommandProcessor, "parameters.CommandProcessor");
             Platform.CheckMemberIsSet(context.StudyLocation, "parameters.StudyLocation");
 
-            DicomProcessingResult result = new DicomProcessingResult();
-            result.DicomStatus = DicomStatuses.Success;
-            result.Successful = true;
+			String studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			String seriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+        	String sopInstanceUid = file.MediaStorageSopInstanceUid;
+			String accessionNumber = file.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
 
-            string failureMessage;
-            String sopInstanceUid = file.MediaStorageSopInstanceUid;
+			DicomProcessingResult result = new DicomProcessingResult
+			{
+				DicomStatus = DicomStatuses.Success,
+				Successful = true,
+				StudyInstanceUid = studyInstanceUid,
+				SeriesInstanceUid = seriesInstanceUid,
+				SopInstanceUid = sopInstanceUid,
+				AccessionNumber = accessionNumber
+			};
 
+        	string failureMessage;
 
             if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
             {
                 Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", sopInstanceUid);
                 return result;
             }
-            else if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
-            {
-                failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
-                Platform.Log(LogLevel.Info, failureMessage);
-                result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
-                return result;
-            }
-            else if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
-            {
-                SaveDuplicate(context, file);
-                InsertWorkQueue(context, file);
-            }
-            else
-            {
-                failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum);
-                result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
-                return result;
-            }
+        	if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
+        	{
+        		failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
+        		Platform.Log(LogLevel.Info, failureMessage);
+        		result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
+        		return result;
+        	}
 
+        	if (context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
+        	{
+        		SaveDuplicate(context, file);
+        		InsertWorkQueue(context, file);
+        	}
+        	else
+        	{
+        		failureMessage = String.Format("Duplicate SOP Instance received. Unsupported duplicate policy {0}.", context.StudyLocation.ServerPartition.DuplicateSopPolicyEnum);
+        		result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
+        		return result;
+        	}
 
-            return result;
+        	return result;
         }
 
         #endregion
 
         #region Private Methods
-        static private void InsertWorkQueue(SopProcessingContext context, DicomFile file)
+
+        static private void InsertWorkQueue(SopProcessingContext context, DicomMessageBase file)
         {
             String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
 
-            String relativePath = StringUtilities.Combine(new string[] 
+            String relativePath = StringUtilities.Combine(new[] 
                                                               {
                                                                   context.StudyLocation.StudyInstanceUid, sopUid
                                                               }, Path.DirectorySeparatorChar.ToString());
 
-            relativePath = relativePath + "." + DUPLICATE_EXTENSION;
+            relativePath = relativePath + "." + DuplicateExtension;
 
             context.CommandProcessor.AddCommand(
-                new UpdateWorkQueueCommand(file, context.StudyLocation, true, DUPLICATE_EXTENSION, context.Group, relativePath));
-
+                new UpdateWorkQueueCommand(file, context.StudyLocation, true, DuplicateExtension, context.Group, relativePath));
         }
 
         static private void SaveDuplicate(SopProcessingContext context, DicomFile file)
@@ -186,7 +197,7 @@ namespace ClearCanvas.ImageServer.Core.Process
             String path = Path.Combine(context.StudyLocation.FilesystemPath, context.StudyLocation.PartitionFolder);
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
-            path = Path.Combine(path, RECONCILE_STORAGE_FOLDER);
+            path = Path.Combine(path, ReconcileStorageFolder);
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, context.Group /* the AE title + timestamp */);
@@ -196,12 +207,13 @@ namespace ClearCanvas.ImageServer.Core.Process
             context.CommandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
             path = Path.Combine(path, sopUid);
-            path += "." + DUPLICATE_EXTENSION;
+            path += "." + DuplicateExtension;
 
             context.CommandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
 
             Platform.Log(ServerPlatform.InstanceLogLevel, "Duplicate ==> {0}", path);
-        } 
+        }
+
         #endregion
     }
 }
