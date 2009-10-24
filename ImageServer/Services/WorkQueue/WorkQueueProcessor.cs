@@ -146,11 +146,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					return;
 
 				bool threadsAvailable = _threadPool.CanQueueItem;
-				bool memoryAvailable = true;/* WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB == 0
+				bool memoryAvailable = WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB == 0
 				                      ||
 				                      SystemResources.GetAvailableMemory(SizeUnits.Megabytes) >
 				                      WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB;
-				*/
+				
 				if (threadsAvailable && memoryAvailable)
 				{
 					try
@@ -235,14 +235,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e,
-							 "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-							 queueItem.WorkQueueTypeEnum,
-							 queueItem.GetKey());
-			    String error = e.InnerException != null ? e.InnerException.Message : e.Message;
+				             "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+				             queueItem.WorkQueueTypeEnum,
+				             queueItem.GetKey());
+				String error = e.InnerException != null ? e.InnerException.Message : e.Message;
 
-                FailQueueItem(queueItem, error);
+				FailQueueItem(queueItem, error);
 			}
-            finally
+			finally
 			{
                 // Signal the parent thread, so it can query again
                 _threadStop.Set();
@@ -271,15 +271,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                        parms.ProcessorID = ServerPlatform.ProcessorId;
+                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters
+                                                          	{
+                                                          		ProcessorID = ServerPlatform.ProcessorId,
+                                                          		WorkQueueKey = item.GetKey(),
+                                                          		StudyStorageKey = item.StudyStorageKey,
+                                                          		FailureCount = item.FailureCount + 1,
+                                                          		FailureDescription = failureDescription
+                                                          	};
 
-                        parms.WorkQueueKey = item.GetKey();
-                        parms.StudyStorageKey = item.StudyStorageKey;
-                        parms.FailureCount = item.FailureCount + 1;
-                        parms.FailureDescription = failureDescription;
-
-                        WorkQueueSettings settings = WorkQueueSettings.Instance;
+                    	WorkQueueSettings settings = WorkQueueSettings.Instance;
                         if ((item.FailureCount + 1) > prop.MaxFailureCount)
                         {
                             Platform.Log(LogLevel.Error,
@@ -323,8 +324,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     {
                         Platform.Log(LogLevel.Warn, "Service is stopping. Retry to fail the entry is terminated.");
                         break;
-                    }
-                        
+                    }                        
                 }                
             }
         }
@@ -369,9 +369,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
-					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
-					parms.ProcessorID = processorId;
-					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat;
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters
+					                                 	{
+					                                 		ProcessorID = processorId,
+					                                 		WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat
+					                                 	};
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -389,9 +391,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
-					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
-					parms.ProcessorID = processorId;
-					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters
+					                                 	{
+					                                 		ProcessorID = processorId,
+					                                 		WorkQueuePriorityEnum = WorkQueuePriorityEnum.High
+					                                 	};
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -408,8 +412,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
-					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
-					parms.ProcessorID = processorId;
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters
+					                                 	{
+					                                 		ProcessorID = processorId
+					                                 	};
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -425,10 +431,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
-					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
-					parms.ProcessorID = processorId;
-					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat;
-					parms.MemoryLimited = true;
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters
+					                                 	{
+					                                 		ProcessorID = processorId,
+					                                 		WorkQueuePriorityEnum = WorkQueuePriorityEnum.Stat,
+					                                 		MemoryLimited = true
+					                                 	};
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -444,9 +452,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
-					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
-					parms.ProcessorID = processorId;
-					parms.MemoryLimited = true;
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters
+					                                 	{
+					                                 		ProcessorID = processorId, 
+															MemoryLimited = true
+					                                 	};
 
 					queueListItem = select.FindOne(parms);
 					if (queueListItem != null)
@@ -461,8 +471,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		{
 			Platform.CheckForNullReference(item, "item");
 
-			WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-			contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+			WorkQueueAlertContextData contextData = new WorkQueueAlertContextData
+			                                        	{
+			                                        		WorkQueueItemKey = item.Key.Key.ToString()
+			                                        	};
 
 			StudyStorage storage = StudyStorage.Load(item.StudyStorageKey);
 			IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
@@ -472,8 +484,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				StudyStorageLocation location = locations[0];
 				if (location != null)
 				{
-					contextData.ValidationStudyInfo = new ValidationStudyInfo();
-					contextData.ValidationStudyInfo.StudyInstaneUid = location.StudyInstanceUid;
+					contextData.ValidationStudyInfo = new ValidationStudyInfo
+					                                  	{
+					                                  		StudyInstaneUid = location.StudyInstanceUid
+					                                  	};
 
 					// study info is not always available (eg, when all images failed to process)
 					if (location.Study != null)
