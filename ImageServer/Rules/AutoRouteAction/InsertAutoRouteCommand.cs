@@ -119,22 +119,21 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                 return;
             }
 
-			InsertWorkQueueParameters parms = new InsertWorkQueueParameters();
-			parms.WorkQueueTypeEnum = WorkQueueTypeEnum.AutoRoute;
-			if (_scheduledTime.HasValue)
-			{
-				parms.ScheduledTime = _scheduledTime.Value;
-			}
-			else
-			{
-				parms.ScheduledTime = Platform.Time.AddSeconds(30);
-			}
-        	parms.StudyStorageKey = _context.StudyLocationKey;
-            parms.ServerPartitionKey = _context.ServerPartitionKey;
-            parms.DeviceKey = dev.GetKey();
-            parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-            parms.SopInstanceUid = _context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-			IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
+			InsertWorkQueueParameters parms = new InsertWorkQueueParameters
+			                                  	{
+			                                  		WorkQueueTypeEnum = WorkQueueTypeEnum.AutoRoute,
+			                                  		ScheduledTime = _scheduledTime.HasValue
+			                                  		                	? _scheduledTime.Value
+			                                  		                	: Platform.Time.AddSeconds(10),
+			                                  		StudyStorageKey = _context.StudyLocationKey,
+			                                  		ServerPartitionKey = _context.ServerPartitionKey,
+			                                  		DeviceKey = dev.GetKey(),
+			                                  		SeriesInstanceUid =
+			                                  			_context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty),
+			                                  		SopInstanceUid =
+			                                  			_context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty)
+			                                  	};
+        	IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
 
             if (broker.FindOne(parms)==null)
             {
