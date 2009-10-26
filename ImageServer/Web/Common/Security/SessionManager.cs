@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.Globalization;
 using System.Threading;
 using System.Web;
@@ -105,11 +106,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 string[] authorities = session.Credentials.Authorities;
 
                 String data = String.Format("{0}|{1}|{2}", token.Id, displayName, authorities);
+
+                DateTime expiryTime =
+                    Platform.Time.AddMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"]));
+
                 FormsAuthenticationTicket authTicket = new
                     FormsAuthenticationTicket(1,  // version
                                               loginId,         // user name
-                                              Platform.Time,    // creation
-                                              token.ExpiryTime,// Expiration
+                                              Platform.Time,   // creation
+                                              expiryTime,      // Expiration
                                               false,           // Persistent
                                               data);           // User data
 
@@ -120,15 +125,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
                 //Create an unencrypted cookie that contains the userid and the expiry time so the browser
                 //can check for session timeout.
-                //HttpCookie loginIdCookie = new HttpCookie("loginid", loginId);
-                HttpCookie expiryCookie = new HttpCookie("ImageServer." + loginId, DateTimeFormatter.Format(token.ExpiryTime.ToUniversalTime(), ImageServerConstants.CookieDateTimeFormat));
+                HttpCookie expiryCookie = new HttpCookie("ImageServer." + loginId, DateTimeFormatter.Format(expiryTime.ToUniversalTime(), ImageServerConstants.CookieDateTimeFormat));
                 
                 HttpContext.Current.Response.Cookies.Add(authCookie);
                 HttpContext.Current.Response.Cookies.Add(expiryCookie);
                 
-                SessionTimeout = token.ExpiryTime - Platform.Time;
+                SessionTimeout = expiryTime.ToUniversalTime() - Platform.Time.ToUniversalTime();
             }
-
         }
 
         /// <summary>
