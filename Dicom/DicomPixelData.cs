@@ -82,6 +82,7 @@ using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
 using ClearCanvas.Dicom.Iod;
 using System.Globalization;
+using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom
 {
@@ -200,20 +201,20 @@ namespace ClearCanvas.Dicom
         {
             collection.LoadDicomFields(this);
 
-        	SopClass = SopClass.GetSopClass(collection[DicomTags.SopClassUid].GetString(0, ""));
+        	SopClass = SopClass.GetSopClass(collection[DicomTags.SopClassUid].GetString(0, string.Empty));
 
 			if (collection.Contains(DicomTags.NumberOfFrames))
                 NumberOfFrames = collection[DicomTags.NumberOfFrames].GetInt32(0, 1);
             if (collection.Contains(DicomTags.PlanarConfiguration))
                 PlanarConfiguration = collection[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
             if (collection.Contains(DicomTags.LossyImageCompression))
-                LossyImageCompression = collection[DicomTags.LossyImageCompression].GetString(0, "");
+				LossyImageCompression = collection[DicomTags.LossyImageCompression].GetString(0, string.Empty);
             if (collection.Contains(DicomTags.LossyImageCompressionRatio))
                 LossyImageCompressionRatio = collection[DicomTags.LossyImageCompressionRatio].GetFloat32(0, 1.0f);
             if (collection.Contains(DicomTags.LossyImageCompressionMethod))
-                LossyImageCompressionMethod = collection[DicomTags.LossyImageCompressionMethod].GetString(0, "");
+				LossyImageCompressionMethod = collection[DicomTags.LossyImageCompressionMethod].GetString(0, string.Empty);
             if (collection.Contains(DicomTags.DerivationDescription))
-                DerivationDescription = collection[DicomTags.DerivationDescription].GetString(0, "");
+				DerivationDescription = collection[DicomTags.DerivationDescription].GetString(0, string.Empty);
 			if (collection.Contains(DicomTags.RescaleSlope))
 				RescaleSlope =collection[DicomTags.RescaleSlope].ToString();
 			if (collection.Contains(DicomTags.RescaleIntercept))
@@ -1268,9 +1269,26 @@ namespace ClearCanvas.Dicom
                 dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, LossyImageCompressionRatio);
             if (dataset.Contains(DicomTags.LossyImageCompressionMethod) || LossyImageCompressionMethod.Length > 0)
                 dataset[DicomTags.LossyImageCompressionMethod].SetString(0, LossyImageCompressionMethod);
-            if (dataset.Contains(DicomTags.DerivationDescription) || DerivationDescription.Length > 0)
+			if (dataset.Contains(DicomTags.DerivationDescription) || DerivationDescription.Length > 0)
+			{
+				string currentValue = dataset[DicomTags.DerivationDescription].ToString();
+
 				dataset[DicomTags.DerivationDescription].SetStringValue(DerivationDescription);
-			if (dataset.Contains(DicomTags.RescaleSlope) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
+				if (!currentValue.Equals(DerivationDescription))
+				{
+					DicomSequenceItem item = new DicomSequenceItem();
+					CodeSequenceMacro macro = new CodeSequenceMacro(item);
+					macro.CodeMeaning = "Lossy Compression";
+					macro.CodeValue = "113040";
+					macro.CodingSchemeDesignator = "DCM";
+					macro.ContextGroupVersion = new DateTime(2005,8,22);
+					macro.ContextIdentifier = "7203";
+					macro.MappingResource = "DCMR";
+
+					dataset[DicomTags.DerivationCodeSequence].AddSequenceItem(item);
+				}
+			}
+        	if (dataset.Contains(DicomTags.RescaleSlope) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
 				dataset[DicomTags.RescaleSlope].SetString(0, RescaleSlope);
 			if (dataset.Contains(DicomTags.RescaleIntercept) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
 				dataset[DicomTags.RescaleIntercept].SetString(0, RescaleIntercept);

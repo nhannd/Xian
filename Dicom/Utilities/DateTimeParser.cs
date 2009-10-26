@@ -303,6 +303,23 @@ namespace ClearCanvas.Dicom.Utilities
 		}
 
 		/// <summary>
+		/// Sets the specified date attribute values based on the specified <paramref name="value">Date value</paramref>.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// <param name="dateAttribute">The date attribute.</param>
+		public static void SetDateAttributeValues(DateTime? value, DicomAttribute dateAttribute)
+		{
+			if (value.HasValue)
+			{
+				dateAttribute.SetDateTime(0, value.Value);
+			}
+			else
+			{
+				dateAttribute.SetNullValue();
+			}
+		}
+
+		/// <summary>
 		/// Sets the date time attribute values for the specified dicom attributes.
 		/// Will first attempt to write to the <paramref name="dateTimeAttribute"/> if it is not null, otherwise
 		/// it will write the values to the separate date and time attributes.
@@ -340,15 +357,17 @@ namespace ClearCanvas.Dicom.Utilities
 		{
 			if (dicomAttributeProvider == null)
 				throw new ArgumentNullException("dicomAttributeProvider");
-
-			DicomAttribute dateTimeAttribute = dicomAttributeProvider[dicomDateTimeTag];
-			if (!dateTimeAttribute.IsEmpty)
+			if (dicomDateTimeTag != 0)
 			{
+				DicomAttribute dateTimeAttribute = dicomAttributeProvider[dicomDateTimeTag];
 				SetDateTimeAttributeValues(value, dateTimeAttribute, null, null);
 			}
 			else
 			{
-				SetDateTimeAttributeValues(value, dicomAttributeProvider[dicomDateTag], dicomAttributeProvider[dicomTimeTag]);
+				if (dicomTimeTag == 0)
+					SetDateAttributeValues(value,dicomAttributeProvider[dicomDateTag]);
+				else
+					SetDateTimeAttributeValues(value, dicomAttributeProvider[dicomDateTag], dicomAttributeProvider[dicomTimeTag]);
 			}
 		}
 
