@@ -64,10 +64,12 @@ namespace ClearCanvas.Ris.Client
 			{
 				workspace = LaunchWorkspace();
 				if (workspace != null)
+				{
 					workspace.Closed += DocumentClosedEventHandler;
+					DocumentManager.RegisterDocument(this);
+				}
 			}
 
-			DocumentManager.RegisterDocument(this);
 		}
 
 		public bool Close()
