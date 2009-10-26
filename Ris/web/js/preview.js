@@ -1246,7 +1246,15 @@ Preview.ImagingServiceSection = function () {
 		'	</tr>'+
 		'	<tr>'+
 		'		<td width="120" class="propertyname">Ordering Physician</td>'+
-		'		<td width="200"><div id="OrderingPhysician"/></td>'+
+		'		<td width="200">'+
+		'			<div id="OrderingPhysician"></div>'+
+		'			<div id="OrderingPhysicianContactPointDetails" style="{font-size:75%;}">'+
+		'				<div id="OrderingPhysicianAddress"/></div>'+
+		'				<div id="OrderingPhysicianPhone"></div>'+
+		'				<div id="OrderingPhysicianFax"></div>'+
+		'				<div id="OrderingPhysicianEmail"></div>'+
+		'			</div>'+
+		'		</td>'+
 		'		<td width="120" class="propertyname">Performing Facility</td>'+
 		'		<td width="200"><div id="PerformingFacility"/></td>'+
 		'	</tr>'+
@@ -1285,6 +1293,22 @@ Preview.ImagingServiceSection = function () {
 		'	</tr>'+
 		'</table></div>';
 		
+	var GetPractitionerContactPoint = function(practitioner, recipients)
+	{
+		var contactPoint = null;
+		recipients.each(function(recipient) 
+		{
+			if(recipient && recipient.Practitioner 
+				&& (recipient.Practitioner.BillingNumber == practitioner.BillingNumber 
+					|| recipient.Practitioner.LicenseNumber == practitioner.LicenseNumber))
+			{
+				contactPoint = recipient.ContactPoint;
+			}
+		});
+		
+		return contactPoint;
+	}
+		
 	return {
 		create: function (element, orderDetail, options)
 		{
@@ -1310,10 +1334,12 @@ Preview.ImagingServiceSection = function () {
 			{
 				Field.show($("CancelSection"), false);
 			}
-			
+
 			Field.show($("EnteredBySection"), false);
 			Field.show($("CancelledBySection"), false);
 			Field.show($("AlertsSection"), false);
+			Field.show($("OrderingPhysicianContactPointDetails"), false);
+			
 			if (options)
 			{
 				Field.show($("EnteredBySection"), options.ShowEnterCancelByStaff);
@@ -1325,6 +1351,22 @@ Preview.ImagingServiceSection = function () {
 					var alertHtml = "";
 					options.Alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item); });
 					Field.setPreFormattedValue($("Alerts"), alertHtml);
+				}
+
+				var contactPoint = GetPractitionerContactPoint(orderDetail.OrderingPractitioner, orderDetail.ResultRecipients);
+				if (options.ShowOrderingPhysicianContactPointDetails && contactPoint)
+				{
+					Field.show($("OrderingPhysicianContactPointDetails"), true);
+
+					Field.show($("OrderingPhysicianAddress"), contactPoint.CurrentAddress != null);
+					Field.show($("OrderingPhysicianPhone"), contactPoint.CurrentPhoneNumber != null);
+					Field.show($("OrderingPhysicianFax"), contactPoint.CurrentFaxNumber != null);
+					Field.show($("OrderingPhysicianEmail"), contactPoint.CurrentEmailAddress != null);
+
+					Field.setValue($("OrderingPhysicianAddress"), Ris.formatAddress(contactPoint.CurrentAddress));
+					Field.setValue($("OrderingPhysicianPhone"), "Phone: " + Ris.formatTelephone(contactPoint.CurrentPhoneNumber));
+					Field.setValue($("OrderingPhysicianFax"), "Fax: " + Ris.formatTelephone(contactPoint.CurrentFaxNumber));
+					Field.setValue($("OrderingPhysicianEmail"), contactPoint.CurrentEmailAddress);
 				}
 			}
 			

@@ -16,8 +16,6 @@
 			
 			function onBodyLoad()
 			{
-				scaleWidth();
-
 				if(!Ris)
 					return;
 				try
@@ -37,7 +35,8 @@
 								IncludeAlerts: true, 
 								IncludeProcedures: true,
 								IncludeVisit: true,
-								IncludeNotes: true
+								IncludeNotes: true,
+								IncludeResultRecipients: true
 							}
 					};
 
@@ -54,7 +53,7 @@
 					if (orderDetail)
 					{
 						var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
-						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, { ShowEnterCancelByStaff: true, Alerts: orderAlerts });
+						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail, { ShowEnterCancelByStaff: true, Alerts: orderAlerts, ShowOrderingPhysicianContactPointDetails: true });
 						Preview.OrderedProceduresTable.create($("orderedProceduresSection"), orderDetail.Procedures);
 						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 					}
