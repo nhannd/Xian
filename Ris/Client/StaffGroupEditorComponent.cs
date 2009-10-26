@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client
 				_staffGroupDetail.Members,
 				staff => staff.StaffRef);
 
-			var isWorklistEditorReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist) == false;
+			var isWorklistEditorReadOnly = Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist) == false;
 			_worklistEditor = new SelectorEditorComponent<WorklistSummary, WorklistTable>(
 				formDataResponse.AllAdminWorklists,
 				_staffGroupDetail.Worklists,
@@ -251,10 +251,7 @@ namespace ClearCanvas.Ris.Client
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, "Unable to save Staff Group", this.Host.DesktopWindow,
-					delegate
-					{
-						this.Exit(ApplicationComponentExitCode.Error);
-					});
+				                        () => Exit(ApplicationComponentExitCode.Error));
 			}
 		}
 	}

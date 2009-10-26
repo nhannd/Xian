@@ -45,7 +45,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff Groups", "Launch")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup)]
+	[ActionPermission("launch", Application.Common.AuthorityTokens.Admin.Data.StaffGroup)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class StaffGroupAdminTool : Tool<IDesktopToolContext>
     {
@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client
             {
                 try
                 {
-                    StaffGroupSummaryComponent component = new StaffGroupSummaryComponent();
+                    var component = new StaffGroupSummaryComponent();
 
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
@@ -83,12 +83,9 @@ namespace ClearCanvas.Ris.Client
     {
         public StaffGroupSummaryTable()
         {
-            this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name",
-                delegate(StaffGroupSummary item) { return item.Name; }, 0.5f));
-            this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Description",
-                delegate(StaffGroupSummary item) { return item.Description; }, 1.0f));
-			this.Columns.Add(new TableColumn<StaffGroupSummary, bool>("Elective",
-				delegate(StaffGroupSummary item) { return item.IsElective; }, 0.2f));
+            this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Name", item => item.Name, 0.5f));
+            this.Columns.Add(new TableColumn<StaffGroupSummary, string>("Description", item => item.Description, 1.0f));
+			this.Columns.Add(new TableColumn<StaffGroupSummary, bool>("Elective", item => item.IsElective, 0.2f));
 		}
     }
 
@@ -144,10 +141,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
-			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
-			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
-			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Add.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Edit.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Delete.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.ToggleActivation.SetPermissibility(Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
 		}
 
 		protected override bool SupportsDelete
@@ -165,10 +162,7 @@ namespace ClearCanvas.Ris.Client
 
             ListStaffGroupsResponse listResponse = null;
             Platform.GetService<IStaffGroupAdminService>(
-                delegate(IStaffGroupAdminService service)
-                {
-                    listResponse = service.ListStaffGroups(request);
-                });
+            	service => listResponse = service.ListStaffGroups(request));
 
             return listResponse.StaffGroups;
         }
@@ -181,8 +175,8 @@ namespace ClearCanvas.Ris.Client
         protected override bool AddItems(out IList<StaffGroupSummary> addedItems)
         {
             addedItems = new List<StaffGroupSummary>();
-            StaffGroupEditorComponent editor = new StaffGroupEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+            var editor = new StaffGroupEditorComponent();
+            var exitCode = LaunchAsDialog(
                 this.Host.DesktopWindow,
 				new DialogBoxCreationArgs(editor, "Add Staff Group", null, DialogSizeHint.Large));
             if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -202,10 +196,10 @@ namespace ClearCanvas.Ris.Client
         protected override bool EditItems(IList<StaffGroupSummary> items, out IList<StaffGroupSummary> editedItems)
         {
             editedItems = new List<StaffGroupSummary>();
-            StaffGroupSummary item = CollectionUtils.FirstElement(items);
+            var item = CollectionUtils.FirstElement(items);
 
-            StaffGroupEditorComponent editor = new StaffGroupEditorComponent(item.StaffGroupRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+            var editor = new StaffGroupEditorComponent(item.StaffGroupRef);
+            var exitCode = LaunchAsDialog(
                 this.Host.DesktopWindow,
 				new DialogBoxCreationArgs(editor, "Edit Staff Group - " + item.Name, null, DialogSizeHint.Large));
             if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -228,15 +222,12 @@ namespace ClearCanvas.Ris.Client
 			failureMessage = null;
 			deletedItems = new List<StaffGroupSummary>();
 
-			foreach (StaffGroupSummary item in items)
+			foreach (var item in items)
 			{
 				try
 				{
 					Platform.GetService<IStaffGroupAdminService>(
-						delegate(IStaffGroupAdminService service)
-							{
-								service.DeleteStaffGroup(new DeleteStaffGroupRequest(item.StaffGroupRef));
-							});
+						service => service.DeleteStaffGroup(new DeleteStaffGroupRequest(item.StaffGroupRef)));
 
 					deletedItems.Add(item);
 				}
@@ -257,16 +248,16 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were edited, false otherwise.</returns>
 		protected override bool UpdateItemsActivation(IList<StaffGroupSummary> items, out IList<StaffGroupSummary> editedItems)
 		{
-			List<StaffGroupSummary> results = new List<StaffGroupSummary>();
-			foreach (StaffGroupSummary item in items)
+			var results = new List<StaffGroupSummary>();
+			foreach (var item in items)
 			{
 				Platform.GetService<IStaffGroupAdminService>(
-					delegate(IStaffGroupAdminService service)
+					service =>
 					{
-						StaffGroupDetail detail = service.LoadStaffGroupForEdit(
+						var detail = service.LoadStaffGroupForEdit(
 							new LoadStaffGroupForEditRequest(item.StaffGroupRef)).StaffGroup;
 						detail.Deactivated = !detail.Deactivated;
-						StaffGroupSummary summary = service.UpdateStaffGroup(
+						var summary = service.UpdateStaffGroup(
 							new UpdateStaffGroupRequest(detail)).StaffGroup;
 
 						results.Add(summary);
