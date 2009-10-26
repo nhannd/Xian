@@ -228,7 +228,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _urgent
 			// 
 			this._urgent.AutoSize = true;
-			this._urgent.Location = new System.Drawing.Point(7, 54);
+			this._urgent.Location = new System.Drawing.Point(5, 6);
 			this._urgent.Name = "_urgent";
 			this._urgent.Size = new System.Drawing.Size(58, 17);
 			this._urgent.TabIndex = 1;
@@ -254,7 +254,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._onBehalf.DisplayMember = "";
 			this._onBehalf.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._onBehalf.LabelText = "Send on behalf of (Staff Group)";
-			this._onBehalf.Location = new System.Drawing.Point(2, 0);
+			this._onBehalf.Location = new System.Drawing.Point(1, 35);
 			this._onBehalf.Margin = new System.Windows.Forms.Padding(2);
 			this._onBehalf.Name = "_onBehalf";
 			this._onBehalf.Size = new System.Drawing.Size(235, 41);

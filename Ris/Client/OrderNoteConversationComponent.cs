@@ -292,10 +292,16 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedTemplate = (TemplateData)value;
 					NotifyPropertyChanged("SelectedTemplate");
+					NotifyPropertyChanged("IsNotTemplateSelected");
 					InitializeFromTemplate(_selectedTemplate);
 					UpdateSoftKeys(_selectedTemplate);
 				}
 			}
+		}
+
+		public bool IsNotTemplateSelected
+		{
+			get { return _selectedTemplate == null; }
 		}
 
 		public string Body
