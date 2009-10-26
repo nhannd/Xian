@@ -183,7 +183,8 @@ namespace ClearCanvas.Ris.Client
             addedItems = new List<StaffGroupSummary>();
             StaffGroupEditorComponent editor = new StaffGroupEditorComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, "Add Staff Group");
+                this.Host.DesktopWindow,
+				new DialogBoxCreationArgs(editor, "Add Staff Group", null, DialogSizeHint.Large));
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 addedItems.Add(editor.StaffGroupSummary);
@@ -205,7 +206,8 @@ namespace ClearCanvas.Ris.Client
 
             StaffGroupEditorComponent editor = new StaffGroupEditorComponent(item.StaffGroupRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, "Edit Staff Group - " + item.Name);
+                this.Host.DesktopWindow,
+				new DialogBoxCreationArgs(editor, "Edit Staff Group - " + item.Name, null, DialogSizeHint.Large));
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 editedItems.Add(editor.StaffGroupSummary);
