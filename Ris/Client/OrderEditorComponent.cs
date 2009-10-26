@@ -357,6 +357,7 @@ namespace ClearCanvas.Ris.Client
 			_noteSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 
 			_attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Order);
+			_attachmentSummaryComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 			this.ChangeCommitted += ((sender, args) => _attachmentSummaryComponent.SaveChanges());
 
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
