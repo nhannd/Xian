@@ -1129,6 +1129,9 @@ Preview.ReportPreview = function () {
 
 		if (!reportText)
 			return "";
+			
+		// #5423: ensure that the reportText object is actually a string (not a Number or Date or whatever)	
+		reportText = String(reportText);		
 
 		return reportText.replaceLineBreak();
 	}
