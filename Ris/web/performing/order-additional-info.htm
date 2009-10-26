@@ -46,6 +46,8 @@
 					initPatientScreeningTable();
 					initLabResultsTable();
 					initTranslationTable();
+
+					initModifiedCallback();
 				}
 				catch(e)
 				{
@@ -540,6 +542,18 @@
 					]);
 				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				table.bindItems([data.translation]);
+			}
+
+			function initModifiedCallback()
+			{
+				var tables = ["weightTable", "heightTable", "bloodGlucoseLevelTable", "otherVitalsTable", "drugAllergiesStatusTable", "drugAllergiesTable", "diabetesTable", "renalDiseaseTable",
+					"renalDialysisTable", "medicationsTable", "pregnancyTable", "breastFeedingTable", "sedationTable", "cardiacConditionTable", 
+					"psaStatusTable", "psaTable", "otherResultsTable", "translationTable"];
+
+				tables.each( function(table) 
+				{
+					$(table).cellUpdated = function() { Ris.setModified(true); };
+				});
 			}
 
 			//////////////////////////////////////////////////////////////////////////
