@@ -32,6 +32,7 @@
 using System;
 using System.Configuration;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -60,11 +61,11 @@ namespace ClearCanvas.Ris.Client
 		}
 		
 		/// <summary>
-		/// Acceptable early check-in threshold before warning user in minutes.
+		/// Specifies how early a procedure can be checked in without triggering a warning. (in minutes).
 		/// </summary>
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.SettingsDescriptionAttribute("Acceptable early check-in threshold before warning user. (in minutes)")]
+		[global::System.Configuration.SettingsDescriptionAttribute("Specifies how early a procedure can be checked in without triggering a warning. (in minutes)")]
 		[global::System.Configuration.DefaultSettingValueAttribute("120")]
 		public int EarlyCheckInWarningThreshold {
 			get {
@@ -73,11 +74,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Acceptable late check-in threshold before warning user in minutes.
+		/// Specifies how late a procedure can be checked in without triggering a warning. (in minutes).
 		/// </summary>
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-		[global::System.Configuration.SettingsDescriptionAttribute("Acceptable late check-in threshold before warning user. (in minutes)")]
+		[global::System.Configuration.SettingsDescriptionAttribute("Specifies how late a procedure can be checked in without triggering a warning. (in minutes)")]
 		[global::System.Configuration.DefaultSettingValueAttribute("180")]
 		public int LateCheckInWarningThreshold {
 			get {
@@ -85,25 +86,29 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public enum ValidateResult { Success, ScheduledTimeTooEarly, ScheduledTimeTooLate }
+		public enum ValidateResult { Success, CheckingInTooEarly, CheckingInTooLate }
 
 		public static ValidateResult Validate(DateTime? scheduledTime, DateTime checkInTime, out string message)
 		{
 			message = "";
+			if (scheduledTime == null)
+				return ValidateResult.Success;
 
-			var earlyBound = checkInTime.AddMinutes(-CheckInSettings.Default.EarlyCheckInWarningThreshold);
-			var lateBound = checkInTime.AddMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
+			var earlyBound = scheduledTime.Value.AddMinutes(-Default.EarlyCheckInWarningThreshold);
+			var lateBound = scheduledTime.Value.AddMinutes(Default.LateCheckInWarningThreshold);
 
-			if (scheduledTime < earlyBound)
+			if (checkInTime < earlyBound)
 			{
-				message = SR.MessageAlertScheduledTimeTooEarly;
-				return ValidateResult.ScheduledTimeTooEarly;
+				var threshold = TimeSpan.FromMinutes(Default.EarlyCheckInWarningThreshold);
+				message = string.Format(SR.MessageAlertCheckingInTooEarly, TimeSpanFormat.FormatDescriptive(threshold));
+				return ValidateResult.CheckingInTooEarly;
 			}
 
-			if (scheduledTime > lateBound)
+			if (checkInTime > lateBound)
 			{
-				message = SR.MessageAlertScheduledTimeTooLate;
-				return ValidateResult.ScheduledTimeTooLate;
+				var threshold = TimeSpan.FromMinutes(Default.LateCheckInWarningThreshold);
+				message = string.Format(SR.MessageAlertCheckingInTooLate, TimeSpanFormat.FormatDescriptive(threshold));
+				return ValidateResult.CheckingInTooLate;
 			}
 
 			return ValidateResult.Success;

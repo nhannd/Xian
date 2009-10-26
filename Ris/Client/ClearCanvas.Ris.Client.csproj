@@ -96,6 +96,7 @@
     <Compile Include="CheckInSettings.cs" />
     <Compile Include="ExternalPractitionerOverviewComponent.cs" />
     <Compile Include="FolderExplorerConfiguration.cs" />
+    <Compile Include="Formatting\TimeSpanFormat.cs" />
     <Compile Include="LookupHandlerAggregator.cs" />
     <Compile Include="LookupHandlerCellEditor.cs" />
     <Compile Include="OrderNoteConversationComponentRecipientTable.cs" />

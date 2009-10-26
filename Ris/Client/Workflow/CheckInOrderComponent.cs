@@ -134,10 +134,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				var result = CheckInSettings.Validate(entry.Procedure.ScheduledStartTime, _checkInTime, out checkInValidationMessage);
 				switch (result)
 				{
-					case CheckInSettings.ValidateResult.ScheduledTimeTooEarly:
+					case CheckInSettings.ValidateResult.CheckingInTooEarly:
 						earlyProcedures.Add(entry.Procedure);
 						break;
-					case CheckInSettings.ValidateResult.ScheduledTimeTooLate:
+					case CheckInSettings.ValidateResult.CheckingInTooLate:
 						lateProcedures.Add(entry.Procedure);
 						break;
 					default:
@@ -147,8 +147,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (earlyProcedures.Count > 0 || lateProcedures.Count > 0)
 			{
+				var earlyThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.EarlyCheckInWarningThreshold);
+				var lateThreshold = TimeSpan.FromMinutes(CheckInSettings.Default.LateCheckInWarningThreshold);
+
+
 				var messageBuilder = new StringBuilder();
-				messageBuilder.AppendLine(SR.MessageCheckInProceduresTooLateOrTooEarly);
+				messageBuilder.AppendFormat(SR.MessageCheckInProceduresTooLateOrTooEarly,
+					TimeSpanFormat.FormatDescriptive(earlyThreshold),
+					TimeSpanFormat.FormatDescriptive(lateThreshold));
+				messageBuilder.AppendLine();
 				messageBuilder.AppendLine();
 				CollectionUtils.ForEach(earlyProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));
 				CollectionUtils.ForEach(lateProcedures, procedure => messageBuilder.AppendLine(ProcedureFormat.Format(procedure)));

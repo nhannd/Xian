@@ -1204,6 +1204,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The procedure is being checked-in too early.  The check-in time should be no more than {0} prior to the scheduled time..
+        /// </summary>
+        internal static string MessageAlertCheckingInTooEarly {
+            get {
+                return ResourceManager.GetString("MessageAlertCheckingInTooEarly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The procedure is being checked-in too late.  The check-in time should be no more than {0} after the scheduled time..
+        /// </summary>
+        internal static string MessageAlertCheckingInTooLate {
+            get {
+                return ResourceManager.GetString("MessageAlertCheckingInTooLate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} has high severity notes: {1}.
         /// </summary>
         internal static string MessageAlertHighSeverityNote {
@@ -1236,24 +1254,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageAlertLanguageNotEnglish {
             get {
                 return ResourceManager.GetString("MessageAlertLanguageNotEnglish", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Scheduled start time is too early to check-in procedure.
-        /// </summary>
-        internal static string MessageAlertScheduledTimeTooEarly {
-            get {
-                return ResourceManager.GetString("MessageAlertScheduledTimeTooEarly", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Scheduled start time is too late to check-in procedure.
-        /// </summary>
-        internal static string MessageAlertScheduledTimeTooLate {
-            get {
-                return ResourceManager.GetString("MessageAlertScheduledTimeTooLate", resourceCulture);
             }
         }
         

@@ -501,11 +501,11 @@
   <data name="MessageAlertLanguageNotEnglish" xml:space="preserve">
     <value>{0} speaks: {1}</value>
   </data>
-  <data name="MessageAlertScheduledTimeTooEarly" xml:space="preserve">
-    <value>Scheduled start time is too early to check-in procedure</value>
+  <data name="MessageAlertCheckingInTooEarly" xml:space="preserve">
+    <value>The procedure is being checked-in too early.  The check-in time should be no more than {0} prior to the scheduled time.</value>
   </data>
-  <data name="MessageAlertScheduledTimeTooLate" xml:space="preserve">
-    <value>Scheduled start time is too late to check-in procedure</value>
+  <data name="MessageAlertCheckingInTooLate" xml:space="preserve">
+    <value>The procedure is being checked-in too late.  The check-in time should be no more than {0} after the scheduled time.</value>
   </data>
   <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
     <value>{0} has unreconciled records</value>
