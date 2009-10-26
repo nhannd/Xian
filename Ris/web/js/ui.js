@@ -110,6 +110,9 @@ var _IE = document.all;
 				The args object contains the properties:   item - the item to be validated
 														   error - the handler should set this to a string error message
 															if there is an error to report
+			
+			cellUpdated - fired after an item in the table has been updated.
+				To attach an event handler, use the following syntax: table.cellUpdated = function() {...}
 */
 
 var Table = {
@@ -1019,6 +1022,9 @@ var Table = {
 		{
 			// update validation on the fly as the user types, rather than wait for the edit to complete
 			this._validateRow(row);
+
+			if(this.cellUpdated)
+				this.cellUpdated();
 		},
 
 		_onEditComplete: function(rowIndex, colIndex)

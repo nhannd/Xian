@@ -358,7 +358,9 @@ namespace ClearCanvas.Ris.Client
 
 			_attachmentSummaryComponent = new AttachedDocumentPreviewComponent(false, AttachedDocumentPreviewComponent.AttachmentMode.Order);
 			this.ChangeCommitted += ((sender, args) => _attachmentSummaryComponent.SaveChanges());
+
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
+			_orderAdditionalInfoComponent.ModifiedChanged += ((sender, args) => this.Modified = true);
 		}
 
 		#endregion
