@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
             ToDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, ToDateFilter.ClientID, ToDateCalendarExtender.ClientID, "To Date must be greater than From Date") + " " + ScriptHelper.PopulateDefaultToTime(ToTimeFilter.ClientID) + " return false;";
             FromDateFilter.Attributes["OnChange"] = ScriptHelper.CheckDateRange(FromDateFilter.ClientID, ToDateFilter.ClientID, FromDateFilter.ClientID, FromDateCalendarExtender.ClientID, "From Date must be less than To Date") + " " + ScriptHelper.PopulateDefaultFromTime(FromTimeFilter.ClientID) + " return false;";
 
-			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
 		    ApplicationLogGridView.Pager = GridPagerTop;
 
 			ApplicationLogGridView.DataSourceCreated += delegate(ApplicationLogDataSource source)

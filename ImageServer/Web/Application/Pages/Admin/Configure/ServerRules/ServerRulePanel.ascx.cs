@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServerRulesSingleItem,
                                              App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
                                              ServerRuleGridViewControl.TheGrid, delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; },
-                                             ImageServerConstants.GridViewPagerPosition.top);
+                                             ImageServerConstants.GridViewPagerPosition.Top);
             ServerRuleGridViewControl.Pager = GridPagerTop;
             GridPagerTop.Reset();
 

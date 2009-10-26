@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.MoveSeries
             _theController = new DeviceConfigurationController();
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.Top);
             DeviceGridPanel.Pager = GridPagerTop;
 
             MoveConfirmation.Confirmed += delegate(object data)

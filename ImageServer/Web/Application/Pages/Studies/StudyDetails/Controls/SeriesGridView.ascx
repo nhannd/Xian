@@ -16,7 +16,7 @@
                         MouseHoverRowHighlightEnabled = "true"
                         RowHighlightColor = "#EEEEEE"
                         SelectionMode="Multiple"
-                        GridLines="Horizontal" BackColor="White" >
+                        GridLines="Horizontal" BackColor="White">
                         <Columns>
                             <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
                                 <HeaderStyle Wrap="False" HorizontalAlign="center"/>    
@@ -54,7 +54,7 @@
                                     <asp:TableHeaderCell>Performed On</asp:TableHeaderCell>
                                 </asp:TableHeaderRow>
                                 <asp:TableRow>
-                                    <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
+                                    <asp:TableCell ColumnSpan="5" Height="50" HorizontalAlign="Center">
                                         <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No Series Items for this study.</asp:panel>
                                     </asp:TableCell>
                                 </asp:TableRow>

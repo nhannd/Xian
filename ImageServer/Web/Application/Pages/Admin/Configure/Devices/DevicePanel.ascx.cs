@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             GridPagerTop.InitializeGridPager(SR.GridPagerDeviceSingleItem, SR.GridPagerDeviceMultipleItems,
                                              DeviceGridViewControl1.TheGrid,
                                              delegate { return DeviceGridViewControl1.Devices.Count; },
-                                             ImageServerConstants.GridViewPagerPosition.top);
+                                             ImageServerConstants.GridViewPagerPosition.Top);
             DeviceGridViewControl1.Pager = GridPagerTop;
             GridPagerTop.Reset();
 

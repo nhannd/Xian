@@ -32,6 +32,7 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Web.Common;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls

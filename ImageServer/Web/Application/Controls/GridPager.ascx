@@ -2,7 +2,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" class="GlobalGridPager">
     <tr>
         <td align="left" style="padding-left: 6px;">
-                                            <% if (PagerPosition == ImageServerConstants.GridViewPagerPosition.top)
+                                            <% if (PagerPosition == ImageServerConstants.GridViewPagerPosition.Top)
                                    { %>
             <table cellspacing="0" cellpadding="0">
                 <tr>
@@ -25,7 +25,7 @@
                         <%} %>            
         </td>
         <td align="center">
-            <% if (PagerPosition == ImageServerConstants.GridViewPagerPosition.top)
+            <% if (PagerPosition == ImageServerConstants.GridViewPagerPosition.Top)
                { %>
                
             <asp:UpdateProgress ID="SearchUpdateProgress" runat="server" DisplayAfter="50">

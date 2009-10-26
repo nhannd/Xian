@@ -50,11 +50,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
     /// </summary>
     public partial class Default : BasePage
     {
-        #region constants
-        private const string QUERY_KEY_STUDY_INSTANCE_UID = "siuid";
-        private const string QUERY_KEY_SERVER_AE = "serverae";
-        #endregion constants
-
         #region Private members
         private string _studyInstanceUid;
         private string _serverae;
@@ -129,15 +124,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            _studyInstanceUid = Request.QueryString[QUERY_KEY_STUDY_INSTANCE_UID];
-            _serverae = Request.QueryString[QUERY_KEY_SERVER_AE];
+            _studyInstanceUid = Request.QueryString[ImageServerConstants.QueryStrings.StudyInstanceUID];
+            _serverae = Request.QueryString[ImageServerConstants.QueryStrings.ServerAE];
 
             if (!String.IsNullOrEmpty(_studyInstanceUid) && !String.IsNullOrEmpty(_serverae)) 
             {
                 
                 ServerPartitionDataAdapter adaptor = new ServerPartitionDataAdapter();
                 ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-                criteria.AeTitle.EqualTo(Request.QueryString[QUERY_KEY_SERVER_AE]);
+                criteria.AeTitle.EqualTo(_serverae);
                 IList<ServerPartition> partitions = adaptor.Get(criteria);
                 if (partitions != null && partitions.Count>0)
                 {
@@ -225,7 +220,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
 
         }
-
 
         #endregion Protected Methods
 

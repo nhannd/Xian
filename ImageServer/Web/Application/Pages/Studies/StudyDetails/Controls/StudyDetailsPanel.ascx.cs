@@ -112,7 +112,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             } 
             
             base.DataBind();
-
         }
 
         public void Page_Load(Object sender, EventArgs e)
