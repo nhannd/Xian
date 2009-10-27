@@ -53,10 +53,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		{
 			try
 			{
-				IList<RestoreQueue> list;
-
 				IWebQueryRestoreQueue broker = HttpContextData.Current.ReadContext.GetBroker<IWebQueryRestoreQueue>();
-				list = broker.Find(parameters);
+				IList<RestoreQueue> list = broker.Find(parameters);
 
 				return list;
 			}
@@ -69,19 +67,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool DeleteRestoreQueueItem(RestoreQueue item)
         {
-        	bool retValue;
-			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+        	using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
-				LockStudyParameters parms = new LockStudyParameters();
-				parms.StudyStorageKey = item.StudyStorageKey;
-				parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+				LockStudyParameters parms = new LockStudyParameters
+				                            	{
+				                            		StudyStorageKey = item.StudyStorageKey,
+				                            		QueueStudyStateEnum = QueueStudyStateEnum.Idle
+				                            	};
 				if (!lockStudyBroker.Execute(parms))
 					return false;
 				if (!parms.Successful)
 					return false;
 
-				retValue = _adaptor.Delete(updateContext, item.Key);
+				bool retValue = _adaptor.Delete(updateContext, item.Key);
 
 				updateContext.Commit();
 

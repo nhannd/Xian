@@ -58,14 +58,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     /// 
     public class RegularExpressionFieldValidator : BaseValidator
     {
-        private bool _required;
-
         #region Public Properties
 
         /// <summary>
         /// Sets or gets the regular expression to validate the input.
         /// </summary>
         public string ValidationExpression { get; set; }
+
+		/// <summary>
+		/// Is the value Required?
+		/// </summary>
+		public bool Required { get; set; }
 
         #endregion Public Properties
 
@@ -89,7 +92,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             var template =
                 new ScriptTemplate(this,
                                    "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
-            template.Replace("@@REQUIRED@@", _required ? "true" : "false");
+            template.Replace("@@REQUIRED@@", Required ? "true" : "false");
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
             template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
                              ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");

@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adaptor.Delete(item.Key);
         }
 
-        private void ReconcileStudy(string command,StudyIntegrityQueue item )
+        private static void ReconcileStudy(string command,StudyIntegrityQueue item )
         {
             //Ignore the reconcile command if the item is null.
             if (item == null) return;
@@ -94,10 +94,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			using (IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
                 
-                LockStudyParameters lockParms = new LockStudyParameters();
-                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReconcileScheduled;
-                lockParms.StudyStorageKey = item.StudyStorageKey;
-                ILockStudy broker = context.GetBroker<ILockStudy>();
+                LockStudyParameters lockParms = new LockStudyParameters
+                                                	{
+                                                		QueueStudyStateEnum = QueueStudyStateEnum.ReconcileScheduled,
+                                                		StudyStorageKey = item.StudyStorageKey
+                                                	};
+				ILockStudy broker = context.GetBroker<ILockStudy>();
                 broker.Execute(lockParms);
                 if (!lockParms.Successful)
                 {
@@ -107,26 +109,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 
 				//Add to Study History
 				StudyHistoryeAdaptor historyAdaptor = new StudyHistoryeAdaptor();
-				StudyHistoryUpdateColumns parameters = new StudyHistoryUpdateColumns();
-
-				parameters.StudyData = item.StudyData;
-				parameters.ChangeDescription = changeDescription;
-				parameters.StudyStorageKey = item.StudyStorageKey;
-				parameters.StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled;
+				StudyHistoryUpdateColumns parameters = new StudyHistoryUpdateColumns
+				                                       	{
+				                                       		StudyData = item.StudyData,
+				                                       		ChangeDescription = changeDescription,
+				                                       		StudyStorageKey = item.StudyStorageKey,
+				                                       		StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled
+				                                       	};
 
 				StudyHistory history = historyAdaptor.Add(context, parameters);
 
 				//Create WorkQueue Entry
 				WorkQueueAdaptor workQueueAdaptor = new WorkQueueAdaptor();
-				WorkQueueUpdateColumns row = new WorkQueueUpdateColumns();
-				row.Data = XmlUtils.SerializeAsXmlDoc(queueData);
-				row.ServerPartitionKey = item.ServerPartitionKey;
-				row.StudyStorageKey = item.StudyStorageKey;
-				row.StudyHistoryKey = history.GetKey();
-				row.WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy;
-				row.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                row.ScheduledTime = Platform.Time;
-                row.ExpirationTime = Platform.Time.AddHours(1);
+				WorkQueueUpdateColumns row = new WorkQueueUpdateColumns
+				                             	{
+				                             		Data = XmlUtils.SerializeAsXmlDoc(queueData),
+				                             		ServerPartitionKey = item.ServerPartitionKey,
+				                             		StudyStorageKey = item.StudyStorageKey,
+				                             		StudyHistoryKey = history.GetKey(),
+				                             		WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy,
+				                             		WorkQueueStatusEnum = WorkQueueStatusEnum.Pending,
+				                             		ScheduledTime = Platform.Time,
+				                             		ExpirationTime = Platform.Time.AddHours(1)
+				                             	};
 				WorkQueue newWorkQueueItem = workQueueAdaptor.Add(context, row);
 
 				StudyIntegrityQueueUidAdaptor studyIntegrityQueueUidAdaptor = new StudyIntegrityQueueUidAdaptor();
@@ -161,12 +166,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	    public void CreateNewStudy(ServerEntityKey itemKey)
 	    {
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
-            ReconcileCreateStudyDescriptor command = new ReconcileCreateStudyDescriptor();
-            command.Automatic = false;
-            command.UserName = ServerHelper.CurrentUserName;
-            command.ExistingStudy = record.ExistingStudyInfo;
-            command.ImageSetData = record.ConflictingImageDescriptor;
-            command.Commands.Add(new SetTagCommand(DicomTags.StudyInstanceUid, record.ExistingStudyInfo.StudyInstanceUid, DicomUid.GenerateUid().UID));
+            ReconcileCreateStudyDescriptor command = new ReconcileCreateStudyDescriptor
+                                                     	{
+                                                     		Automatic = false,
+                                                     		UserName = ServerHelper.CurrentUserName,
+                                                     		ExistingStudy = record.ExistingStudyInfo,
+                                                     		ImageSetData = record.ConflictingImageDescriptor
+                                                     	};
+	    	command.Commands.Add(new SetTagCommand(DicomTags.StudyInstanceUid, record.ExistingStudyInfo.StudyInstanceUid, DicomUid.GenerateUid().UID));
             String xml = XmlUtils.SerializeAsString(command);
             ReconcileStudy(xml, record.QueueItem);
 	    }
@@ -174,13 +181,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	    public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
         {
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
-            ReconcileMergeToExistingStudyDescriptor command = new ReconcileMergeToExistingStudyDescriptor();
-            command.UserName = ServerHelper.CurrentUserName;
-            command.Automatic = false;
-            command.ExistingStudy = record.ExistingStudyInfo;
-            command.ImageSetData = record.ConflictingImageDescriptor;
-  
-            if(useExistingStudy)
+            ReconcileMergeToExistingStudyDescriptor command = new ReconcileMergeToExistingStudyDescriptor
+                                                              	{
+                                                              		UserName = ServerHelper.CurrentUserName,
+                                                              		Automatic = false,
+                                                              		ExistingStudy = record.ExistingStudyInfo,
+                                                              		ImageSetData = record.ConflictingImageDescriptor
+                                                              	};
+
+	    	if(useExistingStudy)
             {
                 command.Description = "Merge using existing study information.";
                 String xml = XmlUtils.SerializeAsString(command);

@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -144,11 +143,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public TServerEntity Add(IUpdateContext context, TColumns param)
         {
-            TServerEntity newEntity = null;
+        	TIEntity update = context.GetBroker<TIEntity>();
 
-            TIEntity update = context.GetBroker<TIEntity>();
-
-            newEntity = update.Insert(param);
+            TServerEntity newEntity = update.Insert(param);
 
             return newEntity;
         }
@@ -179,12 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		{
 			TIEntity update = context.GetBroker<TIEntity>();
 
-			if (!update.Delete(key))
-				return false;
-
-			context.Commit();
-
-			return true;
+			return update.Delete(key);
 		}
 
     	public bool Delete(ServerEntityKey key)
