@@ -51,9 +51,9 @@ namespace ClearCanvas.Desktop.Help
 
 			InitializeComponent();
 
-			_version.Text = String.Format(AboutSettings.Default.VersionTextFormat, Product.GetVersion(true, true));
-			_copyright.Text = Product.Copyright;
-			_license.Text = Product.License;
+			_version.Text = String.Format(AboutSettings.Default.VersionTextFormat, ProductInformation.GetVersion(true, true));
+			_copyright.Text = ProductInformation.Copyright;
+			_license.Text = ProductInformation.License;
 
 			if (AboutSettings.Default.UseSettings)
 			{

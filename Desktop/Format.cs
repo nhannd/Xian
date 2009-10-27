@@ -116,6 +116,7 @@ namespace ClearCanvas.Desktop
                     DateTime? tomorrow = today.Value.AddDays(1);
                     DateTime? afterTomorrow = tomorrow.Value.AddDays(1);
 
+					//TODO (CR Oct 2009): strings to resources.
                     if (dt < yesterday)
                     {
                         return (int) Math.Ceiling(((today.Value - dt.Value).TotalDays)) + " days ago";

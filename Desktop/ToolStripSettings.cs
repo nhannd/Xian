@@ -37,6 +37,8 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
+	//TODO (cr Oct 2009): Type?  ToolStripIconSize?
+
 	/// <summary>
 	/// Enumeration for the differnt possible sizes of toolstrip button items.
 	/// </summary>

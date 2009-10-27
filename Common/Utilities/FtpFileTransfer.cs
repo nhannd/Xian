@@ -70,6 +70,8 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception e)
 			{
+				//TODO (cr Oct 2009): we're not supposed to use SR for exception messages.
+				//Throw a different type of exception and use an ExceptionHandler if it's supposed to be a user message.
 				var message = string.Format(SR.ExceptionFailedToTransferFile, request.LocalFile, request.RemoteFile);
 				throw new Exception(message, e);
 			}
@@ -114,6 +116,8 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception e)
 			{
+				//TODO (cr Oct 2009): we're not supposed to use SR for exception messages.
+				//Throw a different type of exception and use an ExceptionHandler if it's supposed to be a user message.
 				var message = string.Format(SR.ExceptionFailedToTransferFile, request.RemoteFile, request.LocalFile);
 				throw new Exception(message, e);
 			}

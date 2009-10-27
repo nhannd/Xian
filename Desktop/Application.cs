@@ -376,7 +376,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected virtual string GetName()
         {
-			return Product.Name;
+			return ProductInformation.Name;
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         protected virtual Version GetVersion()
         {
-			return Product.Version;
+			return ProductInformation.Version;
         }
         
         #endregion

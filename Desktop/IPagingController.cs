@@ -48,6 +48,7 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         bool HasNext { get; }
 
+    	//TODO (cr Oct 2009): contraction, spell out "Previous"
         /// <summary>
         /// 
         /// </summary>
@@ -60,6 +61,7 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         IList<T> GetNext();
 
+		//TODO (cr Oct 2009): contraction, spell out "Previous"
         /// <summary>
         /// 
         /// </summary>
@@ -72,6 +74,7 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         IList<T> GetFirst();
 
+		//TODO (cr Oct 2009): name?  How about just "event EventHandler InitialQuery"?
         /// <summary>
         /// 
         /// </summary>

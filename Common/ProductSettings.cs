@@ -38,7 +38,7 @@ using System.Text;
 
 namespace ClearCanvas.Common
 {
-	public static class Product
+	public static class ProductInformation
 	{
 		private static string _name;
 		private static Version _version;
@@ -46,7 +46,7 @@ namespace ClearCanvas.Common
 		private static string _copyright;
 		private static string _license;
 
-		static Product()
+		static ProductInformation()
 		{
 			ProductSettings.Default.PropertyChanged += OnSettingPropertyChanged;
 		}

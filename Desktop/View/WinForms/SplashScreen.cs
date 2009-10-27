@@ -133,9 +133,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			SetStatusText(string.Empty);
 
 			// Initialize the version text to the executing assembly's
-			_version.Text = String.Format(SplashScreenSettings.Default.VersionTextFormat, Product.GetVersion(true, true));
-			_copyright.Text = Product.Copyright;
-			_license.Text = Product.License;
+			_version.Text = String.Format(SplashScreenSettings.Default.VersionTextFormat, ProductInformation.GetVersion(true, true));
+			_copyright.Text = ProductInformation.Copyright;
+			_license.Text = ProductInformation.License;
 
 			// Make the window completely transparent
 			Opacity = 0;

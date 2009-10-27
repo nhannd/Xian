@@ -35,6 +35,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Configuration.Standard
 {
+	//TODO (cr Oct 2009): Use the actual enum for the property
+
+	//TODO (cr Oct 2009): ToolbarConfigurationComponent
+
 	[ExtensionPoint]
 	public sealed class ToolStripConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 

@@ -1,10 +1,3 @@
-<Project DefaultTargets="Copy Database Files;Copy Rest of Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- Desktop specific postbuild step -->
-
-	<Target Name="Copy Database Files">
-	</Target>
-
-	<Target Name="Copy Rest of Files">
-	</Target>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+  <Target Name="Default"></Target>
 </Project>
-
