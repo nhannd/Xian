@@ -33,6 +33,7 @@
 			this._txtArguments = new System.Windows.Forms.TextBox();
 			this._lnkHelpFields = new System.Windows.Forms.LinkLabel();
 			this._pnlCommand = new System.Windows.Forms.Panel();
+			this._btnCommand = new System.Windows.Forms.Button();
 			this._pnlWorkingDir = new System.Windows.Forms.Panel();
 			this._pnlArguments = new System.Windows.Forms.Panel();
 			this._pnlOptions = new System.Windows.Forms.Panel();
@@ -41,7 +42,6 @@
 			this._lblMultiValueFieldSeparator = new System.Windows.Forms.Label();
 			this._txtMultiValueFieldSeparator = new System.Windows.Forms.TextBox();
 			this._chkAllowMultiValueFields = new System.Windows.Forms.CheckBox();
-			this._btnCommand = new System.Windows.Forms.Button();
 			this._dlgCommand = new System.Windows.Forms.OpenFileDialog();
 			this._pnlCommand.SuspendLayout();
 			this._pnlWorkingDir.SuspendLayout();
@@ -95,6 +95,13 @@
 			resources.ApplyResources(this._pnlCommand, "_pnlCommand");
 			this._pnlCommand.Name = "_pnlCommand";
 			// 
+			// _btnCommand
+			// 
+			resources.ApplyResources(this._btnCommand, "_btnCommand");
+			this._btnCommand.Name = "_btnCommand";
+			this._btnCommand.UseVisualStyleBackColor = true;
+			this._btnCommand.Click += new System.EventHandler(this._btnCommand_Click);
+			// 
 			// _pnlWorkingDir
 			// 
 			this._pnlWorkingDir.Controls.Add(this._txtWorkingDir);
@@ -126,8 +133,8 @@
 			// 
 			// _pnlMultiValueFieldSeparator
 			// 
-			this._pnlMultiValueFieldSeparator.Controls.Add(this._lblMultiValueFieldSeparator);
 			this._pnlMultiValueFieldSeparator.Controls.Add(this._txtMultiValueFieldSeparator);
+			this._pnlMultiValueFieldSeparator.Controls.Add(this._lblMultiValueFieldSeparator);
 			resources.ApplyResources(this._pnlMultiValueFieldSeparator, "_pnlMultiValueFieldSeparator");
 			this._pnlMultiValueFieldSeparator.Name = "_pnlMultiValueFieldSeparator";
 			// 
@@ -146,13 +153,6 @@
 			resources.ApplyResources(this._chkAllowMultiValueFields, "_chkAllowMultiValueFields");
 			this._chkAllowMultiValueFields.Name = "_chkAllowMultiValueFields";
 			this._chkAllowMultiValueFields.UseVisualStyleBackColor = true;
-			// 
-			// _btnCommand
-			// 
-			resources.ApplyResources(this._btnCommand, "_btnCommand");
-			this._btnCommand.Name = "_btnCommand";
-			this._btnCommand.UseVisualStyleBackColor = true;
-			this._btnCommand.Click += new System.EventHandler(this._btnCommand_Click);
 			// 
 			// _dlgCommand
 			// 

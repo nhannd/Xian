@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms.General
 			_chkAllowMultiValueFields.DataBindings.Add("Checked", launcher, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
 			_chkAutoQuoteArguments.DataBindings.Add("Checked", launcher, "AutoQuoteArguments", false, DataSourceUpdateMode.OnPropertyChanged);
 			_txtMultiValueFieldSeparator.DataBindings.Add("Text", launcher, "MultiValueFieldSeparator", false, DataSourceUpdateMode.OnPropertyChanged);
+			_txtMultiValueFieldSeparator.DataBindings.Add("Enabled", launcher, "AllowMultiValueFields", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _lnkHelpFields_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

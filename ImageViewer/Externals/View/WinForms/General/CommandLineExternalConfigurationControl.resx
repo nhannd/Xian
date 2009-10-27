@@ -235,7 +235,7 @@
     <value>6</value>
   </data>
   <data name="_lblArguments.Text" xml:space="preserve">
-    <value>Arguments</value>
+    <value>Arguments (one per line)</value>
   </data>
   <data name="&gt;&gt;_lblArguments.Name" xml:space="preserve">
     <value>_lblArguments</value>
@@ -255,8 +255,11 @@
   <data name="_txtArguments.Location" type="System.Drawing.Point, System.Drawing">
     <value>10, 26</value>
   </data>
+  <data name="_txtArguments.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="_txtArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 20</value>
+    <value>376, 92</value>
   </data>
   <data name="_txtArguments.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -277,7 +280,7 @@
     <value>Bottom</value>
   </data>
   <data name="_lnkHelpFields.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 51</value>
+    <value>10, 118</value>
   </data>
   <data name="_lnkHelpFields.Size" type="System.Drawing.Size, System.Drawing">
     <value>376, 16</value>
@@ -302,21 +305,6 @@
   </data>
   <data name="&gt;&gt;_lnkHelpFields.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="_btnCommand.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="_btnCommand.Location" type="System.Drawing.Point, System.Drawing">
-    <value>361, 26</value>
-  </data>
-  <data name="_btnCommand.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="_btnCommand.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="_btnCommand.Text" xml:space="preserve">
-    <value>...</value>
   </data>
   <data name="&gt;&gt;_btnCommand.Name" xml:space="preserve">
     <value>_btnCommand</value>
@@ -359,6 +347,33 @@
   </data>
   <data name="&gt;&gt;_pnlCommand.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="_btnCommand.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="_btnCommand.Location" type="System.Drawing.Point, System.Drawing">
+    <value>361, 26</value>
+  </data>
+  <data name="_btnCommand.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="_btnCommand.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_btnCommand.Text" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="&gt;&gt;_btnCommand.Name" xml:space="preserve">
+    <value>_btnCommand</value>
+  </data>
+  <data name="&gt;&gt;_btnCommand.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_btnCommand.Parent" xml:space="preserve">
+    <value>_pnlCommand</value>
+  </data>
+  <data name="&gt;&gt;_btnCommand.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="_pnlWorkingDir.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -403,7 +418,7 @@
     <value>10, 10, 10, 10</value>
   </data>
   <data name="_pnlArguments.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 77</value>
+    <value>396, 144</value>
   </data>
   <data name="_pnlArguments.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -420,72 +435,6 @@
   <data name="&gt;&gt;_pnlArguments.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;_chkAutoQuoteArguments.Name" xml:space="preserve">
-    <value>_chkAutoQuoteArguments</value>
-  </data>
-  <data name="&gt;&gt;_chkAutoQuoteArguments.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_chkAutoQuoteArguments.Parent" xml:space="preserve">
-    <value>_pnlOptions</value>
-  </data>
-  <data name="&gt;&gt;_chkAutoQuoteArguments.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Name" xml:space="preserve">
-    <value>_pnlMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Parent" xml:space="preserve">
-    <value>_pnlOptions</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;_chkAllowMultiValueFields.Name" xml:space="preserve">
-    <value>_chkAllowMultiValueFields</value>
-  </data>
-  <data name="&gt;&gt;_chkAllowMultiValueFields.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_chkAllowMultiValueFields.Parent" xml:space="preserve">
-    <value>_pnlOptions</value>
-  </data>
-  <data name="&gt;&gt;_chkAllowMultiValueFields.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="_pnlOptions.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="_pnlOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 188</value>
-  </data>
-  <data name="_pnlOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 5, 5, 5</value>
-  </data>
-  <data name="_pnlOptions.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>10, 10, 10, 10</value>
-  </data>
-  <data name="_pnlOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 82</value>
-  </data>
-  <data name="_pnlOptions.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;_pnlOptions.Name" xml:space="preserve">
-    <value>_pnlOptions</value>
-  </data>
-  <data name="&gt;&gt;_pnlOptions.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_pnlOptions.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;_pnlOptions.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="_chkAutoQuoteArguments.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -493,7 +442,7 @@
     <value>Top</value>
   </data>
   <data name="_chkAutoQuoteArguments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 52</value>
+    <value>10, 48</value>
   </data>
   <data name="_chkAutoQuoteArguments.Size" type="System.Drawing.Size, System.Drawing">
     <value>376, 17</value>
@@ -516,83 +465,11 @@
   <data name="&gt;&gt;_chkAutoQuoteArguments.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Name" xml:space="preserve">
-    <value>_lblMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Parent" xml:space="preserve">
-    <value>_pnlMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;_txtMultiValueFieldSeparator.Name" xml:space="preserve">
-    <value>_txtMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_txtMultiValueFieldSeparator.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_txtMultiValueFieldSeparator.Parent" xml:space="preserve">
-    <value>_pnlMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_txtMultiValueFieldSeparator.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_pnlMultiValueFieldSeparator.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="_pnlMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 27</value>
-  </data>
-  <data name="_pnlMultiValueFieldSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>376, 25</value>
-  </data>
-  <data name="_pnlMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Name" xml:space="preserve">
-    <value>_pnlMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Parent" xml:space="preserve">
-    <value>_pnlOptions</value>
-  </data>
-  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="_lblMultiValueFieldSeparator.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="_lblMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 7</value>
-  </data>
-  <data name="_lblMultiValueFieldSeparator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 13</value>
-  </data>
-  <data name="_lblMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="_lblMultiValueFieldSeparator.Text" xml:space="preserve">
-    <value>Field separator:</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Name" xml:space="preserve">
-    <value>_lblMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Parent" xml:space="preserve">
-    <value>_pnlMultiValueFieldSeparator</value>
-  </data>
-  <data name="&gt;&gt;_lblMultiValueFieldSeparator.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="_txtMultiValueFieldSeparator.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Left</value>
   </data>
   <data name="_txtMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
-    <value>143, 0</value>
+    <value>105, 0</value>
   </data>
   <data name="_txtMultiValueFieldSeparator.MaxLength" type="System.Int32, mscorlib">
     <value>1</value>
@@ -613,6 +490,63 @@
     <value>_pnlMultiValueFieldSeparator</value>
   </data>
   <data name="&gt;&gt;_txtMultiValueFieldSeparator.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="_lblMultiValueFieldSeparator.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="_lblMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 0</value>
+  </data>
+  <data name="_lblMultiValueFieldSeparator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>85, 21</value>
+  </data>
+  <data name="_lblMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="_lblMultiValueFieldSeparator.Text" xml:space="preserve">
+    <value>Field separator:</value>
+  </data>
+  <data name="_lblMultiValueFieldSeparator.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Name" xml:space="preserve">
+    <value>_lblMultiValueFieldSeparator</value>
+  </data>
+  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_lblMultiValueFieldSeparator.Parent" xml:space="preserve">
+    <value>_pnlMultiValueFieldSeparator</value>
+  </data>
+  <data name="&gt;&gt;_lblMultiValueFieldSeparator.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="_pnlMultiValueFieldSeparator.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="_pnlMultiValueFieldSeparator.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 27</value>
+  </data>
+  <data name="_pnlMultiValueFieldSeparator.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>20, 0, 0, 0</value>
+  </data>
+  <data name="_pnlMultiValueFieldSeparator.Size" type="System.Drawing.Size, System.Drawing">
+    <value>376, 21</value>
+  </data>
+  <data name="_pnlMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Name" xml:space="preserve">
+    <value>_pnlMultiValueFieldSeparator</value>
+  </data>
+  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Parent" xml:space="preserve">
+    <value>_pnlOptions</value>
+  </data>
+  <data name="&gt;&gt;_pnlMultiValueFieldSeparator.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="_chkAllowMultiValueFields.AutoSize" type="System.Boolean, mscorlib">
@@ -645,6 +579,36 @@
   <data name="&gt;&gt;_chkAllowMultiValueFields.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="_pnlOptions.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="_pnlOptions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 255</value>
+  </data>
+  <data name="_pnlOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 5, 5, 5</value>
+  </data>
+  <data name="_pnlOptions.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>10, 10, 10, 10</value>
+  </data>
+  <data name="_pnlOptions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>396, 82</value>
+  </data>
+  <data name="_pnlOptions.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;_pnlOptions.Name" xml:space="preserve">
+    <value>_pnlOptions</value>
+  </data>
+  <data name="&gt;&gt;_pnlOptions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;_pnlOptions.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;_pnlOptions.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="_dlgCommand.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
@@ -661,7 +625,7 @@
     <value>6, 13</value>
   </data>
   <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>396, 273</value>
+    <value>396, 338</value>
   </data>
   <data name="&gt;&gt;_dlgCommand.Name" xml:space="preserve">
     <value>_dlgCommand</value>
