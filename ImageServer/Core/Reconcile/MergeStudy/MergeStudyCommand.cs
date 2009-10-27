@@ -47,12 +47,6 @@ using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 {
-	class ReconcileMergeStudyCommandParameters
-	{
-		public bool UpdateDestination;
-		public List<BaseImageLevelUpdateCommand> Commands;
-	}
-
 	/// <summary>
 	/// Command for reconciling images by merging new images into an existing study.
 	/// </summary>
@@ -61,20 +55,35 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 	class MergeStudyCommand : ReconcileCommandBase
 	{
 		#region Private Members
+		
 		private int _failedCount;
 		private int _processedCount;
-		private readonly ReconcileMergeStudyCommandParameters _parameters;
+		private StudyStorageLocation _destinationStudyStorage;
+		private readonly bool _updateDestination;
+		private readonly bool _complete;
+		private readonly List<BaseImageLevelUpdateCommand> _commands;
 
 		#endregion
 
-		#region Constructors
+		#region Properties
+
+		public StudyStorageLocation Location
+		{
+			get { return _destinationStudyStorage; }
+		}
+
+		#endregion
+
+        #region Constructors
 		/// <summary>
 		/// Creates an instance of <see cref="MergeStudyCommand"/>
 		/// </summary>
-		public MergeStudyCommand(ReconcileStudyProcessorContext context, ReconcileMergeStudyCommandParameters parameters)
+		public MergeStudyCommand(ReconcileStudyProcessorContext context, bool updateDestination, List<BaseImageLevelUpdateCommand> commands, bool complete)
 			: base("Merge Study", true, context)
 		{
-			_parameters = parameters;
+			_updateDestination = updateDestination;
+			_commands = commands;
+			_complete = complete;
 		}
 		#endregion
 
@@ -83,11 +92,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		{
 			Platform.CheckForNullReference(Context, "Context");
 
-			DetermineDestination();
+			_destinationStudyStorage = Context.History.DestStudyStorageKey != null 
+				? StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.StudyStorageKey))[0] 
+				: Context.WorkQueueItemStudyStorage;
 
-            EnsureStudyCanBeUpdated(Context.DestStorageLocation);
+            EnsureStudyCanBeUpdated(_destinationStudyStorage);
 
-			if (_parameters.UpdateDestination)
+			if (_updateDestination)
 				UpdateExistingStudy();
             
 			LoadMergedStudyEntities();
@@ -104,34 +115,32 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
             }
             finally
             {
-                UpdateHistory();
+                UpdateHistory(_destinationStudyStorage);
             }
+
+			if (_complete)
+			{
+				StudyRulesEngine engine = new StudyRulesEngine(_destinationStudyStorage, Context.Partition);
+				engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, theProcessor);
+			}  
 		}
 
         protected void LoadUidMappings()
         {
             // Load the mapping for the study
-            if (Context.DestStorageLocation != null)
+			if (_destinationStudyStorage != null)
             {
-                string path = Path.Combine(Context.DestStorageLocation.GetStudyPath(), "UidMap.xml");
+				string path = Path.Combine(_destinationStudyStorage.GetStudyPath(), "UidMap.xml");
                 if (File.Exists(path))
                 {
                     UidMapXml xml = new UidMapXml();
-                    xml.Load(Context.DestStorageLocation);
+					xml.Load(_destinationStudyStorage);
                     UidMapper = new UidMapper(xml);
 
                     UidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
                 }
             }
         }
-
-	    private void DetermineDestination()
-		{
-			if (Context.DestStorageLocation != null)
-				return;
-
-			Context.DestStorageLocation = Context.WorkQueueItemStudyStorage; // merge into this study
-		}
 
 		#endregion
 
@@ -148,7 +157,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		private void LogResult()
 		{
 			StringBuilder log = new StringBuilder();
-			log.AppendFormat("Destination location: {0}", Context.DestStorageLocation.GetStudyPath());
+			log.AppendFormat("Destination location: {0}", _destinationStudyStorage.GetStudyPath());
 			log.AppendLine();
 			if (_failedCount > 0)
 			{
@@ -167,7 +176,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			Platform.Log(LogLevel.Info, "Updating existing study...");
 			using(ServerCommandProcessor updateProcessor = new ServerCommandProcessor("Update Study"))
 			{
-				UpdateStudyCommand studyUpdateCommand = new UpdateStudyCommand(Context.Partition, Context.DestStorageLocation, _parameters.Commands, ServerRuleApplyTimeEnum.SopProcessed);
+				UpdateStudyCommand studyUpdateCommand = new UpdateStudyCommand(Context.Partition, _destinationStudyStorage, _commands, ServerRuleApplyTimeEnum.SopProcessed);
 				updateProcessor.AddCommand(studyUpdateCommand);
 				if (!updateProcessor.Execute())
 				{
@@ -181,7 +190,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 		{
 			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 
-			StudyProcessorContext context = new StudyProcessorContext(Context.DestStorageLocation);
+			StudyProcessorContext context = new StudyProcessorContext(_destinationStudyStorage);
 
 			// Load the rules engine
 			context.SopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Context.WorkQueueItem.ServerPartitionKey);
@@ -192,10 +201,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			context.UpdateCommands.AddRange(BuildUpdateCommandList());
 
             // Add command to update the Series & Sop Instances.
-            context.UpdateCommands.Add(new SeriesSopUpdateCommand(Context.WorkQueueItemStudyStorage, Context.DestStorageLocation, UidMapper));
+            context.UpdateCommands.Add(new SeriesSopUpdateCommand(Context.WorkQueueItemStudyStorage, _destinationStudyStorage, UidMapper));
 
             // Load the Study XML File
-            StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
+			StudyXml xml = LoadStudyXml(_destinationStudyStorage);
             PrintUpdateCommands(context.UpdateCommands);
             foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
@@ -208,7 +217,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 				{
 					file.Load();
 
-					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
+					string groupID = ServerHelper.GetUidGroup(file, Context.Partition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
                     ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, uid, GetReconcileUidPath(uid));
@@ -241,7 +250,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
 			using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
 			{
-				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, Context.DestStorageLocation, uidGroup);
+				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, _destinationStudyStorage, uidGroup);
 				DicomProcessingResult result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
 				if (!result.Successful)
 				{
@@ -262,8 +271,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 		private void LoadMergedStudyEntities()
 		{
-			StudyStorage storage = StudyStorage.Load(Context.DestStorageLocation.GetKey());
-			Context.DestStorageLocation = StudyStorageLocation.FindStorageLocations(storage)[0];
+			StudyStorage storage = StudyStorage.Load(_destinationStudyStorage.Key);
+			_destinationStudyStorage = StudyStorageLocation.FindStorageLocations(storage)[0];
 		}
 
 
@@ -272,7 +281,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			List<BaseImageLevelUpdateCommand> updateCommandList = new List<BaseImageLevelUpdateCommand>();
             
 			ImageUpdateCommandBuilder builder = new ImageUpdateCommandBuilder();
-			updateCommandList.AddRange(builder.BuildCommands<StudyMatchingMap>(Context.DestStorageLocation));
+			updateCommandList.AddRange(builder.BuildCommands<StudyMatchingMap>(_destinationStudyStorage));
             
 			return updateCommandList;
 		}

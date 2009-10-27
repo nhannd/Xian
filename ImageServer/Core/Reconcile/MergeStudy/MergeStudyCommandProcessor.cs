@@ -53,28 +53,20 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			Platform.CheckForNullReference(context, "context");
 			Context = context;
 
-			EnsureStudyCanBeUpdated();
-
 			ReconcileMergeToExistingStudyDescriptor desc =
 				XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(Context.History.ChangeDescription);
 
-
-			ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters
-			                                                  	{
-			                                                  		UpdateDestination = Context.History.DestStudyStorageKey == null,
-			                                                  		Commands = desc.Commands
-			                                                  	};
-
-			MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
+			MergeStudyCommand command = new MergeStudyCommand(Context,
+			                                                  context.History.DestStudyStorageKey == null,
+			                                                  desc.Commands,
+			                                                  complete);
 			AddCommand(command);
 
 			if (complete)
 			{
-				ApplyStudyAndSeriesRuleCommands();
 				AddCleanupCommands();
 			}
 		}
-
 
 		#endregion
 	}

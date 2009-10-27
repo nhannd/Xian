@@ -142,12 +142,12 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             SeriesMappingUpdated = true;
         }
 
-	    protected void UpdateHistory()
+	    protected void UpdateHistory(StudyStorageLocation location)
 	    {
 	        using(ServerCommandProcessor processor = new ServerCommandProcessor("Reconcile-CreateStudy-Update History"))
 	        {
-                processor.AddCommand(new SaveUidMapXmlCommand(Context.DestStorageLocation, UidMapper));
-                processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, Context.DestStorageLocation, UidMapper));
+                processor.AddCommand(new SaveUidMapXmlCommand(location, UidMapper));
+                processor.AddCommand(new UpdateHistorySeriesMappingCommand(Context.History, location, UidMapper));
                 if (!processor.Execute())
 	            {
 	                throw new ApplicationException("Unable to update the history", processor.FailureException);

@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		/// <summary>
 		/// The <see cref="StudyStorageLocation"/> of the resultant study which the images will be reconciled to.
 		/// </summary>
-		public StudyStorageLocation DestStorageLocation { get; set; }
+		//public StudyStorageLocation DestStorageLocation { get; set; }
 
 		public IList<WorkQueueUid> WorkQueueUidList { get; set; }
 

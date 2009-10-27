@@ -29,10 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
@@ -42,7 +40,6 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
-
     /// <summary>
     /// Processor to handle 'ReconcileStudy' work queue entries
     /// </summary>
@@ -67,8 +64,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             InitializeContext();
 
-            CheckStudyState();
-            
             SetupProcessor();
 				
 			if (WorkQueueUidList.Count == 0)
@@ -89,19 +84,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 				ExecuteCommands(false);
 			}
 		}
-
-        private void CheckStudyState()
-        {
-            Platform.CheckForNullReference(_context, "_context");
-            StudyStorageLocation dest = _context.DestStorageLocation;
-            if (dest==null)
-                return;
-
-            if (_context.DestStorageLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy) && 
-                _context.DestStorageLocation.IsLatestArchiveLossless)
-                throw new ApplicationException(String.Format("Target study {0} is lossy compressed but was archived lossless. It must be restored first.",
-                        _context.DestStorageLocation.StudyInstanceUid));
-        }
 
         private void ExecuteCommands(bool complete)
         {
@@ -129,20 +111,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         protected override bool CanStart()
         {
             // cannot start if the existing study is scheduled for update
-            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, new []
+            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, new[]
                                               {
                                                   WorkQueueTypeEnum.ReprocessStudy
                                               }, 
                                               null);
-            if (!(relatedItems == null || relatedItems.Count == 0))
+			if (!(relatedItems == null || relatedItems.Count == 0))
             {
-                PostponeItem("Study is scheduled for reprocess");
+				PostponeItem("Study is scheduled for reprocess");
             	return false;
             }
         	return true;
         }
-
-
 
         #endregion
 
@@ -178,28 +158,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private void InitializeContext()
         {
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
-            _context = new ReconcileStudyProcessorContext();
-            _context.WorkQueueItem = WorkQueueItem;
-            _context.WorkQueueItemStudyStorage = StorageLocation;
-            _context.Partition = ServerPartition;
-
-            _context.ReconcileWorkQueueData = _reconcileQueueData;
-            _context.WorkQueueUidList = WorkQueueUidList;
-            _context.History = WorkQueueItem.StudyHistoryKey != null
-                                   ? StudyHistory.Load(WorkQueueItem.StudyHistoryKey)
-                                   : null;
-
-            
-            if (_context.History != null)
-            {
-                // if the destination in the history has been set, 
-                // the work queue should refer to the same study so that the correct study will be locked
-                if (_context.History.DestStudyStorageKey!=null)
-                {
-                    StudyStorage destStorage = StudyStorage.Load(_context.History.DestStudyStorageKey);
-                    _context.DestStorageLocation = StudyStorageLocation.FindStorageLocations(destStorage)[0];
-                }                
-            }
+            _context = new ReconcileStudyProcessorContext
+                       	{
+                       		WorkQueueItem = WorkQueueItem,
+                       		WorkQueueItemStudyStorage = StorageLocation,
+                       		Partition = ServerPartition,
+                       		ReconcileWorkQueueData = _reconcileQueueData,
+                       		WorkQueueUidList = WorkQueueUidList,
+                       		History = WorkQueueItem.StudyHistoryKey != null
+                       		          	? StudyHistory.Load(WorkQueueItem.StudyHistoryKey)
+                       		          	: null
+                       	};
         }
 
         #endregion

@@ -50,18 +50,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 		{
 			Platform.CheckForNullReference(context, "context");
 			Context = context;
-			Context.DestStorageLocation = context.WorkQueueItemStudyStorage;
 
-            EnsureStudyCanBeUpdated();
-
-			ProcessAsIsCommand.CommandParameters parms = new ProcessAsIsCommand.CommandParameters();
-			ProcessAsIsCommand command = new ProcessAsIsCommand(Context, parms);
+			ProcessAsIsCommand command = new ProcessAsIsCommand(Context, complete);
 
 			AddCommand(command);
 
             if (complete)
             {
-                ApplyStudyAndSeriesRuleCommands();
                 AddCleanupCommands();
             }
 		}

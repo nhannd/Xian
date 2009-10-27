@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.IO;
-using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Model;
@@ -46,7 +44,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
         /// <summary>
         /// Create an instance of <see cref="ReconcileCreateStudyProcessor"/>
         /// </summary>
-        public ReconcileProcessorBase(string name)
+        protected ReconcileProcessorBase(string name)
             :base(name)
         {
         }
@@ -64,12 +62,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             get { return Description; }
         }
 
-        protected void ApplyStudyAndSeriesRuleCommands()
-        {
-            StudyRulesEngine engine = new StudyRulesEngine(_context.DestStorageLocation, _context.Partition);
-            engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, this);
-        }
-
         protected void AddCleanupCommands()
         {
             DirectoryInfo dir = new DirectoryInfo(Context.ReconcileWorkQueueData.StoragePath);
@@ -79,20 +71,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             {
                 AddCommand(new DeleteDirectoryCommand(dir.Parent.FullName, false, true));
             }            
-        }
-
-        protected void EnsureStudyCanBeUpdated()
-        {
-            Platform.CheckForNullReference(Context, "Context");
-
-            if (Context.DestStorageLocation!=null)
-            {
-                string reason;
-                if (!Context.DestStorageLocation.CanUpdate(out reason))
-                {
-                    throw new ApplicationException(reason);
-                }
-            }
         }
     }
 }

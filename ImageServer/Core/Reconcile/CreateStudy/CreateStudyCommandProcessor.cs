@@ -33,6 +33,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Reconcile.MergeStudy;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 {
@@ -65,33 +66,22 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			Platform.CheckForNullReference(context, "context");
 			Context = context;
 
-            EnsureStudyCanBeUpdated();
-
 			ReconcileCreateStudyDescriptor desc = XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(Context.History.ChangeDescription);
+			
 
 			if (Context.History.DestStudyStorageKey == null)
 			{
-				CreateStudyCommand.CommandParameters parameters = new CreateStudyCommand.CommandParameters
-				                                                  	{
-				                                                  		Commands = desc.Commands
-				                                                  	};
-				CreateStudyCommand command = new CreateStudyCommand(context, parameters);
+				CreateStudyCommand command = new CreateStudyCommand(Context, desc.Commands, complete);
 				AddCommand(command);
 			}
 			else
 			{
-				ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters
-				                                                  	{
-				                                                  		Commands = desc.Commands,
-				                                                  		UpdateDestination = false
-				                                                  	};
-				MergeStudyCommand command = new MergeStudyCommand(Context, parameters);
+				MergeStudyCommand command = new MergeStudyCommand(Context, false, desc.Commands, complete);
 				AddCommand(command);
 			}
 
             if (complete)
             {
-                ApplyStudyAndSeriesRuleCommands();
                 AddCleanupCommands();
             }
 		}

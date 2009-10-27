@@ -43,36 +43,30 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 {
 	internal class ProcessAsIsCommand : ReconcileCommandBase
 	{
-		private readonly CommandParameters _parameters;
+		private StudyStorageLocation _destinationStudyStorage;
+		private readonly bool _complete;
 
-		/// <summary>
-		/// Represents parameters passed to <see cref="ProcessAsIsCommand"/>
-		/// </summary>
-		internal class CommandParameters
+		public StudyStorageLocation Location
 		{
+			get { return _destinationStudyStorage; }
 		}
-
-    
+   
 		/// <summary>
 		/// Creates an instance of <see cref="ProcessAsIsCommand"/>
 		/// </summary>
-		public ProcessAsIsCommand(ReconcileStudyProcessorContext context, CommandParameters parms)
+		public ProcessAsIsCommand(ReconcileStudyProcessorContext context, bool complete)
 			: base("Process As-is Command", true, context)
 		{
-			_parameters = parms;
+			_complete = complete;
 		}
 
 		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
-			Platform.CheckForNullReference(_parameters, "_parameters");
-
-			if (Context.DestStorageLocation==null)
-			{
-				DetermineTargetLocation();
-			}
-
-			EnsureStudyCanBeUpdated(Context.DestStorageLocation);
+			
+			DetermineTargetLocation();
+		
+			EnsureStudyCanBeUpdated(_destinationStudyStorage);
 
             try
             {
@@ -80,21 +74,27 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
             }
             finally
             {
-                UpdateHistory();
+                UpdateHistory(_destinationStudyStorage);
             }
+			if (_complete)
+			{
+				StudyRulesEngine engine = new StudyRulesEngine(_destinationStudyStorage, Context.Partition);
+				engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, theProcessor);
+			}
 		}
 
 		private void DetermineTargetLocation()
 		{
 			if (Context.History.DestStudyStorageKey!=null)
 			{
-				Context.DestStorageLocation =
+				_destinationStudyStorage =
 					StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.StudyStorageKey))[0];
 
 			}
 			else
 			{
-				Context.DestStorageLocation = Context.WorkQueueItemStudyStorage;
+				_destinationStudyStorage = Context.WorkQueueItemStudyStorage;
+				Context.History.DestStudyStorageKey = _destinationStudyStorage.Key;
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			int counter = 0;
 			Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 
-			StudyProcessorContext context = new StudyProcessorContext(Context.DestStorageLocation);
+			StudyProcessorContext context = new StudyProcessorContext(_destinationStudyStorage);
 
 			// Load the rules engine
 			context.SopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Context.WorkQueueItem.ServerPartitionKey);
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			context.SopProcessedRulesEngine.Load();
 
 			// Load the Study XML File
-			StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
+			StudyXml xml = LoadStudyXml(_destinationStudyStorage);
 
 			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 				{
 					file.Load();
 					
-					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
+					string groupID = ServerHelper.GetUidGroup(file, _destinationStudyStorage.ServerPartition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
 					ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, uid, GetReconcileUidPath(uid));
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 			String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
 			using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
 			{
-				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, Context.DestStorageLocation, uidGroup);
+				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, _destinationStudyStorage, uidGroup);
 				DicomProcessingResult result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
 				if (!result.Successful)
 				{

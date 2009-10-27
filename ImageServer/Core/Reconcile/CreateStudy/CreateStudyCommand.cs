@@ -53,61 +53,83 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 	/// </summary>
 	class CreateStudyCommand : ReconcileCommandBase
 	{
-		internal class CommandParameters
+		#region Private Members
+
+		private readonly List<BaseImageLevelUpdateCommand> _commands;
+		private StudyStorageLocation _destinationStudyStorage;
+		private readonly bool _complete;
+
+		#endregion
+
+		#region Properties
+
+		public StudyStorageLocation Location
 		{
-			public List<BaseImageLevelUpdateCommand> Commands;
+			get { return _destinationStudyStorage; }
 		}
 
-		private readonly CommandParameters _parameters;
+		private List<BaseImageLevelUpdateCommand> Commands
+		{
+			get { return _commands; }
+		}
 
-	    #region Constructors
+		#endregion
+
+		#region Constructors
 
 		/// <summary>
 		/// Create an instance of <see cref="CreateStudyCommand"/>
 		/// </summary>
-		public CreateStudyCommand(ReconcileStudyProcessorContext context, CommandParameters parameters)
+		public CreateStudyCommand(ReconcileStudyProcessorContext context, List<BaseImageLevelUpdateCommand> commands, bool complete)
 			: base("Create Study", true, context)
 		{
-			_parameters = parameters;
-		}
-
-		private CommandParameters Parameters
-		{
-			get { return _parameters; }
+			_commands = commands;
+			_complete = complete;
 		}
 
 		#endregion
 
 		#region Overriden Protected Methods
+
 		protected override void OnExecute(ServerCommandProcessor theProcessor)
 		{
 			Platform.CheckForNullReference(Context, "Context");
 			Platform.CheckForNullReference(Context.WorkQueueItem, "Context.WorkQueueItem");
 			Platform.CheckForNullReference(Context.WorkQueueUidList, "Context.WorkQueueUidList");
 
-            if (Context.DestStorageLocation!=null)
-                EnsureStudyCanBeUpdated(Context.DestStorageLocation);
+			// Create or Load the Destination StorageLocation.  Note that this may cause 
+			// issues with orphan StorageLocations if none of the images below are actually
+			// processed.  This must be done becasue the SopInstanceProcessor requires the
+			// destination location.
+			CreateDestinationStudyStorage();
 
             try
             {
                 CreateOrLoadUidMappings();
 
                 PrintChangeList();
+
                 ProcessUidList();
             }
             finally
             {
-                UpdateHistory();
+                UpdateHistory(_destinationStudyStorage);
             }
+
+			if (_complete)
+			{
+				StudyRulesEngine engine = new StudyRulesEngine(_destinationStudyStorage, Context.Partition);
+				engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, theProcessor);
+			}
 		}
 
         protected void CreateOrLoadUidMappings()
         {
             // Load the mapping for the study
-            if (Context.DestStorageLocation != null)
+            if (_destinationStudyStorage != null)
             {
                 UidMapXml xml = new UidMapXml();
-                xml.Load(Context.DestStorageLocation);
+                xml.Load(_destinationStudyStorage);
                 UidMapper = new UidMapper(xml);
             }
             else
@@ -118,12 +140,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
             UidMapper.SeriesMapUpdated += UidMapper_SeriesMapUpdated;
         }
 
-
 	    protected override void OnUndo()
 		{
 
 		}
-
 
 		#endregion
 
@@ -133,7 +153,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		{
 			StringBuilder log = new StringBuilder();
 			log.AppendFormat("Applying following changes to images:\n");
-			foreach (BaseImageLevelUpdateCommand cmd in Parameters.Commands)
+			foreach (BaseImageLevelUpdateCommand cmd in Commands)
 			{
 				log.AppendFormat("{0}", cmd);
 				log.AppendLine();
@@ -148,13 +168,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			int counter = 0;
 			Platform.Log(LogLevel.Info, "Populating images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
 
-			// Create or Load the Destination StorageLocation.  Note that this may cause 
-			// issues with orphan StorageLocations if none of the images below are actually
-			// processed.  This must be done becasue the SopInstanceProcessor requires the
-			// destination location.
-			CreateDestinationStudyStorage();
-
-			StudyProcessorContext context = new StudyProcessorContext(Context.DestStorageLocation);
+			StudyProcessorContext context = new StudyProcessorContext(_destinationStudyStorage);
 
 			// Load the rules engine
 			context.SopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Context.WorkQueueItem.ServerPartitionKey);
@@ -162,13 +176,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			context.SopProcessedRulesEngine.Load();
 
 			// Add the update commands to update the files.  Note that the new Study Instance Uid is already part of this update.
-			context.UpdateCommands.AddRange(Parameters.Commands);
+			context.UpdateCommands.AddRange(Commands);
 
 			// Add command to update the Series & Sop Instances.
-			context.UpdateCommands.Add(new SeriesSopUpdateCommand(Context.WorkQueueItemStudyStorage, Context.DestStorageLocation, UidMapper));
+			context.UpdateCommands.Add(new SeriesSopUpdateCommand(Context.WorkQueueItemStudyStorage, _destinationStudyStorage, UidMapper));
 
 			// Create/Load the Study XML File
-			StudyXml xml = LoadStudyXml(Context.DestStorageLocation);
+			StudyXml xml = LoadStudyXml(_destinationStudyStorage);
 
 			foreach (WorkQueueUid uid in Context.WorkQueueUidList)
 			{
@@ -178,8 +192,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				try
 				{
 					file.Load();
-					
-					string groupID = ServerHelper.GetUidGroup(file, Context.DestStorageLocation.ServerPartition, Context.WorkQueueItem.InsertTime);
+
+					string groupID = ServerHelper.GetUidGroup(file, _destinationStudyStorage.ServerPartition, Context.WorkQueueItem.InsertTime);
 
 				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
                     ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, uid, imagePath);
@@ -202,10 +216,18 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		private void CreateDestinationStudyStorage()
 		{
+			// This really should never happen;
+			if (Context.History.DestStudyStorageKey != null)
+			{
+				_destinationStudyStorage =
+					StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.StudyStorageKey))[0];
+				return;
+			}
+
 			string newStudyInstanceUid = string.Empty;
 
 			// Get the new Study Instance Uid by looking through the update commands
-			foreach (BaseImageLevelUpdateCommand command in Parameters.Commands)
+			foreach (BaseImageLevelUpdateCommand command in Commands)
 			{
 				SetTagCommand setTag = command as SetTagCommand;
 				if (setTag != null && setTag.Tag.TagValue.Equals(DicomTags.StudyInstanceUid))
@@ -222,16 +244,16 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
 			{
 				// Assign new series and instance uid
-				if (Context.DestStorageLocation == null)
-				{
-					processor.AddCommand(new InitializeStorageCommand(Context, newStudyInstanceUid, Context.WorkQueueItemStudyStorage.StudyFolder,
-						TransferSyntax.GetTransferSyntax(Context.WorkQueueItemStudyStorage.TransferSyntaxUid)));
-				}
+				InitializeStorageCommand command = new InitializeStorageCommand(Context, newStudyInstanceUid, Context.WorkQueueItemStudyStorage.StudyFolder,
+					TransferSyntax.GetTransferSyntax(Context.WorkQueueItemStudyStorage.TransferSyntaxUid));
+				processor.AddCommand(command);
 
 				if (!processor.Execute())
 				{
 					throw new ApplicationException(String.Format("Unable to create Study Storage for study: {0}", newStudyInstanceUid), processor.FailureException);
 				}
+
+				_destinationStudyStorage = command.Location;
 			}
 		}
 
@@ -246,8 +268,14 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 		private readonly string _studyInstanceUid;
 		private readonly string _studyDate;
 		private readonly TransferSyntax _transferSyntax;
+		private StudyStorageLocation _location;
 
-		public InitializeStorageCommand(ReconcileStudyProcessorContext context, DicomFile file)
+		public StudyStorageLocation Location
+		{
+			get { return _location; }
+		}
+
+		public InitializeStorageCommand(ReconcileStudyProcessorContext context, DicomMessageBase file)
 			:base("InitializeStorageCommand", true, context)
 		{
 			Platform.CheckForNullReference(file, "file");
@@ -271,9 +299,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
-			if (Context.DestStorageLocation != null)
-				return;
-			Context.DestStorageLocation = FindOrCreateStudyStorageLocation();
+			_location = FindOrCreateStudyStorageLocation();
 		}
 
 		private StudyStorageLocation FindOrCreateStudyStorageLocation()
@@ -287,9 +313,11 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			String folder = ServerHelper.ResolveStorageFolder(Context.Partition, _studyInstanceUid, _studyDate, UpdateContext, true);
             
 			IQueryStudyStorageLocation locQuery = UpdateContext.GetBroker<IQueryStudyStorageLocation>();
-			StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-			locParms.StudyInstanceUid = _studyInstanceUid;
-			locParms.ServerPartitionKey = Context.Partition.GetKey();
+			StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters
+			                                               	{
+			                                               		StudyInstanceUid = _studyInstanceUid,
+			                                               		ServerPartitionKey = Context.Partition.GetKey()
+			                                               	};
 			IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
 
 			if (studyLocationList.Count == 0)
@@ -312,9 +340,9 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 				ServerFilesystemInfo filesystem = selector.SelectFilesystem();
 				if (filesystem == null)
 				{
-					Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
-
-					return null;
+					const string message =  "Unable to select location for storing study.";
+					Platform.Log(LogLevel.Error, message);
+					throw new Exception(message);
 				}
 
 				IInsertStudyStorage locInsert = UpdateContext.GetBroker<IInsertStudyStorage>();
@@ -349,9 +377,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			{
 				if (!FilesystemMonitor.Instance.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
 				{
-					Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}",
+					string message = string.Format("Unable to find writable filesystem for study {0} on Partition {1}",
 								 _studyInstanceUid, Context.Partition.Description);
-					return null;
+					Platform.Log(LogLevel.Error, message);
+					throw new Exception(message);
 				}
 			}
 
