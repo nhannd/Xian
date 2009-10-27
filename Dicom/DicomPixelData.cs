@@ -722,7 +722,7 @@ namespace ClearCanvas.Dicom
         {
             if (_ms == null)
             {
-                _ms = _pd == null || _pd.Count == 0 ? new MemoryStream(frameData.Length) : new MemoryStream((byte[]) _pd.Values);
+                _ms = _pd == null || _pd.Count == 0 ? new MemoryStream(frameData.Length * NumberOfFrames) : new MemoryStream((byte[]) _pd.Values);
             }
 
             _ms.Seek(0, SeekOrigin.End);
@@ -732,7 +732,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Get a specific uncompressed frame.
         /// </summary>
-        /// <param name="frame">The frame to retrieve</param>
+        /// <param name="frame">The zero offset frame to retrieve</param>
         /// <returns>A byte array containing the frame data.</returns>
         /// <param name="photometricInterpretation">The photometric interpretation of the pixel data.</param>
         public override byte[] GetFrame(int frame, out string photometricInterpretation)
@@ -745,10 +745,10 @@ namespace ClearCanvas.Dicom
 
             if (_ms != null)
             {
-                _ms.Seek(0, SeekOrigin.Begin);
-                byte[] pixels = new byte[UncompressedFrameSize];
+                _ms.Seek(frame*UncompressedFrameSize, SeekOrigin.Begin);
+				byte[] pixels = new byte[UncompressedFrameSize];
 
-                _ms.Read(pixels, frame*UncompressedFrameSize, UncompressedFrameSize);
+                _ms.Read(pixels, 0, UncompressedFrameSize);
 
                 return pixels;
             }
