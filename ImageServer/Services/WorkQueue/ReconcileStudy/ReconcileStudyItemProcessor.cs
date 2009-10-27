@@ -129,14 +129,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         protected override bool CanStart()
         {
             // cannot start if the existing study is scheduled for update
-            IList<Model.WorkQueue> items = FindRelatedWorkQueueItems(WorkQueueItem, new WorkQueueTypeEnum[]
+            IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, new []
                                               {
                                                   WorkQueueTypeEnum.ReprocessStudy
                                               }, 
                                               null);
-            if (!( items==null || items.Count == 0))
+            if (!(relatedItems == null || relatedItems.Count == 0))
             {
-				PostponeItem(WorkQueueItem, "Study is scheduled for reprocess");
+                PostponeItem("Study is scheduled for reprocess");
             	return false;
             }
         	return true;

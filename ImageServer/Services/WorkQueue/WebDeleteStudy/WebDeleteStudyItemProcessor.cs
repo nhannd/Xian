@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 				             "ProcessDuplicate cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
 				             failureReason);
 
-				PostponeItem(WorkQueueItem, string.Format("Study is being locked by another processor: {0}", failureReason));
+				PostponeItem(string.Format("Study is being locked by another processor: {0}", failureReason));
 				return false;
 			}
 

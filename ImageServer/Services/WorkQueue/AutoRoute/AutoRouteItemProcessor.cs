@@ -320,7 +320,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             if (DeviceIsBusy(DestinationDevice))
             {
                 DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.ProcessDelaySeconds);
-                PostponeItem(WorkQueueItem, newScheduledTime, newScheduledTime.AddSeconds(WorkQueueProperties.ExpireDelaySeconds),
+                PostponeItem(newScheduledTime, newScheduledTime.AddSeconds(WorkQueueProperties.ExpireDelaySeconds),
                              "Devices is busy. Max connection limit has been reached for the device");
                 return false;
             }

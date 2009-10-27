@@ -551,7 +551,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     // NOTE: If the study could not be restored after certain period of time, this entry will be failed.
                     if (ex.RestoreRequested)
                     {
-                        PostponeItem(item, string.Format("Unable to auto-reconcile at this time: the target study {0} is not online yet. Restore has been requested.", ex.StudyInstanceUid));
+                        PostponeItem(string.Format("Unable to auto-reconcile at this time: the target study {0} is not online yet. Restore has been requested.", ex.StudyInstanceUid));
                         return;
                     }
                 	// fail right away
@@ -614,7 +614,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					Platform.Log(LogLevel.Debug,
 								 "StudyProcess cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
 								 failureReason);
-					PostponeItem(WorkQueueItem, String.Format("Study is being locked by another processor: {0}", failureReason));
+					PostponeItem(String.Format("Study is being locked by another processor: {0}", failureReason));
                     return false;
                 }
             }

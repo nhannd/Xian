@@ -186,7 +186,15 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Query
 DROP PROCEDURE [dbo].[QueryCurrentStudyMove]
 GO
 
+/****** Object:  StoredProcedure [dbo].[WebResetWorkQueue]    Script Date: 10/22/2009 11:21:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebResetWorkQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[WebResetWorkQueue]
+GO
 
+/****** Object:  StoredProcedure [dbo].[UpdateStudyStateFromWorkQueue]    Script Date: 10/26/2009 16:55:26 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateStudyStateFromWorkQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[UpdateStudyStateFromWorkQueue]
+GO
 
 
 /****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 16:45:14 ******/
@@ -785,6 +793,94 @@ END
 ' 
 END
 GO
+
+
+
+set ANSI_NULLS ON
+set QUOTED_IDENTIFIER ON
+go
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateStudyStateFromWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 26, 2009
+-- Description:	Update the study state based on the work queue.
+--
+-- =============================================
+CREATE PROCEDURE [dbo].[UpdateStudyStateFromWorkQueue]
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	DECLARE @NextState smallint
+	DECLARE @NextWorkQueueEntryGUID uniqueidentifier	
+
+	
+	DECLARE @WorkQueueStatusInProgress smallint
+	SELECT @WorkQueueStatusInProgress = Enum FROM WorkQueueStatusEnum WITH(NOLOCK) WHERE Lookup=''In Progress''
+
+	DECLARE @CurrentState smallint
+	SELECT @CurrentState = QueueStudyStateEnum FROM StudyStorage WHERE GUID=@StudyStorageGUID
+
+	DECLARE @StudyStateIdle smallint
+	SELECT  @StudyStateIdle = Enum FROM QueueStudyStateEnum WITH (NOLOCK) WHERE Lookup=''Idle''
+
+	-- Check if there''s any entry in the queue corresponding to the current state
+	-- If there''s then assume it''s correct and leave it.
+	IF NOT EXISTS(SELECT * FROM WorkQueueTypeProperties p WITH(NOLOCK)
+				JOIN WorkQueue q WITH(NOLOCK) ON q.WorkQueueTypeEnum =p.WorkQueueTypeEnum 
+				WHERE q.StudyStorageGUID=@StudyStorageGUID AND 
+					  p.QueueStudyStateEnum=@CurrentState AND @CurrentState<>@StudyStateIdle)
+	BEGIN
+		-- Current state is wrong. Need to reset it.
+
+		-- If there''s an In Progress entry then use its state
+		SELECT TOP 1 @NextWorkQueueEntryGUID=q.GUID, @NextState=p.QueueStudyStateEnum
+		FROM WorkQueue q WITH(NOLOCK) 
+		JOIN WorkQueueTypeProperties p WITH(NOLOCK) ON p.WorkQueueTypeEnum = q.WorkQueueTypeEnum
+		WHERE q.StudyStorageGUID=@StudyStorageGUID 
+			AND WorkQueueStatusEnum = @WorkQueueStatusInProgress
+		ORDER BY p.QueueStudyStateOrder DESC, q.ScheduledTime ASC
+
+		IF @@ROWCOUNT<>0
+		BEGIN
+			UPDATE StudyStorage SET QueueStudyStateEnum=@NextState
+			WHERE GUID=@StudyStorageGUID 
+		END
+
+		-- Otherwise, (empty queue or none of them is In Progress),
+		-- set to Idle or use its state corresponding to the first entry
+		ELSE
+		BEGIN
+			-- WorkQueue is empty or 
+			SELECT TOP 1 @NextWorkQueueEntryGUID=q.GUID, @NextState=p.QueueStudyStateEnum
+			FROM WorkQueue q WITH(NOLOCK) 
+			JOIN WorkQueueTypeProperties p WITH(NOLOCK) ON p.WorkQueueTypeEnum = q.WorkQueueTypeEnum
+			WHERE q.StudyStorageGUID=@StudyStorageGUID 
+				AND WorkQueueStatusEnum <> @WorkQueueStatusInProgress
+			ORDER BY p.QueueStudyStateOrder DESC, q.ScheduledTime ASC
+
+			IF @@ROWCOUNT<>0
+			BEGIN
+				UPDATE StudyStorage SET QueueStudyStateEnum=@NextState
+				WHERE GUID=@StudyStorageGUID 
+			END
+			ELSE
+				UPDATE StudyStorage SET QueueStudyStateEnum=@StudyStateIdle
+				WHERE GUID=@StudyStorageGUID
+		END
+	END
+END
+'
+END
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[UpdateWorkQueue]    Script Date: 04/26/2008 00:28:23 ******/
 SET ANSI_NULLS ON
 GO
@@ -806,6 +902,7 @@ EXEC dbo.sp_executesql @statement = N'
 --                by another process. When this happens, the entry is now left in Pending status.
 --  May 28, 2009, May 03 rev had bug where a Lock was not released in StudyStorage when condition was met.
 --  Sep 11, 2009, Added LastUpdateTime
+--	Oct 26, 2009, Called UpdateStudyStateFromWorkQueue to reset the study state properly (instead of setting to Idle)
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -857,16 +954,10 @@ BEGIN
 
 		IF @@ROWCOUNT<>0
 		BEGIN
-			if @QueueStudyStateEnum is not NULL
-			BEGIN
-				UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate(), QueueStudyStateEnum=@QueueStudyStateEnum  
+			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate()
 				WHERE GUID = @StudyStorageGUID AND Lock = 1
-			END
-			ELSE
-			BEGIN		
-				UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-				WHERE GUID = @StudyStorageGUID AND Lock = 1
-			END
+
+			EXEC dbo.UpdateStudyStateFromWorkQueue @StudyStorageGUID
 		END		
 		ELSE
 		BEGIN
@@ -2330,6 +2421,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 --
 -- Oct 14, 2008: Call UpdateQueueStudyState to update the study status
 -- Oct 23, 2008: Removed UpdateQueueStudyState
+-- Oct 26, 2009: Added UpdateStudyStateFromWorkQueue
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2339,7 +2431,7 @@ CREATE PROCEDURE [dbo].[DeleteWorkQueue]
 	@StudyStorageGUID uniqueidentifier
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
+-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
@@ -2352,9 +2444,18 @@ BEGIN
 	declare @PendingStatusEnum as smallint
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	
+	declare @FailedStatusEnum as smallint
+	select @FailedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
+	
 	declare @HighPriorityEnum as smallint
 	select @HighPriorityEnum = Enum from WorkQueuePriorityEnum where Lookup = ''High''
 
+	declare @QueueStudyStateIdle as smallint
+	select @QueueStudyStateIdle = Enum from QueueStudyStateEnum where Lookup = ''Idle''
+	
+	DECLARE @NextQueueEntryGUID uniqueidentifier
+			
+			
 	BEGIN TRANSACTION
 
 	UPDATE StudyStorage
@@ -2368,9 +2469,13 @@ BEGIN
 		-- Make sure we lock the study, so no one else can get it
 		COMMIT TRANSACTION
 
+		-- Find the study state for this work queue entry
+		declare @NextState smallint
+		
+
 		BEGIN TRANSACTION
 
-		-- Create ''CleanupStudy'' when deleting ''StudyProcess'' 
+		-- Create ''CleanupStudy'' when deleting ''StudyProcess''
 		IF (@workQueueTypeEnum = @StudyProcessTypeEnum)
 		BEGIN
 			declare @CleanupStudyTypeEnum as smallint
@@ -2420,9 +2525,9 @@ BEGIN
 
 		UPDATE StudyStorage
 			SET Lock = 0, LastAccessedTime = getdate()
-		WHERE 
-			Lock = 1 
-			AND GUID = @StudyStorageGUID
+		WHERE Lock = 1 AND GUID = @StudyStorageGUID
+
+		EXEC dbo.UpdateStudyStateFromWorkQueue @StudyStorageGUID=@StudyStorageGUID
 
 		COMMIT TRANSACTION
 	END
@@ -3972,8 +4077,9 @@ EXEC dbo.sp_executesql @statement = N'
 -- Create date: September 11, 2009
 -- Description:	Postpone (reschedule) a work queue entry
 -- History:
---	Sept 16, 2009 :  Added "UpdateWorkQueue" parameter
---
+--	Sep 16, 2009 :  Added "UpdateWorkQueue" parameter
+--  Oct 22, 2009 :  Added NewQueueStudyStateEnum parameter. Used for setting the 
+--					study state.
 -- =================================================================
 CREATE PROCEDURE [dbo].[PostponeWorkQueue]  
 	-- Add the parameters for the stored procedure here
@@ -3989,23 +4095,25 @@ BEGIN
 	SET NOCOUNT ON;
 
 	declare @StudyStorageGUID uniqueidentifier
-	declare @PendingStatusEnum as smallint
+	declare @PendingStatusEnum smallint
+	declare @QueueStudyStateIdle  smallint
 
 	SELECT @StudyStorageGUID=StudyStorageGUID FROM WorkQueue WHERE GUID=@WorkQueueGUID
 	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = ''Pending''
+	SELECT @QueueStudyStateIdle = Enum FROM QueueStudyStateEnum WHERE Lookup = ''Idle''
 	
 	BEGIN TRANSACTION
 
 		IF @UpdateWorkQueue=0
 		BEGIN
 			UPDATE WorkQueue
-				SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum, FailureDescription=@Reason
+				SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum
 			WHERE GUID=@WorkQueueGUID
 		END
 		ELSE
 		BEGIN
 			UPDATE WorkQueue
-			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate(), FailureDescription=@Reason
+			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate()
 			WHERE GUID=@WorkQueueGUID
 		END
 
@@ -4013,6 +4121,10 @@ BEGIN
 		-- Unlock the study
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1	
+
+		-- Update the Study State
+		--EXEC dbo.UpdateStudyStateFromWorkQueue	@StudyStorageGUID=@StudyStorageGUID
+ 			
 
 	COMMIT TRANSACTION
 END
@@ -4051,3 +4163,81 @@ END
 END
 GO
 
+set ANSI_NULLS ON
+set QUOTED_IDENTIFIER ON
+go
+
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebResetWorkQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 22, 2009
+-- Description:	Reset the work queue entry from the Web GUI
+--				Also update the study state if necessary.
+-- 
+--	History:
+--		Oct 26, 2009: Update the study state when necessary.
+-- =============================================
+CREATE PROCEDURE [dbo].[WebResetWorkQueue]
+	@WorkQueueGUID uniqueidentifier,
+	@NewScheduledTime datetime = null,
+	@NewExpirationTime datetime = null,
+	@NewPriority smallint = null
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @PendingStatusEnum as smallint
+	declare @FailStatusEnum smallint
+	declare @QueueStudyStateIdle smallint
+	declare @ScheduledTime datetime
+	declare @ExpirationTime datetime
+	declare @Priority smallint
+	declare @StudyStorageGUID uniqueidentifier
+	
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @FailStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
+	select @QueueStudyStateIdle = Enum from QueueStudyStateEnum where Lookup = ''Idle''
+
+	SET @ScheduledTime=@NewScheduledTime
+	SET @ExpirationTime=@NewExpirationTime
+	SET @Priority=@NewPriority
+
+	IF @ScheduledTime IS NULL
+		SET @ScheduledTime=getdate()
+
+	IF @ExpirationTime IS NULL
+		SET @NewExpirationTime=DateAdd(minute, 15, getdate())
+
+	IF @Priority IS NULL
+		SELECT @Priority=WorkQueuePriorityEnum 
+		FROM WorkQueue WHERE GUID=@WorkQueueGUID
+
+	SELECT @StudyStorageGUID=StudyStorageGUID
+	FROM WorkQueue WITH (NOLOCK)
+	WHERE GUID=@WorkQueueGUID
+
+	BEGIN TRANSACTION
+		
+		UPDATE WorkQueue
+		SET WorkQueueStatusEnum=@PendingStatusEnum,
+			ScheduledTime = @ScheduledTime, ExpirationTime=@ExpirationTime,
+			WorkQueuePriorityEnum=@Priority
+		WHERE GUID=@WorkQueueGUID
+
+		UPDATE WorkQueueUid
+		SET Failed=0, FailureCount=0
+		WHERE WorkQueueGUID=@WorkQueueGUID
+
+		EXEC [dbo].[UpdateStudyStateFromWorkQueue] @StudyStorageGUID=@StudyStorageGUID
+
+	COMMIT 
+	
+	
+END
+'
+END
+GO

@@ -57,22 +57,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public class WorkQueueAlertContextData
     {
         #region Private Members
-        private String _workQueueItemKey;
-        private ValidationStudyInfo _validationStudyInfo; 
+
         #endregion
 
         #region Public Properties
-        public String WorkQueueItemKey
-        {
-            get { return _workQueueItemKey; }
-            set { _workQueueItemKey = value; }
-        }
 
-        public ValidationStudyInfo ValidationStudyInfo
-        {
-            get { return _validationStudyInfo; }
-            set { _validationStudyInfo = value; }
-        } 
+        public string WorkQueueItemKey { get; set; }
+
+        public ValidationStudyInfo ValidationStudyInfo { get; set; }
+
         #endregion
     }
 
@@ -135,11 +128,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private IList<WorkQueueUid> _uidList;
         private ServerPartition _partition;
         protected Study _theStudy;
-    	private bool _cancelPending = false;
+    	private bool _cancelPending;
     	private readonly object _syncRoot = new object();
         private StudyIntegrityValidationModes _validationModes = StudyIntegrityValidationModes.None;
     	private WorkQueueTypeProperties _workQueueProperties;
-        
+
         #endregion
 
         #region Constructors
@@ -347,7 +340,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         if (PerformAutoRecovery(item, reason))
                         {
                             Platform.Log(LogLevel.Info, "Auto-recovery was successful (some operations may still be pending). Current {0} entry will resume later.", item.WorkQueueTypeEnum);
-                            PostponeItem(item, "Auto-recovery was triggered.");
+                            PostponeItem("Auto-recovery was triggered.");
                         }
                         else
                         {
@@ -452,19 +445,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							// Get the FilesystemStudyStorage update broker ready
         					IFilesystemStudyStorageEntityBroker filesystemQueueBroker =
 								updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
-							FilesystemStudyStorageUpdateColumns filesystemQueueUpdate = new FilesystemStudyStorageUpdateColumns();
-        					filesystemQueueUpdate.ServerTransferSyntaxKey = serverSyntax.GetKey();
-							FilesystemStudyStorageSelectCriteria filesystemQueueCriteria = new FilesystemStudyStorageSelectCriteria();
+							FilesystemStudyStorageUpdateColumns filesystemQueueUpdate = new FilesystemStudyStorageUpdateColumns
+							                                                                {
+							                                                                    ServerTransferSyntaxKey = serverSyntax.GetKey()
+							                                                                };
+        				    FilesystemStudyStorageSelectCriteria filesystemQueueCriteria = new FilesystemStudyStorageSelectCriteria();
         					filesystemQueueCriteria.StudyStorageKey.EqualTo(theStudyStorage.GetKey());
 
 							// Get the StudyStorage update broker ready
         					IStudyStorageEntityBroker studyStorageBroker =
         						updateContext.GetBroker<IStudyStorageEntityBroker>();
-							StudyStorageUpdateColumns studyStorageUpdate = new StudyStorageUpdateColumns();
-        					studyStorageUpdate.StudyStatusEnum = theStatus;
-        					studyStorageUpdate.LastAccessedTime = Platform.Time;
+							StudyStorageUpdateColumns studyStorageUpdate = new StudyStorageUpdateColumns
+							                                                   {
+							                                                       StudyStatusEnum = theStatus,
+							                                                       LastAccessedTime = Platform.Time
+							                                                   };
 
-							if (!filesystemQueueBroker.Update(filesystemQueueCriteria,filesystemQueueUpdate))
+        				    if (!filesystemQueueBroker.Update(filesystemQueueCriteria,filesystemQueueUpdate))
 							{
 								Platform.Log(LogLevel.Error, "Unable to update FilesystemQueue row: Study {0}, Server Entity {1}",
 											 theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);
@@ -523,13 +520,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 					{
 						IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-						UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-						parms.WorkQueueKey = item.GetKey();
-						parms.StudyStorageKey = item.StudyStorageKey;
-						parms.ProcessorID = item.ProcessorID;
-
-						WorkQueueSettings settings = WorkQueueSettings.Instance;
-
+						UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters
+						                                      {
+						                                          WorkQueueKey = item.GetKey(),
+						                                          StudyStorageKey = item.StudyStorageKey,
+						                                          ProcessorID = item.ProcessorID
+						                                      };
 
 						DateTime now = Platform.Time;
 
@@ -605,18 +601,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get; set;
         }
 
-        /// <summary>
-        /// Gets the <see cref="QueueStudyStateEnum"/> value to be used for the specified work queue item status
-        /// </summary>
-        /// <param name="workQueueStatus"></param>
-        /// <returns></returns>
-        protected virtual QueueStudyStateEnum GetQueryStudyState(WorkQueueStatusEnum workQueueStatus)
-        {
-        	if (workQueueStatus == WorkQueueStatusEnum.Completed)
-                return QueueStudyStateEnum.Idle;
-        	return null;
-        }
-
     	/// <summary>
 		/// Set a status of <see cref="WorkQueue"/> item after batch processing has been completed.
 		/// </summary>
@@ -648,12 +632,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 						{
 							IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-							UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-							parms.WorkQueueKey = item.GetKey();
-							parms.StudyStorageKey = item.StudyStorageKey;
-							parms.ProcessorID = item.ProcessorID;
+							UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters
+							                                      {
+							                                          WorkQueueKey = item.GetKey(),
+							                                          StudyStorageKey = item.StudyStorageKey,
+							                                          ProcessorID = item.ProcessorID
+							                                      };
 
-							if (item.FailureDescription != null)
+						    if (item.FailureDescription != null)
 								parms.FailureDescription = item.FailureDescription;
 
 							parms.FailureCount = item.FailureCount + 1;
@@ -789,16 +775,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 else
                                     Platform.Log(LogLevel.Error, "Abort {0} WorkQueue entry ({1}). Reason: {2}", item.WorkQueueTypeEnum, item.GetKey(), failureDescription);
                                 IUpdateWorkQueue broker = updateContext.GetBroker<IUpdateWorkQueue>();
-                                UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                                parms.ProcessorID = ServerPlatform.ProcessorId;
-                                parms.WorkQueueKey = item.GetKey();
-                                parms.StudyStorageKey = item.StudyStorageKey;
-                                parms.FailureCount = item.FailureCount + 1;
-                                parms.FailureDescription = failureDescription;
-
-                                parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
-                                parms.ScheduledTime = Platform.Time;
-                                parms.ExpirationTime = Platform.Time.AddDays(1);
+                                UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters
+                                                                      {
+                                                                          ProcessorID = ServerPlatform.ProcessorId,
+                                                                          WorkQueueKey = item.GetKey(),
+                                                                          StudyStorageKey = item.StudyStorageKey,
+                                                                          FailureCount = item.FailureCount + 1,
+                                                                          FailureDescription = failureDescription,
+                                                                          WorkQueueStatusEnum = WorkQueueStatusEnum.Failed,
+                                                                          ScheduledTime = Platform.Time,
+                                                                          ExpirationTime = Platform.Time.AddDays(1)
+                                                                      };
 
                                 if (false == broker.Execute(parms))
                                 {
@@ -807,12 +794,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 else
                                 {
                                     updateContext.Commit();
-
-                                    if (generateAlert)
-                                    {
-                                        //WorkQueueProcessor.RaiseAlert(item, AlertLevel.Error,
-                                        //                              String.Format("Aborted {0} WorkQueue entry ({1}). Reason: {2}",item.WorkQueueTypeEnum, item.GetKey(), failureDescription));
-                                    }
                                 }
                             }
                             #endregion
@@ -868,13 +849,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                         {
                             IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                            UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                            parms.ProcessorID = ServerPlatform.ProcessorId;
-
-                            parms.WorkQueueKey = item.GetKey();
-                            parms.StudyStorageKey = item.StudyStorageKey;
-                            parms.FailureCount = item.FailureCount + 1;
-                            parms.FailureDescription = failureDescription;
+                            UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters
+                                                                  {
+                                                                      ProcessorID = ServerPlatform.ProcessorId,
+                                                                      WorkQueueKey = item.GetKey(),
+                                                                      StudyStorageKey = item.StudyStorageKey,
+                                                                      FailureCount = item.FailureCount + 1,
+                                                                      FailureDescription = failureDescription
+                                                                  };
 
                             WorkQueueSettings settings = WorkQueueSettings.Instance;
                             if ((item.FailureCount + 1) > WorkQueueProperties.MaxFailureCount)
@@ -1025,11 +1007,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                      {
                          IWorkQueueUidEntityBroker update = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
 
-                         WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+                         WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns
+                                                                 {
+                                                                     Duplicate = sop.Duplicate,
+                                                                     Failed = sop.Failed,
+                                                                     FailureCount = sop.FailureCount
+                                                                 };
 
-                         columns.Duplicate = sop.Duplicate;
-                         columns.Failed = sop.Failed;
-                         columns.FailureCount = sop.FailureCount;
                          if (sop.Extension != null)
                              columns.Extension = sop.Extension;
 
@@ -1074,15 +1058,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            return theXml;
         }
 
-        protected virtual void PostponeItem(Model.WorkQueue item, string reasonText)
-		{
-			WorkQueueSettings settings = WorkQueueSettings.Instance;
-			DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
-			DateTime expireTime = newScheduledTime.Add(TimeSpan.FromMinutes(2));
-            PostponeItem(item, newScheduledTime, expireTime, reasonText );
-		}
+        protected void PostponeItem(string reasonText)
+        {
+            DateTime newScheduledTime = Platform.Time.AddSeconds(WorkQueueProperties.PostponeDelaySeconds);
+            DateTime expireTime = newScheduledTime.Add(TimeSpan.FromMinutes(2));
+            PostponeItem(newScheduledTime, expireTime, reasonText);
+        }
 
-        private bool AppearsStuck(Model.WorkQueue item, out string reason)
+        
+        protected void PostponeItem(DateTime newScheduledTime, DateTime expireTime, string postponeReason)
+        {
+            Model.WorkQueue item = WorkQueueItem;
+            DBUpdateTime.Add(
+               delegate
+               {
+                   string stuckReason;
+                   bool updatedBefore = item.LastUpdatedTime > DateTime.MinValue;
+
+                   if (updatedBefore && AppearsStuck(item, out stuckReason))
+                   {
+                       string reason = String.IsNullOrEmpty(stuckReason)
+                                          ? String.Format("Aborted because {0}", postponeReason)
+                                          : String.Format("Aborted because {0}. {1}", postponeReason, stuckReason);
+                       AbortQueueItem(item, reason, true);
+                   }
+                   else
+                   {
+                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, postponeReason, !updatedBefore);
+                   }
+               }
+               );
+        }
+
+        private static bool AppearsStuck(Model.WorkQueue item, out string reason)
         {
             IList<Model.WorkQueue> allItems = ServerHelper.FindWorkQueueEntries(item.StudyStorageKey, null);
             bool updatedBefore = item.LastUpdatedTime > DateTime.MinValue;
@@ -1123,31 +1131,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             return false;
         }
-
-        protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string postponeReason)
-        {
-            DBUpdateTime.Add(
-               delegate
-               {
-                   string stuckReason;
-                   bool updatedBefore = item.LastUpdatedTime > DateTime.MinValue;
-
-                   if (updatedBefore && AppearsStuck(item, out stuckReason))
-                   {
-                       string reason = String.IsNullOrEmpty(stuckReason)
-                                          ? String.Format("Aborted because {0}", postponeReason)
-                                          : String.Format("Aborted because {0}. {1}", postponeReason, stuckReason);
-                       AbortQueueItem(item, reason, true);
-                   }
-                   else
-                   {
-                       InternalPostponeWorkQueue(item, newScheduledTime, expireTime, postponeReason, !updatedBefore);
-                   }
-               }
-               );
-        }
-
-        private void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText, bool updateWorkQueueEntry)
+        private static void InternalPostponeWorkQueue(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime, string reasonText, bool updateWorkQueueEntry)
         {
             Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}: {2}. [GUID={3}]", item.WorkQueueTypeEnum, newScheduledTime, reasonText, item.GetKey());
 
@@ -1156,12 +1140,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 IPostponeWorkQueue broker = updateContext.GetBroker<IPostponeWorkQueue>();
 
 
-                PostponeWorkQueueParameters parameters = new PostponeWorkQueueParameters();
-                parameters.WorkQueueKey = item.Key;
-                parameters.Reason = reasonText;
-                parameters.ScheduledTime = newScheduledTime;
-                parameters.ExpirationTime = expireTime;
-                parameters.UpdateWorkQueue = updateWorkQueueEntry;
+                PostponeWorkQueueParameters parameters = new PostponeWorkQueueParameters
+                                                             {
+                                                                 WorkQueueKey = item.Key,
+                                                                 Reason = reasonText,
+                                                                 ScheduledTime = newScheduledTime,
+                                                                 ExpirationTime = expireTime,
+                                                                 UpdateWorkQueue = updateWorkQueueEntry
+                                                             };
 
                 if (broker.Execute(parameters) == false)
                 {
@@ -1191,35 +1177,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 return null;
 
             // remove the current item 
-            CollectionUtils.Remove(list, delegate(Model.WorkQueue item)
-                                            {
-                                                return item.Key.Equals(workQueueItem.Key);
-                                            });
+            CollectionUtils.Remove(list, item => item.Key.Equals(workQueueItem.Key));
 
             // Remove items if the type is in not the list
             if (types != null)
             {
-                list = CollectionUtils.Select(list, 
-                    delegate(Model.WorkQueue item)
-                    {
-                        return CollectionUtils.Contains(types, delegate(WorkQueueTypeEnum t)
-                                    {
-                                        return t.Equals( item.WorkQueueTypeEnum);
-                                    });
-                                });
+                list = CollectionUtils.Select(list,
+                                              item =>
+                                              CollectionUtils.Contains(types, delegate(WorkQueueTypeEnum t) { return t.Equals(item.WorkQueueTypeEnum); }));
             }
 
             // Remove items if the type is in the list
             if (status != null)
             {
                 list = CollectionUtils.Select(list,
-                    delegate(Model.WorkQueue item)
-                    {
-                        return CollectionUtils.Contains(status, delegate(WorkQueueStatusEnum s)
-                                    {
-                                        return s.Equals(item.WorkQueueStatusEnum);
-                                    });
-                    });
+                                              item =>
+                                              CollectionUtils.Contains(status,
+                                                                       delegate(WorkQueueStatusEnum s) { return s.Equals(item.WorkQueueStatusEnum); }));
             }
 
             return list;
@@ -1229,8 +1203,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             Platform.CheckForNullReference(item, "item");
 
-            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData();
-            contextData.WorkQueueItemKey = item.GetKey().Key.ToString();
+            WorkQueueAlertContextData contextData = new WorkQueueAlertContextData
+                                                        {
+                                                            WorkQueueItemKey = item.Key.ToString()
+                                                        };
 
             StudyStorage storage = StudyStorage.Load(ExecutionContext.Current.PersistenceContext, item.StudyStorageKey);
             IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
@@ -1318,9 +1294,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         				using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
         				{
         					ISetSeriesRelatedInstanceCount broker = updateContext.GetBroker<ISetSeriesRelatedInstanceCount>();
-        					SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(storageLocation.GetKey(), series.SeriesInstanceUid);
-        					criteria.SeriesRelatedInstanceCount = numInstancesInSeriesXml;
-        					if (!broker.Execute(criteria))
+        					SetSeriesRelatedInstanceCountParameters criteria = new SetSeriesRelatedInstanceCountParameters(storageLocation.GetKey(), series.SeriesInstanceUid)
+        					                                                       {
+        					                                                           SeriesRelatedInstanceCount = numInstancesInSeriesXml
+        					                                                       };
+        				    if (!broker.Execute(criteria))
         					{
         						throw new ApplicationException("Unable to update series related instance count in db");
         					}
@@ -1350,17 +1328,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         		using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
         		{
         			ISetStudyRelatedInstanceCount broker = updateContext.GetBroker<ISetStudyRelatedInstanceCount>();
-        			SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(storageLocation.GetKey());
-        			criteria.StudyRelatedSeriesCount = numStudyRelatedSeriesInXml;
-        			criteria.StudyRelatedInstanceCount = numStudyRelatedInstancesInXml;
-        			if (!broker.Execute(criteria))
+        			SetStudyRelatedInstanceCountParameters criteria = new SetStudyRelatedInstanceCountParameters(storageLocation.GetKey())
+        			                                                      {
+        			                                                          StudyRelatedSeriesCount = numStudyRelatedSeriesInXml,
+        			                                                          StudyRelatedInstanceCount = numStudyRelatedInstancesInXml
+        			                                                      };
+        		    if (!broker.Execute(criteria))
         			{
         				throw new ApplicationException("Unable to update study related instance count in db");
         			}
-        			else
-        			{
-        				updateContext.Commit();
-        			}
+        		
+                    updateContext.Commit();
         		}
         	}
 
@@ -1418,8 +1396,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                         {
                             IStudyEntityBroker broker = ctx.GetBroker<IStudyEntityBroker>();
-                            StudyUpdateColumns parameters = new StudyUpdateColumns();
-                            parameters.StudySizeInKB = size;
+                            StudyUpdateColumns parameters = new StudyUpdateColumns {StudySizeInKB = size};
                             if (broker.Update(theStudy.Key, parameters))
                                 ctx.Commit();
                         }    
@@ -1472,21 +1449,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             _workQueueItem = item;
 
-            using (WorkQueueProcessorContext executionContext = new WorkQueueProcessorContext(item))
+            using (new WorkQueueProcessorContext(item))
             {
                 Initialize(item);
 
                 if (!LoadStorageLocation(item))
-            	{
-            		PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Unable to find readable StorageLocation.");
+                {
+                    PostponeItem("Unable to find readable StorageLocation.");
 
-					return;
-            	}
+                    return;
+                }
 
                 if (StorageLocation.QueueStudyStateEnum == QueueStudyStateEnum.ReprocessScheduled && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReprocessStudy))
                 {
                     //TODO: Should we check if the state is correct (ie, there's actually a ReprocessStudy work queue entry)?
-                    PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2), "Study is scheduled for reprocess");
+                    PostponeItem("Study is scheduled for reprocess");
                     return;
                 }
 
@@ -1512,7 +1489,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-        
         #endregion
 
         #region Private Methods
@@ -1533,6 +1509,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         {
                             _processorsRecoverySettings.Add(GetType(), att.Recovery);
                         }
+                        
                         return att.Recovery;
                     }
                 }
@@ -1562,7 +1539,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             Platform.CheckForNullReference(studyStorage, "studyStorage");
             Platform.Log(LogLevel.Info, "Verifying study {0}", studyStorage.StudyInstanceUid);
-            using(ExecutionContext scope = new ExecutionContext())
+            using (new ExecutionContext())
             {
                 StudyIntegrityValidator validator = new StudyIntegrityValidator();
                 validator.ValidateStudyState(WorkQueueItem.WorkQueueTypeEnum.ToString(), studyStorage, ValidationModes);

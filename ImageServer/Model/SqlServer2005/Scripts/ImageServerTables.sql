@@ -1586,6 +1586,8 @@ CREATE TABLE [dbo].[WorkQueueTypeProperties](
 	[PostponeDelaySeconds] [int] NOT NULL,
 	[ExpireDelaySeconds] [int] NOT NULL,
 	[MaxBatchSize] [int] NOT NULL,
+	[QueueStudyStateEnum] [smallint] NULL,
+	[QueueStudyStateOrder] [smallint] NULL,	
  CONSTRAINT [PK_WorkQueueTypeProperties] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -1607,9 +1609,22 @@ BEGIN
 ALTER TABLE [dbo].[WorkQueueTypeProperties] ADD  CONSTRAINT [DF_WorkQueueTypeProperties_GUID]  DEFAULT (newid()) FOR [GUID]
 END
 End
+
+GO
+/****** Object:  Index [IX_WorkQueueTypeProperties_QueueStudyStateEnum]    Script Date: 10/26/2009 16:49:07 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]') AND name = N'IX_WorkQueueTypeProperties_QueueStudyStateEnum')
+CREATE NONCLUSTERED INDEX [IX_WorkQueueTypeProperties_QueueStudyStateEnum] ON [dbo].[WorkQueueTypeProperties] 
+(
+	[QueueStudyStateEnum] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 GO
 
-
+/****** Object:  Index [IX_WorkQueueTypeProperties_QueueStudyStateOrder]    Script Date: 10/26/2009 16:50:02 ******/
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]') AND name = N'IX_WorkQueueTypeProperties_QueueStudyStateOrder')
+CREATE NONCLUSTERED INDEX [IX_WorkQueueTypeProperties_QueueStudyStateOrder] ON [dbo].[WorkQueueTypeProperties] 
+(
+	[QueueStudyStateOrder] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
@@ -2044,3 +2059,8 @@ GO
 IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeProperties_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
 ALTER TABLE [dbo].[WorkQueueTypeProperties] CHECK CONSTRAINT [FK_WorkQueueTypeProperties_WorkQueueTypeEnum]
 GO
+
+/****** Object:  ForeignKey [FK_WorkQueueTypeProperties_QueueStudyStateEnum]    Script Date: 10/26/2009 16:30:20 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeProperties_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeProperties]'))
+ALTER TABLE [dbo].[WorkQueueTypeProperties]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeProperties_QueueStudyStateEnum] FOREIGN KEY([QueueStudyStateEnum])
+REFERENCES [dbo].[QueueStudyStateEnum] ([Enum])

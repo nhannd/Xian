@@ -163,26 +163,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
 
             IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
-                                                        new WorkQueueTypeEnum[]
-                                                           {
-                                                               WorkQueueTypeEnum.StudyProcess,
-                                                               WorkQueueTypeEnum.ReconcileStudy
-                                                           },
-                                                         new WorkQueueStatusEnum[]
-                                                            {
-                                                                 WorkQueueStatusEnum.Idle,
-                                                                 WorkQueueStatusEnum.Pending,
-                                                                 WorkQueueStatusEnum.InProgress
-                                                            });
+                                                        new [] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy },
+                                                         new [] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress });
 
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
-				PostponeItem(WorkQueueItem, "Study is being processed or reconciled");
+                PostponeItem("Study is being processed or reconciled");
             	return false;
             }
     		return true;
         }
-
 
         #endregion
 

@@ -108,20 +108,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
         protected override bool CanStart()
         {
             IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
-                                                                           new WorkQueueTypeEnum[]
-                                                                               {
-                                                                                   WorkQueueTypeEnum.StudyProcess,
-                                                                                   WorkQueueTypeEnum.ReconcileStudy
-                                                                               },
-                                                                           new WorkQueueStatusEnum[]
-                                                                               {
-                                                                                   WorkQueueStatusEnum.Idle,
-                                                                                   WorkQueueStatusEnum.InProgress,
-                                                                                   WorkQueueStatusEnum.Pending
-                                                                               });
+                                                                           new []  { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy },
+                                                                           new [] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
-				PostponeItem(WorkQueueItem, "Study is being processed or reconciled.");
+                PostponeItem("Study is being processed or reconciled.");
             	return false;
             }
         	return true;

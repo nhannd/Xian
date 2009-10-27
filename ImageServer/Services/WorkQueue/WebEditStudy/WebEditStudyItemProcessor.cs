@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Model.WorkQueue item = WorkQueueItem;
 
             IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item,
-                new WorkQueueTypeEnum[]
+                new []
                 {
                     WorkQueueTypeEnum.StudyProcess,
                     WorkQueueTypeEnum.ReconcileStudy
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
             if (! (relatedItems == null || relatedItems.Count == 0))
             {
-				PostponeItem(WorkQueueItem, "Study is being processed or reconciled.");
+                PostponeItem("Study is being processed or reconciled.");
             	return false;
             }
         	return true;

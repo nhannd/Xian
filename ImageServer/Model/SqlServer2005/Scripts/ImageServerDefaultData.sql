@@ -117,51 +117,51 @@ GO
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (100,300,1,1,3,10,180,60,120,120,3000)
+           (100,300,1,1,3,10,180,60,120,120,3000,105,5)
 GO
   -- AutoRoute
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (101,300,1,1,3,10,180,60,120,120,-1)
+           (101,300,1,1,3,10,180,60,120,120,-1,101,0)
 GO
   -- DeleteStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (102,200,0,1,3,30,180,60,120,15,-1)
+           (102,200,0,1,3,30,180,60,120,15,-1,102,6)
 GO
   -- WebDeleteStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (103,200,0,1,3,30,180,60,120,15,-1)
+           (103,200,0,1,3,30,180,60,120,15,-1,103,6) 
 GO
 
   -- WebEditStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (105,200,1,1,3,30,180,60,120,15,-1)
+           (105,200,1,1,3,30,180,60,120,15,-1,104,3)
 GO
 
   -- WebMoveStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (104,200,1,1,3,30,180,60,120,15,-1)
+           (104,200,1,1,3,30,180,60,120,15,-1,101,0)
 GO
 
 
@@ -169,74 +169,74 @@ GO
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (106,200,0,1,3,60,180,60,120,15,-1)
+           (106,200,0,1,3,60,180,60,120,15,-1,109,2)
 GO
 
   -- CompressStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (107,200,1,1,2,30,180,60,120,120,300)
+           (107,200,1,1,2,30,180,60,120,120,300,110,2)
 GO
   -- MigrateStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (108,100,0,1,3,60,180,60,120,15,300)
+           (108,100,0,1,3,60,180,60,120,15,300,111,1)
 GO
   -- PurgeStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (109,200,0,1,3,60,180,60,120,15,300)
+           (109,200,0,1,3,60,180,60,120,15,300,106,1)
 GO
   -- ReprocessStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (110,200,1,1,3,60,180,60,120,15,300)
+           (110,200,1,1,3,60,180,60,120,15,300,112,10)
 GO
   -- ReconcileStudy
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (111,200,1,1,3,60,180,60,120,15,300)
+           (111,200,1,1,3,60,180,60,120,15,300,107,4)
 GO
   -- ReconcileCleanup
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (112,200,1,1,3,60,180,60,120,15,300)
+           (112,200,1,1,3,60,180,60,120,15,300,107,3)
 GO
   -- ReconcilePostProcess
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (113,200,1,1,3,60,180,60,120,15,300)
+           (113,200,1,1,3,60,180,60,120,15,300,107,4)
 GO
   -- ProcessDuplicate
 INSERT INTO [ImageServer].[dbo].[WorkQueueTypeProperties]
            ([WorkQueueTypeEnum],[WorkQueuePriorityEnum],[MemoryLimited],[AlertFailedWorkQueue],
            [MaxFailureCount],[ProcessDelaySeconds],[FailureDelaySeconds],[DeleteDelaySeconds],
-           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize])
+           [PostponeDelaySeconds],[ExpireDelaySeconds],[MaxBatchSize], [QueueStudyStateEnum], [QueueStudyStateOrder])
      VALUES
-           (114,200,1,1,3,60,180,60,120,120,300)
+           (114,200,1,1,3,60,180,60,120,120,300,105,4)
 GO
 
 

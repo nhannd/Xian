@@ -241,27 +241,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     
                 foreach (WorkQueue item in items)
                 {
-					// NOTE!!! Must update if we ever change what WorkQueue types lock, this
-					// probably should be in a lookup table somehow!!!!
-					if (!item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute)
-					 && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebMoveStudy)
-					 && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReconcileStudy))
-					{
-							ILockStudy lockStudy = uctx.GetBroker<ILockStudy>();
-							LockStudyParameters lockParms = new LockStudyParameters();
-							lockParms.StudyStorageKey = item.StudyStorageKey;
-							lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-							lockStudy.Execute(lockParms);
-							if (!lockParms.Successful)
-								Platform.Log(LogLevel.Error, "Unable to unlock study storage key: ", item.StudyStorageKey);
-					}
-
-                    WorkQueueDeleteParameters parms = new WorkQueueDeleteParameters();
+					WorkQueueDeleteParameters parms = new WorkQueueDeleteParameters();
                     parms.ServerPartitionKey = item.ServerPartitionKey;
                     parms.StudyStorageKey = item.StudyStorageKey;
                     parms.WorkQueueKey = item.Key;
                     parms.WorkQueueTypeEnum = item.WorkQueueTypeEnum;
-
+					// NOTE: QueueStudyState is reset by the stored procedure
                     if (!delete.Execute(parms))
                     {
                         Platform.Log(LogLevel.Error, "Unexpected error trying to delete WorkQueue entry");
@@ -333,39 +318,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             if (items == null || items.Count==0)
                 return;
 
-            
-            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-            columns.ProcessorID = String.Empty;
-            columns.FailureCount = 0;
-            columns.FailureDescription = String.Empty;
-            columns.ScheduledTime = newScheduledTime;
-            columns.ExpirationTime = expirationTime;
-            columns.LastUpdatedTime = Platform.Time;
-
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IReadContext ctx = store.OpenReadContext())
             {
-                IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
-                
+                IWebResetWorkQueue broker = ctx.GetBroker<IWebResetWorkQueue>();
                 foreach(WorkQueue item in items)
                 {
-                    if (!workQueueBroker.Update(item.Key, columns))
+                    WebResetWorkQueueParameters parameters = new WebResetWorkQueueParameters
+                                                                 {
+                                                                     WorkQueueKey = item.Key,
+                                                                     NewScheduledTime= newScheduledTime,
+                                                                     NewExpirationTime = expirationTime
+                                                                 };
+
+                    if (!broker.Execute(parameters))
                     {
-                        throw new Exception(String.Format("Unable to reset {0} entry {1}. Please check the log.", item.WorkQueueTypeEnum, item.Key));
+                        Platform.Log(LogLevel.Error,
+                                     "Unexpected error when calling WebResetWorkQueue stored procedure. Could not reset {0} work queue entry {1}",
+                                     item.WorkQueueTypeEnum.Description, item.Key);
                     }
-
-                	WorkQueueUidSelectCriteria uidCritiera = new WorkQueueUidSelectCriteria();
-                	uidCritiera.WorkQueueKey.EqualTo(item.Key);
-
-					WorkQueueUidUpdateColumns uidColumns = new WorkQueueUidUpdateColumns();
-					uidColumns.Failed = false;
-
-                	IWorkQueueUidEntityBroker workQueueUidBroker = ctx.GetBroker<IWorkQueueUidEntityBroker>();
-                    workQueueUidBroker.Update(uidCritiera, uidColumns); // note: Update() returns 0 if there's no WorkQueueUid for the entry
                 }
-
-                ctx.Commit();
             }
         }
 

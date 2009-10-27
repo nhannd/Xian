@@ -398,7 +398,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
         {
 			
 			IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
-                                                    new WorkQueueTypeEnum[]
+                                                    new []
 			                                           {
 			                                               WorkQueueTypeEnum.StudyProcess, 
                                                            WorkQueueTypeEnum.ReconcileStudy, 

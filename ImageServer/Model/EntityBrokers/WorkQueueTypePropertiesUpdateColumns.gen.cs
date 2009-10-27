@@ -87,6 +87,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ProcessDelaySeconds"] = new EntityUpdateColumn<Int32>("ProcessDelaySeconds", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateEnum")]
+        public QueueStudyStateEnum QueueStudyStateEnum
+        {
+            set { SubParameters["QueueStudyStateEnum"] = new EntityUpdateColumn<QueueStudyStateEnum>("QueueStudyStateEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateOrder")]
+        public Int16 QueueStudyStateOrder
+        {
+            set { SubParameters["QueueStudyStateOrder"] = new EntityUpdateColumn<Int16>("QueueStudyStateOrder", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
         public WorkQueuePriorityEnum WorkQueuePriorityEnum
         {

@@ -111,8 +111,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
         protected override bool CanStart()
         {
             IList<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem,
-                new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy },
-                new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
+                new [] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy },
+                new [] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
             
             if (relatedItems != null && relatedItems.Count > 0)
             {
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
                 if (newScheduledTime < Platform.Time.AddMinutes(1))
                     newScheduledTime = Platform.Time.AddMinutes(1);
 
-                PostponeItem(WorkQueueItem, newScheduledTime, newScheduledTime.AddDays(1), "Study is being reconciled.");
+                PostponeItem(newScheduledTime, newScheduledTime.AddDays(1), "Study is being processed or reconciled.");
                 Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", WorkQueueItem.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
             }
 

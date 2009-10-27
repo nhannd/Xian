@@ -158,6 +158,30 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Int32>)SubCriteria["ProcessDelaySeconds"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateEnum")]
+        public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueStudyStateEnum"))
+              {
+                 SubCriteria["QueueStudyStateEnum"] = new SearchCondition<QueueStudyStateEnum>("QueueStudyStateEnum");
+              }
+              return (ISearchCondition<QueueStudyStateEnum>)SubCriteria["QueueStudyStateEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateOrder")]
+        public ISearchCondition<Int16> QueueStudyStateOrder
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueStudyStateOrder"))
+              {
+                 SubCriteria["QueueStudyStateOrder"] = new SearchCondition<Int16>("QueueStudyStateOrder");
+              }
+              return (ISearchCondition<Int16>)SubCriteria["QueueStudyStateOrder"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WorkQueuePriorityEnum")]
         public ISearchCondition<WorkQueuePriorityEnum> WorkQueuePriorityEnum
         {
