@@ -429,45 +429,18 @@ Preview.ImagingServiceTable = function () {
 	return {
 		createActive: function(parentElement, ordersList)
 		{
-			this.createActive(parentElement, ordersList, false, false);
-		},
-		
-		createActive: function(parentElement, ordersList, collapsible, collapsedByDefault)
-		{
 			var activeProcedures = _getActiveProcedures(ordersList);
 					
 			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
-			Preview.SectionContainer.create(parentElement, "Active Imaging Services", collapsible, collapsedByDefault);						
+			Preview.SectionContainer.create(parentElement, "Active Imaging Services", { collapsible: true, initiallyCollapsed: true });						
 		},
 		
-		createActiveCollapsible: function(parentElement, ordersList, collapsedByDefault)
-		{
-			this.createActive(parentElement, ordersList, true, collapsedByDefault);
-		},
-		
-		createPast: function(parentElement, ordersList)
-		{
-			this.createPast(parentElement, ordersList, false, false);
-		},
-		
-		createPastCollapsible: function(parentElement, ordersList, collapsedByDefault)
-		{
-			this.createPast(parentElement, ordersList, true, collapsedByDefault);
-		},	
-		
-		createPast: function(parentElement, ordersList)
-		{
-			this.createPast(parentElement, ordersList, false, false);
-		},			
-		
-		createPast: function(parentElement, ordersList, collapsible, collapsedByDefault)
+		createPast: function(parentElement, ordersList, options)
 		{
 			var pastProcedures = _getNonActiveProcedures(ordersList);
 				
-
-				
 			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
-			Preview.SectionContainer.create(parentElement, "Past Imaging Services", collapsible, collapsedByDefault);						
+			Preview.SectionContainer.create(parentElement, "Past Imaging Services", { collapsible: true, initiallyCollapsed: true });						
 		}
 	};
 }();
@@ -982,13 +955,13 @@ Preview.OrderNotesTable = function () {
 
 	return {
 		create: function(parentElement, notes, heading, collapsedByDefault)
-		{		
+		{
 			if(notes.length == 0)
 				return;
 
 			_createNotesTable(parentElement, notes);
 
-			Preview.SectionContainer.createCollapsible(parentElement, heading, collapsedByDefault);
+			Preview.SectionContainer.create(parentElement, heading, { collapsible: true, initiallyCollapsed: collapsedByDefault });
 		},
 		
 		createAsSubSection: function(parentElement, notes, title) {
@@ -997,7 +970,6 @@ Preview.OrderNotesTable = function () {
 
 			_createNotesTable(parentElement, notes, title);			
 		}
-		
 	};
 }();
 
@@ -1405,7 +1377,7 @@ Preview.SectionContainer = function () {
 			if (collapsible) {
 				var imageSrc = imagePath + "/";
 				imageSrc += collapsedByDefault ? "Expand.png" : "Collapse.png";
-				title = "<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
+				title = "<a href='javascript:void(0)' class='collapsibleSectionHeading' onclick='Collapse.toggleCollapsedSection(this)' style='{text-decoration: none; color: white;}'>" +
 				 		"<img src='" + imageSrc + "' border='0' style='{margin-right: 5px; margin-left: -8px; background: #1b4066;}'/>" + text + "</a>";
 				cell.innerHTML = title;
 			}
@@ -1434,34 +1406,33 @@ Preview.SectionContainer = function () {
 		cell.colSpan = "3";
 		cell.appendChild(content);
 		
-		if(collapsible) collapseSection(table, collapsedByDefault);
+		if(collapsible) Collapse.collapseSection(table, collapsedByDefault);
 		
 		return table;
 	};
 
 	return {
-		create: function (element, title)
-		{
-			this.create(element, title, false, false);
-		},
 		
-		createCollapsible: function (element, title, defaultCollapsed)
-		{
-			this.create(element, title, true, defaultCollapsed);
-		},
-		
-		create: function (element, title, collapsible, defaultCollapsed)
+		/*
+			options:
+				collapsible: true/false - indicates whether the section is collapsible or not
+				initiallyCollapsed: true/false - indicates whether a collapsible section is initially collapsed
+		*/
+		create: function (element, title, options)
 		{			
 			// no need to create a contrainer if the element is hidden
 			if (element.style.display == 'none')
 				return;
+			
+			// default value for options if not supplied
+			options = options || {};
 
 			// Replace the element with the new element that is encased in the container.
 			// We cannot simply use innerHTML because all the event handler of the element will not
 			// be propagated to the new element.  Hence the DOM manipulation to preserve the handlers.
 			var parent = element.parentNode;
 			var nextSibling = element.nextSibling;
-			var newElement = _createContainer(element, title, collapsible, defaultCollapsed);
+			var newElement = _createContainer(element, title, options.collapsible, options.initiallyCollapsed);
 			if (nextSibling)
 				parent.insertBefore(newElement, nextSibling);
 			else
@@ -1904,7 +1875,7 @@ Preview.OrderedProceduresTable = function() {
 							var formattedProcedureStatus = Preview.ProceduresTableHelper.formatProcedureStatus(item.Status, item.ScheduledStartTime, item.StartTime, item.CheckInTime, item.CheckOutTime);
 							
 							html += "<p class='sectionheading'>";
-							html += "	<a href='javascript:void(0)' class='collapsibleHeading' onclick='toggleCollapsed(this)'><span class='plusMinus'>+</span>" + Ris.formatProcedureName(item) + "</a>";
+							html += "	<a href='javascript:void(0)' class='collapsibleHeading' onclick='Collapse.toggleCollapsed(this)'><span class='plusMinus'>+</span>" + Ris.formatProcedureName(item) + "</a>";
 							html += "</p>";
 							html += "<div class='collapsibleContent'>";
 							html += "<table>";
