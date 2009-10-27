@@ -1298,14 +1298,11 @@ Preview.ImagingServiceSection = function () {
 		var contactPoint = null;
 		recipients.each(function(recipient) 
 		{
-			if(recipient && recipient.Practitioner 
-				&& (recipient.Practitioner.BillingNumber == practitioner.BillingNumber 
-					|| recipient.Practitioner.LicenseNumber == practitioner.LicenseNumber))
+			if(recipient && recipient.Practitioner && recipient.Practitioner.PractitionerRef == practitioner.PractitionerRef)
 			{
 				contactPoint = recipient.ContactPoint;
 			}
 		});
-		
 		return contactPoint;
 	}
 		
