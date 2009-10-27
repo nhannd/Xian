@@ -34,7 +34,6 @@ using System.Net;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
 using ClearCanvas.ImageServer.Services.Streaming.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
@@ -47,17 +46,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     {
 
         #region Private Members
-        private string _serverAE;
-		#endregion
+
+        #endregion
 		
 
         #region Public Properties
 
-        public string ServerAE
-        {
-            get { return _serverAE; }
-            set { _serverAE = value; }
-        }
+        public string ServerAE { get; set; }
 
         #endregion
 
@@ -162,10 +157,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                 string requestType = context.Request.QueryString["requestType"];
                 IWADORequestTypeHandler typeHandler = handlerManager.GetHandler(requestType);
 
-                WADORequestTypeHandlerContext ctx = new WADORequestTypeHandlerContext();
-                ctx.HttpContext = context;
-                ctx.ServerAE = UriHelper.GetServerAE(context);
-                        
+                WADORequestTypeHandlerContext ctx = new WADORequestTypeHandlerContext
+                                                        {
+                                                            HttpContext = context,
+                                                            ServerAE = UriHelper.GetServerAE(context)
+                                                        };
+
                 using (WADOResponse response = typeHandler.Process(ctx))
                 {
                     if (response != null)

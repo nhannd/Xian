@@ -128,8 +128,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
         #region Private Methods
         void AddContext(HttpListenerContext ctx)
         {
-            //Platform.Log(LogLevel.Info, ctx.Request.Url.Query);
-                    
             lock (_currentRequests)
             {
                 _currentRequests.Add(ctx.Request.RemoteEndPoint);
@@ -212,6 +210,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
                     {
                         context.Response.OutputStream.Flush();
                         context.Response.OutputStream.Close();
+                    }
+                    catch(Exception ex)
+                    {
+                        Platform.Log(LogLevel.Warn, "Unexpected exception occurred: {0}", ex.Message);
                     }
                     finally
                     {
