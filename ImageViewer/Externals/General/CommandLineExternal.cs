@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Security;
 using System.Text;
 using System.Xml;
@@ -41,7 +42,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Externals.General
 {
 	[ExtensionOf(typeof (ExternalFactoryExtensionPoint))]
-	public class CommandLineExternalDefinitionFactory : ExternalFactoryBase<CommandLineExternal>
+	public sealed class CommandLineExternalDefinitionFactory : ExternalFactoryBase<CommandLineExternal>
 	{
 		public CommandLineExternalDefinitionFactory() : base("Launch via Command Line") {}
 	}
@@ -59,6 +60,10 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		private string _username = string.Empty;
 		private string _domain = string.Empty;
 		private SecureString _password = null;
+
+		private bool _autoQuoteArguments = true;
+		private bool _allowMultiValueFields = true;
+		private string _multiValueFieldSeparator;
 
 		public string Command
 		{
@@ -162,6 +167,55 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			}
 		}
 
+		public bool AutoQuoteArguments
+		{
+			get { return this._autoQuoteArguments; }
+			set
+			{
+				if (this._autoQuoteArguments != value)
+				{
+					this._autoQuoteArguments = value;
+					base.NotifyPropertyChanged("AutoQuoteArguments");
+				}
+			}
+		}
+
+		public bool AllowMultiValueFields
+		{
+			get { return this._allowMultiValueFields; }
+			set
+			{
+				if (this._allowMultiValueFields != value)
+				{
+					this._allowMultiValueFields = value;
+					base.NotifyPropertyChanged("AllowMultiValueFields");
+				}
+			}
+		}
+
+		public string MultiValueFieldSeparator
+		{
+			get { return this._multiValueFieldSeparator; }
+			set
+			{
+				if (this._multiValueFieldSeparator != value)
+				{
+					this._multiValueFieldSeparator = value;
+					base.NotifyPropertyChanged("MultiValueFieldSeparator");
+				}
+			}
+		}
+
+		public string ArgumentFieldsHelpText
+		{
+			get { return SR.HelpCommandLineExternalArgumentFields; }
+		}
+
+		public override bool IsValid
+		{
+			get { return base.IsValid && !string.IsNullOrEmpty(_command); }
+		}
+
 		public IList<string> Arguments
 		{
 			get { return new List<string>(_argumentString.Split(new string[] {Environment.NewLine}, StringSplitOptions.None)); }
@@ -171,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		{
 			foreach (string argument in this.Arguments)
 			{
-				string resolvedArgument = hintResolver.Resolve(argument);
+				string resolvedArgument = hintResolver.Resolve(argument, _allowMultiValueFields, " ");
 				if (resolvedArgument == null)
 					return false;
 			}
@@ -180,11 +234,17 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 		protected override bool PerformLaunch(IArgumentHintResolver hintResolver)
 		{
+			string multiValueSeparator = _multiValueFieldSeparator;
+			if (string.IsNullOrEmpty(multiValueSeparator))
+				multiValueSeparator = " ";
+			if (_autoQuoteArguments && multiValueSeparator == " ")
+				multiValueSeparator = "\" \"";
+
 			StringBuilder argumentsBuilder = new StringBuilder();
 			foreach (string argument in this.Arguments)
 			{
-				string resolvedArgument = hintResolver.Resolve(argument);
-				if (string.IsNullOrEmpty(resolvedArgument) || (resolvedArgument.IndexOf(' ') >= 0 && resolvedArgument.IndexOf("\"") < 0))
+				string resolvedArgument = hintResolver.Resolve(argument, _allowMultiValueFields, multiValueSeparator);
+				if (_autoQuoteArguments && (string.IsNullOrEmpty(resolvedArgument) || resolvedArgument.Contains(" ")))
 					resolvedArgument = string.Format("\"{0}\"", resolvedArgument);
 				argumentsBuilder.Append(resolvedArgument);
 				argumentsBuilder.Append(' ');
@@ -199,7 +259,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 				nfo = new ProcessStartInfo(command);
 			else
 				nfo = new ProcessStartInfo(command, arguments);
-			nfo.WorkingDirectory = workingDirectory;
+			if (Directory.Exists(workingDirectory))
+				nfo.WorkingDirectory = workingDirectory;
 
 			switch (base.WindowStyle)
 			{
@@ -229,6 +290,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			Process process = new Process();
 			process.StartInfo = nfo;
 
+			Platform.Log(LogLevel.Debug, "Command Line Execute: {2}> {0} {1}", nfo.FileName, nfo.Arguments, nfo.WorkingDirectory);
+
 			return process.Start();
 		}
 
@@ -250,6 +313,12 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			root.AppendChild(WriteProperty(doc, "WindowStyle", base.WindowStyle.ToString()));
 			root.AppendChild(WriteProperty(doc, "Command", this.Command));
 			root.AppendChild(WriteProperty(doc, "WorkingDirectory", this.WorkingDirectory));
+			root.AppendChild(WriteProperty(doc, "AutoQuoteArguments", this.AutoQuoteArguments.ToString()));
+			root.AppendChild(WriteProperty(doc, "AllowMultiValueFields", this.AllowMultiValueFields.ToString()));
+			root.AppendChild(WriteProperty(doc, "MultiValueFieldSeparator", this.MultiValueFieldSeparator));
+			root.AppendChild(WriteProperty(doc, "Username", this.Username));
+			root.AppendChild(WriteProperty(doc, "Domain", this.Domain));
+			root.AppendChild(WriteProperty(doc, "Password", this.Password));
 			foreach (string argument in this.Arguments)
 			{
 				root.AppendChild(WriteProperty(doc, "Argument", argument));
@@ -300,6 +369,24 @@ namespace ClearCanvas.ImageViewer.Externals.General
 								break;
 							case "Argument":
 								arguments.AppendLine(data);
+								break;
+							case "AutoQuoteArguments":
+								this.AutoQuoteArguments = bool.Parse(data);
+								break;
+							case "AllowMultiValueFields":
+								this.AllowMultiValueFields = bool.Parse(data);
+								break;
+							case "MultiValueFieldSeparator":
+								this.MultiValueFieldSeparator = data;
+								break;
+							case "Username":
+								this.Username = data;
+								break;
+							case "Domain":
+								this.Domain = data;
+								break;
+							case "Password":
+								this.Password = data;
 								break;
 						}
 					}

@@ -41,6 +41,8 @@ namespace ClearCanvas.ImageViewer.Externals
 		bool Enabled { get; set; }
 		WindowStyle WindowStyle { get; set; }
 
+		bool IsValid { get; }
+
 		string GetState();
 		void SetState(string state);
 	}
@@ -105,6 +107,11 @@ namespace ClearCanvas.ImageViewer.Externals
 					this.NotifyPropertyChanged("WindowStyle");
 				}
 			}
+		}
+
+		public virtual bool IsValid
+		{
+			get { return !string.IsNullOrEmpty(_label) && !string.IsNullOrEmpty(_name); }
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged

@@ -54,27 +54,33 @@ namespace ClearCanvas.ImageViewer.Externals.CoreTools
 				if (_actions == null)
 				{
 					List<IAction> actions = new List<IAction>();
-					foreach (IExternal external in ExternalCollection.SavedExternals)
+					if (this.SelectedDisplaySet != null && this.SelectedDisplaySet.PresentationImages.Count > 1)
 					{
-						IDisplaySetExternal consumer = external as IDisplaySetExternal;
-						if (consumer != null && consumer.CanLaunch(this.SelectedDisplaySet))
+						foreach (IExternal external in ExternalCollection.SavedExternals)
 						{
-							string id = Guid.NewGuid().ToString();
-							ActionPath actionPath = new ActionPath(string.Format("imageviewer-contextmenu/MenuExternals/{0}", id), _resourceResolver);
-							MenuAction action = new MenuAction(id, actionPath, ClickActionFlags.None, _resourceResolver);
-							action.Label = string.Format(SR.FormatOpenDisplaySetWith, consumer.Label);
-							action.SetClickHandler(delegate
-							                       	{
-							                       		try
-							                       		{
-							                       			consumer.Launch(this.SelectedDisplaySet);
-							                       		}
-							                       		catch (Exception ex)
-							                       		{
-							                       			ExceptionHandler.Report(ex, base.Context.DesktopWindow);
-							                       		}
-							                       	});
-							actions.Add(action);
+							if (!external.IsValid)
+								continue;
+
+							IDisplaySetExternal consumer = external as IDisplaySetExternal;
+							if (consumer != null && consumer.CanLaunch(this.SelectedDisplaySet))
+							{
+								string id = Guid.NewGuid().ToString();
+								ActionPath actionPath = new ActionPath(string.Format("imageviewer-contextmenu/MenuExternals/{0}", id), _resourceResolver);
+								MenuAction action = new MenuAction(id, actionPath, ClickActionFlags.None, _resourceResolver);
+								action.Label = string.Format(SR.FormatOpenDisplaySetWith, consumer.Label);
+								action.SetClickHandler(delegate
+								                       	{
+								                       		try
+								                       		{
+								                       			consumer.Launch(this.SelectedDisplaySet);
+								                       		}
+								                       		catch (Exception ex)
+								                       		{
+								                       			ExceptionHandler.Report(ex, base.Context.DesktopWindow);
+								                       		}
+								                       	});
+								actions.Add(action);
+							}
 						}
 					}
 					_actions = new ActionSet(actions);

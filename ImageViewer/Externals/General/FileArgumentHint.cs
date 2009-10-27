@@ -44,22 +44,22 @@ namespace ClearCanvas.ImageViewer.Externals.General
 
 		public FileArgumentHint(string filename) : this(new FileInfo(filename)) {}
 
-		public string this[string key]
+		public ArgumentHintValue this[string key]
 		{
 			get
 			{
 				switch (key)
 				{
 					case "FILENAME":
-						return _fileInfo.FullName;
+						return new ArgumentHintValue(_fileInfo.FullName);
 					case "DIRECTORY":
-						return _fileInfo.DirectoryName;
+						return new ArgumentHintValue(_fileInfo.DirectoryName);
 					case "FILENAMEONLY":
-						return _fileInfo.Name;
+						return new ArgumentHintValue(_fileInfo.Name);
 					case "EXTENSIONONLY":
-						return _fileInfo.Extension;
+						return new ArgumentHintValue(_fileInfo.Extension);
 				}
-				return null;
+				return ArgumentHintValue.Empty;
 			}
 		}
 

@@ -34,7 +34,6 @@ using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Externals.Config;
-using ClearCanvas.ImageViewer.Externals.General;
 using ClearCanvas.ImageViewer.Externals.View.WinForms.Properties;
 
 namespace ClearCanvas.ImageViewer.Externals.View.WinForms
@@ -127,46 +126,55 @@ namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 
 		private void _btnAdd_Click(object sender, EventArgs e)
 		{
-			// there's only one right now - later, we'll change this to be a dropdown of the factories
-			IExternalFactory factory = new CommandLineExternalDefinitionFactory();
-
-			IExternal external = factory.CreateNew();
-
-			_component.Externals.Add(external);
-			ListViewItem lvi = CreateItem(external);
-			_listExternals.Items.Add(lvi);
-			lvi.Selected = true;
-			_component.FlagModified();
-
-			_btnEdit.PerformClick();
+			try
+			{
+				AddNewExternalComponent component = new AddNewExternalComponent();
+				if (_component.DesktopWindow.ShowDialogBox(component, Resources.TitleNew) == DialogBoxAction.Ok)
+				{
+					IExternal external = component.External;
+					_component.Externals.Add(external);
+					ListViewItem lvi = CreateItem(external);
+					_listExternals.Items.Add(lvi);
+					lvi.Selected = true;
+					_component.FlagModified();
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "An error occured while adding an external application definition.");
+				MessageBox.Show(this, Resources.MessageErrorAddingExternal);
+			}
 		}
 
 		private void _btnEdit_Click(object sender, EventArgs e)
 		{
 			if (this.SelectedItem != null)
 			{
-				IExternal external = this.SelectedItem.Tag as IExternal;
-				if (external != null)
+				try
 				{
-					ExternalPropertiesComponent component = new ExternalPropertiesComponent(external);
-					SimpleComponentContainer container = new SimpleComponentContainer(component);
-					if (_component.DesktopWindow.ShowDialogBox(container, string.Format(Resources.TitleEditProperties, external.Label)) == DialogBoxAction.Ok)
+					IExternal external = this.SelectedItem.Tag as IExternal;
+					if (external != null)
 					{
-						ResetExternalList();
-						foreach (ListViewItem item in _listExternals.Items)
+						ExternalPropertiesComponent component = new ExternalPropertiesComponent(external);
+						if (_component.DesktopWindow.ShowDialogBox(component, string.Format(Resources.TitleEditProperties, external.Label)) == DialogBoxAction.Ok)
 						{
-							if (item.Tag == external)
+							ResetExternalList();
+							foreach (ListViewItem item in _listExternals.Items)
 							{
-								item.Selected = true;
-								break;
+								if (item.Tag == external)
+								{
+									item.Selected = true;
+									break;
+								}
 							}
+							_component.FlagModified();
 						}
-						_component.FlagModified();
 					}
-					else
-					{
-						component.ResetExternal();
-					}
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex, "An error occured while editing an external application definition.");
+					MessageBox.Show(this, Resources.MessageErrorEditingExternal);
 				}
 			}
 		}

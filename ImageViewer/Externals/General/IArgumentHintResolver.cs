@@ -39,12 +39,13 @@ namespace ClearCanvas.ImageViewer.Externals.General
 	public interface IArgumentHintResolver : IDisposable
 	{
 		string Resolve(string input);
+		string Resolve(string input, bool resolveMultiValuedHints, string multiValueSeparator);
 	}
 
 	internal sealed class ArgumentHintResolver : IArgumentHintResolver
 	{
 		private static readonly Regex _pattern = new Regex(@"\$(\w*?)\$", RegexOptions.Compiled);
-		private readonly Dictionary<string, string> _resolvedHints;
+		private readonly Dictionary<string, ArgumentHintValue> _resolvedHints;
 		private readonly IList<IArgumentHint> _hints;
 
 		public ArgumentHintResolver() : this(null) {}
@@ -56,8 +57,8 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			else
 				this._hints = new List<IArgumentHint>();
 
-			this._resolvedHints = new Dictionary<string, string>();
-			this._resolvedHints.Add("", "$");
+			this._resolvedHints = new Dictionary<string, ArgumentHintValue>();
+			this._resolvedHints.Add("", new ArgumentHintValue("$"));
 		}
 
 		public void Dispose()
@@ -68,6 +69,11 @@ namespace ClearCanvas.ImageViewer.Externals.General
 		}
 
 		public string Resolve(string input)
+		{
+			return Resolve(input, false, string.Empty);
+		}
+
+		public string Resolve(string input, bool resolveMultiValuedHints, string multiValueSeparator)
 		{
 			if (string.IsNullOrEmpty(input))
 				return input;
@@ -83,20 +89,29 @@ namespace ClearCanvas.ImageViewer.Externals.General
 					// find a hint that provides this key
 					foreach (IArgumentHint hint in this._hints)
 					{
-						string value = hint[key];
-						if (value == null)
+						ArgumentHintValue value = hint[key];
+						if (value.IsNull)
 							continue;
 						this._resolvedHints.Add(key, value);
 						break;
 					}
 
 					if (!this._resolvedHints.ContainsKey(key))
-						return null; // unable to resolve this argument
+						return null; // unable to resolve arguments in this string
 				}
+
+				ArgumentHintValue hintValue = _resolvedHints[key];
+				string resolvedHint;
+				if (resolveMultiValuedHints)
+					resolvedHint = hintValue.ToString(multiValueSeparator);
+				else if (!hintValue.IsMultiValued)
+					resolvedHint = hintValue.ToString();
+				else
+					return null; // unable to resolve argument with multivalue hints disabled
 
 				++lastCopiedChar;
 				sb.Append(input.Substring(lastCopiedChar, m.Index - lastCopiedChar));
-				sb.Append(this._resolvedHints[key]);
+				sb.Append(resolvedHint);
 				lastCopiedChar = m.Index + m.Length - 1;
 			}
 			++lastCopiedChar;

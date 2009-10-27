@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,39 +29,32 @@
 
 #endregion
 
-using System.Globalization;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Externals.General
+namespace ClearCanvas.ImageViewer.Externals.View.WinForms
 {
-	public class SopArgumentHint : IArgumentHint
+	[ExtensionOf(typeof (AddNewExternalComponentViewExtensionPoint))]
+	public class AddNewExternalComponentView : WinFormsView, IApplicationComponentView
 	{
-		private ISopDataSource _dataSource;
+		private AddNewExternalComponent _component;
+		private ExternalPropertiesComponentControl _control;
 
-		public SopArgumentHint(ISopDataSource dataSource)
+		public void SetComponent(IApplicationComponent component)
 		{
-			_dataSource = dataSource;
+			_component = (AddNewExternalComponent) component;
 		}
 
-		public SopArgumentHint(Sop sop) : this(sop.DataSource) {}
-
-		public void Dispose()
-		{
-			_dataSource = null;
-		}
-
-		public ArgumentHintValue this[string key]
+		public override object GuiElement
 		{
 			get
 			{
-				uint tag;
-				if (!uint.TryParse(key, NumberStyles.AllowHexSpecifier, CultureInfo.CurrentCulture.NumberFormat, out tag))
-					return ArgumentHintValue.Empty;
-				DicomAttribute attribute = _dataSource[tag];
-				if (attribute.IsEmpty)
-					return ArgumentHintValue.Empty;
-				return new ArgumentHintValue(attribute.ToString());
+				if (_control == null)
+				{
+					_control = new ExternalPropertiesComponentControl(_component);
+				}
+				return _control;
 			}
 		}
 	}

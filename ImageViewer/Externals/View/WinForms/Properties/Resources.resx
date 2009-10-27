@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MessageErrorAddingExternal" xml:space="preserve">
+    <value>An error occured while adding a new external application definition.</value>
+  </data>
+  <data name="MessageErrorEditingExternal" xml:space="preserve">
+    <value>An error occured while editing an external application definition.</value>
+  </data>
+  <data name="MessagesErrorsExist" xml:space="preserve">
+    <value>There are errors in the properties of the external definition.</value>
+  </data>
   <data name="TitleEditProperties" xml:space="preserve">
     <value>Edit Properties of {0}</value>
+  </data>
+  <data name="TitleNew" xml:space="preserve">
+    <value>New...</value>
   </data>
 </root>

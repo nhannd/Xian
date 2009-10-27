@@ -46,38 +46,37 @@ namespace ClearCanvas.ImageViewer.Externals.General
 			_fileInfos = new List<FileInfo>(fileInfos).AsReadOnly();
 		}
 
-		public string this[string key]
+		public ArgumentHintValue this[string key]
 		{
 			get
 			{
 				Converter<FileInfo, string> converter;
 				switch (key)
 				{
-					case "FILENAMES":
+					case "FILENAME":
 						converter = delegate(FileInfo fileinfo) { return fileinfo.FullName; };
 						break;
-					case "DIRECTORIES":
+					case "DIRECTORY":
 						converter = delegate(FileInfo fileinfo) { return fileinfo.DirectoryName; };
 						break;
-					case "FILENAMESONLY":
+					case "FILENAMEONLY":
 						converter = delegate(FileInfo fileinfo) { return fileinfo.Name; };
 						break;
-					case "EXTENSIONSONLY":
+					case "EXTENSIONONLY":
 						converter = delegate(FileInfo fileinfo) { return fileinfo.Extension; };
 						break;
 					default:
-						return null;
+						return ArgumentHintValue.Empty;
 				}
 
 				List<string> list = new List<string>();
 				foreach (FileInfo fileInfo in _fileInfos)
 				{
 					string result = converter(fileInfo);
-					result = string.Format("\"{0}\"", result);
 					if (!list.Contains(result))
 						list.Add(result);
 				}
-				return string.Join(" ", list.ToArray());
+				return new ArgumentHintValue(list.ToArray());
 			}
 		}
 
