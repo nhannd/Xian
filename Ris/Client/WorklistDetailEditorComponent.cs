@@ -240,7 +240,7 @@ namespace ClearCanvas.Ris.Client
 						WorklistEditorComponentSettings.Default.DefaultWorklistClass = _worklistDetail.WorklistClass.ClassName;
 					}
 					this.Modified = true;
-					NotifyPropertyChanged("WorklistClass");
+					NotifyWorklistClassChanged();
 					NotifyPropertyChanged("WorklistClassDescription");
 				}
 			}

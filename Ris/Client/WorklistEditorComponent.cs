@@ -188,10 +188,10 @@ namespace ClearCanvas.Ris.Client
 						_worklistDetail = new WorklistAdminDetail
 							{
 								FilterByWorkingFacility = true,
+								// establish initial class name
 								WorklistClass = CollectionUtils.SelectFirst(formDataResponse.WorklistClasses, wc => wc.ClassName == _initialClassName)
 							};
 
-						// establish initial class name
 					}
 					else
 					{
@@ -233,6 +233,7 @@ namespace ClearCanvas.Ris.Client
 					}
 					_detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
 					_detailComponent.WorklistClassChanged += OnWorklistClassChanged;
+					_detailComponent.WorklistCategoryChanged += OnWorklistCategoryChanged;
 
 					// create all other pages
 					_filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
@@ -308,6 +309,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private void OnWorklistCategoryChanged(object sender, EventArgs e)
+		{
+			ShowWorklistCategoryDependantPages();
+		}
+
 		private void OnWorklistClassChanged(object sender, EventArgs e)
 		{
 			ShowWorklistCategoryDependantPages();
@@ -315,15 +321,13 @@ namespace ClearCanvas.Ris.Client
 
 		private void ShowWorklistCategoryDependantPages()
 		{
-			var showStaffFilters = _worklistDetail.WorklistClass == null || ShowReportingStaffRoleFilters;
+			var showStaffFilters = ShowStaffRoleFilterPages;
 			ShowAfterPage(_interpretedByFilterComponentPage, showStaffFilters, _patientLocationComponentPage);
 			ShowAfterPage(_transcribedByFilterComponentPage, showStaffFilters, _interpretedByFilterComponentPage);
 			ShowAfterPage(_verifiedByFilterComponentPage, showStaffFilters, _transcribedByFilterComponentPage);
 			ShowAfterPage(_supervisedByFilterComponentPage, showStaffFilters, _verifiedByFilterComponentPage);
 
-			// add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
-			var showTimeFilter = _worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow;
-			ShowBeforePage(_timeWindowComponentPage, showTimeFilter, _summaryComponentPage);
+			ShowBeforePage(_timeWindowComponentPage, ShowTimeFilterPage, _summaryComponentPage);
 		}
 
 		private void ShowAfterPage(NavigatorPage page, bool show, NavigatorPage insertAfterPage)
@@ -472,13 +476,23 @@ namespace ClearCanvas.Ris.Client
 			get { return _worklistDetail.IsUserWorklist; }
 		}
 
-		private bool ShowReportingStaffRoleFilters
+		private bool ShowStaffRoleFilterPages
 		{
 			get
 			{
 				return _worklistDetail != null && _worklistDetail.WorklistClass != null
 						? _worklistDetail.WorklistClass.SupportsReportingStaffRoleFilters
-						: false;
+						: CollectionUtils.Contains<WorklistClassSummary>(_detailComponent.WorklistClassChoices, wc => wc.SupportsReportingStaffRoleFilters);
+			}
+		}
+
+		private bool ShowTimeFilterPage
+		{
+			get
+			{
+				return _worklistDetail != null && _worklistDetail.WorklistClass != null
+						? _worklistDetail.WorklistClass.SupportsTimeWindow
+						: CollectionUtils.Contains<WorklistClassSummary>(_detailComponent.WorklistClassChoices, wc => wc.SupportsTimeWindow);
 			}
 		}
 
@@ -487,7 +501,7 @@ namespace ClearCanvas.Ris.Client
 			if (_filterComponent.IsStarted)
 				_filterComponent.SaveData();
 
-			if (_timeWindowComponent.IsStarted)
+			if (ShowTimeFilterPage && _timeWindowComponent.IsStarted)
 				_timeWindowComponent.SaveData();
 
 			if (_procedureTypeGroupFilterComponent.IsStarted)
@@ -502,25 +516,25 @@ namespace ClearCanvas.Ris.Client
 			if (ShowSubscriptionPages && _staffSubscribersComponent.IsStarted)
 				_worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
 
-			if (ShowReportingStaffRoleFilters && _interpretedByFilterComponent.IsStarted)
+			if (ShowStaffRoleFilterPages && _interpretedByFilterComponent.IsStarted)
 			{
 				_worklistDetail.InterpretedByStaff.Staff = new List<StaffSummary>(_interpretedByFilterComponent.SelectedItems);
 				_worklistDetail.InterpretedByStaff.IncludeCurrentUser = _interpretedByFilterComponent.IncludeCurrentUser;
 			}
 
-			if (ShowReportingStaffRoleFilters && _transcribedByFilterComponent.IsStarted)
+			if (ShowStaffRoleFilterPages && _transcribedByFilterComponent.IsStarted)
 			{
 				_worklistDetail.TranscribedByStaff.Staff = new List<StaffSummary>(_transcribedByFilterComponent.SelectedItems);
 				_worklistDetail.TranscribedByStaff.IncludeCurrentUser = _transcribedByFilterComponent.IncludeCurrentUser;
 			}
 
-			if (ShowReportingStaffRoleFilters && _verifiedByFilterComponent.IsStarted)
+			if (ShowStaffRoleFilterPages && _verifiedByFilterComponent.IsStarted)
 			{
 				_worklistDetail.VerifiedByStaff.Staff = new List<StaffSummary>(_verifiedByFilterComponent.SelectedItems);
 				_worklistDetail.VerifiedByStaff.IncludeCurrentUser = _verifiedByFilterComponent.IncludeCurrentUser;
 			}
 
-			if (ShowReportingStaffRoleFilters && _supervisedByFilterComponent.IsStarted)
+			if (ShowStaffRoleFilterPages && _supervisedByFilterComponent.IsStarted)
 			{
 				_worklistDetail.SupervisedByStaff.Staff = new List<StaffSummary>(_supervisedByFilterComponent.SelectedItems);
 				_worklistDetail.SupervisedByStaff.IncludeCurrentUser = _supervisedByFilterComponent.IncludeCurrentUser;
