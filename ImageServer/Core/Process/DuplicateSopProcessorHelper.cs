@@ -35,9 +35,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Core.Process
 {
@@ -171,10 +173,68 @@ namespace ClearCanvas.ImageServer.Core.Process
         	return result;
         }
 
+		/// <summary>
+		/// Create
+		/// </summary>
+		/// <param name="file"></param>
+		/// <param name="location"></param>
+		/// <param name="sourcePath"></param>
+		/// <param name="queue"></param>
+		/// <param name="uid"></param>
+		public static void CreateDuplicateSIQEntry(DicomFile file, StudyStorageLocation location, string sourcePath, WorkQueue queue, WorkQueueUid uid)
+		{
+			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
+			String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
+			using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
+			{
+				commandProcessor.AddCommand(new FileDeleteCommand(sourcePath, true));
+
+				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, location, uidGroup);
+				DicomProcessingResult result = Process(sopProcessingContext, file);
+				if (!result.Successful)
+				{
+					FailUid(uid, true);
+					return;
+				}
+
+				commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
+				if (!commandProcessor.Execute())
+				{
+					Platform.Log(LogLevel.Error, "Unexpected error when creating duplicate study integrity queue entry: {0}", commandProcessor.FailureReason);
+					FailUid(uid, true);
+				}
+			}
+		}
+
         #endregion
 
         #region Private Methods
 
+		private static void FailUid(WorkQueueUid sop, bool retry)
+		{
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueUidEntityBroker uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+				if (!retry)
+					columns.Failed = true;
+				else
+				{
+					if (sop.FailureCount >= ImageServerCommonConfiguration.WorkQueueMaxFailureCount)
+					{
+						columns.Failed = true;
+					}
+					else
+					{
+						columns.FailureCount = sop.FailureCount++;
+					}
+				}
+
+				uidUpdateBroker.Update(sop.GetKey(), columns);
+				updateContext.Commit();
+			}
+		}
         static private void InsertWorkQueue(SopProcessingContext context, DicomMessageBase file)
         {
             String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();

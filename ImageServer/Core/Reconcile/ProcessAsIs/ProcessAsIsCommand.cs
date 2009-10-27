@@ -146,35 +146,11 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.ProcessAsIs
 					if (e is InstanceAlreadyExistsException
 						|| e.InnerException != null && e.InnerException is InstanceAlreadyExistsException)
 					{
-						CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
+						DuplicateSopProcessorHelper.CreateDuplicateSIQEntry(file, _destinationStudyStorage, GetReconcileUidPath(uid),
+						                                                   Context.WorkQueueItem, uid);
 					}
 					else
 						FailUid(uid, true);
-				}
-			}
-		}
-
-		private void CreatDuplicateSIQEntry(DicomFile file, WorkQueue queue, WorkQueueUid uid)
-		{
-			Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
-			String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
-			using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
-			{
-				SopProcessingContext sopProcessingContext = new SopProcessingContext(commandProcessor, _destinationStudyStorage, uidGroup);
-				DicomProcessingResult result = DuplicateSopProcessorHelper.Process(sopProcessingContext, file);
-				if (!result.Successful)
-				{
-					FailUid(uid, true);
-					return;
-				}
-
-				commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-				commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-
-				if (!commandProcessor.Execute())
-				{
-					Platform.Log(LogLevel.Error,"Unexpected error when creating duplicate study integrity queue entry: {0}", commandProcessor.FailureReason);
-					FailUid(uid, true);
 				}
 			}
 		}
