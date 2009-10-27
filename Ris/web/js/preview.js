@@ -1725,12 +1725,13 @@ Preview.OrderNoteSection = function() {
 			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 
 			var html = "";
-			html += '<table style="{width:100%; margin-top: 4px;}" border="0" cellspacing="0" cellpadding="0">';
+			html += '<table style="{width:98%; margin-top: 4px;}" border="0" cellspacing="0" cellpadding="0">';
 			html += '	<tr class="orderNoteHeading">';
-			html += '		<td><span style="{padding-right: 5px;}" class="orderNoteLabel">From:</span>';
+			html += '		<td style="{width:100%;}"><span style="{padding-right: 5px;}" class="orderNoteLabel">From:</span>';
 			html += '		' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
-			html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
-			html += '		<td style="{width:10em;text-align:right; padding-right: 20px;}" class="orderNoteLabel" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
+			//html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
+			html += '		<td style="{width:5em; text-align:right; padding-right: 5px;}">' + (note.Urgent ? '<span class="urgentTextMark">URGENT</span>' : "")  + '</td>';
+			html += '		<td style="{width:9.5em;text-align:right; padding-right: 5px;}" class="orderNoteLabel" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
 			{
@@ -1834,7 +1835,12 @@ Preview.ConversationNote = function() {
 			html += '<tr><td class="ConversationNote_left_upper"></td><td class="ConversationNote_content_upper">';
 			html += '<table width="100%" class="ConversationNoteDetails" border="0" cellspacing="0" cellpadding="0">';
 			html += '	<tr>';
-			html += '		<td><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">From:</span> ' +  _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '<span style="{padding-left: 20px;}">' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</span></td>';
+			html += '		<td><span style="{color: #205F87; font-weight: bold; padding-right: 10px;}">From:</span> ' 
+				+  _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) 
+				//+ '<span style="{padding-left: 20px;}">' 
+				//+ (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") 
+				+ (note.Urgent ? '<span class="urgentTextMark" style="{margin-left: 20px;}">URGENT</span>' : "") + "</td>";
+				//+ '</span></td>';
 			html += '		<td style="{padding-right: 10px; text-align:right; color: #205F87; font-weight: bold;}" NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDateTime(note.PostTime) + '</td>';
 			html += '	</tr>';
 			if (note.CanAcknowledge) {

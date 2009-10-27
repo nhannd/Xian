@@ -659,3 +659,14 @@ a:active {
 	padding-top: 5px; 	
 	border-top: dashed 1px #AACCEE; 
 }
+
+.urgentTextMark
+{
+	background-color: white;
+	color:red;
+	font-size:75%;
+	font-weight:900;
+	border: 1px solid red;
+	text-align:center;
+	padding: 0 2px;
+}
