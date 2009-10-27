@@ -51,7 +51,9 @@
 					{
 						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
 						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
+						
+						var notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
+						Preview.OrderNotesTable.create($("generalNotesSection"), notes, "Order Notes", false);
 					}
 					else
 					{
@@ -72,7 +74,7 @@
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
 				<div id="proceduresSection"></div>
-				<div id="notesSection"></div>
+				<div id="generalNotesSection"></div>
 			</div>
 		</form>
 	</body>

@@ -57,7 +57,8 @@
 						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
 						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures);
 
-						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
+						var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
 		            }
 					else
 					{
@@ -77,7 +78,7 @@
 			<div id="orderDetailsSection">
 				<div id="proceduresSection"></div>
 				<div id="protocolProceduresSection"></div>
-				<div id="notesSection"></div>
+				<div id="prelimDiagnosisNotesSection"></div>
 			</div>
 		</form>
 	</body>
