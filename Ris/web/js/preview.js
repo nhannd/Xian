@@ -1293,7 +1293,7 @@ Preview.ImagingServiceSection = function () {
 			Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
 			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
-			Field.setValue($("EnteredBy"), Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')');
+			Field.setValue($("EnteredBy"), orderDetail.EnteredBy ? (Ris.formatPersonName(orderDetail.EnteredBy.Name) + ' (' + orderDetail.EnteredBy.StaffType.Value + ')') : "");
 			if (orderDetail.CancelReason)
 			{
 				Field.setValue($("CancelledBy"), Ris.formatPersonName(orderDetail.CancelledBy.Name) + ' (' + orderDetail.CancelledBy.StaffType.Value + ')');
