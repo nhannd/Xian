@@ -57,12 +57,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			InitializeComponent();
 			InitializeHistoryMenu();
 			InitializeIcons();
+			InitializeFocusList();
 
 			SetViewMode(Settings.Default.FolderViewMode, false);
 			SetHomeLocation(Settings.Default.HomeLocation);
 
 			_folderView.ExceptionRaised += OnFolderControlExceptionRaised;
 			_folderTree.ExceptionRaised += OnFolderControlExceptionRaised;
+
+			ResetFocus(); // reset focus must happen after explorer controls are initially populated
 
 			//Tell the component how to get the paths to use.
 			component.GetSelectedPathsDelegate = GetSelectedPaths;
@@ -163,6 +166,53 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			else
 				_folderCoordinator.BrowseTo(_homeLocation);
 		}
+
+		#region Tab Order
+
+		private delegate bool FocusDelegate(bool forward);
+
+		private IList<KeyValuePair<Control, FocusDelegate>> _focusDelegates = null;
+
+		private void InitializeFocusList()
+		{
+			// initialize control focus list
+			List<KeyValuePair<Control, FocusDelegate>> focusDelegates = new List<KeyValuePair<Control, FocusDelegate>>(3);
+			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_folderTree, f => _folderTree.SelectNextControl(_folderTree, f, false, true, false)));
+			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_folderView, f => _folderView.SelectNextControl(_folderView, f, false, true, false)));
+			focusDelegates.Add(new KeyValuePair<Control, FocusDelegate>(_addressStrip, f => { _txtAddress.Focus(); return _addressStrip.ContainsFocus; }));
+			_focusDelegates = focusDelegates.AsReadOnly();
+		}
+
+		private void ResetFocus()
+		{
+			if (_focusDelegates.Count > 0)
+				_focusDelegates[0].Value.Invoke(true);
+		}
+
+		protected override bool ProcessTabKey(bool forward)
+		{
+			// overrides the tab order using the focus delegates list
+			int indexFocusedControl = 0;
+			while (indexFocusedControl < _focusDelegates.Count)
+			{
+				// find the control that is currently focused
+				if (_focusDelegates[indexFocusedControl].Key.ContainsFocus)
+				{
+					// try to focus the next control in sequence
+					for (int offset = 1; offset < _focusDelegates.Count; offset++)
+					{
+						int index = (indexFocusedControl + (forward ? offset : _focusDelegates.Count - offset)) % _focusDelegates.Count;
+						if (_focusDelegates[index].Value.Invoke(forward))
+							break; // end loop on first control that successfully focused
+					}
+					return true;
+				}
+				indexFocusedControl++;
+			}
+			return base.ProcessTabKey(forward);
+		}
+
+		#endregion
 
 		#region Explorer Control
 
@@ -334,7 +384,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private void _btnShowFolders_Click(object sender, EventArgs e)
 		{
 			_btnShowFolders.Checked = !_btnShowFolders.Checked;
-			_splitPane.Panel1Collapsed = !_btnShowFolders.Checked;
+			_folderTree.Visible = _splitter.Visible = _btnShowFolders.Checked;
 		}
 
 		private void _mnuTilesView_Click(object sender, EventArgs e)

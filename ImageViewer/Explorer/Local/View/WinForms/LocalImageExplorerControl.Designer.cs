@@ -62,13 +62,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LocalImageExplorerControl));
-			this._toolStripContainer = new System.Windows.Forms.ToolStripContainer();
-			this._splitPane = new System.Windows.Forms.SplitContainer();
-			this._folderTree = new ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.CustomFolderTree();
-			this._folderTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this._folderCoordinator = new ClearCanvas.Controls.WinForms.FolderCoordinator(this.components);
 			this._folderView = new ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.CustomFolderView();
 			this._folderViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this._folderCoordinator = new ClearCanvas.Controls.WinForms.FolderCoordinator(this.components);
+			this._splitter = new System.Windows.Forms.Splitter();
+			this._folderTree = new ClearCanvas.ImageViewer.Explorer.Local.View.WinForms.CustomFolderTree();
+			this._folderTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._btnBack = new System.Windows.Forms.ToolStripSplitButton();
 			this._btnForward = new System.Windows.Forms.ToolStripSplitButton();
@@ -90,91 +89,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._largeIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this._mediumIconImageList = new System.Windows.Forms.ImageList(this.components);
 			this._smallIconImageList = new System.Windows.Forms.ImageList(this.components);
-			this._toolStripContainer.ContentPanel.SuspendLayout();
-			this._toolStripContainer.TopToolStripPanel.SuspendLayout();
-			this._toolStripContainer.SuspendLayout();
-			this._splitPane.Panel1.SuspendLayout();
-			this._splitPane.Panel2.SuspendLayout();
-			this._splitPane.SuspendLayout();
 			this._toolStrip.SuspendLayout();
 			this._addressStrip.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// _toolStripContainer
-			// 
-			// 
-			// _toolStripContainer.ContentPanel
-			// 
-			this._toolStripContainer.ContentPanel.Controls.Add(this._splitPane);
-			this._toolStripContainer.ContentPanel.Size = new System.Drawing.Size(959, 547);
-			this._toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			// 
-			// _toolStripContainer.LeftToolStripPanel
-			// 
-			this._toolStripContainer.LeftToolStripPanel.Enabled = false;
-			this._toolStripContainer.LeftToolStripPanelVisible = false;
-			this._toolStripContainer.Location = new System.Drawing.Point(0, 0);
-			this._toolStripContainer.Name = "_toolStripContainer";
-			// 
-			// _toolStripContainer.RightToolStripPanel
-			// 
-			this._toolStripContainer.RightToolStripPanel.Enabled = false;
-			this._toolStripContainer.RightToolStripPanelVisible = false;
-			this._toolStripContainer.Size = new System.Drawing.Size(959, 597);
-			this._toolStripContainer.TabIndex = 0;
-			this._toolStripContainer.Text = "toolStripContainer1";
-			// 
-			// _toolStripContainer.TopToolStripPanel
-			// 
-			this._toolStripContainer.TopToolStripPanel.Controls.Add(this._toolStrip);
-			this._toolStripContainer.TopToolStripPanel.Controls.Add(this._addressStrip);
-			// 
-			// _splitPane
-			// 
-			this._splitPane.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._splitPane.Location = new System.Drawing.Point(0, 0);
-			this._splitPane.Name = "_splitPane";
-			// 
-			// _splitPane.Panel1
-			// 
-			this._splitPane.Panel1.Controls.Add(this._folderTree);
-			// 
-			// _splitPane.Panel2
-			// 
-			this._splitPane.Panel2.Controls.Add(this._folderView);
-			this._splitPane.Size = new System.Drawing.Size(959, 547);
-			this._splitPane.SplitterDistance = 319;
-			this._splitPane.TabIndex = 0;
-			// 
-			// _folderTree
-			// 
-			this._folderTree.ContextMenuStrip = this._folderTreeContextMenu;
-			this._folderTree.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._folderTree.FolderCoordinator = this._folderCoordinator;
-			this._folderTree.Location = new System.Drawing.Point(0, 0);
-			this._folderTree.Name = "_folderTree";
-			this._folderTree.Size = new System.Drawing.Size(319, 547);
-			this._folderTree.TabIndex = 0;
-			// 
-			// _folderTreeContextMenu
-			// 
-			this._folderTreeContextMenu.Name = "_folderTreeContextMenu";
-			this._folderTreeContextMenu.Size = new System.Drawing.Size(61, 4);
-			this._folderTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderTreeContextMenu_Opening);
-			// 
-			// _folderCoordinator
-			// 
-			this._folderCoordinator.CurrentPidlChanged += new System.EventHandler(this._folderCoordinator_CurrentPidlChanged);
 			// 
 			// _folderView
 			// 
 			this._folderView.ContextMenuStrip = this._folderViewContextMenu;
 			this._folderView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._folderView.FolderCoordinator = this._folderCoordinator;
-			this._folderView.Location = new System.Drawing.Point(0, 0);
+			this._folderView.Location = new System.Drawing.Point(322, 52);
 			this._folderView.Name = "_folderView";
-			this._folderView.Size = new System.Drawing.Size(636, 547);
-			this._folderView.TabIndex = 0;
+			this._folderView.Size = new System.Drawing.Size(637, 545);
+			this._folderView.TabIndex = 200;
 			this._folderView.ItemDoubleClick += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
 			// 
 			// _folderViewContextMenu
@@ -183,9 +110,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderViewContextMenu.Size = new System.Drawing.Size(61, 4);
 			this._folderViewContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderViewContextMenu_Opening);
 			// 
+			// _folderCoordinator
+			// 
+			this._folderCoordinator.CurrentPidlChanged += new System.EventHandler(this._folderCoordinator_CurrentPidlChanged);
+			// 
+			// _splitter
+			// 
+			this._splitter.Location = new System.Drawing.Point(319, 52);
+			this._splitter.Name = "_splitter";
+			this._splitter.Size = new System.Drawing.Size(3, 545);
+			this._splitter.TabIndex = 251;
+			this._splitter.TabStop = false;
+			// 
+			// _folderTree
+			// 
+			this._folderTree.ContextMenuStrip = this._folderTreeContextMenu;
+			this._folderTree.Dock = System.Windows.Forms.DockStyle.Left;
+			this._folderTree.FolderCoordinator = this._folderCoordinator;
+			this._folderTree.Location = new System.Drawing.Point(0, 52);
+			this._folderTree.Name = "_folderTree";
+			this._folderTree.Size = new System.Drawing.Size(319, 545);
+			this._folderTree.TabIndex = 100;
+			// 
+			// _folderTreeContextMenu
+			// 
+			this._folderTreeContextMenu.Name = "_folderTreeContextMenu";
+			this._folderTreeContextMenu.Size = new System.Drawing.Size(61, 4);
+			this._folderTreeContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._folderTreeContextMenu_Opening);
+			// 
 			// _toolStrip
 			// 
-			this._toolStrip.Dock = System.Windows.Forms.DockStyle.None;
 			this._toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._btnBack,
@@ -201,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._toolStrip.Name = "_toolStrip";
 			this._toolStrip.Size = new System.Drawing.Size(959, 25);
 			this._toolStrip.Stretch = true;
-			this._toolStrip.TabIndex = 3;
+			this._toolStrip.TabIndex = 0;
 			this._toolStrip.Text = "Standard Buttons";
 			// 
 			// _btnBack
@@ -330,7 +284,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// _addressStrip
 			// 
 			this._addressStrip.CanOverflow = false;
-			this._addressStrip.Dock = System.Windows.Forms.DockStyle.None;
 			this._addressStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this._addressStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._lblAddress,
@@ -338,21 +291,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
             this._btnGo});
 			this._addressStrip.Location = new System.Drawing.Point(0, 25);
 			this._addressStrip.Name = "_addressStrip";
-			this._addressStrip.Size = new System.Drawing.Size(959, 25);
+			this._addressStrip.Size = new System.Drawing.Size(959, 27);
 			this._addressStrip.Stretch = true;
-			this._addressStrip.TabIndex = 4;
+			this._addressStrip.TabIndex = 300;
+			this._addressStrip.TabStop = true;
 			this._addressStrip.Text = "Address Bar";
 			// 
 			// _lblAddress
 			// 
 			this._lblAddress.Name = "_lblAddress";
-			this._lblAddress.Size = new System.Drawing.Size(46, 22);
+			this._lblAddress.Size = new System.Drawing.Size(46, 24);
 			this._lblAddress.Text = "Address";
 			// 
 			// _txtAddress
 			// 
 			this._txtAddress.Name = "_txtAddress";
-			this._txtAddress.Size = new System.Drawing.Size(100, 25);
+			this._txtAddress.Size = new System.Drawing.Size(858, 24);
 			this._txtAddress.KeyEnterPressed += new System.EventHandler(this._txtAddress_KeyEnterPressed);
 			// 
 			// _btnGo
@@ -362,7 +316,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._btnGo.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this._btnGo.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._btnGo.Name = "_btnGo";
-			this._btnGo.Size = new System.Drawing.Size(23, 22);
+			this._btnGo.Size = new System.Drawing.Size(23, 24);
 			this._btnGo.Text = "Go";
 			this._btnGo.Click += new System.EventHandler(this._btnGo_Click);
 			// 
@@ -388,30 +342,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._toolStripContainer);
+			this.Controls.Add(this._folderView);
+			this.Controls.Add(this._splitter);
+			this.Controls.Add(this._folderTree);
+			this.Controls.Add(this._addressStrip);
+			this.Controls.Add(this._toolStrip);
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "LocalImageExplorerControl";
 			this.Size = new System.Drawing.Size(959, 597);
-			this._toolStripContainer.ContentPanel.ResumeLayout(false);
-			this._toolStripContainer.TopToolStripPanel.ResumeLayout(false);
-			this._toolStripContainer.TopToolStripPanel.PerformLayout();
-			this._toolStripContainer.ResumeLayout(false);
-			this._toolStripContainer.PerformLayout();
-			this._splitPane.Panel1.ResumeLayout(false);
-			this._splitPane.Panel2.ResumeLayout(false);
-			this._splitPane.ResumeLayout(false);
 			this._toolStrip.ResumeLayout(false);
 			this._toolStrip.PerformLayout();
 			this._addressStrip.ResumeLayout(false);
 			this._addressStrip.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.ToolStripContainer _toolStripContainer;
-		private System.Windows.Forms.SplitContainer _splitPane;
 		private System.Windows.Forms.ToolStrip _addressStrip;
 		private System.Windows.Forms.ToolStripLabel _lblAddress;
 		private ClearCanvas.Controls.WinForms.FolderLocationToolStripTextBox _txtAddress;
@@ -438,5 +387,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private System.Windows.Forms.ImageList _mediumIconImageList;
 		private System.Windows.Forms.ImageList _smallIconImageList;
 		private System.Windows.Forms.ToolStripButton _btnGo;
+		private System.Windows.Forms.Splitter _splitter;
 	}
 }
