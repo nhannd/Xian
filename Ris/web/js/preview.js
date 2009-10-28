@@ -1335,7 +1335,7 @@ Preview.ImagingServiceSection = function () {
 					Field.setValue($("OrderingPhysicianAddress"), Ris.formatAddress(contactPoint.CurrentAddress));
 					Field.setValue($("OrderingPhysicianPhone"), "Phone: " + Ris.formatTelephone(contactPoint.CurrentPhoneNumber));
 					Field.setValue($("OrderingPhysicianFax"), "Fax: " + Ris.formatTelephone(contactPoint.CurrentFaxNumber));
-					Field.setValue($("OrderingPhysicianEmail"), contactPoint.CurrentEmailAddress);
+					Field.setValue($("OrderingPhysicianEmail"), contactPoint.CurrentEmailAddress.Address);
 				}
 			}
 			
