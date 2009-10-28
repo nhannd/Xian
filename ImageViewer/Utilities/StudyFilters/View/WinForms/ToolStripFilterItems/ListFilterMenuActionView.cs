@@ -1,7 +1,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStripFilterItems
 {

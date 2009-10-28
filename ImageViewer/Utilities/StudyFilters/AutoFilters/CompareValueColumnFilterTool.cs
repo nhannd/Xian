@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 {
 	[ExtensionOf(typeof (AutoFilterToolExtensionPoint))]
 	public class CompareValueColumnFilterTool : AutoFilterTool, IFilterMenuActionOwner

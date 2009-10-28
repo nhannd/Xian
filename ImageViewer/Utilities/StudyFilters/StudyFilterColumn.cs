@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters

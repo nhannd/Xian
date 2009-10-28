@@ -3,7 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 {
 	[ButtonAction("removeItems", DefaultToolbarActionSite + "/ToolbarRemoveItems", "RemoveItems")]
 	[EnabledStateObserver("removeItems", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]

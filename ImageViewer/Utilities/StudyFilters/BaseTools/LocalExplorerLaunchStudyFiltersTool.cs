@@ -29,57 +29,37 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Explorer.Local;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 {
-	[ButtonAction("launch", DefaultToolbarActionSite + "/ToolbarLaunchInViewer", "Launch")]
-	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
-	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
-	public class LaunchViewerTool : StudyFilterTool
+	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenInStudyFilters", "Open")]
+	[Tooltip("Open", "TooltipOpenInStudyFilters")]
+	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
+	public class LocalExplorerLaunchStudyFiltersTool : Tool<ILocalImageExplorerToolContext>
 	{
-		public void Launch()
+		public void Open()
 		{
-			if (base.Selection == null || base.Selection.Count == 0)
-				return;
+			List<string> paths = new List<string>();
+			foreach (string path in base.Context.SelectedPaths)
+				paths.Add(path);
 
-			int n = 0;
-			string[] selection = new string[base.Selection.Count];
-			foreach (StudyItem item in base.Selection)
-			{
-				selection[n++] = item.File.FullName;
-			}
+			StudyFilterComponent component = new StudyFilterComponent();
+			component.BulkOperationsMode = true;
 
-			bool cancelled = true;
-			ImageViewerComponent viewer = new ImageViewerComponent();
-			try
+			if (StudyFilterComponentLoadHelper.Load(component, base.Context.DesktopWindow, true, paths))
 			{
-				viewer.LoadImages(selection, base.Context.DesktopWindow, out cancelled);
-			}
-			catch (Exception ex)
-			{
-				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
+				component.Refresh(true);
+				base.Context.DesktopWindow.Workspaces.AddNew(component, SR.StudyFilters);
 			}
 
-			if (cancelled)
-			{
-				viewer.Dispose();
-				return;
-			}
-
-			try
-			{
-				LaunchImageViewerArgs launchArgs = new LaunchImageViewerArgs(WindowBehaviour.Auto);
-				ImageViewerComponent.Launch(viewer, launchArgs);
-			}
-			catch (Exception ex)
-			{
-				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
-				Platform.Log(LogLevel.Error, ex, "ImageViewerComponent launch failure.");
-			}
+			component.BulkOperationsMode = false;
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Threading;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 {
 	public static class StudyFilterComponentLoadHelper
 	{

@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 {
 	[MenuAction("sortUp", "studyfilters-columnfilters/MenuSortAscending", "SortAscending")]
 	[IconSet("sortUp", IconScheme.Colour, "Icons.SortAscendingSmall.png", "Icons.SortAscendingSmall.png", "Icons.SortAscendingSmall.png")]

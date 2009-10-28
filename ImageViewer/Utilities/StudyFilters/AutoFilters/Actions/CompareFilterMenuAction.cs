@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions
 {
 	[ExtensionPoint]
 	public class CompareFilterMenuActionViewExtensionPoint : ExtensionPoint<IActionView> {}

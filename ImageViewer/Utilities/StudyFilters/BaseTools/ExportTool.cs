@@ -39,7 +39,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
 using Path=System.IO.Path;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 {
 	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
 	[IconSet("export", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]

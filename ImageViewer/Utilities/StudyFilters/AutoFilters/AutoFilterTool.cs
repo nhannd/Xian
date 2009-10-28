@@ -4,7 +4,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.Utilities;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 {
 	[ExtensionPoint]
 	public sealed class AutoFilterToolExtensionPoint : ExtensionPoint<ITool> {}

@@ -4,7 +4,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.AutoFilters
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 {
 	[MenuAction("clear", "studyfilters-columnfilters/MenuClearFilters", "Clear")]
 	[EnabledStateObserver("clear", "Enabled", "EnabledChanged")]

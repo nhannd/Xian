@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.Actions;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.Properties;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStripFilterItems
