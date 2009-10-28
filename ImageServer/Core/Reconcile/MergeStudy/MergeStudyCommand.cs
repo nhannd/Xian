@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 			Platform.CheckForNullReference(Context, "Context");
 
 			_destinationStudyStorage = Context.History.DestStudyStorageKey != null 
-				? StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.StudyStorageKey))[0] 
+				? StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.DestStudyStorageKey))[0] 
 				: Context.WorkQueueItemStudyStorage;
 
             EnsureStudyCanBeUpdated(_destinationStudyStorage);

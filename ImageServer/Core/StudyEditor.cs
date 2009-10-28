@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageServer.Core
 
 		}
 
-
 		#region Events
 		public event EventHandler<StudyEditingEventArgs> StudyEditing
 		{
@@ -218,7 +217,10 @@ namespace ClearCanvas.ImageServer.Core
 					new UpdateStudyCommand(ServerPartition, StorageLocation, updateCommands, 
 						ServerRuleApplyTimeEnum.SopEdited);
 				processor.AddCommand(updateStudyCommand);
-		
+
+				// Note, this command will only insert the ArchiveQueue command if a delete doesn't exist
+				processor.AddCommand(new InsertArchiveQueueCommand(ServerPartition.Key, StorageLocation.Key));
+
 				WebEditStudyContext context = new WebEditStudyContext
 				                              	{
 				                              		CommandProcessor = processor,
@@ -260,15 +262,13 @@ namespace ClearCanvas.ImageServer.Core
 		/// </summary>
 		public void Dispose()
 		{
+			if (_plugins == null) return;
 
-			if (_plugins != null)
+			foreach (IWebEditStudyProcessorExtension plugin in _plugins)
 			{
-				foreach (IWebEditStudyProcessorExtension plugin in _plugins)
-				{
-					plugin.Dispose();
-				}
-				_plugins = null;
+				plugin.Dispose();
 			}
+			_plugins = null;
 		}
 	}
 }

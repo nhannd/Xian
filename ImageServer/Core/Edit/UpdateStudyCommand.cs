@@ -61,20 +61,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	public class UpdateStudyCommand : ServerDatabaseCommand, IDisposable
 	{
 		#region Private Members
+
 		private readonly List<InstanceInfo> _updatedSopList = new List<InstanceInfo>();
 		private readonly StudyStorageLocation _oldStudyLocation;
 		private string _oldStudyPath;
 		private string _oldStudyInstanceUid;
-		private string _newStudyFolder;
 		private string _newStudyInstanceUid;
 		private string _oldStudyFolder;
-		private bool _initialized=false;
-
+		private bool _initialized;
 		private PatientInfo _oldPatientInfo;
 		private PatientInfo _newPatientInfo;
-
 		private readonly IList<BaseImageLevelUpdateCommand> _commands;
-		private string _newStudyPath;
 		private string _backupDir;
 		private readonly ServerPartition _partition;
 		private Study _study;
@@ -89,9 +86,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		private bool _patientInfoIsNotChanged;
 		private readonly ServerRulesEngine _rulesEngine;
+
 		#endregion
 
 		#region Constructors
+
 		public UpdateStudyCommand(ServerPartition partition, 
 		                          StudyStorageLocation studyLocation,
 		                          IList<BaseImageLevelUpdateCommand> imageLevelCommands,
@@ -112,20 +111,18 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		#endregion
 
 		#region Properties
+
 		public new UpdateStudyStatistics Statistics
 		{
 			get { return _statistics; }
 		}
 
-		public string NewStudyPath
-		{
-			get { return _newStudyPath; }
-			set { _newStudyPath = value; }
-		}
+		public string NewStudyPath { get; set; }
 
 		#endregion
 
 		#region Protected Method
+
 		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
 		{
 			Statistics.ProcessTime.Start();
@@ -138,20 +135,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				BackupFilesystem();
 
 			UpdateFilesystem();
-
-			//This should only be applied when editing a complete study.  it should not be
-			// applied on reconcile.
-			//StudyRulesEngine engine = new StudyRulesEngine(_oldStudyLocation, _partition);
-			//engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed, theProcessor);
-    
+	  
 			UpdateDatabase();
 
 			Statistics.ProcessTime.End();
-		}
-
-		private void CleaupBackupFiles()
-		{
-			DirectoryUtility.DeleteIfExists(_backupDir);
 		}
 
 		protected override void OnUndo()
@@ -159,15 +146,15 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			RestoreFilesystem();
 
 			// db rollback is done by the processor
-			CleaupBackupFiles();
+			CleanupBackupFiles();
 
 			_restored = true;
 		}
 
-
 		#endregion
 
 		#region Private Methods
+
 		private void Initialize()
 		{
 			using (IPersistenceContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
@@ -177,7 +164,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				_oldStudyPath = _oldStudyLocation.GetStudyPath();
 				_oldStudyInstanceUid = _oldStudyLocation.StudyInstanceUid;
 				_oldStudyFolder = _oldStudyLocation.StudyFolder;
-				_newStudyFolder = _oldStudyFolder;
 				_newStudyInstanceUid = _oldStudyInstanceUid;
 
 				_study = _oldStudyLocation.LoadStudy(readContext);
@@ -196,44 +182,32 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				foreach (BaseImageLevelUpdateCommand command in _commands)
 				{
 					ImageLevelUpdateEntry imageLevelUpdate = command.UpdateEntry;
-					if (imageLevelUpdate != null)
+					if (imageLevelUpdate == null)
+						continue;
+
+					if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
 					{
-						if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
-						{
-							// Update the folder name if the system is not currently using receiving date as the study folder
-							if (!ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder)
-								_newStudyFolder = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
-						{
-							_newStudyInstanceUid = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
-						{
-							_newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
-						{
-							_newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
-						}
-						else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
-						{
-							_newPatientInfo.Name = imageLevelUpdate.GetStringValue();
-						}
+						_newStudyInstanceUid = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
+					{
+						_newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
+					{
+						_newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
+					}
+					else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
+					{
+						_newPatientInfo.Name = imageLevelUpdate.GetStringValue();
 					}
 				}
 
-
 				Platform.CheckForNullReference(_newStudyInstanceUid, "_newStudyInstanceUid");
 
-				if (String.IsNullOrEmpty(_newStudyFolder))
-				{
-					_newStudyFolder = ImageServerCommonConfiguration.DefaultStudyRootFolder;
-				}
-
-				_newStudyPath = Path.Combine(_oldStudyLocation.FilesystemPath, _partition.PartitionFolder);
-				_newStudyPath = Path.Combine(_newStudyPath, _newStudyFolder);
-				_newStudyPath = Path.Combine(_newStudyPath, _newStudyInstanceUid);
+				NewStudyPath = Path.Combine(_oldStudyLocation.FilesystemPath, _partition.PartitionFolder);
+				NewStudyPath = Path.Combine(NewStudyPath, _oldStudyFolder);
+				NewStudyPath = Path.Combine(NewStudyPath, _newStudyInstanceUid);
 
 				_newPatient = FindPatient(_newPatientInfo, readContext);
 				_patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
@@ -246,6 +220,11 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				_deleteOriginalFolder = NewStudyPath != _oldStudyPath;
 				_initialized = true;
 			}
+		}
+
+		private void CleanupBackupFiles()
+		{
+			DirectoryUtility.DeleteIfExists(_backupDir);
 		}
 
 		private static Patient FindPatient(PatientInfo patientInfo, IPersistenceContext context)
@@ -263,7 +242,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			StringBuilder log = new StringBuilder();
 			log.AppendLine(String.Format("Study to be updated:"));
 			log.AppendLine(String.Format("\tServer Partition: {0}", _partition.AeTitle));
-			log.AppendLine(String.Format("\tStorage GUID: {0}", _oldStudyLocation.GetKey().Key));
+			log.AppendLine(String.Format("\tStorage GUID: {0}", _oldStudyLocation.Key.Key));
 			log.AppendLine(String.Format("\tPatient ID: {0}", _study.PatientId));
 			log.AppendLine(String.Format("\tPatient Name: {0}", _study.PatientsName));
 			log.AppendLine(String.Format("\tAccession #: {0}", _study.AccessionNumber));
@@ -285,49 +264,43 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		private void RestoreFilesystem()
 		{
-			if (!RequiresRollback || !_initialized)
+			if (!RequiresRollback || !_initialized || _backupDir == null)
 				return;
 
-			if (_backupDir != null)
+			if (NewStudyPath == _oldStudyPath)
 			{
-				if (NewStudyPath == _oldStudyPath)
+				// Study folder was not changed. Files were overwritten.
+
+				// restore header
+				Platform.Log(LogLevel.Info, "Restoring old study header...");
+
+				FileUtils.Copy(Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml"), _oldStudyLocation.GetStudyXmlPath(), true);
+				FileUtils.Copy(Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml.gz"), _oldStudyLocation.GetCompressedStudyXmlPath(), true);
+
+				// restore updated SOPs
+				Platform.Log(LogLevel.Info, "Restoring old study folder... {0} sop need to be restored", _updatedSopList.Count);
+				int restoredCount = 0;
+				foreach (InstanceInfo sop in _updatedSopList)
 				{
-					// Study folder was not changed. Files were overwritten.
+					string backupSopPath = Path.Combine(_backupDir, sop.SopInstanceUid + ".dcm");
 
-					// restore header
-					Platform.Log(LogLevel.Info, "Restoring old study header...");
+					FileUtils.Copy(backupSopPath,_oldStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid), true);
 
-					FileUtils.Copy(Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml"), _oldStudyLocation.GetStudyXmlPath(), true);
-					FileUtils.Copy(Path.Combine(_backupDir, _study.StudyInstanceUid + ".xml.gz"), _oldStudyLocation.GetCompressedStudyXmlPath(), true);
+					restoredCount++;
+					Platform.Log(ServerPlatform.InstanceLogLevel, "Restored SOP {0} [{1} of {2}]", sop.SopInstanceUid, restoredCount, _updatedSopList.Count);
 
-					// restore updated SOPs
-					Platform.Log(LogLevel.Info, "Restoring old study folder... {0} sop need to be restored", _updatedSopList.Count);
-					int restoredCount = 0;
-					foreach (InstanceInfo sop in _updatedSopList)
-					{
-						string backupSopPath = Path.Combine(_backupDir, sop.SopInstanceUid + ".dcm");
-
-						FileUtils.Copy(backupSopPath,_oldStudyLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid), true);
-
-						restoredCount++;
-						Platform.Log(ServerPlatform.InstanceLogLevel, "Restored SOP {0} [{1} of {2}]", sop.SopInstanceUid, restoredCount, _updatedSopList.Count);
-
-						SimulateErrors();
-					}
-
-					if (restoredCount > 0)
-						Platform.Log(LogLevel.Info, "{0} SOP(s) have been restored.", restoredCount);
-
+					SimulateErrors();
 				}
-				else
-				{
-					// Different study folder was used. Original folder must be kept around 
-					// because we are rolling back.
-					_deleteOriginalFolder = false;
-				}
+
+				if (restoredCount > 0)
+					Platform.Log(LogLevel.Info, "{0} SOP(s) have been restored.", restoredCount);
 			}
-
-            
+			else
+			{
+				// Different study folder was used. Original folder must be kept around 
+				// because we are rolling back.
+				_deleteOriginalFolder = false;
+			}
 		}
 
 		private static void SimulateErrors()
@@ -342,20 +315,20 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			foreach (BaseImageLevelUpdateCommand command in _commands)
 			{
 				ImageLevelUpdateEntry entry = command.UpdateEntry;
-				if (entityMap.ContainsKey(entry.TagPath.Tag))
-				{
-					string value = entry.GetStringValue();
-					DicomTag tag = entry.TagPath.Tag;
-					if (tag.TagValue == DicomTags.PatientsSex)
-					{
-						// Valid Patient's Sex value : "M", "F" or "O"
-						if (!String.IsNullOrEmpty(value) && !value.ToUpper().Equals("M") && !value.ToUpper().Equals("F"))
-							value = "O";
-					}
+				if (!entityMap.ContainsKey(entry.TagPath.Tag))
+					continue;
 
-					if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
-						throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
+				string value = entry.GetStringValue();
+				DicomTag tag = entry.TagPath.Tag;
+				if (tag.TagValue == DicomTags.PatientsSex)
+				{
+					// Valid Patient's Sex value : "M", "F" or "O"
+					if (!String.IsNullOrEmpty(value) && !value.ToUpper().Equals("M") && !value.ToUpper().Equals("F"))
+						value = "O";
 				}
+
+				if (!entityMap.Populate(entity, entry.TagPath.Tag, value))
+					throw new ApplicationException(String.Format("Unable to update {0}. See log file for details.", entity.Name));
 			}
 		}        
 
@@ -367,6 +340,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		private void UpdateDatabase()
 		{
+			// Reload the StudyStorage and Study tables.
 			LoadEntities();
 
 			UpdateEntity(_study);
@@ -381,15 +355,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			IStudyStorageEntityBroker storageUpdateBroker = UpdateContext.GetBroker<IStudyStorageEntityBroker>();
 			storageUpdateBroker.Update(_storage);
 
-			// Update the FilesystemStudyStorage table
-			IFilesystemStudyStorageEntityBroker filesystemStorageBroker = UpdateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
-			FilesystemStudyStorageSelectCriteria criteria = new FilesystemStudyStorageSelectCriteria();
-			criteria.FilesystemKey.Equals(_oldStudyLocation.FilesystemKey);
-			criteria.StudyStorageKey.EqualTo(_oldStudyLocation.Key);
-			FilesystemStudyStorageUpdateColumns columns = new FilesystemStudyStorageUpdateColumns 
-						{StudyFolder = _newStudyFolder};
-			filesystemStorageBroker.Update(criteria, columns);
-
 			// Update Patient level info. Different cases can occur here: 
 			//      A) Patient demographic info is not changed ==> update the current patient
 			//      B) New patient demographics matches (another) existing patient in the datbase 
@@ -402,29 +367,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			{
 				UpdateCurrentPatient();
 			}
-			else 
+			else if (_newPatient == null)
 			{
-				if (_newPatient == null) 
-				{
-					// No matching patient in the database. We should create a new patient for this study
-					_newPatient = CreateNewPatient(_newPatientInfo); 
-				}
-				else
-				{
-					// There's already patient in the database with the new patient demographics
-					// The study should be attached to that patient.
-					TransferStudy(_study, _oldPatientInfo, _newPatient);
-				}
+				// No matching patient in the database. We should create a new patient for this study
+				_newPatient = CreateNewPatient(_newPatientInfo);
 			}
-
-
-			Rearchive();
-		}
-
-		private void Rearchive()
-		{
-			Platform.Log(LogLevel.Info, "Scheduling/Updating study archive..");
-			_storage.Archive(UpdateContext);
+			else
+			{
+				// There's already patient in the database with the new patient demographics
+				// The study should be attached to that patient.
+				TransferStudy(_study.Key, _oldPatientInfo, _newPatient);
+			}
 		}
 
 		private Patient CreateNewPatient(PatientInfo patientInfo)
@@ -453,15 +406,17 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			patientUpdateBroker.Update(_curPatient);
 		}
 
-		private void TransferStudy(Study study, PatientInfo oldPatient, Patient newPatient)
+		private void TransferStudy(ServerEntityKey studyKey, PatientInfo oldPatient, Patient newPatient)
 		{
 			Platform.Log(LogLevel.Info, "Transferring study from {0} [ID={1}] to {2} [ID={3}]",
 			             oldPatient.Name, oldPatient.PatientId, newPatient.PatientsName, newPatient.PatientId);
 
 			IAttachStudyToPatient attachStudyToPatientBroker = UpdateContext.GetBroker<IAttachStudyToPatient>();
-			AttachStudyToPatientParamaters parms = new AttachStudyToPatientParamaters();
-			parms.StudyKey = study.GetKey();
-			parms.NewPatientKey = newPatient.GetKey();
+			AttachStudyToPatientParamaters parms = new AttachStudyToPatientParamaters
+			                                       	{
+			                                       		StudyKey = studyKey,
+			                                       		NewPatientKey = newPatient.GetKey()
+			                                       	};
 			attachStudyToPatientBroker.Execute(parms);
 		}
 
@@ -500,7 +455,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 						SaveFile(file);
 
-
 						_updatedSopList.Add(instance);
 
 						long fileSize = 0;
@@ -510,6 +464,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 							fileSize = finfo.Length;
 						}
+
 						newStudyXml.AddFile(file, fileSize, outputSettings);
 
 						Platform.Log(ServerPlatform.InstanceLogLevel, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
@@ -521,7 +476,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 						File.Delete(Path.Combine(_backupDir, instanceXml.SopInstanceUid) + ".bak"); //dont' need to restore this file
 						throw;
 					}
-
 				}
 			}
 
@@ -557,7 +511,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				destPath = Path.Combine(destPath, _partition.PartitionFolder);
 				filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
 
-				destPath = Path.Combine(destPath, _newStudyFolder);
+				destPath = Path.Combine(destPath, _oldStudyFolder);
 				filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
 
 				destPath = Path.Combine(destPath, _newStudyInstanceUid);
@@ -569,11 +523,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				destPath = Path.Combine(destPath, sopInstanceUid);
 				destPath += extension;
 
-				if (File.Exists(destPath))
-				{
-					// overwrite it
-				}
-
+				// Overwrite the prior file
 				SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
 				filesystemUpdateProcessor.AddCommand(saveCommand);
 
@@ -588,8 +538,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				{
 					throw new ApplicationException(String.Format("Unable to update image {0} : {1}", file.Filename, filesystemUpdateProcessor.FailureReason));
 				}
-			}
-            
+			}            
 		}
 
 		private void BackupFilesystem()
@@ -613,7 +562,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			Platform.Log(LogLevel.Info, "A copy of {0} has been saved in {1}.", _oldStudyInstanceUid, _backupDir);
 		}
 
-
 		#endregion
 
 		#region IDisposable Members
@@ -623,7 +571,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			if (RollBackRequested)
 			{
 				if (_restored)
-					CleaupBackupFiles();
+					CleanupBackupFiles();
 			}
 			else
 			{
@@ -633,7 +581,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 					DirectoryUtility.DeleteIfExists(_oldStudyPath, true);
 				}
                 
-				CleaupBackupFiles();
+				CleanupBackupFiles();
 			}
 		}
 

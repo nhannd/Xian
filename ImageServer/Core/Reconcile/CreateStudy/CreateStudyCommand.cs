@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 			if (Context.History.DestStudyStorageKey != null)
 			{
 				_destinationStudyStorage =
-					StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.StudyStorageKey))[0];
+					StudyStorageLocation.FindStorageLocations(StudyStorage.Load(Context.History.DestStudyStorageKey))[0];
 				return;
 			}
 
