@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,16 +29,36 @@
 
 #endregion
 
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupDuplicate
 {
-    /// <summary>
-    /// Represents the contents in the Data column of the <see cref="WorkQueue"/> entry.
-    /// </summary>
-    public class ProcessDuplicateQueueEntryQueueData
+    [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+    public class CleanupDuplicateFactoryExtension : IWorkQueueProcessorFactory
     {
-        public ProcessDuplicateAction Action { get; set; }
+        #region Private Members
+        #endregion
 
-        public string DuplicateSopFolder { get; set; }
+        #region Constructors
+        public CleanupDuplicateFactoryExtension()
+        { }
+        #endregion
+
+        #region IWorkQueueProcessorFactory Members
+
+        public WorkQueueTypeEnum GetWorkQueueType()
+        {
+            return WorkQueueTypeEnum.CleanupDuplicate;
+        }
+
+        public IWorkQueueItemProcessor GetItemProcessor()
+        {
+            CleanupDuplicateItemProcessor processor = new CleanupDuplicateItemProcessor();
+            processor.Name = GetWorkQueueType().ToString();
+            return processor;
+        }
+
+        #endregion
     }
 }

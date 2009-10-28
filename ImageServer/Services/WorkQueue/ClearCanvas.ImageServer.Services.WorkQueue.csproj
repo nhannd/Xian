@@ -48,6 +48,8 @@
     <Compile Include="AutoRoute\AutoRouteFactoryExtension.cs" />
     <Compile Include="AutoRoute\AutoRouteItemProcessor.cs" />
     <Compile Include="BaseItemProcessor.cs" />
+    <Compile Include="CleanupDuplicate\CleanupDuplicateFactoryExtension.cs" />
+    <Compile Include="CleanupDuplicate\CleanupDuplicateItemProcessor.cs" />
     <Compile Include="CleanupReconcile\CleanupReconcileFactoryExtension.cs" />
     <Compile Include="CleanupReconcile\CleanupReconcileItemProcessor.cs" />
     <Compile Include="CleanupStudy\CleanupStudyFactoryExtension.cs" />

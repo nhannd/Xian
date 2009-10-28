@@ -43,7 +43,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #region Private Memebers
         private readonly string _originalFile;
         private string _backupFile;
-        private bool _restored = false;
         #endregion
 
         #region Constructors
@@ -72,10 +71,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         
         protected override void OnUndo()
         {
-            if (File.Exists(_backupFile))
+            if (!File.Exists(_originalFile))
             {
                 File.Copy(_backupFile, _originalFile, true);
-                _restored = true;
             }
         }
         #endregion
@@ -86,14 +84,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             if (File.Exists(_originalFile))
             {
-                for (int i = 0; ; i++)
-                {
-                    _backupFile = String.Format("{0}.delbak({1})", _originalFile, i);
-                    if (!File.Exists(_backupFile))
-                        break;
-                }
-
-                File.Copy(_originalFile, _backupFile);
+                _backupFile = FileUtils.Backup(_originalFile);
             }
         }
 
@@ -106,8 +97,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             if (RollBackRequested)
             {
-                if (_restored)
+                if (File.Exists(_originalFile))
                 {
+                    // we can now safely delete the backup file
                     if (File.Exists(_backupFile))
                         FileUtils.Delete(_backupFile);
                 }

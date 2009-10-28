@@ -2422,6 +2422,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Oct 14, 2008: Call UpdateQueueStudyState to update the study status
 -- Oct 23, 2008: Removed UpdateQueueStudyState
 -- Oct 26, 2009: Added UpdateStudyStateFromWorkQueue
+-- Oct 27, 2009: Added CleanupDuplicate
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2439,6 +2440,8 @@ BEGIN
 	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
 	declare @ReconcileStudyTypeEnum as smallint
 	select @ReconcileStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
+	declare @ProcessDuplicateTypeEnum as smallint
+	select @ProcessDuplicateTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ProcessDuplicate''
 
 	
 	declare @PendingStatusEnum as smallint
@@ -2486,7 +2489,25 @@ BEGIN
 			INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, WorkQueuePriorityEnum)
 				values  (@NewWorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @CleanupStudyTypeEnum, @PendingStatusEnum, getdate(), getdate(),@HighPriorityEnum)
 
-			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID WHERE WorkQueueGUID = @WorkQueueGUID
+			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID , Failed=0, FailureCount=0
+			WHERE WorkQueueGUID = @WorkQueueGUID
+
+			DELETE FROM WorkQueue where GUID = @WorkQueueGUID			
+		END
+		-- Create ''CleanupDuplicate'' when deleting ''ProcessDuplicate''
+		ELSE IF (@workQueueTypeEnum = @ProcessDuplicateTypeEnum)
+		BEGIN
+			declare @CleanupDuplicateTypeEnum as smallint
+			select @CleanupDuplicateTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''CleanupDuplicate''
+			set @NewWorkQueueGUID = NEWID();
+
+			INSERT WorkQueue(GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, WorkQueuePriorityEnum, Data, GroupID)
+			SELECT @NewWorkQueueGUID, ServerPartitionGUID, StudyStorageGUID, @CleanupDuplicateTypeEnum, @PendingStatusEnum, DATEADD(minute, 15, getdate()), getdate(), @HighPriorityEnum, Data, GroupID
+			FROM WorkQueue WITH(NOLOCK)
+			WHERE GUID=@WorkQueueGUID
+
+			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID, Failed=0, FailureCount=0
+			WHERE WorkQueueGUID = @WorkQueueGUID
 
 			DELETE FROM WorkQueue where GUID = @WorkQueueGUID			
 		END
@@ -2508,7 +2529,8 @@ BEGIN
 			FROM WorkQueue newrec, WorkQueue oldrec
 			WHERE oldrec.GUID=@WorkQueueGUID and newrec.GUID=@NewWorkQueueGUID
 
-			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID WHERE WorkQueueGUID = @WorkQueueGUID
+			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID , Failed=0, FailureCount=0
+			WHERE WorkQueueGUID = @WorkQueueGUID
 
 			DELETE FROM WorkQueue where GUID = @WorkQueueGUID
 
@@ -4178,6 +4200,7 @@ EXEC dbo.sp_executesql @statement = N'
 -- 
 --	History:
 --		Oct 26, 2009: Update the study state when necessary.
+--		Oct 27, 2009: Clear FailureDescription
 -- =============================================
 CREATE PROCEDURE [dbo].[WebResetWorkQueue]
 	@WorkQueueGUID uniqueidentifier,
@@ -4225,7 +4248,8 @@ BEGIN
 		UPDATE WorkQueue
 		SET WorkQueueStatusEnum=@PendingStatusEnum,
 			ScheduledTime = @ScheduledTime, ExpirationTime=@ExpirationTime,
-			WorkQueuePriorityEnum=@Priority
+			WorkQueuePriorityEnum=@Priority,
+			FailureDescription = NULL
 		WHERE GUID=@WorkQueueGUID
 
 		UPDATE WorkQueueUid

@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 					}
 					else
 					{
-						columns.FailureCount = sop.FailureCount++;
+						columns.FailureCount = ++sop.FailureCount;
 					}
 				}
 

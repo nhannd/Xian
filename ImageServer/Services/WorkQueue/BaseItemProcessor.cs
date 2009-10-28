@@ -42,6 +42,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Process;
@@ -829,6 +830,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         }
 
+
+        /// <summary>
+        /// Routine for failing a work queue uid record.
+        /// </summary>
+        /// <param name="uid">The WorkQueueUid record to fail.</param>
+        /// <param name="retry">A boolean value indicating whether a retry will be attempted later.</param>
+        protected void FailWorkQueueUid(WorkQueueUid uid, bool retry)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueUidEntityBroker uidUpdateBroker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+                WorkQueueUidUpdateColumns columns = new WorkQueueUidUpdateColumns();
+                if (!retry)
+                    columns.Failed = true;
+                else
+                {
+                    if (uid.FailureCount >= ImageServerCommonConfiguration.WorkQueueMaxFailureCount)
+                    {
+                        columns.Failed = true;
+                    }
+                    else
+                    {
+                        columns.FailureCount = ++uid.FailureCount;
+                    }
+                }
+
+                if (uidUpdateBroker.Update(uid.GetKey(), columns))
+                    updateContext.Commit();
+                else
+                    throw new ApplicationException(String.Format("FailUid(): Unable to update work queue uid {0}", uid.Key));
+            }
+            
+        }
         
         /// <summary>
         /// Simple routine for failing a work queue item.

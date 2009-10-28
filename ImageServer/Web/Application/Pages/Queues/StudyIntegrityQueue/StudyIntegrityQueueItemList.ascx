@@ -29,7 +29,7 @@
                             <div id="ExistingStudyTable" runat="server" class="SIQItemSummary">
                                 <asp:Label runat="server" ID="ExistingPatientId" CssClass="StudyField" Text='<%# Eval("ExistingPatientId")%>'></asp:Label>
                                 /
-                                <asp:Label runat="server" ID="ExistingPatientName" CssClass="StudyField" Text='<%# NameFormatter.Format(Eval("ExistingPatientName").ToString())%>'></asp:Label>
+                                <asp:Label runat="server" ID="ExistingPatientName" CssClass="StudyField" Text='<%# NameFormatter.Format(Eval("ExistingPatientName") as string)%>'></asp:Label>
                                 <br /><div class="SIQSubItemSummary">
                                 <asp:Label runat="server" ID="ExistingAccessionNumber" CssClass="StudyField" Text='<%# Eval("ExistingAccessionNumber")%>'></asp:Label>
                                 /
@@ -48,7 +48,7 @@
                             <div id="ConflictingStudyTable" runat="server" class="SIQItemSummary">
                                 <asp:Label runat="server" ID="ConflictingPatientId" CssClass="StudyField" Text='<%# Eval("ConflictingPatientId")%>'></asp:Label>
                                 /
-                                <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# NameFormatter.Format(Eval("ConflictingPatientName").ToString())%>'></asp:Label>
+                                <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# NameFormatter.Format(Eval("ConflictingPatientName") as string)%>'></asp:Label>
                                 <br /><div class="SIQSubItemSummary">
                                 <asp:Label runat="server" ID="ConflictingAccessionNumber" CssClass="StudyField" Text='<%# Eval("ConflictingAccessionNumber")%>'></asp:Label>
                                 /
