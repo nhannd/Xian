@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
                 else
                 {
                     // tag doesn't exist, set to empty
-                    SetTagCommand cmd = new SetTagCommand(attribute, string.Empty);
+                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, String.Empty);
                     commandList.Add(cmd);
                 }
             }

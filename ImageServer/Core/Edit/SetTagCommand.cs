@@ -34,7 +34,6 @@ using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Helpers;
-using ClearCanvas.ImageServer.Core.Edit;
 
 namespace ClearCanvas.ImageServer.Core.Edit
 {
@@ -47,7 +46,6 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	[XmlRoot("SetTag")]
 	public class SetTagCommand : BaseImageLevelUpdateCommand
 	{
-	    
 	    #region Private Fields
 
 	    #endregion
@@ -70,8 +68,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
         public SetTagCommand(DicomAttribute attribute, string newValue)
             : this()
         {
-            UpdateEntry.TagPath = new DicomTagPath();
-            UpdateEntry.TagPath.Tag = attribute.Tag;
+            UpdateEntry.TagPath = new DicomTagPath {Tag = attribute.Tag};
             UpdateEntry.Value = newValue;
             UpdateEntry.OriginalValue = attribute.ToString(); 
         }
@@ -86,11 +83,24 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		public SetTagCommand(uint tag, string originalValue, string value)
 			: this()
 		{
-			UpdateEntry.TagPath = new DicomTagPath();
-			UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(tag);
-            UpdateEntry.Value = value;
+			UpdateEntry.TagPath = new DicomTagPath {Tag = DicomTagDictionary.GetDicomTag(tag)};
+		    UpdateEntry.Value = value;
             UpdateEntry.OriginalValue = originalValue;
 		}
+
+        /// <summary>
+        /// Creates an instance of <see cref="SetTagCommand"/> that can be used to update the specified dicom tag with the specified value
+        /// </summary>
+        /// <remarks>
+        /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
+        /// </remarks>
+        public SetTagCommand(uint tag, string newValue)
+            : this()
+        {
+            UpdateEntry.TagPath = new DicomTagPath {Tag = DicomTagDictionary.GetDicomTag(tag)};
+            UpdateEntry.Value = newValue;
+            UpdateEntry.OriginalValue = String.Empty;
+        }
 
         /// <summary>
         /// Creates an instance of <see cref="SetTagCommand"/> that can be used to set the value of the specified dicom tag 
@@ -103,8 +113,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
             : this()
         {
             File = file;
-            UpdateEntry.TagPath = new DicomTagPath();
-            UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(tag);
+            UpdateEntry.TagPath = new DicomTagPath {Tag = DicomTagDictionary.GetDicomTag(tag)};
             UpdateEntry.Value = value;
             UpdateEntry.OriginalValue = originalValue;
         }
@@ -120,9 +129,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
 		public string TagName
 		{
 			get { return UpdateEntry.TagPath.Tag.Name; }
-			set
-			{
-				// NO-OP 
+
+			// Leave 'set' to public. It's used for serialization
+            set {
+				// NO-OP
 			}
 		}
 
@@ -190,7 +200,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
 				DicomAttribute attr = FindAttribute(file.DataSet, UpdateEntry);
 				if (attr != null)
 				{
-				    this.UpdateEntry.OriginalValue = attr.ToString();
+				    UpdateEntry.OriginalValue = attr.ToString();
 				    attr.SetStringValue(UpdateEntry.GetStringValue());
 				}
 			}

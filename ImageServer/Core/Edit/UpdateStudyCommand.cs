@@ -229,10 +229,12 @@ namespace ClearCanvas.ImageServer.Core.Edit
 
 		private static Patient FindPatient(PatientInfo patientInfo, IPersistenceContext context)
 		{
-			IPatientEntityBroker patientFindBroker = context.GetBroker<IPatientEntityBroker>();
+            IPatientEntityBroker patientFindBroker = context.GetBroker<IPatientEntityBroker>();
 			PatientSelectCriteria criteria = new PatientSelectCriteria();
 			criteria.PatientId.EqualTo(patientInfo.PatientId);
-			criteria.PatientsName.EqualTo(patientInfo.Name);
+
+			if (!String.IsNullOrEmpty(patientInfo.Name))
+                criteria.PatientsName.EqualTo(patientInfo.Name);
 
 			return patientFindBroker.FindOne(criteria);
 		}
