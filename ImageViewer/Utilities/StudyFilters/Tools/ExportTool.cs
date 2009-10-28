@@ -42,7 +42,7 @@ using Path=System.IO.Path;
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
 	[DropDownAction("export", DefaultToolbarActionSite + "/ToolbarExport", "DropDownActionModel")]
-	[IconSet("export", IconScheme.Colour, "Icons.SaveSmall.png", "Icons.SaveSmall.png", "Icons.SaveSmall.png")]
+	[IconSet("export", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]
 	[MenuAction("exportAnonymized", DropDownMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
 	[MenuAction("exportAnonymized", DefaultContextMenuActionSite + "/MenuExportAnonymized", "ExportAnonymized")]
 	[MenuAction("exportCopy", DropDownMenuActionSite + "/MenuExportCopy", "ExportCopy")]

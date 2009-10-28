@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{49A47B83-BC95-4E1D-96A8-3DF05673797F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -164,13 +164,7 @@
     <EmbeddedResource Include="Icons\SortDescendingSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AddRemoveColumnsSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\ClearFiltersSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SaveSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\OpenToolSmall.png" />
@@ -189,6 +183,16 @@
     <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
     <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
     <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddRemoveColumnsToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddRemoveColumnsToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddRemoveColumnsToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SaveToolLarge.png" />
+    <EmbeddedResource Include="Icons\SaveToolMedium.png" />
+    <EmbeddedResource Include="Icons\SaveToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
