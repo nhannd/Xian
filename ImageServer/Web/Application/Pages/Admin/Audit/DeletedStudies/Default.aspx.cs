@@ -32,9 +32,10 @@
 using System;
 using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
     public partial class Default : BaseAdminPage
     {
         #region Protected Methods
+
         protected override void OnInit(EventArgs e)
         {
             SearchPanel.ViewDetailsClicked += SearchPanel_ViewDetailsClicked;
@@ -49,29 +51,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             DeleteConfirmMessageBox.Confirmed += DeleteConfirmMessageBox_Confirmed;
             base.OnInit(e);
         }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            SetPageTitle(App_GlobalResources.Titles.DeletedStudiesPageTitle);
+            SetPageTitle(Titles.DeletedStudiesPageTitle);
 
             DataBind();
         }
 
-        protected void Refresh()
-        {
-            DataBind();
-            UpdatePanel1.Update();
-        }
         #endregion
 
         #region Private Methods
-        void DeleteConfirmMessageBox_Confirmed(object data)
+
+        private void DeleteConfirmMessageBox_Confirmed(object data)
         {
             try
             {
-                ServerEntityKey record = data as ServerEntityKey;
-                DeletedStudyController controller = new DeletedStudyController();
+                var record = data as ServerEntityKey;
+                var controller = new DeletedStudyController();
                 controller.Delete(record);
             }
             finally
@@ -80,21 +79,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             }
         }
 
-        void SearchPanel_DeleteClicked(object sender, DeletedStudyDeleteClickedEventArgs e)
+        private void SearchPanel_DeleteClicked(object sender, DeletedStudyDeleteClickedEventArgs e)
         {
             DeleteConfirmMessageBox.Data = e.SelectedItem.DeleteStudyRecord;
             DeleteConfirmMessageBox.Show();
         }
 
-        void SearchPanel_ViewDetailsClicked(object sender, DeletedStudyViewDetailsClickedEventArgs e)
+        private void SearchPanel_ViewDetailsClicked(object sender, DeletedStudyViewDetailsClickedEventArgs e)
         {
-            DeletedStudyDetailsDialogViewModel dialogViewModel = new DeletedStudyDetailsDialogViewModel();
-            dialogViewModel.DeletedStudyRecord = e.DeletedStudyInfo;
+            var dialogViewModel = new DeletedStudyDetailsDialogViewModel {DeletedStudyRecord = e.DeletedStudyInfo};
             DetailsDialog.ViewModel = dialogViewModel;
             DetailsDialog.Show();
         }
 
         #endregion
-
     }
 }

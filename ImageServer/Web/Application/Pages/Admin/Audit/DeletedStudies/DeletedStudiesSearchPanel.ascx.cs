@@ -35,27 +35,25 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
-using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel.js", "application/x-javascript")]
+[assembly:
+    WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel.js",
+        "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
     /// <summary>
     /// Represents an event fired when the View Details button is clicked
     /// </summary>
-    public class DeletedStudyViewDetailsClickedEventArgs:EventArgs
+    public class DeletedStudyViewDetailsClickedEventArgs : EventArgs
     {
-        private DeletedStudyInfo _deletedStudyInfo;
-        public DeletedStudyInfo DeletedStudyInfo
-        {
-            get { return _deletedStudyInfo; }
-            set { _deletedStudyInfo = value; }
-        }
+        public DeletedStudyInfo DeletedStudyInfo { get; set; }
     }
 
     /// <summary>
@@ -63,23 +61,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
     /// </summary>
     public class DeletedStudyDeleteClickedEventArgs : EventArgs
     {
-        private DeletedStudyInfo _selectedStudyInfo;
-        public DeletedStudyInfo SelectedItem
-        {
-            get { return _selectedStudyInfo; }
-            set { _selectedStudyInfo = value; }
-        }
+        public DeletedStudyInfo SelectedItem { get; set; }
     }
 
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel.js")]
+    [ClientScriptResource(
+        ComponentType =
+            "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel",
+        ResourcePath =
+            "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel.js")]
     public partial class DeletedStudiesSearchPanel : AJAXScriptControl
     {
         #region Private Fields
-        private EventHandler<DeletedStudyViewDetailsClickedEventArgs> _viewDetailsClicked;
+
         private EventHandler<DeletedStudyDeleteClickedEventArgs> _deleteClicked;
+        private EventHandler<DeletedStudyViewDetailsClickedEventArgs> _viewDetailsClicked;
+
         #endregion
 
         #region Events
+
         /// <summary>
         /// Occurs when user clicks on the View Details button
         /// </summary>
@@ -97,9 +97,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             add { _deleteClicked += value; }
             remove { _deleteClicked -= value; }
         }
+
         #endregion
 
         #region Ajax Properties
+
         [ExtenderControlProperty]
         [ClientPropertyName("DeleteButtonClientID")]
         public string DeleteButtonClientID
@@ -121,12 +123,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             get { return SearchResultGridView1.GridViewControl.ClientID; }
         }
 
-        #endregion 
-        
+        #endregion
+
         #region Private Methods
-        void DataSource_ObjectCreated(object sender, ObjectDataSourceEventArgs e)
+
+        private void DataSource_ObjectCreated(object sender, ObjectDataSourceEventArgs e)
         {
-            DeletedStudyDataSource dataSource = e.ObjectInstance as DeletedStudyDataSource;
+            var dataSource = e.ObjectInstance as DeletedStudyDataSource;
             if (dataSource != null)
             {
                 dataSource.AccessionNumber = AccessionNumber.Text;
@@ -145,18 +148,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
                     }
                 }
             }
-
         }
+
         #endregion
 
         #region Overridden Protected Methods
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
-            ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
-            
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, SearchResultGridView1.GridViewControl, delegate { return SearchResultGridView1.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
+            ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID,
+                                                                        StudyDateCalendarExtender.ClientID);
+
+            GridPagerTop.InitializeGridPager(Labels.GridPagerQueueSingleItem, Labels.GridPagerQueueMultipleItems,
+                                             SearchResultGridView1.GridViewControl,
+                                             () => SearchResultGridView1.ResultCount,
+                                             ImageServerConstants.GridViewPagerPosition.Top);
             SearchResultGridView1.Pager = GridPagerTop;
             GridPagerTop.Reset();
 
@@ -167,10 +175,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             ViewStudyDetailsButton.Roles =
                 AuthorityTokens.Admin.StudyDeleteHistory.View;
         }
+
         #endregion
 
         #region Protected Methods
-        
+
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             Refresh();
@@ -178,25 +187,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
         protected void ViewDetailsButtonClicked(object sender, ImageClickEventArgs e)
         {
-            DeletedStudyViewDetailsClickedEventArgs args = new DeletedStudyViewDetailsClickedEventArgs();
-            args.DeletedStudyInfo = SearchResultGridView1.SelectedItem;
+            var args = new DeletedStudyViewDetailsClickedEventArgs
+                           {
+                               DeletedStudyInfo = SearchResultGridView1.SelectedItem
+                           };
             EventsHelper.Fire(_viewDetailsClicked, this, args);
         }
 
         protected void DeleteButtonClicked(object sender, ImageClickEventArgs e)
         {
-            DeletedStudyDeleteClickedEventArgs args = new DeletedStudyDeleteClickedEventArgs();
-            args.SelectedItem = SearchResultGridView1.SelectedItem;
+            var args = new DeletedStudyDeleteClickedEventArgs
+                           {
+                               SelectedItem = SearchResultGridView1.SelectedItem
+                           };
             EventsHelper.Fire(_deleteClicked, this, args);
         }
+
         #endregion
-        
+
         #region Public Methods
 
         public void Refresh()
         {
-            SearchResultGridView1.GotoPage(0);
-            DataBind();
+            SearchResultGridView1.Refresh();
             SearchUpdatePanel.Update();
         }
 

@@ -29,11 +29,11 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies;
+using System.Web.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
-    public partial class DeletedStudyDetailsDialogPanel : System.Web.UI.UserControl
+    public partial class DeletedStudyDetailsDialogPanel : UserControl
     {
         private DeletedStudyDetailsDialogViewModel viewModel;
 
@@ -45,9 +45,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
         public override void DataBind()
         {
-            GeneralInfoPanel.ViewModel = this.ViewModel;
-            ArchiveInfoPanel.ViewModel = this.ViewModel;
-            
+            GeneralInfoPanel.ViewModel = ViewModel;
+            ArchiveInfoPanel.ViewModel = ViewModel;
+
             base.DataBind();
         }
     }

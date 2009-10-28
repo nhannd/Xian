@@ -37,7 +37,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions;
-using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
@@ -46,24 +45,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         public override void DataBind()
         {
             IList<DeletedStudyArchiveInfo> infoList = new List<DeletedStudyArchiveInfo>();
-            if (ArchiveInfo!=null)
+            if (ArchiveInfo != null)
                 infoList.Add(ArchiveInfo);
 
-            ArchiveInfoView.DataSource = CollectionUtils.Map<DeletedStudyArchiveInfo, HsmArchivePanelInfoDataModel>(
+            ArchiveInfoView.DataSource = CollectionUtils.Map(
                 infoList,
                 delegate(DeletedStudyArchiveInfo info)
                     {
-                        HsmArchivePanelInfoDataModel dataModel = new HsmArchivePanelInfoDataModel();
-                        dataModel.PartitionArchive = info.PartitionArchive;
-                        dataModel.ArchiveTime = info.ArchiveTime;
-                        dataModel.TransferSyntaxUid = info.TransferSyntaxUid;
-                        dataModel.ArchiveXml = XmlUtils.Deserialize<HsmArchiveXml>(info.ArchiveXml);
+                        var dataModel = new HsmArchivePanelInfoDataModel
+                                            {
+                                                PartitionArchive = info.PartitionArchive,
+                                                ArchiveTime = info.ArchiveTime,
+                                                TransferSyntaxUid = info.TransferSyntaxUid,
+                                                ArchiveXml = XmlUtils.Deserialize<HsmArchiveXml>(info.ArchiveXml)
+                                            };
                         return dataModel;
                     });
 
             base.DataBind();
         }
-
     }
 
     /// <summary>
@@ -72,50 +72,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
     public class HsmArchivePanelInfoDataModel
     {
         #region Private Fields
-        private DateTime _archiveTime;
-        private string _transferSyntaxUid;
-        private HsmArchiveXml _archiveXml;
-        private string _archivePath;
+
         private PartitionArchive _archive;
+        private string _archivePath;
+
         #endregion
 
         #region Public Properties
-        public DateTime ArchiveTime
-        {
-            get { return _archiveTime; }
-            set { _archiveTime = value; }
-        }
 
-        public string TransferSyntaxUid
-        {
-            get { return _transferSyntaxUid; }
-            set { _transferSyntaxUid = value; }
-        }
+        public DateTime ArchiveTime { get; set; }
 
-        public HsmArchiveXml ArchiveXml
-        {
-            get { return _archiveXml; }
-            set { _archiveXml = value; }
-        }
+        public string TransferSyntaxUid { get; set; }
+
+        public HsmArchiveXml ArchiveXml { get; set; }
 
 
         public string ArchiveFolderPath
         {
             get
             {
-                if (String.IsNullOrEmpty(_archivePath) && _archive!=null)
+                if (String.IsNullOrEmpty(_archivePath) && _archive != null)
                 {
-
-                    HsmArchiveConfigXml config = XmlUtils.Deserialize<HsmArchiveConfigXml>(_archive.ConfigurationXml);
-                    _archivePath = StringUtilities.Combine(new string[]
-                                                                       {
-                                                                           config.RootDir, ArchiveXml.StudyFolder, ArchiveXml.Uid, ArchiveXml.Filename
-                                                                       }, String.Format("{0}", Path.DirectorySeparatorChar));
-
+                    var config = XmlUtils.Deserialize<HsmArchiveConfigXml>(_archive.ConfigurationXml);
+                    _archivePath = StringUtilities.Combine(new[]
+                                                               {
+                                                                   config.RootDir, ArchiveXml.StudyFolder,
+                                                                   ArchiveXml.Uid, ArchiveXml.Filename
+                                                               }, String.Format("{0}", Path.DirectorySeparatorChar));
                 }
                 return _archivePath;
             }
-
         }
 
         public PartitionArchive PartitionArchive
@@ -123,6 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             get { return _archive; }
             set { _archive = value; }
         }
+
         #endregion
     }
 
@@ -135,12 +122,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
     public class HsmArchiveXml
     {
         #region Private Fields
-        private string _studyFolder;
+
         private string _filename;
+        private string _studyFolder;
         private string _uid;
+
         #endregion
 
         #region Public Properties
+
         public string StudyFolder
         {
             get { return _studyFolder; }
@@ -158,8 +148,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             get { return _uid; }
             set { _uid = value; }
         }
-        #endregion
 
+        #endregion
     }
 
     /// <summary>
@@ -170,17 +160,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
     public class HsmArchiveConfigXml
     {
         #region Private Fields
+
         private string _rootDir;
+
         #endregion
 
         #region Public Properties
+
         public string RootDir
         {
             get { return _rootDir; }
             set { _rootDir = value; }
         }
+
         #endregion
     }
-
-   
 }

@@ -34,48 +34,38 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
-using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
+using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
     public partial class SearchResultGridView : GridViewPanel
     {
         #region Private Fields
+
         private DeletedStudyDataSource _dataSource;
+
         #endregion
 
         #region Public Properties
 
         public GridView GridViewControl
         {
-            get
-            {
-                return ListControl;
-            }
+            get { return ListControl; }
         }
 
         public int ResultCount
         {
-            get
-            {
-                return _dataSource.SelectCount();
-            }
+            get { return _dataSource.SelectCount(); }
         }
 
         public DeletedStudyInfo SelectedItem
         {
-            get
-            {
-                return _dataSource.Find(ListControl.SelectedValue);
-            }
+            get { return _dataSource.Find(ListControl.SelectedValue); }
         }
 
         public ObjectDataSource DataSourceContainer
         {
-            get
-            {
-                return DataSource;
-            }
+            get { return DataSource; }
         }
 
         #endregion
@@ -87,23 +77,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             base.OnInit(e);
             DataSourceContainer.ObjectCreated += DataSourceContainer_ObjectCreated;
             ListControl.DataSource = DataSource;
+            TheGrid = ListControl;
         }
 
         #endregion
 
         #region Private Methods
-        void DataSourceContainer_ObjectCreated(object sender, ObjectDataSourceEventArgs e)
+
+        private void DataSourceContainer_ObjectCreated(object sender, ObjectDataSourceEventArgs e)
         {
             // keep a reference to the data source created, used for other purposes
             _dataSource = e.ObjectInstance as DeletedStudyDataSource;
-        }
-
-        #endregion
-
-        #region Public Methods
-        public void GotoPage(int pageIndex)
-        {
-            ListControl.PageIndex = pageIndex;
         }
 
         #endregion
