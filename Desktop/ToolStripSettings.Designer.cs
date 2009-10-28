@@ -13,7 +13,7 @@ namespace ClearCanvas.Desktop {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
-    internal sealed partial class ToolStripSettings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class ToolStripSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static ToolStripSettings defaultInstance = ((ToolStripSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ToolStripSettings())));
         
@@ -46,9 +46,9 @@ namespace ClearCanvas.Desktop {
         [global::System.Configuration.SettingsDescriptionAttribute("Controls the size of toolstrip buttons.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Large")]
-        public global::ClearCanvas.Desktop.ToolStripSizeType ToolStripSize {
+        public global::ClearCanvas.Desktop.IconSize ToolStripSize {
             get {
-                return ((global::ClearCanvas.Desktop.ToolStripSizeType)(this["ToolStripSize"]));
+                return ((global::ClearCanvas.Desktop.IconSize)(this["ToolStripSize"]));
             }
             set {
                 this["ToolStripSize"] = value;

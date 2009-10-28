@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -70,7 +70,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Standard\DateFormatApplicationComponent.cs" />
-    <Compile Include="Standard\ToolStripConfigurationComponent.cs" />
+    <Compile Include="Standard\ToolbarConfigurationComponent.cs" />
     <Compile Include="Tools\OptionsTool.cs" />
     <Compile Include="Tools\StandardOptionsConfigurationPageProvider.cs" />
   </ItemGroup>

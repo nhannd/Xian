@@ -29,75 +29,31 @@
 
 #endregion
 
-using System;
-
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Configuration.Standard;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Desktop.Configuration.Standard
+namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {
-	//TODO (cr Oct 2009): Use the actual enum for the property
-
-	//TODO (cr Oct 2009): ToolbarConfigurationComponent
-
-	[ExtensionPoint]
-	public sealed class ToolStripConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
-
-	[AssociateView(typeof (ToolStripConfigurationComponentViewExtensionPoint))]
-	public sealed class ToolStripConfigurationComponent : ConfigurationApplicationComponent
+	[ExtensionOf(typeof (ToolbarConfigurationComponentViewExtensionPoint))]
+	public sealed class ToolbarConfigurationComponentView : WinFormsView, IApplicationComponentView
 	{
-		private ToolStripSettingsHelper _settings;
-		private bool _wrapLongToolstrips;
-		private string _toolStripSize;
+		private ToolbarConfigurationComponent _component;
+		private ToolbarConfigurationComponentControl _control;
 
-		public bool WrapLongToolstrips
+		public void SetComponent(IApplicationComponent component)
 		{
-			get { return _wrapLongToolstrips; }
-			set
+			_component = (ToolbarConfigurationComponent)component;
+		}
+
+		public override object GuiElement
+		{
+			get
 			{
-				if (_wrapLongToolstrips != value)
-				{
-					_wrapLongToolstrips = value;
-					base.NotifyPropertyChanged("WrapLongToolstrips");
-					base.Modified = true;
-				}
+				if (_control == null)
+					_control = new ToolbarConfigurationComponentControl(_component);
+				return _control;
 			}
-		}
-
-		public string ToolStripSize
-		{
-			get { return _toolStripSize; }
-			set
-			{
-				if (_toolStripSize != value)
-				{
-					_toolStripSize = value;
-					base.NotifyPropertyChanged("ToolStripSize");
-					base.Modified = true;
-				}
-			}
-		}
-
-		public override void Start()
-		{
-			base.Start();
-
-			_settings = ToolStripSettingsHelper.Default;
-			_wrapLongToolstrips = _settings.WrapLongToolstrips;
-			_toolStripSize = Enum.GetName(typeof(ToolStripSizeType), _settings.ToolStripSize);
-		}
-
-		public override void Stop()
-		{
-			_settings = null;
-
-			base.Stop();
-		}
-
-		public override void Save()
-		{
-			_settings.WrapLongToolstrips = _wrapLongToolstrips;
-			_settings.ToolStripSize = (ToolStripSizeType)Enum.Parse(typeof(ToolStripSizeType), _toolStripSize);
-			_settings.Save();
 		}
 	}
 }

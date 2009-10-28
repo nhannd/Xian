@@ -46,9 +46,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms {
         [global::System.Configuration.SettingsDescriptionAttribute("Sets the size of the icons on the toolbar.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Medium")]
-        public global::ClearCanvas.Desktop.ToolStripSizeType ToolbarIconSize {
+        public global::ClearCanvas.Desktop.IconSize ToolbarIconSize {
             get {
-                return ((global::ClearCanvas.Desktop.ToolStripSizeType)(this["ToolbarIconSize"]));
+                return ((global::ClearCanvas.Desktop.IconSize)(this["ToolbarIconSize"]));
             }
             set {
                 this["ToolbarIconSize"] = value;

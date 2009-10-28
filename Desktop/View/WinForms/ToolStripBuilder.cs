@@ -128,7 +128,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="builderStyle"></param>
 		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
 		{
-			BuildToolStrip(kind, parentItemCollection, nodes, builderStyle, ToolStripSizeType.Medium);
+			BuildToolStrip(kind, parentItemCollection, nodes, builderStyle, IconSize.Medium);
 		}
 
 		/// <summary>
@@ -138,8 +138,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="parentItemCollection"></param>
 		/// <param name="nodes"></param>
 		/// <param name="builderStyle"></param>
-		/// <param name="toolStripSize"></param>
-		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle, ToolStripSizeType toolStripSize)
+		/// <param name="iconSize"></param>
+		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle, IconSize iconSize)
         {
             switch (kind)
             {
@@ -147,7 +147,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     BuildMenu(parentItemCollection, nodes);
                     break;
                 case ToolStripKind.Toolbar:
-					BuildToolbar(parentItemCollection, nodes, builderStyle, toolStripSize);
+					BuildToolbar(parentItemCollection, nodes, builderStyle, iconSize);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -172,7 +172,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="builderStyle"></param>
 		public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
 		{
-			BuildToolbar(parentItemCollection, nodes, builderStyle, ToolStripSizeType.Medium);
+			BuildToolbar(parentItemCollection, nodes, builderStyle, IconSize.Medium);
 		}
 
 		/// <summary>
@@ -181,8 +181,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="parentItemCollection"></param>
 		/// <param name="nodes"></param>
 		/// <param name="builderStyle"></param>
-		/// <param name="toolStripSize"></param>
-		public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle, ToolStripSizeType toolStripSize)
+		/// <param name="iconSize"></param>
+		public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle, IconSize iconSize)
         {
 			List<ActionModelNode> nodeList = CombineAdjacentSeparators(new List<ActionModelNode>(nodes));
 			
@@ -195,7 +195,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (node is ActionNode)
                 {
                     IAction action = ((ActionNode)node).Action;
-                    ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar, toolStripSize);
+                    ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar, iconSize);
                     button.Tag = node;
 
                     // By default, only display the image on the button
@@ -213,7 +213,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				}
                 else
                 {
-					BuildToolbar(parentItemCollection, node.ChildNodes, builderStyle, toolStripSize);
+					BuildToolbar(parentItemCollection, node.ChildNodes, builderStyle, iconSize);
                 }
             }
         }
@@ -241,7 +241,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // this is a leaf node (terminal menu item)
                 	ActionNode actionNode = (ActionNode) node;
 					IAction action = actionNode.Action;
-                    toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu, ToolStripSizeType.Medium);
+                    toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu, IconSize.Medium);
 
                     toolstripItem.Tag = node;
                     parentItemCollection.Add(toolstripItem);
@@ -356,7 +356,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return result;
 		}
 
-		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind, ToolStripSizeType toolStripSize)
+		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind, IconSize iconSize)
         {
             // optimization: for framework-provided actions, we can just create the controls
             // directly rather than use the associated view, which is slower;
@@ -368,13 +368,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 					if (action is IDropDownAction)
 					{
 						if (action is IClickAction)
-							return new DropDownButtonToolbarItem((IClickAction)action, toolStripSize);
+							return new DropDownButtonToolbarItem((IClickAction)action, iconSize);
 
-						return new DropDownToolbarItem((IDropDownAction)action, toolStripSize);
+						return new DropDownToolbarItem((IDropDownAction)action, iconSize);
 					}
 					else if (action is IClickAction)
 					{
-						return new ActiveToolbarButton((IClickAction)action, toolStripSize);
+						return new ActiveToolbarButton((IClickAction)action, iconSize);
 					}
 				}
 				else

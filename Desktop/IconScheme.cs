@@ -33,8 +33,17 @@ using System;
 
 namespace ClearCanvas.Desktop
 {
-	//TODO (cr Oct 2009): IconSize here, rather than ToolStripSizeType
-    /// <summary>
+	/// <summary>
+	/// Enumeration for different standard icon sizes.
+	/// </summary>
+	public enum IconSize
+	{
+		Small = 0, 
+		Medium, 
+		Large
+	};
+
+	/// <summary>
     /// Defines possible icon schemes.
     /// </summary>
     [Flags]

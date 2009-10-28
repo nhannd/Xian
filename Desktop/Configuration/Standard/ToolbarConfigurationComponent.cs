@@ -29,31 +29,62 @@
 
 #endregion
 
+using System;
+
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Configuration.Standard;
-using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Desktop.Configuration.View.WinForms
+namespace ClearCanvas.Desktop.Configuration.Standard
 {
-	[ExtensionOf(typeof (ToolStripConfigurationComponentViewExtensionPoint))]
-	public sealed class ToolStripConfigurationComponentView : WinFormsView, IApplicationComponentView
-	{
-		private ToolStripConfigurationComponent _component;
-		private ToolStripConfigurationComponentControl _control;
+	[ExtensionPoint]
+	public sealed class ToolbarConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
-		public void SetComponent(IApplicationComponent component)
+	[AssociateView(typeof (ToolbarConfigurationComponentViewExtensionPoint))]
+	public sealed class ToolbarConfigurationComponent : ConfigurationApplicationComponent
+	{
+		private bool _wrap;
+		private IconSize _iconSize;
+
+		public bool Wrap
 		{
-			_component = (ToolStripConfigurationComponent)component;
+			get { return _wrap; }
+			set
+			{
+				if (_wrap != value)
+				{
+					_wrap = value;
+					base.NotifyPropertyChanged("Wrap");
+					base.Modified = true;
+				}
+			}
 		}
 
-		public override object GuiElement
+		public IconSize IconSize
 		{
-			get
+			get { return _iconSize; }
+			set
 			{
-				if (_control == null)
-					_control = new ToolStripConfigurationComponentControl(_component);
-				return _control;
+				if (_iconSize != value)
+				{
+					_iconSize = value;
+					base.NotifyPropertyChanged("IconSize");
+					base.Modified = true;
+				}
 			}
+		}
+
+		public override void Start()
+		{
+			base.Start();
+
+			_wrap = ToolStripSettings.Default.WrapLongToolstrips;
+			_iconSize = ToolStripSettings.Default.ToolStripSize;
+		}
+
+		public override void Save()
+		{
+			ToolStripSettings.Default.WrapLongToolstrips = _wrap;
+			ToolStripSettings.Default.ToolStripSize = _iconSize;
+			ToolStripSettings.Default.Save();
 		}
 	}
 }

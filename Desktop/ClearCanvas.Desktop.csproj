@@ -360,7 +360,7 @@
     </None>
     <None Include="ClassDiagrams\Tools.cd" />
     <None Include="ToolStripSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>ToolStripSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>

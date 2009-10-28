@@ -109,6 +109,7 @@
     <Compile Include="DropListPickerField.designer.cs">
       <DependentUpon>DropListPickerField.cs</DependentUpon>
     </Compile>
+    <Compile Include="StandardIconSizes.cs" />
     <Compile Include="PopupForm.cs">
       <SubType>Form</SubType>
     </Compile>

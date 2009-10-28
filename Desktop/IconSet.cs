@@ -73,6 +73,19 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public IconScheme Scheme { get { return _scheme; } }
 
+    	public string this[IconSize iconSize]
+    	{
+    		get
+    		{
+				if (iconSize == IconSize.Small)
+					return SmallIcon;
+				if (iconSize == IconSize.Medium)
+					return MediumIcon;
+				
+				return LargeIcon;
+    		}	
+    	}
+
         /// <summary>
         /// The resource name of the small icon.
         /// </summary>

@@ -48,7 +48,6 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </remarks>
     public partial class DesktopForm : DotNetMagicForm
     {
-		private ToolStripSettingsHelper _toolstripSettings;
         private ActionModelNode _menuModel;
         private ActionModelNode _toolbarModel;
 
@@ -75,10 +74,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 				InitializeTabControl(_tabbedGroups.ActiveLeaf.TabControl);
 			}
 
-        	_toolstripSettings = ToolStripSettingsHelper.Default;
-			_toolstripSettings.PropertyChanged += OnToolStripSettingsPropertyChanged;
-			OnToolStripSettingsPropertyChanged(_toolstripSettings, new PropertyChangedEventArgs("WrapLongToolstrips"));
-			OnToolStripSettingsPropertyChanged(_toolstripSettings, new PropertyChangedEventArgs("ToolStripSize"));
+			ToolStripSettings.Default.PropertyChanged += OnToolStripSettingsPropertyChanged;
+			OnToolStripSettingsPropertyChanged(ToolStripSettings.Default, new PropertyChangedEventArgs("WrapLongToolstrips"));
+			OnToolStripSettingsPropertyChanged(ToolStripSettings.Default, new PropertyChangedEventArgs("ToolStripSize"));
         }
 
         #region Public properties
@@ -143,7 +141,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     	{
     		if (e.PropertyName == "WrapLongToolstrips")
     		{
-    			if (_toolstripSettings.WrapLongToolstrips && _toolbar.Orientation == Orientation.Vertical)
+    			if (ToolStripSettings.Default.WrapLongToolstrips && _toolbar.Orientation == Orientation.Vertical)
     			{
     				// for some reason, switching to flow layout while vertical causes the toolbar to take up the entire screen
     				// thus, we force the toolbar to the horizontal orientation in the top panel when wrapped.
@@ -152,15 +150,15 @@ namespace ClearCanvas.Desktop.View.WinForms
     				_toolStripContainer.TopToolStripPanel.Join(_mainMenu);
     				_toolStripContainer.ResumeLayout(true);
     			}
-    			_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
+				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
     		}
 			else if (e.PropertyName == "ToolStripSize")
 			{
-				_toolbar.ImageScalingSize = ConvertToolStripEnumToSize(this._toolstripSettings.ToolStripSize);
+				_toolbar.ImageScalingSize = StandardIconSizes.GetSize(ToolStripSettings.Default.ToolStripSize);
 
 				// The only way, it seems, to force the toolbar to re-layout itself properly is to change the layout style and then change it back again
-				_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.StackWithOverflow : ToolStripLayoutStyle.Flow;
-				_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
+				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.StackWithOverflow : ToolStripLayoutStyle.Flow;
+				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
 
 				BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolbar, _toolbarModel);
 			}
@@ -210,10 +208,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					toolStrip.Visible = true;
 
 					if (kind == ToolStripBuilder.ToolStripKind.Toolbar)
-					{
-						ToolStripSettingsHelper settings = ToolStripSettingsHelper.Default;
-						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes, ToolStripBuilder.ToolStripBuilderStyle.GetDefault(), settings.ToolStripSize);
-					}
+						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes, ToolStripBuilder.ToolStripBuilderStyle.GetDefault(), ToolStripSettings.Default.ToolStripSize);
 					else
 						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
 				}
@@ -225,16 +220,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             toolStrip.ResumeLayout();
         }
-
-		private Size ConvertToolStripEnumToSize(ToolStripSizeType toolStripSize)
-		{
-			if (this._toolstripSettings.ToolStripSize == ToolStripSizeType.Small)
-				return new Size(24, 24);
-			else if (this._toolstripSettings.ToolStripSize == ToolStripSizeType.Medium)
-				return new Size(32, 32);
-			else
-				return new Size(48, 48);
-		}
 
         #endregion
     }

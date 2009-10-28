@@ -235,25 +235,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			}
 		}
 
+		private ImageList GetImageList(IconSize iconSize)
+		{
+			if (iconSize == IconSize.Small)
+				return _smallIconImageList;
+
+			if (iconSize == IconSize.Medium)
+				return _mediumIconImageList;
+
+			return _largeIconImageList;
+		}
+
 		private void InitializeIcons()
 		{
 			InitializeImageList(_largeIconImageList, "Large");
 			InitializeImageList(_mediumIconImageList, "Medium");
 			InitializeImageList(_smallIconImageList, "Small");
 
-			switch (Settings.Default.ToolbarIconSize)
-			{
-				case ToolStripSizeType.Large:
-					_toolStrip.ImageList = _largeIconImageList;
-					break;
-				case ToolStripSizeType.Medium:
-					_toolStrip.ImageList = _mediumIconImageList;
-					break;
-				case ToolStripSizeType.Small:
-				default:
-					_toolStrip.ImageList = _smallIconImageList;
-					break;
-			}
+			_toolStrip.ImageList = GetImageList(Settings.Default.ToolbarIconSize);
 
 			_btnBack.ImageKey = "Back";
 			_btnForward.ImageKey = "Next";

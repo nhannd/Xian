@@ -40,21 +40,18 @@ using ClearCanvas.Desktop.Configuration.Standard;
 
 namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {
-	public partial class ToolStripConfigurationComponentControl : UserControl
+	public partial class ToolbarConfigurationComponentControl : UserControl
 	{
-		private readonly ToolStripConfigurationComponent _component;
+		private readonly ToolbarConfigurationComponent _component;
 
-		public ToolStripConfigurationComponentControl(ToolStripConfigurationComponent component)
+		public ToolbarConfigurationComponentControl(ToolbarConfigurationComponent component)
 		{
 			InitializeComponent();
 
 			_component = component;
 
-			BindingSource bindingSource = new BindingSource();
-			bindingSource.DataSource = _component;
-
-			_chkWrapGlobalToolbars.DataBindings.Add("Checked", bindingSource, "WrapLongToolstrips", false, DataSourceUpdateMode.OnPropertyChanged);
-			_toolStripSizes.DataBindings.Add("Text", bindingSource, "ToolStripSize", true, DataSourceUpdateMode.OnPropertyChanged);
+			_wrapToolbars.DataBindings.Add("Checked", _component, "Wrap", false, DataSourceUpdateMode.OnPropertyChanged);
+			_toolbarSize.DataBindings.Add("Text", _component, "IconSize", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 	}
 }

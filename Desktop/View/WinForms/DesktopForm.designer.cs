@@ -49,12 +49,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing)
             {
-				if(_toolstripSettings != null)
-				{
-					_toolstripSettings.PropertyChanged -= OnToolStripSettingsPropertyChanged;
-					_toolstripSettings = null;
-				}
-
 				if (_mainMenu != null)
 				{
 					_mainMenu.Dispose();
@@ -69,6 +63,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				if (_toolStripContainer != null)
 				{
+					ToolStripSettings.Default.PropertyChanged -= OnToolStripSettingsPropertyChanged;
+
 					_toolStripContainer.Dispose();
 					_toolStripContainer = null;
 				}
