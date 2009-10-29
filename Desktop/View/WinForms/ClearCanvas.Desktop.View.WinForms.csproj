@@ -153,46 +153,6 @@
     </Compile>
     <Compile Include="DesktopMonitorComponentView.cs" />
     <Compile Include="DesktopObjectView.cs" />
-    <Compile Include="FileBrowser\Browser.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FileBrowser\Browser.designer.cs">
-      <DependentUpon>Browser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FileBrowser\BrowserControls.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FileBrowser\BrowserWrappers\BrowserContextMenuWrappers.cs" />
-    <Compile Include="FileBrowser\BrowserWrappers\BrowserDragWrappers.cs" />
-    <Compile Include="FileBrowser\BrowserWrappers\BrowserDropWrappers.cs" />
-    <Compile Include="FileBrowser\BrowserWrappers\BrowserPluginWrapper.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FileBrowser\Shell\Interfaces\IAdviseSink.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IContextMenu.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IDataObject.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IDragSourceHelper.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IDropSource.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IDropTarget.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IDropTargetHelper.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IEnumFORMATETC.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IEnumIDList.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IEnumSTATSTG.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IQueryInfo.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IShellExtInit.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IShellFolder.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IStorage.cs" />
-    <Compile Include="FileBrowser\Shell\Interfaces\IStream.cs" />
-    <Compile Include="FileBrowser\Shell\PIDL.cs" />
-    <Compile Include="FileBrowser\Shell\ShellAPI.cs" />
-    <Compile Include="FileBrowser\Shell\ShellBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FileBrowser\Shell\ShellBrowserUpdater.cs" />
-    <Compile Include="FileBrowser\Shell\ShellHelper.cs" />
-    <Compile Include="FileBrowser\Shell\ShellImageList.cs" />
-    <Compile Include="FileBrowser\Shell\ShellItem.cs" />
-    <Compile Include="FileBrowser\Shell\StreamStorage.cs" />
     <Compile Include="GuiToolkit.cs" />
     <Compile Include="ListItemSelector.cs">
       <SubType>UserControl</SubType>
@@ -409,10 +369,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>SimpleComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FileBrowser\Browser.resx">
-      <DependentUpon>Browser.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ListItemSelector.resx">
       <DependentUpon>ListItemSelector.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -490,10 +446,6 @@
     <None Include="Resources\Stop.gif" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FileBrowser\Images\BrowseFolders.png" />
-    <Content Include="FileBrowser\Images\BrowserBack.png" />
-    <Content Include="FileBrowser\Images\BrowserForward.png" />
-    <Content Include="FileBrowser\Images\BrowserUp.png" />
     <None Include="Resources\ClearFilterMini.png" />
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>
