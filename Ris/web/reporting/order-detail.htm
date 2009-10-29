@@ -8,13 +8,12 @@
 		<script type="text/javascript" src="../js/ui.js"></script>
 		<script type="text/javascript" src="../js/ris.js"></script>
 		<script type="text/javascript" src="../js/preview.js"></script>
-		<script type="text/javascript" src="../js/layout.js"></script>
 		<script type="text/javascript" >
+			var errorProvider = new ErrorProvider();
 			var imagePath = "../images";
 			
 			function onBodyLoad()
 			{
-				scaleWidth();
 
 				if(!Ris)
 					return;
@@ -62,9 +61,10 @@
 
 						// select CT and MRI procedures
 						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
-						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures);
-
-						var notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
+						var notes = orderDetail.Notes.select(function(note) { return note.Category == "Protocol"; });
+						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures, notes);
+						
+						notes = orderDetail.Notes.select(function(note) { return note.Category == "PrelimDiagnosis"; });
 						Preview.OrderNotesTable.create($("prelimDiagnosisNotesSection"), notes, "Preliminary Diagnosis", false);
 						
 						notes = orderDetail.Notes.select(function(note) { return note.Category == "General"; });
