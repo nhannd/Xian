@@ -29,81 +29,135 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
-    public delegate IList<U> PageSearchDelegate<U>(int firstRow, int maxRows);
 
-    public class PagingController<T> : IPagingController<T>
+    ///<summary>
+    /// Default implementation of <see cref="IPagingController{TItem}"/>.
+    ///</summary>
+	///<typeparam name="TItem"></typeparam>
+    public class PagingController<TItem> : IPagingController<TItem>
     {
-        private static readonly int _defaultPageSize = 50;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="firstRow"></param>
+		/// <param name="maxRows"></param>
+		/// <returns></returns>
+		public delegate IList<TItem> PageQueryDelegate(int firstRow, int maxRows);
+		
+		private static readonly int _defaultPageSize = 50;
         private int _pageSize;
         private int _currentPageNumber;
         private bool _hasNext;
-        private readonly PageSearchDelegate<T> _searchDelegate;
+        private readonly PageQueryDelegate _queryDelegate;
 
-    	//TODO (cr Oct 2009): wrap private event?
-		public event QueryEventHandler OnInitialQueryEvent;
+		private event EventHandler _pageChanged;
 
-        public PagingController(int pageSize, PageSearchDelegate<T> searchDelegate)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="pageSize"></param>
+		/// <param name="queryDelegate"></param>
+        public PagingController(int pageSize, PageQueryDelegate queryDelegate)
         {
             _pageSize = pageSize;
-            _searchDelegate = searchDelegate;
+            _queryDelegate = queryDelegate;
             _currentPageNumber = 0;
         }
 
-        public PagingController(PageSearchDelegate<T> searchDelegate)
-            : this(_defaultPageSize, searchDelegate)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="queryDelegate"></param>
+        public PagingController(PageQueryDelegate queryDelegate)
+            : this(_defaultPageSize, queryDelegate)
         {
         }
 
         #region IPagingController<T> Members
 
-        public int PageSize
+    	/// <summary>
+    	/// Gets or sets the number of items per page.
+    	/// </summary>
+    	public int PageSize
         {
             get {return _pageSize;}
             set {_pageSize = value;}
         }
 
-        public bool HasNext
+    	/// <summary>
+    	/// Gets a value indicating whether there is a next page.
+    	/// </summary>
+    	/// <returns></returns>
+    	public bool HasNext
         {
             get { return _hasNext; }
         }
 
-        public bool HasPrev
+    	/// <summary>
+    	/// Gets a value indicating whether there is a previous page.
+    	/// </summary>
+    	/// <returns></returns>
+    	public bool HasPrevious
         {
             get { return _currentPageNumber > 0; }
         }
 
-        public IList<T> GetNext()
+    	/// <summary>
+    	/// Gets the next page of items.
+    	/// </summary>
+    	/// <returns></returns>
+    	public IList<TItem> GetNext()
         {
-            IList<T> results = DoQuery(NextPage());
+            var results = DoQuery(NextPage());
             _currentPageNumber++;
-            return results;
+			EventsHelper.Fire(_pageChanged, this, EventArgs.Empty);
+			return results;
         }
 
-        public IList<T> GetPrev()
+    	/// <summary>
+    	/// Gets the previous page of items.
+    	/// </summary>
+    	/// <returns></returns>
+    	public IList<TItem> GetPrevious()
         {
-            IList<T> results = DoQuery(PrevPage());
+            var results = DoQuery(PrevPage());
             _currentPageNumber--;
-            return results;
+			EventsHelper.Fire(_pageChanged, this, EventArgs.Empty);
+			return results;
         }
 
-        public IList<T> GetFirst()
+    	/// <summary>
+    	/// Resets this instance to the first page of items.
+    	/// </summary>
+    	/// <returns></returns>
+    	public IList<TItem> GetFirst()
         {
             _currentPageNumber = 0;
-            IList<T> results = DoQuery(FirstPage());
-            OnInitialQueryEvent();
+            var results = DoQuery(FirstPage());
+        	EventsHelper.Fire(_pageChanged, this, EventArgs.Empty);
             return results;
         }
+
+    	/// <summary>
+    	/// Occurs when the current page changes (by calling any of <see cref="GetFirst"/>, <see cref="GetNext"/> or <see cref="GetPrevious"/>.
+    	/// </summary>
+    	public event EventHandler PageChanged
+		{
+			add { _pageChanged += value; }
+			remove { _pageChanged -= value; }
+		}
 
         #endregion
 
-        private IList<T> DoQuery(int firstRow)
+        private IList<TItem> DoQuery(int firstRow)
         {
-            IList<T> results;
-            results = _searchDelegate(firstRow, _pageSize + 1) ?? new List<T>();
+        	var results = _queryDelegate(firstRow, _pageSize + 1) ?? new List<TItem>();
 
             if (results.Count == _pageSize + 1)
             {
@@ -120,29 +174,15 @@ namespace ClearCanvas.Desktop
 
         private int NextPage()
         {
-            if (HasNext)
-            {
-                return (_currentPageNumber + 1) * _pageSize;
-            }
-            else
-            {
-                return 0;
-            }
+        	return HasNext ? (_currentPageNumber + 1)*_pageSize : 0;
         }
 
-        private int PrevPage()
-        {
-            if (HasPrev)
-            {
-                return (_currentPageNumber - 1) * _pageSize;
-            }
-            else
-            {
-                return 0;
-            }
-        }
+    	private int PrevPage()
+    	{
+    		return HasPrevious ? (_currentPageNumber - 1)*_pageSize : 0;
+    	}
 
-        private static int FirstPage()
+    	private static int FirstPage()
         {
             return 0;
         }

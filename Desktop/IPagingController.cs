@@ -29,55 +29,55 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
-    public delegate void QueryEventHandler();
-
-    public interface IPagingController<T>
+	/// <summary>
+	/// Defines an interface to control pagination through a list of items.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+    public interface IPagingController<TItem>
     {
         /// <summary>
-        /// 
+        /// Gets or sets the number of items per page.
         /// </summary>
         int PageSize {get; set;}
 
         /// <summary>
-        /// 
+        /// Gets a value indicating whether there is a next page.
         /// </summary>
         /// <returns></returns>
         bool HasNext { get; }
 
-    	//TODO (cr Oct 2009): contraction, spell out "Previous"
         /// <summary>
-        /// 
+        /// Gets a value indicating whether there is a previous page.
         /// </summary>
         /// <returns></returns>
-        bool HasPrev { get; }
+        bool HasPrevious { get; }
 
         /// <summary>
-        /// 
+        /// Gets the next page of items.
         /// </summary>
         /// <returns></returns>
-        IList<T> GetNext();
+        IList<TItem> GetNext();
 
-		//TODO (cr Oct 2009): contraction, spell out "Previous"
         /// <summary>
-        /// 
+        /// Gets the previous page of items.
         /// </summary>
         /// <returns></returns>
-        IList<T> GetPrev();
+        IList<TItem> GetPrevious();
 
         /// <summary>
-        /// 
+        /// Resets this instance to the first page of items.
         /// </summary>
         /// <returns></returns>
-        IList<T> GetFirst();
+        IList<TItem> GetFirst();
 
-		//TODO (cr Oct 2009): name?  How about just "event EventHandler InitialQuery"?
         /// <summary>
-        /// 
+        /// Occurs when the current page changes (by calling any of <see cref="GetFirst"/>, <see cref="GetNext"/> or <see cref="GetPrevious"/>.
         /// </summary>
-        event QueryEventHandler OnInitialQueryEvent;
+        event EventHandler PageChanged;
     }
 }

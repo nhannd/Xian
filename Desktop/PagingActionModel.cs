@@ -33,22 +33,29 @@ using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop
 {
-    public class PagingActionModel<T> : SimpleActionModel
+	/// <summary>
+	/// Action model that allows a user to control a <see cref="IPagingController{TItem}"/>.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+    public class PagingActionModel<TItem> : SimpleActionModel
     {
-        private delegate IList<T> PageResultsDelegate();
-
         private readonly IDesktopWindow _desktopWindow;
-        private readonly IPagingController<T> _controller;
-        private readonly Table<T> _table;
+        private readonly IPagingController<TItem> _controller;
+        private readonly Table<TItem> _table;
 
-        public PagingActionModel(IPagingController<T> controller, Table<T> table, IDesktopWindow desktopWindow)
-            : base(new ResourceResolver(typeof(PagingActionModel<T>).Assembly))
+        ///<summary>
+        /// Constructor.
+        ///</summary>
+        ///<param name="controller"></param>
+        ///<param name="table"></param>
+        ///<param name="desktopWindow"></param>
+        public PagingActionModel(IPagingController<TItem> controller, Table<TItem> table, IDesktopWindow desktopWindow)
+            : base(new ResourceResolver(typeof(PagingActionModel<TItem>).Assembly))
         {
             _controller = controller;
             _table = table;
@@ -61,29 +68,27 @@ namespace ClearCanvas.Desktop
             Previous.SetClickHandler(OnPrevious);
 
             Next.Enabled = _controller.HasNext;
-            Previous.Enabled = _controller.HasPrev;  // can't go back from first
+            Previous.Enabled = _controller.HasPrevious;  // can't go back from first
 
-            _controller.OnInitialQueryEvent += this.UpdateActionAvailability;
+            _controller.PageChanged += PageChangedEventHandler;
         }
 
         private void OnNext()
         {
-            PageChangeActionHandler(delegate {return _controller.GetNext(); });
+            ChangePage(_controller.GetNext());
         }
 
         private void OnPrevious()
         {
-            PageChangeActionHandler(delegate { return _controller.GetPrev(); });
+            ChangePage(_controller.GetPrevious());
         }
 
-        private void PageChangeActionHandler(PageResultsDelegate pageResults)
+        private void ChangePage(IEnumerable<TItem> results)
         {
             try
             {
-                IList<T> results = pageResults();
                 _table.Items.Clear();
                 _table.Items.AddRange(results);
-                UpdateActionAvailability();
             }
             catch (Exception e)
             {
@@ -91,10 +96,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        private void UpdateActionAvailability()
+        private void PageChangedEventHandler(object sender, EventArgs args)
         {
             Next.Enabled = _controller.HasNext;
-            Previous.Enabled = _controller.HasPrev;
+            Previous.Enabled = _controller.HasPrevious;
         }
 
         private ClickAction Next
