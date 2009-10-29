@@ -40,6 +40,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
@@ -100,22 +101,36 @@ namespace ClearCanvas.ImageServer.Core.Edit
             return BuildCommands<TMappingObject>(storageLocation, originalDicomAttributeProvider);
 		}
 
-        public IList<BaseImageLevelUpdateCommand> BuildCommands<TTargetType>(IDicomAttributeProvider attributeProvider)
+        public IList<BaseImageLevelUpdateCommand> BuildCommands<TTargetType>(IDicomAttributeProvider targetValueProvider, IEnumerable<IDicomAttributeProvider> originalValueProviders)
         {
             List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
             EntityDicomMap fieldMap = EntityDicomMapManager.Get(typeof(TTargetType));
             foreach (DicomTag tag in fieldMap.Keys)
             {
-	            DicomAttribute attribute;
-                if (attributeProvider.TryGetAttribute(tag, out attribute))
+                DicomAttribute attribute;
+
+                string originalValue = null;
+                if (originalValueProviders != null)
                 {
-                    SetTagCommand cmd = new SetTagCommand(attribute, attribute.ToString());
+                    foreach (IDicomAttributeProvider provider in originalValueProviders)
+                    {
+                        if (provider.TryGetAttribute(tag, out attribute))
+                        {
+                            originalValue = attribute.ToString();
+                            break;
+                        }
+
+                    }
+                }
+                if (targetValueProvider.TryGetAttribute(tag, out attribute))
+                {
+                    SetTagCommand cmd = new SetTagCommand(attribute.Tag.TagValue, originalValue, attribute.ToString());
                     commandList.Add(cmd);
                 }
                 else
                 {
                     // tag doesn't exist, set to empty
-                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, String.Empty);
+                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, originalValue, String.Empty);
                     commandList.Add(cmd);
                 }
             }

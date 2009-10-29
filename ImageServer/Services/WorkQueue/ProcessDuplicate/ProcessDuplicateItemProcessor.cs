@@ -464,7 +464,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
                 // Create a list of commands to update the existing study based on what's defined in StudyMatchingMap
                 // The value will be taken from the content of the duplicate image.
-                commands.AddRange(commandBuilder.BuildCommands<StudyMatchingMap>(file.DataSet));
+                commands.AddRange(commandBuilder.BuildCommands<StudyMatchingMap>(file.DataSet, 
+                        new[]{  
+                                new ServerEntityAttributeProvider(StorageLocation.Study),
+                                new ServerEntityAttributeProvider(StorageLocation.Patient)
+                             }));
             }
 
             return commands;
