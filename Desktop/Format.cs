@@ -108,6 +108,7 @@ namespace ClearCanvas.Desktop
                 if(FormatSettings.Default.DescriptiveDateThresholdInDays < 0)
                     FormatSettings.Default.DescriptiveDateThresholdInDays = 0;
 
+            	//TODO (cr Oct 2009): 86399?  What's this magic#?
                 if (FormatSettings.Default.DescriptiveFormattingEnabled &&  
                     dt >= today.Value.AddDays(-FormatSettings.Default.DescriptiveDateThresholdInDays) &&
                     dt <= today.Value.AddDays(FormatSettings.Default.DescriptiveDateThresholdInDays) + TimeSpan.FromSeconds(86399))

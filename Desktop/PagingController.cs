@@ -42,7 +42,9 @@ namespace ClearCanvas.Desktop
         private int _currentPageNumber;
         private bool _hasNext;
         private readonly PageSearchDelegate<T> _searchDelegate;
-        public event QueryEventHandler OnInitialQueryEvent;
+
+    	//TODO (cr Oct 2009): wrap private event?
+		public event QueryEventHandler OnInitialQueryEvent;
 
         public PagingController(int pageSize, PageSearchDelegate<T> searchDelegate)
         {
