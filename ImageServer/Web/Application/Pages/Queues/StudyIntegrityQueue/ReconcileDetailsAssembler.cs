@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             if (item.QueueData.Details != null)
             {
-                // extract the conflicting study info from QueueData
+                // extract the conflicting study info from Details
                 details.ConflictingStudyInfo.AccessionNumber = item.QueueData.Details.StudyInfo.AccessionNumber;
                 details.ConflictingStudyInfo.StudyDate = item.QueueData.Details.StudyInfo.StudyDate;
                 details.ConflictingStudyInfo.StudyInstanceUID = item.QueueData.Details.StudyInfo.StudyInstanceUid;

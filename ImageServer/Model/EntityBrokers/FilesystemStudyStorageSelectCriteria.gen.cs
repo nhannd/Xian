@@ -50,6 +50,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new FilesystemStudyStorageSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyStorageKey"))
+              {
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
         public ISearchCondition<ServerEntityKey> FilesystemKey
         {
@@ -84,18 +96,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyFolder"] = new SearchCondition<String>("StudyFolder");
               }
               return (ISearchCondition<String>)SubCriteria["StudyFolder"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ServerEntityKey> StudyStorageKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyStorageKey"))
-              {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

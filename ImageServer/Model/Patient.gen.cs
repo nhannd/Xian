@@ -47,94 +47,59 @@ namespace ClearCanvas.ImageServer.Model
         public Patient():base("Patient")
         {}
         public Patient(
-             System.String _issuerOfPatientId_
-            ,System.Int32 _numberOfPatientRelatedInstances_
-            ,System.Int32 _numberOfPatientRelatedSeries_
-            ,System.Int32 _numberOfPatientRelatedStudies_
-            ,System.String _patientId_
-            ,System.String _patientsName_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,System.String _specificCharacterSet_
+             ServerEntityKey _serverPartitionKey_
+            ,Int32 _numberOfPatientRelatedStudies_
+            ,Int32 _numberOfPatientRelatedSeries_
+            ,Int32 _numberOfPatientRelatedInstances_
+            ,String _specificCharacterSet_
+            ,String _patientsName_
+            ,String _patientId_
+            ,String _issuerOfPatientId_
             ):base("Patient")
         {
-            _issuerOfPatientId = _issuerOfPatientId_;
-            _numberOfPatientRelatedInstances = _numberOfPatientRelatedInstances_;
-            _numberOfPatientRelatedSeries = _numberOfPatientRelatedSeries_;
-            _numberOfPatientRelatedStudies = _numberOfPatientRelatedStudies_;
-            _patientId = _patientId_;
-            _patientsName = _patientsName_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _specificCharacterSet = _specificCharacterSet_;
+            ServerPartitionKey = _serverPartitionKey_;
+            NumberOfPatientRelatedStudies = _numberOfPatientRelatedStudies_;
+            NumberOfPatientRelatedSeries = _numberOfPatientRelatedSeries_;
+            NumberOfPatientRelatedInstances = _numberOfPatientRelatedInstances_;
+            SpecificCharacterSet = _specificCharacterSet_;
+            PatientsName = _patientsName_;
+            PatientId = _patientId_;
+            IssuerOfPatientId = _issuerOfPatientId_;
         }
-        #endregion
-
-        #region Private Members
-        private String _issuerOfPatientId;
-        private Int32 _numberOfPatientRelatedInstances;
-        private Int32 _numberOfPatientRelatedSeries;
-        private Int32 _numberOfPatientRelatedStudies;
-        private String _patientId;
-        private String _patientsName;
-        private ServerEntityKey _serverPartitionKey;
-        private String _specificCharacterSet;
         #endregion
 
         #region Public Properties
-        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="IssuerOfPatientId")]
-        public String IssuerOfPatientId
-        {
-        get { return _issuerOfPatientId; }
-        set { _issuerOfPatientId = value; }
-        }
-        [DicomField(DicomTags.NumberOfPatientRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedInstances")]
-        public Int32 NumberOfPatientRelatedInstances
-        {
-        get { return _numberOfPatientRelatedInstances; }
-        set { _numberOfPatientRelatedInstances = value; }
-        }
-        [DicomField(DicomTags.NumberOfPatientRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedSeries")]
-        public Int32 NumberOfPatientRelatedSeries
-        {
-        get { return _numberOfPatientRelatedSeries; }
-        set { _numberOfPatientRelatedSeries = value; }
-        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
+        { get; set; }
         [DicomField(DicomTags.NumberOfPatientRelatedStudies, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedStudies")]
         public Int32 NumberOfPatientRelatedStudies
-        {
-        get { return _numberOfPatientRelatedStudies; }
-        set { _numberOfPatientRelatedStudies = value; }
-        }
-        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientId")]
-        public String PatientId
-        {
-        get { return _patientId; }
-        set { _patientId = value; }
-        }
-        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientsName")]
-        public String PatientsName
-        {
-        get { return _patientsName; }
-        set { _patientsName = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.NumberOfPatientRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedSeries")]
+        public Int32 NumberOfPatientRelatedSeries
+        { get; set; }
+        [DicomField(DicomTags.NumberOfPatientRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedInstances")]
+        public Int32 NumberOfPatientRelatedInstances
+        { get; set; }
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="SpecificCharacterSet")]
         public String SpecificCharacterSet
-        {
-        get { return _specificCharacterSet; }
-        set { _specificCharacterSet = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientsName")]
+        public String PatientsName
+        { get; set; }
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientId")]
+        public String PatientId
+        { get; set; }
+        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="IssuerOfPatientId")]
+        public String IssuerOfPatientId
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -164,14 +129,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPatientEntityBroker broker = update.GetBroker<IPatientEntityBroker>();
             PatientUpdateColumns updateColumns = new PatientUpdateColumns();
-            updateColumns.IssuerOfPatientId = entity.IssuerOfPatientId;
-            updateColumns.NumberOfPatientRelatedInstances = entity.NumberOfPatientRelatedInstances;
-            updateColumns.NumberOfPatientRelatedSeries = entity.NumberOfPatientRelatedSeries;
-            updateColumns.NumberOfPatientRelatedStudies = entity.NumberOfPatientRelatedStudies;
-            updateColumns.PatientId = entity.PatientId;
-            updateColumns.PatientsName = entity.PatientsName;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.NumberOfPatientRelatedStudies = entity.NumberOfPatientRelatedStudies;
+            updateColumns.NumberOfPatientRelatedSeries = entity.NumberOfPatientRelatedSeries;
+            updateColumns.NumberOfPatientRelatedInstances = entity.NumberOfPatientRelatedInstances;
             updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
+            updateColumns.PatientsName = entity.PatientsName;
+            updateColumns.PatientId = entity.PatientId;
+            updateColumns.IssuerOfPatientId = entity.IssuerOfPatientId;
             Patient newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

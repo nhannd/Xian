@@ -50,30 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new FilesystemSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
-        public ISearchCondition<String> Description
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Description"))
-              {
-                 SubCriteria["Description"] = new SearchCondition<String>("Description");
-              }
-              return (ISearchCondition<String>)SubCriteria["Description"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
-        public ISearchCondition<Boolean> Enabled
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Enabled"))
-              {
-                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
-              }
-              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
         public ISearchCondition<String> FilesystemPath
         {
@@ -86,40 +62,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["FilesystemPath"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
-        public ISearchCondition<FilesystemTierEnum> FilesystemTierEnum
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
-              if (!SubCriteria.ContainsKey("FilesystemTierEnum"))
+              if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["FilesystemTierEnum"] = new SearchCondition<FilesystemTierEnum>("FilesystemTierEnum");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<FilesystemTierEnum>)SubCriteria["FilesystemTierEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
-        public ISearchCondition<Decimal> HighWatermark
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("HighWatermark"))
-              {
-                 SubCriteria["HighWatermark"] = new SearchCondition<Decimal>("HighWatermark");
-              }
-              return (ISearchCondition<Decimal>)SubCriteria["HighWatermark"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
-        public ISearchCondition<Decimal> LowWatermark
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("LowWatermark"))
-              {
-                 SubCriteria["LowWatermark"] = new SearchCondition<Decimal>("LowWatermark");
-              }
-              return (ISearchCondition<Decimal>)SubCriteria["LowWatermark"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
@@ -144,6 +96,54 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["WriteOnly"] = new SearchCondition<Boolean>("WriteOnly");
               }
               return (ISearchCondition<Boolean>)SubCriteria["WriteOnly"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
+        public ISearchCondition<FilesystemTierEnum> FilesystemTierEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("FilesystemTierEnum"))
+              {
+                 SubCriteria["FilesystemTierEnum"] = new SearchCondition<FilesystemTierEnum>("FilesystemTierEnum");
+              }
+              return (ISearchCondition<FilesystemTierEnum>)SubCriteria["FilesystemTierEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
+        public ISearchCondition<Decimal> LowWatermark
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("LowWatermark"))
+              {
+                 SubCriteria["LowWatermark"] = new SearchCondition<Decimal>("LowWatermark");
+              }
+              return (ISearchCondition<Decimal>)SubCriteria["LowWatermark"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
+        public ISearchCondition<Decimal> HighWatermark
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("HighWatermark"))
+              {
+                 SubCriteria["HighWatermark"] = new SearchCondition<Decimal>("HighWatermark");
+              }
+              return (ISearchCondition<Decimal>)SubCriteria["HighWatermark"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
+        public ISearchCondition<String> Description
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Description"))
+              {
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
+              }
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
     }

@@ -46,51 +46,32 @@ namespace ClearCanvas.ImageServer.Model
         public FilesystemStudyStorage():base("FilesystemStudyStorage")
         {}
         public FilesystemStudyStorage(
-             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
-            ,System.String _studyFolder_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+             ServerEntityKey _studyStorageKey_
+            ,ServerEntityKey _filesystemKey_
+            ,ServerEntityKey _serverTransferSyntaxKey_
+            ,String _studyFolder_
             ):base("FilesystemStudyStorage")
         {
-            _filesystemKey = _filesystemKey_;
-            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
-            _studyFolder = _studyFolder_;
-            _studyStorageKey = _studyStorageKey_;
+            StudyStorageKey = _studyStorageKey_;
+            FilesystemKey = _filesystemKey_;
+            ServerTransferSyntaxKey = _serverTransferSyntaxKey_;
+            StudyFolder = _studyFolder_;
         }
-        #endregion
-
-        #region Private Members
-        private ServerEntityKey _filesystemKey;
-        private ServerEntityKey _serverTransferSyntaxKey;
-        private String _studyFolder;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
-        public ServerEntityKey FilesystemKey
-        {
-        get { return _filesystemKey; }
-        set { _filesystemKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ServerEntityKey ServerTransferSyntaxKey
-        {
-        get { return _serverTransferSyntaxKey; }
-        set { _serverTransferSyntaxKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyFolder")]
-        public String StudyFolder
-        {
-        get { return _studyFolder; }
-        set { _studyFolder = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
+        public ServerEntityKey FilesystemKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
+        public ServerEntityKey ServerTransferSyntaxKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyFolder")]
+        public String StudyFolder
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -120,10 +101,10 @@ namespace ClearCanvas.ImageServer.Model
         {
             IFilesystemStudyStorageEntityBroker broker = update.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorageUpdateColumns updateColumns = new FilesystemStudyStorageUpdateColumns();
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.FilesystemKey = entity.FilesystemKey;
             updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
             updateColumns.StudyFolder = entity.StudyFolder;
-            updateColumns.StudyStorageKey = entity.StudyStorageKey;
             FilesystemStudyStorage newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

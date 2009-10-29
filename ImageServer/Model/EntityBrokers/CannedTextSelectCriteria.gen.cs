@@ -50,18 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new CannedTextSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
-        public ISearchCondition<String> Category
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Category"))
-              {
-                 SubCriteria["Category"] = new SearchCondition<String>("Category");
-              }
-              return (ISearchCondition<String>)SubCriteria["Category"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
         public ISearchCondition<String> Label
         {
@@ -72,6 +60,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Label"] = new SearchCondition<String>("Label");
               }
               return (ISearchCondition<String>)SubCriteria["Label"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
+        public ISearchCondition<String> Category
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Category"))
+              {
+                 SubCriteria["Category"] = new SearchCondition<String>("Category");
+              }
+              return (ISearchCondition<String>)SubCriteria["Category"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]

@@ -29,12 +29,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model
@@ -51,7 +48,7 @@ namespace ClearCanvas.ImageServer.Model
             get
             {
                 if (_serverPartition == null)
-                    _serverPartition = ServerPartition.Load(_serverPartitionKey);
+                    _serverPartition = ServerPartition.Load(ServerPartitionKey);
                 return _serverPartition;
             }
         }

@@ -47,43 +47,28 @@ namespace ClearCanvas.ImageServer.Model
         public ServerSopClass():base("ServerSopClass")
         {}
         public ServerSopClass(
-             System.String _description_
-            ,System.Boolean _nonImage_
-            ,System.String _sopClassUid_
+             String _sopClassUid_
+            ,String _description_
+            ,Boolean _nonImage_
             ):base("ServerSopClass")
         {
-            _description = _description_;
-            _nonImage = _nonImage_;
-            _sopClassUid = _sopClassUid_;
+            SopClassUid = _sopClassUid_;
+            Description = _description_;
+            NonImage = _nonImage_;
         }
-        #endregion
-
-        #region Private Members
-        private String _description;
-        private Boolean _nonImage;
-        private String _sopClassUid;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="NonImage")]
-        public Boolean NonImage
-        {
-        get { return _nonImage; }
-        set { _nonImage = value; }
-        }
         [DicomField(DicomTags.SopClassUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
         public String SopClassUid
-        {
-        get { return _sopClassUid; }
-        set { _sopClassUid = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
+        public String Description
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="NonImage")]
+        public Boolean NonImage
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -113,9 +98,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerSopClassEntityBroker broker = update.GetBroker<IServerSopClassEntityBroker>();
             ServerSopClassUpdateColumns updateColumns = new ServerSopClassUpdateColumns();
+            updateColumns.SopClassUid = entity.SopClassUid;
             updateColumns.Description = entity.Description;
             updateColumns.NonImage = entity.NonImage;
-            updateColumns.SopClassUid = entity.SopClassUid;
             ServerSopClass newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

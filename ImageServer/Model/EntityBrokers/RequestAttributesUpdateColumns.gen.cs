@@ -43,6 +43,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public RequestAttributesUpdateColumns()
        : base("RequestAttributes")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
+        public ServerEntityKey SeriesKey
+        {
+            set { SubParameters["SeriesKey"] = new EntityUpdateColumn<ServerEntityKey>("SeriesKey", value); }
+        }
        [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
         public String RequestedProcedureId
@@ -54,11 +59,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public String ScheduledProcedureStepId
         {
             set { SubParameters["ScheduledProcedureStepId"] = new EntityUpdateColumn<String>("ScheduledProcedureStepId", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
-        public ServerEntityKey SeriesKey
-        {
-            set { SubParameters["SeriesKey"] = new EntityUpdateColumn<ServerEntityKey>("SeriesKey", value); }
         }
     }
 }

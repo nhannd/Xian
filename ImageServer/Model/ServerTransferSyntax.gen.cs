@@ -47,43 +47,28 @@ namespace ClearCanvas.ImageServer.Model
         public ServerTransferSyntax():base("ServerTransferSyntax")
         {}
         public ServerTransferSyntax(
-             System.String _description_
-            ,System.Boolean _lossless_
-            ,System.String _uid_
+             String _uid_
+            ,String _description_
+            ,Boolean _lossless_
             ):base("ServerTransferSyntax")
         {
-            _description = _description_;
-            _lossless = _lossless_;
-            _uid = _uid_;
+            Uid = _uid_;
+            Description = _description_;
+            Lossless = _lossless_;
         }
-        #endregion
-
-        #region Private Members
-        private String _description;
-        private Boolean _lossless;
-        private String _uid;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
-        public Boolean Lossless
-        {
-        get { return _lossless; }
-        set { _lossless = value; }
-        }
         [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
         public String Uid
-        {
-        get { return _uid; }
-        set { _uid = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
+        public String Description
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
+        public Boolean Lossless
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -113,9 +98,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerTransferSyntaxEntityBroker broker = update.GetBroker<IServerTransferSyntaxEntityBroker>();
             ServerTransferSyntaxUpdateColumns updateColumns = new ServerTransferSyntaxUpdateColumns();
+            updateColumns.Uid = entity.Uid;
             updateColumns.Description = entity.Description;
             updateColumns.Lossless = entity.Lossless;
-            updateColumns.Uid = entity.Uid;
             ServerTransferSyntax newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

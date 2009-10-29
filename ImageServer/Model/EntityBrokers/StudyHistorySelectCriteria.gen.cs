@@ -50,6 +50,54 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new StudyHistorySelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
+        public ISearchCondition<DateTime> InsertTime
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("InsertTime"))
+              {
+                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
+              }
+              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyStorageKey"))
+              {
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
+        public ISearchCondition<StudyHistoryTypeEnum> StudyHistoryTypeEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyHistoryTypeEnum"))
+              {
+                 SubCriteria["StudyHistoryTypeEnum"] = new SearchCondition<StudyHistoryTypeEnum>("StudyHistoryTypeEnum");
+              }
+              return (ISearchCondition<StudyHistoryTypeEnum>)SubCriteria["StudyHistoryTypeEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
+        public ISearchCondition<XmlDocument> StudyData
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyData"))
+              {
+                 SubCriteria["StudyData"] = new SearchCondition<XmlDocument>("StudyData");
+              }
+              return (ISearchCondition<XmlDocument>)SubCriteria["StudyData"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
         public ISearchCondition<XmlDocument> ChangeDescription
         {
@@ -72,54 +120,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["DestStudyStorageKey"] = new SearchCondition<ServerEntityKey>("DestStudyStorageKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["DestStudyStorageKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
-        public ISearchCondition<DateTime> InsertTime
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("InsertTime"))
-              {
-                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
-              }
-              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
-        public ISearchCondition<XmlDocument> StudyData
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyData"))
-              {
-                 SubCriteria["StudyData"] = new SearchCondition<XmlDocument>("StudyData");
-              }
-              return (ISearchCondition<XmlDocument>)SubCriteria["StudyData"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
-        public ISearchCondition<StudyHistoryTypeEnum> StudyHistoryTypeEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyHistoryTypeEnum"))
-              {
-                 SubCriteria["StudyHistoryTypeEnum"] = new SearchCondition<StudyHistoryTypeEnum>("StudyHistoryTypeEnum");
-              }
-              return (ISearchCondition<StudyHistoryTypeEnum>)SubCriteria["StudyHistoryTypeEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ServerEntityKey> StudyStorageKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyStorageKey"))
-              {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

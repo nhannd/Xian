@@ -42,40 +42,40 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServiceLockUpdateColumns()
        : base("ServiceLock")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
-        public Boolean Enabled
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
+        public ServiceLockTypeEnum ServiceLockTypeEnum
         {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
-        public ServerEntityKey FilesystemKey
-        {
-            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
+            set { SubParameters["ServiceLockTypeEnum"] = new EntityUpdateColumn<ServiceLockTypeEnum>("ServiceLockTypeEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
         public Boolean Lock
         {
             set { SubParameters["Lock"] = new EntityUpdateColumn<Boolean>("Lock", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
-        public String ProcessorId
-        {
-            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
         public DateTime ScheduledTime
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
-        public ServiceLockTypeEnum ServiceLockTypeEnum
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
+        public Boolean Enabled
         {
-            set { SubParameters["ServiceLockTypeEnum"] = new EntityUpdateColumn<ServiceLockTypeEnum>("ServiceLockTypeEnum", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
         public XmlDocument State
         {
             set { SubParameters["State"] = new EntityUpdateColumn<XmlDocument>("State", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
+        public ServerEntityKey FilesystemKey
+        {
+            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
+        public String ProcessorId
+        {
+            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
         }
     }
 }

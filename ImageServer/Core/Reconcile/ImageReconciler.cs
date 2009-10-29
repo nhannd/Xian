@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             }
 
             _siqItem = item;
-            if (item.QueueData == null)
+            if (item.Details == null)
             {
                 ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
                 data.StoragePath = _reconcileImageStorage.GetFolderPath();
@@ -269,7 +269,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
                 data.Details.InsertFile(_file);
                 XmlDocument xmlQueueData = XmlUtils.SerializeAsXmlDoc(data);
 
-                item.QueueData = xmlQueueData;
+                item.Details = xmlQueueData;
 
                 IStudyIntegrityQueueEntityBroker updateBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
                 updateBroker.Update(item);
@@ -277,29 +277,33 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             else
             {
                 // Need to re-use the path that's already assigned for this entry
-                ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+                ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.Details);
                 data.Details.InsertFile(_file);
 
                 XmlDocument updatedQueueDataXml = XmlUtils.SerializeAsXmlDoc(data);
                 IStudyIntegrityQueueEntityBroker updateBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
-                StudyIntegrityQueueUpdateColumns columns = new StudyIntegrityQueueUpdateColumns();
-                columns.QueueData = updatedQueueDataXml;
-                updateBroker.Update(item.GetKey(), columns);
+                StudyIntegrityQueueUpdateColumns columns = new StudyIntegrityQueueUpdateColumns
+                                                           	{Details = updatedQueueDataXml};
+            	updateBroker.Update(item.GetKey(), columns);
             }
         }
 
         private static ReconcileStudyQueueDescription GetQueueEntryDescription(StudyStorageLocation existingStorage, DicomFile file)
         {
-            ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
-            desc.ExistingPatientId = existingStorage.Study.PatientId;
-            desc.ExistingPatientName = existingStorage.Study.PatientsName;
-            desc.ExistingAccessionNumber = existingStorage.Study.AccessionNumber;
+            ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription
+                                                  	{
+                                                  		ExistingPatientId = existingStorage.Study.PatientId,
+                                                  		ExistingPatientName = existingStorage.Study.PatientsName,
+                                                  		ExistingAccessionNumber = existingStorage.Study.AccessionNumber,
+                                                  		ConflictingPatientName =
+                                                  			file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty),
+                                                  		ConflictingPatientId =
+                                                  			file.DataSet[DicomTags.PatientId].GetString(0, String.Empty),
+                                                  		ConflictingAccessionNumber =
+                                                  			file.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty)
+                                                  	};
 
-            desc.ConflictingPatientName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-            desc.ConflictingPatientId = file.DataSet[DicomTags.PatientId].GetString(0, String.Empty);
-            desc.ConflictingAccessionNumber = file.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty);
-
-            return desc;
+        	return desc;
         }
     }
 }

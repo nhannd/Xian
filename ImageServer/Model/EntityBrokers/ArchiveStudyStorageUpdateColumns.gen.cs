@@ -42,6 +42,21 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ArchiveStudyStorageUpdateColumns()
        : base("ArchiveStudyStorage")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
+        public ServerEntityKey PartitionArchiveKey
+        {
+            set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ServerEntityKey>("PartitionArchiveKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
+        {
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
+        public ServerEntityKey ServerTransferSyntaxKey
+        {
+            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerTransferSyntaxKey", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveTime")]
         public DateTime ArchiveTime
         {
@@ -51,21 +66,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public XmlDocument ArchiveXml
         {
             set { SubParameters["ArchiveXml"] = new EntityUpdateColumn<XmlDocument>("ArchiveXml", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
-        public ServerEntityKey PartitionArchiveKey
-        {
-            set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ServerEntityKey>("PartitionArchiveKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ServerEntityKey ServerTransferSyntaxKey
-        {
-            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerTransferSyntaxKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

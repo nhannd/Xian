@@ -47,30 +47,30 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ArchiveStudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("ArchiveStudyStorageKey", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
-        public String FailureDescription
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
-        public String ProcessorId
-        {
-            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="RestoreQueueStatusEnum")]
-        public RestoreQueueStatusEnum RestoreQueueStatusEnum
-        {
-            set { SubParameters["RestoreQueueStatusEnum"] = new EntityUpdateColumn<RestoreQueueStatusEnum>("RestoreQueueStatusEnum", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ScheduledTime")]
         public DateTime ScheduledTime
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="RestoreQueueStatusEnum")]
+        public RestoreQueueStatusEnum RestoreQueueStatusEnum
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["RestoreQueueStatusEnum"] = new EntityUpdateColumn<RestoreQueueStatusEnum>("RestoreQueueStatusEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
+        public String ProcessorId
+        {
+            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
+        public String FailureDescription
+        {
+            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
         }
     }
 }

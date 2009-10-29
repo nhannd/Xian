@@ -42,45 +42,45 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerRuleUpdateColumns()
        : base("ServerRule")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
-        public Boolean DefaultRule
-        {
-            set { SubParameters["DefaultRule"] = new EntityUpdateColumn<Boolean>("DefaultRule", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
-        public Boolean ExemptRule
-        {
-            set { SubParameters["ExemptRule"] = new EntityUpdateColumn<Boolean>("ExemptRule", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
         public String RuleName
         {
             set { SubParameters["RuleName"] = new EntityUpdateColumn<String>("RuleName", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
-        public XmlDocument RuleXml
-        {
-            set { SubParameters["RuleXml"] = new EntityUpdateColumn<XmlDocument>("RuleXml", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleTypeEnum")]
+        public ServerRuleTypeEnum ServerRuleTypeEnum
+        {
+            set { SubParameters["ServerRuleTypeEnum"] = new EntityUpdateColumn<ServerRuleTypeEnum>("ServerRuleTypeEnum", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]
         public ServerRuleApplyTimeEnum ServerRuleApplyTimeEnum
         {
             set { SubParameters["ServerRuleApplyTimeEnum"] = new EntityUpdateColumn<ServerRuleApplyTimeEnum>("ServerRuleApplyTimeEnum", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleTypeEnum")]
-        public ServerRuleTypeEnum ServerRuleTypeEnum
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
+        public Boolean Enabled
         {
-            set { SubParameters["ServerRuleTypeEnum"] = new EntityUpdateColumn<ServerRuleTypeEnum>("ServerRuleTypeEnum", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
+        public Boolean DefaultRule
+        {
+            set { SubParameters["DefaultRule"] = new EntityUpdateColumn<Boolean>("DefaultRule", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
+        public Boolean ExemptRule
+        {
+            set { SubParameters["ExemptRule"] = new EntityUpdateColumn<Boolean>("ExemptRule", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
+        public XmlDocument RuleXml
+        {
+            set { SubParameters["RuleXml"] = new EntityUpdateColumn<XmlDocument>("RuleXml", value); }
         }
     }
 }

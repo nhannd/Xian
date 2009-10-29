@@ -42,6 +42,26 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyHistoryUpdateColumns()
        : base("StudyHistory")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
+        public DateTime InsertTime
+        {
+            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
+        {
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
+        public StudyHistoryTypeEnum StudyHistoryTypeEnum
+        {
+            set { SubParameters["StudyHistoryTypeEnum"] = new EntityUpdateColumn<StudyHistoryTypeEnum>("StudyHistoryTypeEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
+        public XmlDocument StudyData
+        {
+            set { SubParameters["StudyData"] = new EntityUpdateColumn<XmlDocument>("StudyData", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
         public XmlDocument ChangeDescription
         {
@@ -51,26 +71,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerEntityKey DestStudyStorageKey
         {
             set { SubParameters["DestStudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("DestStudyStorageKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
-        public DateTime InsertTime
-        {
-            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
-        public XmlDocument StudyData
-        {
-            set { SubParameters["StudyData"] = new EntityUpdateColumn<XmlDocument>("StudyData", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
-        public StudyHistoryTypeEnum StudyHistoryTypeEnum
-        {
-            set { SubParameters["StudyHistoryTypeEnum"] = new EntityUpdateColumn<StudyHistoryTypeEnum>("StudyHistoryTypeEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

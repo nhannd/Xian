@@ -50,30 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new ArchiveQueueSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
-        public ISearchCondition<ArchiveQueueStatusEnum> ArchiveQueueStatusEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ArchiveQueueStatusEnum"))
-              {
-                 SubCriteria["ArchiveQueueStatusEnum"] = new SearchCondition<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum");
-              }
-              return (ISearchCondition<ArchiveQueueStatusEnum>)SubCriteria["ArchiveQueueStatusEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
-        public ISearchCondition<String> FailureDescription
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("FailureDescription"))
-              {
-                 SubCriteria["FailureDescription"] = new SearchCondition<String>("FailureDescription");
-              }
-              return (ISearchCondition<String>)SubCriteria["FailureDescription"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
         public ISearchCondition<ServerEntityKey> PartitionArchiveKey
         {
@@ -84,18 +60,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["PartitionArchiveKey"] = new SearchCondition<ServerEntityKey>("PartitionArchiveKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["PartitionArchiveKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
-        public ISearchCondition<String> ProcessorId
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ProcessorId"))
-              {
-                 SubCriteria["ProcessorId"] = new SearchCondition<String>("ProcessorId");
-              }
-              return (ISearchCondition<String>)SubCriteria["ProcessorId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ScheduledTime")]
@@ -120,6 +84,42 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
+        public ISearchCondition<ArchiveQueueStatusEnum> ArchiveQueueStatusEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ArchiveQueueStatusEnum"))
+              {
+                 SubCriteria["ArchiveQueueStatusEnum"] = new SearchCondition<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum");
+              }
+              return (ISearchCondition<ArchiveQueueStatusEnum>)SubCriteria["ArchiveQueueStatusEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
+        public ISearchCondition<String> ProcessorId
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ProcessorId"))
+              {
+                 SubCriteria["ProcessorId"] = new SearchCondition<String>("ProcessorId");
+              }
+              return (ISearchCondition<String>)SubCriteria["ProcessorId"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
+        public ISearchCondition<String> FailureDescription
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("FailureDescription"))
+              {
+                 SubCriteria["FailureDescription"] = new SearchCondition<String>("FailureDescription");
+              }
+              return (ISearchCondition<String>)SubCriteria["FailureDescription"];
             } 
         }
     }

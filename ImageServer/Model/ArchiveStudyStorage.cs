@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Model
 			get
 			{
 				if (_transferSyntax == null)
-					_transferSyntax = ServerTransferSyntax.Load(_serverTransferSyntaxKey);
+					_transferSyntax = ServerTransferSyntax.Load(ServerTransferSyntaxKey);
 				return _transferSyntax;
 			}
 		}

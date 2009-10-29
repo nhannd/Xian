@@ -50,28 +50,28 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new StudyIntegrityQueueSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
-        public ISearchCondition<String> Description
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
             get
             {
-              if (!SubCriteria.ContainsKey("Description"))
+              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
               {
-                 SubCriteria["Description"] = new SearchCondition<String>("Description");
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
-              return (ISearchCondition<String>)SubCriteria["Description"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
-        public ISearchCondition<String> GroupID
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
         {
             get
             {
-              if (!SubCriteria.ContainsKey("GroupID"))
+              if (!SubCriteria.ContainsKey("StudyStorageKey"))
               {
-                 SubCriteria["GroupID"] = new SearchCondition<String>("GroupID");
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
               }
-              return (ISearchCondition<String>)SubCriteria["GroupID"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
@@ -84,30 +84,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
               }
               return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="QueueData")]
-        public ISearchCondition<XmlDocument> QueueData
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("QueueData"))
-              {
-                 SubCriteria["QueueData"] = new SearchCondition<XmlDocument>("QueueData");
-              }
-              return (ISearchCondition<XmlDocument>)SubCriteria["QueueData"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ServerEntityKey> ServerPartitionKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
-              {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
@@ -134,16 +110,40 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<StudyIntegrityReasonEnum>)SubCriteria["StudyIntegrityReasonEnum"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ServerEntityKey> StudyStorageKey
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
+        public ISearchCondition<String> GroupID
         {
             get
             {
-              if (!SubCriteria.ContainsKey("StudyStorageKey"))
+              if (!SubCriteria.ContainsKey("GroupID"))
               {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
+                 SubCriteria["GroupID"] = new SearchCondition<String>("GroupID");
               }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+              return (ISearchCondition<String>)SubCriteria["GroupID"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Details")]
+        public ISearchCondition<XmlDocument> Details
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Details"))
+              {
+                 SubCriteria["Details"] = new SearchCondition<XmlDocument>("Details");
+              }
+              return (ISearchCondition<XmlDocument>)SubCriteria["Details"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
+        public ISearchCondition<String> Description
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Description"))
+              {
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
+              }
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
     }

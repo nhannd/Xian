@@ -47,44 +47,29 @@ namespace ClearCanvas.ImageServer.Model
         public RequestAttributes():base("RequestAttributes")
         {}
         public RequestAttributes(
-             System.String _requestedProcedureId_
-            ,System.String _scheduledProcedureStepId_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _seriesKey_
+             ServerEntityKey _seriesKey_
+            ,String _requestedProcedureId_
+            ,String _scheduledProcedureStepId_
             ):base("RequestAttributes")
         {
-            _requestedProcedureId = _requestedProcedureId_;
-            _scheduledProcedureStepId = _scheduledProcedureStepId_;
-            _seriesKey = _seriesKey_;
+            SeriesKey = _seriesKey_;
+            RequestedProcedureId = _requestedProcedureId_;
+            ScheduledProcedureStepId = _scheduledProcedureStepId_;
         }
-        #endregion
-
-        #region Private Members
-        private String _requestedProcedureId;
-        private String _scheduledProcedureStepId;
-        private ServerEntityKey _seriesKey;
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
+        public ServerEntityKey SeriesKey
+        { get; set; }
         [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
         public String RequestedProcedureId
-        {
-        get { return _requestedProcedureId; }
-        set { _requestedProcedureId = value; }
-        }
+        { get; set; }
         [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="ScheduledProcedureStepId")]
         public String ScheduledProcedureStepId
-        {
-        get { return _scheduledProcedureStepId; }
-        set { _scheduledProcedureStepId = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
-        public ServerEntityKey SeriesKey
-        {
-        get { return _seriesKey; }
-        set { _seriesKey = value; }
-        }
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -114,9 +99,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             IRequestAttributesEntityBroker broker = update.GetBroker<IRequestAttributesEntityBroker>();
             RequestAttributesUpdateColumns updateColumns = new RequestAttributesUpdateColumns();
+            updateColumns.SeriesKey = entity.SeriesKey;
             updateColumns.RequestedProcedureId = entity.RequestedProcedureId;
             updateColumns.ScheduledProcedureStepId = entity.ScheduledProcedureStepId;
-            updateColumns.SeriesKey = entity.SeriesKey;
             RequestAttributes newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

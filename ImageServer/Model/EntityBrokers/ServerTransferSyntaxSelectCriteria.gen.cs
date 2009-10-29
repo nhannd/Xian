@@ -50,6 +50,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new ServerTransferSyntaxSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
+        public ISearchCondition<String> Uid
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Uid"))
+              {
+                 SubCriteria["Uid"] = new SearchCondition<String>("Uid");
+              }
+              return (ISearchCondition<String>)SubCriteria["Uid"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
         public ISearchCondition<String> Description
         {
@@ -72,18 +84,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Lossless"] = new SearchCondition<Boolean>("Lossless");
               }
               return (ISearchCondition<Boolean>)SubCriteria["Lossless"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
-        public ISearchCondition<String> Uid
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Uid"))
-              {
-                 SubCriteria["Uid"] = new SearchCondition<String>("Uid");
-              }
-              return (ISearchCondition<String>)SubCriteria["Uid"];
             } 
         }
     }

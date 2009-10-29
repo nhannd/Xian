@@ -42,40 +42,40 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public AlertUpdateColumns()
        : base("Alert")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
-        public AlertCategoryEnum AlertCategoryEnum
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
+        public DateTime InsertTime
         {
-            set { SubParameters["AlertCategoryEnum"] = new EntityUpdateColumn<AlertCategoryEnum>("AlertCategoryEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
-        public AlertLevelEnum AlertLevelEnum
-        {
-            set { SubParameters["AlertLevelEnum"] = new EntityUpdateColumn<AlertLevelEnum>("AlertLevelEnum", value); }
+            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
         public String Component
         {
             set { SubParameters["Component"] = new EntityUpdateColumn<String>("Component", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
-        public XmlDocument Content
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
+        public Int32 TypeCode
         {
-            set { SubParameters["Content"] = new EntityUpdateColumn<XmlDocument>("Content", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
-        public DateTime InsertTime
-        {
-            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
+            set { SubParameters["TypeCode"] = new EntityUpdateColumn<Int32>("TypeCode", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
         public String Source
         {
             set { SubParameters["Source"] = new EntityUpdateColumn<String>("Source", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
-        public Int32 TypeCode
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
+        public AlertLevelEnum AlertLevelEnum
         {
-            set { SubParameters["TypeCode"] = new EntityUpdateColumn<Int32>("TypeCode", value); }
+            set { SubParameters["AlertLevelEnum"] = new EntityUpdateColumn<AlertLevelEnum>("AlertLevelEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
+        public AlertCategoryEnum AlertCategoryEnum
+        {
+            set { SubParameters["AlertCategoryEnum"] = new EntityUpdateColumn<AlertCategoryEnum>("AlertCategoryEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
+        public XmlDocument Content
+        {
+            set { SubParameters["Content"] = new EntityUpdateColumn<XmlDocument>("Content", value); }
         }
     }
 }

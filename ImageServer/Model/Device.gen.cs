@@ -46,150 +46,87 @@ namespace ClearCanvas.ImageServer.Model
         public Device():base("Device")
         {}
         public Device(
-             System.Boolean _acceptKOPR_
-            ,System.String _aeTitle_
-            ,System.Boolean _allowAutoRoute_
-            ,System.Boolean _allowQuery_
-            ,System.Boolean _allowRetrieve_
-            ,System.Boolean _allowStorage_
-            ,System.String _description_
+             Boolean _dhcp_
+            ,Boolean _enabled_
+            ,Boolean _allowStorage_
+            ,Boolean _acceptKOPR_
+            ,Boolean _allowRetrieve_
+            ,Boolean _allowQuery_
+            ,Boolean _allowAutoRoute_
+            ,Int16 _throttleMaxConnections_
+            ,DateTime _lastAccessedTime_
             ,DeviceTypeEnum _deviceTypeEnum_
-            ,System.Boolean _dhcp_
-            ,System.Boolean _enabled_
-            ,System.String _ipAddress_
-            ,System.DateTime _lastAccessedTime_
-            ,System.Int32 _port_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,System.Int16 _throttleMaxConnections_
+            ,ServerEntityKey _serverPartitionKey_
+            ,String _aeTitle_
+            ,Int32 _port_
+            ,String _description_
+            ,String _ipAddress_
             ):base("Device")
         {
-            _acceptKOPR = _acceptKOPR_;
-            _aeTitle = _aeTitle_;
-            _allowAutoRoute = _allowAutoRoute_;
-            _allowQuery = _allowQuery_;
-            _allowRetrieve = _allowRetrieve_;
-            _allowStorage = _allowStorage_;
-            _description = _description_;
-            _deviceTypeEnum = _deviceTypeEnum_;
-            _dhcp = _dhcp_;
-            _enabled = _enabled_;
-            _ipAddress = _ipAddress_;
-            _lastAccessedTime = _lastAccessedTime_;
-            _port = _port_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _throttleMaxConnections = _throttleMaxConnections_;
+            Dhcp = _dhcp_;
+            Enabled = _enabled_;
+            AllowStorage = _allowStorage_;
+            AcceptKOPR = _acceptKOPR_;
+            AllowRetrieve = _allowRetrieve_;
+            AllowQuery = _allowQuery_;
+            AllowAutoRoute = _allowAutoRoute_;
+            ThrottleMaxConnections = _throttleMaxConnections_;
+            LastAccessedTime = _lastAccessedTime_;
+            DeviceTypeEnum = _deviceTypeEnum_;
+            ServerPartitionKey = _serverPartitionKey_;
+            AeTitle = _aeTitle_;
+            Port = _port_;
+            Description = _description_;
+            IpAddress = _ipAddress_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _acceptKOPR;
-        private String _aeTitle;
-        private Boolean _allowAutoRoute;
-        private Boolean _allowQuery;
-        private Boolean _allowRetrieve;
-        private Boolean _allowStorage;
-        private String _description;
-        private DeviceTypeEnum _deviceTypeEnum;
-        private Boolean _dhcp;
-        private Boolean _enabled;
-        private String _ipAddress;
-        private DateTime _lastAccessedTime;
-        private Int32 _port;
-        private ServerEntityKey _serverPartitionKey;
-        private Int16 _throttleMaxConnections;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
-        public Boolean AcceptKOPR
-        {
-        get { return _acceptKOPR; }
-        set { _acceptKOPR = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
-        public String AeTitle
-        {
-        get { return _aeTitle; }
-        set { _aeTitle = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
-        public Boolean AllowAutoRoute
-        {
-        get { return _allowAutoRoute; }
-        set { _allowAutoRoute = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
-        public Boolean AllowQuery
-        {
-        get { return _allowQuery; }
-        set { _allowQuery = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
-        public Boolean AllowRetrieve
-        {
-        get { return _allowRetrieve; }
-        set { _allowRetrieve = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
-        public Boolean AllowStorage
-        {
-        get { return _allowStorage; }
-        set { _allowStorage = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
-        public DeviceTypeEnum DeviceTypeEnum
-        {
-        get { return _deviceTypeEnum; }
-        set { _deviceTypeEnum = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public Boolean Dhcp
-        {
-        get { return _dhcp; }
-        set { _dhcp = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Enabled")]
         public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
-        public String IpAddress
-        {
-        get { return _ipAddress; }
-        set { _ipAddress = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="LastAccessedTime")]
-        public DateTime LastAccessedTime
-        {
-        get { return _lastAccessedTime; }
-        set { _lastAccessedTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
-        public Int32 Port
-        {
-        get { return _port; }
-        set { _port = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
+        public Boolean AllowStorage
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
+        public Boolean AcceptKOPR
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
+        public Boolean AllowRetrieve
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
+        public Boolean AllowQuery
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
+        public Boolean AllowAutoRoute
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
         public Int16 ThrottleMaxConnections
-        {
-        get { return _throttleMaxConnections; }
-        set { _throttleMaxConnections = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="LastAccessedTime")]
+        public DateTime LastAccessedTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
+        public DeviceTypeEnum DeviceTypeEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
+        public String AeTitle
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
+        public Int32 Port
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
+        public String Description
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
+        public String IpAddress
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -219,21 +156,21 @@ namespace ClearCanvas.ImageServer.Model
         {
             IDeviceEntityBroker broker = update.GetBroker<IDeviceEntityBroker>();
             DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
-            updateColumns.AcceptKOPR = entity.AcceptKOPR;
-            updateColumns.AeTitle = entity.AeTitle;
-            updateColumns.AllowAutoRoute = entity.AllowAutoRoute;
-            updateColumns.AllowQuery = entity.AllowQuery;
-            updateColumns.AllowRetrieve = entity.AllowRetrieve;
-            updateColumns.AllowStorage = entity.AllowStorage;
-            updateColumns.Description = entity.Description;
-            updateColumns.DeviceTypeEnum = entity.DeviceTypeEnum;
             updateColumns.Dhcp = entity.Dhcp;
             updateColumns.Enabled = entity.Enabled;
-            updateColumns.IpAddress = entity.IpAddress;
-            updateColumns.LastAccessedTime = entity.LastAccessedTime;
-            updateColumns.Port = entity.Port;
-            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.AllowStorage = entity.AllowStorage;
+            updateColumns.AcceptKOPR = entity.AcceptKOPR;
+            updateColumns.AllowRetrieve = entity.AllowRetrieve;
+            updateColumns.AllowQuery = entity.AllowQuery;
+            updateColumns.AllowAutoRoute = entity.AllowAutoRoute;
             updateColumns.ThrottleMaxConnections = entity.ThrottleMaxConnections;
+            updateColumns.LastAccessedTime = entity.LastAccessedTime;
+            updateColumns.DeviceTypeEnum = entity.DeviceTypeEnum;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.AeTitle = entity.AeTitle;
+            updateColumns.Port = entity.Port;
+            updateColumns.Description = entity.Description;
+            updateColumns.IpAddress = entity.IpAddress;
             Device newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

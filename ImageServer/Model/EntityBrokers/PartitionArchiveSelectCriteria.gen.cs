@@ -50,16 +50,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new PartitionArchiveSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
-        public ISearchCondition<Int32> ArchiveDelayHours
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
             get
             {
-              if (!SubCriteria.ContainsKey("ArchiveDelayHours"))
+              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
               {
-                 SubCriteria["ArchiveDelayHours"] = new SearchCondition<Int32>("ArchiveDelayHours");
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
-              return (ISearchCondition<Int32>)SubCriteria["ArchiveDelayHours"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveTypeEnum")]
@@ -72,18 +72,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ArchiveTypeEnum"] = new SearchCondition<ArchiveTypeEnum>("ArchiveTypeEnum");
               }
               return (ISearchCondition<ArchiveTypeEnum>)SubCriteria["ArchiveTypeEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
-        public ISearchCondition<XmlDocument> ConfigurationXml
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ConfigurationXml"))
-              {
-                 SubCriteria["ConfigurationXml"] = new SearchCondition<XmlDocument>("ConfigurationXml");
-              }
-              return (ISearchCondition<XmlDocument>)SubCriteria["ConfigurationXml"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
@@ -122,16 +110,28 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Boolean>)SubCriteria["ReadOnly"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ServerEntityKey> ServerPartitionKey
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
+        public ISearchCondition<Int32> ArchiveDelayHours
         {
             get
             {
-              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
+              if (!SubCriteria.ContainsKey("ArchiveDelayHours"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["ArchiveDelayHours"] = new SearchCondition<Int32>("ArchiveDelayHours");
               }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+              return (ISearchCondition<Int32>)SubCriteria["ArchiveDelayHours"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
+        public ISearchCondition<XmlDocument> ConfigurationXml
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ConfigurationXml"))
+              {
+                 SubCriteria["ConfigurationXml"] = new SearchCondition<XmlDocument>("ConfigurationXml");
+              }
+              return (ISearchCondition<XmlDocument>)SubCriteria["ConfigurationXml"];
             } 
         }
     }

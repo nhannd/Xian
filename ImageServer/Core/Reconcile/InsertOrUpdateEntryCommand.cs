@@ -101,10 +101,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			DuplicateSopReceivedQueue queueEntry = entries[0];
 
-			DuplicateSIQQueueData data = XmlUtils.Deserialize<DuplicateSIQQueueData>(queueEntry.QueueData);
+			DuplicateSIQQueueData data = XmlUtils.Deserialize<DuplicateSIQQueueData>(queueEntry.Details);
 			data.Details.InsertFile(_file);
 
-			queueEntry.QueueData = XmlUtils.SerializeAsXmlDoc(data);
+			queueEntry.Details = XmlUtils.SerializeAsXmlDoc(data);
 
 			IStudyIntegrityQueueEntityBroker siqBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
 			if (!siqBroker.Update(queueEntry))

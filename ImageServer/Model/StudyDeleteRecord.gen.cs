@@ -47,158 +47,95 @@ namespace ClearCanvas.ImageServer.Model
         public StudyDeleteRecord():base("StudyDeleteRecord")
         {}
         public StudyDeleteRecord(
-             System.String _accessionNumber_
-            ,System.Xml.XmlDocument _archiveInfo_
-            ,System.String _backupPath_
-            ,System.String _extendedInfo_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
-            ,System.String _patientId_
-            ,System.String _patientsName_
-            ,System.String _reason_
-            ,System.String _serverPartitionAE_
-            ,System.String _studyDate_
-            ,System.String _studyDescription_
-            ,System.String _studyId_
-            ,System.String _studyInstanceUid_
-            ,System.String _studyTime_
-            ,System.DateTime _timestamp_
+             String _studyInstanceUid_
+            ,DateTime _timestamp_
+            ,String _serverPartitionAE_
+            ,ServerEntityKey _filesystemKey_
+            ,String _backupPath_
+            ,String _reason_
+            ,String _accessionNumber_
+            ,String _patientId_
+            ,String _patientsName_
+            ,String _studyId_
+            ,String _studyDescription_
+            ,String _studyDate_
+            ,String _studyTime_
+            ,XmlDocument _archiveInfo_
+            ,String _extendedInfo_
             ):base("StudyDeleteRecord")
         {
-            _accessionNumber = _accessionNumber_;
-            _archiveInfo = _archiveInfo_;
-            _backupPath = _backupPath_;
-            _extendedInfo = _extendedInfo_;
-            _filesystemKey = _filesystemKey_;
-            _patientId = _patientId_;
-            _patientsName = _patientsName_;
-            _reason = _reason_;
-            _serverPartitionAE = _serverPartitionAE_;
-            _studyDate = _studyDate_;
-            _studyDescription = _studyDescription_;
-            _studyId = _studyId_;
-            _studyInstanceUid = _studyInstanceUid_;
-            _studyTime = _studyTime_;
-            _timestamp = _timestamp_;
+            StudyInstanceUid = _studyInstanceUid_;
+            Timestamp = _timestamp_;
+            ServerPartitionAE = _serverPartitionAE_;
+            FilesystemKey = _filesystemKey_;
+            BackupPath = _backupPath_;
+            Reason = _reason_;
+            AccessionNumber = _accessionNumber_;
+            PatientId = _patientId_;
+            PatientsName = _patientsName_;
+            StudyId = _studyId_;
+            StudyDescription = _studyDescription_;
+            StudyDate = _studyDate_;
+            StudyTime = _studyTime_;
+            ArchiveInfo = _archiveInfo_;
+            ExtendedInfo = _extendedInfo_;
         }
-        #endregion
-
-        #region Private Members
-        private String _accessionNumber;
-        private XmlDocument _archiveInfo;
-        private String _backupPath;
-        private String _extendedInfo;
-        private ServerEntityKey _filesystemKey;
-        private String _patientId;
-        private String _patientsName;
-        private String _reason;
-        private String _serverPartitionAE;
-        private String _studyDate;
-        private String _studyDescription;
-        private String _studyId;
-        private String _studyInstanceUid;
-        private String _studyTime;
-        private DateTime _timestamp;
         #endregion
 
         #region Public Properties
-        [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="AccessionNumber")]
-        public String AccessionNumber
-        {
-        get { return _accessionNumber; }
-        set { _accessionNumber = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
-        public XmlDocument ArchiveInfo
-        {
-        get { return _archiveInfo; }
-        set { _archiveInfo = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
-        public String BackupPath
-        {
-        get { return _backupPath; }
-        set { _backupPath = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
-        public String ExtendedInfo
-        {
-        get { return _extendedInfo; }
-        set { _extendedInfo = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="FilesystemGUID")]
-        public ServerEntityKey FilesystemKey
-        {
-        get { return _filesystemKey; }
-        set { _filesystemKey = value; }
-        }
-        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientId")]
-        public String PatientId
-        {
-        get { return _patientId; }
-        set { _patientId = value; }
-        }
-        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientsName")]
-        public String PatientsName
-        {
-        get { return _patientsName; }
-        set { _patientsName = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Reason")]
-        public String Reason
-        {
-        get { return _reason; }
-        set { _reason = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
-        public String ServerPartitionAE
-        {
-        get { return _serverPartitionAE; }
-        set { _serverPartitionAE = value; }
-        }
-        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]
-        public String StudyDate
-        {
-        get { return _studyDate; }
-        set { _studyDate = value; }
-        }
-        [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDescription")]
-        public String StudyDescription
-        {
-        get { return _studyDescription; }
-        set { _studyDescription = value; }
-        }
-        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyId")]
-        public String StudyId
-        {
-        get { return _studyId; }
-        set { _studyId = value; }
-        }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyInstanceUid")]
         public String StudyInstanceUid
-        {
-        get { return _studyInstanceUid; }
-        set { _studyInstanceUid = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Timestamp")]
+        public DateTime Timestamp
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
+        public String ServerPartitionAE
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="FilesystemGUID")]
+        public ServerEntityKey FilesystemKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
+        public String BackupPath
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Reason")]
+        public String Reason
+        { get; set; }
+        [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="AccessionNumber")]
+        public String AccessionNumber
+        { get; set; }
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientId")]
+        public String PatientId
+        { get; set; }
+        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientsName")]
+        public String PatientsName
+        { get; set; }
+        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyId")]
+        public String StudyId
+        { get; set; }
+        [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDescription")]
+        public String StudyDescription
+        { get; set; }
+        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]
+        public String StudyDate
+        { get; set; }
         [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyTime")]
         public String StudyTime
-        {
-        get { return _studyTime; }
-        set { _studyTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Timestamp")]
-        public DateTime Timestamp
-        {
-        get { return _timestamp; }
-        set { _timestamp = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
+        public XmlDocument ArchiveInfo
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
+        public String ExtendedInfo
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -228,21 +165,21 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyDeleteRecordEntityBroker broker = update.GetBroker<IStudyDeleteRecordEntityBroker>();
             StudyDeleteRecordUpdateColumns updateColumns = new StudyDeleteRecordUpdateColumns();
-            updateColumns.AccessionNumber = entity.AccessionNumber;
-            updateColumns.ArchiveInfo = entity.ArchiveInfo;
-            updateColumns.BackupPath = entity.BackupPath;
-            updateColumns.ExtendedInfo = entity.ExtendedInfo;
+            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.Timestamp = entity.Timestamp;
+            updateColumns.ServerPartitionAE = entity.ServerPartitionAE;
             updateColumns.FilesystemKey = entity.FilesystemKey;
+            updateColumns.BackupPath = entity.BackupPath;
+            updateColumns.Reason = entity.Reason;
+            updateColumns.AccessionNumber = entity.AccessionNumber;
             updateColumns.PatientId = entity.PatientId;
             updateColumns.PatientsName = entity.PatientsName;
-            updateColumns.Reason = entity.Reason;
-            updateColumns.ServerPartitionAE = entity.ServerPartitionAE;
-            updateColumns.StudyDate = entity.StudyDate;
-            updateColumns.StudyDescription = entity.StudyDescription;
             updateColumns.StudyId = entity.StudyId;
-            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.StudyDescription = entity.StudyDescription;
+            updateColumns.StudyDate = entity.StudyDate;
             updateColumns.StudyTime = entity.StudyTime;
-            updateColumns.Timestamp = entity.Timestamp;
+            updateColumns.ArchiveInfo = entity.ArchiveInfo;
+            updateColumns.ExtendedInfo = entity.ExtendedInfo;
             StudyDeleteRecord newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

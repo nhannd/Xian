@@ -46,51 +46,32 @@ namespace ClearCanvas.ImageServer.Model
         public DatabaseVersion():base("DatabaseVersion_")
         {}
         public DatabaseVersion(
-             System.String _build__
-            ,System.String _major__
-            ,System.String _minor__
-            ,System.String _revision__
+             String _major__
+            ,String _minor__
+            ,String _build__
+            ,String _revision__
             ):base("DatabaseVersion_")
         {
-            _build_ = _build__;
-            _major_ = _major__;
-            _minor_ = _minor__;
-            _revision_ = _revision__;
+            Major = _major__;
+            Minor = _minor__;
+            Build = _build__;
+            Revision = _revision__;
         }
-        #endregion
-
-        #region Private Members
-        private String _build_;
-        private String _major_;
-        private String _minor_;
-        private String _revision_;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
-        public String Build
-        {
-        get { return _build_; }
-        set { _build_ = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Major_")]
         public String Major
-        {
-        get { return _major_; }
-        set { _major_ = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Minor_")]
         public String Minor
-        {
-        get { return _minor_; }
-        set { _minor_ = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
+        public String Build
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Revision_")]
         public String Revision
-        {
-        get { return _revision_; }
-        set { _revision_ = value; }
-        }
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -120,9 +101,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             IDatabaseVersionEntityBroker broker = update.GetBroker<IDatabaseVersionEntityBroker>();
             DatabaseVersionUpdateColumns updateColumns = new DatabaseVersionUpdateColumns();
-            updateColumns.Build = entity.Build;
             updateColumns.Major = entity.Major;
             updateColumns.Minor = entity.Minor;
+            updateColumns.Build = entity.Build;
             updateColumns.Revision = entity.Revision;
             DatabaseVersion newEntity = broker.Insert(updateColumns);
             return newEntity;

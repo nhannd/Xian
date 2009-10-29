@@ -46,42 +46,27 @@ namespace ClearCanvas.ImageServer.Model
         public CannedText():base("CannedText")
         {}
         public CannedText(
-             System.String _category_
-            ,System.String _label_
-            ,System.String _text_
+             String _label_
+            ,String _category_
+            ,String _text_
             ):base("CannedText")
         {
-            _category = _category_;
-            _label = _label_;
-            _text = _text_;
+            Label = _label_;
+            Category = _category_;
+            Text = _text_;
         }
-        #endregion
-
-        #region Private Members
-        private String _category;
-        private String _label;
-        private String _text;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
-        public String Category
-        {
-        get { return _category; }
-        set { _category = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
         public String Label
-        {
-        get { return _label; }
-        set { _label = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
+        public String Category
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
         public String Text
-        {
-        get { return _text; }
-        set { _text = value; }
-        }
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -111,8 +96,8 @@ namespace ClearCanvas.ImageServer.Model
         {
             ICannedTextEntityBroker broker = update.GetBroker<ICannedTextEntityBroker>();
             CannedTextUpdateColumns updateColumns = new CannedTextUpdateColumns();
-            updateColumns.Category = entity.Category;
             updateColumns.Label = entity.Label;
+            updateColumns.Category = entity.Category;
             updateColumns.Text = entity.Text;
             CannedText newEntity = broker.Insert(updateColumns);
             return newEntity;

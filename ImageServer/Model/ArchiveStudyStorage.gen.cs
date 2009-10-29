@@ -46,60 +46,37 @@ namespace ClearCanvas.ImageServer.Model
         public ArchiveStudyStorage():base("ArchiveStudyStorage")
         {}
         public ArchiveStudyStorage(
-             System.DateTime _archiveTime_
-            ,System.Xml.XmlDocument _archiveXml_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+             ServerEntityKey _partitionArchiveKey_
+            ,ServerEntityKey _studyStorageKey_
+            ,ServerEntityKey _serverTransferSyntaxKey_
+            ,DateTime _archiveTime_
+            ,XmlDocument _archiveXml_
             ):base("ArchiveStudyStorage")
         {
-            _archiveTime = _archiveTime_;
-            _archiveXml = _archiveXml_;
-            _partitionArchiveKey = _partitionArchiveKey_;
-            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
-            _studyStorageKey = _studyStorageKey_;
+            PartitionArchiveKey = _partitionArchiveKey_;
+            StudyStorageKey = _studyStorageKey_;
+            ServerTransferSyntaxKey = _serverTransferSyntaxKey_;
+            ArchiveTime = _archiveTime_;
+            ArchiveXml = _archiveXml_;
         }
-        #endregion
-
-        #region Private Members
-        private DateTime _archiveTime;
-        private XmlDocument _archiveXml;
-        private ServerEntityKey _partitionArchiveKey;
-        private ServerEntityKey _serverTransferSyntaxKey;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveTime")]
-        public DateTime ArchiveTime
-        {
-        get { return _archiveTime; }
-        set { _archiveTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveXml")]
-        public XmlDocument ArchiveXml
-        {
-        get { return _archiveXml; }
-        set { _archiveXml = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
         public ServerEntityKey PartitionArchiveKey
-        {
-        get { return _partitionArchiveKey; }
-        set { _partitionArchiveKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ServerEntityKey ServerTransferSyntaxKey
-        {
-        get { return _serverTransferSyntaxKey; }
-        set { _serverTransferSyntaxKey = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
+        public ServerEntityKey ServerTransferSyntaxKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveTime")]
+        public DateTime ArchiveTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveXml")]
+        public XmlDocument ArchiveXml
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -129,11 +106,11 @@ namespace ClearCanvas.ImageServer.Model
         {
             IArchiveStudyStorageEntityBroker broker = update.GetBroker<IArchiveStudyStorageEntityBroker>();
             ArchiveStudyStorageUpdateColumns updateColumns = new ArchiveStudyStorageUpdateColumns();
+            updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
             updateColumns.ArchiveTime = entity.ArchiveTime;
             updateColumns.ArchiveXml = entity.ArchiveXml;
-            updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
-            updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
-            updateColumns.StudyStorageKey = entity.StudyStorageKey;
             ArchiveStudyStorage newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

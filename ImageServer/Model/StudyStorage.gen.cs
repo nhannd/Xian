@@ -47,79 +47,48 @@ namespace ClearCanvas.ImageServer.Model
         public StudyStorage():base("StudyStorage")
         {}
         public StudyStorage(
-             System.DateTime _insertTime_
-            ,System.DateTime _lastAccessedTime_
-            ,System.Boolean _lock_
-            ,QueueStudyStateEnum _queueStudyStateEnum_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,System.String _studyInstanceUid_
+             ServerEntityKey _serverPartitionKey_
+            ,String _studyInstanceUid_
+            ,DateTime _insertTime_
+            ,DateTime _lastAccessedTime_
+            ,Boolean _lock_
             ,StudyStatusEnum _studyStatusEnum_
+            ,QueueStudyStateEnum _queueStudyStateEnum_
             ):base("StudyStorage")
         {
-            _insertTime = _insertTime_;
-            _lastAccessedTime = _lastAccessedTime_;
-            _lock = _lock_;
-            _queueStudyStateEnum = _queueStudyStateEnum_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _studyInstanceUid = _studyInstanceUid_;
-            _studyStatusEnum = _studyStatusEnum_;
+            ServerPartitionKey = _serverPartitionKey_;
+            StudyInstanceUid = _studyInstanceUid_;
+            InsertTime = _insertTime_;
+            LastAccessedTime = _lastAccessedTime_;
+            Lock = _lock_;
+            StudyStatusEnum = _studyStatusEnum_;
+            QueueStudyStateEnum = _queueStudyStateEnum_;
         }
-        #endregion
-
-        #region Private Members
-        private DateTime _insertTime;
-        private DateTime _lastAccessedTime;
-        private Boolean _lock;
-        private QueueStudyStateEnum _queueStudyStateEnum;
-        private ServerEntityKey _serverPartitionKey;
-        private String _studyInstanceUid;
-        private StudyStatusEnum _studyStatusEnum;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
-        public DateTime InsertTime
-        {
-        get { return _insertTime; }
-        set { _insertTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
-        public DateTime LastAccessedTime
-        {
-        get { return _lastAccessedTime; }
-        set { _lastAccessedTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
-        public Boolean Lock
-        {
-        get { return _lock; }
-        set { _lock = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
-        public QueueStudyStateEnum QueueStudyStateEnum
-        {
-        get { return _queueStudyStateEnum; }
-        set { _queueStudyStateEnum = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
         public String StudyInstanceUid
-        {
-        get { return _studyInstanceUid; }
-        set { _studyInstanceUid = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
+        public DateTime InsertTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
+        public DateTime LastAccessedTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
+        public Boolean Lock
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]
         public StudyStatusEnum StudyStatusEnum
-        {
-        get { return _studyStatusEnum; }
-        set { _studyStatusEnum = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
+        public QueueStudyStateEnum QueueStudyStateEnum
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -149,13 +118,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyStorageEntityBroker broker = update.GetBroker<IStudyStorageEntityBroker>();
             StudyStorageUpdateColumns updateColumns = new StudyStorageUpdateColumns();
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.InsertTime = entity.InsertTime;
             updateColumns.LastAccessedTime = entity.LastAccessedTime;
             updateColumns.Lock = entity.Lock;
-            updateColumns.QueueStudyStateEnum = entity.QueueStudyStateEnum;
-            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
-            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.StudyStatusEnum = entity.StudyStatusEnum;
+            updateColumns.QueueStudyStateEnum = entity.QueueStudyStateEnum;
             StudyStorage newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

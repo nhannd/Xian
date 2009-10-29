@@ -47,211 +47,128 @@ namespace ClearCanvas.ImageServer.Model
         public Study():base("Study")
         {}
         public Study(
-             System.String _accessionNumber_
-            ,System.String _issuerOfPatientId_
-            ,System.Int32 _numberOfStudyRelatedInstances_
-            ,System.Int32 _numberOfStudyRelatedSeries_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _patientKey_
-            ,System.String _patientId_
-            ,System.String _patientsAge_
-            ,System.String _patientsBirthDate_
-            ,System.String _patientsName_
-            ,System.String _patientsSex_
-            ,System.String _referringPhysiciansName_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,System.String _specificCharacterSet_
-            ,System.String _studyDate_
-            ,System.String _studyDescription_
-            ,System.String _studyId_
-            ,System.String _studyInstanceUid_
-            ,System.Decimal _studySizeInKB_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
-            ,System.String _studyTime_
+             String _studyInstanceUid_
+            ,ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _patientKey_
+            ,Int32 _numberOfStudyRelatedSeries_
+            ,Int32 _numberOfStudyRelatedInstances_
+            ,Decimal _studySizeInKB_
+            ,String _specificCharacterSet_
+            ,ServerEntityKey _studyStorageKey_
+            ,String _patientsName_
+            ,String _patientId_
+            ,String _issuerOfPatientId_
+            ,String _patientsBirthDate_
+            ,String _patientsAge_
+            ,String _patientsSex_
+            ,String _studyDate_
+            ,String _studyTime_
+            ,String _accessionNumber_
+            ,String _studyId_
+            ,String _studyDescription_
+            ,String _referringPhysiciansName_
             ):base("Study")
         {
-            _accessionNumber = _accessionNumber_;
-            _issuerOfPatientId = _issuerOfPatientId_;
-            _numberOfStudyRelatedInstances = _numberOfStudyRelatedInstances_;
-            _numberOfStudyRelatedSeries = _numberOfStudyRelatedSeries_;
-            _patientKey = _patientKey_;
-            _patientId = _patientId_;
-            _patientsAge = _patientsAge_;
-            _patientsBirthDate = _patientsBirthDate_;
-            _patientsName = _patientsName_;
-            _patientsSex = _patientsSex_;
-            _referringPhysiciansName = _referringPhysiciansName_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _specificCharacterSet = _specificCharacterSet_;
-            _studyDate = _studyDate_;
-            _studyDescription = _studyDescription_;
-            _studyId = _studyId_;
-            _studyInstanceUid = _studyInstanceUid_;
-            _studySizeInKB = _studySizeInKB_;
-            _studyStorageKey = _studyStorageKey_;
-            _studyTime = _studyTime_;
+            StudyInstanceUid = _studyInstanceUid_;
+            ServerPartitionKey = _serverPartitionKey_;
+            PatientKey = _patientKey_;
+            NumberOfStudyRelatedSeries = _numberOfStudyRelatedSeries_;
+            NumberOfStudyRelatedInstances = _numberOfStudyRelatedInstances_;
+            StudySizeInKB = _studySizeInKB_;
+            SpecificCharacterSet = _specificCharacterSet_;
+            StudyStorageKey = _studyStorageKey_;
+            PatientsName = _patientsName_;
+            PatientId = _patientId_;
+            IssuerOfPatientId = _issuerOfPatientId_;
+            PatientsBirthDate = _patientsBirthDate_;
+            PatientsAge = _patientsAge_;
+            PatientsSex = _patientsSex_;
+            StudyDate = _studyDate_;
+            StudyTime = _studyTime_;
+            AccessionNumber = _accessionNumber_;
+            StudyId = _studyId_;
+            StudyDescription = _studyDescription_;
+            ReferringPhysiciansName = _referringPhysiciansName_;
         }
-        #endregion
-
-        #region Private Members
-        private String _accessionNumber;
-        private String _issuerOfPatientId;
-        private Int32 _numberOfStudyRelatedInstances;
-        private Int32 _numberOfStudyRelatedSeries;
-        private ServerEntityKey _patientKey;
-        private String _patientId;
-        private String _patientsAge;
-        private String _patientsBirthDate;
-        private String _patientsName;
-        private String _patientsSex;
-        private String _referringPhysiciansName;
-        private ServerEntityKey _serverPartitionKey;
-        private String _specificCharacterSet;
-        private String _studyDate;
-        private String _studyDescription;
-        private String _studyId;
-        private String _studyInstanceUid;
-        private Decimal _studySizeInKB;
-        private ServerEntityKey _studyStorageKey;
-        private String _studyTime;
         #endregion
 
         #region Public Properties
-        [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="AccessionNumber")]
-        public String AccessionNumber
-        {
-        get { return _accessionNumber; }
-        set { _accessionNumber = value; }
-        }
-        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="IssuerOfPatientId")]
-        public String IssuerOfPatientId
-        {
-        get { return _issuerOfPatientId; }
-        set { _issuerOfPatientId = value; }
-        }
-        [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedInstances")]
-        public Int32 NumberOfStudyRelatedInstances
-        {
-        get { return _numberOfStudyRelatedInstances; }
-        set { _numberOfStudyRelatedInstances = value; }
-        }
-        [DicomField(DicomTags.NumberOfStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedSeries")]
-        public Int32 NumberOfStudyRelatedSeries
-        {
-        get { return _numberOfStudyRelatedSeries; }
-        set { _numberOfStudyRelatedSeries = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientGUID")]
-        public ServerEntityKey PatientKey
-        {
-        get { return _patientKey; }
-        set { _patientKey = value; }
-        }
-        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientId")]
-        public String PatientId
-        {
-        get { return _patientId; }
-        set { _patientId = value; }
-        }
-        [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsAge")]
-        public String PatientsAge
-        {
-        get { return _patientsAge; }
-        set { _patientsAge = value; }
-        }
-        [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsBirthDate")]
-        public String PatientsBirthDate
-        {
-        get { return _patientsBirthDate; }
-        set { _patientsBirthDate = value; }
-        }
-        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsName")]
-        public String PatientsName
-        {
-        get { return _patientsName; }
-        set { _patientsName = value; }
-        }
-        [DicomField(DicomTags.PatientsSex, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsSex")]
-        public String PatientsSex
-        {
-        get { return _patientsSex; }
-        set { _patientsSex = value; }
-        }
-        [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ReferringPhysiciansName")]
-        public String ReferringPhysiciansName
-        {
-        get { return _referringPhysiciansName; }
-        set { _referringPhysiciansName = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
-        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
-        public String SpecificCharacterSet
-        {
-        get { return _specificCharacterSet; }
-        set { _specificCharacterSet = value; }
-        }
-        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDate")]
-        public String StudyDate
-        {
-        get { return _studyDate; }
-        set { _studyDate = value; }
-        }
-        [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDescription")]
-        public String StudyDescription
-        {
-        get { return _studyDescription; }
-        set { _studyDescription = value; }
-        }
-        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyId")]
-        public String StudyId
-        {
-        get { return _studyId; }
-        set { _studyId = value; }
-        }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyInstanceUid")]
         public String StudyInstanceUid
-        {
-        get { return _studyInstanceUid; }
-        set { _studyInstanceUid = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientGUID")]
+        public ServerEntityKey PatientKey
+        { get; set; }
+        [DicomField(DicomTags.NumberOfStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedSeries")]
+        public Int32 NumberOfStudyRelatedSeries
+        { get; set; }
+        [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedInstances")]
+        public Int32 NumberOfStudyRelatedInstances
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
         public Decimal StudySizeInKB
-        {
-        get { return _studySizeInKB; }
-        set { _studySizeInKB = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
+        public String SpecificCharacterSet
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsName")]
+        public String PatientsName
+        { get; set; }
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientId")]
+        public String PatientId
+        { get; set; }
+        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="IssuerOfPatientId")]
+        public String IssuerOfPatientId
+        { get; set; }
+        [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsBirthDate")]
+        public String PatientsBirthDate
+        { get; set; }
+        [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsAge")]
+        public String PatientsAge
+        { get; set; }
+        [DicomField(DicomTags.PatientsSex, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsSex")]
+        public String PatientsSex
+        { get; set; }
+        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDate")]
+        public String StudyDate
+        { get; set; }
         [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyTime")]
         public String StudyTime
-        {
-        get { return _studyTime; }
-        set { _studyTime = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="AccessionNumber")]
+        public String AccessionNumber
+        { get; set; }
+        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyId")]
+        public String StudyId
+        { get; set; }
+        [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDescription")]
+        public String StudyDescription
+        { get; set; }
+        [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ReferringPhysiciansName")]
+        public String ReferringPhysiciansName
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -281,26 +198,26 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyEntityBroker broker = update.GetBroker<IStudyEntityBroker>();
             StudyUpdateColumns updateColumns = new StudyUpdateColumns();
-            updateColumns.AccessionNumber = entity.AccessionNumber;
-            updateColumns.IssuerOfPatientId = entity.IssuerOfPatientId;
-            updateColumns.NumberOfStudyRelatedInstances = entity.NumberOfStudyRelatedInstances;
-            updateColumns.NumberOfStudyRelatedSeries = entity.NumberOfStudyRelatedSeries;
-            updateColumns.PatientKey = entity.PatientKey;
-            updateColumns.PatientId = entity.PatientId;
-            updateColumns.PatientsAge = entity.PatientsAge;
-            updateColumns.PatientsBirthDate = entity.PatientsBirthDate;
-            updateColumns.PatientsName = entity.PatientsName;
-            updateColumns.PatientsSex = entity.PatientsSex;
-            updateColumns.ReferringPhysiciansName = entity.ReferringPhysiciansName;
-            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
-            updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
-            updateColumns.StudyDate = entity.StudyDate;
-            updateColumns.StudyDescription = entity.StudyDescription;
-            updateColumns.StudyId = entity.StudyId;
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.PatientKey = entity.PatientKey;
+            updateColumns.NumberOfStudyRelatedSeries = entity.NumberOfStudyRelatedSeries;
+            updateColumns.NumberOfStudyRelatedInstances = entity.NumberOfStudyRelatedInstances;
             updateColumns.StudySizeInKB = entity.StudySizeInKB;
+            updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.PatientsName = entity.PatientsName;
+            updateColumns.PatientId = entity.PatientId;
+            updateColumns.IssuerOfPatientId = entity.IssuerOfPatientId;
+            updateColumns.PatientsBirthDate = entity.PatientsBirthDate;
+            updateColumns.PatientsAge = entity.PatientsAge;
+            updateColumns.PatientsSex = entity.PatientsSex;
+            updateColumns.StudyDate = entity.StudyDate;
             updateColumns.StudyTime = entity.StudyTime;
+            updateColumns.AccessionNumber = entity.AccessionNumber;
+            updateColumns.StudyId = entity.StudyId;
+            updateColumns.StudyDescription = entity.StudyDescription;
+            updateColumns.ReferringPhysiciansName = entity.ReferringPhysiciansName;
             Study newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

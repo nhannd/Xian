@@ -42,20 +42,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public PartitionArchiveUpdateColumns()
        : base("PartitionArchive")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
-        public Int32 ArchiveDelayHours
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ArchiveDelayHours"] = new EntityUpdateColumn<Int32>("ArchiveDelayHours", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveTypeEnum")]
         public ArchiveTypeEnum ArchiveTypeEnum
         {
             set { SubParameters["ArchiveTypeEnum"] = new EntityUpdateColumn<ArchiveTypeEnum>("ArchiveTypeEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
-        public XmlDocument ConfigurationXml
-        {
-            set { SubParameters["ConfigurationXml"] = new EntityUpdateColumn<XmlDocument>("ConfigurationXml", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
         public String Description
@@ -72,10 +67,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ReadOnly"] = new EntityUpdateColumn<Boolean>("ReadOnly", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
+        public Int32 ArchiveDelayHours
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ArchiveDelayHours"] = new EntityUpdateColumn<Int32>("ArchiveDelayHours", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
+        public XmlDocument ConfigurationXml
+        {
+            set { SubParameters["ConfigurationXml"] = new EntityUpdateColumn<XmlDocument>("ConfigurationXml", value); }
         }
     }
 }

@@ -42,6 +42,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public FilesystemStudyStorageUpdateColumns()
        : base("FilesystemStudyStorage")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
+        {
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
         public ServerEntityKey FilesystemKey
         {
@@ -56,11 +61,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public String StudyFolder
         {
             set { SubParameters["StudyFolder"] = new EntityUpdateColumn<String>("StudyFolder", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

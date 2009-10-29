@@ -43,20 +43,20 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public FilesystemQueueUpdateColumns()
        : base("FilesystemQueue")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
-        public ServerEntityKey FilesystemKey
-        {
-            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
         public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
         {
             set { SubParameters["FilesystemQueueTypeEnum"] = new EntityUpdateColumn<FilesystemQueueTypeEnum>("FilesystemQueueTypeEnum", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
-        public XmlDocument QueueXml
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["QueueXml"] = new EntityUpdateColumn<XmlDocument>("QueueXml", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
+        public ServerEntityKey FilesystemKey
+        {
+            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
         public DateTime ScheduledTime
@@ -69,10 +69,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<String>("SeriesInstanceUid", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
+        public XmlDocument QueueXml
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["QueueXml"] = new EntityUpdateColumn<XmlDocument>("QueueXml", value); }
         }
     }
 }

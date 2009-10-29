@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Model
             this.SetKey(studyIntegrityQueueEntry.GetKey());
             this.Description = studyIntegrityQueueEntry.Description;
             this.InsertTime = studyIntegrityQueueEntry.InsertTime;
-            this.QueueData = studyIntegrityQueueEntry.QueueData;
+            this.Details = studyIntegrityQueueEntry.Details;
             this.ServerPartitionKey = studyIntegrityQueueEntry.ServerPartitionKey;
             this.StudyData = studyIntegrityQueueEntry.StudyData;
             this.StudyIntegrityReasonEnum = studyIntegrityQueueEntry.StudyIntegrityReasonEnum;

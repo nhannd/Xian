@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Model
             this.SetKey(studyIntegrityQueueEntry.Key);
             this.Description = studyIntegrityQueueEntry.Description;
             this.InsertTime = studyIntegrityQueueEntry.InsertTime;
-            this.QueueData = studyIntegrityQueueEntry.QueueData;
+            this.Details = studyIntegrityQueueEntry.Details;
             this.ServerPartitionKey = studyIntegrityQueueEntry.ServerPartitionKey;
             this.StudyData = studyIntegrityQueueEntry.StudyData;
             this.StudyIntegrityReasonEnum = studyIntegrityQueueEntry.StudyIntegrityReasonEnum;
@@ -75,11 +75,11 @@ namespace ClearCanvas.ImageServer.Model
 
         public string GetFolderPath()
         {
-            Platform.CheckForNullReference(QueueData, "QueueData");
+            Platform.CheckForNullReference(Details, "Details");
             // TODO: We should use ReconcileStudyWorkQueueData instead here. But that is impossible 
             // because of the Model<--> COmmon dependency.
  
-            XmlNode xmlStoragePath = this.QueueData.SelectSingleNode("//StoragePath");
+            XmlNode xmlStoragePath = this.Details.SelectSingleNode("//StoragePath");
             Platform.CheckForNullReference(xmlStoragePath, "xmlStoragePath");
             // TODO: end
 

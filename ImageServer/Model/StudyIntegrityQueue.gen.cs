@@ -46,87 +46,52 @@ namespace ClearCanvas.ImageServer.Model
         public StudyIntegrityQueue():base("StudyIntegrityQueue")
         {}
         public StudyIntegrityQueue(
-             System.String _description_
-            ,System.String _groupID_
-            ,System.DateTime _insertTime_
-            ,System.Xml.XmlDocument _queueData_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,System.Xml.XmlDocument _studyData_
+             ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _studyStorageKey_
+            ,DateTime _insertTime_
+            ,XmlDocument _studyData_
             ,StudyIntegrityReasonEnum _studyIntegrityReasonEnum_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ,String _groupID_
+            ,XmlDocument _details_
+            ,String _description_
             ):base("StudyIntegrityQueue")
         {
-            _description = _description_;
-            _groupID = _groupID_;
-            _insertTime = _insertTime_;
-            _queueData = _queueData_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _studyData = _studyData_;
-            _studyIntegrityReasonEnum = _studyIntegrityReasonEnum_;
-            _studyStorageKey = _studyStorageKey_;
+            ServerPartitionKey = _serverPartitionKey_;
+            StudyStorageKey = _studyStorageKey_;
+            InsertTime = _insertTime_;
+            StudyData = _studyData_;
+            StudyIntegrityReasonEnum = _studyIntegrityReasonEnum_;
+            GroupID = _groupID_;
+            Details = _details_;
+            Description = _description_;
         }
-        #endregion
-
-        #region Private Members
-        private String _description;
-        private String _groupID;
-        private DateTime _insertTime;
-        private XmlDocument _queueData;
-        private ServerEntityKey _serverPartitionKey;
-        private XmlDocument _studyData;
-        private StudyIntegrityReasonEnum _studyIntegrityReasonEnum;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
-        public String GroupID
-        {
-        get { return _groupID; }
-        set { _groupID = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
-        public DateTime InsertTime
-        {
-        get { return _insertTime; }
-        set { _insertTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="QueueData")]
-        public XmlDocument QueueData
-        {
-        get { return _queueData; }
-        set { _queueData = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
-        public XmlDocument StudyData
-        {
-        get { return _studyData; }
-        set { _studyData = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyIntegrityReasonEnum")]
-        public StudyIntegrityReasonEnum StudyIntegrityReasonEnum
-        {
-        get { return _studyIntegrityReasonEnum; }
-        set { _studyIntegrityReasonEnum = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
+        public DateTime InsertTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
+        public XmlDocument StudyData
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyIntegrityReasonEnum")]
+        public StudyIntegrityReasonEnum StudyIntegrityReasonEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
+        public String GroupID
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Details")]
+        public XmlDocument Details
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
+        public String Description
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -156,14 +121,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyIntegrityQueueEntityBroker broker = update.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueueUpdateColumns updateColumns = new StudyIntegrityQueueUpdateColumns();
-            updateColumns.Description = entity.Description;
-            updateColumns.GroupID = entity.GroupID;
-            updateColumns.InsertTime = entity.InsertTime;
-            updateColumns.QueueData = entity.QueueData;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.InsertTime = entity.InsertTime;
             updateColumns.StudyData = entity.StudyData;
             updateColumns.StudyIntegrityReasonEnum = entity.StudyIntegrityReasonEnum;
-            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.GroupID = entity.GroupID;
+            updateColumns.Details = entity.Details;
+            updateColumns.Description = entity.Description;
             StudyIntegrityQueue newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

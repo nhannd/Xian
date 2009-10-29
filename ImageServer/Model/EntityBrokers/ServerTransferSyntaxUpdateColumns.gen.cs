@@ -43,6 +43,12 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerTransferSyntaxUpdateColumns()
        : base("ServerTransferSyntax")
        {}
+       [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
+        public String Uid
+        {
+            set { SubParameters["Uid"] = new EntityUpdateColumn<String>("Uid", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
         public String Description
         {
@@ -52,12 +58,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public Boolean Lossless
         {
             set { SubParameters["Lossless"] = new EntityUpdateColumn<Boolean>("Lossless", value); }
-        }
-       [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
-        public String Uid
-        {
-            set { SubParameters["Uid"] = new EntityUpdateColumn<String>("Uid", value); }
         }
     }
 }

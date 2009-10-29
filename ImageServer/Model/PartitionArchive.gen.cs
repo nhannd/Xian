@@ -46,78 +46,47 @@ namespace ClearCanvas.ImageServer.Model
         public PartitionArchive():base("PartitionArchive")
         {}
         public PartitionArchive(
-             System.Int32 _archiveDelayHours_
+             ServerEntityKey _serverPartitionKey_
             ,ArchiveTypeEnum _archiveTypeEnum_
-            ,System.Xml.XmlDocument _configurationXml_
-            ,System.String _description_
-            ,System.Boolean _enabled_
-            ,System.Boolean _readOnly_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,String _description_
+            ,Boolean _enabled_
+            ,Boolean _readOnly_
+            ,Int32 _archiveDelayHours_
+            ,XmlDocument _configurationXml_
             ):base("PartitionArchive")
         {
-            _archiveDelayHours = _archiveDelayHours_;
-            _archiveTypeEnum = _archiveTypeEnum_;
-            _configurationXml = _configurationXml_;
-            _description = _description_;
-            _enabled = _enabled_;
-            _readOnly = _readOnly_;
-            _serverPartitionKey = _serverPartitionKey_;
+            ServerPartitionKey = _serverPartitionKey_;
+            ArchiveTypeEnum = _archiveTypeEnum_;
+            Description = _description_;
+            Enabled = _enabled_;
+            ReadOnly = _readOnly_;
+            ArchiveDelayHours = _archiveDelayHours_;
+            ConfigurationXml = _configurationXml_;
         }
-        #endregion
-
-        #region Private Members
-        private Int32 _archiveDelayHours;
-        private ArchiveTypeEnum _archiveTypeEnum;
-        private XmlDocument _configurationXml;
-        private String _description;
-        private Boolean _enabled;
-        private Boolean _readOnly;
-        private ServerEntityKey _serverPartitionKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
-        public Int32 ArchiveDelayHours
-        {
-        get { return _archiveDelayHours; }
-        set { _archiveDelayHours = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveTypeEnum")]
-        public ArchiveTypeEnum ArchiveTypeEnum
-        {
-        get { return _archiveTypeEnum; }
-        set { _archiveTypeEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
-        public XmlDocument ConfigurationXml
-        {
-        get { return _configurationXml; }
-        set { _configurationXml = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ReadOnly")]
-        public Boolean ReadOnly
-        {
-        get { return _readOnly; }
-        set { _readOnly = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveTypeEnum")]
+        public ArchiveTypeEnum ArchiveTypeEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
+        public String Description
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Enabled")]
+        public Boolean Enabled
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ReadOnly")]
+        public Boolean ReadOnly
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
+        public Int32 ArchiveDelayHours
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
+        public XmlDocument ConfigurationXml
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -147,13 +116,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPartitionArchiveEntityBroker broker = update.GetBroker<IPartitionArchiveEntityBroker>();
             PartitionArchiveUpdateColumns updateColumns = new PartitionArchiveUpdateColumns();
-            updateColumns.ArchiveDelayHours = entity.ArchiveDelayHours;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ArchiveTypeEnum = entity.ArchiveTypeEnum;
-            updateColumns.ConfigurationXml = entity.ConfigurationXml;
             updateColumns.Description = entity.Description;
             updateColumns.Enabled = entity.Enabled;
             updateColumns.ReadOnly = entity.ReadOnly;
-            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.ArchiveDelayHours = entity.ArchiveDelayHours;
+            updateColumns.ConfigurationXml = entity.ConfigurationXml;
             PartitionArchive newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

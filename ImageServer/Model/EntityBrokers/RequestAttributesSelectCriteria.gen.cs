@@ -50,6 +50,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new RequestAttributesSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
+        public ISearchCondition<ServerEntityKey> SeriesKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("SeriesKey"))
+              {
+                 SubCriteria["SeriesKey"] = new SearchCondition<ServerEntityKey>("SeriesKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["SeriesKey"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
         public ISearchCondition<String> RequestedProcedureId
         {
@@ -72,18 +84,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ScheduledProcedureStepId"] = new SearchCondition<String>("ScheduledProcedureStepId");
               }
               return (ISearchCondition<String>)SubCriteria["ScheduledProcedureStepId"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
-        public ISearchCondition<ServerEntityKey> SeriesKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("SeriesKey"))
-              {
-                 SubCriteria["SeriesKey"] = new SearchCondition<ServerEntityKey>("SeriesKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["SeriesKey"];
             } 
         }
     }

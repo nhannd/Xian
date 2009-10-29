@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Data
 {
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageServer.Core.Data
     }
 
 	/// <summary>
-	/// Represents the information encoded in the <see cref="Model.StudyIntegrityQueue.QueueData"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
+	/// Represents the information encoded in the <see cref="StudyIntegrityQueue.Details"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
 	/// </summary>
 	public class ReconcileStudyWorkQueueData
 	{
@@ -95,7 +96,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 	}
 
     /// <summary>
-    /// Represents the information encoded in the <see cref="Model.StudyIntegrityQueue.QueueData"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
+    /// Represents the information encoded in the <see cref="StudyIntegrityQueue.Details"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
     /// </summary>
     public class DuplicateSIQQueueData : ReconcileStudyWorkQueueData
     {

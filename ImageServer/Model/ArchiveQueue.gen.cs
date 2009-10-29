@@ -46,69 +46,42 @@ namespace ClearCanvas.ImageServer.Model
         public ArchiveQueue():base("ArchiveQueue")
         {}
         public ArchiveQueue(
-             ArchiveQueueStatusEnum _archiveQueueStatusEnum_
-            ,System.String _failureDescription_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey_
-            ,System.String _processorId_
-            ,System.DateTime _scheduledTime_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+             ServerEntityKey _partitionArchiveKey_
+            ,DateTime _scheduledTime_
+            ,ServerEntityKey _studyStorageKey_
+            ,ArchiveQueueStatusEnum _archiveQueueStatusEnum_
+            ,String _processorId_
+            ,String _failureDescription_
             ):base("ArchiveQueue")
         {
-            _archiveQueueStatusEnum = _archiveQueueStatusEnum_;
-            _failureDescription = _failureDescription_;
-            _partitionArchiveKey = _partitionArchiveKey_;
-            _processorId = _processorId_;
-            _scheduledTime = _scheduledTime_;
-            _studyStorageKey = _studyStorageKey_;
+            PartitionArchiveKey = _partitionArchiveKey_;
+            ScheduledTime = _scheduledTime_;
+            StudyStorageKey = _studyStorageKey_;
+            ArchiveQueueStatusEnum = _archiveQueueStatusEnum_;
+            ProcessorId = _processorId_;
+            FailureDescription = _failureDescription_;
         }
-        #endregion
-
-        #region Private Members
-        private ArchiveQueueStatusEnum _archiveQueueStatusEnum;
-        private String _failureDescription;
-        private ServerEntityKey _partitionArchiveKey;
-        private String _processorId;
-        private DateTime _scheduledTime;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
-        public ArchiveQueueStatusEnum ArchiveQueueStatusEnum
-        {
-        get { return _archiveQueueStatusEnum; }
-        set { _archiveQueueStatusEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
-        public String FailureDescription
-        {
-        get { return _failureDescription; }
-        set { _failureDescription = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
         public ServerEntityKey PartitionArchiveKey
-        {
-        get { return _partitionArchiveKey; }
-        set { _partitionArchiveKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
-        public String ProcessorId
-        {
-        get { return _processorId; }
-        set { _processorId = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ScheduledTime")]
         public DateTime ScheduledTime
-        {
-        get { return _scheduledTime; }
-        set { _scheduledTime = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
+        public ArchiveQueueStatusEnum ArchiveQueueStatusEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
+        public String ProcessorId
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
+        public String FailureDescription
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -138,12 +111,12 @@ namespace ClearCanvas.ImageServer.Model
         {
             IArchiveQueueEntityBroker broker = update.GetBroker<IArchiveQueueEntityBroker>();
             ArchiveQueueUpdateColumns updateColumns = new ArchiveQueueUpdateColumns();
-            updateColumns.ArchiveQueueStatusEnum = entity.ArchiveQueueStatusEnum;
-            updateColumns.FailureDescription = entity.FailureDescription;
             updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
-            updateColumns.ProcessorId = entity.ProcessorId;
             updateColumns.ScheduledTime = entity.ScheduledTime;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.ArchiveQueueStatusEnum = entity.ArchiveQueueStatusEnum;
+            updateColumns.ProcessorId = entity.ProcessorId;
+            updateColumns.FailureDescription = entity.FailureDescription;
             ArchiveQueue newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

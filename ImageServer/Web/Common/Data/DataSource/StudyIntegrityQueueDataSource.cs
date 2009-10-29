@@ -347,7 +347,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             {
                 if (_queueData==null)
                 {
-                    _queueData = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(_studyIntegrityQueueItem.QueueData);
+                    _queueData = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(_studyIntegrityQueueItem.Details);
                 }
                 return _queueData;
             }
@@ -531,9 +531,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 queueDescription.Parse(item.Description);
                 
                 if (item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
-                    summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+                    summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.Details);
                 else
-                    summary.QueueData = XmlUtils.Deserialize<DuplicateSIQQueueData>(item.QueueData);
+                    summary.QueueData = XmlUtils.Deserialize<DuplicateSIQQueueData>(item.Details);
 
                 ImageSetDescriptor studyData = ImageSetDescriptor.Parse(item.StudyData.DocumentElement);
                     
@@ -667,8 +667,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             get
             {
-                if (_duplicateSIQEntry != null && _duplicateSIQEntry.QueueData != null)
-                    return XmlUtils.Deserialize<DuplicateSIQQueueData>(_duplicateSIQEntry.QueueData);
+                if (_duplicateSIQEntry != null && _duplicateSIQEntry.Details != null)
+                    return XmlUtils.Deserialize<DuplicateSIQQueueData>(_duplicateSIQEntry.Details);
                 else
                     return new DuplicateSIQQueueData();
             }

@@ -46,168 +46,97 @@ namespace ClearCanvas.ImageServer.Model
         public ServerPartition():base("ServerPartition")
         {}
         public ServerPartition(
-             System.Boolean _acceptAnyDevice_
-            ,System.String _aeTitle_
-            ,System.Boolean _auditDeleteStudy_
-            ,System.Boolean _autoInsertDevice_
-            ,System.Int32 _defaultRemotePort_
-            ,System.String _description_
+             Boolean _enabled_
+            ,String _description_
+            ,String _aeTitle_
+            ,Int32 _port_
+            ,String _partitionFolder_
+            ,Boolean _acceptAnyDevice_
+            ,Boolean _auditDeleteStudy_
+            ,Boolean _autoInsertDevice_
+            ,Int32 _defaultRemotePort_
+            ,Int32 _studyCount_
             ,DuplicateSopPolicyEnum _duplicateSopPolicyEnum_
-            ,System.Boolean _enabled_
-            ,System.Boolean _matchAccessionNumber_
-            ,System.Boolean _matchIssuerOfPatientId_
-            ,System.Boolean _matchPatientId_
-            ,System.Boolean _matchPatientsBirthDate_
-            ,System.Boolean _matchPatientsName_
-            ,System.Boolean _matchPatientsSex_
-            ,System.String _partitionFolder_
-            ,System.Int32 _port_
-            ,System.Int32 _studyCount_
+            ,Boolean _matchAccessionNumber_
+            ,Boolean _matchIssuerOfPatientId_
+            ,Boolean _matchPatientId_
+            ,Boolean _matchPatientsBirthDate_
+            ,Boolean _matchPatientsName_
+            ,Boolean _matchPatientsSex_
             ):base("ServerPartition")
         {
-            _acceptAnyDevice = _acceptAnyDevice_;
-            _aeTitle = _aeTitle_;
-            _auditDeleteStudy = _auditDeleteStudy_;
-            _autoInsertDevice = _autoInsertDevice_;
-            _defaultRemotePort = _defaultRemotePort_;
-            _description = _description_;
-            _duplicateSopPolicyEnum = _duplicateSopPolicyEnum_;
-            _enabled = _enabled_;
-            _matchAccessionNumber = _matchAccessionNumber_;
-            _matchIssuerOfPatientId = _matchIssuerOfPatientId_;
-            _matchPatientId = _matchPatientId_;
-            _matchPatientsBirthDate = _matchPatientsBirthDate_;
-            _matchPatientsName = _matchPatientsName_;
-            _matchPatientsSex = _matchPatientsSex_;
-            _partitionFolder = _partitionFolder_;
-            _port = _port_;
-            _studyCount = _studyCount_;
+            Enabled = _enabled_;
+            Description = _description_;
+            AeTitle = _aeTitle_;
+            Port = _port_;
+            PartitionFolder = _partitionFolder_;
+            AcceptAnyDevice = _acceptAnyDevice_;
+            AuditDeleteStudy = _auditDeleteStudy_;
+            AutoInsertDevice = _autoInsertDevice_;
+            DefaultRemotePort = _defaultRemotePort_;
+            StudyCount = _studyCount_;
+            DuplicateSopPolicyEnum = _duplicateSopPolicyEnum_;
+            MatchAccessionNumber = _matchAccessionNumber_;
+            MatchIssuerOfPatientId = _matchIssuerOfPatientId_;
+            MatchPatientId = _matchPatientId_;
+            MatchPatientsBirthDate = _matchPatientsBirthDate_;
+            MatchPatientsName = _matchPatientsName_;
+            MatchPatientsSex = _matchPatientsSex_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _acceptAnyDevice;
-        private String _aeTitle;
-        private Boolean _auditDeleteStudy;
-        private Boolean _autoInsertDevice;
-        private Int32 _defaultRemotePort;
-        private String _description;
-        private DuplicateSopPolicyEnum _duplicateSopPolicyEnum;
-        private Boolean _enabled;
-        private Boolean _matchAccessionNumber;
-        private Boolean _matchIssuerOfPatientId;
-        private Boolean _matchPatientId;
-        private Boolean _matchPatientsBirthDate;
-        private Boolean _matchPatientsName;
-        private Boolean _matchPatientsSex;
-        private String _partitionFolder;
-        private Int32 _port;
-        private Int32 _studyCount;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
-        public Boolean AcceptAnyDevice
-        {
-        get { return _acceptAnyDevice; }
-        set { _acceptAnyDevice = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
-        public String AeTitle
-        {
-        get { return _aeTitle; }
-        set { _aeTitle = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
-        public Boolean AuditDeleteStudy
-        {
-        get { return _auditDeleteStudy; }
-        set { _auditDeleteStudy = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
-        public Boolean AutoInsertDevice
-        {
-        get { return _autoInsertDevice; }
-        set { _autoInsertDevice = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
-        public Int32 DefaultRemotePort
-        {
-        get { return _defaultRemotePort; }
-        set { _defaultRemotePort = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
-        public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
-        {
-        get { return _duplicateSopPolicyEnum; }
-        set { _duplicateSopPolicyEnum = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
         public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
-        public Boolean MatchAccessionNumber
-        {
-        get { return _matchAccessionNumber; }
-        set { _matchAccessionNumber = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
-        public Boolean MatchIssuerOfPatientId
-        {
-        get { return _matchIssuerOfPatientId; }
-        set { _matchIssuerOfPatientId = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
-        public Boolean MatchPatientId
-        {
-        get { return _matchPatientId; }
-        set { _matchPatientId = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
-        public Boolean MatchPatientsBirthDate
-        {
-        get { return _matchPatientsBirthDate; }
-        set { _matchPatientsBirthDate = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
-        public Boolean MatchPatientsName
-        {
-        get { return _matchPatientsName; }
-        set { _matchPatientsName = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
-        public Boolean MatchPatientsSex
-        {
-        get { return _matchPatientsSex; }
-        set { _matchPatientsSex = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
-        public String PartitionFolder
-        {
-        get { return _partitionFolder; }
-        set { _partitionFolder = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
+        public String Description
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
+        public String AeTitle
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
         public Int32 Port
-        {
-        get { return _port; }
-        set { _port = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
+        public String PartitionFolder
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
+        public Boolean AcceptAnyDevice
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
+        public Boolean AuditDeleteStudy
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
+        public Boolean AutoInsertDevice
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
+        public Int32 DefaultRemotePort
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
         public Int32 StudyCount
-        {
-        get { return _studyCount; }
-        set { _studyCount = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
+        public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
+        public Boolean MatchAccessionNumber
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
+        public Boolean MatchIssuerOfPatientId
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
+        public Boolean MatchPatientId
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
+        public Boolean MatchPatientsBirthDate
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
+        public Boolean MatchPatientsName
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
+        public Boolean MatchPatientsSex
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -237,23 +166,23 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerPartitionEntityBroker broker = update.GetBroker<IServerPartitionEntityBroker>();
             ServerPartitionUpdateColumns updateColumns = new ServerPartitionUpdateColumns();
-            updateColumns.AcceptAnyDevice = entity.AcceptAnyDevice;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.Description = entity.Description;
             updateColumns.AeTitle = entity.AeTitle;
+            updateColumns.Port = entity.Port;
+            updateColumns.PartitionFolder = entity.PartitionFolder;
+            updateColumns.AcceptAnyDevice = entity.AcceptAnyDevice;
             updateColumns.AuditDeleteStudy = entity.AuditDeleteStudy;
             updateColumns.AutoInsertDevice = entity.AutoInsertDevice;
             updateColumns.DefaultRemotePort = entity.DefaultRemotePort;
-            updateColumns.Description = entity.Description;
+            updateColumns.StudyCount = entity.StudyCount;
             updateColumns.DuplicateSopPolicyEnum = entity.DuplicateSopPolicyEnum;
-            updateColumns.Enabled = entity.Enabled;
             updateColumns.MatchAccessionNumber = entity.MatchAccessionNumber;
             updateColumns.MatchIssuerOfPatientId = entity.MatchIssuerOfPatientId;
             updateColumns.MatchPatientId = entity.MatchPatientId;
             updateColumns.MatchPatientsBirthDate = entity.MatchPatientsBirthDate;
             updateColumns.MatchPatientsName = entity.MatchPatientsName;
             updateColumns.MatchPatientsSex = entity.MatchPatientsSex;
-            updateColumns.PartitionFolder = entity.PartitionFolder;
-            updateColumns.Port = entity.Port;
-            updateColumns.StudyCount = entity.StudyCount;
             ServerPartition newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

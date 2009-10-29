@@ -50,18 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new ApplicationLogSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
-        public ISearchCondition<String> Exception
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Exception"))
-              {
-                 SubCriteria["Exception"] = new SearchCondition<String>("Exception");
-              }
-              return (ISearchCondition<String>)SubCriteria["Exception"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
         public ISearchCondition<String> Host
         {
@@ -72,6 +60,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Host"] = new SearchCondition<String>("Host");
               }
               return (ISearchCondition<String>)SubCriteria["Host"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
+        public ISearchCondition<DateTime> Timestamp
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Timestamp"))
+              {
+                 SubCriteria["Timestamp"] = new SearchCondition<DateTime>("Timestamp");
+              }
+              return (ISearchCondition<DateTime>)SubCriteria["Timestamp"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
@@ -86,18 +86,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["LogLevel"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
-        public ISearchCondition<String> Message
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Message"))
-              {
-                 SubCriteria["Message"] = new SearchCondition<String>("Message");
-              }
-              return (ISearchCondition<String>)SubCriteria["Message"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
         public ISearchCondition<String> Thread
         {
@@ -110,16 +98,28 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["Thread"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
-        public ISearchCondition<DateTime> Timestamp
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
+        public ISearchCondition<String> Message
         {
             get
             {
-              if (!SubCriteria.ContainsKey("Timestamp"))
+              if (!SubCriteria.ContainsKey("Message"))
               {
-                 SubCriteria["Timestamp"] = new SearchCondition<DateTime>("Timestamp");
+                 SubCriteria["Message"] = new SearchCondition<String>("Message");
               }
-              return (ISearchCondition<DateTime>)SubCriteria["Timestamp"];
+              return (ISearchCondition<String>)SubCriteria["Message"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
+        public ISearchCondition<String> Exception
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Exception"))
+              {
+                 SubCriteria["Exception"] = new SearchCondition<String>("Exception");
+              }
+              return (ISearchCondition<String>)SubCriteria["Exception"];
             } 
         }
     }

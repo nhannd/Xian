@@ -50,18 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new PartitionSopClassSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
-        public ISearchCondition<Boolean> Enabled
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Enabled"))
-              {
-                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
-              }
-              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
@@ -84,6 +72,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ServerSopClassKey"] = new SearchCondition<ServerEntityKey>("ServerSopClassKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerSopClassKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
+        public ISearchCondition<Boolean> Enabled
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Enabled"))
+              {
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
     }

@@ -47,70 +47,43 @@ namespace ClearCanvas.ImageServer.Model
         public FilesystemQueue():base("FilesystemQueue")
         {}
         public FilesystemQueue(
-             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
-            ,FilesystemQueueTypeEnum _filesystemQueueTypeEnum_
-            ,System.Xml.XmlDocument _queueXml_
-            ,System.DateTime _scheduledTime_
-            ,System.String _seriesInstanceUid_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+             FilesystemQueueTypeEnum _filesystemQueueTypeEnum_
+            ,ServerEntityKey _studyStorageKey_
+            ,ServerEntityKey _filesystemKey_
+            ,DateTime _scheduledTime_
+            ,String _seriesInstanceUid_
+            ,XmlDocument _queueXml_
             ):base("FilesystemQueue")
         {
-            _filesystemKey = _filesystemKey_;
-            _filesystemQueueTypeEnum = _filesystemQueueTypeEnum_;
-            _queueXml = _queueXml_;
-            _scheduledTime = _scheduledTime_;
-            _seriesInstanceUid = _seriesInstanceUid_;
-            _studyStorageKey = _studyStorageKey_;
+            FilesystemQueueTypeEnum = _filesystemQueueTypeEnum_;
+            StudyStorageKey = _studyStorageKey_;
+            FilesystemKey = _filesystemKey_;
+            ScheduledTime = _scheduledTime_;
+            SeriesInstanceUid = _seriesInstanceUid_;
+            QueueXml = _queueXml_;
         }
-        #endregion
-
-        #region Private Members
-        private ServerEntityKey _filesystemKey;
-        private FilesystemQueueTypeEnum _filesystemQueueTypeEnum;
-        private XmlDocument _queueXml;
-        private DateTime _scheduledTime;
-        private String _seriesInstanceUid;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
-        public ServerEntityKey FilesystemKey
-        {
-        get { return _filesystemKey; }
-        set { _filesystemKey = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
         public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
-        {
-        get { return _filesystemQueueTypeEnum; }
-        set { _filesystemQueueTypeEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
-        public XmlDocument QueueXml
-        {
-        get { return _queueXml; }
-        set { _queueXml = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
+        public ServerEntityKey FilesystemKey
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
         public DateTime ScheduledTime
-        {
-        get { return _scheduledTime; }
-        set { _scheduledTime = value; }
-        }
+        { get; set; }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
         public String SeriesInstanceUid
-        {
-        get { return _seriesInstanceUid; }
-        set { _seriesInstanceUid = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
+        public XmlDocument QueueXml
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -140,12 +113,12 @@ namespace ClearCanvas.ImageServer.Model
         {
             IFilesystemQueueEntityBroker broker = update.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueueUpdateColumns updateColumns = new FilesystemQueueUpdateColumns();
-            updateColumns.FilesystemKey = entity.FilesystemKey;
             updateColumns.FilesystemQueueTypeEnum = entity.FilesystemQueueTypeEnum;
-            updateColumns.QueueXml = entity.QueueXml;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.FilesystemKey = entity.FilesystemKey;
             updateColumns.ScheduledTime = entity.ScheduledTime;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
-            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.QueueXml = entity.QueueXml;
             FilesystemQueue newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

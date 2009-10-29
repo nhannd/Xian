@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			// The Xml in the SIQ item was generated when the images were received and put into the SIQ.
 			// We now add the user info to it so that it will be logged in the history
-            ReconcileStudyWorkQueueData queueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+            ReconcileStudyWorkQueueData queueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.Details);
             queueData.TimeStamp = Platform.Time;
             queueData.UserId = ServerHelper.CurrentUserName;
 
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                 if (record.ConflictingImageDetails!=null)
                 {
-                    // The conflicting study data is stored in QueueData column
+                    // The conflicting study data is stored in Details column
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientId, record.ExistingStudyInfo.PatientInfo.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, record.ExistingStudyInfo.PatientInfo.PatientsBirthdate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
@@ -296,7 +296,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public InconsistentDataSIQRecord(StudyIntegrityQueue queue)
         {
             _queueItem = queue;
-            ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(queue.QueueData);
+            ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(queue.Details);
             _conflictingImageDetails = data.Details;
             _conflictingImageDescriptor = XmlUtils.Deserialize<ImageSetDescriptor>(queue.StudyData);
             StudyStorage storage = StudyStorage.Load(HttpContextData.Current.ReadContext, queue.StudyStorageKey);

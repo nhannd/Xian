@@ -42,15 +42,35 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerPartitionUpdateColumns()
        : base("ServerPartition")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
-        public Boolean AcceptAnyDevice
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
+        public Boolean Enabled
         {
-            set { SubParameters["AcceptAnyDevice"] = new EntityUpdateColumn<Boolean>("AcceptAnyDevice", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
+        public String Description
+        {
+            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
         public String AeTitle
         {
             set { SubParameters["AeTitle"] = new EntityUpdateColumn<String>("AeTitle", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
+        public Int32 Port
+        {
+            set { SubParameters["Port"] = new EntityUpdateColumn<Int32>("Port", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
+        public String PartitionFolder
+        {
+            set { SubParameters["PartitionFolder"] = new EntityUpdateColumn<String>("PartitionFolder", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
+        public Boolean AcceptAnyDevice
+        {
+            set { SubParameters["AcceptAnyDevice"] = new EntityUpdateColumn<Boolean>("AcceptAnyDevice", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
         public Boolean AuditDeleteStudy
@@ -67,20 +87,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["DefaultRemotePort"] = new EntityUpdateColumn<Int32>("DefaultRemotePort", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
-        public String Description
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
+        public Int32 StudyCount
         {
-            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
+            set { SubParameters["StudyCount"] = new EntityUpdateColumn<Int32>("StudyCount", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
         public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
         {
             set { SubParameters["DuplicateSopPolicyEnum"] = new EntityUpdateColumn<DuplicateSopPolicyEnum>("DuplicateSopPolicyEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
         public Boolean MatchAccessionNumber
@@ -111,21 +126,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public Boolean MatchPatientsSex
         {
             set { SubParameters["MatchPatientsSex"] = new EntityUpdateColumn<Boolean>("MatchPatientsSex", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
-        public String PartitionFolder
-        {
-            set { SubParameters["PartitionFolder"] = new EntityUpdateColumn<String>("PartitionFolder", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
-        public Int32 Port
-        {
-            set { SubParameters["Port"] = new EntityUpdateColumn<Int32>("Port", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
-        public Int32 StudyCount
-        {
-            set { SubParameters["StudyCount"] = new EntityUpdateColumn<Int32>("StudyCount", value); }
         }
     }
 }

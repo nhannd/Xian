@@ -42,25 +42,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ArchiveQueueUpdateColumns()
        : base("ArchiveQueue")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
-        public ArchiveQueueStatusEnum ArchiveQueueStatusEnum
-        {
-            set { SubParameters["ArchiveQueueStatusEnum"] = new EntityUpdateColumn<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
-        public String FailureDescription
-        {
-            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
         public ServerEntityKey PartitionArchiveKey
         {
             set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ServerEntityKey>("PartitionArchiveKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
-        public String ProcessorId
-        {
-            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ScheduledTime")]
         public DateTime ScheduledTime
@@ -71,6 +56,21 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerEntityKey StudyStorageKey
         {
             set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
+        public ArchiveQueueStatusEnum ArchiveQueueStatusEnum
+        {
+            set { SubParameters["ArchiveQueueStatusEnum"] = new EntityUpdateColumn<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
+        public String ProcessorId
+        {
+            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
+        public String FailureDescription
+        {
+            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
         }
     }
 }

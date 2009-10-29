@@ -46,87 +46,52 @@ namespace ClearCanvas.ImageServer.Model
         public Filesystem():base("Filesystem")
         {}
         public Filesystem(
-             System.String _description_
-            ,System.Boolean _enabled_
-            ,System.String _filesystemPath_
+             String _filesystemPath_
+            ,Boolean _enabled_
+            ,Boolean _readOnly_
+            ,Boolean _writeOnly_
             ,FilesystemTierEnum _filesystemTierEnum_
-            ,System.Decimal _highWatermark_
-            ,System.Decimal _lowWatermark_
-            ,System.Boolean _readOnly_
-            ,System.Boolean _writeOnly_
+            ,Decimal _lowWatermark_
+            ,Decimal _highWatermark_
+            ,String _description_
             ):base("Filesystem")
         {
-            _description = _description_;
-            _enabled = _enabled_;
-            _filesystemPath = _filesystemPath_;
-            _filesystemTierEnum = _filesystemTierEnum_;
-            _highWatermark = _highWatermark_;
-            _lowWatermark = _lowWatermark_;
-            _readOnly = _readOnly_;
-            _writeOnly = _writeOnly_;
+            FilesystemPath = _filesystemPath_;
+            Enabled = _enabled_;
+            ReadOnly = _readOnly_;
+            WriteOnly = _writeOnly_;
+            FilesystemTierEnum = _filesystemTierEnum_;
+            LowWatermark = _lowWatermark_;
+            HighWatermark = _highWatermark_;
+            Description = _description_;
         }
-        #endregion
-
-        #region Private Members
-        private String _description;
-        private Boolean _enabled;
-        private String _filesystemPath;
-        private FilesystemTierEnum _filesystemTierEnum;
-        private Decimal _highWatermark;
-        private Decimal _lowWatermark;
-        private Boolean _readOnly;
-        private Boolean _writeOnly;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
-        public String Description
-        {
-        get { return _description; }
-        set { _description = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
         public String FilesystemPath
-        {
-        get { return _filesystemPath; }
-        set { _filesystemPath = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
-        public FilesystemTierEnum FilesystemTierEnum
-        {
-        get { return _filesystemTierEnum; }
-        set { _filesystemTierEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
-        public Decimal HighWatermark
-        {
-        get { return _highWatermark; }
-        set { _highWatermark = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
-        public Decimal LowWatermark
-        {
-        get { return _lowWatermark; }
-        set { _lowWatermark = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
+        public Boolean Enabled
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
         public Boolean ReadOnly
-        {
-        get { return _readOnly; }
-        set { _readOnly = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
         public Boolean WriteOnly
-        {
-        get { return _writeOnly; }
-        set { _writeOnly = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
+        public FilesystemTierEnum FilesystemTierEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
+        public Decimal LowWatermark
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
+        public Decimal HighWatermark
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
+        public String Description
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -156,14 +121,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             IFilesystemEntityBroker broker = update.GetBroker<IFilesystemEntityBroker>();
             FilesystemUpdateColumns updateColumns = new FilesystemUpdateColumns();
-            updateColumns.Description = entity.Description;
-            updateColumns.Enabled = entity.Enabled;
             updateColumns.FilesystemPath = entity.FilesystemPath;
-            updateColumns.FilesystemTierEnum = entity.FilesystemTierEnum;
-            updateColumns.HighWatermark = entity.HighWatermark;
-            updateColumns.LowWatermark = entity.LowWatermark;
+            updateColumns.Enabled = entity.Enabled;
             updateColumns.ReadOnly = entity.ReadOnly;
             updateColumns.WriteOnly = entity.WriteOnly;
+            updateColumns.FilesystemTierEnum = entity.FilesystemTierEnum;
+            updateColumns.LowWatermark = entity.LowWatermark;
+            updateColumns.HighWatermark = entity.HighWatermark;
+            updateColumns.Description = entity.Description;
             Filesystem newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

@@ -42,15 +42,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public CannedTextUpdateColumns()
        : base("CannedText")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
-        public String Category
-        {
-            set { SubParameters["Category"] = new EntityUpdateColumn<String>("Category", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
         public String Label
         {
             set { SubParameters["Label"] = new EntityUpdateColumn<String>("Label", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
+        public String Category
+        {
+            set { SubParameters["Category"] = new EntityUpdateColumn<String>("Category", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
         public String Text

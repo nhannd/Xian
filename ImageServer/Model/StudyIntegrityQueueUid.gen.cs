@@ -47,63 +47,40 @@ namespace ClearCanvas.ImageServer.Model
         public StudyIntegrityQueueUid():base("StudyIntegrityQueueUid")
         {}
         public StudyIntegrityQueueUid(
-             System.String _relativePath_
-            ,System.String _seriesDescription_
-            ,System.String _seriesInstanceUid_
-            ,System.String _sopInstanceUid_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyIntegrityQueueKey_
+             ServerEntityKey _studyIntegrityQueueKey_
+            ,String _seriesInstanceUid_
+            ,String _sopInstanceUid_
+            ,String _relativePath_
+            ,String _seriesDescription_
             ):base("StudyIntegrityQueueUid")
         {
-            _relativePath = _relativePath_;
-            _seriesDescription = _seriesDescription_;
-            _seriesInstanceUid = _seriesInstanceUid_;
-            _sopInstanceUid = _sopInstanceUid_;
-            _studyIntegrityQueueKey = _studyIntegrityQueueKey_;
+            StudyIntegrityQueueKey = _studyIntegrityQueueKey_;
+            SeriesInstanceUid = _seriesInstanceUid_;
+            SopInstanceUid = _sopInstanceUid_;
+            RelativePath = _relativePath_;
+            SeriesDescription = _seriesDescription_;
         }
-        #endregion
-
-        #region Private Members
-        private String _relativePath;
-        private String _seriesDescription;
-        private String _seriesInstanceUid;
-        private String _sopInstanceUid;
-        private ServerEntityKey _studyIntegrityQueueKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
-        public String RelativePath
-        {
-        get { return _relativePath; }
-        set { _relativePath = value; }
-        }
-        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
-        public String SeriesDescription
-        {
-        get { return _seriesDescription; }
-        set { _seriesDescription = value; }
-        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
+        public ServerEntityKey StudyIntegrityQueueKey
+        { get; set; }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesInstanceUid")]
         public String SeriesInstanceUid
-        {
-        get { return _seriesInstanceUid; }
-        set { _seriesInstanceUid = value; }
-        }
+        { get; set; }
         [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SopInstanceUid")]
         public String SopInstanceUid
-        {
-        get { return _sopInstanceUid; }
-        set { _sopInstanceUid = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
-        public ServerEntityKey StudyIntegrityQueueKey
-        {
-        get { return _studyIntegrityQueueKey; }
-        set { _studyIntegrityQueueKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
+        public String RelativePath
+        { get; set; }
+        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
+        public String SeriesDescription
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -133,11 +110,11 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyIntegrityQueueUidEntityBroker broker = update.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
             StudyIntegrityQueueUidUpdateColumns updateColumns = new StudyIntegrityQueueUidUpdateColumns();
-            updateColumns.RelativePath = entity.RelativePath;
-            updateColumns.SeriesDescription = entity.SeriesDescription;
+            updateColumns.StudyIntegrityQueueKey = entity.StudyIntegrityQueueKey;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
             updateColumns.SopInstanceUid = entity.SopInstanceUid;
-            updateColumns.StudyIntegrityQueueKey = entity.StudyIntegrityQueueKey;
+            updateColumns.RelativePath = entity.RelativePath;
+            updateColumns.SeriesDescription = entity.SeriesDescription;
             StudyIntegrityQueueUid newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

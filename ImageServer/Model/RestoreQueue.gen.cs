@@ -46,69 +46,42 @@ namespace ClearCanvas.ImageServer.Model
         public RestoreQueue():base("RestoreQueue")
         {}
         public RestoreQueue(
-             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _archiveStudyStorageKey_
-            ,System.String _failureDescription_
-            ,System.String _processorId_
+             ServerEntityKey _archiveStudyStorageKey_
+            ,ServerEntityKey _studyStorageKey_
+            ,DateTime _scheduledTime_
             ,RestoreQueueStatusEnum _restoreQueueStatusEnum_
-            ,System.DateTime _scheduledTime_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ,String _processorId_
+            ,String _failureDescription_
             ):base("RestoreQueue")
         {
-            _archiveStudyStorageKey = _archiveStudyStorageKey_;
-            _failureDescription = _failureDescription_;
-            _processorId = _processorId_;
-            _restoreQueueStatusEnum = _restoreQueueStatusEnum_;
-            _scheduledTime = _scheduledTime_;
-            _studyStorageKey = _studyStorageKey_;
+            ArchiveStudyStorageKey = _archiveStudyStorageKey_;
+            StudyStorageKey = _studyStorageKey_;
+            ScheduledTime = _scheduledTime_;
+            RestoreQueueStatusEnum = _restoreQueueStatusEnum_;
+            ProcessorId = _processorId_;
+            FailureDescription = _failureDescription_;
         }
-        #endregion
-
-        #region Private Members
-        private ServerEntityKey _archiveStudyStorageKey;
-        private String _failureDescription;
-        private String _processorId;
-        private RestoreQueueStatusEnum _restoreQueueStatusEnum;
-        private DateTime _scheduledTime;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ArchiveStudyStorageGUID")]
         public ServerEntityKey ArchiveStudyStorageKey
-        {
-        get { return _archiveStudyStorageKey; }
-        set { _archiveStudyStorageKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
-        public String FailureDescription
-        {
-        get { return _failureDescription; }
-        set { _failureDescription = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
-        public String ProcessorId
-        {
-        get { return _processorId; }
-        set { _processorId = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="RestoreQueueStatusEnum")]
-        public RestoreQueueStatusEnum RestoreQueueStatusEnum
-        {
-        get { return _restoreQueueStatusEnum; }
-        set { _restoreQueueStatusEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ScheduledTime")]
-        public DateTime ScheduledTime
-        {
-        get { return _scheduledTime; }
-        set { _scheduledTime = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ScheduledTime")]
+        public DateTime ScheduledTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="RestoreQueueStatusEnum")]
+        public RestoreQueueStatusEnum RestoreQueueStatusEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
+        public String ProcessorId
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
+        public String FailureDescription
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -139,11 +112,11 @@ namespace ClearCanvas.ImageServer.Model
             IRestoreQueueEntityBroker broker = update.GetBroker<IRestoreQueueEntityBroker>();
             RestoreQueueUpdateColumns updateColumns = new RestoreQueueUpdateColumns();
             updateColumns.ArchiveStudyStorageKey = entity.ArchiveStudyStorageKey;
-            updateColumns.FailureDescription = entity.FailureDescription;
-            updateColumns.ProcessorId = entity.ProcessorId;
-            updateColumns.RestoreQueueStatusEnum = entity.RestoreQueueStatusEnum;
-            updateColumns.ScheduledTime = entity.ScheduledTime;
             updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.RestoreQueueStatusEnum = entity.RestoreQueueStatusEnum;
+            updateColumns.ProcessorId = entity.ProcessorId;
+            updateColumns.FailureDescription = entity.FailureDescription;
             RestoreQueue newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

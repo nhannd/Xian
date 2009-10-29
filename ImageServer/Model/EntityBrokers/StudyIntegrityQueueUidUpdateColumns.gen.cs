@@ -43,16 +43,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyIntegrityQueueUidUpdateColumns()
        : base("StudyIntegrityQueueUid")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
-        public String RelativePath
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
+        public ServerEntityKey StudyIntegrityQueueKey
         {
-            set { SubParameters["RelativePath"] = new EntityUpdateColumn<String>("RelativePath", value); }
-        }
-       [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
-        public String SeriesDescription
-        {
-            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<String>("SeriesDescription", value); }
+            set { SubParameters["StudyIntegrityQueueKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyIntegrityQueueKey", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesInstanceUid")]
@@ -66,10 +60,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<String>("SopInstanceUid", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
-        public ServerEntityKey StudyIntegrityQueueKey
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
+        public String RelativePath
         {
-            set { SubParameters["StudyIntegrityQueueKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyIntegrityQueueKey", value); }
+            set { SubParameters["RelativePath"] = new EntityUpdateColumn<String>("RelativePath", value); }
+        }
+       [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
+        public String SeriesDescription
+        {
+            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<String>("SeriesDescription", value); }
         }
     }
 }

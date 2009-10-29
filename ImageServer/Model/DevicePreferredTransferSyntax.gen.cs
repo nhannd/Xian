@@ -46,42 +46,27 @@ namespace ClearCanvas.ImageServer.Model
         public DevicePreferredTransferSyntax():base("DevicePreferredTransferSyntax")
         {}
         public DevicePreferredTransferSyntax(
-             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverSopClassKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
+             ServerEntityKey _deviceKey_
+            ,ServerEntityKey _serverSopClassKey_
+            ,ServerEntityKey _serverTransferSyntaxKey_
             ):base("DevicePreferredTransferSyntax")
         {
-            _deviceKey = _deviceKey_;
-            _serverSopClassKey = _serverSopClassKey_;
-            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
+            DeviceKey = _deviceKey_;
+            ServerSopClassKey = _serverSopClassKey_;
+            ServerTransferSyntaxKey = _serverTransferSyntaxKey_;
         }
-        #endregion
-
-        #region Private Members
-        private ServerEntityKey _deviceKey;
-        private ServerEntityKey _serverSopClassKey;
-        private ServerEntityKey _serverTransferSyntaxKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="DeviceGUID")]
         public ServerEntityKey DeviceKey
-        {
-        get { return _deviceKey; }
-        set { _deviceKey = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerSopClassGUID")]
         public ServerEntityKey ServerSopClassKey
-        {
-        get { return _serverSopClassKey; }
-        set { _serverSopClassKey = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
         public ServerEntityKey ServerTransferSyntaxKey
-        {
-        get { return _serverTransferSyntaxKey; }
-        set { _serverTransferSyntaxKey = value; }
-        }
+        { get; set; }
         #endregion
 
         #region Static Methods

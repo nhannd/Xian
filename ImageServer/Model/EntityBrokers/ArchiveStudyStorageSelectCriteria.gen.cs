@@ -50,6 +50,42 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new ArchiveStudyStorageSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
+        public ISearchCondition<ServerEntityKey> PartitionArchiveKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("PartitionArchiveKey"))
+              {
+                 SubCriteria["PartitionArchiveKey"] = new SearchCondition<ServerEntityKey>("PartitionArchiveKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["PartitionArchiveKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyStorageKey"))
+              {
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
+        public ISearchCondition<ServerEntityKey> ServerTransferSyntaxKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ServerTransferSyntaxKey"))
+              {
+                 SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ServerEntityKey>("ServerTransferSyntaxKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveTime")]
         public ISearchCondition<DateTime> ArchiveTime
         {
@@ -72,42 +108,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ArchiveXml"] = new SearchCondition<XmlDocument>("ArchiveXml");
               }
               return (ISearchCondition<XmlDocument>)SubCriteria["ArchiveXml"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
-        public ISearchCondition<ServerEntityKey> PartitionArchiveKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("PartitionArchiveKey"))
-              {
-                 SubCriteria["PartitionArchiveKey"] = new SearchCondition<ServerEntityKey>("PartitionArchiveKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["PartitionArchiveKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ISearchCondition<ServerEntityKey> ServerTransferSyntaxKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ServerTransferSyntaxKey"))
-              {
-                 SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ServerEntityKey>("ServerTransferSyntaxKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ServerEntityKey> StudyStorageKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyStorageKey"))
-              {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

@@ -46,42 +46,27 @@ namespace ClearCanvas.ImageServer.Model
         public PartitionTransferSyntax():base("PartitionTransferSyntax")
         {}
         public PartitionTransferSyntax(
-             System.Boolean _enabled_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
+             ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _serverTransferSyntaxKey_
+            ,Boolean _enabled_
             ):base("PartitionTransferSyntax")
         {
-            _enabled = _enabled_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
+            ServerPartitionKey = _serverPartitionKey_;
+            ServerTransferSyntaxKey = _serverTransferSyntaxKey_;
+            Enabled = _enabled_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _enabled;
-        private ServerEntityKey _serverPartitionKey;
-        private ServerEntityKey _serverTransferSyntaxKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
         public ServerEntityKey ServerTransferSyntaxKey
-        {
-        get { return _serverTransferSyntaxKey; }
-        set { _serverTransferSyntaxKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
+        public Boolean Enabled
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -111,9 +96,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPartitionTransferSyntaxEntityBroker broker = update.GetBroker<IPartitionTransferSyntaxEntityBroker>();
             PartitionTransferSyntaxUpdateColumns updateColumns = new PartitionTransferSyntaxUpdateColumns();
-            updateColumns.Enabled = entity.Enabled;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
+            updateColumns.Enabled = entity.Enabled;
             PartitionTransferSyntax newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

@@ -46,87 +46,52 @@ namespace ClearCanvas.ImageServer.Model
         public ServerRule():base("ServerRule")
         {}
         public ServerRule(
-             System.Boolean _defaultRule_
-            ,System.Boolean _enabled_
-            ,System.Boolean _exemptRule_
-            ,System.String _ruleName_
-            ,System.Xml.XmlDocument _ruleXml_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,ServerRuleApplyTimeEnum _serverRuleApplyTimeEnum_
+             String _ruleName_
+            ,ServerEntityKey _serverPartitionKey_
             ,ServerRuleTypeEnum _serverRuleTypeEnum_
+            ,ServerRuleApplyTimeEnum _serverRuleApplyTimeEnum_
+            ,Boolean _enabled_
+            ,Boolean _defaultRule_
+            ,Boolean _exemptRule_
+            ,XmlDocument _ruleXml_
             ):base("ServerRule")
         {
-            _defaultRule = _defaultRule_;
-            _enabled = _enabled_;
-            _exemptRule = _exemptRule_;
-            _ruleName = _ruleName_;
-            _ruleXml = _ruleXml_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _serverRuleApplyTimeEnum = _serverRuleApplyTimeEnum_;
-            _serverRuleTypeEnum = _serverRuleTypeEnum_;
+            RuleName = _ruleName_;
+            ServerPartitionKey = _serverPartitionKey_;
+            ServerRuleTypeEnum = _serverRuleTypeEnum_;
+            ServerRuleApplyTimeEnum = _serverRuleApplyTimeEnum_;
+            Enabled = _enabled_;
+            DefaultRule = _defaultRule_;
+            ExemptRule = _exemptRule_;
+            RuleXml = _ruleXml_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _defaultRule;
-        private Boolean _enabled;
-        private Boolean _exemptRule;
-        private String _ruleName;
-        private XmlDocument _ruleXml;
-        private ServerEntityKey _serverPartitionKey;
-        private ServerRuleApplyTimeEnum _serverRuleApplyTimeEnum;
-        private ServerRuleTypeEnum _serverRuleTypeEnum;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
-        public Boolean DefaultRule
-        {
-        get { return _defaultRule; }
-        set { _defaultRule = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
-        public Boolean ExemptRule
-        {
-        get { return _exemptRule; }
-        set { _exemptRule = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
         public String RuleName
-        {
-        get { return _ruleName; }
-        set { _ruleName = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
-        public XmlDocument RuleXml
-        {
-        get { return _ruleXml; }
-        set { _ruleXml = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]
-        public ServerRuleApplyTimeEnum ServerRuleApplyTimeEnum
-        {
-        get { return _serverRuleApplyTimeEnum; }
-        set { _serverRuleApplyTimeEnum = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleTypeEnum")]
         public ServerRuleTypeEnum ServerRuleTypeEnum
-        {
-        get { return _serverRuleTypeEnum; }
-        set { _serverRuleTypeEnum = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]
+        public ServerRuleApplyTimeEnum ServerRuleApplyTimeEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
+        public Boolean Enabled
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
+        public Boolean DefaultRule
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
+        public Boolean ExemptRule
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
+        public XmlDocument RuleXml
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -156,14 +121,14 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerRuleEntityBroker broker = update.GetBroker<IServerRuleEntityBroker>();
             ServerRuleUpdateColumns updateColumns = new ServerRuleUpdateColumns();
-            updateColumns.DefaultRule = entity.DefaultRule;
-            updateColumns.Enabled = entity.Enabled;
-            updateColumns.ExemptRule = entity.ExemptRule;
             updateColumns.RuleName = entity.RuleName;
-            updateColumns.RuleXml = entity.RuleXml;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
-            updateColumns.ServerRuleApplyTimeEnum = entity.ServerRuleApplyTimeEnum;
             updateColumns.ServerRuleTypeEnum = entity.ServerRuleTypeEnum;
+            updateColumns.ServerRuleApplyTimeEnum = entity.ServerRuleApplyTimeEnum;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.DefaultRule = entity.DefaultRule;
+            updateColumns.ExemptRule = entity.ExemptRule;
+            updateColumns.RuleXml = entity.RuleXml;
             ServerRule newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

@@ -46,78 +46,47 @@ namespace ClearCanvas.ImageServer.Model
         public Alert():base("Alert")
         {}
         public Alert(
-             AlertCategoryEnum _alertCategoryEnum_
+             DateTime _insertTime_
+            ,String _component_
+            ,Int32 _typeCode_
+            ,String _source_
             ,AlertLevelEnum _alertLevelEnum_
-            ,System.String _component_
-            ,System.Xml.XmlDocument _content_
-            ,System.DateTime _insertTime_
-            ,System.String _source_
-            ,System.Int32 _typeCode_
+            ,AlertCategoryEnum _alertCategoryEnum_
+            ,XmlDocument _content_
             ):base("Alert")
         {
-            _alertCategoryEnum = _alertCategoryEnum_;
-            _alertLevelEnum = _alertLevelEnum_;
-            _component = _component_;
-            _content = _content_;
-            _insertTime = _insertTime_;
-            _source = _source_;
-            _typeCode = _typeCode_;
+            InsertTime = _insertTime_;
+            Component = _component_;
+            TypeCode = _typeCode_;
+            Source = _source_;
+            AlertLevelEnum = _alertLevelEnum_;
+            AlertCategoryEnum = _alertCategoryEnum_;
+            Content = _content_;
         }
-        #endregion
-
-        #region Private Members
-        private AlertCategoryEnum _alertCategoryEnum;
-        private AlertLevelEnum _alertLevelEnum;
-        private String _component;
-        private XmlDocument _content;
-        private DateTime _insertTime;
-        private String _source;
-        private Int32 _typeCode;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
-        public AlertCategoryEnum AlertCategoryEnum
-        {
-        get { return _alertCategoryEnum; }
-        set { _alertCategoryEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
-        public AlertLevelEnum AlertLevelEnum
-        {
-        get { return _alertLevelEnum; }
-        set { _alertLevelEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
-        public String Component
-        {
-        get { return _component; }
-        set { _component = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
-        public XmlDocument Content
-        {
-        get { return _content; }
-        set { _content = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
         public DateTime InsertTime
-        {
-        get { return _insertTime; }
-        set { _insertTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
-        public String Source
-        {
-        get { return _source; }
-        set { _source = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
+        public String Component
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
         public Int32 TypeCode
-        {
-        get { return _typeCode; }
-        set { _typeCode = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
+        public String Source
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
+        public AlertLevelEnum AlertLevelEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
+        public AlertCategoryEnum AlertCategoryEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
+        public XmlDocument Content
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -147,13 +116,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             IAlertEntityBroker broker = update.GetBroker<IAlertEntityBroker>();
             AlertUpdateColumns updateColumns = new AlertUpdateColumns();
-            updateColumns.AlertCategoryEnum = entity.AlertCategoryEnum;
-            updateColumns.AlertLevelEnum = entity.AlertLevelEnum;
-            updateColumns.Component = entity.Component;
-            updateColumns.Content = entity.Content;
             updateColumns.InsertTime = entity.InsertTime;
-            updateColumns.Source = entity.Source;
+            updateColumns.Component = entity.Component;
             updateColumns.TypeCode = entity.TypeCode;
+            updateColumns.Source = entity.Source;
+            updateColumns.AlertLevelEnum = entity.AlertLevelEnum;
+            updateColumns.AlertCategoryEnum = entity.AlertCategoryEnum;
+            updateColumns.Content = entity.Content;
             Alert newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

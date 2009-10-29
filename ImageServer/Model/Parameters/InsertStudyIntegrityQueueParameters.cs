@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public XmlDocument QueueData
         {
-            set { SubCriteria["QueueData"] = new ProcedureParameter<XmlDocument>("QueueData", value); }
+            set { SubCriteria["Details"] = new ProcedureParameter<XmlDocument>("Details", value); }
         }
 
 

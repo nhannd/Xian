@@ -46,159 +46,92 @@ namespace ClearCanvas.ImageServer.Model
         public WorkQueue():base("WorkQueue")
         {}
         public WorkQueue(
-             System.Xml.XmlDocument _data_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey_
-            ,System.DateTime _expirationTime_
-            ,System.Int32 _failureCount_
-            ,System.String _failureDescription_
-            ,System.String _groupID_
-            ,System.DateTime _insertTime_
-            ,System.DateTime _lastUpdatedTime_
-            ,System.String _processorID_
-            ,System.DateTime _scheduledTime_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyHistoryKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
-            ,WorkQueuePriorityEnum _workQueuePriorityEnum_
-            ,WorkQueueStatusEnum _workQueueStatusEnum_
+             ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _studyStorageKey_
             ,WorkQueueTypeEnum _workQueueTypeEnum_
+            ,WorkQueueStatusEnum _workQueueStatusEnum_
+            ,WorkQueuePriorityEnum _workQueuePriorityEnum_
+            ,DateTime _scheduledTime_
+            ,DateTime _insertTime_
+            ,Int32 _failureCount_
+            ,String _failureDescription_
+            ,XmlDocument _data_
+            ,DateTime _lastUpdatedTime_
+            ,String _processorID_
+            ,String _groupID_
+            ,DateTime _expirationTime_
+            ,ServerEntityKey _deviceKey_
+            ,ServerEntityKey _studyHistoryKey_
             ):base("WorkQueue")
         {
-            _data = _data_;
-            _deviceKey = _deviceKey_;
-            _expirationTime = _expirationTime_;
-            _failureCount = _failureCount_;
-            _failureDescription = _failureDescription_;
-            _groupID = _groupID_;
-            _insertTime = _insertTime_;
-            _lastUpdatedTime = _lastUpdatedTime_;
-            _processorID = _processorID_;
-            _scheduledTime = _scheduledTime_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _studyHistoryKey = _studyHistoryKey_;
-            _studyStorageKey = _studyStorageKey_;
-            _workQueuePriorityEnum = _workQueuePriorityEnum_;
-            _workQueueStatusEnum = _workQueueStatusEnum_;
-            _workQueueTypeEnum = _workQueueTypeEnum_;
+            ServerPartitionKey = _serverPartitionKey_;
+            StudyStorageKey = _studyStorageKey_;
+            WorkQueueTypeEnum = _workQueueTypeEnum_;
+            WorkQueueStatusEnum = _workQueueStatusEnum_;
+            WorkQueuePriorityEnum = _workQueuePriorityEnum_;
+            ScheduledTime = _scheduledTime_;
+            InsertTime = _insertTime_;
+            FailureCount = _failureCount_;
+            FailureDescription = _failureDescription_;
+            Data = _data_;
+            LastUpdatedTime = _lastUpdatedTime_;
+            ProcessorID = _processorID_;
+            GroupID = _groupID_;
+            ExpirationTime = _expirationTime_;
+            DeviceKey = _deviceKey_;
+            StudyHistoryKey = _studyHistoryKey_;
         }
-        #endregion
-
-        #region Private Members
-        private XmlDocument _data;
-        private ServerEntityKey _deviceKey;
-        private DateTime _expirationTime;
-        private Int32 _failureCount;
-        private String _failureDescription;
-        private String _groupID;
-        private DateTime _insertTime;
-        private DateTime _lastUpdatedTime;
-        private String _processorID;
-        private DateTime _scheduledTime;
-        private ServerEntityKey _serverPartitionKey;
-        private ServerEntityKey _studyHistoryKey;
-        private ServerEntityKey _studyStorageKey;
-        private WorkQueuePriorityEnum _workQueuePriorityEnum;
-        private WorkQueueStatusEnum _workQueueStatusEnum;
-        private WorkQueueTypeEnum _workQueueTypeEnum;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
-        public XmlDocument Data
-        {
-        get { return _data; }
-        set { _data = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="DeviceGUID")]
-        public ServerEntityKey DeviceKey
-        {
-        get { return _deviceKey; }
-        set { _deviceKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ExpirationTime")]
-        public DateTime ExpirationTime
-        {
-        get { return _expirationTime; }
-        set { _expirationTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureCount")]
-        public Int32 FailureCount
-        {
-        get { return _failureCount; }
-        set { _failureCount = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureDescription")]
-        public String FailureDescription
-        {
-        get { return _failureDescription; }
-        set { _failureDescription = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="GroupID")]
-        public String GroupID
-        {
-        get { return _groupID; }
-        set { _groupID = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
-        public DateTime InsertTime
-        {
-        get { return _insertTime; }
-        set { _insertTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
-        public DateTime LastUpdatedTime
-        {
-        get { return _lastUpdatedTime; }
-        set { _lastUpdatedTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
-        public String ProcessorID
-        {
-        get { return _processorID; }
-        set { _processorID = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ScheduledTime")]
-        public DateTime ScheduledTime
-        {
-        get { return _scheduledTime; }
-        set { _scheduledTime = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyHistoryGUID")]
-        public ServerEntityKey StudyHistoryKey
-        {
-        get { return _studyHistoryKey; }
-        set { _studyHistoryKey = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueuePriorityEnum")]
-        public WorkQueuePriorityEnum WorkQueuePriorityEnum
-        {
-        get { return _workQueuePriorityEnum; }
-        set { _workQueuePriorityEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueStatusEnum")]
-        public WorkQueueStatusEnum WorkQueueStatusEnum
-        {
-        get { return _workQueueStatusEnum; }
-        set { _workQueueStatusEnum = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueTypeEnum")]
         public WorkQueueTypeEnum WorkQueueTypeEnum
-        {
-        get { return _workQueueTypeEnum; }
-        set { _workQueueTypeEnum = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueStatusEnum")]
+        public WorkQueueStatusEnum WorkQueueStatusEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueuePriorityEnum")]
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ScheduledTime")]
+        public DateTime ScheduledTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
+        public DateTime InsertTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureCount")]
+        public Int32 FailureCount
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureDescription")]
+        public String FailureDescription
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
+        public XmlDocument Data
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
+        public DateTime LastUpdatedTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
+        public String ProcessorID
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="GroupID")]
+        public String GroupID
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ExpirationTime")]
+        public DateTime ExpirationTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="DeviceGUID")]
+        public ServerEntityKey DeviceKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyHistoryGUID")]
+        public ServerEntityKey StudyHistoryKey
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -228,22 +161,22 @@ namespace ClearCanvas.ImageServer.Model
         {
             IWorkQueueEntityBroker broker = update.GetBroker<IWorkQueueEntityBroker>();
             WorkQueueUpdateColumns updateColumns = new WorkQueueUpdateColumns();
-            updateColumns.Data = entity.Data;
-            updateColumns.DeviceKey = entity.DeviceKey;
-            updateColumns.ExpirationTime = entity.ExpirationTime;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;
+            updateColumns.WorkQueueStatusEnum = entity.WorkQueueStatusEnum;
+            updateColumns.WorkQueuePriorityEnum = entity.WorkQueuePriorityEnum;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.InsertTime = entity.InsertTime;
             updateColumns.FailureCount = entity.FailureCount;
             updateColumns.FailureDescription = entity.FailureDescription;
-            updateColumns.GroupID = entity.GroupID;
-            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.Data = entity.Data;
             updateColumns.LastUpdatedTime = entity.LastUpdatedTime;
             updateColumns.ProcessorID = entity.ProcessorID;
-            updateColumns.ScheduledTime = entity.ScheduledTime;
-            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.GroupID = entity.GroupID;
+            updateColumns.ExpirationTime = entity.ExpirationTime;
+            updateColumns.DeviceKey = entity.DeviceKey;
             updateColumns.StudyHistoryKey = entity.StudyHistoryKey;
-            updateColumns.StudyStorageKey = entity.StudyStorageKey;
-            updateColumns.WorkQueuePriorityEnum = entity.WorkQueuePriorityEnum;
-            updateColumns.WorkQueueStatusEnum = entity.WorkQueueStatusEnum;
-            updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;
             WorkQueue newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

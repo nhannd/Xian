@@ -46,78 +46,47 @@ namespace ClearCanvas.ImageServer.Model
         public ServiceLock():base("ServiceLock")
         {}
         public ServiceLock(
-             System.Boolean _enabled_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
-            ,System.Boolean _lock_
-            ,System.String _processorId_
-            ,System.DateTime _scheduledTime_
-            ,ServiceLockTypeEnum _serviceLockTypeEnum_
-            ,System.Xml.XmlDocument _state_
+             ServiceLockTypeEnum _serviceLockTypeEnum_
+            ,Boolean _lock_
+            ,DateTime _scheduledTime_
+            ,Boolean _enabled_
+            ,XmlDocument _state_
+            ,ServerEntityKey _filesystemKey_
+            ,String _processorId_
             ):base("ServiceLock")
         {
-            _enabled = _enabled_;
-            _filesystemKey = _filesystemKey_;
-            _lock = _lock_;
-            _processorId = _processorId_;
-            _scheduledTime = _scheduledTime_;
-            _serviceLockTypeEnum = _serviceLockTypeEnum_;
-            _state = _state_;
+            ServiceLockTypeEnum = _serviceLockTypeEnum_;
+            Lock = _lock_;
+            ScheduledTime = _scheduledTime_;
+            Enabled = _enabled_;
+            State = _state_;
+            FilesystemKey = _filesystemKey_;
+            ProcessorId = _processorId_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _enabled;
-        private ServerEntityKey _filesystemKey;
-        private Boolean _lock;
-        private String _processorId;
-        private DateTime _scheduledTime;
-        private ServiceLockTypeEnum _serviceLockTypeEnum;
-        private XmlDocument _state;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
-        public ServerEntityKey FilesystemKey
-        {
-        get { return _filesystemKey; }
-        set { _filesystemKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
-        public Boolean Lock
-        {
-        get { return _lock; }
-        set { _lock = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
-        public String ProcessorId
-        {
-        get { return _processorId; }
-        set { _processorId = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
-        public DateTime ScheduledTime
-        {
-        get { return _scheduledTime; }
-        set { _scheduledTime = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
         public ServiceLockTypeEnum ServiceLockTypeEnum
-        {
-        get { return _serviceLockTypeEnum; }
-        set { _serviceLockTypeEnum = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
+        public Boolean Lock
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
+        public DateTime ScheduledTime
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
+        public Boolean Enabled
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
         public XmlDocument State
-        {
-        get { return _state; }
-        set { _state = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
+        public ServerEntityKey FilesystemKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
+        public String ProcessorId
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -147,13 +116,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServiceLockEntityBroker broker = update.GetBroker<IServiceLockEntityBroker>();
             ServiceLockUpdateColumns updateColumns = new ServiceLockUpdateColumns();
-            updateColumns.Enabled = entity.Enabled;
-            updateColumns.FilesystemKey = entity.FilesystemKey;
-            updateColumns.Lock = entity.Lock;
-            updateColumns.ProcessorId = entity.ProcessorId;
-            updateColumns.ScheduledTime = entity.ScheduledTime;
             updateColumns.ServiceLockTypeEnum = entity.ServiceLockTypeEnum;
+            updateColumns.Lock = entity.Lock;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.Enabled = entity.Enabled;
             updateColumns.State = entity.State;
+            updateColumns.FilesystemKey = entity.FilesystemKey;
+            updateColumns.ProcessorId = entity.ProcessorId;
             ServiceLock newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

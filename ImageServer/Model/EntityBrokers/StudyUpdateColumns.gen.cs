@@ -43,23 +43,21 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyUpdateColumns()
        : base("Study")
        {}
-       [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="AccessionNumber")]
-        public String AccessionNumber
+       [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyInstanceUid")]
+        public String StudyInstanceUid
         {
-            set { SubParameters["AccessionNumber"] = new EntityUpdateColumn<String>("AccessionNumber", value); }
+            set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<String>("StudyInstanceUid", value); }
         }
-       [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="IssuerOfPatientId")]
-        public String IssuerOfPatientId
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["IssuerOfPatientId"] = new EntityUpdateColumn<String>("IssuerOfPatientId", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
-       [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedInstances")]
-        public Int32 NumberOfStudyRelatedInstances
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientGUID")]
+        public ServerEntityKey PatientKey
         {
-            set { SubParameters["NumberOfStudyRelatedInstances"] = new EntityUpdateColumn<Int32>("NumberOfStudyRelatedInstances", value); }
+            set { SubParameters["PatientKey"] = new EntityUpdateColumn<ServerEntityKey>("PatientKey", value); }
         }
        [DicomField(DicomTags.NumberOfStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedSeries")]
@@ -67,51 +65,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["NumberOfStudyRelatedSeries"] = new EntityUpdateColumn<Int32>("NumberOfStudyRelatedSeries", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientGUID")]
-        public ServerEntityKey PatientKey
+       [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedInstances")]
+        public Int32 NumberOfStudyRelatedInstances
         {
-            set { SubParameters["PatientKey"] = new EntityUpdateColumn<ServerEntityKey>("PatientKey", value); }
+            set { SubParameters["NumberOfStudyRelatedInstances"] = new EntityUpdateColumn<Int32>("NumberOfStudyRelatedInstances", value); }
         }
-       [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientId")]
-        public String PatientId
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
+        public Decimal StudySizeInKB
         {
-            set { SubParameters["PatientId"] = new EntityUpdateColumn<String>("PatientId", value); }
-        }
-       [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsAge")]
-        public String PatientsAge
-        {
-            set { SubParameters["PatientsAge"] = new EntityUpdateColumn<String>("PatientsAge", value); }
-        }
-       [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsBirthDate")]
-        public String PatientsBirthDate
-        {
-            set { SubParameters["PatientsBirthDate"] = new EntityUpdateColumn<String>("PatientsBirthDate", value); }
-        }
-       [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsName")]
-        public String PatientsName
-        {
-            set { SubParameters["PatientsName"] = new EntityUpdateColumn<String>("PatientsName", value); }
-        }
-       [DicomField(DicomTags.PatientsSex, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsSex")]
-        public String PatientsSex
-        {
-            set { SubParameters["PatientsSex"] = new EntityUpdateColumn<String>("PatientsSex", value); }
-        }
-       [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ReferringPhysiciansName")]
-        public String ReferringPhysiciansName
-        {
-            set { SubParameters["ReferringPhysiciansName"] = new EntityUpdateColumn<String>("ReferringPhysiciansName", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
-        {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["StudySizeInKB"] = new EntityUpdateColumn<Decimal>("StudySizeInKB", value); }
         }
        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
@@ -119,17 +82,64 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["SpecificCharacterSet"] = new EntityUpdateColumn<String>("SpecificCharacterSet", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
+        {
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+        }
+       [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsName")]
+        public String PatientsName
+        {
+            set { SubParameters["PatientsName"] = new EntityUpdateColumn<String>("PatientsName", value); }
+        }
+       [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientId")]
+        public String PatientId
+        {
+            set { SubParameters["PatientId"] = new EntityUpdateColumn<String>("PatientId", value); }
+        }
+       [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="IssuerOfPatientId")]
+        public String IssuerOfPatientId
+        {
+            set { SubParameters["IssuerOfPatientId"] = new EntityUpdateColumn<String>("IssuerOfPatientId", value); }
+        }
+       [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsBirthDate")]
+        public String PatientsBirthDate
+        {
+            set { SubParameters["PatientsBirthDate"] = new EntityUpdateColumn<String>("PatientsBirthDate", value); }
+        }
+       [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsAge")]
+        public String PatientsAge
+        {
+            set { SubParameters["PatientsAge"] = new EntityUpdateColumn<String>("PatientsAge", value); }
+        }
+       [DicomField(DicomTags.PatientsSex, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsSex")]
+        public String PatientsSex
+        {
+            set { SubParameters["PatientsSex"] = new EntityUpdateColumn<String>("PatientsSex", value); }
+        }
        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDate")]
         public String StudyDate
         {
             set { SubParameters["StudyDate"] = new EntityUpdateColumn<String>("StudyDate", value); }
         }
-       [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDescription")]
-        public String StudyDescription
+       [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyTime")]
+        public String StudyTime
         {
-            set { SubParameters["StudyDescription"] = new EntityUpdateColumn<String>("StudyDescription", value); }
+            set { SubParameters["StudyTime"] = new EntityUpdateColumn<String>("StudyTime", value); }
+        }
+       [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="AccessionNumber")]
+        public String AccessionNumber
+        {
+            set { SubParameters["AccessionNumber"] = new EntityUpdateColumn<String>("AccessionNumber", value); }
         }
        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyId")]
@@ -137,27 +147,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["StudyId"] = new EntityUpdateColumn<String>("StudyId", value); }
         }
-       [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyInstanceUid")]
-        public String StudyInstanceUid
+       [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDescription")]
+        public String StudyDescription
         {
-            set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<String>("StudyInstanceUid", value); }
+            set { SubParameters["StudyDescription"] = new EntityUpdateColumn<String>("StudyDescription", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudySizeInKB")]
-        public Decimal StudySizeInKB
+       [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ReferringPhysiciansName")]
+        public String ReferringPhysiciansName
         {
-            set { SubParameters["StudySizeInKB"] = new EntityUpdateColumn<Decimal>("StudySizeInKB", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
-        }
-       [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyTime")]
-        public String StudyTime
-        {
-            set { SubParameters["StudyTime"] = new EntityUpdateColumn<String>("StudyTime", value); }
+            set { SubParameters["ReferringPhysiciansName"] = new EntityUpdateColumn<String>("ReferringPhysiciansName", value); }
         }
     }
 }

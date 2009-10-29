@@ -46,69 +46,42 @@ namespace ClearCanvas.ImageServer.Model
         public ApplicationLog():base("ApplicationLog")
         {}
         public ApplicationLog(
-             System.String _exception_
-            ,System.String _host_
-            ,System.String _logLevel_
-            ,System.String _message_
-            ,System.String _thread_
-            ,System.DateTime _timestamp_
+             String _host_
+            ,DateTime _timestamp_
+            ,String _logLevel_
+            ,String _thread_
+            ,String _message_
+            ,String _exception_
             ):base("ApplicationLog")
         {
-            _exception = _exception_;
-            _host = _host_;
-            _logLevel = _logLevel_;
-            _message = _message_;
-            _thread = _thread_;
-            _timestamp = _timestamp_;
+            Host = _host_;
+            Timestamp = _timestamp_;
+            LogLevel = _logLevel_;
+            Thread = _thread_;
+            Message = _message_;
+            Exception = _exception_;
         }
-        #endregion
-
-        #region Private Members
-        private String _exception;
-        private String _host;
-        private String _logLevel;
-        private String _message;
-        private String _thread;
-        private DateTime _timestamp;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
-        public String Exception
-        {
-        get { return _exception; }
-        set { _exception = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
         public String Host
-        {
-        get { return _host; }
-        set { _host = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
-        public String LogLevel
-        {
-        get { return _logLevel; }
-        set { _logLevel = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
-        public String Message
-        {
-        get { return _message; }
-        set { _message = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
-        public String Thread
-        {
-        get { return _thread; }
-        set { _thread = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
         public DateTime Timestamp
-        {
-        get { return _timestamp; }
-        set { _timestamp = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
+        public String LogLevel
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
+        public String Thread
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
+        public String Message
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
+        public String Exception
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -138,12 +111,12 @@ namespace ClearCanvas.ImageServer.Model
         {
             IApplicationLogEntityBroker broker = update.GetBroker<IApplicationLogEntityBroker>();
             ApplicationLogUpdateColumns updateColumns = new ApplicationLogUpdateColumns();
-            updateColumns.Exception = entity.Exception;
             updateColumns.Host = entity.Host;
-            updateColumns.LogLevel = entity.LogLevel;
-            updateColumns.Message = entity.Message;
-            updateColumns.Thread = entity.Thread;
             updateColumns.Timestamp = entity.Timestamp;
+            updateColumns.LogLevel = entity.LogLevel;
+            updateColumns.Thread = entity.Thread;
+            updateColumns.Message = entity.Message;
+            updateColumns.Exception = entity.Exception;
             ApplicationLog newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

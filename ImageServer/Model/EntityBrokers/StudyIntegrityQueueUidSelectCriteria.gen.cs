@@ -50,28 +50,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new StudyIntegrityQueueUidSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
-        public ISearchCondition<String> RelativePath
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
+        public ISearchCondition<ServerEntityKey> StudyIntegrityQueueKey
         {
             get
             {
-              if (!SubCriteria.ContainsKey("RelativePath"))
+              if (!SubCriteria.ContainsKey("StudyIntegrityQueueKey"))
               {
-                 SubCriteria["RelativePath"] = new SearchCondition<String>("RelativePath");
+                 SubCriteria["StudyIntegrityQueueKey"] = new SearchCondition<ServerEntityKey>("StudyIntegrityQueueKey");
               }
-              return (ISearchCondition<String>)SubCriteria["RelativePath"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
-        public ISearchCondition<String> SeriesDescription
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("SeriesDescription"))
-              {
-                 SubCriteria["SeriesDescription"] = new SearchCondition<String>("SeriesDescription");
-              }
-              return (ISearchCondition<String>)SubCriteria["SeriesDescription"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyIntegrityQueueKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesInstanceUid")]
@@ -98,16 +86,28 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["SopInstanceUid"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
-        public ISearchCondition<ServerEntityKey> StudyIntegrityQueueKey
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
+        public ISearchCondition<String> RelativePath
         {
             get
             {
-              if (!SubCriteria.ContainsKey("StudyIntegrityQueueKey"))
+              if (!SubCriteria.ContainsKey("RelativePath"))
               {
-                 SubCriteria["StudyIntegrityQueueKey"] = new SearchCondition<ServerEntityKey>("StudyIntegrityQueueKey");
+                 SubCriteria["RelativePath"] = new SearchCondition<String>("RelativePath");
               }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyIntegrityQueueKey"];
+              return (ISearchCondition<String>)SubCriteria["RelativePath"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
+        public ISearchCondition<String> SeriesDescription
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("SeriesDescription"))
+              {
+                 SubCriteria["SeriesDescription"] = new SearchCondition<String>("SeriesDescription");
+              }
+              return (ISearchCondition<String>)SubCriteria["SeriesDescription"];
             } 
         }
     }

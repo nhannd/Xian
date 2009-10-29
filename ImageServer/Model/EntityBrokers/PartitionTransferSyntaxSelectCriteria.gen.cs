@@ -50,18 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new PartitionTransferSyntaxSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
-        public ISearchCondition<Boolean> Enabled
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Enabled"))
-              {
-                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
-              }
-              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
@@ -84,6 +72,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ServerEntityKey>("ServerTransferSyntaxKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
+        public ISearchCondition<Boolean> Enabled
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Enabled"))
+              {
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
     }

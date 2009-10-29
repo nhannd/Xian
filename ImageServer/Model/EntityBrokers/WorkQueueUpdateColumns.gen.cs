@@ -42,20 +42,40 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public WorkQueueUpdateColumns()
        : base("WorkQueue")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
-        public XmlDocument Data
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["Data"] = new EntityUpdateColumn<XmlDocument>("Data", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="DeviceGUID")]
-        public ServerEntityKey DeviceKey
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["DeviceKey"] = new EntityUpdateColumn<ServerEntityKey>("DeviceKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ExpirationTime")]
-        public DateTime ExpirationTime
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueTypeEnum")]
+        public WorkQueueTypeEnum WorkQueueTypeEnum
         {
-            set { SubParameters["ExpirationTime"] = new EntityUpdateColumn<DateTime>("ExpirationTime", value); }
+            set { SubParameters["WorkQueueTypeEnum"] = new EntityUpdateColumn<WorkQueueTypeEnum>("WorkQueueTypeEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueStatusEnum")]
+        public WorkQueueStatusEnum WorkQueueStatusEnum
+        {
+            set { SubParameters["WorkQueueStatusEnum"] = new EntityUpdateColumn<WorkQueueStatusEnum>("WorkQueueStatusEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueuePriorityEnum")]
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+        {
+            set { SubParameters["WorkQueuePriorityEnum"] = new EntityUpdateColumn<WorkQueuePriorityEnum>("WorkQueuePriorityEnum", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ScheduledTime")]
+        public DateTime ScheduledTime
+        {
+            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
+        public DateTime InsertTime
+        {
+            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureCount")]
         public Int32 FailureCount
@@ -67,15 +87,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="GroupID")]
-        public String GroupID
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
+        public XmlDocument Data
         {
-            set { SubParameters["GroupID"] = new EntityUpdateColumn<String>("GroupID", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
-        public DateTime InsertTime
-        {
-            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
+            set { SubParameters["Data"] = new EntityUpdateColumn<XmlDocument>("Data", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="LastUpdatedTime")]
         public DateTime LastUpdatedTime
@@ -87,40 +102,25 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ProcessorID"] = new EntityUpdateColumn<String>("ProcessorID", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ScheduledTime")]
-        public DateTime ScheduledTime
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="GroupID")]
+        public String GroupID
         {
-            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
+            set { SubParameters["GroupID"] = new EntityUpdateColumn<String>("GroupID", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ExpirationTime")]
+        public DateTime ExpirationTime
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ExpirationTime"] = new EntityUpdateColumn<DateTime>("ExpirationTime", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="DeviceGUID")]
+        public ServerEntityKey DeviceKey
+        {
+            set { SubParameters["DeviceKey"] = new EntityUpdateColumn<ServerEntityKey>("DeviceKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyHistoryGUID")]
         public ServerEntityKey StudyHistoryKey
         {
             set { SubParameters["StudyHistoryKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyHistoryKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueuePriorityEnum")]
-        public WorkQueuePriorityEnum WorkQueuePriorityEnum
-        {
-            set { SubParameters["WorkQueuePriorityEnum"] = new EntityUpdateColumn<WorkQueuePriorityEnum>("WorkQueuePriorityEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueStatusEnum")]
-        public WorkQueueStatusEnum WorkQueueStatusEnum
-        {
-            set { SubParameters["WorkQueueStatusEnum"] = new EntityUpdateColumn<WorkQueueStatusEnum>("WorkQueueStatusEnum", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="WorkQueueTypeEnum")]
-        public WorkQueueTypeEnum WorkQueueTypeEnum
-        {
-            set { SubParameters["WorkQueueTypeEnum"] = new EntityUpdateColumn<WorkQueueTypeEnum>("WorkQueueTypeEnum", value); }
         }
     }
 }

@@ -47,113 +47,70 @@ namespace ClearCanvas.ImageServer.Model
         public Series():base("Series")
         {}
         public Series(
-             System.String _modality_
-            ,System.Int32 _numberOfSeriesRelatedInstances_
-            ,System.String _performedProcedureStepStartDate_
-            ,System.String _performedProcedureStepStartTime_
-            ,System.String _seriesDescription_
-            ,System.String _seriesInstanceUid_
-            ,System.String _seriesNumber_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,System.String _sourceApplicationEntityTitle_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyKey_
+             ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _studyKey_
+            ,String _seriesInstanceUid_
+            ,String _modality_
+            ,Int32 _numberOfSeriesRelatedInstances_
+            ,String _performedProcedureStepStartDate_
+            ,String _performedProcedureStepStartTime_
+            ,String _sourceApplicationEntityTitle_
+            ,String _seriesNumber_
+            ,String _seriesDescription_
             ):base("Series")
         {
-            _modality = _modality_;
-            _numberOfSeriesRelatedInstances = _numberOfSeriesRelatedInstances_;
-            _performedProcedureStepStartDate = _performedProcedureStepStartDate_;
-            _performedProcedureStepStartTime = _performedProcedureStepStartTime_;
-            _seriesDescription = _seriesDescription_;
-            _seriesInstanceUid = _seriesInstanceUid_;
-            _seriesNumber = _seriesNumber_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _sourceApplicationEntityTitle = _sourceApplicationEntityTitle_;
-            _studyKey = _studyKey_;
+            ServerPartitionKey = _serverPartitionKey_;
+            StudyKey = _studyKey_;
+            SeriesInstanceUid = _seriesInstanceUid_;
+            Modality = _modality_;
+            NumberOfSeriesRelatedInstances = _numberOfSeriesRelatedInstances_;
+            PerformedProcedureStepStartDate = _performedProcedureStepStartDate_;
+            PerformedProcedureStepStartTime = _performedProcedureStepStartTime_;
+            SourceApplicationEntityTitle = _sourceApplicationEntityTitle_;
+            SeriesNumber = _seriesNumber_;
+            SeriesDescription = _seriesDescription_;
         }
-        #endregion
-
-        #region Private Members
-        private String _modality;
-        private Int32 _numberOfSeriesRelatedInstances;
-        private String _performedProcedureStepStartDate;
-        private String _performedProcedureStepStartTime;
-        private String _seriesDescription;
-        private String _seriesInstanceUid;
-        private String _seriesNumber;
-        private ServerEntityKey _serverPartitionKey;
-        private String _sourceApplicationEntityTitle;
-        private ServerEntityKey _studyKey;
         #endregion
 
         #region Public Properties
-        [DicomField(DicomTags.Modality, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
-        public String Modality
-        {
-        get { return _modality; }
-        set { _modality = value; }
-        }
-        [DicomField(DicomTags.NumberOfSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="NumberOfSeriesRelatedInstances")]
-        public Int32 NumberOfSeriesRelatedInstances
-        {
-        get { return _numberOfSeriesRelatedInstances; }
-        set { _numberOfSeriesRelatedInstances = value; }
-        }
-        [DicomField(DicomTags.PerformedProcedureStepStartDate, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartDate")]
-        public String PerformedProcedureStepStartDate
-        {
-        get { return _performedProcedureStepStartDate; }
-        set { _performedProcedureStepStartDate = value; }
-        }
-        [DicomField(DicomTags.PerformedProcedureStepStartTime, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartTime")]
-        public String PerformedProcedureStepStartTime
-        {
-        get { return _performedProcedureStepStartTime; }
-        set { _performedProcedureStepStartTime = value; }
-        }
-        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
-        public String SeriesDescription
-        {
-        get { return _seriesDescription; }
-        set { _seriesDescription = value; }
-        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
+        public ServerEntityKey StudyKey
+        { get; set; }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
         public String SeriesInstanceUid
-        {
-        get { return _seriesInstanceUid; }
-        set { _seriesInstanceUid = value; }
-        }
-        [DicomField(DicomTags.SeriesNumber, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
-        public String SeriesNumber
-        {
-        get { return _seriesNumber; }
-        set { _seriesNumber = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.Modality, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
+        public String Modality
+        { get; set; }
+        [DicomField(DicomTags.NumberOfSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="NumberOfSeriesRelatedInstances")]
+        public Int32 NumberOfSeriesRelatedInstances
+        { get; set; }
+        [DicomField(DicomTags.PerformedProcedureStepStartDate, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartDate")]
+        public String PerformedProcedureStepStartDate
+        { get; set; }
+        [DicomField(DicomTags.PerformedProcedureStepStartTime, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartTime")]
+        public String PerformedProcedureStepStartTime
+        { get; set; }
         [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
         public String SourceApplicationEntityTitle
-        {
-        get { return _sourceApplicationEntityTitle; }
-        set { _sourceApplicationEntityTitle = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
-        public ServerEntityKey StudyKey
-        {
-        get { return _studyKey; }
-        set { _studyKey = value; }
-        }
+        { get; set; }
+        [DicomField(DicomTags.SeriesNumber, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
+        public String SeriesNumber
+        { get; set; }
+        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
+        public String SeriesDescription
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -183,16 +140,16 @@ namespace ClearCanvas.ImageServer.Model
         {
             ISeriesEntityBroker broker = update.GetBroker<ISeriesEntityBroker>();
             SeriesUpdateColumns updateColumns = new SeriesUpdateColumns();
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyKey = entity.StudyKey;
+            updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
             updateColumns.Modality = entity.Modality;
             updateColumns.NumberOfSeriesRelatedInstances = entity.NumberOfSeriesRelatedInstances;
             updateColumns.PerformedProcedureStepStartDate = entity.PerformedProcedureStepStartDate;
             updateColumns.PerformedProcedureStepStartTime = entity.PerformedProcedureStepStartTime;
-            updateColumns.SeriesDescription = entity.SeriesDescription;
-            updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
-            updateColumns.SeriesNumber = entity.SeriesNumber;
-            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.SourceApplicationEntityTitle = entity.SourceApplicationEntityTitle;
-            updateColumns.StudyKey = entity.StudyKey;
+            updateColumns.SeriesNumber = entity.SeriesNumber;
+            updateColumns.SeriesDescription = entity.SeriesDescription;
             Series newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

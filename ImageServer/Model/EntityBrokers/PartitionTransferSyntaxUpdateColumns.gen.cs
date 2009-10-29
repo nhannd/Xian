@@ -42,11 +42,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public PartitionTransferSyntaxUpdateColumns()
        : base("PartitionTransferSyntax")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
         {
@@ -56,6 +51,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerEntityKey ServerTransferSyntaxKey
         {
             set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerTransferSyntaxKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
+        public Boolean Enabled
+        {
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
     }
 }

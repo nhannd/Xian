@@ -50,28 +50,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new AlertSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
-        public ISearchCondition<AlertCategoryEnum> AlertCategoryEnum
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
+        public ISearchCondition<DateTime> InsertTime
         {
             get
             {
-              if (!SubCriteria.ContainsKey("AlertCategoryEnum"))
+              if (!SubCriteria.ContainsKey("InsertTime"))
               {
-                 SubCriteria["AlertCategoryEnum"] = new SearchCondition<AlertCategoryEnum>("AlertCategoryEnum");
+                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
               }
-              return (ISearchCondition<AlertCategoryEnum>)SubCriteria["AlertCategoryEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
-        public ISearchCondition<AlertLevelEnum> AlertLevelEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("AlertLevelEnum"))
-              {
-                 SubCriteria["AlertLevelEnum"] = new SearchCondition<AlertLevelEnum>("AlertLevelEnum");
-              }
-              return (ISearchCondition<AlertLevelEnum>)SubCriteria["AlertLevelEnum"];
+              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
@@ -86,28 +74,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["Component"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
-        public ISearchCondition<XmlDocument> Content
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
+        public ISearchCondition<Int32> TypeCode
         {
             get
             {
-              if (!SubCriteria.ContainsKey("Content"))
+              if (!SubCriteria.ContainsKey("TypeCode"))
               {
-                 SubCriteria["Content"] = new SearchCondition<XmlDocument>("Content");
+                 SubCriteria["TypeCode"] = new SearchCondition<Int32>("TypeCode");
               }
-              return (ISearchCondition<XmlDocument>)SubCriteria["Content"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
-        public ISearchCondition<DateTime> InsertTime
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("InsertTime"))
-              {
-                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
-              }
-              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
+              return (ISearchCondition<Int32>)SubCriteria["TypeCode"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
@@ -122,16 +98,40 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["Source"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
-        public ISearchCondition<Int32> TypeCode
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
+        public ISearchCondition<AlertLevelEnum> AlertLevelEnum
         {
             get
             {
-              if (!SubCriteria.ContainsKey("TypeCode"))
+              if (!SubCriteria.ContainsKey("AlertLevelEnum"))
               {
-                 SubCriteria["TypeCode"] = new SearchCondition<Int32>("TypeCode");
+                 SubCriteria["AlertLevelEnum"] = new SearchCondition<AlertLevelEnum>("AlertLevelEnum");
               }
-              return (ISearchCondition<Int32>)SubCriteria["TypeCode"];
+              return (ISearchCondition<AlertLevelEnum>)SubCriteria["AlertLevelEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
+        public ISearchCondition<AlertCategoryEnum> AlertCategoryEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("AlertCategoryEnum"))
+              {
+                 SubCriteria["AlertCategoryEnum"] = new SearchCondition<AlertCategoryEnum>("AlertCategoryEnum");
+              }
+              return (ISearchCondition<AlertCategoryEnum>)SubCriteria["AlertCategoryEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
+        public ISearchCondition<XmlDocument> Content
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Content"))
+              {
+                 SubCriteria["Content"] = new SearchCondition<XmlDocument>("Content");
+              }
+              return (ISearchCondition<XmlDocument>)SubCriteria["Content"];
             } 
         }
     }

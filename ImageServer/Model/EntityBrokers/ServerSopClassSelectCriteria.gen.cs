@@ -50,6 +50,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new ServerSopClassSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
+        public ISearchCondition<String> SopClassUid
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("SopClassUid"))
+              {
+                 SubCriteria["SopClassUid"] = new SearchCondition<String>("SopClassUid");
+              }
+              return (ISearchCondition<String>)SubCriteria["SopClassUid"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
         public ISearchCondition<String> Description
         {
@@ -72,18 +84,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["NonImage"] = new SearchCondition<Boolean>("NonImage");
               }
               return (ISearchCondition<Boolean>)SubCriteria["NonImage"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
-        public ISearchCondition<String> SopClassUid
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("SopClassUid"))
-              {
-                 SubCriteria["SopClassUid"] = new SearchCondition<String>("SopClassUid");
-              }
-              return (ISearchCondition<String>)SubCriteria["SopClassUid"];
             } 
         }
     }

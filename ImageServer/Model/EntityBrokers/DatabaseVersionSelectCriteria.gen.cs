@@ -50,18 +50,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new DatabaseVersionSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
-        public ISearchCondition<String> Build
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Build_"))
-              {
-                 SubCriteria["Build_"] = new SearchCondition<String>("Build_");
-              }
-              return (ISearchCondition<String>)SubCriteria["Build_"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Major_")]
         public ISearchCondition<String> Major
         {
@@ -84,6 +72,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Minor_"] = new SearchCondition<String>("Minor_");
               }
               return (ISearchCondition<String>)SubCriteria["Minor_"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
+        public ISearchCondition<String> Build
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Build_"))
+              {
+                 SubCriteria["Build_"] = new SearchCondition<String>("Build_");
+              }
+              return (ISearchCondition<String>)SubCriteria["Build_"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Revision_")]

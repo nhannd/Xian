@@ -42,11 +42,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public PartitionSopClassUpdateColumns()
        : base("PartitionSopClass")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
         {
@@ -56,6 +51,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerEntityKey ServerSopClassKey
         {
             set { SubParameters["ServerSopClassKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerSopClassKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
+        public Boolean Enabled
+        {
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
     }
 }

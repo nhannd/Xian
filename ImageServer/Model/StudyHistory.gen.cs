@@ -46,69 +46,42 @@ namespace ClearCanvas.ImageServer.Model
         public StudyHistory():base("StudyHistory")
         {}
         public StudyHistory(
-             System.Xml.XmlDocument _changeDescription_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _destStudyStorageKey_
-            ,System.DateTime _insertTime_
-            ,System.Xml.XmlDocument _studyData_
+             DateTime _insertTime_
+            ,ServerEntityKey _studyStorageKey_
             ,StudyHistoryTypeEnum _studyHistoryTypeEnum_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ,XmlDocument _studyData_
+            ,XmlDocument _changeDescription_
+            ,ServerEntityKey _destStudyStorageKey_
             ):base("StudyHistory")
         {
-            _changeDescription = _changeDescription_;
-            _destStudyStorageKey = _destStudyStorageKey_;
-            _insertTime = _insertTime_;
-            _studyData = _studyData_;
-            _studyHistoryTypeEnum = _studyHistoryTypeEnum_;
-            _studyStorageKey = _studyStorageKey_;
+            InsertTime = _insertTime_;
+            StudyStorageKey = _studyStorageKey_;
+            StudyHistoryTypeEnum = _studyHistoryTypeEnum_;
+            StudyData = _studyData_;
+            ChangeDescription = _changeDescription_;
+            DestStudyStorageKey = _destStudyStorageKey_;
         }
-        #endregion
-
-        #region Private Members
-        private XmlDocument _changeDescription;
-        private ServerEntityKey _destStudyStorageKey;
-        private DateTime _insertTime;
-        private XmlDocument _studyData;
-        private StudyHistoryTypeEnum _studyHistoryTypeEnum;
-        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
-        public XmlDocument ChangeDescription
-        {
-        get { return _changeDescription; }
-        set { _changeDescription = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
-        public ServerEntityKey DestStudyStorageKey
-        {
-        get { return _destStudyStorageKey; }
-        set { _destStudyStorageKey = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
         public DateTime InsertTime
-        {
-        get { return _insertTime; }
-        set { _insertTime = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
-        public XmlDocument StudyData
-        {
-        get { return _studyData; }
-        set { _studyData = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
-        public StudyHistoryTypeEnum StudyHistoryTypeEnum
-        {
-        get { return _studyHistoryTypeEnum; }
-        set { _studyHistoryTypeEnum = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
         public ServerEntityKey StudyStorageKey
-        {
-        get { return _studyStorageKey; }
-        set { _studyStorageKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
+        public StudyHistoryTypeEnum StudyHistoryTypeEnum
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
+        public XmlDocument StudyData
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
+        public XmlDocument ChangeDescription
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
+        public ServerEntityKey DestStudyStorageKey
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -138,12 +111,12 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyHistoryEntityBroker broker = update.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistoryUpdateColumns updateColumns = new StudyHistoryUpdateColumns();
+            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.StudyHistoryTypeEnum = entity.StudyHistoryTypeEnum;
+            updateColumns.StudyData = entity.StudyData;
             updateColumns.ChangeDescription = entity.ChangeDescription;
             updateColumns.DestStudyStorageKey = entity.DestStudyStorageKey;
-            updateColumns.InsertTime = entity.InsertTime;
-            updateColumns.StudyData = entity.StudyData;
-            updateColumns.StudyHistoryTypeEnum = entity.StudyHistoryTypeEnum;
-            updateColumns.StudyStorageKey = entity.StudyStorageKey;
             StudyHistory newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

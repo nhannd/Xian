@@ -46,42 +46,27 @@ namespace ClearCanvas.ImageServer.Model
         public PartitionSopClass():base("PartitionSopClass")
         {}
         public PartitionSopClass(
-             System.Boolean _enabled_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverSopClassKey_
+             ServerEntityKey _serverPartitionKey_
+            ,ServerEntityKey _serverSopClassKey_
+            ,Boolean _enabled_
             ):base("PartitionSopClass")
         {
-            _enabled = _enabled_;
-            _serverPartitionKey = _serverPartitionKey_;
-            _serverSopClassKey = _serverSopClassKey_;
+            ServerPartitionKey = _serverPartitionKey_;
+            ServerSopClassKey = _serverSopClassKey_;
+            Enabled = _enabled_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _enabled;
-        private ServerEntityKey _serverPartitionKey;
-        private ServerEntityKey _serverSopClassKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
-        public Boolean Enabled
-        {
-        get { return _enabled; }
-        set { _enabled = value; }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerSopClassGUID")]
         public ServerEntityKey ServerSopClassKey
-        {
-        get { return _serverSopClassKey; }
-        set { _serverSopClassKey = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
+        public Boolean Enabled
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -111,9 +96,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPartitionSopClassEntityBroker broker = update.GetBroker<IPartitionSopClassEntityBroker>();
             PartitionSopClassUpdateColumns updateColumns = new PartitionSopClassUpdateColumns();
-            updateColumns.Enabled = entity.Enabled;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
             updateColumns.ServerSopClassKey = entity.ServerSopClassKey;
+            updateColumns.Enabled = entity.Enabled;
             PartitionSopClass newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

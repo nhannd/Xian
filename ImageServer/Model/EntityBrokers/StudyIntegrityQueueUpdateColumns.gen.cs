@@ -42,30 +42,20 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyIntegrityQueueUpdateColumns()
        : base("StudyIntegrityQueue")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
-        public String Description
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
-        public String GroupID
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["GroupID"] = new EntityUpdateColumn<String>("GroupID", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
         public DateTime InsertTime
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="QueueData")]
-        public XmlDocument QueueData
-        {
-            set { SubParameters["QueueData"] = new EntityUpdateColumn<XmlDocument>("QueueData", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
-        {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
         public XmlDocument StudyData
@@ -77,10 +67,20 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["StudyIntegrityReasonEnum"] = new EntityUpdateColumn<StudyIntegrityReasonEnum>("StudyIntegrityReasonEnum", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
-        public ServerEntityKey StudyStorageKey
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
+        public String GroupID
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["GroupID"] = new EntityUpdateColumn<String>("GroupID", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Details")]
+        public XmlDocument Details
+        {
+            set { SubParameters["Details"] = new EntityUpdateColumn<XmlDocument>("Details", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
+        public String Description
+        {
+            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
         }
     }
 }

@@ -50,6 +50,30 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new StudyStorageSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
+              {
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
+        public ISearchCondition<String> StudyInstanceUid
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyInstanceUid"))
+              {
+                 SubCriteria["StudyInstanceUid"] = new SearchCondition<String>("StudyInstanceUid");
+              }
+              return (ISearchCondition<String>)SubCriteria["StudyInstanceUid"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
         public ISearchCondition<DateTime> InsertTime
         {
@@ -86,42 +110,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Boolean>)SubCriteria["Lock"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
-        public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("QueueStudyStateEnum"))
-              {
-                 SubCriteria["QueueStudyStateEnum"] = new SearchCondition<QueueStudyStateEnum>("QueueStudyStateEnum");
-              }
-              return (ISearchCondition<QueueStudyStateEnum>)SubCriteria["QueueStudyStateEnum"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ServerEntityKey> ServerPartitionKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
-              {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
-        public ISearchCondition<String> StudyInstanceUid
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyInstanceUid"))
-              {
-                 SubCriteria["StudyInstanceUid"] = new SearchCondition<String>("StudyInstanceUid");
-              }
-              return (ISearchCondition<String>)SubCriteria["StudyInstanceUid"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]
         public ISearchCondition<StudyStatusEnum> StudyStatusEnum
         {
@@ -132,6 +120,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyStatusEnum"] = new SearchCondition<StudyStatusEnum>("StudyStatusEnum");
               }
               return (ISearchCondition<StudyStatusEnum>)SubCriteria["StudyStatusEnum"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
+        public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueStudyStateEnum"))
+              {
+                 SubCriteria["QueueStudyStateEnum"] = new SearchCondition<QueueStudyStateEnum>("QueueStudyStateEnum");
+              }
+              return (ISearchCondition<QueueStudyStateEnum>)SubCriteria["QueueStudyStateEnum"];
             } 
         }
     }

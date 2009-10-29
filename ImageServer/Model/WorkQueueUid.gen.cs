@@ -47,98 +47,59 @@ namespace ClearCanvas.ImageServer.Model
         public WorkQueueUid():base("WorkQueueUid")
         {}
         public WorkQueueUid(
-             System.Boolean _duplicate_
-            ,System.String _extension_
-            ,System.Boolean _failed_
-            ,System.Int16 _failureCount_
-            ,System.String _groupID_
-            ,System.String _relativePath_
-            ,System.String _seriesInstanceUid_
-            ,System.String _sopInstanceUid_
-            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _workQueueKey_
+             ServerEntityKey _workQueueKey_
+            ,Boolean _failed_
+            ,Boolean _duplicate_
+            ,Int16 _failureCount_
+            ,String _groupID_
+            ,String _relativePath_
+            ,String _extension_
+            ,String _seriesInstanceUid_
+            ,String _sopInstanceUid_
             ):base("WorkQueueUid")
         {
-            _duplicate = _duplicate_;
-            _extension = _extension_;
-            _failed = _failed_;
-            _failureCount = _failureCount_;
-            _groupID = _groupID_;
-            _relativePath = _relativePath_;
-            _seriesInstanceUid = _seriesInstanceUid_;
-            _sopInstanceUid = _sopInstanceUid_;
-            _workQueueKey = _workQueueKey_;
+            WorkQueueKey = _workQueueKey_;
+            Failed = _failed_;
+            Duplicate = _duplicate_;
+            FailureCount = _failureCount_;
+            GroupID = _groupID_;
+            RelativePath = _relativePath_;
+            Extension = _extension_;
+            SeriesInstanceUid = _seriesInstanceUid_;
+            SopInstanceUid = _sopInstanceUid_;
         }
-        #endregion
-
-        #region Private Members
-        private Boolean _duplicate;
-        private String _extension;
-        private Boolean _failed;
-        private Int16 _failureCount;
-        private String _groupID;
-        private String _relativePath;
-        private String _seriesInstanceUid;
-        private String _sopInstanceUid;
-        private ServerEntityKey _workQueueKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
-        public Boolean Duplicate
-        {
-        get { return _duplicate; }
-        set { _duplicate = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
-        public String Extension
-        {
-        get { return _extension; }
-        set { _extension = value; }
-        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
+        public ServerEntityKey WorkQueueKey
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Failed")]
         public Boolean Failed
-        {
-        get { return _failed; }
-        set { _failed = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
+        public Boolean Duplicate
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="FailureCount")]
         public Int16 FailureCount
-        {
-        get { return _failureCount; }
-        set { _failureCount = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="GroupID")]
         public String GroupID
-        {
-        get { return _groupID; }
-        set { _groupID = value; }
-        }
+        { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="RelativePath")]
         public String RelativePath
-        {
-        get { return _relativePath; }
-        set { _relativePath = value; }
-        }
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
+        public String Extension
+        { get; set; }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
         public String SeriesInstanceUid
-        {
-        get { return _seriesInstanceUid; }
-        set { _seriesInstanceUid = value; }
-        }
+        { get; set; }
         [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SopInstanceUid")]
         public String SopInstanceUid
-        {
-        get { return _sopInstanceUid; }
-        set { _sopInstanceUid = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
-        public ServerEntityKey WorkQueueKey
-        {
-        get { return _workQueueKey; }
-        set { _workQueueKey = value; }
-        }
+        { get; set; }
         #endregion
 
         #region Static Methods
@@ -168,15 +129,15 @@ namespace ClearCanvas.ImageServer.Model
         {
             IWorkQueueUidEntityBroker broker = update.GetBroker<IWorkQueueUidEntityBroker>();
             WorkQueueUidUpdateColumns updateColumns = new WorkQueueUidUpdateColumns();
-            updateColumns.Duplicate = entity.Duplicate;
-            updateColumns.Extension = entity.Extension;
+            updateColumns.WorkQueueKey = entity.WorkQueueKey;
             updateColumns.Failed = entity.Failed;
+            updateColumns.Duplicate = entity.Duplicate;
             updateColumns.FailureCount = entity.FailureCount;
             updateColumns.GroupID = entity.GroupID;
             updateColumns.RelativePath = entity.RelativePath;
+            updateColumns.Extension = entity.Extension;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
             updateColumns.SopInstanceUid = entity.SopInstanceUid;
-            updateColumns.WorkQueueKey = entity.WorkQueueKey;
             WorkQueueUid newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

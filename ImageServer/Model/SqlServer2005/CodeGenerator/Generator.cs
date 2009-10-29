@@ -501,7 +501,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 					if (col.ColumnName.EndsWith("Enum"))
 						writer.WriteLine("            {0}{1} {2}_", comma, col.ColumnName, col.VariableName);
 					else
-						writer.WriteLine("            {0}{1} {2}_", comma, col.ColumnType, col.VariableName);
+						writer.WriteLine("            {0}{1} {2}_", comma, col.ColumnType.Name, col.VariableName);
 
 					comma = ',';
 				}
@@ -513,25 +513,12 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 				if (!col.ColumnName.Equals("Key"))
 				{
 					if (col.ColumnName.EndsWith("Enum"))
-						writer.WriteLine("            {0} = {0}_;", col.VariableName);
+						writer.WriteLine("            {0} = {1}_;", col.ColumnName, col.VariableName);
 					else
-						writer.WriteLine("            {0} = {0}_;", col.VariableName);
+						writer.WriteLine("            {0} = {1}_;", col.ColumnName, col.VariableName);
 				}
 			}
 			writer.WriteLine("        }");
-			writer.WriteLine("        #endregion");
-			writer.WriteLine("");
-			writer.WriteLine("        #region Private Members");
-			foreach (Column col in table.Columns)
-			{
-				if (!col.ColumnName.Equals("Key"))
-				{
-					if (col.ColumnName.EndsWith("Enum"))
-						writer.WriteLine("        private {0} {1};", col.ColumnName, col.VariableName);
-					else
-						writer.WriteLine("        private {0} {1};", col.ColumnType.Name, col.VariableName);
-				}
-			}
 			writer.WriteLine("        #endregion");
 			writer.WriteLine("");
 			writer.WriteLine("        #region Public Properties");
@@ -549,10 +536,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 						writer.WriteLine("        public {0} {1}", col.ColumnName, col.ColumnName);
 					else
 						writer.WriteLine("        public {0} {1}", col.ColumnType.Name, col.ColumnName);
-					writer.WriteLine("        {");
-					writer.WriteLine("        get {{ return {0}; }}", col.VariableName);
-					writer.WriteLine("        set {{ {0} = value; }}", col.VariableName);
-					writer.WriteLine("        }");
+					writer.WriteLine("        { get; set; }");
 				}
 			}
 			writer.WriteLine("        #endregion");

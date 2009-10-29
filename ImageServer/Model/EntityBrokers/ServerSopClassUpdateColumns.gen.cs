@@ -43,6 +43,12 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerSopClassUpdateColumns()
        : base("ServerSopClass")
        {}
+       [DicomField(DicomTags.SopClassUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
+        public String SopClassUid
+        {
+            set { SubParameters["SopClassUid"] = new EntityUpdateColumn<String>("SopClassUid", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
         public String Description
         {
@@ -52,12 +58,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public Boolean NonImage
         {
             set { SubParameters["NonImage"] = new EntityUpdateColumn<Boolean>("NonImage", value); }
-        }
-       [DicomField(DicomTags.SopClassUid, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
-        public String SopClassUid
-        {
-            set { SubParameters["SopClassUid"] = new EntityUpdateColumn<String>("SopClassUid", value); }
         }
     }
 }

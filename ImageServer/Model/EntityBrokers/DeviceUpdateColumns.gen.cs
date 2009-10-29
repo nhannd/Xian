@@ -42,46 +42,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public DeviceUpdateColumns()
        : base("Device")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
-        public Boolean AcceptKOPR
-        {
-            set { SubParameters["AcceptKOPR"] = new EntityUpdateColumn<Boolean>("AcceptKOPR", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
-        public String AeTitle
-        {
-            set { SubParameters["AeTitle"] = new EntityUpdateColumn<String>("AeTitle", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
-        public Boolean AllowAutoRoute
-        {
-            set { SubParameters["AllowAutoRoute"] = new EntityUpdateColumn<Boolean>("AllowAutoRoute", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
-        public Boolean AllowQuery
-        {
-            set { SubParameters["AllowQuery"] = new EntityUpdateColumn<Boolean>("AllowQuery", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
-        public Boolean AllowRetrieve
-        {
-            set { SubParameters["AllowRetrieve"] = new EntityUpdateColumn<Boolean>("AllowRetrieve", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
-        public Boolean AllowStorage
-        {
-            set { SubParameters["AllowStorage"] = new EntityUpdateColumn<Boolean>("AllowStorage", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
-        public String Description
-        {
-            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
-        public DeviceTypeEnum DeviceTypeEnum
-        {
-            set { SubParameters["DeviceTypeEnum"] = new EntityUpdateColumn<DeviceTypeEnum>("DeviceTypeEnum", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public Boolean Dhcp
         {
@@ -92,30 +52,70 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
-        public String IpAddress
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
+        public Boolean AllowStorage
         {
-            set { SubParameters["IpAddress"] = new EntityUpdateColumn<String>("IpAddress", value); }
+            set { SubParameters["AllowStorage"] = new EntityUpdateColumn<Boolean>("AllowStorage", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AcceptKOPR")]
+        public Boolean AcceptKOPR
+        {
+            set { SubParameters["AcceptKOPR"] = new EntityUpdateColumn<Boolean>("AcceptKOPR", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
+        public Boolean AllowRetrieve
+        {
+            set { SubParameters["AllowRetrieve"] = new EntityUpdateColumn<Boolean>("AllowRetrieve", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
+        public Boolean AllowQuery
+        {
+            set { SubParameters["AllowQuery"] = new EntityUpdateColumn<Boolean>("AllowQuery", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
+        public Boolean AllowAutoRoute
+        {
+            set { SubParameters["AllowAutoRoute"] = new EntityUpdateColumn<Boolean>("AllowAutoRoute", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
+        public Int16 ThrottleMaxConnections
+        {
+            set { SubParameters["ThrottleMaxConnections"] = new EntityUpdateColumn<Int16>("ThrottleMaxConnections", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="LastAccessedTime")]
         public DateTime LastAccessedTime
         {
             set { SubParameters["LastAccessedTime"] = new EntityUpdateColumn<DateTime>("LastAccessedTime", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
-        public Int32 Port
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="DeviceTypeEnum")]
+        public DeviceTypeEnum DeviceTypeEnum
         {
-            set { SubParameters["Port"] = new EntityUpdateColumn<Int32>("Port", value); }
+            set { SubParameters["DeviceTypeEnum"] = new EntityUpdateColumn<DeviceTypeEnum>("DeviceTypeEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
         public ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
-        public Int16 ThrottleMaxConnections
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
+        public String AeTitle
         {
-            set { SubParameters["ThrottleMaxConnections"] = new EntityUpdateColumn<Int16>("ThrottleMaxConnections", value); }
+            set { SubParameters["AeTitle"] = new EntityUpdateColumn<String>("AeTitle", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
+        public Int32 Port
+        {
+            set { SubParameters["Port"] = new EntityUpdateColumn<Int32>("Port", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
+        public String Description
+        {
+            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
+        public String IpAddress
+        {
+            set { SubParameters["IpAddress"] = new EntityUpdateColumn<String>("IpAddress", value); }
         }
     }
 }

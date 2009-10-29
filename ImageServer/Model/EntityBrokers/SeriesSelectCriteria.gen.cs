@@ -50,6 +50,42 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new SeriesSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
+              {
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
+        public ISearchCondition<ServerEntityKey> StudyKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyKey"))
+              {
+                 SubCriteria["StudyKey"] = new SearchCondition<ServerEntityKey>("StudyKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
+        public ISearchCondition<String> SeriesInstanceUid
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("SeriesInstanceUid"))
+              {
+                 SubCriteria["SeriesInstanceUid"] = new SearchCondition<String>("SeriesInstanceUid");
+              }
+              return (ISearchCondition<String>)SubCriteria["SeriesInstanceUid"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
         public ISearchCondition<String> Modality
         {
@@ -98,28 +134,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["PerformedProcedureStepStartTime"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
-        public ISearchCondition<String> SeriesDescription
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
+        public ISearchCondition<String> SourceApplicationEntityTitle
         {
             get
             {
-              if (!SubCriteria.ContainsKey("SeriesDescription"))
+              if (!SubCriteria.ContainsKey("SourceApplicationEntityTitle"))
               {
-                 SubCriteria["SeriesDescription"] = new SearchCondition<String>("SeriesDescription");
+                 SubCriteria["SourceApplicationEntityTitle"] = new SearchCondition<String>("SourceApplicationEntityTitle");
               }
-              return (ISearchCondition<String>)SubCriteria["SeriesDescription"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
-        public ISearchCondition<String> SeriesInstanceUid
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("SeriesInstanceUid"))
-              {
-                 SubCriteria["SeriesInstanceUid"] = new SearchCondition<String>("SeriesInstanceUid");
-              }
-              return (ISearchCondition<String>)SubCriteria["SeriesInstanceUid"];
+              return (ISearchCondition<String>)SubCriteria["SourceApplicationEntityTitle"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
@@ -134,40 +158,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["SeriesNumber"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ServerEntityKey> ServerPartitionKey
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
+        public ISearchCondition<String> SeriesDescription
         {
             get
             {
-              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
+              if (!SubCriteria.ContainsKey("SeriesDescription"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["SeriesDescription"] = new SearchCondition<String>("SeriesDescription");
               }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
-        public ISearchCondition<String> SourceApplicationEntityTitle
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("SourceApplicationEntityTitle"))
-              {
-                 SubCriteria["SourceApplicationEntityTitle"] = new SearchCondition<String>("SourceApplicationEntityTitle");
-              }
-              return (ISearchCondition<String>)SubCriteria["SourceApplicationEntityTitle"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
-        public ISearchCondition<ServerEntityKey> StudyKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyKey"))
-              {
-                 SubCriteria["StudyKey"] = new SearchCondition<ServerEntityKey>("StudyKey");
-              }
-              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyKey"];
+              return (ISearchCondition<String>)SubCriteria["SeriesDescription"];
             } 
         }
     }

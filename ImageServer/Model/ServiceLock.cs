@@ -42,10 +42,10 @@ namespace ClearCanvas.ImageServer.Model
 		{
 			get
 			{
-				if (_filesystemKey == null)
+				if (FilesystemKey == null)
 					return null;
 				if (_filesystem == null)
-					_filesystem = Filesystem.Load(_filesystemKey);
+					_filesystem = Filesystem.Load(FilesystemKey);
 				return _filesystem;
 			}
 		}

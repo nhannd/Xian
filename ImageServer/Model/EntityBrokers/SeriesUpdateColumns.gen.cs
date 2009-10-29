@@ -43,6 +43,22 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public SeriesUpdateColumns()
        : base("Series")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
+        public ServerEntityKey ServerPartitionKey
+        {
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
+        public ServerEntityKey StudyKey
+        {
+            set { SubParameters["StudyKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyKey", value); }
+        }
+       [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
+        public String SeriesInstanceUid
+        {
+            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<String>("SeriesInstanceUid", value); }
+        }
        [DicomField(DicomTags.Modality, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
         public String Modality
@@ -67,17 +83,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["PerformedProcedureStepStartTime"] = new EntityUpdateColumn<String>("PerformedProcedureStepStartTime", value); }
         }
-       [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
-        public String SeriesDescription
+       [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
+        public String SourceApplicationEntityTitle
         {
-            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<String>("SeriesDescription", value); }
-        }
-       [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
-        public String SeriesInstanceUid
-        {
-            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<String>("SeriesInstanceUid", value); }
+            set { SubParameters["SourceApplicationEntityTitle"] = new EntityUpdateColumn<String>("SourceApplicationEntityTitle", value); }
         }
        [DicomField(DicomTags.SeriesNumber, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
@@ -85,21 +95,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["SeriesNumber"] = new EntityUpdateColumn<String>("SeriesNumber", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
-        public ServerEntityKey ServerPartitionKey
+       [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
+        public String SeriesDescription
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
-        }
-       [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
-        public String SourceApplicationEntityTitle
-        {
-            set { SubParameters["SourceApplicationEntityTitle"] = new EntityUpdateColumn<String>("SourceApplicationEntityTitle", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
-        public ServerEntityKey StudyKey
-        {
-            set { SubParameters["StudyKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyKey", value); }
+            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<String>("SeriesDescription", value); }
         }
     }
 }
