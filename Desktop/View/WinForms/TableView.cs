@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Text;
@@ -52,6 +53,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private ITable _table;
         private bool _multiLine;
+
+    	private bool _smartColumnSizing = false;
 
         private bool _delaySelectionChangeNotification = true; // see bug 386
         private bool _surpressSelectionChangedEvent = false;
@@ -120,11 +123,42 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _dataGridView.MultiSelect = value; }
         }
 
+		/// <summary>
+		/// Gets or sets a value indicating the automatic column sizing mode.
+		/// </summary>
+		/// <remarks>
+		/// Setting this property disables the <see cref="SmartColumnSizing"/> algorithm.
+		/// </remarks>
 		[DefaultValue(DataGridViewAutoSizeColumnsMode.Fill)]
-		public virtual DataGridViewAutoSizeColumnsMode AutoSizeColumnsMode
+		public DataGridViewAutoSizeColumnsMode AutoSizeColumnsMode
     	{
 			get { return _dataGridView.AutoSizeColumnsMode; }
-			set { _dataGridView.AutoSizeColumnsMode = value; }
+			set
+			{
+				this.SmartColumnSizing = false;
+				_dataGridView.AutoSizeColumnsMode = value;
+			}
+    	}
+
+		/// <summary>
+		/// Gets or sets a value enabling the smart column sizing algorithm.
+		/// </summary>
+		/// <remarks>
+		/// This algorithm overrides the <see cref="AutoSizeColumnsMode"/> property.
+		/// </remarks>
+		[DefaultValue(false)]
+		[Description("Enables or disables the smart column sizing algorithm. Enabling this algorithm overrides the AutoSizeColumnsMode property.")]
+    	public bool SmartColumnSizing
+    	{
+			get { return _smartColumnSizing; }
+			set
+			{
+				_smartColumnSizing = value;
+				if (_smartColumnSizing)
+					_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+				else
+					this.ResetSmartColumnSizing();
+			}
     	}
 
         [DefaultValue(false)]
@@ -264,48 +298,57 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public virtual ITable Table
+        public ITable Table
         {
-            get
-            {
-                return _table;
-            }
-            set
-            {
-                UnsubscribeFromOldTable();
-
-                _table = value;
-
-                // by setting the datasource to null here, we eliminate the SelectionChanged events that
-                // would get fired during the call to InitColumns()
-                _dataGridView.DataSource = null;
-
-                InitColumns();
-
-                if (_table != null)
-                {
-                    // Set a cell padding to provide space for the top of the focus 
-                    // rectangle and for the content that spans multiple columns. 
-                    var newPadding = new Padding(0, 1, 0,
-                        CELL_SUBROW_HEIGHT * (_table.CellRowCount - 1));
-                    this.DataGridView.RowTemplate.DefaultCellStyle.Padding = newPadding;
-
-                    // Set the row height to accommodate the content that 
-                    // spans multiple columns.
-                    this.DataGridView.RowTemplate.Height = _rowHeight + CELL_SUBROW_HEIGHT * (_table.CellRowCount - 1);
-
-                    // DataSource must be set after RowTemplate in order for changes to take effect
-                    _dataGridView.DataSource = new TableAdapter(_table);
-					_dataGridView.ColumnHeaderMouseClick += _dataGridView_ColumnHeaderMouseClick;
-
-					_table.BeforeSorted += _table_BeforeSortedEvent;
-					_table.Sorted += _table_SortedEvent;
-                }
-
-                InitializeSortButton();
-                IntializeFilter();
-            }
+        	get { return _table; }
+        	set
+        	{
+        		if (this.SmartColumnSizing)
+        		{
+        			this.PerformSmartColumnSizing(() => SetTable(value));
+        		}
+        		else
+        		{
+        			SetTable(value);
+        		}
+        	}
         }
+
+    	private void SetTable(ITable value)
+    	{
+    		UnsubscribeFromOldTable();
+
+    		_table = value;
+
+    		// by setting the datasource to null here, we eliminate the SelectionChanged events that
+    		// would get fired during the call to InitColumns()
+    		_dataGridView.DataSource = null;
+
+    		InitColumns();
+
+    		if (_table != null)
+    		{
+    			// Set a cell padding to provide space for the top of the focus 
+    			// rectangle and for the content that spans multiple columns. 
+    			var newPadding = new Padding(0, 1, 0,
+    			                             CELL_SUBROW_HEIGHT*(_table.CellRowCount - 1));
+    			this.DataGridView.RowTemplate.DefaultCellStyle.Padding = newPadding;
+
+    			// Set the row height to accommodate the content that 
+    			// spans multiple columns.
+    			this.DataGridView.RowTemplate.Height = _rowHeight + CELL_SUBROW_HEIGHT*(_table.CellRowCount - 1);
+
+    			// DataSource must be set after RowTemplate in order for changes to take effect
+    			_dataGridView.DataSource = new TableAdapter(_table);
+    			_dataGridView.ColumnHeaderMouseClick += _dataGridView_ColumnHeaderMouseClick;
+
+    			_table.BeforeSorted += _table_BeforeSortedEvent;
+    			_table.Sorted += _table_SortedEvent;
+    		}
+
+    		InitializeSortButton();
+    		IntializeFilter();
+    	}
 
         /// <summary>
         /// Gets/sets the current selection
@@ -455,7 +498,96 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
-        protected ToolStrip ToolStrip
+		#region Smart Column Sizing
+
+    	private delegate void BeforeSizingOperationDelegate();
+		private Dictionary<string, int> _manualColumnWidths = null;
+		private bool _isInternalColumnWidthChange = false;
+
+    	private void ResetSmartColumnSizing()
+    	{
+    		_manualColumnWidths = null;
+    		_isInternalColumnWidthChange = false;
+    		_smartColumnSizing = false;
+    	}
+
+		private void PerformSmartColumnSizing(BeforeSizingOperationDelegate beforeSizingOperation)
+    	{
+    		_isInternalColumnWidthChange = true;
+    		_dataGridView.AutoSizeColumnsMode = (_manualColumnWidths == null) ? DataGridViewAutoSizeColumnsMode.Fill : DataGridViewAutoSizeColumnsMode.None;
+    		this.SuspendLayout();
+
+    		try
+    		{
+    			if (beforeSizingOperation != null)
+    				beforeSizingOperation.Invoke();
+
+    			if (_manualColumnWidths != null)
+    			{
+    				int totalColumnWidth = 0;
+    				foreach (DataGridViewColumn column in _dataGridView.Columns)
+    					totalColumnWidth += column.Visible ? GetManualColumnWidth(column) : 0;
+
+    				float clientAreaWidth = _dataGridView.ClientSize.Width;
+    				VScrollBar scrollBar = (VScrollBar) CollectionUtils.SelectFirst(_dataGridView.Controls, c => c is VScrollBar);
+    				if (scrollBar != null && scrollBar.Visible)
+    					clientAreaWidth -= scrollBar.Width;
+
+    				float widthMultiplier = 1;
+
+    				if (totalColumnWidth < clientAreaWidth)
+    					widthMultiplier = (clientAreaWidth)/totalColumnWidth;
+
+    				foreach (DataGridViewColumn column in _dataGridView.Columns)
+    					column.Width = (int) (GetManualColumnWidth(column)*widthMultiplier);
+    			}
+    		}
+    		finally
+    		{
+    			this.ResumeLayout(true);
+    			_dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+    			_isInternalColumnWidthChange = false;
+    		}
+    	}
+
+    	private int GetManualColumnWidth(DataGridViewColumn column)
+    	{
+    		if (!_manualColumnWidths.ContainsKey(column.Name))
+    			return column.Width;
+    		return _manualColumnWidths[column.Name];
+    	}
+
+    	protected override void OnSizeChanged(EventArgs e)
+    	{
+    		base.OnSizeChanged(e);
+    		if (this.SmartColumnSizing)
+    			this.PerformSmartColumnSizing(null);
+    	}
+
+    	protected override void OnLoad(EventArgs e)
+    	{
+    		base.OnLoad(e);
+    		if (this.SmartColumnSizing)
+    			this.PerformSmartColumnSizing(null);
+    	}
+
+    	private void DataGridView_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+    	{
+    		if (this.SmartColumnSizing)
+    		{
+    			if (!_isInternalColumnWidthChange)
+    			{
+    				if (_manualColumnWidths == null)
+    					_manualColumnWidths = new Dictionary<string, int>();
+    				foreach (DataGridViewColumn column in _dataGridView.Columns)
+    					_manualColumnWidths[column.Name] = column.Width;
+    			}
+    		}
+    	}
+
+		#endregion
+
+		protected ToolStrip ToolStrip
         {
             get { return _toolStrip; }
         }

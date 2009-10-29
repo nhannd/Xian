@@ -216,6 +216,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._dataGridView.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this._dataGridView_CellParsing);
 			this._dataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this._dataGridView_CellFormatting);
 			this._dataGridView.CellToolTipTextNeeded += new System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler(this._dataGridView_CellToolTipTextNeeded);
+			this._dataGridView.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnWidthChanged);
 			this._dataGridView.CurrentCellDirtyStateChanged += new System.EventHandler(this._dataGridView_CurrentCellDirtyStateChanged);
 			this._dataGridView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._dataGridView_ItemDrag);
 			this._dataGridView.SelectionChanged += new System.EventHandler(this._dataGridView_SelectionChanged);

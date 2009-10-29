@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 
 		public StudyFilterTableView() : base()
 		{
+			base.SmartColumnSizing = true;
 			base.DataGridView.ColumnAdded += DataGridView_ColumnAdded;
 			base.DataGridView.ColumnRemoved += DataGridView_ColumnRemoved;
 			base.DataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;

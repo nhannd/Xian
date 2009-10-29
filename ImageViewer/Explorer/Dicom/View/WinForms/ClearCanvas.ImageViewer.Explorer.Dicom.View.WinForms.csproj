@@ -98,9 +98,6 @@
     <Compile Include="StudyBrowserControl.Designer.cs">
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="StudyTableView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">

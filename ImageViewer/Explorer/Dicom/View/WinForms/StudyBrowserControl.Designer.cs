@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void InitializeComponent()
 		{
 			this._resultsTitleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
-			this._studyTableView = new ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.StudyTableView();
+			this._studyTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
 			// 
 			// _resultsTitleBar
@@ -83,6 +83,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._studyTableView.Name = "_studyTableView";
 			this._studyTableView.ReadOnly = false;
 			this._studyTableView.Size = new System.Drawing.Size(731, 325);
+			this._studyTableView.SmartColumnSizing = true;
 			this._studyTableView.TabIndex = 0;
 			// 
 			// StudyBrowserControl
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		#endregion
 
-		private ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.StudyTableView _studyTableView;
+		private ClearCanvas.Desktop.View.WinForms.TableView _studyTableView;
 		private Crownwood.DotNetMagic.Controls.TitleBar _resultsTitleBar;
 
 
