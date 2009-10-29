@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,34 +29,38 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Utilities.DicomEditor;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	[ButtonAction("removeItemsContext", DefaultContextMenuActionSite + "/MenuRemoveItems", "RemoveItems")]
-	[VisibleStateObserver("removeItemsContext", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
-	[IconSet("removeItemsContext", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
-	//
+	[MenuAction("activate", DefaultContextMenuActionSite + "/MenuDumpFiles", "Dump")]
+	[Tooltip("activate", "TooltipDumpFiles")]
+	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
+	[ActionPermission("activate", ClearCanvas.Utilities.DicomEditor.AuthorityTokens.DicomEditor)]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
-	public class RemoveItemsTool : StudyFilterTool
+	public class DicomEditorTool : LocalExplorerStudyFilterToolProxy<ShowDicomEditorTool>
 	{
-		public void RemoveItems()
+		private static MethodInfo _dumpMethod;
+
+		private static MethodInfo DumpMethod
 		{
-			List<StudyItem> selected = new List<StudyItem>(base.SelectedItems);
-			base.Context.BulkOperationsMode = selected.Count > 50;
-			try
+			get
 			{
-				foreach (StudyItem item in selected)
-					base.Items.Remove(item);
-				base.RefreshTable();
+				if (_dumpMethod == null)
+					_dumpMethod = typeof (ShowDicomEditorTool).GetMethod("Dump", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+				return _dumpMethod;
 			}
-			finally
-			{
-				base.Context.BulkOperationsMode = false;
-			}
+		}
+
+		public void Dump()
+		{
+			MethodInfo methodInfo = DumpMethod;
+			if (methodInfo != null)
+				methodInfo.Invoke(base.BaseTool, null);
 		}
 	}
 }

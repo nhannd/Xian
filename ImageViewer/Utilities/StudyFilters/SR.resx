@@ -323,4 +323,7 @@
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="MenuLaunchInViewer" xml:space="preserve">
+    <value>&amp;Open in Viewer</value>
+  </data>
 </root>

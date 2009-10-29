@@ -61,11 +61,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 		{
 			try
 			{
-				if (base.Selection.Count > 0)
+				if (base.SelectedItems.Count > 0)
 				{
 					ExportComponent component = new ExportComponent();
 
-					foreach (StudyItem item in base.Selection)
+					foreach (StudyItem item in base.SelectedItems)
 					{
 						FileInfo file = item.File;
 						if (file.Exists)
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 		{
 			try
 			{
-				if (base.Selection.Count > 0)
+				if (base.SelectedItems.Count > 0)
 				{
 					SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
 					args.Prompt = SR.MessageSelectOutputLocation;
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 					string outputDir = result.FileName;
 					int count = 0;
 
-					foreach (StudyItem item in base.Selection)
+					foreach (StudyItem item in base.SelectedItems)
 					{
 						FileInfo file = item.File;
 						if (file.Exists)

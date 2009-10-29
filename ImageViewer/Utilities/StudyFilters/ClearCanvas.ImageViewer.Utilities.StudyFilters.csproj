@@ -82,7 +82,7 @@
     <Compile Include="Columns\DicomArray.cs" />
     <Compile Include="BaseTools\LaunchStudyFiltersTool.cs" />
     <Compile Include="BaseTools\RemoveItemsTool.cs" />
-    <Compile Include="BaseTools\StudyFilterComponentLoadHelper.cs" />
+    <Compile Include="StudyFilterComponentBackgroundFileLoader.cs" />
     <Compile Include="Utilities\ExtendedOpenFilesDialog.cs" />
     <Compile Include="Utilities\FilterPredicate.cs" />
     <Compile Include="IStudyFilter.cs" />
@@ -91,7 +91,6 @@
     <Compile Include="BaseTools\AddRemoveColumnsTool.cs" />
     <Compile Include="BaseTools\ExportTool.cs" />
     <Compile Include="BaseTools\LaunchViewerTool.cs" />
-    <Compile Include="BaseTools\LocalExplorerLaunchStudyFiltersTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -137,11 +136,6 @@
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Explorer\Local\ClearCanvas.ImageViewer.Explorer.Local.csproj">
-      <Project>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</Project>
-      <Name>ClearCanvas.ImageViewer.Explorer.Local</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

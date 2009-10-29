@@ -34,11 +34,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			// _tableView
 			// 
 			this._tableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._tableView.Location = new System.Drawing.Point(0, 25);
+			this._tableView.Location = new System.Drawing.Point(0, 33);
 			this._tableView.Name = "_tableView";
 			this._tableView.ReadOnly = false;
 			this._tableView.ShowToolbar = false;
-			this._tableView.Size = new System.Drawing.Size(790, 536);
+			this._tableView.Size = new System.Drawing.Size(790, 528);
 			this._tableView.TabIndex = 0;
 			this._tableView.SelectionChanged += new System.EventHandler(this._tableView_SelectionChanged);
 			// 
@@ -60,9 +60,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			// 
 			// _toolbar
 			// 
+			this._toolbar.AutoSize = false;
+			this._toolbar.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._toolbar.Location = new System.Drawing.Point(0, 0);
 			this._toolbar.Name = "_toolbar";
-			this._toolbar.Size = new System.Drawing.Size(790, 25);
+			this._toolbar.Size = new System.Drawing.Size(790, 33);
 			this._toolbar.TabIndex = 1;
 			this._toolbar.Text = "toolStrip1";
 			// 
@@ -74,7 +76,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 			this.Name = "StudyFilterComponentPanel";
 			this.Size = new System.Drawing.Size(790, 561);
 			this._workspaceDivisor.Panel1.ResumeLayout(false);
-			this._workspaceDivisor.Panel1.PerformLayout();
 			this._workspaceDivisor.ResumeLayout(false);
 			this.ResumeLayout(false);
 

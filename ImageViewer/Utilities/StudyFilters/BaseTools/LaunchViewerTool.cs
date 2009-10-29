@@ -36,19 +36,19 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 {
-	[ButtonAction("launch", DefaultToolbarActionSite + "/ToolbarLaunchInViewer", "Launch")]
+	[MenuAction("launch", DefaultContextMenuActionSite + "/MenuLaunchInViewer", "Launch")]
 	[IconSet("launch", IconScheme.Colour, "OpenToolSmall.png", "OpenToolSmall.png", "OpenToolSmall.png")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
 	public class LaunchViewerTool : StudyFilterTool
 	{
 		public void Launch()
 		{
-			if (base.Selection == null || base.Selection.Count == 0)
+			if (base.SelectedItems == null || base.SelectedItems.Count == 0)
 				return;
 
 			int n = 0;
-			string[] selection = new string[base.Selection.Count];
-			foreach (StudyItem item in base.Selection)
+			string[] selection = new string[base.SelectedItems.Count];
+			foreach (StudyItem item in base.SelectedItems)
 			{
 				selection[n++] = item.File.FullName;
 			}

@@ -328,11 +328,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				_component = component;
 			}
 
-			public StudyFilterComponent Component
-			{
-				get { return _component; }
-			}
-
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
@@ -352,6 +347,47 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			{
 				add { _activeChanged += value; }
 				remove { _activeChanged -= value; }
+			}
+
+			public StudyItemSelection SelectedItems
+			{
+				get { return _component.Selection; }
+			}
+
+			public IList<StudyItem> Items
+			{
+				get { return _component.Items; }
+			}
+
+			public IStudyFilterColumnCollection Columns
+			{
+				get { return _component.Columns; }
+			}
+
+			public bool BulkOperationsMode
+			{
+				get { return _component.BulkOperationsMode; }
+				set { _component.BulkOperationsMode = value; }
+			}
+
+			public bool Load(bool allowCancel, IEnumerable<string> paths, bool recursive)
+			{
+				return _component.Load(this.DesktopWindow, allowCancel, paths);
+			}
+
+			public int Load(IEnumerable<string> paths, bool recursive)
+			{
+				return _component.Load(paths, recursive);
+			}
+
+			public void Refresh()
+			{
+				_component.Refresh();
+			}
+
+			public void Refresh(bool force)
+			{
+				_component.Refresh(force);
 			}
 
 			internal void SetActiveCell(StudyItem item, StudyFilterColumn column)

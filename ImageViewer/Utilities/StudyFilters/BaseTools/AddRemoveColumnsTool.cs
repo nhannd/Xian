@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
 					base.Columns.Add(column.Create());
 				}
 
-				base.Component.Refresh();
+				base.RefreshTable();
 			}
 		}
 	}

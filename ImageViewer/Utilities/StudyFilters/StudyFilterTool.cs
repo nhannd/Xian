@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -42,11 +43,23 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 	public interface IStudyFilterToolContext : IToolContext
 	{
-		StudyFilterComponent Component { get; }
 		IDesktopWindow DesktopWindow { get; }
 
 		StudyItem ActiveItem { get; }
 		StudyFilterColumn ActiveColumn { get; }
+		event EventHandler ActiveChanged;
+
+		StudyItemSelection SelectedItems { get; }
+
+		IList<StudyItem> Items { get; }
+		IStudyFilterColumnCollection Columns { get; }
+
+		bool BulkOperationsMode { get; set; }
+
+		bool Load(bool allowCancel, IEnumerable<string> paths, bool recursive);
+		int Load(IEnumerable<string> paths, bool recursive);
+		void Refresh();
+		void Refresh(bool force);
 	}
 
 	public abstract class StudyFilterTool : Tool<IStudyFilterToolContext>
@@ -54,19 +67,29 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		public const string DefaultToolbarActionSite = "studyfilter-toolbar";
 		public const string DefaultContextMenuActionSite = "studyfilter-context";
 
-		protected StudyFilterComponent Component
-		{
-			get { return base.Context.Component; }
-		}
-
 		protected IStudyFilterColumnCollection Columns
 		{
-			get { return base.Context.Component.Columns; }
+			get { return base.Context.Columns; }
 		}
 
-		protected StudyItemSelection Selection
+		protected IList<StudyItem> Items
 		{
-			get { return base.Context.Component.Selection; }
+			get { return base.Context.Items; }
+		}
+
+		protected StudyItemSelection SelectedItems
+		{
+			get { return base.Context.SelectedItems; }
+		}
+
+		protected StudyItem ActiveItem
+		{
+			get { return base.Context.ActiveItem; }
+		}
+
+		protected StudyFilterColumn ActiveColumn
+		{
+			get { return base.Context.ActiveColumn; }
 		}
 
 		protected IDesktopWindow DesktopWindow
@@ -77,12 +100,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		public override void Initialize()
 		{
 			base.Initialize();
-			this.Selection.SelectionChanged += SelectionChangedEventHandler;
+			this.SelectedItems.SelectionChanged += SelectionChangedEventHandler;
+			this.Context.ActiveChanged += ActiveChangedEventHandler;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			this.Selection.SelectionChanged -= SelectionChangedEventHandler;
+			this.Context.ActiveChanged -= ActiveChangedEventHandler;
+			this.SelectedItems.SelectionChanged -= SelectionChangedEventHandler;
 			base.Dispose(disposing);
 		}
 
@@ -93,12 +118,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 		protected virtual void OnSelectionChanged()
 		{
-			this.AtLeastOneSelected = this.Selection.Count > 0;
+			this.AtLeastOneSelected = this.SelectedItems.Count > 0;
 		}
+
+		private void ActiveChangedEventHandler(object sender, EventArgs e)
+		{
+			this.OnActiveChanged();
+		}
+
+		protected virtual void OnActiveChanged() {}
 
 		private bool _atLeastOneSelected;
 
 		public event EventHandler AtLeastOneSelectedChanged;
+
+		protected virtual void OnAtLeastOneSelectedChanged()
+		{
+			EventsHelper.Fire(this.AtLeastOneSelectedChanged, this, EventArgs.Empty);
+		}
 
 		public bool AtLeastOneSelected
 		{
@@ -108,9 +145,39 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				if (_atLeastOneSelected != value)
 				{
 					_atLeastOneSelected = value;
-					EventsHelper.Fire(this.AtLeastOneSelectedChanged, this, EventArgs.Empty);
+					this.OnAtLeastOneSelectedChanged();
 				}
 			}
+		}
+
+		protected void RefreshTable()
+		{
+			this.Context.Refresh();
+		}
+
+		protected void RefreshTable(bool forceRefresh)
+		{
+			this.Context.Refresh(forceRefresh);
+		}
+
+		protected bool Load(params string[] paths)
+		{
+			return Load((IEnumerable<string>) paths);
+		}
+
+		protected bool Load(IEnumerable<string> paths)
+		{
+			return Load(true, paths);
+		}
+
+		protected bool Load(bool allowCancel, params string[] paths)
+		{
+			return Load(allowCancel, (IEnumerable<string>) paths);
+		}
+
+		protected bool Load(bool allowCancel, IEnumerable<string> paths)
+		{
+			return this.Context.Load(allowCancel, paths, true);
 		}
 	}
 }

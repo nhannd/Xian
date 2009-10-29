@@ -29,37 +29,21 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.Explorer.Local;
+using ClearCanvas.ImageViewer.Services.Tools;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenInStudyFilters", "Open")]
-	[Tooltip("Open", "TooltipOpenInStudyFilters")]
-	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
-	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
-	public class LocalExplorerLaunchStudyFiltersTool : Tool<ILocalImageExplorerToolContext>
+	[MenuAction("import", DefaultContextMenuActionSite + "/MenuImportToLocalDataStore", "Import")]
+	[Tooltip("import", "TooltipImportToLocalDataStore")]
+	[ViewerActionPermission("import", Services.AuthorityTokens.Study.Import)]
+	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
+	public class DataStoreImportTool : LocalExplorerStudyFilterToolProxy<DicomFileImportTool>
 	{
-		public void Open()
+		public void Import()
 		{
-			List<string> paths = new List<string>();
-			foreach (string path in base.Context.SelectedPaths)
-				paths.Add(path);
-
-			StudyFilterComponent component = new StudyFilterComponent();
-			component.BulkOperationsMode = true;
-
-			if (StudyFilterComponentLoadHelper.Load(component, base.Context.DesktopWindow, true, paths))
-			{
-				component.Refresh(true);
-				base.Context.DesktopWindow.Workspaces.AddNew(component, SR.StudyFilters);
-			}
-
-			component.BulkOperationsMode = false;
+			base.BaseTool.Import();
 		}
 	}
 }

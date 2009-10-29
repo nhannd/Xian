@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -33,30 +33,33 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Explorer.Local;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	[ButtonAction("removeItemsContext", DefaultContextMenuActionSite + "/MenuRemoveItems", "RemoveItems")]
-	[VisibleStateObserver("removeItemsContext", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
-	[IconSet("removeItemsContext", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
-	//
-	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
-	public class RemoveItemsTool : StudyFilterTool
+	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenInStudyFilters", "Open")]
+	[Tooltip("Open", "TooltipOpenInStudyFilters")]
+	[IconSet("Open", IconScheme.Colour, "Icons.StudyFilterToolSmall.png", "Icons.StudyFilterToolMedium.png", "Icons.StudyFilterToolLarge.png")]
+	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
+	public class LaunchStudyFiltersLocalExplorerTool : Tool<ILocalImageExplorerToolContext>
 	{
-		public void RemoveItems()
+		public void Open()
 		{
-			List<StudyItem> selected = new List<StudyItem>(base.SelectedItems);
-			base.Context.BulkOperationsMode = selected.Count > 50;
-			try
+			List<string> paths = new List<string>();
+			foreach (string path in base.Context.SelectedPaths)
+				paths.Add(path);
+
+			StudyFilterComponent component = new StudyFilterComponent();
+			component.BulkOperationsMode = true;
+
+			if (component.Load(base.Context.DesktopWindow, true, paths))
 			{
-				foreach (StudyItem item in selected)
-					base.Items.Remove(item);
-				base.RefreshTable();
+				component.Refresh(true);
+				base.Context.DesktopWindow.Workspaces.AddNew(component, SR.TitleStudyFilters);
 			}
-			finally
-			{
-				base.Context.BulkOperationsMode = false;
-			}
+
+			component.BulkOperationsMode = false;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,32 +30,78 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Explorer.Local;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.BaseTools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	[ButtonAction("removeItemsContext", DefaultContextMenuActionSite + "/MenuRemoveItems", "RemoveItems")]
-	[VisibleStateObserver("removeItemsContext", "AtLeastOneSelected", "AtLeastOneSelectedChanged")]
-	[IconSet("removeItemsContext", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
-	//
-	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
-	public class RemoveItemsTool : StudyFilterTool
+	public abstract class LocalExplorerStudyFilterToolProxy<T> : StudyFilterTool
+		where T : ToolBase, new()
 	{
-		public void RemoveItems()
+		private T _baseTool;
+
+		protected LocalExplorerStudyFilterToolProxy()
 		{
-			List<StudyItem> selected = new List<StudyItem>(base.SelectedItems);
-			base.Context.BulkOperationsMode = selected.Count > 50;
-			try
+			_baseTool = new T();
+		}
+
+		protected T BaseTool
+		{
+			get { return _baseTool; }
+		}
+
+		protected IActionSet BaseActions
+		{
+			get { return _baseTool.Actions; }
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+			_baseTool.SetContext(new ToolContextProxy(this));
+			_baseTool.Initialize();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && _baseTool != null)
 			{
-				foreach (StudyItem item in selected)
-					base.Items.Remove(item);
-				base.RefreshTable();
+				_baseTool.Dispose();
+				_baseTool = null;
 			}
-			finally
+			base.Dispose(disposing);
+		}
+
+		private class ToolContextProxy : ILocalImageExplorerToolContext
+		{
+			private readonly LocalExplorerStudyFilterToolProxy<T> _owner;
+			private ClickHandlerDelegate _defaultActionHandler;
+
+			public ToolContextProxy(LocalExplorerStudyFilterToolProxy<T> owner)
 			{
-				base.Context.BulkOperationsMode = false;
+				_owner = owner;
+			}
+
+			public IEnumerable<string> SelectedPaths
+			{
+				get
+				{
+					foreach (StudyItem item in _owner.SelectedItems)
+						yield return item.File.FullName;
+				}
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _owner.Context.DesktopWindow; }
+			}
+
+			public ClickHandlerDelegate DefaultActionHandler
+			{
+				get { return _defaultActionHandler; }
+				set { _defaultActionHandler = value; }
 			}
 		}
 	}
