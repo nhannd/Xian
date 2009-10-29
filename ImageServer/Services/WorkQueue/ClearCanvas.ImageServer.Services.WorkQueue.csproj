@@ -65,8 +65,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DeleteStudy\IDeleteStudyProcessorExtension.cs" />
+    <Compile Include="ProcessDuplicate\DuplicateSopUpdateCommand.cs" />
     <Compile Include="ProcessDuplicate\ProcessDuplicateItemProcessor.cs" />
     <Compile Include="ProcessDuplicate\DuplicateProcessFactoryExtension.cs" />
+    <Compile Include="ProcessDuplicate\ProcessReplacedSOPInstanceCommand.cs" />
+    <Compile Include="ProcessDuplicate\RemoveInstanceFromStudyXmlCommand.cs" />
+    <Compile Include="ProcessDuplicate\UpdateInstanceCountCommand.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
     <Compile Include="ReconcileStudyPostProcessing\ReconcilePostProcessingProcessor.cs" />

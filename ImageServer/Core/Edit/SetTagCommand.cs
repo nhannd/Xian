@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Core.Edit
         {
             UpdateEntry.TagPath = new DicomTagPath {Tag = attribute.Tag};
             UpdateEntry.Value = newValue;
-            UpdateEntry.OriginalValue = attribute.ToString(); 
+            UpdateEntry.OriginalValue = String.Empty;
         }
 
 

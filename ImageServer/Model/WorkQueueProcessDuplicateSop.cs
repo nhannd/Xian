@@ -59,20 +59,20 @@ namespace ClearCanvas.ImageServer.Model
 
         public WorkQueueProcessDuplicateSop(WorkQueue workQueue)
         {
-            this.SetKey(workQueue.GetKey());
-            this.Data = workQueue.Data;
-            this.ExpirationTime = workQueue.ExpirationTime;
-            this.FailureCount = workQueue.FailureCount;
-            this.FailureDescription = workQueue.FailureDescription;
-            this.InsertTime = workQueue.InsertTime;
-            this.ProcessorID = workQueue.ProcessorID;
-            this.ScheduledTime = workQueue.ScheduledTime;
-            this.ServerPartitionKey = workQueue.ServerPartitionKey;
-            this.StudyHistoryKey = workQueue.StudyHistoryKey;
-            this.StudyStorageKey = workQueue.StudyStorageKey;
-            this.WorkQueuePriorityEnum = workQueue.WorkQueuePriorityEnum;
-            this.WorkQueueStatusEnum = workQueue.WorkQueueStatusEnum;
-            this.WorkQueueTypeEnum = workQueue.WorkQueueTypeEnum;
+            SetKey(workQueue.GetKey());
+            Data = workQueue.Data;
+            ExpirationTime = workQueue.ExpirationTime;
+            FailureCount = workQueue.FailureCount;
+            FailureDescription = workQueue.FailureDescription;
+            InsertTime = workQueue.InsertTime;
+            ProcessorID = workQueue.ProcessorID;
+            ScheduledTime = workQueue.ScheduledTime;
+            ServerPartitionKey = workQueue.ServerPartitionKey;
+            StudyHistoryKey = workQueue.StudyHistoryKey;
+            StudyStorageKey = workQueue.StudyStorageKey;
+            WorkQueuePriorityEnum = workQueue.WorkQueuePriorityEnum;
+            WorkQueueStatusEnum = workQueue.WorkQueueStatusEnum;
+            WorkQueueTypeEnum = workQueue.WorkQueueTypeEnum;
 
             _queueData = (ProcessDuplicateQueueEntryQueueData)_serializer.Deserialize(new XmlNodeReader(workQueue.Data.DocumentElement));
 

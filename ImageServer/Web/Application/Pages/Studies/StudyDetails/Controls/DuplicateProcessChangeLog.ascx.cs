@@ -30,15 +30,6 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
@@ -103,24 +94,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 {
                     return "N/A";
                 }
-                else
+
+                switch (ChangeLog.Action)
                 {
-                    switch (ChangeLog.Action)
-                    {
-                        case ProcessDuplicateAction.Delete:
-                            return "Delete duplicate SOPs.";
-                        case ProcessDuplicateAction.OverwriteAsIs:
-                            return "Accept As Is.";
-                        case ProcessDuplicateAction.OverwriteUseDuplicates:
-                            return "Accept + Update Study";
+                    case ProcessDuplicateAction.Delete:
+                        return "Delete Duplicates.";
+                    case ProcessDuplicateAction.OverwriteAsIs:
+                        return "Accept Duplicates As Is.";
+                    case ProcessDuplicateAction.OverwriteUseDuplicates:
+                        return "Accept Duplicates and Update Existing Study";
 
-                        case ProcessDuplicateAction.OverwriteUseExisting:
-                            return "Accept Modified.";
+                    case ProcessDuplicateAction.OverwriteUseExisting:
+                        return "Accept Modified Duplicates.";
 
-                        default:
-                            return ChangeLog.Action.ToString();
+                    default:
+                        return ChangeLog.Action.ToString();
 
-                    }
                 }
             }
         }

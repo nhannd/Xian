@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,51 +29,58 @@
 
 #endregion
 
-using System.Xml.Serialization;
+
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Edit;
 
-namespace ClearCanvas.ImageServer.Core.Data
+namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
-	/// <summary>
-	/// Represents the serializable detailed information of an image set.
-	/// </summary>
-	[XmlRoot("Details")]
-	public class ImageSetDetails
-	{
-		#region Constructors
+    internal class DuplicateSopUpdateCommand : ServerCommand
+    {
+        #region Private Members
 
-		public ImageSetDetails()
-		{
-		    StudyInfo = new StudyInformation();
-		}
+        private readonly List<BaseImageLevelUpdateCommand> _commands;
+        private readonly DicomFile _file;
 
-		public ImageSetDetails(IDicomAttributeProvider attributeProvider)
-		{
-			StudyInfo = new StudyInformation(attributeProvider);
-		}
+        #endregion
 
-		#endregion
+        #region Constructors
 
-		#region Public Properties
+        public DuplicateSopUpdateCommand(DicomFile file, List<BaseImageLevelUpdateCommand> commands)
+            :base("Duplicate SOP demographic update command", true)
+        {
+            _file = file;
+            _commands = commands;
+        }
 
-		public int SopInstanceCount { get; set; }
+        #endregion
 
-		/// <summary>
-		/// Gets or sets the <see cref="StudyInformation"/> of the image set.
-		/// </summary>
-		public StudyInformation StudyInfo { get; set; }
+        #region Overridden Protected Methods
 
-		#endregion
+        protected override void OnExecute(ServerCommandProcessor theProcessor)
+        {
+            if (_commands!=null)
+            {
+                foreach (BaseImageLevelUpdateCommand command in _commands)
+                {
+                    if (!command.Apply(_file))
+                        throw new ApplicationException(
+                            String.Format("Unable to update the duplicate sop. Command={0}", command));
+                }
+            }
+            
+        }
 
-		#region Public Methods
-		/// <summary>
-		/// Inserts a <see cref="DicomMessageBase"/> into the set.
-		/// </summary>
-		/// <param name="message"></param>
-		public void InsertFile(DicomMessageBase message)
-		{
-			StudyInfo.Add(message);
-		}
-		#endregion
-	}
+        
+        protected override void OnUndo()
+        {
+
+        }
+
+        #endregion
+
+    }
 }

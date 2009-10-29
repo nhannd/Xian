@@ -602,7 +602,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get; set;
         }
 
-    	/// <summary>
+        
+        /// <summary>
 		/// Set a status of <see cref="WorkQueue"/> item after batch processing has been completed.
 		/// </summary>
 		/// <remarks>

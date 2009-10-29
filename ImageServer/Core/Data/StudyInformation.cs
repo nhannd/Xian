@@ -44,8 +44,8 @@ namespace ClearCanvas.ImageServer.Core.Data
 	{
 		#region Private Fields
 
-		private PatientInformation _patientInfo = new PatientInformation();
-		private List<SeriesInformation> _series= new List<SeriesInformation> ();
+		private PatientInformation _patientInfo;
+		private List<SeriesInformation> _series;
 
 		#endregion
 
@@ -132,6 +132,14 @@ namespace ClearCanvas.ImageServer.Core.Data
 		/// <param name="message"></param>
 		public void Add(DicomMessageBase message)
 		{
+            if (PatientInfo==null)
+            {
+                PatientInfo = new PatientInformation(message.DataSet);
+            }
+
+            if (Series == null)
+                Series = new List<SeriesInformation>();
+
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].ToString();
 			SeriesInformation theSeries = Series.Find(ser => ser.SeriesInstanceUid == seriesInstanceUid);
 			if (theSeries==null)
@@ -147,6 +155,9 @@ namespace ClearCanvas.ImageServer.Core.Data
 
 		public void Add(SeriesInformation series)
 		{
+            if (Series == null)
+                Series = new List<SeriesInformation>();
+
 			Series.Add(series);
 		}
 
