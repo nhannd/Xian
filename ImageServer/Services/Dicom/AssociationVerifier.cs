@@ -57,9 +57,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             bool isNew;
             Device device = DeviceManager.LookupDevice(context.Partition, assocParms, out isNew);
 
-            if (device==null)
+			if (device==null)
             {
-                reason = DicomRejectReason.CallingAENotRecognized;
+				if (context.Partition.AcceptAnyDevice)
+				{
+					reason = DicomRejectReason.NoReasonGiven;
+					result = DicomRejectResult.Permanent;
+					return true;
+				}
+
+            	reason = DicomRejectReason.CallingAENotRecognized;
                 result = DicomRejectResult.Permanent;
                 return false;
             }

@@ -119,11 +119,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         protected override DicomPresContextResult OnVerifyAssociation(AssociationParameters association, byte pcid)
         {
+			if (Device == null)
+				return DicomPresContextResult.Accept;
 
             if (!Device.AllowStorage)
             {
                 return DicomPresContextResult.RejectUser;
             }
+
 			if (Device.AcceptKOPR)
 			{
 				DicomPresContext context = association.GetPresentationContext(pcid);
