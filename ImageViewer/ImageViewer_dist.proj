@@ -181,6 +181,7 @@
 
   <ItemGroup>
     <StudyFiltersFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.dll" />
+    <StudyFiltersFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools.dll" />
     <StudyFiltersFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.dll" />
   </ItemGroup>
 
