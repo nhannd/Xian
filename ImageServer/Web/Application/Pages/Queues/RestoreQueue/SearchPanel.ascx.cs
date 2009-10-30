@@ -163,12 +163,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ScheduleDate.Text = Request[ScheduleDate.UniqueID];
-            if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                ScheduleDateCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleDateCalendarExtender.Format, null);
-            else
-                ScheduleDateCalendarExtender.SelectedDate = null;
-
             IList<RestoreQueueStatusEnum> statusItems = RestoreQueueStatusEnum.GetAll();
 
             int prevSelectedIndex = StatusFilter.SelectedIndex;

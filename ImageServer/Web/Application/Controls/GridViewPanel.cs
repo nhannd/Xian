@@ -60,7 +60,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             e.Cancel = true;
         }
-
-
     }
 }

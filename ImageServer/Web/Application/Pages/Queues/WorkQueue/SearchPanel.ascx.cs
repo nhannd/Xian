@@ -220,20 +220,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Setup the calendar for schedule date
-            if (Page.IsPostBack)
-            {
-                ScheduleDate.Text = Request[ScheduleDate.UniqueID];
-                if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                    ScheduleCalendarExtender.SelectedDate =
-                        DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
-                else
-                    ScheduleCalendarExtender.SelectedDate = null;
-
-
-
-            } 
-
             // re-populate the drop down lists and restore their states
             IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
             IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();

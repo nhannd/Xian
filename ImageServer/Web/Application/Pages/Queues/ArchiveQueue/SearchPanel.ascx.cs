@@ -177,13 +177,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ScheduleDate.Text = Request[ScheduleDate.UniqueID];
-            if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                ScheduleDateCalendarExtender.SelectedDate =
-                    DateTime.ParseExact(ScheduleDate.Text, ScheduleDateCalendarExtender.Format, null);
-            else
-                ScheduleDateCalendarExtender.SelectedDate = null;
-
             IList<ArchiveQueueStatusEnum> statusItems = ArchiveQueueStatusEnum.GetAll();
 
             int prevSelectedIndex = StatusFilter.SelectedIndex;

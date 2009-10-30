@@ -49,24 +49,18 @@
     function GetSecondsLeft()
     {
         var expiryTime = GetExpiryTime();
-        	    
-        if (expiryTime==null)
-        {
-            return 0;
-        }
-        
-        var localNow = new Date();
-        var localTime = localNow.getTime();
-        var localOffset = localNow.getTimezoneOffset() * 60000;
-        
-        var utc = localTime + localOffset;
-        var utcNow = new Date(utc);
-        
-        test = new Date(expiryTime);
-        test.setHours(test.getHours() - test.getTimezoneOffset()/60);
-               
+               	    
+        if (expiryTime==null) return 0;
+
+        var utcNow = new Date();
+        utcNow.setMinutes(utcNow.getMinutes() + utcNow.getTimezoneOffset());
+                                             
         timeLeft = Math.round( (expiryTime.getTime() - utcNow.getTime()) / 1000 ) + 1;// give 1 second to ensure when we redirect, the session is really expired
-        window.status  = " [ Session Expiry Time: " + test.toLocaleString() + " ]";
+
+        var displayTimeLeft = new Date();
+        displayTimeLeft.setSeconds(displayTimeLeft.getSeconds() + timeLeft);
+        window.status  = " [ Session Expiry Time: " + displayTimeLeft.toLocaleString() + " ]";
+
         return timeLeft;
     }
     
@@ -75,7 +69,6 @@
        
         var name = "ImageServer." + loginId + "=";
         var ca = document.cookie.split(';');
-        
         
         for(var i=0;i < ca.length;i++) {
 		    var c = ca[i];
@@ -92,7 +85,7 @@
         var dateTime = value.split(' ');
         var date = dateTime[0];
         var time = dateTime[1];
-        
+                
         date = date.split('-');
         time = time.split(':');
         

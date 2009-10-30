@@ -32,7 +32,6 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.ImageServer.Web.Common;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
@@ -45,8 +44,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         #region Private Members
 
         private GridView _target;
-        private string _itemName;
-        private string _puralItemName;
         private ImageServerConstants.GridViewPagerPosition _position;
         private string _targetUpdatePanelID;
 
@@ -77,20 +74,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// <summary>
         /// Sets/Retrieve the name of the item in the list.
         /// </summary>
-        public string ItemName
-        {
-            get { return _itemName; }
-            set { _itemName = value; }
-        }
+        public string ItemName { get; set; }
 
         /// <summary>
         /// Sets/Retrieves the name for the more than one items in the list.
         /// </summary>
-        public string PluralItemName
-        {
-            get { return _puralItemName; }
-            set { _puralItemName = value; }
-        }
+        public string PluralItemName { get; set; }
 
         public int ItemCount
         {
@@ -325,8 +314,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             ViewState[ImageServerConstants.PagerItemCount] = null;
         }
-
-        
 
         #endregion Public methods
     }

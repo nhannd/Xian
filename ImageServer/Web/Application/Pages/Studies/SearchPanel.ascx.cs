@@ -265,21 +265,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             SetupChildControls();           
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            ToStudyDate.Text = Request[ToStudyDate.UniqueID];
-            FromStudyDate.Text = Request[FromStudyDate.UniqueID];
-            if (!String.IsNullOrEmpty(ToStudyDate.Text))
-                ToStudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(ToStudyDate.Text, ToStudyDateCalendarExtender.Format, null);
-            else
-                ToStudyDateCalendarExtender.SelectedDate = null;
-
-            if (!String.IsNullOrEmpty(FromStudyDate.Text))
-                FromStudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(FromStudyDate.Text, FromStudyDateCalendarExtender.Format, null);
-            else
-                FromStudyDateCalendarExtender.SelectedDate = null;
-        }
-
         public void Refresh()
         {
             if(!StudyListGridView.IsDataSourceSet()) StudyListGridView.SetDataSource();
