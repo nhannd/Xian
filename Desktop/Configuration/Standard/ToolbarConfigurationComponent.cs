@@ -77,13 +77,13 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			base.Start();
 
 			_wrap = ToolStripSettings.Default.WrapLongToolstrips;
-			_iconSize = ToolStripSettings.Default.ToolStripSize;
+			_iconSize = ToolStripSettings.Default.IconSize;
 		}
 
 		public override void Save()
 		{
 			ToolStripSettings.Default.WrapLongToolstrips = _wrap;
-			ToolStripSettings.Default.ToolStripSize = _iconSize;
+			ToolStripSettings.Default.IconSize = _iconSize;
 			ToolStripSettings.Default.Save();
 		}
 	}

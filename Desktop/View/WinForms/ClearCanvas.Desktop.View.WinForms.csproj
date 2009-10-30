@@ -207,6 +207,7 @@
       <DependentUpon>TrackBarUpDown.cs</DependentUpon>
     </Compile>
     <Compile Include="Win32Constants.cs" />
+    <Compile Include="WinFormsActionView.cs" />
     <Compile Include="WorkspaceView.cs" />
     <Compile Include="ApplicationComponentUserControl.cs">
       <SubType>UserControl</SubType>

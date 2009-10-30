@@ -31,14 +31,14 @@
 
 namespace ClearCanvas.Desktop.Actions
 {
-    /// <summary>
+	/// <summary>
     /// Defines the interface for a view onto an action.
     /// </summary>
     public interface IActionView : IView
     {
         /// <summary>
-        /// Called by the framework to set the action that the view looks at.
+        /// Gets the action view's context; the property is set by the framework.
         /// </summary>
-        void SetAction(IAction action);
+		IActionViewContext Context { get; set; }
     }
 }

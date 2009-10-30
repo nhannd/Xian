@@ -46,10 +46,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private EventHandler _actionLabelChangedHandler;
     	private EventHandler _actionIconSetChangedHandler;
 
+		private IconSize _iconSize;
+
         public ActiveMenuItem(IClickAction action)
+			: this(action, Desktop.IconSize.Small)
+        {
+        }
+
+        public ActiveMenuItem(IClickAction action, IconSize iconSize)
         {
             _action = action;
-
+			_iconSize = iconSize;
             _actionEnabledChangedHandler = new EventHandler(OnActionEnabledChanged);
             _actionCheckedChangedHandler = new EventHandler(OnActionCheckedChanged);
 			_actionVisibleChangedHandler = new EventHandler(OnActionVisibleChanged);
@@ -83,6 +90,19 @@ namespace ClearCanvas.Desktop.View.WinForms
                 Platform.Log(LogLevel.Error, e);
             }
         }
+
+		public IconSize IconSize
+		{
+			get { return _iconSize; }
+			set
+			{
+				if (_iconSize != value)
+				{
+					_iconSize = value;
+					UpdateIcon();
+				}
+			}
+		}
 
         private void OnActionCheckedChanged(object sender, EventArgs e)
         {
@@ -147,7 +167,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				try
 				{
 					Image oldImage = this.Image;
-					this.Image = IconFactory.CreateIcon(_action.IconSet.SmallIcon, _action.ResourceResolver);
+					this.Image = IconFactory.CreateIcon(_action.IconSet[_iconSize], _action.ResourceResolver);
 
 					if (oldImage != null)
 						oldImage.Dispose();

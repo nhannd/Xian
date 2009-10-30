@@ -84,6 +84,7 @@
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
+    <Compile Include="Actions\ActionViewContext.cs" />
     <Compile Include="Actions\DropDownActionAttribute.cs" />
     <Compile Include="Actions\CrudActionModel.cs" />
     <Compile Include="Actions\DropDownButtonAction.cs" />

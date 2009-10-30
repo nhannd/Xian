@@ -5,7 +5,7 @@
     <Setting Name="WrapLongToolstrips" Description="Controls if tool strips longer than the window size should be wrapped." Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ToolStripSize" Description="Controls the size of toolstrip buttons." Type="ClearCanvas.Desktop.IconSize" Scope="User">
+    <Setting Name="IconSize" Description="Controls the size of toolstrip buttons." Type="ClearCanvas.Desktop.IconSize" Scope="User">
       <Value Profile="(Default)">Large</Value>
     </Setting>
   </Settings>

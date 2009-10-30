@@ -46,12 +46,12 @@ namespace ClearCanvas.Desktop {
         [global::System.Configuration.SettingsDescriptionAttribute("Controls the size of toolstrip buttons.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Large")]
-        public global::ClearCanvas.Desktop.IconSize ToolStripSize {
+        public global::ClearCanvas.Desktop.IconSize IconSize {
             get {
-                return ((global::ClearCanvas.Desktop.IconSize)(this["ToolStripSize"]));
+                return ((global::ClearCanvas.Desktop.IconSize)(this["IconSize"]));
             }
             set {
-                this["ToolStripSize"] = value;
+                this["IconSize"] = value;
             }
         }
     }

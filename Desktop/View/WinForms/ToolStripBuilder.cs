@@ -31,14 +31,36 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public static class ToolStripBuilder
+	public static class ToolStripBuilder
 	{
+		public class ItemTag
+		{
+			private readonly ActionModelNode _node;
+			private readonly IActionView _view;
+
+			public ItemTag(ActionModelNode node, IActionView view)
+			{
+				_node = node;
+				_view = view;
+			}
+
+			public ActionModelNode Node
+			{
+				get { return _node; }
+			}
+
+			public IActionView View
+			{
+				get { return _view; }	
+			}
+		}
+
 		#region ToolStripKind
 
 		public enum ToolStripKind
@@ -107,6 +129,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#endregion
 
 		#region Public API
+
+		public static void ChangeIconSize(ToolStrip toolStrip, IconSize iconSize)
+		{
+			toolStrip.SuspendLayout();
+			toolStrip.ImageScalingSize = StandardIconSizes.GetSize(iconSize);
+			ChangeIconSize(toolStrip.Items, iconSize);
+			toolStrip.ResumeLayout(false);
+			toolStrip.PerformLayout();
+		}
 
 		/// <summary>
 		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the default style and size.
@@ -195,8 +226,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (node is ActionNode)
                 {
                     IAction action = ((ActionNode)node).Action;
-                    ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar, iconSize);
-                    button.Tag = node;
+					IActionView view = CreateActionView(ToolStripKind.Toolbar, action, iconSize);
+					ToolStripItem button = (ToolStripItem)view.GuiElement;
+                    button.Tag = new ItemTag(node, view);
 
                     // By default, only display the image on the button
                     button.DisplayStyle = builderStyle.ToolStripItemDisplayStyle;
@@ -208,7 +240,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				else if(node is SeparatorNode)
 				{
 					ToolStripSeparator separator = new ToolStripSeparator();
-					separator.Tag = node;
+					separator.Tag = new ItemTag(node, null);
 					parentItemCollection.Add(separator);
 				}
                 else
@@ -241,9 +273,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // this is a leaf node (terminal menu item)
                 	ActionNode actionNode = (ActionNode) node;
 					IAction action = actionNode.Action;
-                    toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu, IconSize.Medium);
-
-                    toolstripItem.Tag = node;
+					IActionView view = CreateActionView(ToolStripKind.Menu, action, IconSize.Medium);
+					toolstripItem = (ToolStripItem)view.GuiElement;
+					toolstripItem.Tag = new ItemTag(node, view);
                     parentItemCollection.Add(toolstripItem);
 
                     // Determine whether we should check the parent menu items too
@@ -255,7 +287,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 				else if (node is SeparatorNode)
 				{
 					toolstripItem = new ToolStripSeparator();
-					toolstripItem.Tag = node;
+					toolstripItem.Tag = new ItemTag(node, null);
 					parentItemCollection.Add(toolstripItem);
 				}
 				else
@@ -263,7 +295,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // this menu item has a sub menu
                     toolstripItem = new ToolStripMenuItem(node.PathSegment.LocalizedText);
 
-                    toolstripItem.Tag = node;
+					toolstripItem.Tag = new ItemTag(node, null);
                     parentItemCollection.Add(toolstripItem);
 
                     BuildMenu(((ToolStripMenuItem)toolstripItem).DropDownItems, node.ChildNodes);
@@ -300,7 +332,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 // the system may have added other items to the toolstrip,
                 // so make sure we only delete our own
-                if (item.Tag is ActionModelNode)
+                if (item.Tag is ItemTag)
                 {
                     item.Dispose();
                 }
@@ -337,6 +369,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return;
 		}
 
+		private static void ChangeIconSize(ToolStripItemCollection toolStripItems, IconSize iconSize)
+		{
+			foreach (ToolStripItem toolStripItem in toolStripItems)
+			{
+				ItemTag tag = toolStripItem.Tag as ItemTag;
+				if (tag != null && tag.View != null)
+					tag.View.Context.IconSize = iconSize;
+
+				if (toolStripItem is ToolStripMenuItem)
+				{
+					ToolStripMenuItem item = (ToolStripMenuItem)toolStripItem;
+					if (item.HasDropDownItems)
+						ChangeIconSize(item.DropDownItems, iconSize);
+				}
+			}
+		}
+
 		private static List<ActionModelNode> CombineAdjacentSeparators(List<ActionModelNode> nodes)
 		{
 			// nothing to do if less than 2 items
@@ -356,8 +405,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return result;
 		}
 
-		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind, IconSize iconSize)
+		private static IActionView CreateActionView(ToolStripKind kind, IAction action, IconSize iconSize)
         {
+			IActionView view = null;
+
             // optimization: for framework-provided actions, we can just create the controls
             // directly rather than use the associated view, which is slower;
             // however, an AssociateViewAttribute should always take precedence.
@@ -368,25 +419,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 					if (action is IDropDownAction)
 					{
 						if (action is IClickAction)
-							return new DropDownButtonToolbarItem((IClickAction)action, iconSize);
-
-						return new DropDownToolbarItem((IDropDownAction)action, iconSize);
+							view = StandardWinFormsActionView.CreateDropDownButtonView();
 					}
 					else if (action is IClickAction)
-					{
-						return new ActiveToolbarButton((IClickAction)action, iconSize);
-					}
+						view = StandardWinFormsActionView.CreateToolbarButtonView();
 				}
 				else
 				{
 					if (action is IClickAction)
-						return new ActiveMenuItem((IClickAction)action);
+						view = StandardWinFormsActionView.CreateMenuActionView();
 				}
             }
+			if (view == null)
+				view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
 
-            IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
-            view.SetAction(action);
-            return (ToolStripItem)view.GuiElement;
+			view.Context = new ActionViewContext(action, iconSize);
+			return view;
 		}
 
 		#endregion

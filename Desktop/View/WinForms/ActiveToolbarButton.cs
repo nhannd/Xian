@@ -90,6 +90,19 @@ namespace ClearCanvas.Desktop.View.WinForms
             };
         }
 
+		public IconSize IconSize
+		{
+			get { return _iconSize; }
+			set
+			{
+				if (_iconSize != value)
+				{
+					_iconSize = value;
+					UpdateIcon();
+				}
+			}
+		}
+
         private void OnActionCheckedChanged(object sender, EventArgs e)
         {
             this.Checked = _action.Checked;

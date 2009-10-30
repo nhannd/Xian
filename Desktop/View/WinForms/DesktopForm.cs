@@ -76,7 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			ToolStripSettings.Default.PropertyChanged += OnToolStripSettingsPropertyChanged;
 			OnToolStripSettingsPropertyChanged(ToolStripSettings.Default, new PropertyChangedEventArgs("WrapLongToolstrips"));
-			OnToolStripSettingsPropertyChanged(ToolStripSettings.Default, new PropertyChangedEventArgs("ToolStripSize"));
+			OnToolStripSettingsPropertyChanged(ToolStripSettings.Default, new PropertyChangedEventArgs("IconSize"));
         }
 
         #region Public properties
@@ -152,15 +152,9 @@ namespace ClearCanvas.Desktop.View.WinForms
     			}
 				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
     		}
-			else if (e.PropertyName == "ToolStripSize")
+			else if (e.PropertyName == "IconSize")
 			{
-				_toolbar.ImageScalingSize = StandardIconSizes.GetSize(ToolStripSettings.Default.ToolStripSize);
-
-				// The only way, it seems, to force the toolbar to re-layout itself properly is to change the layout style and then change it back again
-				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.StackWithOverflow : ToolStripLayoutStyle.Flow;
-				_toolbar.LayoutStyle = ToolStripSettings.Default.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
-
-				BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolbar, _toolbarModel);
+				ToolStripBuilder.ChangeIconSize(_toolbar, ToolStripSettings.Default.IconSize);
 			}
     	}
 
@@ -208,7 +202,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					toolStrip.Visible = true;
 
 					if (kind == ToolStripBuilder.ToolStripKind.Toolbar)
-						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes, ToolStripBuilder.ToolStripBuilderStyle.GetDefault(), ToolStripSettings.Default.ToolStripSize);
+						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes, ToolStripBuilder.ToolStripBuilderStyle.GetDefault(), ToolStripSettings.Default.IconSize);
 					else
 						ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
 				}

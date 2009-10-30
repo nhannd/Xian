@@ -1,30 +1,28 @@
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters.Actions;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.ToolStripFilterItems
 {
 	[ExtensionOf(typeof (ListFilterMenuActionViewExtensionPoint))]
-	public class ListFilterMenuActionView : WinFormsView, IActionView
+	public class ListFilterMenuActionView : WinFormsActionView
 	{
-		private ListFilterMenuAction _action;
-		private ClickableToolStripControlHost _control;
-
-		public void SetAction(IAction component)
-		{
-			_action = (ListFilterMenuAction) component;
-		}
+		private object _guiElement;
+		
+		public ListFilterMenuActionView()
+		{}
 
 		public override object GuiElement
 		{
 			get
 			{
-				if (_control == null)
+				if (_guiElement == null)
 				{
-					_control = new ClickableToolStripControlHost(new ListFilterControl(_action));
+					_guiElement = new ClickableToolStripControlHost(
+						new ListFilterControl((ListFilterMenuAction)base.Context.Action));
 				}
-				return _control;
+
+				return _guiElement;
 			}
 		}
 	}
