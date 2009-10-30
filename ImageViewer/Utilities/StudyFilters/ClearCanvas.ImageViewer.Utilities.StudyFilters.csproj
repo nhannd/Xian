@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseTools\ClearFiltersTool.cs" />
+    <Compile Include="BaseTools\ToggleFiltersTool.cs" />
     <Compile Include="Columns\AttributeTagDicomTagColumn.cs" />
     <Compile Include="Columns\BinaryDicomTagColumn.cs" />
     <Compile Include="Columns\DateTimeDicomTagColumn.cs" />
@@ -187,6 +189,14 @@
     <EmbeddedResource Include="Icons\SaveToolLarge.png" />
     <EmbeddedResource Include="Icons\SaveToolMedium.png" />
     <EmbeddedResource Include="Icons\SaveToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ClearFiltersToolLarge.png" />
+    <EmbeddedResource Include="Icons\ClearFiltersToolMedium.png" />
+    <EmbeddedResource Include="Icons\ClearFiltersToolSmall.png" />
+    <EmbeddedResource Include="Icons\ToggleFiltersToolLarge.png" />
+    <EmbeddedResource Include="Icons\ToggleFiltersToolMedium.png" />
+    <EmbeddedResource Include="Icons\ToggleFiltersToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

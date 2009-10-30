@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.AutoFilters
 		public bool Enabled
 		{
 			get { return _enabled; }
-			set
+			private set
 			{
 				if (_enabled != value)
 				{

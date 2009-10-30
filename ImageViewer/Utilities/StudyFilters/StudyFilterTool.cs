@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 	public interface IStudyFilterToolContext : IToolContext
 	{
 		IDesktopWindow DesktopWindow { get; }
+		IStudyFilter StudyFilter { get; }
 
 		StudyItem ActiveItem { get; }
 		StudyFilterColumn ActiveColumn { get; }
@@ -95,6 +96,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		protected IDesktopWindow DesktopWindow
 		{
 			get { return base.Context.DesktopWindow; }
+		}
+
+		protected IStudyFilter StudyFilter
+		{
+			get { return base.Context.StudyFilter; }
 		}
 
 		public override void Initialize()

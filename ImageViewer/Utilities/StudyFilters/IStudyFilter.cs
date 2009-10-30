@@ -15,6 +15,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		bool IsStale { get; }
 		event EventHandler IsStaleChanged;
 
+		bool FilterPredicatesEnabled { get; set; }
+		event EventHandler FilterPredicatesEnabledChanged;
+
 		/// <summary>
 		/// Gets the collection of columns available on the Study Filter.
 		/// </summary>
@@ -42,5 +45,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		void Refresh(bool force);
 		event EventHandler FilterPredicatesChanged;
 		event EventHandler SortPredicatesChanged;
+		
 	}
 }

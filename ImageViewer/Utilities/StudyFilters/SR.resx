@@ -326,4 +326,25 @@
   <data name="MenuLaunchInViewer" xml:space="preserve">
     <value>&amp;Open in Viewer</value>
   </data>
+  <data name="MessageConfirmClearAllFilters" xml:space="preserve">
+    <value>Are you sure you want to clear all filters?</value>
+  </data>
+  <data name="ToolbarClearFilters" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="ToolbarFiltersAreOff" xml:space="preserve">
+    <value>Filters are OFF</value>
+  </data>
+  <data name="ToolbarFiltersAreOn" xml:space="preserve">
+    <value>Filters are ON</value>
+  </data>
+  <data name="TooltipClearFilters" xml:space="preserve">
+    <value>Clear all filters from all columns</value>
+  </data>
+  <data name="TooltipFiltersAreOff" xml:space="preserve">
+    <value>The list is currently unfiltered. Click here to re-enable filters.</value>
+  </data>
+  <data name="TooltipFiltersAreOn" xml:space="preserve">
+    <value>The list is currently filtered. Click here to temporarily disable filters.</value>
+  </data>
 </root>

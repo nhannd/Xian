@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		private event EventHandler _filterPredicatesChanged;
 		private event EventHandler _sortPredicatesChanged;
 		private event EventHandler _isStaleChanged;
+		private event EventHandler _filterPredicatesEnabledChanged;
 
 		private readonly Table<StudyItem> _table;
 		private readonly StudyFilterColumnCollection _columns;
@@ -333,6 +334,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				get { return _component.Host.DesktopWindow; }
 			}
 
+			public IStudyFilter StudyFilter
+			{
+				get { return _component; }
+			}
+
 			public StudyItem ActiveItem
 			{
 				get { return _activeItem; }
@@ -490,13 +496,32 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			remove { _filterPredicatesChanged -= value; }
 		}
 
+		public bool FilterPredicatesEnabled
+		{
+			get { return _filterPredicate.Enabled; }
+			set { _filterPredicate.Enabled = value; }
+		}
+
+		public event EventHandler FilterPredicatesEnabledChanged
+		{
+			add { _filterPredicatesEnabledChanged += value; }
+			remove { _filterPredicatesEnabledChanged -= value; }
+		}
+
+		protected virtual void OnFilterPredicatesEnabledChanged(EventArgs e)
+		{
+			EventsHelper.Fire(_filterPredicatesEnabledChanged, this, e);
+		}
+
 		private class FilterPredicateRoot
 		{
 			private readonly AndFilterPredicate _predicate = new AndFilterPredicate();
 			private readonly StudyFilterComponent _owner;
+			private bool _enabled;
 
 			public FilterPredicateRoot(StudyFilterComponent owner)
 			{
+				_enabled = true;
 				_owner = owner;
 				_predicate.Changed += Predicates_Changed;
 			}
@@ -506,16 +531,38 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				get { return _predicate.Predicates; }
 			}
 
+			public bool Enabled
+			{
+				get { return _enabled; }
+				set
+				{
+					if (_enabled != value)
+					{
+						_enabled = value;
+						if (_predicate.Predicates.Count > 0)
+							_owner.IsStale = true;
+						_owner.OnFilterPredicatesEnabledChanged(EventArgs.Empty);
+					}
+				}
+			}
+
 			/// <summary>
 			/// Filters a list. O{n}
 			/// </summary>
 			public IList<StudyItem> Filter(IList<StudyItem> list)
 			{
 				IList<StudyItem> filtered = new List<StudyItem>();
-				foreach (StudyItem item in list)
+				if (_enabled)
 				{
-					if (_predicate.Evaluate(item))
-						filtered.Add(item);
+					foreach (StudyItem item in list)
+					{
+						if (_predicate.Evaluate(item))
+							filtered.Add(item);
+					}
+				}
+				else
+				{
+					((List<StudyItem>) filtered).AddRange(list);
 				}
 				return filtered;
 			}
@@ -525,12 +572,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			/// </summary>
 			public bool Test(StudyItem item)
 			{
-				return _predicate.Evaluate(item);
+				return !_enabled || _predicate.Evaluate(item);
 			}
 
 			private void Predicates_Changed(object sender, EventArgs e)
 			{
-				_owner.IsStale = true;
+				_owner.IsStale = _enabled;
 				EventsHelper.Fire(_owner._filterPredicatesChanged, _owner, EventArgs.Empty);
 			}
 		}

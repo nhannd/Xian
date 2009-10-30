@@ -502,6 +502,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to clear all filters?.
+        /// </summary>
+        internal static string MessageConfirmClearAllFilters {
+            get {
+                return ResourceManager.GetString("MessageConfirmClearAllFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid DICOM file: {0}.
         /// </summary>
         internal static string MessageDicomException {
@@ -619,6 +628,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear Filters.
+        /// </summary>
+        internal static string ToolbarClearFilters {
+            get {
+                return ResourceManager.GetString("ToolbarClearFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Filters.
         /// </summary>
         internal static string ToolbarEditFilters {
@@ -646,6 +664,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filters are OFF.
+        /// </summary>
+        internal static string ToolbarFiltersAreOff {
+            get {
+                return ResourceManager.GetString("ToolbarFiltersAreOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filters are ON.
+        /// </summary>
+        internal static string ToolbarFiltersAreOn {
+            get {
+                return ResourceManager.GetString("ToolbarFiltersAreOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Launch in Viewer.
         /// </summary>
         internal static string ToolbarLaunchInViewer {
@@ -660,6 +696,33 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         internal static string ToolbarRemoveItems {
             get {
                 return ResourceManager.GetString("ToolbarRemoveItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear all filters from all columns.
+        /// </summary>
+        internal static string TooltipClearFilters {
+            get {
+                return ResourceManager.GetString("TooltipClearFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The list is currently unfiltered. Click here to re-enable filters..
+        /// </summary>
+        internal static string TooltipFiltersAreOff {
+            get {
+                return ResourceManager.GetString("TooltipFiltersAreOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The list is currently filtered. Click here to temporarily disable filters..
+        /// </summary>
+        internal static string TooltipFiltersAreOn {
+            get {
+                return ResourceManager.GetString("TooltipFiltersAreOn", resourceCulture);
             }
         }
         
