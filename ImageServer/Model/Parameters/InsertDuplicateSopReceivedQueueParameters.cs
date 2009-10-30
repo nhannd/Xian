@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 
@@ -92,7 +90,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["StudyData"] = new ProcedureParameter<XmlDocument>("StudyData", value); }
         }
-        public XmlDocument QueueData
+		public XmlDocument Details
         {
             set { SubCriteria["Details"] = new ProcedureParameter<XmlDocument>("Details", value); }
         }

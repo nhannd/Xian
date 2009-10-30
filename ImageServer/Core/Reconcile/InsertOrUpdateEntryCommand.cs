@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             
 			ImageSetDescriptor imageSet = new ImageSetDescriptor(_file.DataSet);
 			parms.StudyData = XmlUtils.SerializeAsXmlDoc(imageSet);
-            parms.QueueData = XmlUtils.SerializeAsXmlDoc(queueData);
+            parms.Details = XmlUtils.SerializeAsXmlDoc(queueData);
 		    parms.UidRelativePath = _relativePath;
 			IList<DuplicateSopReceivedQueue> entries = broker.Find(parms);
 

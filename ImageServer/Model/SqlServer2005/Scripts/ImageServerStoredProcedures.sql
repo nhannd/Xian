@@ -3607,7 +3607,7 @@ CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 	@SeriesDescription nvarchar(64),
 	@SopInstanceUid varchar(64),
 	@StudyData xml,
-	@QueueData xml=null,
+	@Details xml=null,
 	@GroupID varchar(256) = null,
 	@UidRelativePath varchar(256)=null,
 	@StudyIntegrityReasonEnum smallint
@@ -3656,7 +3656,7 @@ BEGIN
 		SET @Guid=newid()
 
 		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[Details],[StudyIntegrityReasonEnum],[GroupID])
-		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@StudyIntegrityReasonEnum,@GroupID)
+		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@Details,@StudyIntegrityReasonEnum,@GroupID)
 	END
 
 
@@ -3870,7 +3870,7 @@ CREATE PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue]
 	@SeriesDescription nvarchar(64),
 	@SopInstanceUid varchar(64),
 	@StudyData xml,
-	@QueueData xml,
+	@Details xml,
     @GroupId varchar(50),
 	@UidRelativePath varchar(256)
 AS
@@ -3907,7 +3907,7 @@ BEGIN
 			[StudyData],[Details],[StudyIntegrityReasonEnum],[GroupID])
 		VALUES
            (@Guid,@ServerPartitionGUID,@StudyStorageGUID,getdate(), @Description
-           ,@StudyData, @QueueData, @TypeDuplicateSop, @GroupID )
+           ,@StudyData, @Details, @TypeDuplicateSop, @GroupID )
 
 	END
 
