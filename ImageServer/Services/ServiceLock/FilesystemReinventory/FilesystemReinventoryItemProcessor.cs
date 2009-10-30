@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                 continue;
                             }
 
-                            // Lock the new study storage for study processing
+                            // WriteLock the new study storage for study processing
                             if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled))
                             {
                             	string failureReason;
@@ -237,7 +237,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
                                 location = studyInsert.FindOne(insertParms);
 
-                                // Lock the new study storage for study processing
+                                // WriteLock the new study storage for study processing
                                 ILockStudy lockStudy = update.GetBroker<ILockStudy>();
                                 LockStudyParameters lockParms = new LockStudyParameters();
                                 lockParms.StudyStorageKey = location.Key;

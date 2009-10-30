@@ -98,16 +98,28 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<DateTime>)SubCriteria["LastAccessedTime"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
-        public ISearchCondition<Boolean> Lock
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="WriteLock")]
+        public ISearchCondition<Boolean> WriteLock
         {
             get
             {
-              if (!SubCriteria.ContainsKey("Lock"))
+              if (!SubCriteria.ContainsKey("WriteLock"))
               {
-                 SubCriteria["Lock"] = new SearchCondition<Boolean>("Lock");
+                 SubCriteria["WriteLock"] = new SearchCondition<Boolean>("WriteLock");
               }
-              return (ISearchCondition<Boolean>)SubCriteria["Lock"];
+              return (ISearchCondition<Boolean>)SubCriteria["WriteLock"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ReadLock")]
+        public ISearchCondition<Int16> ReadLock
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ReadLock"))
+              {
+                 SubCriteria["ReadLock"] = new SearchCondition<Int16>("ReadLock");
+              }
+              return (ISearchCondition<Int16>)SubCriteria["ReadLock"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]

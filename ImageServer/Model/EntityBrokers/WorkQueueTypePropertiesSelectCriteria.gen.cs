@@ -182,6 +182,30 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<Int32>)SubCriteria["MaxBatchSize"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ReadLock")]
+        public ISearchCondition<Boolean> ReadLock
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ReadLock"))
+              {
+                 SubCriteria["ReadLock"] = new SearchCondition<Boolean>("ReadLock");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["ReadLock"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WriteLock")]
+        public ISearchCondition<Boolean> WriteLock
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("WriteLock"))
+              {
+                 SubCriteria["WriteLock"] = new SearchCondition<Boolean>("WriteLock");
+              }
+              return (ISearchCondition<Boolean>)SubCriteria["WriteLock"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateEnum")]
         public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
         {

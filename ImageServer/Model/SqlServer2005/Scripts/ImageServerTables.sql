@@ -642,8 +642,9 @@ CREATE TABLE [dbo].[StudyStorage](
 	[StudyInstanceUid] [varchar](64) NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_StudyStorage_InsertTime]  DEFAULT (getdate()),
 	[LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_StudyStorage_LastAccessedTime]  DEFAULT (getdate()),
-	[Lock] [bit] NOT NULL CONSTRAINT [DF_StudyStorage_Lock]  DEFAULT ((0)),
-	[StudyStatusEnum] [smallint] NOT NULL,
+	[WriteLock] [bit] NOT NULL,
+	[ReadLock] [smallint] NOT NULL,
+    [StudyStatusEnum] [smallint] NOT NULL,
 	[QueueStudyStateEnum] [smallint] NOT NULL,
  CONSTRAINT [PK_StudyStorage] PRIMARY KEY CLUSTERED 
 (
@@ -660,6 +661,24 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_StudyStorage_PartitionGUID_StudyInstanceUid
 	[ServerPartitionGUID] ASC,
 	[StudyInstanceUid] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+GO
+/****** Object:  Default [DF_StudyStorage_WriteLock]    Script Date: 10/30/2009 12:15:04 ******/
+IF Not EXISTS (SELECT * FROM sys.default_constraints WHERE object_id = OBJECT_ID(N'[dbo].[DF_StudyStorage_WriteLock]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
+Begin
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_StudyStorage_WriteLock]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[StudyStorage] ADD  CONSTRAINT DF_StudyStorage_WriteLock  DEFAULT ((0)) FOR [WriteLock]
+END
+End
+GO
+/****** Object:  Default [DF_StudyStorage_ReadLock]    Script Date: 10/30/2009 12:15:04 ******/
+IF Not EXISTS (SELECT * FROM sys.default_constraints WHERE object_id = OBJECT_ID(N'[dbo].[DF_StudyStorage_ReadLock]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
+Begin
+IF NOT EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[DF_StudyStorage_ReadLock]') AND type = 'D')
+BEGIN
+ALTER TABLE [dbo].[StudyStorage] ADD  CONSTRAINT [DF_StudyStorage_ReadLock]  DEFAULT ((0)) FOR [ReadLock]
+END
+End
 GO
 /****** Object:  Table [dbo].[Patient]    Script Date: 01/09/2008 15:03:42 ******/
 SET ANSI_NULLS ON
@@ -1588,6 +1607,8 @@ CREATE TABLE [dbo].[WorkQueueTypeProperties](
 	[MaxBatchSize] [int] NOT NULL,
 	[QueueStudyStateEnum] [smallint] NULL,
 	[QueueStudyStateOrder] [smallint] NULL,	
+	[ReadLock] [bit] NOT NULL,
+	[WriteLock] [bit] NOT NULL,
  CONSTRAINT [PK_WorkQueueTypeProperties] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

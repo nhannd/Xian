@@ -97,6 +97,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["MaxBatchSize"] = new EntityUpdateColumn<Int32>("MaxBatchSize", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ReadLock")]
+        public Boolean ReadLock
+        {
+            set { SubParameters["ReadLock"] = new EntityUpdateColumn<Boolean>("ReadLock", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WriteLock")]
+        public Boolean WriteLock
+        {
+            set { SubParameters["WriteLock"] = new EntityUpdateColumn<Boolean>("WriteLock", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateEnum")]
         public QueueStudyStateEnum QueueStudyStateEnum
         {

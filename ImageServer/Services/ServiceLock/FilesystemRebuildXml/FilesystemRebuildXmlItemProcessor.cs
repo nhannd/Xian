@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 						}
 						try
 						{
-							if (!location.AcquireLock())
+							if (!location.AcquireWriteLock())
 							{
 								Platform.Log(LogLevel.Warn, "Unable to lock study: {0}, delaying rebuild", location.StudyInstanceUid);
 								lockFailures.Add(location);
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 							StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
 							rebuilder.RebuildXml();
 
-							location.ReleaseLock();
+							location.ReleaseWriteLock();
 						}
 						catch (Exception e)
 						{
@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			{
 				try
 				{
-					if (!location.AcquireLock())
+					if (!location.AcquireWriteLock())
 					{
 						Platform.Log(LogLevel.Warn, "Unable to lock study: {0}, skipping rebuild", location.StudyInstanceUid);
 						continue;
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 					StudyXmlRebuilder rebuilder = new StudyXmlRebuilder(location);
 					rebuilder.RebuildXml();
 
-					location.ReleaseLock();
+					location.ReleaseWriteLock();
 				}
 				catch (Exception e)
 				{

@@ -18,7 +18,10 @@
                 <ccUI:DateTimeLabel ID="LastAccessedTime" runat="server" Value='<%# Eval("LastAccessedTime") %>' ></ccUI:DateTimeLabel>
             </ItemTemplate>
         </asp:TemplateField>
-        <asp:BoundField DataField="Lock" HeaderText="Lock: ">
+        <asp:BoundField DataField="WriteLock" HeaderText="WriteLock: ">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        </asp:BoundField>
+        <asp:BoundField DataField="ReadLock" HeaderText="ReadLock: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>
         <asp:TemplateField HeaderText="Status: ">

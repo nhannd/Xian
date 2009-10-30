@@ -208,10 +208,14 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Thanh Huynh
 -- Create date: Oct 15, 2008
 -- Description:	Lock/Unlock a study
+--				
+-- History:
+--	Oct 29, 2009 - Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[LockStudy] 
 	@StudyStorageGUID uniqueidentifier,
-	@Lock bit = null,
+	@ReadLock bit = null,
+	@WriteLock bit = null,
 	@QueueStudyStateEnum smallint = null,
 	@Successful bit output,
 	@FailureReason nvarchar(1024)=null output
@@ -248,24 +252,45 @@ BEGIN
 				SET @Successful=0
 		END
 	END
-	ELSE if @Lock is not null
+	ELSE if @ReadLock is not null
 	BEGIN
-		IF @Lock=1
+		IF @ReadLock=1
 		BEGIN
 			UPDATE StudyStorage 
-			SET Lock=1, LastAccessedTime = getdate()
-			WHERE GUID=@StudyStorageGUID AND Lock=0
+			SET ReadLock=ReadLock+1, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND WriteLock=0
 
 			IF (@@ROWCOUNT=0)
-				SET @Successful=0
-			
+				SET @Successful=0			
 		END
 		ELSE
 		BEGIN
 			-- unlock if the study is being locked
 			UPDATE StudyStorage 
-			SET Lock=0, LastAccessedTime = getdate()
-			WHERE GUID=@StudyStorageGUID AND Lock=1
+			SET ReadLock=ReadLock-1, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND ReadLock>0
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+		END
+	END
+	ELSE if @WriteLock is not null
+	BEGIN
+		IF @WriteLock=1
+		BEGIN
+			UPDATE StudyStorage 
+			SET WriteLock=1, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND WriteLock=0
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0			
+		END
+		ELSE
+		BEGIN
+			-- unlock if the study is being locked
+			UPDATE StudyStorage 
+			SET WriteLock=0, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND WriteLock=1
 
 			IF (@@ROWCOUNT=0)
 				SET @Successful=0
@@ -437,10 +462,11 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: 7/30/2007
 -- Description:	
 -- History:
---		Oct 09, 2009	:	Fixed issue with incorrect IsReconcileRequired being returned.
---		Oct 24, 2008	:	Added IsReconcileRequired property into the result set.
---		Jul 04, 2008	:	Modify to return storage location based on the study instance uid 
---							when StudyStorageGUID and ServerPartitionGUID aren''t provided. Used for image streaming service.
+--	Oct 09, 2009	:  Fixed issue with incorrect IsReconcileRequired being returned.
+--	Oct 24, 2008	:  Added IsReconcileRequired property into the result set.
+--	Jul 04, 2008	:  Modify to return storage location based on the study instance uid 
+--					   when StudyStorageGUID and ServerPartitionGUID aren''t provided. Used for image streaming service.
+--	Oct 29, 2009    :  Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryStudyStorageLocation] 
 	-- Add the parameters for the stored procedure here
@@ -468,7 +494,7 @@ BEGIN
 
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
+				Filesystem.FilesystemTierEnum, StudyStorage.WriteLock, StudyStorage.ReadLock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
 				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired as ''IsReconcileRequired''
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
@@ -490,7 +516,7 @@ BEGIN
 	
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
+				Filesystem.FilesystemTierEnum, StudyStorage.ReadLock, StudyStorage.WriteLock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
 				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired  as ''IsReconcileRequired''
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
@@ -507,7 +533,7 @@ BEGIN
 
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
+				Filesystem.FilesystemTierEnum, StudyStorage.ReadLock, StudyStorage.WriteLock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
 				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired  as ''IsReconcileRequired''
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
@@ -530,7 +556,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 13, 2007
--- Modify date: Dev 17, 2008
+-- Modify date: Dec 17, 2008
 -- Description:	Insert a ServerPartition row
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertServerPartition] 
@@ -652,7 +678,7 @@ BEGIN
 				''<rule id="Default Tier1 Retention">
 					<condition>
 					</condition>
-					<action><tier1-retention time="3" unit="weeks"/></action>
+					<action><tier1-retention time="3" unit="weeks" refValue="$StudyDate"/></action>
 				</rule>'' )
 
 	-- Insert a default Tier1Retention rule for restores
@@ -663,7 +689,7 @@ BEGIN
 				''<rule id="Default Tier1 Retention">
 					<condition>
 					</condition>
-					<action><tier1-retention time="1" unit="weeks"/></action>
+					<action><tier1-retention time="1" unit="weeks" refValue="$StudyDate"/></action>
 				</rule>'' )
 
 	-- Insert a default Online Retention Rule for study processed
@@ -903,6 +929,7 @@ EXEC dbo.sp_executesql @statement = N'
 --  May 28, 2009, May 03 rev had bug where a Lock was not released in StudyStorage when condition was met.
 --  Sep 11, 2009, Added LastUpdateTime
 --	Oct 26, 2009, Called UpdateStudyStateFromWorkQueue to reset the study state properly (instead of setting to Idle)
+--  Oct 29, 2009, Added ReadLock/WriteLock capabilities
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -934,11 +961,21 @@ BEGIN
 	declare @PendingStatusEnum as smallint
 	declare @FailedStatusEnum as smallint
 	declare @IdleStatusEnum as smallint
-
+	declare @WriteLock as bit
+	declare @ReadLock as bit
+	declare @Successful as bit
+	
 	select @CompletedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Completed''
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @FailedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
+	
+	SELECT @ReadLock=ReadLock, @WriteLock=WriteLock
+	FROM WorkQueue
+	JOIN WorkQueueTypeProperties on
+	WorkQueue.WorkQueueTypeEnum = WorkQueueTypeProperties.WorkQueueTypeEnum
+	WHERE WorkQueue.GUID = @WorkQueueGUID
+	
 	
 	BEGIN TRANSACTION
 
@@ -954,9 +991,15 @@ BEGIN
 
 		IF @@ROWCOUNT<>0
 		BEGIN
-			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate()
-				WHERE GUID = @StudyStorageGUID AND Lock = 1
-
+			if @ReadLock = 1
+			BEGIN
+				EXEC dbo.LockStudy @StudyStorageGUID, 0, null, null, @Successful OUTPUT
+			END
+			ELSE
+			BEGIN
+				EXEC dbo.LockStudy @StudyStorageGUID, null, 0, null, @Successful OUTPUT
+			END
+			
 			EXEC dbo.UpdateStudyStateFromWorkQueue @StudyStorageGUID
 		END		
 		ELSE
@@ -966,8 +1009,14 @@ BEGIN
 			UPDATE WorkQueue SET [WorkQueueStatusEnum]=@PendingStatusEnum,  LastUpdatedTime=getdate()
 			WHERE GUID = @WorkQueueGUID
 
-			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-			WHERE GUID = @StudyStorageGUID AND Lock = 1
+			if @ReadLock = 1
+			BEGIN
+				EXEC dbo.LockStudy @StudyStorageGUID, 0, null, null, @Successful OUTPUT
+			END
+			ELSE
+			BEGIN
+				EXEC dbo.LockStudy @StudyStorageGUID, null, 0, null, @Successful OUTPUT
+			END
 		END
 	END
 	ELSE if  @WorkQueueStatusEnum = @FailedStatusEnum
@@ -992,8 +1041,14 @@ BEGIN
 			WHERE GUID = @WorkQueueGUID
 		END
 		
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		if @ReadLock = 1
+		BEGIN
+			EXEC dbo.LockStudy @StudyStorageGUID, 0, null, null, @Successful OUTPUT
+		END
+		ELSE
+		BEGIN
+			EXEC dbo.LockStudy @StudyStorageGUID, null, 0, null, @Successful OUTPUT
+		END
 	END
 	ELSE if @WorkQueueStatusEnum = @PendingStatusEnum
 	BEGIN
@@ -1014,8 +1069,14 @@ BEGIN
 			WHERE GUID = @WorkQueueGUID
 		END
 		
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		if @ReadLock = 1
+		BEGIN
+			EXEC dbo.LockStudy @StudyStorageGUID, 0, null, null, @Successful OUTPUT
+		END
+		ELSE
+		BEGIN
+			EXEC dbo.LockStudy @StudyStorageGUID, null, 0, null, @Successful OUTPUT
+		END
 	END
 	ELSE
 	BEGIN
@@ -1027,8 +1088,14 @@ BEGIN
 		
 		if @WorkQueueStatusEnum = @IdleStatusEnum
 		BEGIN
-			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-			WHERE GUID = @StudyStorageGUID AND Lock = 1
+			if @ReadLock = 1
+			BEGIN
+				EXEC dbo.LockStudy @StudyStorageGUID, 0, null, null, @Successful OUTPUT
+			END
+			ELSE
+			BEGIN
+				EXEC dbo.LockStudy @StudyStorageGUID, null, 0, null, @Successful OUTPUT
+			END
 		END
 	END
 
@@ -1150,7 +1217,7 @@ EXEC dbo.sp_executesql @statement = N'
 --				Reset all "in progress" items to "Pending" or "Failed" depending on their retry counts
 -- History:
 -- Sep 11, 2009: Added LastUpdatedTime
---
+-- Oct 29, 2009: Added WriteLock/ReadLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[ResetWorkQueue]
 	@ProcessorID varchar(256),
@@ -1178,7 +1245,6 @@ BEGIN
 		declare @InProgressStatusEnum as int
 		declare @FailedStatusEnum as int
 		declare @WorkQueueGUID uniqueidentifier
-		
 
 		select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 		select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
@@ -1188,21 +1254,20 @@ BEGIN
 		/* All entries that are in progress and failure count = MaxFailureCount should be failed */
 
 		/* Temporary tables to hold all items that will be reset */
-		CREATE TABLE #FailedList(WorkQueueGuid uniqueidentifier, StudyStorageGUID uniqueidentifier)
-		CREATE TABLE #RetryList(WorkQueueGuid uniqueidentifier, StudyStorageGUID uniqueidentifier)
+		CREATE TABLE #FailedList(WorkQueueGuid uniqueidentifier, StudyStorageGUID uniqueidentifier, WorkQueueTypeEnum smallint)
+		CREATE TABLE #RetryList(WorkQueueGuid uniqueidentifier, StudyStorageGUID uniqueidentifier, WorkQueueTypeEnum smallint)
 		
 		/* fill the tables */
-		INSERT INTO #FailedList (WorkQueueGuid, StudyStorageGUID)
-		SELECT dbo.WorkQueue.GUID, dbo.StudyStorage.GUID
+		INSERT INTO #FailedList (WorkQueueGuid, StudyStorageGUID, WorkQueueTypeEnum)
+		SELECT dbo.WorkQueue.GUID, dbo.StudyStorage.GUID, dbo.WorkQueue.WorkQueueTypeEnum
 		FROM dbo.WorkQueue 
 		LEFT JOIN	dbo.StudyStorage ON dbo.WorkQueue.StudyStorageGUID=dbo.StudyStorage.GUID
 		WHERE ProcessorID=@ProcessorID 
 				AND WorkQueue.WorkQueueStatusEnum=@InProgressStatusEnum 
 				AND WorkQueue.FailureCount+1 >= @MaxFailureCount 
 
-
-		INSERT INTO #RetryList (WorkQueueGuid, StudyStorageGUID)
-		SELECT dbo.WorkQueue.GUID, dbo.StudyStorage.GUID
+		INSERT INTO #RetryList (WorkQueueGuid, StudyStorageGUID, WorkQueueTypeEnum)
+		SELECT dbo.WorkQueue.GUID, dbo.StudyStorage.GUID, dbo.WorkQueue.WorkQueueTypeEnum
 		FROM dbo.WorkQueue 
 		LEFT JOIN	dbo.StudyStorage ON dbo.WorkQueue.StudyStorageGUID=dbo.StudyStorage.GUID
 		WHERE ProcessorID=@ProcessorID 
@@ -1212,8 +1277,15 @@ BEGIN
 		/* unlock all studies in the "failed" list */
 		/* and then fail those entries */
 		UPDATE dbo.StudyStorage
-		SET Lock = 0
-		WHERE GUID IN (SELECT StudyStorageGUID FROM #FailedList)
+		SET WriteLock = 0
+		WHERE GUID IN (SELECT StudyStorageGUID FROM #FailedList WHERE WorkQueueTypeEnum in 
+			(select WorkQueueTypeEnum from WorkQueueTypeProperties where WriteLock=1 ))
+
+		UPDATE dbo.StudyStorage
+		SET ReadLock = ReadLock - 1
+		WHERE GUID IN (SELECT StudyStorageGUID FROM #FailedList WHERE WorkQueueTypeEnum in 
+			(select WorkQueueTypeEnum from WorkQueueTypeProperties where ReadLock=1 ))
+		AND ReadLock > 0
 		
 		UPDATE dbo.WorkQueue
 		SET WorkQueueStatusEnum = @FailedStatusEnum,	/* Status=FAILED */
@@ -1225,8 +1297,15 @@ BEGIN
 		/* unlock all studies in the "retry" list */
 		/* and then reschedule those entries */
 		UPDATE dbo.StudyStorage
-		SET Lock = 0
-		WHERE GUID IN (SELECT StudyStorageGUID FROM #RetryList)
+		SET WriteLock = 0
+		WHERE GUID IN (SELECT StudyStorageGUID FROM #RetryList WHERE WorkQueueTypeEnum in 
+			(select WorkQueueTypeEnum from WorkQueueTypeProperties where WriteLock=1 ))
+
+		UPDATE dbo.StudyStorage
+		SET ReadLock = ReadLock - 1
+		WHERE GUID IN (SELECT StudyStorageGUID FROM #RetryList WHERE WorkQueueTypeEnum in 
+			(select WorkQueueTypeEnum from WorkQueueTypeProperties where ReadLock=1 ))
+		AND ReadLock > 0
 			
 		UPDATE dbo.WorkQueue 
 		SET WorkQueueStatusEnum = @PendingStatusEnum,	/* Status=PENDING */
@@ -1270,11 +1349,12 @@ EXEC dbo.sp_executesql @statement = N'
 -- Update date: October 8, 2008
 -- Description:	Select WorkQueue entries
 -- History:
---		Oct 29, 2007:	Add @ProcessorID
---		Jan 9, 2008:	Fixed clustering bug
---      Sep 4, 2008:    Added @WorkQueueStatusEnumList parameter
---      Oct 8, 2008:    Added @WorkQueuePriorityEnum parameter
---      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
+--	Oct 29, 2007:	Add @ProcessorID
+--	Jan 9, 2008:	Fixed clustering bug
+--  Sep 4, 2008:    Added @WorkQueueStatusEnumList parameter
+--  Oct 8, 2008:    Added @WorkQueuePriorityEnum parameter
+--  Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
+--  Oct 29, 2009:   Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	@ProcessorID varchar(256),
@@ -1304,7 +1384,10 @@ BEGIN
 	declare @PendingStatusEnum as int
 	declare @IdleStatusEnum as int
 	declare @InProgressStatusEnum as int
-
+	declare @WorkQueueTypeEnum as smallint
+	declare @WriteLock as bit
+	declare @ReadLock as bit
+	
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
@@ -1316,24 +1399,42 @@ BEGIN
 		if @WorkQueuePriorityEnum is null
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-				@WorkQueueGUID = WorkQueue.GUID 
+				@WorkQueueGUID = WorkQueue.GUID,
+				@WorkQueueTypeEnum = WorkQueueTypeEnum 
 			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			WHERE
 				ScheduledTime < getdate() 
-				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
+				AND (EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND StudyStorage.ReadLock = 0
+							AND WorkQueueTypeEnum in (Select WorkQueueTypeEnum from WorkQueueTypeProperties where WriteLock =1 ))
+				     OR EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND WorkQueueTypeEnum in (Select WorkQueueTypeEnum from WorkQueueTypeProperties where ReadLock = 1)))
 			ORDER BY WorkQueue.ScheduledTime
 		END
 		ELSE
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-				@WorkQueueGUID = WorkQueue.GUID 
+				@WorkQueueGUID = WorkQueue.GUID,
+				@WorkQueueTypeEnum = WorkQueueTypeEnum  
 			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			WHERE
 				ScheduledTime < getdate() 
-				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
 				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
+				AND (EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND StudyStorage.ReadLock = 0
+							AND WorkQueueTypeEnum in (Select WorkQueueTypeEnum from WorkQueueTypeProperties where WriteLock =1 ))
+				     OR EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND WorkQueueTypeEnum in (Select WorkQueueTypeEnum from WorkQueueTypeProperties where ReadLock = 1)))
 			ORDER BY WorkQueue.ScheduledTime
 		END
 	END
@@ -1342,15 +1443,23 @@ BEGIN
 		if @WorkQueuePriorityEnum is null
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-					@WorkQueueGUID = WorkQueue.GUID 
+					@WorkQueueGUID = WorkQueue.GUID,
+				@WorkQueueTypeEnum = WorkQueueTypeEnum  
 			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			JOIN
-				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.WriteLock = 0
 			WHERE
 				ScheduledTime < getdate() 
-				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
-				AND WorkQueue.WorkQueueTypeEnum in (select WorkQueueTypeEnum from WorkQueueTypeProperties WHERE MemoryLimited=@MemoryLimited)
+				AND (EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND StudyStorage.ReadLock = 0
+							AND WorkQueueTypeEnum in (Select WorkQueueTypeEnum from WorkQueueTypeProperties where WriteLock = 1 AND MemoryLimited=@MemoryLimited))
+				     OR EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND WorkQueueTypeEnum in (Select WorkQueueTypeEnum from WorkQueueTypeProperties where ReadLock = 1 AND MemoryLimited=@MemoryLimited)))
 			ORDER BY WorkQueue.ScheduledTime
 		END
 		ELSE
@@ -1359,25 +1468,49 @@ BEGIN
 					@WorkQueueGUID = WorkQueue.GUID 
 			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			JOIN
-				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.WriteLock = 0
 			WHERE
 				ScheduledTime < getdate() 
-				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
-				AND WorkQueue.WorkQueueTypeEnum in (select WorkQueueTypeEnum from WorkQueueTypeProperties WHERE MemoryLimited=@MemoryLimited)
 				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
-			ORDER BY WorkQueue.ScheduledTime
+				AND (EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND StudyStorage.ReadLock = 0
+							AND WorkQueueTypeEnum in (SELECT WorkQueueTypeEnum FROM WorkQueueTypeProperties WHERE WriteLock = 1 AND MemoryLimited=@MemoryLimited))
+				     OR EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) 
+							WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID 
+							AND StudyStorage.WriteLock = 0
+							AND WorkQueueTypeEnum in (SELECT WorkQueueTypeEnum FROM WorkQueueTypeProperties WHERE ReadLock = 1 AND MemoryLimited=@MemoryLimited)))
+				ORDER BY WorkQueue.ScheduledTime
 		END		
 	END
 
+    -- Get the Lock settings
+    SELECT @WriteLock=WriteLock, @ReadLock=ReadLock
+	FROM WorkQueueTypeProperties 
+	WHERE WorkQueueTypeEnum = @WorkQueueTypeEnum
+	
 	-- We have a record, now do the updates
 
-	UPDATE StudyStorage
-		SET Lock = 1, LastAccessedTime = getdate()
-	WHERE 
-		Lock = 0 
-		AND GUID = @StudyStorageGUID
-
+	IF @WriteLock = 1
+	BEGIN
+		UPDATE StudyStorage
+			SET WriteLock = 1, LastAccessedTime = getdate()
+		WHERE 
+			WriteLock = 0
+			AND ReadLock = 0 
+			AND GUID = @StudyStorageGUID
+	END
+	ELSE IF @ReadLock = 1
+	BEGIN
+		UPDATE StudyStorage
+			SET ReadLock = ReadLock + 1, LastAccessedTime = getdate()
+		WHERE 
+			WriteLock = 0 
+			AND GUID = @StudyStorageGUID
+	END
+	
 	if (@@ROWCOUNT = 1)
 	BEGIN
 		UPDATE WorkQueue
@@ -2249,6 +2382,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: 7/30/2007
 -- Description:	Called when a new study is received.
+-- History:
+--	Oct 29, 2009    :  Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -2276,8 +2411,8 @@ BEGIN
 	BEGIN
 		set @StudyStorageGUID = NEWID()
 	
-		INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum, QueueStudyStateEnum) 
-			values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @StudyStatusEnum, @QueueStudyStateEnum)
+		INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, WriteLock, ReadLock, StudyStatusEnum, QueueStudyStateEnum) 
+			values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, 0, @StudyStatusEnum, @QueueStudyStateEnum)
 	END
 	ELSE
 	BEGIN
@@ -2423,6 +2558,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Oct 23, 2008: Removed UpdateQueueStudyState
 -- Oct 26, 2009: Added UpdateStudyStateFromWorkQueue
 -- Oct 27, 2009: Added CleanupDuplicate
+-- Oct 29, 2009: Added WriteLock/ReadLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2436,36 +2572,49 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	declare @StudyProcessTypeEnum as smallint
+	DECLARE @StudyProcessTypeEnum as smallint
 	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
-	declare @ReconcileStudyTypeEnum as smallint
+	DECLARE @ReconcileStudyTypeEnum as smallint
 	select @ReconcileStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
-	declare @ProcessDuplicateTypeEnum as smallint
+	DECLARE @ProcessDuplicateTypeEnum as smallint
 	select @ProcessDuplicateTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ProcessDuplicate''
 
 	
-	declare @PendingStatusEnum as smallint
+	DECLARE @PendingStatusEnum as smallint
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	
-	declare @FailedStatusEnum as smallint
+	DECLARE @FailedStatusEnum as smallint
 	select @FailedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Failed''
 	
-	declare @HighPriorityEnum as smallint
+	DECLARE @HighPriorityEnum as smallint
 	select @HighPriorityEnum = Enum from WorkQueuePriorityEnum where Lookup = ''High''
 
-	declare @QueueStudyStateIdle as smallint
+	DECLARE @QueueStudyStateIdle as smallint
 	select @QueueStudyStateIdle = Enum from QueueStudyStateEnum where Lookup = ''Idle''
 	
 	DECLARE @NextQueueEntryGUID uniqueidentifier
-			
+
+	DECLARE @ReadLock as bit
+	DECLARE @WriteLock as bit
+	
+	SELECT @ReadLock=ReadLock, @WriteLock=WriteLock
+	FROM WorkQueue
+	JOIN WorkQueueTypeProperties on
+	WorkQueue.WorkQueueTypeEnum = WorkQueueTypeProperties.WorkQueueTypeEnum
+	WHERE WorkQueue.GUID = @WorkQueueGUID
 			
 	BEGIN TRANSACTION
 
-	UPDATE StudyStorage
-		SET Lock = 1, LastAccessedTime = getdate()
-	WHERE 
-		Lock = 0 
-		AND GUID = @StudyStorageGUID
+		IF @ReadLock = 1
+		BEGIN
+			UPDATE StudyStorage set ReadLock = ReadLock-1, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND ReadLock > 0	
+		END
+		ELSE IF @WriteLock=1
+		BEGIN
+			UPDATE StudyStorage set WriteLock = 0, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND WriteLock = 1	
+		END
 
 	if (@@ROWCOUNT = 1)
 	BEGIN
@@ -2545,10 +2694,16 @@ BEGIN
 			DELETE FROM WorkQueue WHERE GUID = @WorkQueueGUID;
 		END			
 
-		UPDATE StudyStorage
-			SET Lock = 0, LastAccessedTime = getdate()
-		WHERE Lock = 1 AND GUID = @StudyStorageGUID
-
+		IF @ReadLock = 1
+		BEGIN
+			UPDATE StudyStorage set ReadLock = ReadLock-1, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND ReadLock > 0	
+		END
+		ELSE IF @WriteLock=1
+		BEGIN
+			UPDATE StudyStorage set WriteLock = 0, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND WriteLock = 1	
+		END
 		EXEC dbo.UpdateStudyStateFromWorkQueue @StudyStorageGUID=@StudyStorageGUID
 
 		COMMIT TRANSACTION
@@ -2695,6 +2850,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: July 14, 2008
 -- Description:	Update an ArchiveQueue row
+-- History:
+--	Oct 29, 2009    :  Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateArchiveQueue] 
 	@ArchiveQueueGUID uniqueidentifier, 
@@ -2723,8 +2880,8 @@ BEGIN
 		-- Completed
 		DELETE FROM ArchiveQueue where GUID = @ArchiveQueueGUID
 		
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		UPDATE StudyStorage set ReadLock = ReadLock-1, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND ReadLock>0
 	END
 	ELSE 
 	BEGIN
@@ -2742,8 +2899,8 @@ BEGIN
 				ProcessorID = Null, FailureDescription = @FailureDescription
 			WHERE GUID = @ArchiveQueueGUID
 		END
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		UPDATE StudyStorage set ReadLock = ReadLock-1, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND ReadLock > 0
 	END
 	
 	COMMIT TRANSACTION
@@ -2763,7 +2920,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: July 14, 2008
 -- Description:	Query for entries in the ArchiveQueue
 -- History:
---      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
+--  Apr 30, 2009 : Added UPDLOCK on selects to lock the found row
+--	Oct 29, 2009 : Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryArchiveQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2799,7 +2957,7 @@ BEGIN
 		@ArchiveQueueGUID = ArchiveQueue.GUID 
 	FROM ArchiveQueue WITH (READPAST, UPDLOCK)
 	JOIN
-		StudyStorage ON StudyStorage.GUID = ArchiveQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+		StudyStorage ON StudyStorage.GUID = ArchiveQueue.StudyStorageGUID AND StudyStorage.WriteLock = 0
 	WHERE
 		ScheduledTime < getdate() 
 		AND ArchiveQueue.PartitionArchiveGUID = @PartitionArchiveGUID
@@ -2812,9 +2970,9 @@ BEGIN
 		-- We have a record, now do the updates
 
 		UPDATE StudyStorage
-			SET Lock = 1, LastAccessedTime = getdate()
+			SET ReadLock = ReadLock+1, LastAccessedTime = getdate()
 		WHERE 
-			Lock = 0 
+			WriteLock = 0 
 			AND GUID = @StudyStorageGUID
 
 		if (@@ROWCOUNT = 1)
@@ -2863,7 +3021,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: July 14, 2008
 -- Description:	Query for entries in the RestoreQueue
 -- History:
---      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
+--  Apr 30, 2009 : Added UPDLOCK on selects to lock the found row
+--	Oct 29, 2009 : Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryRestoreQueue] 
 	@PartitionArchiveGUID uniqueidentifier,
@@ -2895,7 +3054,7 @@ BEGIN
 		@RestoreQueueGUID = RestoreQueue.GUID 
 	FROM RestoreQueue WITH (READPAST,UPDLOCK)
 	JOIN
-		StudyStorage ON StudyStorage.GUID = RestoreQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+		StudyStorage ON StudyStorage.GUID = RestoreQueue.StudyStorageGUID AND StudyStorage.WriteLock = 0
 	JOIN
 		ArchiveStudyStorage ON ArchiveStudyStorage.GUID = RestoreQueue.ArchiveStudyStorageGUID
 	WHERE
@@ -2909,9 +3068,9 @@ BEGIN
 		-- We have a record, now do the updates
 
 		UPDATE StudyStorage
-			SET Lock = 1, LastAccessedTime = getdate()
+			SET WriteLock = 1, LastAccessedTime = getdate()
 		WHERE 
-			Lock = 0 
+			WriteLock = 0 
 			AND GUID = @StudyStorageGUID
 
 		if (@@ROWCOUNT = 1)
@@ -2959,6 +3118,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: July 14, 2008
 -- Description:	Update an RestoreQueue row
+-- History:
+--	Oct 29, 2009    :  Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateRestoreQueue] 
 	@RestoreQueueGUID uniqueidentifier, 
@@ -2987,8 +3148,8 @@ BEGIN
 		-- Completed
 		DELETE FROM RestoreQueue where GUID = @RestoreQueueGUID
 		
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		UPDATE StudyStorage set WriteLock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND WriteLock = 1
 	END
 	ELSE 
 	BEGIN
@@ -3007,8 +3168,8 @@ BEGIN
 			WHERE GUID = @RestoreQueueGUID
 		END
 
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+		UPDATE StudyStorage set WriteLock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND WriteLock = 1
 	END
 	
 	COMMIT TRANSACTION
@@ -3027,6 +3188,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: July 16, 2008
 -- Description:	Make a study go offline/nearline
+-- History:
+--	Oct 29, 2009    :  Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteFilesystemStudyStorage] 
 	-- Add the parameters for the stored procedure here
@@ -3073,8 +3236,8 @@ BEGIN
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
 	UPDATE StudyStorage
-	SET Lock = 0, LastAccessedTime = getdate() 
-	WHERE Lock = 1 AND GUID = @StudyStorageGUID
+	SET WriteLock = 0, LastAccessedTime = getdate() 
+	WHERE WriteLock = 1 AND GUID = @StudyStorageGUID
 
 	COMMIT TRANSACTION
 
@@ -3094,6 +3257,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Create date: July 21, 2008
 -- Description:	Insert a RestoreQueue record, if one doesn''t
 --              already exist for the Study.
+-- History:
+--	Oct 29, 2009    :  Added ReadLock/WriteLock support
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertRestoreQueue] 
 	-- Add the parameters for the stored procedure here
@@ -3135,7 +3300,7 @@ BEGIN
 			BEGIN
 				
 				EXECUTE [ImageServer].[dbo].[LockStudy] 
-						@StudyStorageGUID  ,null  ,@RestoreQueueStudyStateEnum  ,@Successful OUTPUT
+						@StudyStorageGUID  ,null  ,null, @RestoreQueueStudyStateEnum  ,@Successful OUTPUT
 
 				IF @Successful = 0
 				BEGIN
@@ -3158,7 +3323,7 @@ BEGIN
 		IF @@ROWCOUNT = 0
 		BEGIN
 			EXECUTE [ImageServer].[dbo].[LockStudy] 
-					@StudyStorageGUID  ,null  ,@RestoreQueueStudyStateEnum  ,@Successful OUTPUT
+					@StudyStorageGUID  ,null  ,null ,@RestoreQueueStudyStateEnum  ,@Successful OUTPUT
 
 			IF @Successful = 0
 			BEGIN
@@ -3426,9 +3591,10 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Last update: May 01, 2009
 -- Description:	Insert or update StudyIntegrity Queue based on supplied data
 --
--- July 21, 2009: Add GroupID and UidRelativePath (for ticket #4929)
--- May 01, 2009: Include StudyIntegrityReasonEnum in the Select statement
--- Nov 06, 2008: Change to insert [StudyIntegrityQueueUid] record only if it doesn''t exist.
+-- July 21, 2009 : Add GroupID and UidRelativePath (for ticket #4929)
+-- May 01, 2009  : Include StudyIntegrityReasonEnum in the Select statement
+-- Nov 06, 2008  : Change to insert [StudyIntegrityQueueUid] record only if it doesn''t exist.
+-- Oct 29, 2009  : Changed QueueData column to Details
 --
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue] 
@@ -3489,7 +3655,7 @@ BEGIN
 		-- PRINT ''Not found''
 		SET @Guid=newid()
 
-		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[QueueData],[StudyIntegrityReasonEnum],[GroupID])
+		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[Details],[StudyIntegrityReasonEnum],[GroupID])
 		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@StudyIntegrityReasonEnum,@GroupID)
 	END
 
@@ -3585,7 +3751,6 @@ BEGIN
 END
 '
 END
-
 GO
 
 
@@ -3692,7 +3857,8 @@ EXEC dbo.sp_executesql @statement = N'
 -- Author:		Thanh Huynh
 -- Create date: May 01, 2009
 -- Description:	Insert or update "Duplicate" StudyIntegrity Queue record
---				
+-- History:
+--	Oct 29, 2009  : Updated QueueData column to Details
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue] 
 	-- Add the parameters for the stored procedure here
@@ -3738,7 +3904,7 @@ BEGIN
 		SET @Guid = newid()
 		INSERT INTO [StudyIntegrityQueue]
            ([GUID],[ServerPartitionGUID],[StudyStorageGUID],[InsertTime],[Description],
-			[StudyData],[QueueData],[StudyIntegrityReasonEnum],[GroupID])
+			[StudyData],[Details],[StudyIntegrityReasonEnum],[GroupID])
 		VALUES
            (@Guid,@ServerPartitionGUID,@StudyStorageGUID,getdate(), @Description
            ,@StudyData, @QueueData, @TypeDuplicateSop, @GroupID )
@@ -3760,9 +3926,6 @@ END
 END
 GO
 
-
-
-
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3772,6 +3935,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'
 -- =============================================
 -- Author:		Thanh Huynh
+-- Description:	Delete an instance
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteInstance] 
 	-- Add the parameters for the stored procedure here
@@ -4102,6 +4266,7 @@ EXEC dbo.sp_executesql @statement = N'
 --	Sep 16, 2009 :  Added "UpdateWorkQueue" parameter
 --  Oct 22, 2009 :  Added NewQueueStudyStateEnum parameter. Used for setting the 
 --					study state.
+--  Oct 29, 2009 :  Added WriteLock/ReadLock support
 -- =================================================================
 CREATE PROCEDURE [dbo].[PostponeWorkQueue]  
 	-- Add the parameters for the stored procedure here
@@ -4119,11 +4284,19 @@ BEGIN
 	declare @StudyStorageGUID uniqueidentifier
 	declare @PendingStatusEnum smallint
 	declare @QueueStudyStateIdle  smallint
-
+	declare @ReadLock bit
+	declare @WriteLock bit
+	
 	SELECT @StudyStorageGUID=StudyStorageGUID FROM WorkQueue WHERE GUID=@WorkQueueGUID
 	SELECT @PendingStatusEnum = Enum FROM WorkQueueStatusEnum WHERE Lookup = ''Pending''
 	SELECT @QueueStudyStateIdle = Enum FROM QueueStudyStateEnum WHERE Lookup = ''Idle''
 	
+	SELECT @ReadLock=ReadLock, @WriteLock=WriteLock
+	FROM WorkQueue
+	JOIN WorkQueueTypeProperties on
+	WorkQueue.WorkQueueTypeEnum = WorkQueueTypeProperties.WorkQueueTypeEnum
+	WHERE WorkQueue.GUID = @WorkQueueGUID
+	 
 	BEGIN TRANSACTION
 
 		IF @UpdateWorkQueue=0
@@ -4140,13 +4313,20 @@ BEGIN
 		END
 
 
-		-- Unlock the study
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1	
-
+		-- Unlock the study lock
+		IF @ReadLock = 1
+		BEGIN
+			UPDATE StudyStorage set ReadLock = ReadLock-1, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND ReadLock > 0	
+		END
+		ELSE IF @WriteLock=1
+		BEGIN
+			UPDATE StudyStorage set WriteLock = 0, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND WriteLock = 1	
+		END
+		
 		-- Update the Study State
 		--EXEC dbo.UpdateStudyStateFromWorkQueue	@StudyStorageGUID=@StudyStorageGUID
- 			
 
 	COMMIT TRANSACTION
 END
@@ -4259,7 +4439,6 @@ BEGIN
 		EXEC [dbo].[UpdateStudyStateFromWorkQueue] @StudyStorageGUID=@StudyStorageGUID
 
 	COMMIT 
-	
 	
 END
 '

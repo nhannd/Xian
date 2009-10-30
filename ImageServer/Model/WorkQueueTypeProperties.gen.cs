@@ -57,6 +57,8 @@ namespace ClearCanvas.ImageServer.Model
             ,Int32 _postponeDelaySeconds_
             ,Int32 _expireDelaySeconds_
             ,Int32 _maxBatchSize_
+            ,Boolean _readLock_
+            ,Boolean _writeLock_
             ,QueueStudyStateEnum _queueStudyStateEnum_
             ,Int16 _queueStudyStateOrder_
             ):base("WorkQueueTypeProperties")
@@ -72,6 +74,8 @@ namespace ClearCanvas.ImageServer.Model
             PostponeDelaySeconds = _postponeDelaySeconds_;
             ExpireDelaySeconds = _expireDelaySeconds_;
             MaxBatchSize = _maxBatchSize_;
+            ReadLock = _readLock_;
+            WriteLock = _writeLock_;
             QueueStudyStateEnum = _queueStudyStateEnum_;
             QueueStudyStateOrder = _queueStudyStateOrder_;
         }
@@ -110,6 +114,12 @@ namespace ClearCanvas.ImageServer.Model
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="MaxBatchSize")]
         public Int32 MaxBatchSize
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="ReadLock")]
+        public Boolean ReadLock
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="WriteLock")]
+        public Boolean WriteLock
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueTypeProperties", ColumnName="QueueStudyStateEnum")]
         public QueueStudyStateEnum QueueStudyStateEnum
@@ -157,6 +167,8 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.PostponeDelaySeconds = entity.PostponeDelaySeconds;
             updateColumns.ExpireDelaySeconds = entity.ExpireDelaySeconds;
             updateColumns.MaxBatchSize = entity.MaxBatchSize;
+            updateColumns.ReadLock = entity.ReadLock;
+            updateColumns.WriteLock = entity.WriteLock;
             updateColumns.QueueStudyStateEnum = entity.QueueStudyStateEnum;
             updateColumns.QueueStudyStateOrder = entity.QueueStudyStateOrder;
             WorkQueueTypeProperties newEntity = broker.Insert(updateColumns);

@@ -73,12 +73,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 StudyStorage storages = adaptor.GetFirst(criteria);
                 if (storages != null)
                 {
-                    details.Lock = storages.Lock;
+                    details.WriteLock = storages.WriteLock;
+                	details.ReadLock = storages.ReadLock;
                     details.Status = storages.StudyStatusEnum.ToString();
                 }
             }
-
-
+			
             return details;
         }
     }

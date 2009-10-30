@@ -48,10 +48,15 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
 
-        public bool Lock
+        public bool WriteLock
         {
-            set { SubCriteria["Lock"] = new ProcedureParameter<bool>("Lock", value); }
+            set { SubCriteria["WriteLock"] = new ProcedureParameter<bool>("WriteLock", value); }
         }
+
+		public bool ReadLock
+		{
+			set { SubCriteria["ReadLock"] = new ProcedureParameter<bool>("ReadLock", value); }
+		}
 
 		public QueueStudyStateEnum QueueStudyStateEnum
 		{
@@ -62,7 +67,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             get
             {
-                return (this.SubCriteria["Successful"] as ProcedureParameter<bool>).Value;
+                return (SubCriteria["Successful"] as ProcedureParameter<bool>).Value;
             }
         }
 
@@ -70,7 +75,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             get
             {
-                return (this.SubCriteria["FailureReason"] as ProcedureParameter<string>).Value;
+                return (SubCriteria["FailureReason"] as ProcedureParameter<string>).Value;
             }
         }
     }

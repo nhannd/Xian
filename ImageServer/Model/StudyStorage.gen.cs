@@ -51,7 +51,8 @@ namespace ClearCanvas.ImageServer.Model
             ,String _studyInstanceUid_
             ,DateTime _insertTime_
             ,DateTime _lastAccessedTime_
-            ,Boolean _lock_
+            ,Boolean _writeLock_
+            ,Int16 _readLock_
             ,StudyStatusEnum _studyStatusEnum_
             ,QueueStudyStateEnum _queueStudyStateEnum_
             ):base("StudyStorage")
@@ -60,7 +61,8 @@ namespace ClearCanvas.ImageServer.Model
             StudyInstanceUid = _studyInstanceUid_;
             InsertTime = _insertTime_;
             LastAccessedTime = _lastAccessedTime_;
-            Lock = _lock_;
+            WriteLock = _writeLock_;
+            ReadLock = _readLock_;
             StudyStatusEnum = _studyStatusEnum_;
             QueueStudyStateEnum = _queueStudyStateEnum_;
         }
@@ -80,8 +82,11 @@ namespace ClearCanvas.ImageServer.Model
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
         public DateTime LastAccessedTime
         { get; set; }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
-        public Boolean Lock
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="WriteLock")]
+        public Boolean WriteLock
+        { get; set; }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ReadLock")]
+        public Int16 ReadLock
         { get; set; }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]
         public StudyStatusEnum StudyStatusEnum
@@ -122,7 +127,8 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
             updateColumns.InsertTime = entity.InsertTime;
             updateColumns.LastAccessedTime = entity.LastAccessedTime;
-            updateColumns.Lock = entity.Lock;
+            updateColumns.WriteLock = entity.WriteLock;
+            updateColumns.ReadLock = entity.ReadLock;
             updateColumns.StudyStatusEnum = entity.StudyStatusEnum;
             updateColumns.QueueStudyStateEnum = entity.QueueStudyStateEnum;
             StudyStorage newEntity = broker.Insert(updateColumns);

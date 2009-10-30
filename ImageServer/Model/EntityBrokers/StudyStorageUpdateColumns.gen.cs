@@ -64,10 +64,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["LastAccessedTime"] = new EntityUpdateColumn<DateTime>("LastAccessedTime", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
-        public Boolean Lock
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="WriteLock")]
+        public Boolean WriteLock
         {
-            set { SubParameters["Lock"] = new EntityUpdateColumn<Boolean>("Lock", value); }
+            set { SubParameters["WriteLock"] = new EntityUpdateColumn<Boolean>("WriteLock", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ReadLock")]
+        public Int16 ReadLock
+        {
+            set { SubParameters["ReadLock"] = new EntityUpdateColumn<Int16>("ReadLock", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]
         public StudyStatusEnum StudyStatusEnum

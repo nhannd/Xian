@@ -672,7 +672,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			studySummary.IsArchiving = controller.GetArchiveQueueCount(study) > 0;
 
-			studySummary.IsProcessing = studySummary.TheStudyStorage.Lock;
+			studySummary.IsProcessing = studySummary.TheStudyStorage.WriteLock;
 
 			// the study is considered "locked" if it's being processed or some action which requires the lock has been scheduled
 			// No additional action should be allowed on the study until everything is completed.

@@ -612,7 +612,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				if (!ServerHelper.LockStudy(WorkQueueItem.StudyStorageKey, QueueStudyStateEnum.ProcessingScheduled, out failureReason))
 				{
 					Platform.Log(LogLevel.Debug,
-								 "StudyProcess cannot start at this point. Study is being locked by another processor. Lock Failure reason={0}",
+								 "StudyProcess cannot start at this point. Study is being locked by another processor. WriteLock Failure reason={0}",
 								 failureReason);
 					PostponeItem(String.Format("Study is being locked by another processor: {0}", failureReason));
                     return false;

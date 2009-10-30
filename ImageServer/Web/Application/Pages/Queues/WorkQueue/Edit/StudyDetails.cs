@@ -66,7 +66,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public string Modalities { get; set; }
 
-        public bool? Lock { get; set; }
+        public bool? WriteLock { get; set; }
+
+		public short ReadLock { get; set; }
 
         #endregion Public Properties
     }

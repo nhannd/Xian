@@ -44,7 +44,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	public class LockStudyCommand : ServerDatabaseCommand
 	{
 		private readonly QueueStudyStateEnum _queueStudyState;
-		private readonly bool? _lock;
+		private readonly bool? _writeLock;
+		private readonly bool? _readLock;
 		private readonly ServerEntityKey _studyStorageKey;
 
 		public LockStudyCommand(ServerEntityKey studyStorageKey, QueueStudyStateEnum studyState) : base("LockStudy", true)
@@ -53,11 +54,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_queueStudyState = studyState;
 		}
 
-		public LockStudyCommand(ServerEntityKey studyStorageKey, bool lockValue)
+		public LockStudyCommand(ServerEntityKey studyStorageKey, bool writeLock, bool readLock)
 			: base("LockStudy", true)
 		{
 			_studyStorageKey = studyStorageKey;
-			_lock = lockValue;
+			_readLock = readLock;
+			_writeLock = writeLock;
 		}
 
 		protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
@@ -67,8 +69,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			lockParms.StudyStorageKey = _studyStorageKey;
 			if (_queueStudyState != null)
 				lockParms.QueueStudyStateEnum = _queueStudyState;
-			if (_lock.HasValue)
-				lockParms.Lock = _lock.Value;
+			if (_writeLock.HasValue)
+				lockParms.WriteLock = _writeLock.Value;
+			if (_readLock.HasValue)
+				lockParms.ReadLock = _readLock.Value;
 			bool retVal = lockStudyBroker.Execute(lockParms);
 
 			if (!retVal || !lockParms.Successful)
