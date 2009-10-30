@@ -175,6 +175,9 @@ namespace ClearCanvas.Ris.Client
 				this.Validation.Add(new ValidationRule("Name",
 					delegate
 					{
+						if (string.IsNullOrEmpty(this.Name))
+							return new ValidationResult(true, "");
+
 						// only allow alphabets and space
 						var ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
 						return new ValidationResult(ok, SR.MessageCannedTextNameCanOnlyContainAlphaChars);
@@ -184,6 +187,9 @@ namespace ClearCanvas.Ris.Client
 				this.Validation.Add(new ValidationRule("Text",
 					delegate
 					{
+						if (string.IsNullOrEmpty(this.Text))
+							return new ValidationResult(true, "");
+
 						// look for none alphabets and space within the named field square brackets
 						// Patterns explaination
 						//		\[				- match beginning bracket
