@@ -60,31 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 			Update(null, null);
 		}
-/*
-		//Not currently used.
-		private void UpdateCollapsedCategories()
-		{
-			GridItem topLevel = _properties.SelectedGridItem;
 
-			if (topLevel != null)
-			{
-				while (topLevel.Parent != null)
-					topLevel = topLevel.Parent;
-			}
-
-			List<string> collapsedCategories = new List<string>();
-			if (topLevel != null && topLevel != _properties.SelectedGridItem)
-			{
-				foreach (GridItem gridItem in topLevel.GridItems)
-				{
-					if (gridItem.Expanded)
-						collapsedCategories.Add(gridItem.Label);
-				}
-			}
-
-			_component.CollapsedCategories = collapsedCategories.ToArray();
-		}
-*/
 		private void Update(object sender, PropertyChangedEventArgs e)
 		{
 			_properties.SelectedObject = new ImageProperties(_component.ImageProperties);
@@ -162,30 +138,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
-			string stringValue = "";
-
-			if (value != null)
-			{
-				if (value is string)
-				{
-					stringValue = value as string;
-				}
-				else
-				{
-					TypeConverter converter = TypeDescriptor.GetConverter(value.GetType());
-					if (converter != null)
-					{
-						if (converter.CanConvertTo(typeof(string)))
-							stringValue = converter.ConvertToString(value);
-						else
-							stringValue = value.ToString();
-					}
-					else
-						stringValue = value.ToString();
-				}
-			}
-
 			ImagePropertyDescriptor descriptor = (ImagePropertyDescriptor)context.PropertyDescriptor;
+			string stringValue = ImagePropertyDescriptor.GetStringValue(descriptor.ImageProperty.Value, false);
 			ShowValueDialog.Show(descriptor.Name, descriptor.Description, stringValue);
 			return value; //no edits allowed
 		}
@@ -227,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		public override object GetValue(object component)
 		{
-			return ImageProperty.Value;
+			return GetStringValue(ImageProperty.Value, true);
 		}
 
 		public override bool IsReadOnly
@@ -252,6 +206,37 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		public override bool ShouldSerializeValue(object component)
 		{
 			return false;
+		}
+
+		internal static string GetStringValue(object value, bool removeCrLf)
+		{
+			if (value == null)
+				return "";
+
+			string returnValue;
+
+			if (value is string)
+			{
+				returnValue = (string)value;
+			}
+			else
+			{
+				TypeConverter converter = TypeDescriptor.GetConverter(value.GetType());
+				if (converter != null && converter.CanConvertTo(typeof(string)))
+					returnValue = converter.ConvertToString(value);
+				else
+					returnValue = value.ToString();
+			}
+
+			returnValue = returnValue ?? "";
+			if (removeCrLf)
+			{
+				returnValue = returnValue.Replace("\r\n", "/");
+				returnValue = returnValue.Replace("\r", "/");
+				returnValue = returnValue.Replace("\n", "/");
+			}
+
+			return returnValue;
 		}
 	}
 

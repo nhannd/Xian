@@ -45,8 +45,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._properties.Size = new System.Drawing.Size(443, 644);
 			this._properties.TabIndex = 0;
 			this._properties.ToolbarVisible = false;
-			this._properties.ViewBackColor = System.Drawing.SystemColors.ControlDarkDark;
-			this._properties.ViewForeColor = System.Drawing.SystemColors.ControlLightLight;
+			this._properties.ViewBackColor = System.Drawing.Color.Black;
+			this._properties.ViewForeColor = System.Drawing.Color.WhiteSmoke;
 			// 
 			// ImagePropertiesApplicationComponentControl
 			// 

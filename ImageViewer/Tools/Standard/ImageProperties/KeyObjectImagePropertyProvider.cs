@@ -5,7 +5,9 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.ContextGroups;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Macros;
+using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
@@ -28,39 +30,56 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				IImageViewer viewer = image.ImageViewer;
 				if (viewer != null)
 				{
-					string uid = image.ParentDisplaySet.Uid;
-					if (!String.IsNullOrEmpty(uid))
+					IDicomDisplaySetDescriptor descriptor = image.ParentDisplaySet.Descriptor as IDicomDisplaySetDescriptor;
+					if (descriptor != null && descriptor.SourceSeries != null)
 					{
-						StudyTree studyTree = viewer.StudyTree;
-						Series keyObjectSeries = studyTree.GetSeries(uid);
-						if (keyObjectSeries != null && keyObjectSeries.Sops.Count > 0)
+						string uid = descriptor.SourceSeries.SeriesInstanceUid;
+						if (!String.IsNullOrEmpty(uid))
 						{
-							Sop keyObjectSop = keyObjectSeries.Sops[0];
-							if (keyObjectSop.SopClassUid == SopClass.KeyObjectSelectionDocumentStorageUid)
+							StudyTree studyTree = viewer.StudyTree;
+							Series keyObjectSeries = studyTree.GetSeries(uid);
+							if (keyObjectSeries != null && keyObjectSeries.Sops.Count > 0)
 							{
-								ISopDataSource dataSource = keyObjectSop.DataSource;
-								KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(dataSource);
-								SrDocumentContentModuleIod content = iod.SrDocumentContent;
-								if (content != null)
+								Sop keyObjectSop = keyObjectSeries.Sops[0];
+								if (keyObjectSop.SopClassUid == SopClass.KeyObjectSelectionDocumentStorageUid)
 								{
-									string codeValue = "";
-									CodeSequenceMacro conceptSequence = content.ConceptNameCodeSequence;
-									if (conceptSequence != null)
+									ISopDataSource dataSource = keyObjectSop.DataSource;
+									KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(dataSource);
+									SrDocumentContentModuleIod content = iod.SrDocumentContent;
+									if (content != null)
 									{
-										KeyObjectSelectionDocumentTitle documentTitle = KeyObjectSelectionDocumentTitleContextGroup.Lookup(conceptSequence.CodeValue);
-										if (documentTitle != null)
-											codeValue = documentTitle.ToString();
+										string codeValue = "";
+										CodeSequenceMacro conceptSequence = content.ConceptNameCodeSequence;
+										if (conceptSequence != null)
+										{
+											KeyObjectSelectionDocumentTitle documentTitle = KeyObjectSelectionDocumentTitleContextGroup.Lookup(conceptSequence.CodeValue);
+											if (documentTitle != null)
+												codeValue = documentTitle.ToString();
+										}
+
+										string documentDescription = "";
+										IContentSequence[] contentSequences = content.ContentSequence ?? new IContentSequence[0];
+										for (int i = contentSequences.Length - 1; i >= 0; --i)
+										{
+											IContentSequence contentSequence = contentSequences[i];
+											CodeSequenceMacro sequenceMacro = contentSequence.ConceptNameCodeSequence;
+											if (sequenceMacro != null && sequenceMacro.CodeValue == KeyObjectSelectionCodeSequences.KeyObjectDescription.CodeValue)
+											{
+												documentDescription = contentSequence.TextValue;
+												break;
+											}
+										}
+
+										properties.Add(
+											new ImageProperty(SR.CategoryKeyImageSeries,
+															  SR.NameKeyImageDocumentTitle,
+															  SR.DescriptionKeyImageDocumentTitle, codeValue));
+
+										properties.Add(
+											new ImageProperty(SR.CategoryKeyImageSeries,
+															  SR.NameKeyImageDocumentDescription,
+															  SR.DescriptionKeyImageDocumentDescription, documentDescription));
 									}
-
-									properties.Add(
-										new ImageProperty(SR.CategoryKeyImageSeries,
-														  SR.NameKeyImageDocumentTitle,
-														  SR.DescriptionKeyImageDocumentTitle, codeValue));
-
-									properties.Add(
-										new ImageProperty(SR.CategoryKeyImageSeries,
-														  SR.NameKeyImageDocumentDescription,
-														  SR.DescriptionKeyImageDocumentDescription, content.TextValue));
 								}
 							}
 						}
