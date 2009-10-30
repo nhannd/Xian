@@ -234,7 +234,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_isInitialItem = false;
 
-			if (_reportNextItem && overrideDoNotPerformNextItem == false)
+			if (_reportNextItem && _componentMode.CanContinue && overrideDoNotPerformNextItem == false)
 			{
 				if (_worklistCache.Count == 0)
 				{
