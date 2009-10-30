@@ -156,6 +156,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
+	[TooltipValueObserver("apply", "Label", "LabelChanged")]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
 	public class DiscardReportTool : ReportingWorkflowItemTool
