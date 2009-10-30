@@ -488,13 +488,13 @@ namespace ClearCanvas.ImageViewer
 			OnPresentationImageRemoved((PresentationImage)e.Item);
 		}
 
-		private void OnPresentationImageAdded(PresentationImage image)
+		protected virtual void OnPresentationImageAdded(PresentationImage image)
 		{
 			image.ParentDisplaySet = this;
 			image.ImageViewer = this.ImageViewer;
 		}
 
-		private void OnPresentationImageRemoved(PresentationImage image)
+		protected virtual void OnPresentationImageRemoved(PresentationImage image)
 		{
 			image.ParentDisplaySet = null;
 			image.ImageViewer = null;

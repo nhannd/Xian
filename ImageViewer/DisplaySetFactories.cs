@@ -196,7 +196,6 @@ namespace ClearCanvas.ImageViewer
 			get { return _singleImageModalities; }
 		}
 
-
 		public override List<IDisplaySet> CreateDisplaySets(Series series)
 		{
 			if (_singleImageModalities.Contains(series.Modality))
@@ -243,7 +242,6 @@ namespace ClearCanvas.ImageViewer
 
 				if (series.Sops.Count == 1 && images.Count == 1)
 				{
-					//The sop is actually a container for other referenced sops, like key images, but there's only one image to show, so it's a complete series.
 					DisplaySetDescriptor descriptor = new SeriesDisplaySetDescriptor(series.GetIdentifier(), PresentationImageFactory);
 					DisplaySet displaySet = new DisplaySet(descriptor);
 					displaySet.PresentationImages.Add(images[0]);

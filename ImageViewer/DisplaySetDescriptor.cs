@@ -10,6 +10,7 @@ namespace ClearCanvas.ImageViewer
 	{
 		ISeriesIdentifier SourceSeries { get; }
 
+		//TODO (cr Oct 2009): remove until it's actually needed.
 		bool Update(Sop sop);
 	}
 

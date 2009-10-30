@@ -303,28 +303,28 @@ namespace ClearCanvas.ImageViewer
 		}
 
 
-		void OnDisplaySetChanged(object sender, ListEventArgs<IDisplaySet> e)
+		private void OnDisplaySetChanged(object sender, ListEventArgs<IDisplaySet> e)
 		{
 			OnDisplaySetAdded((DisplaySet)e.Item);
 		}
 
-		void OnDisplaySetChanging(object sender, ListEventArgs<IDisplaySet> e)
+		private void OnDisplaySetChanging(object sender, ListEventArgs<IDisplaySet> e)
 		{
 			OnDisplaySetRemoved((DisplaySet)e.Item);
 		}
 
-		void OnDisplaySetRemoved(object sender, ListEventArgs<IDisplaySet> e)
+		private void OnDisplaySetRemoved(object sender, ListEventArgs<IDisplaySet> e)
 		{
 			OnDisplaySetRemoved((DisplaySet)e.Item);
 		}
 
-		private void OnDisplaySetAdded(DisplaySet displaySet)
+		protected virtual void OnDisplaySetAdded(DisplaySet displaySet)
 		{
 			displaySet.ParentImageSet = this;
 			displaySet.ImageViewer = this.ImageViewer;
 		}
 
-		private void OnDisplaySetRemoved(DisplaySet displaySet)
+		protected virtual void OnDisplaySetRemoved(DisplaySet displaySet)
 		{
 			displaySet.ParentImageSet = null;
 			displaySet.ImageViewer = null;

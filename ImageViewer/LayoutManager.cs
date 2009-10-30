@@ -155,6 +155,7 @@ namespace ClearCanvas.ImageViewer
 			_layoutCompleted = true;
 			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
 			//NOTE: this event doesn't actually get fired right now, but we're doing this for completeness.
+			//TODO (cr Oct 2009): remove subscription along with update
 			ImageViewer.EventBroker.ImageLoaded += OnImageLoaded;
 		}
 
@@ -192,6 +193,7 @@ namespace ClearCanvas.ImageViewer
 			return new DicomImageSetDescriptor(studyData);
 		}
 
+		//TODO (cr Oct 2009): delete untested code
 		protected virtual void UpdateImageSet(IImageSet imageSet, Series series)
 		{
 			foreach (IDisplaySet displaySet in BasicDisplaySetFactory.CreateSeriesDisplaySets(series, StudyTree))
@@ -325,6 +327,8 @@ namespace ClearCanvas.ImageViewer
 			return new SeriesNumberComparer();
 		}
 
+		//TODO (cr Oct 2009): sort studies
+
 		/// <summary>
 		/// Called to sort the image sets.
 		/// </summary>
@@ -364,6 +368,7 @@ namespace ClearCanvas.ImageViewer
 				AddImageSet(imageSet);
 		}
 
+		//TODO (cr Oct 2009): protected virtual
 		private ImageSet CreateImageSet(Study study)
 		{
 			ImageSetDescriptor descriptor = CreateImageSetDescriptor(study.GetIdentifier());
@@ -388,6 +393,8 @@ namespace ClearCanvas.ImageViewer
 			int insertIndex = LogicalWorkspace.ImageSets.Count;
 			if (_layoutCompleted)
 			{
+				//TODO (cr Oct 2009): can we make this sort studies
+
 				//A bit cheap, but once the initial layout is done, we need to keep everything sorted.
 				List<IImageSet> sorted = new List<IImageSet>(LogicalWorkspace.ImageSets);
 				sorted.Add(imageSet);

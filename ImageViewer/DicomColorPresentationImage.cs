@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer
 			if (base.ImageGraphic.VoiLutStrategy == null)
 			{
 				base.ImageGraphic.VoiLutStrategy = GraphicVoiLutStrategy.CreateStrategy(
-					delegate(IGraphic graphic) { return InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage); }
+					graphic => InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage)
 					);
 			}
 
