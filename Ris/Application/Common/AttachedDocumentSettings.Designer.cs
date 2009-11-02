@@ -13,11 +13,11 @@ namespace ClearCanvas.Ris.Application.Common {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
-    public sealed partial class AttachedDocumentFtpSettings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class AttachedDocumentSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static AttachedDocumentFtpSettings defaultInstance = ((AttachedDocumentFtpSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AttachedDocumentFtpSettings())));
+        private static AttachedDocumentSettings defaultInstance = ((AttachedDocumentSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AttachedDocumentSettings())));
         
-        public static AttachedDocumentFtpSettings Default {
+        public static AttachedDocumentSettings Default {
             get {
                 return defaultInstance;
             }
@@ -56,6 +56,20 @@ namespace ClearCanvas.Ris.Application.Common {
         public string FtpBaseUrl {
             get {
                 return ((string)(this["FtpBaseUrl"]));
+            }
+        }
+        
+        /// <summary>
+        /// Time-to-live in the download cache, in seconds.  The file will then be deleted in the interest of patient confidentialty.
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Time-to-live in the download cache, in seconds.  The file will then be deleted in" +
+            " the interest of patient confidentialty.")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int DownloadCacheTimeToLive {
+            get {
+                return ((int)(this["DownloadCacheTimeToLive"]));
             }
         }
     }

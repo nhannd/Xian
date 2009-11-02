@@ -26,10 +26,10 @@ namespace ClearCanvas.Ris.Client
 				return tempFile;
 
 			var ftpFileTransfer = new FtpFileTransfer(
-				AttachedDocumentFtpSettings.Default.FtpUserId,
-				AttachedDocumentFtpSettings.Default.FtpPassword,
-				AttachedDocumentFtpSettings.Default.FtpBaseUrl,
-				AttachedDocumentFtpSettings.Default.FtpPassiveMode);
+				AttachedDocumentSettings.Default.FtpUserId,
+				AttachedDocumentSettings.Default.FtpPassword,
+				AttachedDocumentSettings.Default.FtpBaseUrl,
+				AttachedDocumentSettings.Default.FtpPassiveMode);
 
 			var fullUrl = new Uri(ftpFileTransfer.BaseUri, documentSummary.ContentUrl);
 

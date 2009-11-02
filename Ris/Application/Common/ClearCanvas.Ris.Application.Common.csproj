@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{09F49217-CD98-4773-8CFB-594F189EEE3B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -139,11 +139,11 @@
     <Compile Include="Admin\WorkQueueAdmin\RemoveWorkQueueItemResponse.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemRequest.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemResponse.cs" />
-    <Compile Include="AttachedDocumentFtpSettings.cs" />
-    <Compile Include="AttachedDocumentFtpSettings.Designer.cs">
+    <Compile Include="AttachedDocumentSettings.cs" />
+    <Compile Include="AttachedDocumentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>AttachedDocumentFtpSettings.settings</DependentUpon>
+      <DependentUpon>AttachedDocumentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AttachmentSummary.cs" />
     <Compile Include="CannedTextService\EditCannedTextCategoriesRequest.cs" />
@@ -669,9 +669,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="AttachedDocumentFtpSettings.settings">
+    <None Include="AttachedDocumentSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>AttachedDocumentFtpSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>AttachedDocumentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

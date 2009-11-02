@@ -29,18 +29,27 @@
 
 #endregion
 
+using System;
 using System.Configuration;
-using ClearCanvas.Desktop;
+using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Application.Common
 {
-	[SettingsGroupDescription("Configures behaviour of attached documents.")]
+
+	[SettingsGroupDescription("Configures properties related to accessing attached documents.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class AttachedDocumentSettings
+	public sealed partial class AttachedDocumentSettings
 	{
-		private AttachedDocumentSettings()
+		/// <summary>
+		/// Public constructor.
+		/// </summary>
+		/// <remarks>
+		/// Server-side settings classes should be instantiated via constructor rather
+        /// than using the <see cref="AttachedDocumentSettings.Default"/> property to avoid creating a static instance.
+		/// </remarks>
+        public AttachedDocumentSettings()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+			// Note: server-side settings classes do not register in the ApplicationSettingsRegistry
 		}
 	}
 }

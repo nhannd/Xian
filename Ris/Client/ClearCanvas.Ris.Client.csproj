@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -67,12 +67,6 @@
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="AsyncLoader.cs" />
-    <Compile Include="AttachedDocumentSettings.cs" />
-    <Compile Include="AttachedDocumentSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>AttachedDocumentSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="AttachmentSummaryTableBase.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BannerSettings.cs" />
@@ -415,10 +409,6 @@
       <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="AttachedDocumentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>AttachedDocumentSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="CannedTextSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>CannedTextSettings.Designer.cs</LastGenOutput>

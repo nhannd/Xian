@@ -367,12 +367,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			var settings = new WorklistSettings();
 			if (owner.IsStaffOwner)
 			{
-				if (worklistCount >= settings.MaxPersonalWorklists)
+				if (worklistCount >= settings.MaxPersonalOwnedWorklists)
 					throw new RequestValidationException(SR.ExceptionMaximumWorklistsReachedForStaff);
 			}
 			else if (owner.IsGroupOwner)
 			{
-				if (worklistCount >= settings.MaxWorklistsPerStaffGroup)
+				if (worklistCount >= settings.MaxGroupOwnedWorklists)
 					throw new RequestValidationException(SR.ExceptionMaximumWorklistsReachedForStaffGroup);
 			}
 		}

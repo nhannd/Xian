@@ -37,15 +37,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        /// Maximum number of worklists that can be owned by a staff.
+        /// Maximum number of worklists that can be owned by an individual user.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Maximum number of worklists that can be owned by a staff.")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Maximum number of worklists that can be owned by an individual user.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int MaxPersonalWorklists {
+        public int MaxPersonalOwnedWorklists {
             get {
-                return ((int)(this["MaxPersonalWorklists"]));
+                return ((int)(this["MaxPersonalOwnedWorklists"]));
             }
         }
         
@@ -56,9 +56,9 @@ namespace ClearCanvas.Ris.Application.Services {
         [global::System.Configuration.SettingsDescriptionAttribute("Maximum number of worklists that can be owned by a staff group.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int MaxWorklistsPerStaffGroup {
+        public int MaxGroupOwnedWorklists {
             get {
-                return ((int)(this["MaxWorklistsPerStaffGroup"]));
+                return ((int)(this["MaxGroupOwnedWorklists"]));
             }
         }
     }
