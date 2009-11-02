@@ -155,7 +155,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.TheGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.Top);
             StudyListGridView.Pager = GridPagerTop;
 
-            ConfirmStudySearchMessageBox.Confirmed += delegate(object data) { StudyListGridView.Refresh(); };
+            ConfirmStudySearchMessageBox.Confirmed += delegate(object data) {
+                                                                                StudyListGridView.DataBindOnPreRender =
+                                                                                    true;  StudyListGridView.Refresh(); };
+            ConfirmStudySearchMessageBox.Cancel += delegate()
+            {
+                StudyListGridView.DataBindOnPreRender =
+                    false; 
+            };
 
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
@@ -262,7 +269,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             base.OnInit(e);
 
-            SetupChildControls();           
+            SetupChildControls();
         }
 
         public void Refresh()
@@ -281,6 +288,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                String.IsNullOrEmpty(StudyDescription.Text) &&
                ModalityListBox.SelectedIndex < 0 &&
                StatusListBox.SelectedIndex < 0) {
+                StudyListGridView.DataBindOnPreRender = false;
                 ConfirmStudySearchMessageBox.Message = "With no filters specified, this search may return a large number of studies.<br/>Are you sure you want to continue?";
                    ConfirmStudySearchMessageBox.MessageStyle = "font-weight: bold; color: #205F87;";
                 ConfirmStudySearchMessageBox.Show();

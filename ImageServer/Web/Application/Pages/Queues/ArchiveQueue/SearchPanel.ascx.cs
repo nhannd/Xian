@@ -215,9 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs e)
-        {
-            ArchiveQueueItemList.RefreshCurrentPage();
-            
+        {            
             IList<Model.ArchiveQueue> items = ArchiveQueueItemList.SelectedItems;
 
             if (items != null && items.Count>0)

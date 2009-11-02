@@ -120,6 +120,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         },
 
         unselectRow: function(rowIndex) {
+
             var row = this.get_element().rows[rowIndex];
             if (row != null && row != undefined)
                 this._unselectRow(row);

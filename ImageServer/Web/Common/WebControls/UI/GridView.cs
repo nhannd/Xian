@@ -260,8 +260,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowIndices", stateValue);
             Page.ClientScript.RegisterHiddenField(ClientID + "SelectedRowDataKeys", selectedDataKeys);
-
-            ClearSelections();
         }
 
         protected virtual void LoadState()

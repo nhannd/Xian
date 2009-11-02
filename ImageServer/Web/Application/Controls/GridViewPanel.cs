@@ -1,12 +1,6 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using GridView=ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
@@ -15,11 +9,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
     {
         private GridPager _gridPager;
         private GridView _theGrid;
+        private bool _dataBindOnPreRender = true;
         
         public GridPager Pager
         {
             set { _gridPager = value; }
             get { return _gridPager;  }
+        }
+
+        public bool DataBindOnPreRender
+        {
+            set { _dataBindOnPreRender = value;  }
+            get { return _dataBindOnPreRender;  }
+
         }
 
         public GridView TheGrid
@@ -59,6 +61,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         protected void DisposeDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
         {
             e.Cancel = true;
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+        if(!_theGrid.IsDataBound && _dataBindOnPreRender) _theGrid.DataBind();
         }
     }
 }

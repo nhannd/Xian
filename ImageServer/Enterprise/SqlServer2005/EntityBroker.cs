@@ -440,7 +440,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 			{
 				StringBuilder sb2 = new StringBuilder();
 				sb2.AppendFormat("SELECT {0}Details.* FROM ({1}) AS {0}Details ", entityName, sb);
-				sb2.AppendFormat("WHERE RowNum BETWEEN @StartRowIndex AND (@StartRowIndex + @MaximumRows) - 1");
+                if(startIndex.Value == 0)
+                    sb2.AppendFormat("WHERE RowNum BETWEEN @StartRowIndex AND @MaximumRows");
+                else 
+				    sb2.AppendFormat("WHERE RowNum BETWEEN @StartRowIndex AND (@StartRowIndex + @MaximumRows) - 1");
 				command.Parameters.AddWithValue("@StartRowIndex", startIndex.Value);
 				command.Parameters.AddWithValue("@MaximumRows", maxRows.Value);
 				return sb2.ToString();
