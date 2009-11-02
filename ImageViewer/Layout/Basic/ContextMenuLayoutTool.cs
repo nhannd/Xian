@@ -42,6 +42,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
+	//TODO (cr Oct 2009): ActionFactoryContext
 	public class ContextMenuActionFactoryArgs
 	{
 		private int _nextActionNumber;
@@ -81,6 +82,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
 	}
 
+	//TODO (cr Oct 2009): move to inner scope
 	public interface IContextMenuActionFactory
 	{
 		IAction[] CreateActions(ContextMenuActionFactoryArgs args);
@@ -241,6 +243,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						else
 							imageSetPath = basePath;
 
+						//TODO (cr Oct 2009): safeguard for this?
 						args.ExcludeDefaultActions = false;
 						args.BasePath = imageSetPath;
 						args.ImageSet = imageSet;

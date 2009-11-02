@@ -33,6 +33,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO (cr Oct 2009): looks like this could be removed
 	public class MprSliceSop : ImageSop
 	{
 		// JY: In general, it is bad practice to derive your own special Sop classes since it

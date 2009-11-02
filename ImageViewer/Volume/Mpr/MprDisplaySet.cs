@@ -35,6 +35,8 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO (cr Oct 2009): if the slice sets were display set descriptors, 
+	//you could just attach them to the display set and this class could be removed.
 	[Cloneable]
 	public class MprDisplaySet : DisplaySet, IDisplaySet
 	{

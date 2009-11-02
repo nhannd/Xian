@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _mprWorkspace; }
 		}
 
+		//TODO (cr Oct 2009): different name - not really a tree
 		public new IObservableList<IMprVolume> StudyTree
 		{
 			get { return _volumes; }

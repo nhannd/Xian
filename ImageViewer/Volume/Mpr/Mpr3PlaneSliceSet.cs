@@ -33,6 +33,8 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO (cr Oct 2009): not used
+
 	/// <summary>
 	/// A standard 3-plane slice view of an MPR <see cref="Volume"/>.
 	/// </summary>

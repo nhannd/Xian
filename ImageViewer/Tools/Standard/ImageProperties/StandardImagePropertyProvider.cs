@@ -34,6 +34,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 		{
 			List<IImageProperty> properties = new List<IImageProperty>();
 
+			//TODO (cr Oct 2009): IDicomPresentationImage?
 			if (image == null || !(image is IImageSopProvider))
 				return properties.ToArray();
 
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 
 				foreach (XmlElement groupNode in groupNodes)
 				{
+					//TODO (cr Oct 2009): xml schema category -> name
 					string category = "";
 					XmlAttribute categoryAttribute = groupNode.Attributes["category"];
 					if (categoryAttribute != null)
@@ -97,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 							continue;
 						}
 
+						//TODO (cr Oct 2009): add ability to look up by hex-value, too
 						string tagName = LookupTagName(tagVariableName);
 						if (String.IsNullOrEmpty(tagName))
 							tagName = tag.Name;

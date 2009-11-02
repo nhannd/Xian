@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	public sealed class CreateVolumeException : Exception
 	{
+		//TODO (cr Oct 2009): take out of resources
 		public CreateVolumeException() : base(SR.MessageUnexpectedCreateVolumeException) { }
 		public CreateVolumeException(string message) : base(message) {}
 		public CreateVolumeException(string message, Exception innerException) : base(message, innerException) {}
@@ -47,6 +48,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	partial class Volume
 	{
+		//TODO (cr Oct 2009): 'Create'
 		public static Volume CreateVolume(IDisplaySet displaySet)
 		{
 			return CreateVolume(displaySet, null);
@@ -56,6 +58,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			Platform.CheckForNullReference(displaySet, "displaySet");
 			List<Frame> frames = new List<Frame>();
+
+			//TODO (cr Oct 2009): not guaranteed, check and throw exception
 			foreach (IImageSopProvider imageSopProvider in displaySet.PresentationImages)
 				frames.Add(imageSopProvider.Frame);
 			return CreateVolume(frames, callback);
@@ -90,6 +94,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					try
 					{
+						//TODO (cr Oct 2009): ImageSop.CreateFromFile(filename)
 						loadedImageSops.Add(new ImageSop(new LocalSopDataSource(fileName)));
 					}
 					catch (Exception ex)

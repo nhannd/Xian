@@ -38,6 +38,7 @@ using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO (cr Oct 2009): realized after code review that these could be display set descriptors ... not sure how it would work, though.
 	public interface IMprSliceSet : IDisposable
 	{
 		string Uid { get; }

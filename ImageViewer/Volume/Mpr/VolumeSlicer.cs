@@ -104,6 +104,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private float GetSliceSpacing()
 		{
+			//TODO (cr Oct 2009): setting outside, let consumer set 'auto' or 'value'
+
 			if (_sliceSpacing == 0f)
 			{
 				_sliceSpacing = _slicerParams.SliceSpacing;
@@ -113,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return _sliceSpacing;
 		}
 
+		//TODO (cr Oct 2009): return ISlice or Slice
 		public IEnumerable<ISliceSopDataSource> CreateSlices()
 		{
 			Vector3D initialThroughPoint = GetSliceThroughPoint();
@@ -160,6 +163,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				yield return CreateSlice(sliceIndex, initialThroughPoint);
 		}
 
+		//TODO (cr Oct 2009): return Slice, remove SeriesUID
 		private VolumeSliceSopDataSource CreateSlice(int sliceIndex, Vector3D throughPoint)
 		{
 			float thicknessAndSpacing = Math.Abs(GetSliceSpacing());
@@ -274,6 +278,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				VtkHelper.RegisterVtkErrorEvents(reslicer);
 
+				//TODO (cr Oct 2009): could be a leak (try ... finally)
+
 				// Obtain a pinned VTK volume for the reslicer. We'll release this when
 				//	VTK is done reslicing.
 				vtkImageData volumeVtkWrapper = _volume.Volume.ObtainPinnedVtkVolume();
@@ -323,6 +329,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 					exec.Update();
 
+					//TODO (cr Oct 2009): why's inside this using
 					_volume.Volume.ReleasePinnedVtkVolume();
 
 					return reslicer.GetOutput();
@@ -335,6 +342,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int[] sliceDimensions = sliceImageData.GetDimensions();
 			int sliceDataSize = sliceDimensions[0]*sliceDimensions[1];
 			IntPtr sliceDataPtr = sliceImageData.GetScalarPointer();
+
+			//TODO (cr Oct 2009): 1000 const
 			byte[] pixelData = MemoryManager.Allocate<byte>(sliceDataSize*sizeof (short), 1000);
 
 			Marshal.Copy(sliceDataPtr, pixelData, 0, sliceDataSize*sizeof (short));

@@ -36,6 +36,7 @@ using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO (cr Oct 2009): just properties on Slicer?  Might factor itself out when Slicer creates Slice objects.
 	/// <summary>
 	/// Defines the parameters for a particular slicing of a <see cref="Volume"/> object (i.e. plane boundaries, orientation, thickness, etc.)
 	/// </summary>
@@ -191,6 +192,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			return new ReadOnlyVolumeSlicerParams(this);
 		}
+
+		//TODO (cr Oct 2009): rename to Create.
 
 		/// <summary>
 		/// Allows specification of the slice plane, through point, and extent via two points in patient space

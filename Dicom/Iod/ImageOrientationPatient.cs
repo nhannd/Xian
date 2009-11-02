@@ -323,6 +323,17 @@ namespace ClearCanvas.Dicom.Iod
 			if (Math.Abs(columnCosines[columnCosineSortedIndices[1]]) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
 				return Directions.None;
 			return this.GetSecondaryColumnDirection(opposingDirection);
+
+			//TODO (cr Oct 2009): change to this implementation.
+			//if (_secondaryColumnDirection == 0)
+			//    return Directions.None;
+
+			//columnCosines = new double[] { _columnX, _columnY, _columnZ };
+			//double secondaryCosine = columnCosines[Math.Abs(_secondaryColumnDirection) - 1];
+
+			//// since degreesTolerance is [0,10], the RHS will always be positive
+			//if (Math.Abs(secondaryCosine) < 1 - Math.Cos(degreesTolerance * Math.PI / 180))
+			//    return Directions.None;
 		}
 
 		#region IEquatable<ImageOrientationPatient> Members

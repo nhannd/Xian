@@ -65,6 +65,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 				if (_value is string)
 					return ((string) _value).Length == 0;
 
+				//TODO (cr Oct 2009): what about objects?
 				return false;
 			}	
 		}

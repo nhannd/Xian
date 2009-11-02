@@ -456,6 +456,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Disposal
 
+		//TODO (cr Oct 2009): finalizer
 		protected void Dispose(bool disposing)
 		{
 			if (disposing && !_disposed)

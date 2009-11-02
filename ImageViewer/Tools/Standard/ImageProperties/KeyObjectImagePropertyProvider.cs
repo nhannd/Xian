@@ -19,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.ImageProperties
 		{
 		}
 
+		//TODO (cr Oct 2009): discrepancy w/ data?  we show the image data + some key image stuff.
 		#region IImagePropertyProvider Members
 
 		public IImageProperty[] GetProperties(IPresentationImage image)

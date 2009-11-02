@@ -41,6 +41,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 {
+	//TODO (cr Oct 2009): maybe it's the name - how about MouseImageViewerToolGroup?
 	public abstract class MouseImageViewerToolMaster<T> : MouseImageViewerTool where T : MouseImageViewerTool
 	{
 		private IToolSet _toolSet;

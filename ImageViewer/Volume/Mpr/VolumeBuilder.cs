@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			#region Private fields
 
+			//TODO (cr Oct 2009): convention?
 			private const float HALF_PI = (float) Math.PI/2;
 			private const float GANTRY_TILT_TOLERANCE = 0.1f; // allowed tolerance for gantry tilt (in radians)
 			private const float ORIENTATION_TOLERANCE = 0.01f; // allowed tolerance for image orientation (direction cosine values)
@@ -135,6 +136,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					if (!_gantryTilt.HasValue)
 					{
+						//TODO (cr Oct 2009): Not a tolerance, it's the actual tilt.
 						double aboutXradians = this.GetTiltAboutXTolerance();
 						double aboutYradians = this.GetTiltAboutYTolerance();
 
@@ -281,6 +283,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					double padTopMm = Math.Tan(gantryTilt)*deltaMm;
 					countRowsPaddedAtTop = (int) (padTopMm/pixelSpacing.Y + 0.5f);
 
+					//TODO (cr Oct 2009): verify that IPP of the first image is correct for the volume.
 					// account for the tilt in negative radians: we start padding from the bottom first in this case
 					if (gantryTilt < 0)
 						countRowsPaddedAtTop += paddingRows;
