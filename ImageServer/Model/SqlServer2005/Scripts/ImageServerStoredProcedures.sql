@@ -2605,16 +2605,16 @@ BEGIN
 			
 	BEGIN TRANSACTION
 
-		IF @ReadLock = 1
-		BEGIN
-			UPDATE StudyStorage set ReadLock = ReadLock-1, LastAccessedTime = getdate() 
-			WHERE GUID = @StudyStorageGUID AND ReadLock > 0	
-		END
-		ELSE IF @WriteLock=1
-		BEGIN
-			UPDATE StudyStorage set WriteLock = 0, LastAccessedTime = getdate() 
-			WHERE GUID = @StudyStorageGUID AND WriteLock = 1	
-		END
+	IF @ReadLock = 1
+	BEGIN
+		UPDATE StudyStorage set ReadLock = ReadLock+1, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID	
+	END
+	ELSE IF @WriteLock=1
+	BEGIN
+		UPDATE StudyStorage set WriteLock = 1, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND WriteLock = 0	
+	END
 
 	if (@@ROWCOUNT = 1)
 	BEGIN
@@ -2685,8 +2685,7 @@ BEGIN
 
 			-- Delete the study history to force user to manually deal with new images later.
 			DELETE StudyHistory WHERE GUID=@StudyHistoryGUID
-
-			
+						
 		END
 		ELSE
 		BEGIN
