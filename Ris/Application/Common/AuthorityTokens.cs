@@ -108,9 +108,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow usage of the tool for manual publication of radiology reports.")]
 			public const string TestPublishReport = "RIS/Development/Test Publish";
-
-			[AuthorityToken(Description = "Allow creation of randomly generated test faxes.")]
-			public const string CreateTestFax = "RIS/Development/Create Test Fax";
 		}
 
 		/// <summary>
