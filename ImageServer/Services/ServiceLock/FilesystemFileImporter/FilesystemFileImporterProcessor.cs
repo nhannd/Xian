@@ -47,12 +47,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
     public class FilesystemFileImporterProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
     {
         #region Private Fields
-        private const String DIRECTORY_SUFFIX = "Incoming";
         private readonly Queue<DirectoryImporterBackgroundProcess> _queue = new Queue<DirectoryImporterBackgroundProcess>();
         private readonly List<DirectoryImporterBackgroundProcess> _inprogress = new List<DirectoryImporterBackgroundProcess>();
         private readonly ManualResetEvent _allCompleted = new ManualResetEvent(false);
         private readonly object _sync = new object();
-        private int importedSopCounter = 0;
+        private int _importedSopCounter;
         #endregion
 
         #region IServiceLockItemProcessor Members
@@ -69,7 +68,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                 foreach (ServerPartition partition in ServerPartitionMonitor.Instance)
                 {
                     DirectoryImporterParameters parms = new DirectoryImporterParameters();
-                    String incomingFolder = String.Format("{0}_{1}", partition.PartitionFolder, DIRECTORY_SUFFIX);
+					String incomingFolder = String.Format("{0}_{1}", partition.PartitionFolder, FilesystemMonitor.ImportDirectorySuffix);
 
                     parms.Directory = new DirectoryInfo(filesystem.Filesystem.GetAbsolutePath(incomingFolder));
                     parms.PartitionAE = partition.AeTitle;
@@ -83,7 +82,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                     }
 
                     DirectoryImporterBackgroundProcess process = new DirectoryImporterBackgroundProcess(parms);
-                    process.SopImported += delegate { importedSopCounter++; };
+                    process.SopImported += delegate { _importedSopCounter++; };
 
                     _queue.Enqueue(process);
                 }
@@ -100,13 +99,13 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                     Platform.Log(LogLevel.Info, "All import processes have completed gracefully.");
             }
 
-            UnlockServiceLock(item, true, Platform.Time.AddSeconds(importedSopCounter>0? 5: settings.RecheckDelaySeconds));
+            UnlockServiceLock(item, true, Platform.Time.AddSeconds(_importedSopCounter>0? 5: settings.RecheckDelaySeconds));
         }
 
         #endregion
 
         #region Private Methods
-        private ServerFilesystemInfo EnsureFilesystemIsValid(Model.ServiceLock item)
+        private static ServerFilesystemInfo EnsureFilesystemIsValid(Model.ServiceLock item)
         {
             ServerFilesystemInfo filesystem = null;
             if (item.FilesystemKey != null)
@@ -138,15 +137,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             return filesystem;
         }
 
-        private ServerFilesystemInfo SelectFilesystem()
+        private static ServerFilesystemInfo SelectFilesystem()
         {
             IEnumerable<ServerFilesystemInfo> filesystems = FilesystemMonitor.Instance.GetFilesystems();
             IList<ServerFilesystemInfo> sortedFilesystems = CollectionUtils.Sort(filesystems, FilesystemSorter.SortByFreeSpace);
 
             if (sortedFilesystems == null || sortedFilesystems.Count == 0)
                 return null;
-            else
-                return sortedFilesystems[0];
+        	return sortedFilesystems[0];
         }
 
         private void OnBackgroundProcessCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -186,10 +184,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                ServiceLockUpdateColumns columns = new ServiceLockUpdateColumns();
-                columns.FilesystemKey = item.FilesystemKey;
+                ServiceLockUpdateColumns columns = new ServiceLockUpdateColumns {FilesystemKey = item.FilesystemKey};
 
-                IServiceLockEntityBroker broker = ctx.GetBroker<IServiceLockEntityBroker>();
+            	IServiceLockEntityBroker broker = ctx.GetBroker<IServiceLockEntityBroker>();
                 broker.Update(item.Key, columns);
                 ctx.Commit();
             }

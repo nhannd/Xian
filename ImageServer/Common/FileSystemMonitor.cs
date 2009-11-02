@@ -36,7 +36,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -114,7 +113,7 @@ namespace ClearCanvas.ImageServer.Common
 		private Timer _dbTimer;
 		private Timer _fsTimer;
 		private EventHandler<FilesystemChangedEventArgs> _changedListener;
-		private StorageLocationCache _storageLocationCache = new StorageLocationCache();
+		private readonly StorageLocationCache _storageLocationCache = new StorageLocationCache();
 		#endregion
 
 		#region Private Constructors
@@ -136,6 +135,9 @@ namespace ClearCanvas.ImageServer.Common
 		#endregion
 
 		#region Public Static Members
+
+		public static String ImportDirectorySuffix = "Incoming";
+
 		/// <summary>
 		/// Singleton FilesystemMonitor created the first time its referenced.
 		/// </summary>
@@ -361,9 +363,11 @@ namespace ClearCanvas.ImageServer.Common
 			}
 
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-			parms.ServerPartitionKey = partitionKey;
-			parms.StudyInstanceUid = studyInstanceUid;
+			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+			                                            	{
+			                                            		ServerPartitionKey = partitionKey,
+			                                            		StudyInstanceUid = studyInstanceUid
+			                                            	};
 			IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
 			foreach (StudyStorageLocation studyLocation in locationList)
@@ -378,7 +382,6 @@ namespace ClearCanvas.ImageServer.Common
 			}
 
 			//Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
-			location = null;
 			return false;
 		}
 
@@ -408,8 +411,8 @@ namespace ClearCanvas.ImageServer.Common
         public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-			parms.StudyStorageKey = studyStorageKey;
+			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters
+			                                            	{StudyStorageKey = studyStorageKey};
 			IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
 			foreach (StudyStorageLocation studyLocation in locationList)
@@ -438,6 +441,43 @@ namespace ClearCanvas.ImageServer.Common
 			{
 				return GetOnlineStudyStorageLocation(read, studyStorageKey, out location);
 			}
+		}
+
+		/// <summary>
+		/// Get an Online and Writeable <see cref="ServiceLock"/> related incoming directory.
+		/// </summary>
+		/// <param name="partition">The ServerPartion</param>
+		/// <param name="folder">The absolute path of the output folder</param>
+		/// <returns>true on a found writeable path, false on failure or no writeable path</returns>
+		public bool GetWriteableIncomingFolder(ServerPartition partition, out string folder)
+		{
+			using (IReadContext read = _store.OpenReadContext())
+			{
+				IServiceLockEntityBroker broker = read.GetBroker<IServiceLockEntityBroker>();
+				ServiceLockSelectCriteria criteria = new ServiceLockSelectCriteria();
+				criteria.ServiceLockTypeEnum.EqualTo(ServiceLockTypeEnum.ImportFiles);
+
+				IList<ServiceLock> rows = broker.Find(criteria);
+
+				foreach (ServiceLock serviceLock in rows)
+				{
+					if (!serviceLock.Enabled) 
+						continue;
+
+					if (!CheckFilesystemOnline(serviceLock.FilesystemKey))
+						continue;
+
+					if (!CheckFilesystemWriteable(serviceLock.FilesystemKey))
+						continue;
+
+					String incomingFolder = String.Format("{0}_{1}", partition.PartitionFolder, ImportDirectorySuffix);
+					folder = serviceLock.Filesystem.GetAbsolutePath(incomingFolder);
+					return true;
+				}
+			}
+
+			folder = string.Empty;
+			return false;
 		}
 
         /// <summary>
@@ -506,10 +546,7 @@ namespace ClearCanvas.ImageServer.Common
                     List<FilesystemTierEnum> tiers = FilesystemTierEnum.GetAll();
 
                     // sorted by enum values
-                    tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
-                               {
-                                   return tier1.Enum.CompareTo(tier2.Enum);
-                               });
+                    tiers.Sort((tier1, tier2) => tier1.Enum.CompareTo(tier2.Enum));
 
                     _tierInfo = new TierInfo();
 

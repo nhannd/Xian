@@ -166,22 +166,27 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                                         ProgressChangedEventArgs progress = new ProgressChangedEventArgs(100, result.SopInstanceUid);
 
                                         // Fire the imported event.
-                                        SopImportedEventArgs args = new SopImportedEventArgs();
-                                        args.StudyInstanceUid = result.StudyInstanceUid;
-                                        args.SeriesInstanceUid = result.SeriesInstanceUid;
-                                        args.SopInstanceUid = result.SopInstanceUid;
-                                        EventsHelper.Fire(_sopImportedHandlers, this, args);
+                                        SopImportedEventArgs args = new SopImportedEventArgs
+                                                                    	{
+                                                                    		StudyInstanceUid = result.StudyInstanceUid,
+                                                                    		SeriesInstanceUid = result.SeriesInstanceUid,
+                                                                    		SopInstanceUid = result.SopInstanceUid
+                                                                    	};
+                                    	EventsHelper.Fire(_sopImportedHandlers, this, args);
 
                                         OnProgressChanged(progress);
                                     }
                                 }
                                 else
                                 {
-                                    Platform.Log(LogLevel.Warn, "Failure importing sop {0}: {1}", filePath, result.ErrorMessage);
                                     if (result.DicomStatus == DicomStatuses.StorageStorageOutOfResources)
                                     {
                                         _skippedStudies.Add(result.StudyInstanceUid);
                                         skipped = true;
+                                    }
+                                    else
+                                    {
+										Platform.Log(LogLevel.Warn, "Failure importing sop {0}: {1}", filePath, result.ErrorMessage);
                                     }
                                 }
                             }

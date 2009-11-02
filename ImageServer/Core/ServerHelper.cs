@@ -153,6 +153,9 @@ namespace ClearCanvas.ImageServer.Core
         		}
         	}
 
+			if (location.ReadOnly)
+				throw new FilesystemNotWritableException(String.Format("Filesystem {0} is readonly", location.FilesystemPath));
+
         	return location;
         }
 

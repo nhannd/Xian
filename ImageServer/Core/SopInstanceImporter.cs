@@ -162,6 +162,7 @@ namespace ClearCanvas.ImageServer.Core
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
             String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
+        	DicomFile file = null;
 
 			DicomProcessingResult result = new DicomProcessingResult
 			                               	{
@@ -221,9 +222,9 @@ namespace ClearCanvas.ImageServer.Core
                 	}
 
                 	String path = studyLocation.FilesystemPath;
-                	string extension = null;
+                	const string extension = null;
                     String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
-                    DicomFile file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
+                    file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
 
                     if (HasUnprocessedCopy(studyLocation, message))
                     {
@@ -274,9 +275,32 @@ namespace ClearCanvas.ImageServer.Core
                 }
                 catch (FilesystemNotWritableException)
                 {
-                    String failureMessage = String.Format("Unable to process image, study storage location is missing or not writeable: {0}.", sopInstanceUid);
-                    commandProcessor.Rollback();
-                    result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+					commandProcessor.Rollback();
+
+                	string folder;
+					if (!FilesystemMonitor.Instance.GetWriteableIncomingFolder(_context.Partition, out folder))
+					{
+						String failureMessage =
+							String.Format("Unable to process image, study storage location is missing or not writeable: {0}.", sopInstanceUid);
+						result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+						return result;
+					}
+
+                	if (file == null)
+                		file = ConvertToDicomFile(message, string.Empty, _context.SourceAE);
+
+                	if (!SaveToFolder(folder, sopInstanceUid, studyInstanceUid, file))
+                	{
+						String failureMessage =
+							String.Format("Study storage location not writeable and no writeable incoming folder: {0}.", sopInstanceUid);
+						result.SetError(DicomStatuses.StorageStorageOutOfResources, failureMessage);
+						return result;
+                	}
+
+                	Platform.Log(LogLevel.Info, "Saved existing SOP without writeable storage location to {0} folder: {1}",
+                	             FilesystemMonitor.ImportDirectorySuffix, sopInstanceUid);
+					result.DicomStatus = DicomStatuses.Success;
+                	return result;
                 }
                 catch (Exception e)
                 {
@@ -368,7 +392,27 @@ namespace ClearCanvas.ImageServer.Core
             #endregion
         }
 
-        private DicomProcessingResult HandleDuplicate(string sopInstanceUid, StudyStorageLocation studyLocation, ServerCommandProcessor commandProcessor, DicomFile file)
+		private static bool SaveToFolder(string folder, string sopInstanceUid, string studyInstanceUid, DicomFile file)
+		{
+			using (ServerCommandProcessor commandProcessor =
+				new ServerCommandProcessor(String.Format("Saving Sop Instance to Incoming {0}", sopInstanceUid)))
+			{
+				string path = Path.Combine(folder, studyInstanceUid);
+				commandProcessor.AddCommand(new CreateDirectoryCommand(path));
+
+				path = Path.Combine(path, sopInstanceUid);
+				path += ".dcm";
+
+				if (File.Exists(path))
+					return false;
+
+				commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true));
+
+				return commandProcessor.Execute();
+			}
+		}
+
+    	private DicomProcessingResult HandleDuplicate(string sopInstanceUid, StudyStorageLocation studyLocation, ServerCommandProcessor commandProcessor, DicomFile file)
         {
         	Study study = studyLocation.Study ??
                           studyLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
