@@ -113,7 +113,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="ImageGraphic"/>		/// with the specified image parameters.
+		/// Initializes a new instance of <see cref="ImageGraphic"/>
+		/// with the specified image parameters.
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
@@ -335,25 +336,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#region Protected properties/methods
 
 		/// <summary>
-		/// Gets the raw raw pixel data, if passed in during construction.
+		/// Gets or sets the raw raw pixel data.
 		/// </summary>
-		/// <value>The raw pixel data, or <b>null</b> if it was not
-		/// passed in during construction</value>
 		protected byte[] PixelDataRaw
 		{
 			get { return _pixelDataRaw; }
-			set { _pixelDataRaw = value; }
+			set
+			{
+				_pixelDataRaw = value;
+				_pixelDataWrapper = null;
+			}
 		}
 
 		/// <summary>
-		/// Gets the pixel data delegate, if passed in during construction.
+		/// Gets or sets the pixel data delegate.
 		/// </summary>
-		/// <value>The pixel data delegate, or <b>null</b> if it was not
-		/// passed in during construction.</value>
 		protected PixelDataGetter PixelDataGetter
 		{
 			get { return _pixelDataGetter; }
-			set { _pixelDataGetter = value; }
+			set
+			{
+				_pixelDataGetter = value;
+				_pixelDataWrapper = null;
+			}
 		}
 
 		/// <summary>

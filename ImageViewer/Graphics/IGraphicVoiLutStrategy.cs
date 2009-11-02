@@ -34,6 +34,8 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	//TODO (cr Oct 2009): factory - the old provider name wasn't right either (rename?)
+	//TODO (cr Oct 2009): Should take an ImageGraphic or IImageGraphic
 	/// <summary>
 	/// Defines a strategy for selecing a VOI LUT appropriate for an <see cref="IGraphic"/>.
 	/// </summary>

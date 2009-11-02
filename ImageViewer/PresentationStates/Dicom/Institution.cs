@@ -34,6 +34,7 @@ using ClearCanvas.Dicom.Iod.Modules;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	//TODO (cr Oct 2009): internal
 	/// <summary>
 	/// Represents an institution's details.
 	/// </summary>

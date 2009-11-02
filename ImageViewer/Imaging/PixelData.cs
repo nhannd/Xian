@@ -53,6 +53,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// to get the raw byte array, then use unsafe code to do your processing.
 	/// </remarks>
 	/// <seealso cref="PixelDataGetter"/>
+
+	//TODO (cr Oct 2009): Disposable?
 	public abstract class PixelData
 	{
 		#region Private fields

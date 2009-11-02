@@ -47,6 +47,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 	}
 
+	//TODO (cr Oct 2009): deprecate, make IGraphicVoiLutFactory fall back to this.
+
 	/// <summary>
 	/// A provider of an image's Initial Voi Lut.
 	/// </summary>
