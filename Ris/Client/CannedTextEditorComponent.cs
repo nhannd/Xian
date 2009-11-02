@@ -169,7 +169,7 @@ namespace ClearCanvas.Ris.Client
 					return new ValidationResult(ok, Desktop.SR.MessageValueRequired);
 				}));
 
-			if (CannedTextSettings.Default.RestrictCannedTextNameAndNameFieldsToAlphaChars)
+			if (CannedTextSettings.Default.RestrictNameToAlphaChars)
 			{
 				// add validation rule to ensure the name does not contain invalid characters
 				this.Validation.Add(new ValidationRule("Name",
@@ -182,7 +182,10 @@ namespace ClearCanvas.Ris.Client
 						var ok = Regex.IsMatch(this.Name, @"^[A-Za-z ]+$");
 						return new ValidationResult(ok, SR.MessageCannedTextNameCanOnlyContainAlphaChars);
 					}));
+			}
 
+			if (CannedTextSettings.Default.RestrictFieldsToAlphaChars)
+			{
 				// add validation rule to ensure the name field in the text does not contain invalid characters
 				this.Validation.Add(new ValidationRule("Text",
 					delegate
