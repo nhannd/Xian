@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Security;
 using ClearCanvas.Common;
@@ -49,14 +48,6 @@ namespace ClearCanvas.Enterprise.Common
 	/// </summary>
 	public class RemoteServiceProviderArgs
 	{
-		private string _baseUrl;
-		private string _failoverBaseUrl;
-		private IServiceChannelConfiguration _configuration;
-		private int _maxReceivedMessageSize;
-		private X509CertificateValidationMode _certificateValidationMode;
-		private X509RevocationMode _revocationMode;
-		private IUserCredentialsProvider _userCredentialsProvider;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -112,85 +103,57 @@ namespace ClearCanvas.Enterprise.Common
 			X509RevocationMode revocationMode,
 			string credentialsProviderClassName)
 		{
-			_baseUrl = baseUrl;
-			_failoverBaseUrl = failoverBaseUrl;
-			_configuration = InstantiateClass<IServiceChannelConfiguration>(configurationClassName);
-			_maxReceivedMessageSize = maxReceivedMessageSize;
-			_certificateValidationMode = certificateValidationMode;
-			_revocationMode = revocationMode;
-			_userCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
+			BaseUrl = baseUrl;
+			FailoverBaseUrl = failoverBaseUrl;
+			Configuration = InstantiateClass<IServiceChannelConfiguration>(configurationClassName);
+			MaxReceivedMessageSize = maxReceivedMessageSize;
+			CertificateValidationMode = certificateValidationMode;
+			RevocationMode = revocationMode;
+			UserCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
 				InstantiateClass<IUserCredentialsProvider>(credentialsProviderClassName);
 		}
 
 		/// <summary>
 		/// Base URL shared by all services in the service layer.
 		/// </summary>
-		public string BaseUrl
-		{
-			get { return _baseUrl; }
-			set { _baseUrl = value; }
-		}
+		public string BaseUrl { get; set; }
 
 		/// <summary>
 		/// Failover base URL shared by all services in the service layer.
 		/// </summary>
-		public string FailoverBaseUrl
-		{
-			get { return _failoverBaseUrl; }
-			set { _failoverBaseUrl = value; }
-		}
+		public string FailoverBaseUrl { get; set; }
 
 		/// <summary>
 		/// Configuration that is responsible for configuring the service binding/endpoint.
 		/// </summary>
-		public IServiceChannelConfiguration Configuration
-		{
-			get { return _configuration; }
-			set { _configuration = value; }
-		}
+		public IServiceChannelConfiguration Configuration { get; set; }
 
 		/// <summary>
 		/// Maximum size in bytes of message received by the service client.
 		/// </summary>
-		public int MaxReceivedMessageSize
-		{
-			get { return _maxReceivedMessageSize; }
-			set { _maxReceivedMessageSize = value; }
-		}
+		public int MaxReceivedMessageSize { get; set; }
 
 		/// <summary>
 		/// Certificate validation mode.
 		/// </summary>
-		public X509CertificateValidationMode CertificateValidationMode
-		{
-			get { return _certificateValidationMode; }
-			set { _certificateValidationMode = value; }
-		}
+		public X509CertificateValidationMode CertificateValidationMode { get; set; }
 
 		/// <summary>
 		/// Certificate revocation mode.
 		/// </summary>
-		public X509RevocationMode RevocationMode
-		{
-			get { return _revocationMode; }
-			set { _revocationMode = value; }
-		}
+		public X509RevocationMode RevocationMode { get; set; }
 
 		/// <summary>
 		/// Gets or sets an <see cref="IUserCredentialsProvider"/>.
 		/// May be null if user credentials are not relevant.
 		/// </summary>
-		public IUserCredentialsProvider UserCredentialsProvider
-		{
-			get { return _userCredentialsProvider; }
-			set { _userCredentialsProvider = value; }
-		}
+		public IUserCredentialsProvider UserCredentialsProvider { get; set; }
 
 		private static T InstantiateClass<T>(string className)
 		{
 			try
 			{
-				Type type = Type.GetType(className, true);
+				var type = Type.GetType(className, true);
 				return (T)Activator.CreateInstance(type);
 			}
 			catch (Exception e)
@@ -274,18 +237,18 @@ namespace ClearCanvas.Enterprise.Common
 				}
 			}
 
-			private bool InvocationMethodIsDispose(IInvocation invocation)
+			private static bool InvocationMethodIsDispose(IInvocation invocation)
 			{
 				return invocation.Method.DeclaringType == typeof(IDisposable)
 					&& invocation.Method.Name == "Dispose";
 			}
 
-			private IDisposable GetDisposableInvocationTarget(IInvocation invocation)
+			private static IDisposable GetDisposableInvocationTarget(IInvocation invocation)
 			{
 				return (IDisposable)ResolveProxiedInvocationTarget(invocation);
 			}
 
-			private object ResolveProxiedInvocationTarget(IInvocation invocation)
+			private static object ResolveProxiedInvocationTarget(IInvocation invocation)
 			{
 				var invocationTarget = invocation.InvocationTarget;
 
@@ -296,11 +259,8 @@ namespace ClearCanvas.Enterprise.Common
 					// we do the safe thing and check if we need to access the inner object
 					return ((IProxyTargetAccessor)invocationTarget).DynProxyGetTarget();
 				}
-				else
-				{
-					// invoke the method directly on the target
-					return invocationTarget;
-				}
+				// invoke the method directly on the target
+				return invocationTarget;
 			}
 		}
 
@@ -343,8 +303,8 @@ namespace ClearCanvas.Enterprise.Common
 			// create the channel
 			// TODO: defer channel creation until an interceptor
 			// actually Proceed()s to it (DP2 supports this)
-			ChannelFactory factory = _channelFactoryProvider.GetPrimary(serviceContract);
-			object channel = CreateChannel(serviceContract, factory);
+			var factory = _channelFactoryProvider.GetPrimary(serviceContract);
+			var channel = CreateChannel(serviceContract, factory);
 
 			// create an AOP proxy around the channel, and return that
 			return CreateChannelProxy(serviceContract, channel);
@@ -412,7 +372,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// <returns></returns>
 		protected internal object GetFailoverChannel(Type serviceContract, EndpointAddress failedEndpoint)
 		{
-			ChannelFactory alternate = _channelFactoryProvider.GetFailover(serviceContract, failedEndpoint);
+			var alternate = _channelFactoryProvider.GetFailover(serviceContract, failedEndpoint);
 			return alternate != null ? CreateChannel(serviceContract, alternate) : null;
 		}
 
@@ -429,7 +389,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// <returns></returns>
 		private object CreateChannel(Type serviceContract, ChannelFactory factory)
 		{
-			bool authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
+			var authenticationRequired = AuthenticationAttribute.IsAuthenticationRequired(serviceContract);
 			if (authenticationRequired)
 			{
 				factory.Credentials.UserName.UserName = this.UserName;
@@ -437,8 +397,8 @@ namespace ClearCanvas.Enterprise.Common
 			}
 
 			// invoke the CreateChannel method on the factory
-			MethodInfo createChannelMethod = factory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
-			object channel = createChannelMethod.Invoke(factory, null);
+			var createChannelMethod = factory.GetType().GetMethod("CreateChannel", Type.EmptyTypes);
+			var channel = createChannelMethod.Invoke(factory, null);
 			Platform.Log(LogLevel.Debug, "Created service channel instance for service {0}, authenticationRequired={1}.",
 						 serviceContract.FullName, authenticationRequired);
 			return channel;

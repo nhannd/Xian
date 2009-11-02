@@ -30,11 +30,9 @@
 #endregion
 
 using System;
-using Castle.DynamicProxy;
 using Castle.Core.Interceptor;
 using System.ServiceModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -80,10 +78,10 @@ namespace ClearCanvas.Enterprise.Common
             }
 		}
 
-        private object DoFailover(IInvocation invocation, Exception e)
+        private void DoFailover(IInvocation invocation, Exception e)
         {
-            object channel = invocation.InvocationTarget;
-            EndpointAddress remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
+            var channel = invocation.InvocationTarget;
+            var remoteEndpoint = ((IClientChannel) channel).RemoteAddress;
 
             // log the exception
             LogFailure(invocation, e, remoteEndpoint);
