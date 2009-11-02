@@ -216,10 +216,12 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		internal class RemoteServiceProxyMixin : IRemoteServiceProxy
 		{
+			private readonly Type _serviceContract;
 			private readonly object _channel;
 
-			internal RemoteServiceProxyMixin(object channel)
+			internal RemoteServiceProxyMixin(Type serviceContract, object channel)
 			{
+				_serviceContract = serviceContract;
 				_channel = channel;
 			}
 
@@ -227,9 +229,17 @@ namespace ClearCanvas.Enterprise.Common
 			/// Gets the channel object.
 			/// </summary>
 			/// <returns></returns>
-			object IRemoteServiceProxy.GetChannel()
+			object IRemoteServiceProxy.Channel
 			{
-				return _channel;
+				get { return _channel; }
+			}
+
+			/// <summary>
+			/// Gets the service contract implemented by this channel.
+			/// </summary>
+			Type IRemoteServiceProxy.ServiceContract
+			{
+				get { return _serviceContract; }
 			}
 		}
 
@@ -374,6 +384,7 @@ namespace ClearCanvas.Enterprise.Common
 			}
 
 			// add fail-over advice at the end of the list, closest the target call
+			//TODO: can we avoid adding this advice if no failover is defined?
 			interceptors.Add(new FailoverClientAdvice(this));
 		}
 
@@ -443,7 +454,7 @@ namespace ClearCanvas.Enterprise.Common
 			}
 
 			var options = new ProxyGenerationOptions();
-			options.AddMixinInstance(new RemoteServiceProxyMixin(channel));
+			options.AddMixinInstance(new RemoteServiceProxyMixin(serviceContract, channel));
 
 			// create and return proxy
 			// note: _proxyGenerator does internal caching based on service contract

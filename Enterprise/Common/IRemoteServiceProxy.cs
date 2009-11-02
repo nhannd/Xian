@@ -44,6 +44,11 @@ namespace ClearCanvas.Enterprise.Common
 		/// Gets the channel object.
 		/// </summary>
 		/// <returns></returns>
-		object GetChannel();
+		object Channel { get; }
+
+		/// <summary>
+		/// Gets the service contract implemented by this channel.
+		/// </summary>
+		Type ServiceContract { get; }
 	}
 }

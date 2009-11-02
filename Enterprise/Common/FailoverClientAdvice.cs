@@ -34,6 +34,7 @@ using Castle.DynamicProxy;
 using Castle.Core.Interceptor;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -113,8 +114,9 @@ namespace ClearCanvas.Enterprise.Common
 
         private object GetFailoverChannel(IInvocation invocation, EndpointAddress failedEndpoint)
         {
+        	var proxy = (IRemoteServiceProxy)invocation.Proxy;
             return _serviceProvider.GetFailoverChannel(
-              invocation.Method.DeclaringType, failedEndpoint);
+			  proxy.ServiceContract, failedEndpoint);
         }
 
         private static void LogFailure(IInvocation invocation, Exception e, EndpointAddress failedEndpoint)
