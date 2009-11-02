@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
         public void Refresh()
         {
-            SearchResultGridView1.Refresh();
+            SearchResultGridView1.RefreshCurrentPage();
             SearchUpdatePanel.Update();
         }
 
