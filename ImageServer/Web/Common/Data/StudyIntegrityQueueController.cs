@@ -35,6 +35,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
@@ -202,7 +203,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 if (record.ConflictingImageDetails!=null)
                 {
                     // The conflicting study data is stored in Details column
-                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
+                    string newPatientName = record.ConflictingImageDetails.StudyInfo.PatientInfo.Name;
+                    if (!String.IsNullOrEmpty(newPatientName))
+                    {
+                        if (PatientNameSettings.Default.RemoveRedundantSpaces)
+                        {
+                            string acceptableName = PatientNameRules.GetAcceptableName(newPatientName);
+                            if (!acceptableName.Equals(newPatientName))
+                            {
+                                //override the value
+                                newPatientName = acceptableName;
+                            }
+                        }
+                    }
+                    command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, newPatientName));
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientId, record.ExistingStudyInfo.PatientInfo.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientsBirthDate, record.ExistingStudyInfo.PatientInfo.PatientsBirthdate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
                     command.Commands.Add(new SetTagCommand(DicomTags.PatientsSex, record.ExistingStudyInfo.PatientInfo.Sex, record.ConflictingImageDetails.StudyInfo.PatientInfo.Sex));
@@ -216,7 +230,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     String patientName = record.ConflictingImageDescriptor[DicomTags.PatientsName] != null
                                              ? record.ConflictingImageDescriptor[DicomTags.PatientsName].Value
                                              : null;
-                    if (patientName!=null)
+
+                    if (!String.IsNullOrEmpty(patientName))
+                    {
+                        if (PatientNameSettings.Default.RemoveRedundantSpaces)
+                        {
+                            string acceptableName = PatientNameRules.GetAcceptableName(patientName);
+                            if (!acceptableName.Equals(patientName))
+                            {
+                                //override the value
+                                patientName = acceptableName;
+                            }
+                        }
+                    }
+                    
+                    if (patientName != null)
                         command.Commands.Add(new SetTagCommand(DicomTags.PatientsName, record.ExistingStudyInfo.PatientInfo.Name, patientName));
 
                     String patientId = record.ConflictingImageDescriptor[DicomTags.PatientId] != null

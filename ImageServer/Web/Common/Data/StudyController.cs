@@ -43,6 +43,7 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using UpdateItem=ClearCanvas.ImageServer.Core.Edit.UpdateItem;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {

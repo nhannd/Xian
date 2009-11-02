@@ -29,7 +29,7 @@
                                      <table>
                                         <tr>
                                             <td width="130px" class="DialogLabelBackground"><asp:Label runat="server" CssClass="DialogTextBoxLabel">Patient Name</asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="PreformattedLabel1" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Name %>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="PreformattedLabel1" CssClass="StudyField"  Text='<%# ReconcileDetails.ExistingStudy.Patient.Name %>' /></td>
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label321" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td>
@@ -94,7 +94,7 @@
                                      <table>
                                         <tr>
                                             <td width="130px" class="DialogLabelBackground"><asp:Label runat="server" CssClass="DialogTextBoxLabel">Patient Name</asp:Label></td>
-                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Name)? "Not Specified": ReconcileDetails.ConflictingStudyInfo.Patient.Name%>' /></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" Width="300px" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingStudyInfo.Patient.Name)? "Not Specified": ReconcileDetails.ConflictingStudyInfo.Patient.Name%>' /></td>
                                         </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td>

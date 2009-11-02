@@ -195,7 +195,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.CreateStudy
 
 					string groupID = ServerHelper.GetUidGroup(file, _destinationStudyStorage.ServerPartition, Context.WorkQueueItem.InsertTime);
 
-				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
+				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context) {EnforceNameRules = true};
+
                     ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, uid, imagePath);
 					if (result.Status != ProcessingStatus.Success)
 					{

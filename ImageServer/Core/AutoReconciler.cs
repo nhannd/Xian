@@ -39,7 +39,6 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Core.Reconcile;
@@ -47,13 +46,13 @@ using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Core
 {
     /// <summary>
     /// Class implementing <see cref="IStudyPreProcessor"/> to update a DICOM image
     /// based on past reconciliation.
     /// </summary>
-    class AutoReconciler : BasePreprocessor, IStudyPreProcessor
+    public class AutoReconciler : BasePreprocessor, IStudyPreProcessor
     {
         #region Private Fields
         private readonly static ServerCache<ServerEntityKey, UidMapper> _uidMapCache = new ServerCache<ServerEntityKey, UidMapper>(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(15));
@@ -92,7 +91,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <exception cref="TargetStudyIsNearlineException">Thrown when the target study is currently nearline.</exception>
         /// <exception cref="TargetStudyInvalidStateException">Thrown when the target study is in invalid state and cannot be updated.</exception>
         /// 
-        public PreProcessingResult Process(DicomFile file)
+        public InstancePreProcessingResult Process(DicomFile file)
         {
             Platform.CheckForNullReference(file, "file");
 
@@ -360,10 +359,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     if (File.Exists(targetStudy.GetSopInstancePath(newSeriesUid, newSopUid)))
                     {
                         throw new InstanceAlreadyExistsException("Instance already exists")
-                        {
-                            SeriesInstanceUid = newSeriesUid,
-                            SopInstanceUid = newSopUid
-                        };
+                                  {
+                                      SeriesInstanceUid = newSeriesUid,
+                                      SopInstanceUid = newSopUid
+                                  };
 
                     }
 
@@ -393,10 +392,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             IList<StudyHistory> reconcileHistories = studyHistoryList.FindAll(
                 delegate(StudyHistory item)
-                {
-                    ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-                    return desc.Equals(fileDesc);
-                });
+                    {
+                        ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+                        return desc.Equals(fileDesc);
+                    });
 
             if (reconcileHistories.Count == 0)
             {
@@ -407,10 +406,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 reconcileHistories = studyHistoryList.FindAll(
                     delegate(StudyHistory item)
-                    {
-                        ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
-                        return desc.Equals(fileDesc);
-                    });
+                        {
+                            ImageSetDescriptor desc = XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+                            return desc.Equals(fileDesc);
+                        });
 
             }
 
@@ -421,7 +420,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion
     }
 
-    class AutoReconcilerResult : PreProcessingResult
+    class AutoReconcilerResult : InstancePreProcessingResult
     {
         #region Private Members
         private readonly StudyReconcileAction _action;

@@ -167,6 +167,16 @@
 	padding: 0px;
 }
 
+.TallHistoryDetailsPanel
+{  
+	background: #ffffff url(../images/Controls/Dialog/DialogBodyBackgroundTall.png) repeat-x bottom;
+	border: solid 1px #cccccc; 
+	margin-right: 5px; 
+	margin-bottom: 5px; 
+	margin-top: 4px; 
+	padding: 0px;
+}
+
 .HistoryDetailsLabel
 {
     color: #205F87;

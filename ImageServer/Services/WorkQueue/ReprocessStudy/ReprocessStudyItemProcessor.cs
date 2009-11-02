@@ -228,7 +228,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             Platform.CheckForNullReference(item.StudyStorageKey, "item.StudyStorageKey");
 
             StudyProcessorContext context = new StudyProcessorContext(StorageLocation);
-            SopInstanceProcessor processor = new SopInstanceProcessor(context);
+            
+            // TODO: Should we enforce the patient's name rule?
+            // If we do, the Study record will have the new patient's name 
+            // but how should we handle the name in the Patient record?
+            bool enforceNameRules = false;
+            SopInstanceProcessor processor = new SopInstanceProcessor(context) { EnforceNameRules = enforceNameRules};
+
             Dictionary<string, List<string>> seriesMap = new Dictionary<string, List<string>>();
 
             bool successful = true;
@@ -341,7 +347,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                                                       {
                                                           Platform.Log(ServerPlatform.InstanceLogLevel, "Reprocessing SOP {0} for study {1}",instanceUid, StorageLocation.StudyInstanceUid);
                                                           string groupId = ServerHelper.GetUidGroup(dicomFile, StorageLocation.ServerPartition, WorkQueueItem.InsertTime);
-                                                          ProcessingResult result = processor.ProcessFile(groupId, dicomFile, studyXml,  true, null, null);
+                                                          ProcessingResult result = processor.ProcessFile(groupId, dicomFile, studyXml, true, null, null);
                                                           switch (result.Status)
                                                           {
                                                               case ProcessingStatus.Success:

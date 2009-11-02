@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplySopRulesCommand.cs" />
+    <Compile Include="AutoReconciler.cs" />
+    <Compile Include="BasePreprocessor.cs" />
     <Compile Include="Data\ProcessDuplicateChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyChangeLog.cs" />
     <Compile Include="Data\ReprocessStudyQueueData.cs" />
@@ -60,6 +62,9 @@
     <Compile Include="Edit\UpdateStudyCommand.cs" />
     <Compile Include="Edit\UpdateStudyStatistics.cs" />
     <Compile Include="Edit\WebDeleteWorkQueueEntryData.cs" />
+    <Compile Include="IStudyPreProcessor.cs" />
+    <Compile Include="PatientNameRules.cs" />
+    <Compile Include="PreProcessors.cs" />
     <Compile Include="Reconcile\StudyMatchingMap.cs" />
     <Compile Include="Edit\WebEditStudyCommandCompiler.cs" />
     <Compile Include="Edit\WebEditStudyContext.cs" />

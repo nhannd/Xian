@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 throw new ApplicationException("No online storage found");
             }
             StudyProcessorContext context = new StudyProcessorContext(_storageLocation);
-            SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
+            SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context) {EnforceNameRules = true};
             string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
 
             _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, _compare, null, null);

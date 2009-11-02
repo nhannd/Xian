@@ -1345,6 +1345,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ViewStudyHover.png" />
+    <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackgroundTall.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerFirstDisabled.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerFirstEnabled.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerLastDisabled.png" />

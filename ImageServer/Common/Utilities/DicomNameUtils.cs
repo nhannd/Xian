@@ -42,7 +42,14 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         [Flags]
         public enum NormalizeOptions
         {
+            /// <summary>
+            /// Remove redundant space character(s), including leading, trailing or in-between double-spaces
+            /// </summary>
             TrimSpaces,
+
+            /// <summary>
+            /// Remove empty trailing component(s)
+            /// </summary>
             TrimEmptyEndingComponents
         }
 
@@ -127,14 +134,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             if (!LookLikeSameNames(name1, name2))
                 return null;
 
-            name1 =
-                DicomNameUtils.Normalize(name1,
-                                         DicomNameUtils.NormalizeOptions.TrimSpaces |
-                                         DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents);
-            name2 =
-                DicomNameUtils.Normalize(name2,
-                                         DicomNameUtils.NormalizeOptions.TrimSpaces |
-                                         DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents);
+            name1 = Normalize(name1, NormalizeOptions.TrimSpaces | NormalizeOptions.TrimEmptyEndingComponents);
+            name2 = Normalize(name2, NormalizeOptions.TrimSpaces | NormalizeOptions.TrimEmptyEndingComponents);
 
             if (name1.Length != name2.Length)
             {

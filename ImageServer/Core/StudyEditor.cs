@@ -203,9 +203,9 @@ namespace ClearCanvas.ImageServer.Core
 				List<BaseImageLevelUpdateCommand> updateCommands = null;
 				if (data != null)
 				{
-					updateCommands = CollectionUtils.Map<UpdateItem, BaseImageLevelUpdateCommand>(
+					updateCommands = CollectionUtils.Map<Edit.UpdateItem, BaseImageLevelUpdateCommand>(
 						data.EditRequest.UpdateEntries,
-						delegate(UpdateItem item)
+						delegate(Edit.UpdateItem item)
 							{
 								// Note: For edit, we assume each UpdateItem is equivalent to SetTagCommand
 								return new SetTagCommand(item.DicomTag.TagValue, item.OriginalValue, item.Value);

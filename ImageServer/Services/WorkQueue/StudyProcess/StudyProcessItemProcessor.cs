@@ -40,6 +40,7 @@ using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Reconcile;
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
-    	private const string ReconcileStorageFolder = "Reconcile";
+    	private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
         #endregion
 
         #region Public Properties
@@ -172,7 +173,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="compare">Indicates whether to compare the DICOM file against the study in the system.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream, bool compare)
         {
-            SopInstanceProcessor processor = new SopInstanceProcessor( _context);
+            SopInstanceProcessor processor = new SopInstanceProcessor(_context) {EnforceNameRules = true};
 
         	FileInfo fileInfo = new FileInfo(file.Filename);
 			long fileSize = fileInfo.Length;
@@ -241,7 +242,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (!String.IsNullOrEmpty(sop.RelativePath))
             {
                 dupPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                dupPath = Path.Combine(dupPath, ReconcileStorageFolder);
+                dupPath = Path.Combine(dupPath, RECONCILE_STORAGE_FOLDER);
                 dupPath = Path.Combine(dupPath, sop.GroupID);
                 dupPath = Path.Combine(dupPath, sop.RelativePath);
             }
@@ -267,7 +268,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (!String.IsNullOrEmpty(sop.RelativePath))
             {
                 groupFolderPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
-                groupFolderPath = Path.Combine(groupFolderPath, ReconcileStorageFolder);
+                groupFolderPath = Path.Combine(groupFolderPath, RECONCILE_STORAGE_FOLDER);
                 groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
             }
 
@@ -301,7 +302,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     DicomFile file = new DicomFile(path);
                     file.Load();
 
-                    PreProcessingResult result = PreProcessFile(sop, file);
+                    InstancePreProcessingResult result = PreProcessFile(sop, file);
 
                     if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
                             || result.DiscardImage)
@@ -321,7 +322,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         DicomFile file = new DicomFile(path);
                         file.Load();
 
-                        PreProcessingResult result = PreProcessFile(sop, file);
+                        InstancePreProcessingResult result = PreProcessFile(sop, file);
 
                         if (false ==file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid) 
                             || result.DiscardImage)
@@ -374,16 +375,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="file"></param>
-        protected virtual PreProcessingResult PreProcessFile(WorkQueueUid uid, DicomFile file)
+        protected virtual InstancePreProcessingResult PreProcessFile(WorkQueueUid uid, DicomFile file)
         {
             String contextID = uid.GroupID ?? String.Format("{0}_{1}",
                 String.IsNullOrEmpty(file.SourceApplicationEntityTitle) ? ServerPartition.AeTitle : file.SourceApplicationEntityTitle, 
                 WorkQueueItem.InsertTime.ToString("yyyyMMddHHmmss"));
 
-            PreProcessingResult result = new PreProcessingResult();
+
+            PatientNameRules nameRule = new PatientNameRules();
+            nameRule.Update(file, _context.StorageLocation);
+
+            InstancePreProcessingResult result = new InstancePreProcessingResult();
             bool updated = false;
             AutoReconciler autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
-            PreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
+            InstancePreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
             result.AutoReconciled = reconcileResult != null;
             updated |= reconcileResult != null;
             
@@ -391,10 +396,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 result.DiscardImage = true;
             }
-
-            PatientNameAutoCorrection patNameCorrection = new PatientNameAutoCorrection(contextID, StorageLocation);
-            PreProcessingResult updateResult = patNameCorrection.Process(file);
-            updated |= updateResult != null;
 
             // if the studyuid is modified, the file will be deleted by the caller.
             if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
@@ -407,7 +408,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return result;
         }
 
-        private void RemoveWorkQueueUid(WorkQueueUid uid, string fileToDelete)
+        private static void RemoveWorkQueueUid(WorkQueueUid uid, string fileToDelete)
         {
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Remove Work Queue Uid"))
             {

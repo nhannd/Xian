@@ -11,12 +11,6 @@
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls {
     
     
-    /// <summary>
-    /// ReconcileHistoryDetailsColumn class.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated class.
-    /// </remarks>
     public partial class ReconcileHistoryDetailsColumn {
         
         /// <summary>
@@ -26,7 +20,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SummaryPanel;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl SummaryPanel;
+        
+        /// <summary>
+        /// ShowHideDetails control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor ShowHideDetails;
+        
+        /// <summary>
+        /// HistoryDetailsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl HistoryDetailsPanel;
         
         /// <summary>
         /// Label1 control.
@@ -36,32 +48,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-        
-        /// <summary>
-        /// DetailsPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DetailsPanel;
-        
-        /// <summary>
-        /// Table1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Table Table1;
-        
-        /// <summary>
-        /// cpe control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.CollapsiblePanelExtender cpe;
     }
 }

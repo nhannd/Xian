@@ -51,10 +51,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
     [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.Default, Recovery = RecoveryModes.Automatic)]
     class ReconcilePostProcessingProcessor : StudyProcessItemProcessor
 	{
-        protected override PreProcessingResult PreProcessFile(Model.WorkQueueUid uid, DicomFile file)
+        protected override InstancePreProcessingResult PreProcessFile(Model.WorkQueueUid uid, DicomFile file)
         {
             // Return a result indicating the file has been reconciled.
-            PreProcessingResult result = new PreProcessingResult();
+            InstancePreProcessingResult result = new InstancePreProcessingResult();
             result.AutoReconciled = true;
 
             return result;

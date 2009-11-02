@@ -29,46 +29,49 @@
 
 #endregion
 
-using System.IO;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core.Reconcile.CreateStudy;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Core.Reconcile
+namespace ClearCanvas.ImageServer.Core
 {
-    internal abstract class ReconcileProcessorBase : ServerCommandProcessor
+    /// <summary>
+    /// Base StudyProcess Preprocessor class.
+    /// </summary>
+    public abstract class BasePreprocessor
     {
-        private ReconcileStudyProcessorContext _context;
+        #region Private Members
+
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="AutoReconciler"/> to update
+        /// a DICOM file according to the history.
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="storageLocation"></param>
+        public BasePreprocessor(string description, StudyStorageLocation storageLocation)
+        {
+            Platform.CheckForEmptyString(description, "description");
+            Platform.CheckForNullReference(storageLocation, "storageLocation");
+
+            StorageLocation = storageLocation;
+            Description = description;
+        }
+        
+        #endregion
+
+        #region Public Properties
+
+        public string Description { get; set; }
 
         /// <summary>
-        /// Create an instance of <see cref="ReconcileCreateStudyProcessor"/>
+        /// Gets or sets the <see cref="StudyStorageLocation"/> of the study which the 
+        /// DICOM file(s) belong to.
         /// </summary>
-        protected ReconcileProcessorBase(string name)
-            :base(name)
-        {
-        }
+        public StudyStorageLocation StorageLocation { get; set; }
 
-        protected internal ReconcileStudyProcessorContext Context
-        {
-            get { return _context; }
-            set { _context = value; }
-        }
+        #endregion
 
-
-
-        public string Name
-        {
-            get { return Description; }
-        }
-
-        protected void AddCleanupCommands()
-        {
-            DirectoryInfo dir = new DirectoryInfo(Context.ReconcileWorkQueueData.StoragePath);
-            AddCommand( new DeleteDirectoryCommand(dir.FullName, false, true));
-
-            if (dir.Parent!=null)
-            {
-                AddCommand(new DeleteDirectoryCommand(dir.Parent.FullName, false, true));
-            }            
-        }
     }
 }

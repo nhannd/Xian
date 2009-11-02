@@ -78,11 +78,6 @@
     <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="RecoveryModes.cs" />
     <Compile Include="StudyIntegrityValidationAttribute.cs" />
-    <Compile Include="StudyProcess\AutoReconcileException.cs" />
-    <Compile Include="StudyProcess\AutoReconciler.cs" />
-    <Compile Include="StudyProcess\BasePreprocessor.cs" />
-    <Compile Include="StudyProcess\PatientNameAutoCorrection.cs" />
-    <Compile Include="StudyProcess\PreProcessors.cs" />
     <Compile Include="WebDeleteStudy\DeleteSeriesFromDBCommand.cs" />
     <Compile Include="WebDeleteStudy\Extensions\LogHistory\LogHistoryExtension.cs" />
     <Compile Include="WebDeleteStudy\IWebDeleteProcessorExtension.cs" />

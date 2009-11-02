@@ -41,6 +41,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.IdentityModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -51,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
+    <Compile Include="Exceptions\AutoReconcileException.cs" />
     <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
@@ -85,6 +90,11 @@
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="InProcessImageServerServiceProvider.cs" />
+    <Compile Include="PatientNameSettings.Designer.cs">
+      <DependentUpon>PatientNameSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="ServiceModel\IFilesystemService.cs" />
     <Compile Include="ServiceMount.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />
@@ -128,6 +138,7 @@
     <Compile Include="Utilities\FilesystemUtils.cs" />
     <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\StringUtils.cs" />
+    <Compile Include="Utilities\Test\DicomNameUtilsTest.cs" />
     <Compile Include="Utilities\XmlUtils.cs" />
     <Compile Include="WSHttpConfiguration.cs" />
     <Compile Include="WebServicesSettings.Designer.cs">
@@ -171,6 +182,10 @@
     <None Include="Diagnostics\DiagnosticSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DiagnosticSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PatientNameSettings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PatientNameSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RemoteImageServerServiceSettings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

@@ -235,6 +235,11 @@ namespace ClearCanvas.ImageServer.Core
 
 		#region Public Properties
 
+        /// <summary>
+        /// Gets or sets a value to indicate whether to apply the Patient's Name rules when processing a Dicom object.
+        /// </summary>
+        public bool EnforceNameRules { get; set; }
+
 		public string Modality
 		{
 			get { return _modality; }
@@ -266,17 +271,23 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="compare"></param>
 		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success.</param>
 		/// <param name="deleteFile">An option file to delete as part of the process</param>
-        public virtual ProcessingResult ProcessFile(String group, DicomFile file, StudyXml stream, bool compare, WorkQueueUid uid, string deleteFile)
+        public virtual ProcessingResult ProcessFile(string group, DicomFile file, StudyXml stream, bool compare, WorkQueueUid uid, string deleteFile)
 		{
             _instanceStats.ProcessTime.Start();
             ProcessingResult result = new ProcessingResult();
             result.Status = ProcessingStatus.Failed; // will reset later
 
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
+		    using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
             {
                 SopProcessingContext processingContext = new SopProcessingContext(processor, _context.StorageLocation, group);
 
-                if (compare && ShouldReconcile(processingContext, file))
+                if (EnforceNameRules)
+                {
+                    PatientNameRules nameRules = new PatientNameRules();
+                    nameRules.Update(file, _context.StorageLocation);
+                }
+
+                if (compare && ShouldReconcile(_context.StorageLocation, file))
                 {
                     ScheduleReconcile(processingContext, file, uid);
                     result.Status = ProcessingStatus.Reconciled;
@@ -302,7 +313,7 @@ namespace ClearCanvas.ImageServer.Core
 		    return result;
 		}
 
-
+        
 
 	    #endregion
 
@@ -313,10 +324,10 @@ namespace ClearCanvas.ImageServer.Core
 		/// <summary>
 		/// Returns a value indicating whether the Dicom image must be reconciled.
 		/// </summary>
+		/// <param name="storageLocation"></param>
 		/// <param name="message">The Dicom message</param>
-		/// <param name="context">The context for processing</param>
 		/// <returns></returns>
-		private bool ShouldReconcile(SopProcessingContext context, DicomMessageBase message)
+		private bool ShouldReconcile(StudyStorageLocation storageLocation, DicomMessageBase message)
 		{
 			Platform.CheckForNullReference(_context, "_context");
 			Platform.CheckForNullReference(message, "message");
@@ -326,21 +337,16 @@ namespace ClearCanvas.ImageServer.Core
 				// the study doesn't exist in the database
 				return false;
 			}
-			else
-			{
-				StudyComparer comparer = new StudyComparer();
-                DifferenceCollection list = comparer.Compare(message, context.StudyLocation.Study, context.StudyLocation.ServerPartition.GetComparisonOptions());
 
-				if (list != null && list.Count > 0)
-				{
-					LogDifferences(message, list);
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
+		    StudyComparer comparer = new StudyComparer();
+            DifferenceCollection list = comparer.Compare(message, storageLocation.Study, storageLocation.ServerPartition.GetComparisonOptions());
+
+		    if (list != null && list.Count > 0)
+		    {
+		        LogDifferences(message, list);
+		        return true;
+		    }
+		    return false;
 		}
 
 		private static void LogDifferences(DicomMessageBase message, DifferenceCollection list)
@@ -367,9 +373,6 @@ namespace ClearCanvas.ImageServer.Core
        
 		private void InsertInstance(DicomFile file, StudyXml stream, WorkQueueUid uid, string deleteFile)
 		{
-			//Platform.CheckForNullReference(_context, "_context");
-			//Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
-            
 			using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file"))
 			{
 			    EventsHelper.Fire(OnInsertingSop, this, new SopInsertingEventArgs() {Processor = processor });

@@ -66,11 +66,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
         /// </remarks>
         public SetTagCommand(DicomAttribute attribute, string newValue)
-            : this()
+            : this(attribute.Tag.TagValue, String.Empty, newValue)
         {
-            UpdateEntry.TagPath = new DicomTagPath {Tag = attribute.Tag};
-            UpdateEntry.Value = newValue;
-            UpdateEntry.OriginalValue = String.Empty;
         }
 
 
@@ -95,11 +92,9 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
         /// </remarks>
         public SetTagCommand(uint tag, string newValue)
-            : this()
+            : this(tag,String.Empty, newValue)
         {
-            UpdateEntry.TagPath = new DicomTagPath {Tag = DicomTagDictionary.GetDicomTag(tag)};
-            UpdateEntry.Value = newValue;
-            UpdateEntry.OriginalValue = String.Empty;
+            
         }
 
         /// <summary>
@@ -110,12 +105,10 @@ namespace ClearCanvas.ImageServer.Core.Edit
         /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
         /// </remarks>
         public SetTagCommand(DicomFile file, uint tag, string originalValue, string value)
-            : this()
+            : this(tag, originalValue, value)
         {
             File = file;
-            UpdateEntry.TagPath = new DicomTagPath {Tag = DicomTagDictionary.GetDicomTag(tag)};
-            UpdateEntry.Value = value;
-            UpdateEntry.OriginalValue = originalValue;
+            
         }
 		#endregion
 

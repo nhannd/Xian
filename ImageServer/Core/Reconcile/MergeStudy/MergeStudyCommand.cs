@@ -219,7 +219,8 @@ namespace ClearCanvas.ImageServer.Core.Reconcile.MergeStudy
 
 					string groupID = ServerHelper.GetUidGroup(file, Context.Partition, Context.WorkQueueItem.InsertTime);
 
-				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context);
+				    SopInstanceProcessor sopProcessor = new SopInstanceProcessor(context) {EnforceNameRules = true };
+
                     ProcessingResult result = sopProcessor.ProcessFile(groupID, file, xml, false, uid, GetReconcileUidPath(uid));
 					if (result.Status != ProcessingStatus.Success)
 					{

@@ -29,63 +29,37 @@
 
 #endregion
 
-using System;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Core
 {
     /// <summary>
-    /// Represents an exception that occured during auto-reconciliation
-    /// is nearline.
+    /// Defines the interface of the Pre-Processors to execute on a file
     /// </summary>
-    /// <remarks>
-    /// <see cref="StudyInstanceUid"/> indicates if a restore request has been submitted
-    /// for the target study.
-    /// </remarks>
-    public class AutoReconcileException : Exception
+    internal interface IStudyPreProcessor
     {
-        public AutoReconcileException(string message) : base(message)
-        {
-        }
-    }
-    
-    
-    /// <summary>
-    /// Represents an exception that occured when the target study during auto-reconciliation
-    /// is not in the right state (eg, it is lossy compressed but has been archived as lossless).
-    /// </summary>
-    public class TargetStudyInvalidStateException: AutoReconcileException
-    {
-        public TargetStudyInvalidStateException(string message)
-            : base(message)
-        {
-        }
+        /// <summary>
+        /// Called to process a DICOM file.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns>An instance of <see cref="InstancePreProcessingResult"/> containing the result of the processing. NULL if 
+        /// the change has been made to the file.</returns>
+        InstancePreProcessingResult Process(DicomFile file);
 
         /// <summary>
-        /// The Study Instance UID of the study that causes the issue.
+        /// Gets or sets the <see cref="StudyStorageLocation"/> of the study which the 
+        /// DICOM file(s) belong to.
         /// </summary>
-        public string StudyInstanceUid { get; set; }
-    }
+        StudyStorageLocation StorageLocation { get; set;}
 
-    /// <summary>
-    /// Represents an exception that occured when the target study during auto-reconciliation
-    /// is nearline.
-    /// </summary>
-    /// <remarks>
-    /// <see cref="RestoreRequested"/> indicates if a restore request has been submitted
-    /// for the target study.
-    /// </remarks>
-    public class TargetStudyIsNearlineException : TargetStudyInvalidStateException
-    {
-        public TargetStudyIsNearlineException()
-            :base("Target study is not online.")
-        {
-        }
-        
         /// <summary>
-        /// Indicates whether or not a restore request has been submitted.
+        /// Gets or sets the description of the pre-processor.
         /// </summary>
-        public bool RestoreRequested { get; set; }
+        string Description
+        {
+            get;
+            set;
+        }
     }
-
-    
 }
