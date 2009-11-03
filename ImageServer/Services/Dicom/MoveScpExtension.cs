@@ -438,8 +438,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 																status = DicomStatuses.QueryRetrieveUnableToPerformSuboperations;
                 	                               			else
                 	                               				status = DicomStatuses.Success;
-
-															_theScu = null;
                 	                               		}
                 	                               		else
                 	                               		{
@@ -467,10 +465,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               	};
 					
                     _theScu.BeginSend(
-                        delegate
+                        delegate(IAsyncResult ar)
                         	{
-								//No-Op
-                            },
+								if (_theScu != null)
+								{
+									_theScu.EndSend(ar);
+									_theScu.Dispose();
+									_theScu = null;
+								}
+                        	},
                         _theScu);
 
 

@@ -237,79 +237,78 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             
             // Now setup the StorageSCU component
             int sendCounter = 0;
-            ImageServerStorageScu scu = new ImageServerStorageScu(ServerPartition, device);
+			using (ImageServerStorageScu scu = new ImageServerStorageScu(ServerPartition, device))
+			{
+				// set the preferred syntax lists
+				scu.LoadPreferredSyntaxes(ReadContext);
 
-            // set the preferred syntax lists
-            scu.LoadPreferredSyntaxes(ReadContext);
+				// Load the Instances to Send into the SCU component
+				scu.AddStorageInstanceList(InstanceList);
 
-            // Load the Instances to Send into the SCU component
-            scu.AddStorageInstanceList(InstanceList);
+				// Set an event to be called when each image is transferred
+				scu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
+				                           	{
+				                           		if (instance.SendStatus.Status == DicomState.Success
+				                           		    || instance.SendStatus.Status == DicomState.Warning
+				                           		    || instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
+				                           		{
+				                           			sendCounter++;
+				                           			OnInstanceSent(instance);
+				                           		}
 
-            // Set an event to be called when each image is transferred
-            scu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
-                                    {
-                                        if (instance.SendStatus.Status == DicomState.Success
-                                            || instance.SendStatus.Status == DicomState.Warning
-                                            || instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
-                                        {
-                                            sendCounter++;
-                                            OnInstanceSent(instance);
-                                        }
+				                           		if (instance.SendStatus.Status == DicomState.Failure)
+				                           		{
+				                           			scu.FailureDescription = instance.SendStatus.Description;
+				                           			if (false == String.IsNullOrEmpty(instance.ExtendedFailureDescription))
+				                           			{
+				                           				scu.FailureDescription = String.Format("{0} [{1}]", scu.FailureDescription,
+				                           				                                       instance.ExtendedFailureDescription);
+				                           			}
+				                           		}
 
-                                        if (instance.SendStatus.Status == DicomState.Failure)
-                                        {
-                                            scu.FailureDescription = instance.SendStatus.Description;
-                                            if (false == String.IsNullOrEmpty(instance.ExtendedFailureDescription))
-                                            {
-                                                scu.FailureDescription = String.Format("{0} [{1}]", scu.FailureDescription, instance.ExtendedFailureDescription);
-                                            }
-                                        }
-                                            
 
-                                        if (CancelPending && !(this is WebMoveStudyItemProcessor) && !scu.Canceled)
-                                        {
-                                            Platform.Log(LogLevel.Info, "Auto-route canceled due to shutdown for study: {0}", StorageLocation.StudyInstanceUid);
-                                            item.FailureDescription = "Operation was canceled due to server shutdown request.";
-                                            scu.Cancel();
-                                        }
-                                    };
+				                           		if (CancelPending && !(this is WebMoveStudyItemProcessor) && !scu.Canceled)
+				                           		{
+				                           			Platform.Log(LogLevel.Info, "Auto-route canceled due to shutdown for study: {0}",
+				                           			             StorageLocation.StudyInstanceUid);
+				                           			item.FailureDescription = "Operation was canceled due to server shutdown request.";
+				                           			scu.Cancel();
+				                           		}
+				                           	};
 
-            try
-            {
-                // Block until send is complete
-                scu.Send();
+				try
+				{
+					// Block until send is complete
+					scu.Send();
 
-                // Join for the thread to exit
-                scu.Join();
+					// Join for the thread to exit
+					scu.Join();
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex, "Error occurs while sending images to {0} : {1}", device.AeTitle, ex.Message);
+				}
+				finally
+				{
+					if (scu.FailureDescription.Length > 0)
+					{
+						item.FailureDescription = scu.FailureDescription;
+						scu.Status = ScuOperationStatus.Failed;
+					}
 
-                // Dispose to cleanup properly
-                scu.Dispose();
-            }
-            catch(Exception ex)
-            {
-                Platform.Log(LogLevel.Error, ex, "Error occurs while sending images to {0} : {1}", device.AeTitle, ex.Message);
-            }
-            finally
-            {
-                if (scu.FailureDescription.Length > 0)
-                {
-                    item.FailureDescription = scu.FailureDescription;
-                    scu.Status = ScuOperationStatus.Failed;
-                }
-
-                // Reset the WorkQueue entry status
-                if ((InstanceList.Count > 0 && sendCounter != InstanceList.Count) // not all sop were sent
-                    || scu.Status == ScuOperationStatus.Failed
-                    || scu.Status == ScuOperationStatus.ConnectFailed)
-                {
-                    PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred}
-                }
-                else
-                {
-                    OnComplete();
-                }
-            }
-            
+					// Reset the WorkQueue entry status
+					if ((InstanceList.Count > 0 && sendCounter != InstanceList.Count) // not all sop were sent
+					    || scu.Status == ScuOperationStatus.Failed
+					    || scu.Status == ScuOperationStatus.ConnectFailed)
+					{
+						PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred}
+					}
+					else
+					{
+						OnComplete();
+					}
+				}
+			}
         }
 
         protected override bool CanStart()
