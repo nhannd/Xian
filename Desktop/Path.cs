@@ -33,6 +33,7 @@ using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
@@ -42,28 +43,37 @@ namespace ClearCanvas.Desktop
     /// <remarks>
     /// Instances of this class are immutable.
     /// </remarks>
-    public class Path
+    public class Path : IEquatable<Path>
     {
 		/// <summary>
 		/// Gets the empty <see cref="Path"/> object.
 		/// </summary>
-		public static Path Empty = new Path(new PathSegment[]{});
+		public static readonly Path Empty = new Path(new PathSegment[]{});
 
 
 		private const string SEPARATOR = "/";
-    	private const string ESCAPED_SEPARATOR = "//";
+    	private const string ESCAPED_SEPARATOR = "'/";
 		private const string TEMP = "__$:$__";
 
         private readonly List<PathSegment> _segments;
 
-        /// <summary>
+		#region Constructors
+
+		/// <summary>
         /// Creates a new <see cref="Path"/> from the specified path string, resolving
         /// resource keys in the path string using the specified <see cref="ResourceResolver"/>.
         /// </summary>
         /// <remarks>
-        /// The path string may contain any combination of literals and resource keys.  Localization
-        /// will be attempted on each path segment by treating the segment as a resource key,
-        /// and path segments that fail as resource keys will be treated as literals.
+        /// <para>
+		/// The path string is a string of the form A[/B[/C...]] where the forward slash delineates
+		/// segments.  To include a slash character as part of a segment, escape it by preceding it
+		/// with a single quote, e.g. '/.
+		/// </para>
+        /// <para>
+		/// Each segment may be either a literal or a resource key.  Localization
+		/// will be attempted on each path segment by treating the segment as a resource key,
+		/// and path segments that fail as resource keys will be treated as literals.
+		/// </para>
         /// </remarks>
         /// <param name="pathString">The path string to parse.</param>
         /// <param name="resolver">The <see cref="IResourceResolver"/> to use for localization.</param>
@@ -76,12 +86,19 @@ namespace ClearCanvas.Desktop
 		/// Creates a new <see cref="Path"/> from the specified path string, with no resource resolver.
 		/// </summary>
 		/// <remarks>
+		/// <para>
+		/// The path string is a string of the form A[/B[/C...]] where the forward slash delineates
+		/// segments.  To include a slash character as part of a segment, escape it by preceding it
+		/// with a single quote, e.g. '/.
+		/// </para>
+		/// <para>
 		/// The path string must only contain literals, because there is no resource resolver to perform
 		/// localization.
+		/// </para>
 		/// </remarks>
 		/// <param name="pathString"></param>
 		public Path(string pathString)
-			:this(ParsePathString(pathString, new ResourceResolver(new Assembly[]{})))
+			:this(ParsePathString(pathString, null))
 		{
 		}
 
@@ -90,7 +107,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		/// <param name="segment"></param>
 		public Path(PathSegment segment)
-			:this(new[]{ segment })
+			:this(segment == null ? null : new[]{ segment })
 		{
 		}
 
@@ -100,10 +117,15 @@ namespace ClearCanvas.Desktop
         /// <param name="segments"></param>
         private Path(IEnumerable<PathSegment> segments)
         {
+        	Platform.CheckForNullReference(segments, "segments");
             _segments = new List<PathSegment>(segments);
-        }
+		}
 
-        /// <summary>
+		#endregion
+
+		#region Public API
+
+		/// <summary>
         /// Gets the individual segments contained in this path.
         /// </summary>
         public IList<PathSegment> Segments
@@ -134,8 +156,7 @@ namespace ClearCanvas.Desktop
 		{
 			get
 			{
-				return StringUtilities.Combine(_segments, SEPARATOR,
-					s => s.LocalizedText.Replace(SEPARATOR, ESCAPED_SEPARATOR), false);
+				return StringUtilities.Combine(_segments, SEPARATOR, s => Escape(s.LocalizedText), false);
 			}
 		}
 
@@ -168,8 +189,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public override string ToString()
         {
-			return StringUtilities.Combine(_segments, SEPARATOR,
-				s => s.ResourceKey.Replace(SEPARATOR, ESCAPED_SEPARATOR), false);
+			return StringUtilities.Combine(_segments, SEPARATOR, s => Escape(s.ResourceKey), false);
 		}
 
 		/// <summary>
@@ -212,13 +232,50 @@ namespace ClearCanvas.Desktop
             return true;
         }
 
-        private static PathSegment[] ParsePathString(string pathString, IResourceResolver resolver)
-		{
-			// replace any escaped separators with some weird temporary string
-			pathString = StringUtilities.EmptyIfNull(pathString).Replace(ESCAPED_SEPARATOR, TEMP);
+    	public bool Equals(Path other)
+    	{
+    		if (ReferenceEquals(null, other)) return false;
+    		if (ReferenceEquals(this, other)) return true;
+    		return CollectionUtils.Equal<PathSegment>(other._segments, _segments, true);
+    	}
 
-			// split string by separator
-        	var parts = pathString.Split(new[] {SEPARATOR}, StringSplitOptions.None);
+    	public override bool Equals(object obj)
+    	{
+    		return Equals(obj as Path);
+    	}
+
+    	public override int GetHashCode()
+    	{
+    		return _segments.GetHashCode();
+    	}
+
+    	public static bool operator ==(Path left, Path right)
+    	{
+    		return Equals(left, right);
+    	}
+
+    	public static bool operator !=(Path left, Path right)
+    	{
+    		return !Equals(left, right);
+		}
+
+		#endregion
+
+		#region Helpers
+
+		private static PathSegment[] ParsePathString(string pathString, IResourceResolver resolver)
+		{
+        	Platform.CheckForNullReference(pathString, "pathString");
+
+			// degenerate case
+			if(pathString == string.Empty)
+				return new PathSegment[0];
+
+			// replace any escaped separators with some weird temporary string
+			pathString = pathString.Replace(ESCAPED_SEPARATOR, TEMP);
+
+			// split string by separator, removing any empty segments
+        	var parts = pathString.Split(new[] {SEPARATOR}, StringSplitOptions.RemoveEmptyEntries);
 
 			// replace temp string with unescaped separator, and create segments
 			return CreateSegments(
@@ -230,5 +287,12 @@ namespace ClearCanvas.Desktop
     	{
     		return CollectionUtils.Map(parts, (string p) => new PathSegment(p, resolver)).ToArray();
     	}
-    }
+
+		private static string Escape(string s)
+		{
+			return s.Replace(SEPARATOR, ESCAPED_SEPARATOR);
+		}
+
+		#endregion
+	}
 }

@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
@@ -69,6 +70,10 @@ namespace ClearCanvas.Desktop
         /// <param name="localized">The localized path segment string.</param>
         internal PathSegment(string key, string localized)
         {
+			// key must be non null and non empty
+        	Platform.CheckForNullReference(key, "key");
+        	Platform.CheckForEmptyString(key, "key");
+
             _key = key;
             _localized = localized;
         }

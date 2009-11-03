@@ -161,6 +161,8 @@
     <Compile Include="Tables\ITableCellEditorView.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="Tests\FormatTests.cs" />
+    <Compile Include="Tests\PathSegmentTests.cs" />
+    <Compile Include="Tests\PathTests.cs" />
     <Compile Include="Tests\TableTest.cs" />
     <Compile Include="ToolStripSettings.cs" />
     <Compile Include="ToolStripSettings.Designer.cs">
