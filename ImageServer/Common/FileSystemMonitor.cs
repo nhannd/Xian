@@ -36,6 +36,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Exceptions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -257,6 +258,30 @@ namespace ClearCanvas.ImageServer.Common
 			return false;
 		}
 
+        /// <summary>
+        /// Helper method to verify if the specified <see cref="StudyStorageLocation"/> 
+        /// is writable and throw <see cref="FilesystemNotWritableException"/> if it is not.
+        /// </summary>
+        /// <param name="location"></param>
+        public void EnsureStorageLocationIsWritable(StudyStorageLocation location)
+        {
+            ServerFilesystemInfo fs = Instance.GetFilesystemInfo(location.FilesystemKey);
+
+            if (!fs.Enable)
+                throw new FilesystemNotWritableException(fs.Filesystem.FilesystemPath) { Reason = "It is disabled" };
+
+            if (!fs.Online)
+                throw new FilesystemNotWritableException(fs.Filesystem.FilesystemPath) { Reason = "It is offline/unreachable" };
+
+            if (fs.ReadOnly)
+                throw new FilesystemNotWritableException(fs.Filesystem.FilesystemPath) { Reason = "It is read-only" };
+
+            if (fs.Full)
+                throw new FilesystemNotWritableException(fs.Filesystem.FilesystemPath) { Reason = "It is full" };
+
+        }
+
+
 		/// <summary>
 		/// Check if a filesystem is readable.
 		/// </summary>
@@ -382,7 +407,7 @@ namespace ClearCanvas.ImageServer.Common
 			}
 
 			//Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
-			return false;
+		    return false;
 		}
 
 		/// <summary>
@@ -491,6 +516,8 @@ namespace ClearCanvas.ImageServer.Common
             ServerFilesystemInfo fs = GetFilesystemInfo(key);
             return fs.Writeable;
         }
+
+
 		#endregion
 
 		#region Private Methods

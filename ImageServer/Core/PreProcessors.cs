@@ -56,6 +56,8 @@ namespace ClearCanvas.ImageServer.Core
         /// Indicates whether or not the file should be discarded.
         /// </summary>
         public bool DiscardImage { get; set; }
+
+        public bool Modified { get; set; }
     }
 
     /// <summary>

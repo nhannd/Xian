@@ -36,7 +36,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
@@ -61,7 +60,6 @@ namespace ClearCanvas.ImageServer.Core
 		private Study _study;
 		private ServerRulesEngine _sopProcessedRulesEngine;
 		private ServerRulesEngine _sopCompressionRulesEngine;
-		private IReadContext _readContext;
 		private List<BaseImageLevelUpdateCommand> _updateCommands;
 	    #endregion
 
@@ -152,28 +150,6 @@ namespace ClearCanvas.ImageServer.Core
 			}
 		}
 
-	    public IReadContext ReadContext
-		{
-			get
-			{
-				lock (_syncLock)
-				{
-					if (_readContext == null)
-					{
-						_readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-					}
-				}
-				return _readContext;
-			}
-			set
-			{
-                lock (_syncLock)
-                {
-                    _readContext = value;
-                }
-			}
-		}
-
 	    public StudyStorageLocation StorageLocation
 	    {
 	        get { return _storageLocation; }
@@ -220,6 +196,7 @@ namespace ClearCanvas.ImageServer.Core
         private readonly StudyProcessorContext _context;
 		private readonly InstanceStatistics _instanceStats = new InstanceStatistics();
 		private string _modality;
+	    private readonly PatientNameRules _patientNameRules;
 
 	    #endregion
 
@@ -229,6 +206,7 @@ namespace ClearCanvas.ImageServer.Core
 		{
             Platform.CheckForNullReference(context, "context");
 		    _context = context;
+		    _patientNameRules = new PatientNameRules(context.Study);
 		}
 
 		#endregion
@@ -262,6 +240,8 @@ namespace ClearCanvas.ImageServer.Core
 
 		#region Public Methods
 
+
+
 		/// <summary>
 		/// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
 		/// </summary>
@@ -271,11 +251,13 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="compare"></param>
 		/// <param name="uid">An optional WorkQueueUid associated with the entry, that will be deleted upon success.</param>
 		/// <param name="deleteFile">An option file to delete as part of the process</param>
-        public virtual ProcessingResult ProcessFile(string group, DicomFile file, StudyXml stream, bool compare, WorkQueueUid uid, string deleteFile)
+        public  ProcessingResult ProcessFile(string group, DicomFile file, StudyXml stream, bool compare, WorkQueueUid uid, string deleteFile)
 		{
+		    Platform.CheckForNullReference(file, "file");
+
+
             _instanceStats.ProcessTime.Start();
-            ProcessingResult result = new ProcessingResult();
-            result.Status = ProcessingStatus.Failed; // will reset later
+            ProcessingResult result = new ProcessingResult {Status = ProcessingStatus.Failed};
 
 		    using (ServerCommandProcessor processor = new ServerCommandProcessor("Process File"))
             {
@@ -283,8 +265,7 @@ namespace ClearCanvas.ImageServer.Core
 
                 if (EnforceNameRules)
                 {
-                    PatientNameRules nameRules = new PatientNameRules();
-                    nameRules.Update(file, _context.StorageLocation);
+                    _patientNameRules.Apply(file);
                 }
 
                 if (compare && ShouldReconcile(_context.StorageLocation, file))
@@ -375,7 +356,7 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file"))
 			{
-			    EventsHelper.Fire(OnInsertingSop, this, new SopInsertingEventArgs() {Processor = processor });
+			    EventsHelper.Fire(OnInsertingSop, this, new SopInsertingEventArgs {Processor = processor });
 
 				InsertInstanceCommand insertInstanceCommand = null;
 				InsertStudyXmlCommand insertStudyXmlCommand = null;
@@ -445,10 +426,7 @@ namespace ClearCanvas.ImageServer.Core
 						Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
 						throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid, processor.FailureException);
 					}
-					else
-					{
-						Platform.Log(ServerPlatform.InstanceLogLevel, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
-					}
+				    Platform.Log(ServerPlatform.InstanceLogLevel, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
 				}
 				catch (Exception e)
 				{
@@ -471,7 +449,7 @@ namespace ClearCanvas.ImageServer.Core
 
     public class ProcessingResult
     {
-        public ProcessingStatus Status;
+        public ProcessingStatus Status { get; set; }
     }
 
     public enum ProcessingStatus

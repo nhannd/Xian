@@ -33,6 +33,7 @@ using System;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
@@ -48,6 +49,12 @@ namespace ClearCanvas.ImageServer.Core
     /// </summary>
     public class PatientNameRules
     {
+        readonly Study _theStudy;
+
+        public PatientNameRules(Study study)
+        {
+            _theStudy = study;
+        }
 
         #region IStudyPreProcessor Members
 
@@ -57,17 +64,15 @@ namespace ClearCanvas.ImageServer.Core
         /// and the specified <see cref="StudyStorageLocation"/>
         /// </summary>
         /// <param name="file"></param>
-        /// <param name="storageLocation"></param>
         /// <returns></returns>
-        public UpdateItem Update(DicomFile file, StudyStorageLocation storageLocation)
+        public UpdateItem Apply(DicomFile file)
         {
             Platform.CheckForNullReference(file, "file");
-            Platform.CheckForNullReference(storageLocation, "storageLocation");
-
+            
             string orginalPatientsNameInFile = file.DataSet[DicomTags.PatientsName].ToString();
 
 			// Note: only apply the name rules if we can't update it to match the study
-            if (!UpdateNameBasedOnTheStudy(file, storageLocation))
+            if (!UpdateNameBasedOnTheStudy(file))
                 UpdateNameBasedOnRules(file);
 
             string newPatientName = file.DataSet[DicomTags.PatientsName].ToString();
@@ -87,27 +92,27 @@ namespace ClearCanvas.ImageServer.Core
             return change;
         }
 
-        private static bool UpdateNameBasedOnTheStudy(DicomFile file, StudyStorageLocation storageLocation)
+        private bool UpdateNameBasedOnTheStudy(DicomFile file)
         {
             bool updated = false;
             string orginalPatientsNameInFile = file.DataSet[DicomTags.PatientsName].ToString();
 
-            if (storageLocation.Study != null)
+            if (_theStudy != null)
             {
                 StudyComparer comparer = new StudyComparer();
-                DifferenceCollection list = comparer.Compare(file, storageLocation.Study,
-                                                             storageLocation.ServerPartition.GetComparisonOptions());
+                ServerPartition partition = ServerPartitionMonitor.Instance.FindPartition(_theStudy.ServerPartitionKey);
+                DifferenceCollection list = comparer.Compare(file, _theStudy, partition.GetComparisonOptions());
 
                 if (list.Count == 1)
                 {
                     ComparisionDifference different = list[0];
                     if (different.DicomTag.TagValue == DicomTags.PatientsName)
                     {
-                        if (DicomNameUtils.LookLikeSameNames(orginalPatientsNameInFile, storageLocation.Study.PatientsName))
+                        if (DicomNameUtils.LookLikeSameNames(orginalPatientsNameInFile, _theStudy.PatientsName))
                         {
                             using ( ServerCommandProcessor processor = new ServerCommandProcessor("Update Patient's Name"))
                             {
-                                SetTagCommand command = new SetTagCommand(file, DicomTags.PatientsName, orginalPatientsNameInFile, storageLocation.Study.PatientsName);
+                                SetTagCommand command = new SetTagCommand(file, DicomTags.PatientsName, orginalPatientsNameInFile, _theStudy.PatientsName);
                                 processor.AddCommand(command);
 
                                 if (!processor.Execute())

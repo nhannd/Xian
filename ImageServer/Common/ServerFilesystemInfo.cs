@@ -82,6 +82,11 @@ namespace ClearCanvas.ImageServer.Common
                 return !Full;
             }
         }
+
+        public bool ReadOnly
+        {
+            get { return _filesystem.ReadOnly; }
+        }
         
         /// <summary>
         /// Returns a boolean value indicating whether the filesystem is readonly.

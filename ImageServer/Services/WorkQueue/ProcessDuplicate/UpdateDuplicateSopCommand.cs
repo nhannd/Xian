@@ -31,74 +31,56 @@
 
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Core;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Core.Edit;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
-    internal class ProcessReplacedSOPInstanceCommand : ServerDatabaseCommand
+    internal class UpdateDuplicateSopCommand : ServerCommand
     {
         #region Private Members
-		
-        private readonly ServerPartition _partition;
-        private readonly DicomFile _file;
-        private StudyStorageLocation _storageLocation;
-        private ProcessingResult _result;
-        private readonly StudyXml _studyXml;
-        private readonly bool _compare;
-        private readonly Model.WorkQueue _item;
-        private readonly WorkQueueUid _uid;
- 
-        #endregion
 
+        private readonly List<BaseImageLevelUpdateCommand> _commands;
+        private readonly DicomFile _file;
+
+        #endregion
 
         #region Constructors
 
-        public ProcessReplacedSOPInstanceCommand(Model.WorkQueue item, WorkQueueUid uid, ServerPartition partition, StudyXml studyXml, DicomFile file, bool compare)
-            : base("ProcessReplacedSOPInstanceCommand", true)
+        public UpdateDuplicateSopCommand(DicomFile file, List<BaseImageLevelUpdateCommand> commands)
+            :base("Duplicate SOP demographic update command", true)
         {
-            _item = item;
-            _uid = uid;
-            _partition = partition;
             _file = file;
-            _compare = compare;
-            _studyXml = studyXml;
+            _commands = commands;
         }
 
-        
         #endregion
 
         #region Overridden Protected Methods
 
-        protected override void OnExecute(ServerCommandProcessor theProcessor, IUpdateContext updateContext)
+        protected override void OnExecute(ServerCommandProcessor theProcessor)
         {
-            String studyUid = _file.DataSet[DicomTags.StudyInstanceUid].ToString();
+            if (_commands!=null)
+            {
+                foreach (BaseImageLevelUpdateCommand command in _commands)
+                {
+                    if (!command.Apply(_file))
+                        throw new ApplicationException(
+                            String.Format("Unable to update the duplicate sop. Command={0}", command));
+                }
+            }
             
-            if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(updateContext, _partition.GetKey(), studyUid, true, out _storageLocation))
-            {
-                throw new ApplicationException("No online storage found");
-            }
-            StudyProcessorContext context = new StudyProcessorContext(_storageLocation);
-            SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context) {EnforceNameRules = true};
-            string group = _uid.GroupID ?? ServerHelper.GetUidGroup(_file, _partition, _item.InsertTime);
-
-            _result = sopInstanceProcessor.ProcessFile(group, _file, _studyXml, _compare, null, null);
-            if (_result.Status == ProcessingStatus.Failed)
-            {
-                throw new ApplicationException("Unable to process file");
-            }
         }
 
+        
         protected override void OnUndo()
         {
 
         }
 
         #endregion
+
     }
 }

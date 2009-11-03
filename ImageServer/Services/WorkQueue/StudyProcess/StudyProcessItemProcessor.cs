@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
-    	private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
+        private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
         #endregion
 
         #region Public Properties
@@ -78,10 +78,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Private Methods
 	
-        private void ProcessDuplicate(WorkQueueUid uid, string basePath, string duplicatePath)
+        private void ProcessDuplicate(DicomFile dupFile, WorkQueueUid uid)
         {
-            DicomFile dupFile = new DicomFile(duplicatePath);
-            dupFile.Load();
+            string duplicateSopPath = GetDuplicateUidPath(uid);
+            string basePath = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
 			if (!File.Exists(basePath))
 			{
 				// NOTE: This is special case. The file which caused dicom service to think this sop is a duplicate
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					             "Duplicate SOP being processed is identical.  Removing SOP: {0}",
 					             baseFile.MediaStorageSopInstanceUid);
 
-				    RemoveWorkQueueUid(uid, duplicatePath);
+                    RemoveWorkQueueUid(uid, duplicateSopPath);
                 }
 				else
 				{
@@ -291,8 +291,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             OnProcessUidBegin(item, sop);
 
             string path = null;
-            string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
-            basePath = Path.Combine(basePath, sop.SopInstanceUid);
             
             try
             {
@@ -310,9 +308,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         RemoveWorkQueueUid(sop, null);
                     }
                     else {
-                    	ProcessDuplicate(sop, basePath + ".dcm", path);
+                    	ProcessDuplicate(file, sop);
                     }
-                    
                 }
                 else
                 {
@@ -381,16 +378,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 String.IsNullOrEmpty(file.SourceApplicationEntityTitle) ? ServerPartition.AeTitle : file.SourceApplicationEntityTitle, 
                 WorkQueueItem.InsertTime.ToString("yyyyMMddHHmmss"));
 
-
-            PatientNameRules nameRule = new PatientNameRules();
-            nameRule.Update(file, _context.StorageLocation);
-
             InstancePreProcessingResult result = new InstancePreProcessingResult();
-            bool updated = false;
+            
+            PatientNameRules patientNameRules = new PatientNameRules(Study);
+            UpdateItem updateItem = patientNameRules.Apply(file);
+
+            result.Modified = updateItem != null;
+
             AutoReconciler autoBaseReconciler = new AutoReconciler(contextID, StorageLocation);
             InstancePreProcessingResult reconcileResult = autoBaseReconciler.Process(file);
             result.AutoReconciled = reconcileResult != null;
-            updated |= reconcileResult != null;
+            result.Modified |= reconcileResult != null;
             
             if (reconcileResult!=null && reconcileResult.DiscardImage)
             {
@@ -400,7 +398,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             // if the studyuid is modified, the file will be deleted by the caller.
             if (file.DataSet[DicomTags.StudyInstanceUid].ToString().Equals(StorageLocation.StudyInstanceUid))
             {
-                if (updated)
+                if (result.Modified)
                     file.Save();
             }
 
@@ -529,8 +527,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     _sopProcessedRulesEngine.Load();
                     _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
                     _context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
-                    _context.ReadContext = ReadContext;
-
+                    
                     if (Study != null)
                     {
                         Platform.Log(LogLevel.Info, "Processing study {0} for Patient {1} (PatientId:{2} A#:{3}), {4} objects",

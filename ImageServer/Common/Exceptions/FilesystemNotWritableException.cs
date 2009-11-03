@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageServer.Common.Exceptions
     {
 
         public string Path { get; private set; }
+        public string Reason { get; set; }
 
         public FilesystemNotWritableException()
             : base("Study is online but the filesystem is no longer writable.")
@@ -50,6 +51,11 @@ namespace ClearCanvas.ImageServer.Common.Exceptions
             : base(String.Format("Filesystem is not writable: {0}", path))
         {
             Path = path;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} : {1}", Path, Reason);
         }
     }
 }

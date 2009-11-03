@@ -62,8 +62,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         private List<BaseImageLevelUpdateCommand> _studyUpdateCommands;
         private List<BaseImageLevelUpdateCommand> _duplicateUpdateCommands;
         private StudyInformation _currentStudyInfo;
-         
-	    #endregion
+        private PatientNameRules _patientNameRules;
+
+        #endregion
 
         #region Protected Properties
 
@@ -112,13 +113,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             base.Initialize(item);
 
             _processDuplicateEntry = new WorkQueueProcessDuplicateSop(item);
+            _patientNameRules = new PatientNameRules(Study);
             HistoryLogged = _processDuplicateEntry.QueueData != null && _processDuplicateEntry.QueueData.State.HistoryLogged;
         }
 
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckMemberIsSet(StorageLocation, "StorageLocation");
-            Platform.CheckForNullReference(Study, "Study doesn't exist"); 
+            Platform.CheckForNullReference(Study, "Study doesn't exist");
             
             if (WorkQueueUidList.Count == 0)
             {
@@ -142,6 +144,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 Platform.CheckTrue(Directory.Exists(DuplicateFolder), String.Format("Duplicate Folder {0} doesn't exist.", DuplicateFolder));
 
                 LogWorkQueueInfo();
+
+                EnsureStorageLocationIsWritable(StorageLocation);
 
                 _currentStudyInfo = StudyInformation.CreateFrom(Study);
 
@@ -175,6 +179,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 }
             }
 
+        }
+
+        private void EnsureStorageLocationIsWritable(StudyStorageLocation location)
+        {
+            FilesystemMonitor.Instance.EnsureStorageLocationIsWritable(location);
         }
 
         #endregion
@@ -379,65 +388,98 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             }
         }
 
+
+        private bool ExistsInStudy(WorkQueueUid uid)
+        {
+            String path = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
+            if (File.Exists(path))
+                return true;
+
+            // check the study xml
+            StudyXml studyXml = StorageLocation.LoadStudyXml();
+            return studyXml[uid.SeriesInstanceUid] != null &&
+                   studyXml[uid.SeriesInstanceUid][uid.SopInstanceUid] != null;
+        }
+
         private void OverwriteExistingInstance(WorkQueueUid uid, ProcessDuplicateAction action)
         {
-            StudyXml studyXml = StorageLocation.LoadStudyXml();
-            String finalDestination = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
-            bool needOverwrite = File.Exists(finalDestination); // the file may not be there any more for some reason
-            if (needOverwrite)
+            if (ExistsInStudy(uid))
             {
-                // The the instance is in the folder, it must have been processed. Otherwise, we can't proceed.
-                Debug.Assert(studyXml.FindInstanceXml(uid.SeriesInstanceUid, uid.SopInstanceUid) != null, "Existing sop hasn't been processed");
+                // remove the existing image and update the count
+                RemoveExistingImage(uid);
             }
 
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Move Duplicate Into Study Folder"))
+            DicomFile duplicateDicomFile = LoadDuplicateDicomFile(uid, false);
+            PreprocessDuplicate(duplicateDicomFile, action);
+            AddDuplicateToStudy(duplicateDicomFile, uid, action);
+        }
+
+        private void PreprocessDuplicate(DicomFile duplicateDicomFile, ProcessDuplicateAction action)
+        {
+            _patientNameRules.Apply(duplicateDicomFile);
+
+            if (action==ProcessDuplicateAction.OverwriteUseExisting)
             {
-                DicomFile file = LoadDuplicateDicomFile(uid, false);
-                String dupFilePath = file.Filename;
-
-                if (needOverwrite)
+                foreach (BaseImageLevelUpdateCommand command in _duplicateUpdateCommands)
                 {
-                    processor.AddCommand(new DeleteFileCommand(StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid)));
-                    processor.AddCommand(new RemoveInstanceFromStudyXmlCommand(StorageLocation, studyXml, file));
-                    processor.AddCommand(new UpdateInstanceCountCommand(StorageLocation, file));
+                    if (!command.Apply(duplicateDicomFile))
+                        throw new ApplicationException(String.Format("Unable to update the duplicate sop. Command={0}", command));
                 }
+            }
+        }
 
-                switch(action)
-                {
-                    case ProcessDuplicateAction.OverwriteUseDuplicates:
-                        // update the study using the duplicate demographics
-                        // assume this has been done at the beginning
-                        break;
+        private void AddDuplicateToStudy(DicomFile duplicateDicomFile, WorkQueueUid uid, ProcessDuplicateAction action)
+        {
+            
+            StudyProcessorContext context = new StudyProcessorContext(StorageLocation);
+            SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context) { EnforceNameRules = true };
+            string group = uid.GroupID ?? ServerHelper.GetUidGroup(duplicateDicomFile, ServerPartition, WorkQueueItem.InsertTime);
 
-                    case ProcessDuplicateAction.OverwriteUseExisting:
-                        // update the duplicate demographics using the existing study
-                        
-                        processor.AddCommand(new DuplicateSopUpdateCommand(file, _duplicateUpdateCommands));
-                
-                        break;
-                }
+            StudyXml studyXml = StorageLocation.LoadStudyXml();
+            int originalInstanceCount = studyXml.NumberOfStudyRelatedInstances;
 
-                
-                bool compare = action != ProcessDuplicateAction.OverwriteAsIs;
-                // NOTE: "compare" has no effect for OverwriteUseExisting or OverwriteUseDuplicate
-                // because in both cases, the study and the duplicates are modified to be the same.
+            bool compare = action != ProcessDuplicateAction.OverwriteAsIs;
+            // NOTE: "compare" has no effect for OverwriteUseExisting or OverwriteUseDuplicate
+            // because in both cases, the study and the duplicates are modified to be the same.
+            ProcessingResult result = sopInstanceProcessor.ProcessFile(group, duplicateDicomFile, studyXml, compare, uid, duplicateDicomFile.Filename);
+            if (result.Status == ProcessingStatus.Failed)
+            {
+                throw new ApplicationException("Unable to process file");
+            }
 
-                ProcessReplacedSOPInstanceCommand processReplaced =
-                        new ProcessReplacedSOPInstanceCommand(WorkQueueItem, uid, StorageLocation.ServerPartition, studyXml, file, compare);
-                processor.AddCommand(processReplaced);
+            Debug.Assert(studyXml.NumberOfStudyRelatedInstances == originalInstanceCount + 1);
+            Debug.Assert(File.Exists(StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid)));
 
-                processor.AddCommand(new DeleteFileCommand(file.Filename));
-                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+        }
+
+        private void RemoveExistingImage(WorkQueueUid uid)
+        {
+            string path = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
+
+            if (!File.Exists(path))
+                return;
+
+            StudyXml studyXml = StorageLocation.LoadStudyXml();
+            DicomFile file = new DicomFile(path);
+            file.Load(DicomReadOptions.DoNotStorePixelDataInDataSet); // don't need to load pixel data cause we will delete it
+
+            int originalInstanceCount = studyXml.NumberOfStudyRelatedInstances;
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Delete Existing Image"))
+            {
+                processor.AddCommand(new DeleteFileCommand(path));
+                processor.AddCommand(new RemoveInstanceFromStudyXmlCommand(StorageLocation, studyXml, file));
+                processor.AddCommand(new UpdateInstanceCountCommand(StorageLocation, file));
 
                 if (!processor.Execute())
                 {
-                    throw new ApplicationException(processor.FailureReason, processor.FailureException);
+                    throw new ApplicationException(String.Format("Unable to remove existing image {0}", file.Filename), processor.FailureException);
                 }
-            	if (needOverwrite)
-            		Platform.Log(ServerPlatform.InstanceLogLevel, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, dupFilePath);
-            	else
-            		Platform.Log(ServerPlatform.InstanceLogLevel, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, dupFilePath);
             }
+
+
+            Debug.Assert(studyXml.NumberOfStudyRelatedInstances == originalInstanceCount - 1);
+            Debug.Assert(!File.Exists(path));
+
         }
 
         private DicomFile LoadDuplicateDicomFile(WorkQueueUid uid, bool skipPixelData)
