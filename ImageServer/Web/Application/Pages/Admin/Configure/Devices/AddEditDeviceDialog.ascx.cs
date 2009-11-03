@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
@@ -167,6 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             }
 
             AllowStorageCheckBox.Attributes.Add("onclick", "AllowStorage_Changed()");
+            AcceptKOPR.Attributes.Add("onclick", "AcceptKOPR_Changed()");
         }
 
 

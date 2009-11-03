@@ -17,6 +17,23 @@
                 }
             }
 
+            function AcceptKOPR_Changed() {
+                if ($("#<%=AcceptKOPR.ClientID %>").attr('checked') == true) {
+                    $("#<%=AllowStorageCheckBox.ClientID %>").attr('checked', true);
+                }
+            }
+
+            Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(SetupCheckBoxes);            
+
+            function SetupCheckBoxes() {
+                if ($("#<%=AllowStorageCheckBox.ClientID %>").attr('checked') == false) {
+                    $("#<%=AcceptKOPR.ClientID %>").attr('disabled', 'true');
+                    $("#<%=AcceptKeyObjectStatesLabel.ClientID %>").css("color", "#bbbbbb");
+                }
+                if ($("#<%=AcceptKOPR.ClientID %>").attr('checked') == true)
+                    $("#<%=AllowStorageCheckBox.ClientID %>").attr('checked', true);
+            }       
+
 
         </script>
 
