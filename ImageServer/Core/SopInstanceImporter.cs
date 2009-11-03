@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -38,9 +37,8 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Exceptions;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Core.Process;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core
@@ -226,7 +224,7 @@ namespace ClearCanvas.ImageServer.Core
                     String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
                     file = ConvertToDicomFile(message, finalDest, _context.SourceAE);
 
-                    if (HasUnprocessedCopy(studyLocation, message))
+                    if (HasUnprocessedCopy(studyLocation.Key, seriesInstanceUid, sopInstanceUid))
                     {
                         failureMessage = string.Format("Another copy of the SOP Instance was received but has not been processed: {0}", sopInstanceUid);
                         result.SetError(DicomStatuses.DuplicateSOPInstance, failureMessage);
@@ -463,48 +461,12 @@ namespace ClearCanvas.ImageServer.Core
             return file;
         }
 
-        static private bool HasUnprocessedCopy(StudyStorageLocation storageLocation, DicomMessageBase message)
+        static private bool HasUnprocessedCopy(ServerEntityKey storageLocationKey, string seriesUid, string sopUid)
         {
-            string seriesUid = message.DataSet[DicomTags.SeriesInstanceUid].ToString();
-            string sopUid = message.DataSet[DicomTags.SopInstanceUid].ToString();
-            IList<WorkQueue> workQueues = ServerHelper.FindWorkQueueEntries(storageLocation.Key, null);
-            foreach (WorkQueue queue in workQueues)
-            {
-                if (queue.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReconcileStudy))
-                {
-                    ReconcileStudyWorkQueue entry = new ReconcileStudyWorkQueue(queue);
-                    ReconcileStudyWorkQueueData queueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(entry.Data);
-                    if (queueData != null)
-                    {
-                        String path = entry.GetSopPath(seriesUid, sopUid);
-                        if (File.Exists(path))
-                            return true;
-                    }
-                }
-            }
+			if (ServerHelper.WorkQueueUidExists(storageLocationKey, seriesUid, sopUid))
+				return true;
 
-            IList<StudyIntegrityQueue> list = ServerHelper.FindSIQEntries(storageLocation.StudyStorage, null);
-            if (list == null || list.Count == 0) return false;
-
-            foreach (StudyIntegrityQueue entry in list)
-            {
-                if (entry.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.Duplicate))
-                {
-                    DuplicateSopReceivedQueue duplicateEntry = new DuplicateSopReceivedQueue(entry);
-                    String path = duplicateEntry.GetSopPath(seriesUid, sopUid);
-                    if (File.Exists(path))
-                        return true;
-                }
-                else if (entry.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
-                {
-                    InconsistentDataSIQEntry duplicateEntry = new InconsistentDataSIQEntry(entry);
-                    String path = duplicateEntry.GetSopPath(seriesUid, sopUid);
-                    if (File.Exists(path))
-                        return true;
-                }
-            }
-
-            return false;
+			return ServerHelper.StudyIntegrityUidExists(storageLocationKey, seriesUid, sopUid);
         }
         
         #endregion

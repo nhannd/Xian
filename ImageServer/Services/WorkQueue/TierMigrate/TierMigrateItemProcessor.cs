@@ -42,6 +42,7 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Validation;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -64,18 +65,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
     public class TierMigrationWorkQueueData
     {
         #region Private Members
-        private TierMigrationProcessingState _state;
-        
-        #endregion
+
+    	#endregion
 
         #region Public Properties
 
-        public TierMigrationProcessingState State
-        {
-            get { return _state; }
-            set { _state = value; }
-        } 
-        #endregion
+    	public TierMigrationProcessingState State { get; set; }
+
+    	#endregion
     }
 
     
@@ -88,7 +85,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
         #region Private Static Members
         private static readonly Object _statisticsLock = new Object();
         private static TierMigrationAverageStatistics _average = new TierMigrationAverageStatistics();
-        private static int _studiesMigratedCount = 0;
+        private static int _studiesMigratedCount;
 
         #endregion
 
@@ -106,15 +103,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                        parms.ProcessorID = ServerPlatform.ProcessorId;
+                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters
+                                                          	{
+                                                          		ProcessorID = ServerPlatform.ProcessorId,
+                                                          		WorkQueueKey = item.GetKey(),
+                                                          		StudyStorageKey = item.StudyStorageKey,
+                                                          		FailureCount = item.FailureCount + 1,
+                                                          		FailureDescription = failureDescription
+                                                          	};
 
-                        parms.WorkQueueKey = item.GetKey();
-                        parms.StudyStorageKey = item.StudyStorageKey;
-                        parms.FailureCount = item.FailureCount + 1;
-                        parms.FailureDescription = failureDescription;
-
-                        Platform.Log(LogLevel.Error,
+                    	Platform.Log(LogLevel.Error,
                                      "Failing {0} WorkQueue entry ({1}): {2}", 
                                      item.WorkQueueTypeEnum, 
                                      item.GetKey(), failureDescription);
@@ -182,7 +180,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
                         // Update the state separately so that if the validation (done in the PostProcessing method) fails, 
                         // we know the study has been migrated when we resume after auto-recovery has been completed.
-                        UpdateState(item, TierMigrationProcessingState.Migrated);
+                        UpdateState(item.Key, TierMigrationProcessingState.Migrated);
                         PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.ResetQueueState);
                     
                     }
@@ -201,27 +199,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 //TODO: What about old entries?
                 return TierMigrationProcessingState.NotStated;
             }
-            else
-            {
-                TierMigrationWorkQueueData data = XmlUtils.Deserialize<TierMigrationWorkQueueData>(item.Data);
-                return data.State;
-            }
+        	TierMigrationWorkQueueData data = XmlUtils.Deserialize<TierMigrationWorkQueueData>(item.Data);
+        	return data.State;
         }
 
-        private static void UpdateState(Model.WorkQueue item, TierMigrationProcessingState state)
+        private static void UpdateState(ServerEntityKey key, TierMigrationProcessingState state)
         {
-            TierMigrationWorkQueueData data = new TierMigrationWorkQueueData();
-            data.State = state;
+            TierMigrationWorkQueueData data = new TierMigrationWorkQueueData {State = state};
 
-            using(IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+        	using(IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IWorkQueueEntityBroker broker = context.GetBroker<IWorkQueueEntityBroker>();
-                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns();
-                parms.Data = XmlUtils.SerializeAsXmlDoc(data);
-                if (!broker.Update(item.Key, parms))
+                WorkQueueUpdateColumns parms = new WorkQueueUpdateColumns {Data = XmlUtils.SerializeAsXmlDoc(data)};
+            	if (!broker.Update(key, parms))
                     throw new ApplicationException("Unable to update work queue state");
-                else
-                    context.Commit();
+            	context.Commit();
             }
         }
 
@@ -235,9 +227,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             Platform.CheckForNullReference(storage, "storage");
             Platform.CheckForNullReference(newFilesystem, "newFilesystem");
 
-            TierMigrationStatistics stat = new TierMigrationStatistics();
-            stat.StudyInstanceUid = storage.StudyInstanceUid;
-            stat.ProcessSpeed.Start();
+            TierMigrationStatistics stat = new TierMigrationStatistics {StudyInstanceUid = storage.StudyInstanceUid};
+        	stat.ProcessSpeed.Start();
     	    StudyXml studyXml = storage.LoadStudyXml();
             stat.StudySize = (ulong) studyXml.GetStudySize(); 
 
@@ -253,11 +244,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
             {
-                TierMigrationContext context = new TierMigrationContext();
-                context.OriginalStudyLocation = storage;
-                context.Destination = newFilesystem;
+                TierMigrationContext context = new TierMigrationContext
+                                               	{
+                                               		OriginalStudyLocation = storage,
+                                               		Destination = newFilesystem
+                                               	};
 
-                string origFolder = context.OriginalStudyLocation.GetStudyPath();
+            	string origFolder = context.OriginalStudyLocation.GetStudyPath();
                 processor.AddCommand(new CreateDirectoryCommand(newPath));
 
                 newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyFolder);
@@ -308,16 +301,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                         using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                                         {
                                             IWorkQueueEntityBroker broker = ctx.GetBroker<IWorkQueueEntityBroker>();
-                                            WorkQueueUpdateColumns parameters = new WorkQueueUpdateColumns();
-                                            parameters.FailureDescription = stats.ToString();
-                                            broker.Update(WorkQueueItem.GetKey(), parameters);
+                                            WorkQueueUpdateColumns parameters = new WorkQueueUpdateColumns
+                                                                                	{FailureDescription = stats.ToString()};
+                                        	broker.Update(WorkQueueItem.GetKey(), parameters);
                                             ctx.Commit();
                                         }
-
                                     }
-                                    catch (Exception)
+                                    catch
                                     {
-                                        // can't log the progress so far... just ignore it
+                                    	// can't log the progress so far... just ignore it
                                     }
                                     finally
                                     {
@@ -329,23 +321,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                         });
                 processor.AddCommand(copyDirCommand);
 
-                DeleteDirectoryCommand delDirCommand = new DeleteDirectoryCommand(origFolder, false);
-                delDirCommand.RequiresRollback = false;
-                processor.AddCommand(delDirCommand);
+                DeleteDirectoryCommand delDirCommand = new DeleteDirectoryCommand(origFolder, false)
+                                                       	{RequiresRollback = false};
+            	processor.AddCommand(delDirCommand);
                 
-                TierMigrateDatabaseUpdateCommand updateDBCommand = new TierMigrateDatabaseUpdateCommand(context);
-                processor.AddCommand(updateDBCommand);
+                TierMigrateDatabaseUpdateCommand updateDbCommand = new TierMigrateDatabaseUpdateCommand(context);
+                processor.AddCommand(updateDbCommand);
 
                 Platform.Log(LogLevel.Info, "Start migrating study {0}.. expecting {1} to be moved", storage.StudyInstanceUid, ByteCountFormatter.Format(stat.StudySize));
                 if (!processor.Execute())
                 {
-                    if (processor.FailureException != null)
+                	if (processor.FailureException != null)
                         throw processor.FailureException;
-                    else
-                        throw new ApplicationException(processor.FailureReason);
+                	throw new ApplicationException(processor.FailureReason);
                 }
 
-                stat.DBUpdate = updateDBCommand.Statistics;
+            	stat.DBUpdate = updateDbCommand.Statistics;
                 stat.CopyFiles = copyDirCommand.CopySpeed;
                 stat.DeleteDirTime = delDirCommand.Statistics;
             }
@@ -407,7 +398,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                                            WorkQueueTypeEnum.ReconcileCleanup
                                                         }, null);
 
-            IList<StudyIntegrityQueue> reconcileList = ServerHelper.FindSIQEntries(WorkQueueItem.StudyStorage, null);
+            IList<StudyIntegrityQueue> reconcileList = ServerHelper.FindSIQEntries(WorkQueueItem.StudyStorageKey, null);
             
             if ((relatedItems == null || relatedItems.Count == 0) && (reconcileList == null || reconcileList.Count == 0))
                 return true; // nothing related in the work queue and nothing in the reconcile queue
@@ -434,13 +425,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
                 broker.Delete(workQueueUidCriteria);
 
-                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
-                parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
-                parms.ScheduledTime = Platform.Time.AddMinutes(10);
-                parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
-                parms.FilesystemKey = StorageLocation.FilesystemKey;
+                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters
+                                                        	{
+                                                        		FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate,
+                                                        		ScheduledTime = Platform.Time.AddMinutes(10),
+                                                        		StudyStorageKey = WorkQueueItem.StudyStorageKey,
+                                                        		FilesystemKey = StorageLocation.FilesystemKey
+                                                        	};
 
-                IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+            	IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
 
                 if (false == insertQueue.Execute(parms))
                 {
@@ -450,7 +443,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     updateContext.Commit();
             }
         }
-    }
-
-    
+    }    
 }

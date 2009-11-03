@@ -219,6 +219,7 @@
     <Compile Include="EntityBrokers\StudyDeleteRecordUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistorySelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistoryUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\StudyIntegrityQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\StudyIntegrityQueueSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\StudyIntegrityQueueUidSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\StudyIntegrityQueueUidUpdateColumns.gen.cs" />

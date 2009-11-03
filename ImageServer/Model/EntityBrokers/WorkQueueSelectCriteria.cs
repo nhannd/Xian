@@ -31,7 +31,6 @@
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
@@ -50,13 +49,35 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             get
             {
-                if (!this.SubCriteria.ContainsKey("StudyStorageRelatedEntityCondition"))
+                if (!SubCriteria.ContainsKey("StudyStorageRelatedEntityCondition"))
                 {
-                    this.SubCriteria["StudyStorageRelatedEntityCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("StudyStorageRelatedEntityCondition",
+                    SubCriteria["StudyStorageRelatedEntityCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("StudyStorageRelatedEntityCondition",
                         "StudyStorageKey", "StudyStorageKey");
                 }
-                return (IRelatedEntityCondition<EntitySelectCriteria>)this.SubCriteria["StudyStorageRelatedEntityCondition"];
+                return (IRelatedEntityCondition<EntitySelectCriteria>)SubCriteria["StudyStorageRelatedEntityCondition"];
             }
         }
+
+		/// <summary>
+		/// Used for EXISTS or NOT EXISTS subselects against the WorkQueueUID table.
+		/// </summary>
+		/// <remarks>
+		/// A <see cref="WorkQueueUidSelectCriteria"/> instance is created with the subselect parameters, 
+		/// and assigned to this Sub-Criteria.  Note that the link between the <see cref="WorkQueue"/>
+		/// and <see cref="WorkQueueUid"/> tables is automatically added into the <see cref="WorkQueueSelectCriteria"/>
+		/// instance by the broker.
+		/// </remarks>
+		public IRelatedEntityCondition<EntitySelectCriteria> WorkQueueUidRelatedEntityCondition
+		{
+			get
+			{
+				if (!SubCriteria.ContainsKey("WorkQueueUidRelatedEntityCondition"))
+				{
+					SubCriteria["WorkQueueUidRelatedEntityCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("WorkQueueUidRelatedEntityCondition",
+						"Key", "WorkQueueKey");
+				}
+				return (IRelatedEntityCondition<EntitySelectCriteria>)SubCriteria["WorkQueueUidRelatedEntityCondition"];
+			}
+		}
     }
 }

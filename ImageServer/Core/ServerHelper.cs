@@ -206,16 +206,16 @@ namespace ClearCanvas.ImageServer.Core
         /// <summary>
         /// Finds a list of <see cref="StudyIntegrityQueue"/> related to the specified <see cref="StudyStorage"/>.
         /// </summary>
-        /// <param name="studyStorage"></param>
+		/// <param name="studyStorageKey"></param>
         /// <param name="filter">A delegate that will be used to filter the returned list. Pass in Null to get the entire list.</param>
         /// <returns>A list of  <see cref="StudyIntegrityQueue"/></returns>
-        static public IList<StudyIntegrityQueue> FindSIQEntries(StudyStorage studyStorage, Predicate<StudyIntegrityQueue> filter)
+        static public IList<StudyIntegrityQueue> FindSIQEntries(ServerEntityKey studyStorageKey, Predicate<StudyIntegrityQueue> filter)
         {
             using (ExecutionContext scope = new ExecutionContext())
             {
                 IStudyIntegrityQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
                 StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
-                criteria.StudyStorageKey.EqualTo(studyStorage.Key);
+                criteria.StudyStorageKey.EqualTo(studyStorageKey);
                 criteria.InsertTime.SortDesc(0);
                 IList<StudyIntegrityQueue> list = broker.Find(criteria);
                 if (filter != null)
@@ -225,6 +225,31 @@ namespace ClearCanvas.ImageServer.Core
                 return list;
             }
         }
+
+		/// <summary>
+		/// Checks for the existinance of a SOP for a given Study in the <see cref="StudyIntegrityQueue"/>.
+		/// </summary>
+		/// <param name="studyStorageKey">The StudyStorage primary key</param>
+		/// <param name="sopInstanceUid">The Sop Instance ot look for</param>
+		/// <param name="seriesInstanceUid">The Series Instance Uid of the Sop</param>
+		/// <returns>true if an entry exists, false if it doesn't</returns>
+		static public bool StudyIntegrityUidExists(ServerEntityKey studyStorageKey, string seriesInstanceUid, string sopInstanceUid)
+		{
+			Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
+
+			using (ExecutionContext scope = new ExecutionContext())
+			{
+				IStudyIntegrityQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+				StudyIntegrityQueueUidSelectCriteria uidSelectCriteria = new StudyIntegrityQueueUidSelectCriteria();
+				uidSelectCriteria.SeriesInstanceUid.EqualTo(seriesInstanceUid);
+				uidSelectCriteria.SopInstanceUid.EqualTo(sopInstanceUid);
+				StudyIntegrityQueueSelectCriteria selectCriteria = new StudyIntegrityQueueSelectCriteria();
+				selectCriteria.StudyStorageKey.EqualTo(studyStorageKey);
+				selectCriteria.StudyIntegrityQueueUidRelatedEntityCondition.Exists(uidSelectCriteria);
+
+				return broker.Count(selectCriteria) > 0;
+			}
+		}
 
         /// <summary>
         /// Finds a list of <see cref="WorkQueue"/> related to the specified <see cref="studyStorageKey"/>.
@@ -250,6 +275,32 @@ namespace ClearCanvas.ImageServer.Core
                 return list;
             }
         }
+
+		/// <summary>
+		/// Checks for the existinance of a SOP for a given Study in the <see cref="WorkQueue"/> for a <see cref="WorkQueueTypeEnum.ReconcileStudy"/>.
+		/// </summary>
+		/// <param name="studyStorageKey">The StudyStorage primary key</param>
+		/// <param name="seriesInstanceUid">The Series Instance Uid of the Sop</param>
+		/// <param name="sopInstanceUid">The Sop Instance to look for</param>
+		/// <returns>true if an entry exists, false if it doesn't</returns>
+		static public bool WorkQueueUidExists(ServerEntityKey studyStorageKey, string seriesInstanceUid, string sopInstanceUid)
+		{
+			Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
+
+			using (ExecutionContext scope = new ExecutionContext())
+			{
+				IWorkQueueEntityBroker broker = scope.PersistenceContext.GetBroker<IWorkQueueEntityBroker>();
+				WorkQueueUidSelectCriteria uidSelectCriteria = new WorkQueueUidSelectCriteria();
+				uidSelectCriteria.SeriesInstanceUid.EqualTo(seriesInstanceUid);
+				uidSelectCriteria.SopInstanceUid.EqualTo(sopInstanceUid);
+				WorkQueueSelectCriteria selectCriteria = new WorkQueueSelectCriteria();
+				selectCriteria.StudyStorageKey.EqualTo(studyStorageKey);
+				selectCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.ReconcileStudy);
+				selectCriteria.WorkQueueUidRelatedEntityCondition.Exists(uidSelectCriteria);
+
+				return broker.Count(selectCriteria) > 0;
+			}
+		}
 
         /// <summary>
         /// Finds a list of <see cref="StudyHistory"/> records of the specified <see cref="StudyHistoryTypeEnum"/> 
