@@ -29,11 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Workflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow
 {

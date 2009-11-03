@@ -47,12 +47,12 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Order", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CancelOrderSmall.png", "Icons.CancelOrderMedium.png", "Icons.CancelOrderLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Cancel)]
+    [ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Cancel)]
     public abstract class CancelOrderToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
         where TItem : WorklistItemSummaryBase
         where TContext : IWorkflowItemToolContext<TItem>
     {
-        public CancelOrderToolBase()
+    	protected CancelOrderToolBase()
             : base("CancelOrder")
         {
         }
@@ -84,8 +84,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return false;
 			}
 
-			CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+			var cancelOrderComponent = new CancelOrderComponent();
+            var exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Context.DesktopWindow,
                 cancelOrderComponent,
                 String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.PatientName)));
@@ -98,10 +98,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                 InvalidateFolders();
                 return true;
             }
-            else
-            {
-                return false;
-            }
+        	return false;
         }
     }
 

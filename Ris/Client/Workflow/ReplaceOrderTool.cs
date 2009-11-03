@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -47,13 +46,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Cancel and Replace Order", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "ReplaceOrderSmall.png", "ReplaceOrderMedium.png", "ReplaceOrderLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
+	[ActionPermission("apply", Application.Common.AuthorityTokens.Workflow.Order.Replace)]
 	public abstract class ReplaceOrderToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
 		where TItem : WorklistItemSummaryBase
 		where TContext : IWorkflowItemToolContext<TItem>
 
 	{
-		public ReplaceOrderToolBase()
+		protected ReplaceOrderToolBase()
 			: base("ReplaceOrder")
 		{
 		}
@@ -84,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return false;
 			}
 
-			OrderEditorComponent component = new OrderEditorComponent(
+			var component = new OrderEditorComponent(
 				item.PatientRef,
 				item.PatientProfileRef,
 				item.OrderRef,
@@ -95,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				component,
 				string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
 
-			Type selectedFolderType = this.Context.SelectedFolder.GetType();
+			var selectedFolderType = this.Context.SelectedFolder.GetType();
 			workspace.Closed += delegate
 				{
 					if (component.ExitCode == ApplicationComponentExitCode.Accepted)
