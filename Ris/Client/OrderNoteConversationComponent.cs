@@ -292,16 +292,22 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedTemplate = (TemplateData)value;
 					NotifyPropertyChanged("SelectedTemplate");
-					NotifyPropertyChanged("IsNotTemplateSelected");
+					NotifyPropertyChanged("IsRecipientChangeEnabled");
 					InitializeFromTemplate(_selectedTemplate);
 					UpdateSoftKeys(_selectedTemplate);
 				}
 			}
 		}
 
-		public bool IsNotTemplateSelected
+		public bool IsRecipientChangeEnabled
 		{
-			get { return _selectedTemplate == null; }
+			get
+			{
+				// if no template is selected, must be allowed to select recipients
+				// even if a template is selected, but there is an existing conversation,
+				// we must allow user to modify recipients, because the algorithm that selects defaults is not all-knowing
+				return _selectedTemplate == null || !_newConversation;
+			}
 		}
 
 		public string Body
@@ -566,13 +572,13 @@ namespace ClearCanvas.Ris.Client
 
 
 			// 2. add all other groups that were party to the conversation, excluding any covered by rule 1, and the OnBehalfOf group
-			// these recips are not checked by default
+			// these recips are checked by default iff there are no sendersPendingAck
 			var otherGroups = AggregateRecipients(orderNotes,
 										n => n.GroupRecipients,
 										gr => true,
 										gr => gr.Group,
 										g => !Equals(g, _onBehalfOf) && !sendersPendingAck.Contains(g));
-			_recipients.AddRange(otherGroups, false);
+			_recipients.AddRange(otherGroups, sendersPendingAck.Count == 0);
 
 
 			// 3. add all other staff that were party to the conversation, excluding any covered by rule 1, and the current user
@@ -582,7 +588,7 @@ namespace ClearCanvas.Ris.Client
 										sr => true,
 										sr => sr.Staff,
 										s => !IsStaffCurrentUser(s) && !sendersPendingAck.Contains(s));
-			_recipients.AddRange(otherStaff, false);
+			_recipients.AddRange(otherStaff, sendersPendingAck.Count == 0);
 		}
 
 		private static bool IsStaffCurrentUser(StaffSummary staff)
