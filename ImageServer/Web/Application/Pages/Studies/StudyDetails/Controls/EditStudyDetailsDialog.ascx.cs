@@ -38,9 +38,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -117,13 +115,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private List<UpdateItem> GetChanges()
         {
-            List<UpdateItem> changes = new List<UpdateItem>();
-            PersonName oldPatientName = new PersonName(Study.PatientsName);
-            PersonName newPatientName = PatientNamePanel.PersonName;
+            var changes = new List<UpdateItem>();
+            var oldPatientName = new PersonName(Study.PatientsName);
+            var newPatientName = PatientNamePanel.PersonName;
 
             if (!oldPatientName.AreSame(newPatientName, PersonNameComparisonOptions.CaseInsensitive))
             {
-                UpdateItem item = new UpdateItem(DicomTags.PatientsName, Study.PatientsName, PatientNamePanel.PersonName);
+                var item = new UpdateItem(DicomTags.PatientsName, Study.PatientsName, PatientNamePanel.PersonName);
                 changes.Add(item);
             }
 
@@ -132,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                         : "";
             if (AreDifferent(Study.PatientsBirthDate, dicomBirthDate))
             {
-                UpdateItem item = new UpdateItem(DicomTags.PatientsBirthDate, Study.PatientsBirthDate, dicomBirthDate);
+                var item = new UpdateItem(DicomTags.PatientsBirthDate, Study.PatientsBirthDate, dicomBirthDate);
                 changes.Add(item);
             }
 
@@ -140,58 +138,58 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if (AreDifferent(Study.PatientsAge, newPatientAge))
             {
-                UpdateItem item = new UpdateItem(DicomTags.PatientsAge, Study.PatientsAge, newPatientAge);
+                var item = new UpdateItem(DicomTags.PatientsAge, Study.PatientsAge, newPatientAge);
                 changes.Add(item);
             }
 
             // PatientGender is a required field.
             if (AreDifferent(Study.PatientsSex, PatientGender.Text))
             {
-                UpdateItem item = new UpdateItem(DicomTags.PatientsSex, Study.PatientsSex, PatientGender.Text);
+                var item = new UpdateItem(DicomTags.PatientsSex, Study.PatientsSex, PatientGender.Text);
                 changes.Add(item);
             }
 
             //PatientID.Text is a required field.
             if (AreDifferent(Study.PatientId, PatientID.Text))
             {
-                UpdateItem item = new UpdateItem(DicomTags.PatientId, Study.PatientId, PatientID.Text);
+                var item = new UpdateItem(DicomTags.PatientId, Study.PatientId, PatientID.Text);
                 changes.Add(item);
             }
 
             if (AreDifferent(Study.StudyDescription, StudyDescription.Text))
             {
-                UpdateItem item = new UpdateItem(DicomTags.StudyDescription, Study.StudyDescription, StudyDescription.Text);
+                var item = new UpdateItem(DicomTags.StudyDescription, Study.StudyDescription, StudyDescription.Text);
                 changes.Add(item);
             }
 
             if (AreDifferent(Study.StudyId, StudyID.Text))
             {
-                UpdateItem item = new UpdateItem(DicomTags.StudyId, Study.StudyId, StudyID.Text);
+                var item = new UpdateItem(DicomTags.StudyId, Study.StudyId, StudyID.Text);
                 changes.Add(item);
             }
 
             if (AreDifferent(Study.AccessionNumber, AccessionNumber.Text))
             {
-                UpdateItem item = new UpdateItem(DicomTags.AccessionNumber, Study.AccessionNumber, AccessionNumber.Text);
+                var item = new UpdateItem(DicomTags.AccessionNumber, Study.AccessionNumber, AccessionNumber.Text);
                 changes.Add(item);
             }
 
-            PersonName oldPhysicianName = new PersonName(Study.ReferringPhysiciansName);
-            PersonName newPhysicianName = ReferringPhysicianNamePanel.PersonName;
+            var oldPhysicianName = new PersonName(Study.ReferringPhysiciansName);
+            var newPhysicianName = ReferringPhysicianNamePanel.PersonName;
 
             if (!newPhysicianName.AreSame(oldPhysicianName, PersonNameComparisonOptions.CaseInsensitive))
             {
-                UpdateItem item = new UpdateItem(DicomTags.ReferringPhysiciansName, Study.ReferringPhysiciansName, ReferringPhysicianNamePanel.PersonName.ToString());
+                var item = new UpdateItem(DicomTags.ReferringPhysiciansName, Study.ReferringPhysiciansName, ReferringPhysicianNamePanel.PersonName.ToString());
                 changes.Add(item);
             }
 
-            String newDicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
+            var newDicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
                                         ? DateTime.Parse(StudyDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
 
             if (AreDifferent(Study.StudyDate, newDicomStudyDate))
             {
-                UpdateItem item = new UpdateItem(DicomTags.StudyDate, Study.StudyDate, newDicomStudyDate);
+                var item = new UpdateItem(DicomTags.StudyDate, Study.StudyDate, newDicomStudyDate);
                 changes.Add(item);
             }
 
@@ -202,7 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if (AreDifferent(Study.StudyTime, dicomStudyTime))
             {
-                UpdateItem item = new UpdateItem(DicomTags.StudyTime, Study.StudyTime, dicomStudyTime);
+                var item = new UpdateItem(DicomTags.StudyTime, Study.StudyTime, dicomStudyTime);
                 changes.Add(item);
             }
 
@@ -213,13 +211,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if(Study == null) return;
 
-            PersonName patientName = new PersonName(Study.PatientsName);
-            PersonName physicianName = new PersonName(Study.ReferringPhysiciansName);
+            var patientName = new PersonName(Study.PatientsName);
+            var physicianName = new PersonName(Study.ReferringPhysiciansName);
             PatientNamePanel.PersonName = patientName;
             ReferringPhysicianNamePanel.PersonName = physicianName;
             
             // Patient Information
-            if (!Study.PatientsSex.Equals(string.Empty))
+            if (!string.IsNullOrEmpty(Study.PatientsSex))
             {
                 switch(Study.PatientsSex)
                 {
@@ -236,7 +234,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         PatientGender.SelectedIndex = 0;
                         break;
                 }
-                
+            } else
+            {
+                PatientGender.SelectedIndex = 0;
             }
 
             PatientID.Text = Study.PatientId;
@@ -278,15 +278,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (!string.IsNullOrEmpty(Study.StudyDate))
             {
                 DateTime? studyDate = DateParser.Parse(Study.StudyDate);
-                if (studyDate!=null)
-                {
-                    StudyDate.Text = studyDate.Value.ToString(DateTimeFormatter.DefaultDateFormat);
-                }
-                else
-                {
-                    StudyDate.Text = String.Empty;
-                }
-            } else
+                StudyDate.Text = studyDate!=null ? studyDate.Value.ToString(DateTimeFormatter.DefaultDateFormat) : String.Empty;
+            }
+            else
             {
                 StudyDate.Text = String.Empty;
             }
@@ -296,20 +290,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 DateTime? studyTime = TimeParser.Parse(Study.StudyTime);
                 if (studyTime!=null)
                 {
-                    if (studyTime.Value.Hour == 0)
-                        StudyTimeHours.Text = "12";
-                    else
-                        StudyTimeHours.Text =
-                            String.Format("{0:00}",studyTime.Value.Hour <= 12 ? studyTime.Value.Hour : studyTime.Value.Hour - 12);
-
+                    StudyTimeHours.Text = studyTime.Value.Hour == 0 ? "12" : String.Format("{0:00}",studyTime.Value.Hour <= 12 ? studyTime.Value.Hour : studyTime.Value.Hour - 12);
 
                     StudyTimeMinutes.Text = String.Format("{0:00}", studyTime.Value.Minute);
                     StudyTimeSeconds.Text = String.Format("{0:00}", studyTime.Value.Second);
 
-                    if (studyTime.Value.Hour < 12)
-                        StudyTimeAmPm.SelectedValue = "AM";
-                    else
-                        StudyTimeAmPm.SelectedValue = "PM";
+                    StudyTimeAmPm.SelectedValue = studyTime.Value.Hour < 12 ? "AM" : "PM";
                 }
                 else
                 {
@@ -336,10 +322,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (ReasonListBox.Items.Count == 0)
             {
-                IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-
-                ICannedTextEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
-                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                var broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
+                var criteria = new CannedTextSelectCriteria();
                 criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
                 IList<CannedText> list = broker.Find(criteria);
 
@@ -357,7 +341,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             Platform.CheckForNullReference(study, "study");
             Platform.CheckForNullReference(fields, "fields");
 
-            DicomInstancesAccessedAuditHelper helper =
+            var helper =
                 new DicomInstancesAccessedAuditHelper(ServerPlatform.AuditSource,
                                                       EventIdentificationTypeEventOutcomeIndicator.Success,
                                                       EventIdentificationTypeEventActionCode.U);
@@ -366,14 +350,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                null,
                                SessionManager.Current.Credentials.DisplayName));
 
-            AuditStudyParticipantObject participant = new AuditStudyParticipantObject(study.StudyInstanceUid, study.AccessionNumber);
+            var participant = new AuditStudyParticipantObject(study.StudyInstanceUid, study.AccessionNumber);
 
             string updateDescription = StringUtilities.Combine(
                 fields, ";",
-                delegate(UpdateItem item)
-                {
-                    return String.Format("Tag=\"{0}\" Value=\"{1}\"", item.DicomTag.Name, item.Value);
-                }
+                item => String.Format("Tag=\"{0}\" Value=\"{1}\"", item.DicomTag.Name, item.Value)
                 );
 
             participant.ParticipantObjectDetail = updateDescription;
@@ -386,15 +367,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (ReasonListBox.Items.FindByText(SaveReasonAsName.Text) != null)
             {
                 // update
-                StudyEditReasonAdaptor adaptor = new StudyEditReasonAdaptor();
-                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                var adaptor = new StudyEditReasonAdaptor();
+                var criteria = new CannedTextSelectCriteria();
                 criteria.Label.EqualTo(SaveReasonAsName.Text);
                 criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
                 IList<CannedText> reasons = adaptor.Get(criteria);
                 foreach (CannedText reason in reasons)
                 {
-                    CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
-                    rowColumns.Text = Reason.Text;
+                    var rowColumns = new CannedTextUpdateColumns {Text = Reason.Text};
                     adaptor.Update(reason.Key, rowColumns);
                 }
 
@@ -402,11 +382,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             else
             {
                 // add 
-                StudyDeleteReasonAdaptor adaptor = new StudyDeleteReasonAdaptor();
-                CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
-                rowColumns.Category = REASON_CANNEDTEXT_CATEGORY;
-                rowColumns.Label = SaveReasonAsName.Text;
-                rowColumns.Text = Reason.Text;
+                var adaptor = new StudyDeleteReasonAdaptor();
+                var rowColumns = new CannedTextUpdateColumns
+                                     {
+                                         Category = REASON_CANNEDTEXT_CATEGORY,
+                                         Label = SaveReasonAsName.Text,
+                                         Text = Reason.Text
+                                     };
                 adaptor.Add(rowColumns);
             }
 
@@ -447,7 +429,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     List<UpdateItem> modifiedFields = GetChanges();
                     if (modifiedFields!=null && modifiedFields.Count > 0)
                     {
-                        StudyController studyController = new StudyController();
+                        var studyController = new StudyController();
                         studyController.EditStudy(Study, modifiedFields, ReasonListBox.SelectedItem.Text + "::" + Reason.Text);
                         AuditLog(Study, modifiedFields);
                         StudyEdited();
