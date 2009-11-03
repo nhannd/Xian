@@ -278,12 +278,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ValidatePatientProfilesExist(newOrder);
 
             // cancel existing order
-			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder), request.CheckForWarnings, out warnUser, out warning);
+			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
 
             PersistenceContext.SynchState();
 
             OrderAssembler orderAssembler = new OrderAssembler();
-            return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext), warnUser, warning);
+            return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext));
         }
 
         [UpdateOperation]
@@ -296,10 +296,31 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
-            CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff), request.CheckForWarnings, out warnUser, out warning);
+            CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
 
-            return new CancelOrderResponse(warnUser, warning);
+            return new CancelOrderResponse();
         }
+
+		[ReadOperation]
+		public QueryCancelOrderWarningsResponse QueryCancelOrderWarnings(QueryCancelOrderWarningsRequest request)
+    	{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+
+			var order = PersistenceContext.Load<Order>(request.OrderRef);
+			var warnings = new List<string>();
+
+			var hasActiveReportingSteps = CollectionUtils.Contains(
+				order.Procedures,
+				p => CollectionUtils.Contains(p.ReportingProcedureSteps, ps => !ps.IsTerminated));
+
+			if(hasActiveReportingSteps)
+			{
+				warnings.Add("This order has been performed and may have reports in progress.");
+			}
+
+			return new QueryCancelOrderWarningsResponse(warnings);
+		}
 
     	[UpdateOperation]
         public TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request)
@@ -517,11 +538,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return order;
         }
 
-		private void CancelOrderHelper(Order order, OrderCancelInfo info, bool checkForWarnings, out bool warnUser, out string warning)
+		private void CancelOrderHelper(Order order, OrderCancelInfo info)
 		{
-            warnUser = false;
-            warning = null;
-			
             if (order.Status == OrderStatus.SC)
 			{
 				CancelOrderOperation op = new CancelOrderOperation();
@@ -530,8 +548,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             else if (order.Status == OrderStatus.IP)
             {
                 DiscontinueOrderOperation op = new DiscontinueOrderOperation();
-                if (checkForWarnings && (warnUser = op.WarnUser(order, out warning)))
-                    return;
                 op.Execute(order, info);
             }
 		}

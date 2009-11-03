@@ -151,6 +151,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [FaultContract(typeof(RequestValidationException))]
         CancelOrderResponse CancelOrder(CancelOrderRequest request);
 
+		/// <summary>
+		/// Queries for warnings that user should heed before proceeding to cancel or replace the specified order.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		QueryCancelOrderWarningsResponse QueryCancelOrderWarnings(QueryCancelOrderWarningsRequest request);
+
         /// <summary>
         /// This method is for testing/demo purposes and is not intended to be called in production.
         /// It shifts the order and associated visit in time by the specified number of minutes, which may be negative or positive.

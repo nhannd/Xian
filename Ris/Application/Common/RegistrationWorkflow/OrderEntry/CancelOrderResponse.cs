@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
@@ -40,16 +37,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class CancelOrderResponse : DataContractBase
     {
-        public CancelOrderResponse(bool warn, string warning)
-        {
-            this.WarnUser = warn;
-            this.Warning = warning;
-        }
-
-        [DataMember] 
-        public string Warning;
-
-        [DataMember] 
-        public bool WarnUser;
     }
 }

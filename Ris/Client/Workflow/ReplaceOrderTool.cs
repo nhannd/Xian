@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
@@ -38,6 +39,7 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -67,6 +69,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected bool ExecuteCore(WorklistItemSummaryBase item)
 		{
+			// first check for warnings
+			var warnings = new List<string>();
+			Platform.GetService<IOrderEntryService>(
+				service => warnings = service.QueryCancelOrderWarnings(new QueryCancelOrderWarningsRequest(item.OrderRef)).Warnings);
+
+			if(warnings.Count > 0)
+			{
+				var warn = CollectionUtils.FirstElement(warnings);
+				var action = this.Context.DesktopWindow.ShowMessageBox(
+					warn + "\n\nAre you sure you want to cancel and replace this order?",
+					MessageBoxActions.YesNo);
+				if(action == DialogBoxAction.No)
+					return false;
+			}
+
 			OrderEditorComponent component = new OrderEditorComponent(
 				item.PatientRef,
 				item.PatientProfileRef,

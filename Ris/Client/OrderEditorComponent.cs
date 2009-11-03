@@ -1140,17 +1140,17 @@ namespace ClearCanvas.Ris.Client
 
 		private void SubmitNewOrder(OrderRequisition requisition)
 		{
-			Platform.GetService<IOrderEntryService>(service =>
-			{
-				var response = service.PlaceOrder(new PlaceOrderRequest(requisition));
-				_orderRef = response.Order.OrderRef;
+			PlaceOrderResponse response = null;
+			Platform.GetService<IOrderEntryService>(
+				service => response = service.PlaceOrder(new PlaceOrderRequest(requisition))
+			);
 
-				this.Host.ShowMessageBox(
-					string.Format(
-						"Order {0} placed successfully.",
-						AccessionFormat.Format(response.Order.AccessionNumber)),
-					MessageBoxActions.Ok);
-			});
+			_orderRef = response.Order.OrderRef;
+			this.Host.ShowMessageBox(
+				string.Format(
+					"Order {0} placed successfully.",
+					AccessionFormat.Format(response.Order.AccessionNumber)),
+				MessageBoxActions.Ok);
 		}
 
 		private void SubmitModifyOrder(OrderRequisition requisition)
@@ -1164,27 +1164,16 @@ namespace ClearCanvas.Ris.Client
 
 		private void SubmitReplaceOrder(OrderRequisition requisition)
 		{
-			Platform.GetService<IOrderEntryService>(service =>
-			{
-				var request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, true);
-				var response = service.ReplaceOrder(request);
+			ReplaceOrderResponse response = null;
+			Platform.GetService<IOrderEntryService>(
+				service => response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition))
+			);
 
-				if (response.WarnUser &&
-					DialogBoxAction.Yes == this.Host.DesktopWindow.ShowMessageBox(
-											response.Warning + "\n\nAre you sure you want to cancel and replace this order?",
-											MessageBoxActions.YesNo))
-				{
-					response = service.ReplaceOrder(new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition, false));
-				}
-				else
-					return;
+			_orderRef = response.Order.OrderRef;
+			this.Host.ShowMessageBox(
+				string.Format("Order successfully replaced with new order {0}.", AccessionFormat.Format(response.Order.AccessionNumber)),
+				MessageBoxActions.Ok);
 
-				_orderRef = response.Order.OrderRef;
-
-				this.Host.ShowMessageBox(
-					string.Format("Order successfully replaced with new order {0}.", AccessionFormat.Format(response.Order.AccessionNumber)),
-					MessageBoxActions.Ok);
-			});
 		}
 
 		private void InitializeTabPages()

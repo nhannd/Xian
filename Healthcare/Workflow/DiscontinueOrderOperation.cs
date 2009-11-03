@@ -64,33 +64,5 @@ namespace ClearCanvas.Healthcare.Workflow
 		{
 			return order.Status == OrderStatus.IP;
 		}
-
-        /// <summary>
-        /// Determines whether or not it is appropriate to warn the user if the operation is potentially undesirable.
-        /// Returns the result and outputs the corresponding warning message.
-        /// </summary>
-        /// <param name="order"></param>
-        /// <param name="warning"></param>
-        /// <returns></returns>
-        public bool WarnUser(Order order, out string warning)
-        {
-            if(CollectionUtils.SelectFirst(order.Procedures, // gets first procedure that has....
-                delegate(Procedure procedure)
-                {
-                    return CollectionUtils.Contains(procedure.ReportingProcedureSteps, // .... a reporting step with active reports
-                       delegate(ReportingProcedureStep procedureStep)
-                       {
-                           return !procedureStep.IsTerminated;
-                       });
-                })!= null)
-            {
-                warning = "This order has been completed and may have reports in progress.";
-                return true;
-            }
-
-            // otherwise...
-            warning = null;
-            return false;
-        }
 	}
 }

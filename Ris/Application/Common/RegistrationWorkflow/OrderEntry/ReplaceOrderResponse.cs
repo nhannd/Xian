@@ -37,11 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class ReplaceOrderResponse : DataContractBase
     {
-        public ReplaceOrderResponse(OrderSummary summary, bool warnUser, string warning)
+        public ReplaceOrderResponse(OrderSummary summary)
         {
             this.Order = summary;
-            this.WarnUser = warnUser;
-            this.Warning = warning;
         }
 
         /// <summary>
@@ -49,17 +47,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public OrderSummary Order;
-
-        /// <summary>
-        /// Whether or not to warn user of undesirable operation.
-        /// </summary>
-        [DataMember] 
-        public bool WarnUser;
-
-        /// <summary>
-        /// Warning string sent to client.
-        /// </summary>
-        [DataMember] 
-        public string Warning;
     }
 }

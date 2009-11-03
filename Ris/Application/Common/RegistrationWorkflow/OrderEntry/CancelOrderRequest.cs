@@ -37,11 +37,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class CancelOrderRequest : DataContractBase
     {
-        public CancelOrderRequest(EntityRef orderRef, EnumValueInfo cancelReason, bool checkWarnings)
+        public CancelOrderRequest(EntityRef orderRef, EnumValueInfo cancelReason)
         {
             this.OrderRef = orderRef;
             this.CancelReason = cancelReason;
-            this.CheckForWarnings = checkWarnings;
         }
 
         /// <summary>
@@ -55,11 +54,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public EnumValueInfo CancelReason;
-
-        /// <summary>
-        /// Whether or not client wants the server to check for warnings.
-        /// </summary>
-        [DataMember] 
-        public bool CheckForWarnings;
     }
 }

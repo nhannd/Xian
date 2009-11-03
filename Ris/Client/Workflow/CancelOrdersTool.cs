@@ -30,7 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
@@ -67,7 +69,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         protected bool ExecuteCore(WorklistItemSummaryBase item)
         {
-            CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
+			// first check for warnings
+			var warnings = new List<string>();
+			Platform.GetService<IOrderEntryService>(
+				service => warnings = service.QueryCancelOrderWarnings(new QueryCancelOrderWarningsRequest(item.OrderRef)).Warnings);
+
+			if (warnings.Count > 0)
+			{
+				var warn = CollectionUtils.FirstElement(warnings);
+				var action = this.Context.DesktopWindow.ShowMessageBox(
+					warn + "\n\nAre you sure you want to cancel this order?",
+					MessageBoxActions.YesNo);
+				if (action == DialogBoxAction.No)
+					return false;
+			}
+
+			CancelOrderComponent cancelOrderComponent = new CancelOrderComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Context.DesktopWindow,
                 cancelOrderComponent,
@@ -76,12 +93,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
-                    {
-                        CancelOrderResponse response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, true));
-                        if (response.WarnUser && this.Context.DesktopWindow.ShowMessageBox(response.Warning + "\n\nAre you sure you want to cancel this order?", MessageBoxActions.YesNo) != DialogBoxAction.No)
-                            response = service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason, false));
-                    });
+                	service => service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason)));
 
                 InvalidateFolders();
                 return true;
