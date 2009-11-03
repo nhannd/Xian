@@ -401,6 +401,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else if (_openStudyTool != null)
 			{
+				//TODO (cr Oct 2009): get rid of explicit reference.
 				//fall back to the open study tool.
 				_openStudyTool.OpenStudy();
 			}
@@ -477,10 +478,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
 
 			string patientsName = ConvertNameToSearchCriteria(_searchPanelComponent.PatientsName);
-			Trace.WriteLine(String.Format("Patient's Name Search: {0}", patientsName));
-
 			string referringPhysiciansName = ConvertNameToSearchCriteria(_searchPanelComponent.ReferringPhysiciansName);
-			Trace.WriteLine(String.Format("Referring Physician's Name Search: {0}", referringPhysiciansName));
 
 			string patientId = "";
 			if (!String.IsNullOrEmpty(_searchPanelComponent.PatientID))
@@ -735,6 +733,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			//TODO: later, make each item have a 'changed' event for the properties instead of doing this
 			existingItem.AccessionNumber = sourceItem.AccessionNumber;
+			existingItem.ReferringPhysiciansName = sourceItem.ReferringPhysiciansName;
 			existingItem.ModalitiesInStudy = sourceItem.ModalitiesInStudy;
 			existingItem.NumberOfStudyRelatedInstances = sourceItem.NumberOfStudyRelatedInstances;
 			existingItem.PatientId = sourceItem.PatientId;

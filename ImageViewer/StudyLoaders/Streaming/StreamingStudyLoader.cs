@@ -147,9 +147,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private static XmlDocument DecompressHeaderStreamToXml(Stream stream)
 		{
-			GZipStream gzStream = new GZipStream(stream, CompressionMode.Decompress);
 			XmlDocument doc;
-			using (gzStream)
+			using (GZipStream gzStream = new GZipStream(stream, CompressionMode.Decompress))
 			{
 				doc = new XmlDocument();
 				doc.Load(gzStream);

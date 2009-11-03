@@ -196,10 +196,6 @@ namespace ClearCanvas.ImageViewer.Common
 		{
 			if (MemoryManagementSettings.Default.LowWatermarkMegaBytes < 0)
 			{
-				//High Watermark = 1GB, unload ~250MB
-				//High Watermark = 2GB, unload ~500MB
-				//return highWatermark/2;
-
 				//free up 1/4 of the total large object memory.
 				const float twentyFivePercent = 0.25F;
 				return (long)(highWatermark - MemoryManager.LargeObjectBytesCount * twentyFivePercent);

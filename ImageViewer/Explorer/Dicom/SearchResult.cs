@@ -19,12 +19,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private readonly List<StudyItem> _hiddenItems;
 
 		private bool _everSearched;
-		private bool _hasDuplicates;
 
 		public SearchResult()
 		{
 			_everSearched = false;
-			_hasDuplicates = false;
+			HasDuplicates = false;
 
 			_serverGroupName = "";
 			_isLocalDataStore = false;
@@ -80,14 +79,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public bool HasDuplicates
-		{
-			get { return _hasDuplicates; }
-		}
+		public bool HasDuplicates { get; private set; }
 
 		#endregion
 		#region Methods
 
+		//TODO (cr Oct 2009): not actually refreshing anything - just toggles duplicates.
 		public void Refresh(bool filterDuplicates)
 		{
 			if (filterDuplicates)
@@ -109,6 +106,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			StudyTable.Sort();
 		}
 
+		//TODO (cr Oct 2009): why not just create a new result object?
 		public void Refresh(StudyItemList studies, bool filterDuplicates)
 		{
 			_everSearched = true;
@@ -116,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_hiddenItems.Clear();
 			IList<StudyItem> filteredStudies = new List<StudyItem>(studies);
 			RemoveDuplicates(filteredStudies, _hiddenItems);
-			_hasDuplicates = _hiddenItems.Count > 0;
+			HasDuplicates = _hiddenItems.Count > 0;
 
 			if (!filterDuplicates)
 			{
@@ -184,10 +182,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 					column = new TableColumn<StudyItem, string>(
 						newColumn.Heading,
-						delegate(StudyItem item)
-						{
-							return newColumn.GetValue(item).ToString();
-						},
+						item => (newColumn.GetValue(item) ?? "").ToString(),
 						newColumn.WidthFactor);
 
 					newColumn.ColumnValueChanged += OnColumnValueChanged;

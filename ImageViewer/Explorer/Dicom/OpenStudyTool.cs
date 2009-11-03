@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[IconSet("activate", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
 
 	[ViewerActionPermission("activate", ImageViewer.AuthorityTokens.Study.Open)]
+
+	//TODO (cr Oct 2009): make an extension again.
 	public class OpenStudyTool : StudyBrowserTool
 	{
 		public OpenStudyTool()

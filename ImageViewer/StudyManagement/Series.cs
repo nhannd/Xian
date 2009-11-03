@@ -35,6 +35,8 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO (cr Oct 2009): put back the deleted properties.
+
 	/// <summary>
 	/// A DICOM series.
 	/// </summary>

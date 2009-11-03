@@ -35,7 +35,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
-	//TODO: Get rid of this class?
+	//TODO (cr Oct 2009): Get rid of this class?
 
 	/// <summary>
 	/// Static helper class for use when debugging.

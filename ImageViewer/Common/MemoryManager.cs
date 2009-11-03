@@ -128,9 +128,12 @@ namespace ClearCanvas.ImageViewer.Common
 				{
 					Platform.Log(LogLevel.Debug, "Starting memory collection thread.");
 
-					_collectionThread = new Thread(RunCollectionThread);
-					_collectionThread.Priority = ThreadPriority.BelowNormal;
-					_collectionThread.IsBackground = true;
+					_collectionThread = new Thread(RunCollectionThread)
+					                    	{
+					                    		Priority = ThreadPriority.BelowNormal, 
+												IsBackground = true
+					                    	};
+
 					_collectionThread.Start();
 				}
 			}

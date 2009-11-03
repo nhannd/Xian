@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			collection[DicomTags.StudyDescription].SetStringValue(queryParams["StudyDescription"]);
         	collection[DicomTags.PatientsBirthDate].SetStringValue("");
             collection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
+			//TODO (cr Oct 2009): not supposed to set this!
             collection[DicomTags.SpecificCharacterSet].SetStringValue("");
 			collection[DicomTags.StudyInstanceUid].SetStringValue(queryParams["StudyInstanceUid"]);
 			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");

@@ -144,12 +144,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// <param name="parent">The parent <see cref="ISopDataSource"/> that this frame belongs to.</param>
 			/// <exception cref="ArgumentNullException">Thrown if <paramref name="parent"/> is null.</exception>
 			/// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="frameNumber"/> is zero or negative.</exception>
-			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent)
+			protected StandardSopFrameData(int frameNumber, StandardSopDataSource parent)
 				: this(frameNumber, parent, RegenerationCost.Low)
 			{
 			}
 
-			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent, RegenerationCost regenerationCost) 
+			protected StandardSopFrameData(int frameNumber, StandardSopDataSource parent, RegenerationCost regenerationCost) 
 				: base(frameNumber, parent)
 			{
 				_largeObjectContainerData.RegenerationCost = regenerationCost;
@@ -200,6 +200,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			/// </remarks>		
 			public override byte[] GetNormalizedPixelData()
 			{
+				//TODO (cr Oct 2009): do we need to use Platform.Time?
 				_largeObjectContainerData.LastAccessTime = Platform.Time;
 
 				byte[] pixelData = _pixelData;

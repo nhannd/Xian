@@ -10,6 +10,7 @@ namespace ClearCanvas.ImageViewer.Common
 		High = 2
 	}
 
+	//TODO (cr Oct 2009): make public?
 	internal class LargeObjectContainerData : ILargeObjectContainer
 	{
 		private readonly string _identifier;
@@ -30,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Common
 		{
 			get { return _identifier; }
 		}
+
 		public int LargeObjectCount
 		{
 			get { return _largeObjectCount; }
@@ -46,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Common
 		{
 			get { return _lastAccessTime; }
 			set { _lastAccessTime = value; }
-
 		}
 
 		public RegenerationCost RegenerationCost
@@ -78,6 +79,7 @@ namespace ClearCanvas.ImageViewer.Common
 		#endregion
 	}
 
+	//TODO (cr Oct 2009): remove?
 	public abstract class LargeObjectContainer : ILargeObjectContainer
 	{
 		private readonly string _identifier;
@@ -115,6 +117,7 @@ namespace ClearCanvas.ImageViewer.Common
 
 	public interface ILargeObjectContainer
 	{
+		//TODO (cr Oct 2009): enforce GUID?
 		string Identifier { get; }
 
 		int LargeObjectCount { get; }

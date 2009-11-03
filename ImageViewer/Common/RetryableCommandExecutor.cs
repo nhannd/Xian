@@ -38,12 +38,14 @@ namespace ClearCanvas.ImageViewer.Common
 				{
 					UpdateWaitTimeRemaining();
 					if (_waitTimeRemaining > TimeSpan.Zero)
-						RetryExecute();
-
-					if (Platform.IsLogLevelEnabled(LogLevel.Debug))
 					{
-						Platform.Log(LogLevel.Debug, "Detected out of memory condition; retrying for up to {0} seconds.",
-								 _waitTimeRemaining.TotalSeconds);
+						if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+						{
+							Platform.Log(LogLevel.Debug, "Detected out of memory condition; retrying for up to {0} seconds.",
+									 _waitTimeRemaining.TotalSeconds);
+						}
+
+						RetryExecute();
 					}
 				}
 			}

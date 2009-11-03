@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Common
 		public readonly long BytesCollectedCount;
 		public readonly bool IsLast;
 
-		//TODO: guard against it being set back to false when already set to true?
+		//TODO (cr Oct 2009): guard against it being set back to false when already set to true?
 		public bool NeedMoreMemory = false;
 	}
 
@@ -43,25 +43,25 @@ namespace ClearCanvas.ImageViewer.Common
 		event EventHandler<MemoryCollectedEventArgs> MemoryCollected;
 	}
 
-	internal class NullMemoryManagementStrategy : IMemoryManagementStrategy
-	{
-		#region IMemoryManagementStrategy Members
-
-		public void Collect(MemoryCollectionArgs collectionArgs)
-		{
-		}
-
-		public event EventHandler<MemoryCollectedEventArgs> MemoryCollected
-		{
-			add { }
-			remove { }
-		}
-
-		#endregion
-	}
-
 	public abstract class MemoryManagementStrategy : IMemoryManagementStrategy
 	{
+		private class NullMemoryManagementStrategy : IMemoryManagementStrategy
+		{
+			#region IMemoryManagementStrategy Members
+
+			public void Collect(MemoryCollectionArgs collectionArgs)
+			{
+			}
+
+			public event EventHandler<MemoryCollectedEventArgs> MemoryCollected
+			{
+				add { }
+				remove { }
+			}
+
+			#endregion
+		}
+
 		internal static readonly IMemoryManagementStrategy Null = new NullMemoryManagementStrategy();
 
 		private event EventHandler<MemoryCollectedEventArgs> _memoryCollected;

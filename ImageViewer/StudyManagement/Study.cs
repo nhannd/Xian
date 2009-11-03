@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO (cr Oct 2009): make sure old properties not deleted.
 	/// <summary>
 	/// A DICOM study.
 	/// </summary>
