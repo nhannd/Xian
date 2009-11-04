@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 	/// ReconcilePostProcessing processor
 	/// </summary>
 	/// <remarks>
-	/// This functionality was replaced in the 1.6 (Server - Performance milestone) release,
+	/// This functionality was replaced in the 2.0 (Server - Performance milestone) release,
 	/// and will be removed in a future relase.
 	/// </remarks>
 	[Obsolete("This functionality is now integrated in with the Reconcile processor")]

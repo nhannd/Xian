@@ -164,10 +164,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             {
             	string path = reconcileStorage.GetSopInstancePath(file.DataSet[DicomTags.SopInstanceUid].ToString());
                 DirectoryInfo dir = new DirectoryInfo(path);
-                CreateDirectoryCommand mkdir = new CreateDirectoryCommand(dir.Parent.FullName);
-                processor.AddCommand(mkdir);
+				if (dir.Parent != null)
+				{
+					CreateDirectoryCommand mkdir = new CreateDirectoryCommand(dir.Parent.FullName);
+					processor.AddCommand(mkdir);
+				}
 
-                SaveDicomFileCommand saveFileCommand = new SaveDicomFileCommand(path, file, true);
+            	SaveDicomFileCommand saveFileCommand = new SaveDicomFileCommand(path, file, true);
                 processor.AddCommand(saveFileCommand);
 
                 InsertSIQCommand updateStudyCommand = new InsertSIQCommand(_context.StudyLocation, reason, file, _context.Group, reconcileStorage);
@@ -240,41 +243,44 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             string sopUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             ImageSetDescriptor imageSet = new ImageSetDescriptor(_file.DataSet);
             ReconcileStudyQueueDescription queueDesc = GetQueueEntryDescription(_storageLocation, _file);
-            
+			ReconcileStudyWorkQueueData detailsData = new ReconcileStudyWorkQueueData
+			{
+				StoragePath = _reconcileImageStorage.GetFolderPath(),
+				Details = new ImageSetDetails(_file.DataSet)
+			};
+			detailsData.Details.InsertFile(_file);
+			
             IInsertStudyIntegrityQueue broker = updateContext.GetBroker<IInsertStudyIntegrityQueue>();
-            InsertStudyIntegrityQueueParameters parameters = new InsertStudyIntegrityQueueParameters();
-            parameters.Description = queueDesc.ToString();
-            parameters.StudyInstanceUid = _storageLocation.StudyInstanceUid;
-            parameters.ServerPartitionKey = _storageLocation.ServerPartition.Key;
-            parameters.StudyStorageKey = _storageLocation.Key;
-            parameters.StudyIntegrityReasonEnum = _reason;
-            parameters.SeriesInstanceUid = seriesUid;
-            parameters.SeriesDescription = sopUid;
-            parameters.SopInstanceUid = _file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-            parameters.StudyData = XmlUtils.SerializeAsXmlDoc(imageSet); // this is used by the stored proc on initial insert only 
-            parameters.GroupID = _uidGroup;
-            parameters.UidRelativePath = _reconcileImageStorage.GetSopRelativePath(_file.DataSet[DicomTags.SopInstanceUid].ToString()); 
-            StudyIntegrityQueue item = broker.FindOne(parameters);
+            InsertStudyIntegrityQueueParameters parameters = new InsertStudyIntegrityQueueParameters
+                         	{
+                         		Description = queueDesc.ToString(),
+                         		StudyInstanceUid = _storageLocation.StudyInstanceUid,
+                         		ServerPartitionKey = _storageLocation.ServerPartition.Key,
+                         		StudyStorageKey = _storageLocation.Key,
+                         		StudyIntegrityReasonEnum = _reason,
+                         		SeriesInstanceUid = seriesUid,
+                         		SeriesDescription = sopUid,
+                         		SopInstanceUid =
+                         			_file.DataSet[DicomTags.SopInstanceUid].GetString(0,
+                         			                                                  String
+                         			                                                  	.
+                         			                                                  	Empty),
+                         		StudyData = XmlUtils.SerializeAsXmlDoc(imageSet),
+                         		Details = XmlUtils.SerializeAsXmlDoc(detailsData),
+                         		GroupID = _uidGroup,
+                         		UidRelativePath =
+                         			_reconcileImageStorage.GetSopRelativePath(
+                         			_file.DataSet[DicomTags.SopInstanceUid].ToString())
+                         	};
+
+        	StudyIntegrityQueue item = broker.FindOne(parameters);
             if (item == null)
             {
                 throw new ApplicationException("Unable to update reconcile queue");
             }
 
             _siqItem = item;
-            if (item.Details == null)
-            {
-                ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
-                data.StoragePath = _reconcileImageStorage.GetFolderPath();
-                data.Details = new ImageSetDetails(_file.DataSet);
-                data.Details.InsertFile(_file);
-                XmlDocument xmlQueueData = XmlUtils.SerializeAsXmlDoc(data);
-
-                item.Details = xmlQueueData;
-
-                IStudyIntegrityQueueEntityBroker updateBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
-                updateBroker.Update(item);
-            }
-            else
+            if (!parameters.Inserted)
             {
                 // Need to re-use the path that's already assigned for this entry
                 ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.Details);
@@ -288,7 +294,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
             }
         }
 
-        private static ReconcileStudyQueueDescription GetQueueEntryDescription(StudyStorageLocation existingStorage, DicomFile file)
+        private static ReconcileStudyQueueDescription GetQueueEntryDescription(StudyStorageLocation existingStorage, DicomMessageBase file)
         {
             ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription
                                                   	{

@@ -3609,12 +3609,14 @@ CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 	@Details xml=null,
 	@GroupID varchar(256) = null,
 	@UidRelativePath varchar(256)=null,
-	@StudyIntegrityReasonEnum smallint
+	@StudyIntegrityReasonEnum smallint,
+	@Inserted bit = 0 OUTPUT
 AS
 BEGIN
 	
 	DECLARE @Guid uniqueidentifier
 	DECLARE @QueueStudyStateEnumReconcileRequired smallint
+	SET @Inserted=0
 	
 	BEGIN TRANSACTION
 
@@ -3656,6 +3658,8 @@ BEGIN
 
 		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[Details],[StudyIntegrityReasonEnum],[GroupID])
 		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@Details,@StudyIntegrityReasonEnum,@GroupID)
+		
+		SET @Inserted=1
 	END
 
 
