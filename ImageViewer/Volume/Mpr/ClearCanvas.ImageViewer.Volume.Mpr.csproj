@@ -93,7 +93,7 @@
     <Compile Include="Tests\SlicerTests.cs" />
     <Compile Include="Tools\ResliceToolGraphic.cs" />
     <Compile Include="Utilities\DicomImagePlane.cs" />
-    <Compile Include="Utilities\MouseImageViewerToolMaster.cs" />
+    <Compile Include="Utilities\MouseImageViewerToolGroup.cs" />
     <Compile Include="Tools\ResliceTool.cs">
       <SubType>Code</SubType>
     </Compile>

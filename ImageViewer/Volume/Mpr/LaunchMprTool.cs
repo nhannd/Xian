@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				context.ReportProgress(new BackgroundTaskProgress(mainTask.IntPercent, string.Format(SR.MessageInitializingMpr, mainTask.Progress)));
 
 				BackgroundTaskParams @params = (BackgroundTaskParams) context.UserState;
-				Volume volume = Volume.CreateVolume(@params.Frames,
+				Volume volume = Volume.Create(@params.Frames,
 				                                    delegate(int i, int count)
 				                                    	{
 				                                    		if (context.CancelRequested)

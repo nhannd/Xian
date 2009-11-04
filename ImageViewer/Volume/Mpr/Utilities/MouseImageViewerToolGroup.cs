@@ -41,15 +41,14 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr.Utilities
 {
-	//TODO (cr Oct 2009): maybe it's the name - how about MouseImageViewerToolGroup?
-	public abstract class MouseImageViewerToolMaster<T> : MouseImageViewerTool where T : MouseImageViewerTool
+	public abstract class MouseImageViewerToolGroup<T> : MouseImageViewerTool where T : MouseImageViewerTool
 	{
 		private IToolSet _toolSet;
 		private IActionSet _actionSet;
 		private T _selectedTool;
 		private event EventHandler _selectedToolChanged;
 
-		protected MouseImageViewerToolMaster() {}
+		protected MouseImageViewerToolGroup() {}
 
 		#region Selected Slave Tool
 

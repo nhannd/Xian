@@ -283,11 +283,14 @@ namespace ClearCanvas.Dicom.Iod
 			// JY: Note that the same tolerance functionality is purposefully not available to the primary direction
 			if (degreesTolerance < 0 || degreesTolerance > 10)
 				throw new ArgumentOutOfRangeException("degreesTolerance", degreesTolerance, "Value must be between 0 and 10.");
+			if (_secondaryRowDirection == 0)
+				return Directions.None;
+
 			double[] rowCosines = new double[] {_rowX, _rowY, _rowZ};
-			int[] rowCosineSortedIndices = BubbleSortCosineIndices(rowCosines);
+			double secondaryCosine = rowCosines[Math.Abs(_secondaryRowDirection) - 1];
 
 			// since degreesTolerance is [0,10], the RHS will always be positive
-			if (Math.Abs(rowCosines[rowCosineSortedIndices[1]]) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
+			if (Math.Abs(secondaryCosine) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
 				return Directions.None;
 			return this.GetSecondaryRowDirection(opposingDirection);
 		}
@@ -316,24 +319,16 @@ namespace ClearCanvas.Dicom.Iod
 			// JY: Note that the same tolerance functionality is purposefully not available to the primary direction
 			if (degreesTolerance < 0 || degreesTolerance > 10)
 				throw new ArgumentOutOfRangeException("degreesTolerance", degreesTolerance, "Value must be between 0 and 10.");
+			if (_secondaryColumnDirection == 0)
+			    return Directions.None;
+
 			double[] columnCosines = new double[] {_columnX, _columnY, _columnZ};
-			int[] columnCosineSortedIndices = BubbleSortCosineIndices(columnCosines);
+			double secondaryCosine = columnCosines[Math.Abs(_secondaryColumnDirection) - 1];
 
 			// since degreesTolerance is [0,10], the RHS will always be positive
-			if (Math.Abs(columnCosines[columnCosineSortedIndices[1]]) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
+			if (Math.Abs(secondaryCosine) < 1 - Math.Cos(degreesTolerance*Math.PI/180))
 				return Directions.None;
 			return this.GetSecondaryColumnDirection(opposingDirection);
-
-			//TODO (cr Oct 2009): change to this implementation.
-			//if (_secondaryColumnDirection == 0)
-			//    return Directions.None;
-
-			//columnCosines = new double[] { _columnX, _columnY, _columnZ };
-			//double secondaryCosine = columnCosines[Math.Abs(_secondaryColumnDirection) - 1];
-
-			//// since degreesTolerance is [0,10], the RHS will always be positive
-			//if (Math.Abs(secondaryCosine) < 1 - Math.Cos(degreesTolerance * Math.PI / 180))
-			//    return Directions.None;
 		}
 
 		#region IEquatable<ImageOrientationPatient> Members

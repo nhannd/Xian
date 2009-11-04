@@ -40,37 +40,39 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	public sealed class CreateVolumeException : Exception
 	{
-		//TODO (cr Oct 2009): take out of resources
-		public CreateVolumeException() : base(SR.MessageUnexpectedCreateVolumeException) { }
+		public CreateVolumeException() : base("An unexpected exception was encountered while creating the volume.") { }
 		public CreateVolumeException(string message) : base(message) {}
 		public CreateVolumeException(string message, Exception innerException) : base(message, innerException) {}
 	}
 
 	partial class Volume
 	{
-		//TODO (cr Oct 2009): 'Create'
-		public static Volume CreateVolume(IDisplaySet displaySet)
+		public static Volume Create(IDisplaySet displaySet)
 		{
-			return CreateVolume(displaySet, null);
+			return Create(displaySet, null);
 		}
 
-		public static Volume CreateVolume(IDisplaySet displaySet, CreateVolumeProgressCallback callback)
+		public static Volume Create(IDisplaySet displaySet, CreateVolumeProgressCallback callback)
 		{
 			Platform.CheckForNullReference(displaySet, "displaySet");
 			List<Frame> frames = new List<Frame>();
 
-			//TODO (cr Oct 2009): not guaranteed, check and throw exception
-			foreach (IImageSopProvider imageSopProvider in displaySet.PresentationImages)
+			foreach (IPresentationImage image in displaySet.PresentationImages)
+			{
+				IImageSopProvider imageSopProvider = image as IImageSopProvider;
+				if (imageSopProvider == null)
+					throw new ArgumentException("Images must be valid IImageSopProviders.");
 				frames.Add(imageSopProvider.Frame);
-			return CreateVolume(frames, callback);
+			}
+			return Create(frames, callback);
 		}
 
-		public static Volume CreateVolume(IEnumerable<Frame> frames)
+		public static Volume Create(IEnumerable<Frame> frames)
 		{
-			return CreateVolume(frames, null);
+			return Create(frames, null);
 		}
 
-		public static Volume CreateVolume(IEnumerable<Frame> frames, CreateVolumeProgressCallback callback)
+		public static Volume Create(IEnumerable<Frame> frames, CreateVolumeProgressCallback callback)
 		{
 			Platform.CheckForNullReference(frames, "frames");
 			using (VolumeBuilder builder = new VolumeBuilder(frames, callback))
@@ -79,12 +81,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		public static Volume CreateVolume(IEnumerable<string> filenames)
+		public static Volume Create(IEnumerable<string> filenames)
 		{
-			return CreateVolume(filenames, null);
+			return Create(filenames, null);
 		}
 
-		public static Volume CreateVolume(IEnumerable<string> filenames, CreateVolumeProgressCallback callback)
+		public static Volume Create(IEnumerable<string> filenames, CreateVolumeProgressCallback callback)
 		{
 			Platform.CheckForNullReference(filenames, "filenames");
 			List<ImageSop> loadedImageSops = new List<ImageSop>();
@@ -94,8 +96,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					try
 					{
-						//TODO (cr Oct 2009): ImageSop.CreateFromFile(filename)
-						loadedImageSops.Add(new ImageSop(new LocalSopDataSource(fileName)));
+						loadedImageSops.Add(ImageSop.Create(fileName));
 					}
 					catch (Exception ex)
 					{
@@ -106,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				List<Frame> frames = new List<Frame>();
 				foreach (ImageSop sop in loadedImageSops)
 					frames.AddRange(sop.Frames);
-				return CreateVolume(frames, callback);
+				return Create(frames, callback);
 			}
 			finally
 			{

@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	public class VolumeSliceSopDataSource : StandardSopDataSource, ISliceSopDataSource
 	{
-		private readonly IVolumeReference _volume;
+		private readonly IVolumeReference _volumeReference;
 		private readonly IVolumeSlicerParams _slicerParams;
 		private readonly Matrix _resliceMatrix;
 		private readonly DicomAttributeCollection _instanceDataSet;
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Platform.CheckForNullReference(throughPoints, "throughPoints");
 			Platform.CheckTrue(throughPoints.Count > 0, "At least one through point must be specified.");
 
-			_volume = volume.CreateTransientReference();
+			_volumeReference = volume.CreateTransientReference();
 			_slicerParams = slicerParams;
 			_resliceMatrix = new Matrix(slicerParams.SlicingPlaneRotation);
 			_resliceMatrix[3, 0] = throughPoints[0].X;
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_instanceDataSet[DicomTags.Rows].SetInt32(0, frameSize.Height);
 
 			// assign Image Orientation (Patient)
-			Matrix resliceAxesPatientOrientation = _volume.Volume.RotateToPatientOrientation(_resliceMatrix);
+			Matrix resliceAxesPatientOrientation = _volumeReference.Volume.RotateToPatientOrientation(_resliceMatrix);
 			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(0, resliceAxesPatientOrientation[0, 0]);
 			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(1, resliceAxesPatientOrientation[0, 1]);
 			_instanceDataSet[DicomTags.ImageOrientationPatient].SetFloat32(2, resliceAxesPatientOrientation[0, 2]);
@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Volume Volume
 		{
-			get { return _volume.Volume; }
+			get { return _volumeReference.Volume; }
 		}
 
 		public IVolumeSlicerParams SlicerParams
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				DicomAttribute attribute;
-				if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
+				if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
 					return attribute;
 				return _instanceDataSet[tag];
 			}
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				DicomAttribute attribute;
-				if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
+				if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
 					return attribute;
 				return _instanceDataSet[tag];
 			}
@@ -137,14 +137,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
 		{
-			if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
+			if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
 				return true;
 			return _instanceDataSet.TryGetAttribute(tag, out attribute);
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			if (_volume.Volume.DataSet.TryGetAttribute(tag, out attribute))
+			if (_volumeReference.Volume.DataSet.TryGetAttribute(tag, out attribute))
 				return true;
 			return _instanceDataSet.TryGetAttribute(tag, out attribute);
 		}
@@ -159,8 +159,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			if (disposing)
 			{
-				//TODO (cr Oct 2009): volume reference
-				_volume.Dispose();
+				_volumeReference.Dispose();
 			}
 			base.Dispose(disposing);
 		}

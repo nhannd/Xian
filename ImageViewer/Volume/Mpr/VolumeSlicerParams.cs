@@ -193,8 +193,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return new ReadOnlyVolumeSlicerParams(this);
 		}
 
-		//TODO (cr Oct 2009): rename to Create.
-
 		/// <summary>
 		/// Allows specification of the slice plane, through point, and extent via two points in patient space
 		/// </summary>
@@ -202,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// <param name="sourceOrientationRowPatient"></param>
 		/// <param name="startPointPatient"></param>
 		/// <param name="endPointPatient"></param>
-		public static VolumeSlicerParams CreateSlicing(Volume volume, Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
+		public static VolumeSlicerParams Create(Volume volume, Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
 		                                               Vector3D startPointPatient, Vector3D endPointPatient)
 		{
 			Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);

@@ -97,6 +97,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		#region Static Helpers
+
+		/// <summary>
+		/// Creates an <see cref="ImageSop"/> based from the given <see cref="ISopDataSource"/>.
+		/// </summary>
+		/// <exception name="ArgumentException">Thrown if the given SOP instance is not an image SOP class.</exception>
+		public new static ImageSop Create(ISopDataSource dataSource)
+		{
+			if (!IsImageSop(dataSource.SopClassUid))
+				throw new ArgumentException("The specified SOP instance is not an image SOP class.", "dataSource");
+			return new ImageSop(dataSource);
+		}
+
+		/// <summary>
+		/// Creates an <see cref="ImageSop"/> from the SOP instance specified by <paramref name="filename"/>.
+		/// </summary>
+		/// <exception name="ArgumentException">Thrown if the given SOP instance is not an image SOP class.</exception>
+		public new static ImageSop Create(string filename)
+		{
+			return Create(new LocalSopDataSource(filename));
+		}
+
+		#endregion
+
 		#region General Image Module
 
 		/// <summary>

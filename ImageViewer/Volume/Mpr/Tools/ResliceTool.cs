@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 	[GroupHint("dropdown", "Tools.Volume.MPR.Reslicing")]
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (MprViewerToolExtensionPoint))]
-	public partial class ResliceTool : MouseImageViewerToolMaster<MprViewerTool>
+	public partial class ResliceTool : MouseImageViewerToolGroup<MprViewerTool>
 	{
 		private static readonly Color[,] _colors = {
 		                                           	{Color.Red, Color.Salmon},
@@ -319,7 +319,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 			if (sliceSet != null && !sliceSet.IsReadOnly)
 			{
 				IImageBox imageBox = FindImageBox(sliceSet, sourceImage.ImageViewer as MprViewerComponent);
-				sliceSet.SlicerParams = VolumeSlicerParams.CreateSlicing(sliceSet.Volume, orientationColumn, orientationRow, startPoint, endPoint);
+				sliceSet.SlicerParams = VolumeSlicerParams.Create(sliceSet.Volume, orientationColumn, orientationRow, startPoint, endPoint);
 
 				IPresentationImage closestImage = GetClosestSlice(startPoint + (endPoint - startPoint) * 2, imageBox.DisplaySet);
 				if (closestImage == null)

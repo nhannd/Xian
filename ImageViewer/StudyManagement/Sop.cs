@@ -913,6 +913,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return new Sop(dataSource);
 		}
 
+		/// <summary>
+		/// Creates either a <see cref="Sop"/> or <see cref="ImageSop"/> based
+		/// on the <see cref="SopClass"/> of the SOP instance specified by <paramref name="filename"/>.
+		/// </summary>
+		public static Sop Create(string filename)
+		{
+			return Create(new LocalSopDataSource(filename));
+		}
+
 		internal static bool IsImageSop(string sopClassUid)
 		{
 			return IsImageSop(SopClass.GetSopClass(sopClassUid));
