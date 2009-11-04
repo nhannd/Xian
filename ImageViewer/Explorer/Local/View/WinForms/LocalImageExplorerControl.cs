@@ -167,15 +167,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 				_folderCoordinator.BrowseTo(_homeLocation);
 		}
 
-		protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e) {
-			if (e.KeyData == (Keys.Control | Keys.A))
-			{
-				_folderView.SelectAll();
-				e.IsInputKey = true;
-			}
-			base.OnPreviewKeyDown(e);
-		}
-
 		#region Tab Order
 
 		private delegate bool FocusDelegate(bool forward);
