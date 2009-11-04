@@ -36,7 +36,7 @@
 <div id="HistoryDetailsPanel" runat="server" class="HistoryDetailsPanel">
     <table width="100%" border="0"  cellpadding="5">
         <tr>
-            <td>
+            <td valign="top">
                 <table border="0" width="100%">
                 <tr><td class="HistoryDetailsLabel">
                     <span style="padding-left:5px">Study (Snapshot):</span>
@@ -67,7 +67,7 @@
             </table>            
             </td>
         
-            <td>
+            <td valign="top">
                 <table border="0" width="100%">
                 <tr>
                     <td class="HistoryDetailsLabel">

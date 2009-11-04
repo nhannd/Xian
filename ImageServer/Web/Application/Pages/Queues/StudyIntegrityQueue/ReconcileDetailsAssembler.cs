@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             details.ExistingStudy.Patient.IssuerOfPatientID = study.IssuerOfPatientId;
             details.ExistingStudy.Patient.BirthDate = study.PatientsBirthDate;
             details.ExistingStudy.Series = CollectionUtils.Map(
-                study.Series,
+                study.Series.Values,
                 delegate(Series theSeries)
                     {
                         var seriesDetails = new ReconcileDetails.SeriesDetails();

@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Core.Data
 			ServerEntityAttributeProvider studyWrapper = new ServerEntityAttributeProvider(study);
 			StudyInformation studyInfo = new StudyInformation(studyWrapper);
 
-			foreach(Series series in study.Series)
+			foreach(Series series in study.Series.Values)
 			{
 				ServerEntityAttributeProvider seriesWrapper = new ServerEntityAttributeProvider(series);
 				SeriesInformation seriesInfo = new SeriesInformation(seriesWrapper);

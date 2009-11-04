@@ -38,7 +38,7 @@
 <div id="HistoryDetailsPanel" runat="server" class="TallHistoryDetailsPanel">
     <table  width="100%">
     <tr>
-        <td style="border-bottom:none; padding-bottom:5px">
+        <td style="border-bottom:none; padding-bottom:5px" valign="top">
             <table border="0" width="100%">
                 <tr><td class="HistoryDetailsLabel" style="border-bottom:dashed 1px #c0c0c0;">Study (Snapshot):</td></tr>
                 <tr><td style="border:none">
@@ -56,7 +56,7 @@
                 </td></tr>
             </table>
         </td>
-        <td style="border-bottom:none">
+        <td style="border-bottom:none" valign="top">
             <table border="0" width="100%">
                 <tr><td class="HistoryDetailsLabel" style="border-bottom:dashed 1px #c0c0c0;">Reconciled Images (Snapshot):</td></tr>
                 <tr><td style="border:none">
