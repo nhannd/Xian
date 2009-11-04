@@ -36,6 +36,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
@@ -463,7 +464,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             DicomFile file = new DicomFile(path);
             file.Load(DicomReadOptions.DoNotStorePixelDataInDataSet); // don't need to load pixel data cause we will delete it
 
-            int originalInstanceCount = studyXml.NumberOfStudyRelatedInstances;
+            #if DEBUG
+            int originalInstanceCountInXml = studyXml.NumberOfStudyRelatedInstances;
+            int originalStudyInstanceCount = Study.NumberOfStudyRelatedInstances;
+            int originalSeriesInstanceCount = Study.Series[uid.SeriesInstanceUid].NumberOfSeriesRelatedInstances;
+            #endif
+
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Delete Existing Image"))
             {
                 processor.AddCommand(new DeleteFileCommand(path));
@@ -476,10 +482,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 }
             }
 
-
-            Debug.Assert(studyXml.NumberOfStudyRelatedInstances == originalInstanceCount - 1);
+            #if DEBUG
             Debug.Assert(!File.Exists(path));
-
+            Debug.Assert(studyXml.NumberOfStudyRelatedInstances == originalInstanceCountInXml - 1);
+            Debug.Assert(Study.Load(Study.Key).NumberOfStudyRelatedInstances == originalStudyInstanceCount - 1);
+            Debug.Assert(Study.Load(Study.Key).Series[uid.SeriesInstanceUid].NumberOfSeriesRelatedInstances == originalSeriesInstanceCount - 1);
+            #endif
         }
 
         private DicomFile LoadDuplicateDicomFile(WorkQueueUid uid, bool skipPixelData)

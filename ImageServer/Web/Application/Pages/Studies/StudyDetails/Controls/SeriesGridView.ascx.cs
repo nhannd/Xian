@@ -239,14 +239,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         studyCriteria.ServerPartitionKey.EqualTo(partition.GetKey());
                         var study = studyAdaptor.GetFirst(studyCriteria);
 
-                        var seriesAdaptor = new SeriesSearchAdaptor();
-                        var criteria = new SeriesSelectCriteria();
-                        criteria.StudyKey.EqualTo(study.GetKey());
-                        criteria.ServerPartitionKey.EqualTo(partition.GetKey());
+                        if (study!=null)
+                        {
+                            var seriesAdaptor = new SeriesSearchAdaptor();
+                            var criteria = new SeriesSelectCriteria();
+                            criteria.StudyKey.EqualTo(study.GetKey());
+                            criteria.ServerPartitionKey.EqualTo(partition.GetKey());
 
-                        Series = seriesAdaptor.Get(criteria);
+                            Series = seriesAdaptor.Get(criteria);
 
-                        GridView1.PageSize = Series.Count;
+                            GridView1.PageSize = Series.Count;
+                        }
+                        
                     }
                 }
             }

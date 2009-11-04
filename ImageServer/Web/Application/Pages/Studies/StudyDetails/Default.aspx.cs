@@ -55,7 +55,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         private string _serverae;
         private ServerPartition _partition;
         private StudySummary _study;
-        private IList<Series> _totalSeries;
         
         #endregion Private members
 
@@ -181,7 +180,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             if (study != null)
             {
                 _study = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study);
-                _totalSeries = study.Series;
             }
             else
             {
@@ -262,23 +260,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                 //DeleteConfirmDialog.Data = _study.TheStudy;
 
                 //DeleteConfirmDialog.Show();
-                List<StudySummary> studyList = new List<StudySummary>();
-                studyList.Add(_study);
+                List<StudySummary> studyList = new List<StudySummary> {_study };
 
-                DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
+                DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map(
                     studyList,
                     delegate(StudySummary study)
                     {
-                        DeleteStudyInfo info = new DeleteStudyInfo();
-                        info.StudyKey = study.TheStudy.GetKey();
-                        info.AccessionNumber = study.AccessionNumber;
-                        info.Modalities = study.ModalitiesInStudy;
-                        info.PatientId = study.PatientId;
-                        info.PatientsName = study.PatientsName;
-                        info.StudyDate = study.StudyDate;
-                        info.StudyDescription = study.StudyDescription;
-                        info.StudyInstanceUid = study.StudyInstanceUid;
-                        info.ServerPartitionAE = study.ThePartition.AeTitle;
+                        DeleteStudyInfo info = new DeleteStudyInfo
+                                                   {
+                                                       StudyKey = study.TheStudy.Key,
+                                                       AccessionNumber = study.AccessionNumber,
+                                                       Modalities = study.ModalitiesInStudy,
+                                                       PatientId = study.PatientId,
+                                                       PatientsName = study.PatientsName,
+                                                       StudyDate = study.StudyDate,
+                                                       StudyDescription = study.StudyDescription,
+                                                       StudyInstanceUid = study.StudyInstanceUid,
+                                                       ServerPartitionAE = study.ThePartition.AeTitle
+                                                   };
                         return info;
                     }
                 );
@@ -301,24 +300,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             {
                 IList<Series> selectedSeries = StudyDetailsPanel.StudyDetailsTabsControl.SelectedSeries;
 
-                DeleteSeriesConfirmDialog.DeleteEntireStudy = _totalSeries.Count == selectedSeries.Count;
+                DeleteSeriesConfirmDialog.DeleteEntireStudy = _study.TheStudy.Series.Count == selectedSeries.Count;
 
-                DeleteSeriesConfirmDialog.DeletingSeries = CollectionUtils.Map<Series, DeleteSeriesInfo>(
+                DeleteSeriesConfirmDialog.DeletingSeries = CollectionUtils.Map(
                     selectedSeries,
                     delegate(Series series)
                     {
-                        DeleteSeriesInfo info = new DeleteSeriesInfo();
-                        info.StudyKey = _study.TheStudy.GetKey();
-                        info.Study = _study.TheStudy;
-                        info.Series = series;
-                        info.ServerPartitionAE = _study.ThePartition.AeTitle;
-                        info.Description = series.SeriesDescription;
-                        info.Modality = series.Modality;
-                        info.SeriesNumber = series.SeriesNumber;
-                        info.NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances;
-                        info.PerformedProcedureStepStartDate = series.PerformedProcedureStepStartDate;
-                        info.PerformedProcedureStepStartTime = series.PerformedProcedureStepStartTime;
-                        info.SeriesInstanceUid = series.SeriesInstanceUid;
+                        DeleteSeriesInfo info = new DeleteSeriesInfo
+                                                    {
+                                                        StudyKey = _study.TheStudy.Key,
+                                                        Study = _study.TheStudy,
+                                                        Series = series,
+                                                        ServerPartitionAE = _study.ThePartition.AeTitle,
+                                                        Description = series.SeriesDescription,
+                                                        Modality = series.Modality,
+                                                        SeriesNumber = series.SeriesNumber,
+                                                        NumberOfSeriesRelatedInstances = series.NumberOfSeriesRelatedInstances,
+                                                        PerformedProcedureStepStartDate = series.PerformedProcedureStepStartDate,
+                                                        PerformedProcedureStepStartTime = series.PerformedProcedureStepStartTime,
+                                                        SeriesInstanceUid = series.SeriesInstanceUid
+                                                    };
 
                         return info;
                     }

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Model
     {
         #region Private Fields
         static private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        private IList<Series> _series = null;
+        private IDictionary<string, Series> _series = null;
         private Patient _patient=null;
         #endregion
 
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Model
         /// <summary>
         /// Gets the <see cref="Series"/> related to this study.
         /// </summary>
-        public IList<Series> Series
+        public IDictionary<string, Series> Series
         {
             get
             {
@@ -63,7 +63,13 @@ namespace ClearCanvas.ImageServer.Model
                             ISeriesEntityBroker broker = readContext.GetBroker<ISeriesEntityBroker>();
                             SeriesSelectCriteria criteria = new SeriesSelectCriteria();
                             criteria.StudyKey.EqualTo(this.GetKey());
-                            _series = broker.Find(criteria);
+                            IList<Series> list = broker.Find(criteria);
+
+                            _series = new Dictionary<string, Series>();
+                            foreach(Series theSeries in list)
+                            {
+                                _series.Add(theSeries.SeriesInstanceUid, theSeries);
+                            }
                         }
                     }
                 }

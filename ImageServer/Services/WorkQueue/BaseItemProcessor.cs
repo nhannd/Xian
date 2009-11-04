@@ -1311,10 +1311,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         	Log(LogLevel.Info, "AUTO-RECOVERY", "# of study related instances in study Xml ({0}) appears correct. Update database based on study xml", numStudyRelatedInstancesInXml);
         	// update the counts in db to match the study xml
         	// Update count for each series 
-        	IList<Series> seriesList = storageLocation.Study.Series;
+        	IDictionary<string, Series> seriesList = storageLocation.Study.Series;
 
 
-        	foreach (Series series in seriesList)
+        	foreach (Series series in seriesList.Values)
         	{
         		SeriesXml seriesXml = studyXml[series.SeriesInstanceUid];
         		if (seriesXml != null)

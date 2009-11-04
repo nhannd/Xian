@@ -3935,6 +3935,8 @@ EXEC dbo.sp_executesql @statement = N'
 -- =============================================
 -- Author:		Thanh Huynh
 -- Description:	Delete an instance
+-- History
+--	Nov 04, 2009	:	Fixed a bug in updating Series table.
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteInstance] 
 	-- Add the parameters for the stored procedure here
@@ -3954,14 +3956,14 @@ BEGIN
 	DECLARE @StudyInstanceUid varchar(64)
 
 	SELECT @StudyGUID = study.GUID, @SeriesGUID=series.GUID, @PatientGUID=patient.GUID
-	FROM StudyStorage storage 
-	JOIN Study study ON study.ServerPartitionGUID=storage.ServerPartitionGUID and study.StudyInstanceUid=storage.StudyInstanceUid
+	FROM StudyStorage storage WITH(NOLOCK)
+	JOIN Study study ON study.StudyStorageGUID=@StudyStorageGUID
 	JOIN Patient patient ON patient.GUID=study.PatientGUID
 	JOIN Series series ON series.StudyGUID=study.GUID
-	WHERE storage.GUID=@StudyStorageGUID
+	WHERE storage.GUID=@StudyStorageGUID and SeriesInstanceUid=@SeriesInstanceUid
 		
 	UPDATE Series SET NumberOfSeriesRelatedInstances=NumberOfSeriesRelatedInstances-1
-	WHERE GUID=@SeriesGUID and SeriesInstanceUid=@SeriesInstanceUid
+	WHERE GUID=@SeriesGUID
 
 	UPDATE Study SET NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances-1
 	WHERE GUID=@StudyGUID

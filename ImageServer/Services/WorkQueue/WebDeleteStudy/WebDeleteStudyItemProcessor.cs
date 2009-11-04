@@ -151,9 +151,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                 using (ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Deleting Series from study {0}, A#:{1}, Patient: {2}, ID:{3}", study.StudyInstanceUid, study.AccessionNumber, study.PatientsName, study.PatientId)))
                 {
                     StudyXml studyXml = StorageLocation.LoadStudyXml();
-                    IList<Series> existingSeries = StorageLocation.Study.Series;
+                    IDictionary<string, Series> existingSeries = StorageLocation.Study.Series;
 
-                    
+
                     // Add commands to delete the folders and update the xml
                     foreach (WorkQueueUid uid in WorkQueueUidList)
                     {
@@ -184,9 +184,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
                     {
                         // Delete from DB
                     	WorkQueueUid queueUid = uid;
-                    	Series theSeries = CollectionUtils.SelectFirst(existingSeries,
-                                                                       series =>
-                                                                       series.SeriesInstanceUid == queueUid.SeriesInstanceUid);
+                        Series theSeries = existingSeries[queueUid.SeriesInstanceUid];
                         if (theSeries!=null)
                         {
                             _seriesToDelete.Add(theSeries);
