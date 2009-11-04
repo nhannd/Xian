@@ -120,9 +120,9 @@ namespace ClearCanvas.ImageViewer
 
 		private void Initialize()
 		{
-			if (base.ImageGraphic.VoiLutStrategy == null)
+			if (base.ImageGraphic.VoiLutFactory == null)
 			{
-				base.ImageGraphic.VoiLutStrategy = GraphicVoiLutStrategy.CreateStrategy(GetInitialVoiLut);
+				base.ImageGraphic.VoiLutFactory = GraphicVoiLutFactory.GetFactory(GetInitialVoiLut);
 			}
 
 			if (_dicomGraphics == null)
@@ -131,8 +131,7 @@ namespace ClearCanvas.ImageViewer
 				_dicomGraphics.Name = "DICOM";
 
 				// insert the DICOM graphics layer right after the image graphic (both contain domain-level graphics)
-				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics,
-					delegate(IGraphic test) { return test is ImageGraphic; });
+				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics, g => g is ImageGraphic);
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(imageGraphic) + 1, _dicomGraphics);
 			}
 		}

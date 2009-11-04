@@ -109,9 +109,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			base.VoiLutsEnabled = DicomPresentationImageSettings.Default.AllowWindowingOnColorImages;
 
-			if (base.ImageGraphic.VoiLutStrategy == null)
+			if (base.ImageGraphic.VoiLutFactory == null)
 			{
-				base.ImageGraphic.VoiLutStrategy = GraphicVoiLutStrategy.CreateStrategy(
+				base.ImageGraphic.VoiLutFactory = GraphicVoiLutFactory.GetFactory(
 					graphic => InitialVoiLutProvider.Instance.GetLut(graphic.ParentPresentationImage)
 					);
 			}
@@ -122,8 +122,7 @@ namespace ClearCanvas.ImageViewer
 				_dicomGraphics.Name = "DICOM";
 
 				// insert the DICOM graphics layer right after the image graphic (both contain domain-level graphics)
-				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics,
-					delegate(IGraphic test) { return test is ImageGraphic; });
+				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.CompositeImageGraphic.Graphics, g => g is ImageGraphic);
 				base.CompositeImageGraphic.Graphics.Insert(base.CompositeImageGraphic.Graphics.IndexOf(imageGraphic) + 1, _dicomGraphics);
 			}
 		}

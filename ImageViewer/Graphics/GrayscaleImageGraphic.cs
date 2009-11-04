@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private IVoiLutManager _voiLutManager;
 
 		[CloneCopyReference]
-		private IGraphicVoiLutStrategy _voiLutStrategy;
+		private IGraphicVoiLutFactory _voiLutFactory;
 
 		private IColorMapManager _colorMapManager;
 		private IDataLut _colorMap;
@@ -248,12 +248,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the VOI LUT selection strategy for this <see cref="GrayscaleImageGraphic"/>.
+		/// Gets or sets the VOI LUT factory for this <see cref="GrayscaleImageGraphic"/>.
 		/// </summary>
-		public IGraphicVoiLutStrategy VoiLutStrategy
+		public IGraphicVoiLutFactory VoiLutFactory
 		{
-			get { return _voiLutStrategy; }
-			set { _voiLutStrategy = value; }
+			get { return _voiLutFactory; }
+			set { _voiLutFactory = value; }
 		}
 
 		/// <summary>
@@ -466,8 +466,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				IComposableLut lut = null;
 
-				if (_voiLutStrategy != null)
-					lut = _voiLutStrategy.GetInitialVoiLut(this);
+				if (_voiLutFactory != null)
+					lut = _voiLutFactory.GetInitialVoiLut(this);
 
 				if (lut == null)
 					lut = new IdentityVoiLinearLut();

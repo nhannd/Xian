@@ -169,7 +169,7 @@
     <Compile Include="DisplaySetDescriptor.cs" />
     <Compile Include="DisplaySetFactories.cs" />
     <Compile Include="DisplaySetFactory.cs" />
-    <Compile Include="Graphics\IGraphicVoiLutStrategy.cs" />
+    <Compile Include="Graphics\IGraphicVoiLutFactory.cs" />
     <Compile Include="ImageSetDescriptor.cs" />
     <Compile Include="ImageSetFactory.cs" />
     <Compile Include="Imaging\IColorMapInstaller.cs" />

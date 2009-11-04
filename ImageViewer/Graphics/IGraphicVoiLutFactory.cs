@@ -34,65 +34,63 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
-	//TODO (cr Oct 2009): factory - the old provider name wasn't right either (rename?)
-	//TODO (cr Oct 2009): Should take an ImageGraphic or IImageGraphic
 	/// <summary>
-	/// Defines a strategy for selecing a VOI LUT appropriate for an <see cref="IGraphic"/>.
+	/// Defines a factory for getting a VOI LUT appropriate for an <see cref="ImageGraphic"/>.
 	/// </summary>
-	public interface IGraphicVoiLutStrategy
+	public interface IGraphicVoiLutFactory
 	{
 		/// <summary>
-		/// Gets the initial VOI LUT appropriate for the <paramref name="graphic"/>.
+		/// Gets the initial VOI LUT appropriate for the <paramref name="imageGraphic"/>.
 		/// </summary>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		IComposableLut GetInitialVoiLut(IGraphic graphic);
+		IComposableLut GetInitialVoiLut(ImageGraphic imageGraphic);
 	}
 
 	/// <summary>
-	/// A base class defines a strategy for selecing a VOI LUT appropriate for an <see cref="IGraphic"/>.
+	/// A base class defines a factory for getting a VOI LUT appropriate for an <see cref="ImageGraphic"/>.
 	/// </summary>
-	public abstract class GraphicVoiLutStrategy : IGraphicVoiLutStrategy
+	public abstract class GraphicVoiLutFactory : IGraphicVoiLutFactory
 	{
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		protected GraphicVoiLutStrategy() {}
+		protected GraphicVoiLutFactory() {}
 
 		/// <summary>
-		/// Gets the initial VOI LUT appropriate for the <paramref name="graphic"/>.
+		/// Gets the initial VOI LUT appropriate for the <paramref name="imageGraphic"/>.
 		/// </summary>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public abstract IComposableLut GetInitialVoiLut(IGraphic graphic);
+		public abstract IComposableLut GetInitialVoiLut(ImageGraphic imageGraphic);
 
 		/// <summary>
-		/// Defines the method for selecing a VOI LUT appropriate for an <see cref="IGraphic"/>.
+		/// Defines the method for getting a VOI LUT appropriate for an <see cref="ImageGraphic"/>.
 		/// </summary>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public delegate IComposableLut GetInitialVoiLutDelegate(IGraphic graphic);
+		public delegate IComposableLut GetInitialVoiLutDelegate(ImageGraphic imageGraphic);
 
 		/// <summary>
-		/// Creates a new strategy that wraps the given delegate.
+		/// Creates a new factory that wraps the given delegate.
 		/// </summary>
-		/// <param name="initialVoiLutDelegate">A <see cref="GetInitialVoiLutDelegate"/> delegate to select a VOI LUT appropriate for the given <see cref="IGraphic"/>. This method should generally be static, as the strategy may only be reference-copied when the parent graphic is cloned.</param>
+		/// <param name="initialVoiLutDelegate">A <see cref="GetInitialVoiLutDelegate"/> delegate to get a VOI LUT appropriate for the given <see cref="ImageGraphic"/>. This method should generally be static, as the factory may only be reference-copied when the parent graphic is cloned.</param>
 		/// <returns>The VOI LUT as an <see cref="IComposableLut"/>.</returns>
-		public static GraphicVoiLutStrategy CreateStrategy(GetInitialVoiLutDelegate initialVoiLutDelegate)
+		public static GraphicVoiLutFactory GetFactory(GetInitialVoiLutDelegate initialVoiLutDelegate)
 		{
-			return new DelegateGraphicVoiLutStrategy(initialVoiLutDelegate);
+			return new DelegateGraphicVoiLutFactory(initialVoiLutDelegate);
 		}
 
-		private class DelegateGraphicVoiLutStrategy : GraphicVoiLutStrategy
+		private class DelegateGraphicVoiLutFactory : GraphicVoiLutFactory
 		{
 			private readonly GetInitialVoiLutDelegate _initialVoiLutDelegate;
 
-			public DelegateGraphicVoiLutStrategy(GetInitialVoiLutDelegate initialVoiLutDelegate)
+			public DelegateGraphicVoiLutFactory(GetInitialVoiLutDelegate initialVoiLutDelegate)
 			{
 				Platform.CheckForNullReference(initialVoiLutDelegate, "initialVoiLutDelegate");
 				_initialVoiLutDelegate = initialVoiLutDelegate;
 			}
 
-			public override IComposableLut GetInitialVoiLut(IGraphic graphic)
+			public override IComposableLut GetInitialVoiLut(ImageGraphic imageGraphic)
 			{
-				return _initialVoiLutDelegate(graphic);
+				return _initialVoiLutDelegate(imageGraphic);
 			}
 		}
 	}
