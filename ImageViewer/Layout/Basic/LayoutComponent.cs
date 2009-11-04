@@ -276,20 +276,22 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			int rows = physicalWorkspace.Rows;
 			int columns = physicalWorkspace.Columns;
 
-			object[,] oldImageBoxMementos = new object[rows, columns];
+			object[,] mementos = new object[rows, columns];
 
 			for (int row = 0; row < rows; ++row)
 			{
 				for (int column = 0; column < columns; ++column)
 				{
-					oldImageBoxMementos[row, column] = physicalWorkspace[row, column].CreateMemento();
+					IImageBox imageBox = physicalWorkspace[row, column];
+					if (imageBox.DisplaySet != null)
+						mementos[row, column] = imageBox.CreateMemento();
 				}
 			}
 
-			return oldImageBoxMementos;
+			return mementos;
 		}
 
-		private static Queue GetOffScreenMementos(IPhysicalWorkspace physicalWorkspace, object[,] oldImageBoxMementos)
+		private static Queue GetOffScreenImageBoxMementos(IPhysicalWorkspace physicalWorkspace, object[,] oldImageBoxMementos)
 		{
 			int oldRows = oldImageBoxMementos.GetLength(0);
 			int oldColumns = oldImageBoxMementos.GetLength(1);
@@ -307,7 +309,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				for (int column = sameColumns; column < oldColumns; ++column)
 				{
-					offScreenMementos.Enqueue(oldImageBoxMementos[row, column]);
+					object memento = oldImageBoxMementos[row, column];
+					if (memento != null)
+						offScreenMementos.Enqueue(memento);
 				}
 			}
 
@@ -315,35 +319,33 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				for (int column = 0; column < oldColumns; ++column)
 				{
-					offScreenMementos.Enqueue(oldImageBoxMementos[row, column]);
+					object memento = oldImageBoxMementos[row, column];
+					if (memento != null)
+						offScreenMementos.Enqueue(memento);
 				}
 			}
 
 			return offScreenMementos;
 		}
 
-		private static IEnumerable<IImageBox> GetNewImageBoxes(IPhysicalWorkspace physicalWorkspace, int oldRows, int oldColumns)
+		private static IEnumerable<IImageBox> GetAvailableEmptyImageBoxes(IPhysicalWorkspace physicalWorkspace)
 		{
-			int newRows = physicalWorkspace.Rows;
-			int newColumns = physicalWorkspace.Columns;
+			Stack<IImageBox> imageBoxes = new Stack<IImageBox>();
 
-			int sameRows = Math.Min(oldRows, newRows);
-			int sameColumns = Math.Min(oldColumns, newColumns);
-
-			for (int row = 0; row < sameRows; ++row)
+			//go top to bottom, right to left, stopping before the first non-empty image box.
+			for (int row = 0; row < physicalWorkspace.Rows; ++row)
 			{
-				for (int column = sameColumns; column < newColumns; ++column)
+				for (int column = physicalWorkspace.Columns - 1; column >= 0; --column)
 				{
-					yield return physicalWorkspace[row, column];
+					IImageBox imageBox = physicalWorkspace[row, column];
+					if (imageBox.DisplaySet == null)
+						imageBoxes.Push(imageBox);
+					else
+						break; //skip to the next row
 				}
-			}
 
-			for (int row = sameRows; row < newRows; ++row)
-			{
-				for (int column = 0; column < newColumns; ++column)
-				{
-					yield return physicalWorkspace[row, column];
-				}
+				while (imageBoxes.Count > 0)
+					yield return imageBoxes.Pop();
 			}
 		}
 
@@ -393,7 +395,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			physicalWorkspace.SetImageBoxGrid(rows, columns);
 
-			Queue offScreenMementos = GetOffScreenMementos(physicalWorkspace, oldImageBoxMementos);
+			Queue offScreenMementos = GetOffScreenImageBoxMementos(physicalWorkspace, oldImageBoxMementos);
 
 			int newRows = physicalWorkspace.Rows;
 			int newColumns = physicalWorkspace.Columns;
@@ -409,13 +411,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				for (int column = 0; column < sameColumns; ++column)
 				{
-					physicalWorkspace[row, column].SetMemento(oldImageBoxMementos[row, column]);
+					object memento = oldImageBoxMementos[row, column];
+					if (memento == null)
+						physicalWorkspace[row, column].SetTileGrid(1, 1);
+					else
+						physicalWorkspace[row, column].SetMemento(memento);
 				}
 			}
 
-			// Fill in new image boxes preferably with display sets that went 'off-screen',
+			// Fill in available image boxes, preferably with display sets that went 'off-screen',
 			// followed by new ones that are not already visible.
-			FillImageBoxes(GetNewImageBoxes(physicalWorkspace, oldRows, oldColumns), offScreenMementos);
+			FillImageBoxes(GetAvailableEmptyImageBoxes(physicalWorkspace), offScreenMementos);
 		}
 
 		private static void SetImageBoxLayoutSimple(IPhysicalWorkspace physicalWorkspace, int rows, int columns)
