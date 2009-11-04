@@ -4266,6 +4266,7 @@ EXEC dbo.sp_executesql @statement = N'
 --  Oct 22, 2009 :  Added NewQueueStudyStateEnum parameter. Used for setting the 
 --					study state.
 --  Oct 29, 2009 :  Added WriteLock/ReadLock support
+--  Nov  4, 2009 :  Added updating FailureDescription based on Reason
 -- =================================================================
 CREATE PROCEDURE [dbo].[PostponeWorkQueue]  
 	-- Add the parameters for the stored procedure here
@@ -4301,13 +4302,16 @@ BEGIN
 		IF @UpdateWorkQueue=0
 		BEGIN
 			UPDATE WorkQueue
-				SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, WorkQueueStatusEnum=@PendingStatusEnum
+				SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime, 
+				WorkQueueStatusEnum=@PendingStatusEnum,	FailureDescription=@Reason
 			WHERE GUID=@WorkQueueGUID
 		END
 		ELSE
 		BEGIN
 			UPDATE WorkQueue
-			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate()
+			SET ScheduledTime=@ScheduledTime, ExpirationTime=@ExpirationTime,
+				WorkQueueStatusEnum=@PendingStatusEnum, LastUpdatedTime=getdate(),
+				FailureDescription=@Reason
 			WHERE GUID=@WorkQueueGUID
 		END
 
