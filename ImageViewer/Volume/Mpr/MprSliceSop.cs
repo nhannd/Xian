@@ -33,7 +33,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	//TODO (cr Oct 2009): looks like this could be removed
 	public class MprSliceSop : ImageSop
 	{
 		// JY: In general, it is bad practice to derive your own special Sop classes since it
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private IMprSliceSet _parent;
 
-		public MprSliceSop(ISliceSopDataSource dataSource) : base(dataSource) {}
+		public MprSliceSop(ISopDataSource dataSource) : base(dataSource) { }
 
 		public IMprSliceSet Parent
 		{
@@ -50,9 +49,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			internal set { _parent = value; }
 		}
 
-		public new ISliceSopDataSource DataSource
+		public new ISopDataSource DataSource
 		{
-			get { return (ISliceSopDataSource) base.DataSource; }
+			get { return base.DataSource; }
 		}
 	}
 }

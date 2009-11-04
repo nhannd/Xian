@@ -40,6 +40,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Volume.Mpr.Configuration;
 using ClearCanvas.ImageViewer.Volume.Mpr.Utilities;
 using vtk;
@@ -116,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		//TODO (cr Oct 2009): return ISlice or Slice
-		public IEnumerable<ISliceSopDataSource> CreateSlices()
+		public IEnumerable<ISopDataSource> CreateSlices()
 		{
 			Vector3D initialThroughPoint = GetSliceThroughPoint();
 
@@ -278,62 +279,62 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				VtkHelper.RegisterVtkErrorEvents(reslicer);
 
-				//TODO (cr Oct 2009): could be a leak (try ... finally)
-
 				// Obtain a pinned VTK volume for the reslicer. We'll release this when
 				//	VTK is done reslicing.
 				vtkImageData volumeVtkWrapper = _volume.Volume.ObtainPinnedVtkVolume();
-				reslicer.SetInput(volumeVtkWrapper);
-				reslicer.SetInformationInput(volumeVtkWrapper);
-
-				// Must instruct reslicer to output 2D images
-				reslicer.SetOutputDimensionality(2);
-
-				// Use the volume's padding value for all pixels that are outside the volume
-				reslicer.SetBackgroundLevel(_volume.Volume.PadValue);
-
-				// This ensures VTK obeys the real spacing, results in all VTK slices being isotropic.
-				//	Effective spacing is the minimum of these three.
-				reslicer.SetOutputSpacing(_volume.Volume.VoxelSpacing.X, _volume.Volume.VoxelSpacing.Y, _volume.Volume.VoxelSpacing.Z);
-
-				reslicer.SetResliceAxes(VtkHelper.ConvertToVtkMatrix(resliceAxes));
-
-				// Clamp the output based on the slice extent
-				int sliceExtentX = GetSliceExtentX();
-				int sliceExtentY = GetSliceExtentY();
-				reslicer.SetOutputExtent(0, sliceExtentX - 1, 0, sliceExtentY - 1, 0, 0);
-
-				// Set the output origin to reflect the slice through point. The slice extent is
-				//	centered on the slice through point.
-				// VTK output origin is derived from the center image being 0,0
-				float originX = -sliceExtentX*EffectiveSpacing/2;
-				float originY = -sliceExtentY*EffectiveSpacing/2;
-				reslicer.SetOutputOrigin(originX, originY, 0);
-
-				switch (_slicerParams.InterpolationMode)
+				try
 				{
-					case VolumeSlicerInterpolationMode.NearestNeighbor:
-						reslicer.SetInterpolationModeToNearestNeighbor();
-						break;
-					case VolumeSlicerInterpolationMode.Linear:
-						reslicer.SetInterpolationModeToLinear();
-						break;
-					case VolumeSlicerInterpolationMode.Cubic:
-						reslicer.SetInterpolationModeToCubic();
-						break;
+					reslicer.SetInput(volumeVtkWrapper);
+					reslicer.SetInformationInput(volumeVtkWrapper);
+
+					// Must instruct reslicer to output 2D images
+					reslicer.SetOutputDimensionality(2);
+
+					// Use the volume's padding value for all pixels that are outside the volume
+					reslicer.SetBackgroundLevel(_volume.Volume.PadValue);
+
+					// This ensures VTK obeys the real spacing, results in all VTK slices being isotropic.
+					//	Effective spacing is the minimum of these three.
+					reslicer.SetOutputSpacing(_volume.Volume.VoxelSpacing.X, _volume.Volume.VoxelSpacing.Y, _volume.Volume.VoxelSpacing.Z);
+
+					reslicer.SetResliceAxes(VtkHelper.ConvertToVtkMatrix(resliceAxes));
+
+					// Clamp the output based on the slice extent
+					int sliceExtentX = GetSliceExtentX();
+					int sliceExtentY = GetSliceExtentY();
+					reslicer.SetOutputExtent(0, sliceExtentX - 1, 0, sliceExtentY - 1, 0, 0);
+
+					// Set the output origin to reflect the slice through point. The slice extent is
+					//	centered on the slice through point.
+					// VTK output origin is derived from the center image being 0,0
+					float originX = -sliceExtentX*EffectiveSpacing/2;
+					float originY = -sliceExtentY*EffectiveSpacing/2;
+					reslicer.SetOutputOrigin(originX, originY, 0);
+
+					switch (_slicerParams.InterpolationMode)
+					{
+						case VolumeSlicerInterpolationMode.NearestNeighbor:
+							reslicer.SetInterpolationModeToNearestNeighbor();
+							break;
+						case VolumeSlicerInterpolationMode.Linear:
+							reslicer.SetInterpolationModeToLinear();
+							break;
+						case VolumeSlicerInterpolationMode.Cubic:
+							reslicer.SetInterpolationModeToCubic();
+							break;
+					}
+
+					using (vtkExecutive exec = reslicer.GetExecutive())
+					{
+						VtkHelper.RegisterVtkErrorEvents(exec);
+						exec.Update();
+					}
 				}
-
-				using (vtkExecutive exec = reslicer.GetExecutive())
+				finally
 				{
-					VtkHelper.RegisterVtkErrorEvents(exec);
-
-					exec.Update();
-
-					//TODO (cr Oct 2009): why's inside this using
 					_volume.Volume.ReleasePinnedVtkVolume();
-
-					return reslicer.GetOutput();
 				}
+				return reslicer.GetOutput();
 			}
 		}
 

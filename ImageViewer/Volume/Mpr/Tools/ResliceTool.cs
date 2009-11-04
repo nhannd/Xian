@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr.Tools
 				yield break;
 
 			// create one instance of the slave tool for each mutable slice set
-			foreach (IMprVolume volume in this.ImageViewer.StudyTree)
+			foreach (IMprVolume volume in this.ImageViewer.Volumes)
 			{
 				foreach (IMprSliceSet sliceSet in volume.SliceSets)
 				{

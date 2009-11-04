@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//	the volume array must be pinned.
 		private GCHandle? _volArrayPinnedHandle;
 
-		private bool _disposed;
+		private bool _disposed = false;
 
 		private readonly string _description;
 		private readonly VolumeSopDataSourcePrototype _modelDicom;
@@ -454,26 +454,34 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
-		#region Disposal
+		#region Destructor and Disposal
 
-		//TODO (cr Oct 2009): finalizer
+		~Volume()
+		{
+			this.Dispose(false);
+		}
+
 		protected void Dispose(bool disposing)
 		{
-			if (disposing && !_disposed)
+			if (!_disposed)
 			{
-				_disposed = true;
+				if (disposing)
+				{
+					if (_cachedVtkVolume != null)
+					{
+						_cachedVtkVolume.GetPointData().Dispose();
+						_cachedVtkVolume.Dispose();
+						_cachedVtkVolume = null;
+					}
+				}
+
 				// This should have been taken care of by caller of Obtain, release here just to be safe.
 				ReleasePinnedVtkVolume();
 
-				if (_cachedVtkVolume != null)
-				{
-					_cachedVtkVolume.GetPointData().Dispose();
-					_cachedVtkVolume.Dispose();
-					_cachedVtkVolume = null;
-				}
-
 				_volumeDataInt16 = null;
 				_volumeDataUInt16 = null;
+
+				_disposed = true;
 			}
 		}
 

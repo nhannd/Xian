@@ -75,8 +75,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _mprWorkspace; }
 		}
 
-		//TODO (cr Oct 2009): different name - not really a tree
-		public new IObservableList<IMprVolume> StudyTree
+		public IObservableList<IMprVolume> Volumes
 		{
 			get { return _volumes; }
 		}
@@ -101,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected virtual string SuggestTitle()
 		{
-			return string.Format(SR.FormatMprWorkspaceTitle, StringUtilities.Combine(this.StudyTree, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; }));
+			return string.Format(SR.FormatMprWorkspaceTitle, StringUtilities.Combine(this.Volumes, String.Format(" {0} ", SR.VolumeLabelSeparator), delegate(IMprVolume volume) { return volume.Description; }));
 		}
 
 		public override IActionSet ExportedActions
@@ -292,7 +291,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				_logicalWorkspaceBuilt = true;
 
-				foreach (MprVolume volume in this.ImageViewer.StudyTree)
+				foreach (MprVolume volume in this.ImageViewer.Volumes)
 				{
 					this.ImageViewer.MprWorkspace.ImageSets.Add(CreateImageSet(volume));
 				}

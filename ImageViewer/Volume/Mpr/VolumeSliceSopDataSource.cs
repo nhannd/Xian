@@ -40,10 +40,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	//TODO (cr Oct 2009): remove
-	public interface ISliceSopDataSource : ISopDataSource {}
-
-	public class VolumeSliceSopDataSource : StandardSopDataSource, ISliceSopDataSource
+	public class VolumeSliceSopDataSource : StandardSopDataSource, ISopDataSource
 	{
 		private readonly IVolumeReference _volumeReference;
 		private readonly IVolumeSlicerParams _slicerParams;

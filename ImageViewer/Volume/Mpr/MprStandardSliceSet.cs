@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -99,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				using (VolumeSlicer slicer = new VolumeSlicer(base.Volume, _slicerParams, base.Uid))
 				{
-					foreach (ISliceSopDataSource dataSource in slicer.CreateSlices())
+					foreach (ISopDataSource dataSource in slicer.CreateSlices())
 					{
 						base.SliceSops.Add(new MprSliceSop(dataSource));
 					}

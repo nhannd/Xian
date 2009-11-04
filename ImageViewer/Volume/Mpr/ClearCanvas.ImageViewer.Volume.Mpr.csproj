@@ -87,7 +87,6 @@
     <Compile Include="MprStaticSliceSet.cs" />
     <Compile Include="MprStandardSliceSet.cs" />
     <Compile Include="IVolumeSlicerParams.cs" />
-    <Compile Include="Mpr3PlaneSliceSet.cs" />
     <Compile Include="MprVolume.cs" />
     <Compile Include="ReadOnlyVolumeSlicerParams.cs" />
     <Compile Include="Tests\SlicerTests.cs" />
