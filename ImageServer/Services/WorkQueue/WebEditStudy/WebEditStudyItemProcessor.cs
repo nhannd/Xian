@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
@@ -41,13 +40,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
     public class WebEditStudyItemProcessor : BaseItemProcessor
     {
-
         #region Private Fields
+
         private ServerFilesystemInfo _filesystem;
         private Study _study;
         private Patient _patient;
-        #endregion
 
+        #endregion
 
         #region Private Methods
 
@@ -62,43 +61,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _patient = Patient.Load(ReadContext, _study.PatientKey);
         }
 
-        private bool FilesystemIsAccessable()
-        {
-            _filesystem =
-                FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
-
-            return _filesystem != null && _filesystem.Readable && _filesystem.Writeable;
-        }
-
         #endregion
 
         #region Overriden Protected Methods
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
-			if (!FilesystemIsAccessable())
-			{
-				String reason = String.Format("Filesystem {0} is not readable and writable.", _filesystem.Filesystem.Description);
-				FailQueueItem(item, reason);
-			}
-			else
-			{
-				LoadAdditionalEntities();
+			LoadAdditionalEntities();
 
-				using (StudyEditor editor = new StudyEditor(ServerPartition, StorageLocation, _patient, Study))
+			using (StudyEditor editor = new StudyEditor(ServerPartition, StorageLocation, _patient, Study))
+			{
+				if (!editor.Edit(item.Data.DocumentElement))
 				{
-					if (!editor.Edit(item.Data.DocumentElement))
-					{
-						FailQueueItem(WorkQueueItem, editor.FailureReason);
-						Platform.Log(LogLevel.Error, "Study Edit failed. WorkQueueKey:{0}. Reason={1}", WorkQueueItem.GetKey(),
-						             editor.FailureReason);
-					}
-					else
-					{
-                        // update this to reflect any changes to the storage location, eg Study Folder
-					    StorageLocation = editor.NewStorageLocation;
-                        Platform.CheckForNullReference(StorageLocation, "StorageLocation"); 
-                        Complete();
-					}
+					FailQueueItem(WorkQueueItem, editor.FailureReason);
+					Platform.Log(LogLevel.Error, "Study Edit failed. WorkQueueKey:{0}. Reason={1}", WorkQueueItem.Key,
+					             editor.FailureReason);
+				}
+				else
+				{
+					// update this to reflect any changes to the storage location, eg Study Folder
+					StorageLocation = editor.NewStorageLocation;
+					Platform.CheckForNullReference(StorageLocation, "StorageLocation");
+					Complete();
 				}
 			}
 		}
@@ -111,7 +94,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-            Platform.Log(LogLevel.Info, "Study Edit completed. WorkQueueKey={0}", WorkQueueItem.GetKey());
+            Platform.Log(LogLevel.Info, "Study Edit completed. WorkQueueKey={0}", WorkQueueItem.Key);
         }
 
         protected override bool CanStart()
@@ -130,6 +113,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 PostponeItem("Study is being processed or reconciled.");
             	return false;
             }
+
+			_filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
+        	Platform.CheckForNullReference(_filesystem, "filesystem");
+			if (_filesystem.Full)
+			{
+				PostponeItem("The Filesystem is full.");
+				return false;
+			}
+
+			if (!_filesystem.Writeable)
+			{
+				PostponeItem("The Filesystem is not writeable.");
+				return false;
+			}
+			
         	return true;
         }
 
