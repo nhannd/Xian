@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		/// <summary>
 		/// Gets or sets the instance creator's institution.
 		/// </summary>
-		public Institution Institution
+		internal Institution Institution
 		{
 			get { return _institution; }
 			set { _institution = value; }

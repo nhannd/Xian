@@ -324,7 +324,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// This property may only be set if the presentation state has not yet been serialized to a file.
 		/// </remarks>
 		/// <exception cref="InvalidOperationException">Thrown if the presentation state has already been serialized to a file.</exception>
-		public Institution Institution
+		internal Institution Institution
 		{
 			get { return _institution; }
 			set

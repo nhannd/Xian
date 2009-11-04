@@ -74,12 +74,6 @@ namespace ClearCanvas.ImageViewer
 			_studyTree = studyTree;
 		}
 
-		//TODO (cr Oct 2009): remove explicit
-		List<IPresentationImage> IPresentationImageFactory.CreateImages(Sop sop)
-		{
-			return CreateImages(sop);
-		}
-
 		IPresentationImage IPresentationImageFactory.CreateImage(Frame frame)
 		{
 			return Create(frame);
