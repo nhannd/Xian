@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			UpdateTreeInfo();
 		}
 
-		private static void OnWorkspaceClosed(object sender, ClosedItemEventArgs<Workspace> e)
+		private void OnWorkspaceClosed(object sender, ClosedItemEventArgs<Workspace> e)
 		{
 			IImageViewer viewer = CastToImageViewer(e.Item);
 			if (viewer != null && _viewerTreeInfo.ContainsKey(viewer))
@@ -224,6 +224,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				ImageSetTreeInfo info = _viewerTreeInfo[viewer];
 				_viewerTreeInfo.Remove(viewer);
 				info.Dispose();
+			}
+
+			if (_desktopWindow.Workspaces.Count == 0)
+			{
+				SetImageViewer(null);
+				UpdateTreeInfo();
 			}
 		}
 
