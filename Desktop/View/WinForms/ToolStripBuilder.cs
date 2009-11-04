@@ -419,10 +419,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 					if (action is IDropDownAction)
 					{
 						if (action is IClickAction)
-							view = StandardWinFormsActionView.CreateDropDownButtonView();
+							view = StandardWinFormsActionView.CreateDropDownButtonActionView();
+						else
+							view = StandardWinFormsActionView.CreateDropDownActionView();
 					}
 					else if (action is IClickAction)
-						view = StandardWinFormsActionView.CreateToolbarButtonView();
+						view = StandardWinFormsActionView.CreateButtonActionView();
 				}
 				else
 				{

@@ -86,6 +86,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 		}
 
+		public IconSize IconSize
+		{
+			get { return _iconSize; }
+			set
+			{
+				if (_iconSize != value)
+				{
+					_iconSize = value;
+					UpdateIcon();
+				}
+			}
+		}
+
 		private void OnDropDownOpening(object sender, EventArgs e)
 		{
 			ToolStripBuilder.Clear(this.DropDownItems);

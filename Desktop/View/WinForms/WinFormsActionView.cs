@@ -56,7 +56,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		public static IActionView CreateDropDownButtonView()
+		public static IActionView CreateDropDownButtonActionView()
 		{
 			return new StandardWinFormsActionView(
 				delegate(IActionViewContext context)
@@ -67,12 +67,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 				});
 		}
 
-		public static IActionView CreateToolbarButtonView()
+		public static IActionView CreateDropDownActionView()
 		{
 			return new StandardWinFormsActionView(
 				delegate(IActionViewContext context)
 				{
-					ActiveToolbarButton item = new ActiveToolbarButton((IClickAction)context.Action, context.IconSize);
+					DropDownToolbarItem item = new DropDownToolbarItem((IDropDownAction) context.Action, context.IconSize);
+					context.IconSizeChanged += delegate { item.IconSize = context.IconSize; };
+					return item;
+				});
+		}
+
+		public static IActionView CreateButtonActionView()
+		{
+			return new StandardWinFormsActionView(
+				delegate(IActionViewContext context)
+				{
+					ActiveToolbarButton item = new ActiveToolbarButton((IClickAction) context.Action, context.IconSize);
 					context.IconSizeChanged += delegate { item.IconSize = context.IconSize; };
 					return item;
 				});
