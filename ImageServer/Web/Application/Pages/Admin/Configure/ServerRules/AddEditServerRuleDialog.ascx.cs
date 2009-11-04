@@ -195,9 +195,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             {
                 control = document.getElementById('" +
 				RuleXmlTextBox.ClientID +
-				@"');
+                @"');
                 params = new Array();
-                params.serverRule=escape(control.value);
+                params.serverRule=escape(CodeMirrorEditor.getCode());
 				var oList = document.getElementById('" +
 								RuleTypeDropDownList.ClientID +
 								@"');
@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			}
 
 			javascript +=
-								@"}
+                                @"}
 
             // This function calls the Web Service method.  
             function webServiceScript(oList)

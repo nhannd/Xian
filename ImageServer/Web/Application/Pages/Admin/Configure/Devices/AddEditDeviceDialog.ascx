@@ -32,7 +32,7 @@
                 }
                 if ($("#<%=AcceptKOPR.ClientID %>").attr('checked') == true)
                     $("#<%=AllowStorageCheckBox.ClientID %>").attr('checked', true);
-            }       
+            });       
 
 
         </script>
