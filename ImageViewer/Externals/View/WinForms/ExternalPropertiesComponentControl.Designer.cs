@@ -63,14 +63,14 @@
 			flowLayoutPanel2.Name = "flowLayoutPanel2";
 			flowLayoutPanel2.Padding = new System.Windows.Forms.Padding(5);
 			flowLayoutPanel2.Size = new System.Drawing.Size(453, 43);
-			flowLayoutPanel2.TabIndex = 4;
+			flowLayoutPanel2.TabIndex = 1;
 			// 
 			// _btnCancel
 			// 
 			this._btnCancel.Location = new System.Drawing.Point(365, 8);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
-			this._btnCancel.TabIndex = 0;
+			this._btnCancel.TabIndex = 1;
 			this._btnCancel.Text = "&Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			this._btnCancel.Click += new System.EventHandler(this._btnCancel_Click);
@@ -80,7 +80,7 @@
 			this._btnOk.Location = new System.Drawing.Point(284, 8);
 			this._btnOk.Name = "_btnOk";
 			this._btnOk.Size = new System.Drawing.Size(75, 23);
-			this._btnOk.TabIndex = 1;
+			this._btnOk.TabIndex = 0;
 			this._btnOk.Text = "&Ok";
 			this._btnOk.UseVisualStyleBackColor = true;
 			this._btnOk.Click += new System.EventHandler(this._btnOk_Click);
@@ -126,7 +126,7 @@
 			this._pnlClientArea.Margin = new System.Windows.Forms.Padding(5);
 			this._pnlClientArea.Name = "_pnlClientArea";
 			this._pnlClientArea.Size = new System.Drawing.Size(453, 232);
-			this._pnlClientArea.TabIndex = 1;
+			this._pnlClientArea.TabIndex = 2;
 			// 
 			// panel1
 			// 
@@ -138,7 +138,7 @@
 			this.panel1.Location = new System.Drawing.Point(0, 0);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(453, 334);
-			this.panel1.TabIndex = 5;
+			this.panel1.TabIndex = 0;
 			// 
 			// _pnlName
 			// 
@@ -149,7 +149,7 @@
 			this._pnlName.Name = "_pnlName";
 			this._pnlName.Padding = new System.Windows.Forms.Padding(10);
 			this._pnlName.Size = new System.Drawing.Size(453, 37);
-			this._pnlName.TabIndex = 2;
+			this._pnlName.TabIndex = 1;
 			// 
 			// _txtName
 			// 

@@ -133,7 +133,7 @@
     <value>0</value>
   </data>
   <data name="_lblCommand.Text" xml:space="preserve">
-    <value>Command</value>
+    <value>Command (Full Path)</value>
   </data>
   <data name="&gt;&gt;_lblCommand.Name" xml:space="preserve">
     <value>_lblCommand</value>
@@ -181,7 +181,7 @@
     <value>376, 16</value>
   </data>
   <data name="_lblWorkingDir.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+    <value>0</value>
   </data>
   <data name="_lblWorkingDir.Text" xml:space="preserve">
     <value>Working Directory</value>
@@ -208,7 +208,7 @@
     <value>376, 20</value>
   </data>
   <data name="_txtWorkingDir.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;_txtWorkingDir.Name" xml:space="preserve">
     <value>_txtWorkingDir</value>
@@ -232,7 +232,7 @@
     <value>376, 16</value>
   </data>
   <data name="_lblArguments.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+    <value>0</value>
   </data>
   <data name="_lblArguments.Text" xml:space="preserve">
     <value>Arguments (one per line)</value>
@@ -262,7 +262,7 @@
     <value>376, 92</value>
   </data>
   <data name="_txtArguments.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;_txtArguments.Name" xml:space="preserve">
     <value>_txtArguments</value>
@@ -286,7 +286,7 @@
     <value>376, 16</value>
   </data>
   <data name="_lnkHelpFields.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+    <value>2</value>
   </data>
   <data name="_lnkHelpFields.Text" xml:space="preserve">
     <value>Special Fields...</value>
@@ -305,6 +305,21 @@
   </data>
   <data name="&gt;&gt;_lnkHelpFields.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="_btnCommand.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Right</value>
+  </data>
+  <data name="_btnCommand.Location" type="System.Drawing.Point, System.Drawing">
+    <value>361, 26</value>
+  </data>
+  <data name="_btnCommand.Size" type="System.Drawing.Size, System.Drawing">
+    <value>25, 20</value>
+  </data>
+  <data name="_btnCommand.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="_btnCommand.Text" xml:space="preserve">
+    <value>...</value>
   </data>
   <data name="&gt;&gt;_btnCommand.Name" xml:space="preserve">
     <value>_btnCommand</value>
@@ -334,7 +349,7 @@
     <value>396, 56</value>
   </data>
   <data name="_pnlCommand.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="&gt;&gt;_pnlCommand.Name" xml:space="preserve">
     <value>_pnlCommand</value>
@@ -347,33 +362,6 @@
   </data>
   <data name="&gt;&gt;_pnlCommand.ZOrder" xml:space="preserve">
     <value>3</value>
-  </data>
-  <data name="_btnCommand.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="_btnCommand.Location" type="System.Drawing.Point, System.Drawing">
-    <value>361, 26</value>
-  </data>
-  <data name="_btnCommand.Size" type="System.Drawing.Size, System.Drawing">
-    <value>25, 20</value>
-  </data>
-  <data name="_btnCommand.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="_btnCommand.Text" xml:space="preserve">
-    <value>...</value>
-  </data>
-  <data name="&gt;&gt;_btnCommand.Name" xml:space="preserve">
-    <value>_btnCommand</value>
-  </data>
-  <data name="&gt;&gt;_btnCommand.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;_btnCommand.Parent" xml:space="preserve">
-    <value>_pnlCommand</value>
-  </data>
-  <data name="&gt;&gt;_btnCommand.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="_pnlWorkingDir.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Top</value>
@@ -391,7 +379,7 @@
     <value>396, 55</value>
   </data>
   <data name="_pnlWorkingDir.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;_pnlWorkingDir.Name" xml:space="preserve">
     <value>_pnlWorkingDir</value>
@@ -421,7 +409,7 @@
     <value>396, 144</value>
   </data>
   <data name="_pnlArguments.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="&gt;&gt;_pnlArguments.Name" xml:space="preserve">
     <value>_pnlArguments</value>
@@ -448,7 +436,7 @@
     <value>376, 17</value>
   </data>
   <data name="_chkAutoQuoteArguments.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="_chkAutoQuoteArguments.Text" xml:space="preserve">
     <value>Automatically quote arguments containing spaces</value>
@@ -478,7 +466,7 @@
     <value>29, 20</value>
   </data>
   <data name="_txtMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;_txtMultiValueFieldSeparator.Name" xml:space="preserve">
     <value>_txtMultiValueFieldSeparator</value>
@@ -502,7 +490,7 @@
     <value>85, 21</value>
   </data>
   <data name="_lblMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="_lblMultiValueFieldSeparator.Text" xml:space="preserve">
     <value>Field separator:</value>
@@ -535,7 +523,7 @@
     <value>376, 21</value>
   </data>
   <data name="_pnlMultiValueFieldSeparator.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+    <value>1</value>
   </data>
   <data name="&gt;&gt;_pnlMultiValueFieldSeparator.Name" xml:space="preserve">
     <value>_pnlMultiValueFieldSeparator</value>
@@ -595,7 +583,7 @@
     <value>396, 82</value>
   </data>
   <data name="_pnlOptions.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;_pnlOptions.Name" xml:space="preserve">
     <value>_pnlOptions</value>

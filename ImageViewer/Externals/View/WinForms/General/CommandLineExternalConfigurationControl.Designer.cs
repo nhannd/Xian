@@ -39,8 +39,8 @@
 			this._pnlOptions = new System.Windows.Forms.Panel();
 			this._chkAutoQuoteArguments = new System.Windows.Forms.CheckBox();
 			this._pnlMultiValueFieldSeparator = new System.Windows.Forms.Panel();
-			this._lblMultiValueFieldSeparator = new System.Windows.Forms.Label();
 			this._txtMultiValueFieldSeparator = new System.Windows.Forms.TextBox();
+			this._lblMultiValueFieldSeparator = new System.Windows.Forms.Label();
 			this._chkAllowMultiValueFields = new System.Windows.Forms.CheckBox();
 			this._dlgCommand = new System.Windows.Forms.OpenFileDialog();
 			this._pnlCommand.SuspendLayout();
@@ -138,15 +138,15 @@
 			resources.ApplyResources(this._pnlMultiValueFieldSeparator, "_pnlMultiValueFieldSeparator");
 			this._pnlMultiValueFieldSeparator.Name = "_pnlMultiValueFieldSeparator";
 			// 
-			// _lblMultiValueFieldSeparator
-			// 
-			resources.ApplyResources(this._lblMultiValueFieldSeparator, "_lblMultiValueFieldSeparator");
-			this._lblMultiValueFieldSeparator.Name = "_lblMultiValueFieldSeparator";
-			// 
 			// _txtMultiValueFieldSeparator
 			// 
 			resources.ApplyResources(this._txtMultiValueFieldSeparator, "_txtMultiValueFieldSeparator");
 			this._txtMultiValueFieldSeparator.Name = "_txtMultiValueFieldSeparator";
+			// 
+			// _lblMultiValueFieldSeparator
+			// 
+			resources.ApplyResources(this._lblMultiValueFieldSeparator, "_lblMultiValueFieldSeparator");
+			this._lblMultiValueFieldSeparator.Name = "_lblMultiValueFieldSeparator";
 			// 
 			// _chkAllowMultiValueFields
 			// 
