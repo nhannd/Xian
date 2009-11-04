@@ -26,6 +26,7 @@ namespace ClearCanvas.Controls.WinForms
 		private bool _isVirtual = false;
 		private bool _isFolder = false;
 		private int _iconIndex = -1;
+		private bool _disposed = false;
 
 		public ShellItem()
 		{
@@ -144,6 +145,11 @@ namespace ClearCanvas.Controls.WinForms
 #endif
 		}
 
+		~ShellItem()
+		{
+			this.Dispose(false);
+		}
+
 		public void Dispose()
 		{
 			this.Dispose(true);
@@ -152,11 +158,26 @@ namespace ClearCanvas.Controls.WinForms
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (!_disposed)
 			{
 #if DEBUG
 				--_instanceCount;
 #endif
+
+				if (disposing)
+				{
+					if (_pidl != null)
+					{
+						_pidl.Dispose();
+						_pidl = null;
+					}
+
+					if (_rootItem != null)
+					{
+						// do not dispose this - we don't own it!
+						_rootItem = null;
+					}
+				}
 
 				if (_shellFolder != null)
 				{
@@ -165,17 +186,7 @@ namespace ClearCanvas.Controls.WinForms
 					_shellFolder = null;
 				}
 
-				if (_pidl != null)
-				{
-					_pidl.Dispose();
-					_pidl = null;
-				}
-
-				if (_rootItem != null)
-				{
-					// do not dispose this - we don't own it!
-					_rootItem = null;
-				}
+				_disposed = true;
 			}
 		}
 
@@ -189,51 +200,67 @@ namespace ClearCanvas.Controls.WinForms
 			return this.Clone();
 		}
 
-		public IEnumerable<ShellItem> EnumerateSubfolders()
-		{
-			return this.EnumerateSubfolders(true);
-		}
-
-		public IEnumerable<ShellItem> EnumerateSubfolders(bool includeHiddenItems)
-		{
-			Native.SHCONTF flags = Native.SHCONTF.SHCONTF_FOLDERS;
-			if (includeHiddenItems)
-				flags |= Native.SHCONTF.SHCONTF_INCLUDEHIDDEN;
-			return this.EnumerateChildren(flags);
-		}
-
-		public IEnumerable<ShellItem> EnumerateFiles()
-		{
-			return this.EnumerateFiles(true);
-		}
-
-		public IEnumerable<ShellItem> EnumerateFiles(bool includeHiddenItems)
-		{
-			Native.SHCONTF flags = Native.SHCONTF.SHCONTF_NONFOLDERS;
-			if (includeHiddenItems)
-				flags |= Native.SHCONTF.SHCONTF_INCLUDEHIDDEN;
-			return this.EnumerateChildren(flags);
-		}
-
 		public IEnumerable<ShellItem> EnumerateChildren()
 		{
-			return this.EnumerateChildren(true);
+			return this.EnumerateChildren(ChildType.Files | ChildType.Folders, true);
 		}
 
 		public IEnumerable<ShellItem> EnumerateChildren(bool includeHiddenItems)
 		{
-			Native.SHCONTF flags = Native.SHCONTF.SHCONTF_NONFOLDERS | Native.SHCONTF.SHCONTF_FOLDERS;
-			if (includeHiddenItems)
-				flags |= Native.SHCONTF.SHCONTF_INCLUDEHIDDEN;
-			return this.EnumerateChildren(flags);
+			return this.EnumerateChildren(ChildType.Files | ChildType.Folders, includeHiddenItems);
 		}
 
-		private IEnumerable<ShellItem> EnumerateChildren(Native.SHCONTF flags)
+		public IEnumerable<ShellItem> EnumerateChildren(ChildType types)
+		{
+			return this.EnumerateChildren(types, true);
+		}
+
+		public IEnumerable<ShellItem> EnumerateChildren(ChildType types, bool includeHiddenItems)
+		{
+			Native.SHCONTF flags = 0;
+			flags |= ((types & ChildType.Files) == ChildType.Files) ? Native.SHCONTF.SHCONTF_NONFOLDERS : 0;
+			flags |= ((types & ChildType.Folders) == ChildType.Folders) ? Native.SHCONTF.SHCONTF_FOLDERS : 0;
+			flags |= (includeHiddenItems) ? Native.SHCONTF.SHCONTF_INCLUDEHIDDEN : 0;
+
+			List<ShellItem> children = new List<ShellItem>();
+			foreach (Pidl pidl in EnumerateChildPidls(flags))
+			{
+				children.Add(new ShellItem(pidl, this));
+				pidl.Dispose();
+			}
+			return children;
+		}
+
+		public IEnumerable<Pidl> EnumerateChildPidls()
+		{
+			return this.EnumerateChildPidls(ChildType.Files | ChildType.Folders, true);
+		}
+
+		public IEnumerable<Pidl> EnumerateChildPidls(bool includeHiddenItems)
+		{
+			return this.EnumerateChildPidls(ChildType.Files | ChildType.Folders, includeHiddenItems);
+		}
+
+		public IEnumerable<Pidl> EnumerateChildPidls(ChildType types)
+		{
+			return this.EnumerateChildPidls(types, true);
+		}
+
+		public IEnumerable<Pidl> EnumerateChildPidls(ChildType types, bool includeHiddenItems)
+		{
+			Native.SHCONTF flags = 0;
+			flags |= ((types & ChildType.Files) == ChildType.Files) ? Native.SHCONTF.SHCONTF_NONFOLDERS : 0;
+			flags |= ((types & ChildType.Folders) == ChildType.Folders) ? Native.SHCONTF.SHCONTF_FOLDERS : 0;
+			flags |= (includeHiddenItems) ? Native.SHCONTF.SHCONTF_INCLUDEHIDDEN : 0;
+			return this.EnumerateChildPidls(flags);
+		}
+
+		private IEnumerable<Pidl> EnumerateChildPidls(Native.SHCONTF flags)
 		{
 			if (!_isFolder)
 				throw new InvalidOperationException("Children can only be enumerated on a folder-type item.");
 			if (_shellFolder == null)
-				return new ShellItem[0];
+				return new Pidl[0];
 
 			// Get the IEnumIDList interface pointer.
 			Native.IEnumIDList pEnum = null;
@@ -241,41 +268,15 @@ namespace ClearCanvas.Controls.WinForms
 			if (hRes != 0)
 				throw new Exception("IShellFolder::EnumObjects failed to enumerate child objects.", Marshal.GetExceptionForHR((int) hRes));
 
-			List<ShellItem> children = new List<ShellItem>();
-
 			try
 			{
-				IntPtr pidl = IntPtr.Zero;
-				int count = 0;
-
-				// Grab the first enumeration.
-				pEnum.Next(1, out pidl, out count);
-
-				// Then continue with all the rest.
-				while (!IntPtr.Zero.Equals(pidl) && count == 1)
-				{
-					// Create the new ShellItem object.
-					using (Pidl safePidl = new Pidl(pidl))
-					{
-						children.Add(new ShellItem(safePidl, this));
-					}
-
-					// Free the PIDL and reset counters.
-					Marshal.FreeCoTaskMem(pidl);
-					pidl = IntPtr.Zero;
-					count = 0;
-
-					// Grab the next item.
-					pEnum.Next(1, out pidl, out count);
-				}
+				return Pidl.ConvertPidlEnumeration(pEnum);
 			}
 			finally
 			{
 				// Free the interface pointer.
 				Marshal.ReleaseComObject(pEnum);
 			}
-
-			return children;
 		}
 
 		public string DisplayName
@@ -321,6 +322,13 @@ namespace ClearCanvas.Controls.WinForms
 		public ShellItem Root
 		{
 			get { return _rootItem; }
+		}
+
+		[Flags]
+		public enum ChildType
+		{
+			Files = 1,
+			Folders = 2
 		}
 	}
 

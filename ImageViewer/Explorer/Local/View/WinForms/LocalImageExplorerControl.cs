@@ -167,6 +167,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 				_folderCoordinator.BrowseTo(_homeLocation);
 		}
 
+		protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e) {
+			if (e.KeyData == (Keys.Control | Keys.A))
+			{
+				_folderView.SelectAll();
+				e.IsInputKey = true;
+			}
+			base.OnPreviewKeyDown(e);
+		}
+
 		#region Tab Order
 
 		private delegate bool FocusDelegate(bool forward);
@@ -333,31 +342,72 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _btnUp_Click(object sender, EventArgs e)
 		{
-			_folderCoordinator.BrowseToParent();
+			this.Cursor = Cursors.WaitCursor;
+			try
+			{
+				_folderCoordinator.BrowseToParent();
+			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _btnBack_Click(object sender, EventArgs e)
 		{
-			_folderCoordinator.BrowseToPrevious();
+			this.Cursor = Cursors.WaitCursor;
+			try
+			{
+				_folderCoordinator.BrowseToPrevious();
+			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _btnForward_Click(object sender, EventArgs e)
 		{
-			_folderCoordinator.BrowseToNext();
+			this.Cursor = Cursors.WaitCursor;
+			try
+			{
+				_folderCoordinator.BrowseToNext();
+			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _btnHome_Click(object sender, EventArgs e)
 		{
-			this.BrowseToHome();
+			this.Cursor = Cursors.WaitCursor;
+			try
+			{
+				this.BrowseToHome();
+			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _btnRefresh_Click(object sender, EventArgs e)
 		{
-			_folderCoordinator.Refresh();
+			this.Cursor = Cursors.WaitCursor;
+			try
+			{
+				_folderCoordinator.Refresh();
+			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _btnGo_Click(object sender, EventArgs e)
 		{
+			this.Cursor = Cursors.WaitCursor;
 			try
 			{
 				if (!string.IsNullOrEmpty(_txtAddress.Text))
@@ -368,6 +418,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 				this.OnFolderControlExceptionRaised(null, new ItemEventArgs<Exception>(ex));
 				_txtAddress.Text = _lastValidLocation;
 			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _txtAddress_KeyEnterPressed(object sender, EventArgs e)
@@ -377,7 +431,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		private void _mnuHistoryItem_Click(object sender, EventArgs e)
 		{
-			_folderCoordinator.BrowseTo((int) ((ToolStripMenuItem) sender).Tag);
+			this.Cursor = Cursors.WaitCursor;
+			try
+			{
+				_folderCoordinator.BrowseTo((int) ((ToolStripMenuItem) sender).Tag);
+			}
+			finally
+			{
+				this.ResetCursor();
+			}
 		}
 
 		private void _btnShowFolders_Click(object sender, EventArgs e)

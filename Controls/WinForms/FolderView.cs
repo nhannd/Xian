@@ -13,8 +13,10 @@ namespace ClearCanvas.Controls.WinForms
 	{
 		private event EventHandler _selectedItemsChanged;
 		private event FolderViewItemEventHandler _itemDoubleClick;
+		private event FolderViewItemEventHandler _itemKeyEnterPressed;
 		private readonly FolderListView _folderListView;
 		private IList<FolderViewItem> _selectedItems;
+		private bool _suppressFolderListViewSelectedIndexChanged = false;
 
 		public FolderView()
 		{
@@ -135,19 +137,32 @@ namespace ClearCanvas.Controls.WinForms
 
 		#endregion
 
+		#region Sorting
+
+		public void SortBy(SortKey sortKey)
+		{
+			_folderListView.Sort(sortKey);
+		}
+
+		#endregion
+
 		#region SelectedItems
 
 		public IList<FolderViewItem> SelectedItems
 		{
-			get { return _selectedItems; }
-			private set
+			get
 			{
-				if (_selectedItems != value)
+				if (_selectedItems == null)
 				{
-					_selectedItems = value;
-					this.OnSelectedItemsChanged(EventArgs.Empty);
-					this.OnPropertyChanged(new PropertyChangedEventArgs("SelectedItems"));
+					List<FolderViewItem> selection = new List<FolderViewItem>();
+					if (_folderListView.SelectedItems != null)
+					{
+						foreach (FolderListViewItem item in _folderListView.SelectedItems)
+							selection.Add(new FolderViewItem(item.Pidl));
+					}
+					_selectedItems = selection.AsReadOnly();
 				}
+				return _selectedItems;
 			}
 		}
 
@@ -161,6 +176,33 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			if (_selectedItemsChanged != null)
 				_selectedItemsChanged.Invoke(this, e);
+		}
+
+		public void SelectAll()
+		{
+			_suppressFolderListViewSelectedIndexChanged = true;
+			foreach (ListViewItem item in _folderListView.Items)
+				item.Selected = true;
+			_suppressFolderListViewSelectedIndexChanged = false;
+			this.OnFolderListViewSelectedIndexChanged(_folderListView, EventArgs.Empty);
+		}
+
+		public void SelectNone()
+		{
+			_suppressFolderListViewSelectedIndexChanged = true;
+			foreach (ListViewItem item in _folderListView.Items)
+				item.Selected = false;
+			_suppressFolderListViewSelectedIndexChanged = false;
+			this.OnFolderListViewSelectedIndexChanged(_folderListView, EventArgs.Empty);
+		}
+
+		public void SelectInverted()
+		{
+			_suppressFolderListViewSelectedIndexChanged = true;
+			foreach (ListViewItem item in _folderListView.Items)
+				item.Selected = !item.Selected;
+			_suppressFolderListViewSelectedIndexChanged = false;
+			this.OnFolderListViewSelectedIndexChanged(_folderListView, EventArgs.Empty);
 		}
 
 		#endregion
@@ -177,6 +219,22 @@ namespace ClearCanvas.Controls.WinForms
 		{
 			if (_itemDoubleClick != null)
 				_itemDoubleClick.Invoke(this, e);
+		}
+
+		#endregion
+
+		#region ItemKeyEnterPressed
+
+		public event FolderViewItemEventHandler ItemKeyEnterPressed
+		{
+			add { _itemKeyEnterPressed += value; }
+			remove { _itemKeyEnterPressed -= value; }
+		}
+
+		protected virtual void OnItemKeyEnterPressed(FolderViewItemEventArgs e)
+		{
+			if (_itemKeyEnterPressed != null)
+				_itemKeyEnterPressed.Invoke(this, e);
 		}
 
 		#endregion
@@ -211,13 +269,13 @@ namespace ClearCanvas.Controls.WinForms
 
 		private void OnFolderListViewSelectedIndexChanged(object sender, EventArgs e)
 		{
-			List<FolderViewItem> selection = new List<FolderViewItem>();
-			if (_folderListView.SelectedItems != null)
+			if (!_suppressFolderListViewSelectedIndexChanged)
 			{
-				foreach (FolderListViewItem item in _folderListView.SelectedItems)
-					selection.Add(new FolderViewItem(item.Pidl));
+				// reset the selected items list and notify listeners of change
+				_selectedItems = null;
+				this.OnSelectedItemsChanged(EventArgs.Empty);
+				this.OnPropertyChanged(new PropertyChangedEventArgs("SelectedItems"));
 			}
-			this.SelectedItems = selection.AsReadOnly();
 		}
 
 		#region FolderViewItem Class
@@ -233,95 +291,84 @@ namespace ClearCanvas.Controls.WinForms
 
 		private class FolderListViewItem : ListViewItem, IDisposable
 		{
-			private ShellItem _shellItem;
-			private DateTime _lastModified = DateTime.MinValue;
-			private long _fileSize = -1;
-			private byte _folderType;
+			private Pidl _pidl;
+			private readonly string _fullPath;
+			private readonly int _iconIndex;
+			private readonly bool _lastModifiedValid;
 
-			public FolderListViewItem(ShellItem shellItem) : base()
+			public readonly string DisplayName;
+			public readonly string TypeName;
+			public readonly byte ItemClass;
+			public readonly long FileSize;
+			public readonly bool IsFolder;
+			public readonly DateTime LastModified;
+
+			public FolderListViewItem(Pidl absolutePidl, Pidl myDocumentsReferencePidl) : base()
 			{
-				string lastModified = string.Empty;
-				string fileSize = string.Empty;
-				if (!string.IsNullOrEmpty(shellItem.Path) && File.Exists(shellItem.Path))
+				_pidl = absolutePidl;
+				_fullPath = absolutePidl.Path;
+
+				// request shell item info now - it's faster than binding to ShellItem directly, and we need it for sorting purposes anyway
+				const Native.SFGAO REQUEST_ATTRIBUTES = Native.SFGAO.SFGAO_FILESYSTEM | Native.SFGAO.SFGAO_FOLDER | Native.SFGAO.SFGAO_HASSUBFOLDER;
+				IntPtr pidl = (IntPtr) _pidl;
+				Native.SHFILEINFO shInfo = new Native.SHFILEINFO();
+				Native.Shell32.SHGetFileInfo(pidl, (uint) REQUEST_ATTRIBUTES, out shInfo, (uint) Marshal.SizeOf(shInfo),
+				                             Native.SHGFI.SHGFI_PIDL | Native.SHGFI.SHGFI_ATTRIBUTES | Native.SHGFI.SHGFI_TYPENAME | Native.SHGFI.SHGFI_DISPLAYNAME | Native.SHGFI.SHGFI_SYSICONINDEX);
+
+				bool isPureVirtual = !(((Native.SFGAO) shInfo.dwAttributes & Native.SFGAO.SFGAO_FILESYSTEM) != 0);
+				bool isFolder = (((Native.SFGAO) shInfo.dwAttributes & (Native.SFGAO.SFGAO_FOLDER | Native.SFGAO.SFGAO_HASSUBFOLDER)) != 0) && !File.Exists(_fullPath);
+
+				byte itemClass;
+				if (_pidl == myDocumentsReferencePidl)
+					itemClass = 0;
+				else if (isPureVirtual && isFolder)
+					itemClass = 64;
+				else if (isFolder)
+					itemClass = (byte) (128 + GetRootVolumeIndex(_fullPath));
+				else
+					itemClass = byte.MaxValue;
+
+				this._iconIndex = shInfo.iIcon;
+				this._lastModifiedValid = false;
+				this.DisplayName = shInfo.szDisplayName;
+				this.TypeName = shInfo.szTypeName;
+				this.ItemClass = itemClass;
+				this.LastModified = DateTime.MinValue;
+				this.IsFolder = isFolder;
+				this.FileSize = -1;
+
+				if (File.Exists(_fullPath))
 				{
-					FileInfo info = new FileInfo(shellItem.Path);
-					_lastModified = info.LastWriteTime;
-					lastModified = _lastModified.ToString();
-					_fileSize = info.Length;
-					fileSize = FormatFileSize(_fileSize);
+					FileInfo fileInfo = new FileInfo(this._fullPath);
+					this._lastModifiedValid = true;
+					this.LastModified = fileInfo.LastWriteTime;
+					this.FileSize = fileInfo.Length;
+				}
+				else if (Directory.Exists(_fullPath))
+				{
+					this._lastModifiedValid = true;
+					this.LastModified = Directory.GetLastWriteTime(_fullPath);
 				}
 
-				_shellItem = shellItem;
-
-				using (Pidl myDocumentsPidl = new Pidl(Environment.SpecialFolder.MyDocuments))
-				{
-					if (shellItem.Pidl.Equals(myDocumentsPidl))
-						_folderType = 0; // force My Documents to the top of the order
-					else
-						_folderType = DecodeFolderType(shellItem, _fileSize);
-				}
-
-				this.Text = _shellItem.DisplayName;
-				this.ImageIndex = _shellItem.IconIndex;
-				this.SubItems.Add(new ListViewSubItem(this, fileSize, SystemColors.GrayText, this.BackColor, this.Font));
-				this.SubItems.Add(new ListViewSubItem(this, _shellItem.TypeName, SystemColors.GrayText, this.BackColor, this.Font));
-				this.SubItems.Add(new ListViewSubItem(this, lastModified, SystemColors.GrayText, this.BackColor, this.Font));
+				this.Text = this.DisplayName;
+				this.ImageIndex = this._iconIndex;
+				this.SubItems.Add(CreateSubItem(this, FormatFileSize(this.FileSize)));
+				this.SubItems.Add(CreateSubItem(this, this.TypeName));
+				this.SubItems.Add(CreateSubItem(this, FormatLastModified(this.LastModified, this._lastModifiedValid)));
 			}
 
 			public void Dispose()
 			{
-				if (_shellItem != null)
+				if (_pidl != null)
 				{
-					_shellItem.Dispose();
-					_shellItem = null;
-				}
-				GC.SuppressFinalize(this);
-			}
-
-			public int CompareTo(FolderListViewItem other, string key)
-			{
-				switch (key)
-				{
-					case FolderListView.COLUMN_NAME:
-						return string.Compare(_shellItem.DisplayName, other._shellItem.DisplayName, StringComparison.InvariantCultureIgnoreCase);
-					case FolderListView.COLUMN_TYPE:
-						return string.Compare(_shellItem.TypeName, other._shellItem.TypeName, StringComparison.InvariantCultureIgnoreCase);
-					case FolderListView.COLUMN_DATEMODIFIED:
-						return DateTime.Compare(_lastModified, other._lastModified);
-					case FolderListView.COLUMN_SIZE:
-						return _fileSize.CompareTo(other._fileSize);
-					case FolderListView.SORT_FOLDERTYPE:
-						return _folderType.CompareTo(other._folderType);
-					default:
-						return 0;
+					_pidl.Dispose();
+					_pidl = null;
 				}
 			}
 
 			public Pidl Pidl
 			{
-				get { return _shellItem.Pidl; }
-			}
-
-			public bool IsFolder
-			{
-				get { return _shellItem.IsFolder; }
-			}
-
-			public ShellItem GetShellItemCopy()
-			{
-				return _shellItem.Clone();
-			}
-
-			private static byte DecodeFolderType(ShellItem shellItem, long fileSize)
-			{
-				if (shellItem.IsVirtual && shellItem.IsFolder)
-					return 32; // a special location folder
-				else if (shellItem.IsVirtual)
-					return 64; // a special item
-				else if (shellItem.IsFolder && fileSize < 0)
-					return 128; // a real folder, not just a folder-like object
-				else
-					return byte.MaxValue; // files and any folder-like objects
+				get { return _pidl; }
 			}
 
 			private static string FormatFileSize(long fileSize)
@@ -340,6 +387,31 @@ namespace ClearCanvas.Controls.WinForms
 				// and finally, in the event of having a file greater than 896 GiB...
 				return string.Format(SR.FormatFileSizeTB, fileSize/1099511627776.0);
 			}
+
+			private static byte GetRootVolumeIndex(string fullPath)
+			{
+				if (string.IsNullOrEmpty(fullPath))
+					return 26;
+				string rootVolume = Directory.GetDirectoryRoot(fullPath);
+				if (string.IsNullOrEmpty(rootVolume) || !string.Equals(rootVolume, fullPath, StringComparison.InvariantCultureIgnoreCase))
+					return 26;
+				char driveLetter = rootVolume.ToLowerInvariant()[0];
+				if (driveLetter < 'a' || driveLetter > 'z')
+					return 26;
+				return (byte) (driveLetter - 'a');
+			}
+
+			private static string FormatLastModified(DateTime lastModified, bool valid)
+			{
+				if (!valid)
+					return string.Empty;
+				return lastModified.ToString();
+			}
+
+			private static ListViewSubItem CreateSubItem(ListViewItem parent, string value)
+			{
+				return new ListViewSubItem(parent, value, SystemColors.GrayText, parent.BackColor, parent.Font);
+			}
 		}
 
 		#endregion
@@ -351,15 +423,12 @@ namespace ClearCanvas.Controls.WinForms
 			public event EventHandler AfterBrowse;
 			private bool _suppressAfterBrowse = false;
 
-			public const string SORT_FOLDERTYPE = "FolderType";
-			public const string COLUMN_NAME = "Name";
-			public const string COLUMN_SIZE = "Size";
-			public const string COLUMN_TYPE = "Type";
-			public const string COLUMN_DATEMODIFIED = "DateModified";
+			private const string COLUMN_NAME = "Name";
+			private const string COLUMN_SIZE = "Size";
+			private const string COLUMN_TYPE = "Type";
+			private const string COLUMN_DATEMODIFIED = "DateModified";
 
-			private const int ColumnLimitInTileView = 1;
-			private readonly List<ColumnHeader> _unusedColumnsInTileView = new List<ColumnHeader>();
-
+			private Pidl _myDocumentsReferencePidl;
 			private ShellItem _rootShellItem = new ShellItem();
 			private ShellItem _currentShellItem = null;
 
@@ -368,10 +437,7 @@ namespace ClearCanvas.Controls.WinForms
 			public FolderListView() : base()
 			{
 				_currentShellItem = _rootShellItem.Clone();
-
-				FolderListViewItemComparer comparer = new FolderListViewItemComparer();
-				comparer.SortOn(COLUMN_TYPE);
-				comparer.SortOn(COLUMN_NAME);
+				_myDocumentsReferencePidl = new Pidl(Environment.SpecialFolder.MyDocuments);
 
 				this.Alignment = ListViewAlignment.SnapToGrid;
 				this.AllowColumnReorder = false;
@@ -381,15 +447,13 @@ namespace ClearCanvas.Controls.WinForms
 				this.HideSelection = false;
 				this.LabelEdit = false;
 				this.LabelWrap = true;
-				this.ListViewItemSorter = comparer;
+				this.ListViewItemSorter = new FolderListViewItemComparer();
 				this.MultiSelect = true;
 				this.Scrollable = true;
 				this.Sorting = SortOrder.Ascending;
 				this.TileSize = new Size(12*(this.FontHeight + 4), 3*this.FontHeight + 4);
-				foreach (ColumnHeader column in CreateDefaultColumns(this.ClientSize.Width))
-					this.Columns.Add(column);
-				foreach (ShellItem shellItem in _currentShellItem.EnumerateChildren())
-					this.Items.Add(new FolderListViewItem(shellItem));
+				this.View = View.LargeIcon;
+				this.PopulateItems();
 			}
 
 			protected override void Dispose(bool disposing)
@@ -408,6 +472,12 @@ namespace ClearCanvas.Controls.WinForms
 					{
 						_rootShellItem.Dispose();
 						_rootShellItem = null;
+					}
+
+					if (_myDocumentsReferencePidl != null)
+					{
+						_myDocumentsReferencePidl.Dispose();
+						_myDocumentsReferencePidl = null;
 					}
 				}
 				base.Dispose(disposing);
@@ -443,23 +513,24 @@ namespace ClearCanvas.Controls.WinForms
 				}
 			}
 
-			protected override void OnResize(EventArgs e)
-			{
-				base.OnResize(e);
-				this.ResizeColumns(this.ClientSize.Width - 15);
-			}
-
-			protected override void OnSizeChanged(EventArgs e)
-			{
-				base.OnSizeChanged(e);
-				this.ResizeColumns(this.ClientSize.Width - 15);
-			}
-
 			protected override void OnColumnClick(ColumnClickEventArgs e)
 			{
 				base.OnColumnClick(e);
-				((FolderListViewItemComparer) this.ListViewItemSorter).SortOn(this.Columns[e.Column].Name);
-				this.Sort();
+				switch (this.Columns[e.Column].Name)
+				{
+					case COLUMN_NAME:
+						this.Sort(SortKey.Name);
+						break;
+					case COLUMN_SIZE:
+						this.Sort(SortKey.Size);
+						break;
+					case COLUMN_TYPE:
+						this.Sort(SortKey.Type);
+						break;
+					case COLUMN_DATEMODIFIED:
+						this.Sort(SortKey.Date);
+						break;
+				}
 			}
 
 			protected override void OnDoubleClick(EventArgs e)
@@ -479,7 +550,7 @@ namespace ClearCanvas.Controls.WinForms
 							if (_autoDrillDown && item.IsFolder)
 							{
 								// if the user double clicked on a folder item, perform a drill down
-								this.Browse(item.GetShellItemCopy());
+								this.Browse(new ShellItem(item.Pidl, _rootShellItem, false));
 							}
 						}
 					}
@@ -489,6 +560,55 @@ namespace ClearCanvas.Controls.WinForms
 					}
 				}
 				base.OnDoubleClick(e);
+			}
+
+			protected override void OnKeyDown(KeyEventArgs e)
+			{
+				if (e.KeyCode == Keys.Enter)
+				{
+					if (this.SelectedItems != null && this.SelectedItems.Count > 0)
+					{
+						try
+						{
+							FolderListViewItem item = (FolderListViewItem) this.FocusedItem;
+							if (item != null)
+							{
+								FolderView control = base.Parent as FolderView;
+								if (control != null)
+									control.OnItemKeyEnterPressed(new FolderViewItemEventArgs(new FolderViewItem(item.Pidl)));
+
+								if (_autoDrillDown && item.IsFolder)
+								{
+									// if the user pressed ENTER on a folder item, perform a drill down
+									this.Browse(new ShellItem(item.Pidl, _rootShellItem, false));
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							HandleBrowseException(ex);
+						}
+					}
+
+					e.Handled = true;
+					e.SuppressKeyPress = true;
+				}
+				else if (e.KeyData == (Keys.Control | Keys.A))
+				{
+					FolderView control = base.Parent as FolderView;
+					if (control != null)
+						control.SelectAll();
+					e.Handled = true;
+					e.SuppressKeyPress = false;
+				}
+				base.OnKeyDown(e);
+			}
+
+			protected override bool IsInputKey(Keys keyData)
+			{
+				if (keyData == Keys.Enter)
+					return true;
+				return base.IsInputKey(keyData);
 			}
 
 			public Pidl CurrentPidl
@@ -514,24 +634,29 @@ namespace ClearCanvas.Controls.WinForms
 				{
 					if (base.View != value)
 					{
-						base.View = value;
+						this.SuspendLayout();
+						try
+						{
+							if (base.View == View.Details)
+								base.Columns.Clear();
 
-						if (value != View.Details && base.Columns.Count > ColumnLimitInTileView)
-						{
-							while (base.Columns.Count > ColumnLimitInTileView)
-							{
-								_unusedColumnsInTileView.Add(base.Columns[ColumnLimitInTileView]);
-								base.Columns.RemoveAt(ColumnLimitInTileView);
-							}
+							base.View = value;
+
+							if (value == View.Details)
+								base.Columns.AddRange(CreateDetailsViewColumns());
 						}
-						else if (value == View.Details && _unusedColumnsInTileView.Count > 0)
+						finally
 						{
-							foreach (ColumnHeader column in _unusedColumnsInTileView)
-								base.Columns.Add(column);
-							_unusedColumnsInTileView.Clear();
+							this.ResumeLayout(true);
 						}
 					}
 				}
+			}
+
+			public void Sort(SortKey sortKey)
+			{
+				((FolderListViewItemComparer) this.ListViewItemSorter).SortOn(sortKey);
+				this.Sort();
 			}
 
 			public void BrowseToPidl(Pidl pidl)
@@ -562,17 +687,12 @@ namespace ClearCanvas.Controls.WinForms
 						this.Items.Clear();
 
 						if (_currentShellItem != null)
-						{
 							_currentShellItem.Dispose();
-						}
 
 						_currentShellItem = destination;
 
 						if (_currentShellItem != null)
-						{
-							foreach (ShellItem shellItem in _currentShellItem.EnumerateChildren())
-								this.Items.Add(new FolderListViewItem(shellItem));
-						}
+							this.PopulateItems();
 					}
 					catch (PathNotFoundException ex)
 					{
@@ -592,26 +712,15 @@ namespace ClearCanvas.Controls.WinForms
 				}
 			}
 
-			private void ResizeColumns(int width)
+			private void PopulateItems()
 			{
-				this.SuspendLayout();
-
-				int totalWidth = 0;
-				foreach (ColumnHeader column in this.Columns)
-					totalWidth += column.Width;
-
-				if (totalWidth < 200)
+				List<FolderListViewItem> items = new List<FolderListViewItem>();
+				foreach (Pidl pidl in _currentShellItem.EnumerateChildPidls())
 				{
-					foreach (ColumnHeader column in this.Columns)
-						column.Width = ((column.Name == COLUMN_NAME) ? 2 : 1)*width/5;
+					items.Add(new FolderListViewItem(new Pidl(_currentShellItem.Pidl, pidl), _myDocumentsReferencePidl));
+					pidl.Dispose(); // the enumerator makes relative PIDLs, but the FolderListViewItem needs an absolute one
 				}
-				else
-				{
-					foreach (ColumnHeader column in this.Columns)
-						column.Width = (int) (1f*width*column.Width/totalWidth);
-				}
-
-				this.ResumeLayout(true);
+				this.Items.AddRange(items.ToArray());
 			}
 
 			private void HandleBrowseException(Exception exception)
@@ -621,20 +730,52 @@ namespace ClearCanvas.Controls.WinForms
 					control.HandleBrowseException(exception);
 			}
 
+			private static ColumnHeader[] CreateDetailsViewColumns()
+			{
+				ColumnHeader[] columns = new ColumnHeader[4];
+
+				columns[0] = new ColumnHeader();
+				columns[0].Name = COLUMN_NAME;
+				columns[0].Text = SR.Name;
+				columns[0].Width = -1;
+
+				columns[1] = new ColumnHeader();
+				columns[1].Name = COLUMN_SIZE;
+				columns[1].Text = SR.Size;
+				columns[1].Width = 100;
+
+				columns[2] = new ColumnHeader();
+				columns[2].Name = COLUMN_TYPE;
+				columns[2].Text = SR.Type;
+				columns[2].Width = 100;
+
+				columns[3] = new ColumnHeader();
+				columns[3].Name = COLUMN_DATEMODIFIED;
+				columns[3].Text = SR.DateModified;
+				columns[3].Width = 100;
+
+				return columns;
+			}
+
 			private class FolderListViewItemComparer : IComparer
 			{
-				private readonly List<string> _sortKeys = new List<string>(4);
-				private bool _invertOrder = false;
+				private readonly List<SortKey> _sortKeys = new List<SortKey>(4);
+				private readonly Dictionary<SortKey, bool> _invertOrder = new Dictionary<SortKey, bool>();
+				private bool _invertClassOrder = false;
 
-				public void SortOn(string key)
+				public FolderListViewItemComparer()
 				{
-					if (_sortKeys.IndexOf(key) == 0)
-					{
-						_invertOrder = !_invertOrder;
-						return;
-					}
-					_invertOrder = false;
-					_sortKeys.Remove(key);
+					_sortKeys.Add(SortKey.Name);
+					_invertOrder[SortKey.Name] = false;
+					_invertOrder[SortKey.Date] = false;
+					_invertOrder[SortKey.Size] = false;
+					_invertOrder[SortKey.Type] = false;
+				}
+
+				public void SortOn(SortKey key)
+				{
+					if (_sortKeys.Remove(key))
+						_invertOrder[key] = _invertClassOrder = !_invertOrder[key];
 					_sortKeys.Insert(0, key);
 				}
 
@@ -643,54 +784,42 @@ namespace ClearCanvas.Controls.WinForms
 					FolderListViewItem itemX = (FolderListViewItem) x;
 					FolderListViewItem itemY = (FolderListViewItem) y;
 
-					if (!_invertOrder)
-						return this.CompareCore(itemX, itemY);
-					return this.CompareCore(itemY, itemX);
-				}
-
-				private int CompareCore(FolderListViewItem itemX, FolderListViewItem itemY)
-				{
-					int result = itemX.CompareTo(itemY, SORT_FOLDERTYPE);
+					int result = itemX.ItemClass.CompareTo(itemY.ItemClass);
 					if (result != 0)
-						return result;
+						return result*(_invertClassOrder ? -1 : 1);
 
-					foreach (string key in _sortKeys)
+					foreach (SortKey key in _sortKeys)
 					{
-						result = itemX.CompareTo(itemY, key);
+						result = key.Compare(itemX, itemY);
 						if (result != 0)
-							return result;
+							return result*(_invertOrder[key] ? -1 : 1);
 					}
 					return 0;
 				}
 			}
+		}
 
-			private static IEnumerable<ColumnHeader> CreateDefaultColumns(int width)
+		#endregion
+
+		#region SortKey
+
+		public sealed class SortKey
+		{
+			public static readonly SortKey Name = new SortKey((x, y) => string.Compare(x.DisplayName, y.DisplayName, StringComparison.InvariantCultureIgnoreCase));
+			public static readonly SortKey Type = new SortKey((x, y) => string.Compare(x.TypeName, y.TypeName, StringComparison.InvariantCultureIgnoreCase));
+			public static readonly SortKey Size = new SortKey((x, y) => DateTime.Compare(x.LastModified, y.LastModified));
+			public static readonly SortKey Date = new SortKey((x, y) => x.FileSize.CompareTo(y.FileSize));
+
+			private readonly Comparison<FolderListViewItem> _comparison;
+
+			private SortKey(Comparison<FolderListViewItem> comparison)
 			{
-				ColumnHeader column;
+				_comparison = comparison;
+			}
 
-				column = new ColumnHeader();
-				column.Name = COLUMN_NAME;
-				column.Text = SR.Name;
-				column.Width = width*2/5;
-				yield return column;
-
-				column = new ColumnHeader();
-				column.Name = COLUMN_SIZE;
-				column.Text = SR.Size;
-				column.Width = width*1/5;
-				yield return column;
-
-				column = new ColumnHeader();
-				column.Name = COLUMN_TYPE;
-				column.Text = SR.Type;
-				column.Width = width*1/5;
-				yield return column;
-
-				column = new ColumnHeader();
-				column.Name = COLUMN_DATEMODIFIED;
-				column.Text = SR.DateModified;
-				column.Width = width*1/5;
-				yield return column;
+			internal int Compare(ListViewItem x, ListViewItem y)
+			{
+				return _comparison((FolderListViewItem) x, (FolderListViewItem) y);
 			}
 		}
 

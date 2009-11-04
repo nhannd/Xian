@@ -137,7 +137,6 @@ namespace ClearCanvas.Controls.WinForms
 					_shellItem.Dispose();
 					_shellItem = null;
 				}
-				GC.SuppressFinalize(this);
 			}
 
 			public Pidl Pidl
@@ -152,7 +151,7 @@ namespace ClearCanvas.Controls.WinForms
 				{
 					DisposeEach(base.Nodes);
 					base.Nodes.Clear();
-					foreach (ShellItem shellItem in _shellItem.EnumerateSubfolders())
+					foreach (ShellItem shellItem in _shellItem.EnumerateChildren(ShellItem.ChildType.Folders))
 					{
 						base.Nodes.Add(new FolderTreeNode(shellItem));
 					}

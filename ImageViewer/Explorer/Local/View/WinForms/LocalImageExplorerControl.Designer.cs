@@ -103,6 +103,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 			this._folderView.Size = new System.Drawing.Size(637, 545);
 			this._folderView.TabIndex = 200;
 			this._folderView.ItemDoubleClick += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
+			this._folderView.ItemKeyEnterPressed += new ClearCanvas.Controls.WinForms.FolderViewItemEventHandler(this._folderView_ItemDoubleClick);
 			// 
 			// _folderViewContextMenu
 			// 

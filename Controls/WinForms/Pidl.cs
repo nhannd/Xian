@@ -12,6 +12,7 @@ namespace ClearCanvas.Controls.WinForms
 	public sealed class Pidl : IDisposable, ICloneable, IEquatable<Pidl>
 	{
 		private IntPtr _pidl;
+		private bool _disposed = false;
 
 		public Pidl(IntPtr pidl) : this(pidl, false) {}
 
@@ -53,15 +54,31 @@ namespace ClearCanvas.Controls.WinForms
 #endif
 		}
 
+		~Pidl()
+		{
+			this.Dispose(false);
+		}
+
 		public void Dispose()
+		{
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool disposing)
 		{
 #if DEBUG
 			--_instanceCount;
 #endif
-			if (!IntPtr.Zero.Equals(_pidl))
+			if (!_disposed)
 			{
-				Marshal.FreeCoTaskMem(_pidl);
-				_pidl = IntPtr.Zero;
+				if (!IntPtr.Zero.Equals(_pidl))
+				{
+					Marshal.FreeCoTaskMem(_pidl);
+					_pidl = IntPtr.Zero;
+				}
+
+				_disposed = true;
 			}
 		}
 
@@ -309,6 +326,32 @@ namespace ClearCanvas.Controls.WinForms
 		public static explicit operator IntPtr(Pidl pidl)
 		{
 			return pidl.GetPidl();
+		}
+
+		internal static IEnumerable<Pidl> ConvertPidlEnumeration(Native.IEnumIDList pEnum)
+		{
+			List<Pidl> children = new List<Pidl>();
+
+			IntPtr pidl = IntPtr.Zero;
+			int count = 0;
+
+			// get the first value in the enumeration (the args in the native method signature are more "ref" rather than "out")
+			pEnum.Next(1, out pidl, out count);
+
+			// check and loop if value is valid
+			while (!IntPtr.Zero.Equals(pidl) && count == 1)
+			{
+				children.Add(new Pidl(pidl, true));
+
+				// reset counters (required, see note above)
+				pidl = IntPtr.Zero;
+				count = 0;
+
+				// get the next value in the enumeration
+				pEnum.Next(1, out pidl, out count);
+			}
+
+			return children;
 		}
 
 		private static IntPtr CreateSpecialFolderPidl(Environment.SpecialFolder folder)
