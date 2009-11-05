@@ -118,8 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FormatThumbnailName" xml:space="preserve">
-    <value>{0}
-({1} images)</value>
+    <value>({0} images)
+{1}</value>
+  </data>
+  <data name="FormatThumbnailName1Image" xml:space="preserve">
+    <value>(1 image)
+{0}</value>
   </data>
   <data name="MenuShowThumbnails" xml:space="preserve">
     <value>Thumbnails</value>

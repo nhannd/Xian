@@ -103,13 +103,18 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			// 
 			// _galleryView
 			// 
+			this._galleryView.AllowRenaming = false;
 			this._galleryView.DataSource = null;
 			this._galleryView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._galleryView.DragOutside = false;
+			this._galleryView.DragOutside = true;
 			this._galleryView.DragReorder = false;
+			this._galleryView.HideSelection = true;
+			this._galleryView.ImageSize = new System.Drawing.Size(100, 100);
 			this._galleryView.Location = new System.Drawing.Point(0, 0);
-			this._galleryView.MultiSelect = true;
+			this._galleryView.MaxDescriptionLines = 0;
+			this._galleryView.MultiSelect = false;
 			this._galleryView.Name = "_galleryView";
+			this._galleryView.ShowDescription = false;
 			this._galleryView.Size = new System.Drawing.Size(421, 166);
 			this._galleryView.TabIndex = 1;
 			// 

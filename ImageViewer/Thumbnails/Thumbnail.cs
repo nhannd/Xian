@@ -101,14 +101,23 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			{
 				get
 				{
-					return String.Format(SR.FormatThumbnailName, _displaySet.Name, _displaySet.PresentationImages.Count);
+					string name = _displaySet.Name;
+					name = name.Replace("\r\n", " ");
+					name = name.Replace("\r", " ");
+					name = name.Replace("\n", " ");
+
+					int number = _displaySet.PresentationImages.Count;
+					if (number <= 1)
+						return String.Format(SR.FormatThumbnailName1Image, name);
+					
+					return String.Format(SR.FormatThumbnailName, number, name);
 				}
 				set { throw new NotSupportedException("Renaming thumbnails is not allowed."); }
 			}
 
 			public string Description
 			{
-				get { return string.Empty; }
+				get { return String.Empty; }
 			}
 
 			public object Item

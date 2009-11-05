@@ -54,9 +54,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
             InitializeComponent();
 
 			_galleryView.DataSource = _component.Thumbnails;
-			_galleryView.MultiSelect = false;
-			_galleryView.DragReorder = false;
-			_galleryView.DragOutside = true;
 
         	_imageSetTree.SelectionChanged += 
 				delegate
